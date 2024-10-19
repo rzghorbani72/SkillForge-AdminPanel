@@ -5,34 +5,54 @@ const authConfig = {
   providers: [
     CredentialProvider({
       credentials: {
-        email: {
-          type: 'email'
+        identifier: {
+          label: 'Email or Phone',
+          type: 'text',
+          placeholder: 'Enter your email or phone'
         },
         password: {
+          label: 'Password',
           type: 'password'
         }
       },
       async authorize(credentials, req) {
-        const user = {
-          id: '1',
-          name: 'John',
-          email: credentials?.email as string
-        };
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
+        const { identifier, password } = credentials || {};
+        // const isEmail = /\S+@\S+\.\S+/.test(identifier);
+        // const isPhone = /^\+?[1-9]\d{1,14}$/.test(identifier);
+        console.log('identifier', identifier);
+        console.log('password', password);
+        debugger;
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login-by-pass`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ identifier, password }),
+              credentials: 'include' // This ensures cookies are sent with the request
+            }
+          );
+          debugger;
+          if (response.ok) {
+            const user = await response.json();
+            // Assuming the response contains user data
+            debugger;
+            return user;
+          } else {
+            return null;
+          }
+        } catch (error) {
+          console.error('Error during authorization:', error);
           return null;
-
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
       }
     })
   ],
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/' //sigin page
+    signIn: '/' // Sign-in page
   }
 } satisfies NextAuthConfig;
 

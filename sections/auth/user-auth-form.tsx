@@ -17,8 +17,11 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
 
+// Update the schema to reflect the identifier input
 const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' }),
+  identifier: z
+    .string()
+    .nonempty({ message: 'Enter a valid email or phone number' }),
   password: z
     .string()
     .min(8, { message: 'Password must be at least 8 characters' })
@@ -31,7 +34,7 @@ export default function UserAuthForm() {
   const callbackUrl = searchParams.get('callbackUrl');
   const [loading, startTransition] = useTransition();
   const defaultValues = {
-    email: '',
+    identifier: '',
     password: ''
   };
   const form = useForm<UserFormValue>({
@@ -42,7 +45,7 @@ export default function UserAuthForm() {
   const onSubmit = async (data: UserFormValue) => {
     startTransition(() => {
       signIn('credentials', {
-        email: data.email,
+        identifier: data.identifier,
         password: data.password,
         callbackUrl: callbackUrl ?? '/dashboard'
       });
@@ -58,14 +61,14 @@ export default function UserAuthForm() {
         >
           <FormField
             control={form.control}
-            name="email"
+            name="identifier"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Email or Phone</FormLabel>
                 <FormControl>
                   <Input
-                    type="email"
-                    placeholder="Enter your email..."
+                    type="text"
+                    placeholder="Enter your email or phone..."
                     disabled={loading}
                     {...field}
                   />
