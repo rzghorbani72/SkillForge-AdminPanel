@@ -26,7 +26,7 @@ export default async function RootLayout({
       >
         <NextTopLoader showSpinner={false} />
         <Toaster />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
