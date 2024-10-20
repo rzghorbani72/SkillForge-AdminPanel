@@ -1,5 +1,8 @@
+import { isAuth } from '@/lib/utils';
 import { SignInViewPage } from '@/sections/auth/view';
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
   title: 'Authentication | Sign In',
@@ -7,5 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
+  if (isAuth(cookies())) {
+    redirect('/dashboard');
+  }
   return <SignInViewPage />;
 }
