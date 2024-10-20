@@ -1,11 +1,22 @@
-import { SignInViewPage } from '@/sections/auth/view';
-import { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Authentication | Sign In',
-  description: 'Sign In page for authentication.'
-};
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
-  return <SignInViewPage />;
+  const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  useEffect(() => {
+    // Perform the redirect on the client side
+    setIsRedirecting(true);
+    router.push('/dashboard');
+  }, [router]);
+
+  // Render a loading state or nothing while redirecting
+  if (isRedirecting) {
+    return <div>Loading...</div>; // Optional loading state
+  }
+
+  return null; // Since we're redirecting, there's no need to render anything
 }

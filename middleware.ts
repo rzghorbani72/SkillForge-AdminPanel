@@ -2,16 +2,35 @@
 // https://next-auth.js.org/configuration/nextjs#middleware
 // https://nextjs.org/docs/app/building-your-application/routing/middleware
 
-import NextAuth from 'next-auth';
-import authConfig from './auth.config';
+import { NextRequest, NextResponse } from 'next/server';
+import { jwtDecode } from 'jwt-decode';
 
-const { auth } = NextAuth(authConfig);
+export default function middleware(req: NextRequest) {
+  const token = req.cookies.get('jwt')?.value;
 
-export default auth((req) => {
-  if (!req.auth) {
-    const url = req.url.replace(req.nextUrl.pathname, '/');
-    return Response.redirect(url);
+  if (!token && !req.nextUrl.pathname.includes('login')) {
+    return NextResponse.redirect(new URL('/login', req.url));
   }
-});
+  if (token) {
+    const decoded = jwtDecode(token);
+    if (decoded.exp * 1000 < Date.now()) {
+      //EXPIRED
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
+    if (req.nextUrl.pathname.includes('login')) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+  }
+  // decoded {
+  //    expires: '2024-10-20T09:47:26Z',
+  //    userId: 1,
+  //    email: 'viola@prisma.io',
+  //    phone: '+989214432309',
+  //    iat: 1729417406,
+  //    exp: 1729421006
+  // }
 
-export const config = { matcher: ['/dashboard/:path*'] };
+  return NextResponse.next();
+}
+
+export const config = { matcher: ['/dashboard/:path*', '/login'] };
