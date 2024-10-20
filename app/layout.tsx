@@ -19,9 +19,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="fa" dir="rtl">
       <body
-        className={`${inter.className} overflow-hidden `}
+        className={`${inter.className} overflow-hidden`}
         suppressHydrationWarning={true}
       >
         <NextTopLoader showSpinner={false} />

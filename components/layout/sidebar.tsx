@@ -3,7 +3,7 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, CommandIcon } from 'lucide-react';
+import { ChevronRight, CommandIcon } from 'lucide-react';
 
 type SidebarProps = {
   className?: string;
@@ -27,9 +27,9 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className="p-5 pt-10 lg:block">
         <CommandIcon size={20} className="flex-none" />
       </div>
-      <ChevronLeft
+      <ChevronRight
         className={cn(
-          'absolute -right-3 top-10 z-50  cursor-pointer rounded-full border bg-background text-3xl text-foreground',
+          'absolute left-0 top-10 z-50  cursor-pointer rounded-full border bg-background text-3xl text-foreground',
           isMinimized && 'rotate-180'
         )}
         onClick={handleToggle}

@@ -96,7 +96,7 @@ const NavItemButton = React.memo(
     onClick: () => void;
     children: React.ReactNode;
   }) => (
-    <button className="w-full text-left" onClick={onClick}>
+    <button className="w-full text-right" onClick={onClick}>
       {children}
     </button>
   )
