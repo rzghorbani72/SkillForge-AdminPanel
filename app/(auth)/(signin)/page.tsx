@@ -10,7 +10,7 @@ export default function Page() {
   useEffect(() => {
     // Perform the redirect on the client side
     setIsRedirecting(true);
-    router.push('/dashboard');
+    // router.push('/dashboard');
   }, [router]);
 
   // Render a loading state or nothing while redirecting

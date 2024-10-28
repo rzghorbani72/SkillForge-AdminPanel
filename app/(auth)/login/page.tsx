@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   if (isAuth(cookies())) {
-    redirect('/dashboard');
+    redirect('/user/schools');
   }
   return <SignInViewPage />;
 }

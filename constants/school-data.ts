@@ -123,20 +123,32 @@ export type Product = {
 
 export const navItems: NavItem[] = [
   {
-    title: 'My Schools',
+    title: 'Schools',
     href: '/schools',
-    icon: 'school',
+    icon: 'dashboard',
     label: 'schools'
   },
   {
-    title: 'Create New School',
-    href: '/schools/create',
-    icon: 'createSchool',
-    label: 'create-school'
+    title: 'Employee',
+    href: '/schools/:schoolId/employee',
+    icon: 'user',
+    label: 'employee'
+  },
+  {
+    title: 'Course',
+    href: '/schools/:schoolId/course',
+    icon: 'course',
+    label: 'course'
+  },
+  {
+    title: 'Article',
+    href: '/schools/:schoolId/article',
+    icon: 'article',
+    label: 'article'
   },
   {
     title: 'Profile',
-    href: '/profile',
+    href: '/schools/:schoolId/profile',
     icon: 'userPen',
     label: 'profile'
   },

@@ -17,6 +17,8 @@ import {
   LogIn,
   LucideIcon,
   LucideProps,
+  LogOut,
+  Newspaper,
   LucideShoppingBag,
   Moon,
   MoreVertical,
@@ -29,7 +31,10 @@ import {
   User,
   UserCircle2Icon,
   UserPen,
+  TvMinimalPlay,
   UserX2Icon,
+  School,
+  CirclePlus,
   X
 } from 'lucide-react';
 
@@ -38,7 +43,11 @@ export type Icon = LucideIcon;
 export const Icons = {
   dashboard: LayoutDashboardIcon,
   logo: Command,
-  login: LogIn,
+  logout: LogOut,
+  article: Newspaper,
+  course: TvMinimalPlay,
+  school: School,
+  createSchool: CirclePlus,
   close: X,
   product: LucideShoppingBag,
   spinner: Loader2,

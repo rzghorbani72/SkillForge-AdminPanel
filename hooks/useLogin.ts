@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -5,7 +6,6 @@ export function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
   const login = async (identifier: string, password: string) => {
     setLoading(true);
     setError(null);
@@ -24,9 +24,7 @@ export function useLogin() {
       );
 
       if (response.ok) {
-        const user = await response.json();
-        // Redirect to dashboard or handle user data
-        router.push('/dashboard');
+        router.push('/user/schools');
       } else {
         setError('Invalid credentials');
       }
