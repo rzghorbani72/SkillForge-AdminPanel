@@ -1,3 +1,4 @@
+import { IconType } from '@/components/icons';
 import { NavItem } from '@/types';
 
 export type User = {
@@ -126,31 +127,31 @@ export const navItems: NavItem[] = [
   {
     title: 'Dashboard',
     href: '/dashboard',
-    icon: 'dashboard',
+    icon: 'dashboard' as IconType,
     label: 'dashboard'
   },
   {
     title: 'My Schools',
     href: '/schools',
-    icon: 'school',
+    icon: 'school' as IconType,
     label: 'schools',
     children: [
       {
         title: 'All Schools',
         href: '/schools',
-        icon: 'list',
+        icon: 'list' as IconType,
         label: 'all-schools'
       },
       {
         title: 'Create School',
         href: '/schools/create',
-        icon: 'plus',
+        icon: 'plus' as IconType,
         label: 'create-school'
       },
       {
         title: 'School Settings',
         href: '/schools/settings',
-        icon: 'settings',
+        icon: 'settings' as IconType,
         label: 'school-settings'
       }
     ]
@@ -158,25 +159,25 @@ export const navItems: NavItem[] = [
   {
     title: 'Courses',
     href: '/courses',
-    icon: 'bookOpen',
+    icon: 'bookOpen' as IconType,
     label: 'courses',
     children: [
       {
         title: 'All Courses',
         href: '/courses',
-        icon: 'list',
+        icon: 'list' as IconType,
         label: 'all-courses'
       },
       {
         title: 'Create Course',
         href: '/courses/create',
-        icon: 'plus',
+        icon: 'plus' as IconType,
         label: 'create-course'
       },
       {
         title: 'Course Categories',
         href: '/courses/categories',
-        icon: 'folder',
+        icon: 'folder' as IconType,
         label: 'course-categories'
       }
     ]
@@ -184,25 +185,25 @@ export const navItems: NavItem[] = [
   {
     title: 'Content',
     href: '/content',
-    icon: 'fileText',
+    icon: 'fileText' as IconType,
     label: 'content',
     children: [
       {
         title: 'Lessons',
         href: '/content/lessons',
-        icon: 'play',
+        icon: 'play' as IconType,
         label: 'lessons'
       },
       {
         title: 'Seasons',
         href: '/content/seasons',
-        icon: 'layers',
+        icon: 'layers' as IconType,
         label: 'seasons'
       },
       {
         title: 'Media Library',
         href: '/content/media',
-        icon: 'image',
+        icon: 'image' as IconType,
         label: 'media-library'
       }
     ]
@@ -210,25 +211,25 @@ export const navItems: NavItem[] = [
   {
     title: 'Students',
     href: '/students',
-    icon: 'users',
+    icon: 'users' as IconType,
     label: 'students',
     children: [
       {
         title: 'All Students',
         href: '/students',
-        icon: 'list',
+        icon: 'list' as IconType,
         label: 'all-students'
       },
       {
         title: 'Enrollments',
         href: '/students/enrollments',
-        icon: 'graduationCap',
+        icon: 'graduationCap' as IconType,
         label: 'enrollments'
       },
       {
         title: 'Progress Tracking',
         href: '/students/progress',
-        icon: 'trendingUp',
+        icon: 'trendingUp' as IconType,
         label: 'progress-tracking'
       }
     ]
@@ -236,31 +237,31 @@ export const navItems: NavItem[] = [
   {
     title: 'Analytics',
     href: '/analytics',
-    icon: 'barChart',
+    icon: 'barChart' as IconType,
     label: 'analytics',
     children: [
       {
         title: 'Overview',
         href: '/analytics',
-        icon: 'dashboard',
+        icon: 'dashboard' as IconType,
         label: 'analytics-overview'
       },
       {
         title: 'Revenue',
         href: '/analytics/revenue',
-        icon: 'dollarSign',
+        icon: 'dollarSign' as IconType,
         label: 'revenue-analytics'
       },
       {
         title: 'Course Performance',
         href: '/analytics/courses',
-        icon: 'trendingUp',
+        icon: 'trendingUp' as IconType,
         label: 'course-performance'
       },
       {
         title: 'Student Engagement',
         href: '/analytics/engagement',
-        icon: 'users',
+        icon: 'users' as IconType,
         label: 'student-engagement'
       }
     ]
@@ -268,25 +269,25 @@ export const navItems: NavItem[] = [
   {
     title: 'Payments',
     href: '/payments',
-    icon: 'creditCard',
+    icon: 'creditCard' as IconType,
     label: 'payments',
     children: [
       {
         title: 'Transactions',
         href: '/payments/transactions',
-        icon: 'list',
+        icon: 'list' as IconType,
         label: 'transactions'
       },
       {
         title: 'Payment Methods',
         href: '/payments/methods',
-        icon: 'creditCard',
+        icon: 'creditCard' as IconType,
         label: 'payment-methods'
       },
       {
         title: 'Invoices',
         href: '/payments/invoices',
-        icon: 'fileText',
+        icon: 'fileText' as IconType,
         label: 'invoices'
       }
     ]
@@ -294,31 +295,31 @@ export const navItems: NavItem[] = [
   {
     title: 'Settings',
     href: '/settings',
-    icon: 'settings',
+    icon: 'settings' as IconType,
     label: 'settings',
     children: [
       {
         title: 'Profile',
         href: '/settings/profile',
-        icon: 'user',
+        icon: 'user' as IconType,
         label: 'profile-settings'
       },
       {
         title: 'School Settings',
         href: '/settings/school',
-        icon: 'school',
+        icon: 'school' as IconType,
         label: 'school-settings'
       },
       {
         title: 'Theme & Branding',
         href: '/settings/theme',
-        icon: 'palette',
+        icon: 'palette' as IconType,
         label: 'theme-settings'
       },
       {
         title: 'Security',
         href: '/settings/security',
-        icon: 'shield',
+        icon: 'shield' as IconType,
         label: 'security-settings'
       }
     ]

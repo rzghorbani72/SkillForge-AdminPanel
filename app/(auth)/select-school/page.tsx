@@ -1,14 +1,27 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { School, Search, ExternalLink, Loader2, AlertCircle, GraduationCap } from 'lucide-react';
+import {
+  School,
+  Search,
+  ExternalLink,
+  Loader2,
+  AlertCircle,
+  GraduationCap
+} from 'lucide-react';
 import { authService, UserSchool } from '@/lib/auth';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 export default function SelectSchoolPage() {
@@ -16,7 +29,7 @@ export default function SelectSchoolPage() {
   const [filteredSchools, setFilteredSchools] = useState<UserSchool[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<unknown>(null);
 
   const router = useRouter();
 
@@ -34,7 +47,7 @@ export default function SelectSchoolPage() {
         // Check if user should be redirected to school (students)
         if (authService.shouldRedirectToSchool(currentUser)) {
           const userSchools = await authService.getUserSchools();
-          
+
           if (userSchools.length === 0) {
             toast.error('No schools found for your account');
             router.push('/login');
@@ -43,7 +56,9 @@ export default function SelectSchoolPage() {
 
           if (userSchools.length === 1) {
             // Only one school, redirect directly
-            const schoolUrl = authService.getSchoolDashboardUrl(userSchools[0].school);
+            const schoolUrl = authService.getSchoolDashboardUrl(
+              userSchools[0].school
+            );
             window.location.href = schoolUrl;
             return;
           }
@@ -70,9 +85,10 @@ export default function SelectSchoolPage() {
 
   useEffect(() => {
     // Filter schools based on search term
-    const filtered = schools.filter(school =>
-      school.school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      school.school.slug.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = schools.filter(
+      (school) =>
+        school.school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        school.school.slug.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredSchools(filtered);
   }, [searchTerm, schools]);
@@ -89,7 +105,7 @@ export default function SelectSchoolPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading your schools...</span>
@@ -100,21 +116,29 @@ export default function SelectSchoolPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+        <div className="mb-8 text-center">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
             <GraduationCap className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Select Your School</h1>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+            Select Your School
+          </h1>
           <p className="text-gray-600">
-            You're enrolled in multiple schools. Choose which one you'd like to access.
+            You&apos;re enrolled in multiple schools. Choose which one
+            you&apos;d like to access.
           </p>
-          {user && (
-            <p className="text-sm text-gray-500 mt-2">
-              Welcome back, {user.user.name}
+          {user &&
+          typeof user === 'object' &&
+          'user' in user &&
+          user.user &&
+          typeof user.user === 'object' &&
+          'name' in user.user ? (
+            <p className="mt-2 text-sm text-gray-500">
+              Welcome back, {(user.user as { name?: string }).name ?? 'User'}
             </p>
-          )}
+          ) : null}
         </div>
 
         {/* Search */}
@@ -136,20 +160,22 @@ export default function SelectSchoolPage() {
         </div>
 
         {/* Schools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredSchools.map((userSchool) => (
-            <Card 
-              key={userSchool.school.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer"
+            <Card
+              key={userSchool.school.id}
+              className="cursor-pointer transition-shadow hover:shadow-lg"
               onClick={() => handleSchoolSelect(userSchool)}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
                     <School className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg">{userSchool.school.name}</CardTitle>
+                    <CardTitle className="text-lg">
+                      {userSchool.school.name}
+                    </CardTitle>
                     <CardDescription>
                       {userSchool.school.slug}.skillforge.com
                     </CardDescription>
@@ -166,7 +192,7 @@ export default function SelectSchoolPage() {
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Status:</span>
-                    <span className="text-green-600 font-medium">Active</span>
+                    <span className="font-medium text-green-600">Active</span>
                   </div>
                   {userSchool.school.domain?.public_address && (
                     <div className="flex items-center justify-between text-sm">
@@ -177,11 +203,8 @@ export default function SelectSchoolPage() {
                     </div>
                   )}
                 </div>
-                <Button 
-                  className="w-full mt-4" 
-                  variant="outline"
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
+                <Button className="mt-4 w-full" variant="outline">
+                  <ExternalLink className="mr-2 h-4 w-4" />
                   Access School
                 </Button>
               </CardContent>
@@ -191,17 +214,16 @@ export default function SelectSchoolPage() {
 
         {/* No Results */}
         {filteredSchools.length === 0 && searchTerm && (
-          <Card className="text-center py-8">
+          <Card className="py-8 text-center">
             <CardContent>
-              <School className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No schools found</h3>
-              <p className="text-gray-600 mb-4">
-                No schools match your search for "{searchTerm}"
+              <School className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+              <h3 className="mb-2 text-lg font-medium text-gray-900">
+                No schools found
+              </h3>
+              <p className="mb-4 text-gray-600">
+                No schools match your search for &quot;{searchTerm}&quot;
               </p>
-              <Button 
-                variant="outline" 
-                onClick={() => setSearchTerm('')}
-              >
+              <Button variant="outline" onClick={() => setSearchTerm('')}>
                 Clear search
               </Button>
             </CardContent>
@@ -209,16 +231,16 @@ export default function SelectSchoolPage() {
         )}
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button 
-            variant="outline" 
+        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Button
+            variant="outline"
             onClick={handleLogout}
             className="w-full sm:w-auto"
           >
             Sign out
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => router.push('/dashboard')}
             className="w-full sm:w-auto"
           >
@@ -230,14 +252,19 @@ export default function SelectSchoolPage() {
         <Alert className="mt-8">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Need help?</strong> If you can't find your school or need to enroll in a new one, 
-            please contact your school administrator or{' '}
-            <a href="/support" className="text-blue-600 hover:text-blue-500 underline">
+            <strong>Need help?</strong> If you can&apos;t find your school or
+            need to enroll in a new one, please contact your school
+            administrator or{' '}
+            <a
+              href="/support"
+              className="text-blue-600 underline hover:text-blue-500"
+            >
               contact support
-            </a>.
+            </a>
+            .
           </AlertDescription>
         </Alert>
       </div>
     </div>
   );
-} 
+}

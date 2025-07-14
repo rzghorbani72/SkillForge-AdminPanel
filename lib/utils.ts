@@ -9,7 +9,9 @@ type DraggableData = ColumnDragData | TaskDragData;
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export function isAuth(cookies: any) {
+export function isAuth(cookies: {
+  get: (name: string) => { value?: string } | undefined;
+}) {
   const token = cookies.get('jwt')?.value;
   return !!token;
 }
@@ -45,14 +47,16 @@ export function formatBytes(
   if (bytes === 0) return '0 Byte';
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
-    sizeType === 'accurate' ? accurateSizes[i] ?? 'Bytest' : sizes[i] ?? 'Bytes'
+    sizeType === 'accurate'
+      ? (accurateSizes[i] ?? 'Bytest')
+      : (sizes[i] ?? 'Bytes')
   }`;
 }
 
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'USD'
   }).format(amount / 100); // Assuming amount is in cents
 }
 
@@ -64,7 +68,7 @@ export function formatDate(date: string | Date): string {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric',
+    day: 'numeric'
   }).format(new Date(date));
 }
 
@@ -74,14 +78,16 @@ export function formatDateTime(date: string | Date): string {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit',
+    minute: '2-digit'
   }).format(new Date(date));
 }
 
 export function formatRelativeTime(date: string | Date): string {
   const now = new Date();
   const targetDate = new Date(date);
-  const diffInSeconds = Math.floor((now.getTime() - targetDate.getTime()) / 1000);
+  const diffInSeconds = Math.floor(
+    (now.getTime() - targetDate.getTime()) / 1000
+  );
 
   if (diffInSeconds < 60) {
     return 'Just now';
@@ -140,7 +146,7 @@ export function isValidPhone(phone: string): boolean {
   return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
 }
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -151,7 +157,7 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -174,7 +180,7 @@ export function getFileSize(bytes: number): string {
 }
 
 export function getFileExtension(filename: string): string {
-  return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+  return filename.slice(((filename.lastIndexOf('.') - 1) >>> 0) + 2);
 }
 
 export function isImageFile(filename: string): boolean {

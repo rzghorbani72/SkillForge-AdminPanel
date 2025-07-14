@@ -1,5 +1,6 @@
 import { apiClient } from './api';
 import { User, Profile, School } from '@/types/api';
+import { NextResponse } from 'next/server';
 
 export interface AuthUser {
   user: User;
@@ -28,6 +29,23 @@ class AuthService {
     return role === 'USER';
   }
 
+  // Implement handleGet and handlePost as async functions
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  async handleGet(
+    _: import('next/server').NextRequest
+  ): Promise<import('next/server').NextResponse> {
+    // Placeholder implementation
+    return NextResponse.json({ message: 'GET not implemented' });
+  }
+
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  async handlePost(
+    _: import('next/server').NextRequest
+  ): Promise<import('next/server').NextResponse> {
+    // Placeholder implementation
+    return NextResponse.json({ message: 'POST not implemented' });
+  }
+
   // Get current authenticated user
   async getCurrentUser(): Promise<AuthUser | null> {
     try {
@@ -37,7 +55,7 @@ class AuthService {
 
       // Get current profile from API
       const profileResponse = await apiClient.getCurrentProfile();
-      const profile = profileResponse.data;
+      const profile = profileResponse.data as Profile;
 
       if (!profile) {
         return null;
@@ -45,14 +63,14 @@ class AuthService {
 
       // Get user details
       const userResponse = await apiClient.getUser(profile.user_id);
-      const user = userResponse.data;
+      const user = userResponse.data as User;
 
       // Get school details if available
       let school: School | undefined;
       if (profile.school_id) {
         try {
           const schoolResponse = await apiClient.getCurrentSchool();
-          school = schoolResponse.data;
+          school = schoolResponse.data as School;
         } catch (error) {
           console.warn('Could not fetch school details:', error);
         }
@@ -80,11 +98,11 @@ class AuthService {
 
       // Get all schools where user has profiles
       const schoolsResponse = await apiClient.getSchools();
-      const schools = schoolsResponse.data || [];
+      const schools = (schoolsResponse.data as School[]) || [];
 
       // Get user profiles for each school
       const userSchools: UserSchool[] = [];
-      
+
       for (const school of schools) {
         try {
           // This would need a backend endpoint to get user's profile in a specific school
@@ -115,7 +133,7 @@ class AuthService {
     if (school.domain?.public_address) {
       return `https://${school.domain.public_address}`;
     }
-    
+
     // Otherwise, use the private domain with the main domain
     const privateDomain = school.slug;
     return `https://${privateDomain}.skillforge.com`;
@@ -130,25 +148,25 @@ class AuthService {
   // Check if user is a teacher in any school
   async isTeacherInAnySchool(): Promise<boolean> {
     const userSchools = await this.getUserSchools();
-    return userSchools.some(us => us.profile.role?.name === 'TEACHER');
+    return userSchools.some((us) => us.profile.role?.name === 'TEACHER');
   }
 
   // Check if user is a manager in any school
   async isManagerInAnySchool(): Promise<boolean> {
     const userSchools = await this.getUserSchools();
-    return userSchools.some(us => us.profile.role?.name === 'MANAGER');
+    return userSchools.some((us) => us.profile.role?.name === 'MANAGER');
   }
 
   // Check if user is an admin
   async isAdmin(): Promise<boolean> {
     const userSchools = await this.getUserSchools();
-    return userSchools.some(us => us.profile.role?.name === 'ADMIN');
+    return userSchools.some((us) => us.profile.role?.name === 'ADMIN');
   }
 
   // Get primary school for user (where they have highest role)
   async getPrimarySchool(): Promise<UserSchool | null> {
     const userSchools = await this.getUserSchools();
-    
+
     if (userSchools.length === 0) {
       return null;
     }
@@ -159,37 +177,43 @@ class AuthService {
 
     // Sort by role hierarchy (ADMIN > MANAGER > TEACHER > USER)
     const roleHierarchy = {
-      'ADMIN': 4,
-      'MANAGER': 3,
-      'TEACHER': 2,
-      'USER': 1
+      ADMIN: 4,
+      MANAGER: 3,
+      TEACHER: 2,
+      USER: 1
     };
 
     return userSchools.sort((a, b) => {
-      const aLevel = roleHierarchy[a.profile.role?.name as keyof typeof roleHierarchy] || 0;
-      const bLevel = roleHierarchy[b.profile.role?.name as keyof typeof roleHierarchy] || 0;
+      const aLevel =
+        roleHierarchy[a.profile.role?.name as keyof typeof roleHierarchy] || 0;
+      const bLevel =
+        roleHierarchy[b.profile.role?.name as keyof typeof roleHierarchy] || 0;
       return bLevel - aLevel;
     })[0];
   }
 
   // Login user
-  async login(credentials: { email?: string; phone?: string; password: string }): Promise<AuthUser> {
+  async login(credentials: {
+    email?: string;
+    phone?: string;
+    password: string;
+  }): Promise<AuthUser> {
     const response = await apiClient.login(credentials);
-    
+
     if (response.data) {
       // Clear cached data
       this.currentUser = null;
       this.userSchools = [];
-      
+
       // Get fresh user data
       const user = await this.getCurrentUser();
       if (!user) {
         throw new Error('Failed to get user data after login');
       }
-      
+
       return user;
     }
-    
+
     throw new Error('Login failed');
   }
 
@@ -201,7 +225,7 @@ class AuthService {
     password: string;
   }): Promise<void> {
     const response = await apiClient.register(userData);
-    
+
     if (!response.data) {
       throw new Error('Registration failed');
     }
@@ -217,7 +241,7 @@ class AuthService {
       // Clear cached data
       this.currentUser = null;
       this.userSchools = [];
-      
+
       // Redirect to login
       window.location.href = '/login';
     }
@@ -232,7 +256,7 @@ class AuthService {
   // Get user's role in a specific school
   async getUserRoleInSchool(schoolId: number): Promise<string | null> {
     const userSchools = await this.getUserSchools();
-    const userSchool = userSchools.find(us => us.school.id === schoolId);
+    const userSchool = userSchools.find((us) => us.school.id === schoolId);
     return userSchool?.profile.role?.name || null;
   }
 
@@ -249,4 +273,4 @@ class AuthService {
   }
 }
 
-export const authService = new AuthService(); 
+export const authService = new AuthService();

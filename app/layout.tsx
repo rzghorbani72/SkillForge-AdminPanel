@@ -1,19 +1,22 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Toaster } from 'sonner';
-import { ThemeProvider } from '@/components/theme-provider';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import AuthGuard from '@/components/auth-guard';
+import ProtectedLayout from './(protected)/layout';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'SkillForge Admin Panel',
-  description: 'Admin panel for SkillForge - Manage your schools, courses, and students',
+  description:
+    'Admin panel for SkillForge - Manage your schools, courses, and students'
 };
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
@@ -26,10 +29,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthGuard>
-            {children}
-          </AuthGuard>
-          <Toaster />
+          {children}
+          <ToastContainer />
         </ThemeProvider>
       </body>
     </html>

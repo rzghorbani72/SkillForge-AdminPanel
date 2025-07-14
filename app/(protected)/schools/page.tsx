@@ -1,36 +1,33 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreHorizontal, 
-  Edit, 
-  Trash2, 
-  Eye,
-  Settings,
-  Users,
-  BookOpen,
-  DollarSign,
-  TrendingUp,
-  Globe,
-  Calendar
-} from 'lucide-react';
+import { Plus, Search, Filter, Edit, Eye, Settings, Globe } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { School, Course, Profile } from '@/types/api';
-import { formatDate, formatNumber, generateSlug } from '@/lib/utils';
-import { toast } from 'sonner';
+import { School } from '@/types/api';
+import { generateSlug } from '@/lib/utils';
+import { toast } from 'react-toastify';
 
 export default function SchoolsPage() {
   const [schools, setSchools] = useState<School[]>([]);
@@ -55,7 +52,7 @@ export default function SchoolsPage() {
     try {
       setIsLoading(true);
       const response = await apiClient.getMySchools();
-      setSchools(response.data || []);
+      setSchools((response.data as School[]) || []);
     } catch (error) {
       console.error('Error fetching schools:', error);
       toast.error('Failed to fetch schools');
@@ -92,10 +89,16 @@ export default function SchoolsPage() {
     try {
       if (!selectedSchool) return;
 
-      const updateData: any = {};
+      const updateData: {
+        name?: string;
+        private_domain?: string;
+        description?: string;
+      } = {};
       if (formData.name) updateData.name = formData.name;
-      if (formData.private_domain) updateData.private_domain = generateSlug(formData.private_domain);
-      if (formData.description !== undefined) updateData.description = formData.description;
+      if (formData.private_domain)
+        updateData.private_domain = generateSlug(formData.private_domain);
+      if (formData.description !== undefined)
+        updateData.description = formData.description;
 
       await apiClient.updateSchool(updateData);
       toast.success('School updated successfully');
@@ -109,16 +112,19 @@ export default function SchoolsPage() {
     }
   };
 
-  const filteredSchools = schools.filter(school =>
-    school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    school.slug.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSchools = schools.filter(
+    (school) =>
+      school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      school.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getSchoolStats = (school: School) => {
     return {
       courses: school.courses?.length || 0,
-      students: school.profiles?.filter(p => p.role?.name === 'USER').length || 0,
-      teachers: school.profiles?.filter(p => p.role?.name === 'TEACHER').length || 0,
+      students:
+        school.profiles?.filter((p) => p.role?.name === 'USER').length || 0,
+      teachers:
+        school.profiles?.filter((p) => p.role?.name === 'TEACHER').length || 0,
       revenue: 0 // You'll need to implement this based on your payment data
     };
   };
@@ -153,7 +159,9 @@ export default function SchoolsPage() {
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   placeholder="Enter school name"
                 />
               </div>
@@ -162,11 +170,16 @@ export default function SchoolsPage() {
                 <Input
                   id="domain"
                   value={formData.private_domain}
-                  onChange={(e) => setFormData({ ...formData, private_domain: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, private_domain: e.target.value })
+                  }
                   placeholder="my-school"
                 />
                 <p className="text-xs text-muted-foreground">
-                  This will be your school's URL: {formData.private_domain ? `${formData.private_domain}.skillforge.com` : 'your-domain.skillforge.com'}
+                  This will be your school&apos;s URL:{' '}
+                  {formData.private_domain
+                    ? `${formData.private_domain}.skillforge.com`
+                    : 'your-domain.skillforge.com'}
                 </p>
               </div>
               <div className="grid gap-2">
@@ -174,14 +187,19 @@ export default function SchoolsPage() {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="Describe your school"
                   rows={3}
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsCreateDialogOpen(false)}
+              >
                 Cancel
               </Button>
               <Button onClick={handleCreateSchool}>Create School</Button>
@@ -213,11 +231,11 @@ export default function SchoolsPage() {
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader>
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-                <div className="h-3 bg-muted rounded w-1/2"></div>
+                <div className="h-4 w-3/4 rounded bg-muted"></div>
+                <div className="h-3 w-1/2 rounded bg-muted"></div>
               </CardHeader>
               <CardContent>
-                <div className="h-20 bg-muted rounded"></div>
+                <div className="h-20 rounded bg-muted"></div>
               </CardContent>
             </Card>
           ))}
@@ -225,10 +243,12 @@ export default function SchoolsPage() {
       ) : filteredSchools.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Globe className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No schools found</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              {searchTerm ? 'No schools match your search criteria.' : 'You haven\'t created any schools yet.'}
+            <Globe className="mb-4 h-12 w-12 text-muted-foreground" />
+            <h3 className="mb-2 text-lg font-medium">No schools found</h3>
+            <p className="mb-4 text-center text-muted-foreground">
+              {searchTerm
+                ? 'No schools match your search criteria.'
+                : "You haven't created any schools yet."}
             </p>
             {!searchTerm && (
               <Button onClick={() => setIsCreateDialogOpen(true)}>
@@ -243,14 +263,20 @@ export default function SchoolsPage() {
           {filteredSchools.map((school) => {
             const stats = getSchoolStats(school);
             return (
-              <Card key={school.id} className="hover:shadow-lg transition-shadow">
+              <Card
+                key={school.id}
+                className="transition-shadow hover:shadow-lg"
+              >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={school.logo?.url} />
                         <AvatarFallback>
-                          {school.name.split(' ').map(n => n[0]).join('')}
+                          {school.name
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div>
@@ -261,26 +287,36 @@ export default function SchoolsPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <Badge variant={school.is_active ? 'default' : 'secondary'}>
+                      <Badge
+                        variant={school.is_active ? 'default' : 'secondary'}
+                      >
                         {school.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
                     {school.description || 'No description provided'}
                   </p>
-                  
+
                   {/* Stats */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="mb-4 grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-lg font-semibold">{stats.courses}</div>
-                      <div className="text-xs text-muted-foreground">Courses</div>
+                      <div className="text-lg font-semibold">
+                        {stats.courses}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Courses
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold">{stats.students}</div>
-                      <div className="text-xs text-muted-foreground">Students</div>
+                      <div className="text-lg font-semibold">
+                        {stats.students}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Students
+                      </div>
                     </div>
                   </div>
 
@@ -290,7 +326,9 @@ export default function SchoolsPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => window.location.href = `/schools/${school.id}`}
+                        onClick={() =>
+                          (window.location.href = `/schools/${school.id}`)
+                        }
                       >
                         <Eye className="h-4 w-4" />
                         View
@@ -329,7 +367,7 @@ export default function SchoolsPage() {
           <DialogHeader>
             <DialogTitle>Edit School</DialogTitle>
             <DialogDescription>
-              Update your school's information
+              Update your school&apos;s information
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -338,7 +376,9 @@ export default function SchoolsPage() {
               <Input
                 id="edit-name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Enter school name"
               />
             </div>
@@ -347,11 +387,16 @@ export default function SchoolsPage() {
               <Input
                 id="edit-domain"
                 value={formData.private_domain}
-                onChange={(e) => setFormData({ ...formData, private_domain: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, private_domain: e.target.value })
+                }
                 placeholder="my-school"
               />
               <p className="text-xs text-muted-foreground">
-                This will be your school's URL: {formData.private_domain ? `${formData.private_domain}.skillforge.com` : 'your-domain.skillforge.com'}
+                This will be your school&apos;s URL:{' '}
+                {formData.private_domain
+                  ? `${formData.private_domain}.skillforge.com`
+                  : 'your-domain.skillforge.com'}
               </p>
             </div>
             <div className="grid gap-2">
@@ -359,14 +404,19 @@ export default function SchoolsPage() {
               <Textarea
                 id="edit-description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Describe your school"
                 rows={3}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleUpdateSchool}>Update School</Button>
@@ -375,4 +425,4 @@ export default function SchoolsPage() {
       </Dialog>
     </div>
   );
-} 
+}

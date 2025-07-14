@@ -1,11 +1,12 @@
 import { Icons } from '@/components/icons';
+import { IconType } from '@/components/icons';
 
 export interface NavItem {
   title: string;
   href?: string;
   disabled?: boolean;
   external?: boolean;
-  icon?: keyof typeof Icons;
+  icon?: IconType;
   label?: string;
   description?: string;
   children?: NavItem[];
@@ -35,7 +36,11 @@ export type SidebarNavItem = NavItemWithChildren;
 // Dashboard activity types
 export interface ActivityItem {
   id: number;
-  type: 'course_created' | 'student_enrolled' | 'payment_received' | 'lesson_completed';
+  type:
+    | 'course_created'
+    | 'student_enrolled'
+    | 'payment_received'
+    | 'lesson_completed';
   title: string;
   description: string;
   timestamp: string;
@@ -56,18 +61,28 @@ export interface TableColumn<T> {
   key: keyof T;
   title: string;
   sortable?: boolean;
-  render?: (value: any, record: T) => React.ReactNode;
+  render?: (value: unknown, record: T) => React.ReactNode;
 }
 
 // Form field types
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'file' | 'date';
+  type:
+    | 'text'
+    | 'email'
+    | 'password'
+    | 'number'
+    | 'textarea'
+    | 'select'
+    | 'checkbox'
+    | 'radio'
+    | 'file'
+    | 'date';
   placeholder?: string;
   required?: boolean;
   options?: { value: string; label: string }[];
-  validation?: any;
+  validation?: unknown;
 }
 
 // Modal types
@@ -117,7 +132,7 @@ export interface SearchParams {
   limit?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
 }
 
 // Notification types
@@ -200,7 +215,7 @@ export interface TooltipConfig {
 export interface LoadingState {
   isLoading: boolean;
   error?: string | null;
-  data?: any;
+  data?: unknown;
 }
 
 // API response wrapper

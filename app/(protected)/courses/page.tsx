@@ -1,41 +1,41 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreHorizontal, 
-  Edit, 
-  Trash2, 
-  Eye,
-  Play,
-  Users,
-  BookOpen,
-  DollarSign,
-  TrendingUp,
-  Calendar,
-  Star,
-  Clock,
-  FileText,
-  Settings
-} from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, BookOpen } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course, Category } from '@/types/api';
-import { formatDate, formatNumber, formatCurrency, generateSlug } from '@/lib/utils';
+import { formatNumber, formatCurrency } from '@/lib/utils';
 import { courseDifficulties } from '@/constants/data';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -71,7 +71,8 @@ export default function CoursesPage() {
     try {
       setIsLoading(true);
       const response = await apiClient.getCourses();
-      setCourses(response.data.data || []);
+      const data = response.data as { data: Course[] };
+      setCourses(data.data || []);
     } catch (error) {
       console.error('Error fetching courses:', error);
       toast.error('Failed to fetch courses');
@@ -83,7 +84,8 @@ export default function CoursesPage() {
   const fetchCategories = async () => {
     try {
       const response = await apiClient.getCategories();
-      setCategories(response.data || []);
+      const data = response.data as Category[];
+      setCategories(data || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
@@ -102,7 +104,9 @@ export default function CoursesPage() {
         short_description: formData.short_description,
         price: formData.price * 100, // Convert to cents
         is_free: formData.is_free,
-        category_id: formData.category_id ? parseInt(formData.category_id) : undefined,
+        category_id: formData.category_id
+          ? parseInt(formData.category_id)
+          : undefined,
         difficulty: formData.difficulty,
         is_published: formData.is_published,
         is_featured: formData.is_featured
@@ -133,16 +137,20 @@ export default function CoursesPage() {
     try {
       if (!selectedCourse) return;
 
-      const updateData: any = {};
+      const updateData: Partial<Course> = {};
       if (formData.title) updateData.title = formData.title;
       if (formData.description) updateData.description = formData.description;
-      if (formData.short_description !== undefined) updateData.short_description = formData.short_description;
+      if (formData.short_description !== undefined)
+        updateData.short_description = formData.short_description;
       if (formData.price !== undefined) updateData.price = formData.price * 100;
       if (formData.is_free !== undefined) updateData.is_free = formData.is_free;
-      if (formData.category_id) updateData.category_id = parseInt(formData.category_id);
+      if (formData.category_id)
+        updateData.category_id = parseInt(formData.category_id);
       if (formData.difficulty) updateData.difficulty = formData.difficulty;
-      if (formData.is_published !== undefined) updateData.is_published = formData.is_published;
-      if (formData.is_featured !== undefined) updateData.is_featured = formData.is_featured;
+      if (formData.is_published !== undefined)
+        updateData.is_published = formData.is_published;
+      if (formData.is_featured !== undefined)
+        updateData.is_featured = formData.is_featured;
 
       await apiClient.updateCourse(selectedCourse.id, updateData);
       toast.success('Course updated successfully');
@@ -167,7 +175,11 @@ export default function CoursesPage() {
   };
 
   const handleDeleteCourse = async (courseId: number) => {
-    if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to delete this course? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -181,24 +193,35 @@ export default function CoursesPage() {
     }
   };
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || course.category_id?.toString() === selectedCategory;
-    const matchesDifficulty = selectedDifficulty === 'all' || course.difficulty === selectedDifficulty;
-    const matchesStatus = selectedStatus === 'all' || 
-                         (selectedStatus === 'published' && course.is_published) ||
-                         (selectedStatus === 'draft' && !course.is_published);
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch =
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      course.category_id?.toString() === selectedCategory;
+    const matchesDifficulty =
+      selectedDifficulty === 'all' || course.difficulty === selectedDifficulty;
+    const matchesStatus =
+      selectedStatus === 'all' ||
+      (selectedStatus === 'published' && course.is_published) ||
+      (selectedStatus === 'draft' && !course.is_published);
 
-    return matchesSearch && matchesCategory && matchesDifficulty && matchesStatus;
+    return (
+      matchesSearch && matchesCategory && matchesDifficulty && matchesStatus
+    );
   });
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'BEGINNER': return 'bg-green-100 text-green-800';
-      case 'INTERMEDIATE': return 'bg-yellow-100 text-yellow-800';
-      case 'ADVANCED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'BEGINNER':
+        return 'bg-green-100 text-green-800';
+      case 'INTERMEDIATE':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'ADVANCED':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -232,7 +255,9 @@ export default function CoursesPage() {
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   placeholder="Enter course title"
                 />
               </div>
@@ -241,7 +266,12 @@ export default function CoursesPage() {
                 <Input
                   id="short_description"
                   value={formData.short_description}
-                  onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      short_description: e.target.value
+                    })
+                  }
                   placeholder="Brief description for course cards"
                 />
               </div>
@@ -250,7 +280,9 @@ export default function CoursesPage() {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="Detailed course description"
                   rows={4}
                 />
@@ -258,13 +290,21 @@ export default function CoursesPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="category">Category</Label>
-                  <Select value={formData.category_id} onValueChange={(value) => setFormData({ ...formData, category_id: value })}>
+                  <Select
+                    value={formData.category_id}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, category_id: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
+                        <SelectItem
+                          key={category.id}
+                          value={category.id.toString()}
+                        >
                           {category.name}
                         </SelectItem>
                       ))}
@@ -273,13 +313,21 @@ export default function CoursesPage() {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="difficulty">Difficulty</Label>
-                  <Select value={formData.difficulty} onValueChange={(value: any) => setFormData({ ...formData, difficulty: value })}>
+                  <Select
+                    value={formData.difficulty}
+                    onValueChange={(
+                      value: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+                    ) => setFormData({ ...formData, difficulty: value })}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {courseDifficulties.map((difficulty) => (
-                        <SelectItem key={difficulty.value} value={difficulty.value}>
+                        <SelectItem
+                          key={difficulty.value}
+                          value={difficulty.value}
+                        >
                           {difficulty.label}
                         </SelectItem>
                       ))}
@@ -294,7 +342,12 @@ export default function CoursesPage() {
                     id="price"
                     type="number"
                     value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        price: parseFloat(e.target.value) || 0
+                      })
+                    }
                     placeholder="0.00"
                     disabled={formData.is_free}
                   />
@@ -303,7 +356,9 @@ export default function CoursesPage() {
                   <Switch
                     id="is_free"
                     checked={formData.is_free}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_free: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_free: checked })
+                    }
                   />
                   <Label htmlFor="is_free">Free Course</Label>
                 </div>
@@ -313,7 +368,9 @@ export default function CoursesPage() {
                   <Switch
                     id="is_published"
                     checked={formData.is_published}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_published: checked })
+                    }
                   />
                   <Label htmlFor="is_published">Published</Label>
                 </div>
@@ -321,14 +378,19 @@ export default function CoursesPage() {
                   <Switch
                     id="is_featured"
                     checked={formData.is_featured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_featured: checked })
+                    }
                   />
                   <Label htmlFor="is_featured">Featured</Label>
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsCreateDialogOpen(false)}
+              >
                 Cancel
               </Button>
               <Button onClick={handleCreateCourse}>Create Course</Button>
@@ -361,7 +423,10 @@ export default function CoursesPage() {
             ))}
           </SelectContent>
         </Select>
-        <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+        <Select
+          value={selectedDifficulty}
+          onValueChange={setSelectedDifficulty}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Difficulty" />
           </SelectTrigger>
@@ -392,11 +457,11 @@ export default function CoursesPage() {
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader>
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-                <div className="h-3 bg-muted rounded w-1/2"></div>
+                <div className="h-4 w-3/4 rounded bg-muted"></div>
+                <div className="h-3 w-1/2 rounded bg-muted"></div>
               </CardHeader>
               <CardContent>
-                <div className="h-20 bg-muted rounded"></div>
+                <div className="h-20 rounded bg-muted"></div>
               </CardContent>
             </Card>
           ))}
@@ -404,33 +469,41 @@ export default function CoursesPage() {
       ) : filteredCourses.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No courses found</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              {searchTerm || selectedCategory !== 'all' || selectedDifficulty !== 'all' || selectedStatus !== 'all'
+            <BookOpen className="mb-4 h-12 w-12 text-muted-foreground" />
+            <h3 className="mb-2 text-lg font-medium">No courses found</h3>
+            <p className="mb-4 text-center text-muted-foreground">
+              {searchTerm ||
+              selectedCategory !== 'all' ||
+              selectedDifficulty !== 'all' ||
+              selectedStatus !== 'all'
                 ? 'No courses match your search criteria.'
-                : 'You haven\'t created any courses yet.'}
+                : "You haven't created any courses yet."}
             </p>
-            {!searchTerm && selectedCategory === 'all' && selectedDifficulty === 'all' && selectedStatus === 'all' && (
-              <Button onClick={() => setIsCreateDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Your First Course
-              </Button>
-            )}
+            {!searchTerm &&
+              selectedCategory === 'all' &&
+              selectedDifficulty === 'all' &&
+              selectedStatus === 'all' && (
+                <Button onClick={() => setIsCreateDialogOpen(true)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Your First Course
+                </Button>
+              )}
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredCourses.map((course) => (
-            <Card key={course.id} className="hover:shadow-lg transition-shadow">
+            <Card key={course.id} className="transition-shadow hover:shadow-lg">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
                       <BookOpen className="h-6 w-6" />
                     </div>
                     <div className="flex-1">
-                      <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
+                      <CardTitle className="line-clamp-2 text-lg">
+                        {course.title}
+                      </CardTitle>
                       <CardDescription className="text-sm">
                         {course.category?.name || 'Uncategorized'}
                       </CardDescription>
@@ -440,35 +513,47 @@ export default function CoursesPage() {
                     {course.is_featured && (
                       <Badge variant="secondary">Featured</Badge>
                     )}
-                    <Badge variant={course.is_published ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={course.is_published ? 'default' : 'secondary'}
+                    >
                       {course.is_published ? 'Published' : 'Draft'}
                     </Badge>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                  {course.short_description || course.description.substring(0, 100)}...
+                <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+                  {course.short_description ||
+                    course.description.substring(0, 100)}
+                  ...
                 </p>
-                
+
                 {/* Course Stats */}
-                <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="mb-4 grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="text-lg font-semibold">{course.lessons_count}</div>
+                    <div className="text-lg font-semibold">
+                      {course.lessons_count}
+                    </div>
                     <div className="text-xs text-muted-foreground">Lessons</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-semibold">{formatNumber(course.students_count)}</div>
-                    <div className="text-xs text-muted-foreground">Students</div>
+                    <div className="text-lg font-semibold">
+                      {formatNumber(course.students_count)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Students
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-semibold">{course.rating.toFixed(1)}</div>
+                    <div className="text-lg font-semibold">
+                      {course.rating.toFixed(1)}
+                    </div>
                     <div className="text-xs text-muted-foreground">Rating</div>
                   </div>
                 </div>
 
                 {/* Course Meta */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4 flex items-center justify-between">
                   <Badge className={getDifficultyColor(course.difficulty)}>
                     {course.difficulty}
                   </Badge>
@@ -483,7 +568,9 @@ export default function CoursesPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.location.href = `/courses/${course.id}`}
+                      onClick={() =>
+                        (window.location.href = `/courses/${course.id}`)
+                      }
                     >
                       <Eye className="h-4 w-4" />
                       View
@@ -540,7 +627,9 @@ export default function CoursesPage() {
               <Input
                 id="edit-title"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 placeholder="Enter course title"
               />
             </div>
@@ -549,7 +638,12 @@ export default function CoursesPage() {
               <Input
                 id="edit-short_description"
                 value={formData.short_description}
-                onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    short_description: e.target.value
+                  })
+                }
                 placeholder="Brief description for course cards"
               />
             </div>
@@ -558,7 +652,9 @@ export default function CoursesPage() {
               <Textarea
                 id="edit-description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Detailed course description"
                 rows={4}
               />
@@ -566,13 +662,21 @@ export default function CoursesPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="edit-category">Category</Label>
-                <Select value={formData.category_id} onValueChange={(value) => setFormData({ ...formData, category_id: value })}>
+                <Select
+                  value={formData.category_id}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, category_id: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
+                      <SelectItem
+                        key={category.id}
+                        value={category.id.toString()}
+                      >
                         {category.name}
                       </SelectItem>
                     ))}
@@ -581,13 +685,21 @@ export default function CoursesPage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="edit-difficulty">Difficulty</Label>
-                <Select value={formData.difficulty} onValueChange={(value: any) => setFormData({ ...formData, difficulty: value })}>
+                <Select
+                  value={formData.difficulty}
+                  onValueChange={(
+                    value: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+                  ) => setFormData({ ...formData, difficulty: value })}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {courseDifficulties.map((difficulty) => (
-                      <SelectItem key={difficulty.value} value={difficulty.value}>
+                      <SelectItem
+                        key={difficulty.value}
+                        value={difficulty.value}
+                      >
                         {difficulty.label}
                       </SelectItem>
                     ))}
@@ -602,7 +714,12 @@ export default function CoursesPage() {
                   id="edit-price"
                   type="number"
                   value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      price: parseFloat(e.target.value) || 0
+                    })
+                  }
                   placeholder="0.00"
                   disabled={formData.is_free}
                 />
@@ -611,7 +728,9 @@ export default function CoursesPage() {
                 <Switch
                   id="edit-is_free"
                   checked={formData.is_free}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_free: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, is_free: checked })
+                  }
                 />
                 <Label htmlFor="edit-is_free">Free Course</Label>
               </div>
@@ -621,7 +740,9 @@ export default function CoursesPage() {
                 <Switch
                   id="edit-is_published"
                   checked={formData.is_published}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, is_published: checked })
+                  }
                 />
                 <Label htmlFor="edit-is_published">Published</Label>
               </div>
@@ -629,14 +750,19 @@ export default function CoursesPage() {
                 <Switch
                   id="edit-is_featured"
                   checked={formData.is_featured}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, is_featured: checked })
+                  }
                 />
                 <Label htmlFor="edit-is_featured">Featured</Label>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleUpdateCourse}>Update Course</Button>
@@ -645,4 +771,4 @@ export default function CoursesPage() {
       </Dialog>
     </div>
   );
-} 
+}

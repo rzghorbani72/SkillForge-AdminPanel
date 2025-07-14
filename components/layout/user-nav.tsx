@@ -1,5 +1,5 @@
 'use client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,8 +12,15 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '../providers/auth-provider';
+import type { AuthUser } from '@/lib/auth';
+
 export function UserNav() {
-  const { phone, userId, email, role } = useAuth();
+  const auth = useAuth() as unknown as AuthUser;
+  const phone = auth?.user?.phone_number ?? '';
+  const userId = auth?.user?.id ?? '';
+  const email = auth?.user?.email ?? '';
+  const role = auth?.profile?.role?.name ?? '';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -7,7 +7,7 @@ import Dropzone, {
   type DropzoneProps,
   type FileRejection
 } from 'react-dropzone';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';

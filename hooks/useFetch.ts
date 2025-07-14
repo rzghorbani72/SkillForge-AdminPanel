@@ -3,7 +3,7 @@ import useSWR from 'swr';
 interface FetchOptions {
   method?: string;
   headers?: Record<string, string>;
-  body?: any;
+  body?: unknown;
 }
 
 const defaultHeaders = {
@@ -20,8 +20,9 @@ const fetcher = async (url: string, options: FetchOptions = {}) => {
   });
 
   if (!response.ok) {
-    const error = new Error('An error occurred while fetching the data.');
-    // Attach extra info to the error object.
+    const error = new Error(
+      'An error occurred while fetching the data.'
+    ) as Error & { info?: unknown; status?: number };
     error.info = await response.json();
     error.status = response.status;
     throw error;
@@ -30,7 +31,7 @@ const fetcher = async (url: string, options: FetchOptions = {}) => {
   return response.json();
 };
 
-export function useFetch<Data = any, Error = any>(
+export function useFetch<Data = unknown, Error = unknown>(
   url: string,
   options?: FetchOptions
 ) {

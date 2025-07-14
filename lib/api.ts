@@ -1,6 +1,7 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
   status: number;
@@ -28,14 +29,14 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
+        ...options.headers
       },
       credentials: 'include',
-      ...options,
+      ...options
     };
 
     try {
@@ -43,12 +44,14 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          data.message || `HTTP error! status: ${response.status}`
+        );
       }
 
       return {
         data,
-        status: response.status,
+        status: response.status
       };
     } catch (error) {
       console.error('API request failed:', error);
@@ -57,10 +60,14 @@ class ApiClient {
   }
 
   // Auth endpoints
-  async login(credentials: { email?: string; phone?: string; password: string }) {
+  async login(credentials: {
+    email?: string;
+    phone?: string;
+    password: string;
+  }) {
     return this.request('/public-auth/login', {
       method: 'POST',
-      body: JSON.stringify(credentials),
+      body: JSON.stringify(credentials)
     });
   }
 
@@ -72,13 +79,13 @@ class ApiClient {
   }) {
     return this.request('/public-auth/register', {
       method: 'POST',
-      body: JSON.stringify(userData),
+      body: JSON.stringify(userData)
     });
   }
 
   async logout() {
     return this.request('/public-auth/logout', {
-      method: 'POST',
+      method: 'POST'
     });
   }
 
@@ -102,7 +109,7 @@ class ApiClient {
   }) {
     return this.request('/schools', {
       method: 'POST',
-      body: JSON.stringify(schoolData),
+      body: JSON.stringify(schoolData)
     });
   }
 
@@ -113,7 +120,7 @@ class ApiClient {
   }) {
     return this.request('/schools/current', {
       method: 'PATCH',
-      body: JSON.stringify(schoolData),
+      body: JSON.stringify(schoolData)
     });
   }
 
@@ -133,7 +140,7 @@ class ApiClient {
         }
       });
     }
-    
+
     return this.request(`/courses?${queryParams.toString()}`);
   }
 
@@ -152,20 +159,20 @@ class ApiClient {
   }) {
     return this.request('/courses', {
       method: 'POST',
-      body: JSON.stringify(courseData),
+      body: JSON.stringify(courseData)
     });
   }
 
-  async updateCourse(id: number, courseData: any) {
+  async updateCourse(id: number, courseData: unknown) {
     return this.request(`/courses/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(courseData),
+      body: JSON.stringify(courseData)
     });
   }
 
   async deleteCourse(id: number) {
     return this.request(`/courses/${id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
   }
 
@@ -184,7 +191,7 @@ class ApiClient {
         }
       });
     }
-    
+
     return this.request(`/lessons?${queryParams.toString()}`);
   }
 
@@ -203,20 +210,20 @@ class ApiClient {
   }) {
     return this.request('/lessons', {
       method: 'POST',
-      body: JSON.stringify(lessonData),
+      body: JSON.stringify(lessonData)
     });
   }
 
-  async updateLesson(id: number, lessonData: any) {
+  async updateLesson(id: number, lessonData: unknown) {
     return this.request(`/lessons/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(lessonData),
+      body: JSON.stringify(lessonData)
     });
   }
 
   async deleteLesson(id: number) {
     return this.request(`/lessons/${id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
   }
 
@@ -233,20 +240,20 @@ class ApiClient {
   }) {
     return this.request('/season', {
       method: 'POST',
-      body: JSON.stringify(seasonData),
+      body: JSON.stringify(seasonData)
     });
   }
 
-  async updateSeason(id: number, seasonData: any) {
+  async updateSeason(id: number, seasonData: unknown) {
     return this.request(`/season/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(seasonData),
+      body: JSON.stringify(seasonData)
     });
   }
 
   async deleteSeason(id: number) {
     return this.request(`/season/${id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
   }
 
@@ -262,25 +269,28 @@ class ApiClient {
   }) {
     return this.request('/categories', {
       method: 'POST',
-      body: JSON.stringify(categoryData),
+      body: JSON.stringify(categoryData)
     });
   }
 
-  async updateCategory(id: number, categoryData: any) {
+  async updateCategory(id: number, categoryData: unknown) {
     return this.request(`/categories/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(categoryData),
+      body: JSON.stringify(categoryData)
     });
   }
 
   async deleteCategory(id: number) {
     return this.request(`/categories/${id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
   }
 
   // Media endpoints
-  async uploadImage(file: File, metadata?: { title?: string; description?: string }) {
+  async uploadImage(
+    file: File,
+    metadata?: { title?: string; description?: string }
+  ) {
     const formData = new FormData();
     formData.append('image', file);
     if (metadata) {
@@ -291,11 +301,14 @@ class ApiClient {
     return this.request('/images/upload', {
       method: 'POST',
       headers: {}, // Let browser set content-type for FormData
-      body: formData,
+      body: formData
     });
   }
 
-  async uploadVideo(file: File, metadata?: { title?: string; description?: string }) {
+  async uploadVideo(
+    file: File,
+    metadata?: { title?: string; description?: string }
+  ) {
     const formData = new FormData();
     formData.append('video', file);
     if (metadata) {
@@ -306,11 +319,14 @@ class ApiClient {
     return this.request('/videos/upload', {
       method: 'POST',
       headers: {}, // Let browser set content-type for FormData
-      body: formData,
+      body: formData
     });
   }
 
-  async uploadAudio(file: File, metadata?: { title?: string; description?: string }) {
+  async uploadAudio(
+    file: File,
+    metadata?: { title?: string; description?: string }
+  ) {
     const formData = new FormData();
     formData.append('audio', file);
     if (metadata) {
@@ -321,11 +337,14 @@ class ApiClient {
     return this.request('/audio/upload', {
       method: 'POST',
       headers: {}, // Let browser set content-type for FormData
-      body: formData,
+      body: formData
     });
   }
 
-  async uploadDocument(file: File, metadata?: { title?: string; description?: string }) {
+  async uploadDocument(
+    file: File,
+    metadata?: { title?: string; description?: string }
+  ) {
     const formData = new FormData();
     formData.append('documentfile', file);
     if (metadata) {
@@ -336,7 +355,7 @@ class ApiClient {
     return this.request('/files/upload', {
       method: 'POST',
       headers: {}, // Let browser set content-type for FormData
-      body: formData,
+      body: formData
     });
   }
 
@@ -352,7 +371,7 @@ class ApiClient {
   }) {
     return this.request('/profiles/current', {
       method: 'PATCH',
-      body: JSON.stringify(profileData),
+      body: JSON.stringify(profileData)
     });
   }
 
@@ -365,10 +384,10 @@ class ApiClient {
     return this.request(`/users/${id}`);
   }
 
-  async updateUser(id: number, userData: any) {
+  async updateUser(id: number, userData: unknown) {
     return this.request(`/users/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(userData),
+      body: JSON.stringify(userData)
     });
   }
 
@@ -385,13 +404,20 @@ class ApiClient {
   async validatePrivateDomain(domain: string) {
     return this.request('/domain/is-valid-private-domain', {
       method: 'POST',
-      body: JSON.stringify({ domain }),
+      body: JSON.stringify({ domain })
     });
   }
 
   async generateUniqueDomainName() {
     return this.request('/domain/generate-unique-name');
   }
+
+  async getRecentEnrollments() {
+    return this.request('/enrollments/recent');
+  }
+  async getRecentPayments() {
+    return this.request('/payments/recent');
+  }
 }
 
-export const apiClient = new ApiClient(API_BASE_URL); 
+export const apiClient = new ApiClient(API_BASE_URL);

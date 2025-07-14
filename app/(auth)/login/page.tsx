@@ -1,16 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Mail, Phone, Lock, School, Loader2, AlertCircle } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Phone,
+  Lock,
+  School,
+  Loader2,
+  AlertCircle
+} from 'lucide-react';
 import { authService } from '@/lib/auth';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -56,7 +71,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -66,20 +81,24 @@ export default function LoginPage() {
     try {
       const credentials = {
         password: formData.password,
-        ...(authMethod === 'email' ? { email: formData.email } : { phone: formData.phone })
+        ...(authMethod === 'email'
+          ? { email: formData.email }
+          : { phone: formData.phone })
       };
 
       const user = await authService.login(credentials);
-      
+
       if (user) {
         toast.success('Login successful!');
-        
+
         // Check user role and redirect accordingly
         if (authService.shouldRedirectToSchool(user)) {
           // User is a student, redirect to their school
           const schools = await authService.getUserSchools();
           if (schools.length > 0) {
-            const schoolUrl = authService.getSchoolDashboardUrl(schools[0].school);
+            const schoolUrl = authService.getSchoolDashboardUrl(
+              schools[0].school
+            );
             toast.info('Redirecting to your school dashboard...');
             window.location.href = schoolUrl;
             return;
@@ -97,28 +116,31 @@ export default function LoginPage() {
           return;
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      toast.error(error.message || 'Login failed. Please check your credentials.');
+      toast.error(
+        (error as Error).message ||
+          'Login failed. Please check your credentials.'
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+        <div className="mb-8 text-center">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
             <School className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
@@ -129,26 +151,39 @@ export default function LoginPage() {
         <Alert className="mb-6">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            This panel is for <strong>Teachers, Managers, and Administrators</strong> only. 
-            Students should login through their school's website.
+            This panel is for{' '}
+            <strong>Teachers, Managers, and Administrators</strong> only.
+            Students should login through their school&apos;s website.
           </AlertDescription>
         </Alert>
 
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
+            <CardTitle className="text-center text-2xl">Welcome back</CardTitle>
             <CardDescription className="text-center">
               Sign in to your admin account
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs value={authMethod} onValueChange={(value) => setAuthMethod(value as 'email' | 'phone')} className="w-full">
+            <Tabs
+              value={authMethod}
+              onValueChange={(value: string) =>
+                setAuthMethod(value as 'email' | 'phone')
+              }
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="email" className="flex items-center space-x-2">
+                <TabsTrigger
+                  value="email"
+                  className="flex items-center space-x-2"
+                >
                   <Mail className="h-4 w-4" />
                   <span>Email</span>
                 </TabsTrigger>
-                <TabsTrigger value="phone" className="flex items-center space-x-2">
+                <TabsTrigger
+                  value="phone"
+                  className="flex items-center space-x-2"
+                >
                   <Phone className="h-4 w-4" />
                   <span>Phone</span>
                 </TabsTrigger>
@@ -165,8 +200,12 @@ export default function LoginPage() {
                         type="email"
                         placeholder="Enter your email"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          handleInputChange('email', e.target.value)
+                        }
+                        className={`pl-10 ${
+                          errors.email ? 'border-red-500' : ''
+                        }`}
                         disabled={isLoading}
                       />
                     </div>
@@ -184,8 +223,12 @@ export default function LoginPage() {
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Enter your password"
                         value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        className={`pl-10 pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          handleInputChange('password', e.target.value)
+                        }
+                        className={`pl-10 pr-10 ${
+                          errors.password ? 'border-red-500' : ''
+                        }`}
                         disabled={isLoading}
                       />
                       <Button
@@ -216,7 +259,10 @@ export default function LoginPage() {
                         aria-label="Remember me"
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <Label htmlFor="remember" className="text-sm text-gray-600">
+                      <Label
+                        htmlFor="remember"
+                        className="text-sm text-gray-600"
+                      >
                         Remember me
                       </Label>
                     </div>
@@ -228,11 +274,7 @@ export default function LoginPage() {
                     </Link>
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={isLoading}
-                  >
+                  <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -256,8 +298,12 @@ export default function LoginPage() {
                         type="tel"
                         placeholder="Enter your phone number"
                         value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className={`pl-10 ${errors.phone ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          handleInputChange('phone', e.target.value)
+                        }
+                        className={`pl-10 ${
+                          errors.phone ? 'border-red-500' : ''
+                        }`}
                         disabled={isLoading}
                       />
                     </div>
@@ -275,8 +321,12 @@ export default function LoginPage() {
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Enter your password"
                         value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        className={`pl-10 pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          handleInputChange('password', e.target.value)
+                        }
+                        className={`pl-10 pr-10 ${
+                          errors.password ? 'border-red-500' : ''
+                        }`}
                         disabled={isLoading}
                       />
                       <Button
@@ -307,7 +357,10 @@ export default function LoginPage() {
                         aria-label="Remember me"
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <Label htmlFor="remember-phone" className="text-sm text-gray-600">
+                      <Label
+                        htmlFor="remember-phone"
+                        className="text-sm text-gray-600"
+                      >
                         Remember me
                       </Label>
                     </div>
@@ -319,11 +372,7 @@ export default function LoginPage() {
                     </Link>
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={isLoading}
-                  >
+                  <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -339,10 +388,10 @@ export default function LoginPage() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Don't have an admin account?{' '}
+                Don&apos;t have an admin account?{' '}
                 <Link
                   href="/register"
-                  className="text-blue-600 hover:text-blue-500 font-medium"
+                  className="font-medium text-blue-600 hover:text-blue-500"
                 >
                   Register as Teacher
                 </Link>

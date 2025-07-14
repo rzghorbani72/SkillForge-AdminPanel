@@ -1,3 +1,4 @@
+import { IconType } from '@/components/icons';
 import { NavItem } from '@/types';
 
 export type User = {
@@ -125,37 +126,37 @@ export const navItems: NavItem[] = [
   {
     title: 'Schools',
     href: '/schools',
-    icon: 'dashboard',
+    icon: 'dashboard' as IconType,
     label: 'schools'
   },
   {
     title: 'Employee',
     href: '/schools/:schoolId/employee',
-    icon: 'user',
+    icon: 'user' as IconType,
     label: 'employee'
   },
   {
     title: 'Course',
     href: '/schools/:schoolId/course',
-    icon: 'course',
+    icon: 'course' as IconType,
     label: 'course'
   },
   {
     title: 'Article',
     href: '/schools/:schoolId/article',
-    icon: 'article',
+    icon: 'article' as IconType,
     label: 'article'
   },
   {
     title: 'Profile',
     href: '/schools/:schoolId/profile',
-    icon: 'userPen',
+    icon: 'userPen' as IconType,
     label: 'profile'
   },
   {
     title: 'Logout',
     href: '/',
-    icon: 'logout',
+    icon: 'logout' as IconType,
     label: 'logout'
   }
 ];

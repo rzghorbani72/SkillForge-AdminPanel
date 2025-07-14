@@ -14,9 +14,7 @@ import {
   Laptop,
   LayoutDashboardIcon,
   Loader2,
-  LogIn,
   LucideIcon,
-  LucideProps,
   LogOut,
   Newspaper,
   LucideShoppingBag,
@@ -37,7 +35,39 @@ import {
   CirclePlus,
   X
 } from 'lucide-react';
-
+export type IconType =
+  | 'media'
+  | 'article'
+  | 'course'
+  | 'school'
+  | 'createSchool'
+  | 'close'
+  | 'product'
+  | 'spinner'
+  | 'kanban'
+  | 'chevronLeft'
+  | 'chevronRight'
+  | 'trash'
+  | 'employee'
+  | 'post'
+  | 'page'
+  | 'userPen'
+  | 'user2'
+  | 'media'
+  | 'settings'
+  | 'billing'
+  | 'ellipsis'
+  | 'add'
+  | 'warning'
+  | 'user'
+  | 'arrowRight'
+  | 'help'
+  | 'pizza'
+  | 'sun'
+  | 'moon'
+  | 'laptop'
+  | 'twitter'
+  | 'check';
 export type Icon = LucideIcon;
 
 export const Icons = {

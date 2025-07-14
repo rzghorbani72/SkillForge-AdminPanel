@@ -1,13 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { School, Search, ExternalLink, Globe, MapPin, Users, BookOpen } from 'lucide-react';
-import { toast } from 'sonner';
+import {
+  School,
+  Search,
+  ExternalLink,
+  Globe,
+  MapPin,
+  Users,
+  BookOpen
+} from 'lucide-react';
+import { toast } from 'react-toastify';
 import Link from 'next/link';
 
 export default function FindSchoolPage() {
@@ -16,7 +30,7 @@ export default function FindSchoolPage() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!searchTerm.trim()) {
       toast.error('Please enter a school name or domain');
       return;
@@ -27,21 +41,21 @@ export default function FindSchoolPage() {
     try {
       // This would call the backend API to search for schools
       // For now, we'll simulate the search
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Extract domain from search term
       let domain = searchTerm.trim().toLowerCase();
-      
+
       // Remove protocol if present
       if (domain.startsWith('http://') || domain.startsWith('https://')) {
         domain = domain.replace(/^https?:\/\//, '');
       }
-      
+
       // Remove www. if present
       if (domain.startsWith('www.')) {
         domain = domain.replace(/^www\./, '');
       }
-      
+
       // Remove .skillforge.com if present
       if (domain.endsWith('.skillforge.com')) {
         domain = domain.replace(/\.skillforge\.com$/, '');
@@ -49,13 +63,14 @@ export default function FindSchoolPage() {
 
       // Construct the school URL
       const schoolUrl = `https://${domain}.skillforge.com`;
-      
+
       toast.success(`Redirecting to ${schoolUrl}`);
       window.location.href = schoolUrl;
-      
     } catch (error) {
       console.error('Search error:', error);
-      toast.error('Failed to find school. Please check the domain or contact support.');
+      toast.error(
+        'Failed to find school. Please check the domain or contact support.'
+      );
     } finally {
       setIsSearching(false);
     }
@@ -63,15 +78,18 @@ export default function FindSchoolPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+        <div className="mb-8 text-center">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
             <School className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Your School</h1>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+            Find Your School
+          </h1>
           <p className="text-gray-600">
-            Enter your school's domain or name to access your learning dashboard
+            Enter your school&apos;s domain or name to access your learning
+            dashboard
           </p>
         </div>
 
@@ -80,7 +98,8 @@ export default function FindSchoolPage() {
           <CardHeader>
             <CardTitle>Search for Your School</CardTitle>
             <CardDescription>
-              Enter your school's domain (e.g., myschool.skillforge.com) or school name
+              Enter your school&apos;s domain (e.g., myschool.skillforge.com) or
+              school name
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -100,11 +119,7 @@ export default function FindSchoolPage() {
                   />
                 </div>
               </div>
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={isSearching}
-              >
+              <Button type="submit" className="w-full" disabled={isSearching}>
                 {isSearching ? (
                   <>
                     <Search className="mr-2 h-4 w-4 animate-spin" />
@@ -122,7 +137,7 @@ export default function FindSchoolPage() {
         </Card>
 
         {/* Examples */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
@@ -132,13 +147,21 @@ export default function FindSchoolPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">Custom Domain</p>
-                  <p className="text-sm text-gray-600">https://yourschool.com</p>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-sm font-medium text-gray-900">
+                    Custom Domain
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    https://yourschool.com
+                  </p>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">SkillForge Subdomain</p>
-                  <p className="text-sm text-gray-600">https://yourschool.skillforge.com</p>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-sm font-medium text-gray-900">
+                    SkillForge Subdomain
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    https://yourschool.skillforge.com
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -153,12 +176,16 @@ export default function FindSchoolPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">Full School Name</p>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-sm font-medium text-gray-900">
+                    Full School Name
+                  </p>
                   <p className="text-sm text-gray-600">Harvard University</p>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">Short Name</p>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-sm font-medium text-gray-900">
+                    Short Name
+                  </p>
                   <p className="text-sm text-gray-600">Harvard</p>
                 </div>
               </div>
@@ -175,39 +202,73 @@ export default function FindSchoolPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[
-                { name: 'Harvard University', domain: 'harvard', students: '50K+', courses: '500+' },
-                { name: 'MIT', domain: 'mit', students: '30K+', courses: '300+' },
-                { name: 'Stanford University', domain: 'stanford', students: '40K+', courses: '400+' },
-                { name: 'Yale University', domain: 'yale', students: '25K+', courses: '250+' },
-                { name: 'Princeton University', domain: 'princeton', students: '20K+', courses: '200+' },
-                { name: 'Columbia University', domain: 'columbia', students: '35K+', courses: '350+' }
+                {
+                  name: 'Harvard University',
+                  domain: 'harvard',
+                  students: '50K+',
+                  courses: '500+'
+                },
+                {
+                  name: 'MIT',
+                  domain: 'mit',
+                  students: '30K+',
+                  courses: '300+'
+                },
+                {
+                  name: 'Stanford University',
+                  domain: 'stanford',
+                  students: '40K+',
+                  courses: '400+'
+                },
+                {
+                  name: 'Yale University',
+                  domain: 'yale',
+                  students: '25K+',
+                  courses: '250+'
+                },
+                {
+                  name: 'Princeton University',
+                  domain: 'princeton',
+                  students: '20K+',
+                  courses: '200+'
+                },
+                {
+                  name: 'Columbia University',
+                  domain: 'columbia',
+                  students: '35K+',
+                  courses: '350+'
+                }
               ].map((school) => (
                 <div
                   key={school.domain}
-                  className="p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+                  className="cursor-pointer rounded-lg border p-4 transition-shadow hover:shadow-md"
                   onClick={() => {
                     const schoolUrl = `https://${school.domain}.skillforge.com`;
                     window.location.href = schoolUrl;
                   }}
                 >
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div className="mb-3 flex items-center space-x-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
                       <School className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">{school.name}</h3>
-                      <p className="text-sm text-gray-500">{school.domain}.skillforge.com</p>
+                      <h3 className="font-medium text-gray-900">
+                        {school.name}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {school.domain}.skillforge.com
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <span className="flex items-center">
-                      <Users className="h-4 w-4 mr-1" />
+                      <Users className="mr-1 h-4 w-4" />
                       {school.students}
                     </span>
                     <span className="flex items-center">
-                      <BookOpen className="h-4 w-4 mr-1" />
+                      <BookOpen className="mr-1 h-4 w-4" />
                       {school.courses}
                     </span>
                   </div>
@@ -218,19 +279,23 @@ export default function FindSchoolPage() {
         </Card>
 
         {/* Help Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <Alert>
             <AlertDescription>
-              <strong>Can't find your school?</strong> Contact your school administrator 
-              to get the correct domain or ask them to set up a SkillForge account.
+              <strong>Can&apos;t find your school?</strong> Contact your school
+              administrator to get the correct domain or ask them to set up a
+              SkillForge account.
             </AlertDescription>
           </Alert>
 
           <Alert>
             <AlertDescription>
-              <strong>Need to create a school?</strong> If you're a teacher or administrator, 
-              you can{' '}
-              <Link href="/register" className="text-blue-600 hover:text-blue-500 underline">
+              <strong>Need to create a school?</strong> If you&apos;re a teacher
+              or administrator, you can{' '}
+              <Link
+                href="/register"
+                className="text-blue-600 underline hover:text-blue-500"
+              >
                 register here
               </Link>{' '}
               to create your own school on SkillForge.
@@ -239,23 +304,22 @@ export default function FindSchoolPage() {
         </div>
 
         {/* Footer Actions */}
-        <div className="mt-8 text-center space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="mt-8 space-y-4 text-center">
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/login">
-              <Button variant="outline">
-                Back to Login
-              </Button>
+              <Button variant="outline">Back to Login</Button>
             </Link>
             <Link href="/register">
-              <Button>
-                Create New School
-              </Button>
+              <Button>Create New School</Button>
             </Link>
           </div>
-          
-          <p className="text-sm text-gray-500">
+
+          <p className="mt-2 text-sm text-gray-500">
             Need help?{' '}
-            <a href="/support" className="text-blue-600 hover:text-blue-500 underline">
+            <a
+              href="/support"
+              className="text-blue-600 underline hover:text-blue-500"
+            >
               Contact Support
             </a>
           </p>
@@ -263,4 +327,4 @@ export default function FindSchoolPage() {
       </div>
     </div>
   );
-} 
+}
