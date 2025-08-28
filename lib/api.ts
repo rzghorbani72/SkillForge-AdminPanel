@@ -418,6 +418,48 @@ class ApiClient {
   async getRecentPayments() {
     return this.request('/payments/recent');
   }
+
+  // Articles endpoints
+  async getArticles() {
+    return this.request('/articles');
+  }
+
+  async getArticle(id: number) {
+    return this.request(`/articles/${id}`);
+  }
+
+  async createArticle(articleData: {
+    title: string;
+    content: string;
+    category_id: number;
+    featured_image_id?: number;
+  }) {
+    return this.request('/articles', {
+      method: 'POST',
+      body: JSON.stringify(articleData)
+    });
+  }
+
+  async updateArticle(id: number, articleData: unknown) {
+    return this.request(`/articles/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(articleData)
+    });
+  }
+
+  async deleteArticle(id: number) {
+    return this.request(`/articles/${id}`, {
+      method: 'DELETE'
+    });
+  }
+
+  async getArticleCategories() {
+    return this.request('/articles/categories');
+  }
+
+  async getArticleTags() {
+    return this.request('/articles/tags');
+  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);
