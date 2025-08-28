@@ -23,9 +23,9 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react';
-import { authService } from '@/lib/auth';
+import { enhancedAuthService } from '@/lib/enhanced-auth';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { toast } from 'react-toastify';
+import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -79,49 +79,61 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
+      // Set auth type to public for general login
+      enhancedAuthService.setAuthType('public');
+
       const credentials = {
+        phone_number: authMethod === 'phone' ? formData.phone : '',
         password: formData.password,
-        ...(authMethod === 'email'
-          ? { email: formData.email }
-          : { phone: formData.phone })
+        ...(authMethod === 'email' && { email: formData.email })
       };
 
-      const user = await authService.login(credentials);
+      const user = await enhancedAuthService.enhancedLogin(credentials);
 
       if (user) {
-        toast.success('Login successful!');
+        ErrorHandler.showSuccess('Login successful!');
 
         // Check user role and redirect accordingly
-        if (authService.shouldRedirectToSchool(user)) {
+        if (user.isStudent) {
           // User is a student, redirect to their school
-          const schools = await authService.getUserSchools();
+          const schools = await enhancedAuthService.getUserSchools();
           if (schools.length > 0) {
-            const schoolUrl = authService.getSchoolDashboardUrl(
-              schools[0].school
+            const schoolUrl = enhancedAuthService.getSchoolDashboardUrl(
+              schools[0]
             );
-            toast.info('Redirecting to your school dashboard...');
+            ErrorHandler.showInfo('Redirecting to your school dashboard...');
             window.location.href = schoolUrl;
             return;
           } else {
-            toast.error('No school found for this account');
+            ErrorHandler.showWarning('No school found for this account');
             return;
           }
-        } else if (authService.canAccessAdminPanel(user)) {
+        } else if (user.isStaff) {
           // User is admin/manager/teacher, redirect to admin dashboard
           router.push('/dashboard');
           return;
         } else {
           // User doesn't have proper permissions
-          toast.error('You do not have permission to access this panel');
+          ErrorHandler.showWarning(
+            'You do not have permission to access this panel'
+          );
           return;
         }
       }
     } catch (error: unknown) {
       console.error('Login error:', error);
-      toast.error(
-        (error as Error).message ||
-          'Login failed. Please check your credentials.'
-      );
+
+      // Parse backend validation errors and map to form fields
+      const fieldErrors = ErrorHandler.handleFormError(error, [
+        'email',
+        'phone',
+        'password'
+      ]);
+
+      // Update form errors
+      if (Object.keys(fieldErrors).length > 0) {
+        setErrors(fieldErrors);
+      }
     } finally {
       setIsLoading(false);
     }

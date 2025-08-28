@@ -21,7 +21,7 @@ import {
   Users,
   BookOpen
 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { ErrorHandler } from '@/lib/error-handler';
 import Link from 'next/link';
 
 export default function FindSchoolPage() {
@@ -32,7 +32,7 @@ export default function FindSchoolPage() {
     e.preventDefault();
 
     if (!searchTerm.trim()) {
-      toast.error('Please enter a school name or domain');
+      ErrorHandler.showWarning('Please enter a school name or domain');
       return;
     }
 
@@ -64,11 +64,11 @@ export default function FindSchoolPage() {
       // Construct the school URL
       const schoolUrl = `https://${domain}.skillforge.com`;
 
-      toast.success(`Redirecting to ${schoolUrl}`);
+      ErrorHandler.showSuccess(`Redirecting to ${schoolUrl}`);
       window.location.href = schoolUrl;
     } catch (error) {
       console.error('Search error:', error);
-      toast.error(
+      ErrorHandler.showWarning(
         'Failed to find school. Please check the domain or contact support.'
       );
     } finally {

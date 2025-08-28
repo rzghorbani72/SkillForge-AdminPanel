@@ -11,7 +11,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Eye,
   EyeOff,
@@ -25,7 +24,7 @@ import {
 } from 'lucide-react';
 import { enhancedAuthService } from '@/lib/enhanced-auth';
 import { isValidPhone } from '@/lib/utils';
-import { toast } from 'react-toastify';
+import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -86,7 +85,9 @@ export default function AdminLoginPage() {
       const user = await enhancedAuthService.enhancedLogin(credentials);
 
       if (user) {
-        toast.success('Login successful! Welcome to the admin panel!');
+        ErrorHandler.showSuccess(
+          'Login successful! Welcome to the admin panel!'
+        );
 
         // Check if user is staff
         if (user.isStaff) {
@@ -99,7 +100,7 @@ export default function AdminLoginPage() {
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      toast.error(error.message || 'Login failed. Please try again.');
+      // Error handling is now done in the enhanced auth service
     } finally {
       setIsLoading(false);
     }

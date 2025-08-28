@@ -89,6 +89,116 @@ class ApiClient {
     });
   }
 
+  // Enhanced Auth endpoints
+  async enhancedLogin(credentials: {
+    phone_number: string;
+    password?: string;
+    otp?: string;
+    school_id?: number;
+    profile_id?: number;
+  }) {
+    return this.request('/enhanced-auth/public/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+  }
+
+  async enhancedRegister(userData: {
+    name: string;
+    phone_number: string;
+    email?: string;
+    password: string;
+    confirmed_password: string;
+    phone_otp: string;
+    email_otp?: string;
+    role: string;
+    school_id: number;
+    display_name: string;
+    bio?: string;
+    website?: string;
+    location?: string;
+  }) {
+    return this.request('/enhanced-auth/public/register', {
+      method: 'POST',
+      body: JSON.stringify(userData)
+    });
+  }
+
+  async switchProfile(profileId: number, schoolId: number) {
+    return this.request('/enhanced-auth/switch-profile', {
+      method: 'POST',
+      body: JSON.stringify({
+        profile_id: profileId,
+        school_id: schoolId
+      })
+    });
+  }
+
+  async getUserProfiles() {
+    return this.request('/enhanced-auth/profiles');
+  }
+
+  async getUserSchools() {
+    return this.request('/enhanced-auth/schools');
+  }
+
+  async createProfile(profileData: {
+    school_id: number;
+    role: string;
+    display_name: string;
+    bio?: string;
+    website?: string;
+    location?: string;
+  }) {
+    return this.request('/enhanced-auth/create-profile', {
+      method: 'POST',
+      body: JSON.stringify(profileData)
+    });
+  }
+
+  async getUserContext() {
+    return this.request('/enhanced-auth/context');
+  }
+
+  async validateRoleRegistration(schoolId: number, role: string) {
+    return this.request(`/enhanced-auth/validate-role/${schoolId}/${role}`, {
+      method: 'POST'
+    });
+  }
+
+  async getPrimarySchool() {
+    return this.request('/enhanced-auth/primary-school');
+  }
+
+  // OTP endpoints
+  async sendPhoneOtp(phone_number: string) {
+    return this.request('/public-auth/send-phone-otp', {
+      method: 'POST',
+      body: JSON.stringify({ phone_number })
+    });
+  }
+
+  async sendEmailOtp(email: string) {
+    return this.request('/public-auth/send-email-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    });
+  }
+
+  async verifyPhoneOtp(phone_number: string, otp: string) {
+    return this.request('/public-auth/verify-phone-otp', {
+      method: 'POST',
+      body: JSON.stringify({ phone_number, otp })
+    });
+  }
+
+  async verifyEmailOtp(email: string, otp: string) {
+    return this.request('/public-auth/verify-email-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp })
+    });
+  }
+
   // Schools endpoints
   async getSchools() {
     return this.request('/schools');

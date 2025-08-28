@@ -23,16 +23,22 @@ import {
 } from 'lucide-react';
 import { enhancedAuthService } from '@/lib/enhanced-auth';
 import { isValidPhone } from '@/lib/utils';
-import { toast } from 'react-toastify';
+import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function StudentLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<'password' | 'otp'>(
+    'password'
+  );
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
   const [formData, setFormData] = useState({
     phone_number: '',
     password: '',
+    otp: '',
     school_id: '',
     profile_id: ''
   });
@@ -43,6 +49,36 @@ export default function StudentLoginPage() {
   // Set auth type to public for students
   enhancedAuthService.setAuthType('public');
 
+  // Send OTP for login
+  const handleSendOtp = async () => {
+    if (!formData.phone_number) {
+      ErrorHandler.showWarning('Please enter your phone number first');
+      return;
+    }
+
+    if (!isValidPhone(formData.phone_number)) {
+      ErrorHandler.showWarning('Please enter a valid phone number');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      const result = await enhancedAuthService.sendOtp(formData.phone_number);
+
+      if (result.otp) {
+        setOtpSent(true);
+        ErrorHandler.showInfo(
+          `OTP sent successfully! Your OTP is: ${result.otp}`
+        );
+      }
+    } catch (error) {
+      console.error('Failed to send OTP:', error);
+      // Error handling is done in the service
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -52,10 +88,18 @@ export default function StudentLoginPage() {
       newErrors.phone_number = 'Please enter a valid phone number';
     }
 
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    if (loginMethod === 'password') {
+      if (!formData.password) {
+        newErrors.password = 'Password is required';
+      } else if (formData.password.length < 6) {
+        newErrors.password = 'Password must be at least 6 characters';
+      }
+    } else {
+      if (!formData.otp) {
+        newErrors.otp = 'OTP is required';
+      } else if (formData.otp.length < 4 || formData.otp.length > 6) {
+        newErrors.otp = 'OTP must be 4-6 characters';
+      }
     }
 
     setErrors(newErrors);
@@ -74,7 +118,9 @@ export default function StudentLoginPage() {
     try {
       const credentials = {
         phone_number: formData.phone_number,
-        password: formData.password,
+        ...(loginMethod === 'password'
+          ? { password: formData.password }
+          : { otp: formData.otp }),
         ...(formData.school_id && { school_id: parseInt(formData.school_id) }),
         ...(formData.profile_id && {
           profile_id: parseInt(formData.profile_id)
@@ -84,7 +130,7 @@ export default function StudentLoginPage() {
       const user = await enhancedAuthService.enhancedLogin(credentials);
 
       if (user) {
-        toast.success('Login successful! Welcome back!');
+        ErrorHandler.showSuccess('Login successful! Welcome back!');
 
         // Check if user is a student
         if (user.isStudent) {
@@ -97,7 +143,7 @@ export default function StudentLoginPage() {
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      toast.error(error.message || 'Login failed. Please try again.');
+      // Error handling is now done in the enhanced auth service
     } finally {
       setIsLoading(false);
     }

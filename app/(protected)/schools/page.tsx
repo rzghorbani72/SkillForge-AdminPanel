@@ -27,7 +27,7 @@ import { Plus, Search, Filter, Edit, Eye, Settings, Globe } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { School } from '@/types/api';
 import { generateSlug } from '@/lib/utils';
-import { toast } from 'react-toastify';
+import { ErrorHandler } from '@/lib/error-handler';
 
 export default function SchoolsPage() {
   const [schools, setSchools] = useState<School[]>([]);
@@ -55,7 +55,7 @@ export default function SchoolsPage() {
       setSchools((response.data as School[]) || []);
     } catch (error) {
       console.error('Error fetching schools:', error);
-      toast.error('Failed to fetch schools');
+      ErrorHandler.handleApiError(error);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +64,7 @@ export default function SchoolsPage() {
   const handleCreateSchool = async () => {
     try {
       if (!formData.name || !formData.private_domain) {
-        toast.error('Please fill in all required fields');
+        ErrorHandler.showWarning('Please fill in all required fields');
         return;
       }
 
@@ -75,13 +75,13 @@ export default function SchoolsPage() {
       };
 
       await apiClient.createSchool(schoolData);
-      toast.success('School created successfully');
+      ErrorHandler.showSuccess('School created successfully');
       setIsCreateDialogOpen(false);
       setFormData({ name: '', private_domain: '', description: '' });
       fetchSchools();
     } catch (error) {
       console.error('Error creating school:', error);
-      toast.error('Failed to create school');
+      ErrorHandler.handleApiError(error);
     }
   };
 

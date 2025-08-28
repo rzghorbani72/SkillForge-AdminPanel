@@ -1,5 +1,6 @@
 import { apiClient } from './api';
 import { User, Profile, School } from '@/types/api';
+import { ErrorHandler } from './error-handler';
 
 export interface EnhancedAuthUser {
   user: User;
@@ -44,28 +45,29 @@ class EnhancedAuthService {
   // Enhanced login with auth type
   async enhancedLogin(credentials: {
     phone_number: string;
-    password: string;
+    password?: string;
+    otp?: string;
     school_id?: number;
     profile_id?: number;
   }): Promise<EnhancedAuthUser> {
-    const endpoint =
-      this.authType === 'public'
-        ? 'enhanced-auth/public/login'
-        : 'enhanced-auth/admin/login';
+    try {
+      const response = await apiClient.enhancedLogin(credentials);
 
-    const response = await apiClient.post(endpoint, credentials);
+      if (response.data) {
+        // Clear cached data
+        this.currentUser = null;
 
-    if (response.data) {
-      // Clear cached data
-      this.currentUser = null;
+        // Store the enhanced user data
+        this.currentUser = response.data as EnhancedAuthUser;
 
-      // Store the enhanced user data
-      this.currentUser = response.data as EnhancedAuthUser;
+        return this.currentUser;
+      }
 
-      return this.currentUser;
+      throw new Error('Login failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
     }
-
-    throw new Error('Login failed');
   }
 
   // Enhanced register with auth type
@@ -75,7 +77,8 @@ class EnhancedAuthService {
     email?: string;
     password: string;
     confirmed_password: string;
-    otp: string;
+    phone_otp: string;
+    email_otp?: string;
     role: string;
     school_id: number;
     display_name: string;
@@ -83,24 +86,24 @@ class EnhancedAuthService {
     website?: string;
     location?: string;
   }): Promise<EnhancedAuthUser> {
-    const endpoint =
-      this.authType === 'public'
-        ? 'enhanced-auth/public/register'
-        : 'enhanced-auth/admin/register';
+    try {
+      const response = await apiClient.enhancedRegister(userData);
 
-    const response = await apiClient.post(endpoint, userData);
+      if (response.data) {
+        // Clear cached data
+        this.currentUser = null;
 
-    if (response.data) {
-      // Clear cached data
-      this.currentUser = null;
+        // Store the enhanced user data
+        this.currentUser = response.data as EnhancedAuthUser;
 
-      // Store the enhanced user data
-      this.currentUser = response.data as EnhancedAuthUser;
+        return this.currentUser;
+      }
 
-      return this.currentUser;
+      throw new Error('Registration failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
     }
-
-    throw new Error('Registration failed');
   }
 
   // Switch user profile (school context)
@@ -108,30 +111,42 @@ class EnhancedAuthService {
     profileId: number,
     schoolId: number
   ): Promise<EnhancedAuthUser> {
-    const response = await apiClient.post('enhanced-auth/switch-profile', {
-      profile_id: profileId,
-      school_id: schoolId
-    });
+    try {
+      const response = await apiClient.switchProfile(profileId, schoolId);
 
-    if (response.data) {
-      // Update current user data
-      this.currentUser = response.data as EnhancedAuthUser;
-      return this.currentUser;
+      if (response.data) {
+        // Update current user data
+        this.currentUser = response.data as EnhancedAuthUser;
+        return this.currentUser;
+      }
+
+      throw new Error('Profile switch failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
     }
-
-    throw new Error('Profile switch failed');
   }
 
   // Get user profiles
   async getUserProfiles(): Promise<UserProfile[]> {
-    const response = await apiClient.get('enhanced-auth/profiles');
-    return response.data?.profiles || [];
+    try {
+      const response = await apiClient.getUserProfiles();
+      return (response.data as any)?.profiles || [];
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
   }
 
   // Get user schools
   async getUserSchools(): Promise<School[]> {
-    const response = await apiClient.get('enhanced-auth/schools');
-    return response.data?.schools || [];
+    try {
+      const response = await apiClient.getUserSchools();
+      return (response.data as any)?.schools || [];
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
   }
 
   // Create new profile
@@ -143,24 +158,31 @@ class EnhancedAuthService {
     website?: string;
     location?: string;
   }): Promise<EnhancedAuthUser> {
-    const response = await apiClient.post(
-      'enhanced-auth/create-profile',
-      profileData
-    );
+    try {
+      const response = await apiClient.createProfile(profileData);
 
-    if (response.data) {
-      // Update current user data
-      this.currentUser = response.data as EnhancedAuthUser;
-      return this.currentUser;
+      if (response.data) {
+        // Update current user data
+        this.currentUser = response.data as EnhancedAuthUser;
+        return this.currentUser;
+      }
+
+      throw new Error('Profile creation failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
     }
-
-    throw new Error('Profile creation failed');
   }
 
   // Get user context
   async getUserContext(): Promise<any> {
-    const response = await apiClient.get('enhanced-auth/context');
-    return response.data?.context;
+    try {
+      const response = await apiClient.getUserContext();
+      return (response.data as any)?.context;
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
   }
 
   // Validate role registration
@@ -168,16 +190,68 @@ class EnhancedAuthService {
     schoolId: number,
     role: string
   ): Promise<boolean> {
-    const response = await apiClient.post(
-      `enhanced-auth/validate-role/${schoolId}/${role}`
-    );
-    return response.data?.valid || false;
+    try {
+      const response = await apiClient.validateRoleRegistration(schoolId, role);
+      return (response.data as any)?.valid || false;
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
   }
 
   // Get primary school
   async getPrimarySchool(): Promise<School | null> {
-    const response = await apiClient.get('enhanced-auth/primary-school');
-    return response.data?.school || null;
+    try {
+      const response = await apiClient.getPrimarySchool();
+      return (response.data as any)?.school || null;
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
+  }
+
+  // Send OTP for phone verification
+  async sendPhoneOtp(phone_number: string): Promise<{ otp: string }> {
+    try {
+      const response = await apiClient.sendPhoneOtp(phone_number);
+      return response.data as { otp: string };
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
+  }
+
+  // Send OTP for email verification
+  async sendEmailOtp(email: string): Promise<{ otp: string }> {
+    try {
+      const response = await apiClient.sendEmailOtp(email);
+      return response.data as { otp: string };
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
+  }
+
+  // Verify phone OTP
+  async verifyPhoneOtp(phone_number: string, otp: string): Promise<boolean> {
+    try {
+      const response = await apiClient.verifyPhoneOtp(phone_number, otp);
+      return (response.data as any)?.valid || false;
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
+  }
+
+  // Verify email OTP
+  async verifyEmailOtp(email: string, otp: string): Promise<boolean> {
+    try {
+      const response = await apiClient.verifyEmailOtp(email, otp);
+      return (response.data as any)?.valid || false;
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
   }
 
   // Get current authenticated user
@@ -248,7 +322,7 @@ class EnhancedAuthService {
 
   // Get user's role in current school
   getCurrentRole(user: EnhancedAuthUser): string {
-    return user.currentProfile.role;
+    return user.currentProfile.role?.name || '';
   }
 
   // Get user's current school

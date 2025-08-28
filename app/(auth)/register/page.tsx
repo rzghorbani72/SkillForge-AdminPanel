@@ -32,9 +32,9 @@ import {
   User,
   Building
 } from 'lucide-react';
-import { authService } from '@/lib/auth';
+import { enhancedAuthService } from '@/lib/enhanced-auth';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { toast } from 'react-toastify';
+import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -45,12 +45,20 @@ export default function RegisterPage() {
   const [registrationType, setRegistrationType] = useState<
     'new-school' | 'existing-school'
   >('new-school');
+  const [userType, setUserType] = useState<'manager' | 'teacher'>('manager');
+  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [phoneOtpVerified, setPhoneOtpVerified] = useState(false);
+  const [emailOtpVerified, setEmailOtpVerified] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
     confirmPassword: '',
+    phoneOtp: '',
+    emailOtp: '',
     schoolName: '',
     schoolDescription: '',
     schoolSlug: '',
@@ -59,6 +67,128 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const router = useRouter();
+
+  // Send phone OTP
+  const handleSendPhoneOtp = async () => {
+    if (!formData.phone) {
+      ErrorHandler.showWarning('Please enter your phone number first');
+      return;
+    }
+
+    if (!isValidPhone(formData.phone)) {
+      ErrorHandler.showWarning('Please enter a valid phone number');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      // Set auth type to public for OTP
+      enhancedAuthService.setAuthType('public');
+
+      const result = await enhancedAuthService.sendPhoneOtp(formData.phone);
+
+      if (result.otp) {
+        setPhoneOtpSent(true);
+        ErrorHandler.showInfo(
+          `SMS OTP sent successfully! Your phone OTP is: ${result.otp}`
+        );
+      }
+    } catch (error) {
+      console.error('Failed to send phone OTP:', error);
+      // Error handling is done in the service
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // Send email OTP
+  const handleSendEmailOtp = async () => {
+    if (!formData.email) {
+      ErrorHandler.showWarning('Please enter your email first');
+      return;
+    }
+
+    if (!isValidEmail(formData.email)) {
+      ErrorHandler.showWarning('Please enter a valid email');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      // Set auth type to public for OTP
+      enhancedAuthService.setAuthType('public');
+
+      const result = await enhancedAuthService.sendEmailOtp(formData.email);
+
+      if (result.otp) {
+        setEmailOtpSent(true);
+        ErrorHandler.showInfo(
+          `Email OTP sent successfully! Your email OTP is: ${result.otp}`
+        );
+      }
+    } catch (error) {
+      console.error('Failed to send email OTP:', error);
+      // Error handling is done in the service
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // Verify phone OTP
+  const handleVerifyPhoneOtp = async () => {
+    if (!formData.phoneOtp) {
+      ErrorHandler.showWarning('Please enter the phone OTP');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      const isValid = await enhancedAuthService.verifyPhoneOtp(
+        formData.phone,
+        formData.phoneOtp
+      );
+
+      if (isValid) {
+        setPhoneOtpVerified(true);
+        ErrorHandler.showSuccess('Phone OTP verified successfully!');
+      } else {
+        ErrorHandler.showWarning('Invalid phone OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Failed to verify phone OTP:', error);
+      // Error handling is done in the service
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // Verify email OTP
+  const handleVerifyEmailOtp = async () => {
+    if (!formData.emailOtp) {
+      ErrorHandler.showWarning('Please enter the email OTP');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      const isValid = await enhancedAuthService.verifyEmailOtp(
+        formData.email,
+        formData.emailOtp
+      );
+
+      if (isValid) {
+        setEmailOtpVerified(true);
+        ErrorHandler.showSuccess('Email OTP verified successfully!');
+      } else {
+        ErrorHandler.showWarning('Invalid email OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Failed to verify email OTP:', error);
+      // Error handling is done in the service
+    } finally {
+      setOtpLoading(false);
+    }
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -92,6 +222,30 @@ export default function RegisterPage() {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
+    // Phone OTP validation
+    if (!formData.phoneOtp) {
+      newErrors.phoneOtp = 'Phone OTP is required';
+    } else if (formData.phoneOtp.length < 4 || formData.phoneOtp.length > 6) {
+      newErrors.phoneOtp = 'Phone OTP must be 4-6 characters';
+    }
+
+    if (!phoneOtpVerified) {
+      newErrors.phoneOtp = 'Please verify your phone OTP first';
+    }
+
+    // Email OTP validation (if email is provided)
+    if (formData.email) {
+      if (!formData.emailOtp) {
+        newErrors.emailOtp = 'Email OTP is required';
+      } else if (formData.emailOtp.length < 4 || formData.emailOtp.length > 6) {
+        newErrors.emailOtp = 'Email OTP must be 4-6 characters';
+      }
+
+      if (!emailOtpVerified) {
+        newErrors.emailOtp = 'Please verify your email OTP first';
+      }
+    }
+
     // School validation based on registration type
     if (registrationType === 'new-school') {
       if (!formData.schoolName.trim()) {
@@ -123,48 +277,64 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // Register the user
+      // Set auth type to public for teacher registration
+      enhancedAuthService.setAuthType('public');
+
+      // Register the user with enhanced auth service
       const userData = {
         name: formData.name,
+        phone_number: formData.phone,
         email: formData.email || undefined,
-        phone: formData.phone,
-        password: formData.password
-      };
-
-      await authService.register(userData);
-
-      // Login the user after successful registration
-      const credentials = {
         password: formData.password,
-        ...(formData.email
-          ? { email: formData.email }
-          : { phone: formData.phone })
+        confirmed_password: formData.confirmPassword,
+        phone_otp: formData.phoneOtp, // Use the verified phone OTP
+        email_otp: formData.emailOtp, // Use the verified email OTP
+        role: 'TEACHER',
+        school_id:
+          registrationType === 'existing-school'
+            ? parseInt(formData.existingSchoolId)
+            : 1, // Default school ID for new schools
+        display_name: formData.name
       };
 
-      const user = await authService.login(credentials);
+      const user = await enhancedAuthService.enhancedRegister(userData);
 
       if (user) {
-        toast.success('Registration successful!');
+        ErrorHandler.showSuccess('Registration successful!');
 
         // Handle school creation or joining
         if (registrationType === 'new-school') {
           // Create new school
-          // This would call the backend API to create a school
-          toast.info('Creating your school...');
+          ErrorHandler.showInfo('Creating your school...');
           // Redirect to school setup
           router.push('/dashboard');
         } else {
           // Join existing school
-          toast.info('Joining existing school...');
+          ErrorHandler.showInfo('Joining existing school...');
           // Redirect to school dashboard
           router.push('/dashboard');
         }
       }
     } catch (error: unknown) {
       console.error('Registration error:', error);
-      toast.error(
-        (error as Error).message || 'Registration failed. Please try again.'
-      );
+
+      // Parse backend validation errors and map to form fields
+      const fieldErrors = ErrorHandler.handleFormError(error, [
+        'name',
+        'phone',
+        'email',
+        'password',
+        'confirmPassword',
+        'otp',
+        'role',
+        'existingSchoolId',
+        'display_name'
+      ]);
+
+      // Update form errors
+      if (Object.keys(fieldErrors).length > 0) {
+        setErrors(fieldErrors);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -411,6 +581,164 @@ export default function RegisterPage() {
                     )}
                   </div>
                 </div>
+
+                {/* Phone OTP Verification */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Phone Verification</h3>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneOtp">Phone OTP Code</Label>
+                    <div className="flex space-x-2">
+                      <div className="relative flex-1">
+                        <Input
+                          id="phoneOtp"
+                          type="text"
+                          placeholder="Enter phone OTP code"
+                          value={formData.phoneOtp}
+                          onChange={(e) =>
+                            handleInputChange('phoneOtp', e.target.value)
+                          }
+                          className={errors.phoneOtp ? 'border-red-500' : ''}
+                          disabled={isLoading || otpLoading}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={handleSendPhoneOtp}
+                        disabled={
+                          otpLoading ||
+                          !formData.phone ||
+                          !isValidPhone(formData.phone)
+                        }
+                        className="whitespace-nowrap"
+                      >
+                        {otpLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          'Send SMS OTP'
+                        )}
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={handleVerifyPhoneOtp}
+                        disabled={
+                          otpLoading || !formData.phoneOtp || phoneOtpVerified
+                        }
+                        variant="outline"
+                        className="whitespace-nowrap"
+                      >
+                        {otpLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Verifying...
+                          </>
+                        ) : phoneOtpVerified ? (
+                          '✓ Verified'
+                        ) : (
+                          'Verify SMS OTP'
+                        )}
+                      </Button>
+                    </div>
+                    {errors.phoneOtp && (
+                      <p className="text-sm text-red-500">{errors.phoneOtp}</p>
+                    )}
+                    {phoneOtpSent && !phoneOtpVerified && (
+                      <p className="text-sm text-blue-600">
+                        SMS OTP sent! Please check the info toast above for the
+                        OTP code.
+                      </p>
+                    )}
+                    {phoneOtpVerified && (
+                      <p className="text-sm text-green-600">
+                        ✓ Phone number verified successfully!
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Email OTP Verification (if email is provided) */}
+                {formData.email && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Email Verification</h3>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="emailOtp">Email OTP Code</Label>
+                      <div className="flex space-x-2">
+                        <div className="relative flex-1">
+                          <Input
+                            id="emailOtp"
+                            type="text"
+                            placeholder="Enter email OTP code"
+                            value={formData.emailOtp}
+                            onChange={(e) =>
+                              handleInputChange('emailOtp', e.target.value)
+                            }
+                            className={errors.emailOtp ? 'border-red-500' : ''}
+                            disabled={isLoading || otpLoading}
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          onClick={handleSendEmailOtp}
+                          disabled={
+                            otpLoading ||
+                            !formData.email ||
+                            !isValidEmail(formData.email)
+                          }
+                          className="whitespace-nowrap"
+                        >
+                          {otpLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Sending...
+                            </>
+                          ) : (
+                            'Send Email OTP'
+                          )}
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={handleVerifyEmailOtp}
+                          disabled={
+                            otpLoading || !formData.emailOtp || emailOtpVerified
+                          }
+                          variant="outline"
+                          className="whitespace-nowrap"
+                        >
+                          {otpLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Verifying...
+                            </>
+                          ) : emailOtpVerified ? (
+                            '✓ Verified'
+                          ) : (
+                            'Verify Email OTP'
+                          )}
+                        </Button>
+                      </div>
+                      {errors.emailOtp && (
+                        <p className="text-sm text-red-500">
+                          {errors.emailOtp}
+                        </p>
+                      )}
+                      {emailOtpSent && !emailOtpVerified && (
+                        <p className="text-sm text-blue-600">
+                          Email OTP sent! Please check the info toast above for
+                          the OTP code.
+                        </p>
+                      )}
+                      {emailOtpVerified && (
+                        <p className="text-sm text-green-600">
+                          ✓ Email verified successfully!
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* School Information */}

@@ -20,13 +20,13 @@ import {
   AlertCircle,
   GraduationCap
 } from 'lucide-react';
-import { authService, UserSchool } from '@/lib/auth';
-import { toast } from 'react-toastify';
+import { enhancedAuthService } from '@/lib/enhanced-auth';
+import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 
 export default function SelectSchoolPage() {
-  const [schools, setSchools] = useState<UserSchool[]>([]);
-  const [filteredSchools, setFilteredSchools] = useState<UserSchool[]>([]);
+  const [schools, setSchools] = useState<any[]>([]);
+  const [filteredSchools, setFilteredSchools] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<unknown>(null);
@@ -36,7 +36,7 @@ export default function SelectSchoolPage() {
   useEffect(() => {
     const loadUserSchools = async () => {
       try {
-        const currentUser = await authService.getCurrentUser();
+        const currentUser = await enhancedAuthService.getCurrentUser();
         if (!currentUser) {
           router.push('/login');
           return;
@@ -45,19 +45,19 @@ export default function SelectSchoolPage() {
         setUser(currentUser);
 
         // Check if user should be redirected to school (students)
-        if (authService.shouldRedirectToSchool(currentUser)) {
-          const userSchools = await authService.getUserSchools();
+        if (currentUser.isStudent) {
+          const userSchools = await enhancedAuthService.getUserSchools();
 
           if (userSchools.length === 0) {
-            toast.error('No schools found for your account');
+            ErrorHandler.showWarning('No schools found for your account');
             router.push('/login');
             return;
           }
 
           if (userSchools.length === 1) {
             // Only one school, redirect directly
-            const schoolUrl = authService.getSchoolDashboardUrl(
-              userSchools[0].school
+            const schoolUrl = enhancedAuthService.getSchoolDashboardUrl(
+              userSchools[0]
             );
             window.location.href = schoolUrl;
             return;
@@ -73,7 +73,7 @@ export default function SelectSchoolPage() {
         }
       } catch (error) {
         console.error('Failed to load schools:', error);
-        toast.error('Failed to load your schools');
+        ErrorHandler.handleApiError(error);
         router.push('/login');
       } finally {
         setIsLoading(false);
@@ -93,9 +93,9 @@ export default function SelectSchoolPage() {
     setFilteredSchools(filtered);
   }, [searchTerm, schools]);
 
-  const handleSchoolSelect = (userSchool: UserSchool) => {
-    const schoolUrl = authService.getSchoolDashboardUrl(userSchool.school);
-    toast.info(`Redirecting to ${userSchool.school.name}...`);
+  const handleSchoolSelect = (userSchool: any) => {
+    const schoolUrl = enhancedAuthService.getSchoolDashboardUrl(userSchool);
+    ErrorHandler.showInfo(`Redirecting to ${userSchool.name}...`);
     window.location.href = schoolUrl;
   };
 

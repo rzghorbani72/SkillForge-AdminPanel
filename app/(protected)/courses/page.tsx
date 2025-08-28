@@ -35,7 +35,7 @@ import { apiClient } from '@/lib/api';
 import { Course, Category } from '@/types/api';
 import { formatNumber, formatCurrency } from '@/lib/utils';
 import { courseDifficulties } from '@/constants/data';
-import { toast } from 'react-toastify';
+import { ErrorHandler } from '@/lib/error-handler';
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -75,7 +75,7 @@ export default function CoursesPage() {
       setCourses(data.data || []);
     } catch (error) {
       console.error('Error fetching courses:', error);
-      toast.error('Failed to fetch courses');
+      ErrorHandler.handleApiError(error);
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +94,7 @@ export default function CoursesPage() {
   const handleCreateCourse = async () => {
     try {
       if (!formData.title || !formData.description) {
-        toast.error('Please fill in all required fields');
+        ErrorHandler.showWarning('Please fill in all required fields');
         return;
       }
 
@@ -113,7 +113,7 @@ export default function CoursesPage() {
       };
 
       await apiClient.createCourse(courseData);
-      toast.success('Course created successfully');
+      ErrorHandler.showSuccess('Course created successfully');
       setIsCreateDialogOpen(false);
       setFormData({
         title: '',
@@ -129,7 +129,7 @@ export default function CoursesPage() {
       fetchCourses();
     } catch (error) {
       console.error('Error creating course:', error);
-      toast.error('Failed to create course');
+      ErrorHandler.handleApiError(error);
     }
   };
 
