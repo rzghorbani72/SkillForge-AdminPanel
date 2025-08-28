@@ -80,11 +80,15 @@ class EnhancedAuthService {
     phone_otp: string;
     email_otp?: string;
     role: string;
-    school_id: number;
+    school_id?: number;
     display_name: string;
     bio?: string;
     website?: string;
     location?: string;
+    // School creation data (when creating new school)
+    school_name?: string;
+    school_slug?: string;
+    school_description?: string;
   }): Promise<EnhancedAuthUser> {
     try {
       const response = await apiClient.enhancedRegister(userData);
