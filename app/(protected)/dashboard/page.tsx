@@ -42,17 +42,86 @@ export default function DashboardPage() {
         setIsLoading(true);
 
         // Fetch recent courses
-        const coursesResponse = await apiClient.getCourses({ limit: 5 });
-        const data = coursesResponse.data as { data: Course[] };
-        setRecentCourses(data.data || []);
+        try {
+          const coursesResponse = await apiClient.getCourses({ limit: 5 });
+          console.log('Courses response:', coursesResponse);
 
-        // Fetch recent enrollments (you'll need to implement this endpoint)
-        const enrollmentsResponse = await apiClient.getRecentEnrollments();
-        setRecentEnrollments((enrollmentsResponse.data as Enrollment[]) || []);
+          // Handle different possible response structures
+          let coursesData: Course[] = [];
+          const responseData = coursesResponse.data as any;
 
-        // Fetch recent payments (you'll need to implement this endpoint)
-        const paymentsResponse = await apiClient.getRecentPayments();
-        setRecentPayments((paymentsResponse.data as Payment[]) || []);
+          if (responseData && Array.isArray(responseData)) {
+            coursesData = responseData;
+          } else if (
+            responseData &&
+            responseData.data &&
+            Array.isArray(responseData.data)
+          ) {
+            coursesData = responseData.data;
+          } else if (
+            responseData &&
+            responseData.courses &&
+            Array.isArray(responseData.courses)
+          ) {
+            coursesData = responseData.courses;
+          }
+
+          setRecentCourses(coursesData);
+        } catch (error) {
+          console.error('Error fetching courses:', error);
+          setRecentCourses([]);
+        }
+
+        // Fetch recent enrollments
+        try {
+          const enrollmentsResponse = await apiClient.getRecentEnrollments();
+          console.log('Enrollments response:', enrollmentsResponse);
+
+          let enrollmentsData: Enrollment[] = [];
+          const enrollmentsResponseData = enrollmentsResponse.data as any;
+
+          if (
+            enrollmentsResponseData &&
+            Array.isArray(enrollmentsResponseData)
+          ) {
+            enrollmentsData = enrollmentsResponseData;
+          } else if (
+            enrollmentsResponseData &&
+            enrollmentsResponseData.data &&
+            Array.isArray(enrollmentsResponseData.data)
+          ) {
+            enrollmentsData = enrollmentsResponseData.data;
+          }
+
+          setRecentEnrollments(enrollmentsData);
+        } catch (error) {
+          console.error('Error fetching enrollments:', error);
+          setRecentEnrollments([]);
+        }
+
+        // Fetch recent payments
+        try {
+          const paymentsResponse = await apiClient.getRecentPayments();
+          console.log('Payments response:', paymentsResponse);
+
+          let paymentsData: Payment[] = [];
+          const paymentsResponseData = paymentsResponse.data as any;
+
+          if (paymentsResponseData && Array.isArray(paymentsResponseData)) {
+            paymentsData = paymentsResponseData;
+          } else if (
+            paymentsResponseData &&
+            paymentsResponseData.data &&
+            Array.isArray(paymentsResponseData.data)
+          ) {
+            paymentsData = paymentsResponseData.data;
+          }
+
+          setRecentPayments(paymentsData);
+        } catch (error) {
+          console.error('Error fetching payments:', error);
+          setRecentPayments([]);
+        }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -130,8 +199,48 @@ export default function DashboardPage() {
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
+            <p className="mt-2 text-sm text-gray-600">
+              Loading dashboard data...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
+
+  // Ensure we always have arrays to prevent map errors
+  const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];
+  const safeRecentEnrollments = Array.isArray(recentEnrollments)
+    ? recentEnrollments
+    : [];
+  const safeRecentPayments = Array.isArray(recentPayments)
+    ? recentPayments
+    : [];
+  const safeRecentActivity = Array.isArray(recentActivity)
+    ? recentActivity
+    : [];
+
+  // Add fallback data if all arrays are empty
+  const hasData =
+    safeRecentCourses.length > 0 ||
+    safeRecentEnrollments.length > 0 ||
+    safeRecentPayments.length > 0;
+
+  // Debug logging
+  console.log('Dashboard data state:', {
+    recentCourses: recentCourses,
+    safeRecentCourses: safeRecentCourses,
+    recentEnrollments: recentEnrollments,
+    safeRecentEnrollments: safeRecentEnrollments,
+    recentPayments: recentPayments,
+    safeRecentPayments: safeRecentPayments,
+    hasData: hasData
+  });
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -197,7 +306,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentActivity.map((activity) => (
+              {safeRecentActivity.map((activity) => (
                 <div key={activity.id} className="flex items-center space-x-4">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback>
@@ -275,7 +384,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentCourses.map((course) => (
+                {safeRecentCourses.map((course) => (
                   <div key={course.id} className="flex items-center space-x-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
                       <BookOpen className="h-6 w-6" />
@@ -317,7 +426,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentEnrollments.length === 0 ? (
+                {safeRecentEnrollments.length === 0 ? (
                   <div className="py-8 text-center">
                     <Users className="mx-auto h-12 w-12 text-muted-foreground" />
                     <h3 className="mt-2 text-sm font-medium">
@@ -329,7 +438,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
                 ) : (
-                  recentEnrollments.map((enrollment) => (
+                  safeRecentEnrollments.map((enrollment) => (
                     <div
                       key={enrollment.id}
                       className="flex items-center space-x-4"
@@ -370,7 +479,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentPayments.length === 0 ? (
+                {safeRecentPayments.length === 0 ? (
                   <div className="py-8 text-center">
                     <DollarSign className="mx-auto h-12 w-12 text-muted-foreground" />
                     <h3 className="mt-2 text-sm font-medium">
@@ -382,7 +491,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
                 ) : (
-                  recentPayments.map((payment) => (
+                  safeRecentPayments.map((payment) => (
                     <div
                       key={payment.id}
                       className="flex items-center space-x-4"
@@ -430,7 +539,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentCourses.slice(0, 3).map((course) => (
+              {safeRecentCourses.slice(0, 3).map((course) => (
                 <div key={course.id} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">{course.title}</span>
@@ -442,7 +551,7 @@ export default function DashboardPage() {
                     value={
                       (course.students_count /
                         Math.max(
-                          ...recentCourses.map((c) => c.students_count)
+                          ...safeRecentCourses.map((c) => c.students_count)
                         )) *
                       100
                     }

@@ -41,7 +41,10 @@ const NavItemContent = React.memo(
     isExpanded: boolean;
     path: string;
   }) => {
-    const Icon = item.icon ? Icons[item.icon] : Icons.logo;
+    const Icon =
+      item.icon && Icons[item.icon as keyof typeof Icons]
+        ? Icons[item.icon as keyof typeof Icons]
+        : Icons.logo;
     const hasChildren = item.children && item.children.length > 0;
 
     return (

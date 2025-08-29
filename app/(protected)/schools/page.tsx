@@ -52,10 +52,33 @@ export default function SchoolsPage() {
     try {
       setIsLoading(true);
       const response = await apiClient.getMySchools();
-      setSchools((response.data as School[]) || []);
+      console.log('Schools response:', response);
+
+      // Handle different possible response structures
+      let schoolsData: School[] = [];
+      const responseData = response.data as any;
+
+      if (responseData && Array.isArray(responseData)) {
+        schoolsData = responseData;
+      } else if (
+        responseData &&
+        responseData.data &&
+        Array.isArray(responseData.data)
+      ) {
+        schoolsData = responseData.data;
+      } else if (
+        responseData &&
+        responseData.schools &&
+        Array.isArray(responseData.schools)
+      ) {
+        schoolsData = responseData.schools;
+      }
+
+      setSchools(schoolsData);
     } catch (error) {
       console.error('Error fetching schools:', error);
       ErrorHandler.handleApiError(error);
+      setSchools([]); // Set empty array on error
     } finally {
       setIsLoading(false);
     }
@@ -112,11 +135,22 @@ export default function SchoolsPage() {
     }
   };
 
-  const filteredSchools = schools.filter(
+  // Ensure schools is always an array
+  const safeSchools = Array.isArray(schools) ? schools : [];
+
+  const filteredSchools = safeSchools.filter(
     (school) =>
       school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       school.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Debug logging
+  console.log('Schools data state:', {
+    schools: schools,
+    safeSchools: safeSchools,
+    filteredSchools: filteredSchools,
+    searchTerm: searchTerm
+  });
 
   const getSchoolStats = (school: School) => {
     return {

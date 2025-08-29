@@ -176,6 +176,7 @@ class ApiClient {
 
   // OTP endpoints
   async sendPhoneOtp(phone_number: string) {
+    console.log('API: Sending phone OTP request with:', { phone_number });
     return this.request('/public-auth/send-phone-otp', {
       method: 'POST',
       body: JSON.stringify({ phone_number })

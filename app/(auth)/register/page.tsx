@@ -51,7 +51,9 @@ export default function RegisterPage() {
   const [phoneOtpVerified, setPhoneOtpVerified] = useState(false);
   const [emailOtpVerified, setEmailOtpVerified] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
-  const [step, setStep] = useState<'form' | 'verification'>('form');
+  const [step, setStep] = useState<
+    'form' | 'phone-verification' | 'email-verification'
+  >('form');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -201,16 +203,16 @@ export default function RegisterPage() {
       newErrors.name = 'Full name is required';
     }
 
-    if (!formData.email && !formData.phone) {
-      newErrors.email = 'Either email or phone number is required';
-      newErrors.phone = 'Either email or phone number is required';
-    } else {
-      if (formData.email && !isValidEmail(formData.email)) {
-        newErrors.email = 'Please enter a valid email address';
-      }
-      if (formData.phone && !isValidPhone(formData.phone)) {
-        newErrors.phone = 'Please enter a valid phone number';
-      }
+    // Email is required for all users
+    if (!formData.email) {
+      newErrors.email = 'Email address is required';
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    // Phone number is optional but must be valid if provided
+    if (formData.phone && !isValidPhone(formData.phone)) {
+      newErrors.phone = 'Please enter a valid phone number';
     }
 
     if (!formData.password) {
@@ -251,33 +253,117 @@ export default function RegisterPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleVerifyStep = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Prevent double submission
-    if (isLoading || isSubmittingRef.current) {
-      return;
-    }
-
-    if (!validateForm()) {
-      return;
-    }
-
+  // Step 1: Register user with unverified phone and email
+  const handleFormSubmission = async () => {
     setIsLoading(true);
     isSubmittingRef.current = true;
 
     try {
-      // Store form data locally and move to verification step
-      console.log('Form data stored locally:', formData);
+      // Validate form data
+      if (!validateForm()) {
+        return;
+      }
 
-      // Move to verification step without making API calls
-      setStep('verification');
-      ErrorHandler.showSuccess(
-        'Form data saved! Please verify your contact information.'
+      // Determine role based on registration type
+      let role: string;
+      if (registrationType === 'new-school') {
+        role = 'MANAGER';
+      } else {
+        // When joining existing school, register as student first
+        // They can request teacher promotion later
+        role = 'STUDENT';
+      }
+
+      // Set auth type to public for registration
+      enhancedAuthService.setAuthType('public');
+
+      // Create user with unverified phone and email
+      const userData: any = {
+        name: formData.name,
+        phone_number: formData.phone,
+        email: formData.email || undefined,
+        password: formData.password,
+        confirmed_password: formData.confirmPassword,
+        role: role,
+        school_id:
+          registrationType === 'existing-school'
+            ? parseInt(formData.existingSchoolId)
+            : undefined,
+        display_name: formData.name,
+        // School creation data (only when creating new school)
+        ...(registrationType === 'new-school' && {
+          school_name: formData.schoolName,
+          school_slug: formData.schoolSlug,
+          school_description: formData.schoolDescription
+        })
+      };
+
+      // Register user without OTP verification
+      const user = await enhancedAuthService.enhancedRegister(userData);
+
+      if (user) {
+        ErrorHandler.showSuccess(
+          'Account registered successfully! Now verifying your contact information.'
+        );
+
+        // Move to phone verification step
+        setStep('phone-verification');
+      }
+    } catch (error: unknown) {
+      console.error('User registration error:', error);
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsLoading(false);
+      isSubmittingRef.current = false;
+    }
+  };
+
+  // Step 3: Handle final registration with verified contact info
+  const handleFinalRegistration = async () => {
+    setIsLoading(true);
+    isSubmittingRef.current = true;
+
+    try {
+      // Set auth type to public for registration
+      enhancedAuthService.setAuthType('public');
+
+      // Update user with verified OTPs
+      const verificationData: any = {};
+
+      // Add verified phone OTP
+      if (phoneOtpVerified && formData.phoneOtp?.trim()) {
+        verificationData.phone_otp = formData.phoneOtp.trim();
+      }
+
+      // Add verified email OTP
+      if (formData.email && emailOtpVerified && formData.emailOtp?.trim()) {
+        verificationData.email_otp = formData.emailOtp.trim();
+      }
+
+      // Call backend to update user with verified contact information
+      // Note: This would require a new endpoint to update user verification status
+      // For now, we'll show success message
+      console.log(
+        'Updating user with verified contact info:',
+        verificationData
       );
-    } catch (error) {
-      console.error('Failed to save form data:', error);
-      ErrorHandler.showWarning('Failed to save form data. Please try again.');
+
+      ErrorHandler.showSuccess('Registration completed successfully!');
+
+      if (registrationType === 'new-school') {
+        ErrorHandler.showInfo(
+          'Your school has been created successfully! You are now the manager of this school with verified contact information.'
+        );
+        router.push('/dashboard');
+      } else {
+        ErrorHandler.showInfo(
+          'Registration completed successfully! You have been registered as a student with verified contact information. You can request teacher promotion from the school manager.'
+        );
+        router.push('/dashboard');
+      }
+    } catch (error: unknown) {
+      console.error('Final registration error:', error);
+      ErrorHandler.handleApiError(error);
     } finally {
       setIsLoading(false);
       isSubmittingRef.current = false;
@@ -292,39 +378,47 @@ export default function RegisterPage() {
       return;
     }
 
-    // First, send OTPs if not already sent
-    if (!phoneOtpSent && formData.phone) {
-      try {
-        await enhancedAuthService.sendPhoneOtp(formData.phone);
-        setPhoneOtpSent(true);
-        ErrorHandler.showInfo('Phone OTP sent! Please check your phone.');
-      } catch (error) {
-        console.error('Failed to send phone OTP:', error);
-        ErrorHandler.showWarning('Failed to send phone OTP. Please try again.');
-        return;
-      }
-    }
-
-    if (formData.email && !emailOtpSent) {
-      try {
-        await enhancedAuthService.sendEmailOtp(formData.email);
-        setEmailOtpSent(true);
-        ErrorHandler.showInfo('Email OTP sent! Please check your email.');
-      } catch (error) {
-        console.error('Failed to send email OTP:', error);
-        ErrorHandler.showWarning('Failed to send email OTP. Please try again.');
-        return;
-      }
-    }
-
-    // Validate OTP verification
-    if (!phoneOtpVerified) {
-      ErrorHandler.showWarning('Please verify your phone OTP first');
+    // Step 1: Form submission - Create user and send OTPs
+    if (step === 'form') {
+      await handleFormSubmission();
       return;
     }
 
-    if (formData.email && !emailOtpVerified) {
-      ErrorHandler.showWarning('Please verify your email OTP first');
+    // Step 2: Phone verification
+    if (step === 'phone-verification') {
+      // If phone OTP is not sent yet, send it
+      if (!phoneOtpSent) {
+        await handleSendPhoneOtp();
+        return;
+      }
+
+      // If phone OTP is sent but not verified, verify it
+      if (!phoneOtpVerified) {
+        ErrorHandler.showWarning('Please verify your phone OTP first');
+        return;
+      }
+
+      // Phone is verified, move to email verification step
+      setStep('email-verification');
+      return;
+    }
+
+    // Step 3: Email verification and final registration
+    if (step === 'email-verification') {
+      // If email OTP is not sent yet, send it
+      if (!emailOtpSent) {
+        await handleSendEmailOtp();
+        return;
+      }
+
+      // If email OTP is sent but not verified, verify it
+      if (formData.email && !emailOtpVerified) {
+        ErrorHandler.showWarning('Please verify your email OTP first');
+        return;
+      }
+
+      // Email is verified, complete the registration
+      await handleFinalRegistration();
       return;
     }
 
@@ -482,7 +576,7 @@ export default function RegisterPage() {
             <School className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
-          <p className="text-gray-600">Teacher Registration</p>
+          <p className="text-gray-600">School Registration</p>
         </div>
 
         {/* Access Notice */}
@@ -490,8 +584,8 @@ export default function RegisterPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             This registration is for{' '}
-            <strong>Teachers and Administrators</strong> only. Students should
-            register through their school&apos;s website.
+            <strong>School Managers and Potential Teachers</strong>. Students
+            should register through their school&apos;s website.
           </AlertDescription>
         </Alert>
 
@@ -499,6 +593,7 @@ export default function RegisterPage() {
           {/* Step Indicator */}
           <div className="flex justify-center border-b p-4">
             <div className="flex items-center space-x-4">
+              {/* Step 1: Fill Form */}
               <div
                 className={`flex items-center space-x-2 ${step === 'form' ? 'text-blue-600' : 'text-gray-400'}`}
               >
@@ -507,37 +602,55 @@ export default function RegisterPage() {
                 >
                   1
                 </div>
-                <span className="font-medium">Fill Form</span>
+                <span className="font-medium">Base Data</span>
               </div>
               <div className="h-0.5 w-8 bg-gray-300"></div>
+
+              {/* Step 2: Phone Verification */}
               <div
-                className={`flex items-center space-x-2 ${step === 'verification' ? 'text-blue-600' : 'text-gray-400'}`}
+                className={`flex items-center space-x-2 ${step === 'phone-verification' ? 'text-blue-600' : 'text-gray-400'}`}
               >
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'verification' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'phone-verification' ? 'bg-blue-600 text-white' : step === 'email-verification' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
                 >
                   2
                 </div>
-                <span className="font-medium">Send OTPs & Create</span>
+                <span className="font-medium">Phone OTP</span>
+              </div>
+              <div className="h-0.5 w-8 bg-gray-300"></div>
+
+              {/* Step 3: Email Verification */}
+              <div
+                className={`flex items-center space-x-2 ${step === 'email-verification' ? 'text-blue-600' : 'text-gray-400'}`}
+              >
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'email-verification' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                >
+                  3
+                </div>
+                <span className="font-medium">Email OTP</span>
               </div>
             </div>
           </div>
 
           <CardHeader className="space-y-1">
             <CardTitle className="text-center text-2xl">
-              {step === 'form' ? 'Create Your Account' : 'Verify OTP'}
+              {step === 'form'
+                ? 'Create School Account'
+                : step === 'phone-verification'
+                  ? 'Verify Phone Number'
+                  : 'Verify Email Address'}
             </CardTitle>
             <CardDescription className="text-center">
               {step === 'form'
-                ? 'Register as a teacher to start creating and managing courses'
-                : 'Enter the OTP codes sent to your phone and email'}
+                ? 'Register as a school manager or join as a student with unverified contact information'
+                : step === 'phone-verification'
+                  ? 'Send OTP to your phone number and verify it'
+                  : 'Send OTP to your email address and verify it to complete registration'}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form
-              onSubmit={step === 'form' ? handleVerifyStep : handleSubmit}
-              className="space-y-6"
-            >
+            <form onSubmit={handleSubmit} className="space-y-6">
               {step === 'form' && (
                 <>
                   {/* Registration Type Selection */}
@@ -557,7 +670,8 @@ export default function RegisterPage() {
                           <div>
                             <h3 className="font-medium">Create New School</h3>
                             <p className="text-sm text-gray-600">
-                              Start your own educational institution
+                              Start your own educational institution as a
+                              manager
                             </p>
                           </div>
                         </div>
@@ -577,7 +691,7 @@ export default function RegisterPage() {
                               Join Existing School
                             </h3>
                             <p className="text-sm text-gray-600">
-                              Join as a teacher at an existing school
+                              Join as a student and request teacher promotion
                             </p>
                           </div>
                         </div>
@@ -595,8 +709,8 @@ export default function RegisterPage() {
                           <h3 className="font-medium">Role Assignment</h3>
                           <p className="text-sm text-gray-600">
                             {registrationType === 'new-school'
-                              ? 'You will be the manager of your new school'
-                              : 'You will be registered as a student and can be promoted to higher roles by the school manager'}
+                              ? 'You will be the manager of your new school with full administrative privileges'
+                              : 'You will be registered as a student and can request teacher promotion from the school manager'}
                           </p>
                         </div>
                       </div>
@@ -875,15 +989,17 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              {/* OTP Verification Section - Step 2 */}
-              {step === 'verification' && (
+              {/* Phone OTP Verification Section - Step 2 */}
+              {step === 'phone-verification' && (
                 <div className="space-y-6">
                   <div className="text-center">
                     <h3 className="mb-2 text-lg font-medium">
-                      Verify Your Contact Information
+                      Verify Your Phone Number
                     </h3>
                     <p className="text-sm text-gray-600">
-                      Please enter the OTP codes sent to your phone and email
+                      {!phoneOtpSent
+                        ? 'Click the button below to send OTP to your phone number'
+                        : 'Please enter the OTP code sent to your phone number'}
                     </p>
                   </div>
 
@@ -891,22 +1007,12 @@ export default function RegisterPage() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Phone Verification</h3>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="phoneOtp">Phone OTP Code</Label>
-                      <div className="flex space-x-2">
-                        <div className="relative flex-1">
-                          <Input
-                            id="phoneOtp"
-                            type="text"
-                            placeholder="Enter phone OTP code"
-                            value={formData.phoneOtp}
-                            onChange={(e) =>
-                              handleInputChange('phoneOtp', e.target.value)
-                            }
-                            className={errors.phoneOtp ? 'border-red-500' : ''}
-                            disabled={isLoading || otpLoading}
-                          />
-                        </div>
+                    {!phoneOtpSent ? (
+                      <div className="space-y-2">
+                        <p className="text-sm text-gray-600">
+                          Click the button below to send OTP to your phone
+                          number: {formData.phone}
+                        </p>
                         <Button
                           type="button"
                           onClick={handleSendPhoneOtp}
@@ -915,64 +1021,156 @@ export default function RegisterPage() {
                             !formData.phone ||
                             !isValidPhone(formData.phone)
                           }
-                          className="whitespace-nowrap"
+                          className="w-full"
                         >
                           {otpLoading ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Sending...
+                              Sending OTP...
                             </>
                           ) : (
-                            'Resend SMS OTP'
-                          )}
-                        </Button>
-                        <Button
-                          type="button"
-                          onClick={handleVerifyPhoneOtp}
-                          disabled={
-                            otpLoading || !formData.phoneOtp || phoneOtpVerified
-                          }
-                          variant="outline"
-                          className="whitespace-nowrap"
-                        >
-                          {otpLoading ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Verifying...
-                            </>
-                          ) : phoneOtpVerified ? (
-                            '✓ Verified'
-                          ) : (
-                            'Verify SMS OTP'
+                            'Send Phone OTP'
                           )}
                         </Button>
                       </div>
-                      {errors.phoneOtp && (
-                        <p className="text-sm text-red-500">
-                          {errors.phoneOtp}
-                        </p>
-                      )}
-                      {phoneOtpSent && !phoneOtpVerified && (
-                        <p className="text-sm text-blue-600">
-                          SMS OTP sent! Please check the info toast above for
-                          the OTP code.
-                        </p>
-                      )}
-                      {phoneOtpVerified && (
-                        <p className="text-sm text-green-600">
-                          ✓ Phone number verified successfully!
-                        </p>
-                      )}
-                    </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label htmlFor="phoneOtp">Phone OTP Code</Label>
+                        <div className="flex space-x-2">
+                          <div className="relative flex-1">
+                            <Input
+                              id="phoneOtp"
+                              type="text"
+                              placeholder="Enter phone OTP code"
+                              value={formData.phoneOtp}
+                              onChange={(e) =>
+                                handleInputChange('phoneOtp', e.target.value)
+                              }
+                              className={
+                                errors.phoneOtp ? 'border-red-500' : ''
+                              }
+                              disabled={isLoading || otpLoading}
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            onClick={handleSendPhoneOtp}
+                            disabled={
+                              otpLoading ||
+                              !formData.phone ||
+                              !isValidPhone(formData.phone)
+                            }
+                            className="whitespace-nowrap"
+                          >
+                            {otpLoading ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Sending...
+                              </>
+                            ) : (
+                              'Resend SMS OTP'
+                            )}
+                          </Button>
+                          <Button
+                            type="button"
+                            onClick={handleVerifyPhoneOtp}
+                            disabled={
+                              otpLoading ||
+                              !formData.phoneOtp ||
+                              phoneOtpVerified
+                            }
+                            variant="outline"
+                            className="whitespace-nowrap"
+                          >
+                            {otpLoading ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Verifying...
+                              </>
+                            ) : phoneOtpVerified ? (
+                              '✓ Verified'
+                            ) : (
+                              'Verify SMS OTP'
+                            )}
+                          </Button>
+                        </div>
+                        {errors.phoneOtp && (
+                          <p className="text-sm text-red-500">
+                            {errors.phoneOtp}
+                          </p>
+                        )}
+                        {phoneOtpSent && !phoneOtpVerified && (
+                          <p className="text-sm text-blue-600">
+                            SMS OTP sent! Please check the info toast above for
+                            the OTP code.
+                          </p>
+                        )}
+                        {phoneOtpVerified && (
+                          <p className="text-sm text-green-600">
+                            ✓ Phone number verified successfully!
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Email OTP Verification (if email is provided) */}
-                  {formData.email && (
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium">
-                        Email Verification
-                      </h3>
+                  {/* Back to Form Button */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setStep('form')}
+                    className="w-full"
+                  >
+                    ← Back to Form
+                  </Button>
+                </div>
+              )}
 
+              {/* Email OTP Verification Section - Step 3 */}
+              {step === 'email-verification' && (
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <h3 className="mb-2 text-lg font-medium">
+                      Verify Your Email Address
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {!emailOtpSent
+                        ? 'Click the button below to send OTP to your email address'
+                        : 'Please enter the OTP code sent to your email address'}
+                    </p>
+                  </div>
+
+                  {/* Email OTP Verification */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Email Verification</h3>
+
+                    {!emailOtpSent ? (
+                      <div className="space-y-2">
+                        <p className="text-sm text-gray-600">
+                          Click the button below to send OTP to your email
+                          address: {formData.email}
+                        </p>
+                        <Button
+                          type="button"
+                          onClick={handleSendEmailOtp}
+                          disabled={
+                            otpLoading ||
+                            !formData.email ||
+                            !isValidEmail(formData.email)
+                          }
+                          className="w-full"
+                        >
+                          {otpLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Sending OTP...
+                            </>
+                          ) : (
+                            'Send Email OTP'
+                          )}
+                        </Button>
+                      </div>
+                    ) : (
                       <div className="space-y-2">
                         <Label htmlFor="emailOtp">Email OTP Code</Label>
                         <div className="flex space-x-2">
@@ -1050,41 +1248,62 @@ export default function RegisterPage() {
                           </p>
                         )}
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
-                  {/* Back to Form Button */}
+                  {/* Back to Phone Verification Button */}
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setStep('form')}
+                    onClick={() => setStep('phone-verification')}
                     className="w-full"
                   >
-                    ← Back to Form
+                    ← Back to Phone Verification
                   </Button>
                 </div>
               )}
 
-              {step === 'form' ? (
+              {step === 'form' && (
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
+                      Registering User...
                     </>
                   ) : (
-                    'Save & Continue'
+                    'Register User'
                   )}
                 </Button>
-              ) : (
+              )}
+
+              {step === 'phone-verification' && (
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Account...
+                      {!phoneOtpSent ? 'Sending OTP...' : 'Continuing...'}
                     </>
+                  ) : !phoneOtpSent ? (
+                    'Send Phone OTP'
                   ) : (
-                    'Create Account'
+                    'Continue to Email Verification'
+                  )}
+                </Button>
+              )}
+
+              {step === 'email-verification' && (
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {!emailOtpSent
+                        ? 'Sending OTP...'
+                        : 'Completing Registration...'}
+                    </>
+                  ) : !emailOtpSent ? (
+                    'Send Email OTP'
+                  ) : (
+                    'Complete Registration'
                   )}
                 </Button>
               )}

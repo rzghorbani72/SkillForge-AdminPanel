@@ -1,18 +1,25 @@
 import {
   AlertTriangle,
   ArrowRight,
+  BarChart3,
+  BookOpen,
   Check,
   ChevronLeft,
   ChevronRight,
   CircuitBoardIcon,
   Command,
   CreditCard,
+  DollarSign,
   File,
   FileText,
+  Folder,
+  GraduationCap,
   HelpCircle,
   Image,
   Laptop,
+  Layers,
   LayoutDashboardIcon,
+  List,
   Loader2,
   LucideIcon,
   LogOut,
@@ -20,13 +27,18 @@ import {
   LucideShoppingBag,
   Moon,
   MoreVertical,
+  Palette,
   Pizza,
+  Play,
   Plus,
   Settings,
+  Shield,
   SunMedium,
   Trash,
+  TrendingUp,
   Twitter,
   User,
+  Users,
   UserCircle2Icon,
   UserPen,
   TvMinimalPlay,
@@ -36,7 +48,9 @@ import {
   X
 } from 'lucide-react';
 export type IconType =
-  | 'media'
+  | 'dashboard'
+  | 'logo'
+  | 'logout'
   | 'article'
   | 'course'
   | 'school'
@@ -67,7 +81,22 @@ export type IconType =
   | 'moon'
   | 'laptop'
   | 'twitter'
-  | 'check';
+  | 'check'
+  | 'palette'
+  | 'shield'
+  | 'list'
+  | 'plus'
+  | 'bookOpen'
+  | 'folder'
+  | 'play'
+  | 'layers'
+  | 'image'
+  | 'users'
+  | 'graduationCap'
+  | 'trendingUp'
+  | 'barChart'
+  | 'dollarSign'
+  | 'creditCard';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -104,5 +133,20 @@ export const Icons = {
   moon: Moon,
   laptop: Laptop,
   twitter: Twitter,
-  check: Check
+  check: Check,
+  palette: Palette,
+  shield: Shield,
+  list: List,
+  plus: Plus,
+  bookOpen: BookOpen,
+  folder: Folder,
+  play: Play,
+  layers: Layers,
+  image: Image,
+  users: Users,
+  graduationCap: GraduationCap,
+  trendingUp: TrendingUp,
+  barChart: BarChart3,
+  dollarSign: DollarSign,
+  creditCard: CreditCard
 };
