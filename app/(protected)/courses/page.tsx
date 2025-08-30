@@ -71,11 +71,33 @@ export default function CoursesPage() {
     try {
       setIsLoading(true);
       const response = await apiClient.getCourses();
-      const data = response.data as { data: Course[] };
-      setCourses(data.data || []);
+      console.log('Courses response:', response);
+
+      // Handle different possible response structures
+      let coursesData: Course[] = [];
+      const responseData = response.data as any;
+
+      if (responseData && Array.isArray(responseData)) {
+        coursesData = responseData;
+      } else if (
+        responseData &&
+        responseData.data &&
+        Array.isArray(responseData.data)
+      ) {
+        coursesData = responseData.data;
+      } else if (
+        responseData &&
+        responseData.courses &&
+        Array.isArray(responseData.courses)
+      ) {
+        coursesData = responseData.courses;
+      }
+
+      setCourses(coursesData);
     } catch (error) {
       console.error('Error fetching courses:', error);
       ErrorHandler.handleApiError(error);
+      setCourses([]); // Set empty array on error
     } finally {
       setIsLoading(false);
     }
@@ -84,10 +106,26 @@ export default function CoursesPage() {
   const fetchCategories = async () => {
     try {
       const response = await apiClient.getCategories();
-      const data = response.data as Category[];
-      setCategories(data || []);
+      console.log('Categories response:', response);
+
+      // Handle different possible response structures
+      let categoriesData: Category[] = [];
+      const responseData = response.data as any;
+
+      if (responseData && Array.isArray(responseData)) {
+        categoriesData = responseData;
+      } else if (
+        responseData &&
+        responseData.data &&
+        Array.isArray(responseData.data)
+      ) {
+        categoriesData = responseData.data;
+      }
+
+      setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching categories:', error);
+      setCategories([]); // Set empty array on error
     }
   };
 
@@ -193,7 +231,11 @@ export default function CoursesPage() {
     }
   };
 
-  const filteredCourses = courses.filter((course) => {
+  // Ensure courses and categories are always arrays
+  const safeCourses = Array.isArray(courses) ? courses : [];
+  const safeCategories = Array.isArray(categories) ? categories : [];
+
+  const filteredCourses = safeCourses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -212,6 +254,16 @@ export default function CoursesPage() {
     );
   });
 
+  // Debug logging
+  console.log('Courses data state:', {
+    courses: courses,
+    safeCourses: safeCourses,
+    categories: categories,
+    safeCategories: safeCategories,
+    filteredCourses: filteredCourses,
+    searchTerm: searchTerm
+  });
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'BEGINNER':
@@ -224,6 +276,19 @@ export default function CoursesPage() {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
+            <p className="mt-2 text-sm text-gray-600">Loading courses...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -300,7 +365,7 @@ export default function CoursesPage() {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((category) => (
+                      {safeCategories.map((category) => (
                         <SelectItem
                           key={category.id}
                           value={category.id.toString()}
@@ -416,7 +481,7 @@ export default function CoursesPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
+            {safeCategories.map((category) => (
               <SelectItem key={category.id} value={category.id.toString()}>
                 {category.name}
               </SelectItem>
@@ -672,7 +737,7 @@ export default function CoursesPage() {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
+                    {safeCategories.map((category) => (
                       <SelectItem
                         key={category.id}
                         value={category.id.toString()}

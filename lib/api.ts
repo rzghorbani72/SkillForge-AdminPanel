@@ -380,7 +380,12 @@ class ApiClient {
   async createCategory(categoryData: {
     name: string;
     description?: string;
-    type?: 'COURSE' | 'LESSON';
+    type?: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS';
+    parent_id?: number;
+    icon?: string;
+    color?: string;
+    sort_order?: number;
+    is_active?: boolean;
   }) {
     return this.request('/categories', {
       method: 'POST',
@@ -388,7 +393,19 @@ class ApiClient {
     });
   }
 
-  async updateCategory(id: number, categoryData: unknown) {
+  async updateCategory(
+    id: number,
+    categoryData: {
+      name?: string;
+      description?: string;
+      type?: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS';
+      parent_id?: number;
+      icon?: string;
+      color?: string;
+      sort_order?: number;
+      is_active?: boolean;
+    }
+  ) {
     return this.request(`/categories/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(categoryData)

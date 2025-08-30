@@ -160,7 +160,7 @@ export interface Category {
   id: number;
   name: string;
   description?: string;
-  type: 'COURSE' | 'LESSON';
+  type: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS';
   parent_id?: number;
   is_active: boolean;
   created_at: string;
@@ -343,7 +343,7 @@ export interface CreateSeasonData {
 export interface CreateCategoryData {
   name: string;
   description?: string;
-  type?: 'COURSE' | 'LESSON';
+  type?: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS' | 'ROOT' | 'LESSON';
 }
 
 export interface UpdateProfileData {
@@ -395,4 +395,4 @@ export interface FileUploadResponse {
   mime_type: string;
   size: number;
   type: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT';
-} 
+}

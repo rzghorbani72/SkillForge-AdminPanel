@@ -176,7 +176,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Course Categories',
-        href: '/courses/categories',
+        href: '/categories',
         icon: 'folder' as IconType,
         label: 'course-categories'
       }
@@ -205,6 +205,32 @@ export const navItems: NavItem[] = [
         href: '/content/media',
         icon: 'image' as IconType,
         label: 'media-library'
+      }
+    ]
+  },
+  {
+    title: 'Categories',
+    href: '/categories',
+    icon: 'folder' as IconType,
+    label: 'categories',
+    children: [
+      {
+        title: 'All Categories',
+        href: '/categories',
+        icon: 'list' as IconType,
+        label: 'all-categories'
+      },
+      {
+        title: 'Course Categories',
+        href: '/categories?type=COURSE',
+        icon: 'bookOpen' as IconType,
+        label: 'course-categories'
+      },
+      {
+        title: 'Content Categories',
+        href: '/categories?type=ARTICLE',
+        icon: 'fileText' as IconType,
+        label: 'content-categories'
       }
     ]
   },
