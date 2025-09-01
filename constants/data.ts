@@ -209,6 +209,38 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'Users',
+    href: '/users',
+    icon: 'users' as IconType,
+    label: 'users',
+    children: [
+      {
+        title: 'All Users',
+        href: '/users',
+        icon: 'list' as IconType,
+        label: 'all-users'
+      },
+      {
+        title: 'Students',
+        href: '/users?role=STUDENT',
+        icon: 'user' as IconType,
+        label: 'students'
+      },
+      {
+        title: 'Teachers',
+        href: '/users?role=TEACHER',
+        icon: 'graduationCap' as IconType,
+        label: 'teachers'
+      },
+      {
+        title: 'Managers',
+        href: '/users?role=MANAGER',
+        icon: 'shield' as IconType,
+        label: 'managers'
+      }
+    ]
+  },
+  {
     title: 'Categories',
     href: '/categories',
     icon: 'folder' as IconType,

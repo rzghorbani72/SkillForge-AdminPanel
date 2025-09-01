@@ -508,8 +508,28 @@ class ApiClient {
   }
 
   // Users endpoints
-  async getUsers() {
-    return this.request('/users');
+  async getUsers(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+    school_id?: number;
+    status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+  }) {
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.role) queryParams.append('role', params.role);
+    if (params?.school_id)
+      queryParams.append('school_id', params.school_id.toString());
+    if (params?.status) queryParams.append('status', params.status);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/users?${queryString}` : '/users';
+
+    return this.request(url);
   }
 
   async getUser(id: number) {
