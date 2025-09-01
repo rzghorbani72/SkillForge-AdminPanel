@@ -41,6 +41,7 @@ export default function SchoolsPage() {
   const [formData, setFormData] = useState({
     name: '',
     private_domain: '',
+    public_domain: '',
     description: ''
   });
 
@@ -59,7 +60,12 @@ export default function SchoolsPage() {
 
   // Reset form state
   const resetFormState = () => {
-    setFormData({ name: '', private_domain: '', description: '' });
+    setFormData({
+      name: '',
+      private_domain: '',
+      public_domain: '',
+      description: ''
+    });
     setDomainValidation({ isValid: false, message: '' });
     setDomainAvailability({
       isChecking: false,
@@ -72,11 +78,18 @@ export default function SchoolsPage() {
     fetchSchools();
   }, []);
 
+  // Monitor formData changes for validation
+  useEffect(() => {
+    // Only validate if we have a domain and a selected school (editing mode)
+    if (formData.private_domain && selectedSchool && isEditDialogOpen) {
+      validateDomain(formData.private_domain);
+    }
+  }, [formData.private_domain, selectedSchool, isEditDialogOpen]);
+
   const fetchSchools = async () => {
     try {
       setIsLoading(true);
       const response = await apiClient.getMySchools();
-      console.log('Schools response:', response);
 
       // Handle different possible response structures
       let schoolsData: School[] = [];
@@ -110,10 +123,15 @@ export default function SchoolsPage() {
 
   const handleCreateSchool = async () => {
     try {
-      console.log('Creating school with data:', formData);
+      if (!formData.name) {
+        ErrorHandler.showWarning('School name is required');
+        return;
+      }
 
-      if (!formData.name || !formData.private_domain) {
-        ErrorHandler.showWarning('Please fill in all required fields');
+      if (!formData.private_domain) {
+        ErrorHandler.showWarning(
+          'Domain name is required. Each school must have a unique domain name.'
+        );
         return;
       }
 
@@ -139,19 +157,35 @@ export default function SchoolsPage() {
         return;
       }
 
-      // Check if domain is available
+      // Check if domain is available and unique
       if (!domainAvailability.isAvailable) {
-        ErrorHandler.showWarning('Please choose a different domain name');
+        ErrorHandler.showWarning(
+          'Please choose a unique domain name that is not already taken'
+        );
+        return;
+      }
+
+      // Double-check uniqueness against existing schools (for create, check all schools)
+      const isDomainTaken = schools.some((school) => {
+        const schoolDomainPart = extractDomainPart(
+          school.domain?.private_address || ''
+        );
+        const inputDomainPart = extractDomainPart(formData.private_domain);
+        return schoolDomainPart === inputDomainPart;
+      });
+      if (isDomainTaken) {
+        ErrorHandler.showWarning(
+          'This domain name is already taken by another school. Please choose a unique domain name.'
+        );
         return;
       }
 
       const schoolData = {
         name: formData.name,
-        private_domain: generateSlug(formData.private_domain),
+        private_domain: `${formatDomain(formData.private_domain)}.skillforge.com`,
         description: formData.description
       };
 
-      console.log('Sending school data:', schoolData);
       await apiClient.createSchool(schoolData);
       ErrorHandler.showSuccess('School created successfully');
       setIsCreateDialogOpen(false);
@@ -165,8 +199,6 @@ export default function SchoolsPage() {
 
   const handleUpdateSchool = async () => {
     try {
-      console.log('Updating school with data:', formData);
-
       if (!selectedSchool) {
         console.error('No school selected for update');
         return;
@@ -200,12 +232,29 @@ export default function SchoolsPage() {
         return;
       }
 
-      // Check if domain is available (for updates, allow keeping the same domain)
-      if (
-        !domainAvailability.isAvailable &&
-        formData.private_domain !== selectedSchool.slug
-      ) {
-        ErrorHandler.showWarning('Please choose a different domain name');
+      // Check if domain is available and unique
+      if (!domainAvailability.isAvailable) {
+        ErrorHandler.showWarning(
+          'Please choose a unique domain name that is not already taken'
+        );
+        return;
+      }
+
+      // Double-check uniqueness against existing schools (excluding current school)
+      const isDomainTaken = schools.some((school) => {
+        const schoolDomainPart = extractDomainPart(
+          school.domain?.private_address || ''
+        );
+        const inputDomainPart = extractDomainPart(formData.private_domain);
+        return (
+          schoolDomainPart === inputDomainPart &&
+          school.id !== selectedSchool.id
+        );
+      });
+      if (isDomainTaken) {
+        ErrorHandler.showWarning(
+          'This domain name is already taken by another school. Please choose a unique domain name.'
+        );
         return;
       }
 
@@ -216,11 +265,10 @@ export default function SchoolsPage() {
       } = {};
       if (formData.name) updateData.name = formData.name;
       if (formData.private_domain)
-        updateData.private_domain = generateSlug(formData.private_domain);
+        updateData.private_domain = `${formatDomain(formData.private_domain)}.skillforge.com`;
       if (formData.description !== undefined)
         updateData.description = formData.description;
 
-      console.log('Sending update data:', updateData);
       await apiClient.updateSchool(updateData);
       ErrorHandler.showSuccess('School updated successfully');
       setIsEditDialogOpen(false);
@@ -242,13 +290,32 @@ export default function SchoolsPage() {
       school.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Debug logging
-  console.log('Schools data state:', {
-    schools: schools,
-    safeSchools: safeSchools,
-    filteredSchools: filteredSchools,
-    searchTerm: searchTerm
-  });
+  // Extract and format the first part of domain (before the dot)
+  const extractDomainPart = (domain: string): string => {
+    // Remove .skillforge.com or any domain suffix
+    const cleanDomain = domain
+      .replace(/\.skillforge\.com$/i, '')
+      .replace(/\./g, '');
+
+    return cleanDomain
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+  };
+
+  // Convert domain to standard format (lowercase, kebab-case)
+  const formatDomain = (domain: string): string => {
+    return domain
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+  };
 
   // Domain validation function
   const validateDomain = (domain: string) => {
@@ -262,12 +329,13 @@ export default function SchoolsPage() {
       return;
     }
 
-    const domainRegex = /^[a-z0-9-]+$/;
-    if (!domainRegex.test(domain)) {
+    // Format the domain to standard format
+    const formattedDomain = formatDomain(domain);
+
+    if (formattedDomain.length < 5) {
       setDomainValidation({
         isValid: false,
-        message:
-          'Domain can only contain lowercase letters, numbers, and hyphens'
+        message: 'Domain must be at least 5 characters long'
       });
       setDomainAvailability({
         isChecking: false,
@@ -277,20 +345,7 @@ export default function SchoolsPage() {
       return;
     }
 
-    if (domain.length < 3) {
-      setDomainValidation({
-        isValid: false,
-        message: 'Domain must be at least 3 characters long'
-      });
-      setDomainAvailability({
-        isChecking: false,
-        isAvailable: false,
-        message: ''
-      });
-      return;
-    }
-
-    if (domain.length > 50) {
+    if (formattedDomain.length > 50) {
       setDomainValidation({
         isValid: false,
         message: 'Domain must be less than 50 characters'
@@ -302,39 +357,57 @@ export default function SchoolsPage() {
       });
       return;
     }
-
-    setDomainValidation({ isValid: true, message: 'Domain name is valid' });
-
-    // Check domain availability
-    checkDomainAvailability(domain);
+    // Check domain availability using formatted domain
+    checkDomainAvailability(formattedDomain);
   };
 
-  // Check if domain is already taken
+  // Check if domain is already taken by other schools
+  // When editing: exclude the current school from the check
+  // When creating: check against all existing schools
   const checkDomainAvailability = (domain: string) => {
+    // Prevent validation if domain is empty
+    if (!domain) {
+      setDomainAvailability({
+        isChecking: false,
+        isAvailable: false,
+        message: ''
+      });
+      return;
+    }
+
     setDomainAvailability({
       isChecking: true,
       isAvailable: false,
       message: 'Checking availability...'
     });
 
-    // Check if domain already exists in current schools
-    const isTaken = schools.some(
-      (school) =>
-        school.slug === domain &&
-        (!selectedSchool || school.id !== selectedSchool.id)
-    );
+    // Check if domain already exists in other schools (exclude current school when editing)
+    const isTaken = schools.some((school) => {
+      const schoolDomainPart = extractDomainPart(
+        school.domain?.private_address || ''
+      );
+      const inputDomainPart = extractDomainPart(domain);
+      return (
+        schoolDomainPart === inputDomainPart &&
+        school.id !== (selectedSchool?.id || 0)
+      );
+    });
 
-    if (isTaken) {
-      setDomainAvailability({
-        isChecking: false,
-        isAvailable: false,
-        message: 'This domain name is already taken'
-      });
-    } else {
+    if (
+      selectedSchool &&
+      extractDomainPart(domain) ===
+        extractDomainPart(selectedSchool.domain?.private_address || '')
+    ) {
       setDomainAvailability({
         isChecking: false,
         isAvailable: true,
-        message: 'Domain name is available'
+        message: 'Current domain name (unique)'
+      });
+    } else if (isTaken) {
+      setDomainAvailability({
+        isChecking: false,
+        isAvailable: false,
+        message: 'This domain name is already taken by another school'
       });
     }
   };
@@ -387,18 +460,19 @@ export default function SchoolsPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="domain">Domain Name *</Label>
+                <Label htmlFor="domain">Domain Name * (Must be unique)</Label>
                 <Input
                   id="domain"
                   value={formData.private_domain}
                   onChange={(e) => {
+                    const formattedValue = formatDomain(e.target.value);
                     setFormData({
                       ...formData,
-                      private_domain: e.target.value
+                      private_domain: formattedValue
                     });
-                    validateDomain(e.target.value);
+                    validateDomain(formattedValue);
                   }}
-                  placeholder="Enter unique domain name (e.g., my-school)"
+                  placeholder="Enter domain name (auto-formatted to lowercase, kebab-case)"
                   className={
                     domainValidation.message && !domainValidation.isValid
                       ? 'border-red-500'
@@ -412,6 +486,9 @@ export default function SchoolsPage() {
                   {formData.private_domain
                     ? `${formData.private_domain}.skillforge.com`
                     : 'your-domain.skillforge.com'}
+                </p>
+                <p className="text-xs font-medium text-orange-600">
+                  ⚠️ Each school must have a unique domain name
                 </p>
                 {domainValidation.message && (
                   <p
@@ -433,6 +510,34 @@ export default function SchoolsPage() {
                     {domainAvailability.message}
                   </p>
                 )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="public-domain">Private Domain</Label>
+                <Input
+                  id="public-domain"
+                  value={formData.private_domain}
+                  onChange={(e) =>
+                    setFormData({ ...formData, private_domain: e.target.value })
+                  }
+                  placeholder="Enter private domain (e.g., my-school)"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional custom domain for your school
+                </p>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="public-domain">Public Domain (Optional)</Label>
+                <Input
+                  id="public-domain"
+                  value={formData.public_domain}
+                  onChange={(e) =>
+                    setFormData({ ...formData, public_domain: e.target.value })
+                  }
+                  placeholder="Enter public domain (e.g., www.myschool.com)"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional custom domain for your school
+                </p>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
@@ -548,7 +653,8 @@ export default function SchoolsPage() {
                       <div>
                         <CardTitle className="text-lg">{school.name}</CardTitle>
                         <CardDescription className="text-sm">
-                          {school.slug}.skillforge.com
+                          {school.domain?.private_address ||
+                            `${school.slug}.skillforge.com`}
                         </CardDescription>
                       </div>
                     </div>
@@ -603,13 +709,16 @@ export default function SchoolsPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          setSelectedSchool(school);
-                          setFormData({
+                          const newFormData = {
                             name: school.name,
-                            private_domain: school.slug,
+                            private_domain: extractDomainPart(
+                              school.domain?.private_address || ''
+                            ),
+                            public_domain: school.domain?.public_address || '',
                             description: school.description || ''
-                          });
-                          validateDomain(school.slug);
+                          };
+                          setSelectedSchool(school);
+                          setFormData(newFormData);
                           setIsEditDialogOpen(true);
                         }}
                       >
@@ -651,15 +760,18 @@ export default function SchoolsPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-domain">Domain Name *</Label>
+              <Label htmlFor="edit-domain">
+                Domain Name * (Must be unique)
+              </Label>
               <Input
                 id="edit-domain"
                 value={formData.private_domain}
                 onChange={(e) => {
-                  setFormData({ ...formData, private_domain: e.target.value });
-                  validateDomain(e.target.value);
+                  const formattedValue = formatDomain(e.target.value);
+                  setFormData({ ...formData, private_domain: formattedValue });
+                  validateDomain(formattedValue);
                 }}
-                placeholder={selectedSchool?.slug || 'Enter unique domain name'}
+                placeholder="Enter domain name (auto-formatted to lowercase, kebab-case)"
                 required
                 className={
                   domainValidation.message && !domainValidation.isValid
@@ -697,6 +809,22 @@ export default function SchoolsPage() {
               )}
             </div>
             <div className="grid gap-2">
+              <Label htmlFor="edit-public-domain">
+                Public Domain (Optional)
+              </Label>
+              <Input
+                id="edit-public-domain"
+                value={formData.public_domain}
+                onChange={(e) =>
+                  setFormData({ ...formData, public_domain: e.target.value })
+                }
+                placeholder="Enter public domain (e.g., www.myschool.com)"
+              />
+              <p className="text-xs text-muted-foreground">
+                Optional custom domain for your school
+              </p>
+            </div>
+            <div className="grid gap-2">
               <Label htmlFor="edit-description">Description</Label>
               <Textarea
                 id="edit-description"
@@ -725,8 +853,7 @@ export default function SchoolsPage() {
                 !formData.name ||
                 !formData.private_domain ||
                 !domainValidation.isValid ||
-                (!domainAvailability.isAvailable &&
-                  formData.private_domain !== selectedSchool?.slug) ||
+                !domainAvailability.isAvailable ||
                 domainAvailability.isChecking
               }
             >
