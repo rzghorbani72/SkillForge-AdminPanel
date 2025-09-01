@@ -32,8 +32,10 @@ import { apiClient } from '@/lib/api';
 import { Lesson, Season, Media, Course, Category } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import ContentCreationHub from '@/components/content/content-creation-hub';
+import { useSchool } from '@/contexts/SchoolContext';
 
 export default function ContentPage() {
+  const { selectedSchool } = useSchool();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [media, setMedia] = useState<Media[]>([]);
@@ -43,61 +45,78 @@ export default function ContentPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetchContent();
-  }, []);
+    if (selectedSchool) {
+      fetchContent();
+    }
+  }, [selectedSchool]);
 
   const fetchContent = async () => {
+    if (!selectedSchool) return;
+
     try {
       setIsLoading(true);
 
-      // Fetch courses
+      // Fetch courses for the selected school
       try {
         const coursesResponse = await apiClient.getCourses();
-        const coursesData = coursesResponse.data as any;
-        setCourses(Array.isArray(coursesData) ? coursesData : []);
+        if (coursesResponse.status === 'ok' && coursesResponse.data) {
+          // Filter courses by selected school
+          const schoolCourses = coursesResponse.data.filter(
+            (course: Course) => course.school_id === selectedSchool.id
+          );
+          setCourses(schoolCourses);
+        }
       } catch (error) {
         console.error('Error fetching courses:', error);
         setCourses([]);
       }
 
-      // Fetch categories
+      // Fetch categories for the selected school
       try {
         const categoriesResponse = await apiClient.getCategories();
-        const categoriesData = categoriesResponse.data as any;
-        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+        if (categoriesResponse.status === 'ok' && categoriesResponse.data) {
+          // Filter categories by selected school
+          const schoolCategories = categoriesResponse.data.filter(
+            (category: Category) => category.school_id === selectedSchool.id
+          );
+          setCategories(schoolCategories);
+        }
       } catch (error) {
         console.error('Error fetching categories:', error);
         setCategories([]);
       }
 
-      // Fetch lessons
+      // Fetch other content types for the selected school
       try {
-        const lessonsResponse = await apiClient.getLessons();
-        const lessonsData = lessonsResponse.data as any;
-        setLessons(Array.isArray(lessonsData) ? lessonsData : []);
-      } catch (error) {
-        console.error('Error fetching lessons:', error);
-        setLessons([]);
-      }
+        const [lessonsResponse, seasonsResponse, mediaResponse] =
+          await Promise.all([
+            apiClient.getLessons(),
+            apiClient.getSeasons(),
+            apiClient.getMedia()
+          ]);
 
-      // Fetch seasons
-      try {
-        const seasonsResponse = await apiClient.getSeasons();
-        const seasonsData = seasonsResponse.data as any;
-        setSeasons(Array.isArray(seasonsData) ? seasonsData : []);
-      } catch (error) {
-        console.error('Error fetching seasons:', error);
-        setSeasons([]);
-      }
+        if (lessonsResponse.status === 'ok' && lessonsResponse.data) {
+          const schoolLessons = lessonsResponse.data.filter(
+            (lesson: Lesson) => lesson.school_id === selectedSchool.id
+          );
+          setLessons(schoolLessons);
+        }
 
-      // Fetch media
-      try {
-        const mediaResponse = await apiClient.getMedia();
-        const mediaData = mediaResponse.data as any;
-        setMedia(Array.isArray(mediaData) ? mediaData : []);
+        if (seasonsResponse.status === 'ok' && seasonsResponse.data) {
+          const schoolSeasons = seasonsResponse.data.filter(
+            (season: Season) => season.school_id === selectedSchool.id
+          );
+          setSeasons(schoolSeasons);
+        }
+
+        if (mediaResponse.status === 'ok' && mediaResponse.data) {
+          const schoolMedia = mediaResponse.data.filter(
+            (item: Media) => item.school_id === selectedSchool.id
+          );
+          setMedia(schoolMedia);
+        }
       } catch (error) {
-        console.error('Error fetching media:', error);
-        setMedia([]);
+        console.error('Error fetching content:', error);
       }
     } catch (error) {
       console.error('Error fetching content:', error);
@@ -107,39 +126,42 @@ export default function ContentPage() {
     }
   };
 
-  const getMediaIcon = (type: string) => {
-    switch (type) {
-      case 'VIDEO':
-        return Video;
-      case 'AUDIO':
-        return Music;
-      case 'IMAGE':
-        return Image;
-      default:
-        return File;
-    }
-  };
+  // Filter content based on search term
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const getMediaTypeColor = (type: string) => {
-    switch (type) {
-      case 'VIDEO':
-        return 'bg-red-100 text-red-800';
-      case 'AUDIO':
-        return 'bg-blue-100 text-blue-800';
-      case 'IMAGE':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const filteredLessons = lessons.filter(
+    (lesson) =>
+      lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lesson.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  if (isLoading) {
+  const filteredSeasons = seasons.filter(
+    (season) =>
+      season.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      season.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredMedia = media.filter(
+    (item) =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (!selectedSchool) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading content...</p>
+            <h2 className="text-2xl font-semibold text-muted-foreground">
+              No School Selected
+            </h2>
+            <p className="text-muted-foreground">
+              Please select a school from the header to view content.
+            </p>
           </div>
         </div>
       </div>
@@ -155,10 +177,15 @@ export default function ContentPage() {
             Content Management
           </h1>
           <p className="text-muted-foreground">
-            Manage your lessons, seasons, and media library
+            Manage content for{' '}
+            <span className="font-semibold">{selectedSchool.name}</span>
           </p>
         </div>
         <div className="flex items-center space-x-2">
+          <Button variant="outline">
+            <Filter className="mr-2 h-4 w-4" />
+            Filter
+          </Button>
           <ContentCreationHub
             onContentCreated={fetchContent}
             courses={courses}
@@ -169,7 +196,7 @@ export default function ContentPage() {
 
       {/* Search */}
       <div className="flex items-center space-x-2">
-        <div className="relative flex-1">
+        <div className="relative max-w-sm flex-1">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search content..."
@@ -178,10 +205,6 @@ export default function ContentPage() {
             className="pl-8"
           />
         </div>
-        <Button variant="outline">
-          <Filter className="mr-2 h-4 w-4" />
-          Filters
-        </Button>
       </div>
 
       {/* Content Overview Cards */}
@@ -193,9 +216,12 @@ export default function ContentPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{courses.length}</div>
-            <p className="text-xs text-muted-foreground">Available courses</p>
+            <p className="text-xs text-muted-foreground">
+              Active courses in {selectedSchool.name}
+            </p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Lessons</CardTitle>
@@ -203,9 +229,10 @@ export default function ContentPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{lessons.length}</div>
-            <p className="text-xs text-muted-foreground">Across all courses</p>
+            <p className="text-xs text-muted-foreground">Available lessons</p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Seasons</CardTitle>
@@ -216,15 +243,16 @@ export default function ContentPage() {
             <p className="text-xs text-muted-foreground">Course modules</p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Media Files</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Media</CardTitle>
             <Image className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{media.length}</div>
             <p className="text-xs text-muted-foreground">
-              Images, videos, documents
+              Images, videos, audio, documents
             </p>
           </CardContent>
         </Card>
@@ -240,238 +268,98 @@ export default function ContentPage() {
         </TabsList>
 
         <TabsContent value="courses" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Courses</CardTitle>
-              <CardDescription>
-                All courses you've created and their current status
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {courses.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-2 text-sm font-medium">
-                      No courses found
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Create your first course to get started.
-                    </p>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredCourses.map((course) => (
+              <Card key={course.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{course.title}</CardTitle>
+                  <CardDescription className="text-sm">
+                    {course.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>{course.lessons?.length || 0} lessons</span>
+                    <span>{course.students?.length || 0} students</span>
                   </div>
-                ) : (
-                  courses.slice(0, 5).map((course) => (
-                    <div
-                      key={course.id}
-                      className="flex items-center space-x-4"
+                  <div className="mt-2 flex items-center justify-between">
+                    <Badge
+                      variant={course.is_published ? 'default' : 'secondary'}
                     >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-                        <BookOpen className="h-6 w-6" />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {course.title}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {course.short_description ||
-                            course.description?.substring(0, 100)}
-                          ...
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline">
-                          {course.lessons_count || 0} lessons
-                        </Badge>
-                        <Badge variant="outline">
-                          {course.students_count || 0} students
-                        </Badge>
-                        <Badge
-                          variant={
-                            course.is_published ? 'default' : 'secondary'
-                          }
-                        >
-                          {course.is_published ? 'Published' : 'Draft'}
-                        </Badge>
-                        <Badge variant="outline">
-                          {course.is_free ? 'Free' : `$${course.price}`}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                      {course.is_published ? 'Published' : 'Draft'}
+                    </Badge>
+                    {course.price && course.price > 0 ? (
+                      <span className="font-medium">${course.price}</span>
+                    ) : (
+                      <Badge variant="outline">Free</Badge>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
 
         <TabsContent value="lessons" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Lessons</CardTitle>
-              <CardDescription>
-                Your latest lessons and their status
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {lessons.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <Play className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-2 text-sm font-medium">
-                      No lessons found
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Create your first lesson to get started.
-                    </p>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredLessons.map((lesson) => (
+              <Card key={lesson.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{lesson.title}</CardTitle>
+                  <CardDescription className="text-sm">
+                    {lesson.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>Duration: {lesson.duration || 'N/A'}</span>
+                    <span>Course: {lesson.course?.title || 'N/A'}</span>
                   </div>
-                ) : (
-                  lessons.slice(0, 5).map((lesson) => (
-                    <div
-                      key={lesson.id}
-                      className="flex items-center space-x-4"
-                    >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-                        <Play className="h-6 w-6" />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {lesson.title}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {lesson.description?.substring(0, 100)}...
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline">
-                          {lesson.duration || '0'} min
-                        </Badge>
-                        <Badge
-                          variant={
-                            lesson.is_published ? 'default' : 'secondary'
-                          }
-                        >
-                          {lesson.is_published ? 'Published' : 'Draft'}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
 
         <TabsContent value="seasons" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Seasons</CardTitle>
-              <CardDescription>
-                Organized course modules and their content
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {seasons.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <Layers className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-2 text-sm font-medium">
-                      No seasons found
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Create seasons to organize your course content.
-                    </p>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredSeasons.map((season) => (
+              <Card key={season.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{season.title}</CardTitle>
+                  <CardDescription className="text-sm">
+                    {season.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-sm text-muted-foreground">
+                    Course: {season.course?.title || 'N/A'}
                   </div>
-                ) : (
-                  seasons.slice(0, 5).map((season) => (
-                    <div
-                      key={season.id}
-                      className="flex items-center space-x-4"
-                    >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-                        <Layers className="h-6 w-6" />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {season.title}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {season.description?.substring(0, 100)}...
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline">
-                          {season.lessons?.length || 0} lessons
-                        </Badge>
-                        <Badge
-                          variant={
-                            season.is_published ? 'default' : 'secondary'
-                          }
-                        >
-                          {season.is_published ? 'Published' : 'Draft'}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
 
         <TabsContent value="media" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Media Library</CardTitle>
-              <CardDescription>
-                Images, videos, and documents for your courses
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {media.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <Image className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-2 text-sm font-medium">No media found</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Upload media files to enhance your courses.
-                    </p>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredMedia.map((item) => (
+              <Card key={item.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{item.title}</CardTitle>
+                  <CardDescription className="text-sm">
+                    {item.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>Type: {item.type}</span>
+                    <span>Size: {item.file_size || 'N/A'}</span>
                   </div>
-                ) : (
-                  media.slice(0, 5).map((item) => {
-                    const MediaIcon = getMediaIcon(item.type);
-                    return (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-4"
-                      >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-                          <MediaIcon className="h-6 w-6" />
-                        </div>
-                        <div className="flex-1 space-y-1">
-                          <p className="text-sm font-medium leading-none">
-                            {item.title}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {item.description?.substring(0, 100)}...
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Badge className={getMediaTypeColor(item.type)}>
-                            {item.type}
-                          </Badge>
-                          <Badge variant="outline">
-                            {item.size
-                              ? `${(item.size / 1024 / 1024).toFixed(1)} MB`
-                              : 'Unknown'}
-                          </Badge>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

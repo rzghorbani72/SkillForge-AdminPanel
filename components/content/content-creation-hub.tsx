@@ -3,14 +3,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import {
   Card,
   CardContent,
   CardDescription,
@@ -18,78 +10,87 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import {
-  Plus,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import {
   BookOpen,
   Play,
   Layers,
   Music,
   FileText,
-  GraduationCap,
   Video,
-  FileAudio
+  Plus
 } from 'lucide-react';
+import { Course, Category } from '@/types/api';
+import { useSchool } from '@/contexts/SchoolContext';
+
+// Import dialogs
 import CreateCourseDialog from './create-course-dialog';
 import CreateLessonDialog from './create-lesson-dialog';
 import CreateSeasonDialog from './create-season-dialog';
 import UploadAudioDialog from './upload-audio-dialog';
 import UploadDocumentDialog from './upload-document-dialog';
 import UploadVideoDialog from './upload-video-dialog';
-import { Course, Category } from '@/types/api';
 
 interface ContentCreationHubProps {
-  onContentCreated?: () => void;
-  courses?: Course[];
-  categories?: Category[];
+  onContentCreated: () => void;
+  courses: Course[];
+  categories: Category[];
 }
 
 const contentTypes = [
   {
     id: 'course',
-    title: 'Create Course',
-    description: 'Set up a new course with lessons and content',
+    title: 'Course',
+    description: 'Create a new course with lessons and content',
     icon: BookOpen,
-    color: 'bg-blue-500',
-    dialog: CreateCourseDialog
+    dialog: CreateCourseDialog,
+    color: 'bg-blue-500'
   },
   {
     id: 'lesson',
-    title: 'Create Lesson',
+    title: 'Lesson',
     description: 'Add a new lesson to an existing course',
     icon: Play,
-    color: 'bg-green-500',
-    dialog: CreateLessonDialog
+    dialog: CreateLessonDialog,
+    color: 'bg-green-500'
   },
   {
     id: 'season',
-    title: 'Create Season',
-    description: 'Organize course content into modules',
+    title: 'Season',
+    description: 'Create a new season/module for a course',
     icon: Layers,
-    color: 'bg-purple-500',
-    dialog: CreateSeasonDialog
-  },
-  {
-    id: 'video',
-    title: 'Upload Video',
-    description: 'Upload video content for courses and lessons',
-    icon: Video,
-    color: 'bg-indigo-500',
-    dialog: UploadVideoDialog
+    dialog: CreateSeasonDialog,
+    color: 'bg-purple-500'
   },
   {
     id: 'audio',
-    title: 'Upload Audio',
+    title: 'Audio',
     description: 'Upload audio files for lessons and courses',
     icon: Music,
-    color: 'bg-orange-500',
-    dialog: UploadAudioDialog
+    dialog: UploadAudioDialog,
+    color: 'bg-orange-500'
   },
   {
     id: 'document',
-    title: 'Upload Document',
-    description: 'Upload PDFs, presentations, and other documents',
+    title: 'Document',
+    description: 'Upload documents and study materials',
     icon: FileText,
-    color: 'bg-red-500',
-    dialog: UploadDocumentDialog
+    dialog: UploadDocumentDialog,
+    color: 'bg-gray-500'
+  },
+  {
+    id: 'video',
+    title: 'Video',
+    description: 'Upload video content for lessons',
+    icon: Video,
+    dialog: UploadVideoDialog,
+    color: 'bg-red-500'
   }
 ];
 
@@ -98,17 +99,23 @@ export default function ContentCreationHub({
   courses,
   categories
 }: ContentCreationHubProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { selectedSchool } = useSchool();
   const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleContentCreated = () => {
-    setIsOpen(false);
+    setIsDialogOpen(false);
     setSelectedType(null);
-    onContentCreated?.();
+    onContentCreated();
+  };
+
+  const handleTypeSelect = (typeId: string) => {
+    setSelectedType(typeId);
+    setIsDialogOpen(true);
   };
 
   const renderDialog = () => {
-    if (!selectedType) return null;
+    if (!selectedType || !selectedSchool) return null;
 
     const contentType = contentTypes.find((type) => type.id === selectedType);
     if (!contentType) return null;
@@ -121,6 +128,7 @@ export default function ContentCreationHub({
           <DialogComponent
             onCourseCreated={handleContentCreated}
             categories={categories}
+            schoolId={selectedSchool.id}
           />
         );
       case 'lesson':
@@ -128,6 +136,7 @@ export default function ContentCreationHub({
           <DialogComponent
             onLessonCreated={handleContentCreated}
             courses={courses}
+            schoolId={selectedSchool.id}
           />
         );
       case 'season':
@@ -135,6 +144,7 @@ export default function ContentCreationHub({
           <DialogComponent
             onSeasonCreated={handleContentCreated}
             courses={courses}
+            schoolId={selectedSchool.id}
           />
         );
       case 'audio':
@@ -142,6 +152,7 @@ export default function ContentCreationHub({
           <DialogComponent
             onAudioUploaded={handleContentCreated}
             courses={courses}
+            schoolId={selectedSchool.id}
           />
         );
       case 'video':
@@ -149,6 +160,7 @@ export default function ContentCreationHub({
           <DialogComponent
             onVideoUploaded={handleContentCreated}
             courses={courses}
+            schoolId={selectedSchool.id}
           />
         );
       case 'document':
@@ -156,6 +168,7 @@ export default function ContentCreationHub({
           <DialogComponent
             onDocumentUploaded={handleContentCreated}
             courses={courses}
+            schoolId={selectedSchool.id}
           />
         );
       default:
@@ -163,69 +176,59 @@ export default function ContentCreationHub({
     }
   };
 
+  if (!selectedSchool) {
+    return (
+      <Button disabled>
+        <Plus className="mr-2 h-4 w-4" />
+        Select School First
+      </Button>
+    );
+  }
+
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Content
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[800px]">
-          <DialogHeader>
-            <DialogTitle>Content Creation Hub</DialogTitle>
-            <DialogDescription>
-              Choose what type of content you want to create for your school
-            </DialogDescription>
-          </DialogHeader>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogTrigger asChild>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Content
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Create New Content</DialogTitle>
+        </DialogHeader>
 
+        {!selectedType ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {contentTypes.map((type) => {
-              const Icon = type.icon;
-              return (
-                <Card
-                  key={type.id}
-                  className="cursor-pointer transition-shadow hover:shadow-md"
-                  onClick={() => setSelectedType(type.id)}
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center space-x-2">
-                      <div className={`rounded-lg p-2 ${type.color}`}>
-                        <Icon className="h-5 w-5 text-white" />
-                      </div>
-                      <CardTitle className="text-lg">{type.title}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-sm">
-                      {type.description}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {contentTypes.map((type) => (
+              <Card
+                key={type.id}
+                className="cursor-pointer transition-shadow hover:shadow-md"
+                onClick={() => handleTypeSelect(type.id)}
+              >
+                <CardHeader className="text-center">
+                  <div
+                    className={`mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full ${type.color} text-white`}
+                  >
+                    <type.icon className="h-6 w-6" />
+                  </div>
+                  <CardTitle className="text-lg">{type.title}</CardTitle>
+                  <CardDescription className="text-sm">
+                    {type.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <Badge variant="outline" className="text-xs">
+                    {selectedSchool.name}
+                  </Badge>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-
-          {selectedType && (
-            <div className="mt-6 border-t pt-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold">
-                  {contentTypes.find((t) => t.id === selectedType)?.title}
-                </h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSelectedType(null)}
-                >
-                  Back to Options
-                </Button>
-              </div>
-              {renderDialog()}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
+        ) : (
+          <div className="mt-4">{renderDialog()}</div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
