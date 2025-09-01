@@ -56,7 +56,10 @@ export default function UnauthorizedPage() {
                 <ul className="space-y-1 text-sm text-blue-800">
                   <li>• Access your school&apos;s student dashboard</li>
                   <li>• Contact your school administrator</li>
-                  <li>• Register as a teacher if you&apos;re an educator</li>
+                  <li>
+                    • Join a school and request teacher role if you&apos;re an
+                    educator
+                  </li>
                 </ul>
               </div>
 
@@ -78,7 +81,7 @@ export default function UnauthorizedPage() {
               </Link>
 
               <Link href="/register">
-                <Button className="w-full">Register as Teacher</Button>
+                <Button className="w-full">Register your School</Button>
               </Link>
 
               <Link href="/login">

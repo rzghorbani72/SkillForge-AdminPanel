@@ -30,7 +30,8 @@ import {
   Loader2,
   AlertCircle,
   User,
-  Building
+  Building,
+  GraduationCap
 } from 'lucide-react';
 import { enhancedAuthService } from '@/lib/enhanced-auth';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
@@ -45,6 +46,7 @@ export default function RegisterPage() {
   const [registrationType, setRegistrationType] = useState<
     'new-school' | 'existing-school'
   >('new-school');
+  const [joinAsTeacher, setJoinAsTeacher] = useState(false);
 
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [emailOtpSent, setEmailOtpSent] = useState(false);
@@ -65,7 +67,8 @@ export default function RegisterPage() {
     schoolName: '',
     schoolDescription: '',
     schoolSlug: '',
-    existingSchoolId: ''
+    existingSchoolId: '',
+    teacherRequestReason: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const isSubmittingRef = useRef(false);
@@ -247,6 +250,12 @@ export default function RegisterPage() {
       if (!formData.existingSchoolId) {
         newErrors.existingSchoolId = 'Please select a school';
       }
+
+      // Validate teacher request reason if requesting teacher role
+      if (joinAsTeacher && !formData.teacherRequestReason.trim()) {
+        newErrors.teacherRequestReason =
+          'Please explain why you want to be a teacher';
+      }
     }
 
     setErrors(newErrors);
@@ -290,6 +299,12 @@ export default function RegisterPage() {
             ? parseInt(formData.existingSchoolId)
             : undefined,
         display_name: formData.name,
+        // Teacher request data (only when requesting teacher role)
+        ...(registrationType === 'existing-school' &&
+          joinAsTeacher && {
+            teacher_request: true,
+            teacher_request_reason: formData.teacherRequestReason
+          }),
         // School creation data (only when creating new school)
         ...(registrationType === 'new-school' && {
           school_name: formData.schoolName,
@@ -356,9 +371,15 @@ export default function RegisterPage() {
         );
         router.push('/dashboard');
       } else {
-        ErrorHandler.showInfo(
-          'Registration completed successfully! You have been registered as a student with verified contact information. You can request teacher promotion from the school manager.'
-        );
+        if (joinAsTeacher) {
+          ErrorHandler.showInfo(
+            'Registration completed successfully! You have been registered as a student with a pending teacher role request. The school manager will review your request and notify you of the decision.'
+          );
+        } else {
+          ErrorHandler.showInfo(
+            'Registration completed successfully! You have been registered as a student with verified contact information. You can request teacher role from the school manager later.'
+          );
+        }
         router.push('/dashboard');
       }
     } catch (error: unknown) {
@@ -691,7 +712,8 @@ export default function RegisterPage() {
                               Join Existing School
                             </h3>
                             <p className="text-sm text-gray-600">
-                              Join as a student and request teacher promotion
+                              Join as a student and optionally request teacher
+                              role
                             </p>
                           </div>
                         </div>
@@ -710,7 +732,7 @@ export default function RegisterPage() {
                           <p className="text-sm text-gray-600">
                             {registrationType === 'new-school'
                               ? 'You will be the manager of your new school with full administrative privileges'
-                              : 'You will be registered as a student and can request teacher promotion from the school manager'}
+                              : 'You will be registered as a student and can request teacher role from the school manager'}
                           </p>
                         </div>
                       </div>
@@ -984,6 +1006,59 @@ export default function RegisterPage() {
                       <p className="text-sm text-red-500">
                         {errors.existingSchoolId}
                       </p>
+                    )}
+                  </div>
+
+                  {/* Teacher Request Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        id="joinAsTeacher"
+                        checked={joinAsTeacher}
+                        onChange={(e) => setJoinAsTeacher(e.target.checked)}
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <Label
+                        htmlFor="joinAsTeacher"
+                        className="flex items-center space-x-2"
+                      >
+                        <GraduationCap className="h-4 w-4 text-blue-600" />
+                        <span>Request Teacher Role</span>
+                      </Label>
+                    </div>
+
+                    {joinAsTeacher && (
+                      <div className="space-y-2">
+                        <Label htmlFor="teacherRequestReason">
+                          Why do you want to be a teacher?
+                        </Label>
+                        <Textarea
+                          id="teacherRequestReason"
+                          placeholder="Please explain your teaching experience, qualifications, and why you want to teach at this school..."
+                          value={formData.teacherRequestReason}
+                          onChange={(e) =>
+                            handleInputChange(
+                              'teacherRequestReason',
+                              e.target.value
+                            )
+                          }
+                          disabled={isLoading}
+                          rows={4}
+                          className={
+                            errors.teacherRequestReason ? 'border-red-500' : ''
+                          }
+                        />
+                        <p className="text-xs text-gray-500">
+                          Your request will be reviewed by the school manager.
+                          You'll be notified once approved or rejected.
+                        </p>
+                        {errors.teacherRequestReason && (
+                          <p className="text-sm text-red-500">
+                            {errors.teacherRequestReason}
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

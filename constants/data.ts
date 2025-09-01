@@ -237,6 +237,12 @@ export const navItems: NavItem[] = [
         href: '/users?role=MANAGER',
         icon: 'shield' as IconType,
         label: 'managers'
+      },
+      {
+        title: 'Teacher Requests',
+        href: '/teacher-requests',
+        icon: 'graduationCap' as IconType,
+        label: 'teacher-requests'
       }
     ]
   },
