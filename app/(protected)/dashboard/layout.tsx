@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Sidebar from '@/components/layout/sidebar-old';
+import Sidebar from '@/components/layout/sidebar';
 import Header from '@/components/layout/header';
 
 export const metadata: Metadata = {
@@ -13,11 +13,10 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="w-full flex-1 overflow-hidden">
+    <div className="flex h-screen">
+      <main className="flex flex-1 flex-col overflow-hidden">
         <Header />
-        {children}
+        <div className="flex-1 overflow-auto">{children}</div>
       </main>
     </div>
   );
