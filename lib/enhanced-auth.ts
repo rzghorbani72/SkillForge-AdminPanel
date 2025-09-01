@@ -1,6 +1,7 @@
 import { apiClient } from './api';
 import { User, Profile, School } from '@/types/api';
 import { ErrorHandler } from './error-handler';
+import { isDevelopmentMode, getSchoolUrl, logDevInfo } from './dev-utils';
 
 export interface EnhancedAuthUser {
   user: User;
@@ -355,9 +356,16 @@ class EnhancedAuthService {
       this.currentUser = null;
 
       // Redirect to appropriate login page
-      const loginPath =
-        this.authType === 'public' ? '/student/login' : '/admin/login';
-      window.location.href = loginPath;
+      if (isDevelopmentMode()) {
+        // In development, redirect to localhost login
+        logDevInfo('Development mode: Redirecting to localhost login');
+        window.location.href = '/login';
+      } else {
+        // In production, use the appropriate login path
+        const loginPath =
+          this.authType === 'public' ? '/student/login' : '/admin/login';
+        window.location.href = loginPath;
+      }
     }
   }
 
@@ -368,6 +376,13 @@ class EnhancedAuthService {
 
   // Get school dashboard URL
   getSchoolDashboardUrl(school: School): string {
+    if (isDevelopmentMode()) {
+      // In development, use localhost with school slug as subdomain
+      const schoolUrl = getSchoolUrl(school.slug);
+      logDevInfo('School URL for development:', schoolUrl);
+      return schoolUrl;
+    }
+
     // If school has a public domain, use it
     if (school.domain?.public_address) {
       return `https://${school.domain.public_address}`;

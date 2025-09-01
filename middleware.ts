@@ -37,9 +37,9 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = !!token;
 
   // If user is on an auth route and is already authenticated, redirect to dashboard
-  // if (isAuthRoute && isAuthenticated) {
-  //   return NextResponse.redirect(new URL('/dashboard', request.url));
-  // }
+  if (isAuthRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 
   // If user is not authenticated and trying to access a protected route
   if (!isAuthenticated && !isPublicRoute) {
@@ -50,9 +50,9 @@ export function middleware(request: NextRequest) {
   }
 
   // If user is authenticated and trying to access the root path
-  // if (isAuthenticated && pathname === '/') {
-  //   return NextResponse.redirect(new URL('/dashboard', request.url));
-  // }
+  if (isAuthenticated && pathname === '/') {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 
   return NextResponse.next();
 }
