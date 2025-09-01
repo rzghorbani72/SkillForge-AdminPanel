@@ -1,130 +1,83 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { authService, AuthUser } from '@/lib/auth';
-import { Loader2 } from 'lucide-react';
+import { ReactNode } from 'react';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 interface AuthGuardProps {
-  children: React.ReactNode;
-  requiredRole?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'USER';
+  children: ReactNode;
+  requireAuth?: boolean;
+  requireStaff?: boolean;
+  requireStudent?: boolean;
   redirectTo?: string;
+  fallback?: ReactNode;
 }
 
-export default function AuthGuard({
+export function AuthGuard({
   children,
-  requiredRole,
-  redirectTo = '/login'
+  requireAuth = true,
+  requireStaff = false,
+  requireStudent = false,
+  redirectTo = '/login',
+  fallback
 }: AuthGuardProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [, setUser] = useState<AuthUser | null>(null);
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [hasMounted, setHasMounted] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
+  const { isLoading, isAuthenticated, isStaff, isStudent } = useAuthRedirect({
+    redirectTo,
+    requireAuth,
+    requireStaff,
+    requireStudent
+  });
 
-  // List of public routes
-  const publicRoutes = ['/', '/login', '/register'];
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  // Wait for mount to avoid hydration errors
-  if (!hasMounted) {
-    return null; // or a spinner
-  }
-
-  // If current route is public, allow access
-  if (publicRoutes.includes(pathname)) {
-    return <>{children}</>;
-  }
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const currentUser = await authService.getCurrentUser();
-
-        if (!currentUser) {
-          router.push(redirectTo);
-          return;
-        }
-
-        setUser(currentUser);
-
-        // Check if user should be redirected to school (students)
-        if (authService.shouldRedirectToSchool(currentUser)) {
-          const schools = await authService.getUserSchools();
-          if (schools.length > 0) {
-            const schoolUrl = authService.getSchoolDashboardUrl(
-              schools[0].school
-            );
-            window.location.href = schoolUrl;
-            return;
-          }
-        }
-
-        // Check role-based access
-        if (requiredRole) {
-          const userRole = currentUser.profile.role?.name;
-          const roleHierarchy = {
-            USER: 0,
-            TEACHER: 1,
-            MANAGER: 2,
-            ADMIN: 3
-          };
-
-          const userRoleLevel =
-            roleHierarchy[userRole as keyof typeof roleHierarchy] || 0;
-          const requiredRoleLevel = roleHierarchy[requiredRole];
-
-          if (userRoleLevel < requiredRoleLevel) {
-            router.push('/unauthorized');
-            return;
-          }
-        }
-
-        // Check if user can access admin panel
-        if (!authService.canAccessAdminPanel(currentUser)) {
-          const schools = await authService.getUserSchools();
-          if (schools.length > 0) {
-            const schoolUrl = authService.getSchoolDashboardUrl(
-              schools[0].school
-            );
-            window.location.href = schoolUrl;
-            return;
-          } else {
-            router.push('/unauthorized');
-            return;
-          }
-        }
-
-        setIsAuthorized(true);
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        router.push(redirectTo);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [router, redirectTo, requiredRole, pathname]);
-
+  // Show loading state
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="flex items-center space-x-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading...</span>
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          <p className="mt-2 text-sm text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
 
-  if (!isAuthorized) {
-    return null;
+  // Check if user meets requirements
+  if (requireAuth && !isAuthenticated) {
+    return fallback || null;
   }
 
+  if (requireStaff && !isStaff) {
+    return (
+      fallback || (
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Access Denied
+            </h2>
+            <p className="mt-2 text-gray-600">
+              This page is for staff members only.
+            </p>
+          </div>
+        </div>
+      )
+    );
+  }
+
+  if (requireStudent && !isStudent) {
+    return (
+      fallback || (
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Access Denied
+            </h2>
+            <p className="mt-2 text-gray-600">
+              This page is for students only.
+            </p>
+          </div>
+        </div>
+      )
+    );
+  }
+
+  // User meets all requirements, render children
   return <>{children}</>;
 }
