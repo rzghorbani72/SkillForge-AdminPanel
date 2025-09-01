@@ -44,6 +44,30 @@ export default function SchoolsPage() {
     description: ''
   });
 
+  // Domain validation state
+  const [domainValidation, setDomainValidation] = useState({
+    isValid: false,
+    message: ''
+  });
+
+  // Domain availability state
+  const [domainAvailability, setDomainAvailability] = useState({
+    isChecking: false,
+    isAvailable: false,
+    message: ''
+  });
+
+  // Reset form state
+  const resetFormState = () => {
+    setFormData({ name: '', private_domain: '', description: '' });
+    setDomainValidation({ isValid: false, message: '' });
+    setDomainAvailability({
+      isChecking: false,
+      isAvailable: false,
+      message: ''
+    });
+  };
+
   useEffect(() => {
     fetchSchools();
   }, []);
@@ -86,8 +110,38 @@ export default function SchoolsPage() {
 
   const handleCreateSchool = async () => {
     try {
+      console.log('Creating school with data:', formData);
+
       if (!formData.name || !formData.private_domain) {
         ErrorHandler.showWarning('Please fill in all required fields');
+        return;
+      }
+
+      // Validate domain name format
+      const domainRegex = /^[a-z0-9-]+$/;
+      if (!domainRegex.test(formData.private_domain)) {
+        ErrorHandler.showWarning(
+          'Domain name can only contain lowercase letters, numbers, and hyphens'
+        );
+        return;
+      }
+
+      // Check if domain name is too short or too long
+      if (formData.private_domain.length < 3) {
+        ErrorHandler.showWarning(
+          'Domain name must be at least 3 characters long'
+        );
+        return;
+      }
+
+      if (formData.private_domain.length > 50) {
+        ErrorHandler.showWarning('Domain name must be less than 50 characters');
+        return;
+      }
+
+      // Check if domain is available
+      if (!domainAvailability.isAvailable) {
+        ErrorHandler.showWarning('Please choose a different domain name');
         return;
       }
 
@@ -97,10 +151,11 @@ export default function SchoolsPage() {
         description: formData.description
       };
 
+      console.log('Sending school data:', schoolData);
       await apiClient.createSchool(schoolData);
       ErrorHandler.showSuccess('School created successfully');
       setIsCreateDialogOpen(false);
-      setFormData({ name: '', private_domain: '', description: '' });
+      resetFormState();
       fetchSchools();
     } catch (error) {
       console.error('Error creating school:', error);
@@ -110,7 +165,49 @@ export default function SchoolsPage() {
 
   const handleUpdateSchool = async () => {
     try {
-      if (!selectedSchool) return;
+      console.log('Updating school with data:', formData);
+
+      if (!selectedSchool) {
+        console.error('No school selected for update');
+        return;
+      }
+
+      // Validate required fields
+      if (!formData.name || !formData.private_domain) {
+        ErrorHandler.showWarning('Please fill in all required fields');
+        return;
+      }
+
+      // Validate domain name format
+      const domainRegex = /^[a-z0-9-]+$/;
+      if (!domainRegex.test(formData.private_domain)) {
+        ErrorHandler.showWarning(
+          'Domain name can only contain lowercase letters, numbers, and hyphens'
+        );
+        return;
+      }
+
+      // Check if domain name is too short or too long
+      if (formData.private_domain.length < 3) {
+        ErrorHandler.showWarning(
+          'Domain name must be at least 3 characters long'
+        );
+        return;
+      }
+
+      if (formData.private_domain.length > 50) {
+        ErrorHandler.showWarning('Domain name must be less than 50 characters');
+        return;
+      }
+
+      // Check if domain is available (for updates, allow keeping the same domain)
+      if (
+        !domainAvailability.isAvailable &&
+        formData.private_domain !== selectedSchool.slug
+      ) {
+        ErrorHandler.showWarning('Please choose a different domain name');
+        return;
+      }
 
       const updateData: {
         name?: string;
@@ -123,15 +220,16 @@ export default function SchoolsPage() {
       if (formData.description !== undefined)
         updateData.description = formData.description;
 
+      console.log('Sending update data:', updateData);
       await apiClient.updateSchool(updateData);
-      toast.success('School updated successfully');
+      ErrorHandler.showSuccess('School updated successfully');
       setIsEditDialogOpen(false);
       setSelectedSchool(null);
-      setFormData({ name: '', private_domain: '', description: '' });
+      resetFormState();
       fetchSchools();
     } catch (error) {
       console.error('Error updating school:', error);
-      toast.error('Failed to update school');
+      ErrorHandler.handleApiError(error);
     }
   };
 
@@ -151,6 +249,95 @@ export default function SchoolsPage() {
     filteredSchools: filteredSchools,
     searchTerm: searchTerm
   });
+
+  // Domain validation function
+  const validateDomain = (domain: string) => {
+    if (!domain) {
+      setDomainValidation({ isValid: false, message: '' });
+      setDomainAvailability({
+        isChecking: false,
+        isAvailable: false,
+        message: ''
+      });
+      return;
+    }
+
+    const domainRegex = /^[a-z0-9-]+$/;
+    if (!domainRegex.test(domain)) {
+      setDomainValidation({
+        isValid: false,
+        message:
+          'Domain can only contain lowercase letters, numbers, and hyphens'
+      });
+      setDomainAvailability({
+        isChecking: false,
+        isAvailable: false,
+        message: ''
+      });
+      return;
+    }
+
+    if (domain.length < 3) {
+      setDomainValidation({
+        isValid: false,
+        message: 'Domain must be at least 3 characters long'
+      });
+      setDomainAvailability({
+        isChecking: false,
+        isAvailable: false,
+        message: ''
+      });
+      return;
+    }
+
+    if (domain.length > 50) {
+      setDomainValidation({
+        isValid: false,
+        message: 'Domain must be less than 50 characters'
+      });
+      setDomainAvailability({
+        isChecking: false,
+        isAvailable: false,
+        message: ''
+      });
+      return;
+    }
+
+    setDomainValidation({ isValid: true, message: 'Domain name is valid' });
+
+    // Check domain availability
+    checkDomainAvailability(domain);
+  };
+
+  // Check if domain is already taken
+  const checkDomainAvailability = (domain: string) => {
+    setDomainAvailability({
+      isChecking: true,
+      isAvailable: false,
+      message: 'Checking availability...'
+    });
+
+    // Check if domain already exists in current schools
+    const isTaken = schools.some(
+      (school) =>
+        school.slug === domain &&
+        (!selectedSchool || school.id !== selectedSchool.id)
+    );
+
+    if (isTaken) {
+      setDomainAvailability({
+        isChecking: false,
+        isAvailable: false,
+        message: 'This domain name is already taken'
+      });
+    } else {
+      setDomainAvailability({
+        isChecking: false,
+        isAvailable: true,
+        message: 'Domain name is available'
+      });
+    }
+  };
 
   const getSchoolStats = (school: School) => {
     return {
@@ -204,10 +391,21 @@ export default function SchoolsPage() {
                 <Input
                   id="domain"
                   value={formData.private_domain}
-                  onChange={(e) =>
-                    setFormData({ ...formData, private_domain: e.target.value })
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      private_domain: e.target.value
+                    });
+                    validateDomain(e.target.value);
+                  }}
+                  placeholder="Enter unique domain name (e.g., my-school)"
+                  className={
+                    domainValidation.message && !domainValidation.isValid
+                      ? 'border-red-500'
+                      : domainAvailability.isAvailable
+                        ? 'border-green-500'
+                        : ''
                   }
-                  placeholder="my-school"
                 />
                 <p className="text-xs text-muted-foreground">
                   This will be your school&apos;s URL:{' '}
@@ -215,6 +413,26 @@ export default function SchoolsPage() {
                     ? `${formData.private_domain}.skillforge.com`
                     : 'your-domain.skillforge.com'}
                 </p>
+                {domainValidation.message && (
+                  <p
+                    className={`text-xs ${domainValidation.isValid ? 'text-green-600' : 'text-red-600'}`}
+                  >
+                    {domainValidation.message}
+                  </p>
+                )}
+                {domainAvailability.message && (
+                  <p
+                    className={`text-xs ${
+                      domainAvailability.isChecking
+                        ? 'text-blue-600'
+                        : domainAvailability.isAvailable
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                    }`}
+                  >
+                    {domainAvailability.message}
+                  </p>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
@@ -232,11 +450,25 @@ export default function SchoolsPage() {
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setIsCreateDialogOpen(false)}
+                onClick={() => {
+                  setIsCreateDialogOpen(false);
+                  resetFormState();
+                }}
               >
                 Cancel
               </Button>
-              <Button onClick={handleCreateSchool}>Create School</Button>
+              <Button
+                onClick={handleCreateSchool}
+                disabled={
+                  !formData.name ||
+                  !formData.private_domain ||
+                  !domainValidation.isValid ||
+                  !domainAvailability.isAvailable ||
+                  domainAvailability.isChecking
+                }
+              >
+                Create School
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -377,6 +609,7 @@ export default function SchoolsPage() {
                             private_domain: school.slug,
                             description: school.description || ''
                           });
+                          validateDomain(school.slug);
                           setIsEditDialogOpen(true);
                         }}
                       >
@@ -406,7 +639,7 @@ export default function SchoolsPage() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit-name">School Name</Label>
+              <Label htmlFor="edit-name">School Name *</Label>
               <Input
                 id="edit-name"
                 value={formData.name}
@@ -414,17 +647,27 @@ export default function SchoolsPage() {
                   setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="Enter school name"
+                required
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-domain">Domain Name</Label>
+              <Label htmlFor="edit-domain">Domain Name *</Label>
               <Input
                 id="edit-domain"
                 value={formData.private_domain}
-                onChange={(e) =>
-                  setFormData({ ...formData, private_domain: e.target.value })
+                onChange={(e) => {
+                  setFormData({ ...formData, private_domain: e.target.value });
+                  validateDomain(e.target.value);
+                }}
+                placeholder={selectedSchool?.slug || 'Enter unique domain name'}
+                required
+                className={
+                  domainValidation.message && !domainValidation.isValid
+                    ? 'border-red-500'
+                    : domainAvailability.isAvailable
+                      ? 'border-green-500'
+                      : ''
                 }
-                placeholder="my-school"
               />
               <p className="text-xs text-muted-foreground">
                 This will be your school&apos;s URL:{' '}
@@ -432,6 +675,26 @@ export default function SchoolsPage() {
                   ? `${formData.private_domain}.skillforge.com`
                   : 'your-domain.skillforge.com'}
               </p>
+              {domainValidation.message && (
+                <p
+                  className={`text-xs ${domainValidation.isValid ? 'text-green-600' : 'text-red-600'}`}
+                >
+                  {domainValidation.message}
+                </p>
+              )}
+              {domainAvailability.message && (
+                <p
+                  className={`text-xs ${
+                    domainAvailability.isChecking
+                      ? 'text-blue-600'
+                      : domainAvailability.isAvailable
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                  }`}
+                >
+                  {domainAvailability.message}
+                </p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="edit-description">Description</Label>
@@ -449,11 +712,26 @@ export default function SchoolsPage() {
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
+              onClick={() => {
+                setIsEditDialogOpen(false);
+                resetFormState();
+              }}
             >
               Cancel
             </Button>
-            <Button onClick={handleUpdateSchool}>Update School</Button>
+            <Button
+              onClick={handleUpdateSchool}
+              disabled={
+                !formData.name ||
+                !formData.private_domain ||
+                !domainValidation.isValid ||
+                (!domainAvailability.isAvailable &&
+                  formData.private_domain !== selectedSchool?.slug) ||
+                domainAvailability.isChecking
+              }
+            >
+              Update School
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
