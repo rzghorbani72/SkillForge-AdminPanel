@@ -317,11 +317,16 @@ export interface UpdateSchoolData {
 export interface CreateCourseData {
   title: string;
   description: string;
-  short_description?: string;
-  price: number;
-  is_free: boolean;
+  meta_tags: Array<{ title: string; content: string }>;
+  primary_price: number;
+  secondary_price: number;
+  currency: 'USD' | 'IRR' | 'TL' | 'EUR' | 'GBP';
   category_id?: number;
-  difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  season_id?: number;
+  audio_id?: number;
+  video_id?: number;
+  image_id?: number;
+  published?: boolean;
 }
 
 export interface CreateLessonData {

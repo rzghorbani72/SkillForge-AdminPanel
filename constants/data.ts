@@ -156,38 +156,19 @@ export const navItems: NavItem[] = [
       }
     ]
   },
-  {
-    title: 'Courses',
-    href: '/courses',
-    icon: 'bookOpen' as IconType,
-    label: 'courses',
-    children: [
-      {
-        title: 'All Courses',
-        href: '/courses',
-        icon: 'list' as IconType,
-        label: 'all-courses'
-      },
-      {
-        title: 'Create Course',
-        href: '/courses/create',
-        icon: 'plus' as IconType,
-        label: 'create-course'
-      },
-      {
-        title: 'Course Categories',
-        href: '/categories',
-        icon: 'folder' as IconType,
-        label: 'course-categories'
-      }
-    ]
-  },
+
   {
     title: 'Content',
     href: '/content',
     icon: 'fileText' as IconType,
     label: 'content',
     children: [
+      {
+        title: 'Courses',
+        href: '/content',
+        icon: 'bookOpen' as IconType,
+        label: 'courses'
+      },
       {
         title: 'Lessons',
         href: '/content/lessons',

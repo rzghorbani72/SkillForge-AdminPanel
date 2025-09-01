@@ -179,7 +179,7 @@ export default function DashboardPage() {
       title: 'Create Course',
       description: 'Add a new course to your school',
       icon: Plus,
-      href: '/courses/create',
+      href: '/content',
       color: 'bg-blue-500'
     },
     {
