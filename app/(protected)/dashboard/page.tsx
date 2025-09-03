@@ -30,6 +30,7 @@ import { dashboardStats, recentActivity } from '@/constants/data';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useCategoriesStore } from '@/lib/store';
+import ContentCreationHub from '@/components/content/content-creation-hub';
 
 export default function DashboardPage() {
   const [stats] = useState(dashboardStats);
@@ -37,6 +38,7 @@ export default function DashboardPage() {
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [courses, setCourses] = useState<Course[]>([]);
   const {
     selectedSchool,
     schools,
@@ -77,9 +79,11 @@ export default function DashboardPage() {
           }
 
           setRecentCourses(coursesData);
+          setCourses(coursesData); // Also set for content creation hub
         } catch (error) {
           console.error('Error fetching courses:', error);
           setRecentCourses([]);
+          setCourses([]);
         }
 
         // Fetch recent enrollments
@@ -271,57 +275,15 @@ export default function DashboardPage() {
             <Calendar className="mr-2 h-4 w-4" />
             Today
           </Button>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Quick Action
-          </Button>
+          <ContentCreationHub
+            onContentCreated={() => {
+              // Refresh dashboard data when content is created
+              window.location.reload();
+            }}
+            courses={courses}
+          />
         </div>
       </div>
-
-      {/* School Context Debug */}
-      <Card className="border-amber-200 bg-amber-50">
-        <CardHeader>
-          <CardTitle className="text-amber-800">School Context Debug</CardTitle>
-          <CardDescription className="text-amber-700">
-            Current state of school selection
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <span className="font-medium">Loading:</span>
-            <Badge variant={isLoading ? 'default' : 'secondary'}>
-              {isLoading ? 'Yes' : 'No'}
-            </Badge>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="font-medium">Error:</span>
-            <Badge variant={error ? 'destructive' : 'secondary'}>
-              {error || 'None'}
-            </Badge>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="font-medium">Schools Count:</span>
-            <Badge variant="outline">{schools.length}</Badge>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="font-medium">Selected School:</span>
-            <Badge variant="outline">{selectedSchool?.name || 'None'}</Badge>
-          </div>
-          {schools.length > 0 && (
-            <div className="mt-2 rounded border bg-white p-2">
-              <p className="text-sm font-medium">Available Schools:</p>
-              <ul className="mt-1 space-y-1 text-xs">
-                {schools.map((school) => (
-                  <li key={school.id}>
-                    • {school.name} (ID: {school.id}) -{' '}
-                    {school.domain?.private_address || school.slug}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

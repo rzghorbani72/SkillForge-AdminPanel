@@ -164,28 +164,46 @@ export const navItems: NavItem[] = [
     label: 'content',
     children: [
       {
-        title: 'Courses',
+        title: 'All Content',
         href: '/content',
+        icon: 'grid' as IconType,
+        label: 'all-content'
+      },
+      {
+        title: 'Courses',
+        href: '/courses',
         icon: 'bookOpen' as IconType,
         label: 'courses'
       },
       {
         title: 'Lessons',
-        href: '/content/lessons',
+        href: '/lessons',
         icon: 'play' as IconType,
         label: 'lessons'
       },
       {
         title: 'Seasons',
-        href: '/content/seasons',
+        href: '/seasons',
         icon: 'layers' as IconType,
         label: 'seasons'
       },
       {
-        title: 'Media Library',
-        href: '/content/media',
-        icon: 'image' as IconType,
-        label: 'media-library'
+        title: 'Videos',
+        href: '/videos',
+        icon: 'video' as IconType,
+        label: 'videos'
+      },
+      {
+        title: 'Audios',
+        href: '/audios',
+        icon: 'music' as IconType,
+        label: 'audios'
+      },
+      {
+        title: 'Documents',
+        href: '/documents',
+        icon: 'fileText' as IconType,
+        label: 'documents'
       }
     ]
   },

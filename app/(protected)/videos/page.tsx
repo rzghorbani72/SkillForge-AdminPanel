@@ -26,8 +26,9 @@ import {
   Trash2
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { Media } from '@/types/api';
+import { Media, Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useSchool } from '@/contexts/SchoolContext';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
 import VideoPlayer from '@/components/content/video-player';
 
@@ -40,7 +41,9 @@ interface VideoWithMetadata extends Media {
 }
 
 export default function VideosPage() {
+  const { selectedSchool } = useSchool();
   const [videos, setVideos] = useState<VideoWithMetadata[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
@@ -50,20 +53,38 @@ export default function VideosPage() {
   const [showPlayer, setShowPlayer] = useState(false);
 
   useEffect(() => {
-    fetchVideos();
-  }, []);
+    if (selectedSchool) {
+      fetchData();
+    }
+  }, [selectedSchool]);
 
-  const fetchVideos = async () => {
+  const fetchData = async () => {
+    if (!selectedSchool) return;
+
     try {
       setIsLoading(true);
-      const response = await apiClient.getVideos();
-      const videosData = response.data as any;
-      const videosList = Array.isArray(videosData) ? videosData : [];
-      setVideos(videosList);
+      const [videosResponse, coursesResponse] = await Promise.all([
+        apiClient.getVideos(),
+        apiClient.getCourses()
+      ]);
+
+      if (videosResponse.status === 'ok' && videosResponse.data) {
+        const schoolVideos = videosResponse.data.filter(
+          (item: Media) =>
+            item.school_id === selectedSchool.id && item.type === 'video'
+        );
+        setVideos(schoolVideos);
+      }
+
+      if (coursesResponse.status === 'ok' && coursesResponse.data) {
+        const schoolCourses = coursesResponse.data.filter(
+          (course: Course) => course.school_id === selectedSchool.id
+        );
+        setCourses(schoolCourses);
+      }
     } catch (error) {
-      console.error('Error fetching videos:', error);
+      console.error('Error fetching data:', error);
       ErrorHandler.handleApiError(error);
-      setVideos([]);
     } finally {
       setIsLoading(false);
     }
@@ -133,6 +154,23 @@ export default function VideosPage() {
     setShowPlayer(true);
   };
 
+  if (!selectedSchool) {
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold text-muted-foreground">
+              No School Selected
+            </h2>
+            <p className="text-muted-foreground">
+              Please select a school from the header to view videos.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flex-1 space-y-6 p-6">
@@ -159,7 +197,7 @@ export default function VideosPage() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <UploadVideoDialog onVideoUploaded={fetchVideos} />
+          <UploadVideoDialog onVideoUploaded={fetchData} />
         </div>
       </div>
 

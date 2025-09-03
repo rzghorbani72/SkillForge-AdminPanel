@@ -160,10 +160,10 @@ export default function ContentPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Content Management
+            Content Overview
           </h1>
           <p className="text-muted-foreground">
-            Manage content for{' '}
+            Overview of all content for{' '}
             <span className="font-semibold">{selectedSchool.name}</span>
           </p>
         </div>
@@ -194,7 +194,10 @@ export default function ContentPage() {
 
       {/* Content Overview Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card
+          className="cursor-pointer transition-shadow hover:shadow-md"
+          onClick={() => (window.location.href = '/courses')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -207,7 +210,10 @@ export default function ContentPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className="cursor-pointer transition-shadow hover:shadow-md"
+          onClick={() => (window.location.href = '/lessons')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Lessons</CardTitle>
             <Play className="h-4 w-4 text-muted-foreground" />
@@ -218,7 +224,10 @@ export default function ContentPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className="cursor-pointer transition-shadow hover:shadow-md"
+          onClick={() => (window.location.href = '/seasons')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Seasons</CardTitle>
             <Layers className="h-4 w-4 text-muted-foreground" />
@@ -229,7 +238,10 @@ export default function ContentPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className="cursor-pointer transition-shadow hover:shadow-md"
+          onClick={() => (window.location.href = '/videos')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Media</CardTitle>
             <Image className="h-4 w-4 text-muted-foreground" />
@@ -242,6 +254,103 @@ export default function ContentPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Navigate to specific content management pages
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <Button
+              variant="outline"
+              className="h-auto justify-start p-4"
+              onClick={() => (window.location.href = '/courses')}
+            >
+              <BookOpen className="mr-3 h-5 w-5" />
+              <div className="text-left">
+                <div className="font-medium">Manage Courses</div>
+                <div className="text-xs text-muted-foreground">
+                  Create, edit, and organize courses
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-auto justify-start p-4"
+              onClick={() => (window.location.href = '/lessons')}
+            >
+              <Play className="mr-3 h-5 w-5" />
+              <div className="text-left">
+                <div className="font-medium">Manage Lessons</div>
+                <div className="text-xs text-muted-foreground">
+                  Create and organize lesson content
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-auto justify-start p-4"
+              onClick={() => (window.location.href = '/seasons')}
+            >
+              <Layers className="mr-3 h-5 w-5" />
+              <div className="text-left">
+                <div className="font-medium">Manage Seasons</div>
+                <div className="text-xs text-muted-foreground">
+                  Organize course modules and seasons
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-auto justify-start p-4"
+              onClick={() => (window.location.href = '/videos')}
+            >
+              <Video className="mr-3 h-5 w-5" />
+              <div className="text-left">
+                <div className="font-medium">Manage Videos</div>
+                <div className="text-xs text-muted-foreground">
+                  Upload and organize video content
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-auto justify-start p-4"
+              onClick={() => (window.location.href = '/audios')}
+            >
+              <Music className="mr-3 h-5 w-5" />
+              <div className="text-left">
+                <div className="font-medium">Manage Audios</div>
+                <div className="text-xs text-muted-foreground">
+                  Upload and organize audio files
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-auto justify-start p-4"
+              onClick={() => (window.location.href = '/documents')}
+            >
+              <FileText className="mr-3 h-5 w-5" />
+              <div className="text-left">
+                <div className="font-medium">Manage Documents</div>
+                <div className="text-xs text-muted-foreground">
+                  Upload and organize documents
+                </div>
+              </div>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Content Tabs */}
       <Tabs defaultValue="courses" className="space-y-4">
