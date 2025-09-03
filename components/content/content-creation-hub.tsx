@@ -40,7 +40,6 @@ import UploadVideoDialog from './upload-video-dialog';
 interface ContentCreationHubProps {
   onContentCreated: () => void;
   courses: Course[];
-  categories: Category[];
 }
 
 const contentTypes = [
@@ -96,8 +95,7 @@ const contentTypes = [
 
 export default function ContentCreationHub({
   onContentCreated,
-  courses,
-  categories
+  courses
 }: ContentCreationHubProps) {
   const { selectedSchool } = useSchool();
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -127,7 +125,6 @@ export default function ContentCreationHub({
         return (
           <DialogComponent
             onCourseCreated={handleContentCreated}
-            categories={categories}
             schoolId={selectedSchool.id}
           />
         );

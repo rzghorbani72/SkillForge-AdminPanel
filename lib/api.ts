@@ -30,11 +30,14 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
 
+    // Don't set Content-Type for FormData (let browser set it to multipart/form-data)
+    const headers =
+      options.body instanceof FormData
+        ? { ...options.headers } // No Content-Type for FormData
+        : { 'Content-Type': 'application/json', ...options.headers };
+
     const config: RequestInit = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-      },
+      headers,
       credentials: 'include',
       ...options
     };
@@ -176,7 +179,6 @@ class ApiClient {
 
   // OTP endpoints
   async sendPhoneOtp(phone_number: string) {
-    console.log('API: Sending phone OTP request with:', { phone_number });
     return this.request('/public-auth/send-phone-otp', {
       method: 'POST',
       body: JSON.stringify({ phone_number })
@@ -266,16 +268,21 @@ class ApiClient {
   async createCourse(courseData: {
     title: string;
     description: string;
-    meta_tags: Array<{ title: string; content: string }>;
+    short_description?: string;
     primary_price: number;
     secondary_price: number;
-    currency: 'USD' | 'IRR' | 'TL' | 'EUR' | 'GBP';
+    meta_tags: Array<{ title: string; content: string }>;
     category_id?: number;
     season_id?: number;
     audio_id?: number;
     video_id?: number;
     image_id?: number;
     published?: boolean;
+    difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+    language?: string;
+    requirements?: string;
+    learning_outcomes?: string;
+    duration?: number;
   }) {
     return this.request('/courses', {
       method: 'POST',
@@ -429,17 +436,16 @@ class ApiClient {
     metadata?: { title?: string; description?: string }
   ) {
     const formData = new FormData();
-    formData.append('image', file);
-    if (metadata) {
-      formData.append('title', metadata.title || file.name);
-      formData.append('description', metadata.description || '');
-    }
+    formData.append('imagefile', file); // Backend expects 'imagefile'
+    formData.append('alt', metadata?.title || file.name); // Backend expects 'alt' field
 
-    return this.request('/images/upload', {
+    const response = await this.request('/images/upload', {
       method: 'POST',
       headers: {}, // Let browser set content-type for FormData
       body: formData
     });
+
+    return response.data;
   }
 
   async uploadVideo(
@@ -447,7 +453,7 @@ class ApiClient {
     metadata?: { title?: string; description?: string }
   ) {
     const formData = new FormData();
-    formData.append('video', file);
+    formData.append('videofile', file); // Backend expects 'videofile'
     if (metadata) {
       formData.append('title', metadata.title || file.name);
       formData.append('description', metadata.description || '');
@@ -465,7 +471,7 @@ class ApiClient {
     metadata?: { title?: string; description?: string }
   ) {
     const formData = new FormData();
-    formData.append('audio', file);
+    formData.append('audioFile', file); // Backend expects 'audioFile'
     if (metadata) {
       formData.append('title', metadata.title || file.name);
       formData.append('description', metadata.description || '');
@@ -515,6 +521,21 @@ class ApiClient {
 
   async getDocuments() {
     return this.request('/files');
+  }
+
+  // Image fetching endpoint
+  async getImage(identifier: string | number) {
+    const endpoint =
+      typeof identifier === 'number'
+        ? `/images/get-image?id=${identifier}`
+        : `/images/get-image?filename=${identifier}`;
+
+    return this.request(endpoint, {
+      method: 'GET',
+      headers: {
+        Accept: 'image/*'
+      }
+    });
   }
 
   // Profile endpoints

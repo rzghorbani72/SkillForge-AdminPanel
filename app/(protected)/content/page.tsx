@@ -33,14 +33,15 @@ import { Lesson, Season, Media, Course, Category } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import ContentCreationHub from '@/components/content/content-creation-hub';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useCategories } from '@/hooks/useCategories';
 
 export default function ContentPage() {
   const { selectedSchool } = useSchool();
+  const { categories } = useCategories();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [media, setMedia] = useState<Media[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -69,21 +70,6 @@ export default function ContentPage() {
       } catch (error) {
         console.error('Error fetching courses:', error);
         setCourses([]);
-      }
-
-      // Fetch categories for the selected school
-      try {
-        const categoriesResponse = await apiClient.getCategories();
-        if (categoriesResponse.status === 'ok' && categoriesResponse.data) {
-          // Filter categories by selected school
-          const schoolCategories = categoriesResponse.data.filter(
-            (category: Category) => category.school_id === selectedSchool.id
-          );
-          setCategories(schoolCategories);
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-        setCategories([]);
       }
 
       // Fetch other content types for the selected school
@@ -189,7 +175,6 @@ export default function ContentPage() {
           <ContentCreationHub
             onContentCreated={fetchContent}
             courses={courses}
-            categories={categories}
           />
         </div>
       </div>

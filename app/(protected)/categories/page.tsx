@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Category } from '@/types/api';
+import { useCategoriesStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -22,8 +23,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -47,8 +47,15 @@ import {
 
 export default function CategoriesPage() {
   const searchParams = useSearchParams();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    categories,
+    isLoading,
+    error,
+    setCategories,
+    setLoading,
+    setError,
+    clearError
+  } = useCategoriesStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<
     'all' | 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
@@ -63,27 +70,27 @@ export default function CategoriesPage() {
     is_active: true
   });
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
+      clearError();
       const response = await apiClient.getCategories();
 
       let categoriesData: Category[] = [];
       if (response && typeof response === 'object') {
-        if (Array.isArray(response.data)) {
-          categoriesData = response.data;
-        } else if (
-          response.data &&
-          typeof response.data === 'object' &&
-          Array.isArray((response.data as any).data)
-        ) {
-          categoriesData = (response.data as any).data;
-        } else if (
-          response.data &&
-          typeof response.data === 'object' &&
-          Array.isArray((response.data as any).categories)
-        ) {
-          categoriesData = (response.data as any).categories;
+        const responseData = response.data as
+          | { data?: Category[]; categories?: Category[] }
+          | Category[];
+        if (Array.isArray(responseData)) {
+          categoriesData = responseData;
+        } else if (responseData && typeof responseData === 'object') {
+          if (Array.isArray(responseData.data)) {
+            categoriesData = responseData.data;
+          } else if (Array.isArray(responseData.categories)) {
+            categoriesData = responseData.categories;
+          } else {
+            categoriesData = [];
+          }
         } else {
           categoriesData = [];
         }
@@ -94,16 +101,19 @@ export default function CategoriesPage() {
       setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching categories:', error);
-      toast.error('Failed to fetch categories');
+      setError('Failed to fetch categories');
       setCategories([]);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
+  }, [clearError, setCategories, setError, setLoading]);
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    // Only fetch if categories are not already loaded from store
+    if (categories.length === 0) {
+      fetchCategories();
+    }
+  }, [categories.length, fetchCategories]);
 
   // Handle URL parameters for filtering
   useEffect(() => {
@@ -248,14 +258,6 @@ export default function CategoriesPage() {
     }
   };
 
-  console.log('Categories data state:', {
-    categories: categories,
-    safeCategories: safeCategories,
-    filteredCategories: filteredCategories,
-    searchTerm: searchTerm,
-    selectedType: selectedType
-  });
-
   if (isLoading) {
     return (
       <div className="flex-1 space-y-6 p-6">
@@ -279,120 +281,96 @@ export default function CategoriesPage() {
             Manage categories for courses and content
           </p>
         </div>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => resetForm()}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Category
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create New Category</DialogTitle>
-              <DialogDescription>
-                Add a new category for organizing your courses and content.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Enter category name"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Enter category description"
-                  rows={3}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="type">Type</Label>
-                <Select
-                  value={formData.type}
-                  onValueChange={(
-                    value: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
-                  ) => setFormData({ ...formData, type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="COURSE">Course</SelectItem>
-                    <SelectItem value="ARTICLE">Article</SelectItem>
-                    <SelectItem value="BLOG">Blog</SelectItem>
-                    <SelectItem value="NEWS">News</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setIsCreateDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleCreateCategory}>Create Category</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => setIsCreateDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Category
+        </Button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row">
-        <div className="flex-1">
-          <Input
-            placeholder="Search categories..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
-          />
+      {/* Error Display */}
+      {error && (
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-red-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                Error loading categories
+              </h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>{error}</p>
+              </div>
+              <div className="mt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    clearError();
+                    fetchCategories();
+                  }}
+                  className="border-red-300 text-red-800 hover:bg-red-100"
+                >
+                  Try Again
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Select
-            value={selectedType}
-            onValueChange={(
-              value: 'all' | 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
-            ) => setSelectedType(value)}
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="COURSE">Courses</SelectItem>
-              <SelectItem value="ARTICLE">Articles</SelectItem>
-              <SelectItem value="BLOG">Blogs</SelectItem>
-              <SelectItem value="NEWS">News</SelectItem>
-            </SelectContent>
-          </Select>
+      )}
+
+      {/* Search and Filter */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 items-center space-x-2">
+          <div className="relative flex-1 sm:max-w-xs">
+            <Input
+              placeholder="Search categories..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8"
+            />
+            <Folder className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          </div>
         </div>
+        <Select
+          value={selectedType}
+          onValueChange={(
+            value: 'all' | 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
+          ) => setSelectedType(value)}
+        >
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Filter by type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="COURSE">Course</SelectItem>
+            <SelectItem value="ARTICLE">Article</SelectItem>
+            <SelectItem value="BLOG">Blog</SelectItem>
+            <SelectItem value="NEWS">News</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Categories Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredCategories.length === 0 ? (
           <div className="col-span-full py-12 text-center">
-            <Folder className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
-              No categories found
-            </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <Folder className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h3 className="mt-4 text-lg font-semibold">No categories found</h3>
+            <p className="mt-2 text-muted-foreground">
               {searchTerm || selectedType !== 'all'
-                ? 'Try adjusting your filters.'
-                : 'Get started by creating a new category.'}
+                ? 'Try adjusting your search or filter criteria.'
+                : 'Get started by creating your first category.'}
             </p>
           </div>
         ) : (
@@ -420,17 +398,17 @@ export default function CategoriesPage() {
                     )}
                   </div>
                 </div>
+              </CardHeader>
+              <CardContent>
                 {category.description && (
-                  <CardDescription className="mt-2">
+                  <CardDescription className="mb-4 line-clamp-2">
                     {category.description}
                   </CardDescription>
                 )}
-              </CardHeader>
-              <CardContent>
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>{category.courses?.length || 0} courses</span>
                   <span>
-                    Created {new Date(category.created_at).toLocaleDateString()}
+                    Created:{' '}
+                    {new Date(category.created_at).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="mt-4 flex items-center justify-end space-x-2">
@@ -454,6 +432,71 @@ export default function CategoriesPage() {
           ))
         )}
       </div>
+
+      {/* Create Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create New Category</DialogTitle>
+            <DialogDescription>
+              Add a new category for organizing your courses and content.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Name *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                placeholder="Enter category name"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                placeholder="Enter category description"
+                rows={3}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="type">Type</Label>
+              <Select
+                value={formData.type}
+                onValueChange={(
+                  value: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
+                ) => setFormData({ ...formData, type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="COURSE">Course</SelectItem>
+                  <SelectItem value="ARTICLE">Article</SelectItem>
+                  <SelectItem value="BLOG">Blog</SelectItem>
+                  <SelectItem value="NEWS">News</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsCreateDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleCreateCategory}>Create Category</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

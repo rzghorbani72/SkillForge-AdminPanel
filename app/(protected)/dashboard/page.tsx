@@ -29,6 +29,7 @@ import { Course, Enrollment, Payment } from '@/types/api';
 import { dashboardStats, recentActivity } from '@/constants/data';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useCategoriesStore } from '@/lib/store';
 
 export default function DashboardPage() {
   const [stats] = useState(dashboardStats);
@@ -42,6 +43,8 @@ export default function DashboardPage() {
     isLoading: schoolLoading,
     error
   } = useSchool();
+
+  const { categories } = useCategoriesStore();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -129,6 +132,9 @@ export default function DashboardPage() {
           console.error('Error fetching payments:', error);
           setRecentPayments([]);
         }
+
+        // Categories are now loaded at the layout level via CategoriesInitializer
+        // No need to fetch them here anymore
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {

@@ -38,6 +38,16 @@ export interface Role {
 }
 
 // School and Domain Types
+// Currency configuration
+export type CurrencyCode = 'USD' | 'IRR' | 'TL' | 'EUR' | 'GBP' | 'TRY';
+
+export interface CurrencyConfig {
+  code: CurrencyCode;
+  name: string;
+  symbol: string;
+  is_default: boolean;
+}
+
 export interface School {
   id: number;
   name: string;
@@ -47,6 +57,8 @@ export interface School {
   logo_id?: number;
   cover_id?: number;
   is_active: boolean;
+  available_currencies?: CurrencyConfig[];
+  default_currency?: CurrencyCode;
   created_at: string;
   updated_at: string;
   deleted_at?: string;
@@ -320,7 +332,7 @@ export interface CreateCourseData {
   meta_tags: Array<{ title: string; content: string }>;
   primary_price: number;
   secondary_price: number;
-  currency: 'USD' | 'IRR' | 'TL' | 'EUR' | 'GBP';
+  currency: CurrencyCode;
   category_id?: number;
   season_id?: number;
   audio_id?: number;

@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { persist } from 'zustand/middleware';
 import { Column } from '@/sections/kanban/board-column';
 import { UniqueIdentifier } from '@dnd-kit/core';
+import { Category } from '@/types/api';
 
 export type Status = 'TODO' | 'IN_PROGRESS' | 'DONE';
 
@@ -91,5 +92,51 @@ export const useTaskStore = create<State & Actions>()(
       setCols: (newCols: Column[]) => set({ columns: newCols })
     }),
     { name: 'task-store', skipHydration: true }
+  )
+);
+
+// Categories Store
+export type CategoriesState = {
+  categories: Category[];
+  isLoading: boolean;
+  error: string | null;
+};
+
+export type CategoriesActions = {
+  setCategories: (categories: Category[]) => void;
+  addCategory: (category: Category) => void;
+  updateCategory: (id: number, category: Partial<Category>) => void;
+  removeCategory: (id: number) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  clearError: () => void;
+};
+
+export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
+  persist(
+    (set) => ({
+      categories: [],
+      isLoading: false,
+      error: null,
+      setCategories: (categories: Category[]) => set({ categories }),
+      addCategory: (category: Category) =>
+        set((state) => ({
+          categories: [...state.categories, category]
+        })),
+      updateCategory: (id: number, category: Partial<Category>) =>
+        set((state) => ({
+          categories: state.categories.map((cat) =>
+            cat.id === id ? { ...cat, ...category } : cat
+          )
+        })),
+      removeCategory: (id: number) =>
+        set((state) => ({
+          categories: state.categories.filter((cat) => cat.id !== id)
+        })),
+      setLoading: (loading: boolean) => set({ isLoading: loading }),
+      setError: (error: string | null) => set({ error }),
+      clearError: () => set({ error: null })
+    }),
+    { name: 'categories-store', skipHydration: true }
   )
 );
