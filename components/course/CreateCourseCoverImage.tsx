@@ -36,8 +36,16 @@ const CreateCourseCoverImage = ({
         <ImageUploadPreview
           title={form.watch('title') || 'Course Cover'}
           description={form.watch('description') || 'Course cover image'}
-          onSuccess={(imageId) => {
-            form.setValue('image_id', imageId);
+          onSuccess={(image) => {
+            console.log(
+              'CreateCourseCoverImage - Image selected, setting image_id to:',
+              image.id
+            );
+            form.setValue('image_id', image.id.toString());
+            console.log(
+              'CreateCourseCoverImage - Form image_id is now:',
+              form.getValues('image_id')
+            );
           }}
           selectedImageId={form.watch('image_id')}
           alt="Course cover preview"

@@ -361,8 +361,16 @@ export default function LessonCreatePage() {
             <ImageUploadPreview
               title={form.watch('title') || 'Lesson Cover'}
               description={form.watch('description') || 'Lesson cover image'}
-              onSuccess={(imageId) => {
-                form.setValue('cover_id', imageId);
+              onSuccess={(image) => {
+                console.log(
+                  'LessonCreate - Image selected, setting cover_id to:',
+                  image.id
+                );
+                form.setValue('cover_id', image.id.toString());
+                console.log(
+                  'LessonCreate - Form cover_id is now:',
+                  form.getValues('cover_id')
+                );
               }}
               selectedImageId={form.watch('cover_id')}
               alt="Lesson cover preview"

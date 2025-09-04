@@ -380,8 +380,16 @@ export default function LessonEditPage() {
             <ImageUploadPreview
               title={form.watch('title') || 'Lesson Cover'}
               description={form.watch('description') || 'Lesson cover image'}
-              onSuccess={(imageId) => {
-                form.setValue('cover_id', imageId);
+              onSuccess={(image) => {
+                console.log(
+                  'LessonEdit - Image selected, setting cover_id to:',
+                  image.id
+                );
+                form.setValue('cover_id', image.id.toString());
+                console.log(
+                  'LessonEdit - Form cover_id is now:',
+                  form.getValues('cover_id')
+                );
               }}
               selectedImageId={form.watch('cover_id')}
               existingImageUrl={null}

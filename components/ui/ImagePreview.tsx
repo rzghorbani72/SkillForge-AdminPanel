@@ -5,6 +5,7 @@ import { Image as ImageIcon, X } from 'lucide-react';
 interface ImagePreviewProps {
   preview?: string | null;
   uploadedImageId?: string | null;
+  selectedImage?: { id: number; url: string } | null;
   onRemove: () => void;
   existingImageUrl?: string | null;
   existingImageId?: string | number | null;
@@ -18,6 +19,7 @@ interface ImagePreviewProps {
 const ImagePreview: React.FC<ImagePreviewProps> = ({
   preview,
   uploadedImageId,
+  selectedImage,
   onRemove,
   existingImageUrl,
   existingImageId,
@@ -27,6 +29,14 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   placeholderText = 'No image selected',
   placeholderSubtext = 'Upload an image to preview it here'
 }) => {
+  console.log('ImagePreview props:', {
+    preview: preview ? 'Yes' : 'No',
+    uploadedImageId,
+    selectedImageId: selectedImage?.id,
+    selectedImageUrl: selectedImage?.url ? 'Yes' : 'No',
+    existingImageUrl: existingImageUrl ? 'Yes' : 'No',
+    existingImageId
+  });
   // Show uploaded preview if available
   if (preview) {
     return (
@@ -52,6 +62,68 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             ✓ Image uploaded successfully (ID: {uploadedImageId})
           </p>
         )}
+      </div>
+    );
+  }
+
+  // Show selected image from library if available
+  if (selectedImage && !preview) {
+    return (
+      <div className="space-y-3">
+        <div className="relative">
+          <div
+            className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
+          >
+            <img
+              src={selectedImage.url}
+              alt={alt}
+              className="h-auto w-full object-cover"
+            />
+          </div>
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            onClick={onRemove}
+            className="absolute right-2 top-2"
+          >
+            ×
+          </Button>
+        </div>
+        <p className="text-xs text-blue-600">
+          ✓ Image selected from library (ID: {selectedImage.id})
+        </p>
+      </div>
+    );
+  }
+
+  // Show uploaded image by ID if available (fallback)
+  if (uploadedImageId && !preview && !selectedImage) {
+    return (
+      <div className="space-y-3">
+        <div className="relative">
+          <div
+            className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
+          >
+            <img
+              src={`/api/images/fetch-image-by-id/${uploadedImageId}`}
+              alt={alt}
+              className="h-auto w-full object-cover"
+            />
+          </div>
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            onClick={onRemove}
+            className="absolute right-2 top-2"
+          >
+            ×
+          </Button>
+        </div>
+        <p className="text-xs text-blue-600">
+          ✓ Image selected from library (ID: {uploadedImageId})
+        </p>
       </div>
     );
   }

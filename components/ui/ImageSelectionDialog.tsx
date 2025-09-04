@@ -49,7 +49,7 @@ interface ImageWithState extends Image {
 }
 
 interface ImageSelectionDialogProps {
-  onSelect: (imageId: string) => void;
+  onSelect: (image: { id: number; url: string }) => void;
   selectedImageId?: string | null;
   trigger?: React.ReactNode;
   open?: boolean;
@@ -127,8 +127,15 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
     }
   }, [searchTerm, images]);
 
-  const handleImageSelect = (imageId: string) => {
-    onSelect(imageId);
+  const handleImageSelect = (image: ImageWithState) => {
+    console.log('Image selected:', image);
+    // Extract only id and url for the callback
+    const imageData = {
+      id: image.id,
+      url: image.url
+    };
+    console.log('Calling onSelect with:', imageData);
+    onSelect(imageData);
     onOpenChange?.(false);
   };
 
@@ -287,7 +294,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
                     key={image.id}
                     className={`group relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
                       selectedImageId === image.id.toString()
-                        ? 'border-blue-500 ring-2 ring-blue-200'
+                        ? 'border-blue-500 ring-4 ring-blue-200'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                     onClick={(e) => {
@@ -300,7 +307,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
                         return;
                       }
                       if (!image.isDeleting) {
-                        handleImageSelect(image.id.toString());
+                        handleImageSelect(image);
                       }
                     }}
                   >

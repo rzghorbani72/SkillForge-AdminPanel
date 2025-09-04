@@ -194,8 +194,16 @@ const LessonForm = ({
                           description={
                             form.watch('description') || 'Lesson cover image'
                           }
-                          onSuccess={(imageId) => {
-                            form.setValue('cover_id', imageId);
+                          onSuccess={(image) => {
+                            console.log(
+                              'LessonForm - Image selected, setting cover_id to:',
+                              image.id
+                            );
+                            form.setValue('cover_id', image.id.toString());
+                            console.log(
+                              'LessonForm - Form cover_id is now:',
+                              form.getValues('cover_id')
+                            );
                           }}
                           selectedImageId={form.watch('cover_id')}
                           alt="Lesson cover preview"
