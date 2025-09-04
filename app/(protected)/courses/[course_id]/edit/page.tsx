@@ -23,7 +23,9 @@ export default function EditCoursePage() {
     coverImage,
     coverPreview
   } = useCourseEdit();
+  console.log('coverPreview', coverPreview);
 
+  console.log('initialValues', initialValues);
   if (!selectedSchool) {
     return (
       <div className="flex-1 space-y-6 p-6">
@@ -102,7 +104,11 @@ export default function EditCoursePage() {
           onCoverImageChange={handleCoverImageChange}
           onRemoveCoverImage={removeCoverImage}
           coverImage={coverImage}
-          coverPreview={coverPreview}
+          coverPreview={
+            coverPreview?.startsWith('/')
+              ? `${process.env.NEXT_PUBLIC_HOST}${coverPreview}`
+              : coverPreview
+          }
           submitLabel="Update Course"
         />
       </div>

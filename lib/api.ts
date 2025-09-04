@@ -275,7 +275,7 @@ class ApiClient {
       typeof response.data === 'object' &&
       'data' in response.data
     )
-      return response.data.data as { course: any };
+      return response.data.data as any;
     else return null as any;
   }
 
@@ -512,7 +512,8 @@ class ApiClient {
   // Media endpoints
   async uploadImage(
     file: File,
-    metadata?: { title?: string; description?: string }
+    metadata?: { title?: string; description?: string },
+    signal?: AbortSignal
   ) {
     const formData = new FormData();
     formData.append('imagefile', file); // Backend expects 'imagefile'
@@ -521,10 +522,17 @@ class ApiClient {
     const response = await this.request('/images/upload', {
       method: 'POST',
       headers: {}, // Let browser set content-type for FormData
-      body: formData
+      body: formData,
+      signal
     });
 
-    return response.data;
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    )
+      return response.data.data as any;
+    else return null as any;
   }
 
   async uploadVideo(

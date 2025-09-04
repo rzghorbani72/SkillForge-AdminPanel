@@ -109,18 +109,12 @@ export default function LessonEditPage() {
         });
       }
 
-      if (coursesResponse.data && Array.isArray(coursesResponse.data)) {
-        const schoolCourses = coursesResponse.data.filter(
-          (course: Course) => course.school_id === selectedSchool.id
-        );
-        setCourses(schoolCourses);
+      if (coursesResponse && Array.isArray(coursesResponse)) {
+        setCourses(coursesResponse);
       }
 
-      if (seasonsResponse.data && Array.isArray(seasonsResponse.data)) {
-        const schoolSeasons = seasonsResponse.data.filter(
-          (season: Season) => season.school_id === selectedSchool.id
-        );
-        setSeasons(schoolSeasons);
+      if (seasonsResponse && Array.isArray(seasonsResponse)) {
+        setSeasons(seasonsResponse);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -154,12 +148,13 @@ export default function LessonEditPage() {
       if (coverImage) {
         const formData = new FormData();
         formData.append('file', coverImage);
-        formData.append('type', 'image');
-        formData.append('school_id', selectedSchool.id.toString());
 
-        const uploadResponse = await apiClient.uploadMedia(formData);
-        if (uploadResponse.data && uploadResponse.data.id) {
-          coverId = uploadResponse.data.id.toString();
+        const uploadResponse = await apiClient.uploadImage(coverImage, {
+          title: 'Cover Image',
+          description: 'Cover image for lesson'
+        });
+        if (uploadResponse && uploadResponse.id) {
+          coverId = uploadResponse.id.toString();
         }
       }
 

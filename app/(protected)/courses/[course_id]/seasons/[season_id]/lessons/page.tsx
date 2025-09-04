@@ -3,11 +3,11 @@
 import { useParams, useRouter } from 'next/navigation';
 import LessonHeader from '@/components/lesson/header';
 import LessonNavigation from '@/components/lesson/navigation';
-import SearchAndStats from '@/components/lesson/search-and-stats';
-import NotFound from '@/components/lesson/not-found';
+import SearchAndStats from '@/components/lesson/SearchAndStats';
+import NotFound from '@/components/lesson/NotFound';
 import LessonIndex from '@/components/lesson/index';
 import Loading from '@/components/lesson/loading';
-import SeasonNotFound from '@/components/lesson/season-not-found';
+import SeasonNotFound from '@/components/lesson/SeasonNotFound';
 import useLesson from '@/components/lesson/useLesson';
 
 export default function SeasonLessonsPage() {

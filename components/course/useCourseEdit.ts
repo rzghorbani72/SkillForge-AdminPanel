@@ -3,8 +3,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
-import { Course, CourseFormData } from '@/types/api';
+import { Course } from '@/types/api';
+import { CourseFormData } from './schema';
 import { toast } from 'sonner';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 type UseCourseEditReturn = {
   course: Course | null;
@@ -30,8 +32,12 @@ const useCourseEdit = (): UseCourseEditReturn => {
   const [initialValues, setInitialValues] = useState<CourseFormData | null>(
     null
   );
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+
+  const imageUpload = useImageUpload({
+    onSuccess: (imageId) => {
+      // This will be handled by the form component
+    }
+  });
 
   useEffect(() => {
     if (courseId && selectedSchool) {
@@ -45,6 +51,11 @@ const useCourseEdit = (): UseCourseEditReturn => {
       const response = await apiClient.getCourse(parseInt(courseId));
       if (response) {
         setCourse(response);
+        // Set the existing cover image as preview
+        if (response.cover?.url) {
+          imageUpload.reset();
+          // We'll set the preview manually since we have an existing image
+        }
         setInitialValues({
           title: response.title || '',
           description: response.description || '',
@@ -58,7 +69,7 @@ const useCourseEdit = (): UseCourseEditReturn => {
           season_id: '',
           audio_id: response.audio_id?.toString() || '',
           video_id: response.video_id?.toString() || '',
-          image_id: response.image_id?.toString() || '',
+          cover_id: response.cover?.id?.toString() || '',
           published: response.is_published || false
         });
       }
@@ -68,25 +79,6 @@ const useCourseEdit = (): UseCourseEditReturn => {
       router.push('/courses');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleCoverImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setCoverImage(file);
-      const previewUrl = URL.createObjectURL(file);
-      setCoverPreview(previewUrl);
-    }
-  };
-
-  const removeCoverImage = () => {
-    setCoverImage(null);
-    if (coverPreview) {
-      URL.revokeObjectURL(coverPreview);
-      setCoverPreview(null);
     }
   };
 
@@ -136,7 +128,7 @@ const useCourseEdit = (): UseCourseEditReturn => {
         season_id: data.season_id ? Number(data.season_id) : undefined,
         audio_id: data.audio_id ? Number(data.audio_id) : undefined,
         video_id: data.video_id ? Number(data.video_id) : undefined,
-        image_id: data.image_id ? Number(data.image_id) : undefined,
+        cover_id: data.cover_id ? Number(data.cover_id) : undefined,
         published: !!data.published
       };
 
@@ -157,10 +149,10 @@ const useCourseEdit = (): UseCourseEditReturn => {
     isSubmitting,
     initialValues,
     onSubmit,
-    handleCoverImageChange,
-    removeCoverImage,
-    coverImage,
-    coverPreview
+    handleCoverImageChange: imageUpload.handleFileChange,
+    removeCoverImage: imageUpload.removeFile,
+    coverImage: imageUpload.selectedFile,
+    coverPreview: imageUpload.preview || course?.cover?.url || null
   };
 };
 

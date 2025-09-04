@@ -22,7 +22,8 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Image as ImageIcon } from 'lucide-react';
+import { Image as ImageIcon, Upload, Loader2, X } from 'lucide-react';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 type Props = {
   initialValues: CourseFormData;
@@ -30,10 +31,6 @@ type Props = {
   isSubmitting: boolean;
   onSubmit: (data: CourseFormData) => void;
   onCancel: () => void;
-  onCoverImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onRemoveCoverImage: () => void;
-  coverImage: File | null;
-  coverPreview: string | null;
   submitLabel?: string;
 };
 
@@ -43,10 +40,6 @@ const CourseForm = ({
   isSubmitting,
   onSubmit,
   onCancel,
-  onCoverImageChange,
-  onRemoveCoverImage,
-  coverImage,
-  coverPreview,
   submitLabel = 'Save'
 }: Props) => {
   const form = useForm<CourseFormData>({
@@ -54,6 +47,13 @@ const CourseForm = ({
     defaultValues: initialValues
   });
 
+  const imageUpload = useImageUpload({
+    title: form.watch('title') || initialValues.title,
+    description: form.watch('description') || initialValues.description,
+    onSuccess: (imageId) => {
+      form.setValue('cover_id', imageId);
+    }
+  });
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -121,37 +121,75 @@ const CourseForm = ({
             <Input
               type="file"
               accept="image/*"
-              onChange={onCoverImageChange}
+              onChange={imageUpload.handleFileChange}
               className="cursor-pointer"
             />
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={imageUpload.uploadImage}
+                disabled={!imageUpload.canUpload}
+                className="flex-1"
+              >
+                {imageUpload.isUploading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : imageUpload.hasFile ? (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload Cover Image
+                  </>
+                ) : (
+                  'Select an image first'
+                )}
+              </Button>
 
-            {coverPreview && (
+              {imageUpload.canCancel && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={imageUpload.cancelUpload}
+                  className="px-4"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </Button>
+              )}
+            </div>
+
+            {imageUpload.preview && (
               <div className="space-y-3">
                 <div className="relative">
-                  <div className="aspect-[5/4] w-full max-w-md overflow-hidden rounded-lg border border-gray-200">
+                  <div className="w-full max-w-md overflow-hidden rounded-lg border border-gray-200">
                     <img
-                      src={coverPreview}
+                      src={imageUpload.preview}
                       alt="Course cover preview"
-                      className="h-full w-full object-cover"
+                      className="h-auto w-full"
                     />
                   </div>
                   <Button
                     type="button"
                     variant="destructive"
                     size="sm"
-                    onClick={onRemoveCoverImage}
+                    onClick={imageUpload.removeFile}
                     className="absolute right-2 top-2"
                   >
                     ×
                   </Button>
                 </div>
-                <p className="text-sm text-gray-600">
-                  Cover image selected: {coverImage?.name}
-                </p>
+                {imageUpload.uploadedImageId && (
+                  <p className="text-xs text-green-600">
+                    ✓ Image uploaded successfully (ID:{' '}
+                    {imageUpload.uploadedImageId})
+                  </p>
+                )}
               </div>
             )}
 
-            {!coverPreview && (
+            {!imageUpload.preview && (
               <div className="flex aspect-[5/4] w-full max-w-md flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300">
                 <ImageIcon className="mb-2 h-8 w-8 text-gray-400" />
                 <p className="text-sm text-gray-600">No cover image selected</p>
@@ -231,23 +269,26 @@ const CourseForm = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem
-                            key={category.id}
-                            value={category.id.toString()}
-                          >
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={category.id.toString()}
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -311,14 +352,14 @@ const CourseForm = ({
 
               <FormField
                 control={form.control}
-                name="image_id"
+                name="cover_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image ID</FormLabel>
+                    <FormLabel>Cover ID</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Image ID (optional)"
+                        placeholder="Cover ID (optional)"
                         {...field}
                       />
                     </FormControl>
