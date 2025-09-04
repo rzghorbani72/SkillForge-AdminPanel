@@ -183,7 +183,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Seasons',
-        href: '/seasons',
+        href: '/seasonss',
         icon: 'layers' as IconType,
         label: 'seasons'
       },

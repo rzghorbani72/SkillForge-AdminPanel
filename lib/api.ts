@@ -354,21 +354,13 @@ class ApiClient {
 
   async getLesson(id: number) {
     const response = await this.request(`/lessons/${id}`);
-
-    // Handle the new API response structure where lesson might be nested
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'lesson' in response.data
-    ) {
-      const apiData = response.data as { lesson: any };
-      return {
-        ...response,
-        data: apiData.lesson
-      };
-    }
-
-    return response;
+      'data' in response.data
+    )
+      return response.data.data as { lesson: any };
+    else return null as any;
   }
 
   async createLesson(lessonData: {
@@ -402,45 +394,39 @@ class ApiClient {
   // Seasons endpoints
   async getSeasons(courseId?: number) {
     const queryParams = courseId ? `?course_id=${courseId}` : '';
-    const response = await this.request(`/season${queryParams}`);
+    const response = await this.request(`/seasons${queryParams}`);
 
     // Handle the new API response structure where seasons might be nested
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'seasons' in response.data
-    ) {
-      const apiData = response.data as { seasons: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.seasons,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      'data' in response.data
+    )
+      return response.data.data as { seasons: any };
+    else return null as any;
   }
 
   async createSeason(seasonData: {
     title: string;
     description?: string;
+    order: number;
     course_id: number;
   }) {
-    return this.request('/season', {
+    return this.request('/seasons', {
       method: 'POST',
       body: JSON.stringify(seasonData)
     });
   }
 
   async updateSeason(id: number, seasonData: unknown) {
-    return this.request(`/season/${id}`, {
+    return this.request(`/seasons/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(seasonData)
     });
   }
 
   async deleteSeason(id: number) {
-    return this.request(`/season/${id}`, {
+    return this.request(`/seasons/${id}`, {
       method: 'DELETE'
     });
   }

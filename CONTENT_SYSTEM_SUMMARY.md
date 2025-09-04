@@ -175,7 +175,7 @@ Your backend needs these endpoints:
 
 - `GET/POST /courses` - Course CRUD operations
 - `GET/POST /lessons` - Lesson CRUD operations
-- `GET/POST /season` - Season CRUD operations
+- `GET/POST /seasonss` - Season CRUD operations
 
 ### **Media Upload**
 

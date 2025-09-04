@@ -1,0 +1,453 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { ArrowLeft, Save, Upload } from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { Course, Season } from '@/types/api';
+import { ErrorHandler } from '@/lib/error-handler';
+import { toast } from 'sonner';
+import { useSchool } from '@/contexts/SchoolContext';
+
+const lessonSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().optional(),
+  duration: z.string().optional(),
+  order: z.string().optional(),
+  type: z.string().optional(),
+  course_id: z.string().optional(),
+  season_id: z.string().optional(),
+  audio_id: z.string().optional(),
+  video_id: z.string().optional(),
+  cover_id: z.string().optional(),
+  is_published: z.boolean().default(false)
+});
+
+type LessonFormData = z.infer<typeof lessonSchema>;
+
+export default function LessonCreatePage() {
+  const router = useRouter();
+  const { selectedSchool } = useSchool();
+
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [seasons, setSeasons] = useState<Season[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+
+  const form = useForm<LessonFormData>({
+    resolver: zodResolver(lessonSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      duration: '',
+      order: '',
+      type: 'standard',
+      course_id: '',
+      season_id: '',
+      audio_id: '',
+      video_id: '',
+      cover_id: '',
+      is_published: false
+    }
+  });
+
+  useEffect(() => {
+    if (selectedSchool) {
+      fetchData();
+    }
+  }, [selectedSchool]);
+
+  const fetchData = async () => {
+    if (!selectedSchool) return;
+
+    try {
+      setIsLoadingData(true);
+      const [coursesResponse, seasonsResponse] = await Promise.all([
+        apiClient.getCourses(),
+        apiClient.getSeasons()
+      ]);
+
+      if (coursesResponse.data && Array.isArray(coursesResponse.data)) {
+        const schoolCourses = coursesResponse.data.filter(
+          (course: Course) => course.school_id === selectedSchool.id
+        );
+        setCourses(schoolCourses);
+      }
+
+      if (seasonsResponse.data && Array.isArray(seasonsResponse.data)) {
+        const schoolSeasons = seasonsResponse.data.filter(
+          (season: Season) => season.school_id === selectedSchool.id
+        );
+        setSeasons(schoolSeasons);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCoverPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const onSubmit = async (data: LessonFormData) => {
+    if (!selectedSchool) return;
+
+    try {
+      setIsLoading(true);
+
+      let coverId = data.cover_id;
+
+      // Upload cover image if selected
+      if (coverImage) {
+        const formData = new FormData();
+        formData.append('file', coverImage);
+        formData.append('type', 'image');
+        formData.append('school_id', selectedSchool.id.toString());
+
+        const uploadResponse = await apiClient.uploadMedia(formData);
+        if (uploadResponse.data && uploadResponse.data.id) {
+          coverId = uploadResponse.data.id.toString();
+        }
+      }
+
+      const lessonData = {
+        ...data,
+        school_id: selectedSchool.id,
+        course_id: data.course_id ? parseInt(data.course_id) : null,
+        season_id: data.season_id ? parseInt(data.season_id) : null,
+        audio_id: data.audio_id ? parseInt(data.audio_id) : null,
+        video_id: data.video_id ? parseInt(data.video_id) : null,
+        cover_id: coverId ? parseInt(coverId) : null,
+        order: data.order ? parseInt(data.order) : null
+      };
+
+      await apiClient.createLesson(lessonData);
+      toast.success('Lesson created successfully');
+      router.push('/lessons');
+    } catch (error) {
+      console.error('Error creating lesson:', error);
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoadingData) {
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+            <p className="text-muted-foreground">Loading data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!selectedSchool) {
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold text-muted-foreground">
+              No School Selected
+            </h2>
+            <p className="text-muted-foreground">
+              Please select a school from the header to create lessons.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => router.push('/lessons')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Lessons
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 space-y-6 p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push('/lessons')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Create Lesson</h1>
+            <p className="text-muted-foreground">
+              Create a new lesson for {selectedSchool.name}
+            </p>
+          </div>
+        </div>
+        <Button onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
+          <Save className="mr-2 h-4 w-4" />
+          {isLoading ? 'Creating...' : 'Create Lesson'}
+        </Button>
+      </div>
+
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Basic Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                Lesson Title
+              </label>
+              <Input
+                {...form.register('title')}
+                placeholder="Enter lesson title"
+                className={form.formState.errors.title ? 'border-red-500' : ''}
+              />
+              {form.formState.errors.title && (
+                <p className="mt-1 text-sm text-red-500">
+                  {form.formState.errors.title.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                Description
+              </label>
+              <Textarea
+                {...form.register('description')}
+                placeholder="Enter lesson description"
+                rows={4}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Lesson Details */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Lesson Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Duration
+                </label>
+                <Input
+                  {...form.register('duration')}
+                  placeholder="e.g., 30 minutes"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">Order</label>
+                <Input
+                  {...form.register('order')}
+                  type="number"
+                  placeholder="Lesson order"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Type</label>
+              <Select
+                value={form.watch('type')}
+                onValueChange={(value) => form.setValue('type', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select lesson type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="standard">Standard</SelectItem>
+                  <SelectItem value="video">Video</SelectItem>
+                  <SelectItem value="audio">Audio</SelectItem>
+                  <SelectItem value="text">Text</SelectItem>
+                  <SelectItem value="quiz">Quiz</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Content Associations */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Content Associations</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium">Course</label>
+                <Select
+                  value={form.watch('course_id')}
+                  onValueChange={(value) => form.setValue('course_id', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select course" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {courses.map((course) => (
+                      <SelectItem key={course.id} value={course.id.toString()}>
+                        {course.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">Season</label>
+                <Select
+                  value={form.watch('season_id')}
+                  onValueChange={(value) => form.setValue('season_id', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select season" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {seasons.map((season) => (
+                      <SelectItem key={season.id} value={season.id.toString()}>
+                        {season.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Audio ID
+                </label>
+                <Input
+                  {...form.register('audio_id')}
+                  type="number"
+                  placeholder="Audio ID"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Video ID
+                </label>
+                <Input
+                  {...form.register('video_id')}
+                  type="number"
+                  placeholder="Video ID"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Cover Image */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Cover Image</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                Upload Cover Image
+              </label>
+              <div className="flex items-center space-x-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverImageChange}
+                  className="hidden"
+                  id="cover-upload"
+                />
+                <label
+                  htmlFor="cover-upload"
+                  className="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  Choose File
+                </label>
+                {coverImage && (
+                  <span className="text-sm text-gray-500">
+                    {coverImage.name}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {coverPreview && (
+              <div className="relative h-48 w-full overflow-hidden rounded-lg border">
+                <img
+                  src={coverPreview}
+                  alt="Cover preview"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Publish Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Publish Settings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <div className="text-base font-medium">Publish Lesson</div>
+                <div className="text-sm text-gray-500">
+                  Make this lesson visible to students immediately
+                </div>
+              </div>
+              <Switch
+                checked={form.watch('is_published')}
+                onCheckedChange={(checked) =>
+                  form.setValue('is_published', checked)
+                }
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </form>
+    </div>
+  );
+}

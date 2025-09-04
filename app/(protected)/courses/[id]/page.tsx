@@ -164,6 +164,13 @@ export default function CourseViewPage() {
           </div>
         </div>
         <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/courses/${course.id}/seasons`)}
+          >
+            <BookOpen className="mr-2 h-4 w-4" />
+            Manage Seasons
+          </Button>
           <Button onClick={handleEditCourse}>
             <Edit className="mr-2 h-4 w-4" />
             Edit Course
@@ -347,6 +354,50 @@ export default function CourseViewPage() {
               <Badge variant={course.is_published ? 'default' : 'secondary'}>
                 {course.is_published ? 'Published' : 'Draft'}
               </Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Course Management Navigation */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Course Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="mb-4 text-sm text-muted-foreground">
+              Manage your course content hierarchy: Course → Seasons → Lessons →
+              Content
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Button
+                variant="outline"
+                className="flex h-auto flex-col items-start p-4"
+                onClick={() => router.push(`/courses/${course.id}/seasons`)}
+              >
+                <div className="mb-2 flex items-center">
+                  <BookOpen className="mr-2 h-5 w-5" />
+                  <span className="font-medium">Manage Seasons</span>
+                </div>
+                <span className="text-left text-sm text-muted-foreground">
+                  Create and organize seasons within this course
+                </span>
+              </Button>
+
+              <Button
+                variant="outline"
+                className="flex h-auto flex-col items-start p-4"
+                onClick={() => router.push(`/courses/${course.id}/edit`)}
+              >
+                <div className="mb-2 flex items-center">
+                  <Edit className="mr-2 h-5 w-5" />
+                  <span className="font-medium">Edit Course</span>
+                </div>
+                <span className="text-left text-sm text-muted-foreground">
+                  Update course information and settings
+                </span>
+              </Button>
             </div>
           </div>
         </CardContent>

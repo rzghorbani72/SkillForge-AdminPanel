@@ -97,10 +97,10 @@ Verify these endpoints are available in your backend:
 
 #### Season Management
 
-- `GET /season` - List all seasons
-- `POST /season` - Create new season
-- `PATCH /season/:id` - Update season
-- `DELETE /season/:id` - Delete season
+- `GET /seasonss` - List all seasons
+- `POST /seasonss` - Create new season
+- `PATCH /seasonss/:id` - Update season
+- `DELETE /seasonss/:id` - Delete season
 
 #### Media Upload
 

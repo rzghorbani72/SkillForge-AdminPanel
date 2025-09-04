@@ -226,7 +226,7 @@ export default function ContentPage() {
 
         <Card
           className="cursor-pointer transition-shadow hover:shadow-md"
-          onClick={() => (window.location.href = '/seasons')}
+          onClick={() => (window.location.href = '/seasonss')}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Seasons</CardTitle>
@@ -296,7 +296,7 @@ export default function ContentPage() {
             <Button
               variant="outline"
               className="h-auto justify-start p-4"
-              onClick={() => (window.location.href = '/seasons')}
+              onClick={() => (window.location.href = '/seasonss')}
             >
               <Layers className="mr-3 h-5 w-5" />
               <div className="text-left">

@@ -39,7 +39,14 @@ import { ErrorHandler } from '@/lib/error-handler';
 
 const seasonFormSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  description: z.string().optional(),
+  order: z
+    .string()
+    .min(1, 'Order is required')
+    .refine((val) => {
+      const num = Number(val);
+      return !isNaN(num) && num > 0 && Number.isInteger(num);
+    }, 'Order must be a positive integer'),
   course_id: z.string().min(1, 'Course is required')
 });
 
@@ -48,11 +55,13 @@ type SeasonFormData = z.infer<typeof seasonFormSchema>;
 interface CreateSeasonDialogProps {
   onSeasonCreated?: () => void;
   courses?: Course[];
+  courseId?: number; // Pre-select a specific course
 }
 
 export default function CreateSeasonDialog({
   onSeasonCreated,
-  courses
+  courses,
+  courseId
 }: CreateSeasonDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +71,8 @@ export default function CreateSeasonDialog({
     defaultValues: {
       title: '',
       description: '',
-      course_id: ''
+      order: '1',
+      course_id: courseId ? courseId.toString() : ''
     }
   });
 
@@ -73,7 +83,8 @@ export default function CreateSeasonDialog({
       // Create season
       await apiClient.createSeason({
         title: data.title,
-        description: data.description,
+        description: data.description || '',
+        order: parseInt(data.order),
         course_id: parseInt(data.course_id)
       });
 
@@ -82,7 +93,23 @@ export default function CreateSeasonDialog({
       onSeasonCreated?.();
     } catch (error) {
       console.error('Error creating season:', error);
-      ErrorHandler.handleApiError(error);
+
+      // Handle specific database constraint errors
+      if (
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        typeof error.message === 'string' &&
+        error.message.includes('Unique constraint failed')
+      ) {
+        ErrorHandler.handleApiError(
+          new Error(
+            'Unable to create season due to ordering conflict. Please try again.'
+          )
+        );
+      } else {
+        ErrorHandler.handleApiError(error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -106,33 +133,35 @@ export default function CreateSeasonDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="course_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Course *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a course" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {courses?.map((course) => (
-                        <SelectItem
-                          key={course.id}
-                          value={course.id.toString()}
-                        >
-                          {course.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!courseId && (
+              <FormField
+                control={form.control}
+                name="course_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Course *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a course" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {courses?.map((course) => (
+                          <SelectItem
+                            key={course.id}
+                            value={course.id.toString()}
+                          >
+                            {course.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
@@ -153,10 +182,32 @@ export default function CreateSeasonDialog({
 
             <FormField
               control={form.control}
+              name="order"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Order *</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="e.g., 1"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    The sequence order of this season within the course
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description *</FormLabel>
+                  <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Describe what this season covers and its learning objectives"

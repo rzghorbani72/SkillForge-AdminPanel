@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -25,15 +26,14 @@ import { apiClient } from '@/lib/api';
 import { Lesson, Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
-import CreateLessonDialog from '@/components/content/create-lesson-dialog';
 
 export default function LessonsPage() {
   const { selectedSchool } = useSchool();
+  const router = useRouter();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   useEffect(() => {
     if (selectedSchool) {
@@ -51,14 +51,14 @@ export default function LessonsPage() {
         apiClient.getCourses()
       ]);
 
-      if (lessonsResponse.status === 'ok' && lessonsResponse.data) {
+      if (lessonsResponse.data && Array.isArray(lessonsResponse.data)) {
         const schoolLessons = lessonsResponse.data.filter(
           (lesson: Lesson) => lesson.school_id === selectedSchool.id
         );
         setLessons(schoolLessons);
       }
 
-      if (coursesResponse.status === 'ok' && coursesResponse.data) {
+      if (coursesResponse.data && Array.isArray(coursesResponse.data)) {
         const schoolCourses = coursesResponse.data.filter(
           (course: Course) => course.school_id === selectedSchool.id
         );
@@ -70,11 +70,6 @@ export default function LessonsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleLessonCreated = () => {
-    setIsCreateDialogOpen(false);
-    fetchData();
   };
 
   const filteredLessons = lessons.filter(
@@ -107,98 +102,40 @@ export default function LessonsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Lessons</h1>
           <p className="text-muted-foreground">
-            Manage lessons for {selectedSchool.name}
+            Lessons are now managed within courses and seasons
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Lesson
+        <Button onClick={() => router.push('/courses')}>
+          <BookOpen className="mr-2 h-4 w-4" />
+          Go to Courses
         </Button>
       </div>
 
-      {/* Search */}
-      <div className="flex items-center space-x-2">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search lessons..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-        </div>
-      </div>
-
-      {/* Stats Card */}
+      {/* Information Card */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Lessons</CardTitle>
-          <Play className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{lessons.length}</div>
-          <p className="text-xs text-muted-foreground">
-            Available lessons in {selectedSchool.name}
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <BookOpen className="mb-4 h-12 w-12 text-muted-foreground" />
+          <h3 className="mb-2 text-lg font-semibold">
+            Lessons Management Moved
+          </h3>
+          <p className="mb-4 text-center text-muted-foreground">
+            Lessons are now organized within courses and seasons for better
+            content management.
+            <br />
+            Navigate to courses to manage your lessons.
           </p>
+          <div className="flex space-x-2">
+            <Button onClick={() => router.push('/courses')}>
+              <BookOpen className="mr-2 h-4 w-4" />
+              Go to Courses
+            </Button>
+            <Button variant="outline" onClick={() => router.push('/content')}>
+              <Play className="mr-2 h-4 w-4" />
+              Content Overview
+            </Button>
+          </div>
         </CardContent>
       </Card>
-
-      {/* Lessons Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredLessons.map((lesson) => (
-          <Card key={lesson.id} className="transition-shadow hover:shadow-md">
-            <CardHeader>
-              <CardTitle className="text-lg">{lesson.title}</CardTitle>
-              <CardDescription className="text-sm">
-                {lesson.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span className="flex items-center">
-                    <Clock className="mr-1 h-4 w-4" />
-                    {lesson.duration || 'N/A'}
-                  </span>
-                  <span className="flex items-center">
-                    <BookOpen className="mr-1 h-4 w-4" />
-                    {lesson.course?.title || 'No Course'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline">{lesson.type || 'Standard'}</Badge>
-                  <span className="text-sm text-muted-foreground">
-                    Order: {lesson.order || 'N/A'}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Eye className="mr-1 h-4 w-4" />
-                    View
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="mr-1 h-4 w-4" />
-                    Edit
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Trash2 className="mr-1 h-4 w-4" />
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Create Lesson Dialog */}
-      {isCreateDialogOpen && (
-        <CreateLessonDialog
-          onLessonCreated={handleLessonCreated}
-          courses={courses}
-          schoolId={selectedSchool.id}
-        />
-      )}
     </div>
   );
 }
