@@ -43,7 +43,7 @@ import { useSchool } from '@/contexts/SchoolContext';
 export default function CourseViewPage() {
   const router = useRouter();
   const params = useParams();
-  const courseId = params.id as string;
+  const courseId = params.course_id as string;
   const { selectedSchool } = useSchool();
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);

@@ -339,14 +339,9 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'lessons' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { lessons: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.lessons,
-        pagination: apiData.pagination
-      };
+      return response.data.data as { lessons: any[]; pagination?: any };
     }
 
     return response;
@@ -365,12 +360,16 @@ class ApiClient {
 
   async createLesson(lessonData: {
     title: string;
-    description: string;
-    content?: string;
-    duration?: number;
-    course_id: number;
-    season_id?: number;
-    media_id?: number;
+    description?: string;
+    season_id: number;
+    audio_id?: number;
+    video_id?: number;
+    image_id?: number;
+    document_id?: number;
+    category_id?: number;
+    published?: boolean;
+    is_free?: boolean;
+    lesson_type?: string;
   }) {
     return this.request('/lessons', {
       method: 'POST',
@@ -396,14 +395,31 @@ class ApiClient {
     const queryParams = courseId ? `?course_id=${courseId}` : '';
     const response = await this.request(`/seasons${queryParams}`);
 
-    // Handle the new API response structure where seasons might be nested
+    // Handle the API response structure
+    if (response.data && Array.isArray(response.data)) {
+      return response.data;
+    } else if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return response.data.data as any[];
+    }
+    return [];
+  }
+
+  async getSeason(id: number) {
+    const response = await this.request(`/seasons/${id}`);
     if (
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data
     )
-      return response.data.data as { seasons: any };
-    else return null as any;
+      return response.data.data as any;
+    else if (response.data) {
+      return response.data as any;
+    }
+    return null;
   }
 
   async createSeason(seasonData: {

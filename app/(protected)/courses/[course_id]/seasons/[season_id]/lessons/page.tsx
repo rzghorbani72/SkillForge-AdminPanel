@@ -5,13 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
+  CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,41 +27,44 @@ import {
   ArrowLeft,
   Plus,
   Search,
+  BookOpen,
+  Eye,
   Edit,
   Trash2,
-  Eye,
   Clock,
-  BookOpen,
   Play,
-  Volume2,
   Video,
+  Volume2,
   FileText
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Lesson, Season, Course } from '@/types/api';
+import { useSchool } from '@/contexts/SchoolContext';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
 
 export default function SeasonLessonsPage() {
   const params = useParams();
   const router = useRouter();
-  const courseId = params.id as string;
-  const seasonId = params.seasonId as string;
+  const { selectedSchool } = useSchool();
+  const courseId = params.course_id as string;
+  const seasonId = params.season_id as string;
 
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [season, setSeason] = useState<Season | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isDeleting, setIsDeleting] = useState<number | null>(null);
 
   useEffect(() => {
-    if (seasonId && courseId) {
+    if (courseId && seasonId && selectedSchool) {
       fetchData();
     }
-  }, [seasonId, courseId]);
+  }, [courseId, seasonId, selectedSchool]);
 
   const fetchData = async () => {
+    if (!selectedSchool) return;
+
     try {
       setIsLoading(true);
       const [lessonsResponse, seasonResponse, courseResponse] =
@@ -71,8 +74,8 @@ export default function SeasonLessonsPage() {
           apiClient.getCourse(parseInt(courseId))
         ]);
 
-      if (lessonsResponse.data && Array.isArray(lessonsResponse.data)) {
-        setLessons(lessonsResponse.data);
+      if (lessonsResponse && Array.isArray(lessonsResponse)) {
+        setLessons(lessonsResponse);
       }
 
       if (seasonResponse) {
@@ -90,29 +93,28 @@ export default function SeasonLessonsPage() {
     }
   };
 
-  const handleDelete = async (lessonId: number) => {
+  const handleDeleteLesson = async (lessonId: number) => {
     try {
-      setIsDeleting(lessonId);
       await apiClient.deleteLesson(lessonId);
       toast.success('Lesson deleted successfully');
-      fetchData(); // Refresh the list
+      fetchData(); // Refresh data
     } catch (error) {
       console.error('Error deleting lesson:', error);
       ErrorHandler.handleApiError(error);
-    } finally {
-      setIsDeleting(null);
     }
   };
 
+  // Filter lessons based on search term
   const filteredLessons = lessons.filter(
     (lesson) =>
       lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lesson.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      (lesson.description &&
+        lesson.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
@@ -125,13 +127,11 @@ export default function SeasonLessonsPage() {
 
   if (!season || !course) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-muted-foreground">
-              Season Not Found
-            </h2>
-            <p className="text-muted-foreground">
+            <h2 className="mb-4 text-2xl font-bold">Season Not Found</h2>
+            <p className="mb-4 text-muted-foreground">
               The season you're looking for doesn't exist.
             </p>
             <Button
@@ -149,7 +149,7 @@ export default function SeasonLessonsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="container mx-auto space-y-6 py-6">
       {/* Breadcrumb Navigation */}
       <div className="flex items-center space-x-2 text-sm text-muted-foreground">
         <button
@@ -199,7 +199,7 @@ export default function SeasonLessonsPage() {
             Back to Season
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Lessons</h1>
+            <h1 className="text-3xl font-bold">Lessons Management</h1>
             <p className="text-muted-foreground">
               Manage lessons for "{season.title}" in "{course.title}"
             </p>
@@ -213,36 +213,44 @@ export default function SeasonLessonsPage() {
           }
         >
           <Plus className="mr-2 h-4 w-4" />
-          Create Lesson
+          Add New Lesson
         </Button>
       </div>
 
-      {/* Search */}
-      <div className="flex items-center space-x-2">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search lessons..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
+      {/* Search and Stats */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+            <Input
+              placeholder="Search lessons..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-80 pl-10"
+            />
+          </div>
         </div>
+        <Card>
+          <CardContent className="py-4">
+            <div className="flex items-center space-x-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold">{lessons.length}</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Lessons
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {lessons.filter((lesson) => lesson.is_active).length}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Active Lessons
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Stats Card */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Lessons</CardTitle>
-          <BookOpen className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{lessons.length}</div>
-          <p className="text-xs text-muted-foreground">
-            Lessons in this season
-          </p>
-        </CardContent>
-      </Card>
 
       {/* Lessons Grid */}
       {filteredLessons.length === 0 ? (
@@ -264,7 +272,7 @@ export default function SeasonLessonsPage() {
                 }
               >
                 <Plus className="mr-2 h-4 w-4" />
-                Create First Lesson
+                Add First Lesson
               </Button>
             )}
           </CardContent>
@@ -274,16 +282,21 @@ export default function SeasonLessonsPage() {
           {filteredLessons.map((lesson) => (
             <Card key={lesson.id} className="transition-shadow hover:shadow-md">
               <CardHeader>
-                <CardTitle className="line-clamp-2 text-lg">
-                  {lesson.title}
-                </CardTitle>
-                <CardDescription className="line-clamp-2 text-sm">
-                  {lesson.description || 'No description provided'}
-                </CardDescription>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg">{lesson.title}</CardTitle>
+                    <CardDescription className="mt-1">
+                      {lesson.description || 'No description provided'}
+                    </CardDescription>
+                  </div>
+                  <Badge variant={lesson.is_active ? 'default' : 'secondary'}>
+                    {lesson.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <span className="flex items-center">
                       <Clock className="mr-1 h-4 w-4" />
                       {lesson.duration || 'N/A'}
@@ -294,29 +307,18 @@ export default function SeasonLessonsPage() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <span className="flex items-center">
                       <Video className="mr-1 h-4 w-4" />
-                      {lesson.video_id ? 'Video' : 'No Video'}
+                      {lesson.media_id ? 'Media' : 'No Media'}
                     </span>
                     <span className="flex items-center">
-                      <Volume2 className="mr-1 h-4 w-4" />
-                      {lesson.audio_id ? 'Audio' : 'No Audio'}
+                      <FileText className="mr-1 h-4 w-4" />
+                      {lesson.content ? 'Content' : 'No Content'}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <Badge
-                      variant={lesson.is_published ? 'default' : 'secondary'}
-                    >
-                      {lesson.is_published ? 'Published' : 'Draft'}
-                    </Badge>
-                    <span className="text-sm text-muted-foreground">
-                      {lesson.document_ids?.length || 0} docs
-                    </span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 pt-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -327,7 +329,7 @@ export default function SeasonLessonsPage() {
                         )
                       }
                     >
-                      <Eye className="mr-1 h-4 w-4" />
+                      <Eye className="mr-1 h-3 w-3" />
                       View
                     </Button>
                     <Button
@@ -340,14 +342,13 @@ export default function SeasonLessonsPage() {
                         )
                       }
                     >
-                      <Edit className="mr-1 h-4 w-4" />
+                      <Edit className="mr-1 h-3 w-3" />
                       Edit
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Trash2 className="mr-1 h-4 w-4" />
-                          Delete
+                        <Button variant="outline" size="sm">
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -362,13 +363,10 @@ export default function SeasonLessonsPage() {
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => handleDelete(lesson.id)}
-                            disabled={isDeleting === lesson.id}
+                            onClick={() => handleDeleteLesson(lesson.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            {isDeleting === lesson.id
-                              ? 'Deleting...'
-                              : 'Delete'}
+                            Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

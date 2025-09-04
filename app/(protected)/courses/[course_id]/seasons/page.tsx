@@ -5,13 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
+  CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   Accordion,
   AccordionContent,
@@ -33,29 +33,29 @@ import {
   ArrowLeft,
   Plus,
   Search,
+  Calendar,
+  BookOpen,
+  Eye,
   Edit,
   Trash2,
-  Eye,
-  BookOpen,
-  Calendar,
-  Play,
   Clock,
-  Volume2,
+  Play,
   Video,
+  Volume2,
   FileText
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Season, Course, Lesson } from '@/types/api';
-import { ErrorHandler } from '@/lib/error-handler';
-import { toast } from 'sonner';
 import { useSchool } from '@/contexts/SchoolContext';
+import { ErrorHandler } from '@/lib/error-handler';
 import CreateSeasonDialog from '@/components/content/create-season-dialog';
+import { toast } from 'sonner';
 
-export default function CourseSeasonsPage() {
+export default function SeasonsPage() {
   const params = useParams();
   const router = useRouter();
   const { selectedSchool } = useSchool();
-  const courseId = params.id as string;
+  const courseId = params.course_id as string;
 
   const [course, setCourse] = useState<Course | null>(null);
   const [seasons, setSeasons] = useState<Season[]>([]);
@@ -91,8 +91,8 @@ export default function CourseSeasonsPage() {
       if (seasonsResponse && Array.isArray(seasonsResponse)) {
         // Get all lessons for the course
         const allLessons =
-          lessonsResponse.data && Array.isArray(lessonsResponse.data)
-            ? lessonsResponse.data
+          lessonsResponse && Array.isArray(lessonsResponse)
+            ? lessonsResponse
             : [];
 
         // Group lessons by season_id
@@ -136,7 +136,7 @@ export default function CourseSeasonsPage() {
       setIsDeleting(seasonId);
       await apiClient.deleteSeason(seasonId);
       toast.success('Season deleted successfully');
-      fetchData(); // Refresh the list
+      fetchData(); // Refresh data
     } catch (error) {
       console.error('Error deleting season:', error);
       ErrorHandler.handleApiError(error);
@@ -149,16 +149,40 @@ export default function CourseSeasonsPage() {
     try {
       await apiClient.deleteLesson(lessonId);
       toast.success('Lesson deleted successfully');
-      fetchData(); // Refresh the list
+      fetchData(); // Refresh data
     } catch (error) {
       console.error('Error deleting lesson:', error);
       ErrorHandler.handleApiError(error);
     }
   };
 
+  // Filter seasons and lessons based on search term
+  const filteredSeasons = seasons.filter((season) => {
+    const matchesSeason =
+      season.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (season.description &&
+        season.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesLessons = season.lessons?.some(
+      (lesson: Lesson) =>
+        lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (lesson.description &&
+          lesson.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
+    return matchesSeason || matchesLessons;
+  });
+
+  const filteredOrphanedLessons = orphanedLessons.filter(
+    (lesson) =>
+      lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (lesson.description &&
+        lesson.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
@@ -171,13 +195,11 @@ export default function CourseSeasonsPage() {
 
   if (!course) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-muted-foreground">
-              Course Not Found
-            </h2>
-            <p className="text-muted-foreground">
+            <h2 className="mb-4 text-2xl font-bold">Course Not Found</h2>
+            <p className="mb-4 text-muted-foreground">
               The course you're looking for doesn't exist.
             </p>
             <Button
@@ -195,7 +217,7 @@ export default function CourseSeasonsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="container mx-auto space-y-6 py-6">
       {/* Breadcrumb Navigation */}
       <div className="flex items-center space-x-2 text-sm text-muted-foreground">
         <button
@@ -227,47 +249,58 @@ export default function CourseSeasonsPage() {
             Back to Course
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Seasons</h1>
+            <h1 className="text-3xl font-bold">Seasons Management</h1>
             <p className="text-muted-foreground">
-              Manage seasons for "{course.title}"
+              Manage seasons and lessons for "{course.title}"
             </p>
           </div>
         </div>
         <CreateSeasonDialog
-          onSeasonCreated={fetchData}
           courseId={parseInt(courseId)}
+          onSeasonCreated={fetchData}
         />
       </div>
 
-      {/* Search */}
-      <div className="flex items-center space-x-2">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search seasons..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
+      {/* Search and Stats */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+            <Input
+              placeholder="Search seasons and lessons..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-80 pl-10"
+            />
+          </div>
         </div>
+        <Card>
+          <CardContent className="py-4">
+            <div className="flex items-center space-x-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold">{seasons.length}</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Seasons
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {seasons.reduce(
+                    (acc, season) => acc + (season.lessons?.length || 0),
+                    0
+                  )}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total Lessons
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Stats Card */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Seasons</CardTitle>
-          <Calendar className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{seasons.length}</div>
-          <p className="text-xs text-muted-foreground">
-            Seasons in this course
-          </p>
-        </CardContent>
-      </Card>
-
       {/* Seasons Accordion */}
-      {seasons.length === 0 ? (
+      {filteredSeasons.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
@@ -279,15 +312,15 @@ export default function CourseSeasonsPage() {
             </p>
             {!searchTerm && (
               <CreateSeasonDialog
-                onSeasonCreated={fetchData}
                 courseId={parseInt(courseId)}
+                onSeasonCreated={fetchData}
               />
             )}
           </CardContent>
         </Card>
       ) : (
         <Accordion type="multiple" className="w-full">
-          {seasons.map((season) => (
+          {filteredSeasons.map((season) => (
             <AccordionItem key={season.id} value={`season-${season.id}`}>
               <AccordionTrigger className="hover:no-underline">
                 <div className="mr-4 flex w-full items-center justify-between">
@@ -300,6 +333,7 @@ export default function CourseSeasonsPage() {
                         {season.description || 'No description provided'}
                       </p>
                     </div>
+                    <Badge variant="outline">Season</Badge>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <span className="flex items-center">
@@ -308,9 +342,8 @@ export default function CourseSeasonsPage() {
                     </span>
                     <span className="flex items-center">
                       <Play className="mr-1 h-4 w-4" />
-                      Order: {season.order || 'N/A'}
+                      Order: {season.order}
                     </span>
-                    <Badge variant="outline">Season</Badge>
                   </div>
                 </div>
               </AccordionTrigger>
@@ -372,7 +405,6 @@ export default function CourseSeasonsPage() {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDeleteSeason(season.id)}
-                            disabled={isDeleting === season.id}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
                             {isDeleting === season.id
@@ -423,14 +455,6 @@ export default function CourseSeasonsPage() {
                                   <span className="flex items-center">
                                     <Video className="mr-1 h-3 w-3" />
                                     {lesson.media_id ? 'Media' : 'No Media'}
-                                  </span>
-                                  <span className="flex items-center">
-                                    <Volume2 className="mr-1 h-3 w-3" />
-                                    {lesson.media?.type || 'No Type'}
-                                  </span>
-                                  <span className="flex items-center">
-                                    <FileText className="mr-1 h-3 w-3" />
-                                    {lesson.content ? 'Content' : 'No Content'}
                                   </span>
                                 </div>
                               </div>
@@ -526,7 +550,7 @@ export default function CourseSeasonsPage() {
       )}
 
       {/* Orphaned Lessons Section */}
-      {orphanedLessons.length > 0 && (
+      {filteredOrphanedLessons.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -539,7 +563,7 @@ export default function CourseSeasonsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-3">
-              {orphanedLessons.map((lesson: Lesson) => (
+              {filteredOrphanedLessons.map((lesson: Lesson) => (
                 <Card
                   key={lesson.id}
                   className="transition-shadow hover:shadow-md"

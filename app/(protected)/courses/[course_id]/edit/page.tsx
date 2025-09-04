@@ -69,7 +69,7 @@ type CourseFormData = z.infer<typeof courseFormSchema>;
 export default function EditCoursePage() {
   const router = useRouter();
   const params = useParams();
-  const courseId = params.id as string;
+  const courseId = params.course_id as string;
   const { selectedSchool } = useSchool();
   const { categories } = useCategoriesStore();
   const [isLoading, setIsLoading] = useState(false);
