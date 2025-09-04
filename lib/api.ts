@@ -455,17 +455,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'categories' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { categories: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.categories,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   async createCategory(categoryData: {
@@ -611,7 +604,16 @@ class ApiClient {
   }
 
   async getImages() {
-    return this.request('/images');
+    const response = await this.request('/images');
+
+    // Handle the new API response structure where images might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return response.data.data as any;
+    } else return null as any;
   }
 
   async getVideos() {
@@ -621,17 +623,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'videos' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { videos: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.videos,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   async getAudio() {
@@ -641,17 +636,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'audio' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { audio: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.audio,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   async getDocuments() {
@@ -661,17 +649,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'files' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { files: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.files,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   // Image fetching endpoint
@@ -686,6 +667,13 @@ class ApiClient {
       headers: {
         Accept: 'image/*'
       }
+    });
+  }
+
+  // Image deletion endpoint
+  async deleteImage(imageId: number) {
+    return this.request(`/images/${imageId}`, {
+      method: 'DELETE'
     });
   }
 
@@ -780,20 +768,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'transactions' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as {
-        transactions: any[];
-        pagination?: any;
-      };
-      return {
-        ...response,
-        data: apiData.transactions,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   async getTransaction(id: number) {
@@ -834,17 +812,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'enrollments' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { enrollments: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.enrollments,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   async getRecentPayments() {
@@ -854,17 +825,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'payments' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { payments: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.payments,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   // Articles endpoints
@@ -875,17 +839,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'articles' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { articles: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.articles,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   async getArticle(id: number) {
@@ -924,17 +881,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'categories' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { categories: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.categories,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 
   async getArticleTags() {
@@ -944,17 +894,10 @@ class ApiClient {
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'tags' in response.data
+      'data' in response.data
     ) {
-      const apiData = response.data as { tags: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.tags,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
+      return response.data.data as any;
+    } else return null as any;
   }
 }
 

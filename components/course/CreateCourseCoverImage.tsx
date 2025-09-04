@@ -39,6 +39,7 @@ const CreateCourseCoverImage = ({
           onSuccess={(imageId) => {
             form.setValue('image_id', imageId);
           }}
+          selectedImageId={form.watch('image_id')}
           alt="Course cover preview"
           className="aspect-[5/4] w-full max-w-md"
           placeholderText="No cover image selected"

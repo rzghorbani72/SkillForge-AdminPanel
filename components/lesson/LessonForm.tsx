@@ -197,6 +197,7 @@ const LessonForm = ({
                           onSuccess={(imageId) => {
                             form.setValue('cover_id', imageId);
                           }}
+                          selectedImageId={form.watch('cover_id')}
                           alt="Lesson cover preview"
                           placeholderText="No cover image selected"
                           placeholderSubtext="Upload an image to preview it here"

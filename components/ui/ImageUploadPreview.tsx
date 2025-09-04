@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Image as ImageIcon, Upload, Loader2, X } from 'lucide-react';
+import { Image as ImageIcon, Upload, Loader2, X, Library } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import ImagePreview from './ImagePreview';
+import ImageSelectionDialog from './ImageSelectionDialog';
 
 interface ImageUploadPreviewProps {
   title?: string;
@@ -20,6 +21,8 @@ interface ImageUploadPreviewProps {
   placeholderSubtext?: string;
   uploadButtonText?: string;
   selectButtonText?: string;
+  showImageSelection?: boolean;
+  selectedImageId?: string | null;
   disabled?: boolean;
 }
 
@@ -38,8 +41,11 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   placeholderSubtext = 'Upload an image to preview it here',
   uploadButtonText = 'Upload Image',
   selectButtonText = 'Select an image first',
+  showImageSelection = true,
+  selectedImageId,
   disabled = false
 }) => {
+  const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
   const imageUpload = useImageUpload({
     title,
     description,
@@ -47,6 +53,10 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
     onError,
     onCancel
   });
+
+  const handleImageSelect = (imageId: string) => {
+    onSuccess?.(imageId);
+  };
 
   return (
     <div className="space-y-4">
@@ -59,7 +69,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
         disabled={disabled}
       />
 
-      {/* Upload and Cancel Buttons */}
+      {/* Upload, Select, and Cancel Buttons */}
       <div className="flex gap-2">
         <Button
           type="button"
@@ -83,6 +93,26 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
           )}
         </Button>
 
+        {showImageSelection && (
+          <ImageSelectionDialog
+            onSelect={handleImageSelect}
+            selectedImageId={selectedImageId}
+            trigger={
+              <Button
+                type="button"
+                variant="outline"
+                disabled={disabled}
+                className="px-4"
+              >
+                <Library className="mr-2 h-4 w-4" />
+                Library
+              </Button>
+            }
+            open={isSelectionDialogOpen}
+            onOpenChange={setIsSelectionDialogOpen}
+          />
+        )}
+
         {imageUpload.canCancel && (
           <Button
             type="button"
@@ -100,8 +130,13 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
       {/* Image Preview */}
       <ImagePreview
         preview={imageUpload.preview}
-        uploadedImageId={imageUpload.uploadedImageId}
-        onRemove={imageUpload.removeFile}
+        uploadedImageId={imageUpload.uploadedImageId || selectedImageId}
+        onRemove={() => {
+          imageUpload.removeFile();
+          if (selectedImageId) {
+            onSuccess?.('');
+          }
+        }}
         existingImageUrl={existingImageUrl}
         existingImageId={existingImageId}
         alt={alt}

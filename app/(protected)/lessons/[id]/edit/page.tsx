@@ -383,6 +383,7 @@ export default function LessonEditPage() {
               onSuccess={(imageId) => {
                 form.setValue('cover_id', imageId);
               }}
+              selectedImageId={form.watch('cover_id')}
               existingImageUrl={null}
               existingImageId={(lesson as any)?.cover_id}
               alt="Lesson cover preview"
