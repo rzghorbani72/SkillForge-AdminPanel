@@ -1,0 +1,91 @@
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { apiClient } from '@/lib/api';
+import { ErrorHandler } from '@/lib/error-handler';
+import { useSchool } from '@/contexts/SchoolContext';
+import { Course } from '@/types/api';
+
+type UseCoursesReturn = {
+  courses: Course[];
+  isLoading: boolean;
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  handleViewCourse: (course: Course) => void;
+  handleEditCourse: (course: Course) => void;
+};
+
+const useCourses = (): UseCoursesReturn => {
+  const router = useRouter();
+  const { selectedSchool } = useSchool();
+
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    if (selectedSchool) {
+      fetchCourses();
+    }
+  }, [selectedSchool]);
+
+  const fetchCourses = async () => {
+    if (!selectedSchool) return;
+
+    try {
+      setIsLoading(true);
+      const response = await apiClient.getCourses();
+
+      // Handle possible shapes: { courses: [] } or { data: [] } or []
+      let nextCourses: Course[] = [];
+      const data: any = (response as any).data ?? response;
+      if (Array.isArray(data)) {
+        nextCourses = data;
+      } else if (data && Array.isArray(data.courses)) {
+        nextCourses = data.courses;
+      } else if (data && Array.isArray(data.data)) {
+        nextCourses = data.data;
+      } else if (
+        (response as any).courses &&
+        Array.isArray((response as any).courses)
+      ) {
+        nextCourses = (response as any).courses;
+      }
+
+      // Optionally filter by school if present on objects
+      if (selectedSchool && nextCourses.length > 0) {
+        nextCourses = nextCourses.filter((c) =>
+          (c as any).school_id
+            ? (c as any).school_id === selectedSchool.id
+            : true
+        );
+      }
+
+      setCourses(nextCourses);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      ErrorHandler.handleApiError(error);
+      setCourses([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleViewCourse = (course: Course) => {
+    router.push(`/courses/${course.id}`);
+  };
+
+  const handleEditCourse = (course: Course) => {
+    router.push(`/courses/${course.id}/edit`);
+  };
+
+  return {
+    courses,
+    isLoading,
+    searchTerm,
+    setSearchTerm,
+    handleViewCourse,
+    handleEditCourse
+  };
+};
+
+export default useCourses;
