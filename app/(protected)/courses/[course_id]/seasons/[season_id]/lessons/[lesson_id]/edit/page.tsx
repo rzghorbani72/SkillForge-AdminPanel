@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -13,45 +13,77 @@ import { toast } from 'sonner';
 import LessonForm from '@/components/lesson/LessonForm';
 import { LessonFormData } from '@/components/lesson/schema';
 
-export default function CreateLessonPage() {
+export default function EditLessonPage() {
   const router = useRouter();
   const params = useParams();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
+  const lessonId = params.lesson_id as string;
   const { selectedSchool } = useSchool();
   const { categories } = useCategoriesStore();
+
   const [isLoading, setIsLoading] = useState(false);
   const [season, setSeason] = useState<any>(null);
   const [course, setCourse] = useState<any>(null);
+  const [initialValues, setInitialValues] = useState<LessonFormData | null>(
+    null
+  );
 
-  // Fetch season and course data
   useEffect(() => {
     const fetchData = async () => {
       if (!selectedSchool) return;
 
       try {
-        const [seasonResponse, courseResponse] = await Promise.all([
-          apiClient.getSeason(parseInt(seasonId)),
-          apiClient.getCourse(parseInt(courseId))
-        ]);
+        setIsLoading(true);
+        const [lessonResponse, seasonResponse, courseResponse] =
+          await Promise.all([
+            apiClient.getLesson(parseInt(lessonId)),
+            apiClient.getSeason(parseInt(seasonId)),
+            apiClient.getCourse(parseInt(courseId))
+          ]);
 
-        if (seasonResponse) {
-          setSeason(seasonResponse);
+        if (lessonResponse) {
+          setInitialValues({
+            title: lessonResponse.title,
+            description: lessonResponse.description ?? '',
+            season_id: seasonId,
+            audio_id: lessonResponse.audio_id
+              ? String(lessonResponse.audio_id)
+              : '',
+            video_id: lessonResponse.video_id
+              ? String(lessonResponse.video_id)
+              : '',
+            image_id: lessonResponse.image_id
+              ? String(lessonResponse.image_id)
+              : '',
+            document_id: lessonResponse.document_id
+              ? String(lessonResponse.document_id)
+              : '',
+            category_id: lessonResponse.category_id
+              ? String(lessonResponse.category_id)
+              : '',
+            published: Boolean(
+              lessonResponse.published ?? lessonResponse.is_active
+            ),
+            is_free: Boolean(lessonResponse.is_free),
+            lesson_type: (lessonResponse.lesson_type as any) ?? 'VIDEO'
+          });
         }
 
-        if (courseResponse) {
-          setCourse(courseResponse);
-        }
+        if (seasonResponse) setSeason(seasonResponse);
+        if (courseResponse) setCourse(courseResponse);
       } catch (error) {
         console.error('Error fetching data:', error);
         ErrorHandler.handleApiError(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    if (courseId && seasonId && selectedSchool) {
+    if (courseId && seasonId && lessonId && selectedSchool) {
       fetchData();
     }
-  }, [courseId, seasonId, selectedSchool]);
+  }, [courseId, seasonId, lessonId, selectedSchool]);
 
   const onSubmit = async (data: LessonFormData) => {
     if (!selectedSchool) {
@@ -60,7 +92,6 @@ export default function CreateLessonPage() {
     }
 
     setIsLoading(true);
-
     try {
       const lessonData = {
         title: data.title,
@@ -76,18 +107,20 @@ export default function CreateLessonPage() {
         lesson_type: data.lesson_type
       };
 
-      await apiClient.createLesson(lessonData);
-      toast.success('Lesson created successfully!');
-      router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`);
+      await apiClient.updateLesson(parseInt(lessonId), lessonData);
+      toast.success('Lesson updated successfully!');
+      router.push(
+        `/courses/${courseId}/seasons/${seasonId}/lessons/${lessonId}`
+      );
     } catch (error) {
-      console.error('Error creating lesson:', error);
+      console.error('Error updating lesson:', error);
       ErrorHandler.handleApiError(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (!season || !course) {
+  if (!initialValues || !season || !course) {
     return (
       <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
@@ -143,7 +176,7 @@ export default function CreateLessonPage() {
           Lessons
         </button>
         <span>/</span>
-        <span className="font-medium text-foreground">Create</span>
+        <span className="font-medium text-foreground">Edit</span>
       </div>
 
       {/* Header */}
@@ -160,9 +193,9 @@ export default function CreateLessonPage() {
             Back to Lessons
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Create New Lesson</h1>
+            <h1 className="text-3xl font-bold">Edit Lesson</h1>
             <p className="text-muted-foreground">
-              Add a new lesson to "{season.title}" in "{course.title}"
+              Update lesson in "{season.title}" for "{course.title}"
             </p>
           </div>
         </div>
@@ -172,14 +205,16 @@ export default function CreateLessonPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <LessonForm
-            initialValues={{ season_id: seasonId }}
+            initialValues={initialValues}
             categories={categories}
             isSubmitting={isLoading}
             onSubmit={onSubmit}
             onCancel={() =>
-              router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
+              router.push(
+                `/courses/${courseId}/seasons/${seasonId}/lessons/${lessonId}`
+              )
             }
-            submitLabel="Create Lesson"
+            submitLabel="Update Lesson"
           />
         </div>
 
@@ -203,23 +238,6 @@ export default function CreateLessonPage() {
                 </label>
                 <p className="text-sm font-semibold">{season.title}</p>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Tips */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tips</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-muted-foreground">
-              <p>• Use clear, descriptive titles for your lessons</p>
-              <p>
-                • Add media IDs to associate videos, audio, images, or documents
-              </p>
-              <p>• Choose appropriate lesson types based on your content</p>
-              <p>
-                • Set lessons as free to make them accessible to all students
-              </p>
             </CardContent>
           </Card>
         </div>
