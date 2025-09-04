@@ -16,6 +16,7 @@ export const columns: ColumnDef<Product>[] = [
             alt={row.getValue('name')}
             fill
             className="rounded-lg"
+            unoptimized
           />
         </div>
       );
