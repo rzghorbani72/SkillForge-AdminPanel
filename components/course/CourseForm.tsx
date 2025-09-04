@@ -22,8 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Image as ImageIcon, Upload, Loader2, X } from 'lucide-react';
-import { useImageUpload } from '@/hooks/useImageUpload';
+import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 
 type Props = {
   initialValues: CourseFormData;
@@ -47,13 +46,6 @@ const CourseForm = ({
     defaultValues: initialValues
   });
 
-  const imageUpload = useImageUpload({
-    title: form.watch('title') || initialValues.title,
-    description: form.watch('description') || initialValues.description,
-    onSuccess: (imageId) => {
-      form.setValue('cover_id', imageId);
-    }
-  });
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -118,86 +110,20 @@ const CourseForm = ({
             <CardTitle>Cover Image</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={imageUpload.handleFileChange}
-              className="cursor-pointer"
+            <ImageUploadPreview
+              title={form.watch('title') || initialValues.title}
+              description={
+                form.watch('description') || initialValues.description
+              }
+              onSuccess={(imageId) => {
+                form.setValue('cover_id', imageId);
+              }}
+              alt="Course cover preview"
+              placeholderText="No cover image selected"
+              placeholderSubtext="Upload an image to preview it here"
+              uploadButtonText="Upload Cover Image"
+              selectButtonText="Select an image first"
             />
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={imageUpload.uploadImage}
-                disabled={!imageUpload.canUpload}
-                className="flex-1"
-              >
-                {imageUpload.isUploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : imageUpload.hasFile ? (
-                  <>
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload Cover Image
-                  </>
-                ) : (
-                  'Select an image first'
-                )}
-              </Button>
-
-              {imageUpload.canCancel && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={imageUpload.cancelUpload}
-                  className="px-4"
-                >
-                  <X className="mr-2 h-4 w-4" />
-                  Cancel
-                </Button>
-              )}
-            </div>
-
-            {imageUpload.preview && (
-              <div className="space-y-3">
-                <div className="relative">
-                  <div className="w-full max-w-md overflow-hidden rounded-lg border border-gray-200">
-                    <img
-                      src={imageUpload.preview}
-                      alt="Course cover preview"
-                      className="h-auto w-full"
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={imageUpload.removeFile}
-                    className="absolute right-2 top-2"
-                  >
-                    ×
-                  </Button>
-                </div>
-                {imageUpload.uploadedImageId && (
-                  <p className="text-xs text-green-600">
-                    ✓ Image uploaded successfully (ID:{' '}
-                    {imageUpload.uploadedImageId})
-                  </p>
-                )}
-              </div>
-            )}
-
-            {!imageUpload.preview && (
-              <div className="flex aspect-[5/4] w-full max-w-md flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300">
-                <ImageIcon className="mb-2 h-8 w-8 text-gray-400" />
-                <p className="text-sm text-gray-600">No cover image selected</p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Upload an image to preview it here
-                </p>
-              </div>
-            )}
           </CardContent>
         </Card>
 

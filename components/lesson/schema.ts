@@ -12,7 +12,7 @@ export const lessonFormSchema = z.object({
   season_id: z.string().min(1, 'Season is required'),
   audio_id: z.string().optional(),
   video_id: z.string().optional(),
-  image_id: z.string().optional(),
+  cover_id: z.string().optional(),
   document_id: z.string().optional(),
   category_id: z.string().optional(),
   published: z.boolean().default(false),

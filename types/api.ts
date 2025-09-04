@@ -173,15 +173,59 @@ export interface Lesson {
   content?: string;
   duration?: number;
   order: number;
-  course_id: number;
-  season_id?: number;
-  media_id?: number;
-  is_active: boolean;
+  season_id: number;
+  video_id?: number;
+  audio_id?: number;
+  document_id?: number;
+  image_id?: number;
+  is_published: boolean;
+  is_free: boolean;
+  lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ';
   created_at: string;
   updated_at: string;
-  course?: Course;
   season?: Season;
-  media?: Media;
+  video?: Video;
+  audio?: Audio;
+  document?: Document;
+  image?: Image;
+}
+
+// Media Types
+export interface Video {
+  id: number;
+  url: string;
+  title: string;
+  duration?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Audio {
+  id: number;
+  url: string;
+  title: string;
+  duration?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Document {
+  id: number;
+  url: string;
+  title: string;
+  file_size?: number;
+  mime_type?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Image {
+  id: number;
+  url: string;
+  alt?: string;
+  title?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 // Category and Tag Types

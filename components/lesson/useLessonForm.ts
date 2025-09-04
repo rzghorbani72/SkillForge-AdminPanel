@@ -72,7 +72,7 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
           video_id: lessonResponse.video_id
             ? String(lessonResponse.video_id)
             : '',
-          image_id: lessonResponse.image_id
+          cover_id: lessonResponse.image_id
             ? String(lessonResponse.image_id)
             : '',
           document_id: lessonResponse.document_id
@@ -94,7 +94,7 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
           season_id: seasonId,
           audio_id: '',
           video_id: '',
-          image_id: '',
+          cover_id: '',
           document_id: '',
           category_id: '',
           published: false,
@@ -124,7 +124,7 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
         season_id: parseInt(data.season_id),
         audio_id: data.audio_id ? parseInt(data.audio_id) : undefined,
         video_id: data.video_id ? parseInt(data.video_id) : undefined,
-        image_id: data.image_id ? parseInt(data.image_id) : undefined,
+        cover_id: data.cover_id ? parseInt(data.cover_id) : undefined,
         document_id: data.document_id ? parseInt(data.document_id) : undefined,
         category_id: data.category_id ? parseInt(data.category_id) : undefined,
         published: data.published,

@@ -24,6 +24,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen } from 'lucide-react';
+import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 
 type Props = {
   initialValues: Partial<LessonFormData> & { season_id: string };
@@ -50,7 +51,7 @@ const LessonForm = ({
       season_id: initialValues.season_id,
       audio_id: initialValues.audio_id ?? '',
       video_id: initialValues.video_id ?? '',
-      image_id: initialValues.image_id ?? '',
+      cover_id: initialValues.cover_id ?? '',
       document_id: initialValues.document_id ?? '',
       category_id: initialValues.category_id ?? '',
       published: initialValues.published ?? false,
@@ -179,26 +180,40 @@ const LessonForm = ({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="image_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image ID</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter image ID"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      ID of the associated image
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* Image Upload Section */}
+              <div className="col-span-2">
+                <FormField
+                  control={form.control}
+                  name="cover_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cover Image</FormLabel>
+                      <FormControl>
+                        <ImageUploadPreview
+                          title={form.watch('title') || 'Lesson Cover'}
+                          description={
+                            form.watch('description') || 'Lesson cover image'
+                          }
+                          onSuccess={(imageId) => {
+                            form.setValue('cover_id', imageId);
+                          }}
+                          alt="Lesson cover preview"
+                          placeholderText="No cover image selected"
+                          placeholderSubtext="Upload an image to preview it here"
+                          uploadButtonText="Upload Cover Image"
+                          selectButtonText="Select an image first"
+                        />
+                        {/* Hidden input to store the image ID */}
+                        <input type="hidden" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Upload a cover image for this lesson
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="document_id"

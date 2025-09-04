@@ -17,12 +17,13 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Save, Upload } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course, Season } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
 import { useSchool } from '@/contexts/SchoolContext';
+import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 
 const lessonSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -48,8 +49,6 @@ export default function LessonCreatePage() {
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string | null>(null);
 
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonSchema),
@@ -105,38 +104,11 @@ export default function LessonCreatePage() {
     }
   };
 
-  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setCoverImage(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setCoverPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const onSubmit = async (data: LessonFormData) => {
     if (!selectedSchool) return;
 
     try {
       setIsLoading(true);
-
-      let coverId = data.cover_id;
-
-      // Upload cover image if selected
-      if (coverImage) {
-        const formData = new FormData();
-        formData.append('file', coverImage);
-        formData.append('type', 'image');
-        formData.append('school_id', selectedSchool.id.toString());
-
-        const uploadResponse = await apiClient.uploadMedia(formData);
-        if (uploadResponse.data && uploadResponse.data.id) {
-          coverId = uploadResponse.data.id.toString();
-        }
-      }
 
       const lessonData = {
         ...data,
@@ -145,7 +117,7 @@ export default function LessonCreatePage() {
         season_id: data.season_id ? parseInt(data.season_id) : null,
         audio_id: data.audio_id ? parseInt(data.audio_id) : null,
         video_id: data.video_id ? parseInt(data.video_id) : null,
-        cover_id: coverId ? parseInt(coverId) : null,
+        cover_id: data.cover_id ? parseInt(data.cover_id) : null,
         order: data.order ? parseInt(data.order) : null
       };
 
@@ -386,42 +358,18 @@ export default function LessonCreatePage() {
             <CardTitle>Cover Image</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <label className="mb-1 block text-sm font-medium">
-                Upload Cover Image
-              </label>
-              <div className="flex items-center space-x-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCoverImageChange}
-                  className="hidden"
-                  id="cover-upload"
-                />
-                <label
-                  htmlFor="cover-upload"
-                  className="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  Choose File
-                </label>
-                {coverImage && (
-                  <span className="text-sm text-gray-500">
-                    {coverImage.name}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {coverPreview && (
-              <div className="relative h-48 w-full overflow-hidden rounded-lg border">
-                <img
-                  src={coverPreview}
-                  alt="Cover preview"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            )}
+            <ImageUploadPreview
+              title={form.watch('title') || 'Lesson Cover'}
+              description={form.watch('description') || 'Lesson cover image'}
+              onSuccess={(imageId) => {
+                form.setValue('cover_id', imageId);
+              }}
+              alt="Lesson cover preview"
+              placeholderText="No cover image selected"
+              placeholderSubtext="Upload an image to preview it here"
+              uploadButtonText="Upload Cover Image"
+              selectButtonText="Select an image first"
+            />
           </CardContent>
         </Card>
 
