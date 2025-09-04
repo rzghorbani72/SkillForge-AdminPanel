@@ -32,6 +32,7 @@ import { Lesson, Season, Course } from '@/types/api';
 import { useSchool } from '@/contexts/SchoolContext';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 export default function LessonViewPage() {
   const params = useParams();
@@ -279,8 +280,8 @@ export default function LessonViewPage() {
               <label className="text-sm font-medium text-muted-foreground">
                 Status
               </label>
-              <Badge variant={lesson.is_active ? 'default' : 'secondary'}>
-                {lesson.is_active ? 'Active' : 'Inactive'}
+              <Badge variant={lesson.is_published ? 'default' : 'secondary'}>
+                {lesson.is_published ? 'Published' : 'Draft'}
               </Badge>
             </div>
           </CardContent>
@@ -395,10 +396,12 @@ export default function LessonViewPage() {
           </CardHeader>
           <CardContent>
             <div className="relative h-64 w-full overflow-hidden rounded-lg border">
-              <img
-                src={`/api/media/${lesson.image_id}`}
+              <Image
+                src={`${lesson.image?.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${lesson.image?.url}` : lesson.image?.url}`}
                 alt={lesson.title}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
+                unoptimized
+                fill
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';

@@ -63,8 +63,6 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   });
 
   const handleImageSelect = (image: { id: number; url: string }) => {
-    console.log('ImageUploadPreview - Image selected:', image);
-    console.log('ImageUploadPreview - Calling onSuccess with:', image);
     setSelectedImage(image);
     onSuccess?.(image);
   };

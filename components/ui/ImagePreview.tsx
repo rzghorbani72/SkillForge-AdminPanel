@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Image as ImageIcon, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface ImagePreviewProps {
   preview?: string | null;
@@ -29,14 +30,6 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   placeholderText = 'No image selected',
   placeholderSubtext = 'Upload an image to preview it here'
 }) => {
-  console.log('ImagePreview props:', {
-    preview: preview ? 'Yes' : 'No',
-    uploadedImageId,
-    selectedImageId: selectedImage?.id,
-    selectedImageUrl: selectedImage?.url ? 'Yes' : 'No',
-    existingImageUrl: existingImageUrl ? 'Yes' : 'No',
-    existingImageId
-  });
   // Show uploaded preview if available
   if (preview) {
     return (
@@ -45,7 +38,19 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
           <div
             className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
           >
-            <img src={preview} alt={alt} className="h-auto w-full" />
+            <Image
+              src={
+                preview.startsWith('/')
+                  ? `${process.env.NEXT_PUBLIC_HOST}${preview}`
+                  : preview
+              }
+              alt={alt}
+              className="h-auto w-full object-contain"
+              unoptimized
+              width={0}
+              height={0}
+              sizes="100vw"
+            />
           </div>
           <Button
             type="button"
@@ -74,10 +79,14 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
           <div
             className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
           >
-            <img
-              src={selectedImage.url}
+            <Image
+              src={`${selectedImage.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${selectedImage.url}` : selectedImage.url}`}
               alt={alt}
-              className="h-auto w-full object-cover"
+              className="h-auto w-full object-contain"
+              unoptimized
+              width={0}
+              height={0}
+              sizes="100vw"
             />
           </div>
           <Button
@@ -105,10 +114,14 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
           <div
             className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
           >
-            <img
-              src={`/api/images/fetch-image-by-id/${uploadedImageId}`}
+            <Image
+              src={`${process.env.NEXT_PUBLIC_HOST}/api/images/fetch-image-by-id/${uploadedImageId}`}
               alt={alt}
-              className="h-auto w-full object-cover"
+              className="h-auto w-full object-contain"
+              unoptimized
+              width={0}
+              height={0}
+              sizes="100vw"
             />
           </div>
           <Button
