@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -30,7 +31,6 @@ import { Course, Category } from '@/types/api';
 import { useSchool } from '@/contexts/SchoolContext';
 
 // Import dialogs
-import CreateCourseDialog from './create-course-dialog';
 import CreateLessonDialog from './create-lesson-dialog';
 import CreateSeasonDialog from './create-season-dialog';
 import UploadAudioDialog from './upload-audio-dialog';
@@ -48,7 +48,7 @@ const contentTypes = [
     title: 'Course',
     description: 'Create a new course with lessons and content',
     icon: BookOpen,
-    dialog: CreateCourseDialog,
+    dialog: null, // Will navigate to page instead
     color: 'bg-blue-500'
   },
   {
@@ -97,6 +97,7 @@ export default function ContentCreationHub({
   onContentCreated,
   courses
 }: ContentCreationHubProps) {
+  const router = useRouter();
   const { selectedSchool } = useSchool();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -108,6 +109,11 @@ export default function ContentCreationHub({
   };
 
   const handleTypeSelect = (typeId: string) => {
+    if (typeId === 'course') {
+      // Navigate to course creation page
+      router.push('/courses/create');
+      return;
+    }
     setSelectedType(typeId);
     setIsDialogOpen(true);
   };
@@ -116,18 +122,11 @@ export default function ContentCreationHub({
     if (!selectedType || !selectedSchool) return null;
 
     const contentType = contentTypes.find((type) => type.id === selectedType);
-    if (!contentType) return null;
+    if (!contentType || !contentType.dialog) return null;
 
     const DialogComponent = contentType.dialog;
 
     switch (selectedType) {
-      case 'course':
-        return (
-          <DialogComponent
-            onCourseCreated={handleContentCreated}
-            schoolId={selectedSchool.id}
-          />
-        );
       case 'lesson':
         return (
           <DialogComponent

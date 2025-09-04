@@ -270,21 +270,13 @@ class ApiClient {
 
   async getCourse(id: number) {
     const response = await this.request(`/courses/${id}`);
-
-    // Handle the new API response structure where course might be nested
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'course' in response.data
-    ) {
-      const apiData = response.data as { course: any };
-      return {
-        ...response,
-        data: apiData.course
-      };
-    }
-
-    return response;
+      'data' in response.data
+    )
+      return response.data.data as { course: any };
+    else return null as any;
   }
 
   async createCourse(courseData: {
