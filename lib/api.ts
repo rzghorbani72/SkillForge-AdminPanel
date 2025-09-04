@@ -258,11 +258,33 @@ class ApiClient {
       });
     }
 
-    return this.request(`/courses?${queryParams.toString()}`);
+    const response = await this.request(`/courses?${queryParams.toString()}`);
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    )
+      return response.data.data as { courses: any[]; pagination?: any };
+    else return { courses: [], pagination: undefined };
   }
 
   async getCourse(id: number) {
-    return this.request(`/courses/${id}`);
+    const response = await this.request(`/courses/${id}`);
+
+    // Handle the new API response structure where course might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'course' in response.data
+    ) {
+      const apiData = response.data as { course: any };
+      return {
+        ...response,
+        data: apiData.course
+      };
+    }
+
+    return response;
   }
 
   async createCourse(courseData: {
@@ -319,11 +341,42 @@ class ApiClient {
       });
     }
 
-    return this.request(`/lessons?${queryParams.toString()}`);
+    const response = await this.request(`/lessons?${queryParams.toString()}`);
+
+    // Handle the new API response structure where lessons might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'lessons' in response.data
+    ) {
+      const apiData = response.data as { lessons: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.lessons,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async getLesson(id: number) {
-    return this.request(`/lessons/${id}`);
+    const response = await this.request(`/lessons/${id}`);
+
+    // Handle the new API response structure where lesson might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'lesson' in response.data
+    ) {
+      const apiData = response.data as { lesson: any };
+      return {
+        ...response,
+        data: apiData.lesson
+      };
+    }
+
+    return response;
   }
 
   async createLesson(lessonData: {
@@ -357,7 +410,23 @@ class ApiClient {
   // Seasons endpoints
   async getSeasons(courseId?: number) {
     const queryParams = courseId ? `?course_id=${courseId}` : '';
-    return this.request(`/season${queryParams}`);
+    const response = await this.request(`/season${queryParams}`);
+
+    // Handle the new API response structure where seasons might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'seasons' in response.data
+    ) {
+      const apiData = response.data as { seasons: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.seasons,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async createSeason(seasonData: {
@@ -386,7 +455,23 @@ class ApiClient {
 
   // Categories endpoints
   async getCategories() {
-    return this.request('/categories');
+    const response = await this.request('/categories');
+
+    // Handle the new API response structure where categories might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'categories' in response.data
+    ) {
+      const apiData = response.data as { categories: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.categories,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async createCategory(categoryData: {
@@ -504,7 +589,23 @@ class ApiClient {
 
   // Media endpoints
   async getMedia() {
-    return this.request('/images');
+    const response = await this.request('/images');
+
+    // Handle the new API response structure where media might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'images' in response.data
+    ) {
+      const apiData = response.data as { images: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.images,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async getImages() {
@@ -512,15 +613,63 @@ class ApiClient {
   }
 
   async getVideos() {
-    return this.request('/videos');
+    const response = await this.request('/videos');
+
+    // Handle the new API response structure where videos might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'videos' in response.data
+    ) {
+      const apiData = response.data as { videos: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.videos,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async getAudio() {
-    return this.request('/audio');
+    const response = await this.request('/audio');
+
+    // Handle the new API response structure where audio might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'audio' in response.data
+    ) {
+      const apiData = response.data as { audio: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.audio,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async getDocuments() {
-    return this.request('/files');
+    const response = await this.request('/files');
+
+    // Handle the new API response structure where documents might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'files' in response.data
+    ) {
+      const apiData = response.data as { files: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.files,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   // Image fetching endpoint
@@ -576,11 +725,42 @@ class ApiClient {
     const queryString = queryParams.toString();
     const url = queryString ? `/users?${queryString}` : '/users';
 
-    return this.request(url);
+    const response = await this.request(url);
+
+    // Handle the new API response structure where users might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'users' in response.data
+    ) {
+      const apiData = response.data as { users: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.users,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async getUser(id: number) {
-    return this.request(`/users/${id}`);
+    const response = await this.request(`/users/${id}`);
+
+    // Handle the new API response structure where user might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'user' in response.data
+    ) {
+      const apiData = response.data as { user: any };
+      return {
+        ...response,
+        data: apiData.user
+      };
+    }
+
+    return response;
   }
 
   async updateUser(id: number, userData: unknown) {
@@ -592,11 +772,45 @@ class ApiClient {
 
   // Transactions endpoints
   async getTransactions() {
-    return this.request('/transactions');
+    const response = await this.request('/transactions');
+
+    // Handle the new API response structure where transactions might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'transactions' in response.data
+    ) {
+      const apiData = response.data as {
+        transactions: any[];
+        pagination?: any;
+      };
+      return {
+        ...response,
+        data: apiData.transactions,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async getTransaction(id: number) {
-    return this.request(`/transactions/${id}`);
+    const response = await this.request(`/transactions/${id}`);
+
+    // Handle the new API response structure where transaction might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'transaction' in response.data
+    ) {
+      const apiData = response.data as { transaction: any };
+      return {
+        ...response,
+        data: apiData.transaction
+      };
+    }
+
+    return response;
   }
 
   // Domain endpoints
@@ -612,15 +826,64 @@ class ApiClient {
   }
 
   async getRecentEnrollments() {
-    return this.request('/enrollments/recent');
+    const response = await this.request('/enrollments/recent');
+
+    // Handle the new API response structure where enrollments might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'enrollments' in response.data
+    ) {
+      const apiData = response.data as { enrollments: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.enrollments,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
+
   async getRecentPayments() {
-    return this.request('/payments/recent');
+    const response = await this.request('/payments/recent');
+
+    // Handle the new API response structure where payments might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'payments' in response.data
+    ) {
+      const apiData = response.data as { payments: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.payments,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   // Articles endpoints
   async getArticles() {
-    return this.request('/articles');
+    const response = await this.request('/articles');
+
+    // Handle the new API response structure where articles might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'articles' in response.data
+    ) {
+      const apiData = response.data as { articles: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.articles,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async getArticle(id: number) {
@@ -653,11 +916,43 @@ class ApiClient {
   }
 
   async getArticleCategories() {
-    return this.request('/articles/categories');
+    const response = await this.request('/articles/categories');
+
+    // Handle the new API response structure where categories might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'categories' in response.data
+    ) {
+      const apiData = response.data as { categories: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.categories,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 
   async getArticleTags() {
-    return this.request('/articles/tags');
+    const response = await this.request('/articles/tags');
+
+    // Handle the new API response structure where tags might be nested
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'tags' in response.data
+    ) {
+      const apiData = response.data as { tags: any[]; pagination?: any };
+      return {
+        ...response,
+        data: apiData.tags,
+        pagination: apiData.pagination
+      };
+    }
+
+    return response;
   }
 }
 

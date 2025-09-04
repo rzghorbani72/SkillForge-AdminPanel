@@ -113,9 +113,11 @@ export interface Course {
   short_description?: string;
   price: number;
   original_price?: number;
+  discount_percent?: number;
   is_free: boolean;
   is_published: boolean;
   is_featured: boolean;
+  is_certificate?: boolean;
   cover_id?: number;
   author_id: number;
   school_id: number;
@@ -126,6 +128,19 @@ export interface Course {
   students_count: number;
   rating: number;
   rating_count: number;
+  language?: string;
+  requirements?: string;
+  learning_outcomes?: string;
+  sales_count?: number;
+  revenue?: number;
+  completion_rate?: number;
+  avg_rating?: number;
+  total_reviews?: number;
+  is_draft?: boolean;
+  published_at?: string;
+  video_id?: number;
+  audio_id?: number;
+  document_id?: number;
   created_at: string;
   updated_at: string;
   deleted_at?: string;
@@ -134,6 +149,8 @@ export interface Course {
   category?: Category;
   cover?: Media;
   seasons?: Season[];
+  lessons?: Lesson[];
+  students?: any[];
 }
 
 export interface Season {
