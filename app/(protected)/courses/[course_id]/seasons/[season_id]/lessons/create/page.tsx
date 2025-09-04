@@ -1,93 +1,42 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
-import { apiClient } from '@/lib/api';
-import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useCategoriesStore } from '@/lib/store';
-import { toast } from 'sonner';
-import LessonForm from '@/components/lesson/LessonForm';
-import { LessonFormData } from '@/components/lesson/schema';
+import useLessonForm from '@/components/lesson/useLessonForm';
+import LessonFormPage from '@/components/lesson/LessonFormPage';
 
 export default function CreateLessonPage() {
-  const router = useRouter();
-  const params = useParams();
-  const courseId = params.course_id as string;
-  const seasonId = params.season_id as string;
   const { selectedSchool } = useSchool();
   const { categories } = useCategoriesStore();
-  const [isLoading, setIsLoading] = useState(false);
-  const [season, setSeason] = useState<any>(null);
-  const [course, setCourse] = useState<any>(null);
+  const {
+    lesson,
+    season,
+    course,
+    isLoading,
+    isSubmitting,
+    initialValues,
+    onSubmit,
+    isEdit
+  } = useLessonForm(false);
 
-  // Fetch season and course data
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!selectedSchool) return;
+  if (!selectedSchool) {
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold text-muted-foreground">
+              No School Selected
+            </h2>
+            <p className="text-muted-foreground">
+              Please select a school from the header to create lessons.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-      try {
-        const [seasonResponse, courseResponse] = await Promise.all([
-          apiClient.getSeason(parseInt(seasonId)),
-          apiClient.getCourse(parseInt(courseId))
-        ]);
-
-        if (seasonResponse) {
-          setSeason(seasonResponse);
-        }
-
-        if (courseResponse) {
-          setCourse(courseResponse);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        ErrorHandler.handleApiError(error);
-      }
-    };
-
-    if (courseId && seasonId && selectedSchool) {
-      fetchData();
-    }
-  }, [courseId, seasonId, selectedSchool]);
-
-  const onSubmit = async (data: LessonFormData) => {
-    if (!selectedSchool) {
-      toast.error('Please select a school first');
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const lessonData = {
-        title: data.title,
-        description: data.description || '',
-        season_id: parseInt(data.season_id),
-        audio_id: data.audio_id ? parseInt(data.audio_id) : undefined,
-        video_id: data.video_id ? parseInt(data.video_id) : undefined,
-        image_id: data.image_id ? parseInt(data.image_id) : undefined,
-        document_id: data.document_id ? parseInt(data.document_id) : undefined,
-        category_id: data.category_id ? parseInt(data.category_id) : undefined,
-        published: data.published,
-        is_free: data.is_free,
-        lesson_type: data.lesson_type
-      };
-
-      await apiClient.createLesson(lessonData);
-      toast.success('Lesson created successfully!');
-      router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`);
-    } catch (error) {
-      console.error('Error creating lesson:', error);
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!season || !course) {
+  if (isLoading || !initialValues || !season || !course) {
     return (
       <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
@@ -101,129 +50,15 @@ export default function CreateLessonPage() {
   }
 
   return (
-    <div className="container mx-auto space-y-6 py-6">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-        <button
-          onClick={() => router.push('/courses')}
-          className="transition-colors hover:text-foreground"
-        >
-          Courses
-        </button>
-        <span>/</span>
-        <button
-          onClick={() => router.push(`/courses/${courseId}`)}
-          className="transition-colors hover:text-foreground"
-        >
-          {course.title}
-        </button>
-        <span>/</span>
-        <button
-          onClick={() => router.push(`/courses/${courseId}/seasons`)}
-          className="transition-colors hover:text-foreground"
-        >
-          Seasons
-        </button>
-        <span>/</span>
-        <button
-          onClick={() =>
-            router.push(`/courses/${courseId}/seasons/${seasonId}`)
-          }
-          className="transition-colors hover:text-foreground"
-        >
-          {season.title}
-        </button>
-        <span>/</span>
-        <button
-          onClick={() =>
-            router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
-          }
-          className="transition-colors hover:text-foreground"
-        >
-          Lessons
-        </button>
-        <span>/</span>
-        <span className="font-medium text-foreground">Create</span>
-      </div>
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
-            }
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Lessons
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Create New Lesson</h1>
-            <p className="text-muted-foreground">
-              Add a new lesson to "{season.title}" in "{course.title}"
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Form */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <LessonForm
-            initialValues={{ season_id: seasonId }}
-            categories={categories}
-            isSubmitting={isLoading}
-            onSubmit={onSubmit}
-            onCancel={() =>
-              router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
-            }
-            submitLabel="Create Lesson"
-          />
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Course & Season Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Course & Season</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Course
-                </label>
-                <p className="text-sm font-semibold">{course.title}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Season
-                </label>
-                <p className="text-sm font-semibold">{season.title}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Tips */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tips</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-muted-foreground">
-              <p>• Use clear, descriptive titles for your lessons</p>
-              <p>
-                • Add media IDs to associate videos, audio, images, or documents
-              </p>
-              <p>• Choose appropriate lesson types based on your content</p>
-              <p>
-                • Set lessons as free to make them accessible to all students
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+    <LessonFormPage
+      initialValues={initialValues}
+      categories={categories}
+      isSubmitting={isSubmitting}
+      onSubmit={onSubmit}
+      onCancel={() => window.history.back()}
+      season={season}
+      course={course}
+      isEdit={isEdit}
+    />
   );
 }
