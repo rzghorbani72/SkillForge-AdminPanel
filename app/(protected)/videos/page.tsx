@@ -34,6 +34,10 @@ import { useAuth } from '@/components/providers/auth-provider';
 import type { AuthUser } from '@/lib/auth';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
 import VideoPlayer from '@/components/content/video-player';
+import {
+  AccessControlBadge,
+  AccessControlActions
+} from '@/components/ui/access-control-badge';
 
 interface VideoWithMetadata extends Media {
   lesson_type?: 'WELCOME' | 'LESSON' | 'INTRO' | 'CONCLUSION';
@@ -44,6 +48,14 @@ interface VideoWithMetadata extends Media {
   poster_url?: string | null;
   streaming_url?: string;
   Owner?: { id: number; name: string };
+  access_control?: {
+    can_modify: boolean;
+    can_delete: boolean;
+    can_view: boolean;
+    is_owner: boolean;
+    user_role: string;
+    user_permissions: string[];
+  };
 }
 
 export default function VideosPage() {
@@ -71,10 +83,14 @@ export default function VideosPage() {
 
     try {
       setIsLoading(true);
-      const videosResponse = await apiClient.getVideos();
+      const response = await apiClient.getVideos();
 
-      if (videosResponse && Array.isArray(videosResponse)) {
-        setVideos(videosResponse);
+      // Handle new response structure with access control
+      if (response && response.data && Array.isArray(response.data)) {
+        setVideos(response.data);
+      } else if (Array.isArray(response)) {
+        // Fallback for old response format
+        setVideos(response);
       } else {
         setVideos([]);
       }
@@ -153,7 +169,7 @@ export default function VideosPage() {
   };
 
   const isOwnMedia = (video: VideoWithMetadata) => {
-    return true;
+    return video.access_control?.is_owner || false;
   };
 
   const handleVideoSelect = (video: VideoWithMetadata) => {
@@ -479,14 +495,21 @@ function VideoGrid({
                 </div>
               )}
 
-              {/* Ownership Badge */}
+              {/* Access Control Badge */}
               <div className="absolute left-2 top-2 z-10">
-                <Badge
-                  variant={isOwnMedia(video) ? 'default' : 'secondary'}
-                  className="text-xs"
-                >
-                  {isOwnMedia(video) ? 'Yours' : 'Other Teacher'}
-                </Badge>
+                {video.access_control ? (
+                  <AccessControlBadge
+                    accessControl={video.access_control}
+                    className="text-xs"
+                  />
+                ) : (
+                  <Badge
+                    variant={isOwnMedia(video) ? 'default' : 'secondary'}
+                    className="text-xs"
+                  >
+                    {isOwnMedia(video) ? 'Yours' : 'Other Teacher'}
+                  </Badge>
+                )}
               </div>
             </div>
 
@@ -552,13 +575,24 @@ function VideoGrid({
                   <Play className="mr-1 h-3 w-3" />
                   Play
                 </Button>
-                <Button size="sm" variant="outline">
-                  <Edit className="h-3 w-3" />
-                </Button>
 
-                <Button size="sm" variant="outline">
-                  <Download className="h-3 w-3" />
-                </Button>
+                {video.access_control ? (
+                  <AccessControlActions
+                    accessControl={video.access_control}
+                    onEdit={() => console.log('Edit video', video.id)}
+                    onDelete={() => console.log('Delete video', video.id)}
+                    onView={() => console.log('View video', video.id)}
+                  />
+                ) : (
+                  <>
+                    <Button size="sm" variant="outline">
+                      <Edit className="h-3 w-3" />
+                    </Button>
+                    <Button size="sm" variant="outline">
+                      <Download className="h-3 w-3" />
+                    </Button>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>

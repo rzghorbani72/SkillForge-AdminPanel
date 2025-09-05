@@ -35,20 +35,15 @@ const useCourses = (): UseCoursesReturn => {
       setIsLoading(true);
       const response = await apiClient.getCourses();
 
-      // Handle possible shapes: { courses: [] } or { data: [] } or []
+      // Handle new response structure with access control
       let nextCourses: Course[] = [];
-      const data: any = (response as any).data ?? response;
-      if (Array.isArray(data)) {
-        nextCourses = data;
-      } else if (data && Array.isArray(data.courses)) {
-        nextCourses = data.courses;
-      } else if (data && Array.isArray(data.data)) {
-        nextCourses = data.data;
-      } else if (
-        (response as any).courses &&
-        Array.isArray((response as any).courses)
-      ) {
-        nextCourses = (response as any).courses;
+      if (response && response && Array.isArray(response)) {
+        nextCourses = response;
+      } else if (Array.isArray(response)) {
+        // Fallback for old response format
+        nextCourses = response;
+      } else if (response && Array.isArray(response.courses)) {
+        nextCourses = response.courses;
       }
 
       // Optionally filter by school if present on objects

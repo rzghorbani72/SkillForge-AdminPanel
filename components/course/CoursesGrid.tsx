@@ -10,6 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Clock, Edit, Eye, Plus, Users } from 'lucide-react';
 import { Course } from '@/types/api';
+import {
+  AccessControlBadge,
+  AccessControlActions
+} from '@/components/ui/access-control-badge';
 
 type Props = {
   courses: Course[];
@@ -51,12 +55,25 @@ const CoursesGrid = ({
       {courses.map((course) => (
         <Card key={course.id} className="transition-shadow hover:shadow-md">
           <CardHeader className="pb-3">
-            <CardTitle className="line-clamp-2 text-lg">
-              {course.title}
-            </CardTitle>
-            <CardDescription className="line-clamp-2 text-sm">
-              {course.short_description || course.description}
-            </CardDescription>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <CardTitle className="line-clamp-2 text-lg">
+                  {course.title}
+                </CardTitle>
+                <CardDescription className="line-clamp-2 text-sm">
+                  {course.short_description || course.description}
+                </CardDescription>
+              </div>
+              {/* Access Control Badge */}
+              {course.access_control && (
+                <div className="ml-2">
+                  <AccessControlBadge
+                    accessControl={course.access_control}
+                    className="text-xs"
+                  />
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="space-y-3">
@@ -105,24 +122,36 @@ const CoursesGrid = ({
               </div>
 
               <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => onView(course)}
-                >
-                  <Eye className="mr-1 h-4 w-4" />
-                  View
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => onEdit(course)}
-                >
-                  <Edit className="mr-1 h-4 w-4" />
-                  Edit
-                </Button>
+                {course.access_control ? (
+                  <AccessControlActions
+                    accessControl={course.access_control}
+                    onView={() => onView(course)}
+                    onEdit={() => onEdit(course)}
+                    onDelete={() => console.log('Delete course', course.id)}
+                    className="flex-1"
+                  />
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => onView(course)}
+                    >
+                      <Eye className="mr-1 h-4 w-4" />
+                      View
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => onEdit(course)}
+                    >
+                      <Edit className="mr-1 h-4 w-4" />
+                      Edit
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </CardContent>

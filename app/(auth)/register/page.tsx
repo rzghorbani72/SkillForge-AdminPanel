@@ -38,6 +38,7 @@ import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useSchools } from '@/hooks/useSchools';
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +48,13 @@ export default function RegisterPage() {
     'new-school' | 'existing-school'
   >('new-school');
   const [joinAsTeacher, setJoinAsTeacher] = useState(false);
+
+  // Fetch schools for the dropdown
+  const {
+    schools,
+    isLoading: schoolsLoading,
+    error: schoolsError
+  } = useSchools();
 
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [emailOtpSent, setEmailOtpSent] = useState(false);
@@ -982,29 +990,42 @@ export default function RegisterPage() {
                       onValueChange={(value) =>
                         handleInputChange('existingSchoolId', value)
                       }
-                      disabled={isLoading}
+                      disabled={isLoading || schoolsLoading}
                     >
                       <SelectTrigger
                         className={
                           errors.existingSchoolId ? 'border-red-500' : ''
                         }
                       >
-                        <SelectValue placeholder="Choose a school to join" />
+                        <SelectValue
+                          placeholder={
+                            schoolsLoading
+                              ? 'Loading schools...'
+                              : schoolsError
+                                ? 'Error loading schools'
+                                : 'Choose a school to join'
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="school1">
-                          Harvard University
-                        </SelectItem>
-                        <SelectItem value="school2">MIT</SelectItem>
-                        <SelectItem value="school3">
-                          Stanford University
-                        </SelectItem>
-                        <SelectItem value="school4">Yale University</SelectItem>
+                        {schools.map((school) => (
+                          <SelectItem
+                            key={school.id}
+                            value={school.id.toString()}
+                          >
+                            {school.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     {errors.existingSchoolId && (
                       <p className="text-sm text-red-500">
                         {errors.existingSchoolId}
+                      </p>
+                    )}
+                    {schoolsError && (
+                      <p className="text-sm text-red-500">
+                        Error loading schools: {schoolsError}
                       </p>
                     )}
                   </div>

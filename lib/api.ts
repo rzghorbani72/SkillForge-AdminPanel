@@ -211,6 +211,10 @@ class ApiClient {
     return this.request('/schools');
   }
 
+  async getSchoolsPublic() {
+    return this.request('/schools/public');
+  }
+
   async getMySchools() {
     return this.request('/schools/my-schools');
   }

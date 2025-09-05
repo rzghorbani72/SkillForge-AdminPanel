@@ -41,6 +41,10 @@ import { toast } from 'sonner';
 import Image from 'next/image';
 import { useAuth } from '@/components/providers/auth-provider';
 import type { AuthUser } from '@/lib/auth';
+import {
+  AccessControlBadge,
+  AccessControlActions
+} from '@/components/ui/access-control-badge';
 
 interface ImageItem {
   id: number;
@@ -49,6 +53,14 @@ interface ImageItem {
   size: number;
   mime_type: string;
   created_at: string;
+  access_control?: {
+    can_modify: boolean;
+    can_delete: boolean;
+    can_view: boolean;
+    is_owner: boolean;
+    user_role: string;
+    user_permissions: string[];
+  };
 }
 
 export default function ImagesPage() {
@@ -69,7 +81,13 @@ export default function ImagesPage() {
       setIsLoading(true);
       setError(null);
       const response = await apiClient.getImages();
-      if (response && Array.isArray(response)) {
+
+      // Handle new response structure with access control
+      if (response && response.data && Array.isArray(response.data)) {
+        setImages(response.data);
+        setFilteredImages(response.data);
+      } else if (Array.isArray(response)) {
+        // Fallback for old response format
         setImages(response);
         setFilteredImages(response);
       } else {
@@ -233,9 +251,20 @@ export default function ImagesPage() {
                 </CardHeader>
                 <CardContent className="p-4">
                   <div className="space-y-2">
-                    <h3 className="line-clamp-2 font-semibold">
-                      {image.filename}
-                    </h3>
+                    <div className="flex items-start justify-between">
+                      <h3 className="line-clamp-2 flex-1 font-semibold">
+                        {image.filename}
+                      </h3>
+                      {/* Access Control Badge */}
+                      {image.access_control && (
+                        <div className="ml-2">
+                          <AccessControlBadge
+                            accessControl={image.access_control}
+                            className="text-xs"
+                          />
+                        </div>
+                      )}
+                    </div>
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
                       <span>{formatFileSize(image.size)}</span>
                       <Badge variant="outline">
@@ -252,39 +281,58 @@ export default function ImagesPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 pt-2">
-                      <Button size="sm" variant="outline" className="flex-1">
-                        <Eye className="mr-1 h-3 w-3" />
-                        View
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Download className="h-3 w-3" />
-                      </Button>
-
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="outline">
-                            <Trash2 className="h-3 w-3" />
+                      {image.access_control ? (
+                        <AccessControlActions
+                          accessControl={image.access_control}
+                          onView={() => console.log('View image', image.id)}
+                          onEdit={() => console.log('Edit image', image.id)}
+                          onDelete={() => handleDeleteImage(image.id)}
+                          className="flex-1"
+                        />
+                      ) : (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1"
+                          >
+                            <Eye className="mr-1 h-3 w-3" />
+                            View
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete the image "{image.filename}".
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteImage(image.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                          <Button size="sm" variant="outline">
+                            <Download className="h-3 w-3" />
+                          </Button>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="sm" variant="outline">
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete the image "{image.filename}
+                                  ".
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteImage(image.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardContent>
