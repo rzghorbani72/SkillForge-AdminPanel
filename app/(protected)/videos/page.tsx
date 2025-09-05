@@ -23,7 +23,8 @@ import {
   Eye,
   Download,
   Edit,
-  Trash2
+  Trash2,
+  Image as ImageIcon
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Media, Course } from '@/types/api';
@@ -40,6 +41,9 @@ interface VideoWithMetadata extends Media {
   duration?: number;
   tags?: string[];
   course_id?: number;
+  poster_url?: string | null;
+  streaming_url?: string;
+  Owner?: { id: number; name: string };
 }
 
 export default function VideosPage() {
@@ -67,24 +71,12 @@ export default function VideosPage() {
 
     try {
       setIsLoading(true);
-      const [videosResponse, coursesResponse] = await Promise.all([
-        apiClient.getVideos(),
-        apiClient.getCourses()
-      ]);
+      const videosResponse = await apiClient.getVideos();
 
-      if (videosResponse.status === 'ok' && videosResponse.data) {
-        const schoolVideos = videosResponse.data.filter(
-          (item: Media) =>
-            item.school_id === selectedSchool.id && item.type === 'video'
-        );
-        setVideos(schoolVideos);
-      }
-
-      if (coursesResponse.status === 'ok' && coursesResponse.data) {
-        const schoolCourses = coursesResponse.data.filter(
-          (course: Course) => course.school_id === selectedSchool.id
-        );
-        setCourses(schoolCourses);
+      if (videosResponse && Array.isArray(videosResponse)) {
+        setVideos(videosResponse);
+      } else {
+        setVideos([]);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -106,11 +98,6 @@ export default function VideosPage() {
 
     return matchesSearch && matchesFilter;
   });
-
-  const isOwnMedia = (video: VideoWithMetadata) => {
-    return user && video.Owner?.id === user.id;
-  };
-
   const welcomeVideos = videos.filter((video) => video.is_welcome_video);
   const lessonVideos = videos.filter((video) => video.lesson_type === 'LESSON');
   const introVideos = videos.filter((video) => video.lesson_type === 'INTRO');
@@ -155,6 +142,18 @@ export default function VideosPage() {
     if (!bytes) return 'Unknown';
     const mb = bytes / (1024 * 1024);
     return `${mb.toFixed(1)} MB`;
+  };
+
+  const getPosterUrl = (
+    posterUrl: string | null | undefined
+  ): string | null => {
+    if (!posterUrl) return null;
+    if (posterUrl.startsWith('http')) return posterUrl;
+    return `${process.env.NEXT_PUBLIC_HOST || ''}${posterUrl}`;
+  };
+
+  const isOwnMedia = (video: VideoWithMetadata) => {
+    return true;
   };
 
   const handleVideoSelect = (video: VideoWithMetadata) => {
@@ -342,6 +341,8 @@ export default function VideosPage() {
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
             formatFileSize={formatFileSize}
+            getPosterUrl={getPosterUrl}
+            isOwnMedia={isOwnMedia}
           />
         </TabsContent>
 
@@ -353,6 +354,8 @@ export default function VideosPage() {
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
             formatFileSize={formatFileSize}
+            getPosterUrl={getPosterUrl}
+            isOwnMedia={isOwnMedia}
           />
         </TabsContent>
 
@@ -364,6 +367,8 @@ export default function VideosPage() {
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
             formatFileSize={formatFileSize}
+            getPosterUrl={getPosterUrl}
+            isOwnMedia={isOwnMedia}
           />
         </TabsContent>
 
@@ -375,6 +380,8 @@ export default function VideosPage() {
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
             formatFileSize={formatFileSize}
+            getPosterUrl={getPosterUrl}
+            isOwnMedia={isOwnMedia}
           />
         </TabsContent>
 
@@ -386,6 +393,8 @@ export default function VideosPage() {
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
             formatFileSize={formatFileSize}
+            getPosterUrl={getPosterUrl}
+            isOwnMedia={isOwnMedia}
           />
         </TabsContent>
       </Tabs>
@@ -400,7 +409,9 @@ function VideoGrid({
   getVideoIcon,
   getVideoTypeColor,
   formatDuration,
-  formatFileSize
+  formatFileSize,
+  getPosterUrl,
+  isOwnMedia
 }: {
   videos: VideoWithMetadata[];
   onVideoSelect: (video: VideoWithMetadata) => void;
@@ -408,6 +419,8 @@ function VideoGrid({
   getVideoTypeColor: (type?: string) => string;
   formatDuration: (seconds?: number) => string;
   formatFileSize: (bytes?: number) => string;
+  getPosterUrl: (posterUrl: string | null | undefined) => string | null;
+  isOwnMedia: (video: VideoWithMetadata) => boolean;
 }) {
   if (videos.length === 0) {
     return (
@@ -424,32 +437,57 @@ function VideoGrid({
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {videos.map((video) => {
-        const isOwn = isOwnMedia(video);
         return (
           <Card
             key={video.id}
             className={`relative cursor-pointer transition-shadow hover:shadow-md ${
               video.is_welcome_video ? 'ring-2 ring-yellow-400' : ''
-            } ${!isOwn ? 'border-dashed opacity-75' : ''}`}
+            }`}
             onClick={() => onVideoSelect(video)}
           >
-            {video.is_welcome_video && (
-              <div className="absolute right-2 top-2 z-10">
-                <Badge className="bg-yellow-500 text-white">
-                  <Star className="mr-1 h-3 w-3" />
-                  Welcome
+            {/* Video Poster Preview */}
+            <div className="relative aspect-video w-full overflow-hidden rounded-t-lg bg-muted">
+              {getPosterUrl(video.poster_url) ? (
+                <img
+                  src={getPosterUrl(video.poster_url)!}
+                  alt={`${video.title} poster`}
+                  className="h-full w-full object-cover transition-transform hover:scale-105"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-muted">
+                  <div className="flex flex-col items-center space-y-2 text-muted-foreground">
+                    <Video className="h-8 w-8" />
+                    <span className="text-sm">No Poster</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Play Button Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity hover:opacity-100">
+                <div className="rounded-full bg-white/90 p-3">
+                  <Play className="h-6 w-6 text-black" />
+                </div>
+              </div>
+
+              {/* Welcome Video Badge */}
+              {video.is_welcome_video && (
+                <div className="absolute right-2 top-2 z-10">
+                  <Badge className="bg-yellow-500 text-white">
+                    <Star className="mr-1 h-3 w-3" />
+                    Welcome
+                  </Badge>
+                </div>
+              )}
+
+              {/* Ownership Badge */}
+              <div className="absolute left-2 top-2 z-10">
+                <Badge
+                  variant={isOwnMedia(video) ? 'default' : 'secondary'}
+                  className="text-xs"
+                >
+                  {isOwnMedia(video) ? 'Yours' : 'Other Teacher'}
                 </Badge>
               </div>
-            )}
-
-            {/* Ownership indicator */}
-            <div className="absolute left-2 top-2 z-10">
-              <Badge
-                variant={isOwn ? 'default' : 'secondary'}
-                className="text-xs"
-              >
-                {isOwn ? 'Yours' : 'Other Teacher'}
-              </Badge>
             </div>
 
             <CardHeader className="pb-3">
@@ -514,20 +552,10 @@ function VideoGrid({
                   <Play className="mr-1 h-3 w-3" />
                   Play
                 </Button>
-                {isOwn ? (
-                  <Button size="sm" variant="outline">
-                    <Edit className="h-3 w-3" />
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled
-                    title="You can only edit your own videos"
-                  >
-                    <Edit className="h-3 w-3" />
-                  </Button>
-                )}
+                <Button size="sm" variant="outline">
+                  <Edit className="h-3 w-3" />
+                </Button>
+
                 <Button size="sm" variant="outline">
                   <Download className="h-3 w-3" />
                 </Button>
