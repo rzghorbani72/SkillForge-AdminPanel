@@ -29,6 +29,8 @@ import { apiClient } from '@/lib/api';
 import { Media, Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useAuth } from '@/components/providers/auth-provider';
+import type { AuthUser } from '@/lib/auth';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
 import VideoPlayer from '@/components/content/video-player';
 
@@ -42,6 +44,8 @@ interface VideoWithMetadata extends Media {
 
 export default function VideosPage() {
   const { selectedSchool } = useSchool();
+  const auth = useAuth() as unknown as AuthUser;
+  const user = auth?.user;
   const [videos, setVideos] = useState<VideoWithMetadata[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -102,6 +106,10 @@ export default function VideosPage() {
 
     return matchesSearch && matchesFilter;
   });
+
+  const isOwnMedia = (video: VideoWithMetadata) => {
+    return user && video.Owner?.id === user.id;
+  };
 
   const welcomeVideos = videos.filter((video) => video.is_welcome_video);
   const lessonVideos = videos.filter((video) => video.lesson_type === 'LESSON');
@@ -415,93 +423,119 @@ function VideoGrid({
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {videos.map((video) => (
-        <Card
-          key={video.id}
-          className={`relative cursor-pointer transition-shadow hover:shadow-md ${
-            video.is_welcome_video ? 'ring-2 ring-yellow-400' : ''
-          }`}
-          onClick={() => onVideoSelect(video)}
-        >
-          {video.is_welcome_video && (
-            <div className="absolute right-2 top-2 z-10">
-              <Badge className="bg-yellow-500 text-white">
-                <Star className="mr-1 h-3 w-3" />
-                Welcome
-              </Badge>
-            </div>
-          )}
-
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-2">
-              {getVideoIcon(video.lesson_type)}
-              <CardTitle className="truncate text-lg">{video.title}</CardTitle>
-            </div>
-            <CardDescription className="line-clamp-2">
-              {video.description}
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-3">
-            {/* Video Type Badge */}
-            <div className="flex items-center space-x-2">
-              <Badge className={getVideoTypeColor(video.lesson_type)}>
-                {video.lesson_type || 'VIDEO'}
-              </Badge>
-              {video.is_welcome_video && (
-                <Badge
-                  variant="outline"
-                  className="border-yellow-600 text-yellow-600"
-                >
-                  Default
+      {videos.map((video) => {
+        const isOwn = isOwnMedia(video);
+        return (
+          <Card
+            key={video.id}
+            className={`relative cursor-pointer transition-shadow hover:shadow-md ${
+              video.is_welcome_video ? 'ring-2 ring-yellow-400' : ''
+            } ${!isOwn ? 'border-dashed opacity-75' : ''}`}
+            onClick={() => onVideoSelect(video)}
+          >
+            {video.is_welcome_video && (
+              <div className="absolute right-2 top-2 z-10">
+                <Badge className="bg-yellow-500 text-white">
+                  <Star className="mr-1 h-3 w-3" />
+                  Welcome
                 </Badge>
-              )}
-            </div>
-
-            {/* Video Details */}
-            <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-              <div className="flex items-center space-x-1">
-                <Clock className="h-3 w-3" />
-                <span>{formatDuration(video.metadata?.duration)}</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Eye className="h-3 w-3" />
-                <span>{formatFileSize(video.size)}</span>
-              </div>
-            </div>
-
-            {/* Tags */}
-            {video.tags && video.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {video.tags.slice(0, 3).map((tag, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-                {video.tags.length > 3 && (
-                  <Badge variant="secondary" className="text-xs">
-                    +{video.tags.length - 3}
-                  </Badge>
-                )}
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-2 pt-2">
-              <Button size="sm" variant="outline" className="flex-1">
-                <Play className="mr-1 h-3 w-3" />
-                Play
-              </Button>
-              <Button size="sm" variant="outline">
-                <Edit className="h-3 w-3" />
-              </Button>
-              <Button size="sm" variant="outline">
-                <Download className="h-3 w-3" />
-              </Button>
+            {/* Ownership indicator */}
+            <div className="absolute left-2 top-2 z-10">
+              <Badge
+                variant={isOwn ? 'default' : 'secondary'}
+                className="text-xs"
+              >
+                {isOwn ? 'Yours' : 'Other Teacher'}
+              </Badge>
             </div>
-          </CardContent>
-        </Card>
-      ))}
+
+            <CardHeader className="pb-3">
+              <div className="flex items-center space-x-2">
+                {getVideoIcon(video.lesson_type)}
+                <CardTitle className="truncate text-lg">
+                  {video.title}
+                </CardTitle>
+              </div>
+              <CardDescription className="line-clamp-2">
+                {video.description}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-3">
+              {/* Video Type Badge */}
+              <div className="flex items-center space-x-2">
+                <Badge className={getVideoTypeColor(video.lesson_type)}>
+                  {video.lesson_type || 'VIDEO'}
+                </Badge>
+                {video.is_welcome_video && (
+                  <Badge
+                    variant="outline"
+                    className="border-yellow-600 text-yellow-600"
+                  >
+                    Default
+                  </Badge>
+                )}
+              </div>
+
+              {/* Video Details */}
+              <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1">
+                  <Clock className="h-3 w-3" />
+                  <span>{formatDuration(video.metadata?.duration)}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Eye className="h-3 w-3" />
+                  <span>{formatFileSize(video.size)}</span>
+                </div>
+              </div>
+
+              {/* Tags */}
+              {video.tags && video.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {video.tags.slice(0, 3).map((tag, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {video.tags.length > 3 && (
+                    <Badge variant="secondary" className="text-xs">
+                      +{video.tags.length - 3}
+                    </Badge>
+                  )}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-2 pt-2">
+                <Button size="sm" variant="outline" className="flex-1">
+                  <Play className="mr-1 h-3 w-3" />
+                  Play
+                </Button>
+                {isOwn ? (
+                  <Button size="sm" variant="outline">
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled
+                    title="You can only edit your own videos"
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                )}
+                <Button size="sm" variant="outline">
+                  <Download className="h-3 w-3" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

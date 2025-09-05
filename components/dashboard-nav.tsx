@@ -9,6 +9,7 @@ import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useCallback, useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,11 +57,18 @@ const NavItemContent = React.memo(
         )}
       >
         <Icon className="size-5 flex-none" />
-        {!isMinimized && <span className="mr-2 truncate">{item.title}</span>}
+        {!isMinimized && (
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <span className="truncate">{item.title}</span>
+            {(item as any).badge && (
+              <Badge variant="secondary" className="h-5 px-1.5 py-0.5 text-xs">
+                {(item as any).badge}
+              </Badge>
+            )}
+          </div>
+        )}
         {hasChildren && !isMinimized && (
-          <ChevronRight
-            className={cn('ml-auto h-4 w-4', isExpanded && 'rotate-90')}
-          />
+          <ChevronRight className={cn('h-4 w-4', isExpanded && 'rotate-90')} />
         )}
       </div>
     );

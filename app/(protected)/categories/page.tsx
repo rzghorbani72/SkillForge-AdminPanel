@@ -77,23 +77,9 @@ export default function CategoriesPage() {
       const response = await apiClient.getCategories();
 
       let categoriesData: Category[] = [];
-      if (response && typeof response === 'object') {
-        const responseData = response.data as
-          | { data?: Category[]; categories?: Category[] }
-          | Category[];
-        if (Array.isArray(responseData)) {
-          categoriesData = responseData;
-        } else if (responseData && typeof responseData === 'object') {
-          if (Array.isArray(responseData.data)) {
-            categoriesData = responseData.data;
-          } else if (Array.isArray(responseData.categories)) {
-            categoriesData = responseData.categories;
-          } else {
-            categoriesData = [];
-          }
-        } else {
-          categoriesData = [];
-        }
+
+      if (Array.isArray(response)) {
+        categoriesData = response;
       } else {
         categoriesData = [];
       }

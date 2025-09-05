@@ -164,6 +164,30 @@ export const navItems: NavItem[] = [
     label: 'courses'
   },
   {
+    title: 'Videos',
+    href: '/videos',
+    icon: 'video' as IconType,
+    label: 'videos'
+  },
+  {
+    title: 'Images',
+    href: '/images',
+    icon: 'image' as IconType,
+    label: 'images'
+  },
+  {
+    title: 'Audios',
+    href: '/audios',
+    icon: 'volume2' as IconType,
+    label: 'audios'
+  },
+  {
+    title: 'Documents',
+    href: '/documents',
+    icon: 'fileText' as IconType,
+    label: 'documents'
+  },
+  {
     title: 'Users',
     href: '/users',
     icon: 'users' as IconType,

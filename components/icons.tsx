@@ -45,7 +45,9 @@ import {
   UserX2Icon,
   School,
   CirclePlus,
-  X
+  X,
+  Video,
+  Volume2
 } from 'lucide-react';
 export type IconType =
   | 'dashboard'
@@ -96,7 +98,9 @@ export type IconType =
   | 'trendingUp'
   | 'barChart'
   | 'dollarSign'
-  | 'creditCard';
+  | 'creditCard'
+  | 'video'
+  | 'volume2';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -148,5 +152,7 @@ export const Icons = {
   trendingUp: TrendingUp,
   barChart: BarChart3,
   dollarSign: DollarSign,
-  creditCard: CreditCard
+  creditCard: CreditCard,
+  video: Video,
+  volume2: Volume2
 };

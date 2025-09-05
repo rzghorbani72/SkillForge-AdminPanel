@@ -5,6 +5,10 @@ import {
   Bookmark,
   SquarePen,
   LayoutGrid,
+  Video,
+  Image,
+  Volume2,
+  FileText,
   LucideIcon
 } from 'lucide-react';
 
@@ -71,6 +75,35 @@ export function getMenuList(pathname: string): Group[] {
           label: 'Tags',
           active: pathname.includes('/tags'),
           icon: Tag
+        }
+      ]
+    },
+    {
+      groupLabel: 'Media Library',
+      menus: [
+        {
+          href: '/videos',
+          label: 'Videos',
+          active: pathname.includes('/videos'),
+          icon: Video
+        },
+        {
+          href: '/images',
+          label: 'Images',
+          active: pathname.includes('/images'),
+          icon: Image
+        },
+        {
+          href: '/audios',
+          label: 'Audios',
+          active: pathname.includes('/audios'),
+          icon: Volume2
+        },
+        {
+          href: '/documents',
+          label: 'Documents',
+          active: pathname.includes('/documents'),
+          icon: FileText
         }
       ]
     },
