@@ -32,7 +32,6 @@ import { Lesson, Season, Course } from '@/types/api';
 import { useSchool } from '@/contexts/SchoolContext';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
-import Image from 'next/image';
 
 export default function LessonViewPage() {
   const params = useParams();
@@ -342,6 +341,39 @@ export default function LessonViewPage() {
         </Card>
       )}
 
+      {/* Video Player */}
+      {lesson.video_id && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Video className="mr-2 h-5 w-5" />
+              Lesson Video
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
+              <video
+                controls
+                className="h-full w-full"
+                poster={
+                  lesson.image?.url
+                    ? `${lesson.image.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${lesson.image.url}` : lesson.image.url}`
+                    : undefined
+                }
+              >
+                <source
+                  src={apiClient.getVideoStreamUrl(
+                    parseInt(lesson.video_id.toString())
+                  )}
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Media Information */}
       <Card>
         <CardHeader>
@@ -378,7 +410,7 @@ export default function LessonViewPage() {
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Image ID
+                Video Poster Image ID
               </label>
               <p className="text-sm">
                 {lesson.image_id || 'No image assigned'}
@@ -387,41 +419,6 @@ export default function LessonViewPage() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Lesson Cover Image */}
-      {lesson.image_id && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Lesson Cover</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="relative h-64 w-full overflow-hidden rounded-lg border">
-              <Image
-                src={`${lesson.image?.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${lesson.image?.url}` : lesson.image?.url}`}
-                alt={lesson.title}
-                className="h-full w-full object-contain"
-                unoptimized
-                fill
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const placeholder = target.nextElementSibling as HTMLElement;
-                  if (placeholder) placeholder.style.display = 'flex';
-                }}
-              />
-              <div
-                className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-500"
-                style={{ display: 'none' }}
-              >
-                <div className="text-center">
-                  <div className="mb-2 text-4xl">📷</div>
-                  <div className="text-sm">Image not available</div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Content Management */}
       <Card>

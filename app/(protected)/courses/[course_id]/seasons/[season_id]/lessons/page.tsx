@@ -7,7 +7,7 @@ import SearchAndStats from '@/components/lesson/SearchAndStats';
 import NotFound from '@/components/lesson/NotFound';
 import LessonIndex from '@/components/lesson/index';
 import Loading from '@/components/lesson/loading';
-import SeasonNotFound from '@/components/lesson/SeasonNotFound';
+import SeasonNotFound from '@/components/lesson/season-not-found';
 import useLesson from '@/components/lesson/useLesson';
 
 export default function SeasonLessonsPage() {

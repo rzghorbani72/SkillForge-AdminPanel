@@ -25,6 +25,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen } from 'lucide-react';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
+import VideoUploadPreview from '@/components/ui/VideoUploadPreview';
 
 type Props = {
   initialValues: Partial<LessonFormData> & { season_id: string };
@@ -56,7 +57,9 @@ const LessonForm = ({
       category_id: initialValues.category_id ?? '',
       published: initialValues.published ?? false,
       is_free: initialValues.is_free ?? false,
-      lesson_type: (initialValues.lesson_type as any) ?? 'VIDEO'
+      lesson_type:
+        (initialValues.lesson_type as 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ') ??
+        'VIDEO'
     }
   });
 
@@ -139,27 +142,52 @@ const LessonForm = ({
               )}
             />
 
-            <div className="grid gap-4 md:grid-cols-2">
+            {/* Video Upload Section */}
+            <div className="col-span-2">
               <FormField
                 control={form.control}
                 name="video_id"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
-                    <FormLabel>Video ID</FormLabel>
+                    <FormLabel>Video</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter video ID"
-                        {...field}
+                      <VideoUploadPreview
+                        title={form.watch('title') || 'Lesson Video'}
+                        description={
+                          form.watch('description') || 'Lesson video content'
+                        }
+                        onSuccess={(video) => {
+                          form.setValue('video_id', video.id.toString());
+                        }}
+                        selectedVideoId={form.watch('video_id')}
+                        alt="Lesson video preview"
+                        placeholderText="No video selected"
+                        placeholderSubtext="Upload a video to preview it here"
+                        uploadButtonText="Upload Video"
+                        selectButtonText="Select a video first"
+                        allowPosterUpload={true}
+                        // Poster image props - use cover_id as poster
+                        posterImageId={form.watch('cover_id')}
+                        onPosterSuccess={(image) => {
+                          form.setValue('cover_id', image.id.toString());
+                        }}
+                        onPosterRemove={() => {
+                          form.setValue('cover_id', '');
+                        }}
                       />
                     </FormControl>
                     <FormDescription>
-                      ID of the associated video
+                      Upload or select a video for this lesson
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
+
+            {/* Image Upload Section */}
+
+            <div className="grid gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="audio_id"
@@ -180,39 +208,7 @@ const LessonForm = ({
                   </FormItem>
                 )}
               />
-              {/* Image Upload Section */}
-              <div className="col-span-2">
-                <FormField
-                  control={form.control}
-                  name="cover_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cover Image</FormLabel>
-                      <FormControl>
-                        <ImageUploadPreview
-                          title={form.watch('title') || 'Lesson Cover'}
-                          description={
-                            form.watch('description') || 'Lesson cover image'
-                          }
-                          onSuccess={(image) => {
-                            form.setValue('cover_id', image.id.toString());
-                          }}
-                          selectedImageId={form.watch('cover_id')}
-                          alt="Lesson cover preview"
-                          placeholderText="No cover image selected"
-                          placeholderSubtext="Upload an image to preview it here"
-                          uploadButtonText="Upload Cover Image"
-                          selectButtonText="Select an image first"
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Upload a cover image for this lesson
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+
               <FormField
                 control={form.control}
                 name="document_id"

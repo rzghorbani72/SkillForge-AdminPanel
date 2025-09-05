@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import AuthGuard from '@/components/auth-guard';
 import ProtectedLayout from './(protected)/layout';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'SkillForge Admin Panel',
@@ -27,7 +28,24 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <ToastContainer />
+          <Toaster />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            style={{
+              top: '20px',
+              right: '20px',
+              zIndex: 9999
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

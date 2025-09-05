@@ -528,21 +528,211 @@ class ApiClient {
     else return null as any;
   }
 
-  async uploadVideo(
+  // Alternative upload method with better progress tracking
+  async uploadVideoWithProgress(
     file: File,
-    metadata?: { title?: string; description?: string }
+    metadata?: { title?: string; description?: string },
+    posterFile?: File,
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
   ) {
     const formData = new FormData();
-    formData.append('videofile', file); // Backend expects 'videofile'
+    formData.append('videofile', file);
+
+    if (posterFile) {
+      formData.append('posterfile', posterFile);
+    }
+
     if (metadata) {
       formData.append('title', metadata.title || file.name);
       formData.append('description', metadata.description || '');
     }
 
-    return this.request('/videos/upload', {
-      method: 'POST',
-      headers: {}, // Let browser set content-type for FormData
-      body: formData
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      let lastProgress = 0;
+
+      // Handle abort controller
+      if (abortController) {
+        abortController.signal.addEventListener('abort', () => {
+          xhr.abort();
+        });
+      }
+
+      // Progress tracking with throttling
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable && onProgress) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+
+          // Only update if progress has actually changed
+          if (progress !== lastProgress) {
+            lastProgress = progress;
+            console.log(
+              `Upload progress: ${event.loaded}/${event.total} bytes (${progress}%)`
+            );
+            onProgress(progress);
+          }
+        }
+      });
+
+      // Event handlers
+      xhr.upload.addEventListener('loadstart', () => {
+        console.log('Upload started');
+        if (onProgress) onProgress(0);
+      });
+
+      xhr.upload.addEventListener('loadend', () => {
+        console.log('Upload ended');
+        // Don't set progress to 100% here - let the response handler do it
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            // Set progress to 100% when upload is successful
+            if (onProgress) onProgress(100);
+            resolve(response.data || response);
+          } catch (error) {
+            reject(new Error('Failed to parse response'));
+          }
+        } else {
+          reject(new Error(`Upload failed with status: ${xhr.status}`));
+        }
+      });
+
+      xhr.addEventListener('error', () => reject(new Error('Upload failed')));
+      xhr.addEventListener('abort', () =>
+        reject(new Error('Upload cancelled'))
+      );
+      xhr.ontimeout = () => reject(new Error('Upload timeout'));
+
+      xhr.open('POST', `${this.baseURL}/videos/upload`);
+      xhr.withCredentials = true;
+      xhr.timeout = 300000; // 5 minutes
+
+      console.log(`Starting upload: ${file.name} (${file.size} bytes)`);
+      xhr.send(formData);
+    });
+  }
+
+  async uploadVideo(
+    file: File,
+    metadata?: { title?: string; description?: string },
+    posterFile?: File,
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
+  ) {
+    const formData = new FormData();
+    formData.append('videofile', file); // Backend expects 'videofile'
+
+    if (posterFile) {
+      formData.append('posterfile', posterFile); // Backend expects 'posterfile'
+    }
+
+    if (metadata) {
+      formData.append('title', metadata.title || file.name);
+      formData.append('description', metadata.description || '');
+    }
+
+    // Create XMLHttpRequest for progress tracking
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      // Handle abort controller
+      if (abortController) {
+        abortController.signal.addEventListener('abort', () => {
+          xhr.abort();
+        });
+      }
+
+      // Track upload progress with more detailed logging
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable && onProgress) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          console.log(
+            `Upload progress: ${event.loaded}/${event.total} bytes (${progress}%)`
+          );
+          onProgress(progress);
+        } else {
+          console.log('Progress event not computable:', {
+            lengthComputable: event.lengthComputable,
+            loaded: event.loaded,
+            total: event.total
+          });
+        }
+      });
+
+      // Track loadstart
+      xhr.upload.addEventListener('loadstart', () => {
+        console.log('Upload started');
+        if (onProgress) onProgress(0);
+      });
+
+      // Track loadend - don't set progress to 100% here as it happens before response processing
+      xhr.upload.addEventListener('loadend', () => {
+        console.log('Upload ended');
+        // Don't set progress to 100% here - let the response handler do it
+      });
+
+      // Track error events
+      xhr.upload.addEventListener('error', (event) => {
+        console.error('Upload error:', event);
+      });
+
+      // Track abort events
+      xhr.upload.addEventListener('abort', (event) => {
+        console.log('Upload aborted:', event);
+      });
+
+      // Handle response
+      xhr.addEventListener('load', () => {
+        console.log('Response received:', xhr.status);
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            // Set progress to 100% when upload is successful
+            if (onProgress) onProgress(100);
+
+            if (
+              response &&
+              typeof response === 'object' &&
+              'data' in response
+            ) {
+              resolve(response.data);
+            } else {
+              resolve(response);
+            }
+          } catch (error) {
+            reject(new Error('Failed to parse response'));
+          }
+        } else {
+          reject(new Error(`Upload failed with status: ${xhr.status}`));
+        }
+      });
+
+      // Handle errors
+      xhr.addEventListener('error', () => {
+        reject(new Error('Upload failed'));
+      });
+
+      // Handle abort
+      xhr.addEventListener('abort', () => {
+        reject(new Error('Upload cancelled'));
+      });
+
+      // Open and send request
+      xhr.open('POST', `${this.baseURL}/videos/upload`);
+      xhr.withCredentials = true; // Include credentials
+
+      // Set timeout for better error handling
+      xhr.timeout = 300000; // 5 minutes
+      xhr.ontimeout = () => {
+        reject(new Error('Upload timeout'));
+      };
+
+      console.log(`Starting upload: ${file.name} (${file.size} bytes)`);
+      xhr.send(formData);
     });
   }
 
@@ -627,6 +817,15 @@ class ApiClient {
     ) {
       return response.data.data as any;
     } else return null as any;
+  }
+
+  getVideoStreamUrl(videoId: number): string {
+    return `${this.baseURL}/videos/stream/${videoId}`;
+  }
+
+  async getVideo(videoId: number) {
+    const response = await this.request(`/videos/${videoId}`);
+    return response.data;
   }
 
   async getAudio() {
