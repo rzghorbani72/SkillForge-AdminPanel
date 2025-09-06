@@ -23,7 +23,7 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react';
-import { enhancedAuthService } from '@/lib/enhanced-auth';
+import { authService } from '@/lib/auth';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
@@ -38,9 +38,12 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
-    password: ''
+    password: '',
+    school_id: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [availableSchools, setAvailableSchools] = useState<any[]>([]);
+  const [showSchoolSelection, setShowSchoolSelection] = useState(false);
 
   const router = useRouter();
 
@@ -73,6 +76,10 @@ export default function LoginPage() {
       newErrors.password = 'Password must be at least 6 characters';
     }
 
+    if (showSchoolSelection && !formData.school_id) {
+      newErrors.school_id = 'Please select a school';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -87,52 +94,54 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Set auth type to public for general login
-      enhancedAuthService.setAuthType('public');
-
       const credentials = {
-        phone_number: authMethod === 'phone' ? formData.phone : '',
+        identifier: authMethod === 'phone' ? formData.phone : formData.email,
         password: formData.password,
-        ...(authMethod === 'email' && { email: formData.email })
+        school_id: formData.school_id ? parseInt(formData.school_id) : undefined
       };
 
-      const user = await enhancedAuthService.enhancedLogin(credentials);
+      const response = await authService.login(credentials);
 
-      if (user) {
+      if (response) {
+        // Check if school selection is required
+        if (
+          response.requires_school_selection ||
+          (response.availableSchools && response.availableSchools.length > 0)
+        ) {
+          // Show school selection UI
+          setAvailableSchools(response.availableSchools || []);
+          setShowSchoolSelection(true);
+          return;
+        }
+
+        // Single school or specific school - proceed with normal login
         ErrorHandler.showSuccess('Login successful!');
-
         // Check user role and redirect accordingly
-        if (user.isStudent) {
+        const userRole = response.user?.role;
+        if (userRole === 'STUDENT') {
           // User is a student, redirect to their school
-          const schools = await enhancedAuthService.getUserSchools();
-          if (schools.length > 0) {
-            const schoolUrl = enhancedAuthService.getSchoolDashboardUrl(
-              schools[0]
+          if (isDevelopmentMode()) {
+            // In development, show info instead of redirecting
+            ErrorHandler.showInfo(
+              'Development mode: Student would be redirected to school dashboard'
             );
-
-            if (isDevelopmentMode()) {
-              // In development, show info instead of redirecting
-              ErrorHandler.showInfo(
-                `Development mode: Would redirect to ${schoolUrl}`
-              );
-              logDevInfo(
-                'Development mode: Would redirect student to:',
-                schoolUrl
-              );
-              // For development, redirect to dashboard instead
-              router.push('/dashboard');
-              return;
-            } else {
-              // In production, redirect to school
-              ErrorHandler.showInfo('Redirecting to your school dashboard...');
-              window.location.href = schoolUrl;
-              return;
-            }
+            logDevInfo(
+              'Development mode: Would redirect student to school dashboard'
+            );
+            // For development, redirect to dashboard instead
+            router.push('/dashboard');
+            return;
           } else {
-            ErrorHandler.showWarning('No school found for this account');
+            // In production, redirect to school
+            ErrorHandler.showInfo('Redirecting to your school dashboard...');
+            window.location.href = '/student-dashboard';
             return;
           }
-        } else if (user.isStaff) {
+        } else if (
+          userRole === 'ADMIN' ||
+          userRole === 'MANAGER' ||
+          userRole === 'TEACHER'
+        ) {
           // User is admin/manager/teacher, redirect to admin dashboard
           router.push('/dashboard');
           return;
@@ -168,6 +177,69 @@ export default function LoginPage() {
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleSchoolSelection = async (schoolId: string) => {
+    setFormData((prev) => ({ ...prev, school_id: schoolId }));
+    setShowSchoolSelection(false);
+
+    // Retry login with school_id
+    try {
+      const credentials = {
+        identifier: authMethod === 'phone' ? formData.phone : formData.email,
+        password: formData.password,
+        school_id: parseInt(schoolId)
+      };
+
+      const response = await authService.login(credentials);
+
+      if (response) {
+        ErrorHandler.showSuccess('Login successful!');
+
+        // Store auth data
+        localStorage.setItem('auth_token', response.access_token);
+        localStorage.setItem('user_data', JSON.stringify(response.user));
+        localStorage.setItem(
+          'current_profile',
+          JSON.stringify(response.currentProfile)
+        );
+        localStorage.setItem(
+          'current_school',
+          JSON.stringify(response.currentSchool)
+        );
+
+        // Check user role and redirect accordingly
+        const userRole = response.user?.role;
+        if (userRole === 'STUDENT') {
+          if (isDevelopmentMode()) {
+            ErrorHandler.showInfo(
+              'Development mode: Student would be redirected to school dashboard'
+            );
+            router.push('/dashboard');
+            return;
+          } else {
+            ErrorHandler.showInfo('Redirecting to your school dashboard...');
+            window.location.href = '/student-dashboard';
+            return;
+          }
+        } else if (
+          userRole === 'ADMIN' ||
+          userRole === 'MANAGER' ||
+          userRole === 'TEACHER'
+        ) {
+          router.push('/dashboard');
+          return;
+        } else {
+          ErrorHandler.showWarning(
+            'You do not have permission to access this panel'
+          );
+          return;
+        }
+      }
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      ErrorHandler.handleFormError(error, ['school_id']);
     }
   };
 
@@ -308,6 +380,32 @@ export default function LoginPage() {
                     )}
                   </div>
 
+                  {showSchoolSelection && (
+                    <div className="space-y-2">
+                      <Label htmlFor="school">Select School</Label>
+                      <div className="space-y-2">
+                        {availableSchools.map((school) => (
+                          <button
+                            key={school.id}
+                            type="button"
+                            onClick={() => handleSchoolSelection(school.id)}
+                            className="w-full rounded-lg border p-3 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <div className="font-medium">{school.name}</div>
+                            <div className="text-sm text-gray-500">
+                              {school.slug}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      {errors.school_id && (
+                        <p className="text-sm text-red-500">
+                          {errors.school_id}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <input
@@ -405,6 +503,32 @@ export default function LoginPage() {
                       <p className="text-sm text-red-500">{errors.password}</p>
                     )}
                   </div>
+
+                  {showSchoolSelection && (
+                    <div className="space-y-2">
+                      <Label htmlFor="school-phone">Select School</Label>
+                      <div className="space-y-2">
+                        {availableSchools.map((school) => (
+                          <button
+                            key={school.id}
+                            type="button"
+                            onClick={() => handleSchoolSelection(school.id)}
+                            className="w-full rounded-lg border p-3 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <div className="font-medium">{school.name}</div>
+                            <div className="text-sm text-gray-500">
+                              {school.slug}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      {errors.school_id && (
+                        <p className="text-sm text-red-500">
+                          {errors.school_id}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">

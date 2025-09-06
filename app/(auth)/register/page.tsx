@@ -33,7 +33,7 @@ import {
   Building,
   GraduationCap
 } from 'lucide-react';
-import { enhancedAuthService } from '@/lib/enhanced-auth';
+import { apiClient } from '@/lib/api';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
@@ -97,15 +97,13 @@ export default function RegisterPage() {
 
     setOtpLoading(true);
     try {
-      // Set auth type to public for OTP
-      enhancedAuthService.setAuthType('public');
+      const result = await apiClient.sendPhoneOtp(formData.phone);
+      const responseData = result.data as any;
 
-      const result = await enhancedAuthService.sendPhoneOtp(formData.phone);
-
-      if (result.otp) {
+      if (responseData?.otp) {
         setPhoneOtpSent(true);
         ErrorHandler.showInfo(
-          `SMS OTP sent successfully! Your phone OTP is: ${result.otp}`
+          `SMS OTP sent successfully! Your phone OTP is: ${responseData.otp}`
         );
       }
     } catch (error) {
@@ -130,15 +128,13 @@ export default function RegisterPage() {
 
     setOtpLoading(true);
     try {
-      // Set auth type to public for OTP
-      enhancedAuthService.setAuthType('public');
+      const result = await apiClient.sendEmailOtp(formData.email);
+      const responseData = result.data as any;
 
-      const result = await enhancedAuthService.sendEmailOtp(formData.email);
-
-      if (result.otp) {
+      if (responseData?.otp) {
         setEmailOtpSent(true);
         ErrorHandler.showInfo(
-          `Email OTP sent successfully! Your email OTP is: ${result.otp}`
+          `Email OTP sent successfully! Your email OTP is: ${responseData.otp}`
         );
       }
     } catch (error) {
@@ -158,10 +154,12 @@ export default function RegisterPage() {
 
     setOtpLoading(true);
     try {
-      const isValid = await enhancedAuthService.verifyPhoneOtp(
+      const result = await apiClient.verifyPhoneOtp(
         formData.phone,
         formData.phoneOtp
       );
+      const responseData = result.data as any;
+      const isValid = responseData?.success;
 
       if (isValid) {
         setPhoneOtpVerified(true);
@@ -186,10 +184,12 @@ export default function RegisterPage() {
 
     setOtpLoading(true);
     try {
-      const isValid = await enhancedAuthService.verifyEmailOtp(
+      const result = await apiClient.verifyEmailOtp(
         formData.email,
         formData.emailOtp
       );
+      const responseData = result.data as any;
+      const isValid = responseData?.success;
 
       if (isValid) {
         setEmailOtpVerified(true);
@@ -291,9 +291,6 @@ export default function RegisterPage() {
         role = 'STUDENT';
       }
 
-      // Set auth type to public for registration
-      enhancedAuthService.setAuthType('public');
-
       // Create user with unverified phone and email
       const userData: any = {
         name: formData.name,
@@ -322,7 +319,7 @@ export default function RegisterPage() {
       };
 
       // Register user without OTP verification
-      const user = await enhancedAuthService.enhancedRegister(userData);
+      const user = await apiClient.register(userData);
 
       if (user) {
         ErrorHandler.showSuccess(
@@ -347,9 +344,6 @@ export default function RegisterPage() {
     isSubmittingRef.current = true;
 
     try {
-      // Set auth type to public for registration
-      enhancedAuthService.setAuthType('public');
-
       // Update user with verified OTPs
       const verificationData: any = {};
 
@@ -466,10 +460,7 @@ export default function RegisterPage() {
     isSubmittingRef.current = true;
 
     try {
-      // Set auth type to public for teacher registration
-      enhancedAuthService.setAuthType('public');
-
-      // Register the user with enhanced auth service
+      // Register the user with auth service
       // Debug: Log the OTP values
       console.log(
         'Phone OTP:',
@@ -529,7 +520,7 @@ export default function RegisterPage() {
         typeof userData.phone_otp
       );
 
-      const user = await enhancedAuthService.enhancedRegister(userData);
+      const user = await apiClient.register(userData);
 
       if (user) {
         ErrorHandler.showSuccess('Registration successful!');
