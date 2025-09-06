@@ -1,234 +1,212 @@
 import { apiClient } from './api';
-import { User, Profile, School } from '@/types/api';
-import { NextResponse } from 'next/server';
+import { ErrorHandler } from './error-handler';
 
 export interface AuthUser {
-  user: User;
-  profile: Profile;
-  school?: School;
+  user: any;
+  access_token: string;
+  currentProfile?: any;
+  currentSchool?: any;
+  requires_school_selection?: boolean;
+  available_schools?: any[];
+  availableProfiles?: any[];
+  availableSchools?: any[];
+  permissions?: string[];
+  expires_at?: Date;
 }
 
-export interface UserSchool {
-  profile: Profile;
-  school: School;
+export interface LoginCredentials {
+  identifier: string;
+  password: string;
+  school_id?: number;
+}
+
+export interface RegisterData {
+  name: string;
+  phone_number: string;
+  email?: string;
+  password: string;
+  confirmed_password: string;
+  role: string;
+  school_id?: number;
+  display_name: string;
+  bio?: string;
+  website?: string;
+  location?: string;
+  // School creation data (for MANAGER role)
+  school_name?: string;
+  school_slug?: string;
+  school_description?: string;
+  // Teacher request data
+  teacher_request?: boolean;
+  teacher_request_reason?: string;
 }
 
 class AuthService {
   private currentUser: AuthUser | null = null;
-  private userSchools: UserSchool[] = [];
 
-  // Check if user can access the main admin panel
-  canAccessAdminPanel(user: AuthUser): boolean {
-    const role = user.profile.role?.name;
-    return role === 'ADMIN' || role === 'MANAGER' || role === 'TEACHER';
-  }
-
-  // Check if user should be redirected to school (students)
-  shouldRedirectToSchool(user: AuthUser): boolean {
-    const role = user.profile.role?.name;
-    return role === 'USER';
-  }
-
-  // Implement handleGet and handlePost as async functions
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  async handleGet(
-    _: import('next/server').NextRequest
-  ): Promise<import('next/server').NextResponse> {
-    // Placeholder implementation
-    return NextResponse.json({ message: 'GET not implemented' });
-  }
-
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  async handlePost(
-    _: import('next/server').NextRequest
-  ): Promise<import('next/server').NextResponse> {
-    // Placeholder implementation
-    return NextResponse.json({ message: 'POST not implemented' });
-  }
-
-  // Get current authenticated user
-  async getCurrentUser(): Promise<AuthUser | null> {
+  // Login with password
+  async login(credentials: LoginCredentials): Promise<AuthUser> {
     try {
-      if (this.currentUser) {
+      const response = await apiClient.login(credentials);
+
+      if (response.data) {
+        this.currentUser = response.data as AuthUser;
         return this.currentUser;
       }
 
-      // Get current profile from API
-      const profileResponse = await apiClient.getCurrentProfile();
-      const profile = profileResponse.data as Profile;
-
-      if (!profile) {
-        return null;
-      }
-
-      // Get user details
-      const userResponse = await apiClient.getUser(profile.user_id);
-      const user = userResponse.data as User;
-
-      // Get school details if available
-      let school: School | undefined;
-      if (profile.school_id) {
-        try {
-          const schoolResponse = await apiClient.getCurrentSchool();
-          school = schoolResponse.data as School;
-        } catch (error) {
-          console.warn('Could not fetch school details:', error);
-        }
-      }
-
-      this.currentUser = {
-        user,
-        profile,
-        school
-      };
-
-      return this.currentUser;
+      throw new Error('Login failed');
     } catch (error) {
-      console.error('Failed to get current user:', error);
-      return null;
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
     }
   }
 
-  // Get all schools where user has a profile
-  async getUserSchools(): Promise<UserSchool[]> {
+  // Register new user
+  async register(userData: RegisterData): Promise<AuthUser> {
     try {
-      if (this.userSchools.length > 0) {
-        return this.userSchools;
+      const response = await apiClient.register(userData);
+
+      if (response.data) {
+        this.currentUser = response.data as AuthUser;
+        return this.currentUser;
       }
 
-      // Get all schools where user has profiles
-      const schoolsResponse = await apiClient.getSchools();
-      const schools = (schoolsResponse.data as School[]) || [];
-
-      // Get user profiles for each school
-      const userSchools: UserSchool[] = [];
-
-      for (const school of schools) {
-        try {
-          // This would need a backend endpoint to get user's profile in a specific school
-          // For now, we'll use the current profile if it matches the school
-          const currentUser = await this.getCurrentUser();
-          if (currentUser && currentUser.profile.school_id === school.id) {
-            userSchools.push({
-              profile: currentUser.profile,
-              school
-            });
-          }
-        } catch (error) {
-          console.warn(`Could not get profile for school ${school.id}:`, error);
-        }
-      }
-
-      this.userSchools = userSchools;
-      return userSchools;
-    } catch (error) {
-      console.error('Failed to get user schools:', error);
-      return [];
-    }
-  }
-
-  // Get school dashboard URL
-  getSchoolDashboardUrl(school: School): string {
-    // If school has a public domain, use it
-    if (school.domain?.public_address) {
-      return `https://${school.domain.public_address}`;
-    }
-
-    // Otherwise, use the private domain with the main domain
-    const privateDomain = school.slug;
-    return `https://${privateDomain}.skillforge.com`;
-  }
-
-  // Get school login URL
-  getSchoolLoginUrl(school: School): string {
-    const baseUrl = this.getSchoolDashboardUrl(school);
-    return `${baseUrl}/login`;
-  }
-
-  // Check if user is a teacher in any school
-  async isTeacherInAnySchool(): Promise<boolean> {
-    const userSchools = await this.getUserSchools();
-    return userSchools.some((us) => us.profile.role?.name === 'TEACHER');
-  }
-
-  // Check if user is a manager in any school
-  async isManagerInAnySchool(): Promise<boolean> {
-    const userSchools = await this.getUserSchools();
-    return userSchools.some((us) => us.profile.role?.name === 'MANAGER');
-  }
-
-  // Check if user is an admin
-  async isAdmin(): Promise<boolean> {
-    const userSchools = await this.getUserSchools();
-    return userSchools.some((us) => us.profile.role?.name === 'ADMIN');
-  }
-
-  // Get primary school for user (where they have highest role)
-  async getPrimarySchool(): Promise<UserSchool | null> {
-    const userSchools = await this.getUserSchools();
-
-    if (userSchools.length === 0) {
-      return null;
-    }
-
-    if (userSchools.length === 1) {
-      return userSchools[0];
-    }
-
-    // Sort by role hierarchy (ADMIN > MANAGER > TEACHER > USER)
-    const roleHierarchy = {
-      ADMIN: 4,
-      MANAGER: 3,
-      TEACHER: 2,
-      USER: 1
-    };
-
-    return userSchools.sort((a, b) => {
-      const aLevel =
-        roleHierarchy[a.profile.role?.name as keyof typeof roleHierarchy] || 0;
-      const bLevel =
-        roleHierarchy[b.profile.role?.name as keyof typeof roleHierarchy] || 0;
-      return bLevel - aLevel;
-    })[0];
-  }
-
-  // Login user
-  async login(credentials: {
-    email?: string;
-    phone?: string;
-    password: string;
-  }): Promise<AuthUser> {
-    const response = await apiClient.login(credentials);
-
-    if (response.data) {
-      // Clear cached data
-      this.currentUser = null;
-      this.userSchools = [];
-
-      // Get fresh user data
-      const user = await this.getCurrentUser();
-      if (!user) {
-        throw new Error('Failed to get user data after login');
-      }
-
-      return user;
-    }
-
-    throw new Error('Login failed');
-  }
-
-  // Register user
-  async register(userData: {
-    name: string;
-    email?: string;
-    phone: string;
-    password: string;
-  }): Promise<void> {
-    const response = await apiClient.register(userData);
-
-    if (!response.data) {
       throw new Error('Registration failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
     }
+  }
+
+  // Login with phone OTP
+  async loginPhoneByOtp(credentials: {
+    phone_number: string;
+    otp: string;
+    school_id?: number;
+  }): Promise<AuthUser> {
+    try {
+      const response = await apiClient.loginPhoneByOtp(credentials);
+
+      if (response.data) {
+        this.currentUser = response.data as AuthUser;
+        return this.currentUser;
+      }
+
+      throw new Error('Phone OTP login failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
+    }
+  }
+
+  // Login with email OTP
+  async loginEmailByOtp(credentials: {
+    email: string;
+    otp: string;
+    school_id?: number;
+  }): Promise<AuthUser> {
+    try {
+      const response = await apiClient.loginEmailByOtp(credentials);
+
+      if (response.data) {
+        this.currentUser = response.data as AuthUser;
+        return this.currentUser;
+      }
+
+      throw new Error('Email OTP login failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
+    }
+  }
+
+  // Select school after login
+  async selectSchool(data: {
+    temp_token: string;
+    school_id: number;
+  }): Promise<AuthUser> {
+    try {
+      const response = await apiClient.selectSchool(data);
+
+      if (response.data) {
+        this.currentUser = response.data as AuthUser;
+        return this.currentUser;
+      }
+
+      throw new Error('School selection failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
+    }
+  }
+
+  // Send phone OTP
+  async sendPhoneOtp(phone_number: string): Promise<{ otp: string }> {
+    try {
+      const response = await apiClient.sendPhoneOtp(phone_number);
+      return response.data as { otp: string };
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
+  }
+
+  // Send email OTP
+  async sendEmailOtp(email: string): Promise<{ otp: string }> {
+    try {
+      const response = await apiClient.sendEmailOtp(email);
+      return response.data as { otp: string };
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
+  }
+
+  // Verify phone OTP
+  async verifyPhoneOtp(phone_number: string, otp: string): Promise<boolean> {
+    try {
+      const response = await apiClient.verifyPhoneOtp(phone_number, otp);
+      return (response.data as any)?.valid || false;
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
+  }
+
+  // Verify email OTP
+  async verifyEmailOtp(email: string, otp: string): Promise<boolean> {
+    try {
+      const response = await apiClient.verifyEmailOtp(email, otp);
+      return (response.data as any)?.valid || false;
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+      throw error;
+    }
+  }
+
+  // Get current authenticated user
+  getCurrentUser(): AuthUser | null {
+    return this.currentUser;
+  }
+
+  // Check if user is authenticated
+  isAuthenticated(): boolean {
+    return this.currentUser !== null;
+  }
+
+  // Get access token
+  getAccessToken(): string | null {
+    return this.currentUser?.access_token || null;
+  }
+
+  // Get current user profile
+  getCurrentProfile(): any | null {
+    return this.currentUser?.currentProfile || null;
+  }
+
+  // Get current school
+  getCurrentSchool(): any | null {
+    return this.currentUser?.currentSchool || null;
   }
 
   // Logout user
@@ -240,9 +218,14 @@ class AuthService {
     } finally {
       // Clear cached data
       this.currentUser = null;
-      this.userSchools = [];
 
-      // Redirect to login
+      // Clear localStorage
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_data');
+      localStorage.removeItem('current_profile');
+      localStorage.removeItem('current_school');
+
+      // Redirect to login page
       window.location.href = '/login';
     }
   }
@@ -250,26 +233,11 @@ class AuthService {
   // Clear cached data
   clearCache(): void {
     this.currentUser = null;
-    this.userSchools = [];
   }
 
-  // Get user's role in a specific school
-  async getUserRoleInSchool(schoolId: number): Promise<string | null> {
-    const userSchools = await this.getUserSchools();
-    const userSchool = userSchools.find((us) => us.school.id === schoolId);
-    return userSchool?.profile.role?.name || null;
-  }
-
-  // Check if user can manage a specific school
-  async canManageSchool(schoolId: number): Promise<boolean> {
-    const role = await this.getUserRoleInSchool(schoolId);
-    return role === 'ADMIN' || role === 'MANAGER' || role === 'TEACHER';
-  }
-
-  // Check if user can access admin features in a school
-  async canAccessSchoolAdmin(schoolId: number): Promise<boolean> {
-    const role = await this.getUserRoleInSchool(schoolId);
-    return role === 'ADMIN' || role === 'MANAGER';
+  // Set current user (for manual session restoration)
+  setCurrentUser(user: AuthUser): void {
+    this.currentUser = user;
   }
 }
 

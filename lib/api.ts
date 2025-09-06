@@ -64,11 +64,11 @@ class ApiClient {
 
   // Auth endpoints
   async login(credentials: {
-    email?: string;
-    phone?: string;
+    identifier: string;
     password: string;
+    school_id?: number;
   }) {
-    return this.request('/public-auth/login', {
+    return this.request('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials)
     });
@@ -76,77 +76,83 @@ class ApiClient {
 
   async register(userData: {
     name: string;
-    email?: string;
-    phone: string;
-    password: string;
-  }) {
-    return this.request('/public-auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData)
-    });
-  }
-
-  async logout() {
-    return this.request('/public-auth/logout', {
-      method: 'POST'
-    });
-  }
-
-  // Enhanced Auth endpoints
-  async enhancedLogin(credentials: {
-    phone_number: string;
-    password?: string;
-    otp?: string;
-    school_id?: number;
-    profile_id?: number;
-  }) {
-    return this.request('/enhanced-auth/public/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials)
-    });
-  }
-
-  async enhancedRegister(userData: {
-    name: string;
     phone_number: string;
     email?: string;
     password: string;
     confirmed_password: string;
-    phone_otp: string;
-    email_otp?: string;
     role: string;
     school_id?: number;
     display_name: string;
     bio?: string;
     website?: string;
     location?: string;
-    // School creation data (when creating new school)
+    // School creation data (for MANAGER role)
     school_name?: string;
     school_slug?: string;
     school_description?: string;
+    // Teacher request data
+    teacher_request?: boolean;
+    teacher_request_reason?: string;
   }) {
-    return this.request('/enhanced-auth/public/register', {
+    return this.request('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData)
     });
   }
 
-  async switchProfile(profileId: number, schoolId: number) {
-    return this.request('/enhanced-auth/switch-profile', {
-      method: 'POST',
-      body: JSON.stringify({
-        profile_id: profileId,
-        school_id: schoolId
-      })
+  async logout() {
+    return this.request('/auth/logout', {
+      method: 'POST'
     });
   }
 
+  async loginPhoneByOtp(credentials: {
+    phone_number: string;
+    otp: string;
+    school_id?: number;
+  }) {
+    return this.request('/auth/login-by-phone-otp', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+  }
+
+  async loginEmailByOtp(credentials: {
+    email: string;
+    otp: string;
+    school_id?: number;
+  }) {
+    return this.request('/auth/login-by-email-otp', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+  }
+
+  async selectSchool(data: { temp_token: string; school_id: number }) {
+    return this.request('/auth/select-school', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  // Note: These enhanced auth endpoints have been removed
+  // Use the standard auth endpoints instead
+  async switchProfile(profileId: number, schoolId: number) {
+    throw new Error(
+      'switchProfile endpoint not available - use standard auth flow'
+    );
+  }
+
   async getUserProfiles() {
-    return this.request('/enhanced-auth/profiles');
+    throw new Error(
+      'getUserProfiles endpoint not available - use standard auth flow'
+    );
   }
 
   async getUserSchools() {
-    return this.request('/enhanced-auth/schools');
+    throw new Error(
+      'getUserSchools endpoint not available - use standard auth flow'
+    );
   }
 
   async createProfile(profileData: {
@@ -157,50 +163,35 @@ class ApiClient {
     website?: string;
     location?: string;
   }) {
-    return this.request('/enhanced-auth/create-profile', {
-      method: 'POST',
-      body: JSON.stringify(profileData)
-    });
-  }
-
-  async getUserContext() {
-    return this.request('/enhanced-auth/context');
-  }
-
-  async validateRoleRegistration(schoolId: number, role: string) {
-    return this.request(`/enhanced-auth/validate-role/${schoolId}/${role}`, {
-      method: 'POST'
-    });
-  }
-
-  async getPrimarySchool() {
-    return this.request('/enhanced-auth/primary-school');
+    throw new Error(
+      'createProfile endpoint not available - use standard auth flow'
+    );
   }
 
   // OTP endpoints
   async sendPhoneOtp(phone_number: string) {
-    return this.request('/public-auth/send-phone-otp', {
+    return this.request('/auth/send-phone-otp', {
       method: 'POST',
       body: JSON.stringify({ phone_number })
     });
   }
 
   async sendEmailOtp(email: string) {
-    return this.request('/public-auth/send-email-otp', {
+    return this.request('/auth/send-email-otp', {
       method: 'POST',
       body: JSON.stringify({ email })
     });
   }
 
   async verifyPhoneOtp(phone_number: string, otp: string) {
-    return this.request('/public-auth/verify-phone-otp', {
+    return this.request('/auth/verify-phone-otp', {
       method: 'POST',
       body: JSON.stringify({ phone_number, otp })
     });
   }
 
   async verifyEmailOtp(email: string, otp: string) {
-    return this.request('/public-auth/verify-email-otp', {
+    return this.request('/auth/verify-email-otp', {
       method: 'POST',
       body: JSON.stringify({ email, otp })
     });
@@ -263,24 +254,18 @@ class ApiClient {
     }
 
     const response = await this.request(`/courses?${queryParams.toString()}`);
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    )
-      return response.data.data as { courses: any[]; pagination?: any };
-    else return { courses: [], pagination: undefined };
+    if (response.data) {
+      return response.data as { courses: any[]; pagination?: any };
+    }
+    return { courses: [], pagination: undefined };
   }
 
   async getCourse(id: number) {
     const response = await this.request(`/courses/${id}`);
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    )
-      return response.data.data as any;
-    else return null as any;
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async createCourse(courseData: {
@@ -339,13 +324,9 @@ class ApiClient {
 
     const response = await this.request(`/lessons?${queryParams.toString()}`);
 
-    // Handle the new API response structure where lessons might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as { lessons: any[]; pagination?: any };
+    // Return the lessons data directly
+    if (response.data) {
+      return response.data as { lessons: any[]; pagination?: any };
     }
 
     return response;
@@ -353,13 +334,10 @@ class ApiClient {
 
   async getLesson(id: number) {
     const response = await this.request(`/lessons/${id}`);
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    )
-      return response.data.data as { lesson: any };
-    else return null as any;
+    if (response.data) {
+      return response.data as { lesson: any };
+    }
+    return null as any;
   }
 
   async createLesson(lessonData: {
@@ -399,28 +377,18 @@ class ApiClient {
     const queryParams = courseId ? `?course_id=${courseId}` : '';
     const response = await this.request(`/seasons${queryParams}`);
 
-    // Handle the API response structure
+    // Return the seasons data directly
     if (response.data && Array.isArray(response.data)) {
       return response.data;
-    } else if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any[];
+    } else if (response.data) {
+      return response.data as any[];
     }
     return [];
   }
 
   async getSeason(id: number) {
     const response = await this.request(`/seasons/${id}`);
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    )
-      return response.data.data as any;
-    else if (response.data) {
+    if (response.data) {
       return response.data as any;
     }
     return null;
@@ -455,14 +423,11 @@ class ApiClient {
   async getCategories() {
     const response = await this.request('/categories');
 
-    // Handle the new API response structure where categories might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the categories data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async createCategory(categoryData: {
@@ -523,13 +488,10 @@ class ApiClient {
       signal
     });
 
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    )
-      return response.data.data as any;
-    else return null as any;
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   // Alternative upload method with better progress tracking
@@ -698,15 +660,7 @@ class ApiClient {
             // Set progress to 100% when upload is successful
             if (onProgress) onProgress(100);
 
-            if (
-              response &&
-              typeof response === 'object' &&
-              'data' in response
-            ) {
-              resolve(response.data);
-            } else {
-              resolve(response);
-            }
+            resolve(response);
           } catch (error) {
             reject(new Error('Failed to parse response'));
           }
@@ -776,51 +730,24 @@ class ApiClient {
     });
   }
 
-  // Media endpoints
-  async getMedia() {
-    const response = await this.request('/images');
-
-    // Handle the new API response structure where media might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'images' in response.data
-    ) {
-      const apiData = response.data as { images: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.images,
-        pagination: apiData.pagination
-      };
-    }
-
-    return response;
-  }
-
   async getImages() {
     const response = await this.request('/images');
-
-    // Handle the new API response structure where images might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    console.log('1.response getImages', response);
+    // Return the images data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getVideos() {
     const response = await this.request('/videos');
-
-    // Handle the new API response structure where videos might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    console.log('1.response getVideos', response);
+    // Return the videos data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   getVideoStreamUrl(videoId: number): string {
@@ -835,27 +762,21 @@ class ApiClient {
   async getAudio() {
     const response = await this.request('/audio');
 
-    // Handle the new API response structure where audio might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the audio data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getDocuments() {
     const response = await this.request('/files');
 
-    // Handle the new API response structure where documents might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the documents data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   // Image fetching endpoint
@@ -920,39 +841,20 @@ class ApiClient {
 
     const response = await this.request(url);
 
-    // Handle the new API response structure where users might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'users' in response.data
-    ) {
-      const apiData = response.data as { users: any[]; pagination?: any };
-      return {
-        ...response,
-        data: apiData.users,
-        pagination: apiData.pagination
-      };
+    // Return the users data directly
+    if (response.data) {
+      return response.data;
     }
-
     return response;
   }
 
   async getUser(id: number) {
     const response = await this.request(`/users/${id}`);
 
-    // Handle the new API response structure where user might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'user' in response.data
-    ) {
-      const apiData = response.data as { user: any };
-      return {
-        ...response,
-        data: apiData.user
-      };
+    // Return the user data directly
+    if (response.data) {
+      return response.data;
     }
-
     return response;
   }
 
@@ -967,32 +869,20 @@ class ApiClient {
   async getTransactions() {
     const response = await this.request('/transactions');
 
-    // Handle the new API response structure where transactions might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the transactions data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getTransaction(id: number) {
     const response = await this.request(`/transactions/${id}`);
 
-    // Handle the new API response structure where transaction might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'transaction' in response.data
-    ) {
-      const apiData = response.data as { transaction: any };
-      return {
-        ...response,
-        data: apiData.transaction
-      };
+    // Return the transaction data directly
+    if (response.data) {
+      return response.data;
     }
-
     return response;
   }
 
@@ -1011,41 +901,32 @@ class ApiClient {
   async getRecentEnrollments() {
     const response = await this.request('/enrollments/recent');
 
-    // Handle the new API response structure where enrollments might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the enrollments data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getRecentPayments() {
     const response = await this.request('/payments/recent');
 
-    // Handle the new API response structure where payments might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the payments data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   // Articles endpoints
   async getArticles() {
     const response = await this.request('/articles');
 
-    // Handle the new API response structure where articles might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the articles data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getArticle(id: number) {
@@ -1080,27 +961,21 @@ class ApiClient {
   async getArticleCategories() {
     const response = await this.request('/articles/categories');
 
-    // Handle the new API response structure where categories might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the categories data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getArticleTags() {
     const response = await this.request('/articles/tags');
 
-    // Handle the new API response structure where tags might be nested
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data.data as any;
-    } else return null as any;
+    // Return the tags data directly
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 }
 
