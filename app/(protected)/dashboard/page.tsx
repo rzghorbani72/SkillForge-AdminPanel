@@ -15,6 +15,7 @@ import ContentCreationHub from '@/components/content/content-creation-hub';
 import useDashboard from '@/components/dashboard/useDashboard';
 import StatsCards from '@/components/dashboard/StatsCards';
 import RecentLists from '@/components/dashboard/RecentLists';
+import { useAccessControl } from '@/hooks/useAccessControl';
 
 export default function DashboardPage() {
   const {
@@ -25,6 +26,16 @@ export default function DashboardPage() {
     recentActivity,
     statsCards
   } = useDashboard();
+
+  // Test the access control hook
+  const {
+    userState,
+    isLoading: userLoading,
+    error: userError
+  } = useAccessControl();
+  console.log('Dashboard - User State:', userState);
+  console.log('Dashboard - User Loading:', userLoading);
+  console.log('Dashboard - User Error:', userError);
 
   const quickActions = [
     {

@@ -37,11 +37,12 @@ export function useSchools(): UseSchoolsReturn {
       if (response.status === 200 && response.data) {
         let schoolsData: School[] = [];
 
-        // Handle different response structures
-        if (response.data.status === 'ok' && response.data.data) {
-          schoolsData = response.data.data;
-        } else if (Array.isArray(response.data)) {
+        // Handle response structure - data is now directly available
+        if (Array.isArray(response.data)) {
           schoolsData = response.data;
+        } else if (response.data.status === 'ok' && response.data.data) {
+          // Fallback for legacy response structure
+          schoolsData = response.data.data;
         } else {
           console.error('Unexpected response structure:', response.data);
           setError('Invalid response structure from server');

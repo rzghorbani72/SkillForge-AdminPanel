@@ -27,6 +27,7 @@ import { Eye } from 'lucide-react';
 import { Edit } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Lesson } from '@/types/api';
+import { AccessControlBadge } from '../ui/access-control-badge';
 
 const index = ({
   lesson,
@@ -51,9 +52,18 @@ const index = ({
               {lesson.description || 'No description provided'}
             </CardDescription>
           </div>
-          <Badge variant={lesson.is_active ? 'default' : 'secondary'}>
-            {lesson.is_active ? 'Active' : 'Inactive'}
-          </Badge>
+          <div className="flex flex-col items-end gap-2">
+            <Badge variant={lesson.is_active ? 'default' : 'secondary'}>
+              {lesson.is_active ? 'Active' : 'Inactive'}
+            </Badge>
+            {/* Ownership Badge */}
+            {(lesson as any).access_control && (
+              <AccessControlBadge
+                accessControl={(lesson as any).access_control}
+                className="text-xs"
+              />
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>

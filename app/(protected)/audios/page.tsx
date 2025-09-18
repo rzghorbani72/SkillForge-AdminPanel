@@ -27,6 +27,7 @@ import { Media, Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
 import UploadAudioDialog from '@/components/content/upload-audio-dialog';
+import { AccessControlBadge } from '@/components/ui/access-control-badge';
 
 export default function AudiosPage() {
   const { selectedSchool } = useSchool();
@@ -52,16 +53,16 @@ export default function AudiosPage() {
         apiClient.getCourses()
       ]);
 
-      if (mediaResponse.status === 'ok' && mediaResponse.data) {
-        const schoolAudios = mediaResponse.data.filter(
+      if (mediaResponse) {
+        const schoolAudios = mediaResponse.filter(
           (item: Media) =>
-            item.school_id === selectedSchool.id && item.type === 'audio'
+            item.school_id === selectedSchool.id && item.type === 'AUDIO'
         );
         setAudios(schoolAudios);
       }
 
-      if (coursesResponse.status === 'ok' && coursesResponse.data) {
-        const schoolCourses = coursesResponse.data.filter(
+      if (coursesResponse) {
+        const schoolCourses = coursesResponse.filter(
           (course: Course) => course.school_id === selectedSchool.id
         );
         setCourses(schoolCourses);
@@ -152,10 +153,21 @@ export default function AudiosPage() {
         {filteredAudios.map((audio) => (
           <Card key={audio.id} className="transition-shadow hover:shadow-md">
             <CardHeader>
-              <CardTitle className="text-lg">{audio.title}</CardTitle>
-              <CardDescription className="text-sm">
-                {audio.description}
-              </CardDescription>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg">{audio.title}</CardTitle>
+                  <CardDescription className="text-sm">
+                    {audio.description}
+                  </CardDescription>
+                </div>
+                {/* Ownership Badge */}
+                {(audio as any).access_control && (
+                  <AccessControlBadge
+                    accessControl={(audio as any).access_control}
+                    className="ml-2 text-xs"
+                  />
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">

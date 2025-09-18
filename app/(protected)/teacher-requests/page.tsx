@@ -48,7 +48,7 @@ import {
   Building
 } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
-import { enhancedAuthService } from '@/lib/enhanced-auth';
+import { authService } from '@/lib/auth';
 
 interface TeacherRequest {
   id: number;
@@ -109,7 +109,7 @@ export default function TeacherRequestsPage() {
   const fetchTeacherRequests = async () => {
     try {
       setLoading(true);
-      enhancedAuthService.setAuthType('admin');
+      // Auth type is handled by the new auth service
 
       const response = await fetch(
         `/api/teacher-requests?page=${pagination.page}&limit=${pagination.limit}`,
@@ -145,7 +145,7 @@ export default function TeacherRequestsPage() {
 
     try {
       setReviewing(true);
-      enhancedAuthService.setAuthType('admin');
+      // Auth type is handled by the new auth service
 
       const response = await fetch(
         `/api/teacher-requests/${selectedRequest.id}/review`,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { enhancedAuthService } from '@/lib/enhanced-auth';
+import { authService } from '@/lib/auth';
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 
 interface UseAuthRedirectOptions {
@@ -27,7 +27,7 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const currentUser = await enhancedAuthService.getCurrentUser();
+        const currentUser = authService.getCurrentUser();
         setUser(currentUser);
 
         if (currentUser) {
@@ -40,46 +40,37 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
 
           // Page doesn't require authentication, but user is authenticated
           // Redirect based on user type
-          if (currentUser.isStaff && requireStaff) {
-            // Staff user accessing staff page - allow access
-            setIsLoading(false);
-            return;
-          }
-
-          if (currentUser.isStudent && requireStudent) {
-            // Student user accessing student page - allow access
-            setIsLoading(false);
-            return;
-          }
-
-          // User is authenticated but accessing wrong type of page
-          if (currentUser.isStaff) {
+          if (
+            currentUser.user?.role === 'ADMIN' ||
+            currentUser.user?.role === 'MANAGER' ||
+            currentUser.user?.role === 'TEACHER'
+          ) {
+            if (requireStaff) {
+              // Staff user accessing staff page - allow access
+              setIsLoading(false);
+              return;
+            }
             // Staff user - redirect to dashboard
             router.push(redirectTo);
             return;
-          } else if (currentUser.isStudent) {
-            // Student user - redirect to their school
-            const schools = await enhancedAuthService.getUserSchools();
-            if (schools.length > 0) {
-              const schoolUrl = enhancedAuthService.getSchoolDashboardUrl(
-                schools[0]
+          } else if (currentUser.user?.role === 'STUDENT') {
+            if (requireStudent) {
+              // Student user accessing student page - allow access
+              setIsLoading(false);
+              return;
+            }
+            // Student user - redirect to their school (simplified for now)
+            if (isDevelopmentMode()) {
+              // In development, show a message instead of redirecting to external domain
+              logDevInfo(
+                'Development mode: Student user would be redirected to school dashboard'
               );
-
-              if (isDevelopmentMode()) {
-                // In development, show a message instead of redirecting to external domain
-                logDevInfo(
-                  'Development mode: Would redirect student to:',
-                  schoolUrl
-                );
-                // For development, we'll stay on the current page and show a message
-                // You can customize this behavior as needed
-                setIsLoading(false);
-                return;
-              } else {
-                // In production, redirect to school
-                window.location.href = schoolUrl;
-                return;
-              }
+              setIsLoading(false);
+              return;
+            } else {
+              // In production, redirect to school
+              window.location.href = '/student-dashboard';
+              return;
             }
           }
         } else {
@@ -113,7 +104,11 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
     isLoading,
     user,
     isAuthenticated: !!user,
-    isStaff: user?.isStaff || false,
-    isStudent: user?.isStudent || false
+    isStaff:
+      user?.user?.role === 'ADMIN' ||
+      user?.user?.role === 'MANAGER' ||
+      user?.user?.role === 'TEACHER' ||
+      false,
+    isStudent: user?.user?.role === 'STUDENT' || false
   };
 }

@@ -27,6 +27,7 @@ import { Media, Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
 import UploadDocumentDialog from '@/components/content/upload-document-dialog';
+import { AccessControlBadge } from '@/components/ui/access-control-badge';
 
 export default function DocumentsPage() {
   const { selectedSchool } = useSchool();
@@ -150,10 +151,21 @@ export default function DocumentsPage() {
         {filteredDocuments.map((document) => (
           <Card key={document.id} className="transition-shadow hover:shadow-md">
             <CardHeader>
-              <CardTitle className="text-lg">{document.title}</CardTitle>
-              <CardDescription className="text-sm">
-                {document.description}
-              </CardDescription>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg">{document.title}</CardTitle>
+                  <CardDescription className="text-sm">
+                    {document.description}
+                  </CardDescription>
+                </div>
+                {/* Ownership Badge */}
+                {(document as any).access_control && (
+                  <AccessControlBadge
+                    accessControl={(document as any).access_control}
+                    className="ml-2 text-xs"
+                  />
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">

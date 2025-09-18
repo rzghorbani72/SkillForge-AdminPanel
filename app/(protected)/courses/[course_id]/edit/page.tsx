@@ -7,6 +7,7 @@ import { useCategoriesStore } from '@/lib/store';
 import useCourseEdit from '@/components/course/useCourseEdit';
 import CourseForm from '@/components/course/CourseForm';
 import EditHeader from '@/components/course/EditHeader';
+import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function EditCoursePage() {
   const router = useRouter();
@@ -91,27 +92,26 @@ export default function EditCoursePage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
-      <EditHeader course={course!} onBack={() => router.back()} />
+    <AccessControlGuard
+      resource={course}
+      action="modify"
+      fallbackPath="/courses"
+      fallbackMessage="You can only edit your own courses."
+    >
+      <div className="flex-1 space-y-6 p-6">
+        <EditHeader course={course!} onBack={() => router.back()} />
 
-      <div className="max-w-4xl">
-        <CourseForm
-          initialValues={initialValues}
-          categories={categories}
-          isSubmitting={isSubmitting}
-          onSubmit={onSubmit}
-          onCancel={() => router.back()}
-          onCoverImageChange={handleCoverImageChange}
-          onRemoveCoverImage={removeCoverImage}
-          coverImage={coverImage}
-          coverPreview={
-            coverPreview?.startsWith('/')
-              ? `${process.env.NEXT_PUBLIC_HOST}${coverPreview}`
-              : coverPreview
-          }
-          submitLabel="Update Course"
-        />
+        <div className="max-w-4xl">
+          <CourseForm
+            initialValues={initialValues}
+            categories={categories}
+            isSubmitting={isSubmitting}
+            onSubmit={onSubmit}
+            onCancel={() => router.back()}
+            submitLabel="Update Course"
+          />
+        </div>
       </div>
-    </div>
+    </AccessControlGuard>
   );
 }
