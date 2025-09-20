@@ -99,7 +99,7 @@ export default function UploadVideoDialog({
 
         // For now, we'll log the association details
         console.log('Video Details:', {
-          id: uploadResponse.data.id,
+          id: (uploadResponse as any).data.id,
           title: data.title,
           course_id: data.course_id,
           lesson_type: data.lesson_type,

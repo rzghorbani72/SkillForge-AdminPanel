@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { authService } from '@/lib/auth';
 
 export interface UserState {
   user_id: number;
@@ -43,21 +44,20 @@ export function useAccessControl() {
       setIsLoading(true);
       setError(null);
 
-      // Get user context from the enhanced auth endpoint
-      const response = await apiClient.getUserContext();
+      // Get user context from the auth service
+      const currentUser = authService.getCurrentUser();
 
-      if (response) {
-        const context = response;
-        // Transform the context data to match our UserState interface
+      if (currentUser) {
+        // Transform the current user data to match our UserState interface
         const userState: UserState = {
-          user_id: context.userId,
-          school_id: context.schoolId,
-          role: context.role,
-          is_admin: context.role === 'ADMIN',
-          is_manager: context.role === 'MANAGER',
-          is_teacher: context.role === 'TEACHER',
-          is_student: context.role === 'STUDENT',
-          permissions: context.permissions || []
+          user_id: currentUser.user.id,
+          school_id: currentUser.currentProfile?.school_id || 0,
+          role: currentUser.currentProfile?.role?.name || 'STUDENT',
+          is_admin: currentUser.currentProfile?.role?.name === 'ADMIN',
+          is_manager: currentUser.currentProfile?.role?.name === 'MANAGER',
+          is_teacher: currentUser.currentProfile?.role?.name === 'TEACHER',
+          is_student: currentUser.currentProfile?.role?.name === 'STUDENT',
+          permissions: []
         };
 
         setUserState(userState);

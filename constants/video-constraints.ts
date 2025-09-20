@@ -88,7 +88,7 @@ export const validateVideoFile = (
   file: File
 ): { valid: boolean; error?: string } => {
   // Check file type
-  if (!VIDEO_CONSTRAINTS.ALLOWED_FORMATS.includes(file.type)) {
+  if (!VIDEO_CONSTRAINTS.ALLOWED_FORMATS.includes(file.type as any)) {
     return { valid: false, error: VIDEO_CONSTRAINTS.MESSAGES.INVALID_FORMAT };
   }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -42,7 +42,9 @@ export default function LoginPage() {
     school_id: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [availableSchools, setAvailableSchools] = useState<any[]>([]);
+  const [availableSchools, setAvailableSchools] = useState<
+    Array<{ id: number; name: string; slug: string }>
+  >([]);
   const [showSchoolSelection, setShowSchoolSelection] = useState(false);
 
   const router = useRouter();
@@ -117,8 +119,8 @@ export default function LoginPage() {
         // Single school or specific school - proceed with normal login
         ErrorHandler.showSuccess('Login successful!');
         // Check user role and redirect accordingly
-        const userRole = response.user?.role;
-        if (userRole === 'STUDENT') {
+        const userRole = response.currentProfile?.role?.name;
+        if (userRole === 'STUDENT' || userRole === 'USER') {
           // User is a student, redirect to their school
           if (isDevelopmentMode()) {
             // In development, show info instead of redirecting
@@ -180,8 +182,8 @@ export default function LoginPage() {
     }
   };
 
-  const handleSchoolSelection = async (schoolId: string) => {
-    setFormData((prev) => ({ ...prev, school_id: schoolId }));
+  const handleSchoolSelection = async (schoolId: number) => {
+    setFormData((prev) => ({ ...prev, school_id: schoolId.toString() }));
     setShowSchoolSelection(false);
 
     // Retry login with school_id
@@ -189,7 +191,7 @@ export default function LoginPage() {
       const credentials = {
         identifier: authMethod === 'phone' ? formData.phone : formData.email,
         password: formData.password,
-        school_id: parseInt(schoolId)
+        school_id: schoolId
       };
 
       const response = await authService.login(credentials);
@@ -210,20 +212,8 @@ export default function LoginPage() {
         );
 
         // Check user role and redirect accordingly
-        const userRole = response.user?.role;
-        if (userRole === 'STUDENT') {
-          if (isDevelopmentMode()) {
-            ErrorHandler.showInfo(
-              'Development mode: Student would be redirected to school dashboard'
-            );
-            router.push('/dashboard');
-            return;
-          } else {
-            ErrorHandler.showInfo('Redirecting to your school dashboard...');
-            window.location.href = '/student-dashboard';
-            return;
-          }
-        } else if (
+        const userRole = response.currentProfile?.role?.name;
+        if (
           userRole === 'ADMIN' ||
           userRole === 'MANAGER' ||
           userRole === 'TEACHER'
@@ -232,7 +222,7 @@ export default function LoginPage() {
           return;
         } else {
           ErrorHandler.showWarning(
-            'You do not have permission to access this panel'
+            'You do not have permission to access this panel. Only Teachers, Managers, and Admins can access this panel.'
           );
           return;
         }
@@ -422,7 +412,7 @@ export default function LoginPage() {
                       </Label>
                     </div>
                     <Link
-                      href="/forgot-password"
+                      href="/forget-password"
                       className="text-sm text-blue-600 hover:text-blue-500"
                     >
                       Forgot password?
@@ -546,7 +536,7 @@ export default function LoginPage() {
                       </Label>
                     </div>
                     <Link
-                      href="/forgot-password"
+                      href="/forget-password"
                       className="text-sm text-blue-600 hover:text-blue-500"
                     >
                       Forgot password?

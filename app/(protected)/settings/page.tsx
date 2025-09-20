@@ -14,24 +14,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import {
-  User,
-  School,
-  Palette,
-  Shield,
-  Save,
-  Upload,
-  Eye,
-  EyeOff,
-  Lock,
-  Key,
-  Bell,
-  Globe,
-  Mail,
-  Phone
-} from 'lucide-react';
+import { Shield, Save, Upload, Key } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { User as UserType, School as SchoolType } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -88,13 +72,12 @@ export default function SettingsPage() {
       // Fetch user profile
       try {
         const userResponse = await apiClient.getCurrentUser();
-        const userData = userResponse.data as any;
-        setUser(userData);
+        setUser(userResponse);
         setProfileForm({
-          name: userData?.name || '',
-          email: userData?.email || '',
-          phone: userData?.phone_number || '',
-          bio: userData?.bio || ''
+          name: userResponse?.name || '',
+          email: userResponse?.email || '',
+          phone: userResponse?.phone_number || '',
+          bio: ''
         });
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -103,8 +86,7 @@ export default function SettingsPage() {
       // Fetch school data
       try {
         const schoolsResponse = await apiClient.getMySchools();
-        const schoolsData = schoolsResponse.data as any;
-        const schools = Array.isArray(schoolsData) ? schoolsData : [];
+        const schools = Array.isArray(schoolsResponse) ? schoolsResponse : [];
         if (schools.length > 0) {
           setSchool(schools[0]);
           setSchoolForm({
@@ -141,7 +123,7 @@ export default function SettingsPage() {
     try {
       setIsSaving(true);
       if (school) {
-        await apiClient.updateSchool(school.id, schoolForm);
+        await apiClient.updateSchool(schoolForm);
         ErrorHandler.showSuccess('School settings updated successfully');
       }
     } catch (error) {

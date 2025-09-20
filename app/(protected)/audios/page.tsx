@@ -49,7 +49,7 @@ export default function AudiosPage() {
     try {
       setIsLoading(true);
       const [mediaResponse, coursesResponse] = await Promise.all([
-        apiClient.getMedia(),
+        apiClient.getAudio(),
         apiClient.getCourses()
       ]);
 
@@ -61,8 +61,8 @@ export default function AudiosPage() {
         setAudios(schoolAudios);
       }
 
-      if (coursesResponse) {
-        const schoolCourses = coursesResponse.filter(
+      if (coursesResponse && coursesResponse.courses) {
+        const schoolCourses = coursesResponse.courses.filter(
           (course: Course) => course.school_id === selectedSchool.id
         );
         setCourses(schoolCourses);
@@ -174,17 +174,17 @@ export default function AudiosPage() {
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span className="flex items-center">
                     <FileText className="mr-1 h-4 w-4" />
-                    {audio.file_size || 'N/A'}
+                    {audio.size || 'N/A'}
                   </span>
                   <span className="flex items-center">
                     <Clock className="mr-1 h-4 w-4" />
-                    {audio.duration || 'N/A'}
+                    {audio.metadata?.duration || 'N/A'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <Badge variant="outline">{audio.format || 'Audio'}</Badge>
+                  <Badge variant="outline">{audio.mime_type || 'Audio'}</Badge>
                   <span className="text-sm text-muted-foreground">
-                    {audio.lesson?.title || 'No Lesson'}
+                    {audio.title || 'Untitled'}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -212,7 +212,6 @@ export default function AudiosPage() {
         <UploadAudioDialog
           onAudioUploaded={handleAudioUploaded}
           courses={courses}
-          schoolId={selectedSchool.id}
         />
       )}
     </div>

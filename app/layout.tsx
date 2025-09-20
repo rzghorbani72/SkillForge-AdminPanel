@@ -3,7 +3,7 @@ import './globals.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import AuthGuard from '@/components/auth-guard';
+import { AuthGuard } from '@/components/auth-guard';
 import ProtectedLayout from './(protected)/layout';
 import { Toaster } from '@/components/ui/toaster';
 

@@ -433,10 +433,14 @@ export default function SeasonsPage() {
                                   </h4>
                                   <Badge
                                     variant={
-                                      lesson.is_active ? 'default' : 'secondary'
+                                      lesson.is_published
+                                        ? 'default'
+                                        : 'secondary'
                                     }
                                   >
-                                    {lesson.is_active ? 'Active' : 'Inactive'}
+                                    {lesson.is_published
+                                      ? 'Published'
+                                      : 'Draft'}
                                   </Badge>
                                 </div>
                                 <p className="mb-2 text-sm text-muted-foreground">
@@ -454,7 +458,12 @@ export default function SeasonsPage() {
                                   </span>
                                   <span className="flex items-center">
                                     <Video className="mr-1 h-3 w-3" />
-                                    {lesson.media_id ? 'Media' : 'No Media'}
+                                    {lesson.video_id ||
+                                    lesson.audio_id ||
+                                    lesson.document_id ||
+                                    lesson.image_id
+                                      ? 'Media'
+                                      : 'No Media'}
                                   </span>
                                 </div>
                               </div>
@@ -574,9 +583,11 @@ export default function SeasonsPage() {
                         <div className="mb-2 flex items-center space-x-3">
                           <h4 className="font-medium">{lesson.title}</h4>
                           <Badge
-                            variant={lesson.is_active ? 'default' : 'secondary'}
+                            variant={
+                              lesson.is_published ? 'default' : 'secondary'
+                            }
                           >
-                            {lesson.is_active ? 'Active' : 'Inactive'}
+                            {lesson.is_published ? 'Published' : 'Draft'}
                           </Badge>
                         </div>
                         <p className="mb-2 text-sm text-muted-foreground">
@@ -593,7 +604,12 @@ export default function SeasonsPage() {
                           </span>
                           <span className="flex items-center">
                             <Video className="mr-1 h-3 w-3" />
-                            {lesson.media_id ? 'Media' : 'No Media'}
+                            {lesson.video_id ||
+                            lesson.audio_id ||
+                            lesson.document_id ||
+                            lesson.image_id
+                              ? 'Media'
+                              : 'No Media'}
                           </span>
                         </div>
                       </div>

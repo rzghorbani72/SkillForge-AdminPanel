@@ -34,6 +34,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { OtpType } from '@/constants/data';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
@@ -97,7 +98,10 @@ export default function RegisterPage() {
 
     setOtpLoading(true);
     try {
-      const result = await apiClient.sendPhoneOtp(formData.phone);
+      const result = await apiClient.sendPhoneOtp(
+        formData.phone,
+        OtpType.REGISTER_PHONE_VERIFICATION
+      );
       const responseData = result.data as any;
 
       if (responseData?.otp) {
@@ -128,7 +132,10 @@ export default function RegisterPage() {
 
     setOtpLoading(true);
     try {
-      const result = await apiClient.sendEmailOtp(formData.email);
+      const result = await apiClient.sendEmailOtp(
+        formData.email,
+        OtpType.REGISTER_EMAIL_VERIFICATION
+      );
       const responseData = result.data as any;
 
       if (responseData?.otp) {
@@ -156,7 +163,8 @@ export default function RegisterPage() {
     try {
       const result = await apiClient.verifyPhoneOtp(
         formData.phone,
-        formData.phoneOtp
+        formData.phoneOtp,
+        OtpType.REGISTER_PHONE_VERIFICATION
       );
       const responseData = result.data as any;
       const isValid = responseData?.success;
@@ -186,7 +194,8 @@ export default function RegisterPage() {
     try {
       const result = await apiClient.verifyEmailOtp(
         formData.email,
-        formData.emailOtp
+        formData.emailOtp,
+        OtpType.REGISTER_EMAIL_VERIFICATION
       );
       const responseData = result.data as any;
       const isValid = responseData?.success;
@@ -286,9 +295,9 @@ export default function RegisterPage() {
       if (registrationType === 'new-school') {
         role = 'MANAGER';
       } else {
-        // When joining existing school, register as student first
-        // They can request teacher promotion later
-        role = 'STUDENT';
+        // When joining existing school, register as teacher
+        // Only teachers, managers, and admins can access this panel
+        role = 'TEACHER';
       }
 
       // Create user with unverified phone and email
@@ -451,9 +460,9 @@ export default function RegisterPage() {
       // When creating a new school, the user automatically becomes the manager
       role = 'MANAGER';
     } else {
-      // Anyone joining an existing school becomes a student by default
-      // They can be promoted to higher roles by managers/admins later
-      role = 'STUDENT';
+      // Anyone joining an existing school becomes a teacher by default
+      // Only teachers, managers, and admins can access this panel
+      role = 'TEACHER';
     }
 
     setIsLoading(true);

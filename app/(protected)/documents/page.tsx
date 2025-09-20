@@ -49,20 +49,20 @@ export default function DocumentsPage() {
     try {
       setIsLoading(true);
       const [mediaResponse, coursesResponse] = await Promise.all([
-        apiClient.getMedia(),
+        apiClient.getDocuments(),
         apiClient.getCourses()
       ]);
 
-      if (mediaResponse.status === 'ok' && mediaResponse.data) {
-        const schoolDocuments = mediaResponse.data.filter(
+      if (mediaResponse) {
+        const schoolDocuments = mediaResponse.filter(
           (item: Media) =>
-            item.school_id === selectedSchool.id && item.type === 'document'
+            item.school_id === selectedSchool.id && item.type === 'DOCUMENT'
         );
         setDocuments(schoolDocuments);
       }
 
-      if (coursesResponse.status === 'ok' && coursesResponse.data) {
-        const schoolCourses = coursesResponse.data.filter(
+      if (coursesResponse && coursesResponse.courses) {
+        const schoolCourses = coursesResponse.courses.filter(
           (course: Course) => course.school_id === selectedSchool.id
         );
         setCourses(schoolCourses);
@@ -172,17 +172,17 @@ export default function DocumentsPage() {
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span className="flex items-center">
                     <File className="mr-1 h-4 w-4" />
-                    {document.file_size || 'N/A'}
+                    {document.size || 'N/A'}
                   </span>
                   <span className="flex items-center">
                     <Clock className="mr-1 h-4 w-4" />
-                    {document.format || 'PDF'}
+                    {document.mime_type || 'PDF'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <Badge variant="outline">{document.type || 'Document'}</Badge>
                   <span className="text-sm text-muted-foreground">
-                    {document.lesson?.title || 'No Lesson'}
+                    {document?.title || 'No Title'}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -214,7 +214,6 @@ export default function DocumentsPage() {
         <UploadDocumentDialog
           onDocumentUploaded={handleDocumentUploaded}
           courses={courses}
-          schoolId={selectedSchool.id}
         />
       )}
     </div>

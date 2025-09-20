@@ -7,7 +7,6 @@ interface AuthGuardProps {
   children: ReactNode;
   requireAuth?: boolean;
   requireStaff?: boolean;
-  requireStudent?: boolean;
   redirectTo?: string;
   fallback?: ReactNode;
 }
@@ -16,15 +15,13 @@ export function AuthGuard({
   children,
   requireAuth = true,
   requireStaff = false,
-  requireStudent = false,
   redirectTo = '/login',
   fallback
 }: AuthGuardProps) {
-  const { isLoading, isAuthenticated, isStaff, isStudent } = useAuthRedirect({
+  const { isLoading, isAuthenticated, isStaff } = useAuthRedirect({
     redirectTo,
     requireAuth,
-    requireStaff,
-    requireStudent
+    requireStaff
   });
 
   // Show loading state
@@ -54,23 +51,6 @@ export function AuthGuard({
             </h2>
             <p className="mt-2 text-gray-600">
               This page is for staff members only.
-            </p>
-          </div>
-        </div>
-      )
-    );
-  }
-
-  if (requireStudent && !isStudent) {
-    return (
-      fallback || (
-        <div className="flex min-h-screen items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Access Denied
-            </h2>
-            <p className="mt-2 text-gray-600">
-              This page is for students only.
             </p>
           </div>
         </div>

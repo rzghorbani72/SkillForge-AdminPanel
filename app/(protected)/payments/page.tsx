@@ -21,13 +21,9 @@ import {
   Filter,
   Download,
   Eye,
-  Calendar,
-  TrendingUp,
-  TrendingDown,
   CheckCircle,
   XCircle,
-  Clock,
-  AlertCircle
+  Clock
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Payment, Transaction } from '@/types/api';
@@ -35,7 +31,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 
 export default function PaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -50,8 +46,8 @@ export default function PaymentsPage() {
       // Fetch payments
       try {
         const paymentsResponse = await apiClient.getPayments();
-        const paymentsData = paymentsResponse.data as any;
-        setPayments(Array.isArray(paymentsData) ? paymentsData : []);
+        setPayments(Array.isArray(paymentsResponse) ? paymentsResponse : []);
+        setPayments(Array.isArray(paymentsResponse) ? paymentsResponse : []);
       } catch (error) {
         console.error('Error fetching payments:', error);
         setPayments([]);

@@ -62,8 +62,9 @@ export default function AnalyticsPage() {
       // Fetch courses
       try {
         const coursesResponse = await apiClient.getCourses();
-        const coursesData = coursesResponse.data as any;
-        setCourses(Array.isArray(coursesData) ? coursesData : []);
+        setCourses(
+          Array.isArray(coursesResponse.courses) ? coursesResponse.courses : []
+        );
       } catch (error) {
         console.error('Error fetching courses:', error);
         setCourses([]);
@@ -71,9 +72,10 @@ export default function AnalyticsPage() {
 
       // Fetch enrollments
       try {
-        const enrollmentsResponse = await apiClient.getEnrollments();
-        const enrollmentsData = enrollmentsResponse.data as any;
-        setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : []);
+        const enrollmentsResponse = await apiClient.getRecentEnrollments();
+        setEnrollments(
+          Array.isArray(enrollmentsResponse) ? enrollmentsResponse : []
+        );
       } catch (error) {
         console.error('Error fetching enrollments:', error);
         setEnrollments([]);
@@ -81,9 +83,8 @@ export default function AnalyticsPage() {
 
       // Fetch payments
       try {
-        const paymentsResponse = await apiClient.getPayments();
-        const paymentsData = paymentsResponse.data as any;
-        setPayments(Array.isArray(paymentsData) ? paymentsData : []);
+        const paymentsResponse = await apiClient.getRecentPayments();
+        setPayments(Array.isArray(paymentsResponse) ? paymentsResponse : []);
       } catch (error) {
         console.error('Error fetching payments:', error);
         setPayments([]);

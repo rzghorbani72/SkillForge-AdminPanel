@@ -37,14 +37,15 @@ export default function UnauthorizedPage() {
             </CardTitle>
             <CardDescription>
               This admin panel is restricted to teachers, managers, and
-              administrators only.
+              administrators only. Students should access their learning
+              dashboard through their school&apos;s website.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <Alert>
               <AlertDescription>
-                <strong>Students:</strong> Please access your learning dashboard
-                through your school&apos;s website.
+                <strong>Note:</strong> If you believe you should have access to
+                this panel, please contact your school administrator.
               </AlertDescription>
             </Alert>
 

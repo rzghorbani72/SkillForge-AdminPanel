@@ -1,5 +1,8 @@
+import { OtpType } from '@/constants/data';
+import { User as UserType } from '@/types/api';
+
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -68,10 +71,11 @@ class ApiClient {
     password: string;
     school_id?: number;
   }) {
-    return this.request('/auth/login', {
+    const response = this.request('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials)
     });
+    return response;
   }
 
   async register(userData: {
@@ -144,15 +148,16 @@ class ApiClient {
   }
 
   async getUserProfiles() {
-    throw new Error(
-      'getUserProfiles endpoint not available - use standard auth flow'
-    );
+    const response = await this.request('/profiles');
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getUserSchools() {
-    throw new Error(
-      'getUserSchools endpoint not available - use standard auth flow'
-    );
+    const response = await this.request('/schools');
+    return response.data;
   }
 
   async createProfile(profileData: {
@@ -163,55 +168,87 @@ class ApiClient {
     website?: string;
     location?: string;
   }) {
-    throw new Error(
-      'createProfile endpoint not available - use standard auth flow'
-    );
+    return this.request('/profiles', {
+      method: 'POST',
+      body: JSON.stringify(profileData)
+    });
   }
 
   // OTP endpoints
-  async sendPhoneOtp(phone_number: string) {
+  async sendPhoneOtp(phone_number: string, type: OtpType) {
     return this.request('/auth/send-phone-otp', {
       method: 'POST',
-      body: JSON.stringify({ phone_number })
-    });
+      body: JSON.stringify({ phone_number, type })
+    }) as any;
   }
 
-  async sendEmailOtp(email: string) {
+  async sendEmailOtp(email: string, type: OtpType) {
     return this.request('/auth/send-email-otp', {
       method: 'POST',
-      body: JSON.stringify({ email })
-    });
+      body: JSON.stringify({ email, type })
+    }) as any;
   }
 
-  async verifyPhoneOtp(phone_number: string, otp: string) {
+  async verifyPhoneOtp(phone_number: string, otp: string, type: OtpType) {
     return this.request('/auth/verify-phone-otp', {
       method: 'POST',
-      body: JSON.stringify({ phone_number, otp })
-    });
+      body: JSON.stringify({ phone_number, otp, type })
+    }) as any;
   }
 
-  async verifyEmailOtp(email: string, otp: string) {
+  async verifyEmailOtp(email: string, otp: string, type: OtpType) {
     return this.request('/auth/verify-email-otp', {
       method: 'POST',
-      body: JSON.stringify({ email, otp })
+      body: JSON.stringify({ email, otp, type })
+    }) as any;
+  }
+
+  // Forget password endpoints
+  async forgetPassword(data: {
+    identifier: string;
+    password: string;
+    confirmed_password: string;
+    otp: string;
+    role?: string;
+    school_id?: number;
+  }) {
+    return this.request('/auth/forget-password', {
+      method: 'POST',
+      body: JSON.stringify(data)
     });
   }
 
   // Schools endpoints
   async getSchools() {
-    return this.request('/schools');
+    const response = await this.request('/schools');
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getSchoolsPublic() {
-    return this.request('/schools/public');
+    const response = await this.request('/schools/public');
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getMySchools() {
-    return this.request('/schools/my-schools');
+    const response = await this.request('/schools/my-schools');
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async getCurrentSchool() {
-    return this.request('/schools/current');
+    const response = await this.request('/schools/current');
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async createSchool(schoolData: {
@@ -803,7 +840,11 @@ class ApiClient {
 
   // Profile endpoints
   async getCurrentProfile() {
-    return this.request('/profiles/current');
+    const response = await this.request('/profiles/current');
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async updateProfile(profileData: {
@@ -814,7 +855,7 @@ class ApiClient {
     return this.request('/profiles/current', {
       method: 'PATCH',
       body: JSON.stringify(profileData)
-    });
+    }) as any;
   }
 
   // Users endpoints
@@ -930,7 +971,11 @@ class ApiClient {
   }
 
   async getArticle(id: number) {
-    return this.request(`/articles/${id}`);
+    const response = await this.request(`/articles/${id}`);
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   async createArticle(articleData: {
@@ -942,20 +987,20 @@ class ApiClient {
     return this.request('/articles', {
       method: 'POST',
       body: JSON.stringify(articleData)
-    });
+    }) as any;
   }
 
   async updateArticle(id: number, articleData: unknown) {
     return this.request(`/articles/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(articleData)
-    });
+    }) as any;
   }
 
   async deleteArticle(id: number) {
     return this.request(`/articles/${id}`, {
       method: 'DELETE'
-    });
+    }) as any;
   }
 
   async getArticleCategories() {
@@ -976,6 +1021,131 @@ class ApiClient {
       return response.data as any;
     }
     return null as any;
+  }
+
+  async getPayments() {
+    const response = await this.request('/payments');
+    return response.data || [];
+  }
+  async getCurrentUser(): Promise<UserType | null> {
+    const response = await this.request('/auth/me');
+    return (response.data as UserType) || null;
+  }
+
+  // Enrollments endpoints
+  async getEnrollments(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
+    course_id?: number;
+    user_id?: number;
+    school_id?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/enrollments?${queryString}` : '/enrollments';
+
+    const response = await this.request(url);
+
+    // Return the enrollments data directly
+    if (response.data) {
+      return response.data;
+    }
+    return response;
+  }
+
+  async getEnrollment(id: number) {
+    const response = await this.request(`/enrollments/${id}`);
+
+    // Return the enrollment data directly
+    if (response.data) {
+      return response.data;
+    }
+    return response;
+  }
+
+  async createEnrollment(enrollmentData: {
+    user_id: number;
+    course_id: number;
+    status?: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
+  }) {
+    return this.request('/enrollments', {
+      method: 'POST',
+      body: JSON.stringify(enrollmentData)
+    });
+  }
+
+  async updateEnrollment(
+    id: number,
+    enrollmentData: {
+      status?: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
+    }
+  ) {
+    return this.request(`/enrollments/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(enrollmentData)
+    });
+  }
+
+  async deleteEnrollment(id: number) {
+    return this.request(`/enrollments/${id}`, {
+      method: 'DELETE'
+    });
+  }
+
+  // Profiles endpoints (for getting all profiles)
+  async getProfiles(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+    school_id?: number;
+    is_active?: boolean;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/profiles?${queryString}` : '/profiles';
+
+    const response = await this.request(url);
+
+    // Return the profiles data directly
+    if (response.data) {
+      return response.data;
+    }
+    return response;
+  }
+
+  async getProfile(id: number) {
+    const response = await this.request(`/profiles/${id}`);
+
+    // Return the profile data directly
+    if (response.data) {
+      return response.data;
+    }
+    return response;
+  }
+
+  async deleteProfile(id: number) {
+    return this.request(`/profiles/${id}`, {
+      method: 'DELETE'
+    });
   }
 }
 

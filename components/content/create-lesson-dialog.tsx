@@ -93,8 +93,7 @@ export default function CreateLessonDialog({
   const fetchSeasons = async (courseId: number) => {
     try {
       const response = await apiClient.getSeasons(courseId);
-      const seasonsData = response.data as any;
-      setSeasons(Array.isArray(seasonsData) ? seasonsData : []);
+      setSeasons(Array.isArray(response) ? response : []);
     } catch (error) {
       console.error('Error fetching seasons:', error);
       setSeasons([]);
@@ -108,40 +107,52 @@ export default function CreateLessonDialog({
       let mediaId: number | undefined;
 
       // Upload media file if provided
+      let mediaType: string | null = null;
       if (data.media_file && data.media_file.length > 0) {
         const file = data.media_file[0];
         let uploadResponse;
 
         if (file.type.startsWith('video/')) {
+          mediaType = 'video';
           uploadResponse = await apiClient.uploadVideo(file, {
             title: `Lesson Media: ${data.title}`,
             description: `Media file for lesson: ${data.title}`
           });
         } else if (file.type.startsWith('audio/')) {
+          mediaType = 'audio';
           uploadResponse = await apiClient.uploadAudio(file, {
             title: `Lesson Audio: ${data.title}`,
             description: `Audio file for lesson: ${data.title}`
           });
         } else {
+          mediaType = 'document';
           uploadResponse = await apiClient.uploadDocument(file, {
             title: `Lesson Document: ${data.title}`,
             description: `Document for lesson: ${data.title}`
           });
         }
 
-        mediaId = uploadResponse.data.id;
+        mediaId = (uploadResponse as any).data.id;
       }
 
       // Create lesson
-      await apiClient.createLesson({
+      const lessonData: any = {
         title: data.title,
         description: data.description,
-        content: data.content || '',
-        duration: parseInt(data.duration),
-        course_id: parseInt(data.course_id),
-        season_id: data.season_id ? parseInt(data.season_id) : undefined,
-        media_id: mediaId
-      });
+        season_id: parseInt(data.season_id || '0')
+      };
+
+      if (mediaId && mediaType) {
+        if (mediaType === 'video') {
+          lessonData.video_id = mediaId;
+        } else if (mediaType === 'audio') {
+          lessonData.audio_id = mediaId;
+        } else if (mediaType === 'document') {
+          lessonData.document_id = mediaId;
+        }
+      }
+
+      await apiClient.createLesson(lessonData);
 
       form.reset();
       setIsOpen(false);

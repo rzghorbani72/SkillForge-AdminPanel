@@ -132,7 +132,6 @@ export default function ContentCreationHub({
           <DialogComponent
             onLessonCreated={handleContentCreated}
             courses={courses}
-            schoolId={selectedSchool.id}
           />
         );
       case 'season':
@@ -140,7 +139,6 @@ export default function ContentCreationHub({
           <DialogComponent
             onSeasonCreated={handleContentCreated}
             courses={courses}
-            schoolId={selectedSchool.id}
           />
         );
       case 'audio':
@@ -148,7 +146,6 @@ export default function ContentCreationHub({
           <DialogComponent
             onAudioUploaded={handleContentCreated}
             courses={courses}
-            schoolId={selectedSchool.id}
           />
         );
       case 'video':
@@ -156,7 +153,6 @@ export default function ContentCreationHub({
           <DialogComponent
             onVideoUploaded={handleContentCreated}
             courses={courses}
-            schoolId={selectedSchool.id}
           />
         );
       case 'document':
@@ -164,7 +160,6 @@ export default function ContentCreationHub({
           <DialogComponent
             onDocumentUploaded={handleContentCreated}
             courses={courses}
-            schoolId={selectedSchool.id}
           />
         );
       default:

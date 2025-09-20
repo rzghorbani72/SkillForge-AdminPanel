@@ -53,8 +53,8 @@ const index = ({
             </CardDescription>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <Badge variant={lesson.is_active ? 'default' : 'secondary'}>
-              {lesson.is_active ? 'Active' : 'Inactive'}
+            <Badge variant={lesson.is_published ? 'default' : 'secondary'}>
+              {lesson.is_published ? 'Published' : 'Draft'}
             </Badge>
             {/* Ownership Badge */}
             {(lesson as any).access_control && (
@@ -82,7 +82,12 @@ const index = ({
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             <span className="flex items-center">
               <Video className="mr-1 h-4 w-4" />
-              {lesson.media_id ? 'Media' : 'No Media'}
+              {lesson.video_id ||
+              lesson.audio_id ||
+              lesson.document_id ||
+              lesson.image_id
+                ? 'Media'
+                : 'No Media'}
             </span>
             <span className="flex items-center">
               <FileText className="mr-1 h-4 w-4" />

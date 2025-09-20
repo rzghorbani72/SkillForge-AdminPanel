@@ -9,15 +9,13 @@ interface UseAuthRedirectOptions {
   redirectTo?: string;
   requireAuth?: boolean;
   requireStaff?: boolean;
-  requireStudent?: boolean;
 }
 
 export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
   const {
     redirectTo = '/dashboard',
     requireAuth = false,
-    requireStaff = false,
-    requireStudent = false
+    requireStaff = false
   } = options;
 
   const router = useRouter();
@@ -41,9 +39,9 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
           // Page doesn't require authentication, but user is authenticated
           // Redirect based on user type
           if (
-            currentUser.user?.role === 'ADMIN' ||
-            currentUser.user?.role === 'MANAGER' ||
-            currentUser.user?.role === 'TEACHER'
+            currentUser.currentProfile?.role?.name === 'ADMIN' ||
+            currentUser.currentProfile?.role?.name === 'MANAGER' ||
+            currentUser.currentProfile?.role?.name === 'TEACHER'
           ) {
             if (requireStaff) {
               // Staff user accessing staff page - allow access
@@ -53,25 +51,10 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
             // Staff user - redirect to dashboard
             router.push(redirectTo);
             return;
-          } else if (currentUser.user?.role === 'STUDENT') {
-            if (requireStudent) {
-              // Student user accessing student page - allow access
-              setIsLoading(false);
-              return;
-            }
-            // Student user - redirect to their school (simplified for now)
-            if (isDevelopmentMode()) {
-              // In development, show a message instead of redirecting to external domain
-              logDevInfo(
-                'Development mode: Student user would be redirected to school dashboard'
-              );
-              setIsLoading(false);
-              return;
-            } else {
-              // In production, redirect to school
-              window.location.href = '/student-dashboard';
-              return;
-            }
+          } else {
+            // User has invalid role for this panel
+            router.push('/unauthorized');
+            return;
           }
         } else {
           // User is not authenticated
@@ -98,7 +81,7 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
     };
 
     checkAuth();
-  }, [router, redirectTo, requireAuth, requireStaff, requireStudent]);
+  }, [router, redirectTo, requireAuth, requireStaff]);
 
   return {
     isLoading,

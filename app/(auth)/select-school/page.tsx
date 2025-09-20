@@ -20,7 +20,7 @@ import {
   AlertCircle,
   GraduationCap
 } from 'lucide-react';
-import { enhancedAuthService } from '@/lib/enhanced-auth';
+import { authService } from '@/lib/auth';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 
@@ -36,7 +36,7 @@ export default function SelectSchoolPage() {
   useEffect(() => {
     const loadUserSchools = async () => {
       try {
-        const currentUser = await enhancedAuthService.getCurrentUser();
+        const currentUser = await authService.getCurrentUser();
         if (!currentUser) {
           router.push('/login');
           return;
@@ -44,33 +44,24 @@ export default function SelectSchoolPage() {
 
         setUser(currentUser);
 
-        // Check if user should be redirected to school (students)
-        if (currentUser.isStudent) {
-          const userSchools = await enhancedAuthService.getUserSchools();
+        // Load user's schools for selection
+        const userSchools = await authService.getUserSchools();
 
-          if (userSchools.length === 0) {
-            ErrorHandler.showWarning('No schools found for your account');
-            router.push('/login');
-            return;
-          }
+        if (userSchools.length === 0) {
+          ErrorHandler.showWarning('No schools found for your account');
+          router.push('/login');
+          return;
+        }
 
-          if (userSchools.length === 1) {
-            // Only one school, redirect directly
-            const schoolUrl = enhancedAuthService.getSchoolDashboardUrl(
-              userSchools[0]
-            );
-            window.location.href = schoolUrl;
-            return;
-          }
-
-          // Multiple schools, show selection
-          setSchools(userSchools);
-          setFilteredSchools(userSchools);
-        } else {
-          // User is admin/manager/teacher, redirect to admin panel
+        if (userSchools.length === 1) {
+          // Only one school, redirect directly to dashboard
           router.push('/dashboard');
           return;
         }
+
+        // Multiple schools, show selection
+        setSchools(userSchools);
+        setFilteredSchools(userSchools);
       } catch (error) {
         console.error('Failed to load schools:', error);
         ErrorHandler.handleApiError(error);
@@ -94,7 +85,7 @@ export default function SelectSchoolPage() {
   }, [searchTerm, schools]);
 
   const handleSchoolSelect = (userSchool: any) => {
-    const schoolUrl = enhancedAuthService.getSchoolDashboardUrl(userSchool);
+    const schoolUrl = authService.getSchoolDashboardUrl(userSchool);
     ErrorHandler.showInfo(`Redirecting to ${userSchool.name}...`);
     window.location.href = schoolUrl;
   };

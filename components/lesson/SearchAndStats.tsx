@@ -34,7 +34,7 @@ const SearchAndStats = ({
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold">
-                {lessons.filter((lesson) => lesson.is_active).length}
+                {lessons.filter((lesson) => lesson.is_published).length}
               </div>
               <div className="text-sm text-muted-foreground">
                 Active Lessons

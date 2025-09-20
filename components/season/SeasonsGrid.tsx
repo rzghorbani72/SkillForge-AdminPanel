@@ -61,7 +61,7 @@ const SeasonsGrid = ({ seasons, searchTerm, onCreate }: Props) => {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <Badge variant="outline">{season.type || 'Standard'}</Badge>
+                <Badge variant="outline">Season {season.order}</Badge>
                 <span className="text-sm text-muted-foreground">
                   Lessons: {season.lessons?.length || 0}
                 </span>

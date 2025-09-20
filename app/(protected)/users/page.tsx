@@ -115,9 +115,12 @@ export default function UsersPage() {
 
       const response = await apiClient.getUsers(params);
 
-      if (response.data && response.data.users) {
-        setUsers(response.data.users);
-        setPagination(response.data.pagination);
+      if (response && typeof response === 'object' && 'users' in response) {
+        setUsers((response as any).users);
+        setPagination((response as any).pagination);
+      } else if (Array.isArray(response)) {
+        setUsers(response);
+        setPagination(null);
       } else {
         setUsers([]);
         setPagination(null);

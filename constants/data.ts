@@ -1,6 +1,15 @@
 import { IconType } from '@/components/icons';
 import { NavItem } from '@/types';
 
+export enum OtpType {
+  LOGIN_BY_PHONE = 'LOGIN_BY_PHONE',
+  LOGIN_BY_EMAIL = 'LOGIN_BY_EMAIL',
+  RESET_PASSWORD_BY_PHONE = 'RESET_PASSWORD_BY_PHONE',
+  RESET_PASSWORD_BY_EMAIL = 'RESET_PASSWORD_BY_EMAIL',
+  REGISTER_PHONE_VERIFICATION = 'REGISTER_PHONE_VERIFICATION',
+  REGISTER_EMAIL_VERIFICATION = 'REGISTER_EMAIL_VERIFICATION'
+}
+
 export type User = {
   id: number;
   name: string;
@@ -201,7 +210,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Students',
-        href: '/users?role=STUDENT',
+        href: '/students',
         icon: 'user' as IconType,
         label: 'students'
       },

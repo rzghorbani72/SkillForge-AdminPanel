@@ -3,7 +3,21 @@ import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
-import { Course, Lesson, Season, LessonFormData } from '@/types/api';
+import { Course, Lesson, Season } from '@/types/api';
+
+type LessonFormData = {
+  title: string;
+  description?: string;
+  season_id: string;
+  audio_id?: string;
+  video_id?: string;
+  cover_id?: string;
+  document_id?: string;
+  category_id?: string;
+  published: boolean;
+  is_free: boolean;
+  lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ';
+};
 import { toast } from 'sonner';
 
 type UseLessonFormReturn = {

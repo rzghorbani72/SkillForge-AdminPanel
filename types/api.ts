@@ -31,7 +31,7 @@ export interface Profile {
 
 export interface Role {
   id: number;
-  name: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'USER';
+  name: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
   description?: string;
   created_at: string;
   updated_at: string;

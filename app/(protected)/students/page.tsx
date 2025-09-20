@@ -21,12 +21,7 @@ import {
   Plus,
   Search,
   Filter,
-  Mail,
-  Calendar,
-  BookOpen,
-  CheckCircle,
-  Clock,
-  XCircle
+  CheckCircle
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { User, Enrollment, Profile } from '@/types/api';
@@ -35,7 +30,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 export default function StudentsPage() {
   const [students, setStudents] = useState<User[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [, setProfiles] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -50,7 +45,7 @@ export default function StudentsPage() {
       // Fetch students (users with student role)
       try {
         const studentsResponse = await apiClient.getUsers();
-        const studentsData = studentsResponse.data as any;
+        const studentsData = studentsResponse as any;
         const allUsers = Array.isArray(studentsData) ? studentsData : [];
         // Filter for students (this would need to be adjusted based on your role system)
         setStudents(allUsers);
@@ -62,7 +57,7 @@ export default function StudentsPage() {
       // Fetch enrollments
       try {
         const enrollmentsResponse = await apiClient.getEnrollments();
-        const enrollmentsData = enrollmentsResponse.data as any;
+        const enrollmentsData = enrollmentsResponse as any;
         setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : []);
       } catch (error) {
         console.error('Error fetching enrollments:', error);
@@ -72,7 +67,7 @@ export default function StudentsPage() {
       // Fetch profiles
       try {
         const profilesResponse = await apiClient.getProfiles();
-        const profilesData = profilesResponse.data as any;
+        const profilesData = profilesResponse as any;
         setProfiles(Array.isArray(profilesData) ? profilesData : []);
       } catch (error) {
         console.error('Error fetching profiles:', error);
