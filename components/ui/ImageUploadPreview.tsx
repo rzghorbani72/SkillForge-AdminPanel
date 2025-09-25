@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Image as ImageIcon, Upload, Loader2, X, Library } from 'lucide-react';
+import { Upload, Loader2, X, Library } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import ImagePreview from './ImagePreview';
 import ImageSelectionDialog from './ImageSelectionDialog';

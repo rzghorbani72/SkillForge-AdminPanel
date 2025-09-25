@@ -33,7 +33,7 @@ export default function DocumentsPage() {
   const { selectedSchool } = useSchool();
   const [documents, setDocuments] = useState<Media[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 

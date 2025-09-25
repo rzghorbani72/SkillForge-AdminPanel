@@ -28,18 +28,7 @@ import {
   AreaChart,
   Area
 } from 'recharts';
-import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  BookOpen,
-  Eye,
-  Clock,
-  Star,
-  Calendar,
-  Filter
-} from 'lucide-react';
+import { DollarSign, Users, Eye, Star, Calendar, Filter } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course, Enrollment, Payment } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -49,7 +38,7 @@ export default function AnalyticsPage() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('30d');
+  const [timeRange] = useState('30d');
 
   useEffect(() => {
     fetchAnalyticsData();

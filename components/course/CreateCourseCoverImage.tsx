@@ -1,7 +1,5 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { CourseCreateFormData } from './useCourseCreate';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
@@ -17,16 +15,7 @@ type Props = {
   onCancelUpload: () => void;
 };
 
-const CreateCourseCoverImage = ({
-  form,
-  coverImage,
-  coverPreview,
-  isUploading,
-  onCoverImageChange,
-  onRemoveCoverImage,
-  onUploadCoverImage,
-  onCancelUpload
-}: Props) => {
+const CreateCourseCoverImage = ({ form }: Props) => {
   return (
     <Card>
       <CardHeader>

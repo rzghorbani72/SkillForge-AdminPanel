@@ -33,7 +33,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { FileUploader } from '@/components/file-uploader';
-import { Plus, Music, Headphones } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -78,7 +78,7 @@ export default function UploadAudioDialog({
 
       // Upload audio file
       const file = data.audio_file[0];
-      const uploadResponse = await apiClient.uploadAudio(file, {
+      await apiClient.uploadAudio(file, {
         title: data.title,
         description: data.description
       });

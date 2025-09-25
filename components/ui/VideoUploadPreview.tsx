@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Upload, Loader2, X, Library } from 'lucide-react';
 import { useVideoUpload } from '@/hooks/useVideoUpload';
 import VideoPreview from './VideoPreview';
 import VideoSelectionDialog from './VideoSelectionDialog';
-import ImagePreview from './ImagePreview';
 import ProgressBar from './ProgressBar';
 import { cn } from '@/lib/utils';
 import ImageUploadPreview from './ImageUploadPreview';
@@ -58,8 +56,7 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
   // Poster props
   posterImageId,
   posterImageUrl,
-  onPosterSuccess,
-  onPosterRemove
+  onPosterSuccess
 }) => {
   const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<{

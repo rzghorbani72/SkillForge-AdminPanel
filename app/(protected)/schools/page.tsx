@@ -29,11 +29,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
 
 export default function SchoolsPage() {
-  const {
-    schools,
-    updateSchoolsList,
-    selectedSchool: contextSelectedSchool
-  } = useSchool();
+  const { schools, updateSchoolsList } = useSchool();
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);

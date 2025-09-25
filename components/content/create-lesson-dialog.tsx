@@ -33,7 +33,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { FileUploader } from '@/components/file-uploader';
-import { Plus, Clock, FileText } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course, Season } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';

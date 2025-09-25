@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useSchool } from '@/contexts/SchoolContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,7 +11,6 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Building2, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export function SchoolSelector() {
@@ -24,7 +22,6 @@ export function SchoolSelector() {
     refreshSchools,
     setSelectedSchool
   } = useSchool();
-  const [isOpen, setIsOpen] = useState(false);
 
   if (isLoading) {
     return (

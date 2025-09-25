@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Image as ImageIcon, X } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
 interface ImagePreviewProps {
@@ -145,10 +145,13 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   if (existingImageUrl || existingImageId) {
     return (
       <div className="relative h-48 w-full overflow-hidden rounded-lg border">
-        <img
+        <Image
           src={existingImageUrl || `/api/media/${existingImageId}`}
           alt="Current image"
           className="h-full w-full object-cover"
+          unoptimized
+          width={0}
+          height={0}
         />
       </div>
     );

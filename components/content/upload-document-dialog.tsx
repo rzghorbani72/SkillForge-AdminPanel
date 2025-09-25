@@ -33,7 +33,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { FileUploader } from '@/components/file-uploader';
-import { Plus, FileText, BookOpen } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -86,7 +86,7 @@ export default function UploadDocumentDialog({
 
       // Upload document file
       const file = data.document_file[0];
-      const uploadResponse = await apiClient.uploadDocument(file, {
+      await apiClient.uploadDocument(file, {
         title: data.title,
         description: data.description
       });

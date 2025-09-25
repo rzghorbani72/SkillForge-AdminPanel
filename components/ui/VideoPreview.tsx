@@ -36,10 +36,8 @@ const VideoPreview: React.FC<VideoPreviewProps> = ({
   placeholderSubtext = 'Upload a video to preview it here',
   title = 'Video Preview',
   isUploading = false,
-  uploadProgress = 0,
   // Poster props
-  posterImageUrl,
-  posterImageId
+  posterImageUrl
 }) => {
   // Determine which video to show
   const videoToShow = preview || selectedVideo?.url || existingVideoUrl;

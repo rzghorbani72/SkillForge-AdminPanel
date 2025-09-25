@@ -2,13 +2,12 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
 import { Course, Lesson, Season } from '@/types/api';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const useLesson = () => {
   const params = useParams();
-  const router = useRouter();
   const { selectedSchool } = useSchool();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;

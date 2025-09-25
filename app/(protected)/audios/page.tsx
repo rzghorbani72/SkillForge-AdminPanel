@@ -17,7 +17,6 @@ import {
   Search,
   Edit,
   Trash2,
-  Eye,
   Play,
   FileText,
   Clock
@@ -33,7 +32,7 @@ export default function AudiosPage() {
   const { selectedSchool } = useSchool();
   const [audios, setAudios] = useState<Media[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 

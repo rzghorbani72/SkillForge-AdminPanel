@@ -10,7 +10,7 @@ type Props = {
   onEdit: () => void;
 };
 
-const CourseManagement = ({ course, onManageSeasons, onEdit }: Props) => {
+const CourseManagement = ({ onManageSeasons, onEdit }: Props) => {
   return (
     <Card>
       <CardHeader>

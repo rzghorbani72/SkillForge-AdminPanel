@@ -9,7 +9,6 @@ export default function CreateLessonPage() {
   const { selectedSchool } = useSchool();
   const { categories } = useCategoriesStore();
   const {
-    lesson,
     season,
     course,
     isLoading,

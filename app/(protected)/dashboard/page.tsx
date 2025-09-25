@@ -83,12 +83,6 @@ export default function DashboardPage() {
     );
   }
 
-  // Ensure we always have arrays to prevent map errors
-  const hasData =
-    recentCourses.length > 0 ||
-    recentEnrollments.length > 0 ||
-    recentPayments.length > 0;
-
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Header */}

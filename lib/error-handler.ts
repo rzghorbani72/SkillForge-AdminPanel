@@ -165,10 +165,7 @@ export class ErrorHandler {
   /**
    * Handle form submission errors
    */
-  static handleFormError(
-    error: any,
-    formFields?: string[]
-  ): Record<string, string> {
+  static handleFormError(error: any): Record<string, string> {
     const fieldErrors: Record<string, string> = {};
 
     if (typeof error === 'string') {

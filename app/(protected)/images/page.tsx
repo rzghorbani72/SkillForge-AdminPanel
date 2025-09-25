@@ -1,18 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,8 +31,6 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { useAuth } from '@/components/providers/auth-provider';
-import type { AuthUser } from '@/lib/auth';
 import {
   AccessControlBadge,
   AccessControlActions
@@ -64,8 +54,6 @@ interface ImageItem {
 }
 
 export default function ImagesPage() {
-  const auth = useAuth() as unknown as AuthUser;
-  const user = auth?.user;
   const [images, setImages] = useState<ImageItem[]>([]);
   const [filteredImages, setFilteredImages] = useState<ImageItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');

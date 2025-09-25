@@ -20,13 +20,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
 import {
   Search,
   Image as ImageIcon,
   Check,
   Loader2,
-  X,
   Trash2,
   AlertCircle
 } from 'lucide-react';
@@ -165,7 +163,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
     );
   };
 
-  const handleDeleteClick = (imageId: number, event: React.MouseEvent) => {
+  const handleDeleteClick = (imageId: number) => {
     setImageToDelete(imageId);
     setShowDeleteDialog(true);
   };
@@ -359,7 +357,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          handleDeleteClick(image.id, e);
+                          handleDeleteClick(image.id);
                         }}
                         onMouseDown={(e) => {
                           e.preventDefault();

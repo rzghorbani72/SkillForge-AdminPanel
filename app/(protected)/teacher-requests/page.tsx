@@ -35,20 +35,17 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Eye,
   CheckCircle,
   XCircle,
   Clock,
   Loader2,
-  AlertCircle,
   User,
   GraduationCap,
   Building
 } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
-import { authService } from '@/lib/auth';
 
 interface TeacherRequest {
   id: number;

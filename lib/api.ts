@@ -141,7 +141,7 @@ class ApiClient {
 
   // Note: These enhanced auth endpoints have been removed
   // Use the standard auth endpoints instead
-  async switchProfile(profileId: number, schoolId: number) {
+  async switchProfile() {
     throw new Error(
       'switchProfile endpoint not available - use standard auth flow'
     );

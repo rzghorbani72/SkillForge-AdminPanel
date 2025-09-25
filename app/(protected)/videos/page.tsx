@@ -14,24 +14,18 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Video,
-  Plus,
   Search,
-  Filter,
   Star,
   Play,
   Clock,
   Eye,
   Download,
-  Edit,
-  Trash2,
-  Image as ImageIcon
+  Edit
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { Media, Course } from '@/types/api';
+import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
-import { useAuth } from '@/components/providers/auth-provider';
-import type { AuthUser } from '@/lib/auth';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
 import VideoPlayer from '@/components/content/video-player';
 import {
@@ -60,10 +54,7 @@ interface VideoWithMetadata extends Media {
 
 export default function VideosPage() {
   const { selectedSchool } = useSchool();
-  const auth = useAuth() as unknown as AuthUser;
-  const user = auth?.user;
   const [videos, setVideos] = useState<VideoWithMetadata[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');

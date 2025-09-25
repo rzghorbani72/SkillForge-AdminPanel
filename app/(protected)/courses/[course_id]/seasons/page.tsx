@@ -40,9 +40,7 @@ import {
   Trash2,
   Clock,
   Play,
-  Video,
-  Volume2,
-  FileText
+  Video
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Season, Course, Lesson } from '@/types/api';

@@ -24,7 +24,6 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen } from 'lucide-react';
-import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import VideoUploadPreview from '@/components/ui/VideoUploadPreview';
 
 type Props = {

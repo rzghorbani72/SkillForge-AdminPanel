@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Plus, Layers } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';

@@ -27,7 +27,7 @@ import {
   Video,
   Plus
 } from 'lucide-react';
-import { Course, Category } from '@/types/api';
+import { Course } from '@/types/api';
 import { useSchool } from '@/contexts/SchoolContext';
 
 // Import dialogs

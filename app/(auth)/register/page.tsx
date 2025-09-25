@@ -555,18 +555,7 @@ export default function RegisterPage() {
       console.error('Registration error:', error);
 
       // Parse backend validation errors and map to form fields
-      const fieldErrors = ErrorHandler.handleFormError(error, [
-        'name',
-        'phone',
-        'email',
-        'password',
-        'confirmPassword',
-        'phone_otp',
-        'email_otp',
-        'role',
-        'existingSchoolId',
-        'display_name'
-      ]);
+      const fieldErrors = ErrorHandler.handleFormError(error);
 
       // Update form errors
       if (Object.keys(fieldErrors).length > 0) {

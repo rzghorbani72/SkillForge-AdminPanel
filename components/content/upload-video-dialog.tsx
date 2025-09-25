@@ -34,7 +34,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { FileUploader } from '@/components/file-uploader';
-import { Plus, Video, Play, Clock } from 'lucide-react';
+import { Plus, Play } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';

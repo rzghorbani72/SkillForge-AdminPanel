@@ -24,7 +24,7 @@ export function AccessControlBadge({
   className,
   showDetails = false
 }: AccessControlBadgeProps) {
-  const { is_owner, can_modify, can_delete, user_role } = accessControl;
+  const { is_owner, can_modify, can_delete } = accessControl;
 
   // Determine badge variant and content based on ownership and permissions
   const getBadgeConfig = () => {

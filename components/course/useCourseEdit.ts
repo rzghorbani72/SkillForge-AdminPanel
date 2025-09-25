@@ -34,7 +34,7 @@ const useCourseEdit = (): UseCourseEditReturn => {
   );
 
   const imageUpload = useImageUpload({
-    onSuccess: (imageId) => {
+    onSuccess: () => {
       // This will be handled by the form component
     }
   });

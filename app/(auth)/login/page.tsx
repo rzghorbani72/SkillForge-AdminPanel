@@ -159,11 +159,7 @@ export default function LoginPage() {
       console.error('Login error:', error);
 
       // Parse backend validation errors and map to form fields
-      const fieldErrors = ErrorHandler.handleFormError(error, [
-        'email',
-        'phone',
-        'password'
-      ]);
+      const fieldErrors = ErrorHandler.handleFormError(error);
 
       // Update form errors
       if (Object.keys(fieldErrors).length > 0) {
@@ -229,7 +225,7 @@ export default function LoginPage() {
       }
     } catch (error: unknown) {
       console.error('Login error:', error);
-      ErrorHandler.handleFormError(error, ['school_id']);
+      ErrorHandler.handleFormError(error);
     }
   };
 

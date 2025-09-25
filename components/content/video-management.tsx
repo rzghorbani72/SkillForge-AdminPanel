@@ -17,11 +17,9 @@ import {
   Clock,
   Star,
   Edit,
-  Trash2,
   Download,
   Eye,
-  Search,
-  Filter
+  Search
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Media } from '@/types/api';
