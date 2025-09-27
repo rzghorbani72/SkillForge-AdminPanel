@@ -11,6 +11,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { InputWithIcon } from '@/components/ui/input-with-icon';
+import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -762,51 +764,27 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address (Optional)</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="Enter your email"
-                          value={formData.email}
-                          onChange={(e) =>
-                            handleInputChange('email', e.target.value)
-                          }
-                          className={`pl-10 ${
-                            errors.email ? 'border-red-500' : ''
-                          }`}
-                          disabled={isLoading}
-                        />
-                      </div>
-                      {errors.email && (
-                        <p className="text-sm text-red-500">{errors.email}</p>
-                      )}
-                    </div>
+                    <InputWithIcon
+                      id="email"
+                      label="Email Address (Optional)"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={(value) => handleInputChange('email', value)}
+                      icon={Mail}
+                      error={errors.email}
+                      disabled={isLoading}
+                    />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="phone"
-                          type="tel"
-                          placeholder="Enter your phone number"
-                          value={formData.phone}
-                          onChange={(e) =>
-                            handleInputChange('phone', e.target.value)
-                          }
-                          className={`pl-10 ${
-                            errors.phone ? 'border-red-500' : ''
-                          }`}
-                          disabled={isLoading}
-                        />
-                      </div>
-                      {errors.phone && (
-                        <p className="text-sm text-red-500">{errors.phone}</p>
-                      )}
-                    </div>
+                    <PhoneInputWithCountry
+                      id="phone"
+                      label="Phone Number"
+                      placeholder="Enter your phone number"
+                      value={formData.phone}
+                      onChange={(value) => handleInputChange('phone', value)}
+                      error={errors.phone}
+                      disabled={isLoading}
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -1077,17 +1055,6 @@ export default function RegisterPage() {
               {/* Phone OTP Verification Section - Step 2 */}
               {step === 'phone-verification' && (
                 <div className="space-y-6">
-                  <div className="text-center">
-                    <h3 className="mb-2 text-lg font-medium">
-                      Verify Your Phone Number
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {!phoneOtpSent
-                        ? 'Click the button below to send OTP to your phone number'
-                        : 'Please enter the OTP code sent to your phone number'}
-                    </p>
-                  </div>
-
                   {/* Phone OTP Verification */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Phone Verification</h3>

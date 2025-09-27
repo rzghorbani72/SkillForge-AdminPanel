@@ -174,32 +174,32 @@ class ApiClient {
     });
   }
 
-  // OTP endpoints
+  // OTP endpoints - Updated to use new OTP controller
   async sendPhoneOtp(phone_number: string, type: OtpType) {
-    return this.request('/auth/send-phone-otp', {
+    return this.request('/auth/otp/send-phone', {
       method: 'POST',
       body: JSON.stringify({ phone_number, type })
     }) as any;
   }
 
   async sendEmailOtp(email: string, type: OtpType) {
-    return this.request('/auth/send-email-otp', {
+    return this.request('/auth/otp/send-email', {
       method: 'POST',
       body: JSON.stringify({ email, type })
     }) as any;
   }
 
   async verifyPhoneOtp(phone_number: string, otp: string, type: OtpType) {
-    return this.request('/auth/verify-phone-otp', {
+    return this.request('/auth/otp/verify-phone', {
       method: 'POST',
-      body: JSON.stringify({ phone_number, otp, type })
+      body: JSON.stringify({ phone_number, otp })
     }) as any;
   }
 
   async verifyEmailOtp(email: string, otp: string, type: OtpType) {
-    return this.request('/auth/verify-email-otp', {
+    return this.request('/auth/otp/verify-email', {
       method: 'POST',
-      body: JSON.stringify({ email, otp, type })
+      body: JSON.stringify({ email, otp })
     }) as any;
   }
 
@@ -1145,6 +1145,25 @@ class ApiClient {
   async deleteProfile(id: number) {
     return this.request(`/profiles/${id}`, {
       method: 'DELETE'
+    });
+  }
+
+  // Profile password management
+  async changeProfilePassword(data: {
+    profile_id: number;
+    current_password: string;
+    new_password: string;
+    confirm_new_password: string;
+  }) {
+    return this.request('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async getUserProfiles() {
+    return this.request('/auth/profiles', {
+      method: 'POST'
     });
   }
 }

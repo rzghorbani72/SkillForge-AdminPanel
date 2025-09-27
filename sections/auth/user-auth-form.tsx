@@ -57,6 +57,12 @@ export default function UserAuthForm() {
         >
           Forgot Password?
         </Link>
+        <Link
+          href="/profile-passwords"
+          className="text-sm text-blue-600 hover:underline"
+        >
+          Manage Profile Passwords
+        </Link>
       </div>
       <Button disabled={loading} className="w-full" type="submit">
         Sign In

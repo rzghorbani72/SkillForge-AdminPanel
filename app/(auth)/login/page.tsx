@@ -11,6 +11,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { InputWithIcon } from '@/components/ui/input-with-icon';
+import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -306,28 +308,17 @@ export default function LoginPage() {
 
               <TabsContent value="email" className="space-y-4">
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email address</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={formData.email}
-                        onChange={(e) =>
-                          handleInputChange('email', e.target.value)
-                        }
-                        className={`pl-10 ${
-                          errors.email ? 'border-red-500' : ''
-                        }`}
-                        disabled={isLoading}
-                      />
-                    </div>
-                    {errors.email && (
-                      <p className="text-sm text-red-500">{errors.email}</p>
-                    )}
-                  </div>
+                  <InputWithIcon
+                    id="email"
+                    label="Email address"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={(value) => handleInputChange('email', value)}
+                    icon={Mail}
+                    error={errors.email}
+                    disabled={isLoading}
+                  />
 
                   <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
@@ -430,28 +421,15 @@ export default function LoginPage() {
 
               <TabsContent value="phone" className="space-y-4">
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone number</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        value={formData.phone}
-                        onChange={(e) =>
-                          handleInputChange('phone', e.target.value)
-                        }
-                        className={`pl-10 ${
-                          errors.phone ? 'border-red-500' : ''
-                        }`}
-                        disabled={isLoading}
-                      />
-                    </div>
-                    {errors.phone && (
-                      <p className="text-sm text-red-500">{errors.phone}</p>
-                    )}
-                  </div>
+                  <PhoneInputWithCountry
+                    id="phone"
+                    label="Phone number"
+                    placeholder="Enter your phone number"
+                    value={formData.phone}
+                    onChange={(value) => handleInputChange('phone', value)}
+                    error={errors.phone}
+                    disabled={isLoading}
+                  />
 
                   <div className="space-y-2">
                     <Label htmlFor="password-phone">Password</Label>

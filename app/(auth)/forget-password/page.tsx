@@ -11,6 +11,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { InputWithIcon } from '@/components/ui/input-with-icon';
+import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -265,50 +267,30 @@ export default function ForgetPasswordPage() {
                     <TabsTrigger value="phone">Phone</TabsTrigger>
                   </TabsList>
                   <TabsContent value="email" className="space-y-4">
-                    <div>
-                      <Label htmlFor="email">Email Address</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="Enter your email"
-                          value={formData.identifier}
-                          onChange={(e) =>
-                            handleInputChange('identifier', e.target.value)
-                          }
-                          className="pl-10"
-                        />
-                      </div>
-                      {errors.identifier && (
-                        <p className="mt-1 text-sm text-red-600">
-                          {errors.identifier}
-                        </p>
-                      )}
-                    </div>
+                    <InputWithIcon
+                      id="email"
+                      label="Email Address"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.identifier}
+                      onChange={(value) =>
+                        handleInputChange('identifier', value)
+                      }
+                      icon={Mail}
+                      error={errors.identifier}
+                    />
                   </TabsContent>
                   <TabsContent value="phone" className="space-y-4">
-                    <div>
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="phone"
-                          type="tel"
-                          placeholder="Enter your phone number"
-                          value={formData.identifier}
-                          onChange={(e) =>
-                            handleInputChange('identifier', e.target.value)
-                          }
-                          className="pl-10"
-                        />
-                      </div>
-                      {errors.identifier && (
-                        <p className="mt-1 text-sm text-red-600">
-                          {errors.identifier}
-                        </p>
-                      )}
-                    </div>
+                    <PhoneInputWithCountry
+                      id="phone"
+                      label="Phone Number"
+                      placeholder="Enter your phone number"
+                      value={formData.identifier}
+                      onChange={(value) =>
+                        handleInputChange('identifier', value)
+                      }
+                      error={errors.identifier}
+                    />
                   </TabsContent>
                 </Tabs>
 
@@ -393,49 +375,29 @@ export default function ForgetPasswordPage() {
 
             {step === 'password' && (
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="password">New Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Enter new password"
-                      value={formData.password}
-                      onChange={(e) =>
-                        handleInputChange('password', e.target.value)
-                      }
-                      className="pl-10"
-                    />
-                  </div>
-                  {errors.password && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.password}
-                    </p>
-                  )}
-                </div>
+                <InputWithIcon
+                  id="password"
+                  label="New Password"
+                  type="password"
+                  placeholder="Enter new password"
+                  value={formData.password}
+                  onChange={(value) => handleInputChange('password', value)}
+                  icon={Lock}
+                  error={errors.password}
+                />
 
-                <div>
-                  <Label htmlFor="confirmed_password">Confirm Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="confirmed_password"
-                      type="password"
-                      placeholder="Confirm new password"
-                      value={formData.confirmed_password}
-                      onChange={(e) =>
-                        handleInputChange('confirmed_password', e.target.value)
-                      }
-                      className="pl-10"
-                    />
-                  </div>
-                  {errors.confirmed_password && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.confirmed_password}
-                    </p>
-                  )}
-                </div>
+                <InputWithIcon
+                  id="confirmed_password"
+                  label="Confirm Password"
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={formData.confirmed_password}
+                  onChange={(value) =>
+                    handleInputChange('confirmed_password', value)
+                  }
+                  icon={Lock}
+                  error={errors.confirmed_password}
+                />
 
                 <div className="flex space-x-2">
                   <Button
