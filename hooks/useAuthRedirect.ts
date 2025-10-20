@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { authService } from '@/lib/auth';
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 
@@ -19,8 +19,10 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
   } = options;
 
   const router = useRouter();
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -48,19 +50,34 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
               setIsLoading(false);
               return;
             }
-            // Staff user - redirect to dashboard
-            router.push(redirectTo);
+            // Staff user - redirect to target if not already there and not already redirected
+            if (!hasRedirectedRef.current && pathname !== redirectTo) {
+              hasRedirectedRef.current = true;
+              router.replace(redirectTo);
+              return;
+            }
+            setIsLoading(false);
             return;
           } else {
             // User has invalid role for this panel
-            router.push('/unauthorized');
+            if (!hasRedirectedRef.current && pathname !== '/unauthorized') {
+              hasRedirectedRef.current = true;
+              router.replace('/unauthorized');
+              return;
+            }
+            setIsLoading(false);
             return;
           }
         } else {
           // User is not authenticated
           if (requireAuth) {
             // Page requires authentication but user is not authenticated
-            router.push('/login');
+            if (!hasRedirectedRef.current && pathname !== '/login') {
+              hasRedirectedRef.current = true;
+              router.replace('/login');
+              return;
+            }
+            setIsLoading(false);
             return;
           }
         }
@@ -72,8 +89,11 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
 
         if (requireAuth) {
           // Page requires authentication but check failed
-          router.push('/login');
-          return;
+          if (!hasRedirectedRef.current && pathname !== '/login') {
+            hasRedirectedRef.current = true;
+            router.replace('/login');
+            return;
+          }
         }
 
         setIsLoading(false);
@@ -81,7 +101,7 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
     };
 
     checkAuth();
-  }, [router, redirectTo, requireAuth, requireStaff]);
+  }, [router, pathname, redirectTo, requireAuth, requireStaff]);
 
   return {
     isLoading,

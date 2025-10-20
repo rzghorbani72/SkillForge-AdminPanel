@@ -29,7 +29,7 @@ import { authService } from '@/lib/auth';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
-import { useAuthRedirect } from '@/hooks/useAuthRedirect';
+// Note: Avoid client-side auth redirect here to prevent loops; middleware and protected layout handle it.
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import Link from 'next/link';
 
@@ -51,11 +51,7 @@ export default function LoginPage() {
 
   const router = useRouter();
 
-  // Use auth redirect hook to handle authentication checks
-  const { isLoading: isCheckingAuth } = useAuthRedirect({
-    redirectTo: '/dashboard',
-    requireAuth: false // Login page doesn't require auth, but will redirect if already authenticated
-  });
+  // Removed client-side redirect check to avoid infinite navigation loops on auth routes.
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -231,26 +227,7 @@ export default function LoginPage() {
     }
   };
 
-  // Show loading state while checking authentication
-  if (isCheckingAuth) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div className="w-full max-w-md text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-            <School className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
-          <p className="text-gray-600">Admin Panel</p>
-          <div className="mt-8">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-sm text-gray-600">
-              Checking authentication...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Middleware handles redirect for already-authenticated users.
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">

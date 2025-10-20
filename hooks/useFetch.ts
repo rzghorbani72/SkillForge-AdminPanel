@@ -11,7 +11,8 @@ const defaultHeaders = {
   Accept: 'application/json'
 };
 
-const fetcher = async (url: string, options: FetchOptions = {}) => {
+const fetcher = async (url: string, optionsJson?: string) => {
+  const options: FetchOptions = optionsJson ? JSON.parse(optionsJson) : {};
   const { method = 'GET', headers = {}, body } = options;
   const response = await fetch(url, {
     method,
@@ -35,10 +36,11 @@ export function useFetch<Data = unknown, Error = unknown>(
   url: string,
   options?: FetchOptions
 ) {
-  const { data, error, isLoading } = useSWR<Data, Error>(
-    url ? [url, options] : null,
-    fetcher
-  );
+  const key = url ? [url, JSON.stringify(options || {})] : null;
+  const { data, error, isLoading } = useSWR<Data, Error>(key, fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 2000
+  });
 
   return {
     data,
