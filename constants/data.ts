@@ -141,154 +141,45 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'My Schools',
-    href: '/schools',
+    href: '/schools?filter=none',
     icon: 'school' as IconType,
-    label: 'schools',
-    children: [
-      {
-        title: 'All Schools',
-        href: '/schools',
-        icon: 'list' as IconType,
-        label: 'all-schools'
-      },
-      {
-        title: 'School Settings',
-        href: '/schools/settings',
-        icon: 'settings' as IconType,
-        label: 'school-settings'
-      }
-    ]
+    label: 'schools'
   },
-
+  {
+    title: 'Categories',
+    href: '/categories',
+    icon: 'folder' as IconType,
+    label: 'categories'
+  },
   {
     title: 'Courses',
-    href: '/courses',
+    href: '/courses?filter=none',
     icon: 'fileText' as IconType,
-    label: 'courses',
-    children: [
-      {
-        title: 'All Courses',
-        href: '/courses',
-        icon: 'list' as IconType,
-        label: 'all-courses'
-      },
-      {
-        title: 'Course Categories',
-        href: '/courses?filter=category',
-        icon: 'folder' as IconType,
-        label: 'course-categories'
-      },
-      {
-        title: 'Course Management',
-        href: '/courses?view=management',
-        icon: 'settings' as IconType,
-        label: 'course-management'
-      }
-    ]
+    label: 'courses'
   },
   {
     title: 'Videos',
-    href: '/videos',
+    href: '/videos?filter=none',
     icon: 'video' as IconType,
-    label: 'videos',
-    children: [
-      {
-        title: 'All Videos',
-        href: '/videos',
-        icon: 'list' as IconType,
-        label: 'all-videos'
-      },
-      {
-        title: 'Video Categories',
-        href: '/videos?filter=category',
-        icon: 'folder' as IconType,
-        label: 'video-categories'
-      },
-      {
-        title: 'Video Management',
-        href: '/videos?view=management',
-        icon: 'settings' as IconType,
-        label: 'video-management'
-      }
-    ]
+    label: 'videos'
   },
   {
     title: 'Images',
-    href: '/images',
+    href: '/images?filter=none',
     icon: 'image' as IconType,
-    label: 'images',
-    children: [
-      {
-        title: 'All Images',
-        href: '/images',
-        icon: 'list' as IconType,
-        label: 'all-images'
-      },
-      {
-        title: 'Image Categories',
-        href: '/images?filter=category',
-        icon: 'folder' as IconType,
-        label: 'image-categories'
-      },
-      {
-        title: 'Image Management',
-        href: '/images?view=management',
-        icon: 'settings' as IconType,
-        label: 'image-management'
-      }
-    ]
+    label: 'images'
   },
   {
     title: 'Audios',
-    href: '/audios',
+    href: '/audios?filter=none',
     icon: 'volume2' as IconType,
-    label: 'audios',
-    children: [
-      {
-        title: 'All Audios',
-        href: '/audios',
-        icon: 'list' as IconType,
-        label: 'all-audios'
-      },
-      {
-        title: 'Audio Categories',
-        href: '/audios?filter=category',
-        icon: 'folder' as IconType,
-        label: 'audio-categories'
-      },
-      {
-        title: 'Audio Management',
-        href: '/audios?view=management',
-        icon: 'settings' as IconType,
-        label: 'audio-management'
-      }
-    ]
+    label: 'audios'
   },
   {
     title: 'Documents',
-    href: '/documents',
+    href: '/documents?filter=none',
     icon: 'fileText' as IconType,
-    label: 'documents',
-    children: [
-      {
-        title: 'All Documents',
-        href: '/documents',
-        icon: 'list' as IconType,
-        label: 'all-documents'
-      },
-      {
-        title: 'Document Categories',
-        href: '/documents?filter=category',
-        icon: 'folder' as IconType,
-        label: 'document-categories'
-      },
-      {
-        title: 'Document Management',
-        href: '/documents?view=management',
-        icon: 'settings' as IconType,
-        label: 'document-management'
-      }
-    ]
+    label: 'documents'
   },
   {
     title: 'Users',
@@ -298,13 +189,13 @@ export const navItems: NavItem[] = [
     children: [
       {
         title: 'All Users',
-        href: '/users',
+        href: '/users?filter=none',
         icon: 'list' as IconType,
         label: 'all-users'
       },
       {
         title: 'Students',
-        href: '/students',
+        href: '/students?role=STUDENT',
         icon: 'user' as IconType,
         label: 'students'
       },
@@ -328,32 +219,7 @@ export const navItems: NavItem[] = [
       }
     ]
   },
-  {
-    title: 'Categories',
-    href: '/categories',
-    icon: 'folder' as IconType,
-    label: 'categories',
-    children: [
-      {
-        title: 'All Categories',
-        href: '/categories',
-        icon: 'list' as IconType,
-        label: 'all-categories'
-      },
-      {
-        title: 'Course Categories',
-        href: '/categories?type=COURSE',
-        icon: 'bookOpen' as IconType,
-        label: 'course-categories'
-      },
-      {
-        title: 'Content Categories',
-        href: '/categories?type=ARTICLE',
-        icon: 'fileText' as IconType,
-        label: 'content-categories'
-      }
-    ]
-  },
+
   {
     title: 'Students',
     href: '/students',
