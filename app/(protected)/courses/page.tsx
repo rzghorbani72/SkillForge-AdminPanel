@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import Header from '@/components/course/Header';
 import SearchBar from '@/components/course/SearchBar';
 import StatsCard from '@/components/course/StatsCard';

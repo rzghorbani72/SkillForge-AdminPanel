@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import { toast } from 'sonner';
 import { useImageUpload } from '@/hooks/useImageUpload';
 

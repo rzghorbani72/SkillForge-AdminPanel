@@ -152,12 +152,6 @@ export const navItems: NavItem[] = [
         label: 'all-schools'
       },
       {
-        title: 'Create School',
-        href: '/schools/create',
-        icon: 'plus' as IconType,
-        label: 'create-school'
-      },
-      {
         title: 'School Settings',
         href: '/schools/settings',
         icon: 'settings' as IconType,
@@ -170,31 +164,131 @@ export const navItems: NavItem[] = [
     title: 'Courses',
     href: '/courses',
     icon: 'fileText' as IconType,
-    label: 'courses'
+    label: 'courses',
+    children: [
+      {
+        title: 'All Courses',
+        href: '/courses',
+        icon: 'list' as IconType,
+        label: 'all-courses'
+      },
+      {
+        title: 'Course Categories',
+        href: '/courses?filter=category',
+        icon: 'folder' as IconType,
+        label: 'course-categories'
+      },
+      {
+        title: 'Course Management',
+        href: '/courses?view=management',
+        icon: 'settings' as IconType,
+        label: 'course-management'
+      }
+    ]
   },
   {
     title: 'Videos',
     href: '/videos',
     icon: 'video' as IconType,
-    label: 'videos'
+    label: 'videos',
+    children: [
+      {
+        title: 'All Videos',
+        href: '/videos',
+        icon: 'list' as IconType,
+        label: 'all-videos'
+      },
+      {
+        title: 'Video Categories',
+        href: '/videos?filter=category',
+        icon: 'folder' as IconType,
+        label: 'video-categories'
+      },
+      {
+        title: 'Video Management',
+        href: '/videos?view=management',
+        icon: 'settings' as IconType,
+        label: 'video-management'
+      }
+    ]
   },
   {
     title: 'Images',
     href: '/images',
     icon: 'image' as IconType,
-    label: 'images'
+    label: 'images',
+    children: [
+      {
+        title: 'All Images',
+        href: '/images',
+        icon: 'list' as IconType,
+        label: 'all-images'
+      },
+      {
+        title: 'Image Categories',
+        href: '/images?filter=category',
+        icon: 'folder' as IconType,
+        label: 'image-categories'
+      },
+      {
+        title: 'Image Management',
+        href: '/images?view=management',
+        icon: 'settings' as IconType,
+        label: 'image-management'
+      }
+    ]
   },
   {
     title: 'Audios',
     href: '/audios',
     icon: 'volume2' as IconType,
-    label: 'audios'
+    label: 'audios',
+    children: [
+      {
+        title: 'All Audios',
+        href: '/audios',
+        icon: 'list' as IconType,
+        label: 'all-audios'
+      },
+      {
+        title: 'Audio Categories',
+        href: '/audios?filter=category',
+        icon: 'folder' as IconType,
+        label: 'audio-categories'
+      },
+      {
+        title: 'Audio Management',
+        href: '/audios?view=management',
+        icon: 'settings' as IconType,
+        label: 'audio-management'
+      }
+    ]
   },
   {
     title: 'Documents',
     href: '/documents',
     icon: 'fileText' as IconType,
-    label: 'documents'
+    label: 'documents',
+    children: [
+      {
+        title: 'All Documents',
+        href: '/documents',
+        icon: 'list' as IconType,
+        label: 'all-documents'
+      },
+      {
+        title: 'Document Categories',
+        href: '/documents?filter=category',
+        icon: 'folder' as IconType,
+        label: 'document-categories'
+      },
+      {
+        title: 'Document Management',
+        href: '/documents?view=management',
+        icon: 'settings' as IconType,
+        label: 'document-management'
+      }
+    ]
   },
   {
     title: 'Users',

@@ -122,12 +122,15 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const { isAboveLg } = useBreakpoint('lg');
 
   const toggleExpand = useCallback((title: string) => {
+    console.log('Toggling expand for:', title);
     setExpandedItems((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(title)) {
         newSet.delete(title);
+        console.log('Collapsed:', title);
       } else {
         newSet.add(title);
+        console.log('Expanded:', title);
       }
       return newSet;
     });
@@ -139,8 +142,28 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
 
   const renderNavItem = useCallback(
     (item: NavItem, depth = 0) => {
-      const hasChildren = item.children && item.children.length > 0;
+      // Prevent infinite recursion by limiting depth
+      if (depth > 5) {
+        console.warn(
+          'Maximum navigation depth reached, skipping item:',
+          item.title
+        );
+        return null;
+      }
+
+      const hasChildren =
+        item.children &&
+        Array.isArray(item.children) &&
+        item.children.length > 0;
       const isExpanded = expandedItems.has(item.title);
+
+      // Debug logging
+      console.log('Item:', item.title, {
+        hasChildren,
+        isAboveLg,
+        isMinimized,
+        shouldShowDropdown: hasChildren && isAboveLg && isMinimized
+      });
 
       const content = (
         <NavItemContent
@@ -152,27 +175,38 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
       );
 
       if (hasChildren && isAboveLg && isMinimized) {
+        console.log(
+          'Rendering dropdown for:',
+          item.title,
+          'children:',
+          item.children
+        );
         return (
           <DropdownMenu key={item.title}>
-            <DropdownMenuTrigger>{content}</DropdownMenuTrigger>
+            <DropdownMenuTrigger className="w-full">
+              {content}
+            </DropdownMenuTrigger>
             <DropdownMenuContent
               className="w-48 space-y-1"
               align="start"
               side="right"
-              sideOffset={20}
+              sideOffset={5}
+              avoidCollisions={true}
             >
               <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
               {item.children &&
-                item.children.map((child) => (
-                  <DropdownMenuItem key={child.title} asChild>
-                    {child.href && (
+                item.children.map((child, index) => (
+                  <DropdownMenuItem key={`${child.title}-${index}`}>
+                    {child.href ? (
                       <Link
                         href={child.href}
                         onClick={handleSetOpen}
-                        className="cursor-pointer"
+                        className="w-full cursor-pointer"
                       >
                         {child.title}
                       </Link>
+                    ) : (
+                      <span className="cursor-pointer">{child.title}</span>
                     )}
                   </DropdownMenuItem>
                 ))}
@@ -183,21 +217,38 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
 
       return (
         <div key={item.title}>
-          {item.href ? (
+          {hasChildren ? (
+            <NavItemButton onClick={() => toggleExpand(item.title)}>
+              {content}
+            </NavItemButton>
+          ) : item.href ? (
             <NavItemLink item={item} onClick={handleSetOpen}>
               {content}
             </NavItemLink>
           ) : (
-            <NavItemButton onClick={() => toggleExpand(item.title)}>
-              {content}
-            </NavItemButton>
+            <div>{content}</div>
           )}
-          {hasChildren && !isMinimized && isExpanded && (
-            <div className="ml-4 mt-1 space-y-1">
-              {item.children &&
-                item.children.map((child) => renderNavItem(child, depth + 1))}
-            </div>
-          )}
+          {hasChildren &&
+            !isMinimized &&
+            isExpanded &&
+            (() => {
+              console.log(
+                'Rendering children for:',
+                item.title,
+                'children:',
+                item.children
+              );
+              return (
+                <div className="ml-4 mt-1 space-y-1">
+                  {item.children &&
+                    item.children.map((child, index) => (
+                      <div key={`${child.title}-${index}`}>
+                        {renderNavItem(child, depth + 1)}
+                      </div>
+                    ))}
+                </div>
+              );
+            })()}
         </div>
       );
     },

@@ -8,7 +8,7 @@ import { Video, Star, Play, Clock, Eye, Download, Edit } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
 import VideoPlayer from '@/components/content/video-player';
 import { PageHeader } from '@/components/shared/PageHeader';

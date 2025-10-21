@@ -15,21 +15,22 @@ import { Plus, Search, Building2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { School } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/contexts/SchoolContext';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { SchoolCard } from '@/components/schools/SchoolCard';
 import { SchoolForm } from '@/components/schools/SchoolForm';
+import { useSchool } from '@/hooks/useSchool';
+import { extractDomainPart, formatDomain } from '@/lib/school-utils';
 
 export default function SchoolsPage() {
-  const { schools, updateSchoolsList } = useSchool();
-  const [isLoading, setIsLoading] = useState(false);
+  const { schools, isLoading, error, refreshSchools } = useSchool();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -70,45 +71,13 @@ export default function SchoolsPage() {
 
   // Monitor formData changes for validation
   useEffect(() => {
-    // Only validate if we have a domain and a selected school (editing mode)
     if (formData.private_domain && selectedSchool && isEditDialogOpen) {
       validateDomain(formData.private_domain);
     }
   }, [formData.private_domain, selectedSchool, isEditDialogOpen]);
 
-  // Extract and format the first part of domain (before the dot)
-  const extractDomainPart = (domain: string): string => {
-    if (!domain) return '';
-    // Remove .skillforge.com or any domain suffix
-    const cleanDomain = domain
-      .replace(/\.skillforge\.com$/i, '')
-      .replace(/\./g, '');
-
-    if (!cleanDomain) return '';
-    return cleanDomain
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
-  };
-
-  // Convert domain to standard format (lowercase, kebab-case)
-  const formatDomain = (domain: string): string => {
-    if (!domain) return '';
-    return domain
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
-  };
-
   // Validate domain format and length
   const validateDomain = (domain: string) => {
-    // Format the domain to standard format
     const formattedDomain = formatDomain(domain);
 
     if (formattedDomain.length < 5) {
@@ -124,7 +93,6 @@ export default function SchoolsPage() {
       return;
     }
 
-    // Check domain availability using formatted domain
     checkDomainAvailability(formattedDomain);
   };
 
@@ -138,9 +106,7 @@ export default function SchoolsPage() {
       message: 'Checking domain availability...'
     });
 
-    // Simulate API call delay
     setTimeout(() => {
-      // Check if domain already exists in other schools (exclude current school when editing)
       const isTaken = schools.some((school) => {
         const schoolDomainPart = extractDomainPart(
           school.domain?.private_address || ''
@@ -192,7 +158,6 @@ export default function SchoolsPage() {
         return;
       }
 
-      // Check if domain is available and unique
       if (!domainAvailability.isAvailable) {
         ErrorHandler.showWarning(
           'Please choose a unique domain name that is not already taken'
@@ -200,7 +165,6 @@ export default function SchoolsPage() {
         return;
       }
 
-      // Double-check uniqueness against existing schools (for create, check all schools)
       const isDomainTaken = schools.some((school) => {
         const schoolDomainPart = extractDomainPart(
           school.domain?.private_address || ''
@@ -208,6 +172,7 @@ export default function SchoolsPage() {
         const inputDomainPart = extractDomainPart(formData.private_domain);
         return schoolDomainPart === inputDomainPart;
       });
+
       if (isDomainTaken) {
         ErrorHandler.showWarning(
           'This domain name is already taken by another school. Please choose a unique domain name.'
@@ -215,7 +180,7 @@ export default function SchoolsPage() {
         return;
       }
 
-      setIsLoading(true);
+      setIsSubmitting(true);
 
       const schoolData = {
         name: formData.name,
@@ -226,18 +191,8 @@ export default function SchoolsPage() {
       await apiClient.createSchool(schoolData);
       ErrorHandler.showSuccess('School created successfully');
 
-      // Refresh schools list from context
-      const response = await apiClient.getMySchools();
-      if (response.status === 200 && response.data) {
-        let newSchools: School[] = [];
-        const responseData = response.data as any;
-        if (responseData.status === 'ok' && responseData.data) {
-          newSchools = responseData.data;
-        } else if (Array.isArray(responseData)) {
-          newSchools = responseData;
-        }
-        updateSchoolsList(newSchools);
-      }
+      // Refresh schools list
+      await refreshSchools();
 
       setIsCreateDialogOpen(false);
       resetFormState();
@@ -245,7 +200,7 @@ export default function SchoolsPage() {
       console.error('Error creating school:', error);
       ErrorHandler.handleApiError(error);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -268,7 +223,6 @@ export default function SchoolsPage() {
         return;
       }
 
-      // Check if domain is available and unique
       if (!domainAvailability.isAvailable) {
         ErrorHandler.showWarning(
           'Please choose a unique domain name that is not already taken'
@@ -276,7 +230,6 @@ export default function SchoolsPage() {
         return;
       }
 
-      // Double-check uniqueness against existing schools (excluding current school)
       const isDomainTaken = schools.some((school) => {
         if (!school.domain) return false;
         const schoolDomainPart = extractDomainPart(
@@ -288,6 +241,7 @@ export default function SchoolsPage() {
           school.id !== selectedSchool.id
         );
       });
+
       if (isDomainTaken) {
         ErrorHandler.showWarning(
           'This domain name is already taken by another school. Please choose a unique domain name.'
@@ -295,7 +249,7 @@ export default function SchoolsPage() {
         return;
       }
 
-      setIsLoading(true);
+      setIsSubmitting(true);
 
       const updateData: any = {};
       if (formData.name) updateData.name = formData.name;
@@ -307,18 +261,8 @@ export default function SchoolsPage() {
       await apiClient.updateSchool(updateData);
       ErrorHandler.showSuccess('School updated successfully');
 
-      // Refresh schools list from context
-      const response = await apiClient.getMySchools();
-      if (response.status === 200 && response.data) {
-        let newSchools: School[] = [];
-        const responseData = response.data as any;
-        if (responseData.status === 'ok' && responseData.data) {
-          newSchools = responseData.data;
-        } else if (Array.isArray(responseData)) {
-          newSchools = responseData;
-        }
-        updateSchoolsList(newSchools);
-      }
+      // Refresh schools list
+      await refreshSchools();
 
       setIsEditDialogOpen(false);
       resetFormState();
@@ -327,13 +271,35 @@ export default function SchoolsPage() {
       console.error('Error updating school:', error);
       ErrorHandler.handleApiError(error);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  // Show loading state while schools are being fetched
-  if (!schools) {
+  // Filter schools based on search term
+  const filteredSchools = schools.filter(
+    (school) =>
+      school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      school.domain?.private_address
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase())
+  );
+
+  if (isLoading) {
     return <LoadingSpinner message="Loading schools..." />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="text-center">
+          <h2 className="mb-4 text-2xl font-bold text-destructive">Error</h2>
+          <p className="mb-4 text-muted-foreground">{error}</p>
+          <Button onClick={refreshSchools} variant="outline">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -390,7 +356,7 @@ export default function SchoolsPage() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {(schools || []).map((school) => (
+        {filteredSchools.map((school) => (
           <SchoolCard
             key={school.id}
             school={school}
@@ -412,7 +378,7 @@ export default function SchoolsPage() {
         ))}
       </div>
 
-      {schools.length === 0 && (
+      {filteredSchools.length === 0 && (
         <EmptyState
           icon={<Building2 className="h-12 w-12" />}
           title="No schools found"

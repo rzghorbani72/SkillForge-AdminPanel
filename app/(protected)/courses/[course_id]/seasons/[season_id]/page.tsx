@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit, BookOpen, Calendar, Play } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Season, Course } from '@/types/api';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import { ErrorHandler } from '@/lib/error-handler';
 import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 

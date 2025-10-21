@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import { toast } from 'sonner';
 
 export const useCourseView = (courseId: string) => {

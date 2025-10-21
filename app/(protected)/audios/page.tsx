@@ -24,7 +24,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { Media, Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import UploadAudioDialog from '@/components/content/upload-audio-dialog';
 import { AccessControlBadge } from '@/components/ui/access-control-badge';
 

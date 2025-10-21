@@ -1,6 +1,6 @@
 'use client';
 
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -20,7 +20,7 @@ export function SchoolSelector() {
     isLoading,
     error,
     refreshSchools,
-    setSelectedSchool
+    selectSchool
   } = useSchool();
 
   if (isLoading) {
@@ -71,7 +71,7 @@ export function SchoolSelector() {
     const school = schools.find((s) => s.id.toString() === schoolId);
     if (school) {
       console.log('Switching to school:', school);
-      setSelectedSchool(school);
+      selectSchool(school.id);
     }
   };
 

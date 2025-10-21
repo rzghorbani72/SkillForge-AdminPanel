@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Lesson, Season, Course } from '@/types/api';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
 import AccessControlGuard from '@/components/access-control/AccessControlGuard';

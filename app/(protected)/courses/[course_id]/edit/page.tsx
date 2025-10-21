@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import { useCategoriesStore } from '@/lib/store';
 import useCourseEdit from '@/components/course/useCourseEdit';
 import CourseForm from '@/components/course/CourseForm';

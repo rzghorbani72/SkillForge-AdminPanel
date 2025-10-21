@@ -28,7 +28,7 @@ import {
   Plus
 } from 'lucide-react';
 import { Course } from '@/types/api';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 
 // Import dialogs
 import CreateLessonDialog from './create-lesson-dialog';

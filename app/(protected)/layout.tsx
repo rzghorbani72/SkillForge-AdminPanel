@@ -3,7 +3,6 @@ import { isAuth } from '@/lib/utils';
 import { redirect } from 'next/navigation';
 import Sidebar from '@/components/layout/sidebar';
 import Header from '@/components/layout/header';
-import { SchoolProvider } from '@/contexts/SchoolContext';
 import { CategoriesInitializer } from '@/components/providers/CategoriesInitializer';
 
 export default function ProtectedLayout({
@@ -17,7 +16,7 @@ export default function ProtectedLayout({
   }
 
   return (
-    <SchoolProvider>
+    <>
       <CategoriesInitializer />
       <div className="flex h-screen">
         <Sidebar />
@@ -26,6 +25,6 @@ export default function ProtectedLayout({
           <div className="flex-1 overflow-auto">{children}</div>
         </main>
       </div>
-    </SchoolProvider>
+    </>
   );
 }

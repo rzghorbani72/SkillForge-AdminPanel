@@ -147,14 +147,6 @@ class ApiClient {
     );
   }
 
-  async getUserProfiles() {
-    const response = await this.request('/profiles');
-    if (response.data) {
-      return response.data as any;
-    }
-    return null as any;
-  }
-
   async getUserSchools() {
     const response = await this.request('/schools');
     return response.data;
@@ -237,18 +229,12 @@ class ApiClient {
 
   async getMySchools() {
     const response = await this.request('/schools/my-schools');
-    if (response.data) {
-      return response.data as any;
-    }
-    return null as any;
+    return response;
   }
 
   async getCurrentSchool() {
     const response = await this.request('/schools/current');
-    if (response.data) {
-      return response.data as any;
-    }
-    return null as any;
+    return response;
   }
 
   async createSchool(schoolData: {

@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/contexts/SchoolContext';
+import { useSchool } from '@/hooks/useSchool';
 import { Course, Lesson, Season } from '@/types/api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
