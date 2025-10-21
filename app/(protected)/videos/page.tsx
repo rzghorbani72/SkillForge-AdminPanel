@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -49,13 +49,7 @@ export default function VideosPage() {
   );
   const [showPlayer, setShowPlayer] = useState(false);
 
-  useEffect(() => {
-    if (selectedSchool) {
-      fetchData();
-    }
-  }, [selectedSchool]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!selectedSchool) return;
 
     try {
@@ -77,7 +71,13 @@ export default function VideosPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedSchool]);
+
+  useEffect(() => {
+    if (selectedSchool) {
+      fetchData();
+    }
+  }, [selectedSchool, fetchData]);
 
   const filteredVideos = videos.filter((video) => {
     const matchesSearch =

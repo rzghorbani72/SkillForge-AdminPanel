@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Category } from '@/types/api';
@@ -38,6 +38,8 @@ export default function CategoriesPage() {
     is_active: true
   });
 
+  const hasFetched = useRef(false);
+
   const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
@@ -60,14 +62,14 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false);
     }
-  }, [clearError, setCategories, setError, setLoading]);
+  }, []); // Empty dependency array - store functions are stable
 
   useEffect(() => {
-    // Only fetch if categories are not already loaded from store
-    if (categories.length === 0) {
+    if (!hasFetched.current && categories.length === 0) {
+      hasFetched.current = true;
       fetchCategories();
     }
-  }, [categories.length, fetchCategories]);
+  }, [categories.length]);
 
   // Handle URL parameters for filtering
   useEffect(() => {
@@ -195,7 +197,6 @@ export default function CategoriesPage() {
           error={error}
           onRetry={() => {
             clearError();
-            fetchCategories();
           }}
         />
       )}

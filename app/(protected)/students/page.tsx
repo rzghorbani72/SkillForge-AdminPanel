@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -34,11 +34,7 @@ export default function StudentsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchStudentsData();
-  }, []);
-
-  const fetchStudentsData = async () => {
+  const fetchStudentsData = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -79,7 +75,11 @@ export default function StudentsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchStudentsData();
+  }, [fetchStudentsData]);
 
   const getEnrollmentStatusColor = (status: string) => {
     switch (status) {
