@@ -5,45 +5,15 @@ import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Category } from '@/types/api';
 import { useCategoriesStore } from '@/lib/store';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Folder,
-  BookOpen,
-  FileText,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+import { CategoryHeader } from '@/components/category/CategoryHeader';
+import { SearchAndFilters } from '@/components/category/SearchAndFilters';
+import { ErrorDisplay } from '@/components/category/ErrorDisplay';
+import { LoadingState } from '@/components/category/LoadingState';
+import { EmptyState } from '@/components/category/EmptyState';
+import { CategoryCard } from '@/components/category/CategoryCard';
+import { CategoryDialog } from '@/components/category/CategoryDialog';
+import { CategoryType, FilterType } from '@/components/category/category-utils';
 
 export default function CategoriesPage() {
   const searchParams = useSearchParams();
@@ -57,16 +27,14 @@ export default function CategoriesPage() {
     clearError
   } = useCategoriesStore();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState<
-    'all' | 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
-  >('all');
+  const [selectedType, setSelectedType] = useState<FilterType>('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    type: 'COURSE' as 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS',
+    type: 'COURSE' as CategoryType,
     is_active: true
   });
 
@@ -110,7 +78,7 @@ export default function CategoriesPage() {
       typeParam === 'BLOG' ||
       typeParam === 'NEWS'
     ) {
-      setSelectedType(typeParam as 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS');
+      setSelectedType(typeParam as CategoryType);
     }
   }, [searchParams]);
 
@@ -131,7 +99,7 @@ export default function CategoriesPage() {
     setFormData({
       name: '',
       description: '',
-      type: 'COURSE',
+      type: 'COURSE' as CategoryType,
       is_active: true
     });
   };
@@ -214,350 +182,72 @@ export default function CategoriesPage() {
     setIsEditDialogOpen(true);
   };
 
-  const getCategoryTypeIcon = (type: string) => {
-    switch (type) {
-      case 'COURSE':
-        return <BookOpen className="h-4 w-4" />;
-      case 'ARTICLE':
-        return <FileText className="h-4 w-4" />;
-      case 'BLOG':
-        return <FileText className="h-4 w-4" />;
-      case 'NEWS':
-        return <FileText className="h-4 w-4" />;
-      default:
-        return <Folder className="h-4 w-4" />;
-    }
-  };
-
-  const getCategoryTypeColor = (type: string) => {
-    switch (type) {
-      case 'COURSE':
-        return 'bg-blue-100 text-blue-800';
-      case 'ARTICLE':
-        return 'bg-green-100 text-green-800';
-      case 'BLOG':
-        return 'bg-purple-100 text-purple-800';
-      case 'NEWS':
-        return 'bg-orange-100 text-orange-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   if (isLoading) {
-    return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading categories...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
-          <p className="text-muted-foreground">
-            Manage categories for courses and content
-          </p>
-        </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Category
-        </Button>
-      </div>
+      <CategoryHeader onCreateClick={() => setIsCreateDialogOpen(true)} />
 
-      {/* Error Display */}
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-red-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                Error loading categories
-              </h3>
-              <div className="mt-2 text-sm text-red-700">
-                <p>{error}</p>
-              </div>
-              <div className="mt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    clearError();
-                    fetchCategories();
-                  }}
-                  className="border-red-300 text-red-800 hover:bg-red-100"
-                >
-                  Try Again
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ErrorDisplay
+          error={error}
+          onRetry={() => {
+            clearError();
+            fetchCategories();
+          }}
+        />
       )}
 
-      {/* Search and Filter */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 items-center space-x-2">
-          <div className="relative flex-1 sm:max-w-xs">
-            <Input
-              placeholder="Search categories..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
-            <Folder className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          </div>
-        </div>
-        <Select
-          value={selectedType}
-          onValueChange={(
-            value: 'all' | 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
-          ) => setSelectedType(value)}
-        >
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="Filter by type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="COURSE">Course</SelectItem>
-            <SelectItem value="ARTICLE">Article</SelectItem>
-            <SelectItem value="BLOG">Blog</SelectItem>
-            <SelectItem value="NEWS">News</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <SearchAndFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        selectedType={selectedType}
+        onTypeChange={setSelectedType}
+      />
 
-      {/* Categories Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredCategories.length === 0 ? (
-          <div className="col-span-full py-12 text-center">
-            <Folder className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-semibold">No categories found</h3>
-            <p className="mt-2 text-muted-foreground">
-              {searchTerm || selectedType !== 'all'
-                ? 'Try adjusting your search or filter criteria.'
-                : 'Get started by creating your first category.'}
-            </p>
-          </div>
+          <EmptyState searchTerm={searchTerm} selectedType={selectedType} />
         ) : (
           filteredCategories.map((category) => (
-            <Card key={category.id} className="relative">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-2">
-                    {getCategoryTypeIcon(category.type)}
-                    <div>
-                      <CardTitle className="text-lg">{category.name}</CardTitle>
-                      <Badge
-                        variant="secondary"
-                        className={getCategoryTypeColor(category.type)}
-                      >
-                        {category.type}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    {category.is_active ? (
-                      <Eye className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {category.description && (
-                  <CardDescription className="mb-4 line-clamp-2">
-                    {category.description}
-                  </CardDescription>
-                )}
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>
-                    Created:{' '}
-                    {new Date(category.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="mt-4 flex items-center justify-end space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openEditDialog(category)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteCategory(category.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <CategoryCard
+              key={category.id}
+              category={category}
+              onEdit={openEditDialog}
+              onDelete={handleDeleteCategory}
+            />
           ))
         )}
       </div>
 
-      {/* Create Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Create New Category</DialogTitle>
-            <DialogDescription>
-              Add a new category for organizing your courses and content.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="Enter category name"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Enter category description"
-                rows={3}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="type">Type</Label>
-              <Select
-                value={formData.type}
-                onValueChange={(
-                  value: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
-                ) => setFormData({ ...formData, type: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="COURSE">Course</SelectItem>
-                  <SelectItem value="ARTICLE">Article</SelectItem>
-                  <SelectItem value="BLOG">Blog</SelectItem>
-                  <SelectItem value="NEWS">News</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsCreateDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleCreateCategory}>Create Category</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CategoryDialog
+        isOpen={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        isEdit={false}
+        formData={formData}
+        onFormDataChange={setFormData}
+        onSubmit={handleCreateCategory}
+        onCancel={() => {
+          setIsCreateDialogOpen(false);
+          resetForm();
+        }}
+      />
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Category</DialogTitle>
-            <DialogDescription>
-              Update the category information.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="edit-name">Name *</Label>
-              <Input
-                id="edit-name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="Enter category name"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-description">Description</Label>
-              <Textarea
-                id="edit-description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Enter category description"
-                rows={3}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-type">Type</Label>
-              <Select
-                value={formData.type}
-                onValueChange={(
-                  value: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS'
-                ) => setFormData({ ...formData, type: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="COURSE">Course</SelectItem>
-                  <SelectItem value="ARTICLE">Article</SelectItem>
-                  <SelectItem value="BLOG">Blog</SelectItem>
-                  <SelectItem value="NEWS">News</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="edit-is_active"
-                checked={formData.is_active}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, is_active: checked })
-                }
-              />
-              <Label htmlFor="edit-is_active">Active</Label>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleEditCategory}>Update Category</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CategoryDialog
+        isOpen={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        isEdit={true}
+        formData={formData}
+        onFormDataChange={setFormData}
+        onSubmit={handleEditCategory}
+        onCancel={() => {
+          setIsEditDialogOpen(false);
+          setEditingCategory(null);
+          resetForm();
+        }}
+      />
     </div>
   );
 }

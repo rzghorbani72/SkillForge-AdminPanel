@@ -1,37 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Video,
-  Search,
-  Star,
-  Play,
-  Clock,
-  Eye,
-  Download,
-  Edit
-} from 'lucide-react';
+import { Video, Star, Play, Clock, Eye, Download, Edit } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
 import VideoPlayer from '@/components/content/video-player';
-import {
-  AccessControlBadge,
-  AccessControlActions
-} from '@/components/ui/access-control-badge';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { SearchBar } from '@/components/shared/SearchBar';
+import { VideoStats } from '@/components/videos/VideoStats';
+import { VideoGrid } from '@/components/videos/VideoGrid';
+import { formatDuration, formatFileSize } from '@/components/shared/utils';
 
 interface VideoWithMetadata extends Media {
   lesson_type?: 'WELCOME' | 'LESSON' | 'INTRO' | 'CONCLUSION';
@@ -138,19 +124,6 @@ export default function VideosPage() {
     }
   };
 
-  const formatDuration = (seconds?: number) => {
-    if (!seconds) return 'Unknown';
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
-  const formatFileSize = (bytes?: number) => {
-    if (!bytes) return 'Unknown';
-    const mb = bytes / (1024 * 1024);
-    return `${mb.toFixed(1)} MB`;
-  };
-
   const getPosterUrl = (
     posterUrl: string | null | undefined
   ): string | null => {
@@ -170,112 +143,38 @@ export default function VideosPage() {
 
   if (!selectedSchool) {
     return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold text-muted-foreground">
-              No School Selected
-            </h2>
-            <p className="text-muted-foreground">
-              Please select a school from the header to view videos.
-            </p>
-          </div>
-        </div>
-      </div>
+      <EmptyState
+        icon={<Video className="h-12 w-12" />}
+        title="No School Selected"
+        description="Please select a school from the header to view videos."
+      />
     );
   }
 
   if (isLoading) {
-    return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading videos...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading videos..." />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Video Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your course videos and welcome content
-          </p>
-        </div>
+      <PageHeader
+        title="Video Management"
+        description="Manage your course videos and welcome content"
+      >
         <div className="flex items-center space-x-2">
           <UploadVideoDialog onVideoUploaded={fetchData} />
         </div>
-      </div>
+      </PageHeader>
 
-      {/* Video Overview Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Videos</CardTitle>
-            <Video className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{videos.length}</div>
-            <p className="text-xs text-muted-foreground">All video content</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Welcome Videos
-            </CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{welcomeVideos.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Default course videos
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lesson Videos</CardTitle>
-            <Play className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{lessonVideos.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Course content videos
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Duration
-            </CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {(videos.reduce(
-                (total, video) => total + (video.metadata?.duration || 0),
-                0
-              ) /
-                60) |
-                0}
-              h
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Combined video length
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <VideoStats
+        totalVideos={videos.length}
+        welcomeVideos={welcomeVideos.length}
+        lessonVideos={lessonVideos.length}
+        totalDuration={videos.reduce(
+          (total, video) => total + (video.metadata?.duration || 0),
+          0
+        )}
+      />
 
       {/* Video Player Modal */}
       {showPlayer && selectedVideo && (
@@ -299,17 +198,12 @@ export default function VideosPage() {
         </div>
       )}
 
-      {/* Search and Filter */}
       <div className="flex items-center space-x-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search videos..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-        </div>
+        <SearchBar
+          placeholder="Search videos..."
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
@@ -405,190 +299,6 @@ export default function VideosPage() {
           />
         </TabsContent>
       </Tabs>
-    </div>
-  );
-}
-
-// Video Grid Component
-function VideoGrid({
-  videos,
-  onVideoSelect,
-  getVideoIcon,
-  getVideoTypeColor,
-  formatDuration,
-  formatFileSize,
-  getPosterUrl,
-  isOwnMedia
-}: {
-  videos: VideoWithMetadata[];
-  onVideoSelect: (video: VideoWithMetadata) => void;
-  getVideoIcon: (type?: string) => React.ReactNode;
-  getVideoTypeColor: (type?: string) => string;
-  formatDuration: (seconds?: number) => string;
-  formatFileSize: (bytes?: number) => string;
-  getPosterUrl: (posterUrl: string | null | undefined) => string | null;
-  isOwnMedia: (video: VideoWithMetadata) => boolean;
-}) {
-  if (videos.length === 0) {
-    return (
-      <div className="py-12 text-center">
-        <Video className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-2 text-sm font-medium">No videos found</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Upload your first video to get started.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {videos.map((video) => {
-        return (
-          <Card
-            key={video.id}
-            className={`relative cursor-pointer transition-shadow hover:shadow-md ${
-              video.is_welcome_video ? 'ring-2 ring-yellow-400' : ''
-            }`}
-            onClick={() => onVideoSelect(video)}
-          >
-            {/* Video Poster Preview */}
-            <div className="relative aspect-video w-full overflow-hidden rounded-t-lg bg-muted">
-              {getPosterUrl(video.poster_url) ? (
-                <img
-                  src={getPosterUrl(video.poster_url)!}
-                  alt={`${video.title} poster`}
-                  className="h-full w-full object-cover transition-transform hover:scale-105"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-muted">
-                  <div className="flex flex-col items-center space-y-2 text-muted-foreground">
-                    <Video className="h-8 w-8" />
-                    <span className="text-sm">No Poster</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Play Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity hover:opacity-100">
-                <div className="rounded-full bg-white/90 p-3">
-                  <Play className="h-6 w-6 text-black" />
-                </div>
-              </div>
-
-              {/* Welcome Video Badge */}
-              {video.is_welcome_video && (
-                <div className="absolute right-2 top-2 z-10">
-                  <Badge className="bg-yellow-500 text-white">
-                    <Star className="mr-1 h-3 w-3" />
-                    Welcome
-                  </Badge>
-                </div>
-              )}
-
-              {/* Access Control Badge */}
-              <div className="absolute left-2 top-2 z-10">
-                {video.access_control ? (
-                  <AccessControlBadge
-                    accessControl={video.access_control}
-                    className="text-xs"
-                  />
-                ) : (
-                  <Badge
-                    variant={isOwnMedia(video) ? 'default' : 'secondary'}
-                    className="text-xs"
-                  >
-                    {isOwnMedia(video) ? 'Yours' : 'Other Teacher'}
-                  </Badge>
-                )}
-              </div>
-            </div>
-
-            <CardHeader className="pb-3">
-              <div className="flex items-center space-x-2">
-                {getVideoIcon(video.lesson_type)}
-                <CardTitle className="truncate text-lg">
-                  {video.title}
-                </CardTitle>
-              </div>
-              <CardDescription className="line-clamp-2">
-                {video.description}
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-3">
-              {/* Video Type Badge */}
-              <div className="flex items-center space-x-2">
-                <Badge className={getVideoTypeColor(video.lesson_type)}>
-                  {video.lesson_type || 'VIDEO'}
-                </Badge>
-                {video.is_welcome_video && (
-                  <Badge
-                    variant="outline"
-                    className="border-yellow-600 text-yellow-600"
-                  >
-                    Default
-                  </Badge>
-                )}
-              </div>
-
-              {/* Video Details */}
-              <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-1">
-                  <Clock className="h-3 w-3" />
-                  <span>{formatDuration(video.metadata?.duration)}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Eye className="h-3 w-3" />
-                  <span>{formatFileSize(video.size)}</span>
-                </div>
-              </div>
-
-              {/* Tags */}
-              {video.tags && video.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {video.tags.slice(0, 3).map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                  {video.tags.length > 3 && (
-                    <Badge variant="secondary" className="text-xs">
-                      +{video.tags.length - 3}
-                    </Badge>
-                  )}
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex items-center space-x-2 pt-2">
-                <Button size="sm" variant="outline" className="flex-1">
-                  <Play className="mr-1 h-3 w-3" />
-                  Play
-                </Button>
-
-                {video.access_control ? (
-                  <AccessControlActions
-                    accessControl={video.access_control}
-                    onEdit={() => console.log('Edit video', video.id)}
-                    onDelete={() => console.log('Delete video', video.id)}
-                    onView={() => console.log('View video', video.id)}
-                  />
-                ) : (
-                  <>
-                    <Button size="sm" variant="outline">
-                      <Edit className="h-3 w-3" />
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Download className="h-3 w-3" />
-                    </Button>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
     </div>
   );
 }

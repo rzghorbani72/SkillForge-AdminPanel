@@ -2,9 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -14,19 +11,17 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Search, Building2 } from 'lucide-react';
+import { Plus, Search, Building2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { School } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/contexts/SchoolContext';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { SearchBar } from '@/components/shared/SearchBar';
+import { SchoolCard } from '@/components/schools/SchoolCard';
+import { SchoolForm } from '@/components/schools/SchoolForm';
 
 export default function SchoolsPage() {
   const { schools, updateSchoolsList } = useSchool();
@@ -338,30 +333,15 @@ export default function SchoolsPage() {
 
   // Show loading state while schools are being fetched
   if (!schools) {
-    return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading schools...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading schools..." />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Schools Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your schools and their settings
-          </p>
-        </div>
+      <PageHeader
+        title="Schools Management"
+        description="Manage your schools and their settings"
+      >
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -376,85 +356,13 @@ export default function SchoolsPage() {
                 Create a new school with a unique domain name
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">School Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Enter school name"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="domain">Domain Name * (Must be unique)</Label>
-                <Input
-                  id="domain"
-                  value={formData.private_domain}
-                  onChange={(e) => {
-                    const formattedValue = formatDomain(e.target.value);
-                    setFormData({
-                      ...formData,
-                      private_domain: formattedValue
-                    });
-                    validateDomain(formattedValue);
-                  }}
-                  placeholder="Enter domain name (auto-formatted to lowercase, kebab-case)"
-                  className={
-                    domainValidation.message
-                      ? domainValidation.isValid
-                        ? 'border-green-500'
-                        : 'border-red-500'
-                      : ''
-                  }
-                />
-                {domainValidation.message && (
-                  <p
-                    className={`text-xs ${
-                      domainValidation.isValid
-                        ? 'text-green-600'
-                        : 'text-red-600'
-                    }`}
-                  >
-                    {domainValidation.message}
-                  </p>
-                )}
-                {domainAvailability.message && (
-                  <p
-                    className={`text-xs ${
-                      domainAvailability.isAvailable
-                        ? 'text-green-600'
-                        : 'text-red-600'
-                    }`}
-                  >
-                    {domainAvailability.message}
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  This will be your school&apos;s URL:{' '}
-                  {formData.private_domain
-                    ? `${formData.private_domain}.skillforge.com`
-                    : 'your-domain.skillforge.com'}
-                </p>
-                <p className="text-xs font-medium text-orange-600">
-                  ⚠️ Each school must have a unique domain name
-                </p>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Describe your school"
-                  rows={3}
-                />
-              </div>
-            </div>
+            <SchoolForm
+              formData={formData}
+              onFormDataChange={setFormData}
+              domainValidation={domainValidation}
+              domainAvailability={domainAvailability}
+              isEdit={false}
+            />
             <DialogFooter>
               <Button
                 onClick={handleCreateSchool}
@@ -472,214 +380,83 @@ export default function SchoolsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
+      </PageHeader>
 
-      {/* Search */}
-      <div className="flex items-center space-x-2">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search schools..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-        </div>
-      </div>
+      <SearchBar
+        placeholder="Search schools..."
+        value={searchTerm}
+        onChange={setSearchTerm}
+        className="max-w-sm"
+      />
 
-      {/* Schools Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {(schools || []).map((school) => (
-          <Card key={school.id}>
-            <CardHeader>
-              <div className="flex items-center space-x-2">
-                <Building2 className="h-5 w-5 text-muted-foreground" />
-                <div className="flex-1">
-                  <CardTitle className="text-lg">
-                    {school?.name || 'Unnamed School'}
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    {school?.domain?.private_address ||
-                      `${school?.slug || 'unknown'}.skillforge.com`}
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-sm text-muted-foreground">
-                {school?.description || 'No description provided'}
-              </p>
-              <div className="flex items-center justify-between">
-                <Badge variant="outline">
-                  {school?.is_active ? 'Active' : 'Inactive'}
-                </Badge>
-                <Dialog
-                  open={isEditDialogOpen}
-                  onOpenChange={setIsEditDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newFormData = {
-                          name: school?.name || '',
-                          private_domain: extractDomainPart(
-                            school?.domain?.private_address || ''
-                          ),
-                          public_domain: school?.domain?.public_address || '',
-                          description: school?.description || ''
-                        };
+          <SchoolCard
+            key={school.id}
+            school={school}
+            onEdit={(school) => {
+              const newFormData = {
+                name: school?.name || '',
+                private_domain: extractDomainPart(
+                  school?.domain?.private_address || ''
+                ),
+                public_domain: school?.domain?.public_address || '',
+                description: school?.description || ''
+              };
 
-                        setSelectedSchool(school);
-                        setFormData(newFormData);
-                      }}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Edit School</DialogTitle>
-                      <DialogDescription>
-                        Update school information and settings
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid gap-2">
-                        <Label htmlFor="edit-name">School Name *</Label>
-                        <Input
-                          id="edit-name"
-                          value={formData.name}
-                          onChange={(e) =>
-                            setFormData({ ...formData, name: e.target.value })
-                          }
-                          placeholder="Enter school name"
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="edit-domain">
-                          Domain Name * (Must be unique)
-                        </Label>
-                        <Input
-                          id="edit-domain"
-                          value={formData.private_domain}
-                          onChange={(e) => {
-                            const formattedValue = formatDomain(e.target.value);
-                            setFormData({
-                              ...formData,
-                              private_domain: formattedValue
-                            });
-                            validateDomain(formattedValue);
-                          }}
-                          placeholder="Enter domain name (auto-formatted to lowercase, kebab-case)"
-                          className={
-                            domainValidation.message
-                              ? domainValidation.isValid
-                                ? 'border-green-500'
-                                : 'border-red-500'
-                              : ''
-                          }
-                        />
-                        {domainValidation.message && (
-                          <p
-                            className={`text-xs ${
-                              domainValidation.isValid
-                                ? 'text-green-600'
-                                : 'text-red-600'
-                            }`}
-                          >
-                            {domainValidation.message}
-                          </p>
-                        )}
-                        {domainAvailability.message && (
-                          <p
-                            className={`text-xs ${
-                              domainAvailability.isAvailable
-                                ? 'text-green-600'
-                                : 'text-red-600'
-                            }`}
-                          >
-                            {domainAvailability.message}
-                          </p>
-                        )}
-                        <p className="text-xs text-muted-foreground">
-                          This will be your school&apos;s URL:{' '}
-                          {formData.private_domain
-                            ? `${formData.private_domain}.skillforge.com`
-                            : 'your-domain.skillforge.com'}
-                        </p>
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="edit-public-domain">
-                          Public Domain (Optional)
-                        </Label>
-                        <Input
-                          id="edit-public-domain"
-                          value={formData.public_domain}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              public_domain: e.target.value
-                            })
-                          }
-                          placeholder="Enter public domain (e.g., www.myschool.com)"
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Optional custom domain for your school
-                        </p>
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="edit-description">Description</Label>
-                        <Textarea
-                          id="edit-description"
-                          value={formData.description}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              description: e.target.value
-                            })
-                          }
-                          placeholder="Describe your school"
-                          rows={3}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        onClick={handleUpdateSchool}
-                        disabled={
-                          !formData.name ||
-                          !formData.private_domain ||
-                          !domainValidation.isValid ||
-                          !domainAvailability.isAvailable ||
-                          domainAvailability.isChecking ||
-                          isLoading
-                        }
-                      >
-                        {isLoading ? 'Updating...' : 'Update School'}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </CardContent>
-          </Card>
+              setSelectedSchool(school);
+              setFormData(newFormData);
+              setIsEditDialogOpen(true);
+            }}
+          />
         ))}
       </div>
 
       {schools.length === 0 && (
-        <div className="py-12 text-center">
-          <Building2 className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">No schools found</h3>
-          <p className="mt-2 text-muted-foreground">
-            {searchTerm
+        <EmptyState
+          icon={<Building2 className="h-12 w-12" />}
+          title="No schools found"
+          description={
+            searchTerm
               ? 'No schools match your search criteria.'
-              : 'Get started by creating your first school.'}
-          </p>
-        </div>
+              : 'Get started by creating your first school.'
+          }
+        />
       )}
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit School</DialogTitle>
+            <DialogDescription>
+              Update school information and settings
+            </DialogDescription>
+          </DialogHeader>
+          <SchoolForm
+            formData={formData}
+            onFormDataChange={setFormData}
+            domainValidation={domainValidation}
+            domainAvailability={domainAvailability}
+            isEdit={true}
+          />
+          <DialogFooter>
+            <Button
+              onClick={handleUpdateSchool}
+              disabled={
+                !formData.name ||
+                !formData.private_domain ||
+                !domainValidation.isValid ||
+                !domainAvailability.isAvailable ||
+                domainAvailability.isChecking ||
+                isLoading
+              }
+            >
+              {isLoading ? 'Updating...' : 'Update School'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
