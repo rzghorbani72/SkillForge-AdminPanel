@@ -7,7 +7,8 @@
     "url": "https://github.com/Kiranism"
   },
   "scripts": {
-    "dev": "fuser -k 4000/tcp && next dev --turbo --port 4000",
+    "dev": "next dev --turbo --port 4000",
+    "kill-port": "fuser -k 4000/tcp",
     "build": "next build",
     "start": "next start --port 4000",
     "lint": "next lint",
