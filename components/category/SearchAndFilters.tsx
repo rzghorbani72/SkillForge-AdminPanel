@@ -2,12 +2,18 @@ import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
 import { Folder } from 'lucide-react';
-import { FilterType } from './category-utils';
+import {
+  FilterType,
+  getCategoryTypeIcon,
+  CategoryType,
+  getCategoryTypeLabel
+} from './category-utils';
 
 interface SearchAndFiltersProps {
   searchTerm: string;
@@ -40,11 +46,31 @@ export function SearchAndFilters({
           <SelectValue placeholder="Filter by type" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Types</SelectItem>
-          <SelectItem value="COURSE">Course</SelectItem>
-          <SelectItem value="ARTICLE">Article</SelectItem>
-          <SelectItem value="BLOG">Blog</SelectItem>
-          <SelectItem value="NEWS">News</SelectItem>
+          <SelectGroup>
+            <SelectItem
+              className={
+                selectedType === 'all'
+                  ? 'items-center justify-start gap-2 bg-primary text-primary-foreground'
+                  : 'items-center justify-start gap-2'
+              }
+              value="all"
+            >
+              {getCategoryTypeLabel('all')}
+            </SelectItem>
+            {Object.values(CategoryType).map((type: CategoryType) => (
+              <SelectItem
+                className={
+                  selectedType === type.toString()
+                    ? 'items-center justify-start gap-2 bg-primary text-primary-foreground'
+                    : 'items-center justify-start gap-2'
+                }
+                key={type}
+                value={type.toString()}
+              >
+                {getCategoryTypeLabel(type.toString())}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>

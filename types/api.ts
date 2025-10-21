@@ -241,7 +241,16 @@ export interface Category {
   id: number;
   name: string;
   description?: string;
-  type: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS';
+  type:
+    | 'COURSE'
+    | 'ARTICLE'
+    | 'BLOG'
+    | 'NEWS'
+    | 'VIDEO'
+    | 'AUDIO'
+    | 'DOCUMENT'
+    | 'IMAGE'
+    | 'ROOT';
   parent_id?: number;
   is_active: boolean;
   created_at: string;
@@ -429,7 +438,16 @@ export interface CreateSeasonData {
 export interface CreateCategoryData {
   name: string;
   description?: string;
-  type?: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS' | 'ROOT' | 'LESSON';
+  type?:
+    | 'COURSE'
+    | 'ARTICLE'
+    | 'BLOG'
+    | 'NEWS'
+    | 'VIDEO'
+    | 'AUDIO'
+    | 'DOCUMENT'
+    | 'IMAGE'
+    | 'ROOT';
 }
 
 export interface UpdateProfileData {
