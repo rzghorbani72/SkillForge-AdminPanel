@@ -175,12 +175,6 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
       );
 
       if (hasChildren && isAboveLg && isMinimized) {
-        console.log(
-          'Rendering dropdown for:',
-          item.title,
-          'children:',
-          item.children
-        );
         return (
           <DropdownMenu key={item.title}>
             <DropdownMenuTrigger className="w-full">

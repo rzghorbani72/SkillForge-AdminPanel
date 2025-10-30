@@ -2,7 +2,7 @@ import { OtpType } from '@/constants/data';
 import { User as UserType } from '@/types/api';
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export interface ApiResponse<T = unknown> {
   data: T;

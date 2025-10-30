@@ -10,28 +10,31 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 
 ### **User Roles & Permissions**
 
-| Role | Admin Panel Access | School Management | Course Management | Student Management |
-|------|-------------------|-------------------|-------------------|-------------------|
-| **ADMIN** | ✅ Full Access | ✅ Full Access | ✅ Full Access | ✅ Full Access |
-| **MANAGER** | ✅ Full Access | ✅ Full Access | ✅ Full Access | ✅ Full Access |
-| **TEACHER** | ✅ Limited Access | ✅ Own Courses | ✅ Own Courses | ✅ Own Students |
-| **USER (Student)** | ❌ No Access | ❌ No Access | ❌ No Access | ❌ No Access |
+| Role               | Admin Panel Access | School Management | Course Management | Student Management |
+| ------------------ | ------------------ | ----------------- | ----------------- | ------------------ |
+| **ADMIN**          | ✅ Full Access     | ✅ Full Access    | ✅ Full Access    | ✅ Full Access     |
+| **MANAGER**        | ✅ Full Access     | ✅ Full Access    | ✅ Full Access    | ✅ Full Access     |
+| **TEACHER**        | ✅ Limited Access  | ✅ Own Courses    | ✅ Own Courses    | ✅ Own Students    |
+| **USER (Student)** | ❌ No Access       | ❌ No Access      | ❌ No Access      | ❌ No Access       |
 
 ### **Authentication Flow**
 
 #### **1. Login Process**
+
 - Users can login with **email OR phone** + password
 - System checks user role and redirects accordingly:
   - **Students (USER role)**: Redirected to their school's dashboard
   - **Teachers/Managers/Admins**: Access admin panel
 
 #### **2. Multi-School Support**
+
 - Users can be enrolled in multiple schools with different roles
 - If user has multiple schools:
   - **Students**: School selection page → Redirect to chosen school
   - **Teachers**: Access admin panel with school switching
 
 #### **3. School-Specific Access**
+
 - Each school has a unique domain/subdomain
 - Students access: `schoolname.skillforge.com`
 - Teachers access: `admin.skillforge.com` (this panel)
@@ -39,6 +42,7 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 ### **Route Protection**
 
 #### **Public Routes** (No Authentication Required)
+
 - `/login` - Authentication page
 - `/register` - Teacher registration
 - `/find-school` - School discovery for students
@@ -47,6 +51,7 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 - `/support`, `/terms`, `/privacy` - Static pages
 
 #### **Protected Routes** (Authentication Required)
+
 - `/dashboard` - Main admin dashboard
 - `/schools` - School management
 - `/courses` - Course management
@@ -57,6 +62,7 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 ## 🏗️ **Architecture**
 
 ### **Frontend Stack**
+
 - **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS + Shadcn/ui
@@ -65,6 +71,7 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 - **Forms**: React Hook Form + Zod validation
 
 ### **Backend Integration**
+
 - **API**: RESTful API with NestJS
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: JWT tokens
@@ -74,6 +81,7 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 ## 🚀 **Key Features**
 
 ### **Authentication System**
+
 - ✅ Role-based access control
 - ✅ Multi-school user support
 - ✅ JWT token management
@@ -81,24 +89,28 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 - ✅ School selection for multi-school users
 
 ### **School Management**
+
 - ✅ Create and manage schools
 - ✅ Custom domain support
 - ✅ School-specific settings
 - ✅ Teacher and student management
 
 ### **Course Management**
+
 - ✅ Create, edit, and delete courses
 - ✅ Lesson management
 - ✅ Media upload support
 - ✅ Course enrollment tracking
 
 ### **User Management**
+
 - ✅ Student enrollment
 - ✅ Teacher assignment
 - ✅ Role management
 - ✅ Profile management
 
 ### **Analytics & Reporting**
+
 - ✅ Course performance metrics
 - ✅ Student progress tracking
 - ✅ Revenue analytics
@@ -140,7 +152,8 @@ SkillForge-AdminPanel/
 ## 🔧 **Setup Instructions**
 
 ### **Prerequisites**
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 - PostgreSQL database
 - SkillForge Backend running
@@ -148,38 +161,43 @@ SkillForge-AdminPanel/
 ### **Installation**
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd SkillForge-AdminPanel
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Environment Setup**
+
    ```bash
    cp .env.example .env.local
    ```
-   
+
    Configure the following variables:
+
    ```env
    # Backend API
-   NEXT_PUBLIC_API_URL=http://localhost:3001
-   
+   NEXT_PUBLIC_API_URL=http://localhost:3000
+
    # Authentication
    JWT_SECRET=your-jwt-secret
-   
+
    # Database
    DATABASE_URL=postgresql://user:password@localhost:5432/skillforge
-   
+
    # File Upload
    UPLOADTHING_SECRET=your-uploadthing-secret
    UPLOADTHING_APP_ID=your-uploadthing-app-id
    ```
 
 4. **Run the development server**
+
    ```bash
    npm run dev
    ```
@@ -191,18 +209,21 @@ SkillForge-AdminPanel/
 ## 🔄 **Authentication Flow Examples**
 
 ### **Scenario 1: Student Login**
+
 1. Student visits `/login`
 2. Enters credentials
 3. System detects USER role
 4. Redirects to school dashboard: `schoolname.skillforge.com`
 
 ### **Scenario 2: Teacher Login**
+
 1. Teacher visits `/login`
 2. Enters credentials
 3. System detects TEACHER role
 4. Redirects to admin panel: `/dashboard`
 
 ### **Scenario 3: Multi-School Student**
+
 1. Student visits `/login`
 2. Enters credentials
 3. System detects multiple schools
@@ -211,6 +232,7 @@ SkillForge-AdminPanel/
 6. Redirects to chosen school dashboard
 
 ### **Scenario 4: New Teacher Registration**
+
 1. Teacher visits `/register`
 2. Chooses "Create New School" or "Join Existing School"
 3. Fills registration form
@@ -249,19 +271,23 @@ The frontend integrates with the SkillForge Backend API:
 ## 🚀 **Deployment**
 
 ### **Production Build**
+
 ```bash
 npm run build
 npm start
 ```
 
 ### **Environment Variables**
+
 Ensure all production environment variables are configured:
+
 - Database connection
 - API endpoints
 - JWT secrets
 - File upload credentials
 
 ### **Domain Configuration**
+
 - Configure custom domains for schools
 - Set up SSL certificates
 - Configure DNS records
@@ -281,6 +307,7 @@ This project is licensed under the MIT License.
 ## 🆘 **Support**
 
 For support and questions:
+
 - Create an issue in the repository
 - Contact the development team
 - Check the documentation
