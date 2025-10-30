@@ -2,12 +2,14 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 
 interface SchoolFormData {
   name: string;
   private_domain: string;
   public_domain: string;
   description: string;
+  is_active: boolean;
 }
 
 interface SchoolFormProps {
@@ -32,7 +34,7 @@ export function SchoolForm({
   domainAvailability,
   isEdit = false
 }: SchoolFormProps) {
-  const updateFormData = (field: keyof SchoolFormData, value: string) => {
+  const updateFormData = (field: keyof SchoolFormData, value: any) => {
     onFormDataChange({ ...formData, [field]: value });
   };
 
@@ -120,6 +122,28 @@ export function SchoolForm({
           rows={3}
         />
       </div>
+      {isEdit && (
+        <div className="flex items-center justify-between rounded-md border p-3">
+          <div className="space-y-0.5">
+            <Label>Status</Label>
+            <p className="text-xs text-muted-foreground">
+              Toggle to activate or deactivate this school
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">
+              {formData.is_active ? 'Active' : 'Inactive'}
+            </span>
+            <Switch
+              checked={!!formData.is_active}
+              onCheckedChange={(checked) =>
+                updateFormData('is_active', checked)
+              }
+              aria-label="Toggle active status"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

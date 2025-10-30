@@ -37,7 +37,8 @@ export default function SchoolsPage() {
     name: '',
     private_domain: '',
     public_domain: '',
-    description: ''
+    description: '',
+    is_active: false
   });
 
   // Domain validation state
@@ -59,7 +60,8 @@ export default function SchoolsPage() {
       name: '',
       private_domain: '',
       public_domain: '',
-      description: ''
+      description: '',
+      is_active: false
     });
     setDomainValidation({ isValid: false, message: '' });
     setDomainAvailability({
@@ -254,6 +256,8 @@ export default function SchoolsPage() {
         updateData.private_domain = formatDomain(formData.private_domain);
       if (formData.description !== undefined)
         updateData.description = formData.description;
+      if (typeof formData.is_active === 'boolean')
+        updateData.is_active = formData.is_active;
 
       const response = (await apiClient.updateSchool(updateData)) as any;
       if (response.data.status === 'fail') {
@@ -325,7 +329,7 @@ export default function SchoolsPage() {
             </DialogHeader>
             <SchoolForm
               formData={formData}
-              onFormDataChange={setFormData}
+              onFormDataChange={(data) => setFormData(data)}
               domainValidation={domainValidation}
               domainAvailability={domainAvailability}
               isEdit={false}
@@ -363,7 +367,8 @@ export default function SchoolsPage() {
                   school?.domain?.private_address || ''
                 ),
                 public_domain: school?.domain?.public_address || '',
-                description: school?.description || ''
+                description: school?.description || '',
+                is_active: school?.is_active ?? false
               };
 
               setSelectedSchool(school);
@@ -397,7 +402,7 @@ export default function SchoolsPage() {
           </DialogHeader>
           <SchoolForm
             formData={formData}
-            onFormDataChange={setFormData}
+            onFormDataChange={(data) => setFormData(data)}
             domainValidation={domainValidation}
             domainAvailability={domainAvailability}
             isEdit={true}
