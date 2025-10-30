@@ -276,9 +276,11 @@ class ApiClient {
       });
     }
 
-    const response = await this.request(`/courses?${queryParams.toString()}`);
-    if (response.data) {
-      return response.data as { courses: any[]; pagination?: any };
+    const response = (await this.request(
+      `/courses?${queryParams.toString()}`
+    )) as any;
+    if (response.data.data && response.data.status === 'ok') {
+      return response.data.data as { courses: any[]; pagination?: any };
     }
     return { courses: [], pagination: undefined };
   }

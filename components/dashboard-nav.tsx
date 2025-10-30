@@ -122,15 +122,12 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const { isAboveLg } = useBreakpoint('lg');
 
   const toggleExpand = useCallback((title: string) => {
-    console.log('Toggling expand for:', title);
     setExpandedItems((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(title)) {
         newSet.delete(title);
-        console.log('Collapsed:', title);
       } else {
         newSet.add(title);
-        console.log('Expanded:', title);
       }
       return newSet;
     });
@@ -156,14 +153,6 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         Array.isArray(item.children) &&
         item.children.length > 0;
       const isExpanded = expandedItems.has(item.title);
-
-      // Debug logging
-      console.log('Item:', item.title, {
-        hasChildren,
-        isAboveLg,
-        isMinimized,
-        shouldShowDropdown: hasChildren && isAboveLg && isMinimized
-      });
 
       const content = (
         <NavItemContent

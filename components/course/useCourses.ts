@@ -34,7 +34,6 @@ const useCourses = (): UseCoursesReturn => {
     try {
       setIsLoading(true);
       const response = await apiClient.getCourses();
-
       // Handle new response structure with access control
       let nextCourses: Course[] = [];
       if (response && response && Array.isArray(response)) {
