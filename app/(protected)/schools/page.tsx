@@ -158,13 +158,6 @@ export default function SchoolsPage() {
         return;
       }
 
-      if (!domainAvailability.isAvailable) {
-        ErrorHandler.showWarning(
-          'Please choose a unique domain name that is not already taken'
-        );
-        return;
-      }
-
       const isDomainTaken = schools.some((school) => {
         const schoolDomainPart = extractDomainPart(
           school.domain?.private_address || ''
@@ -184,12 +177,16 @@ export default function SchoolsPage() {
 
       const schoolData = {
         name: formData.name,
-        private_domain: `${formatDomain(formData.private_domain)}.skillforge.com`,
+        private_domain: formatDomain(formData.private_domain),
         description: formData.description
       };
 
-      await apiClient.createSchool(schoolData);
-      ErrorHandler.showSuccess('School created successfully');
+      const response = (await apiClient.createSchool(schoolData)) as any;
+      if (response.data.status === 'fail') {
+        ErrorHandler.showWarning(response.message);
+        return;
+      }
+      ErrorHandler.showSuccess('School updated successfully');
 
       // Refresh schools list
       await refreshSchools();
@@ -254,11 +251,15 @@ export default function SchoolsPage() {
       const updateData: any = {};
       if (formData.name) updateData.name = formData.name;
       if (formData.private_domain)
-        updateData.private_domain = `${formatDomain(formData.private_domain)}.skillforge.com`;
+        updateData.private_domain = formatDomain(formData.private_domain);
       if (formData.description !== undefined)
         updateData.description = formData.description;
 
-      await apiClient.updateSchool(updateData);
+      const response = (await apiClient.updateSchool(updateData)) as any;
+      if (response.data.status === 'fail') {
+        ErrorHandler.showWarning(response.message);
+        return;
+      }
       ErrorHandler.showSuccess('School updated successfully');
 
       // Refresh schools list
@@ -333,12 +334,7 @@ export default function SchoolsPage() {
               <Button
                 onClick={handleCreateSchool}
                 disabled={
-                  !formData.name ||
-                  !formData.private_domain ||
-                  !domainValidation.isValid ||
-                  !domainAvailability.isAvailable ||
-                  domainAvailability.isChecking ||
-                  isLoading
+                  !formData.name || !formData.private_domain || isLoading
                 }
               >
                 {isLoading ? 'Creating...' : 'Create School'}
@@ -409,14 +405,7 @@ export default function SchoolsPage() {
           <DialogFooter>
             <Button
               onClick={handleUpdateSchool}
-              disabled={
-                !formData.name ||
-                !formData.private_domain ||
-                !domainValidation.isValid ||
-                !domainAvailability.isAvailable ||
-                domainAvailability.isChecking ||
-                isLoading
-              }
+              disabled={!formData.name || !formData.private_domain || isLoading}
             >
               {isLoading ? 'Updating...' : 'Update School'}
             </Button>
