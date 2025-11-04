@@ -757,7 +757,6 @@ class ApiClient {
 
   async getImages() {
     const response = await this.request('/images');
-    console.log('1.response getImages', response);
     // Return the images data directly
     if (response.data) {
       return response.data as any;
@@ -817,6 +816,18 @@ class ApiClient {
         Accept: 'image/*'
       }
     });
+  }
+
+  // Image update endpoint
+  async updateImage(imageId: number, data: { alt?: string }) {
+    const response = await this.request(`/images/${imageId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    if (response.data) {
+      return response.data as any;
+    }
+    return null as any;
   }
 
   // Image deletion endpoint

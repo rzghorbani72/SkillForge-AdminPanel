@@ -67,8 +67,8 @@ export const useCourseCreate = () => {
   const imageUpload = useImageUpload({
     title: form.watch('title') || 'Course Cover',
     description: form.watch('description') || 'Course cover image',
-    onSuccess: (imageId) => {
-      form.setValue('image_id', imageId);
+    onSuccess: (image) => {
+      form.setValue('image_id', image.id.toString());
     }
   });
 

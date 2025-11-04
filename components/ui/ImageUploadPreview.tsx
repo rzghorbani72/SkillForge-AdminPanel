@@ -26,25 +26,26 @@ interface ImageUploadPreviewProps {
   disabled?: boolean;
 }
 
-const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
-  title = 'Image Upload',
-  description = 'Upload an image',
-  onSuccess,
-  onError,
-  onCancel,
-  existingImageUrl,
-  existingImageId,
-  alt = 'Image preview',
-  className = '',
-  showPlaceholder = true,
-  placeholderText = 'No image selected',
-  placeholderSubtext = 'Upload an image to preview it here',
-  uploadButtonText = 'Upload Image',
-  selectButtonText = 'Select an image first',
-  showImageSelection = true,
-  selectedImageId,
-  disabled = false
-}) => {
+const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
+  const {
+    title = 'Image Upload',
+    description = 'Upload an image',
+    onSuccess,
+    onError,
+    onCancel,
+    existingImageUrl,
+    existingImageId,
+    alt = 'Image preview',
+    className = '',
+    showPlaceholder = true,
+    placeholderText = 'No image selected',
+    placeholderSubtext = 'Upload an image to preview it here',
+    uploadButtonText = 'Upload Image',
+    selectButtonText = 'Select an image first',
+    showImageSelection = true,
+    selectedImageId,
+    disabled = false
+  } = props;
   const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{
     id: number;
@@ -54,9 +55,9 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   const imageUpload = useImageUpload({
     title,
     description,
-    onSuccess: (imageId) => {
-      // Handle uploaded image
-      onSuccess?.({ id: parseInt(imageId), url: '' });
+    onSuccess: (image) => {
+      // Handle uploaded image with full image object
+      onSuccess?.(image);
     },
     onError,
     onCancel
@@ -156,12 +157,6 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
         placeholderText={placeholderText}
         placeholderSubtext={placeholderSubtext}
       />
-      {/* Debug info */}
-      <div className="text-xs text-gray-500">
-        Debug: uploadedImageId={imageUpload.uploadedImageId}, selectedImageId=
-        {selectedImageId}, selectedImageId={selectedImage?.id},
-        selectedImageUrl={selectedImage?.url ? 'Yes' : 'No'}
-      </div>
     </div>
   );
 };

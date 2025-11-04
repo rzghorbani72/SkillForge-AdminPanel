@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 export interface ImageUploadOptions {
   title?: string;
   description?: string;
-  onSuccess?: (imageId: string) => void;
+  onSuccess?: (image: { id: number; url: string }) => void;
   onError?: (error: Error) => void;
   onCancel?: () => void;
 }
@@ -70,15 +70,26 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
         },
         abortController.signal
       );
-
-      if (uploadResponse && (uploadResponse as any).id) {
-        const imageId = (uploadResponse as any).id.toString();
+      // Handle response structure: { message, status, data: { id, url, ... } }
+      // or direct image object: { id, url, ... }
+      const imageData = (uploadResponse as any)?.data || uploadResponse;
+      
+      if (imageData && imageData.id) {
+        const imageId = imageData.id.toString();
+        const imageUrl = imageData.url || '';
+        // Construct full URL if it's a relative path
+        const fullUrl = imageUrl.startsWith('http') 
+          ? imageUrl 
+          : imageUrl.startsWith('/')
+            ? `${process.env.NEXT_PUBLIC_HOST || ''}${imageUrl}`
+            : imageUrl;
         setUploadedImageId(imageId);
         toast.success('Image uploaded successfully!');
-        options.onSuccess?.(imageId);
+        options.onSuccess?.({ id: parseInt(imageId), url: fullUrl });
       } else {
-        toast.error('Failed to upload image');
-        options.onError?.(new Error('Upload failed'));
+        console.error('Upload response structure:', uploadResponse);
+        toast.error('Failed to upload image: Invalid response structure');
+        options.onError?.(new Error('Upload failed: Invalid response structure'));
       }
     } catch (error: any) {
       if (error.name === 'AbortError') {

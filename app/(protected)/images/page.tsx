@@ -6,22 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog';
-import {
   Search,
   Plus,
   Trash2,
   Download,
   Eye,
+  Edit,
   Calendar,
   User,
   Image as ImageIcon,
@@ -35,6 +25,10 @@ import {
   AccessControlBadge,
   AccessControlActions
 } from '@/components/ui/access-control-badge';
+import ImageUploadModal from '@/components/modal/image-upload-modal';
+import ImageViewModal from '@/components/modal/image-view-modal';
+import ImageEditModal from '@/components/modal/image-edit-modal';
+import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 
 interface ImageItem {
   id: number;
@@ -43,6 +37,7 @@ interface ImageItem {
   size: number;
   mime_type: string;
   created_at: string;
+  alt?: string;
   access_control?: {
     can_modify: boolean;
     can_delete: boolean;
@@ -59,6 +54,12 @@ export default function ImagesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Modal states
+  const [viewImage, setViewImage] = useState<ImageItem | null>(null);
+  const [editImage, setEditImage] = useState<ImageItem | null>(null);
+  const [deleteImage, setDeleteImage] = useState<ImageItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchImages();
@@ -102,15 +103,46 @@ export default function ImagesPage() {
     }
   };
 
+  const handleViewImage = (image: ImageItem) => {
+    setViewImage(image);
+  };
+
+  const handleEditImage = (image: ImageItem) => {
+    setEditImage(image);
+  };
+
+  const handleUpdateImage = async (data: { alt?: string }) => {
+    if (!editImage) return;
+    
+    try {
+      await apiClient.updateImage(editImage.id, data);
+      toast.success('Image updated successfully');
+      fetchImages(); // Refresh the list
+      setEditImage(null);
+    } catch (error) {
+      console.error('Error updating image:', error);
+      ErrorHandler.handleApiError(error);
+      throw error; // Re-throw to let the modal handle it
+    }
+  };
+
   const handleDeleteImage = async (imageId: number) => {
     try {
+      setIsDeleting(true);
       await apiClient.deleteImage(imageId);
       toast.success('Image deleted successfully');
+      setDeleteImage(null);
       fetchImages(); // Refresh the list
     } catch (error) {
       console.error('Error deleting image:', error);
       ErrorHandler.handleApiError(error);
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleDeleteClick = (image: ImageItem) => {
+    setDeleteImage(image);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -171,10 +203,24 @@ export default function ImagesPage() {
             {images.length} images)
           </p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Upload Image
-        </Button>
+        <ImageUploadModal
+          trigger={
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Upload Image
+            </Button>
+          }
+          onSuccess={(image) => {
+            // Toast is already shown by useImageUpload hook
+            fetchImages(); // Refresh the list
+          }}
+          onError={(error) => {
+            console.error('Error uploading image:', error);
+            ErrorHandler.handleApiError(error);
+          }}
+          modalTitle="Upload Image"
+          modalDescription="Upload a new image or select from your library"
+        />
       </div>
 
       {/* Search */}
@@ -272,9 +318,9 @@ export default function ImagesPage() {
                       {image.access_control ? (
                         <AccessControlActions
                           accessControl={image.access_control}
-                          onView={() => console.log('View image', image.id)}
-                          onEdit={() => console.log('Edit image', image.id)}
-                          onDelete={() => handleDeleteImage(image.id)}
+                          onView={() => handleViewImage(image)}
+                          onEdit={() => handleEditImage(image)}
+                          onDelete={() => handleDeleteClick(image)}
                           className="flex-1"
                         />
                       ) : (
@@ -283,42 +329,26 @@ export default function ImagesPage() {
                             size="sm"
                             variant="outline"
                             className="flex-1"
+                            onClick={() => handleViewImage(image)}
                           >
                             <Eye className="mr-1 h-3 w-3" />
                             View
                           </Button>
-                          <Button size="sm" variant="outline">
-                            <Download className="h-3 w-3" />
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditImage(image)}
+                          >
+                            <Edit className="mr-1 h-3 w-3" />
+                            Edit
                           </Button>
-
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button size="sm" variant="outline">
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Are you sure?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will
-                                  permanently delete the image "{image.filename}
-                                  ".
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDeleteImage(image.id)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDeleteClick(image)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
                         </>
                       )}
                     </div>
@@ -328,6 +358,44 @@ export default function ImagesPage() {
             );
           })}
         </div>
+      )}
+
+      {/* View Image Modal */}
+      {viewImage && (
+        <ImageViewModal
+          open={!!viewImage}
+          onOpenChange={(open) => !open && setViewImage(null)}
+          imageUrl={viewImage.url}
+          title={viewImage.alt || viewImage.filename}
+          filename={viewImage.filename}
+        />
+      )}
+
+      {/* Edit Image Modal */}
+      {editImage && (
+        <ImageEditModal
+          open={!!editImage}
+          onOpenChange={(open) => !open && setEditImage(null)}
+          image={{
+            id: editImage.id,
+            url: editImage.url,
+            filename: editImage.filename,
+            alt: editImage.alt
+          }}
+          onSave={handleUpdateImage}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteImage && (
+        <ConfirmDeleteModal
+          open={!!deleteImage}
+          onOpenChange={(open) => !open && setDeleteImage(null)}
+          title={deleteImage.filename}
+          itemType="image"
+          onConfirm={() => handleDeleteImage(deleteImage.id)}
+          isLoading={isDeleting}
+        />
       )}
     </div>
   );
