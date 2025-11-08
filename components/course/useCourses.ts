@@ -4,6 +4,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/hooks/useSchool';
 import { Course } from '@/types/api';
+import { toast } from 'sonner';
 
 type UseCoursesReturn = {
   courses: Course[];
@@ -12,6 +13,7 @@ type UseCoursesReturn = {
   setSearchTerm: (value: string) => void;
   handleViewCourse: (course: Course) => void;
   handleEditCourse: (course: Course) => void;
+  handleDeleteCourse: (course: Course) => void;
 };
 
 const useCourses = (): UseCoursesReturn => {
@@ -72,13 +74,30 @@ const useCourses = (): UseCoursesReturn => {
     router.push(`/courses/${course.id}/edit`);
   };
 
+  const handleDeleteCourse = async (course: Course) => {
+    try {
+      const response = await apiClient.deleteCourse(course.id);
+      console.log('delete course response', response);
+      if (response && response.status === 200) {
+        toast.success((response.data as any).message);
+        fetchCourses();
+      } else {
+        toast.error('Failed to delete course');
+      }
+    } catch (error) {
+      console.error('Error deleting course:', error);
+      ErrorHandler.handleApiError(error);
+    }
+  };
+
   return {
     courses,
     isLoading,
     searchTerm,
     setSearchTerm,
     handleViewCourse,
-    handleEditCourse
+    handleEditCourse,
+    handleDeleteCourse
   };
 };
 

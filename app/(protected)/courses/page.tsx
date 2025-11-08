@@ -17,7 +17,8 @@ export default function CoursesPage() {
     searchTerm,
     setSearchTerm,
     handleViewCourse,
-    handleEditCourse
+    handleEditCourse,
+    handleDeleteCourse
   } = useCourses();
 
   if (!selectedSchool) {
@@ -64,6 +65,7 @@ export default function CoursesPage() {
         onCreate={() => router.push('/courses/create')}
         onView={handleViewCourse}
         onEdit={handleEditCourse}
+        onDelete={handleDeleteCourse}
       />
     </div>
   );

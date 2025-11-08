@@ -8,13 +8,14 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Clock, Edit, Eye, Plus, Users } from 'lucide-react';
+import { BookOpen, Clock, Edit, Eye, Plus, Trash2, Users } from 'lucide-react';
 import { Course } from '@/types/api';
 import {
   AccessControlBadge,
   AccessControlActions
 } from '@/components/ui/access-control-badge';
 import CourseCover from './CourseCover';
+import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 
 type Props = {
   courses: Course[];
@@ -22,6 +23,7 @@ type Props = {
   onCreate?: () => void;
   onView: (course: Course) => void;
   onEdit: (course: Course) => void;
+  onDelete?: (course: Course) => void;
 };
 
 const CoursesGrid = ({
@@ -29,8 +31,35 @@ const CoursesGrid = ({
   searchTerm,
   onCreate,
   onView,
-  onEdit
+  onEdit,
+  onDelete
 }: Props) => {
+  const [courseToDelete, setCourseToDelete] = React.useState<Course | null>(
+    null
+  );
+
+  const handleDeleteClick = (course: Course) => {
+    setCourseToDelete(course);
+  };
+
+  const handleConfirmDelete = () => {
+    if (courseToDelete && onDelete) {
+      onDelete(courseToDelete);
+    }
+    setCourseToDelete(null);
+  };
+
+  const handleModalOpenChange = (open: boolean) => {
+    if (!open) {
+      setCourseToDelete(null);
+    }
+  };
+
+  const resultsLabel = `${courses.length} course${courses.length === 1 ? '' : 's'}`;
+  const headerDescription = searchTerm
+    ? `Showing ${resultsLabel} matching "${searchTerm}".`
+    : `Showing ${resultsLabel}.`;
+
   if (courses.length === 0) {
     return (
       <Card className="py-12 text-center">
@@ -52,114 +81,158 @@ const CoursesGrid = ({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {courses.map((course) => (
-        <Card key={course.id} className="transition-shadow hover:shadow-md">
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <CardTitle className="line-clamp-2 text-lg">
-                  {course.title}
-                </CardTitle>
-                <CardDescription className="line-clamp-2 text-sm">
-                  {course.short_description || course.description}
-                </CardDescription>
-              </div>
-              {/* Access Control Badge */}
-              {course.access_control && (
-                <div className="ml-2">
-                  <AccessControlBadge
-                    accessControl={course.access_control}
-                    className="text-xs"
-                  />
-                </div>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <CourseCover course={course} />
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span className="flex items-center">
-                  <Users className="mr-1 h-4 w-4" />
-                  {course.students_count || 0}
-                </span>
-                <span className="flex items-center">
-                  <Clock className="mr-1 h-4 w-4" />
-                  {course.lessons_count || 0}
-                </span>
-                {course.rating > 0 && (
-                  <span className="flex items-center">
-                    ⭐ {course.rating.toFixed(1)}
-                  </span>
-                )}
-              </div>
+    <>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">Courses</h2>
+          <p className="text-sm text-muted-foreground">{headerDescription}</p>
+        </div>
+        {onCreate && (
+          <Button onClick={onCreate} className="w-full sm:w-auto">
+            <Plus className="mr-2 h-4 w-4" />
+            Create Course
+          </Button>
+        )}
+      </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-1">
-                  <Badge
-                    variant={course.is_published ? 'default' : 'secondary'}
-                    className="text-xs"
-                  >
-                    {course.is_published ? 'Published' : 'Draft'}
-                  </Badge>
-                  {course.is_featured && (
+      <div className="flex flex-wrap gap-4">
+        {courses.map((course) => (
+          <div
+            key={course.id}
+            className="flex min-w-[300px] max-w-full flex-1 flex-col gap-3 sm:max-w-[340px] lg:max-w-[380px] xl:max-w-[420px]"
+          >
+            <Card className="flex h-full w-full flex-col border-border/60 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1">
+                    <CardTitle className="line-clamp-2 text-lg">
+                      {course.title}
+                    </CardTitle>
+                    <CardDescription className="line-clamp-2 text-sm">
+                      {course.short_description || course.description}
+                    </CardDescription>
+                  </div>
+                  {course.access_control && (
+                    <AccessControlBadge
+                      accessControl={course.access_control}
+                      className="shrink-0 text-xs"
+                    />
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="flex flex-1 flex-col gap-4 pt-0">
+                <CourseCover course={course} />
+
+                <div className="grid grid-cols-3 items-center gap-2 text-sm text-muted-foreground">
+                  <span className="flex items-center justify-start gap-1">
+                    <Users className="h-4 w-4" />
+                    {course.students_count || 0}
+                  </span>
+                  <span className="flex items-center justify-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    {course.lessons_count || 0}
+                  </span>
+                  {course.rating > 0 ? (
+                    <span className="flex items-center justify-end gap-1">
+                      ⭐ {course.rating.toFixed(1)}
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-end gap-1 text-muted-foreground/60">
+                      No rating
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Badge
-                      variant="outline"
-                      className="border-yellow-600 text-xs text-yellow-600"
+                      variant={course.is_published ? 'default' : 'secondary'}
+                      className="text-xs"
                     >
-                      Featured
+                      {course.is_published ? 'Published' : 'Draft'}
+                    </Badge>
+                    {course.is_featured && (
+                      <Badge
+                        variant="outline"
+                        className="border-yellow-600 text-xs text-yellow-600"
+                      >
+                        Featured
+                      </Badge>
+                    )}
+                  </div>
+                  {course.price && course.price > 0 ? (
+                    <span className="text-sm font-semibold text-foreground">
+                      ${(course.price / 100).toFixed(2)}
+                    </span>
+                  ) : (
+                    <Badge variant="outline" className="text-xs">
+                      Free
                     </Badge>
                   )}
                 </div>
-                {course.price && course.price > 0 ? (
-                  <span className="text-sm font-medium">
-                    ${(course.price / 100).toFixed(2)}
-                  </span>
-                ) : (
-                  <Badge variant="outline" className="text-xs">
-                    Free
-                  </Badge>
-                )}
-              </div>
 
-              <div className="flex items-center space-x-2">
-                {course.access_control ? (
-                  <AccessControlActions
-                    accessControl={course.access_control}
-                    onView={() => onView(course)}
-                    onEdit={() => onEdit(course)}
-                    onDelete={() => console.log('Delete course', course.id)}
-                    className="flex-1"
-                  />
-                ) : (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => onView(course)}
-                    >
-                      <Eye className="mr-1 h-4 w-4" />
-                      View
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => onEdit(course)}
-                    >
-                      <Edit className="mr-1 h-4 w-4" />
-                      Edit
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+                <div className="mt-auto flex flex-wrap items-center gap-2">
+                  {course.access_control ? (
+                    <AccessControlActions
+                      accessControl={course.access_control}
+                      onView={() => onView(course)}
+                      onEdit={() => onEdit(course)}
+                      onDelete={
+                        onDelete ? () => handleDeleteClick(course) : undefined
+                      }
+                      className="w-full justify-between gap-2 sm:flex sm:w-auto"
+                    />
+                  ) : (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="min-w-[110px] flex-1"
+                        onClick={() => onView(course)}
+                      >
+                        <Eye className="mr-1 h-4 w-4" />
+                        View
+                      </Button>
+                      {onEdit && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="min-w-[110px] flex-1"
+                          onClick={() => onEdit(course)}
+                        >
+                          <Edit className="mr-1 h-4 w-4" />
+                          Edit
+                        </Button>
+                      )}
+                      {onDelete && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="min-w-[110px] flex-1"
+                          onClick={() => handleDeleteClick(course)}
+                        >
+                          <Trash2 className="mr-1 h-4 w-4" />
+                          Delete
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ))}
+      </div>
+      {courseToDelete && (
+        <ConfirmDeleteModal
+          open={Boolean(courseToDelete)}
+          onOpenChange={handleModalOpenChange}
+          title={courseToDelete.title}
+          itemType="course"
+          onConfirm={handleConfirmDelete}
+        />
+      )}
+    </>
   );
 };
 
