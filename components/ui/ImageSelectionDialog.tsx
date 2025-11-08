@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 interface Image {
   id: number;
@@ -70,25 +71,22 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const fetchImages = async () => {
+    console.log('fetchImages');
     try {
       setIsLoading(true);
       setError(null);
       const response = await apiClient.getImages();
-
+      console.log('image response', response);
       // Handle the API response structure: { message, status, data: images[] }
-      if (response && Array.isArray(response)) {
+      if (response.data && Array.isArray(response.data)) {
         // Transform the response to match our Image interface with loading states
-        const transformedImages = response.map((img: any) => ({
+        const transformedImages = response.data.map((img: any) => ({
           id: img.id,
-          url:
-            process.env.NEXT_PUBLIC_HOST +
-            (img.public_url_by_filename || img.public_url_by_id),
+          url: process.env.NEXT_PUBLIC_HOST + img.url,
           alt: img.alt || '',
           title: img.filename || `Image ${img.id}`,
           created_at: img.created_at || new Date().toISOString(),
           filename: img.filename,
-          isLoading: true,
-          hasError: false,
           isDeleting: false
         }));
 
@@ -135,32 +133,6 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
     console.log('Calling onSelect with:', imageData);
     onSelect(imageData);
     onOpenChange?.(false);
-  };
-
-  const handleImageLoad = (imageId: number) => {
-    setImages((prev) =>
-      prev.map((img) =>
-        img.id === imageId ? { ...img, isLoading: false, hasError: false } : img
-      )
-    );
-    setFilteredImages((prev) =>
-      prev.map((img) =>
-        img.id === imageId ? { ...img, isLoading: false, hasError: false } : img
-      )
-    );
-  };
-
-  const handleImageError = (imageId: number) => {
-    setImages((prev) =>
-      prev.map((img) =>
-        img.id === imageId ? { ...img, isLoading: false, hasError: true } : img
-      )
-    );
-    setFilteredImages((prev) =>
-      prev.map((img) =>
-        img.id === imageId ? { ...img, isLoading: false, hasError: true } : img
-      )
-    );
   };
 
   const handleDeleteClick = (imageId: number) => {
@@ -287,7 +259,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4 p-1 md:grid-cols-3 lg:grid-cols-4">
-                {filteredImages.map((image) => (
+                {filteredImages.map((image: ImageWithState) => (
                   <div
                     key={image.id}
                     className={`group relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
@@ -311,31 +283,23 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
                   >
                     <div className="relative aspect-square overflow-hidden rounded-lg">
                       {/* Loading state */}
-                      {image.isLoading && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                          <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                        </div>
-                      )}
 
-                      {/* Error state - show corrupted image placeholder */}
-                      {image.hasError ? (
+                      {image.url && (
+                        <Image
+                          src={image.url}
+                          alt={image.alt || 'Image'}
+                          width={100}
+                          height={100}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                      {image.hasError && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 text-gray-500">
                           <AlertCircle className="mb-2 h-8 w-8" />
                           <span className="px-2 text-center text-xs">
                             Corrupted Image
                           </span>
                         </div>
-                      ) : (
-                        <img
-                          src={image.url}
-                          alt={image.alt || 'Image'}
-                          className="h-full w-full object-cover"
-                          onLoad={() => handleImageLoad(image.id)}
-                          onError={() => handleImageError(image.id)}
-                          style={{
-                            display: image.isLoading ? 'none' : 'block'
-                          }}
-                        />
                       )}
                     </div>
 

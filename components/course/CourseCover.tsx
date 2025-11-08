@@ -19,7 +19,6 @@ const CourseCover = ({ course }: Props) => {
             src={`${course.cover?.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${course.cover?.url}` : course.cover?.url}`}
             alt={course.title}
             className="h-full w-full object-contain"
-            unoptimized
             fill
             onError={(e) => {
               const target = e.target as HTMLImageElement;

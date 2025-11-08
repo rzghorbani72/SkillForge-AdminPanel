@@ -46,7 +46,6 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
               }
               alt={alt}
               className="h-auto w-full object-contain"
-              unoptimized
               width={0}
               height={0}
               sizes="100vw"
@@ -83,7 +82,6 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
               src={`${selectedImage.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${selectedImage.url}` : selectedImage.url}`}
               alt={alt}
               className="h-auto w-full object-contain"
-              unoptimized
               width={0}
               height={0}
               sizes="100vw"
@@ -118,7 +116,6 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
               src={`${process.env.NEXT_PUBLIC_HOST}/api/images/fetch-image-by-id/${uploadedImageId}`}
               alt={alt}
               className="h-auto w-full object-contain"
-              unoptimized
               width={0}
               height={0}
               sizes="100vw"
@@ -149,7 +146,6 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
           src={existingImageUrl || `/api/media/${existingImageId}`}
           alt="Current image"
           className="h-full w-full object-cover"
-          unoptimized
           width={0}
           height={0}
         />

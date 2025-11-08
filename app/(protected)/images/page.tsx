@@ -54,7 +54,7 @@ export default function ImagesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Modal states
   const [viewImage, setViewImage] = useState<ImageItem | null>(null);
   const [editImage, setEditImage] = useState<ImageItem | null>(null);
@@ -113,7 +113,7 @@ export default function ImagesPage() {
 
   const handleUpdateImage = async (data: { alt?: string }) => {
     if (!editImage) return;
-    
+
     try {
       await apiClient.updateImage(editImage.id, data);
       toast.success('Image updated successfully');
@@ -264,7 +264,7 @@ export default function ImagesPage() {
                           ? `${process.env.NEXT_PUBLIC_HOST}${image.url}`
                           : image.url
                       }
-                      alt={image.filename}
+                      alt={image.alt || image.filename}
                       fill
                       className="object-cover"
                       onError={(e) => {
@@ -286,12 +286,19 @@ export default function ImagesPage() {
                 <CardContent className="p-4">
                   <div className="space-y-2">
                     <div className="flex items-start justify-between">
-                      <h3 className="line-clamp-2 flex-1 font-semibold">
-                        {image.filename}
-                      </h3>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="line-clamp-1 font-semibold">
+                          {image.filename}
+                        </h3>
+                        {image.alt && (
+                          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                            {image.alt}
+                          </p>
+                        )}
+                      </div>
                       {/* Access Control Badge */}
                       {image.access_control && (
-                        <div className="ml-2">
+                        <div className="ml-2 flex-shrink-0">
                           <AccessControlBadge
                             accessControl={image.access_control}
                             className="text-xs"
@@ -364,7 +371,7 @@ export default function ImagesPage() {
       {viewImage && (
         <ImageViewModal
           open={!!viewImage}
-          onOpenChange={(open) => !open && setViewImage(null)}
+          onOpenChange={(open: boolean) => !open && setViewImage(null)}
           imageUrl={viewImage.url}
           title={viewImage.alt || viewImage.filename}
           filename={viewImage.filename}
@@ -375,7 +382,7 @@ export default function ImagesPage() {
       {editImage && (
         <ImageEditModal
           open={!!editImage}
-          onOpenChange={(open) => !open && setEditImage(null)}
+          onOpenChange={(open: boolean) => !open && setEditImage(null)}
           image={{
             id: editImage.id,
             url: editImage.url,
@@ -390,7 +397,7 @@ export default function ImagesPage() {
       {deleteImage && (
         <ConfirmDeleteModal
           open={!!deleteImage}
-          onOpenChange={(open) => !open && setDeleteImage(null)}
+          onOpenChange={(open: boolean) => !open && setDeleteImage(null)}
           title={deleteImage.filename}
           itemType="image"
           onConfirm={() => handleDeleteImage(deleteImage.id)}

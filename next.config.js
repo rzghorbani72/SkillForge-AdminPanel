@@ -1,5 +1,9 @@
 const nextConfig = {
   images: {
+    // Use custom loader to bypass Next.js optimization and serve images directly from backend
+    // This prevents server-side fetch errors (500) and avoids disk usage
+    loader: 'custom',
+    loaderFile: './lib/image-loader.js',
     remotePatterns: [
       {
         protocol: 'http',
@@ -13,7 +17,10 @@ const nextConfig = {
         port: '3000',
         pathname: '/api/images/**'
       }
-    ]
+    ],
+    // Device sizes for responsive images
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384]
   },
   // webpack(config) {
   //   // Grab the existing rule that handles SVG imports

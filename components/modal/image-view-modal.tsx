@@ -55,36 +55,24 @@ const ImageViewModal: React.FC<ImageViewModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl max-h-[90vh] p-0">
-        <DialogHeader className="px-6 pt-6 pb-2">
+      <DialogContent className="max-h-[90vh] max-w-5xl p-0">
+        <DialogHeader className="px-6 pb-2 pt-10">
           <div className="flex items-center justify-between">
             <DialogTitle>{title || filename || 'Image Preview'}</DialogTitle>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownload}
-              >
+              <Button variant="outline" size="sm" onClick={handleDownload}>
                 <Download className="mr-2 h-4 w-4" />
                 Download
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onOpenChange(false)}
-              >
-                <X className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </DialogHeader>
-        <div className="relative w-full h-[calc(90vh-100px)] bg-muted flex items-center justify-center p-6">
+        <div className="relative flex h-[calc(90vh-100px)] w-full items-center justify-center bg-muted p-6">
           <Image
             src={fullImageUrl}
             alt={title || filename || 'Image'}
             fill
             className="object-contain"
-            unoptimized
           />
         </div>
       </DialogContent>
