@@ -32,11 +32,12 @@ const CreateCoursePricing = ({ form }: Props) => {
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="0.00 (0-999,999.99)"
+                    inputMode="numeric"
+                    placeholder="0 (0-999,999,999)"
                     {...field}
                     min="0"
-                    max="999999.99"
-                    step="0.01"
+                    max="999999999"
+                    step="1"
                   />
                 </FormControl>
                 <FormMessage />
@@ -53,11 +54,12 @@ const CreateCoursePricing = ({ form }: Props) => {
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="0.00 (0-999,999.99)"
+                    inputMode="numeric"
+                    placeholder="0 (0-999,999,999)"
                     {...field}
                     min="0"
-                    max="999999.99"
-                    step="0.01"
+                    max="999999999"
+                    step="1"
                   />
                 </FormControl>
                 <FormMessage />
@@ -66,7 +68,7 @@ const CreateCoursePricing = ({ form }: Props) => {
           />
         </div>
         <p className="text-sm text-gray-600">
-          Prices must be between 0 and 999,999.99
+          Enter whole numbers between 0 and 999,999,999
         </p>
       </CardContent>
     </Card>

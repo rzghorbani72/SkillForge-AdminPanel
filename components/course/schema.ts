@@ -12,17 +12,25 @@ export const courseFormSchema = z.object({
   primary_price: z
     .string()
     .min(1, 'Primary price is required')
+    .refine(
+      (val) => /^\d+$/.test(val.trim()),
+      'Primary price must be a whole number'
+    )
     .refine((val) => {
       const num = Number(val);
-      return !isNaN(num) && num >= 0;
-    }, 'Primary price must be a valid number'),
+      return !isNaN(num) && num >= 0 && num <= 999999999;
+    }, 'Primary price must be between 0 and 999,999,999'),
   secondary_price: z
     .string()
     .min(1, 'Secondary price is required')
+    .refine(
+      (val) => /^\d+$/.test(val.trim()),
+      'Secondary price must be a whole number'
+    )
     .refine((val) => {
       const num = Number(val);
-      return !isNaN(num) && num >= 0;
-    }, 'Secondary price must be a valid number'),
+      return !isNaN(num) && num >= 0 && num <= 999999999;
+    }, 'Secondary price must be between 0 and 999,999,999'),
   category_id: z.string().optional(),
   season_id: z.string().optional(),
   audio_id: z.string().optional(),

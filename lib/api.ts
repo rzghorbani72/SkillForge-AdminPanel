@@ -287,10 +287,24 @@ class ApiClient {
 
   async getCourse(id: number) {
     const response = await this.request(`/courses/${id}`);
-    if (response.data) {
-      return response.data as any;
+    const payload = response.data as any;
+
+    if (!payload) {
+      return null as any;
     }
-    return null as any;
+
+    // Handle standard API shape: { status: 'ok', data: {...}, user_state?: {...} }
+    if (payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+
+    // Fallback for APIs that wrap the resource under `data`
+    if (payload.data) {
+      return payload.data;
+    }
+
+    // As a last resort, return the payload itself (already the resource)
+    return payload;
   }
 
   async createCourse(courseData: {

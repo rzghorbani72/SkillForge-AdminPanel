@@ -22,17 +22,25 @@ const courseFormSchema = z.object({
   primary_price: z
     .string()
     .min(1, 'Primary price is required')
+    .refine(
+      (val) => /^\d+$/.test(val.trim()),
+      'Primary price must be a whole number'
+    )
     .refine((val) => {
       const num = Number(val);
-      return !isNaN(num) && num >= 0 && num <= 999999.99;
-    }, 'Primary price must be a valid number between 0 and 999,999.99'),
+      return !isNaN(num) && num >= 0 && num <= 999999999;
+    }, 'Primary price must be between 0 and 999,999,999'),
   secondary_price: z
     .string()
     .min(1, 'Secondary price is required')
+    .refine(
+      (val) => /^\d+$/.test(val.trim()),
+      'Secondary price must be a whole number'
+    )
     .refine((val) => {
       const num = Number(val);
-      return !isNaN(num) && num >= 0 && num <= 999999.99;
-    }, 'Secondary price must be a valid number between 0 and 999,999.99'),
+      return !isNaN(num) && num >= 0 && num <= 999999999;
+    }, 'Secondary price must be between 0 and 999,999,999'),
   category_id: z.string().optional(),
   season_id: z.string().optional(),
   audio_id: z.string().optional(),
@@ -53,8 +61,8 @@ export const useCourseCreate = () => {
     defaultValues: {
       title: '',
       description: '',
-      primary_price: '0.00',
-      secondary_price: '0.00',
+      primary_price: '0',
+      secondary_price: '0',
       category_id: '',
       season_id: '',
       audio_id: '',
@@ -98,18 +106,23 @@ export const useCourseCreate = () => {
         toast.error('Secondary price cannot be greater than primary price');
         return;
       }
-      if (isNaN(primaryPrice) || isNaN(secondaryPrice)) {
-        toast.error('Prices must be valid numbers');
+      if (
+        isNaN(primaryPrice) ||
+        isNaN(secondaryPrice) ||
+        !Number.isInteger(primaryPrice) ||
+        !Number.isInteger(secondaryPrice)
+      ) {
+        toast.error('Prices must be whole numbers');
         return;
       }
 
       if (
         primaryPrice < 0 ||
-        primaryPrice > 999999.99 ||
+        primaryPrice > 999999999 ||
         secondaryPrice < 0 ||
-        secondaryPrice > 999999.99
+        secondaryPrice > 999999999
       ) {
-        toast.error('Prices must be between 0 and 999,999.99');
+        toast.error('Prices must be between 0 and 999,999,999');
         return;
       }
 

@@ -59,12 +59,14 @@ const useCourseEdit = (): UseCourseEditReturn => {
         setInitialValues({
           title: response.title || '',
           description: response.description || '',
-          primary_price: response.price
-            ? (response.price / 100).toFixed(2)
-            : '0.00',
-          secondary_price: response.original_price
-            ? (response.original_price / 100).toFixed(2)
-            : '0.00',
+          primary_price:
+            typeof response.price === 'number'
+              ? Math.trunc(response.price).toString()
+              : '0',
+          secondary_price:
+            typeof response.original_price === 'number'
+              ? Math.trunc(response.original_price).toString()
+              : '0',
           category_id: response.category_id?.toString() || '',
           season_id: '',
           audio_id: response.audio_id?.toString() || '',
@@ -101,8 +103,13 @@ const useCourseEdit = (): UseCourseEditReturn => {
         toast.error('Both primary and secondary prices are required');
         return;
       }
-      if (isNaN(primaryPrice) || isNaN(secondaryPrice)) {
-        toast.error('Prices must be valid numbers');
+      if (
+        isNaN(primaryPrice) ||
+        isNaN(secondaryPrice) ||
+        !Number.isInteger(primaryPrice) ||
+        !Number.isInteger(secondaryPrice)
+      ) {
+        toast.error('Prices must be whole numbers');
         return;
       }
 
@@ -113,11 +120,11 @@ const useCourseEdit = (): UseCourseEditReturn => {
 
       if (
         primaryPrice < 0 ||
-        primaryPrice > 999999.99 ||
+        primaryPrice > 999999999 ||
         secondaryPrice < 0 ||
-        secondaryPrice > 999999.99
+        secondaryPrice > 999999999
       ) {
-        toast.error('Prices must be between 0 and 999,999.99');
+        toast.error('Prices must be between 0 and 999,999,999');
         return;
       }
 
