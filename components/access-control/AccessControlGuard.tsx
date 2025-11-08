@@ -56,10 +56,59 @@ export default function AccessControlGuard({
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading || !userState) return;
+    if (isLoading) return;
+    if (!userState && !resource?.access_control) return;
 
     try {
       let access = true;
+
+      const ownerIdFromResource =
+        resource?.owner_id ??
+        (resource as any)?.author?.user_id ??
+        (resource as any)?.author_id ??
+        (resource as any)?.user_id ??
+        null;
+
+      const resourceAccess = resource
+        ? resource.access_control
+          ? {
+              canModify: resource.access_control.can_modify,
+              canDelete: resource.access_control.can_delete,
+              canView: resource.access_control.can_view,
+              isOwner: resource.access_control.is_owner,
+              userRole: resource.access_control.user_role,
+              userPermissions: resource.access_control.user_permissions || []
+            }
+          : checkResourceAccess(resource)
+        : null;
+
+      const isOwner =
+        resourceAccess?.isOwner ||
+        (ownerIdFromResource !== null &&
+          userState?.user_id === Number(ownerIdFromResource)) ||
+        false;
+      const roleAllowsCourseManagement =
+        resourceAccess?.userRole === 'ADMIN' ||
+        resourceAccess?.userRole === 'MANAGER' ||
+        (resourceAccess?.userRole === 'TEACHER' &&
+          resourceAccess?.userPermissions?.includes('manage_courses')) ||
+        resourceAccess?.userPermissions?.includes('manage_courses') ||
+        resourceAccess?.userPermissions?.includes('modify_own_data');
+
+      const hasBackendAccess =
+        !userState &&
+        resourceAccess &&
+        (resourceAccess.canModify ||
+          resourceAccess.canView ||
+          resourceAccess.canDelete ||
+          isOwner ||
+          roleAllowsCourseManagement);
+
+      if (hasBackendAccess) {
+        setHasAccess(true);
+        setAccessError(null);
+        return;
+      }
 
       // Check permission requirement
       if (requiredPermission && !hasPermission(requiredPermission)) {
@@ -83,7 +132,22 @@ export default function AccessControlGuard({
         !requiredPermission &&
         !requiredRole
       ) {
-        if (!canManageCourses()) {
+        if (resourceAccess) {
+          const canPerform =
+            action === 'modify'
+              ? resourceAccess.canModify ||
+                isOwner ||
+                roleAllowsCourseManagement
+              : resourceAccess.canDelete ||
+                isOwner ||
+                roleAllowsCourseManagement;
+          if (!canPerform) {
+            access = false;
+            setAccessError(
+              `You do not have permission to ${action} this resource.`
+            );
+          }
+        } else if (!canManageCourses()) {
           access = false;
           setAccessError(
             'You need course management permissions to perform this action.'
@@ -92,12 +156,14 @@ export default function AccessControlGuard({
       }
 
       // Check resource-specific access
-      if (resource) {
-        const resourceAccess = checkResourceAccess(resource);
-
+      if (resourceAccess) {
         switch (action) {
           case 'view':
-            if (!resourceAccess.canView) {
+            if (
+              !resourceAccess.canView &&
+              !isOwner &&
+              !roleAllowsCourseManagement
+            ) {
               access = false;
               setAccessError(
                 'You do not have permission to view this resource.'
@@ -105,7 +171,11 @@ export default function AccessControlGuard({
             }
             break;
           case 'modify':
-            if (!resourceAccess.canModify) {
+            if (
+              !resourceAccess.canModify &&
+              !isOwner &&
+              !roleAllowsCourseManagement
+            ) {
               access = false;
               setAccessError(
                 'You do not have permission to modify this resource.'
@@ -113,7 +183,11 @@ export default function AccessControlGuard({
             }
             break;
           case 'delete':
-            if (!resourceAccess.canDelete) {
+            if (
+              !resourceAccess.canDelete &&
+              !isOwner &&
+              !roleAllowsCourseManagement
+            ) {
               access = false;
               setAccessError(
                 'You do not have permission to delete this resource.'
