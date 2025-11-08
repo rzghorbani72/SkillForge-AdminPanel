@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 type UseCoursesReturn = {
   courses: Course[];
+  totalCourses: number;
   isLoading: boolean;
   searchTerm: string;
   setSearchTerm: (value: string) => void;
@@ -23,6 +24,34 @@ const useCourses = (): UseCoursesReturn => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const totalCourses = courses.length;
+
+  const filteredCourses = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) {
+      return courses;
+    }
+
+    return courses.filter((course) => {
+      const titleMatch = course.title?.toLowerCase().includes(term);
+      const slugMatch = course.slug?.toLowerCase().includes(term);
+      const descriptionMatch = course.description?.toLowerCase().includes(term);
+      const shortDescriptionMatch = course.short_description
+        ?.toLowerCase()
+        .includes(term);
+      const categoryMatch = (course as any)?.category?.name
+        ?.toLowerCase()
+        .includes(term);
+
+      return (
+        titleMatch ||
+        slugMatch ||
+        descriptionMatch ||
+        shortDescriptionMatch ||
+        categoryMatch
+      );
+    });
+  }, [courses, searchTerm]);
 
   useEffect(() => {
     if (selectedSchool) {
@@ -91,7 +120,8 @@ const useCourses = (): UseCoursesReturn => {
   };
 
   return {
-    courses,
+    courses: filteredCourses,
+    totalCourses,
     isLoading,
     searchTerm,
     setSearchTerm,

@@ -13,6 +13,7 @@ export default function CoursesPage() {
   const { selectedSchool } = useSchool();
   const {
     courses,
+    totalCourses,
     isLoading,
     searchTerm,
     setSearchTerm,
@@ -57,7 +58,7 @@ export default function CoursesPage() {
 
       <SearchBar value={searchTerm} onChange={setSearchTerm} />
 
-      <StatsCard total={courses.length} />
+      <StatsCard total={searchTerm ? courses.length : totalCourses} />
 
       <CoursesGrid
         courses={courses}
