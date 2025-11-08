@@ -91,21 +91,23 @@ const useCourseEdit = (): UseCourseEditReturn => {
     try {
       setIsSubmitting(true);
 
-      if (!data.title.trim() || data.title.trim().length < 5) {
-        toast.error('Title must be at least 5 characters long');
+      if (!data.title.trim() || data.title.trim().length < 1) {
+        toast.error('Title is required');
         return;
       }
-
+      const primaryPrice = Number(data.primary_price);
+      const secondaryPrice = Number(data.secondary_price);
       if (!data.primary_price || !data.secondary_price) {
         toast.error('Both primary and secondary prices are required');
         return;
       }
-
-      const primaryPrice = Number(data.primary_price);
-      const secondaryPrice = Number(data.secondary_price);
-
       if (isNaN(primaryPrice) || isNaN(secondaryPrice)) {
         toast.error('Prices must be valid numbers');
+        return;
+      }
+
+      if (secondaryPrice > primaryPrice) {
+        toast.error('Secondary price cannot be greater than primary price');
         return;
       }
 

@@ -10,10 +10,7 @@ type Props = {
 const CourseCover = ({ course }: Props) => {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Course Cover</CardTitle>
-      </CardHeader>
-      <CardContent>
+      {course.cover?.url && (
         <div className="relative h-64 w-full overflow-hidden rounded-lg border">
           <Image
             src={`${course.cover?.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${course.cover?.url}` : course.cover?.url}`}
@@ -37,7 +34,7 @@ const CourseCover = ({ course }: Props) => {
             </div>
           </div>
         </div>
-      </CardContent>
+      )}
     </Card>
   );
 };

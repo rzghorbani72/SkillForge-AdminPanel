@@ -94,7 +94,10 @@ export const useCourseCreate = () => {
 
       const primaryPrice = Number(data.primary_price);
       const secondaryPrice = Number(data.secondary_price);
-
+      if (secondaryPrice > primaryPrice) {
+        toast.error('Secondary price cannot be greater than primary price');
+        return;
+      }
       if (isNaN(primaryPrice) || isNaN(secondaryPrice)) {
         toast.error('Prices must be valid numbers');
         return;
@@ -121,7 +124,7 @@ export const useCourseCreate = () => {
         season_id: data.season_id ? Number(data.season_id) : undefined,
         audio_id: data.audio_id ? Number(data.audio_id) : undefined,
         video_id: data.video_id ? Number(data.video_id) : undefined,
-        image_id: data.image_id ? Number(data.image_id) : undefined,
+        cover_id: data.image_id ? Number(data.image_id) : undefined,
         published: !!data.published
       };
 

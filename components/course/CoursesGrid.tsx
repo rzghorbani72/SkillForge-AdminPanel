@@ -14,6 +14,7 @@ import {
   AccessControlBadge,
   AccessControlActions
 } from '@/components/ui/access-control-badge';
+import CourseCover from './CourseCover';
 
 type Props = {
   courses: Course[];
@@ -76,6 +77,7 @@ const CoursesGrid = ({
             </div>
           </CardHeader>
           <CardContent className="pt-0">
+            <CourseCover course={course} />
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span className="flex items-center">
