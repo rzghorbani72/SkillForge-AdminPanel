@@ -12,7 +12,7 @@ import CourseManagement from '@/components/course/CourseManagement';
 import LoadingState from '@/components/course/LoadingState';
 import ErrorState from '@/components/course/ErrorState';
 import NoSchoolState from '@/components/course/NoSchoolState';
-import AccessControlGuard from '@/components/access-control/AccessControlGuard';
+// import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function CourseViewPage() {
   const params = useParams();
@@ -42,38 +42,38 @@ export default function CourseViewPage() {
   }
 
   return (
-    <AccessControlGuard
-      resource={course}
-      action="view"
-      fallbackPath="/courses"
-      fallbackMessage="You do not have permission to view this course."
-    >
-      <div className="flex-1 space-y-6 p-6">
-        <CourseHeader
-          course={course}
-          isDeleting={isDeleting}
-          onBack={handleBack}
-          onEdit={handleEditCourse}
-          onManageSeasons={handleManageSeasons}
-          onDelete={handleDeleteCourse}
-        />
+    // <AccessControlGuard
+    //   resource={course}
+    //   action="view"
+    //   fallbackPath="/courses"
+    //   fallbackMessage="You do not have permission to view this course."
+    // >
+    <div className="flex-1 space-y-6 p-6">
+      <CourseHeader
+        course={course}
+        isDeleting={isDeleting}
+        onBack={handleBack}
+        onEdit={handleEditCourse}
+        onManageSeasons={handleManageSeasons}
+        onDelete={handleDeleteCourse}
+      />
 
-        <CourseCover course={course} />
+      <CourseCover course={course} />
 
-        <CourseInfo course={course} />
+      <CourseInfo course={course} />
 
-        <CoursePricing course={course} />
+      <CoursePricing course={course} />
 
-        <CourseAssociations course={course} />
+      <CourseAssociations course={course} />
 
-        <CoursePublishSettings course={course} />
+      <CoursePublishSettings course={course} />
 
-        <CourseManagement
-          course={course}
-          onManageSeasons={handleManageSeasons}
-          onEdit={handleEditCourse}
-        />
-      </div>
-    </AccessControlGuard>
+      <CourseManagement
+        course={course}
+        onManageSeasons={handleManageSeasons}
+        onEdit={handleEditCourse}
+      />
+    </div>
+    // </AccessControlGuard>
   );
 }

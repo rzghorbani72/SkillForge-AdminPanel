@@ -133,82 +133,312 @@ export default function LessonViewPage() {
   }
 
   return (
-    <AccessControlGuard
-      resource={{
-        owner_id: course?.author_id,
-        school_id: course?.school_id,
-        access_control: (lesson as any).access_control
-      }}
-      action="view"
-      fallbackPath={`/courses/${courseId}/seasons/${seasonId}/lessons`}
-      fallbackMessage="You do not have permission to view this lesson."
-    >
-      <div className="container mx-auto space-y-6 py-6">
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <button
-            onClick={() => router.push('/courses')}
-            className="transition-colors hover:text-foreground"
-          >
-            Courses
-          </button>
-          <span>/</span>
-          <button
-            onClick={() => router.push(`/courses/${courseId}`)}
-            className="transition-colors hover:text-foreground"
-          >
-            {course.title}
-          </button>
-          <span>/</span>
-          <button
-            onClick={() => router.push(`/courses/${courseId}/seasons`)}
-            className="transition-colors hover:text-foreground"
-          >
-            Seasons
-          </button>
-          <span>/</span>
-          <button
-            onClick={() =>
-              router.push(`/courses/${courseId}/seasons/${seasonId}`)
-            }
-            className="transition-colors hover:text-foreground"
-          >
-            {season.title}
-          </button>
-          <span>/</span>
-          <button
+    <div className="container mx-auto space-y-6 py-6">
+      {/* Breadcrumb Navigation */}
+      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+        <button
+          onClick={() => router.push('/courses')}
+          className="transition-colors hover:text-foreground"
+        >
+          Courses
+        </button>
+        <span>/</span>
+        <button
+          onClick={() => router.push(`/courses/${courseId}`)}
+          className="transition-colors hover:text-foreground"
+        >
+          {course.title}
+        </button>
+        <span>/</span>
+        <button
+          onClick={() => router.push(`/courses/${courseId}/seasons`)}
+          className="transition-colors hover:text-foreground"
+        >
+          Seasons
+        </button>
+        <span>/</span>
+        <button
+          onClick={() =>
+            router.push(`/courses/${courseId}/seasons/${seasonId}`)
+          }
+          className="transition-colors hover:text-foreground"
+        >
+          {season.title}
+        </button>
+        <span>/</span>
+        <button
+          onClick={() =>
+            router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
+          }
+          className="transition-colors hover:text-foreground"
+        >
+          Lessons
+        </button>
+        <span>/</span>
+        <span className="font-medium text-foreground">{lesson.title}</span>
+      </div>
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() =>
               router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
             }
-            className="transition-colors hover:text-foreground"
           >
-            Lessons
-          </button>
-          <span>/</span>
-          <span className="font-medium text-foreground">{lesson.title}</span>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Lessons
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">{lesson.title}</h1>
+            <p className="text-muted-foreground">
+              Lesson details for "{season.title}" in "{course.title}"
+            </p>
+          </div>
         </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              router.push(
+                `/courses/${courseId}/seasons/${seasonId}/lessons/${lessonId}/edit`
+              )
+            }
+          >
+            <Edit className="mr-2 h-4 w-4" />
+            Edit Lesson
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline">
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Lesson
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the
+                  lesson "{lesson.title}" and all its associated content.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteLesson}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
-              }
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Lessons
-            </Button>
+      {/* Lesson Details */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <BookOpen className="mr-2 h-5 w-5" />
+              Lesson Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div>
-              <h1 className="text-3xl font-bold">{lesson.title}</h1>
-              <p className="text-muted-foreground">
-                Lesson details for "{season.title}" in "{course.title}"
+              <label className="text-sm font-medium text-muted-foreground">
+                Title
+              </label>
+              <p className="text-lg font-semibold">{lesson.title}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Description
+              </label>
+              <p className="text-sm">
+                {lesson.description || 'No description provided'}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Duration
+              </label>
+              <p className="text-sm">{lesson.duration || 'N/A'}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Order
+              </label>
+              <p className="text-sm">{lesson.order || 'N/A'}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Status
+              </label>
+              <Badge variant={lesson.is_published ? 'default' : 'secondary'}>
+                {lesson.is_published ? 'Published' : 'Draft'}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Play className="mr-2 h-5 w-5" />
+              Course & Season Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Course
+              </label>
+              <p className="text-lg font-semibold">{course.title}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Season
+              </label>
+              <p className="text-lg font-semibold">{season.title}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Season Description
+              </label>
+              <p className="text-sm">
+                {season.description || 'No description provided'}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Season Order
+              </label>
+              <p className="text-sm">{season.order}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Lesson Content */}
+      {lesson.content && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <FileText className="mr-2 h-5 w-5" />
+              Lesson Content
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="prose max-w-none">
+              <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Video Player */}
+      {lesson.video_id && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Video className="mr-2 h-5 w-5" />
+              Lesson Video
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
+              <video
+                controls
+                className="h-full w-full"
+                poster={
+                  lesson.image?.url
+                    ? `${lesson.image.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${lesson.image.url}` : lesson.image.url}`
+                    : undefined
+                }
+              >
+                <source
+                  src={apiClient.getVideoStreamUrl(
+                    parseInt(lesson.video_id.toString())
+                  )}
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Media Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Video className="mr-2 h-5 w-5" />
+            Media Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Video ID
+              </label>
+              <p className="text-sm">
+                {lesson.video_id || 'No video assigned'}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Audio ID
+              </label>
+              <p className="text-sm">
+                {lesson.audio_id || 'No audio assigned'}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Document ID
+              </label>
+              <p className="text-sm">
+                {lesson.document_id || 'No document assigned'}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Video Poster Image ID
+              </label>
+              <p className="text-sm">
+                {lesson.image_id || 'No image assigned'}
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+        </CardContent>
+      </Card>
+
+      {/* Content Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Content Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" onClick={() => router.push(`/videos`)}>
+              <Video className="mr-2 h-4 w-4" />
+              Manage Videos
+            </Button>
+            <Button variant="outline" onClick={() => router.push(`/audios`)}>
+              <Volume2 className="mr-2 h-4 w-4" />
+              Manage Audios
+            </Button>
+            <Button variant="outline" onClick={() => router.push(`/documents`)}>
+              <FileText className="mr-2 h-4 w-4" />
+              Manage Documents
+            </Button>
             <Button
               variant="outline"
               onClick={() =>
@@ -220,253 +450,9 @@ export default function LessonViewPage() {
               <Edit className="mr-2 h-4 w-4" />
               Edit Lesson
             </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Lesson
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    the lesson "{lesson.title}" and all its associated content.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteLesson}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
           </div>
-        </div>
-
-        {/* Lesson Details */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <BookOpen className="mr-2 h-5 w-5" />
-                Lesson Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Title
-                </label>
-                <p className="text-lg font-semibold">{lesson.title}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Description
-                </label>
-                <p className="text-sm">
-                  {lesson.description || 'No description provided'}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Duration
-                </label>
-                <p className="text-sm">{lesson.duration || 'N/A'}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Order
-                </label>
-                <p className="text-sm">{lesson.order || 'N/A'}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Status
-                </label>
-                <Badge variant={lesson.is_published ? 'default' : 'secondary'}>
-                  {lesson.is_published ? 'Published' : 'Draft'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Play className="mr-2 h-5 w-5" />
-                Course & Season Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Course
-                </label>
-                <p className="text-lg font-semibold">{course.title}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Season
-                </label>
-                <p className="text-lg font-semibold">{season.title}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Season Description
-                </label>
-                <p className="text-sm">
-                  {season.description || 'No description provided'}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Season Order
-                </label>
-                <p className="text-sm">{season.order}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Lesson Content */}
-        {lesson.content && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <FileText className="mr-2 h-5 w-5" />
-                Lesson Content
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose max-w-none">
-                <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Video Player */}
-        {lesson.video_id && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Video className="mr-2 h-5 w-5" />
-                Lesson Video
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
-                <video
-                  controls
-                  className="h-full w-full"
-                  poster={
-                    lesson.image?.url
-                      ? `${lesson.image.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${lesson.image.url}` : lesson.image.url}`
-                      : undefined
-                  }
-                >
-                  <source
-                    src={apiClient.getVideoStreamUrl(
-                      parseInt(lesson.video_id.toString())
-                    )}
-                    type="video/mp4"
-                  />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Media Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Video className="mr-2 h-5 w-5" />
-              Media Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Video ID
-                </label>
-                <p className="text-sm">
-                  {lesson.video_id || 'No video assigned'}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Audio ID
-                </label>
-                <p className="text-sm">
-                  {lesson.audio_id || 'No audio assigned'}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Document ID
-                </label>
-                <p className="text-sm">
-                  {lesson.document_id || 'No document assigned'}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Video Poster Image ID
-                </label>
-                <p className="text-sm">
-                  {lesson.image_id || 'No image assigned'}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Content Management */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Content Management</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" onClick={() => router.push(`/videos`)}>
-                <Video className="mr-2 h-4 w-4" />
-                Manage Videos
-              </Button>
-              <Button variant="outline" onClick={() => router.push(`/audios`)}>
-                <Volume2 className="mr-2 h-4 w-4" />
-                Manage Audios
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => router.push(`/documents`)}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Manage Documents
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  router.push(
-                    `/courses/${courseId}/seasons/${seasonId}/lessons/${lessonId}/edit`
-                  )
-                }
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Lesson
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </AccessControlGuard>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

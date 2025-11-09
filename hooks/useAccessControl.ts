@@ -64,19 +64,61 @@ const restoreUserFromStorage = (): AuthUser | null => {
   if (typeof window === 'undefined') return null;
 
   try {
-    const storedUser = window.localStorage.getItem('user_data');
-    const storedProfile = window.localStorage.getItem('current_profile');
-    const storedSchool = window.localStorage.getItem('current_school');
-    const storedPermissions = window.localStorage.getItem('user_permissions');
-    const accessToken = window.localStorage.getItem('auth_token') || '';
+    let storedUser = window.localStorage.getItem('user_data');
+    let storedProfile = window.localStorage.getItem('current_profile');
+    let storedSchool = window.localStorage.getItem('current_school');
+    let storedPermissions = window.localStorage.getItem('user_permissions');
+    let accessToken = window.localStorage.getItem('auth_token') || '';
+    const storedAuthUser = window.localStorage.getItem('auth_user');
+
+    const isNullish = (
+      value: string | null
+    ): value is null | 'undefined' | 'null' | '' =>
+      value === null ||
+      value === 'undefined' ||
+      value === 'null' ||
+      value === '';
 
     if (
-      !storedUser ||
-      storedUser === 'undefined' ||
-      !storedProfile ||
-      storedProfile === 'undefined' ||
-      !accessToken
+      storedAuthUser &&
+      !isNullish(storedAuthUser) &&
+      (isNullish(storedUser) ||
+        isNullish(storedProfile) ||
+        isNullish(storedPermissions) ||
+        !accessToken)
     ) {
+      try {
+        const parsedAuthUser = JSON.parse(storedAuthUser) as AuthUser;
+        if (parsedAuthUser) {
+          if (isNullish(storedUser) && parsedAuthUser.user) {
+            storedUser = JSON.stringify(parsedAuthUser.user);
+          }
+          if (isNullish(storedProfile) && parsedAuthUser.currentProfile) {
+            storedProfile = JSON.stringify(parsedAuthUser.currentProfile);
+          }
+          if (isNullish(storedSchool) && parsedAuthUser.currentSchool) {
+            storedSchool = JSON.stringify(parsedAuthUser.currentSchool);
+          }
+          if (isNullish(storedPermissions)) {
+            storedPermissions = JSON.stringify(
+              parsedAuthUser.permissions &&
+                parsedAuthUser.permissions.length > 0
+                ? parsedAuthUser.permissions
+                : (parsedAuthUser.currentProfile as any)?.permissions ||
+                    (parsedAuthUser.currentProfile?.role as any)?.permissions ||
+                    []
+            );
+          }
+          if (!accessToken && parsedAuthUser.access_token) {
+            accessToken = parsedAuthUser.access_token;
+          }
+        }
+      } catch (parseError) {
+        console.error('Failed to parse stored auth_user', parseError);
+      }
+    }
+
+    if (isNullish(storedUser) || isNullish(storedProfile) || !accessToken) {
       return null;
     }
 

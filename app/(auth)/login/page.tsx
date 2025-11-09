@@ -193,18 +193,6 @@ export default function LoginPage() {
       if (response) {
         ErrorHandler.showSuccess('Login successful!');
 
-        // Store auth data
-        localStorage.setItem('auth_token', response.access_token);
-        localStorage.setItem('user_data', JSON.stringify(response.user));
-        localStorage.setItem(
-          'current_profile',
-          JSON.stringify(response.currentProfile)
-        );
-        localStorage.setItem(
-          'current_school',
-          JSON.stringify(response.currentSchool)
-        );
-
         // Check user role and redirect accordingly
         const userRole = response.currentProfile?.role?.name;
         if (

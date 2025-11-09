@@ -91,62 +91,164 @@ export default function SeasonViewPage() {
   }
 
   return (
-    <AccessControlGuard
-      resource={{
-        owner_id: course?.author_id,
-        school_id: course?.school_id,
-        access_control: (season as any).access_control
-      }}
-      action="view"
-      fallbackPath={`/courses/${courseId}/seasons`}
-      fallbackMessage="You do not have permission to view this season."
-    >
-      <div className="container mx-auto space-y-6 py-6">
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <button
-            onClick={() => router.push('/courses')}
-            className="transition-colors hover:text-foreground"
-          >
-            Courses
-          </button>
-          <span>/</span>
-          <button
-            onClick={() => router.push(`/courses/${courseId}`)}
-            className="transition-colors hover:text-foreground"
-          >
-            {course.title}
-          </button>
-          <span>/</span>
-          <button
-            onClick={() => router.push(`/courses/${courseId}/seasons`)}
-            className="transition-colors hover:text-foreground"
-          >
-            Seasons
-          </button>
-          <span>/</span>
-          <span className="font-medium text-foreground">{season.title}</span>
-        </div>
+    // <AccessControlGuard
+    //   resource={{
+    //     owner_id: course?.author_id,
+    //     school_id: course?.school_id,
+    //     access_control: (season as any).access_control
+    //   }}
+    //   action="view"
+    //   fallbackPath={`/courses/${courseId}/seasons`}
+    //   fallbackMessage="You do not have permission to view this season."
+    // >
+    <div className="container mx-auto space-y-6 py-6">
+      {/* Breadcrumb Navigation */}
+      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+        <button
+          onClick={() => router.push('/courses')}
+          className="transition-colors hover:text-foreground"
+        >
+          Courses
+        </button>
+        <span>/</span>
+        <button
+          onClick={() => router.push(`/courses/${courseId}`)}
+          className="transition-colors hover:text-foreground"
+        >
+          {course.title}
+        </button>
+        <span>/</span>
+        <button
+          onClick={() => router.push(`/courses/${courseId}/seasons`)}
+          className="transition-colors hover:text-foreground"
+        >
+          Seasons
+        </button>
+        <span>/</span>
+        <span className="font-medium text-foreground">{season.title}</span>
+      </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.push(`/courses/${courseId}/seasons`)}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Seasons
-            </Button>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(`/courses/${courseId}/seasons`)}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Seasons
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">{season.title}</h1>
+            <p className="text-muted-foreground">
+              Season details for "{course.title}"
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
+            }
+          >
+            <BookOpen className="mr-2 h-4 w-4" />
+            Manage Lessons
+          </Button>
+          <Button
+            onClick={() =>
+              router.push(`/courses/${courseId}/seasons/${seasonId}/edit`)
+            }
+          >
+            <Edit className="mr-2 h-4 w-4" />
+            Edit Season
+          </Button>
+        </div>
+      </div>
+
+      {/* Season Details */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Calendar className="mr-2 h-5 w-5" />
+              Season Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div>
-              <h1 className="text-3xl font-bold">{season.title}</h1>
-              <p className="text-muted-foreground">
-                Season details for "{course.title}"
+              <label className="text-sm font-medium text-muted-foreground">
+                Title
+              </label>
+              <p className="text-lg font-semibold">{season.title}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Description
+              </label>
+              <p className="text-sm">
+                {season.description || 'No description provided'}
               </p>
             </div>
-          </div>
-          <div className="flex items-center space-x-2">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Order
+              </label>
+              <p className="text-sm">{season.order}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Status
+              </label>
+              <Badge variant={season.is_active ? 'default' : 'secondary'}>
+                {season.is_active ? 'Active' : 'Inactive'}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <BookOpen className="mr-2 h-5 w-5" />
+              Course Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Course
+              </label>
+              <p className="text-lg font-semibold">{course.title}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Course Description
+              </label>
+              <p className="text-sm">
+                {course.description || 'No description provided'}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">
+                Course Status
+              </label>
+              <Badge variant={course.is_published ? 'default' : 'secondary'}>
+                {course.is_published ? 'Published' : 'Draft'}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Course Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Season Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-4">
             <Button
               variant="outline"
               onClick={() =>
@@ -157,6 +259,7 @@ export default function SeasonViewPage() {
               Manage Lessons
             </Button>
             <Button
+              variant="outline"
               onClick={() =>
                 router.push(`/courses/${courseId}/seasons/${seasonId}/edit`)
               }
@@ -164,126 +267,21 @@ export default function SeasonViewPage() {
               <Edit className="mr-2 h-4 w-4" />
               Edit Season
             </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                router.push(
+                  `/courses/${courseId}/seasons/${seasonId}/lessons/create`
+                )
+              }
+            >
+              <Play className="mr-2 h-4 w-4" />
+              Add New Lesson
+            </Button>
           </div>
-        </div>
-
-        {/* Season Details */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Calendar className="mr-2 h-5 w-5" />
-                Season Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Title
-                </label>
-                <p className="text-lg font-semibold">{season.title}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Description
-                </label>
-                <p className="text-sm">
-                  {season.description || 'No description provided'}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Order
-                </label>
-                <p className="text-sm">{season.order}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Status
-                </label>
-                <Badge variant={season.is_active ? 'default' : 'secondary'}>
-                  {season.is_active ? 'Active' : 'Inactive'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <BookOpen className="mr-2 h-5 w-5" />
-                Course Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Course
-                </label>
-                <p className="text-lg font-semibold">{course.title}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Course Description
-                </label>
-                <p className="text-sm">
-                  {course.description || 'No description provided'}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Course Status
-                </label>
-                <Badge variant={course.is_published ? 'default' : 'secondary'}>
-                  {course.is_published ? 'Published' : 'Draft'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Course Management */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Season Management</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                onClick={() =>
-                  router.push(
-                    `/courses/${courseId}/seasons/${seasonId}/lessons`
-                  )
-                }
-              >
-                <BookOpen className="mr-2 h-4 w-4" />
-                Manage Lessons
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  router.push(`/courses/${courseId}/seasons/${seasonId}/edit`)
-                }
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Season
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  router.push(
-                    `/courses/${courseId}/seasons/${seasonId}/lessons/create`
-                  )
-                }
-              >
-                <Play className="mr-2 h-4 w-4" />
-                Add New Lesson
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </AccessControlGuard>
+        </CardContent>
+      </Card>
+    </div>
+    // </AccessControlGuard>
   );
 }

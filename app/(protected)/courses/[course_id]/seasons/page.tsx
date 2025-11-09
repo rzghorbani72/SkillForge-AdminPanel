@@ -330,7 +330,13 @@ export default function SeasonsPage() {
       ) : (
         <Accordion type="multiple" className="w-full">
           {filteredSeasons.map((season) => (
-            <AccordionItem key={season.id} value={`season-${season.id}`}>
+            <AccordionItem
+              key={season.id}
+              value={`season-${season.id}`}
+              //  onClick={() =>
+              //       router.push(`/courses/${courseId}/seasons/${season.id}`)
+              //     }
+            >
               <AccordionTrigger className="hover:no-underline">
                 <div className="mr-4 flex w-full items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -363,21 +369,13 @@ export default function SeasonsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        router.push(`/courses/${courseId}/seasons/${season.id}`)
-                      }
-                    >
-                      <Eye className="mr-1 h-4 w-4" />
-                      View Season
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation;
                         router.push(
                           `/courses/${courseId}/seasons/${season.id}/edit`
-                        )
-                      }
+                        );
+                      }}
                     >
                       <Edit className="mr-1 h-4 w-4" />
                       Edit Season

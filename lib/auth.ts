@@ -59,9 +59,99 @@ export interface RegisterData {
   teacher_request_reason?: string;
 }
 
+const normalizePermissionArray = (permissions: unknown): string[] => {
+  if (!permissions) return [];
+  if (!Array.isArray(permissions)) return [];
+
+  return permissions
+    .map((permission) => {
+      if (!permission) return null;
+      if (typeof permission === 'string') return permission;
+      if (typeof permission === 'object') {
+        if (
+          'name' in permission &&
+          typeof (permission as any).name === 'string'
+        ) {
+          return (permission as any).name as string;
+        }
+        if (
+          'permission' in permission &&
+          typeof (permission as any).permission === 'string'
+        ) {
+          return (permission as any).permission as string;
+        }
+      }
+      return null;
+    })
+    .filter((permission): permission is string => Boolean(permission));
+};
+
 class AuthService {
   private currentUser: AuthUser | null = null;
   private authType: AuthType['type'] = 'admin';
+
+  private persistSession(user: AuthUser | null) {
+    if (typeof window === 'undefined') return;
+
+    try {
+      if (!user) {
+        window.localStorage.removeItem('auth_token');
+        window.localStorage.removeItem('user_data');
+        window.localStorage.removeItem('current_profile');
+        window.localStorage.removeItem('current_school');
+        window.localStorage.removeItem('user_permissions');
+        window.localStorage.removeItem('auth_user');
+        return;
+      }
+
+      const derivedPermissions =
+        user.permissions && user.permissions.length > 0
+          ? normalizePermissionArray(user.permissions)
+          : normalizePermissionArray(
+              (user.currentProfile as any)?.permissions ||
+                (user.currentProfile?.role as any)?.permissions ||
+                []
+            );
+
+      if (user.access_token) {
+        window.localStorage.setItem('auth_token', user.access_token);
+      } else {
+        window.localStorage.removeItem('auth_token');
+      }
+
+      if (user.user) {
+        window.localStorage.setItem('user_data', JSON.stringify(user.user));
+      } else {
+        window.localStorage.removeItem('user_data');
+      }
+
+      if (user.currentProfile) {
+        window.localStorage.setItem(
+          'current_profile',
+          JSON.stringify(user.currentProfile)
+        );
+      } else {
+        window.localStorage.removeItem('current_profile');
+      }
+
+      if (user.currentSchool) {
+        window.localStorage.setItem(
+          'current_school',
+          JSON.stringify(user.currentSchool)
+        );
+      } else {
+        window.localStorage.removeItem('current_school');
+      }
+
+      window.localStorage.setItem(
+        'user_permissions',
+        JSON.stringify(derivedPermissions)
+      );
+      window.localStorage.setItem('auth_user', JSON.stringify(user));
+    } catch (error) {
+      console.error('Failed to persist auth session', error);
+    }
+  }
 
   // Login with password
   async login(credentials: LoginCredentials): Promise<AuthUser> {
@@ -70,6 +160,7 @@ class AuthService {
       console.log('login 2.', { response });
       if (response.data) {
         this.currentUser = response.data as AuthUser;
+        this.persistSession(this.currentUser);
         return this.currentUser;
       }
 
@@ -87,6 +178,7 @@ class AuthService {
 
       if (response.data) {
         this.currentUser = response.data as AuthUser;
+        this.persistSession(this.currentUser);
         return this.currentUser;
       }
 
@@ -108,6 +200,7 @@ class AuthService {
 
       if (response.data) {
         this.currentUser = response.data as AuthUser;
+        this.persistSession(this.currentUser);
         return this.currentUser;
       }
 
@@ -129,6 +222,7 @@ class AuthService {
 
       if (response.data) {
         this.currentUser = response.data as AuthUser;
+        this.persistSession(this.currentUser);
         return this.currentUser;
       }
 
@@ -149,6 +243,7 @@ class AuthService {
 
       if (response.data) {
         this.currentUser = response.data as AuthUser;
+        this.persistSession(this.currentUser);
         return this.currentUser;
       }
 
@@ -319,10 +414,10 @@ class AuthService {
       this.currentUser = null;
 
       // Clear localStorage
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user_data');
-      localStorage.removeItem('current_profile');
-      localStorage.removeItem('current_school');
+      this.persistSession(null);
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem('user_state');
+      }
 
       // Redirect to appropriate login page
       if (isDevelopmentMode()) {
@@ -346,6 +441,7 @@ class AuthService {
   // Set current user (for manual session restoration)
   setCurrentUser(user: AuthUser): void {
     this.currentUser = user;
+    this.persistSession(user);
   }
 
   // Get user's schools

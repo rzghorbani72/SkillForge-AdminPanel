@@ -48,8 +48,12 @@ export default function CategoriesPage() {
 
       let categoriesData: Category[] = [];
 
-      if (Array.isArray(response)) {
-        categoriesData = response;
+      if (
+        response &&
+        typeof response === 'object' &&
+        Array.isArray(response.data)
+      ) {
+        categoriesData = response.data as Category[];
       } else {
         categoriesData = [];
       }
