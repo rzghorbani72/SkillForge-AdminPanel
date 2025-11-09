@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useSchool } from '@/hooks/useSchool';
 import Header from '@/components/course/Header';
 import SearchBar from '@/components/course/SearchBar';
-import StatsCard from '@/components/course/StatsCard';
 import CoursesGrid from '@/components/course/CoursesGrid';
 import useCourses from '@/components/course/useCourses';
 
@@ -57,8 +56,6 @@ export default function CoursesPage() {
       <Header />
 
       <SearchBar value={searchTerm} onChange={setSearchTerm} />
-
-      <StatsCard total={searchTerm ? courses.length : totalCourses} />
 
       <CoursesGrid
         courses={courses}

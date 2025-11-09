@@ -36,16 +36,14 @@ const useLesson = () => {
           apiClient.getCourse(parseInt(courseId))
         ]);
 
-      if (lessonsResponse && Array.isArray(lessonsResponse)) {
-        setLessons(lessonsResponse);
-      }
+      setLessons(Array.isArray(lessonsResponse) ? lessonsResponse : []);
 
       if (seasonResponse) {
-        setSeason(seasonResponse);
+        setSeason(seasonResponse as Season);
       }
 
       if (courseResponse) {
-        setCourse(courseResponse);
+        setCourse(courseResponse as Course);
       }
     } catch (error) {
       console.error('Error fetching data:', error);

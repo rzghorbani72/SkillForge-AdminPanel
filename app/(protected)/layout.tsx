@@ -17,7 +17,7 @@ export default function ProtectedLayout({
 
   return (
     <>
-      <CategoriesInitializer />
+      {/* <CategoriesInitializer /> */}
       <div className="flex h-screen">
         <Sidebar />
         <main className="flex flex-1 flex-col overflow-hidden">

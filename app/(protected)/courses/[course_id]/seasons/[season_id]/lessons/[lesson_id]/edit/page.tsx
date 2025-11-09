@@ -37,13 +37,25 @@ export default function EditLessonPage() {
     );
   }
 
-  if (isLoading || !initialValues || !season || !course) {
+  if (isLoading) {
     return (
-      <div className="container mx-auto py-6">
+      <div id="edit-lesson-page" className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
             <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!initialValues) {
+    return (
+      <div id="edit-lesson-page" className="container mx-auto py-6">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <p className="text-muted-foreground">Lesson not found.</p>
           </div>
         </div>
       </div>

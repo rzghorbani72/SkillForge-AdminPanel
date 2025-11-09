@@ -87,21 +87,16 @@ const CoursesGrid = ({
           <h2 className="text-lg font-semibold text-foreground">Courses</h2>
           <p className="text-sm text-muted-foreground">{headerDescription}</p>
         </div>
-        {onCreate && (
-          <Button onClick={onCreate} className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Course
-          </Button>
-        )}
       </div>
 
       <div className="flex flex-wrap gap-4">
         {courses.map((course) => (
           <div
             key={course.id}
-            className="flex min-w-[300px] max-w-full flex-1 flex-col gap-3 sm:max-w-[340px] lg:max-w-[380px] xl:max-w-[420px]"
+            onClick={() => onView(course)}
+            className="flex min-w-[300px] max-w-full flex-1 cursor-pointer flex-col gap-3 sm:max-w-[340px] lg:max-w-[380px] xl:max-w-[420px]"
           >
-            <Card className="flex h-full w-full flex-col border-border/60 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+            <Card className="flex h-full w-full flex-col border-border/60 hover:shadow-md">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1">
@@ -188,31 +183,26 @@ const CoursesGrid = ({
                         variant="outline"
                         size="sm"
                         className="min-w-[110px] flex-1"
-                        onClick={() => onView(course)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(course);
+                        }}
                       >
-                        <Eye className="mr-1 h-4 w-4" />
-                        View
+                        <Trash2 className="mr-1 h-4 w-4" />
+                        Delete
                       </Button>
                       {onEdit && (
                         <Button
                           variant="outline"
                           size="sm"
                           className="min-w-[110px] flex-1"
-                          onClick={() => onEdit(course)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(course);
+                          }}
                         >
                           <Edit className="mr-1 h-4 w-4" />
                           Edit
-                        </Button>
-                      )}
-                      {onDelete && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="min-w-[110px] flex-1"
-                          onClick={() => handleDeleteClick(course)}
-                        >
-                          <Trash2 className="mr-1 h-4 w-4" />
-                          Delete
                         </Button>
                       )}
                     </>

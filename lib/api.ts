@@ -362,21 +362,44 @@ class ApiClient {
     }
 
     const response = await this.request(`/lessons?${queryParams.toString()}`);
+    const payload = response.data as any;
 
-    // Return the lessons data directly
-    if (response.data) {
-      return response.data as { lessons: any[]; pagination?: any };
+    if (!payload) {
+      return [];
     }
 
-    return response;
+    if (payload.status === 'ok' && Array.isArray(payload.data)) {
+      return payload.data;
+    }
+
+    if (Array.isArray(payload?.lessons)) {
+      return payload.lessons;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    return [];
   }
 
   async getLesson(id: number) {
     const response = await this.request(`/lessons/${id}`);
-    if (response.data) {
-      return response.data as { lesson: any };
+    const payload = response.data as any;
+
+    if (!payload) {
+      return null as any;
     }
-    return null as any;
+
+    if (payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+
+    if (payload.data) {
+      return payload.data;
+    }
+
+    return payload;
   }
 
   async createLesson(lessonData: {
@@ -415,22 +438,44 @@ class ApiClient {
   async getSeasons(courseId?: number) {
     const queryParams = courseId ? `?course_id=${courseId}` : '';
     const response = await this.request(`/seasons${queryParams}`);
+    const payload = response.data as any;
 
-    // Return the seasons data directly
-    if (response.data && Array.isArray(response.data)) {
-      return response.data;
-    } else if (response.data) {
-      return response.data as any[];
+    if (!payload) {
+      return [];
     }
+
+    if (payload.status === 'ok' && Array.isArray(payload.data)) {
+      return payload.data;
+    }
+
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
     return [];
   }
 
   async getSeason(id: number) {
     const response = await this.request(`/seasons/${id}`);
-    if (response.data) {
-      return response.data as any;
+    const payload = response.data as any;
+
+    if (!payload) {
+      return null as any;
     }
-    return null;
+
+    if (payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+
+    if (payload.data) {
+      return payload.data;
+    }
+
+    return payload;
   }
 
   async createSeason(seasonData: {

@@ -86,12 +86,23 @@ export default function SeasonsPage() {
         setCourse(courseResponse);
       }
 
-      if (seasonsResponse && Array.isArray(seasonsResponse)) {
+      const seasonsData = Array.isArray(seasonsResponse)
+        ? seasonsResponse
+        : Array.isArray((seasonsResponse as any)?.data)
+          ? (seasonsResponse as any).data
+          : [];
+
+      if (seasonsData.length > 0) {
         // Get all lessons for the course
-        const allLessons =
-          lessonsResponse && Array.isArray(lessonsResponse)
-            ? lessonsResponse
-            : [];
+        const lessonsData = Array.isArray(lessonsResponse)
+          ? lessonsResponse
+          : Array.isArray((lessonsResponse as any)?.lessons)
+            ? (lessonsResponse as any).lessons
+            : Array.isArray((lessonsResponse as any)?.data)
+              ? (lessonsResponse as any).data
+              : [];
+
+        const allLessons = lessonsData as Lesson[];
 
         // Group lessons by season_id
         const lessonsBySeason = allLessons.reduce(
@@ -107,7 +118,7 @@ export default function SeasonsPage() {
         );
 
         // Attach lessons to their respective seasons
-        const seasonsWithLessons = seasonsResponse.map((season) => ({
+        const seasonsWithLessons = seasonsData.map((season: any) => ({
           ...season,
           lessons: lessonsBySeason[season.id] || []
         }));

@@ -71,35 +71,32 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
       const [seasonResponse, courseResponse, lessonResponse] =
         await Promise.all(promises);
 
-      if (seasonResponse) setSeason(seasonResponse);
-      if (courseResponse) setCourse(courseResponse);
+      if (seasonResponse) setSeason(seasonResponse as Season);
+      if (courseResponse) setCourse(courseResponse as Course);
 
       if (isEdit && lessonResponse) {
-        setLesson(lessonResponse);
+        const lessonData = lessonResponse as Lesson;
+        setLesson(lessonData);
         setInitialValues({
-          title: lessonResponse.title,
-          description: lessonResponse.description ?? '',
+          title: lessonData.title,
+          description: lessonData.description ?? '',
           season_id: seasonId,
-          audio_id: lessonResponse.audio_id
-            ? String(lessonResponse.audio_id)
+          audio_id: lessonData.audio_id ? String(lessonData.audio_id) : '',
+          video_id: lessonData.video_id ? String(lessonData.video_id) : '',
+          cover_id: lessonData.image_id ? String(lessonData.image_id) : '',
+          document_id: lessonData.document_id
+            ? String(lessonData.document_id)
             : '',
-          video_id: lessonResponse.video_id
-            ? String(lessonResponse.video_id)
-            : '',
-          cover_id: lessonResponse.image_id
-            ? String(lessonResponse.image_id)
-            : '',
-          document_id: lessonResponse.document_id
-            ? String(lessonResponse.document_id)
-            : '',
-          category_id: lessonResponse.category_id
-            ? String(lessonResponse.category_id)
+          category_id: lessonData.category_id
+            ? String(lessonData.category_id)
             : '',
           published: Boolean(
-            lessonResponse.published ?? lessonResponse.is_active
+            (lessonData as any).published ??
+              (lessonData as any).is_active ??
+              lessonData.is_published
           ),
-          is_free: Boolean(lessonResponse.is_free),
-          lesson_type: (lessonResponse.lesson_type as any) ?? 'VIDEO'
+          is_free: Boolean(lessonData.is_free),
+          lesson_type: (lessonData.lesson_type as any) ?? 'VIDEO'
         });
       } else if (!isEdit) {
         setInitialValues({
@@ -164,6 +161,11 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
       setIsSubmitting(false);
     }
   };
+
+  console.log('initialValues', initialValues);
+  console.log('lesson', lesson);
+  console.log('season', season);
+  console.log('course', course);
 
   return {
     lesson,

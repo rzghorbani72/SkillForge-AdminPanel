@@ -37,7 +37,7 @@ export default function CreateLessonPage() {
 
   if (isLoading || !initialValues || !season || !course) {
     return (
-      <div className="container mx-auto py-6">
+      <div id="create-lesson-page" className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>

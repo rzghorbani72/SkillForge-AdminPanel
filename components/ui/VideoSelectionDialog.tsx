@@ -58,9 +58,9 @@ const VideoSelectionDialog: React.FC<VideoSelectionDialogProps> = ({
 
     try {
       const response = await apiClient.getVideos();
-      if (response && Array.isArray(response)) {
-        setVideos(response);
-        setFilteredVideos(response);
+      if (response?.data && Array.isArray(response.data)) {
+        setVideos(response.data);
+        setFilteredVideos(response.data);
       } else {
         setError('Failed to load videos');
       }
