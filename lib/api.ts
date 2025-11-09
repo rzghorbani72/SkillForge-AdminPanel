@@ -45,6 +45,14 @@ class ApiClient {
       ...options
     };
 
+    if (process.env.NODE_ENV !== 'production') {
+      config.cache = 'no-store';
+      (config as any).next = {
+        ...(options as any)?.next,
+        revalidate: 0
+      };
+    }
+
     try {
       const response = await fetch(url, config);
       const data = await response.json();

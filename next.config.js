@@ -1,3 +1,51 @@
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+const CACHE_CONTROL_APP = isDevelopment
+  ? 'no-store, no-cache, must-revalidate'
+  : 'public, max-age=21600, must-revalidate';
+
+const CACHE_CONTROL_API = isDevelopment
+  ? 'no-store, no-cache, must-revalidate'
+  : 'public, max-age=60, s-maxage=300, stale-while-revalidate=86400';
+
+const SECURITY_HEADERS = [
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=63072000; includeSubDomains; preload'
+  },
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'on'
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'SAMEORIGIN'
+  },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()'
+  },
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff'
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'origin-when-cross-origin'
+  },
+  { key: 'Access-Control-Allow-Credentials', value: 'true' },
+  { key: 'Access-Control-Allow-Origin', value: '*' },
+  {
+    key: 'Access-Control-Allow-Methods',
+    value: 'GET,DELETE,PATCH,POST,PUT'
+  },
+  {
+    key: 'Access-Control-Allow-Headers',
+    value:
+      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  }
+];
+
 const nextConfig = {
   images: {
     // Use custom loader to bypass Next.js optimization and serve images directly from backend
@@ -56,56 +104,26 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=21600, must-revalidate'
+            value: CACHE_CONTROL_APP
+          }
+        ]
+      },
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: CACHE_CONTROL_API
           }
         ]
       },
       {
         source: '/(.*)',
         headers: [
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload'
-          },
+          ...SECURITY_HEADERS,
           {
             key: 'Cache-Control',
-            value: 'public, max-age=21600, must-revalidate'
-          },
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on'
-          },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
-          },
-          {
-            key: 'Permissions-Policy',
-            value:
-              'camera=(), microphone=(), geolocation=(), browsing-topics=()'
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin'
-          },
-          { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET,DELETE,PATCH,POST,PUT'
-          },
-          {
-            key: 'Access-Control-Allow-Headers',
-            value:
-              'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+            value: CACHE_CONTROL_APP
           }
         ]
       }
