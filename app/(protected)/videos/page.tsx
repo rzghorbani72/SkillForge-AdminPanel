@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Video, Star, Play, Clock, Eye, Download, Edit } from 'lucide-react';
 import { apiClient } from '@/lib/api';
@@ -10,7 +8,6 @@ import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/hooks/useSchool';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
-import VideoPlayer from '@/components/content/video-player';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -44,10 +41,6 @@ export default function VideosPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
-  const [selectedVideo, setSelectedVideo] = useState<VideoWithMetadata | null>(
-    null
-  );
-  const [showPlayer, setShowPlayer] = useState(false);
 
   const fetchData = useCallback(async () => {
     if (!selectedSchool) return;
@@ -136,11 +129,6 @@ export default function VideosPage() {
     return video.access_control?.is_owner || false;
   };
 
-  const handleVideoSelect = (video: VideoWithMetadata) => {
-    setSelectedVideo(video);
-    setShowPlayer(true);
-  };
-
   if (!selectedSchool) {
     return (
       <EmptyState
@@ -175,28 +163,6 @@ export default function VideosPage() {
           0
         )}
       />
-
-      {/* Video Player Modal */}
-      {showPlayer && selectedVideo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-          <div className="w-full max-w-6xl">
-            <div className="mb-4 flex justify-end">
-              <Button
-                variant="outline"
-                onClick={() => setShowPlayer(false)}
-                className="border-white text-white hover:bg-white/20"
-              >
-                Close
-              </Button>
-            </div>
-            <VideoPlayer
-              video={selectedVideo}
-              autoPlay={true}
-              onVideoEnd={() => setShowPlayer(false)}
-            />
-          </div>
-        </div>
-      )}
 
       <div className="flex items-center space-x-4">
         <SearchBar
@@ -237,7 +203,6 @@ export default function VideosPage() {
         <TabsContent value="all" className="space-y-4">
           <VideoGrid
             videos={filteredVideos}
-            onVideoSelect={handleVideoSelect}
             getVideoIcon={getVideoIcon}
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
@@ -250,7 +215,6 @@ export default function VideosPage() {
         <TabsContent value="welcome" className="space-y-4">
           <VideoGrid
             videos={welcomeVideos}
-            onVideoSelect={handleVideoSelect}
             getVideoIcon={getVideoIcon}
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
@@ -263,7 +227,6 @@ export default function VideosPage() {
         <TabsContent value="lessons" className="space-y-4">
           <VideoGrid
             videos={lessonVideos}
-            onVideoSelect={handleVideoSelect}
             getVideoIcon={getVideoIcon}
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
@@ -276,7 +239,6 @@ export default function VideosPage() {
         <TabsContent value="intro" className="space-y-4">
           <VideoGrid
             videos={introVideos}
-            onVideoSelect={handleVideoSelect}
             getVideoIcon={getVideoIcon}
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
@@ -289,7 +251,6 @@ export default function VideosPage() {
         <TabsContent value="conclusion" className="space-y-4">
           <VideoGrid
             videos={conclusionVideos}
-            onVideoSelect={handleVideoSelect}
             getVideoIcon={getVideoIcon}
             getVideoTypeColor={getVideoTypeColor}
             formatDuration={formatDuration}
