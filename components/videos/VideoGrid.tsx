@@ -6,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { cn } from '@/lib/utils';
 
+const DEFAULT_POSTER = '/images/video-placeholder.svg';
+
 interface VideoGridProps {
   videos: any[];
   onVideoSelect?: (video: any) => void;
@@ -117,13 +119,17 @@ function VideoCard({
     }
   }, [isActive]);
 
-  const posterUrl = getPosterUrl(
+  const rawPosterSource =
     video.posterUrl ??
-      video.poster_url ??
-      video.thumbnailUrl ??
-      video.thumbnail_url ??
-      video.metadata?.thumbnail_url
-  );
+    video.poster_url ??
+    video.thumbnailUrl ??
+    video.thumbnail_url ??
+    video.metadata?.thumbnail_url;
+  const posterUrl =
+    getPosterUrl(rawPosterSource) ??
+    (rawPosterSource && typeof rawPosterSource === 'string'
+      ? rawPosterSource
+      : DEFAULT_POSTER);
   const videoTypeLabel = video.type ?? 'Video';
   const typeBadgeClass = getVideoTypeColor(video.type);
   const isOwner = isOwnMedia(video);
@@ -195,12 +201,15 @@ function VideoCard({
           <video
             ref={videoRef}
             className="h-full w-full bg-black object-cover"
-            poster={posterUrl ?? undefined}
+            poster={posterUrl ?? DEFAULT_POSTER}
             controls
             autoPlay
             onEnded={onDeactivate}
           >
-            <source src={videoSource} type={videoMimeType} />
+            <source
+              src={process.env.NEXT_PUBLIC_API_URL + videoSource}
+              type={videoMimeType}
+            />
             Your browser does not support the video tag.
           </video>
         ) : (
@@ -234,13 +243,11 @@ function VideoCard({
                   : 'Video source unavailable'
               }
             >
-              {canPlay && (
-                <span className="inline-flex items-center gap-2 rounded-full bg-black/70 px-4 py-2 text-sm font-semibold uppercase tracking-wide">
-                  <Play className="h-4 w-4" />
-                  Play
+              {canPlay ? (
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/60 text-white shadow-lg transition group-hover:bg-black/70">
+                  <Play className="h-6 w-6 translate-x-px" />
                 </span>
-              )}
-              {!canPlay && (
+              ) : (
                 <span className="rounded-full bg-black/70 px-4 py-2 text-sm font-semibold uppercase tracking-wide">
                   Unavailable
                 </span>
