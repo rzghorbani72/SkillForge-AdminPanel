@@ -797,7 +797,7 @@ class ApiClient {
       formData.append('description', metadata.description || '');
     }
 
-    return this.request('/audio/upload', {
+    return this.request('/audios/upload', {
       method: 'POST',
       headers: {}, // Let browser set content-type for FormData
       body: formData
@@ -850,14 +850,72 @@ class ApiClient {
     return response.data;
   }
 
-  async getAudio() {
-    const response = await this.request('/audio');
+  async getAudios() {
+    const response = await this.request('/audios');
+    const payload = response.data as any;
 
-    // Return the audio data directly
-    if (response.data) {
-      return response.data as any;
+    if (!payload) {
+      return [];
     }
-    return null as any;
+
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (payload.status === 'ok' && Array.isArray(payload.data)) {
+      return payload.data;
+    }
+
+    if (Array.isArray(payload?.audios)) {
+      return payload.audios;
+    }
+
+    if (Array.isArray(payload?.data?.audios)) {
+      return payload.data.audios;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    return [];
+  }
+
+  async getAudio(audioId: number) {
+    const response = await this.request(`/audios/${audioId}`);
+    const payload = response.data as any;
+
+    if (!payload) {
+      return null;
+    }
+
+    if (payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+
+    if (payload.data) {
+      return payload.data;
+    }
+
+    return payload;
+  }
+
+  async updateAudio(
+    audioId: number,
+    audioData: { title?: string; description?: string; is_public?: boolean }
+  ) {
+    const response = await this.request(`/audios/${audioId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(audioData)
+    });
+
+    return response.data as any;
+  }
+
+  async deleteAudio(audioId: number) {
+    return this.request(`/audios/${audioId}`, {
+      method: 'DELETE'
+    });
   }
 
   async getDocuments() {
