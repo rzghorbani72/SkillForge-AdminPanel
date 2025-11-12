@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -10,158 +10,191 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
+  Area,
   AreaChart,
-  Area
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
 } from 'recharts';
-import { DollarSign, Users, Eye, Star, Calendar, Filter } from 'lucide-react';
-import { apiClient } from '@/lib/api';
-import { Course, Enrollment, Payment } from '@/types/api';
-import { ErrorHandler } from '@/lib/error-handler';
+import { Calendar, DollarSign, Eye, Filter, Star, Users } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { useAnalyticsData } from './_hooks/use-analytics-data';
+
+interface RevenuePoint {
+  month: string;
+  revenue: number;
+  enrollments: number;
+}
+
+interface EngagementSlice {
+  name: string;
+  value: number;
+  color: string;
+}
+
+const MONTH_NAMES = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+];
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+  }).format(value / 100);
+}
 
 export default function AnalyticsPage() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [timeRange] = useState('30d');
+  const { courses, enrollments, payments, isLoading } = useAnalyticsData();
 
-  useEffect(() => {
-    fetchAnalyticsData();
-  }, [timeRange]);
-
-  const fetchAnalyticsData = async () => {
-    try {
-      setIsLoading(true);
-
-      // Fetch courses
-      try {
-        const coursesResponse = await apiClient.getCourses();
-        setCourses(
-          Array.isArray(coursesResponse.courses) ? coursesResponse.courses : []
-        );
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-        setCourses([]);
+  const { revenueTrend, totalRevenue, totalEnrollments, activeEnrollments } =
+    useMemo(() => {
+      if (payments.length === 0 && enrollments.length === 0) {
+        return {
+          revenueTrend: [] as RevenuePoint[],
+          totalRevenue: 0,
+          totalEnrollments: 0,
+          activeEnrollments: 0
+        };
       }
 
-      // Fetch enrollments
-      try {
-        const enrollmentsResponse = await apiClient.getRecentEnrollments();
-        setEnrollments(
-          Array.isArray(enrollmentsResponse) ? enrollmentsResponse : []
-        );
-      } catch (error) {
-        console.error('Error fetching enrollments:', error);
-        setEnrollments([]);
-      }
+      const revenueMap = new Map<
+        string,
+        { revenue: number; enrollments: number }
+      >();
 
-      // Fetch payments
-      try {
-        const paymentsResponse = await apiClient.getRecentPayments();
-        setPayments(Array.isArray(paymentsResponse) ? paymentsResponse : []);
-      } catch (error) {
-        console.error('Error fetching payments:', error);
-        setPayments([]);
-      }
-    } catch (error) {
-      console.error('Error fetching analytics data:', error);
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setIsLoading(false);
+      payments.forEach((payment) => {
+        if (!payment.payment_date) return;
+        const date = new Date(payment.payment_date);
+        const key = `${date.getFullYear()}-${date.getMonth()}`;
+        if (!revenueMap.has(key)) {
+          revenueMap.set(key, { revenue: 0, enrollments: 0 });
+        }
+        const bucket = revenueMap.get(key)!;
+        bucket.revenue += payment.amount ?? 0;
+      });
+
+      enrollments.forEach((enrollment) => {
+        if (!enrollment.enrolled_at) return;
+        const date = new Date(enrollment.enrolled_at);
+        const key = `${date.getFullYear()}-${date.getMonth()}`;
+        if (!revenueMap.has(key)) {
+          revenueMap.set(key, { revenue: 0, enrollments: 0 });
+        }
+        const bucket = revenueMap.get(key)!;
+        bucket.enrollments += 1;
+      });
+
+      const trend = Array.from(revenueMap.entries())
+        .map(([key, value]) => {
+          const [year, month] = key.split('-').map((item) => Number(item));
+          return {
+            month: `${MONTH_NAMES[month]} ${String(year).slice(-2)}`,
+            revenue: value.revenue,
+            enrollments: value.enrollments
+          };
+        })
+        .sort((a, b) => {
+          const [aMonth, aYear] = a.month.split(' ');
+          const [bMonth, bYear] = b.month.split(' ');
+          const yearDiff = Number(aYear) - Number(bYear);
+          if (yearDiff !== 0) return yearDiff;
+          return MONTH_NAMES.indexOf(aMonth) - MONTH_NAMES.indexOf(bMonth);
+        });
+
+      const totalRevenueAccum = payments.reduce(
+        (sum, payment) => sum + (payment.amount ?? 0),
+        0
+      );
+      const totalEnrollmentsAccum = enrollments.length;
+      const activeEnrollmentsAccum = enrollments.filter(
+        (enrollment) => enrollment.status === 'ACTIVE'
+      ).length;
+
+      return {
+        revenueTrend: trend,
+        totalRevenue: totalRevenueAccum,
+        totalEnrollments: totalEnrollmentsAccum,
+        activeEnrollments: activeEnrollmentsAccum
+      };
+    }, [payments, enrollments]);
+
+  const completionRate = useMemo(() => {
+    if (totalEnrollments === 0) return 0;
+    const completed = enrollments.filter(
+      (enrollment) => enrollment.status === 'COMPLETED'
+    ).length;
+    return Math.round((completed / totalEnrollments) * 100);
+  }, [enrollments, totalEnrollments]);
+
+  const engagementSlices = useMemo<EngagementSlice[]>(() => {
+    if (enrollments.length === 0) {
+      return [{ name: 'No Data', value: 1, color: '#CBD5F5' }];
     }
-  };
 
-  // Mock data for charts (replace with real data from API)
-  const revenueData = [
-    { month: 'Jan', revenue: 4000, enrollments: 24 },
-    { month: 'Feb', revenue: 3000, enrollments: 13 },
-    { month: 'Mar', revenue: 2000, enrollments: 18 },
-    { month: 'Apr', revenue: 2780, enrollments: 39 },
-    { month: 'May', revenue: 1890, enrollments: 48 },
-    { month: 'Jun', revenue: 2390, enrollments: 38 },
-    { month: 'Jul', revenue: 3490, enrollments: 43 }
-  ];
+    return [
+      {
+        name: 'Active',
+        value: enrollments.filter((e) => e.status === 'ACTIVE').length,
+        color: '#10b981'
+      },
+      {
+        name: 'Completed',
+        value: enrollments.filter((e) => e.status === 'COMPLETED').length,
+        color: '#3b82f6'
+      },
+      {
+        name: 'Cancelled',
+        value: enrollments.filter((e) => e.status === 'CANCELLED').length,
+        color: '#ef4444'
+      }
+    ].filter((slice) => slice.value > 0);
+  }, [enrollments]);
 
-  // Ensure all arrays are safe
-  const safeCourses = Array.isArray(courses) ? courses : [];
-  const safeEnrollments = Array.isArray(enrollments) ? enrollments : [];
-  const safePayments = Array.isArray(payments) ? payments : [];
+  const topCourses = useMemo(() => {
+    if (courses.length === 0) return [];
 
-  const coursePerformanceData = safeCourses.slice(0, 5).map((course) => ({
-    name: course.title,
-    students: course.students_count || 0,
-    revenue: (course.students_count || 0) * 99, // Mock revenue calculation
-    completion: Math.floor(Math.random() * 100) // Mock completion rate
-  }));
+    return courses
+      .map((course) => ({
+        name: course.title,
+        students: course.students_count ?? course?.enrollments_count ?? 0,
+        revenue: (course.students_count ?? 0) * 9900
+      }))
+      .sort((a, b) => b.students - a.students)
+      .slice(0, 5);
+  }, [courses]);
 
-  const studentEngagementData = [
-    {
-      name: 'Active',
-      value: safeEnrollments.filter((e) => e.status === 'ACTIVE').length,
-      color: '#10b981'
-    },
-    {
-      name: 'Completed',
-      value: safeEnrollments.filter((e) => e.status === 'COMPLETED').length,
-      color: '#3b82f6'
-    },
-    {
-      name: 'Inactive',
-      value: safeEnrollments.filter((e) => e.status === 'CANCELLED').length,
-      color: '#ef4444'
-    }
-  ];
-
-  const totalRevenue = safePayments.reduce(
-    (sum, payment) => sum + payment.amount,
-    0
+  const revenueLeader = useMemo(
+    () =>
+      topCourses.length > 0
+        ? Math.max(...topCourses.map((course) => course.revenue))
+        : 0,
+    [topCourses]
   );
-  const totalEnrollments = safeEnrollments.length;
-  const activeEnrollments = safeEnrollments.filter(
-    (e) => e.status === 'ACTIVE'
-  ).length;
-  const completionRate =
-    totalEnrollments > 0
-      ? Math.round(
-          (safeEnrollments.filter((e) => e.status === 'COMPLETED').length /
-            totalEnrollments) *
-            100
-        )
-      : 0;
-
-  // Debug logging
-  console.log('Analytics data state:', {
-    courses: courses,
-    safeCourses: safeCourses,
-    enrollments: enrollments,
-    safeEnrollments: safeEnrollments,
-    payments: payments,
-    safePayments: safePayments,
-    totalRevenue: totalRevenue,
-    totalEnrollments: totalEnrollments
-  });
 
   if (isLoading) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
             <p className="mt-2 text-sm text-gray-600">Loading analytics...</p>
           </div>
         </div>
@@ -171,15 +204,17 @@ export default function AnalyticsPage() {
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Analytics Overview
+          </h1>
           <p className="text-muted-foreground">
-            Track your performance, revenue, and student engagement
+            Snapshot of revenue, engagement, and course performance across your
+            organisation.
           </p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Button variant="outline">
             <Calendar className="mr-2 h-4 w-4" />
             Last 30 days
@@ -191,7 +226,6 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Key Metrics */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -200,10 +234,10 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${(totalRevenue / 100).toFixed(2)}
+              {formatCurrency(totalRevenue)}
             </div>
             <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">+20.1%</span> from last month
+              Combined payments collected
             </p>
           </CardContent>
         </Card>
@@ -217,7 +251,7 @@ export default function AnalyticsPage() {
           <CardContent>
             <div className="text-2xl font-bold">{totalEnrollments}</div>
             <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">+12.5%</span> from last month
+              Recent enrollment activity
             </p>
           </CardContent>
         </Card>
@@ -230,7 +264,9 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeEnrollments}</div>
-            <p className="text-xs text-muted-foreground">Currently learning</p>
+            <p className="text-xs text-muted-foreground">
+              Currently progressing courses
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -242,265 +278,128 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{completionRate}%</div>
-            <p className="text-xs text-muted-foreground">Course completion</p>
+            <p className="text-xs text-muted-foreground">
+              Share of finished enrolments
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Analytics Tabs */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="revenue">Revenue</TabsTrigger>
-          <TabsTrigger value="courses">Course Performance</TabsTrigger>
-          <TabsTrigger value="engagement">Student Engagement</TabsTrigger>
-        </TabsList>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue Trend</CardTitle>
+            <CardDescription>
+              Monthly revenue alongside new enrolments.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={320}>
+              <AreaChart data={revenueTrend}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip
+                  formatter={(value: number, name: string) =>
+                    name === 'revenue'
+                      ? [formatCurrency(value), 'Revenue']
+                      : [value, 'Enrollments']
+                  }
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#6366f1"
+                  fill="#6366f1"
+                  name="revenue"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="enrollments"
+                  stroke="#22c55e"
+                  fill="#22c55e33"
+                  name="enrollments"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue Trend</CardTitle>
-                <CardDescription>
-                  Monthly revenue and enrollment trends
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={revenueData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="#8884d8"
-                      fill="#8884d8"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Engagement Breakdown</CardTitle>
+            <CardDescription>
+              Distribution of current enrolment states.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={engagementSlices}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="value">
+                  {engagementSlices.map((slice, index) => (
+                    <Cell key={slice.name} fill={slice.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Student Engagement</CardTitle>
-                <CardDescription>
-                  Distribution of student enrollment status
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={studentEngagementData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name} ${(percent * 100).toFixed(0)}%`
-                      }
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {studentEngagementData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="revenue" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue Analytics</CardTitle>
-              <CardDescription>
-                Detailed revenue breakdown and trends
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#8884d8"
-                    strokeWidth={2}
+      <Card>
+        <CardHeader>
+          <CardTitle>Top Performing Courses</CardTitle>
+          <CardDescription>
+            Leaderboard of courses by recent enrolments.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {topCourses.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No recent course enrolment data available yet.
+            </p>
+          ) : (
+            topCourses.map((course, index) => (
+              <div
+                key={course.name}
+                className="flex flex-col gap-2 rounded-md border p-4 md:flex-row md:items-center md:justify-between"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{course.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {course.students} students
+                    </p>
+                  </div>
+                </div>
+                <div className="flex w-full flex-col gap-2 md:w-64">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Revenue</span>
+                    <Badge variant="outline">
+                      {formatCurrency(course.revenue)}
+                    </Badge>
+                  </div>
+                  <Progress
+                    value={
+                      revenueLeader > 0
+                        ? Math.round((course.revenue / revenueLeader) * 100)
+                        : 0
+                    }
+                    className="h-2"
                   />
-                  <Line
-                    type="monotone"
-                    dataKey="enrollments"
-                    stroke="#82ca9d"
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="courses" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Performance</CardTitle>
-              <CardDescription>
-                Top performing courses by enrollment and revenue
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={coursePerformanceData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="students" fill="#8884d8" />
-                  <Bar dataKey="revenue" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Course Performance Details */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Top Courses by Enrollment</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {coursePerformanceData
-                    .sort((a, b) => b.students - a.students)
-                    .slice(0, 5)
-                    .map((course, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">{course.name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {course.students} students
-                            </p>
-                          </div>
-                        </div>
-                        <Badge variant="outline">
-                          {course.completion}% completion
-                        </Badge>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue by Course</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {coursePerformanceData
-                    .sort((a, b) => b.revenue - a.revenue)
-                    .slice(0, 5)
-                    .map((course, index) => (
-                      <div key={index} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">
-                            {course.name}
-                          </span>
-                          <span className="text-sm font-medium">
-                            ${course.revenue}
-                          </span>
-                        </div>
-                        <Progress
-                          value={
-                            (course.revenue /
-                              Math.max(
-                                ...coursePerformanceData.map((c) => c.revenue)
-                              )) *
-                            100
-                          }
-                          className="h-2"
-                        />
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="engagement" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Student Engagement Metrics</CardTitle>
-              <CardDescription>
-                Track how students interact with your courses
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">
-                    {Math.round((activeEnrollments / totalEnrollments) * 100)}%
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Active Engagement
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600">
-                    {completionRate}%
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Completion Rate
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600">
-                    {Math.floor(Math.random() * 20) + 80}%
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Satisfaction Rate
-                  </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Engagement Trends</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="enrollments" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            ))
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
