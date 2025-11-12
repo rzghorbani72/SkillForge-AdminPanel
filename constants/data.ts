@@ -286,7 +286,7 @@ export const navItems: NavItem[] = [
     children: [
       {
         title: 'Transactions',
-        href: '/payments/transactions',
+        href: '/payments',
         icon: 'list' as IconType,
         label: 'transactions'
       },
