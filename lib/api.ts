@@ -1084,7 +1084,7 @@ class ApiClient {
 
     const queryString = queryParams.toString();
     const response = await this.request(
-      `/teacher-requests${queryString ? `?${queryString}` : ''}`
+      `/users/teacher-requests${queryString ? `?${queryString}` : ''}`
     );
 
     const payload = response.data as any;
@@ -1094,6 +1094,21 @@ class ApiClient {
     }
 
     return payload;
+  }
+
+  async reviewTeacherRequest(
+    id: number,
+    payload: {
+      status: 'PENDING' | 'APPROVED' | 'REJECTED';
+      notes?: string;
+    }
+  ) {
+    const response = await this.request(`/teacher-requests/${id}/review`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+
+    return response.data as any;
   }
 
   async getUser(id: number) {

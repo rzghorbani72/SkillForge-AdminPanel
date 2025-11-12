@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -136,6 +136,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState<
     'all' | 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER'
@@ -146,6 +147,18 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   const [selectedSchool, setSelectedSchool] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  const queryKey = JSON.stringify({
+    category,
+    currentPage,
+    pageSize,
+    searchTerm,
+    selectedRole,
+    selectedStatus,
+    selectedSchool,
+    roleLocked: categoryConfig.roleLocked,
+    defaultRole: categoryConfig.defaultRole
+  });
+  const previousQueryKeyRef = useRef<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -214,8 +227,17 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   ]);
 
   useEffect(() => {
+    if (!isInitialized) {
+      return;
+    }
+
+    if (previousQueryKeyRef.current === queryKey) {
+      return;
+    }
+
+    previousQueryKeyRef.current = queryKey;
     fetchUsers();
-  }, []);
+  }, [fetchUsers, isInitialized, queryKey]);
 
   useEffect(() => {
     const roleParam = searchParams.get('role');
@@ -227,22 +249,37 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
       ['ADMIN', 'MANAGER', 'TEACHER', 'STUDENT', 'USER'].includes(roleParam) &&
       !categoryConfig.roleLocked
     ) {
-      setSelectedRole(roleParam as any);
+      setSelectedRole((prev) =>
+        prev === roleParam ? prev : (roleParam as any)
+      );
     }
+
     if (
       statusParam &&
       ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'BANNED'].includes(statusParam)
     ) {
-      setSelectedStatus(statusParam as any);
+      setSelectedStatus((prev) =>
+        prev === statusParam ? prev : (statusParam as any)
+      );
     }
+
     if (schoolParam) {
-      setSelectedSchool(parseInt(schoolParam));
+      const parsedSchool = parseInt(schoolParam);
+      setSelectedSchool((prev) =>
+        prev === parsedSchool ? prev : parsedSchool
+      );
+    } else {
+      setSelectedSchool((prev) => (prev === null ? prev : null));
     }
+
+    setIsInitialized(true);
   }, [categoryConfig.roleLocked, searchParams]);
 
   useEffect(() => {
     if (categoryConfig.roleLocked) {
-      setSelectedRole(categoryConfig.defaultRole);
+      setSelectedRole((prev) =>
+        prev === categoryConfig.defaultRole ? prev : categoryConfig.defaultRole
+      );
     }
   }, [categoryConfig.defaultRole, categoryConfig.roleLocked]);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -46,6 +46,7 @@ import {
   Building
 } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
+import { apiClient } from '@/lib/api';
 
 interface TeacherRequest {
   id: number;
@@ -99,69 +100,67 @@ export default function TeacherRequestsPage() {
     hasPreviousPage: false
   });
 
-  useEffect(() => {
-    fetchTeacherRequests();
-  }, [pagination.page]);
-
-  const fetchTeacherRequests = async () => {
+  const fetchTeacherRequests = useCallback(async () => {
     try {
       setLoading(true);
-      // Auth type is handled by the new auth service
+      const data = await apiClient.getTeacherRequests({
+        page: pagination.page,
+        limit: pagination.limit
+      });
 
-      const response = await fetch(
-        `/api/teacher-requests?page=${pagination.page}&limit=${pagination.limit}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+      if (data && typeof data === 'object') {
+        const requestList = (data as any).requests ?? [];
+        const paginationInfo = (data as any).pagination ?? null;
+
+        setRequests(requestList);
+
+        if (paginationInfo) {
+          setPagination((prev) => ({
+            ...prev,
+            total: paginationInfo.total ?? prev.total,
+            totalPages: paginationInfo.totalPages ?? prev.totalPages,
+            hasNextPage: Boolean(paginationInfo.hasNextPage),
+            hasPreviousPage: Boolean(paginationInfo.hasPreviousPage)
+          }));
+        } else {
+          setPagination((prev) => ({
+            ...prev,
+            total: 0,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPreviousPage: false
+          }));
         }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch teacher requests');
+      } else {
+        setRequests([]);
+        setPagination((prev) => ({
+          ...prev,
+          total: 0,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false
+        }));
       }
-
-      const data = await response.json();
-      setRequests(data.data.requests);
-      setPagination((prev) => ({
-        ...prev,
-        total: data.data.pagination.total,
-        totalPages: data.data.pagination.totalPages,
-        hasNextPage: data.data.pagination.hasNextPage,
-        hasPreviousPage: data.data.pagination.hasPreviousPage
-      }));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.limit, pagination.page]);
+
+  useEffect(() => {
+    fetchTeacherRequests();
+  }, [fetchTeacherRequests]);
 
   const handleReview = async () => {
     if (!selectedRequest) return;
 
     try {
       setReviewing(true);
-      // Auth type is handled by the new auth service
-
-      const response = await fetch(
-        `/api/teacher-requests/${selectedRequest.id}/review`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({
-            status: reviewStatus,
-            notes: reviewNotes
-          })
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to review teacher request');
-      }
+      await apiClient.reviewTeacherRequest(selectedRequest.id, {
+        status: reviewStatus,
+        notes: reviewNotes || undefined
+      });
 
       ErrorHandler.showSuccess(
         `Teacher request ${reviewStatus.toLowerCase()} successfully`
