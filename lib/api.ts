@@ -983,11 +983,10 @@ class ApiClient {
   }
 
   // Users endpoints
-  async getUsers(params?: {
+  private buildUserQuery(params?: {
     page?: number;
     limit?: number;
     search?: string;
-    role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
     school_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
@@ -996,21 +995,105 @@ class ApiClient {
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
-    if (params?.role) queryParams.append('role', params.role);
     if (params?.school_id)
       queryParams.append('school_id', params.school_id.toString());
     if (params?.status) queryParams.append('status', params.status);
 
     const queryString = queryParams.toString();
-    const url = queryString ? `/users?${queryString}` : '/users';
+    return queryString ? `?${queryString}` : '';
+  }
 
-    const response = await this.request(url);
+  private mapUsersResponse(response: ApiResponse<any>) {
+    const payload = response.data as any;
 
-    // Return the users data directly
-    if (response.data) {
-      return response.data;
+    if (!payload) {
+      return null;
     }
-    return response;
+
+    if (payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+
+    return payload;
+  }
+
+  async getUsers(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+    school_id?: number;
+    status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+  }) {
+    const query = this.buildUserQuery(params);
+    const endpoint = `/users${query}${params?.role ? `${query ? '&' : '?'}role=${params.role}` : ''}`;
+
+    const response = await this.request(endpoint);
+    return this.mapUsersResponse(response);
+  }
+
+  async getStudentUsers(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    school_id?: number;
+    status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+  }) {
+    const query = this.buildUserQuery(params);
+    const response = await this.request(`/users/students${query}`);
+    return this.mapUsersResponse(response);
+  }
+
+  async getTeacherUsers(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    school_id?: number;
+    status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+  }) {
+    const query = this.buildUserQuery(params);
+    const response = await this.request(`/users/teachers${query}`);
+    return this.mapUsersResponse(response);
+  }
+
+  async getManagerUsers(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    school_id?: number;
+    status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+  }) {
+    const query = this.buildUserQuery(params);
+    const response = await this.request(`/users/managers${query}`);
+    return this.mapUsersResponse(response);
+  }
+
+  async getTeacherRequests(params?: {
+    page?: number;
+    limit?: number;
+    school_id?: number;
+    status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+  }) {
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.school_id)
+      queryParams.append('school_id', params.school_id.toString());
+    if (params?.status) queryParams.append('status', params.status);
+
+    const queryString = queryParams.toString();
+    const response = await this.request(
+      `/teacher-requests${queryString ? `?${queryString}` : ''}`
+    );
+
+    const payload = response.data as any;
+
+    if (payload?.status === 'ok' && payload?.data) {
+      return payload.data;
+    }
+
+    return payload;
   }
 
   async getUser(id: number) {

@@ -15,6 +15,7 @@ interface UserFiltersProps {
   onRoleChange: (role: string) => void;
   selectedStatus: string;
   onStatusChange: (status: string) => void;
+  roleDisabled?: boolean;
 }
 
 export function UserFilters({
@@ -23,7 +24,8 @@ export function UserFilters({
   selectedRole,
   onRoleChange,
   selectedStatus,
-  onStatusChange
+  onStatusChange,
+  roleDisabled = false
 }: UserFiltersProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row">
@@ -39,7 +41,11 @@ export function UserFilters({
         </div>
       </div>
       <div className="flex gap-2">
-        <Select value={selectedRole} onValueChange={onRoleChange}>
+        <Select
+          value={selectedRole}
+          onValueChange={onRoleChange}
+          disabled={roleDisabled}
+        >
           <SelectTrigger className="w-[140px]">
             <SelectValue />
           </SelectTrigger>

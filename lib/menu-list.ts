@@ -114,7 +114,34 @@ export function getMenuList(pathname: string): Group[] {
           href: '/users',
           label: 'Users',
           active: pathname.includes('/users'),
-          icon: Users
+          icon: Users,
+          submenus: [
+            {
+              href: '/users',
+              label: 'All Users',
+              active: pathname === '/users'
+            },
+            {
+              href: '/users/students',
+              label: 'Students',
+              active: pathname.startsWith('/users/students')
+            },
+            {
+              href: '/users/teachers',
+              label: 'Teachers',
+              active: pathname.startsWith('/users/teachers')
+            },
+            {
+              href: '/users/managers',
+              label: 'Managers',
+              active: pathname.startsWith('/users/managers')
+            },
+            {
+              href: '/users/teacher-requests',
+              label: 'Teacher Requests',
+              active: pathname.startsWith('/users/teacher-requests')
+            }
+          ]
         },
         {
           href: '/account',
