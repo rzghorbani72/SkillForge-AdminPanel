@@ -286,6 +286,7 @@ export interface Enrollment {
   status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
   enrolled_at: string;
   completed_at?: string;
+  progress_percent?: number;
   user?: User;
   course?: Course;
   progress?: Progress[];

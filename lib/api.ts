@@ -1277,12 +1277,13 @@ class ApiClient {
     const url = queryString ? `/enrollments?${queryString}` : '/enrollments';
 
     const response = await this.request(url);
+    const payload = response.data as any;
 
-    // Return the enrollments data directly
-    if (response.data) {
-      return response.data;
+    if (payload?.status === 'ok' && payload?.data) {
+      return payload.data;
     }
-    return response;
+
+    return payload;
   }
 
   async getEnrollment(id: number) {
@@ -1346,12 +1347,13 @@ class ApiClient {
     const url = queryString ? `/profiles?${queryString}` : '/profiles';
 
     const response = await this.request(url);
+    const payload = response.data as any;
 
-    // Return the profiles data directly
-    if (response.data) {
-      return response.data;
+    if (payload?.status === 'ok' && payload?.data) {
+      return payload.data;
     }
-    return response;
+
+    return payload;
   }
 
   async getProfile(id: number) {
