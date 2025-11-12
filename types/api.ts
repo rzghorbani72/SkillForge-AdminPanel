@@ -41,6 +41,16 @@ export interface Role {
 // Currency configuration
 export type CurrencyCode = 'USD' | 'IRR' | 'TL' | 'EUR' | 'GBP' | 'TRY';
 
+export interface ThemeConfigPayload {
+  themeId?: number;
+  name?: string;
+  primary_color: string;
+  secondary_color: string;
+  accent_color: string;
+  background_color: string;
+  dark_mode: boolean;
+}
+
 export interface CurrencyConfig {
   code: CurrencyCode;
   name: string;

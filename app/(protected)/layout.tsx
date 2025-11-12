@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import Sidebar from '@/components/layout/sidebar';
 import Header from '@/components/layout/header';
 import { CategoriesInitializer } from '@/components/providers/CategoriesInitializer';
+import { ThemeInitializer } from '@/components/providers/ThemeInitializer';
 
 export default function ProtectedLayout({
   children
@@ -18,6 +19,7 @@ export default function ProtectedLayout({
   return (
     <>
       {/* <CategoriesInitializer /> */}
+      <ThemeInitializer />
       <div className="flex h-screen">
         <Sidebar />
         <main className="flex flex-1 flex-col overflow-hidden">

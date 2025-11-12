@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -14,6 +14,15 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Palette, Image, Save } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
+import { apiClient } from '@/lib/api';
+import {
+  applyThemeVariables,
+  DEFAULT_THEME_CONFIG,
+  dispatchThemeUpdate,
+  parseThemeResponse
+} from '@/lib/theme';
+import { useTheme } from 'next-themes';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ThemeFormState {
   primary: string;
@@ -25,33 +34,109 @@ interface ThemeFormState {
 }
 
 const DEFAULT_THEME: ThemeFormState = {
-  primary: '#3b82f6',
-  secondary: '#6366f1',
-  accent: '#f59e0b',
-  background: '#f8fafc',
-  darkMode: false,
+  primary: DEFAULT_THEME_CONFIG.primary_color,
+  secondary: DEFAULT_THEME_CONFIG.secondary_color,
+  accent: DEFAULT_THEME_CONFIG.accent_color,
+  background: DEFAULT_THEME_CONFIG.background_color,
+  darkMode: DEFAULT_THEME_CONFIG.dark_mode,
   logoUrl: ''
 };
 
 export default function ThemeSettingsPage() {
+  const { setTheme: setNextTheme } = useTheme();
   const [theme, setTheme] = useState<ThemeFormState>(DEFAULT_THEME);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [themeId, setThemeId] = useState<number | undefined>(undefined);
+
+  const applyLivePreview = (nextState: ThemeFormState) => {
+    const payload = buildConfigPayload(nextState);
+    applyThemeVariables(payload);
+    setNextTheme(nextState.darkMode ? 'dark' : 'light');
+    dispatchThemeUpdate(payload);
+  };
+
+  const buildConfigPayload = (state: ThemeFormState) => ({
+    themeId,
+    name: 'Custom Theme',
+    primary_color: state.primary,
+    secondary_color: state.secondary,
+    accent_color: state.accent,
+    background_color: state.darkMode ? '#0f172a' : state.background,
+    dark_mode: state.darkMode
+  });
 
   const previewStyles = useMemo(
     () => ({
       '--preview-primary': theme.primary,
       '--preview-secondary': theme.secondary,
       '--preview-accent': theme.accent,
-      '--preview-background': theme.background,
+      '--preview-background': theme.darkMode ? '#0f172a' : theme.background,
+      '--preview-surface': theme.darkMode ? '#0f172a' : theme.background,
       '--preview-text': theme.darkMode ? '#f8fafc' : '#0f172a'
     }),
     [theme]
   );
 
+  useEffect(() => {
+    let mounted = true;
+
+    const loadTheme = async () => {
+      try {
+        const response = await apiClient.getCurrentThemeConfig();
+        if (!mounted) return;
+        const config = parseThemeResponse(response);
+        setTheme({
+          primary: config.primary_color,
+          secondary: config.secondary_color,
+          accent: config.accent_color,
+          background: config.background_color,
+          darkMode: config.dark_mode,
+          logoUrl: ''
+        });
+        setThemeId(config.themeId);
+        applyThemeVariables(config);
+        setNextTheme(config.dark_mode ? 'dark' : 'light');
+      } catch (error) {
+        console.error('Failed to load theme configuration', error);
+        if (!mounted) return;
+        setTheme(DEFAULT_THEME);
+        applyThemeVariables(DEFAULT_THEME_CONFIG);
+        setNextTheme(DEFAULT_THEME_CONFIG.dark_mode ? 'dark' : 'light');
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    loadTheme();
+
+    return () => {
+      mounted = false;
+    };
+  }, [setNextTheme]);
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      // TODO: Hook up to theme API when available
+      const response = await apiClient.updateCurrentThemeConfig(
+        buildConfigPayload(theme)
+      );
+
+      const updatedConfig = parseThemeResponse(response);
+      setTheme({
+        primary: updatedConfig.primary_color,
+        secondary: updatedConfig.secondary_color,
+        accent: updatedConfig.accent_color,
+        background: updatedConfig.background_color,
+        darkMode: updatedConfig.dark_mode,
+        logoUrl: theme.logoUrl
+      });
+      setThemeId(updatedConfig.themeId);
+
+      applyThemeVariables(updatedConfig);
+      setNextTheme(updatedConfig.dark_mode ? 'dark' : 'light');
+      dispatchThemeUpdate(updatedConfig);
+
       ErrorHandler.showSuccess('Theme preferences saved');
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -59,6 +144,17 @@ export default function ThemeSettingsPage() {
       setIsSaving(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        <Skeleton className="h-9 w-64" />
+        <Skeleton className="h-4 w-72" />
+        <Skeleton className="h-[420px]" />
+        <Skeleton className="h-[220px]" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -109,20 +205,28 @@ export default function ThemeSettingsPage() {
                       type="color"
                       value={theme[key as keyof ThemeFormState] as string}
                       onChange={(event) =>
-                        setTheme((prev) => ({
-                          ...prev,
-                          [key]: event.target.value
-                        }))
+                        setTheme((prev) => {
+                          const nextState = {
+                            ...prev,
+                            [key]: event.target.value
+                          } as ThemeFormState;
+                          applyLivePreview(nextState);
+                          return nextState;
+                        })
                       }
                       className="h-10 w-16"
                     />
                     <Input
                       value={theme[key as keyof ThemeFormState] as string}
                       onChange={(event) =>
-                        setTheme((prev) => ({
-                          ...prev,
-                          [key]: event.target.value
-                        }))
+                        setTheme((prev) => {
+                          const nextState = {
+                            ...prev,
+                            [key]: event.target.value
+                          } as ThemeFormState;
+                          applyLivePreview(nextState);
+                          return nextState;
+                        })
                       }
                     />
                   </div>
@@ -141,7 +245,21 @@ export default function ThemeSettingsPage() {
               <Switch
                 checked={theme.darkMode}
                 onCheckedChange={(checked) =>
-                  setTheme((prev) => ({ ...prev, darkMode: checked }))
+                  setTheme((prev) => {
+                    const nextState = {
+                      ...prev,
+                      darkMode: checked,
+                      background: checked
+                        ? prev.background === DEFAULT_THEME.background
+                          ? '#0f172a'
+                          : prev.background
+                        : prev.background === '#0f172a'
+                          ? DEFAULT_THEME.background
+                          : prev.background
+                    } as ThemeFormState;
+                    applyLivePreview(nextState);
+                    return nextState;
+                  })
                 }
               />
             </div>
@@ -163,6 +281,9 @@ export default function ThemeSettingsPage() {
                 ] as string,
                 color: previewStyles[
                   '--preview-text' as keyof typeof previewStyles
+                ] as string,
+                borderColor: previewStyles[
+                  '--preview-primary' as keyof typeof previewStyles
                 ] as string
               }}
             >

@@ -1378,11 +1378,32 @@ class ApiClient {
     current_password: string;
     new_password: string;
     confirm_new_password: string;
+    user_id?: number;
   }) {
     return this.request('/auth/change-password', {
       method: 'POST',
       body: JSON.stringify(data)
     });
+  }
+
+  async getCurrentThemeConfig() {
+    const response = await this.request('/theme/current/config');
+    return response.data;
+  }
+
+  async updateCurrentThemeConfig(payload: {
+    primary_color?: string;
+    secondary_color?: string;
+    accent_color?: string;
+    background_color?: string;
+    dark_mode?: boolean;
+    name?: string;
+  }) {
+    const response = await this.request('/theme/current/config', {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    return response.data;
   }
 
   async getUserProfiles() {
