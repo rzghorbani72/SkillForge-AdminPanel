@@ -55,11 +55,35 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
+
+      let data: any = null;
+      try {
+        data = await response.json();
+      } catch {
+        // Response has no JSON body or failed to parse; keep data as null
+      }
+
+      // Handle unauthorized responses globally
+      if (response.status === 401) {
+        // In the browser, redirect to login and preserve the current path
+        if (typeof window !== 'undefined') {
+          const currentPath = window.location.pathname + window.location.search;
+          if (currentPath.includes('/login'))
+            return null as unknown as ApiResponse<T>;
+
+          const loginUrl = `/login?redirect=${encodeURIComponent(currentPath)}`;
+          window.location.href = loginUrl;
+        }
+
+        throw new Error(
+          (data && (data.message || data.error)) || 'Unauthorized (401)'
+        );
+      }
 
       if (!response.ok) {
         throw new Error(
-          data.message || `HTTP error! status: ${response.status}`
+          (data && (data.message || data.error)) ||
+            `HTTP error! status: ${response.status}`
         );
       }
 

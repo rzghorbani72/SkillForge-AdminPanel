@@ -403,32 +403,46 @@ class AuthService {
     return role === 'ADMIN' || role === 'MANAGER';
   }
 
-  // Logout user
+  // Logout user - uses server action to remove cookie
   async logout(): Promise<void> {
     try {
-      await apiClient.logout();
-    } catch (error) {
-      console.warn('Logout API call failed:', error);
-    } finally {
-      // Clear cached data
-      this.currentUser = null;
+      // Import server action dynamically to avoid SSR issues
+      const { logout: logoutAction } = await import('@/app/actions/auth');
+      const result = await logoutAction();
 
-      // Clear localStorage
+      if (result.success) {
+        // Clear cached data
+        this.currentUser = null;
+        this.persistSession(null);
+        if (typeof window !== 'undefined') {
+          window.localStorage.removeItem('user_state');
+          // Redirect to appropriate login page
+          if (isDevelopmentMode()) {
+            logDevInfo('Development mode: Redirecting to localhost login');
+            window.location.href = '/login';
+          } else {
+            const loginPath =
+              this.authType === 'public' ? '/student/login' : '/admin/login';
+            window.location.href = loginPath;
+          }
+        }
+      } else {
+        throw new Error(result.error || 'Logout failed');
+      }
+    } catch (error) {
+      console.warn('Logout failed:', error);
+      // Fallback: clear cached data and redirect
+      this.currentUser = null;
       this.persistSession(null);
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem('user_state');
-      }
-
-      // Redirect to appropriate login page
-      if (isDevelopmentMode()) {
-        // In development, redirect to localhost login
-        logDevInfo('Development mode: Redirecting to localhost login');
-        window.location.href = '/login';
-      } else {
-        // In production, use the appropriate login path
-        const loginPath =
-          this.authType === 'public' ? '/student/login' : '/admin/login';
-        window.location.href = loginPath;
+        if (isDevelopmentMode()) {
+          window.location.href = '/login';
+        } else {
+          const loginPath =
+            this.authType === 'public' ? '/student/login' : '/admin/login';
+          window.location.href = loginPath;
+        }
       }
     }
   }
