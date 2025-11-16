@@ -91,14 +91,6 @@ export default function UploadDocumentDialog({
         description: data.description
       });
 
-      // If course is selected, you might want to associate the document with the course
-      if (data.course_id) {
-        // You might need to create an endpoint to associate documents with courses
-        console.log(
-          'Document uploaded, course association would be handled here'
-        );
-      }
-
       form.reset();
       setIsOpen(false);
       onDocumentUploaded?.();

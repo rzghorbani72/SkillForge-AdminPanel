@@ -24,9 +24,7 @@ export default function EditCoursePage() {
     coverImage,
     coverPreview
   } = useCourseEdit();
-  console.log('coverPreview', coverPreview);
 
-  console.log('initialValues', initialValues);
   if (!selectedSchool) {
     return (
       <div className="flex-1 space-y-6 p-6">

@@ -72,7 +72,6 @@ export function useSchool(): UseSchoolReturn {
   }, []);
 
   const fetchFreshSchools = useCallback(async () => {
-    console.log('fetching fresh schools');
     try {
       const response = await apiClient.getMySchools();
 
@@ -110,7 +109,6 @@ export function useSchool(): UseSchoolReturn {
   }, [router]);
 
   const refreshSchools = useCallback(async () => {
-    console.log('refreshing schools');
     await fetchFreshSchools();
   }, [fetchFreshSchools]);
 

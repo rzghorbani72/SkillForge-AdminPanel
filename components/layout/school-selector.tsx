@@ -70,7 +70,6 @@ export function SchoolSelector() {
   const handleSchoolChange = (schoolId: string) => {
     const school = schools.find((s) => s.id.toString() === schoolId);
     if (school) {
-      console.log('Switching to school:', school);
       selectSchool(school.id);
     }
   };

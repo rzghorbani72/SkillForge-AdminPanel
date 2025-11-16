@@ -215,12 +215,6 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
             !isMinimized &&
             isExpanded &&
             (() => {
-              console.log(
-                'Rendering children for:',
-                item.title,
-                'children:',
-                item.children
-              );
               return (
                 <div className="ml-4 mt-1 space-y-1">
                   {item.children &&

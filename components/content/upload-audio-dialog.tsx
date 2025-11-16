@@ -83,13 +83,6 @@ export default function UploadAudioDialog({
         description: data.description
       });
 
-      // If course is selected, you might want to associate the audio with the course
-      // This would depend on your backend API structure
-      if (data.course_id) {
-        // You might need to create an endpoint to associate audio with courses
-        console.log('Audio uploaded, course association would be handled here');
-      }
-
       form.reset();
       setIsOpen(false);
       onAudioUploaded?.();

@@ -106,7 +106,6 @@ const useCourses = (): UseCoursesReturn => {
   const handleDeleteCourse = async (course: Course) => {
     try {
       const response = await apiClient.deleteCourse(course.id);
-      console.log('delete course response', response);
       if (response && response.status === 200) {
         toast.success((response.data as any).message);
         fetchCourses();

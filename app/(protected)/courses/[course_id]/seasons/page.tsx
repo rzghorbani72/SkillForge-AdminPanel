@@ -79,8 +79,6 @@ export default function SeasonsPage() {
           apiClient.getSeasons(parseInt(courseId)),
           apiClient.getLessons({ course_id: parseInt(courseId) })
         ]);
-      console.log('seasonsResponse', seasonsResponse);
-      console.log('lessonsResponse', lessonsResponse);
 
       if (courseResponse) {
         setCourse(courseResponse);

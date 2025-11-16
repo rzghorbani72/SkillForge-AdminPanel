@@ -33,9 +33,6 @@ export default function DashboardPage() {
     isLoading: userLoading,
     error: userError
   } = useAccessControl();
-  console.log('Dashboard - User State:', userState);
-  console.log('Dashboard - User Loading:', userLoading);
-  console.log('Dashboard - User Error:', userError);
 
   const quickActions = [
     {

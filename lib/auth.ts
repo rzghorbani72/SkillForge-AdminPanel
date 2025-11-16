@@ -157,7 +157,6 @@ class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthUser> {
     try {
       const response = await apiClient.login(credentials);
-      console.log('login 2.', { response });
       if (response.data) {
         this.currentUser = response.data as AuthUser;
         this.persistSession(this.currentUser);

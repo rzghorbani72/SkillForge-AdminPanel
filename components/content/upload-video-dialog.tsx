@@ -92,23 +92,6 @@ export default function UploadVideoDialog({
         description: data.description
       });
 
-      // If course is selected, associate the video with the course
-      if (data.course_id) {
-        // You might need to create an endpoint to associate videos with courses
-        console.log('Video uploaded, course association would be handled here');
-
-        // For now, we'll log the association details
-        console.log('Video Details:', {
-          id: (uploadResponse as any).data.id,
-          title: data.title,
-          course_id: data.course_id,
-          lesson_type: data.lesson_type,
-          is_welcome_video: data.is_welcome_video,
-          duration: data.duration,
-          tags: data.tags
-        });
-      }
-
       form.reset();
       setIsOpen(false);
       onVideoUploaded?.();

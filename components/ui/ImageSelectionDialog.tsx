@@ -71,12 +71,10 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const fetchImages = async () => {
-    console.log('fetchImages');
     try {
       setIsLoading(true);
       setError(null);
       const response = await apiClient.getImages();
-      console.log('image response', response);
       // Handle the API response structure: { message, status, data: images[] }
       if (response.data && Array.isArray(response.data)) {
         // Transform the response to match our Image interface with loading states
@@ -124,13 +122,11 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
   }, [searchTerm, images]);
 
   const handleImageSelect = (image: ImageWithState) => {
-    console.log('Image selected:', image);
     // Extract only id and url for the callback
     const imageData = {
       id: image.id,
       url: image.url
     };
-    console.log('Calling onSelect with:', imageData);
     onSelect(imageData);
     onOpenChange?.(false);
   };

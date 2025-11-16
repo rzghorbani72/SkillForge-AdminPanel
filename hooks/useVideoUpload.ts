@@ -156,11 +156,6 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
     setUploadAbortController(abortController);
     setIsUploading(true);
     setUploadProgress(0);
-
-    console.log(
-      `Starting upload for file: ${selectedFile.name}, size: ${selectedFile.size} bytes`
-    );
-
     // Fallback progress simulation in case XMLHttpRequest progress events don't work
     let progressSimulation: NodeJS.Timeout | null = null;
     let simulatedProgress = 0;
