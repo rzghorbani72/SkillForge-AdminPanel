@@ -36,7 +36,8 @@ export const courseFormSchema = z.object({
   audio_id: z.string().optional(),
   video_id: z.string().optional(),
   cover_id: z.string().optional(),
-  published: z.boolean().default(false)
+  published: z.boolean().default(false),
+  is_featured: z.boolean().default(false)
 });
 
 export type CourseFormData = z.infer<typeof courseFormSchema>;

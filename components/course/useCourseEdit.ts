@@ -72,7 +72,8 @@ const useCourseEdit = (): UseCourseEditReturn => {
           audio_id: response.audio_id?.toString() || '',
           video_id: response.video_id?.toString() || '',
           cover_id: response.cover?.id?.toString() || '',
-          published: response.is_published || false
+          published: response.is_published || false,
+          is_featured: !!response.is_featured
         });
       }
     } catch (error) {
@@ -138,7 +139,8 @@ const useCourseEdit = (): UseCourseEditReturn => {
         audio_id: data.audio_id ? Number(data.audio_id) : undefined,
         video_id: data.video_id ? Number(data.video_id) : undefined,
         cover_id: data.cover_id ? Number(data.cover_id) : undefined,
-        published: !!data.published
+        published: !!data.published,
+        is_featured: !!data.is_featured
       };
 
       await apiClient.updateCourse(course.id, courseData);
