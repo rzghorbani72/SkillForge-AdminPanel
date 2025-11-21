@@ -11,7 +11,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Palette, Image, Save } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
 import { apiClient } from '@/lib/api';
@@ -24,21 +30,45 @@ import {
 import { useTheme } from 'next-themes';
 import { Skeleton } from '@/components/ui/skeleton';
 
+type ThemeMode = 'dark' | 'light' | 'system';
+
 interface ThemeFormState {
-  primary: string;
-  secondary: string;
+  primaryLight: string;
+  primaryDark: string;
+  secondaryLight: string;
+  secondaryDark: string;
   accent: string;
-  background: string;
-  darkMode: boolean;
+  backgroundLight: string;
+  backgroundDark: string;
+  darkMode: ThemeMode;
   logoUrl: string;
 }
 
+const getThemeMode = (darkMode: boolean | null): ThemeMode => {
+  if (darkMode === null) return 'system';
+  return darkMode ? 'dark' : 'light';
+};
+
+const getDarkModeValue = (mode: ThemeMode): boolean | null => {
+  if (mode === 'system') return null;
+  return mode === 'dark';
+};
+
 const DEFAULT_THEME: ThemeFormState = {
-  primary: DEFAULT_THEME_CONFIG.primary_color,
-  secondary: DEFAULT_THEME_CONFIG.secondary_color,
+  primaryLight:
+    DEFAULT_THEME_CONFIG.primary_color_light ??
+    DEFAULT_THEME_CONFIG.primary_color,
+  primaryDark: DEFAULT_THEME_CONFIG.primary_color_dark ?? '#60a5fa',
+  secondaryLight:
+    DEFAULT_THEME_CONFIG.secondary_color_light ??
+    DEFAULT_THEME_CONFIG.secondary_color,
+  secondaryDark: DEFAULT_THEME_CONFIG.secondary_color_dark ?? '#818cf8',
   accent: DEFAULT_THEME_CONFIG.accent_color,
-  background: DEFAULT_THEME_CONFIG.background_color,
-  darkMode: DEFAULT_THEME_CONFIG.dark_mode,
+  backgroundLight:
+    DEFAULT_THEME_CONFIG.background_color_light ??
+    DEFAULT_THEME_CONFIG.background_color,
+  backgroundDark: DEFAULT_THEME_CONFIG.background_color_dark ?? '#0f172a',
+  darkMode: getThemeMode(DEFAULT_THEME_CONFIG.dark_mode),
   logoUrl: ''
 };
 
@@ -52,31 +82,59 @@ export default function ThemeSettingsPage() {
   const applyLivePreview = (nextState: ThemeFormState) => {
     const payload = buildConfigPayload(nextState);
     applyThemeVariables(payload);
-    setNextTheme(nextState.darkMode ? 'dark' : 'light');
+    const darkModeValue = getDarkModeValue(nextState.darkMode);
+    if (darkModeValue === null) {
+      setNextTheme('system');
+    } else {
+      setNextTheme(darkModeValue ? 'dark' : 'light');
+    }
     dispatchThemeUpdate(payload);
   };
 
   const buildConfigPayload = (state: ThemeFormState) => ({
     themeId,
     name: 'Custom Theme',
-    primary_color: state.primary,
-    secondary_color: state.secondary,
+    primary_color: state.primaryLight,
+    primary_color_light: state.primaryLight,
+    primary_color_dark: state.primaryDark,
+    secondary_color: state.secondaryLight,
+    secondary_color_light: state.secondaryLight,
+    secondary_color_dark: state.secondaryDark,
     accent_color: state.accent,
-    background_color: state.darkMode ? '#0f172a' : state.background,
-    dark_mode: state.darkMode
+    background_color: state.backgroundLight,
+    background_color_light: state.backgroundLight,
+    background_color_dark: state.backgroundDark,
+    dark_mode: getDarkModeValue(state.darkMode)
   });
 
-  const previewStyles = useMemo(
-    () => ({
-      '--preview-primary': theme.primary,
-      '--preview-secondary': theme.secondary,
+  const getEffectiveDarkMode = (mode: ThemeMode): boolean => {
+    if (mode === 'system') {
+      return (
+        typeof window !== 'undefined' &&
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      );
+    }
+    return mode === 'dark';
+  };
+
+  const previewStyles = useMemo(() => {
+    const isDark = getEffectiveDarkMode(theme.darkMode);
+    return {
+      '--preview-primary': isDark ? theme.primaryDark : theme.primaryLight,
+      '--preview-secondary': isDark
+        ? theme.secondaryDark
+        : theme.secondaryLight,
       '--preview-accent': theme.accent,
-      '--preview-background': theme.darkMode ? '#0f172a' : theme.background,
-      '--preview-surface': theme.darkMode ? '#0f172a' : theme.background,
-      '--preview-text': theme.darkMode ? '#f8fafc' : '#0f172a'
-    }),
-    [theme]
-  );
+      '--preview-background': isDark
+        ? theme.backgroundDark
+        : theme.backgroundLight,
+      '--preview-surface': isDark
+        ? theme.backgroundDark
+        : theme.backgroundLight,
+      '--preview-text': isDark ? '#f8fafc' : '#0f172a'
+    };
+  }, [theme]);
 
   useEffect(() => {
     let mounted = true;
@@ -87,22 +145,38 @@ export default function ThemeSettingsPage() {
         if (!mounted) return;
         const config = parseThemeResponse(response);
         setTheme({
-          primary: config.primary_color,
-          secondary: config.secondary_color,
+          primaryLight: config.primary_color_light ?? config.primary_color,
+          primaryDark: config.primary_color_dark ?? config.primary_color,
+          secondaryLight:
+            config.secondary_color_light ?? config.secondary_color,
+          secondaryDark: config.secondary_color_dark ?? config.secondary_color,
           accent: config.accent_color,
-          background: config.background_color,
-          darkMode: config.dark_mode,
+          backgroundLight:
+            config.background_color_light ?? config.background_color,
+          backgroundDark:
+            config.background_color_dark ?? config.background_color,
+          darkMode: getThemeMode(config.dark_mode),
           logoUrl: ''
         });
         setThemeId(config.themeId);
         applyThemeVariables(config);
-        setNextTheme(config.dark_mode ? 'dark' : 'light');
+        const darkModeValue = config.dark_mode;
+        if (darkModeValue === null) {
+          setNextTheme('system');
+        } else {
+          setNextTheme(darkModeValue ? 'dark' : 'light');
+        }
       } catch (error) {
         console.error('Failed to load theme configuration', error);
         if (!mounted) return;
         setTheme(DEFAULT_THEME);
         applyThemeVariables(DEFAULT_THEME_CONFIG);
-        setNextTheme(DEFAULT_THEME_CONFIG.dark_mode ? 'dark' : 'light');
+        const defaultDarkMode = DEFAULT_THEME_CONFIG.dark_mode;
+        if (defaultDarkMode === null) {
+          setNextTheme('system');
+        } else {
+          setNextTheme(defaultDarkMode ? 'dark' : 'light');
+        }
       } finally {
         if (mounted) setIsLoading(false);
       }
@@ -124,17 +198,32 @@ export default function ThemeSettingsPage() {
 
       const updatedConfig = parseThemeResponse(response);
       setTheme({
-        primary: updatedConfig.primary_color,
-        secondary: updatedConfig.secondary_color,
+        primaryLight:
+          updatedConfig.primary_color_light ?? updatedConfig.primary_color,
+        primaryDark:
+          updatedConfig.primary_color_dark ?? updatedConfig.primary_color,
+        secondaryLight:
+          updatedConfig.secondary_color_light ?? updatedConfig.secondary_color,
+        secondaryDark:
+          updatedConfig.secondary_color_dark ?? updatedConfig.secondary_color,
         accent: updatedConfig.accent_color,
-        background: updatedConfig.background_color,
-        darkMode: updatedConfig.dark_mode,
+        backgroundLight:
+          updatedConfig.background_color_light ??
+          updatedConfig.background_color,
+        backgroundDark:
+          updatedConfig.background_color_dark ?? updatedConfig.background_color,
+        darkMode: getThemeMode(updatedConfig.dark_mode),
         logoUrl: theme.logoUrl
       });
       setThemeId(updatedConfig.themeId);
 
       applyThemeVariables(updatedConfig);
-      setNextTheme(updatedConfig.dark_mode ? 'dark' : 'light');
+      const darkModeValue = updatedConfig.dark_mode;
+      if (darkModeValue === null) {
+        setNextTheme('system');
+      } else {
+        setNextTheme(darkModeValue ? 'dark' : 'light');
+      }
       dispatchThemeUpdate(updatedConfig);
 
       ErrorHandler.showSuccess('Theme preferences saved');
@@ -174,94 +263,186 @@ export default function ThemeSettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-6">
               {[
                 {
                   key: 'primary',
                   label: 'Primary colour',
-                  helper: 'Buttons, highlights, and key actions.'
+                  helper: 'Buttons, highlights, and key actions.',
+                  lightKey: 'primaryLight' as const,
+                  darkKey: 'primaryDark' as const
                 },
                 {
                   key: 'secondary',
                   label: 'Secondary colour',
-                  helper: 'Navigation elements and accents.'
-                },
-                {
-                  key: 'accent',
-                  label: 'Accent colour',
-                  helper: 'Badges, tags, and supporting highlights.'
+                  helper: 'Navigation elements and accents.',
+                  lightKey: 'secondaryLight' as const,
+                  darkKey: 'secondaryDark' as const
                 },
                 {
                   key: 'background',
                   label: 'Background colour',
-                  helper: 'Dashboard and content areas.'
+                  helper: 'Dashboard and content areas.',
+                  lightKey: 'backgroundLight' as const,
+                  darkKey: 'backgroundDark' as const
                 }
-              ].map(({ key, label, helper }) => (
-                <div key={key} className="space-y-2">
-                  <Label htmlFor={`${key}-color`}>{label}</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      id={`${key}-color`}
-                      type="color"
-                      value={theme[key as keyof ThemeFormState] as string}
-                      onChange={(event) =>
-                        setTheme((prev) => {
-                          const nextState = {
-                            ...prev,
-                            [key]: event.target.value
-                          } as ThemeFormState;
-                          applyLivePreview(nextState);
-                          return nextState;
-                        })
-                      }
-                      className="h-10 w-16"
-                    />
-                    <Input
-                      value={theme[key as keyof ThemeFormState] as string}
-                      onChange={(event) =>
-                        setTheme((prev) => {
-                          const nextState = {
-                            ...prev,
-                            [key]: event.target.value
-                          } as ThemeFormState;
-                          applyLivePreview(nextState);
-                          return nextState;
-                        })
-                      }
-                    />
+              ].map(({ key, label, helper, lightKey, darkKey }) => (
+                <div key={key} className="space-y-3">
+                  <Label>{label}</Label>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`${key}-light`}
+                        className="text-xs text-muted-foreground"
+                      >
+                        Light theme
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id={`${key}-light`}
+                          type="color"
+                          value={theme[lightKey]}
+                          onChange={(event) =>
+                            setTheme((prev) => {
+                              const nextState = {
+                                ...prev,
+                                [lightKey]: event.target.value
+                              } as ThemeFormState;
+                              applyLivePreview(nextState);
+                              return nextState;
+                            })
+                          }
+                          className="h-10 w-16"
+                        />
+                        <Input
+                          value={theme[lightKey]}
+                          onChange={(event) =>
+                            setTheme((prev) => {
+                              const nextState = {
+                                ...prev,
+                                [lightKey]: event.target.value
+                              } as ThemeFormState;
+                              applyLivePreview(nextState);
+                              return nextState;
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`${key}-dark`}
+                        className="text-xs text-muted-foreground"
+                      >
+                        Dark theme
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id={`${key}-dark`}
+                          type="color"
+                          value={theme[darkKey]}
+                          onChange={(event) =>
+                            setTheme((prev) => {
+                              const nextState = {
+                                ...prev,
+                                [darkKey]: event.target.value
+                              } as ThemeFormState;
+                              applyLivePreview(nextState);
+                              return nextState;
+                            })
+                          }
+                          className="h-10 w-16"
+                        />
+                        <Input
+                          value={theme[darkKey]}
+                          onChange={(event) =>
+                            setTheme((prev) => {
+                              const nextState = {
+                                ...prev,
+                                [darkKey]: event.target.value
+                              } as ThemeFormState;
+                              applyLivePreview(nextState);
+                              return nextState;
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
                   </div>
                   <p className="text-xs text-muted-foreground">{helper}</p>
                 </div>
               ))}
-            </div>
 
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="space-y-1">
-                <Label>Dark mode</Label>
-                <p className="text-sm text-muted-foreground">
-                  Render the student experience using the dark theme.
+              <div className="space-y-2">
+                <Label htmlFor="accent-color">Accent colour</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="accent-color"
+                    type="color"
+                    value={theme.accent}
+                    onChange={(event) =>
+                      setTheme((prev) => {
+                        const nextState = {
+                          ...prev,
+                          accent: event.target.value
+                        } as ThemeFormState;
+                        applyLivePreview(nextState);
+                        return nextState;
+                      })
+                    }
+                    className="h-10 w-16"
+                  />
+                  <Input
+                    value={theme.accent}
+                    onChange={(event) =>
+                      setTheme((prev) => {
+                        const nextState = {
+                          ...prev,
+                          accent: event.target.value
+                        } as ThemeFormState;
+                        applyLivePreview(nextState);
+                        return nextState;
+                      })
+                    }
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Badges, tags, and supporting highlights.
                 </p>
               </div>
-              <Switch
-                checked={theme.darkMode}
-                onCheckedChange={(checked) =>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Theme mode</Label>
+              <Select
+                value={theme.darkMode}
+                onValueChange={(value: ThemeMode) =>
                   setTheme((prev) => {
                     const nextState = {
                       ...prev,
-                      darkMode: checked,
-                      background: checked
-                        ? prev.background === DEFAULT_THEME.background
-                          ? '#0f172a'
-                          : prev.background
-                        : prev.background === '#0f172a'
-                          ? DEFAULT_THEME.background
-                          : prev.background
+                      darkMode: value
                     } as ThemeFormState;
                     applyLivePreview(nextState);
                     return nextState;
                   })
                 }
-              />
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {theme.darkMode === 'system'
+                  ? 'Uses the system preference (dark or light)'
+                  : theme.darkMode === 'dark'
+                    ? 'Forces dark theme for all students'
+                    : 'Forces light theme for all students'}
+              </p>
             </div>
           </CardContent>
         </Card>

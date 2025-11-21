@@ -4,10 +4,16 @@ import { ThemeConfigPayload } from '@/types/api';
 
 export const DEFAULT_THEME_CONFIG: ThemeConfigPayload = {
   primary_color: '#3b82f6',
+  primary_color_light: '#3b82f6',
+  primary_color_dark: '#60a5fa',
   secondary_color: '#6366f1',
+  secondary_color_light: '#6366f1',
+  secondary_color_dark: '#818cf8',
   accent_color: '#f59e0b',
   background_color: '#f8fafc',
-  dark_mode: false
+  background_color_light: '#f8fafc',
+  background_color_dark: '#0f172a',
+  dark_mode: null
 };
 
 const FALLBACK_DARK_BACKGROUND = '#0f172a';
@@ -45,9 +51,26 @@ export function parseThemeResponse(payload: any): ThemeConfigPayload {
       configs?.primary_color,
       DEFAULT_THEME_CONFIG.primary_color
     ),
+    primary_color_light: normaliseHex(
+      configs?.primary_color_light,
+      configs?.primary_color_light ?? DEFAULT_THEME_CONFIG.primary_color_light
+    ),
+    primary_color_dark: normaliseHex(
+      configs?.primary_color_dark,
+      configs?.primary_color_dark ?? DEFAULT_THEME_CONFIG.primary_color_dark
+    ),
     secondary_color: normaliseHex(
       configs?.secondary_color,
       DEFAULT_THEME_CONFIG.secondary_color
+    ),
+    secondary_color_light: normaliseHex(
+      configs?.secondary_color_light,
+      configs?.secondary_color_light ??
+        DEFAULT_THEME_CONFIG.secondary_color_light
+    ),
+    secondary_color_dark: normaliseHex(
+      configs?.secondary_color_dark,
+      configs?.secondary_color_dark ?? DEFAULT_THEME_CONFIG.secondary_color_dark
     ),
     accent_color: normaliseHex(
       configs?.accent_color,
@@ -57,8 +80,20 @@ export function parseThemeResponse(payload: any): ThemeConfigPayload {
       configs?.background_color,
       DEFAULT_THEME_CONFIG.background_color
     ),
+    background_color_light: normaliseHex(
+      configs?.background_color_light,
+      configs?.background_color_light ??
+        DEFAULT_THEME_CONFIG.background_color_light
+    ),
+    background_color_dark: normaliseHex(
+      configs?.background_color_dark,
+      configs?.background_color_dark ??
+        DEFAULT_THEME_CONFIG.background_color_dark
+    ),
     dark_mode:
-      parseBoolean(configs?.dark_mode) ?? DEFAULT_THEME_CONFIG.dark_mode
+      configs?.dark_mode === null || configs?.dark_mode === undefined
+        ? null
+        : (parseBoolean(configs?.dark_mode) ?? DEFAULT_THEME_CONFIG.dark_mode)
   };
 }
 
@@ -86,13 +121,36 @@ export function applyThemeVariables(config: ThemeConfigPayload) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
 
-  const backgroundHex = config.dark_mode
-    ? normaliseDarkHex(config.background_color)
-    : (config.background_color ?? DEFAULT_THEME_CONFIG.background_color);
+  const isDark =
+    config.dark_mode === null
+      ? typeof window !== 'undefined' &&
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      : config.dark_mode;
 
-  const primaryHex = config.primary_color ?? DEFAULT_THEME_CONFIG.primary_color;
-  const secondaryHex =
-    config.secondary_color ?? DEFAULT_THEME_CONFIG.secondary_color;
+  const backgroundHex = isDark
+    ? (config.background_color_dark ??
+      normaliseDarkHex(config.background_color))
+    : (config.background_color_light ??
+      config.background_color ??
+      DEFAULT_THEME_CONFIG.background_color);
+
+  const primaryHex = isDark
+    ? (config.primary_color_dark ??
+      config.primary_color ??
+      DEFAULT_THEME_CONFIG.primary_color)
+    : (config.primary_color_light ??
+      config.primary_color ??
+      DEFAULT_THEME_CONFIG.primary_color);
+
+  const secondaryHex = isDark
+    ? (config.secondary_color_dark ??
+      config.secondary_color ??
+      DEFAULT_THEME_CONFIG.secondary_color)
+    : (config.secondary_color_light ??
+      config.secondary_color ??
+      DEFAULT_THEME_CONFIG.secondary_color);
+
   const accentHex = config.accent_color ?? DEFAULT_THEME_CONFIG.accent_color;
 
   const primaryHsl = hexToHslString(primaryHex);

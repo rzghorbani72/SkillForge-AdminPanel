@@ -45,10 +45,16 @@ export interface ThemeConfigPayload {
   themeId?: number;
   name?: string;
   primary_color: string;
+  primary_color_light?: string;
+  primary_color_dark?: string;
   secondary_color: string;
+  secondary_color_light?: string;
+  secondary_color_dark?: string;
   accent_color: string;
   background_color: string;
-  dark_mode: boolean;
+  background_color_light?: string;
+  background_color_dark?: string;
+  dark_mode: boolean | null;
 }
 
 export interface CurrencyConfig {

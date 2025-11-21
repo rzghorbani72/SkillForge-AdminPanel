@@ -23,7 +23,11 @@ export function ThemeInitializer() {
         if (!isMounted) return;
         const config = parseThemeResponse(response);
         applyThemeVariables(config);
-        setTheme(config.dark_mode ? 'dark' : 'light');
+        if (config.dark_mode === null) {
+          setTheme('system');
+        } else {
+          setTheme(config.dark_mode ? 'dark' : 'light');
+        }
       } catch (error) {
         console.error('Failed to load theme configuration', error);
         if (!isMounted) return;
@@ -36,7 +40,11 @@ export function ThemeInitializer() {
     const unsubscribe = subscribeToThemeUpdates(
       (config: ThemeConfigPayload) => {
         applyThemeVariables(config);
-        setTheme(config.dark_mode ? 'dark' : 'light');
+        if (config.dark_mode === null) {
+          setTheme('system');
+        } else {
+          setTheme(config.dark_mode ? 'dark' : 'light');
+        }
       }
     );
 

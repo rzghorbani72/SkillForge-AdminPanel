@@ -27,9 +27,7 @@ export default function ThemeToggle() {
 
   const persistDarkPreference = useMemo(() => {
     if (theme === 'system') {
-      if (typeof window === 'undefined' || !window.matchMedia)
-        return DEFAULT_THEME_CONFIG.dark_mode;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return null;
     }
     return theme === 'dark';
   }, [theme]);
@@ -38,23 +36,18 @@ export default function ThemeToggle() {
     async (nextTheme: ThemeChoice) => {
       setTheme(nextTheme);
 
-      const shouldPersistDark =
-        nextTheme === 'system'
-          ? (typeof window !== 'undefined' &&
-              window.matchMedia &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches) ||
-            false
-          : nextTheme === 'dark';
+      const darkModeValue: boolean | null =
+        nextTheme === 'system' ? null : nextTheme === 'dark';
 
       // Avoid duplicate updates if nothing changes
-      if (shouldPersistDark === persistDarkPreference) {
+      if (darkModeValue === persistDarkPreference) {
         return;
       }
 
       setIsUpdating(true);
       try {
         const response = await apiClient.updateCurrentThemeConfig({
-          dark_mode: shouldPersistDark
+          dark_mode: darkModeValue
         });
         const updatedConfig = parseThemeResponse(response);
         applyThemeVariables(updatedConfig);
