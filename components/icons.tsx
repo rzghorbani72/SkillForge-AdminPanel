@@ -18,6 +18,7 @@ import {
   Image,
   Laptop,
   Layers,
+  Layout,
   LayoutDashboardIcon,
   List,
   Loader2,
@@ -92,6 +93,7 @@ export type IconType =
   | 'folder'
   | 'play'
   | 'layers'
+  | 'layout'
   | 'image'
   | 'users'
   | 'graduationCap'
@@ -146,6 +148,7 @@ export const Icons = {
   folder: Folder,
   play: Play,
   layers: Layers,
+  layout: Layout,
   image: Image,
   users: Users,
   graduationCap: GraduationCap,

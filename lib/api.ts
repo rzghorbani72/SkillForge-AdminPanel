@@ -1435,6 +1435,59 @@ class ApiClient {
       method: 'POST'
     });
   }
+
+  // UI Template endpoints
+  async getCurrentUITemplate() {
+    const response = await this.request('/ui-template/current');
+    return response.data;
+  }
+
+  async createUITemplate(payload: {
+    blocks: Array<{
+      id: string;
+      type: string;
+      order: number;
+      isVisible: boolean;
+      config?: Record<string, any>;
+    }>;
+    is_active?: boolean;
+  }) {
+    const response = await this.request('/ui-template/current', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return response.data;
+  }
+
+  async updateUITemplate(payload: {
+    blocks?: Array<{
+      id: string;
+      type: string;
+      order: number;
+      isVisible: boolean;
+      config?: Record<string, any>;
+    }>;
+    template_preset?: string;
+    is_active?: boolean;
+  }) {
+    const response = await this.request('/ui-template/current', {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    return response.data;
+  }
+
+  async getAvailableTemplatePresets() {
+    const response = await this.request('/ui-template/presets');
+    return response.data;
+  }
+
+  async applyTemplatePreset(presetId: string) {
+    const response = await this.request(`/ui-template/presets/${presetId}`, {
+      method: 'POST'
+    });
+    return response.data;
+  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

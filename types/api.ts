@@ -364,6 +364,41 @@ export interface Theme {
   school?: School;
 }
 
+// UI Template Types
+export interface UIBlockConfig {
+  id: string;
+  type:
+    | 'header'
+    | 'hero'
+    | 'features'
+    | 'courses'
+    | 'testimonials'
+    | 'footer'
+    | 'sidebar';
+  order: number;
+  isVisible: boolean;
+  config?: Record<string, any>;
+}
+
+export interface UITemplate {
+  id: number;
+  school_id: number;
+  blocks: UIBlockConfig[];
+  template_preset?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  school?: School;
+}
+
+export interface TemplatePreset {
+  id: string;
+  name: string;
+  description: string;
+  preview?: string;
+  blocks: UIBlockConfig[];
+}
+
 // Session and OTP Types
 export interface Session {
   id: number;

@@ -10,7 +10,14 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowRight, Palette, Shield, User, Building } from 'lucide-react';
+import {
+  ArrowRight,
+  Palette,
+  Shield,
+  User,
+  Building,
+  Layout
+} from 'lucide-react';
 import { useSettingsData } from './_hooks/use-settings-data';
 import { format } from 'date-fns';
 
@@ -35,6 +42,13 @@ const SECTIONS = [
       'Customize colours, logos, and visual appearance for students.',
     href: '/settings/theme',
     icon: Palette
+  },
+  {
+    title: 'UI Template Builder',
+    description:
+      'Customize the layout, visibility, and configuration of UI blocks on your school website.',
+    href: '/settings/ui-template',
+    icon: Layout
   },
   {
     title: 'Security',

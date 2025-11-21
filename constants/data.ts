@@ -329,6 +329,12 @@ export const navItems: NavItem[] = [
         label: 'theme-settings'
       },
       {
+        title: 'UI Template Builder',
+        href: '/settings/ui-template',
+        icon: 'layout' as IconType,
+        label: 'ui-template-settings'
+      },
+      {
         title: 'Security',
         href: '/settings/security',
         icon: 'shield' as IconType,
