@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -28,7 +28,7 @@ import {
 import { authService } from '@/lib/auth';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 // Note: Avoid client-side auth redirect here to prevent loops; middleware and protected layout handle it.
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import Link from 'next/link';
@@ -48,8 +48,30 @@ export default function LoginPage() {
     Array<{ id: number; name: string; slug: string }>
   >([]);
   const [showSchoolSelection, setShowSchoolSelection] = useState(false);
+  const [unauthorizedError, setUnauthorizedError] = useState<string | null>(
+    null
+  );
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Check for unauthorized role error from URL parameters
+  useEffect(() => {
+    const error = searchParams.get('error');
+    const message = searchParams.get('message');
+
+    if (error === 'unauthorized_role') {
+      const errorMessage =
+        message ||
+        'You do not have permission to access the admin dashboard. Only ADMIN, MANAGER, and TEACHER roles are allowed.';
+      setUnauthorizedError(errorMessage);
+      ErrorHandler.handleValidationErrors({ message: errorMessage });
+
+      // Clean up URL parameters
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [searchParams]);
 
   // Removed client-side redirect check to avoid infinite navigation loops on auth routes.
 
@@ -228,6 +250,14 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
           <p className="text-gray-600">Admin Panel</p>
         </div>
+
+        {/* Unauthorized Role Error */}
+        {unauthorizedError && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{unauthorizedError}</AlertDescription>
+          </Alert>
+        )}
 
         {/* Access Notice */}
         <Alert className="mb-6">
