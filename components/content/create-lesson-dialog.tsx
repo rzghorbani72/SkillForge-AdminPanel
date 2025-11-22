@@ -37,6 +37,7 @@ import { Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course, Season } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 const lessonFormSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -100,7 +101,12 @@ export default function CreateLessonDialog({
     }
   };
 
-  const onSubmit = async (data: LessonFormData) => {
+  const onSubmitHandler = async (data: LessonFormData) => {
+    // Prevent multiple submissions
+    if (isLoading) {
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -166,6 +172,9 @@ export default function CreateLessonDialog({
       setIsLoading(false);
     }
   };
+
+  // Debounce the submit handler to prevent multiple rapid submissions
+  const onSubmit = useDebouncedCallback(onSubmitHandler, 500);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -36,6 +36,7 @@ import { Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 const seasonFormSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -76,7 +77,12 @@ export default function CreateSeasonDialog({
     }
   });
 
-  const onSubmit = async (data: SeasonFormData) => {
+  const onSubmitHandler = async (data: SeasonFormData) => {
+    // Prevent multiple submissions
+    if (isLoading) {
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -114,6 +120,9 @@ export default function CreateSeasonDialog({
       setIsLoading(false);
     }
   };
+
+  // Debounce the submit handler to prevent multiple rapid submissions
+  const onSubmit = useDebouncedCallback(onSubmitHandler, 500);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

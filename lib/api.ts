@@ -216,14 +216,14 @@ class ApiClient {
   async verifyPhoneOtp(phone_number: string, otp: string, type: OtpType) {
     return this.request('/auth/otp/verify-phone', {
       method: 'POST',
-      body: JSON.stringify({ phone_number, otp })
+      body: JSON.stringify({ phone_number, otp, type })
     }) as any;
   }
 
   async verifyEmailOtp(email: string, otp: string, type: OtpType) {
     return this.request('/auth/otp/verify-email', {
       method: 'POST',
-      body: JSON.stringify({ email, otp })
+      body: JSON.stringify({ email, otp, type })
     }) as any;
   }
 

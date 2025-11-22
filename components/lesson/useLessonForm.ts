@@ -4,6 +4,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/hooks/useSchool';
 import { Course, Lesson, Season } from '@/types/api';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 type LessonFormData = {
   title: string;
@@ -121,9 +122,14 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
     }
   };
 
-  const onSubmit = async (data: LessonFormData) => {
+  const onSubmitHandler = async (data: LessonFormData) => {
     if (!selectedSchool) {
       toast.error('Please select a school first');
+      return;
+    }
+
+    // Prevent multiple submissions
+    if (isSubmitting) {
       return;
     }
 
@@ -161,6 +167,9 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
       setIsSubmitting(false);
     }
   };
+
+  // Debounce the submit handler to prevent multiple rapid submissions
+  const onSubmit = useDebouncedCallback(onSubmitHandler, 500);
 
   console.log('initialValues', initialValues);
   console.log('lesson', lesson);

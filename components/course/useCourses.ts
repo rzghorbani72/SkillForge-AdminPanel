@@ -5,6 +5,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/hooks/useSchool';
 import { Course } from '@/types/api';
 import { toast } from 'sonner';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 type UseCoursesReturn = {
   courses: Course[];
@@ -103,7 +104,7 @@ const useCourses = (): UseCoursesReturn => {
     router.push(`/courses/${course.id}/edit`);
   };
 
-  const handleDeleteCourse = async (course: Course) => {
+  const handleDeleteCourseHandler = async (course: Course) => {
     try {
       const response = await apiClient.deleteCourse(course.id);
       if (response && response.status === 200) {
@@ -117,6 +118,12 @@ const useCourses = (): UseCoursesReturn => {
       ErrorHandler.handleApiError(error);
     }
   };
+
+  // Debounce the delete handler to prevent multiple rapid deletions
+  const handleDeleteCourse = useDebouncedCallback(
+    handleDeleteCourseHandler,
+    500
+  );
 
   return {
     courses: filteredCourses,

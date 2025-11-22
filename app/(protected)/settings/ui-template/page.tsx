@@ -127,6 +127,7 @@ interface SortableBlockProps {
   onEdit: (blockId: string) => void;
   onStopEdit: () => void;
   onUpdateConfig: (blockId: string, config: Record<string, any>) => void;
+  isCustomized?: boolean;
 }
 
 function SortableBlock({
@@ -135,7 +136,8 @@ function SortableBlock({
   onToggleVisibility,
   onEdit,
   onStopEdit,
-  onUpdateConfig
+  onUpdateConfig,
+  isCustomized = false
 }: SortableBlockProps) {
   const {
     attributes,
@@ -178,6 +180,11 @@ function SortableBlock({
                 <Eye className="h-4 w-4 text-green-600" />
               ) : (
                 <EyeOff className="h-4 w-4 text-gray-400" />
+              )}
+              {isCustomized && (
+                <Badge variant="secondary" className="text-xs">
+                  Customized
+                </Badge>
               )}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -344,6 +351,7 @@ export default function UITemplateSettingsPage() {
   );
   const [isLoadingPresets, setIsLoadingPresets] = useState<boolean>(false);
   const [isPresetDialogOpen, setIsPresetDialogOpen] = useState<boolean>(false);
+  const [basePresetBlocks, setBasePresetBlocks] = useState<UIBlockConfig[]>([]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -370,6 +378,8 @@ export default function UITemplateSettingsPage() {
           setBlocks(DEFAULT_BLOCKS);
         }
         setCurrentPreset(templateData?.template_preset);
+
+        // Load base preset blocks for comparison - moved to separate effect
       } catch (error) {
         console.error('Failed to load UI template', error);
         if (!mounted) return;
@@ -395,13 +405,32 @@ export default function UITemplateSettingsPage() {
       }
     };
 
-    loadTemplate();
-    loadPresets();
+    // Load presets first, then template (so we can compare)
+    loadPresets().then(() => {
+      loadTemplate();
+    });
 
     return () => {
       mounted = false;
     };
   }, []);
+
+  // Update base preset blocks when preset or presets change
+  useEffect(() => {
+    if (currentPreset && availablePresets.length > 0) {
+      const basePreset = availablePresets.find((p) => p.id === currentPreset);
+      if (basePreset?.blocks) {
+        const sortedBaseBlocks = [...basePreset.blocks].sort(
+          (a, b) => a.order - b.order
+        );
+        setBasePresetBlocks(sortedBaseBlocks);
+      } else {
+        setBasePresetBlocks([]);
+      }
+    } else {
+      setBasePresetBlocks([]);
+    }
+  }, [currentPreset, availablePresets]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -470,6 +499,16 @@ export default function UITemplateSettingsPage() {
         );
         setBlocks(sortedBlocks);
         setCurrentPreset(templateData.template_preset);
+
+        // Update base preset blocks
+        const basePreset = availablePresets.find((p) => p.id === presetId);
+        if (basePreset?.blocks) {
+          const sortedBaseBlocks = [...basePreset.blocks].sort(
+            (a, b) => a.order - b.order
+          );
+          setBasePresetBlocks(sortedBaseBlocks);
+        }
+
         setIsPresetDialogOpen(false);
         ErrorHandler.showSuccess(`Template "${presetId}" applied successfully`);
       }
@@ -478,6 +517,25 @@ export default function UITemplateSettingsPage() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // Get the current preset details
+  const currentPresetDetails = availablePresets.find(
+    (p) => p.id === currentPreset
+  );
+
+  // Check if a block has been customized from the base preset
+  const isBlockCustomized = (block: UIBlockConfig): boolean => {
+    if (!currentPreset || basePresetBlocks.length === 0) return false;
+    const baseBlock = basePresetBlocks.find((b) => b.id === block.id);
+    if (!baseBlock) return true; // New block not in preset
+
+    // Compare key properties
+    return (
+      block.isVisible !== baseBlock.isVisible ||
+      block.order !== baseBlock.order ||
+      JSON.stringify(block.config) !== JSON.stringify(baseBlock.config)
+    );
   };
 
   if (isLoading) {
@@ -502,6 +560,19 @@ export default function UITemplateSettingsPage() {
               Customize the layout and visibility of UI blocks on your school
               website.
             </p>
+            {currentPresetDetails && (
+              <div className="mt-3 flex items-center gap-2">
+                <Badge variant="outline" className="gap-1">
+                  <Layout className="h-3 w-3" />
+                  Based on: {currentPresetDetails.name}
+                </Badge>
+                {currentPresetDetails.description && (
+                  <span className="text-sm text-muted-foreground">
+                    {currentPresetDetails.description}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
           <Dialog
             open={isPresetDialogOpen}
@@ -607,15 +678,6 @@ export default function UITemplateSettingsPage() {
             </DialogContent>
           </Dialog>
         </div>
-        {currentPreset && (
-          <div className="mt-2">
-            <Badge variant="outline" className="gap-1">
-              <Layout className="h-3 w-3" />
-              Current:{' '}
-              {currentPreset.charAt(0).toUpperCase() + currentPreset.slice(1)}
-            </Badge>
-          </div>
-        )}
       </div>
 
       <Card>
@@ -646,6 +708,7 @@ export default function UITemplateSettingsPage() {
                     onEdit={setEditingBlock}
                     onStopEdit={() => setEditingBlock(null)}
                     onUpdateConfig={updateBlockConfig}
+                    isCustomized={isBlockCustomized(block)}
                   />
                 ))}
               </div>

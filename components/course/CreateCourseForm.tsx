@@ -11,7 +11,6 @@ import CreateCoursePublishSettings from './CreateCoursePublishSettings';
 
 type Props = {
   form: UseFormReturn<CourseCreateFormData>;
-  categories: Array<{ id: number; name: string }>;
   isLoading: boolean;
   coverImage: File | null;
   coverPreview: string | null;
@@ -26,7 +25,6 @@ type Props = {
 
 const CreateCourseForm = ({
   form,
-  categories,
   isLoading,
   coverImage,
   coverPreview,
@@ -57,7 +55,7 @@ const CreateCourseForm = ({
 
           <CreateCoursePricing form={form} />
 
-          <CreateCourseAssociations form={form} categories={categories} />
+          <CreateCourseAssociations form={form} />
 
           <CreateCoursePublishSettings form={form} />
 

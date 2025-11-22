@@ -66,6 +66,9 @@ export function VerificationStep(props: VerificationStepProps) {
           placeholder="Enter your phone number"
           value={formData.phone}
           onChange={(value) => onChange('phone', value)}
+          onCountryChange={(countryCode) =>
+            onChange('countryCode', countryCode)
+          }
           error={errors.phone}
           disabled={isLoading}
         />
@@ -90,7 +93,7 @@ export function VerificationStep(props: VerificationStepProps) {
             type="button"
             onClick={onSendPhone}
             disabled={
-              otpLoading || !formData.phone || !isValidPhone(formData.phone)
+              otpLoading || !formData.phone || formData.phone.length < 7
             }
             className="whitespace-nowrap"
           >

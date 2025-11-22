@@ -8,6 +8,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/hooks/useSchool';
 import { toast } from 'sonner';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 // Schema with proper validation for all required fields
 const courseFormSchema = z.object({
@@ -80,9 +81,14 @@ export const useCourseCreate = () => {
     }
   });
 
-  const onSubmit = async (data: CourseCreateFormData) => {
+  const onSubmitHandler = async (data: CourseCreateFormData) => {
     if (!selectedSchool) {
       toast.error('Please select a school first');
+      return;
+    }
+
+    // Prevent multiple submissions
+    if (isLoading) {
       return;
     }
 
@@ -151,6 +157,9 @@ export const useCourseCreate = () => {
       setIsLoading(false);
     }
   };
+
+  // Debounce the submit handler to prevent multiple rapid submissions
+  const onSubmit = useDebouncedCallback(onSubmitHandler, 500);
 
   const handleBack = () => {
     router.back();

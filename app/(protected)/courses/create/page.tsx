@@ -1,13 +1,11 @@
 'use client';
 
-import { useCategoriesStore } from '@/lib/store';
 import { useCourseCreate } from '@/components/course/useCourseCreate';
 import CreateCourseHeader from '@/components/course/CreateCourseHeader';
 import CreateCourseForm from '@/components/course/CreateCourseForm';
 import CreateCourseNoSchoolState from '@/components/course/CreateCourseNoSchoolState';
 
 export default function CreateCoursePage() {
-  const { categories } = useCategoriesStore();
   const {
     form,
     selectedSchool,
@@ -36,7 +34,6 @@ export default function CreateCoursePage() {
 
       <CreateCourseForm
         form={form}
-        categories={categories}
         isLoading={isLoading}
         coverImage={coverImage}
         coverPreview={coverPreview}

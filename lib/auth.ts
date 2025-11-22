@@ -157,7 +157,7 @@ class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthUser> {
     try {
       const response = await apiClient.login(credentials);
-      if (response.data) {
+      if (response?.data) {
         this.currentUser = response.data as AuthUser;
         this.persistSession(this.currentUser);
         return this.currentUser;
@@ -175,7 +175,7 @@ class AuthService {
     try {
       const response = await apiClient.register(userData);
 
-      if (response.data) {
+      if (response?.data) {
         this.currentUser = response.data as AuthUser;
         this.persistSession(this.currentUser);
         return this.currentUser;
@@ -197,7 +197,7 @@ class AuthService {
     try {
       const response = await apiClient.loginPhoneByOtp(credentials);
 
-      if (response.data) {
+      if (response?.data) {
         this.currentUser = response.data as AuthUser;
         this.persistSession(this.currentUser);
         return this.currentUser;
@@ -219,7 +219,7 @@ class AuthService {
     try {
       const response = await apiClient.loginEmailByOtp(credentials);
 
-      if (response.data) {
+      if (response?.data) {
         this.currentUser = response.data as AuthUser;
         this.persistSession(this.currentUser);
         return this.currentUser;
@@ -240,7 +240,7 @@ class AuthService {
     try {
       const response = await apiClient.selectSchool(data);
 
-      if (response.data) {
+      if (response?.data) {
         this.currentUser = response.data as AuthUser;
         this.persistSession(this.currentUser);
         return this.currentUser;

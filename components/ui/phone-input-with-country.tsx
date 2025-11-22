@@ -31,6 +31,7 @@ interface PhoneInputWithCountryProps {
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
+  onCountryChange?: (countryCode: string) => void;
   error?: string;
   disabled?: boolean;
   className?: string;
@@ -44,6 +45,7 @@ export function PhoneInputWithCountry({
   placeholder = 'Enter your phone number',
   value,
   onChange,
+  onCountryChange,
   error,
   disabled = false,
   className,
@@ -89,6 +91,7 @@ export function PhoneInputWithCountry({
     if (country) {
       setSelectedCountry(country);
       storeCountry(country);
+      onCountryChange?.(countryCode);
     }
   };
 

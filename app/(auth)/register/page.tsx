@@ -21,6 +21,7 @@ import { useSchools } from '@/hooks/useSchools';
 import { StepIndicator } from '@/components/auth/register/StepIndicator';
 import { VerificationStep } from '@/components/auth/register/VerificationStep';
 import { BaseDataForm } from '@/components/auth/register/BaseDataForm';
+import { COUNTRY_CODES } from '@/lib/country-codes';
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,6 +47,7 @@ export default function RegisterPage() {
     name: '',
     email: '',
     phone: '',
+    countryCode: 'IR', // Default to Iran
     password: '',
     confirmPassword: '',
     phoneOtp: '',
@@ -61,6 +63,18 @@ export default function RegisterPage() {
 
   const router = useRouter();
 
+  // Helper function to get full phone number with country code
+  const getFullPhoneNumber = (phone: string, countryCode?: string): string => {
+    if (!phone) return phone;
+    if (!countryCode) return phone;
+
+    const country = COUNTRY_CODES.find((c) => c.code === countryCode);
+    if (country) {
+      return `${country.dialCode}${phone}`;
+    }
+    return phone;
+  };
+
   // Send phone OTP
   const handleSendPhoneOtp = async () => {
     if (!formData.phone) {
@@ -68,15 +82,23 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!isValidPhone(formData.phone)) {
-      ErrorHandler.showWarning('Please enter a valid phone number');
+    if (formData.phone.length < 7 || formData.phone.length > 15) {
+      ErrorHandler.showWarning(
+        'Please enter a valid phone number (7-15 digits)'
+      );
       return;
     }
 
     setOtpLoading(true);
     try {
-      const result = await apiClient.sendPhoneOtp(
+      // Combine country code with phone number
+      const fullPhoneNumber = getFullPhoneNumber(
         formData.phone,
+        formData.countryCode
+      );
+
+      const result = await apiClient.sendPhoneOtp(
+        fullPhoneNumber,
         OtpType.REGISTER_PHONE_VERIFICATION
       );
       const responseData = result.data as any;
@@ -138,8 +160,14 @@ export default function RegisterPage() {
 
     setOtpLoading(true);
     try {
-      const result = await apiClient.verifyPhoneOtp(
+      // Combine country code with phone number
+      const fullPhoneNumber = getFullPhoneNumber(
         formData.phone,
+        formData.countryCode
+      );
+
+      const result = await apiClient.verifyPhoneOtp(
+        fullPhoneNumber,
         formData.phoneOtp,
         OtpType.REGISTER_PHONE_VERIFICATION
       );
@@ -207,9 +235,11 @@ export default function RegisterPage() {
       newErrors.email = 'Please enter a valid email address';
     }
 
-    // Phone number is optional but must be valid if provided
-    if (formData.phone && !isValidPhone(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
+    // Phone number is required and must be valid
+    if (!formData.phone) {
+      newErrors.phone = 'Phone number is required';
+    } else if (formData.phone.length < 7 || formData.phone.length > 15) {
+      newErrors.phone = 'Please enter a valid phone number (7-15 digits)';
     }
 
     if (!formData.password) {
@@ -399,9 +429,15 @@ export default function RegisterPage() {
       console.log('Form Data:', formData);
 
       // In step 2, we send the verified OTP data
+      // Combine country code with phone number for backend
+      const fullPhoneNumber = getFullPhoneNumber(
+        formData.phone,
+        formData.countryCode
+      );
+
       const userData: any = {
         name: formData.name,
-        phone_number: formData.phone,
+        phone_number: fullPhoneNumber, // Send full phone with country code
         email: formData.email || undefined,
         password: formData.password,
         confirmed_password: formData.confirmPassword,
@@ -448,17 +484,17 @@ export default function RegisterPage() {
         if (registrationType === 'new-school') {
           // Create new school - user becomes manager automatically
           ErrorHandler.showInfo(
-            'Creating your school... You will be the manager of this school. You can verify your phone/email OTP later.'
+            'Registration completed! Your school has been created and you are the manager. You can now login.'
           );
-          // Redirect to school setup
-          router.push(nextStep === 'login' ? '/login' : '/dashboard');
+          // Redirect to login
+          router.push('/login');
         } else {
-          // Join existing school - everyone becomes student by default
+          // Join existing school - becomes teacher
           ErrorHandler.showInfo(
-            'Registration successful! You have been registered as a student. You can verify your phone/email OTP later. Contact the school manager to be promoted to higher roles if needed.'
+            'Registration completed! You have been registered as a teacher. You can now login.'
           );
-          // Redirect to school dashboard
-          router.push(nextStep === 'login' ? '/login' : '/dashboard');
+          // Redirect to login
+          router.push('/login');
         }
       }
     } catch (error: unknown) {

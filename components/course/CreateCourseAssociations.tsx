@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FormControl,
@@ -17,13 +17,61 @@ import {
 } from '@/components/ui/select';
 import { UseFormReturn } from 'react-hook-form';
 import { CourseCreateFormData } from './useCourseCreate';
+import { apiClient } from '@/lib/api';
+import { Category } from '@/types/api';
 
 type Props = {
   form: UseFormReturn<CourseCreateFormData>;
-  categories: Array<{ id: number; name: string }>;
 };
 
-const CreateCourseAssociations = ({ form, categories }: Props) => {
+const CreateCourseAssociations = ({ form }: Props) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [categoriesError, setCategoriesError] = useState<string | null>(null);
+  const hasFetchedCategories = useRef(false);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      setCategoriesLoading(true);
+      setCategoriesError(null);
+      const response = await apiClient.getCategories();
+
+      let categoriesData: Category[] = [];
+
+      if (
+        response &&
+        typeof response === 'object' &&
+        Array.isArray(response.data)
+      ) {
+        categoriesData = response.data as Category[];
+      } else {
+        categoriesData = [];
+      }
+
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setCategoriesError('Failed to fetch categories');
+      setCategories([]);
+    } finally {
+      setCategoriesLoading(false);
+    }
+  }, []); // Empty dependency array - store functions are stable
+
+  useEffect(() => {
+    if (!hasFetchedCategories.current && categories.length === 0) {
+      hasFetchedCategories.current = true;
+      fetchCategories();
+    }
+  }, [categories.length, fetchCategories]);
+
+  // Filter categories to only show COURSE type and active ones, format for dropdown
+  const courseCategories = categories
+    .filter((category) => category.type === 'COURSE' && category.is_active)
+    .map((category) => ({
+      id: category.id,
+      name: category.name
+    }));
   return (
     <Card>
       <CardHeader>
@@ -37,97 +85,43 @@ const CreateCourseAssociations = ({ form, categories }: Props) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || undefined}
+                  disabled={categoriesLoading}
+                >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue
+                        placeholder={
+                          categoriesLoading
+                            ? 'Loading categories...'
+                            : 'Select category'
+                        }
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem
-                        key={category.id}
-                        value={category.id.toString()}
-                      >
-                        {category.name}
+                    {categoriesLoading ? (
+                      <SelectItem value="" disabled>
+                        Loading categories...
                       </SelectItem>
-                    ))}
+                    ) : courseCategories.length === 0 ? (
+                      <SelectItem value="" disabled>
+                        {categoriesError || 'No categories available'}
+                      </SelectItem>
+                    ) : (
+                      courseCategories.map((category) => (
+                        <SelectItem
+                          key={category.id}
+                          value={category.id.toString()}
+                        >
+                          {category.name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="season_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Season ID</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Season ID (optional)"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <FormField
-            control={form.control}
-            name="audio_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Audio ID</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Audio ID (optional)"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="video_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Video ID</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Video ID (optional)"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="image_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Image ID</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Image ID (optional)"
-                    {...field}
-                  />
-                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

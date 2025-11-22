@@ -14,6 +14,7 @@ import { EmptyState } from '@/components/category/EmptyState';
 import { CategoryCard } from '@/components/category/CategoryCard';
 import { CategoryDialog } from '@/components/category/CategoryDialog';
 import { CategoryType, FilterType } from '@/components/category/category-utils';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 export default function CategoriesPage() {
   const searchParams = useSearchParams();
@@ -110,7 +111,7 @@ export default function CategoriesPage() {
     });
   };
 
-  const handleCreateCategory = async () => {
+  const handleCreateCategoryHandler = async () => {
     try {
       if (!formData.name.trim()) {
         toast.error('Category name is required');
@@ -133,7 +134,7 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleEditCategory = async () => {
+  const handleEditCategoryHandler = async () => {
     try {
       if (!editingCategory || !formData.name.trim()) {
         toast.error('Category name is required');
@@ -157,6 +158,16 @@ export default function CategoriesPage() {
       toast.error('Failed to update category');
     }
   };
+
+  // Debounce the handlers to prevent multiple rapid submissions
+  const handleCreateCategory = useDebouncedCallback(
+    handleCreateCategoryHandler,
+    500
+  );
+  const handleEditCategory = useDebouncedCallback(
+    handleEditCategoryHandler,
+    500
+  );
 
   const handleDeleteCategory = async (categoryId: number) => {
     if (

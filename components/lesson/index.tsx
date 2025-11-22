@@ -21,13 +21,13 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Clock } from 'lucide-react';
 import { Play } from 'lucide-react';
-import { Video } from 'lucide-react';
 import { FileText } from 'lucide-react';
 import { Eye } from 'lucide-react';
 import { Edit } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Lesson } from '@/types/api';
 import { AccessControlBadge } from '../ui/access-control-badge';
+import LessonMediaPreview from './LessonMediaPreview';
 
 const index = ({
   lesson,
@@ -79,20 +79,16 @@ const index = ({
             </span>
           </div>
 
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <span className="flex items-center">
-              <Video className="mr-1 h-4 w-4" />
-              {lesson.video_id ||
-              lesson.audio_id ||
-              lesson.document_id ||
-              lesson.image_id
-                ? 'Media'
-                : 'No Media'}
-            </span>
-            <span className="flex items-center">
-              <FileText className="mr-1 h-4 w-4" />
-              {lesson.content ? 'Content' : 'No Content'}
-            </span>
+          <div className="space-y-2">
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+              <span className="flex items-center">
+                <FileText className="mr-1 h-4 w-4" />
+                {lesson.content ? 'Content' : 'No Content'}
+              </span>
+            </div>
+            <div>
+              <LessonMediaPreview lesson={lesson} />
+            </div>
           </div>
 
           <div className="flex items-center space-x-2 pt-2">

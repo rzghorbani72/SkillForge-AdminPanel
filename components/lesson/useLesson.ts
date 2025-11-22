@@ -5,6 +5,7 @@ import { Course, Lesson, Season } from '@/types/api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 const useLesson = () => {
   const params = useParams();
@@ -53,7 +54,7 @@ const useLesson = () => {
     }
   };
 
-  const handleDeleteLesson = async (lessonId: number) => {
+  const handleDeleteLessonHandler = async (lessonId: number) => {
     try {
       await apiClient.deleteLesson(lessonId);
       toast.success('Lesson deleted successfully');
@@ -63,6 +64,12 @@ const useLesson = () => {
       ErrorHandler.handleApiError(error);
     }
   };
+
+  // Debounce the delete handler to prevent multiple rapid deletions
+  const handleDeleteLesson = useDebouncedCallback(
+    handleDeleteLessonHandler,
+    500
+  );
 
   return {
     lessons,

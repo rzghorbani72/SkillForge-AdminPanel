@@ -7,6 +7,7 @@ import { Course } from '@/types/api';
 import { CourseFormData } from './schema';
 import { toast } from 'sonner';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 type UseCourseEditReturn = {
   course: Course | null;
@@ -85,9 +86,14 @@ const useCourseEdit = (): UseCourseEditReturn => {
     }
   };
 
-  const onSubmit = async (data: CourseFormData) => {
+  const onSubmitHandler = async (data: CourseFormData) => {
     if (!selectedSchool || !course) {
       toast.error('Course or school not found');
+      return;
+    }
+
+    // Prevent multiple submissions
+    if (isSubmitting) {
       return;
     }
 
@@ -153,6 +159,9 @@ const useCourseEdit = (): UseCourseEditReturn => {
       setIsSubmitting(false);
     }
   };
+
+  // Debounce the submit handler to prevent multiple rapid submissions
+  const onSubmit = useDebouncedCallback(onSubmitHandler, 500);
 
   return {
     course,
