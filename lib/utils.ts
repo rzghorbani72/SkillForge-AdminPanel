@@ -109,7 +109,15 @@ export function formatCurrencyWithSchool(
   }
 
   // Check if school has currency configuration
-  const hasCurrencyConfig = school.currency || school.currency_symbol;
+  // Use type assertion to access currency properties safely
+  const schoolWithCurrency = school as School & {
+    currency?: string;
+    currency_symbol?: string;
+    currency_position?: 'before' | 'after';
+  };
+
+  const hasCurrencyConfig =
+    schoolWithCurrency.currency || schoolWithCurrency.currency_symbol;
 
   if (!hasCurrencyConfig) {
     // Fallback to default USD formatting if no currency config
@@ -117,8 +125,8 @@ export function formatCurrencyWithSchool(
       console.warn('School missing currency config:', {
         schoolId: school.id,
         schoolName: school.name,
-        hasCurrency: !!school.currency,
-        hasCurrencySymbol: !!school.currency_symbol
+        hasCurrency: !!schoolWithCurrency.currency,
+        hasCurrencySymbol: !!schoolWithCurrency.currency_symbol
       });
     }
     return formatCurrency(amount, { divideBy: divideBy || 100 });
@@ -127,16 +135,16 @@ export function formatCurrencyWithSchool(
   // For Toman (IRR), typically no division needed as it's already in the base unit
   // For Turkish Lira (TRY/TL), also typically no division needed
   const defaultDivideBy =
-    school.currency === 'IRR' ||
-    school.currency === 'TRY' ||
-    school.currency === 'TL'
+    schoolWithCurrency.currency === 'IRR' ||
+    schoolWithCurrency.currency === 'TRY' ||
+    schoolWithCurrency.currency === 'TL'
       ? 1
       : 100;
 
   return formatCurrency(amount, {
-    currency: school.currency || 'USD',
-    currency_symbol: school.currency_symbol,
-    currency_position: school.currency_position || 'after',
+    currency: schoolWithCurrency.currency || 'USD',
+    currency_symbol: schoolWithCurrency.currency_symbol,
+    currency_position: schoolWithCurrency.currency_position || 'after',
     divideBy: divideBy ?? defaultDivideBy
   });
 }
