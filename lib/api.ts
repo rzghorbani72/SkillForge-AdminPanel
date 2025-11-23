@@ -406,6 +406,33 @@ class ApiClient {
     });
   }
 
+  // Q&A endpoints
+  async getCourseQnAs(courseId: number) {
+    const response = await this.request(`/courses/${courseId}/qna`);
+    return response.data?.data ?? [];
+  }
+
+  async createCourseQnA(courseId: number, question: string) {
+    return this.request(`/courses/${courseId}/qna`, {
+      method: 'POST',
+      body: JSON.stringify({ question })
+    });
+  }
+
+  async answerCourseQnA(courseId: number, qnaId: number, answer: string) {
+    return this.request(`/courses/${courseId}/qna/${qnaId}/answer`, {
+      method: 'PUT',
+      body: JSON.stringify({ answer })
+    });
+  }
+
+  async approveCourseQnA(courseId: number, qnaId: number, isApproved: boolean) {
+    return this.request(`/courses/${courseId}/qna/${qnaId}/approve`, {
+      method: 'PUT',
+      body: JSON.stringify({ is_approved: isApproved })
+    });
+  }
+
   async deleteCourse(id: number) {
     return this.request(`/courses/${id}`, {
       method: 'DELETE'

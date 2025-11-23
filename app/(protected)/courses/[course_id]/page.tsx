@@ -9,6 +9,7 @@ import CoursePricing from '@/components/course/CoursePricing';
 import CourseAssociations from '@/components/course/CourseAssociations';
 import CoursePublishSettings from '@/components/course/CoursePublishSettings';
 import CourseManagement from '@/components/course/CourseManagement';
+import CourseQnA from '@/components/course/CourseQnA';
 import LoadingState from '@/components/course/LoadingState';
 import ErrorState from '@/components/course/ErrorState';
 import NoSchoolState from '@/components/course/NoSchoolState';
@@ -67,6 +68,8 @@ export default function CourseViewPage() {
       <CourseAssociations course={course} />
 
       <CoursePublishSettings course={course} />
+
+      <CourseQnA courseId={course.id} />
 
       <CourseManagement
         course={course}
