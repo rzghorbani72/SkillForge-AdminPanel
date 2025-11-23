@@ -35,6 +35,7 @@ import {
   Settings,
   Shield,
   SunMedium,
+  Tag,
   Trash,
   TrendingUp,
   Twitter,
@@ -102,7 +103,8 @@ export type IconType =
   | 'dollarSign'
   | 'creditCard'
   | 'video'
-  | 'volume2';
+  | 'volume2'
+  | 'tag';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -157,5 +159,6 @@ export const Icons = {
   dollarSign: DollarSign,
   creditCard: CreditCard,
   video: Video,
-  volume2: Volume2
+  volume2: Volume2,
+  tag: Tag
 };

@@ -3,6 +3,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAccessControl } from '@/hooks/useAccessControl';
+import { ErrorHandler } from '@/lib/error-handler';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock, ArrowLeft } from 'lucide-react';
@@ -199,7 +200,7 @@ export default function AccessControlGuard({
 
       setHasAccess(access);
 
-      // Redirect if no access and not showing fallback
+      // Show toast if no access and not showing fallback
       if (!access && !showFallback) {
         if (requiredPermission) {
           requirePermission(requiredPermission, fallbackPath);
@@ -208,12 +209,19 @@ export default function AccessControlGuard({
         } else if (resource) {
           requireResourceAccess(resource, action, fallbackPath);
         } else {
-          router.push(fallbackPath);
+          ErrorHandler.showWarning(
+            accessError || 'You do not have permission to access this resource.'
+          );
         }
       }
     } catch (error) {
       console.error('Access control check failed:', error);
-      setAccessError('Failed to verify access permissions.');
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to verify access permissions.';
+      ErrorHandler.showWarning(errorMessage);
+      setAccessError(errorMessage);
       setHasAccess(false);
     }
   }, [

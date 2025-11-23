@@ -301,6 +301,12 @@ export const navItems: NavItem[] = [
         href: '/payments/invoices',
         icon: 'fileText' as IconType,
         label: 'invoices'
+      },
+      {
+        title: 'Discount Codes',
+        href: '/discounts',
+        icon: 'tag' as IconType,
+        label: 'discounts'
       }
     ]
   },

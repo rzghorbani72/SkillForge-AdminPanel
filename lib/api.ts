@@ -1,5 +1,6 @@
 import { OtpType } from '@/constants/data';
 import { User as UserType } from '@/types/api';
+import { toast } from 'react-toastify';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
@@ -33,11 +34,38 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
 
+    // Get JWT token from cookie or localStorage
+    let token: string | null = null;
+    if (typeof window !== 'undefined') {
+      // Try to get token from cookie
+      const cookies = document.cookie.split(';');
+      const jwtCookie = cookies.find((cookie) =>
+        cookie.trim().startsWith('jwt=')
+      );
+      if (jwtCookie) {
+        token = jwtCookie.split('=')[1]?.trim();
+      }
+      // Fallback to localStorage
+      if (!token) {
+        token = window.localStorage.getItem('auth_token') || null;
+      }
+    }
+
     // Don't set Content-Type for FormData (let browser set it to multipart/form-data)
-    const headers =
+    const headersObj: Record<string, string> =
       options.body instanceof FormData
-        ? { ...options.headers } // No Content-Type for FormData
-        : { 'Content-Type': 'application/json', ...options.headers };
+        ? { ...(options.headers as Record<string, string>) } // No Content-Type for FormData
+        : {
+            'Content-Type': 'application/json',
+            ...(options.headers as Record<string, string>)
+          };
+
+    // Add Authorization header if token is available
+    if (token && !headersObj['Authorization']) {
+      headersObj['Authorization'] = `Bearer ${token}`;
+    }
+
+    const headers: HeadersInit = headersObj;
 
     const config: RequestInit = {
       headers,
@@ -65,19 +93,26 @@ class ApiClient {
 
       // Handle unauthorized responses globally
       if (response.status === 401) {
-        // In the browser, redirect to login and preserve the current path
+        const errorMessage =
+          (data && (data.message || data.error)) || 'Unauthorized (401)';
+
+        // In the browser, show toast error instead of redirecting on protected pages
         if (typeof window !== 'undefined') {
           const currentPath = window.location.pathname + window.location.search;
-          if (currentPath.includes('/login'))
-            return null as unknown as ApiResponse<T>;
 
-          const loginUrl = `/login?redirect=${encodeURIComponent(currentPath)}`;
-          window.location.href = loginUrl;
+          // Only redirect if on auth pages, otherwise show toast
+          if (
+            currentPath.includes('/login') ||
+            currentPath.includes('/register')
+          ) {
+            return null as unknown as ApiResponse<T>;
+          }
+
+          // Show toast error for protected pages
+          toast.error(errorMessage);
         }
 
-        throw new Error(
-          (data && (data.message || data.error)) || 'Unauthorized (401)'
-        );
+        throw new Error(errorMessage);
       }
 
       if (!response.ok) {
@@ -1493,6 +1528,141 @@ class ApiClient {
       method: 'POST'
     });
     return response.data;
+  }
+
+  // Discounts endpoints
+  async getDiscounts(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    is_active?: boolean;
+    school_id?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.is_active !== undefined)
+      queryParams.append('is_active', params.is_active.toString());
+    if (params?.school_id)
+      queryParams.append('school_id', params.school_id.toString());
+
+    const query = queryParams.toString();
+    const response = await this.request<any>(
+      `/discounts${query ? `?${query}` : ''}`
+    );
+
+    // Backend returns { message, status, data: { discounts, pagination } }
+    // API client wraps it in { data: { message, status, data } }
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return response.data;
+    }
+    return response.data as any;
+  }
+
+  async getDiscountById(id: number) {
+    const response = await this.request<any>(`/discounts/${id}`);
+
+    // Backend returns { message, status, data }
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return response.data;
+    }
+    return response.data as any;
+  }
+
+  async createDiscount(discountData: {
+    code: string;
+    description?: string;
+    discount_type: 'PERCENT' | 'FIXED';
+    discount_value: number;
+    school_id?: number;
+    usage_limit?: number;
+    usage_type: 'ONE_TIME' | 'LIMITED' | 'UNLIMITED' | 'USER_SPECIFIC';
+    start_date: string;
+    end_date: string;
+    is_active?: boolean;
+    min_purchase_amount?: number;
+    max_discount_amount?: number;
+  }) {
+    const response = await this.request<any>('/discounts', {
+      method: 'POST',
+      body: JSON.stringify(discountData)
+    });
+
+    // Backend returns { message, status, data }
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return response.data;
+    }
+    return response.data as any;
+  }
+
+  async updateDiscount(
+    id: number,
+    discountData: {
+      description?: string;
+      discount_type?: 'PERCENT' | 'FIXED';
+      discount_value?: number;
+      usage_limit?: number;
+      usage_type?: 'ONE_TIME' | 'LIMITED' | 'UNLIMITED' | 'USER_SPECIFIC';
+      start_date?: string;
+      end_date?: string;
+      is_active?: boolean;
+      min_purchase_amount?: number;
+      max_discount_amount?: number;
+    }
+  ) {
+    const response = await this.request<any>(`/discounts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(discountData)
+    });
+
+    // Backend returns { message, status, data }
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return response.data;
+    }
+    return response.data as any;
+  }
+
+  async deleteDiscount(id: number) {
+    const response = await this.request<any>(`/discounts/${id}`, {
+      method: 'DELETE'
+    });
+
+    // Backend returns { message, status }
+    return response.data as any;
+  }
+
+  async validateDiscount(code: string, amount: number, user_id?: number) {
+    const response = await this.request<any>('/discounts/validate', {
+      method: 'POST',
+      body: JSON.stringify({ code, amount, user_id })
+    });
+
+    // Backend returns { message, status, data }
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return response.data;
+    }
+    return response.data as any;
   }
 }
 
