@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { Course, Enrollment, Payment } from '@/types/api';
-import { formatCurrency, formatNumber } from '@/lib/utils';
+import {
+  formatCurrency,
+  formatNumber,
+  formatCurrencyWithSchool
+} from '@/lib/utils';
 import { recentActivity } from '@/constants/data';
+import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 
 export type DashboardStatsCard = {
   title: string;
@@ -14,6 +19,7 @@ export type DashboardStatsCard = {
 };
 
 const useDashboard = () => {
+  const school = useCurrentSchool();
   const [recentCourses, setRecentCourses] = useState<Course[]>([]);
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
@@ -179,7 +185,7 @@ const useDashboard = () => {
       },
       {
         title: 'Total Revenue',
-        value: formatCurrency(statsTotals.totalRevenue),
+        value: formatCurrencyWithSchool(statsTotals.totalRevenue, school),
         icon: require('lucide-react').DollarSign,
         change: 'Live',
         changeType: 'increase',
@@ -194,7 +200,7 @@ const useDashboard = () => {
         description: 'Students currently progressing'
       }
     ],
-    [statsTotals]
+    [statsTotals, school]
   );
 
   const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];

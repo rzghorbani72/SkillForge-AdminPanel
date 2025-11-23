@@ -16,8 +16,11 @@ import useDashboard from '@/components/dashboard/useDashboard';
 import StatsCards from '@/components/dashboard/StatsCards';
 import RecentLists from '@/components/dashboard/RecentLists';
 import { useAccessControl } from '@/hooks/useAccessControl';
+import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { formatCurrencyWithSchool } from '@/lib/utils';
 
 export default function DashboardPage() {
+  const school = useCurrentSchool();
   const {
     isLoading,
     recentCourses,
@@ -33,6 +36,12 @@ export default function DashboardPage() {
     isLoading: userLoading,
     error: userError
   } = useAccessControl();
+
+  // Calculate actual revenue from payments
+  const currentRevenue = recentPayments
+    .filter((p) => p.status === 'COMPLETED')
+    .reduce((sum, p) => sum + (p.amount ?? 0), 0);
+  const revenueTarget = 7500000; // 75,000 in smallest currency unit (cents or tomans)
 
   const quickActions = [
     {
@@ -249,10 +258,17 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Revenue Target</span>
                   <span className="text-sm text-muted-foreground">
-                    $45,678/$75,000
+                    {formatCurrencyWithSchool(currentRevenue, school)}/
+                    {formatCurrencyWithSchool(revenueTarget, school)}
                   </span>
                 </div>
-                <Progress value={61} />
+                <Progress
+                  value={
+                    revenueTarget > 0
+                      ? Math.min((currentRevenue / revenueTarget) * 100, 100)
+                      : 0
+                  }
+                />
               </div>
             </div>
           </CardContent>

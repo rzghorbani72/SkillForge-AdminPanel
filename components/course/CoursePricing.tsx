@@ -1,12 +1,16 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Course } from '@/types/api';
+import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 
 type Props = {
   course: Course;
 };
 
 const CoursePricing = ({ course }: Props) => {
+  const school = useCurrentSchool();
+
   return (
     <Card>
       <CardHeader>
@@ -19,7 +23,7 @@ const CoursePricing = ({ course }: Props) => {
               Primary Price
             </label>
             <div className="text-lg font-medium">
-              ${course.price ? (course.price / 100).toFixed(2) : '0.00'}
+              {formatCurrencyWithSchool(course.price || 0, school)}
             </div>
           </div>
 
@@ -28,10 +32,7 @@ const CoursePricing = ({ course }: Props) => {
               Secondary Price
             </label>
             <div className="text-lg font-medium">
-              $
-              {course.original_price
-                ? (course.original_price / 100).toFixed(2)
-                : '0.00'}
+              {formatCurrencyWithSchool(course.original_price || 0, school)}
             </div>
           </div>
         </div>

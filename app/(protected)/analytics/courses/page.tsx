@@ -22,6 +22,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
+import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { formatCurrencyWithSchool } from '@/lib/utils';
 
 interface CoursePerformance {
   name: string;
@@ -33,6 +35,7 @@ interface CoursePerformance {
 
 export default function CoursePerformancePage() {
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
+  const school = useCurrentSchool();
 
   const courseMetrics = useMemo<CoursePerformance[]>(() => {
     if (courses.length === 0) return [];
@@ -283,10 +286,7 @@ export default function CoursePerformancePage() {
                   <div className="flex items-center justify-between">
                     <span className="truncate">{course.name}</span>
                     <Badge variant="secondary">
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD'
-                      }).format(course.revenue / 100)}
+                      {formatCurrencyWithSchool(course.revenue, school)}
                     </Badge>
                   </div>
                   <Progress value={course.completion} className="h-2" />

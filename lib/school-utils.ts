@@ -102,6 +102,14 @@ export function clearSchoolData(): void {
 }
 
 /**
+ * Check if cached schools have currency fields
+ * Returns true if all schools have currency config, false otherwise
+ */
+export function validateSchoolCurrencyFields(schools: School[]): boolean {
+  return schools.every((school) => school.currency || school.currency_symbol);
+}
+
+/**
  * Check if user has access to a specific school
  */
 export function hasSchoolAccess(schoolId: number, schools: School[]): boolean {

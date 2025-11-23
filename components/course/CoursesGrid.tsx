@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/access-control-badge';
 import CourseCover from './CourseCover';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
+import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 
 type Props = {
   courses: Course[];
@@ -34,6 +36,7 @@ const CoursesGrid = ({
   onEdit,
   onDelete
 }: Props) => {
+  const school = useCurrentSchool();
   const [courseToDelete, setCourseToDelete] = React.useState<Course | null>(
     null
   );
@@ -157,7 +160,7 @@ const CoursesGrid = ({
                   </div>
                   {course.price && course.price > 0 ? (
                     <span className="text-sm font-semibold text-foreground">
-                      ${(course.price / 100).toFixed(2)}
+                      {formatCurrencyWithSchool(course.price, school)}
                     </span>
                   ) : (
                     <Badge variant="outline" className="text-xs">

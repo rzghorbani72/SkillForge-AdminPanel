@@ -73,6 +73,10 @@ export interface School {
   logo_id?: number;
   cover_id?: number;
   is_active: boolean;
+  country_code?: string;
+  currency?: string;
+  currency_symbol?: string;
+  currency_position?: 'before' | 'after';
   available_currencies?: CurrencyConfig[];
   default_currency?: CurrencyCode;
   created_at: string;

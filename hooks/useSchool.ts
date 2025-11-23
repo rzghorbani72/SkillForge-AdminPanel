@@ -13,7 +13,8 @@ import {
   getSelectedSchool,
   clearSchoolData,
   validateSchoolSelection,
-  autoSelectSchool
+  autoSelectSchool,
+  validateSchoolCurrencyFields
 } from '@/lib/school-utils';
 
 interface UseSchoolReturn {
@@ -56,13 +57,17 @@ export function useSchool(): UseSchoolReturn {
       // Try to load from cache first
       const cachedSchools = getCachedSchools();
 
-      if (cachedSchools.length > 0) {
+      // If cached schools don't have currency fields, force refresh
+      if (
+        cachedSchools.length > 0 &&
+        validateSchoolCurrencyFields(cachedSchools)
+      ) {
         setSchools(cachedSchools);
         setIsLoading(false);
         return;
       }
 
-      // No cache, fetch from API
+      // No cache or missing currency fields, fetch from API
       await fetchFreshSchools();
     } catch (error) {
       console.error('Error loading schools:', error);
@@ -76,24 +81,36 @@ export function useSchool(): UseSchoolReturn {
       const response = await apiClient.getMySchools();
 
       // Handle the API response format: { message, status: "ok", data: [...] }
+      let schoolsData: School[] = [];
+
       if (
         response.data &&
         (response.data as any).status === 'ok' &&
         (response.data as any).data
       ) {
-        const schoolsData: School[] = (response.data as any).data;
-        setSchools(schoolsData);
-        setCachedSchools(schoolsData);
+        schoolsData = (response.data as any).data;
       } else if (Array.isArray(response.data)) {
         // Fallback for direct array response
-        const schoolsData: School[] = response.data;
-        setSchools(schoolsData);
-        setCachedSchools(schoolsData);
+        schoolsData = response.data;
       } else {
         console.error('Unexpected response structure:', response.data);
         setError('Invalid response structure from server');
         return;
       }
+
+      // Validate that schools have currency fields, log warning if missing
+      if (process.env.NODE_ENV === 'development') {
+        schoolsData.forEach((school) => {
+          if (!school.currency && !school.currency_symbol) {
+            console.warn(
+              `School ${school.id} (${school.name}) missing currency fields`
+            );
+          }
+        });
+      }
+
+      setSchools(schoolsData);
+      setCachedSchools(schoolsData);
     } catch (error) {
       console.error('Error fetching schools:', error);
       setError('Failed to fetch schools');

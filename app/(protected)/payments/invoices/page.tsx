@@ -13,7 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Filter, Plus, Search } from 'lucide-react';
 import { usePaymentsData } from '../_hooks/use-payments-data';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrencyWithSchool } from '@/lib/utils';
+import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 
 const STATUS_COLORS: Record<string, string> = {
   COMPLETED: 'bg-green-100 text-green-800',
@@ -22,14 +23,6 @@ const STATUS_COLORS: Record<string, string> = {
   REFUNDED: 'bg-blue-100 text-blue-800'
 };
 
-function formatCurrency(cents: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2
-  }).format(cents / 100);
-}
-
 function formatDate(value?: string | null): string {
   if (!value) return '—';
   return new Date(value).toLocaleDateString();
@@ -37,6 +30,7 @@ function formatDate(value?: string | null): string {
 
 export default function InvoicesPage() {
   const { payments, isLoading } = usePaymentsData();
+  const school = useCurrentSchool();
   const [searchTerm, setSearchTerm] = useState('');
 
   const invoices = useMemo(() => {
@@ -211,7 +205,7 @@ export default function InvoicesPage() {
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="text-right text-sm">
                     <p className="font-semibold">
-                      {formatCurrency(payment.amount ?? 0)}
+                      {formatCurrencyWithSchool(payment.amount ?? 0, school)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(payment.payment_date)}

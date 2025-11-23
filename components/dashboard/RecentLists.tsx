@@ -11,6 +11,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, DollarSign, Users } from 'lucide-react';
 import { Course, Enrollment, Payment } from '@/types/api';
+import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 
 type Props = {
   courses: Course[];
@@ -19,6 +21,8 @@ type Props = {
 };
 
 const RecentLists = ({ courses, enrollments, payments }: Props) => {
+  const school = useCurrentSchool();
+
   return (
     <Tabs defaultValue="courses" className="space-y-4">
       <TabsList>
@@ -159,7 +163,7 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium">
-                        ${(payment.amount / 100).toFixed(2)}
+                        {formatCurrencyWithSchool(payment.amount ?? 0, school)}
                       </p>
                       <Badge
                         variant={
