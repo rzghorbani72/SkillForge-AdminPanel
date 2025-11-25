@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -37,12 +37,33 @@ export default function RegisterPage() {
     error: schoolsError
   } = useSchools();
 
+  // Update primary verification method when school is selected
+  useEffect(() => {
+    if (registrationType === 'existing-school' && formData.existingSchoolId) {
+      const selectedSchool = schools.find(
+        (s) => s.id === parseInt(formData.existingSchoolId)
+      );
+      if (selectedSchool?.primary_verification_method) {
+        setPrimaryVerificationMethod(
+          selectedSchool.primary_verification_method
+        );
+      } else {
+        setPrimaryVerificationMethod('phone'); // Default
+      }
+    } else if (registrationType === 'new-school') {
+      setPrimaryVerificationMethod('phone'); // Default for new schools
+    }
+  }, [formData.existingSchoolId, registrationType, schools]);
+
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [emailOtpSent, setEmailOtpSent] = useState(false);
   const [phoneOtpVerified, setPhoneOtpVerified] = useState(false);
   const [emailOtpVerified, setEmailOtpVerified] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const [step, setStep] = useState<'verification' | 'form'>('verification');
+  const [primaryVerificationMethod, setPrimaryVerificationMethod] = useState<
+    'phone' | 'email'
+  >('phone');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -228,18 +249,32 @@ export default function RegisterPage() {
       newErrors.name = 'Full name is required';
     }
 
-    // Email is required for all users
-    if (!formData.email) {
-      newErrors.email = 'Email address is required';
-    } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    // Phone number is required and must be valid
-    if (!formData.phone) {
-      newErrors.phone = 'Phone number is required';
-    } else if (formData.phone.length < 7 || formData.phone.length > 15) {
-      newErrors.phone = 'Please enter a valid phone number (7-15 digits)';
+    // Validate based on primary verification method
+    if (primaryVerificationMethod === 'phone') {
+      // Phone is required, email is optional
+      if (!formData.phone) {
+        newErrors.phone = 'Phone number is required';
+      } else if (formData.phone.length < 7 || formData.phone.length > 15) {
+        newErrors.phone = 'Please enter a valid phone number (7-15 digits)';
+      }
+      // Email is optional but must be valid if provided
+      if (formData.email && !isValidEmail(formData.email)) {
+        newErrors.email = 'Please enter a valid email address';
+      }
+    } else {
+      // Email is required, phone is optional
+      if (!formData.email) {
+        newErrors.email = 'Email address is required';
+      } else if (!isValidEmail(formData.email)) {
+        newErrors.email = 'Please enter a valid email address';
+      }
+      // Phone is optional but must be valid if provided
+      if (
+        formData.phone &&
+        (formData.phone.length < 7 || formData.phone.length > 15)
+      ) {
+        newErrors.phone = 'Please enter a valid phone number (7-15 digits)';
+      }
     }
 
     if (!formData.password) {
@@ -292,9 +327,15 @@ export default function RegisterPage() {
     isSubmittingRef.current = true;
 
     try {
-      // Ensure both OTPs are verified before allowing base data submission
-      if (!phoneOtpVerified || (formData.email && !emailOtpVerified)) {
-        ErrorHandler.showWarning('Please verify phone and email OTPs first');
+      // Ensure primary method OTP is verified
+      const primaryVerified =
+        primaryVerificationMethod === 'phone'
+          ? phoneOtpVerified
+          : emailOtpVerified;
+      if (!primaryVerified) {
+        const methodName =
+          primaryVerificationMethod === 'phone' ? 'phone' : 'email';
+        ErrorHandler.showWarning(`Please verify your ${methodName} OTP first`);
         return;
       }
 
@@ -371,21 +412,26 @@ export default function RegisterPage() {
     }
 
     if (step === 'verification') {
-      if (!phoneOtpSent) {
-        await handleSendPhoneOtp();
-        return;
-      }
-      if (!phoneOtpVerified) {
-        ErrorHandler.showWarning('Please verify your phone OTP first');
-        return;
-      }
-      if (formData.email && !emailOtpSent) {
-        await handleSendEmailOtp();
-        return;
-      }
-      if (formData.email && !emailOtpVerified) {
-        ErrorHandler.showWarning('Please verify your email OTP first');
-        return;
+      // Only verify primary method during registration
+      if (primaryVerificationMethod === 'phone') {
+        if (!phoneOtpSent) {
+          await handleSendPhoneOtp();
+          return;
+        }
+        if (!phoneOtpVerified) {
+          ErrorHandler.showWarning('Please verify your phone OTP first');
+          return;
+        }
+      } else {
+        // Email is primary
+        if (!emailOtpSent) {
+          await handleSendEmailOtp();
+          return;
+        }
+        if (!emailOtpVerified) {
+          ErrorHandler.showWarning('Please verify your email OTP first');
+          return;
+        }
       }
       setStep('form');
       return;
@@ -580,6 +626,7 @@ export default function RegisterPage() {
                   phoneOtpSent={phoneOtpSent}
                   emailOtpVerified={emailOtpVerified}
                   phoneOtpVerified={phoneOtpVerified}
+                  primaryMethod={primaryVerificationMethod}
                   onChange={handleInputChange}
                   onSendPhone={handleSendPhoneOtp}
                   onVerifyPhone={handleVerifyPhoneOtp}

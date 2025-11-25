@@ -77,6 +77,7 @@ export interface School {
   currency?: string;
   currency_symbol?: string;
   currency_position?: 'before' | 'after';
+  primary_verification_method?: 'phone' | 'email';
   available_currencies?: CurrencyConfig[];
   default_currency?: CurrencyCode;
   created_at: string;
