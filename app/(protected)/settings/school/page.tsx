@@ -17,6 +17,7 @@ import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
+import { extractDomainPart, formatDomain } from '@/lib/school-utils';
 
 interface SchoolFormState {
   name: string;
@@ -51,11 +52,25 @@ export default function SchoolSettingsPage() {
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await apiClient.updateSchool({
-        name: form.name,
-        description: form.description,
-        private_domain: form.domain
-      });
+      const updateData: {
+        name?: string;
+        description?: string;
+        private_domain?: string;
+      } = {};
+
+      if (form.name) updateData.name = form.name;
+      if (form.description !== undefined)
+        updateData.description = form.description;
+
+      if (form.domain && form.domain.trim()) {
+        const domainPart = extractDomainPart(form.domain);
+        const formattedDomain = formatDomain(domainPart);
+        if (formattedDomain) {
+          updateData.private_domain = formattedDomain;
+        }
+      }
+
+      await apiClient.updateSchool(updateData);
       ErrorHandler.showSuccess('School settings updated successfully');
     } catch (error) {
       console.error('Error updating school settings', error);
@@ -113,7 +128,7 @@ export default function SchoolSettingsPage() {
                   onChange={(event) =>
                     setForm({ ...form, domain: event.target.value })
                   }
-                  placeholder="academy.skillforge.com"
+                  placeholder="academy"
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
