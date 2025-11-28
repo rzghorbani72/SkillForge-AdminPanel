@@ -158,6 +158,12 @@ export const navItems: NavItem[] = [
     label: 'courses'
   },
   {
+    title: 'Products',
+    href: '/products?filter=none',
+    icon: 'product' as IconType,
+    label: 'products'
+  },
+  {
     title: 'Videos',
     href: '/videos?filter=none',
     icon: 'video' as IconType,

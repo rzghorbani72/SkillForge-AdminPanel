@@ -182,6 +182,112 @@ export interface Course {
   };
 }
 
+export interface Product {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  short_description?: string;
+  price: number;
+  original_price?: number;
+  discount_percent?: number;
+  product_type: 'DIGITAL' | 'PHYSICAL';
+  stock_quantity?: number | null;
+  sku?: string;
+  is_published: boolean;
+  is_featured: boolean;
+  author_id: number;
+  school_id: number;
+  category_id?: number;
+  sales_count: number;
+  revenue: number;
+  rating: number;
+  rating_count: number;
+  cover_id?: number;
+  weight?: number | null;
+  dimensions?: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+  author?: Profile;
+  school?: School;
+  category?: Category;
+  cover?: Media;
+  images?: Media[];
+  access_control?: {
+    can_modify: boolean;
+    can_delete: boolean;
+    can_view: boolean;
+    is_owner: boolean;
+    user_role: string;
+    user_permissions: string[];
+  };
+}
+
+export interface Order {
+  id: number;
+  order_number: string;
+  profile_id: number;
+  shipping_address_id?: number;
+  total_amount: number;
+  shipping_cost: number;
+  currency: string;
+  status:
+    | 'PENDING'
+    | 'CONFIRMED'
+    | 'PROCESSING'
+    | 'SHIPPED'
+    | 'DELIVERED'
+    | 'CANCELLED'
+    | 'REFUNDED';
+  payment_status: 'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED' | 'REFUNDED';
+  payment_id?: number;
+  shipping_status?:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'SHIPPED'
+    | 'IN_TRANSIT'
+    | 'DELIVERED'
+    | 'RETURNED';
+  tracking_number?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  items?: OrderItem[];
+  shippingAddress?: ShippingAddress;
+  profile?: Profile;
+}
+
+export interface OrderItem {
+  id: number;
+  order_id: number;
+  item_type: 'COURSE' | 'PRODUCT';
+  course_id?: number;
+  product_id?: number;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  created_at: string;
+  course?: Course;
+  product?: Product;
+}
+
+export interface ShippingAddress {
+  id: number;
+  profile_id: number;
+  full_name: string;
+  phone_number: string;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  state_province?: string;
+  postal_code?: string;
+  country_code: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Season {
   id: number;
   title: string;

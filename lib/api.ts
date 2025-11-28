@@ -34,20 +34,35 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
 
-    // Get JWT token from cookie or localStorage
+    // Get JWT token from localStorage or cookie
+    // Note: HttpOnly cookies cannot be read by JavaScript, but will be sent automatically by browser
+    // We prioritize localStorage token (stored by authService) as it's accessible
     let token: string | null = null;
     if (typeof window !== 'undefined') {
-      // Try to get token from cookie
-      const cookies = document.cookie.split(';');
-      const jwtCookie = cookies.find((cookie) =>
-        cookie.trim().startsWith('jwt=')
-      );
-      if (jwtCookie) {
-        token = jwtCookie.split('=')[1]?.trim();
-      }
-      // Fallback to localStorage
+      // Try localStorage first (AdminPanel stores token here after login)
+      token =
+        window.localStorage.getItem('auth_token') ||
+        window.localStorage.getItem('jwt') ||
+        window.localStorage.getItem('token') ||
+        null;
+
+      // If not in localStorage, try to read from cookie (for non-HttpOnly cookies)
       if (!token) {
-        token = window.localStorage.getItem('auth_token') || null;
+        try {
+          const cookies = document.cookie.split(';');
+          const jwtCookie = cookies.find((cookie) => {
+            const trimmed = cookie.trim();
+            return trimmed.startsWith('jwt=') || trimmed.startsWith('JWT=');
+          });
+          if (jwtCookie) {
+            const parts = jwtCookie.split('=');
+            if (parts.length >= 2) {
+              token = parts.slice(1).join('=').trim(); // Handle tokens with '=' in them
+            }
+          }
+        } catch (e) {
+          // Cookie might be HttpOnly, ignore error
+        }
       }
     }
 
@@ -61,8 +76,34 @@ class ApiClient {
           };
 
     // Add Authorization header if token is available
+    // This is important as a fallback if the HttpOnly cookie isn't being sent
     if (token && !headersObj['Authorization']) {
       headersObj['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Add school ID header if available (from localStorage)
+    if (typeof window !== 'undefined') {
+      // Use the same key as school-utils.ts
+      const schoolId = window.localStorage.getItem(
+        'skillforge_selected_school_id'
+      );
+      if (schoolId && !headersObj['X-School-ID']) {
+        headersObj['X-School-ID'] = schoolId;
+      }
+
+      // Debug logging in development
+      if (process.env.NODE_ENV === 'development') {
+        if (!token) {
+          console.warn(
+            '[API Client] No token found in localStorage. Make sure you are logged in.'
+          );
+        }
+        if (!schoolId) {
+          console.warn(
+            '[API Client] No school ID found. Make sure a school is selected.'
+          );
+        }
+      }
     }
 
     const headers: HeadersInit = headersObj;
@@ -436,6 +477,166 @@ class ApiClient {
   async deleteCourse(id: number) {
     return this.request(`/courses/${id}`, {
       method: 'DELETE'
+    });
+  }
+
+  // Products endpoints
+  async getProducts(params?: {
+    search?: string;
+    title?: string;
+    min_price?: number;
+    max_price?: number;
+    page?: number;
+    limit?: number;
+    order_by?: string;
+    published?: boolean;
+    is_featured?: boolean;
+    product_type?: 'DIGITAL' | 'PHYSICAL';
+    category_id?: number;
+    author_id?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, String(value));
+        }
+      });
+    }
+    const queryString = queryParams.toString();
+    const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
+    const response = await this.request(endpoint);
+    const payload = response.data as any;
+
+    if (payload && payload.status === 'ok' && payload.data) {
+      return payload.data as { products: any[]; pagination?: any };
+    }
+    return { products: [], pagination: undefined };
+  }
+
+  async getProduct(id: number) {
+    const response = await this.request(`/products/${id}`);
+    const payload = response.data as any;
+
+    if (!payload) {
+      return null as any;
+    }
+
+    if (payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+
+    if (payload.data) {
+      return payload.data;
+    }
+
+    return payload;
+  }
+
+  async createProduct(productData: {
+    title: string;
+    description: string;
+    short_description?: string;
+    price: number;
+    original_price?: number;
+    product_type: 'DIGITAL' | 'PHYSICAL';
+    stock_quantity?: number;
+    sku?: string;
+    category_id?: number;
+    cover_id?: number;
+    published?: boolean;
+    is_featured?: boolean;
+    weight?: number;
+    dimensions?: string;
+  }) {
+    return this.request('/products', {
+      method: 'POST',
+      body: JSON.stringify(productData)
+    });
+  }
+
+  async updateProduct(id: number, productData: unknown) {
+    return this.request(`/products/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(productData)
+    });
+  }
+
+  async deleteProduct(id: number) {
+    return this.request(`/products/${id}`, {
+      method: 'DELETE'
+    });
+  }
+
+  // Shipping & Orders endpoints
+  async getShippingAddresses() {
+    const response = await this.request('/shipping/addresses');
+    const payload = response.data as any;
+    if (payload && payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+    return [];
+  }
+
+  async createShippingAddress(addressData: {
+    full_name: string;
+    phone_number: string;
+    address_line1: string;
+    address_line2?: string;
+    city: string;
+    state_province?: string;
+    postal_code?: string;
+    is_default?: boolean;
+  }) {
+    return this.request('/shipping/addresses', {
+      method: 'POST',
+      body: JSON.stringify(addressData)
+    });
+  }
+
+  async updateShippingAddress(id: number, addressData: unknown) {
+    return this.request(`/shipping/addresses/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(addressData)
+    });
+  }
+
+  async deleteShippingAddress(id: number) {
+    return this.request(`/shipping/addresses/${id}`, {
+      method: 'DELETE'
+    });
+  }
+
+  async getOrders() {
+    const response = await this.request('/shipping/orders');
+    const payload = response.data as any;
+    if (payload && payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+    return [];
+  }
+
+  async getOrder(id: number) {
+    const response = await this.request(`/shipping/orders/${id}`);
+    const payload = response.data as any;
+    if (payload && payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+    return null;
+  }
+
+  async createOrder(orderData: {
+    items: Array<{
+      item_type: 'COURSE' | 'PRODUCT';
+      item_id: number;
+      quantity?: number;
+    }>;
+    shipping_address_id?: number;
+    notes?: string;
+  }) {
+    return this.request('/shipping/orders', {
+      method: 'POST',
+      body: JSON.stringify(orderData)
     });
   }
 
