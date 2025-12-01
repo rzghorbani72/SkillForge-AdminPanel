@@ -71,6 +71,30 @@ export const getCountryByCode = (code: string): CountryCode | undefined => {
   return COUNTRY_CODES.find((country) => country.code === code);
 };
 
+/**
+ * Get default country based on language code
+ * @param language - Language code (en, ar, fa, tr)
+ * @returns Default country for the language
+ */
+export const getDefaultCountryByLanguage = (language?: string): CountryCode => {
+  const languageCountryMap: Record<string, string> = {
+    fa: 'IR', // Farsi → Iran
+    tr: 'TR', // Turkish → Turkey
+    en: 'US', // English → United States
+    ar: 'SA' // Arabic → Saudi Arabia
+  };
+
+  if (language && languageCountryMap[language]) {
+    const country = getCountryByCode(languageCountryMap[language]);
+    if (country) {
+      return country;
+    }
+  }
+
+  // Fallback to US if language not found or country not found
+  return COUNTRY_CODES[0]; // Default to US
+};
+
 export const getDefaultCountry = (): CountryCode => {
   return COUNTRY_CODES[0]; // Default to US
 };

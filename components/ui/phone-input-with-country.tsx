@@ -25,6 +25,7 @@ import {
   formatPhoneNumber
 } from '@/lib/phone-utils';
 import { useLanguage } from '@/lib/i18n/hooks';
+import { getDefaultCountryByLanguage } from '@/lib/country-codes';
 
 interface PhoneInputWithCountryProps {
   id: string;
@@ -53,31 +54,51 @@ export function PhoneInputWithCountry({
   maxLength = 10,
   onValidationChange
 }: PhoneInputWithCountryProps) {
-  const { isRTL } = useLanguage();
+  const { isRTL, language } = useLanguage();
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
-    COUNTRY_CODES[0]
+    getDefaultCountryByLanguage(language)
   );
   const [isLoadingCountry, setIsLoadingCountry] = useState(true);
   const [isValid, setIsValid] = useState(false);
 
-  // Detect user's country on component mount
+  // Detect user's country on component mount and when language changes
   useEffect(() => {
     const initializeCountry = async () => {
       setIsLoadingCountry(true);
 
-      // First try to get stored country
+      // Get language-based default country
+      const languageBasedCountry = getDefaultCountryByLanguage(language);
+      const languageCountryMap: Record<string, string> = {
+        fa: 'IR',
+        tr: 'TR',
+        en: 'US',
+        ar: 'SA'
+      };
+
+      // Check if stored country matches the current language preference
       const storedCountry = getStoredCountry();
-      if (storedCountry) {
+      if (
+        storedCountry &&
+        storedCountry.code === languageCountryMap[language]
+      ) {
+        // Stored country matches language, use it
         setSelectedCountry(storedCountry);
         setIsLoadingCountry(false);
         return;
       }
 
-      // If no stored country, detect from IP
+      // Stored country doesn't match language or doesn't exist, use language-based default
+      setSelectedCountry(languageBasedCountry);
+      storeCountry(languageBasedCountry);
+
+      // Optionally try to detect from IP (but prefer language-based default)
       try {
         const detectedCountry = await detectUserCountry();
-        setSelectedCountry(detectedCountry);
-        storeCountry(detectedCountry);
+        // Only use detected country if it matches the language preference
+        if (detectedCountry.code === languageCountryMap[language]) {
+          setSelectedCountry(detectedCountry);
+          storeCountry(detectedCountry);
+        }
       } catch (error) {
         console.warn('Failed to detect country:', error);
       } finally {
@@ -86,7 +107,7 @@ export function PhoneInputWithCountry({
     };
 
     initializeCountry();
-  }, []);
+  }, [language]);
 
   const handleCountryChange = (countryCode: string) => {
     const country = COUNTRY_CODES.find((c) => c.code === countryCode);
@@ -186,9 +207,6 @@ export function PhoneInputWithCountry({
         >
           {isValid ? '✓ Valid phone number' : '⚠ Invalid phone number format'}
         </p>
-      )}
-      {isLoadingCountry && (
-        <p className="text-xs text-gray-500">Detecting your country...</p>
       )}
     </div>
   );
