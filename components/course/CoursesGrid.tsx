@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Card,
@@ -18,6 +20,7 @@ import CourseCover from './CourseCover';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 import { formatCurrencyWithSchool } from '@/lib/utils';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   courses: Course[];
@@ -36,6 +39,7 @@ const CoursesGrid = ({
   onEdit,
   onDelete
 }: Props) => {
+  const { t } = useTranslation();
   const school = useCurrentSchool();
   const [courseToDelete, setCourseToDelete] = React.useState<Course | null>(
     null
@@ -58,25 +62,28 @@ const CoursesGrid = ({
     }
   };
 
-  const resultsLabel = `${courses.length} course${courses.length === 1 ? '' : 's'}`;
+  const resultsLabel =
+    courses.length === 1
+      ? t('courses.oneCourse')
+      : t('courses.multipleCourses', { count: courses.length });
   const headerDescription = searchTerm
-    ? `Showing ${resultsLabel} matching "${searchTerm}".`
-    : `Showing ${resultsLabel}.`;
+    ? t('courses.showingMatching', { count: courses.length, term: searchTerm })
+    : t('courses.showingCount', { count: courses.length });
 
   if (courses.length === 0) {
     return (
       <Card className="py-12 text-center">
         <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-2 text-sm font-medium">No courses found</h3>
+        <h3 className="mt-2 text-sm font-medium">{t('courses.noCourses')}</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           {searchTerm
-            ? `No courses match "${searchTerm}"`
-            : 'Get started by creating your first course.'}
+            ? t('courses.noCoursesMatch', { term: searchTerm })
+            : t('courses.getStarted')}
         </p>
         {!searchTerm && onCreate && (
           <Button onClick={onCreate} className="mt-4">
             <Plus className="mr-2 h-4 w-4" />
-            Create Course
+            {t('courses.createCourse')}
           </Button>
         )}
       </Card>
@@ -87,7 +94,9 @@ const CoursesGrid = ({
     <>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Courses</h2>
+          <h2 className="text-lg font-semibold text-foreground">
+            {t('courses.title')}
+          </h2>
           <p className="text-sm text-muted-foreground">{headerDescription}</p>
         </div>
       </div>
@@ -136,7 +145,7 @@ const CoursesGrid = ({
                     </span>
                   ) : (
                     <span className="flex items-center justify-end gap-1 text-muted-foreground/60">
-                      No rating
+                      {t('courses.noRating')}
                     </span>
                   )}
                 </div>
@@ -147,14 +156,16 @@ const CoursesGrid = ({
                       variant={course.is_published ? 'default' : 'secondary'}
                       className="text-xs"
                     >
-                      {course.is_published ? 'Published' : 'Draft'}
+                      {course.is_published
+                        ? t('courses.published')
+                        : t('courses.draft')}
                     </Badge>
                     {course.is_featured && (
                       <Badge
                         variant="outline"
                         className="border-yellow-600 text-xs text-yellow-600"
                       >
-                        Featured
+                        {t('courses.featured')}
                       </Badge>
                     )}
                   </div>
@@ -164,7 +175,7 @@ const CoursesGrid = ({
                     </span>
                   ) : (
                     <Badge variant="outline" className="text-xs">
-                      Free
+                      {t('courses.free')}
                     </Badge>
                   )}
                 </div>

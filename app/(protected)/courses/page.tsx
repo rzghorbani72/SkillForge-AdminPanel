@@ -6,8 +6,10 @@ import Header from '@/components/course/Header';
 import SearchBar from '@/components/course/SearchBar';
 import CoursesGrid from '@/components/course/CoursesGrid';
 import useCourses from '@/components/course/useCourses';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function CoursesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { selectedSchool } = useSchool();
   const {
@@ -27,10 +29,10 @@ export default function CoursesPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-muted-foreground">
-              No School Selected
+              {t('common.noSchoolSelected')}
             </h2>
             <p className="text-muted-foreground">
-              Please select a school from the header to view courses.
+              {t('common.selectSchoolToView')}
             </p>
           </div>
         </div>
@@ -44,7 +46,9 @@ export default function CoursesPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading courses...</p>
+            <p className="mt-2 text-sm text-gray-600">
+              {t('courses.loadingCourses')}
+            </p>
           </div>
         </div>
       </div>

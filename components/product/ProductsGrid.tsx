@@ -36,6 +36,7 @@ const ProductsGrid = ({
   onEdit,
   onDelete
 }: Props) => {
+  const { t } = useTranslation();
   const school = useCurrentSchool();
   const [productToDelete, setProductToDelete] = React.useState<Product | null>(
     null
@@ -58,25 +59,31 @@ const ProductsGrid = ({
     }
   };
 
-  const resultsLabel = `${products.length} product${products.length === 1 ? '' : 's'}`;
+  const resultsLabel =
+    products.length === 1
+      ? t('products.oneProduct')
+      : t('products.multipleProducts', { count: products.length });
   const headerDescription = searchTerm
-    ? `Showing ${resultsLabel} matching "${searchTerm}".`
-    : `Showing ${resultsLabel}.`;
+    ? t('products.showingMatching', {
+        count: products.length,
+        term: searchTerm
+      })
+    : t('products.showingCount', { count: products.length });
 
   if (products.length === 0) {
     return (
       <Card className="py-12 text-center">
         <Package className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-2 text-sm font-medium">No products found</h3>
+        <h3 className="mt-2 text-sm font-medium">{t('products.noProducts')}</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           {searchTerm
-            ? `No products match "${searchTerm}"`
-            : 'Get started by creating your first product.'}
+            ? t('products.noProductsMatch', { term: searchTerm })
+            : t('products.getStarted')}
         </p>
         {!searchTerm && onCreate && (
           <Button onClick={onCreate} className="mt-4">
             <Plus className="mr-2 h-4 w-4" />
-            Create Product
+            {t('products.createProduct')}
           </Button>
         )}
       </Card>
@@ -87,7 +94,9 @@ const ProductsGrid = ({
     <>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Products</h2>
+          <h2 className="text-lg font-semibold text-foreground">
+            {t('products.title')}
+          </h2>
           <p className="text-sm text-muted-foreground">{headerDescription}</p>
         </div>
       </div>
@@ -142,19 +151,19 @@ const ProductsGrid = ({
                     {product.product_type === 'PHYSICAL' ? (
                       <>
                         <Package className="mr-1 h-3 w-3" />
-                        Physical
+                        {t('products.physical')}
                       </>
                     ) : (
                       <>
                         <ShoppingCart className="mr-1 h-3 w-3" />
-                        Digital
+                        {t('products.digital')}
                       </>
                     )}
                   </Badge>
                   {product.product_type === 'PHYSICAL' &&
                     product.stock_quantity !== null && (
                       <Badge variant="outline" className="text-xs">
-                        Stock: {product.stock_quantity}
+                        {t('products.stock')}: {product.stock_quantity}
                       </Badge>
                     )}
                 </div>
@@ -165,14 +174,16 @@ const ProductsGrid = ({
                       variant={product.is_published ? 'default' : 'secondary'}
                       className="text-xs"
                     >
-                      {product.is_published ? 'Published' : 'Draft'}
+                      {product.is_published
+                        ? t('courses.published')
+                        : t('courses.draft')}
                     </Badge>
                     {product.is_featured && (
                       <Badge
                         variant="outline"
                         className="border-yellow-600 text-xs text-yellow-600"
                       >
-                        Featured
+                        {t('courses.featured')}
                       </Badge>
                     )}
                   </div>
@@ -182,7 +193,7 @@ const ProductsGrid = ({
                     </span>
                   ) : (
                     <Badge variant="outline" className="text-xs">
-                      Free
+                      {t('courses.free')}
                     </Badge>
                   )}
                 </div>
@@ -191,7 +202,9 @@ const ProductsGrid = ({
                   <div className="flex items-center gap-1 text-sm text-muted-foreground">
                     <span>⭐ {product.rating.toFixed(1)}</span>
                     {product.rating_count > 0 && (
-                      <span>({product.rating_count} reviews)</span>
+                      <span>
+                        ({product.rating_count} {t('products.reviews')})
+                      </span>
                     )}
                   </div>
                 )}
@@ -219,7 +232,7 @@ const ProductsGrid = ({
                         }}
                       >
                         <Trash2 className="mr-1 h-4 w-4" />
-                        Delete
+                        {t('common.delete')}
                       </Button>
                       {onEdit && (
                         <Button
@@ -232,7 +245,7 @@ const ProductsGrid = ({
                           }}
                         >
                           <Edit className="mr-1 h-4 w-4" />
-                          Edit
+                          {t('common.edit')}
                         </Button>
                       )}
                     </>

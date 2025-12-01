@@ -22,8 +22,13 @@ import { StepIndicator } from '@/components/auth/register/StepIndicator';
 import { VerificationStep } from '@/components/auth/register/VerificationStep';
 import { BaseDataForm } from '@/components/auth/register/BaseDataForm';
 import { COUNTRY_CODES } from '@/lib/country-codes';
+import { LanguageDetector } from '@/components/providers/language-detector';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
+  const { isRTL } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [registrationType, setRegistrationType] = useState<
     'new-school' | 'existing-school'
@@ -36,24 +41,6 @@ export default function RegisterPage() {
     isLoading: schoolsLoading,
     error: schoolsError
   } = useSchools();
-
-  // Update primary verification method when school is selected
-  useEffect(() => {
-    if (registrationType === 'existing-school' && formData.existingSchoolId) {
-      const selectedSchool = schools.find(
-        (s) => s.id === parseInt(formData.existingSchoolId)
-      );
-      if (selectedSchool?.primary_verification_method) {
-        setPrimaryVerificationMethod(
-          selectedSchool.primary_verification_method
-        );
-      } else {
-        setPrimaryVerificationMethod('phone'); // Default
-      }
-    } else if (registrationType === 'new-school') {
-      setPrimaryVerificationMethod('phone'); // Default for new schools
-    }
-  }, [formData.existingSchoolId, registrationType, schools]);
 
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [emailOtpSent, setEmailOtpSent] = useState(false);
@@ -79,6 +66,24 @@ export default function RegisterPage() {
     existingSchoolId: '',
     teacherRequestReason: ''
   });
+
+  // Update primary verification method when school is selected
+  useEffect(() => {
+    if (registrationType === 'existing-school' && formData.existingSchoolId) {
+      const selectedSchool = schools.find(
+        (s) => s.id === parseInt(formData.existingSchoolId)
+      );
+      if (selectedSchool?.primary_verification_method) {
+        setPrimaryVerificationMethod(
+          selectedSchool.primary_verification_method
+        );
+      } else {
+        setPrimaryVerificationMethod('phone'); // Default
+      }
+    } else if (registrationType === 'new-school') {
+      setPrimaryVerificationMethod('phone'); // Default for new schools
+    }
+  }, [formData.existingSchoolId, registrationType, schools]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const isSubmittingRef = useRef(false);
 
@@ -246,47 +251,47 @@ export default function RegisterPage() {
     console.log('Form Data:', formData);
     // Basic user validation
     if (!formData.name.trim()) {
-      newErrors.name = 'Full name is required';
+      newErrors.name = t('auth.fullNameRequired');
     }
 
     // Validate based on primary verification method
     if (primaryVerificationMethod === 'phone') {
       // Phone is required, email is optional
       if (!formData.phone) {
-        newErrors.phone = 'Phone number is required';
+        newErrors.phone = t('auth.phoneNumberRequired');
       } else if (formData.phone.length < 7 || formData.phone.length > 15) {
-        newErrors.phone = 'Please enter a valid phone number (7-15 digits)';
+        newErrors.phone = t('auth.validPhoneNumber');
       }
       // Email is optional but must be valid if provided
       if (formData.email && !isValidEmail(formData.email)) {
-        newErrors.email = 'Please enter a valid email address';
+        newErrors.email = t('auth.validEmailAddress');
       }
     } else {
       // Email is required, phone is optional
       if (!formData.email) {
-        newErrors.email = 'Email address is required';
+        newErrors.email = t('auth.emailAddressRequired');
       } else if (!isValidEmail(formData.email)) {
-        newErrors.email = 'Please enter a valid email address';
+        newErrors.email = t('auth.validEmailAddress');
       }
       // Phone is optional but must be valid if provided
       if (
         formData.phone &&
         (formData.phone.length < 7 || formData.phone.length > 15)
       ) {
-        newErrors.phone = 'Please enter a valid phone number (7-15 digits)';
+        newErrors.phone = t('auth.validPhoneNumber');
       }
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('auth.passwordRequired');
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = t('auth.passwordTooShort');
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
+      newErrors.confirmPassword = t('auth.confirmPasswordRequired');
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = t('auth.passwordsDoNotMatch');
     }
 
     // Note: OTP verification is handled separately after form submission
@@ -295,25 +300,23 @@ export default function RegisterPage() {
     // School validation based on registration type
     if (registrationType === 'new-school') {
       if (!formData.schoolName.trim()) {
-        newErrors.schoolName = 'School name is required';
+        newErrors.schoolName = t('auth.schoolNameRequired');
       }
       if (!formData.schoolSlug.trim()) {
-        newErrors.schoolSlug = 'School slug is required';
+        newErrors.schoolSlug = t('auth.schoolSlugRequired');
         // Note: When creating a new school, the user automatically becomes the manager
         // regardless of their selected user type. They can also be students/teachers in other schools.
       } else if (!/^[a-z0-9-]+$/.test(formData.schoolSlug)) {
-        newErrors.schoolSlug =
-          'School slug can only contain lowercase letters, numbers, and hyphens';
+        newErrors.schoolSlug = t('auth.schoolSlugInvalid');
       }
     } else {
       if (!formData.existingSchoolId) {
-        newErrors.existingSchoolId = 'Please select a school';
+        newErrors.existingSchoolId = t('auth.selectSchoolRequired');
       }
 
       // Validate teacher request reason if requesting teacher role
       if (joinAsTeacher && !formData.teacherRequestReason.trim()) {
-        newErrors.teacherRequestReason =
-          'Please explain why you want to be a teacher';
+        newErrors.teacherRequestReason = t('auth.teacherRequestReasonRequired');
       }
     }
 
@@ -578,124 +581,139 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="w-full max-w-2xl">
-        {/* Logo/Brand */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-            <School className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
-          <p className="text-gray-600">School Registration</p>
+    <>
+      <LanguageDetector />
+      <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        {/* Language Switcher - Top Right/Left based on RTL */}
+        <div
+          className={`absolute top-4 z-[100] ${isRTL ? 'left-4' : 'right-4'}`}
+        >
+          <LanguageSwitcher />
         </div>
 
-        {/* Access Notice */}
-        <Alert className="mb-6">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            This registration is for{' '}
-            <strong>School Managers and Potential Teachers</strong>. Students
-            should register through their school&apos;s website.
-          </AlertDescription>
-        </Alert>
-
-        <Card className="shadow-xl">
-          <StepIndicator current={step} />
-
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-center text-2xl">
-              {step === 'verification'
-                ? 'Verify Your Contact'
-                : 'Create School Account'}
-            </CardTitle>
-            <CardDescription className="text-center">
-              {step === 'verification'
-                ? 'Verify phone (and email if provided) first. Then fill base data.'
-                : 'Register as a school manager or join as a student'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {step === 'verification' && (
-                <VerificationStep
-                  formData={formData}
-                  errors={errors}
-                  otpLoading={otpLoading}
-                  isLoading={isLoading}
-                  emailOtpSent={emailOtpSent}
-                  phoneOtpSent={phoneOtpSent}
-                  emailOtpVerified={emailOtpVerified}
-                  phoneOtpVerified={phoneOtpVerified}
-                  primaryMethod={primaryVerificationMethod}
-                  onChange={handleInputChange}
-                  onSendPhone={handleSendPhoneOtp}
-                  onVerifyPhone={handleVerifyPhoneOtp}
-                  onSendEmail={handleSendEmailOtp}
-                  onVerifyEmail={handleVerifyEmailOtp}
-                />
-              )}
-
-              {step === 'form' && (
-                <BaseDataForm
-                  registrationType={registrationType}
-                  setRegistrationType={setRegistrationType}
-                  formData={formData}
-                  errors={errors}
-                  isLoading={isLoading}
-                  schools={schools}
-                  schoolsLoading={schoolsLoading}
-                  schoolsError={schoolsError as any}
-                  joinAsTeacher={joinAsTeacher}
-                  setJoinAsTeacher={setJoinAsTeacher}
-                  onChange={handleInputChange}
-                  onGenerateSlug={generateSchoolSlug}
-                />
-              )}
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {step === 'verification'
-                      ? 'Checking...'
-                      : 'Registering User...'}
-                  </>
-                ) : step === 'verification' ? (
-                  'Continue to Base Data'
-                ) : (
-                  'Register User'
-                )}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <Link
-                  href="/login"
-                  className="font-medium text-blue-600 hover:text-blue-500"
-                >
-                  Sign in
-                </Link>
-              </p>
+        <div className="w-full max-w-2xl">
+          {/* Logo/Brand */}
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
+              <School className="h-8 w-8 text-white" />
             </div>
-          </CardContent>
-        </Card>
+            <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
+            <p className="text-gray-600">{t('auth.register')}</p>
+          </div>
 
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-xs text-gray-500">
-            By creating an account, you agree to our{' '}
-            <Link href="/terms" className="text-blue-600 hover:text-blue-500">
-              Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
-              Privacy Policy
-            </Link>
-          </p>
+          {/* Access Notice */}
+          <Alert className="mb-6" dir={isRTL ? 'rtl' : 'ltr'}>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {t('auth.panelForStaff')}{' '}
+              <strong>{t('auth.teachersManagersAdmins')}</strong>.{' '}
+              {t('auth.studentsLoginThroughSchool')}
+            </AlertDescription>
+          </Alert>
+
+          <Card className="shadow-xl" dir={isRTL ? 'rtl' : 'ltr'}>
+            <StepIndicator current={step} />
+
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-center text-2xl">
+                {step === 'verification'
+                  ? t('auth.verifyYourContact')
+                  : t('auth.createSchoolAccount')}
+              </CardTitle>
+              <CardDescription className="text-center">
+                {step === 'verification'
+                  ? t('auth.verifyContactDescription')
+                  : t('auth.registerDescription')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {step === 'verification' && (
+                  <VerificationStep
+                    formData={formData}
+                    errors={errors}
+                    otpLoading={otpLoading}
+                    isLoading={isLoading}
+                    emailOtpSent={emailOtpSent}
+                    phoneOtpSent={phoneOtpSent}
+                    emailOtpVerified={emailOtpVerified}
+                    phoneOtpVerified={phoneOtpVerified}
+                    primaryMethod={primaryVerificationMethod}
+                    onChange={handleInputChange}
+                    onSendPhone={handleSendPhoneOtp}
+                    onVerifyPhone={handleVerifyPhoneOtp}
+                    onSendEmail={handleSendEmailOtp}
+                    onVerifyEmail={handleVerifyEmailOtp}
+                  />
+                )}
+
+                {step === 'form' && (
+                  <BaseDataForm
+                    registrationType={registrationType}
+                    setRegistrationType={setRegistrationType}
+                    formData={formData}
+                    errors={errors}
+                    isLoading={isLoading}
+                    schools={schools}
+                    schoolsLoading={schoolsLoading}
+                    schoolsError={schoolsError as any}
+                    joinAsTeacher={joinAsTeacher}
+                    setJoinAsTeacher={setJoinAsTeacher}
+                    onChange={handleInputChange}
+                    onGenerateSlug={generateSchoolSlug}
+                  />
+                )}
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2
+                        className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                      />
+                      {step === 'verification'
+                        ? t('common.loading')
+                        : t('auth.registering')}
+                    </>
+                  ) : step === 'verification' ? (
+                    t('auth.continueToBaseData')
+                  ) : (
+                    t('auth.registerUser')
+                  )}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                  {t('auth.alreadyHaveAccount')}{' '}
+                  <Link
+                    href="/login"
+                    className="font-medium text-blue-600 hover:text-blue-500"
+                  >
+                    {t('auth.signIn')}
+                  </Link>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-500">
+              By creating an account, you agree to our{' '}
+              <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link
+                href="/privacy"
+                className="text-blue-600 hover:text-blue-500"
+              >
+                Privacy Policy
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -29,8 +29,12 @@ import { OtpType } from '@/constants/data';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { LanguageDetector } from '@/components/providers/language-detector';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function ForgetPasswordPage() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<
     'identifier' | 'otp' | 'password' | 'success'
@@ -79,17 +83,17 @@ export default function ForgetPasswordPage() {
   const validateIdentifier = () => {
     const { identifier } = formData;
     if (!identifier.trim()) {
-      setErrors({ identifier: 'Email or phone number is required' });
+      setErrors({ identifier: t('forgotPassword.emailOrPhoneRequired') });
       return false;
     }
 
     if (authMethod === 'email' && !isValidEmail(identifier)) {
-      setErrors({ identifier: 'Please enter a valid email address' });
+      setErrors({ identifier: t('forgotPassword.validEmailAddress') });
       return false;
     }
 
     if (authMethod === 'phone' && !isValidPhone(identifier)) {
-      setErrors({ identifier: 'Please enter a valid phone number' });
+      setErrors({ identifier: t('forgotPassword.validPhoneNumber') });
       return false;
     }
 
@@ -101,15 +105,15 @@ export default function ForgetPasswordPage() {
     const newErrors: Record<string, string> = {};
 
     if (!password.trim()) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('auth.passwordRequired');
     } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = t('auth.passwordTooShort');
     }
 
     if (!confirmed_password.trim()) {
-      newErrors.confirmed_password = 'Please confirm your password';
+      newErrors.confirmed_password = t('auth.confirmPasswordRequired');
     } else if (password !== confirmed_password) {
-      newErrors.confirmed_password = 'Passwords do not match';
+      newErrors.confirmed_password = t('auth.passwordsDoNotMatch');
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -132,13 +136,13 @@ export default function ForgetPasswordPage() {
           formData.identifier,
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
-        setMessage('OTP sent to your email address');
+        setMessage(t('forgotPassword.otpSentToEmail'));
       } else {
         await apiClient.sendPhoneOtp(
           formData.identifier,
           OtpType.RESET_PASSWORD_BY_PHONE
         );
-        setMessage('OTP sent to your phone number');
+        setMessage(t('forgotPassword.otpSentToPhone'));
       }
       setStep('otp');
     } catch (error: unknown) {
@@ -152,7 +156,7 @@ export default function ForgetPasswordPage() {
 
   const handleVerifyOtp = async () => {
     if (!formData.otp.trim()) {
-      setErrors({ otp: 'OTP is required' });
+      setErrors({ otp: t('forgotPassword.otpRequired') });
       return;
     }
 
@@ -174,10 +178,10 @@ export default function ForgetPasswordPage() {
         );
       }
       setStep('password');
-      setMessage('OTP verified successfully');
+      setMessage(t('forgotPassword.otpVerifiedSuccess'));
     } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Invalid OTP';
+        error instanceof Error ? error.message : t('forgotPassword.invalidOtp');
       setErrors({ otp: errorMessage });
     } finally {
       setIsLoading(false);
@@ -203,10 +207,12 @@ export default function ForgetPasswordPage() {
       });
 
       setStep('success');
-      setMessage('Password reset successfully');
+      setMessage(t('forgotPassword.passwordResetSuccess'));
     } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to reset password';
+        error instanceof Error
+          ? error.message
+          : t('forgotPassword.passwordResetFailed');
       setErrors({ password: errorMessage });
     } finally {
       setIsLoading(false);
@@ -227,247 +233,258 @@ export default function ForgetPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Reset Password
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            {step === 'identifier' &&
-              'Enter your email or phone number and select school (if applicable) to receive OTP'}
-            {step === 'otp' && 'Enter the OTP sent to your device'}
-            {step === 'password' && 'Enter your new password'}
-            {step === 'success' && 'Password reset successfully'}
-          </p>
+    <>
+      <LanguageDetector />
+      <div className="relative flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+        {/* Language Switcher - Top Right */}
+        <div className="absolute right-4 top-4 z-50">
+          <LanguageSwitcher />
         </div>
+        <div className="w-full max-w-md space-y-8">
+          <div className="text-center">
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+              {t('forgotPassword.title')}
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              {step === 'identifier' && t('forgotPassword.enterIdentifier')}
+              {step === 'otp' && t('forgotPassword.enterOtp')}
+              {step === 'password' && t('forgotPassword.enterNewPassword')}
+              {step === 'success' && t('forgotPassword.passwordResetSuccess')}
+            </p>
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center">Reset Password</CardTitle>
-            <CardDescription className="text-center">
-              {step === 'identifier' &&
-                "Select your school if you're a student, or leave blank for manager/teacher"}
-              {step === 'otp' && 'Check your device for the verification code'}
-              {step === 'password' && 'Create a new secure password'}
-              {step === 'success' && 'You can now login with your new password'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {step === 'identifier' && (
-              <div className="space-y-4">
-                <Tabs
-                  value={authMethod}
-                  onValueChange={(value) =>
-                    setAuthMethod(value as 'email' | 'phone')
-                  }
-                >
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="email">Email</TabsTrigger>
-                    <TabsTrigger value="phone">Phone</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="email" className="space-y-4">
-                    <InputWithIcon
-                      id="email"
-                      label="Email Address"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={formData.identifier}
-                      onChange={(value) =>
-                        handleInputChange('identifier', value)
-                      }
-                      icon={Mail}
-                      error={errors.identifier}
-                    />
-                  </TabsContent>
-                  <TabsContent value="phone" className="space-y-4">
-                    <PhoneInputWithCountry
-                      id="phone"
-                      label="Phone Number"
-                      placeholder="Enter your phone number"
-                      value={formData.identifier}
-                      onChange={(value) =>
-                        handleInputChange('identifier', value)
-                      }
-                      error={errors.identifier}
-                    />
-                  </TabsContent>
-                </Tabs>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center">
+                {t('forgotPassword.title')}
+              </CardTitle>
+              <CardDescription className="text-center">
+                {step === 'identifier' &&
+                  t('forgotPassword.selectSchoolDescription')}
+                {step === 'otp' && t('forgotPassword.checkDeviceForCode')}
+                {step === 'password' && t('forgotPassword.createNewPassword')}
+                {step === 'success' && t('forgotPassword.canLoginNow')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {step === 'identifier' && (
+                <div className="space-y-4">
+                  <Tabs
+                    value={authMethod}
+                    onValueChange={(value) =>
+                      setAuthMethod(value as 'email' | 'phone')
+                    }
+                  >
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="email">{t('auth.email')}</TabsTrigger>
+                      <TabsTrigger value="phone">{t('auth.phone')}</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="email" className="space-y-4">
+                      <InputWithIcon
+                        id="email"
+                        label={t('auth.emailAddress')}
+                        type="email"
+                        placeholder={t('auth.enterEmail')}
+                        value={formData.identifier}
+                        onChange={(value) =>
+                          handleInputChange('identifier', value)
+                        }
+                        icon={Mail}
+                        error={errors.identifier}
+                      />
+                    </TabsContent>
+                    <TabsContent value="phone" className="space-y-4">
+                      <PhoneInputWithCountry
+                        id="phone"
+                        label={t('auth.phoneNumber')}
+                        placeholder={t('auth.enterPhone')}
+                        value={formData.identifier}
+                        onChange={(value) =>
+                          handleInputChange('identifier', value)
+                        }
+                        error={errors.identifier}
+                      />
+                    </TabsContent>
+                  </Tabs>
 
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="school_slug">
+                        {t('schools.title')} ({t('common.optional')})
+                      </Label>
+                      <select
+                        id="school_slug"
+                        value={formData.school_slug}
+                        onChange={(e) =>
+                          handleInputChange('school_slug', e.target.value)
+                        }
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={isLoadingSchools}
+                      >
+                        {schools.map((school) => (
+                          <option key={school.id} value={school.slug}>
+                            {school.name}
+                          </option>
+                        ))}
+                      </select>
+                      {isLoadingSchools && (
+                        <p className="mt-1 text-sm text-gray-500">
+                          {t('common.loading')}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={handleSendOtp}
+                    disabled={isLoading}
+                    className="w-full"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : null}
+                    {t('forgotPassword.sendOtp')}
+                  </Button>
+                </div>
+              )}
+
+              {step === 'otp' && (
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="school_slug">School (Optional)</Label>
-                    <select
-                      id="school_slug"
-                      value={formData.school_slug}
-                      onChange={(e) =>
-                        handleInputChange('school_slug', e.target.value)
-                      }
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      disabled={isLoadingSchools}
-                    >
-                      {schools.map((school) => (
-                        <option key={school.id} value={school.slug}>
-                          {school.name}
-                        </option>
-                      ))}
-                    </select>
-                    {isLoadingSchools && (
-                      <p className="mt-1 text-sm text-gray-500">
-                        Loading schools...
-                      </p>
+                    <Label htmlFor="otp">
+                      {t('forgotPassword.verificationCode')}
+                    </Label>
+                    <Input
+                      id="otp"
+                      type="text"
+                      placeholder={t('forgotPassword.enter6DigitCode')}
+                      value={formData.otp}
+                      onChange={(e) => handleInputChange('otp', e.target.value)}
+                      maxLength={6}
+                    />
+                    {errors.otp && (
+                      <p className="mt-1 text-sm text-red-600">{errors.otp}</p>
                     )}
                   </div>
+
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setStep('identifier')}
+                      className="flex-1"
+                    >
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      {t('common.back')}
+                    </Button>
+                    <Button
+                      onClick={handleVerifyOtp}
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : null}
+                      {t('forgotPassword.verifyOtp')}
+                    </Button>
+                  </div>
                 </div>
+              )}
 
-                <Button
-                  onClick={handleSendOtp}
-                  disabled={isLoading}
-                  className="w-full"
-                >
-                  {isLoading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
-                  Send OTP
-                </Button>
-              </div>
-            )}
-
-            {step === 'otp' && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="otp">Verification Code</Label>
-                  <Input
-                    id="otp"
-                    type="text"
-                    placeholder="Enter 6-digit code"
-                    value={formData.otp}
-                    onChange={(e) => handleInputChange('otp', e.target.value)}
-                    maxLength={6}
+              {step === 'password' && (
+                <div className="space-y-4">
+                  <InputWithIcon
+                    id="password"
+                    label={t('forgotPassword.newPassword')}
+                    type="password"
+                    placeholder={t('forgotPassword.enterNewPassword')}
+                    value={formData.password}
+                    onChange={(value) => handleInputChange('password', value)}
+                    icon={Lock}
+                    error={errors.password}
                   />
-                  {errors.otp && (
-                    <p className="mt-1 text-sm text-red-600">{errors.otp}</p>
-                  )}
-                </div>
 
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setStep('identifier')}
-                    className="flex-1"
-                  >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back
-                  </Button>
-                  <Button
-                    onClick={handleVerifyOtp}
-                    disabled={isLoading}
-                    className="flex-1"
-                  >
-                    {isLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : null}
-                    Verify OTP
-                  </Button>
+                  <InputWithIcon
+                    id="confirmed_password"
+                    label={t('auth.confirmPassword')}
+                    type="password"
+                    placeholder={t('forgotPassword.confirmNewPassword')}
+                    value={formData.confirmed_password}
+                    onChange={(value) =>
+                      handleInputChange('confirmed_password', value)
+                    }
+                    icon={Lock}
+                    error={errors.confirmed_password}
+                  />
+
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setStep('otp')}
+                      className="flex-1"
+                    >
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      {t('common.back')}
+                    </Button>
+                    <Button
+                      onClick={handleResetPassword}
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : null}
+                      {t('forgotPassword.resetPassword')}
+                    </Button>
+                  </div>
                 </div>
+              )}
+
+              {step === 'success' && (
+                <div className="space-y-4 text-center">
+                  <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
+                  <h3 className="text-lg font-medium text-gray-900">
+                    {t('forgotPassword.passwordResetSuccessTitle')}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {t('forgotPassword.passwordResetSuccessMessage')}
+                  </p>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={resetForm}
+                      className="flex-1"
+                    >
+                      {t('forgotPassword.resetAnotherPassword')}
+                    </Button>
+                    <Button
+                      onClick={() => router.push('/login')}
+                      className="flex-1"
+                    >
+                      {t('forgotPassword.goToLogin')}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {message && (
+                <Alert className="mt-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{message}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="mt-6 text-center">
+                <Link
+                  href="/login"
+                  className="text-sm text-blue-600 hover:text-blue-500"
+                >
+                  {t('forgotPassword.backToLogin')}
+                </Link>
               </div>
-            )}
-
-            {step === 'password' && (
-              <div className="space-y-4">
-                <InputWithIcon
-                  id="password"
-                  label="New Password"
-                  type="password"
-                  placeholder="Enter new password"
-                  value={formData.password}
-                  onChange={(value) => handleInputChange('password', value)}
-                  icon={Lock}
-                  error={errors.password}
-                />
-
-                <InputWithIcon
-                  id="confirmed_password"
-                  label="Confirm Password"
-                  type="password"
-                  placeholder="Confirm new password"
-                  value={formData.confirmed_password}
-                  onChange={(value) =>
-                    handleInputChange('confirmed_password', value)
-                  }
-                  icon={Lock}
-                  error={errors.confirmed_password}
-                />
-
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setStep('otp')}
-                    className="flex-1"
-                  >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back
-                  </Button>
-                  <Button
-                    onClick={handleResetPassword}
-                    disabled={isLoading}
-                    className="flex-1"
-                  >
-                    {isLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : null}
-                    Reset Password
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {step === 'success' && (
-              <div className="space-y-4 text-center">
-                <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
-                <h3 className="text-lg font-medium text-gray-900">
-                  Password Reset Successfully!
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Your password has been reset. You can now login with your new
-                  password.
-                </p>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={resetForm}
-                    className="flex-1"
-                  >
-                    Reset Another Password
-                  </Button>
-                  <Button
-                    onClick={() => router.push('/login')}
-                    className="flex-1"
-                  >
-                    Go to Login
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {message && (
-              <Alert className="mt-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{message}</AlertDescription>
-              </Alert>
-            )}
-
-            <div className="mt-6 text-center">
-              <Link
-                href="/login"
-                className="text-sm text-blue-600 hover:text-blue-500"
-              >
-                Back to Login
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

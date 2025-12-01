@@ -15,6 +15,7 @@ import {
 import { Building, Eye, EyeOff, GraduationCap, Lock, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 interface SchoolOption {
   id: number;
@@ -37,6 +38,8 @@ interface BaseDataFormProps {
 }
 
 export function BaseDataForm(props: BaseDataFormProps) {
+  const { t } = useTranslation();
+  const { isRTL } = useLanguage();
   const {
     registrationType,
     setRegistrationType,
@@ -56,7 +59,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Registration Type */}
       <div className="space-y-2">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -68,12 +71,12 @@ export function BaseDataForm(props: BaseDataFormProps) {
             }`}
             onClick={() => setRegistrationType('new-school')}
           >
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-3">
               <Building className="h-5 w-5 text-blue-600" />
               <div>
-                <h3 className="font-medium">Create New School</h3>
+                <h3 className="font-medium">{t('auth.createNewSchool')}</h3>
                 <p className="text-sm text-gray-600">
-                  Start your own educational institution as a manager
+                  {t('auth.createNewSchoolDescription')}
                 </p>
               </div>
             </div>
@@ -86,12 +89,12 @@ export function BaseDataForm(props: BaseDataFormProps) {
             }`}
             onClick={() => setRegistrationType('existing-school')}
           >
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-3">
               <GraduationCap className="h-5 w-5 text-green-600" />
               <div>
-                <h3 className="font-medium">Join Existing School</h3>
+                <h3 className="font-medium">{t('auth.joinExistingSchool')}</h3>
                 <p className="text-sm text-gray-600">
-                  Join as a student and optionally request teacher role
+                  {t('auth.joinExistingSchoolDescription')}
                 </p>
               </div>
             </div>
@@ -100,38 +103,42 @@ export function BaseDataForm(props: BaseDataFormProps) {
       </div>
 
       {/* Personal Info */}
-      <div className="space-y-4">
+      <div className="space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name">{t('auth.fullName')}</Label>
           <Input
             id="name"
             type="text"
-            placeholder="Enter your full name"
+            placeholder={t('auth.enterFullName')}
             value={formData.name}
             onChange={(e) => onChange('name', e.target.value)}
             className={errors.name ? 'border-red-500' : ''}
             disabled={isLoading}
+            dir={isRTL ? 'rtl' : 'ltr'}
           />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.password')}</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Lock
+                className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+              />
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Create a password"
+                placeholder={t('auth.createPassword')}
                 value={formData.password}
                 onChange={(e) => onChange('password', e.target.value)}
-                className={`pl-10 pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${errors.password ? 'border-red-500' : ''}`}
                 disabled={isLoading}
+                dir={isRTL ? 'rtl' : 'ltr'}
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
               >
@@ -144,23 +151,26 @@ export function BaseDataForm(props: BaseDataFormProps) {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Lock
+                className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+              />
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="Confirm your password"
+                placeholder={t('auth.confirmPasswordPlaceholder')}
                 value={formData.confirmPassword}
                 onChange={(e) => onChange('confirmPassword', e.target.value)}
-                className={`pl-10 pr-10 ${errors.confirmPassword ? 'border-red-500' : ''}`}
+                className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${errors.confirmPassword ? 'border-red-500' : ''}`}
                 disabled={isLoading}
+                dir={isRTL ? 'rtl' : 'ltr'}
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 disabled={isLoading}
               >
@@ -177,13 +187,13 @@ export function BaseDataForm(props: BaseDataFormProps) {
 
       {/* School Information */}
       {registrationType === 'new-school' ? (
-        <div className="space-y-4">
+        <div className="space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="space-y-2">
-            <Label htmlFor="schoolName">School Name</Label>
+            <Label htmlFor="schoolName">{t('schools.schoolName')}</Label>
             <Input
               id="schoolName"
               type="text"
-              placeholder="Enter your school name"
+              placeholder={t('schools.enterSchoolName')}
               value={formData.schoolName}
               onChange={(e) => {
                 onChange('schoolName', e.target.value);
@@ -191,43 +201,48 @@ export function BaseDataForm(props: BaseDataFormProps) {
               }}
               className={errors.schoolName ? 'border-red-500' : ''}
               disabled={isLoading}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="schoolSlug">School URL Slug</Label>
+            <Label htmlFor="schoolSlug">{t('schools.schoolUrlSlug')}</Label>
             <div className="relative">
               <Input
                 id="schoolSlug"
                 type="text"
-                placeholder="your-school-name"
+                placeholder={t('schools.schoolSlugPlaceholder')}
                 value={formData.schoolSlug}
                 onChange={(e) => onChange('schoolSlug', e.target.value)}
-                className={`pr-20 ${errors.schoolSlug ? 'border-red-500' : ''}`}
+                className={`${isRTL ? 'pl-20 ps-20' : 'pe-20 pr-20'} ${errors.schoolSlug ? 'border-red-500' : ''}`}
                 disabled={isLoading}
+                dir={isRTL ? 'rtl' : 'ltr'}
               />
-              <span className="absolute right-3 top-3 text-sm text-gray-500">
+              <span
+                className={`absolute top-3 text-sm text-gray-500 ${isRTL ? 'left-3' : 'right-3'}`}
+              >
                 .skillforge.com
               </span>
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="schoolDescription">
-              School Description (Optional)
+              {t('schools.schoolDescription')} ({t('common.optional')})
             </Label>
             <Textarea
               id="schoolDescription"
-              placeholder="Brief description of your school..."
+              placeholder={t('schools.schoolDescriptionPlaceholder')}
               value={formData.schoolDescription}
               onChange={(e) => onChange('schoolDescription', e.target.value)}
               disabled={isLoading}
               rows={3}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="space-y-2">
-            <Label htmlFor="existingSchool">Select School</Label>
+            <Label htmlFor="existingSchool">{t('auth.selectSchool')}</Label>
             <Select
               value={formData.existingSchoolId}
               onValueChange={(value) => onChange('existingSchoolId', value)}
@@ -239,10 +254,10 @@ export function BaseDataForm(props: BaseDataFormProps) {
                 <SelectValue
                   placeholder={
                     schoolsLoading
-                      ? 'Loading schools...'
+                      ? t('common.loading')
                       : schoolsError
-                        ? 'Error loading schools'
-                        : 'Choose a school to join'
+                        ? t('common.errorLoading')
+                        : t('auth.chooseSchoolToJoin')
                   }
                 />
               </SelectTrigger>
@@ -256,7 +271,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
             </Select>
           </div>
           <div className="space-y-4">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-3">
               <input
                 type="checkbox"
                 id="joinAsTeacher"
@@ -266,20 +281,20 @@ export function BaseDataForm(props: BaseDataFormProps) {
               />
               <Label
                 htmlFor="joinAsTeacher"
-                className="flex items-center space-x-2"
+                className="flex items-center gap-2"
               >
                 <GraduationCap className="h-4 w-4 text-blue-600" />
-                <span>Request Teacher Role</span>
+                <span>{t('auth.requestTeacherRole')}</span>
               </Label>
             </div>
             {joinAsTeacher && (
               <div className="space-y-2">
                 <Label htmlFor="teacherRequestReason">
-                  Why do you want to be a teacher?
+                  {t('auth.whyWantToBeTeacher')}
                 </Label>
                 <Textarea
                   id="teacherRequestReason"
-                  placeholder="Please explain your teaching experience, qualifications, and why you want to teach at this school..."
+                  placeholder={t('auth.teacherRequestReasonPlaceholder')}
                   value={formData.teacherRequestReason}
                   onChange={(e) =>
                     onChange('teacherRequestReason', e.target.value)
@@ -289,6 +304,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
                   className={
                     errors.teacherRequestReason ? 'border-red-500' : ''
                   }
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 />
               </div>
             )}

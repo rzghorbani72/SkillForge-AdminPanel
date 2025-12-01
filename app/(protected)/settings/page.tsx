@@ -20,47 +20,44 @@ import {
 } from 'lucide-react';
 import { useSettingsData } from './_hooks/use-settings-data';
 import { format } from 'date-fns';
-
-const SECTIONS = [
-  {
-    title: 'Profile Settings',
-    description:
-      'Update your personal details, avatar, and contact information.',
-    href: '/settings/profile',
-    icon: User
-  },
-  {
-    title: 'School Settings',
-    description:
-      'Manage your school name, description, and domain configuration.',
-    href: '/settings/school',
-    icon: Building
-  },
-  {
-    title: 'Theme & Branding',
-    description:
-      'Customize colours, logos, and visual appearance for students.',
-    href: '/settings/theme',
-    icon: Palette
-  },
-  {
-    title: 'UI Template Builder',
-    description:
-      'Customize the layout, visibility, and configuration of UI blocks on your school website.',
-    href: '/settings/ui-template',
-    icon: Layout
-  },
-  {
-    title: 'Security',
-    description:
-      'Change passwords, enable two-factor authentication, and manage notifications.',
-    href: '/settings/security',
-    icon: Shield
-  }
-] as const;
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function SettingsOverviewPage() {
+  const { t } = useTranslation();
   const { user, school, isLoading, refresh } = useSettingsData();
+
+  const SECTIONS = [
+    {
+      title: t('settings.profileSettings'),
+      description: t('settings.profileSettingsDescription'),
+      href: '/settings/profile',
+      icon: User
+    },
+    {
+      title: t('settings.schoolSettings'),
+      description: t('settings.schoolSettingsDescription'),
+      href: '/settings/school',
+      icon: Building
+    },
+    {
+      title: t('settings.themeBranding'),
+      description: t('settings.themeBrandingDescription'),
+      href: '/settings/theme',
+      icon: Palette
+    },
+    {
+      title: t('settings.uiTemplateBuilder'),
+      description: t('settings.uiTemplateBuilderDescription'),
+      href: '/settings/ui-template',
+      icon: Layout
+    },
+    {
+      title: t('settings.security'),
+      description: t('settings.securityDescription'),
+      href: '/settings/security',
+      icon: Shield
+    }
+  ] as const;
 
   if (isLoading) {
     return (
@@ -82,47 +79,46 @@ export default function SettingsOverviewPage() {
     <div className="flex-1 space-y-6 p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-          <p className="text-muted-foreground">
-            Manage your profile, school configuration, branding, and security
-            preferences.
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('settings.title')}
+          </h1>
+          <p className="text-muted-foreground">{t('settings.description')}</p>
         </div>
         <Button variant="outline" onClick={refresh}>
-          Refresh Data
+          {t('settings.refreshData')}
         </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Account Summary</CardTitle>
+            <CardTitle>{t('settings.accountSummary')}</CardTitle>
             <CardDescription>
-              Key information for your admin account.
+              {t('settings.accountSummaryDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
             <div className="flex justify-between">
-              <span>Administrator</span>
+              <span>{t('settings.administrator')}</span>
               <span className="font-medium text-foreground">
                 {user?.name ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Email</span>
+              <span>{t('settings.email')}</span>
               <span className="font-medium text-foreground">
                 {user?.email ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Phone</span>
+              <span>{t('settings.phone')}</span>
               <span className="font-medium text-foreground">
                 {user?.phone_number ?? '—'}
               </span>
             </div>
             {user?.created_at && (
               <div className="flex justify-between">
-                <span>Joined</span>
+                <span>{t('settings.joined')}</span>
                 <span className="font-medium text-foreground">
                   {format(new Date(user.created_at), 'dd MMM yyyy')}
                 </span>
@@ -133,32 +129,32 @@ export default function SettingsOverviewPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>School Snapshot</CardTitle>
+            <CardTitle>{t('settings.schoolSnapshot')}</CardTitle>
             <CardDescription>
-              Your primary school on SkillForge.
+              {t('settings.schoolSnapshotDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
             <div className="flex justify-between">
-              <span>Name</span>
+              <span>{t('settings.name')}</span>
               <span className="font-medium text-foreground">
                 {school?.name ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Domain</span>
+              <span>{t('settings.domain')}</span>
               <span className="font-medium text-foreground">
                 {school?.private_address ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Students</span>
+              <span>{t('settings.students')}</span>
               <span className="font-medium text-foreground">
                 {school?.students_count ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Created</span>
+              <span>{t('settings.created')}</span>
               <span className="font-medium text-foreground">
                 {school?.created_at
                   ? format(new Date(school.created_at), 'dd MMM yyyy')
@@ -185,7 +181,7 @@ export default function SettingsOverviewPage() {
             <CardContent>
               <Button variant="link" asChild className="px-0 font-medium">
                 <Link href={href} className="inline-flex items-center gap-2">
-                  Open settings
+                  {t('settings.openSettings')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>

@@ -29,6 +29,7 @@ import {
 } from '@/lib/theme';
 import { useTheme } from 'next-themes';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type ThemeMode = 'dark' | 'light' | 'system';
 
@@ -73,6 +74,7 @@ const DEFAULT_THEME: ThemeFormState = {
 };
 
 export default function ThemeSettingsPage() {
+  const { t } = useTranslation();
   const { setTheme: setNextTheme } = useTheme();
   const [theme, setTheme] = useState<ThemeFormState>(DEFAULT_THEME);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -226,7 +228,7 @@ export default function ThemeSettingsPage() {
       }
       dispatchThemeUpdate(updatedConfig);
 
-      ErrorHandler.showSuccess('Theme preferences saved');
+      ErrorHandler.showSuccess(t('settings.themePreferencesSaved'));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -248,18 +250,20 @@ export default function ThemeSettingsPage() {
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Theme & Branding</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('settings.themeBrandingTitle')}
+        </h1>
         <p className="text-muted-foreground">
-          Customize the look and feel of your SkillForge schools for students.
+          {t('settings.themeBrandingSubtitle')}
         </p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <Card>
           <CardHeader>
-            <CardTitle>Colours</CardTitle>
+            <CardTitle>{t('settings.colours')}</CardTitle>
             <CardDescription>
-              Choose the palette students will see across the platform.
+              {t('settings.coloursDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -267,22 +271,22 @@ export default function ThemeSettingsPage() {
               {[
                 {
                   key: 'primary',
-                  label: 'Primary colour',
-                  helper: 'Buttons, highlights, and key actions.',
+                  label: t('settings.primaryColour'),
+                  helper: t('settings.primaryColourHelper'),
                   lightKey: 'primaryLight' as const,
                   darkKey: 'primaryDark' as const
                 },
                 {
                   key: 'secondary',
-                  label: 'Secondary colour',
-                  helper: 'Navigation elements and accents.',
+                  label: t('settings.secondaryColour'),
+                  helper: t('settings.secondaryColourHelper'),
                   lightKey: 'secondaryLight' as const,
                   darkKey: 'secondaryDark' as const
                 },
                 {
                   key: 'background',
-                  label: 'Background colour',
-                  helper: 'Dashboard and content areas.',
+                  label: t('settings.backgroundColour'),
+                  helper: t('settings.backgroundColourHelper'),
                   lightKey: 'backgroundLight' as const,
                   darkKey: 'backgroundDark' as const
                 }
@@ -295,7 +299,7 @@ export default function ThemeSettingsPage() {
                         htmlFor={`${key}-light`}
                         className="text-xs text-muted-foreground"
                       >
-                        Light theme
+                        {t('settings.lightTheme')}
                       </Label>
                       <div className="flex items-center gap-2">
                         <Input
@@ -334,7 +338,7 @@ export default function ThemeSettingsPage() {
                         htmlFor={`${key}-dark`}
                         className="text-xs text-muted-foreground"
                       >
-                        Dark theme
+                        {t('settings.darkTheme')}
                       </Label>
                       <div className="flex items-center gap-2">
                         <Input
@@ -374,7 +378,9 @@ export default function ThemeSettingsPage() {
               ))}
 
               <div className="space-y-2">
-                <Label htmlFor="accent-color">Accent colour</Label>
+                <Label htmlFor="accent-color">
+                  {t('settings.accentColour')}
+                </Label>
                 <div className="flex items-center gap-2">
                   <Input
                     id="accent-color"
@@ -407,13 +413,13 @@ export default function ThemeSettingsPage() {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Badges, tags, and supporting highlights.
+                  {t('settings.accentColourHelper')}
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Theme mode</Label>
+              <Label>{t('settings.themeMode')}</Label>
               <Select
                 value={theme.darkMode}
                 onValueChange={(value: ThemeMode) =>
@@ -431,17 +437,17 @@ export default function ThemeSettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
+                  <SelectItem value="light">{t('settings.light')}</SelectItem>
+                  <SelectItem value="dark">{t('settings.dark')}</SelectItem>
+                  <SelectItem value="system">{t('settings.system')}</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
                 {theme.darkMode === 'system'
-                  ? 'Uses the system preference (dark or light)'
+                  ? t('settings.systemModeDescription')
                   : theme.darkMode === 'dark'
-                    ? 'Forces dark theme for all students'
-                    : 'Forces light theme for all students'}
+                    ? t('settings.darkModeDescription')
+                    : t('settings.lightModeDescription')}
               </p>
             </div>
           </CardContent>
@@ -450,7 +456,7 @@ export default function ThemeSettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              <Palette className="h-4 w-4" /> Live preview
+              <Palette className="h-4 w-4" /> {t('settings.livePreview')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -477,12 +483,13 @@ export default function ThemeSettingsPage() {
                   color: '#fff'
                 }}
               >
-                Preview badge
+                {t('settings.previewBadge')}
               </span>
-              <h3 className="text-lg font-semibold">Welcome to your school</h3>
+              <h3 className="text-lg font-semibold">
+                {t('settings.welcomeToYourSchool')}
+              </h3>
               <p className="text-sm opacity-80">
-                Primary buttons, highlights, and accents will use your selected
-                palette. Toggle dark mode to preview the student experience.
+                {t('settings.previewDescription')}
               </p>
               <Button
                 size="sm"
@@ -493,7 +500,7 @@ export default function ThemeSettingsPage() {
                   color: '#fff'
                 }}
               >
-                Primary action
+                {t('settings.primaryAction')}
               </Button>
             </div>
           </CardContent>
@@ -502,40 +509,39 @@ export default function ThemeSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Brand assets</CardTitle>
+          <CardTitle>{t('settings.brandAssets')}</CardTitle>
           <CardDescription>
-            Upload logos and set branding resources for certificates and emails.
+            {t('settings.brandAssetsDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="logoUrl">Logo URL</Label>
+            <Label htmlFor="logoUrl">{t('settings.logoUrl')}</Label>
             <Input
               id="logoUrl"
-              placeholder="https://cdn.yourschool.com/logo.png"
+              placeholder={t('settings.logoUrlPlaceholder')}
               value={theme.logoUrl}
               onChange={(event) =>
                 setTheme((prev) => ({ ...prev, logoUrl: event.target.value }))
               }
             />
             <p className="text-xs text-muted-foreground">
-              Provide a publicly accessible image URL. SVG is recommended for
-              crisp results.
+              {t('settings.logoUrlHint')}
             </p>
           </div>
           <div className="rounded-lg border p-4 text-sm text-muted-foreground">
             <div className="mb-2 flex items-center gap-2 text-foreground">
-              <Image className="h-4 w-4" /> Preview
+              <Image className="h-4 w-4" /> {t('settings.preview')}
             </div>
             {theme.logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={theme.logoUrl}
-                alt="School logo preview"
+                alt={t('settings.schoolLogoPreview')}
                 className="h-16"
               />
             ) : (
-              <p>No logo provided yet. Paste a URL to preview.</p>
+              <p>{t('settings.noLogoProvided')}</p>
             )}
           </div>
         </CardContent>
@@ -544,7 +550,7 @@ export default function ThemeSettingsPage() {
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={isSaving}>
           <Save className="mr-2 h-4 w-4" />
-          {isSaving ? 'Saving…' : 'Save theme'}
+          {isSaving ? t('settings.savingTheme') : t('settings.saveTheme')}
         </Button>
       </div>
     </div>

@@ -44,6 +44,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const DEFAULT_BLOCKS: UIBlockConfig[] = [
   {
@@ -110,15 +111,7 @@ const DEFAULT_BLOCKS: UIBlockConfig[] = [
   }
 ];
 
-const BLOCK_LABELS: Record<string, string> = {
-  header: 'Header',
-  hero: 'Hero Section',
-  features: 'Features Section',
-  courses: 'Courses Section',
-  testimonials: 'Testimonials',
-  footer: 'Footer',
-  sidebar: 'Sidebar'
-};
+// BLOCK_LABELS will be created inside component to use translations
 
 interface SortableBlockProps {
   block: UIBlockConfig;
@@ -139,6 +132,7 @@ function SortableBlock({
   onUpdateConfig,
   isCustomized = false
 }: SortableBlockProps) {
+  const { t } = useTranslation();
   const {
     attributes,
     listeners,
@@ -147,6 +141,16 @@ function SortableBlock({
     transition,
     isDragging
   } = useSortable({ id: block.id });
+
+  const BLOCK_LABELS: Record<string, string> = {
+    header: t('settings.header'),
+    hero: t('settings.heroSection'),
+    features: t('settings.featuresSection'),
+    courses: t('settings.coursesSection'),
+    testimonials: t('settings.testimonials'),
+    footer: t('settings.footer'),
+    sidebar: t('settings.sidebar')
+  };
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -183,12 +187,13 @@ function SortableBlock({
               )}
               {isCustomized && (
                 <Badge variant="secondary" className="text-xs">
-                  Customized
+                  {t('settings.customized')}
                 </Badge>
               )}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              Order: {block.order} • Type: {block.type}
+              {t('settings.order')}: {block.order} • {t('settings.type')}:{' '}
+              {block.type}
             </p>
           </div>
           <Switch
@@ -204,7 +209,7 @@ function SortableBlock({
             {block.type === 'hero' && (
               <>
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>{t('settings.title')}</Label>
                   <Input
                     value={block.config?.title || ''}
                     onChange={(e) =>
@@ -215,7 +220,7 @@ function SortableBlock({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Subtitle</Label>
+                  <Label>{t('settings.subtitle')}</Label>
                   <Input
                     value={block.config?.subtitle || ''}
                     onChange={(e) =>
@@ -226,7 +231,7 @@ function SortableBlock({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>CTA Text</Label>
+                  <Label>{t('settings.ctaText')}</Label>
                   <Input
                     value={block.config?.ctaText || ''}
                     onChange={(e) =>
@@ -245,7 +250,7 @@ function SortableBlock({
                       })
                     }
                   />
-                  <Label>Show CTA Button</Label>
+                  <Label>{t('settings.showCtaButton')}</Label>
                 </div>
               </>
             )}
@@ -253,7 +258,7 @@ function SortableBlock({
             {block.type === 'features' && (
               <>
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>{t('settings.title')}</Label>
                   <Input
                     value={block.config?.title || ''}
                     onChange={(e) =>
@@ -264,7 +269,7 @@ function SortableBlock({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Subtitle</Label>
+                  <Label>{t('settings.subtitle')}</Label>
                   <Input
                     value={block.config?.subtitle || ''}
                     onChange={(e) =>
@@ -280,7 +285,7 @@ function SortableBlock({
             {block.type === 'courses' && (
               <>
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>{t('settings.title')}</Label>
                   <Input
                     value={block.config?.title || ''}
                     onChange={(e) =>
@@ -291,7 +296,7 @@ function SortableBlock({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Subtitle</Label>
+                  <Label>{t('settings.subtitle')}</Label>
                   <Input
                     value={block.config?.subtitle || ''}
                     onChange={(e) =>
@@ -302,7 +307,7 @@ function SortableBlock({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Grid Columns</Label>
+                  <Label>{t('settings.gridColumns')}</Label>
                   <Input
                     type="number"
                     min="1"
@@ -319,7 +324,7 @@ function SortableBlock({
             )}
           </div>
           <Button variant="outline" size="sm" onClick={onStopEdit}>
-            Done
+            {t('settings.done')}
           </Button>
         </div>
       )}
@@ -331,7 +336,7 @@ function SortableBlock({
           className="mt-2"
           onClick={() => onEdit(block.id)}
         >
-          Configure
+          {t('settings.configure')}
         </Button>
       )}
     </div>
@@ -339,6 +344,7 @@ function SortableBlock({
 }
 
 export default function UITemplateSettingsPage() {
+  const { t } = useTranslation();
   const [blocks, setBlocks] = useState<UIBlockConfig[]>(DEFAULT_BLOCKS);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -352,6 +358,16 @@ export default function UITemplateSettingsPage() {
   const [isLoadingPresets, setIsLoadingPresets] = useState<boolean>(false);
   const [isPresetDialogOpen, setIsPresetDialogOpen] = useState<boolean>(false);
   const [basePresetBlocks, setBasePresetBlocks] = useState<UIBlockConfig[]>([]);
+
+  const BLOCK_LABELS: Record<string, string> = {
+    header: t('settings.header'),
+    hero: t('settings.heroSection'),
+    features: t('settings.featuresSection'),
+    courses: t('settings.coursesSection'),
+    testimonials: t('settings.testimonials'),
+    footer: t('settings.footer'),
+    sidebar: t('settings.sidebar')
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -479,7 +495,7 @@ export default function UITemplateSettingsPage() {
         template_preset: currentPreset
       });
 
-      ErrorHandler.showSuccess('UI template saved successfully');
+      ErrorHandler.showSuccess(t('settings.uiTemplateSavedSuccess'));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -510,7 +526,9 @@ export default function UITemplateSettingsPage() {
         }
 
         setIsPresetDialogOpen(false);
-        ErrorHandler.showSuccess(`Template "${presetId}" applied successfully`);
+        ErrorHandler.showSuccess(
+          t('settings.templateAppliedSuccess').replace('{presetId}', presetId)
+        );
       }
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -554,17 +572,16 @@ export default function UITemplateSettingsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              UI Template Builder
+              {t('settings.uiTemplateBuilderTitle')}
             </h1>
             <p className="text-muted-foreground">
-              Customize the layout and visibility of UI blocks on your school
-              website.
+              {t('settings.uiTemplateBuilderSubtitle')}
             </p>
             {currentPresetDetails && (
               <div className="mt-3 flex items-center gap-2">
                 <Badge variant="outline" className="gap-1">
                   <Layout className="h-3 w-3" />
-                  Based on: {currentPresetDetails.name}
+                  {t('settings.basedOn')}: {currentPresetDetails.name}
                 </Badge>
                 {currentPresetDetails.description && (
                   <span className="text-sm text-muted-foreground">
@@ -581,15 +598,14 @@ export default function UITemplateSettingsPage() {
             <DialogTrigger asChild>
               <Button variant="outline">
                 <Layout className="mr-2 h-4 w-4" />
-                Choose Template
+                {t('settings.chooseTemplate')}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[80vh] max-w-4xl overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Choose a Template Layout</DialogTitle>
+                <DialogTitle>{t('settings.chooseTemplateLayout')}</DialogTitle>
                 <DialogDescription>
-                  Select a pre-designed template to quickly set up your school
-                  website layout.
+                  {t('settings.chooseTemplateLayoutDescription')}
                 </DialogDescription>
               </DialogHeader>
               <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-2">
@@ -615,7 +631,7 @@ export default function UITemplateSettingsPage() {
                             {currentPreset === preset.id && (
                               <Badge variant="default" className="gap-1">
                                 <Check className="h-3 w-3" />
-                                Active
+                                {t('settings.active')}
                               </Badge>
                             )}
                           </div>
@@ -636,7 +652,7 @@ export default function UITemplateSettingsPage() {
                           {/* Blocks Info */}
                           <div className="space-y-2">
                             <p className="text-xs font-medium text-muted-foreground">
-                              Blocks (
+                              {t('settings.blocks')} (
                               {preset.blocks.filter((b) => b.isVisible).length}
                               ):
                             </p>
@@ -668,8 +684,8 @@ export default function UITemplateSettingsPage() {
                             }}
                           >
                             {currentPreset === preset.id
-                              ? 'Currently Active'
-                              : 'Apply Template'}
+                              ? t('settings.currentlyActive')
+                              : t('settings.applyTemplate')}
                           </Button>
                         </CardContent>
                       </Card>
@@ -682,10 +698,9 @@ export default function UITemplateSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Page Blocks</CardTitle>
+          <CardTitle>{t('settings.pageBlocks')}</CardTitle>
           <CardDescription>
-            Drag and drop to reorder blocks. Toggle visibility and configure
-            each block.
+            {t('settings.pageBlocksDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -720,7 +735,7 @@ export default function UITemplateSettingsPage() {
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={isSaving}>
           <Save className="mr-2 h-4 w-4" />
-          {isSaving ? 'Saving…' : 'Save Template'}
+          {isSaving ? t('settings.saving') : t('settings.saveTemplate')}
         </Button>
       </div>
     </div>

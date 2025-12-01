@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -23,6 +25,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   initialValues: CourseFormData;
@@ -41,6 +44,7 @@ const CourseForm = ({
   onCancel,
   submitLabel = 'Save'
 }: Props) => {
+  const { t } = useTranslation();
   const form = useForm<CourseFormData>({
     resolver: zodResolver(courseFormSchema),
     defaultValues: initialValues
@@ -52,7 +56,7 @@ const CourseForm = ({
         {/* Basic Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle>{t('courses.basicInformation')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <FormField
@@ -60,10 +64,10 @@ const CourseForm = ({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Course Title *</FormLabel>
+                  <FormLabel>{t('courses.courseTitle')} *</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter course title (min 5 characters)"
+                      placeholder={t('courses.enterCourseTitle')}
                       {...field}
                     />
                   </FormControl>
@@ -71,8 +75,7 @@ const CourseForm = ({
                   <p
                     className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-gray-600'}`}
                   >
-                    Title must be between 5 and 80 characters (
-                    {field.value?.length || 0}/80)
+                    {t('courses.titleLength')} ({field.value?.length || 0}/80)
                   </p>
                 </FormItem>
               )}
@@ -83,10 +86,10 @@ const CourseForm = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description *</FormLabel>
+                  <FormLabel>{t('courses.description')} *</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter course description"
+                      placeholder={t('courses.enterDescription')}
                       {...field}
                       rows={4}
                     />
@@ -95,8 +98,8 @@ const CourseForm = ({
                   <p
                     className={`text-sm ${(field.value?.length || 0) >= 350 ? 'text-orange-600' : 'text-gray-600'}`}
                   >
-                    Description must be less than 400 characters (
-                    {field.value?.length || 0}/400)
+                    {t('courses.descriptionLength')} ({field.value?.length || 0}
+                    /400)
                   </p>
                 </FormItem>
               )}
@@ -107,7 +110,7 @@ const CourseForm = ({
         {/* Cover Image */}
         <Card>
           <CardHeader>
-            <CardTitle>Cover Image</CardTitle>
+            <CardTitle>{t('courses.coverImage')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ImageUploadPreview
@@ -119,11 +122,11 @@ const CourseForm = ({
                 form.setValue('cover_id', image.id.toString());
               }}
               selectedImageId={form.watch('cover_id')}
-              alt="Course cover preview"
-              placeholderText="No cover image selected"
-              placeholderSubtext="Upload an image to preview it here"
-              uploadButtonText="Upload Cover Image"
-              selectButtonText="Select an image first"
+              alt={t('courses.courseCoverPreview')}
+              placeholderText={t('courses.noCoverImageSelected')}
+              placeholderSubtext={t('courses.uploadImageToPreview')}
+              uploadButtonText={t('courses.uploadCoverImage')}
+              selectButtonText={t('courses.selectImageFirst')}
             />
           </CardContent>
         </Card>
@@ -131,7 +134,7 @@ const CourseForm = ({
         {/* Pricing */}
         <Card>
           <CardHeader>
-            <CardTitle>Pricing</CardTitle>
+            <CardTitle>{t('courses.pricing')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -140,12 +143,12 @@ const CourseForm = ({
                 name="primary_price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Primary Price *</FormLabel>
+                    <FormLabel>{t('courses.primaryPrice')} *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         inputMode="numeric"
-                        placeholder="0 (0-999,999,999)"
+                        placeholder={t('courses.pricePlaceholder')}
                         {...field}
                         min="0"
                         max="999999999"
@@ -162,12 +165,12 @@ const CourseForm = ({
                 name="secondary_price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Secondary Price *</FormLabel>
+                    <FormLabel>{t('courses.secondaryPrice')} *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         inputMode="numeric"
-                        placeholder="0 (0-999,999,999)"
+                        placeholder={t('courses.pricePlaceholder')}
                         {...field}
                         min="0"
                         max="999999999"
@@ -180,7 +183,7 @@ const CourseForm = ({
               />
             </div>
             <p className="text-sm text-gray-600">
-              Enter whole numbers between 0 and 999,999,999
+              {t('courses.enterWholeNumbers')}
             </p>
           </CardContent>
         </Card>
@@ -188,7 +191,7 @@ const CourseForm = ({
         {/* Associations */}
         <Card>
           <CardHeader>
-            <CardTitle>Content Associations</CardTitle>
+            <CardTitle>{t('courses.contentAssociations')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -197,14 +200,16 @@ const CourseForm = ({
                 name="category_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>{t('courses.category')}</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
+                          <SelectValue
+                            placeholder={t('courses.selectCategory')}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {categories.map((category) => (
@@ -228,11 +233,11 @@ const CourseForm = ({
                 name="season_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Season ID</FormLabel>
+                    <FormLabel>{t('courses.seasonId')}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Season ID (optional)"
+                        placeholder={t('courses.seasonIdPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -248,11 +253,11 @@ const CourseForm = ({
                 name="audio_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Audio ID</FormLabel>
+                    <FormLabel>{t('courses.audioId')}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Audio ID (optional)"
+                        placeholder={t('courses.audioIdPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -266,11 +271,11 @@ const CourseForm = ({
                 name="video_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Video ID</FormLabel>
+                    <FormLabel>{t('courses.videoId')}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Video ID (optional)"
+                        placeholder={t('courses.videoIdPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -284,11 +289,11 @@ const CourseForm = ({
                 name="cover_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cover ID</FormLabel>
+                    <FormLabel>{t('courses.coverId')}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Cover ID (optional)"
+                        placeholder={t('courses.coverIdPlaceholder')}
                         {...field}
                       />
                     </FormControl>

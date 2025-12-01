@@ -11,8 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, AlertTriangle, ArrowLeft, School } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function UnauthorizedPage() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 to-orange-100 p-4">
       <div className="w-full max-w-md">
@@ -22,53 +24,45 @@ export default function UnauthorizedPage() {
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h1 className="mb-2 text-3xl font-bold text-gray-900">
-            Access Denied
+            {t('unauthorized.title')}
           </h1>
-          <p className="text-gray-600">
-            You don&apos;t have permission to access this area
-          </p>
+          <p className="text-gray-600">{t('unauthorized.description')}</p>
         </div>
 
         <Card className="shadow-xl">
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center space-x-2">
               <AlertTriangle className="h-6 w-6 text-red-600" />
-              <span>Unauthorized Access</span>
+              <span>{t('unauthorized.title')}</span>
             </CardTitle>
-            <CardDescription>
-              This admin panel is restricted to teachers, managers, and
-              administrators only. Students should access their learning
-              dashboard through their school&apos;s website.
-            </CardDescription>
+            <CardDescription>{t('unauthorized.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <Alert>
               <AlertDescription>
-                <strong>Note:</strong> If you believe you should have access to
-                this panel, please contact your school administrator.
+                <strong>{t('unauthorized.note')}</strong>{' '}
+                {t('unauthorized.contactAdmin')}
               </AlertDescription>
             </Alert>
 
             <div className="space-y-4">
               <div className="rounded-lg bg-blue-50 p-4">
                 <h3 className="mb-2 font-medium text-blue-900">
-                  What you can do:
+                  {t('unauthorized.whatYouCanDo')}
                 </h3>
                 <ul className="space-y-1 text-sm text-blue-800">
-                  <li>• Access your school&apos;s student dashboard</li>
-                  <li>• Contact your school administrator</li>
-                  <li>
-                    • Join a school and request teacher role if you&apos;re an
-                    educator
-                  </li>
+                  <li>• {t('unauthorized.accessStudentDashboard')}</li>
+                  <li>• {t('unauthorized.contactSchoolAdmin')}</li>
+                  <li>• {t('unauthorized.joinAsTeacher')}</li>
                 </ul>
               </div>
 
               <div className="rounded-lg bg-orange-50 p-4">
-                <h3 className="mb-2 font-medium text-orange-900">Need help?</h3>
+                <h3 className="mb-2 font-medium text-orange-900">
+                  {t('unauthorized.needHelp')}
+                </h3>
                 <p className="text-sm text-orange-800">
-                  If you believe you should have access to this panel, please
-                  contact your school administrator or our support team.
+                  {t('unauthorized.contactSupport')}
                 </p>
               </div>
             </div>
@@ -77,18 +71,18 @@ export default function UnauthorizedPage() {
               <Link href="/find-school">
                 <Button className="w-full" variant="outline">
                   <School className="mr-2 h-4 w-4" />
-                  Find My School
+                  {t('auth.findSchool')}
                 </Button>
               </Link>
 
               <Link href="/register">
-                <Button className="w-full">Register your School</Button>
+                <Button className="w-full">{t('auth.registerSchool')}</Button>
               </Link>
 
               <Link href="/login">
                 <Button className="w-full" variant="ghost">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Login
+                  {t('auth.backToLogin')}
                 </Button>
               </Link>
             </div>

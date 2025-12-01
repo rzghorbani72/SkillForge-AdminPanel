@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { I18nProvider } from '@/lib/i18n/provider';
+import { getAdminLanguage, getAdminDirection } from '@/lib/i18n/server';
+import { cookies } from 'next/headers';
+import { ToastContainerWrapper } from '@/components/providers/toast-container-wrapper';
+import { LanguageSync } from '@/components/providers/language-sync';
 
 export const metadata: Metadata = {
   title: 'SkillForge Admin Panel',
@@ -11,13 +15,23 @@ export const metadata: Metadata = {
     'Admin panel for SkillForge - Manage your schools, courses, and students'
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
+  // Get language preference from cookies or default to English
+  const cookieStore = await cookies();
+  const languagePreference =
+    cookieStore.get('preferred_language')?.value || null;
+
+  // Try to get country code from school data if available
+  // For now, we'll use language preference or default to English
+  const language = getAdminLanguage(languagePreference, null);
+  const direction = getAdminDirection(languagePreference, null);
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={language} dir={direction} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
@@ -25,25 +39,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-            style={{
-              top: '20px',
-              right: '20px',
-              zIndex: 9999
-            }}
-          />
+          <I18nProvider initialLanguage={language}>
+            <LanguageSync />
+            {children}
+            <Toaster />
+            <ToastContainerWrapper />
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

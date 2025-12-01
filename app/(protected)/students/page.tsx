@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Card,
   CardContent,
@@ -46,23 +47,25 @@ interface PaginationInfo {
   hasPreviousPage: boolean;
 }
 
-const STUDENT_STATUS_OPTIONS: Array<{ label: string; value: StudentStatus }> = [
-  { label: 'All Statuses', value: 'all' },
-  { label: 'Active', value: 'ACTIVE' },
-  { label: 'Inactive', value: 'INACTIVE' },
-  { label: 'Suspended', value: 'SUSPENDED' },
-  { label: 'Banned', value: 'BANNED' }
-];
-
-const ENROLLMENT_STATUS_FILTERS = [
-  { label: 'All', value: 'all' },
-  { label: 'Active', value: 'ACTIVE' },
-  { label: 'Completed', value: 'COMPLETED' },
-  { label: 'Cancelled', value: 'CANCELLED' },
-  { label: 'Expired', value: 'EXPIRED' }
-];
-
 export default function StudentsPage() {
+  const { t } = useTranslation();
+
+  const STUDENT_STATUS_OPTIONS: Array<{ label: string; value: StudentStatus }> =
+    [
+      { label: t('students.allStatuses'), value: 'all' },
+      { label: t('common.active'), value: 'ACTIVE' },
+      { label: t('common.inactive'), value: 'INACTIVE' },
+      { label: t('students.suspended'), value: 'SUSPENDED' },
+      { label: t('students.banned'), value: 'BANNED' }
+    ];
+
+  const ENROLLMENT_STATUS_FILTERS = [
+    { label: t('common.all'), value: 'all' },
+    { label: t('common.active'), value: 'ACTIVE' },
+    { label: t('students.completed'), value: 'COMPLETED' },
+    { label: t('students.cancelled'), value: 'CANCELLED' },
+    { label: t('students.expired'), value: 'EXPIRED' }
+  ];
   const [students, setStudents] = useState<User[]>([]);
   const [studentPagination, setStudentPagination] =
     useState<PaginationInfo | null>(null);
@@ -214,7 +217,7 @@ export default function StudentsPage() {
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
             <p className="mt-2 text-sm text-gray-600">
-              Loading students data...
+              {t('students.loadingStudentsData')}
             </p>
           </div>
         </div>
@@ -226,15 +229,17 @@ export default function StudentsPage() {
     <div className="flex-1 space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Students</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('students.title')}
+          </h1>
           <p className="text-muted-foreground">
-            Manage your students, track enrollments, and monitor progress
+            {t('students.manageDescription')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Add Student
+            {t('students.addStudent')}
           </Button>
         </div>
       </div>
@@ -243,7 +248,7 @@ export default function StudentsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search students..."
+            placeholder={t('students.searchStudents')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="pl-8"
@@ -257,7 +262,7 @@ export default function StudentsPage() {
           }
         >
           <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder={t('common.filter')} />
           </SelectTrigger>
           <SelectContent>
             {STUDENT_STATUS_OPTIONS.map((option) => (
@@ -269,7 +274,7 @@ export default function StudentsPage() {
         </Select>
         <Button variant="outline" className="hidden md:inline-flex">
           <Filter className="mr-2 h-4 w-4" />
-          More Filters
+          {t('common.moreFilters')}
         </Button>
       </div>
 
@@ -277,31 +282,35 @@ export default function StudentsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Students
+              {t('students.totalStudents')}
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalStudents}</div>
-            <p className="text-xs text-muted-foreground">Registered students</p>
+            <p className="text-xs text-muted-foreground">
+              {t('students.registeredStudents')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Enrollments
+              {t('students.activeEnrollments')}
             </CardTitle>
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeEnrollmentsCount}</div>
-            <p className="text-xs text-muted-foreground">Currently enrolled</p>
+            <p className="text-xs text-muted-foreground">
+              {t('students.currentlyEnrolled')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Completed Courses
+              {t('students.completedCourses')}
             </CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -310,37 +319,45 @@ export default function StudentsPage() {
               {completedEnrollmentsCount}
             </div>
             <p className="text-xs text-muted-foreground">
-              Successfully completed
+              {t('students.successfullyCompleted')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Progress</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('students.avgProgress')}
+            </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{averageProgress}%</div>
-            <p className="text-xs text-muted-foreground">Across all courses</p>
+            <p className="text-xs text-muted-foreground">
+              {t('students.acrossAllCourses')}
+            </p>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="students" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="students">Students ({totalStudents})</TabsTrigger>
-          <TabsTrigger value="enrollments">
-            Enrollments ({filteredEnrollments.length})
+          <TabsTrigger value="students">
+            {t('students.title')} ({totalStudents})
           </TabsTrigger>
-          <TabsTrigger value="progress">Progress Tracking</TabsTrigger>
+          <TabsTrigger value="enrollments">
+            {t('students.enrollments')} ({filteredEnrollments.length})
+          </TabsTrigger>
+          <TabsTrigger value="progress">
+            {t('students.progressTracking')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="students" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Students</CardTitle>
+              <CardTitle>{t('students.allStudents')}</CardTitle>
               <CardDescription>
-                Manage your student roster and their information
+                {t('students.manageRosterDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -348,10 +365,10 @@ export default function StudentsPage() {
                 <div className="py-8 text-center">
                   <Users className="mx-auto h-12 w-12 text-muted-foreground" />
                   <h3 className="mt-2 text-sm font-medium">
-                    No students found
+                    {t('students.noStudents')}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Students will appear here once they register.
+                    {t('students.willAppearWhenRegistered')}
                   </p>
                 </div>
               ) : (
@@ -389,7 +406,9 @@ export default function StudentsPage() {
                         <Badge
                           variant={student.is_active ? 'default' : 'secondary'}
                         >
-                          {student.is_active ? 'Active' : 'Inactive'}
+                          {student.is_active
+                            ? t('common.active')
+                            : t('common.inactive')}
                         </Badge>
                       </div>
                     </div>
@@ -417,15 +436,15 @@ export default function StudentsPage() {
         <TabsContent value="enrollments" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Course Enrollments</CardTitle>
+              <CardTitle>{t('students.courseEnrollments')}</CardTitle>
               <CardDescription>
-                Track student enrollments and their status
+                {t('students.trackEnrollmentsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  Showing recent enrollments pulled from your schools
+                  {t('students.showingRecentEnrollments')}
                 </p>
                 <Select
                   value={enrollmentStatusFilter}
@@ -488,13 +507,15 @@ export default function StudentsPage() {
                         </Avatar>
                         <div className="space-y-1">
                           <p className="text-sm font-medium leading-none">
-                            {enrollment.user?.name || 'Unknown Student'}
+                            {enrollment.user?.name ||
+                              t('students.unknownStudent')}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {enrollment.course?.title || 'Unknown course'}
+                            {enrollment.course?.title ||
+                              t('students.unknownCourse')}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Enrolled on{' '}
+                            {t('students.enrolledOn')}{' '}
                             {new Date(
                               enrollment.enrolled_at
                             ).toLocaleDateString()}
@@ -507,11 +528,20 @@ export default function StudentsPage() {
                             enrollment.status
                           )}
                         >
-                          {enrollment.status}
+                          {enrollment.status === 'ACTIVE'
+                            ? t('common.active')
+                            : enrollment.status === 'COMPLETED'
+                              ? t('students.completed')
+                              : enrollment.status === 'CANCELLED'
+                                ? t('students.cancelled')
+                                : enrollment.status === 'EXPIRED'
+                                  ? t('students.expired')
+                                  : enrollment.status}
                         </Badge>
                         {typeof enrollment.progress_percent === 'number' && (
                           <span className="text-xs text-muted-foreground">
-                            Progress: {Math.round(enrollment.progress_percent)}%
+                            {t('students.progress')}:{' '}
+                            {Math.round(enrollment.progress_percent)}%
                           </span>
                         )}
                       </div>
@@ -526,9 +556,9 @@ export default function StudentsPage() {
         <TabsContent value="progress" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Progress Tracking</CardTitle>
+              <CardTitle>{t('students.progressTracking')}</CardTitle>
               <CardDescription>
-                Monitor student progress across all courses
+                {t('students.monitorProgressDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -536,15 +566,17 @@ export default function StudentsPage() {
                 <div className="py-8 text-center">
                   <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Loading progress data...
+                    {t('students.loadingProgressData')}
                   </p>
                 </div>
               ) : filteredEnrollments.length === 0 ? (
                 <div className="py-8 text-center">
                   <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-2 text-sm font-medium">No progress data</h3>
+                  <h3 className="mt-2 text-sm font-medium">
+                    {t('students.noProgressData')}
+                  </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Progress will be tracked once students start courses.
+                    {t('students.progressWillBeTracked')}
                   </p>
                 </div>
               ) : (
@@ -565,10 +597,12 @@ export default function StudentsPage() {
                             </Avatar>
                             <div>
                               <p className="text-sm font-medium">
-                                {enrollment.user?.name || 'Unknown Student'}
+                                {enrollment.user?.name ||
+                                  t('students.unknownStudent')}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {enrollment.course?.title || 'Unknown course'}
+                                {enrollment.course?.title ||
+                                  t('students.unknownCourse')}
                               </p>
                             </div>
                           </div>

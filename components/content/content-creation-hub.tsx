@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { Course } from '@/types/api';
 import { useSchool } from '@/hooks/useSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 // Import dialogs
 import CreateLessonDialog from './create-lesson-dialog';
@@ -42,65 +43,66 @@ interface ContentCreationHubProps {
   courses: Course[];
 }
 
-const contentTypes = [
-  {
-    id: 'course',
-    title: 'Course',
-    description: 'Create a new course with lessons and content',
-    icon: BookOpen,
-    dialog: null, // Will navigate to page instead
-    color: 'bg-blue-500'
-  },
-  {
-    id: 'lesson',
-    title: 'Lesson',
-    description: 'Add a new lesson to an existing course',
-    icon: Play,
-    dialog: CreateLessonDialog,
-    color: 'bg-green-500'
-  },
-  {
-    id: 'season',
-    title: 'Season',
-    description: 'Create a new season/module for a course',
-    icon: Layers,
-    dialog: CreateSeasonDialog,
-    color: 'bg-purple-500'
-  },
-  {
-    id: 'audio',
-    title: 'Audio',
-    description: 'Upload audio files for lessons and courses',
-    icon: Music,
-    dialog: UploadAudioDialog,
-    color: 'bg-orange-500'
-  },
-  {
-    id: 'document',
-    title: 'Document',
-    description: 'Upload documents and study materials',
-    icon: FileText,
-    dialog: UploadDocumentDialog,
-    color: 'bg-gray-500'
-  },
-  {
-    id: 'video',
-    title: 'Video',
-    description: 'Upload video content for lessons',
-    icon: Video,
-    dialog: UploadVideoDialog,
-    color: 'bg-red-500'
-  }
-];
-
 export default function ContentCreationHub({
   onContentCreated,
   courses
 }: ContentCreationHubProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { selectedSchool } = useSchool();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const contentTypes = [
+    {
+      id: 'course',
+      title: t('content.course'),
+      description: t('content.createCourseDescription'),
+      icon: BookOpen,
+      dialog: null, // Will navigate to page instead
+      color: 'bg-blue-500'
+    },
+    {
+      id: 'lesson',
+      title: t('content.lesson'),
+      description: t('content.addLessonDescription'),
+      icon: Play,
+      dialog: CreateLessonDialog,
+      color: 'bg-green-500'
+    },
+    {
+      id: 'season',
+      title: t('content.season'),
+      description: t('content.createSeasonDescription'),
+      icon: Layers,
+      dialog: CreateSeasonDialog,
+      color: 'bg-purple-500'
+    },
+    {
+      id: 'audio',
+      title: t('content.audio'),
+      description: t('content.uploadAudioDescription'),
+      icon: Music,
+      dialog: UploadAudioDialog,
+      color: 'bg-orange-500'
+    },
+    {
+      id: 'document',
+      title: t('content.document'),
+      description: t('content.uploadDocumentDescription'),
+      icon: FileText,
+      dialog: UploadDocumentDialog,
+      color: 'bg-gray-500'
+    },
+    {
+      id: 'video',
+      title: t('content.video'),
+      description: t('content.uploadVideoDescription'),
+      icon: Video,
+      dialog: UploadVideoDialog,
+      color: 'bg-red-500'
+    }
+  ];
 
   const handleContentCreated = () => {
     setIsDialogOpen(false);
@@ -171,7 +173,7 @@ export default function ContentCreationHub({
     return (
       <Button disabled>
         <Plus className="mr-2 h-4 w-4" />
-        Select School First
+        {t('content.selectSchoolFirst')}
       </Button>
     );
   }
@@ -181,12 +183,12 @@ export default function ContentCreationHub({
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Create Content
+          {t('content.createContent')}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Content</DialogTitle>
+          <DialogTitle>{t('content.createNewContent')}</DialogTitle>
         </DialogHeader>
 
         {!selectedType ? (

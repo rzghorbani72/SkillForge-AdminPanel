@@ -7,6 +7,7 @@ import { InputWithIcon } from '@/components/ui/input-with-icon';
 import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import { Loader2, Mail } from 'lucide-react';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 interface VerificationStepProps {
   formData: {
@@ -31,6 +32,8 @@ interface VerificationStepProps {
 }
 
 export function VerificationStep(props: VerificationStepProps) {
+  const { t } = useTranslation();
+  const { isRTL } = useLanguage();
   const {
     formData,
     errors,
@@ -52,31 +55,29 @@ export function VerificationStep(props: VerificationStepProps) {
   const isEmailPrimary = primaryMethod === 'email';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Show only primary verification method */}
       {isEmailPrimary ? (
         <div className="space-y-2">
           <InputWithIcon
             id="email"
-            label="Email Address"
+            label={t('auth.emailAddress')}
             type="email"
-            placeholder="Enter your email"
+            placeholder={t('auth.enterEmail')}
             value={formData.email}
             onChange={(value) => onChange('email', value)}
             icon={Mail}
             error={errors.email}
             disabled={isLoading}
           />
-          <p className="text-xs text-gray-500">
-            You can verify your phone number later in account settings
-          </p>
+          <p className="text-xs text-gray-500">{t('auth.verifyPhoneLater')}</p>
         </div>
       ) : (
         <div className="space-y-2">
           <PhoneInputWithCountry
             id="phone"
-            label="Phone Number"
-            placeholder="Enter your phone number"
+            label={t('auth.phoneNumber')}
+            placeholder={t('auth.enterPhone')}
             value={formData.phone}
             onChange={(value) => onChange('phone', value)}
             onCountryChange={(countryCode) =>
@@ -85,26 +86,25 @@ export function VerificationStep(props: VerificationStepProps) {
             error={errors.phone}
             disabled={isLoading}
           />
-          <p className="text-xs text-gray-500">
-            You can verify your email address later in account settings
-          </p>
+          <p className="text-xs text-gray-500">{t('auth.verifyEmailLater')}</p>
         </div>
       )}
 
       {/* Show only primary method OTP section */}
       {isPhonePrimary ? (
         <div className="space-y-2">
-          <Label htmlFor="phoneOtp">Phone OTP</Label>
-          <div className="flex space-x-2">
+          <Label htmlFor="phoneOtp">{t('auth.phoneOtp')}</Label>
+          <div className="flex gap-2">
             <div className="relative flex-1">
               <Input
                 id="phoneOtp"
                 type="text"
-                placeholder="Enter phone OTP"
+                placeholder={t('auth.enterPhoneOtp')}
                 value={formData.phoneOtp}
                 onChange={(e) => onChange('phoneOtp', e.target.value)}
                 className={errors.phoneOtp ? 'border-red-500' : ''}
                 disabled={isLoading || otpLoading}
+                dir={isRTL ? 'rtl' : 'ltr'}
               />
             </div>
             <Button
@@ -117,12 +117,15 @@ export function VerificationStep(props: VerificationStepProps) {
             >
               {otpLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...
+                  <Loader2
+                    className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                  />{' '}
+                  {t('auth.sending')}
                 </>
               ) : phoneOtpSent ? (
-                'Resend SMS OTP'
+                t('auth.resendSmsOtp')
               ) : (
-                'Send Phone OTP'
+                t('auth.sendPhoneOtp')
               )}
             </Button>
             <Button
@@ -134,29 +137,33 @@ export function VerificationStep(props: VerificationStepProps) {
             >
               {otpLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying...
+                  <Loader2
+                    className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                  />{' '}
+                  {t('auth.verifying')}
                 </>
               ) : phoneOtpVerified ? (
-                '✓ Verified'
+                t('auth.verified')
               ) : (
-                'Verify SMS OTP'
+                t('auth.verifySmsOtp')
               )}
             </Button>
           </div>
         </div>
       ) : (
         <div className="space-y-2">
-          <Label htmlFor="emailOtp">Email OTP</Label>
-          <div className="flex space-x-2">
+          <Label htmlFor="emailOtp">{t('auth.emailOtp')}</Label>
+          <div className="flex gap-2">
             <div className="relative flex-1">
               <Input
                 id="emailOtp"
                 type="text"
-                placeholder="Enter email OTP"
+                placeholder={t('auth.enterEmailOtp')}
                 value={formData.emailOtp}
                 onChange={(e) => onChange('emailOtp', e.target.value)}
                 className={errors.emailOtp ? 'border-red-500' : ''}
                 disabled={isLoading || otpLoading}
+                dir={isRTL ? 'rtl' : 'ltr'}
               />
             </div>
             <Button
@@ -169,12 +176,15 @@ export function VerificationStep(props: VerificationStepProps) {
             >
               {otpLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...
+                  <Loader2
+                    className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                  />{' '}
+                  {t('auth.sending')}
                 </>
               ) : emailOtpSent ? (
-                'Resend Email OTP'
+                t('auth.resendEmailOtp')
               ) : (
-                'Send Email OTP'
+                t('auth.sendEmailOtp')
               )}
             </Button>
             <Button
@@ -186,12 +196,15 @@ export function VerificationStep(props: VerificationStepProps) {
             >
               {otpLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying...
+                  <Loader2
+                    className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                  />{' '}
+                  {t('auth.verifying')}
                 </>
               ) : emailOtpVerified ? (
-                '✓ Verified'
+                t('auth.verified')
               ) : (
-                'Verify Email OTP'
+                t('auth.verifyEmailOtp')
               )}
             </Button>
           </div>

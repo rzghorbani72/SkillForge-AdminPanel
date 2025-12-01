@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from './ui/tooltip';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -35,12 +36,14 @@ const NavItemContent = React.memo(
     item,
     isMinimized,
     isExpanded,
-    path
+    path,
+    translatedTitle
   }: {
     item: NavItem;
     isMinimized: boolean;
     isExpanded: boolean;
     path: string;
+    translatedTitle: string;
   }) => {
     const Icon =
       item.icon && Icons[item.icon as keyof typeof Icons]
@@ -59,7 +62,7 @@ const NavItemContent = React.memo(
         <Icon className="size-5 flex-none" />
         {!isMinimized && (
           <div className="flex min-w-0 flex-1 items-center gap-2">
-            <span className="truncate">{item.title}</span>
+            <span className="truncate">{translatedTitle}</span>
             {(item as any).badge && (
               <Badge variant="secondary" className="h-5 px-1.5 py-0.5 text-xs">
                 {(item as any).badge}
@@ -116,10 +119,24 @@ const NavItemButton = React.memo(
 NavItemButton.displayName = 'NavItemButton';
 
 export function DashboardNav({ items, setOpen }: DashboardNavProps) {
+  const { t } = useTranslation();
   const path = usePathname();
   const { isMinimized } = useSidebar();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const { isAboveLg } = useBreakpoint('lg');
+
+  const translateNavTitle = useCallback(
+    (label: string, title: string): string => {
+      const translationKey = `navigation.${label}`;
+      const translated = t(translationKey);
+      // If translation exists and is different from the key, use it
+      if (translated && translated !== translationKey) {
+        return translated;
+      }
+      return title;
+    },
+    [t]
+  );
 
   const toggleExpand = useCallback((title: string) => {
     setExpandedItems((prev) => {
@@ -153,6 +170,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         Array.isArray(item.children) &&
         item.children.length > 0;
       const isExpanded = expandedItems.has(item.title);
+      const translatedTitle = translateNavTitle(item.label || '', item.title);
 
       const content = (
         <NavItemContent
@@ -160,6 +178,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
           isMinimized={isMinimized}
           isExpanded={isExpanded}
           path={path}
+          translatedTitle={translatedTitle}
         />
       );
 
@@ -176,23 +195,31 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
               sideOffset={5}
               avoidCollisions={true}
             >
-              <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
+              <DropdownMenuLabel>{translatedTitle}</DropdownMenuLabel>
               {item.children &&
-                item.children.map((child, index) => (
-                  <DropdownMenuItem key={`${child.title}-${index}`}>
-                    {child.href ? (
-                      <Link
-                        href={child.href}
-                        onClick={handleSetOpen}
-                        className="w-full cursor-pointer"
-                      >
-                        {child.title}
-                      </Link>
-                    ) : (
-                      <span className="cursor-pointer">{child.title}</span>
-                    )}
-                  </DropdownMenuItem>
-                ))}
+                item.children.map((child, index) => {
+                  const childTranslatedTitle = translateNavTitle(
+                    child.label || '',
+                    child.title
+                  );
+                  return (
+                    <DropdownMenuItem key={`${child.title}-${index}`}>
+                      {child.href ? (
+                        <Link
+                          href={child.href}
+                          onClick={handleSetOpen}
+                          className="w-full cursor-pointer"
+                        >
+                          {childTranslatedTitle}
+                        </Link>
+                      ) : (
+                        <span className="cursor-pointer">
+                          {childTranslatedTitle}
+                        </span>
+                      )}
+                    </DropdownMenuItem>
+                  );
+                })}
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -229,7 +256,15 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         </div>
       );
     },
-    [expandedItems, isMinimized, isAboveLg, path, handleSetOpen, toggleExpand]
+    [
+      expandedItems,
+      isMinimized,
+      isAboveLg,
+      path,
+      handleSetOpen,
+      toggleExpand,
+      translateNavTitle
+    ]
   );
 
   const memoizedItems = useMemo(() => items, [items]);
@@ -250,7 +285,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
               sideOffset={8}
               className={!isMinimized ? 'hidden' : 'inline-block'}
             >
-              {item.title}
+              {translateNavTitle(item.label || '', item.title)}
             </TooltipContent>
           </Tooltip>
         ))}

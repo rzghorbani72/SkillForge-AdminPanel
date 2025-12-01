@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -18,12 +20,14 @@ import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
 import { apiClient } from '@/lib/api';
 import { Category, Course } from '@/types/api';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
 };
 
 const CreateProductAssociations = ({ form }: Props) => {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
@@ -158,7 +162,7 @@ const CreateProductAssociations = ({ form }: Props) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Associations</CardTitle>
+        <CardTitle>{t('products.associations')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -167,7 +171,7 @@ const CreateProductAssociations = ({ form }: Props) => {
             name="category_id"
             render={({ field }: { field: any }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>{t('products.category')}</FormLabel>
                 <Select
                   onValueChange={(value) => {
                     field.onChange(value);
@@ -182,8 +186,8 @@ const CreateProductAssociations = ({ form }: Props) => {
                       <SelectValue
                         placeholder={
                           categoriesLoading
-                            ? 'Loading categories...'
-                            : 'Select category'
+                            ? t('common.loading')
+                            : t('products.selectCategory')
                         }
                       />
                     </SelectTrigger>
@@ -191,15 +195,15 @@ const CreateProductAssociations = ({ form }: Props) => {
                   <SelectContent>
                     {categoriesLoading ? (
                       <SelectItem value="" disabled>
-                        Loading categories...
+                        {t('common.loading')}
                       </SelectItem>
                     ) : productCategories.length === 0 ? (
                       <SelectItem value="" disabled>
-                        {categoriesError || 'No categories available'}
+                        {categoriesError || t('products.noCategoriesAvailable')}
                       </SelectItem>
                     ) : (
                       <>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="">{t('common.none')}</SelectItem>
                         {productCategories.map((category) => (
                           <SelectItem
                             key={category.id}
@@ -220,25 +224,25 @@ const CreateProductAssociations = ({ form }: Props) => {
 
         <div className="space-y-2">
           <FormLabel>
-            Related Courses
+            {t('products.relatedCourses')}
             {selectedCategoryId && (
               <span className="ml-2 text-xs font-normal text-slate-500">
-                (filtered by selected category)
+                ({t('products.filteredByCategory')})
               </span>
             )}
           </FormLabel>
           <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
             {!selectedCategoryId ? (
               <p className="text-sm text-slate-500">
-                Please select a category first to see related courses
+                {t('products.selectCategoryFirst')}
               </p>
             ) : coursesLoading ? (
-              <p className="text-sm text-slate-500">Loading courses...</p>
+              <p className="text-sm text-slate-500">{t('common.loading')}</p>
             ) : coursesError ? (
               <p className="text-sm text-red-500">{coursesError}</p>
             ) : courses.length === 0 ? (
               <p className="text-sm text-slate-500">
-                No courses available in this category
+                {t('products.noCoursesInCategory')}
               </p>
             ) : (
               <div className="max-h-60 space-y-2 overflow-y-auto">
@@ -268,8 +272,11 @@ const CreateProductAssociations = ({ form }: Props) => {
           </div>
           {courseIds.length > 0 && (
             <p className="text-xs text-slate-500">
-              {courseIds.length} course{courseIds.length !== 1 ? 's' : ''}{' '}
-              selected
+              {courseIds.length}{' '}
+              {courseIds.length === 1
+                ? t('courses.course')
+                : t('courses.courses')}{' '}
+              {t('common.selected')}
             </p>
           )}
         </div>

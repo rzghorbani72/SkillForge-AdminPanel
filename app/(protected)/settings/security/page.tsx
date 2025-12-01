@@ -18,6 +18,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Profile } from '@/types/api';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface PasswordForm {
   currentPassword: string;
@@ -46,6 +47,7 @@ const DEFAULT_NOTIFICATIONS: NotificationSettings = {
 };
 
 export default function SecuritySettingsPage() {
+  const { t } = useTranslation();
   const { user, isLoading } = useSettingsData();
   const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
   const [passwordForm, setPasswordForm] = useState<PasswordForm>(
@@ -83,14 +85,12 @@ export default function SecuritySettingsPage() {
 
   const handlePasswordChange = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      ErrorHandler.showWarning('New passwords do not match');
+      ErrorHandler.showWarning(t('settings.newPasswordsDoNotMatch'));
       return;
     }
 
     if (!user || !activeProfile) {
-      ErrorHandler.showWarning(
-        'Unable to load account profile. Please refresh and try again.'
-      );
+      ErrorHandler.showWarning(t('settings.unableToLoadProfile'));
       return;
     }
 
@@ -103,7 +103,7 @@ export default function SecuritySettingsPage() {
         confirm_new_password: passwordForm.confirmPassword,
         user_id: user.id
       });
-      ErrorHandler.showSuccess('Password updated successfully');
+      ErrorHandler.showSuccess(t('settings.passwordUpdatedSuccess'));
       setPasswordForm(DEFAULT_PASSWORD_FORM);
     } catch (error) {
       console.error('Error updating password', error);
@@ -117,7 +117,7 @@ export default function SecuritySettingsPage() {
     try {
       setIsSavingNotifications(true);
       // Persisting notification preferences is not yet implemented on the backend.
-      ErrorHandler.showSuccess('Notification preferences saved');
+      ErrorHandler.showSuccess(t('settings.notificationPreferencesSaved'));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -139,26 +139,29 @@ export default function SecuritySettingsPage() {
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Security</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('settings.securityTitle')}
+        </h1>
         <p className="text-muted-foreground">
-          Strengthen your account by keeping credentials and notifications up to
-          date.
+          {t('settings.securitySubtitle')}
         </p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <KeyRound className="h-5 w-5" /> Change password
+            <KeyRound className="h-5 w-5" /> {t('settings.changePassword')}
           </CardTitle>
           <CardDescription>
-            Use a strong password and update it regularly.
+            {t('settings.changePasswordDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="currentPassword">Current password</Label>
+              <Label htmlFor="currentPassword">
+                {t('settings.currentPassword')}
+              </Label>
               <Input
                 id="currentPassword"
                 type="password"
@@ -169,11 +172,11 @@ export default function SecuritySettingsPage() {
                     currentPassword: event.target.value
                   })
                 }
-                placeholder="Enter your current password"
+                placeholder={t('settings.currentPasswordPlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="newPassword">New password</Label>
+              <Label htmlFor="newPassword">{t('settings.newPassword')}</Label>
               <Input
                 id="newPassword"
                 type="password"
@@ -184,11 +187,13 @@ export default function SecuritySettingsPage() {
                     newPassword: event.target.value
                   })
                 }
-                placeholder="Choose a new password"
+                placeholder={t('settings.newPasswordPlaceholder')}
               />
             </div>
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="confirmPassword">Confirm new password</Label>
+              <Label htmlFor="confirmPassword">
+                {t('settings.confirmNewPassword')}
+              </Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -199,12 +204,14 @@ export default function SecuritySettingsPage() {
                     confirmPassword: event.target.value
                   })
                 }
-                placeholder="Re-enter new password"
+                placeholder={t('settings.confirmNewPasswordPlaceholder')}
               />
             </div>
           </div>
           <Button onClick={handlePasswordChange} disabled={isSavingPassword}>
-            {isSavingPassword ? 'Updating…' : 'Update password'}
+            {isSavingPassword
+              ? t('settings.updating')
+              : t('settings.updatePassword')}
           </Button>
         </CardContent>
       </Card>
@@ -212,20 +219,17 @@ export default function SecuritySettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" /> Two-factor authentication
+            <Shield className="h-5 w-5" />{' '}
+            {t('settings.twoFactorAuthentication')}
           </CardTitle>
           <CardDescription>
-            Add an additional layer of security to your account.
+            {t('settings.twoFactorAuthenticationDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-muted-foreground">
-          <p>
-            Enable two-factor authentication (2FA) to require a one-time code in
-            addition to your password when signing in. Hardware keys,
-            authenticator apps, and SMS are supported.
-          </p>
+          <p>{t('settings.twoFactorAuthenticationText')}</p>
           <Button variant="outline" size="sm">
-            Configure 2FA
+            {t('settings.configure2FA')}
           </Button>
         </CardContent>
       </Card>
@@ -233,36 +237,33 @@ export default function SecuritySettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" /> Notification preferences
+            <Bell className="h-5 w-5" /> {t('settings.notificationPreferences')}
           </CardTitle>
           <CardDescription>
-            Choose which product and payment notifications you receive.
+            {t('settings.notificationPreferencesDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {[
             {
               key: 'emailNotifications',
-              title: 'Email notifications',
-              description:
-                'Receive important account and product updates by email.'
+              title: t('settings.emailNotifications'),
+              description: t('settings.emailNotificationsDescription')
             },
             {
               key: 'smsNotifications',
-              title: 'SMS alerts',
-              description:
-                'Get text messages for critical payment and security events.'
+              title: t('settings.smsAlerts'),
+              description: t('settings.smsAlertsDescription')
             },
             {
               key: 'courseUpdates',
-              title: 'Course updates',
-              description:
-                'Stay informed when courses or lessons are added or updated.'
+              title: t('settings.courseUpdates'),
+              description: t('settings.courseUpdatesDescription')
             },
             {
               key: 'paymentAlerts',
-              title: 'Payment alerts',
-              description: 'Receive receipts and payout notifications.'
+              title: t('settings.paymentAlerts'),
+              description: t('settings.paymentAlertsDescription')
             }
           ].map(({ key, title, description }) => (
             <div
@@ -291,7 +292,9 @@ export default function SecuritySettingsPage() {
               disabled={isSavingNotifications}
             >
               <Save className="mr-2 h-4 w-4" />
-              {isSavingNotifications ? 'Saving…' : 'Save preferences'}
+              {isSavingNotifications
+                ? t('settings.saving')
+                : t('settings.savePreferences')}
             </Button>
           </div>
         </CardContent>

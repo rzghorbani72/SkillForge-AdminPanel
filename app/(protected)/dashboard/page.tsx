@@ -18,8 +18,10 @@ import RecentLists from '@/components/dashboard/RecentLists';
 import { useAccessControl } from '@/hooks/useAccessControl';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const school = useCurrentSchool();
   const {
     isLoading,
@@ -45,29 +47,29 @@ export default function DashboardPage() {
 
   const quickActions = [
     {
-      title: 'Create Course',
-      description: 'Add a new course to your school',
+      title: t('dashboard.createCourse'),
+      description: t('dashboard.addNewCourse'),
       icon: require('lucide-react').Plus,
       href: '/content',
       color: 'bg-blue-500'
     },
     {
-      title: 'Add Lesson',
-      description: 'Create a new lesson for your courses',
+      title: t('dashboard.addLesson'),
+      description: t('dashboard.createNewLesson'),
       icon: require('lucide-react').Play,
       href: '/content/lessons/create',
       color: 'bg-green-500'
     },
     {
-      title: 'Upload Media',
-      description: 'Add images, videos, or documents',
+      title: t('dashboard.uploadMedia'),
+      description: t('dashboard.addMedia'),
       icon: require('lucide-react').FileText,
       href: '/content/media',
       color: 'bg-purple-500'
     },
     {
-      title: 'View Analytics',
-      description: 'Check your performance metrics',
+      title: t('dashboard.viewAnalytics'),
+      description: t('dashboard.checkMetrics'),
       icon: require('lucide-react').BarChart3,
       href: '/analytics',
       color: 'bg-orange-500'
@@ -81,7 +83,7 @@ export default function DashboardPage() {
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
             <p className="mt-2 text-sm text-gray-600">
-              Loading dashboard data...
+              {t('dashboard.loadingDashboardData')}
             </p>
           </div>
         </div>
@@ -94,16 +96,17 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('dashboard.title')}
+          </h1>
           <p className="text-muted-foreground">
-            Welcome back! Here&apos;s what&apos;s happening with your schools
-            today.
+            {t('dashboard.welcomeBack')} {t('dashboard.whatsHappening')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline">
             <Calendar className="mr-2 h-4 w-4" />
-            Today
+            {t('common.today')}
           </Button>
           <ContentCreationHub
             onContentCreated={() => {

@@ -1,8 +1,11 @@
+'use client';
+
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface SchoolFormData {
   name: string;
@@ -34,6 +37,7 @@ export function SchoolForm({
   domainAvailability,
   isEdit = false
 }: SchoolFormProps) {
+  const { t } = useTranslation();
   const updateFormData = (field: keyof SchoolFormData, value: any) => {
     onFormDataChange({ ...formData, [field]: value });
   };
@@ -41,23 +45,25 @@ export function SchoolForm({
   return (
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
-        <Label htmlFor={isEdit ? 'edit-name' : 'name'}>School Name *</Label>
+        <Label htmlFor={isEdit ? 'edit-name' : 'name'}>
+          {t('schools.schoolName')} *
+        </Label>
         <Input
           id={isEdit ? 'edit-name' : 'name'}
           value={formData.name}
           onChange={(e) => updateFormData('name', e.target.value)}
-          placeholder="Enter school name"
+          placeholder={t('schools.enterSchoolName')}
         />
       </div>
       <div className="grid gap-2">
         <Label htmlFor={isEdit ? 'edit-domain' : 'domain'}>
-          Domain Name * (Must be unique)
+          {t('schools.domainName')} * ({t('schools.mustBeUnique')})
         </Label>
         <Input
           id={isEdit ? 'edit-domain' : 'domain'}
           value={formData.private_domain}
           onChange={(e) => updateFormData('private_domain', e.target.value)}
-          placeholder="Enter domain name (auto-formatted to lowercase, kebab-case)"
+          placeholder={t('schools.enterDomainName')}
           className={
             domainValidation.message
               ? domainValidation.isValid
@@ -85,61 +91,63 @@ export function SchoolForm({
           </p>
         )}
         <p className="text-xs text-muted-foreground">
-          This will be your school&apos;s URL:{' '}
+          {t('schools.schoolUrlWillBe')}{' '}
           {formData.private_domain
             ? `${formData.private_domain}.skillforge.com`
             : 'your-domain.skillforge.com'}
         </p>
         {!isEdit && (
           <p className="text-xs font-medium text-orange-600">
-            ⚠️ Each school must have a unique domain name
+            ⚠️ {t('schools.uniqueDomainRequired')}
           </p>
         )}
       </div>
       {isEdit && (
         <div className="grid gap-2">
-          <Label htmlFor="edit-public-domain">Public Domain (Optional)</Label>
+          <Label htmlFor="edit-public-domain">
+            {t('schools.publicDomain')} ({t('common.optional')})
+          </Label>
           <Input
             id="edit-public-domain"
             value={formData.public_domain}
             onChange={(e) => updateFormData('public_domain', e.target.value)}
-            placeholder="Enter public domain (e.g., www.myschool.com)"
+            placeholder={t('schools.enterPublicDomain')}
           />
           <p className="text-xs text-muted-foreground">
-            Optional custom domain for your school
+            {t('schools.optionalCustomDomain')}
           </p>
         </div>
       )}
       <div className="grid gap-2">
         <Label htmlFor={isEdit ? 'edit-description' : 'description'}>
-          Description
+          {t('common.description')}
         </Label>
         <Textarea
           id={isEdit ? 'edit-description' : 'description'}
           value={formData.description}
           onChange={(e) => updateFormData('description', e.target.value)}
-          placeholder="Describe your school"
+          placeholder={t('schools.describeSchool')}
           rows={3}
         />
       </div>
       {isEdit && (
         <div className="flex items-center justify-between rounded-md border p-3">
           <div className="space-y-0.5">
-            <Label>Status</Label>
+            <Label>{t('common.status')}</Label>
             <p className="text-xs text-muted-foreground">
-              Toggle to activate or deactivate this school
+              {t('schools.toggleStatusDescription')}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">
-              {formData.is_active ? 'Active' : 'Inactive'}
+              {formData.is_active ? t('common.active') : t('common.inactive')}
             </span>
             <Switch
               checked={!!formData.is_active}
               onCheckedChange={(checked) =>
                 updateFormData('is_active', checked)
               }
-              aria-label="Toggle active status"
+              aria-label={t('schools.toggleActiveStatus')}
             />
           </div>
         </div>

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -9,16 +11,19 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
 };
 
 const CreateProductPublishSettings = ({ form }: Props) => {
+  const { t } = useTranslation();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Publish Settings</CardTitle>
+        <CardTitle>{t('products.publishSettings')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <FormField
@@ -27,9 +32,11 @@ const CreateProductPublishSettings = ({ form }: Props) => {
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Publish Product</FormLabel>
+                <FormLabel className="text-base">
+                  {t('products.publishProduct')}
+                </FormLabel>
                 <div className="text-sm text-gray-500">
-                  Make this product visible to customers immediately
+                  {t('products.publishProductDescription')}
                 </div>
               </div>
               <FormControl>
@@ -48,9 +55,11 @@ const CreateProductPublishSettings = ({ form }: Props) => {
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Featured Product</FormLabel>
+                <FormLabel className="text-base">
+                  {t('products.featuredProduct')}
+                </FormLabel>
                 <div className="text-sm text-gray-500">
-                  Highlight this product on the storefront
+                  {t('products.featuredProductDescription')}
                 </div>
               </div>
               <FormControl>

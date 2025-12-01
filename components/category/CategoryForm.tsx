@@ -10,6 +10,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { CategoryType } from './category-utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface CategoryFormData {
   name: string;
@@ -29,6 +30,7 @@ export function CategoryForm({
   onFormDataChange,
   isEdit = false
 }: CategoryFormProps) {
+  const { t } = useTranslation();
   const updateFormData = (field: keyof CategoryFormData, value: any) => {
     onFormDataChange({ ...formData, [field]: value });
   };
@@ -36,28 +38,32 @@ export function CategoryForm({
   return (
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
-        <Label htmlFor={isEdit ? 'edit-name' : 'name'}>Name *</Label>
+        <Label htmlFor={isEdit ? 'edit-name' : 'name'}>
+          {t('common.name')} *
+        </Label>
         <Input
           id={isEdit ? 'edit-name' : 'name'}
           value={formData.name}
           onChange={(e) => updateFormData('name', e.target.value)}
-          placeholder="Enter category name"
+          placeholder={t('categories.enterCategoryName')}
         />
       </div>
       <div className="grid gap-2">
         <Label htmlFor={isEdit ? 'edit-description' : 'description'}>
-          Description
+          {t('common.description')}
         </Label>
         <Textarea
           id={isEdit ? 'edit-description' : 'description'}
           value={formData.description}
           onChange={(e) => updateFormData('description', e.target.value)}
-          placeholder="Enter category description"
+          placeholder={t('categories.enterCategoryDescription')}
           rows={3}
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor={isEdit ? 'edit-type' : 'type'}>Type</Label>
+        <Label htmlFor={isEdit ? 'edit-type' : 'type'}>
+          {t('categories.type')}
+        </Label>
         <Select
           value={formData.type}
           onValueChange={(value: CategoryType) => updateFormData('type', value)}
@@ -66,10 +72,10 @@ export function CategoryForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="COURSE">Course</SelectItem>
-            <SelectItem value="ARTICLE">Article</SelectItem>
-            <SelectItem value="BLOG">Blog</SelectItem>
-            <SelectItem value="NEWS">News</SelectItem>
+            <SelectItem value="COURSE">{t('categories.course')}</SelectItem>
+            <SelectItem value="ARTICLE">{t('categories.article')}</SelectItem>
+            <SelectItem value="BLOG">{t('categories.blog')}</SelectItem>
+            <SelectItem value="NEWS">{t('categories.news')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -80,7 +86,7 @@ export function CategoryForm({
             checked={formData.is_active}
             onCheckedChange={(checked) => updateFormData('is_active', checked)}
           />
-          <Label htmlFor="edit-is_active">Active</Label>
+          <Label htmlFor="edit-is_active">{t('common.active')}</Label>
         </div>
       )}
     </div>

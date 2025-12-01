@@ -24,6 +24,7 @@ import {
   isValidPhoneNumber,
   formatPhoneNumber
 } from '@/lib/phone-utils';
+import { useLanguage } from '@/lib/i18n/hooks';
 
 interface PhoneInputWithCountryProps {
   id: string;
@@ -52,6 +53,7 @@ export function PhoneInputWithCountry({
   maxLength = 10,
   onValidationChange
 }: PhoneInputWithCountryProps) {
+  const { isRTL } = useLanguage();
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
     COUNTRY_CODES[0]
   );
@@ -113,18 +115,20 @@ export function PhoneInputWithCountry({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" dir={isRTL ? 'rtl' : 'ltr'}>
       <Label htmlFor={id}>{label}</Label>
       <div className="relative">
-        <div className="flex">
+        <div className={`flex ${isRTL ? 'flex-row-reverse' : ''}`}>
           {/* Country Code Selector */}
           <Select
             value={selectedCountry.code}
             onValueChange={handleCountryChange}
             disabled={disabled || isLoadingCountry}
           >
-            <SelectTrigger className="w-[140px] rounded-r-none border-r-0 focus:ring-0 focus:ring-offset-0">
-              <div className="flex items-center space-x-2">
+            <SelectTrigger
+              className={`w-[140px] focus:ring-0 focus:ring-offset-0 ${isRTL ? 'rounded-l-none border-l-0' : 'rounded-r-none border-r-0'}`}
+            >
+              <div className="flex items-center gap-2">
                 <span className="text-lg">{selectedCountry.flag}</span>
                 <span className="text-sm font-medium">
                   {selectedCountry.dialCode}
@@ -135,7 +139,7 @@ export function PhoneInputWithCountry({
             <SelectContent className="max-h-[300px]">
               {COUNTRY_CODES.map((country) => (
                 <SelectItem key={country.code} value={country.code}>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     <span className="text-lg">{country.flag}</span>
                     <span className="text-sm">{country.name}</span>
                     <span className="text-sm text-gray-500">
@@ -149,7 +153,9 @@ export function PhoneInputWithCountry({
 
           {/* Phone Number Input */}
           <div className="relative flex-1">
-            <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Phone
+              className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+            />
             <Input
               id={id}
               type="tel"
@@ -157,12 +163,15 @@ export function PhoneInputWithCountry({
               value={getDisplayValue()}
               onChange={(e) => handlePhoneChange(e.target.value)}
               className={cn(
-                'rounded-l-none border-l-0 pl-10',
+                isRTL
+                  ? 'rounded-r-none border-r-0 pe-10 pr-10'
+                  : 'rounded-l-none border-l-0 pl-10 ps-10',
                 error && 'border-red-500',
                 className
               )}
               disabled={disabled}
               maxLength={maxLength}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
         </div>

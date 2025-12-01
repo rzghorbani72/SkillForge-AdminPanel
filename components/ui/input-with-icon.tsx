@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n/hooks';
 
 interface InputWithIconProps {
   id: string;
@@ -32,20 +33,29 @@ export function InputWithIcon({
   className,
   maxLength
 }: InputWithIconProps) {
+  const { isRTL } = useLanguage();
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" dir={isRTL ? 'rtl' : 'ltr'}>
       <Label htmlFor={id}>{label}</Label>
       <div className="relative">
-        <Icon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+        <Icon
+          className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+        />
         <Input
           id={id}
           type={type}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={cn('pl-10', error && 'border-red-500', className)}
+          className={cn(
+            isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10',
+            error && 'border-red-500',
+            className
+          )}
           disabled={disabled}
           maxLength={maxLength}
+          dir={isRTL ? 'rtl' : 'ltr'}
         />
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}

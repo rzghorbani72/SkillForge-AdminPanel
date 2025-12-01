@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -10,16 +12,19 @@ import {
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
 };
 
 const CreateProductPricing = ({ form }: Props) => {
+  const { t } = useTranslation();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pricing</CardTitle>
+        <CardTitle>{t('products.pricing')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <FormField
@@ -27,12 +32,12 @@ const CreateProductPricing = ({ form }: Props) => {
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price *</FormLabel>
+              <FormLabel>{t('products.price')} *</FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   inputMode="numeric"
-                  placeholder="0 (0-999,999,999)"
+                  placeholder={t('products.pricePlaceholder')}
                   {...field}
                   min="0"
                   max="999999999"
@@ -49,12 +54,14 @@ const CreateProductPricing = ({ form }: Props) => {
           name="original_price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Original Price (for discount)</FormLabel>
+              <FormLabel>
+                {t('products.originalPrice')} ({t('products.forDiscount')})
+              </FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   inputMode="numeric"
-                  placeholder="Optional - higher than price for discount"
+                  placeholder={t('products.originalPricePlaceholder')}
                   {...field}
                   min="0"
                   max="999999999"
@@ -63,14 +70,14 @@ const CreateProductPricing = ({ form }: Props) => {
               </FormControl>
               <FormMessage />
               <p className="text-sm text-gray-600">
-                If set, must be higher than price to show discount
+                {t('products.originalPriceDescription')}
               </p>
             </FormItem>
           )}
         />
 
         <p className="text-sm text-gray-600">
-          Enter whole numbers between 0 and 999,999,999
+          {t('products.enterWholeNumbers')}
         </p>
       </CardContent>
     </Card>

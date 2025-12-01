@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -17,18 +19,20 @@ import {
 } from '@/components/ui/select';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
 };
 
 const CreateProductTypeSettings = ({ form }: Props) => {
+  const { t } = useTranslation();
   const productType = form.watch('product_type');
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Product Type & Inventory</CardTitle>
+        <CardTitle>{t('products.productTypeInventory')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <FormField
@@ -36,16 +40,22 @@ const CreateProductTypeSettings = ({ form }: Props) => {
           name="product_type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Product Type *</FormLabel>
+              <FormLabel>{t('products.productType')} *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select product type" />
+                    <SelectValue
+                      placeholder={t('products.selectProductType')}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="DIGITAL">Digital Product</SelectItem>
-                  <SelectItem value="PHYSICAL">Physical Product</SelectItem>
+                  <SelectItem value="DIGITAL">
+                    {t('products.digitalProduct')}
+                  </SelectItem>
+                  <SelectItem value="PHYSICAL">
+                    {t('products.physicalProduct')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -60,12 +70,12 @@ const CreateProductTypeSettings = ({ form }: Props) => {
               name="stock_quantity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stock Quantity</FormLabel>
+                  <FormLabel>{t('products.stockQuantity')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       inputMode="numeric"
-                      placeholder="Enter available stock"
+                      placeholder={t('products.enterAvailableStock')}
                       {...field}
                       min="0"
                       step="1"
@@ -73,7 +83,7 @@ const CreateProductTypeSettings = ({ form }: Props) => {
                   </FormControl>
                   <FormMessage />
                   <p className="text-sm text-gray-600">
-                    Leave empty for unlimited stock
+                    {t('products.leaveEmptyForUnlimited')}
                   </p>
                 </FormItem>
               )}
@@ -84,12 +94,12 @@ const CreateProductTypeSettings = ({ form }: Props) => {
               name="weight"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Weight (kg)</FormLabel>
+                  <FormLabel>{t('products.weight')} (kg)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       inputMode="numeric"
-                      placeholder="Enter weight in kilograms"
+                      placeholder={t('products.enterWeightInKg')}
                       {...field}
                       min="0"
                       step="0.01"
@@ -105,9 +115,12 @@ const CreateProductTypeSettings = ({ form }: Props) => {
               name="dimensions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Dimensions</FormLabel>
+                  <FormLabel>{t('products.dimensions')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 10x5x3 cm or LxWxH" {...field} />
+                    <Input
+                      placeholder={t('products.dimensionsPlaceholder')}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

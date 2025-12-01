@@ -11,16 +11,19 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
 };
 
 const CreateProductBasicInfo = ({ form }: Props) => {
+  const { t } = useTranslation();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Basic Information</CardTitle>
+        <CardTitle>{t('courses.basicInformation')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <FormField
@@ -28,10 +31,10 @@ const CreateProductBasicInfo = ({ form }: Props) => {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Product Title *</FormLabel>
+              <FormLabel>{t('products.productTitle')} *</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter product title (min 5 characters)"
+                  placeholder={t('products.enterProductTitle')}
                   {...field}
                 />
               </FormControl>
@@ -39,8 +42,7 @@ const CreateProductBasicInfo = ({ form }: Props) => {
               <p
                 className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-gray-600'}`}
               >
-                Title must be between 5 and 80 characters (
-                {field.value?.length || 0}/80)
+                {t('courses.titleLength')} ({field.value?.length || 0}/80)
               </p>
             </FormItem>
           )}
@@ -51,17 +53,17 @@ const CreateProductBasicInfo = ({ form }: Props) => {
           name="short_description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Short Description</FormLabel>
+              <FormLabel>{t('products.shortDescription')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Brief product description (optional)"
+                  placeholder={t('products.briefDescription')}
                   {...field}
                   rows={2}
                 />
               </FormControl>
               <FormMessage />
               <p className="text-sm text-gray-600">
-                Short description (max 400 characters) -{' '}
+                {t('products.shortDescriptionLength')} -{' '}
                 {field.value?.length || 0}/400
               </p>
             </FormItem>

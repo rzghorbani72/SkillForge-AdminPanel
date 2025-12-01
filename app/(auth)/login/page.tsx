@@ -32,8 +32,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 // Note: Avoid client-side auth redirect here to prevent loops; middleware and protected layout handle it.
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import Link from 'next/link';
+import { LanguageDetector } from '@/components/providers/language-detector';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 export default function LoginPage() {
+  const { t } = useTranslation();
+  const { isRTL } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
@@ -80,26 +85,26 @@ export default function LoginPage() {
 
     if (authMethod === 'email') {
       if (!formData.email) {
-        newErrors.email = 'Email is required';
+        newErrors.email = t('auth.emailRequired');
       } else if (!isValidEmail(formData.email)) {
-        newErrors.email = 'Please enter a valid email address';
+        newErrors.email = t('auth.invalidEmail');
       }
     } else {
       if (!formData.phone) {
-        newErrors.phone = 'Phone number is required';
+        newErrors.phone = t('auth.phoneRequired');
       } else if (!isValidPhone(formData.phone)) {
-        newErrors.phone = 'Please enter a valid phone number';
+        newErrors.phone = t('auth.invalidPhone');
       }
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('auth.passwordRequired');
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = t('auth.passwordTooShort');
     }
 
     if (showSchoolSelection && !formData.school_id) {
-      newErrors.school_id = 'Please select a school';
+      newErrors.school_id = t('auth.selectSchool');
     }
 
     setErrors(newErrors);
@@ -240,332 +245,380 @@ export default function LoginPage() {
   // Middleware handles redirect for already-authenticated users.
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="w-full max-w-md">
-        {/* Logo/Brand */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-            <School className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
-          <p className="text-gray-600">Admin Panel</p>
+    <>
+      <LanguageDetector />
+      <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        {/* Language Switcher - Top Right/Left based on RTL */}
+        <div
+          className={`absolute top-4 z-[100] ${isRTL ? 'left-4' : 'right-4'}`}
+        >
+          <LanguageSwitcher />
         </div>
 
-        {/* Unauthorized Role Error */}
-        {unauthorizedError && (
-          <Alert variant="destructive" className="mb-6">
+        <div className="w-full max-w-md">
+          {/* Logo/Brand */}
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
+              <School className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
+            <p className="text-gray-600">{t('auth.adminPanel')}</p>
+          </div>
+
+          {/* Unauthorized Role Error */}
+          {unauthorizedError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{unauthorizedError}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Access Notice */}
+          <Alert className="mb-6" dir={isRTL ? 'rtl' : 'ltr'}>
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{unauthorizedError}</AlertDescription>
+            <AlertDescription>
+              {t('auth.panelForStaff')}{' '}
+              <strong>{t('auth.teachersManagersAdmins')}</strong>{' '}
+              {t('auth.staffOnly')} {t('auth.studentsLoginThroughSchool')}
+            </AlertDescription>
           </Alert>
-        )}
 
-        {/* Access Notice */}
-        <Alert className="mb-6">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            This panel is for{' '}
-            <strong>Teachers, Managers, and Administrators</strong> only.
-            Students should login through their school&apos;s website.
-          </AlertDescription>
-        </Alert>
+          <Card className="shadow-xl" dir={isRTL ? 'rtl' : 'ltr'}>
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-center text-2xl">
+                {t('auth.welcomeBack')}
+              </CardTitle>
+              <CardDescription className="text-center">
+                {t('auth.signInToAdmin')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs
+                value={authMethod}
+                onValueChange={(value: string) =>
+                  setAuthMethod(value as 'email' | 'phone')
+                }
+                className="w-full"
+              >
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger
+                    value="email"
+                    className="flex items-center gap-2"
+                  >
+                    <Mail className="h-4 w-4" />
+                    <span>{t('auth.email')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="phone"
+                    className="flex items-center gap-2"
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span>{t('auth.phone')}</span>
+                  </TabsTrigger>
+                </TabsList>
 
-        <Card className="shadow-xl">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-center text-2xl">Welcome back</CardTitle>
-            <CardDescription className="text-center">
-              Sign in to your admin account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs
-              value={authMethod}
-              onValueChange={(value: string) =>
-                setAuthMethod(value as 'email' | 'phone')
-              }
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger
+                <TabsContent
                   value="email"
-                  className="flex items-center space-x-2"
+                  className="space-y-4"
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 >
-                  <Mail className="h-4 w-4" />
-                  <span>Email</span>
-                </TabsTrigger>
-                <TabsTrigger
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <InputWithIcon
+                      id="email"
+                      label={t('auth.emailAddress')}
+                      type="email"
+                      placeholder={t('auth.enterEmail')}
+                      value={formData.email}
+                      onChange={(value) => handleInputChange('email', value)}
+                      icon={Mail}
+                      error={errors.email}
+                      disabled={isLoading}
+                    />
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password">{t('auth.password')}</Label>
+                      <div className="relative">
+                        <Lock
+                          className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+                        />
+                        <Input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder={t('auth.enterPassword')}
+                          value={formData.password}
+                          onChange={(e) =>
+                            handleInputChange('password', e.target.value)
+                          }
+                          className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
+                            errors.password ? 'border-red-500' : ''
+                          }`}
+                          disabled={isLoading}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
+                          onClick={() => setShowPassword(!showPassword)}
+                          disabled={isLoading}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
+                      </div>
+                      {errors.password && (
+                        <p className="text-sm text-red-500">
+                          {errors.password}
+                        </p>
+                      )}
+                    </div>
+
+                    {showSchoolSelection && (
+                      <div className="space-y-2">
+                        <Label htmlFor="school">{t('auth.selectSchool')}</Label>
+                        <div className="space-y-2">
+                          {availableSchools.map((school) => (
+                            <button
+                              key={school.id}
+                              type="button"
+                              onClick={() => handleSchoolSelection(school.id)}
+                              className={`w-full rounded-lg border p-3 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isRTL ? 'text-right' : 'text-left'}`}
+                            >
+                              <div className="font-medium">{school.name}</div>
+                              <div className="text-sm text-gray-500">
+                                {school.slug}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        {errors.school_id && (
+                          <p className="text-sm text-red-500">
+                            {errors.school_id}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="remember"
+                          aria-label="Remember me"
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <Label
+                          htmlFor="remember"
+                          className="text-sm text-gray-600"
+                        >
+                          {t('auth.rememberMe')}
+                        </Label>
+                      </div>
+                      <Link
+                        href="/forget-password"
+                        className="text-sm text-blue-600 hover:text-blue-500"
+                      >
+                        {t('auth.forgotPassword')}
+                      </Link>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2
+                            className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                          />
+                          {t('auth.signingIn')}
+                        </>
+                      ) : (
+                        t('auth.signIn')
+                      )}
+                    </Button>
+                  </form>
+                </TabsContent>
+
+                <TabsContent
                   value="phone"
-                  className="flex items-center space-x-2"
+                  className="space-y-4"
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 >
-                  <Phone className="h-4 w-4" />
-                  <span>Phone</span>
-                </TabsTrigger>
-              </TabsList>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <PhoneInputWithCountry
+                      id="phone"
+                      label={t('auth.phoneNumber')}
+                      placeholder={t('auth.enterPhone')}
+                      value={formData.phone}
+                      onChange={(value) => handleInputChange('phone', value)}
+                      error={errors.phone}
+                      disabled={isLoading}
+                    />
 
-              <TabsContent value="email" className="space-y-4">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <InputWithIcon
-                    id="email"
-                    label="Email address"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={(value) => handleInputChange('email', value)}
-                    icon={Mail}
-                    error={errors.email}
-                    disabled={isLoading}
-                  />
-
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Enter your password"
-                        value={formData.password}
-                        onChange={(e) =>
-                          handleInputChange('password', e.target.value)
-                        }
-                        className={`pl-10 pr-10 ${
-                          errors.password ? 'border-red-500' : ''
-                        }`}
-                        disabled={isLoading}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                        disabled={isLoading}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-gray-400" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-gray-400" />
-                        )}
-                      </Button>
-                    </div>
-                    {errors.password && (
-                      <p className="text-sm text-red-500">{errors.password}</p>
-                    )}
-                  </div>
-
-                  {showSchoolSelection && (
-                    <div className="space-y-2">
-                      <Label htmlFor="school">Select School</Label>
-                      <div className="space-y-2">
-                        {availableSchools.map((school) => (
-                          <button
-                            key={school.id}
-                            type="button"
-                            onClick={() => handleSchoolSelection(school.id)}
-                            className="w-full rounded-lg border p-3 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            <div className="font-medium">{school.name}</div>
-                            <div className="text-sm text-gray-500">
-                              {school.slug}
-                            </div>
-                          </button>
-                        ))}
+                    <div className="space-y-2" dir={isRTL ? 'rtl' : 'ltr'}>
+                      <Label htmlFor="password-phone">
+                        {t('auth.password')}
+                      </Label>
+                      <div className="relative">
+                        <Lock
+                          className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+                        />
+                        <Input
+                          id="password-phone"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder={t('auth.enterPassword')}
+                          value={formData.password}
+                          onChange={(e) =>
+                            handleInputChange('password', e.target.value)
+                          }
+                          className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
+                            errors.password ? 'border-red-500' : ''
+                          }`}
+                          disabled={isLoading}
+                          dir={isRTL ? 'rtl' : 'ltr'}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
+                          onClick={() => setShowPassword(!showPassword)}
+                          disabled={isLoading}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
                       </div>
-                      {errors.school_id && (
+                      {errors.password && (
                         <p className="text-sm text-red-500">
-                          {errors.school_id}
+                          {errors.password}
                         </p>
                       )}
                     </div>
-                  )}
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id="remember"
-                        aria-label="Remember me"
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <Label
-                        htmlFor="remember"
-                        className="text-sm text-gray-600"
-                      >
-                        Remember me
-                      </Label>
-                    </div>
-                    <Link
-                      href="/forget-password"
-                      className="text-sm text-blue-600 hover:text-blue-500"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Signing in...
-                      </>
-                    ) : (
-                      'Sign in'
-                    )}
-                  </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="phone" className="space-y-4">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <PhoneInputWithCountry
-                    id="phone"
-                    label="Phone number"
-                    placeholder="Enter your phone number"
-                    value={formData.phone}
-                    onChange={(value) => handleInputChange('phone', value)}
-                    error={errors.phone}
-                    disabled={isLoading}
-                  />
-
-                  <div className="space-y-2">
-                    <Label htmlFor="password-phone">Password</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="password-phone"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Enter your password"
-                        value={formData.password}
-                        onChange={(e) =>
-                          handleInputChange('password', e.target.value)
-                        }
-                        className={`pl-10 pr-10 ${
-                          errors.password ? 'border-red-500' : ''
-                        }`}
-                        disabled={isLoading}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                        disabled={isLoading}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-gray-400" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-gray-400" />
-                        )}
-                      </Button>
-                    </div>
-                    {errors.password && (
-                      <p className="text-sm text-red-500">{errors.password}</p>
-                    )}
-                  </div>
-
-                  {showSchoolSelection && (
-                    <div className="space-y-2">
-                      <Label htmlFor="school-phone">Select School</Label>
+                    {showSchoolSelection && (
                       <div className="space-y-2">
-                        {availableSchools.map((school) => (
-                          <button
-                            key={school.id}
-                            type="button"
-                            onClick={() => handleSchoolSelection(school.id)}
-                            className="w-full rounded-lg border p-3 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            <div className="font-medium">{school.name}</div>
-                            <div className="text-sm text-gray-500">
-                              {school.slug}
-                            </div>
-                          </button>
-                        ))}
+                        <Label htmlFor="school-phone">
+                          {t('auth.selectSchool')}
+                        </Label>
+                        <div className="space-y-2">
+                          {availableSchools.map((school) => (
+                            <button
+                              key={school.id}
+                              type="button"
+                              onClick={() => handleSchoolSelection(school.id)}
+                              className={`w-full rounded-lg border p-3 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isRTL ? 'text-right' : 'text-left'}`}
+                            >
+                              <div className="font-medium">{school.name}</div>
+                              <div className="text-sm text-gray-500">
+                                {school.slug}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        {errors.school_id && (
+                          <p className="text-sm text-red-500">
+                            {errors.school_id}
+                          </p>
+                        )}
                       </div>
-                      {errors.school_id && (
-                        <p className="text-sm text-red-500">
-                          {errors.school_id}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id="remember-phone"
-                        aria-label="Remember me"
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <Label
-                        htmlFor="remember-phone"
-                        className="text-sm text-gray-600"
-                      >
-                        Remember me
-                      </Label>
-                    </div>
-                    <Link
-                      href="/forget-password"
-                      className="text-sm text-blue-600 hover:text-blue-500"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Signing in...
-                      </>
-                    ) : (
-                      'Sign in'
                     )}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Don&apos;t have an admin account?{' '}
-                <Link
-                  href="/register"
-                  className="font-medium text-blue-600 hover:text-blue-500"
-                >
-                  Register your School
-                </Link>
-              </p>
-            </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="remember-phone"
+                          aria-label="Remember me"
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <Label
+                          htmlFor="remember-phone"
+                          className="text-sm text-gray-600"
+                        >
+                          {t('auth.rememberMe')}
+                        </Label>
+                      </div>
+                      <Link
+                        href="/forget-password"
+                        className="text-sm text-blue-600 hover:text-blue-500"
+                      >
+                        {t('auth.forgotPassword')}
+                      </Link>
+                    </div>
 
-            <div className="mt-4 text-center">
-              <p className="text-xs text-gray-500">
-                Are you a student?{' '}
-                <Link
-                  href="/find-school"
-                  className="text-blue-600 hover:text-blue-500"
-                >
-                  Find your school
-                </Link>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2
+                            className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                          />
+                          {t('auth.signingIn')}
+                        </>
+                      ) : (
+                        t('auth.signIn')
+                      )}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </Tabs>
 
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-xs text-gray-500">
-            By signing in, you agree to our{' '}
-            <Link href="/terms" className="text-blue-600 hover:text-blue-500">
-              Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
-              Privacy Policy
-            </Link>
-          </p>
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                  {t('auth.dontHaveAccount')}{' '}
+                  <Link
+                    href="/register"
+                    className="font-medium text-blue-600 hover:text-blue-500"
+                  >
+                    {t('auth.registerSchool')}
+                  </Link>
+                </p>
+              </div>
+
+              <div className="mt-4 text-center">
+                <p className="text-xs text-gray-500">
+                  {t('auth.areYouStudent')}{' '}
+                  <Link
+                    href="/find-school"
+                    className="text-blue-600 hover:text-blue-500"
+                  >
+                    {t('auth.findSchool')}
+                  </Link>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-500">
+              By signing in, you agree to our{' '}
+              <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link
+                href="/privacy"
+                className="text-blue-600 hover:text-blue-500"
+              >
+                Privacy Policy
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

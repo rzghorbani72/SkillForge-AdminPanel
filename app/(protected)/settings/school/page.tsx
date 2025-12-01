@@ -18,6 +18,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
 import { extractDomainPart, formatDomain } from '@/lib/school-utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface SchoolFormState {
   name: string;
@@ -32,6 +33,7 @@ const DEFAULT_FORM: SchoolFormState = {
 };
 
 export default function SchoolSettingsPage() {
+  const { t } = useTranslation();
   const { school, isLoading } = useSettingsData();
   const [form, setForm] = useState<SchoolFormState>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -71,7 +73,7 @@ export default function SchoolSettingsPage() {
       }
 
       await apiClient.updateSchool(updateData);
-      ErrorHandler.showSuccess('School settings updated successfully');
+      ErrorHandler.showSuccess(t('settings.schoolSettingsUpdatedSuccess'));
     } catch (error) {
       console.error('Error updating school settings', error);
       ErrorHandler.handleApiError(error);
@@ -93,46 +95,48 @@ export default function SchoolSettingsPage() {
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">School Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('settings.schoolSettingsTitle')}
+        </h1>
         <p className="text-muted-foreground">
-          Manage how your school appears across the SkillForge ecosystem.
+          {t('settings.schoolSettingsSubtitle')}
         </p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <Card>
           <CardHeader>
-            <CardTitle>General Information</CardTitle>
+            <CardTitle>{t('settings.generalInformation')}</CardTitle>
             <CardDescription>
-              Update the name, description, and domain for your school.
+              {t('settings.generalInformationDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="schoolName">School name</Label>
+                <Label htmlFor="schoolName">{t('settings.schoolName')}</Label>
                 <Input
                   id="schoolName"
                   value={form.name}
                   onChange={(event) =>
                     setForm({ ...form, name: event.target.value })
                   }
-                  placeholder="SkillForge Academy"
+                  placeholder={t('settings.schoolNamePlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="domain">Custom domain</Label>
+                <Label htmlFor="domain">{t('settings.customDomain')}</Label>
                 <Input
                   id="domain"
                   value={form.domain}
                   onChange={(event) =>
                     setForm({ ...form, domain: event.target.value })
                   }
-                  placeholder="academy"
+                  placeholder={t('settings.customDomainPlaceholder')}
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t('settings.description')}</Label>
                 <Textarea
                   id="description"
                   rows={4}
@@ -140,14 +144,14 @@ export default function SchoolSettingsPage() {
                   onChange={(event) =>
                     setForm({ ...form, description: event.target.value })
                   }
-                  placeholder="Describe your school for prospective students"
+                  placeholder={t('settings.descriptionPlaceholder')}
                 />
               </div>
             </div>
             <div className="flex justify-end">
               <Button onClick={handleSave} disabled={isSaving}>
                 <Save className="mr-2 h-4 w-4" />
-                {isSaving ? 'Saving…' : 'Save changes'}
+                {isSaving ? t('settings.saving') : t('settings.saveChanges')}
               </Button>
             </div>
           </CardContent>
@@ -157,24 +161,25 @@ export default function SchoolSettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                <Building2 className="h-4 w-4" /> Current overview
+                <Building2 className="h-4 w-4" />{' '}
+                {t('settings.currentOverview')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <div className="flex justify-between">
-                <span>Students</span>
+                <span>{t('settings.students')}</span>
                 <span className="font-medium text-foreground">
                   {school?.students_count ?? '—'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Teachers</span>
+                <span>{t('settings.teachers')}</span>
                 <span className="font-medium text-foreground">
                   {school?.teachers_count ?? '—'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Managers</span>
+                <span>{t('settings.managers')}</span>
                 <span className="font-medium text-foreground">
                   {school?.managers_count ?? '—'}
                 </span>
@@ -185,34 +190,25 @@ export default function SchoolSettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                <Globe className="h-4 w-4" /> Domain tips
+                <Globe className="h-4 w-4" /> {t('settings.domainTips')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
-              <p>
-                Use a subdomain you control (e.g. academy.yourschool.com) for
-                the best branding experience.
-              </p>
-              <p>
-                You can request SSL certificates and custom DNS support by
-                contacting SkillForge support.
-              </p>
+              <p>{t('settings.domainTipsText1')}</p>
+              <p>{t('settings.domainTipsText2')}</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                <Info className="h-4 w-4" /> Need help?
+                <Info className="h-4 w-4" /> {t('settings.needHelp')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
-              <p>
-                Visit the documentation to learn how to configure single
-                sign-on, custom domains, and more.
-              </p>
+              <p>{t('settings.needHelpText')}</p>
               <Button variant="outline" size="sm">
-                Open documentation
+                {t('settings.openDocumentation')}
               </Button>
             </CardContent>
           </Card>

@@ -1,8 +1,11 @@
+'use client';
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
@@ -16,25 +19,29 @@ type Props = {
 };
 
 const CreateProductCoverImage = ({ form }: Props) => {
+  const { t } = useTranslation();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Cover Image</CardTitle>
+        <CardTitle>{t('products.coverImage')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <ImageUploadPreview
-          title={form.watch('title') || 'Product Cover'}
-          description={form.watch('description') || 'Product cover image'}
+          title={form.watch('title') || t('products.productCover')}
+          description={
+            form.watch('description') || t('products.productCoverImage')
+          }
           onSuccess={(image) => {
             form.setValue('cover_id', image.id.toString());
           }}
           selectedImageId={form.watch('cover_id')}
-          alt="Product cover preview"
+          alt={t('products.productCoverPreview')}
           className="aspect-[5/4] w-full max-w-md"
-          placeholderText="No cover image selected"
-          placeholderSubtext="Upload an image to preview it here"
-          uploadButtonText="Upload Cover Image"
-          selectButtonText="Select an image first"
+          placeholderText={t('products.noCoverImageSelected')}
+          placeholderSubtext={t('products.uploadImageToPreview')}
+          uploadButtonText={t('products.uploadCoverImage')}
+          selectButtonText={t('products.selectImageFirst')}
         />
       </CardContent>
     </Card>

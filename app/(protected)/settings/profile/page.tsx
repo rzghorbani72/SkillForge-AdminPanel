@@ -18,6 +18,7 @@ import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface ProfileFormState {
   name: string;
@@ -34,6 +35,7 @@ const DEFAULT_FORM: ProfileFormState = {
 };
 
 export default function ProfileSettingsPage() {
+  const { t } = useTranslation();
   const { user, isLoading } = useSettingsData();
   const [form, setForm] = useState<ProfileFormState>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -72,7 +74,7 @@ export default function ProfileSettingsPage() {
         phone_number: form.phone,
         bio: form.bio
       });
-      ErrorHandler.showSuccess('Profile updated successfully');
+      ErrorHandler.showSuccess(t('settings.profileUpdatedSuccess'));
     } catch (error) {
       console.error('Error updating profile', error);
       ErrorHandler.handleApiError(error);
@@ -94,17 +96,19 @@ export default function ProfileSettingsPage() {
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('settings.profileSettingsTitle')}
+        </h1>
         <p className="text-muted-foreground">
-          Update the personal information other administrators will see.
+          {t('settings.profileSettingsSubtitle')}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
+          <CardTitle>{t('settings.profileInformation')}</CardTitle>
           <CardDescription>
-            Manage your avatar, contact information, and bio.
+            {t('settings.profileInformationDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -115,28 +119,28 @@ export default function ProfileSettingsPage() {
             </Avatar>
             <div className="space-y-2">
               <Button variant="outline" size="sm">
-                <Upload className="mr-2 h-4 w-4" /> Upload Photo
+                <Upload className="mr-2 h-4 w-4" /> {t('settings.uploadPhoto')}
               </Button>
               <p className="text-sm text-muted-foreground">
-                JPG, PNG or GIF up to 2MB.
+                {t('settings.photoFormatHint')}
               </p>
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Full name</Label>
+              <Label htmlFor="name">{t('settings.fullName')}</Label>
               <Input
                 id="name"
                 value={form.name}
                 onChange={(event) =>
                   setForm({ ...form, name: event.target.value })
                 }
-                placeholder="Jane Doe"
+                placeholder={t('settings.fullNamePlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('settings.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -144,22 +148,22 @@ export default function ProfileSettingsPage() {
                 onChange={(event) =>
                   setForm({ ...form, email: event.target.value })
                 }
-                placeholder="jane@skillforge.com"
+                placeholder={t('settings.emailPlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone number</Label>
+              <Label htmlFor="phone">{t('settings.phoneNumber')}</Label>
               <Input
                 id="phone"
                 value={form.phone}
                 onChange={(event) =>
                   setForm({ ...form, phone: event.target.value })
                 }
-                placeholder="+1 555 000 0000"
+                placeholder={t('settings.phoneNumberPlaceholder')}
               />
             </div>
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="bio">Bio</Label>
+              <Label htmlFor="bio">{t('settings.bio')}</Label>
               <Textarea
                 id="bio"
                 rows={4}
@@ -167,7 +171,7 @@ export default function ProfileSettingsPage() {
                 onChange={(event) =>
                   setForm({ ...form, bio: event.target.value })
                 }
-                placeholder="Tell colleagues more about you"
+                placeholder={t('settings.bioPlaceholder')}
               />
             </div>
           </div>
@@ -175,7 +179,7 @@ export default function ProfileSettingsPage() {
           <div className="flex justify-end">
             <Button onClick={handleSave} disabled={isSaving || !user}>
               <Save className="mr-2 h-4 w-4" />
-              {isSaving ? 'Saving…' : 'Save changes'}
+              {isSaving ? t('settings.saving') : t('settings.saveChanges')}
             </Button>
           </div>
         </CardContent>

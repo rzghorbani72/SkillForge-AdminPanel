@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
 import { SchoolSelector } from './school-selector';
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 export default function Header() {
   return (
@@ -13,6 +14,7 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-4">
           <SchoolSelector />
+          <LanguageSwitcher />
           <UserNav />
           <ThemeToggle />
         </div>
