@@ -54,6 +54,23 @@ export function formatBytes(
   }`;
 }
 
+/**
+ * Translate currency symbol based on language
+ * @param symbol - Currency symbol to translate
+ * @param language - Language code (e.g., 'fa', 'en')
+ * @returns Translated currency symbol
+ */
+function translateCurrencySymbol(symbol: string, language?: string): string {
+  if (!symbol || !language) return symbol;
+
+  // Translate Toman to Persian when language is Farsi
+  if (symbol === 'Toman' && language === 'fa') {
+    return 'تومان';
+  }
+
+  return symbol;
+}
+
 export function formatCurrency(
   amount: number,
   options?: {
@@ -61,27 +78,32 @@ export function formatCurrency(
     currency_symbol?: string;
     currency_position?: 'before' | 'after';
     divideBy?: number;
+    language?: string;
   }
 ): string {
   const {
     currency = 'USD',
     currency_symbol,
     currency_position = 'after',
-    divideBy = 100
+    divideBy = 100,
+    language
   } = options || {};
 
   const numericValue = amount / divideBy;
 
   // If custom symbol is provided, format manually
   if (currency_symbol) {
+    // Translate currency symbol based on language
+    const translatedSymbol = translateCurrencySymbol(currency_symbol, language);
+
     const formattedNumber = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     }).format(numericValue);
 
     return currency_position === 'before'
-      ? `${currency_symbol}${formattedNumber}`
-      : `${formattedNumber} ${currency_symbol}`;
+      ? `${translatedSymbol}${formattedNumber}`
+      : `${formattedNumber} ${translatedSymbol}`;
   }
 
   // Use Intl.NumberFormat for standard currencies
@@ -101,11 +123,12 @@ export function formatCurrency(
 export function formatCurrencyWithSchool(
   amount: number,
   school?: School | null,
-  divideBy?: number
+  divideBy?: number,
+  language?: string
 ): string {
   if (!school) {
     // Fallback to USD if no school
-    return formatCurrency(amount, { divideBy: divideBy || 100 });
+    return formatCurrency(amount, { divideBy: divideBy || 100, language });
   }
 
   // Check if school has currency configuration
@@ -129,7 +152,7 @@ export function formatCurrencyWithSchool(
         hasCurrencySymbol: !!schoolWithCurrency.currency_symbol
       });
     }
-    return formatCurrency(amount, { divideBy: divideBy || 100 });
+    return formatCurrency(amount, { divideBy: divideBy || 100, language });
   }
 
   // For Toman (IRR), typically no division needed as it's already in the base unit
@@ -141,11 +164,18 @@ export function formatCurrencyWithSchool(
       ? 1
       : 100;
 
+  // Try to get language from localStorage if not provided (client-side only)
+  let currentLanguage = language;
+  if (!currentLanguage && typeof window !== 'undefined') {
+    currentLanguage = localStorage.getItem('preferred_language') || undefined;
+  }
+
   return formatCurrency(amount, {
     currency: schoolWithCurrency.currency || 'USD',
     currency_symbol: schoolWithCurrency.currency_symbol,
     currency_position: schoolWithCurrency.currency_position || 'after',
-    divideBy: divideBy ?? defaultDivideBy
+    divideBy: divideBy ?? defaultDivideBy,
+    language: currentLanguage
   });
 }
 

@@ -21,7 +21,7 @@ import { formatCurrencyWithSchool } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function DashboardPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const school = useCurrentSchool();
   const {
     isLoading,
@@ -269,8 +269,19 @@ export default function DashboardPage() {
                     {t('dashboard.revenueTarget')}
                   </span>
                   <span className="text-sm text-muted-foreground">
-                    {formatCurrencyWithSchool(currentRevenue, school)}/
-                    {formatCurrencyWithSchool(revenueTarget, school)}
+                    {formatCurrencyWithSchool(
+                      currentRevenue,
+                      school,
+                      undefined,
+                      language
+                    )}
+                    /
+                    {formatCurrencyWithSchool(
+                      revenueTarget,
+                      school,
+                      undefined,
+                      language
+                    )}
                   </span>
                 </div>
                 <Progress
