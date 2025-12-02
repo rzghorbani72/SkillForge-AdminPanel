@@ -201,44 +201,74 @@ export function formatDateTime(date: string | Date): string {
   }).format(new Date(date));
 }
 
-export function formatRelativeTime(date: string | Date): string {
+export function formatRelativeTime(
+  date: string | Date,
+  t?: (key: string) => string
+): string {
   const now = new Date();
   const targetDate = new Date(date);
   const diffInSeconds = Math.floor(
     (now.getTime() - targetDate.getTime()) / 1000
   );
 
+  // If no translation function provided, use English defaults
+  const translate = t || ((key: string) => key);
+
   if (diffInSeconds < 60) {
-    return 'Just now';
+    return translate('dashboard.timeJustNow');
   }
 
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   if (diffInMinutes < 60) {
-    return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    const key =
+      diffInMinutes === 1
+        ? 'dashboard.timeMinutesAgo'
+        : 'dashboard.timeMinutesAgoPlural';
+    return translate(key).replace('{{count}}', diffInMinutes.toString());
   }
 
   const diffInHours = Math.floor(diffInMinutes / 60);
   if (diffInHours < 24) {
-    return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    const key =
+      diffInHours === 1
+        ? 'dashboard.timeHoursAgo'
+        : 'dashboard.timeHoursAgoPlural';
+    return translate(key).replace('{{count}}', diffInHours.toString());
   }
 
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays < 7) {
-    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    const key =
+      diffInDays === 1
+        ? 'dashboard.timeDaysAgo'
+        : 'dashboard.timeDaysAgoPlural';
+    return translate(key).replace('{{count}}', diffInDays.toString());
   }
 
   const diffInWeeks = Math.floor(diffInDays / 7);
   if (diffInWeeks < 4) {
-    return `${diffInWeeks} week${diffInWeeks > 1 ? 's' : ''} ago`;
+    const key =
+      diffInWeeks === 1
+        ? 'dashboard.timeWeeksAgo'
+        : 'dashboard.timeWeeksAgoPlural';
+    return translate(key).replace('{{count}}', diffInWeeks.toString());
   }
 
   const diffInMonths = Math.floor(diffInDays / 30);
   if (diffInMonths < 12) {
-    return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+    const key =
+      diffInMonths === 1
+        ? 'dashboard.timeMonthsAgo'
+        : 'dashboard.timeMonthsAgoPlural';
+    return translate(key).replace('{{count}}', diffInMonths.toString());
   }
 
   const diffInYears = Math.floor(diffInDays / 365);
-  return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
+  const key =
+    diffInYears === 1
+      ? 'dashboard.timeYearsAgo'
+      : 'dashboard.timeYearsAgoPlural';
+  return translate(key).replace('{{count}}', diffInYears.toString());
 }
 
 export function truncateText(text: string, maxLength: number): string {

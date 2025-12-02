@@ -237,7 +237,26 @@ export const en = {
     paymentsWillAppear:
       'Payment transactions will appear here once students purchase your courses.',
     published: 'Published',
-    draft: 'Draft'
+    draft: 'Draft',
+    activityNewCourseCreated: 'New course created',
+    activityNewStudentEnrolled: 'New student enrolled',
+    activityPaymentReceived: 'Payment received',
+    activityCourseWasCreated: '{{courseName}} course was created',
+    activityEnrolledIn: '{{studentName}} enrolled in {{courseName}}',
+    activityPaymentFor: '{{amount}} payment for {{courseName}} course',
+    timeJustNow: 'Just now',
+    timeMinutesAgo: '{{count}} minute ago',
+    timeMinutesAgoPlural: '{{count}} minutes ago',
+    timeHoursAgo: '{{count}} hour ago',
+    timeHoursAgoPlural: '{{count}} hours ago',
+    timeDaysAgo: '{{count}} day ago',
+    timeDaysAgoPlural: '{{count}} days ago',
+    timeWeeksAgo: '{{count}} week ago',
+    timeWeeksAgoPlural: '{{count}} weeks ago',
+    timeMonthsAgo: '{{count}} month ago',
+    timeMonthsAgoPlural: '{{count}} months ago',
+    timeYearsAgo: '{{count}} year ago',
+    timeYearsAgoPlural: '{{count}} years ago'
   },
   schools: {
     title: 'Schools',

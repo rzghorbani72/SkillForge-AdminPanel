@@ -4,9 +4,9 @@ import { Course, Enrollment, Payment } from '@/types/api';
 import {
   formatCurrency,
   formatNumber,
-  formatCurrencyWithSchool
+  formatCurrencyWithSchool,
+  formatRelativeTime
 } from '@/lib/utils';
-import { recentActivity } from '@/constants/data';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -20,7 +20,7 @@ export type DashboardStatsCard = {
 };
 
 const useDashboard = () => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const school = useCurrentSchool();
   const [recentCourses, setRecentCourses] = useState<Course[]>([]);
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
@@ -212,17 +212,122 @@ const useDashboard = () => {
   const safeRecentPayments = Array.isArray(recentPayments)
     ? recentPayments
     : [];
-  const safeRecentActivity = Array.isArray(recentActivity)
-    ? recentActivity
-    : [];
+
+  // Generate real activity items from actual data
+  const realActivity = useMemo(() => {
+    const activities: any[] = [];
+
+    // Generate activities from recent courses
+    safeRecentCourses.slice(0, 3).forEach((course) => {
+      if (course.created_at) {
+        activities.push({
+          id: `course-${course.id}`,
+          type: 'course_created',
+          title: t('dashboard.activityNewCourseCreated'),
+          description: t('dashboard.activityCourseWasCreated').replace(
+            /\{\{courseName\}\}/g,
+            course.title
+          ),
+          timestamp: course.created_at,
+          user:
+            course.author?.user?.name ||
+            course.author?.display_name ||
+            t('dashboard.unknownUser')
+        });
+      }
+    });
+
+    // Generate activities from recent enrollments
+    safeRecentEnrollments.slice(0, 3).forEach((enrollment) => {
+      if (enrollment.enrolled_at) {
+        const studentName = enrollment.user?.name || t('dashboard.unknownUser');
+        const courseName =
+          enrollment.course?.title || t('dashboard.unknownCourse');
+        activities.push({
+          id: `enrollment-${enrollment.id}`,
+          type: 'student_enrolled',
+          title: t('dashboard.activityNewStudentEnrolled'),
+          description: t('dashboard.activityEnrolledIn')
+            .replace(/\{\{studentName\}\}/g, studentName)
+            .replace(/\{\{courseName\}\}/g, courseName),
+          timestamp: enrollment.enrolled_at,
+          user: studentName
+        });
+      }
+    });
+
+    // Generate activities from recent payments
+    safeRecentPayments
+      .filter((payment) => payment.status === 'COMPLETED')
+      .slice(0, 3)
+      .forEach((payment) => {
+        if (payment.payment_date) {
+          const userName = payment.user?.name || t('dashboard.unknownUser');
+          const courseName =
+            payment.course?.title || t('dashboard.unknownCourse');
+          const amount = formatCurrencyWithSchool(
+            payment.amount ?? 0,
+            school,
+            undefined,
+            language
+          );
+          activities.push({
+            id: `payment-${payment.id}`,
+            type: 'payment_received',
+            title: t('dashboard.activityPaymentReceived'),
+            description: t('dashboard.activityPaymentFor')
+              .replace(/\{\{amount\}\}/g, amount)
+              .replace(/\{\{courseName\}\}/g, courseName),
+            timestamp: payment.payment_date,
+            user: userName
+          });
+        }
+      });
+
+    // Sort by timestamp (most recent first)
+    return activities
+      .sort((a, b) => {
+        const dateA = new Date(a.timestamp).getTime();
+        const dateB = new Date(b.timestamp).getTime();
+        return dateB - dateA;
+      })
+      .slice(0, 10); // Limit to 10 most recent activities
+  }, [
+    safeRecentCourses,
+    safeRecentEnrollments,
+    safeRecentPayments,
+    school,
+    t,
+    language
+  ]);
+
+  // Format activity timestamps with translations
+  const formattedActivity = useMemo(() => {
+    if (!Array.isArray(realActivity)) return [];
+
+    return realActivity.map((activity: any) => {
+      // Format timestamp - real activity always has ISO date strings
+      let translatedTimestamp = activity.timestamp;
+      if (activity.timestamp && typeof activity.timestamp === 'string') {
+        // Format ISO date string as relative time
+        translatedTimestamp = formatRelativeTime(activity.timestamp, t);
+      }
+
+      return {
+        ...activity,
+        timestamp: translatedTimestamp
+      };
+    });
+  }, [realActivity, t]);
 
   return {
     isLoading,
     recentCourses: safeRecentCourses,
     recentEnrollments: safeRecentEnrollments,
     recentPayments: safeRecentPayments,
-    recentActivity: safeRecentActivity,
-    statsCards
+    recentActivity: formattedActivity,
+    statsCards,
+    statsTotals
   };
 };
 

@@ -230,7 +230,26 @@ export const tr = {
     paymentsWillAppear:
       'Öğrenciler kurslarınızı satın aldığında ödeme işlemleri burada görünecek.',
     published: 'Yayınlandı',
-    draft: 'Taslak'
+    draft: 'Taslak',
+    activityNewCourseCreated: 'Yeni kurs oluşturuldu',
+    activityNewStudentEnrolled: 'Yeni öğrenci kaydoldu',
+    activityPaymentReceived: 'Ödeme alındı',
+    activityCourseWasCreated: '{{courseName}} kursu oluşturuldu',
+    activityEnrolledIn: '{{studentName}}, {{courseName}} kursuna kaydoldu',
+    activityPaymentFor: '{{courseName}} kursu için {{amount}} ödeme',
+    timeJustNow: 'Az önce',
+    timeMinutesAgo: '{{count}} dakika önce',
+    timeMinutesAgoPlural: '{{count}} dakika önce',
+    timeHoursAgo: '{{count}} saat önce',
+    timeHoursAgoPlural: '{{count}} saat önce',
+    timeDaysAgo: '{{count}} gün önce',
+    timeDaysAgoPlural: '{{count}} gün önce',
+    timeWeeksAgo: '{{count}} hafta önce',
+    timeWeeksAgoPlural: '{{count}} hafta önce',
+    timeMonthsAgo: '{{count}} ay önce',
+    timeMonthsAgoPlural: '{{count}} ay önce',
+    timeYearsAgo: '{{count}} yıl önce',
+    timeYearsAgoPlural: '{{count}} yıl önce'
   },
   schools: {
     title: 'Okullar',

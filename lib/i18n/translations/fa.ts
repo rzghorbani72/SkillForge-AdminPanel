@@ -228,7 +228,26 @@ export const fa = {
     paymentsWillAppear:
       'هنگامی که دانشجویان دوره‌های شما را خریداری کنند، تراکنش‌های پرداخت در اینجا ظاهر می‌شوند.',
     published: 'منتشر شده',
-    draft: 'پیش‌نویس'
+    draft: 'پیش‌نویس',
+    activityNewCourseCreated: 'دوره جدید ایجاد شد',
+    activityNewStudentEnrolled: 'دانشجوی جدید ثبت‌نام کرد',
+    activityPaymentReceived: 'پرداخت دریافت شد',
+    activityCourseWasCreated: 'دوره {{courseName}} ایجاد شد',
+    activityEnrolledIn: '{{studentName}} در دوره {{courseName}} ثبت‌نام کرد',
+    activityPaymentFor: 'پرداخت {{amount}} برای دوره {{courseName}}',
+    timeJustNow: 'همین الان',
+    timeMinutesAgo: '{{count}} دقیقه پیش',
+    timeMinutesAgoPlural: '{{count}} دقیقه پیش',
+    timeHoursAgo: '{{count}} ساعت پیش',
+    timeHoursAgoPlural: '{{count}} ساعت پیش',
+    timeDaysAgo: '{{count}} روز پیش',
+    timeDaysAgoPlural: '{{count}} روز پیش',
+    timeWeeksAgo: '{{count}} هفته پیش',
+    timeWeeksAgoPlural: '{{count}} هفته پیش',
+    timeMonthsAgo: '{{count}} ماه پیش',
+    timeMonthsAgoPlural: '{{count}} ماه پیش',
+    timeYearsAgo: '{{count}} سال پیش',
+    timeYearsAgoPlural: '{{count}} سال پیش'
   },
   schools: {
     title: 'مدارس',

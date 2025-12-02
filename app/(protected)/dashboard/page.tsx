@@ -29,7 +29,8 @@ export default function DashboardPage() {
     recentEnrollments,
     recentPayments,
     recentActivity,
-    statsCards
+    statsCards,
+    statsTotals
   } = useDashboard();
 
   // Test the access control hook
@@ -39,11 +40,78 @@ export default function DashboardPage() {
     error: userError
   } = useAccessControl();
 
-  // Calculate actual revenue from payments
+  // Calculate monthly statistics
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+
+  // Calculate actual revenue from payments this month
   const currentRevenue = recentPayments
-    .filter((p) => p.status === 'COMPLETED')
+    .filter((p) => {
+      if (p.status !== 'COMPLETED') return false;
+      if (!p.payment_date) return false;
+      const paymentDate = new Date(p.payment_date);
+      return paymentDate >= startOfMonth;
+    })
     .reduce((sum, p) => sum + (p.amount ?? 0), 0);
-  const revenueTarget = 7500000; // 75,000 in smallest currency unit (cents or tomans)
+
+  // Calculate revenue from last month to set target (110% of last month)
+  const lastMonthRevenue = recentPayments
+    .filter((p) => {
+      if (p.status !== 'COMPLETED') return false;
+      if (!p.payment_date) return false;
+      const paymentDate = new Date(p.payment_date);
+      return paymentDate >= startOfLastMonth && paymentDate <= endOfLastMonth;
+    })
+    .reduce((sum, p) => sum + (p.amount ?? 0), 0);
+
+  // Set revenue target as 110% of last month's revenue, or use current revenue * 1.5 if no last month data
+  const revenueTarget =
+    lastMonthRevenue > 0
+      ? Math.round(lastMonthRevenue * 1.1)
+      : currentRevenue > 0
+        ? Math.round(currentRevenue * 1.5)
+        : 7500000; // Fallback default
+
+  // Calculate courses created this month from recent courses
+  // Note: This is an approximation based on recent courses. For accurate monthly stats,
+  // you would need to fetch all courses or use a dedicated monthly stats API endpoint
+  const coursesThisMonth = recentCourses.filter((course) => {
+    if (!course.created_at) return false;
+    const createdDate = new Date(course.created_at);
+    return createdDate >= startOfMonth;
+  }).length;
+
+  // Use total courses from stats for better target calculation
+  const totalCourses = statsTotals?.totalCourses || recentCourses.length;
+  // Set course creation target: aim for 5 new courses per month minimum, or 10% growth
+  const courseCreationTarget = Math.max(5, Math.ceil(totalCourses * 0.1));
+  const courseCreationProgress =
+    courseCreationTarget > 0
+      ? Math.min((coursesThisMonth / courseCreationTarget) * 100, 100)
+      : 0;
+
+  // Calculate enrollments this month from recent enrollments
+  // Note: This is an approximation. For accurate monthly stats, fetch all enrollments
+  const enrollmentsThisMonth = recentEnrollments.filter((enrollment) => {
+    if (!enrollment.enrolled_at) return false;
+    const enrolledDate = new Date(enrollment.enrolled_at);
+    return enrolledDate >= startOfMonth;
+  }).length;
+
+  // Use active enrollments from stats for better target calculation
+  const totalActiveEnrollments =
+    statsTotals?.activeEnrollments || recentEnrollments.length;
+  // Set enrollment target: aim for 20% growth or minimum 100 new enrollments per month
+  const enrollmentTarget = Math.max(
+    100,
+    Math.ceil(totalActiveEnrollments * 0.2)
+  );
+  const enrollmentProgress =
+    enrollmentTarget > 0
+      ? Math.min((enrollmentsThisMonth / enrollmentTarget) * 100, 100)
+      : 0;
 
   const quickActions = [
     {
@@ -132,29 +200,40 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentActivity.map((activity: any) => (
-                <div key={activity.id} className="flex items-center space-x-4">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>
-                      {activity.user
-                        .split(' ')
-                        .map((n: string) => n[0])
-                        .join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {activity.title}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {activity.description}
-                    </p>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {activity.timestamp}
-                  </div>
+              {recentActivity.length === 0 ? (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    {t('common.noData')}
+                  </p>
                 </div>
-              ))}
+              ) : (
+                recentActivity.map((activity: any) => (
+                  <div
+                    key={activity.id}
+                    className="flex items-center space-x-4"
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>
+                        {activity.user
+                          ?.split(' ')
+                          .map((n: string) => n[0])
+                          .join('') || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {activity.title}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {activity.description}
+                      </p>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {activity.timestamp}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
@@ -248,9 +327,11 @@ export default function DashboardPage() {
                   <span className="text-sm font-medium">
                     {t('dashboard.courseCreation')}
                   </span>
-                  <span className="text-sm text-muted-foreground">3/5</span>
+                  <span className="text-sm text-muted-foreground">
+                    {coursesThisMonth}/{courseCreationTarget}
+                  </span>
                 </div>
-                <Progress value={60} />
+                <Progress value={courseCreationProgress} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -258,10 +339,11 @@ export default function DashboardPage() {
                     {t('dashboard.studentEnrollment')}
                   </span>
                   <span className="text-sm text-muted-foreground">
-                    1,234/2,000
+                    {enrollmentsThisMonth.toLocaleString()}/
+                    {enrollmentTarget.toLocaleString()}
                   </span>
                 </div>
-                <Progress value={62} />
+                <Progress value={enrollmentProgress} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
