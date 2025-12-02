@@ -8,6 +8,7 @@ import {
 } from '@/lib/utils';
 import { recentActivity } from '@/constants/data';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export type DashboardStatsCard = {
   title: string;
@@ -19,6 +20,7 @@ export type DashboardStatsCard = {
 };
 
 const useDashboard = () => {
+  const { t } = useTranslation();
   const school = useCurrentSchool();
   const [recentCourses, setRecentCourses] = useState<Course[]>([]);
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
@@ -168,39 +170,39 @@ const useDashboard = () => {
   const statsCards: DashboardStatsCard[] = useMemo(
     () => [
       {
-        title: 'Total Courses',
+        title: t('dashboard.totalCourses'),
         value: formatNumber(statsTotals.totalCourses),
         icon: require('lucide-react').BookOpen,
-        change: 'Live',
+        change: t('dashboard.live'),
         changeType: 'increase',
-        description: 'Courses across your schools'
+        description: t('dashboard.coursesAcrossSchools')
       },
       {
-        title: 'Total Students',
+        title: t('dashboard.totalStudents'),
         value: formatNumber(statsTotals.totalStudents),
         icon: require('lucide-react').Users,
-        change: 'Live',
+        change: t('dashboard.live'),
         changeType: 'increase',
-        description: 'Students enrolled across schools'
+        description: t('dashboard.studentsEnrolledAcrossSchools')
       },
       {
-        title: 'Total Revenue',
+        title: t('dashboard.totalRevenue'),
         value: formatCurrencyWithSchool(statsTotals.totalRevenue, school),
         icon: require('lucide-react').DollarSign,
-        change: 'Live',
+        change: t('dashboard.live'),
         changeType: 'increase',
-        description: 'Completed payments to date'
+        description: t('dashboard.completedPaymentsToDate')
       },
       {
-        title: 'Active Enrollments',
+        title: t('dashboard.activeEnrollments'),
         value: formatNumber(statsTotals.activeEnrollments),
         icon: require('lucide-react').TrendingUp,
-        change: 'Live',
+        change: t('dashboard.live'),
         changeType: 'increase',
-        description: 'Students currently progressing'
+        description: t('dashboard.studentsCurrentlyProgressing')
       }
     ],
-    [statsTotals, school]
+    [statsTotals, school, t]
   );
 
   const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];

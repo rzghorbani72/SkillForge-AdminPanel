@@ -13,6 +13,7 @@ import { BookOpen, DollarSign, Users } from 'lucide-react';
 import { Course, Enrollment, Payment } from '@/types/api';
 import { formatCurrencyWithSchool } from '@/lib/utils';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   courses: Course[];
@@ -21,22 +22,29 @@ type Props = {
 };
 
 const RecentLists = ({ courses, enrollments, payments }: Props) => {
+  const { t } = useTranslation();
   const school = useCurrentSchool();
 
   return (
     <Tabs defaultValue="courses" className="space-y-4">
       <TabsList>
-        <TabsTrigger value="courses">Recent Courses</TabsTrigger>
-        <TabsTrigger value="enrollments">Recent Enrollments</TabsTrigger>
-        <TabsTrigger value="payments">Recent Payments</TabsTrigger>
+        <TabsTrigger value="courses">
+          {t('dashboard.recentCourses')}
+        </TabsTrigger>
+        <TabsTrigger value="enrollments">
+          {t('dashboard.recentEnrollments')}
+        </TabsTrigger>
+        <TabsTrigger value="payments">
+          {t('dashboard.recentPayments')}
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="courses" className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Courses</CardTitle>
+            <CardTitle>{t('dashboard.recentCourses')}</CardTitle>
             <CardDescription>
-              Your latest courses and their performance
+              {t('dashboard.recentCoursesDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -60,10 +68,12 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                     <Badge
                       variant={course.is_published ? 'default' : 'secondary'}
                     >
-                      {course.is_published ? 'Published' : 'Draft'}
+                      {course.is_published
+                        ? t('dashboard.published')
+                        : t('dashboard.draft')}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      {course.students_count} students
+                      {course.students_count} {t('dashboard.students')}
                     </span>
                   </div>
                 </div>
@@ -76,9 +86,9 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
       <TabsContent value="enrollments" className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Enrollments</CardTitle>
+            <CardTitle>{t('dashboard.recentEnrollments')}</CardTitle>
             <CardDescription>
-              Latest student enrollments across your courses
+              {t('dashboard.recentEnrollmentsDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -87,11 +97,10 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                 <div className="py-8 text-center">
                   <Users className="mx-auto h-12 w-12 text-muted-foreground" />
                   <h3 className="mt-2 text-sm font-medium">
-                    No recent enrollments
+                    {t('dashboard.noRecentEnrollments')}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Enrollments will appear here once students join your
-                    courses.
+                    {t('dashboard.enrollmentsWillAppear')}
                   </p>
                 </div>
               ) : (
@@ -110,11 +119,12 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                     </Avatar>
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {enrollment.user?.name || 'Unknown User'}
+                        {enrollment.user?.name || t('dashboard.unknownUser')}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Enrolled in{' '}
-                        {enrollment.course?.title || 'Unknown Course'}
+                        {t('dashboard.enrolledIn')}{' '}
+                        {enrollment.course?.title ||
+                          t('dashboard.unknownCourse')}
                       </p>
                     </div>
                     <Badge variant="outline">{enrollment.status}</Badge>
@@ -129,9 +139,9 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
       <TabsContent value="payments" className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Payments</CardTitle>
+            <CardTitle>{t('dashboard.recentPayments')}</CardTitle>
             <CardDescription>
-              Latest payment transactions from your courses
+              {t('dashboard.recentPaymentsDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -140,11 +150,10 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                 <div className="py-8 text-center">
                   <DollarSign className="mx-auto h-12 w-12 text-muted-foreground" />
                   <h3 className="mt-2 text-sm font-medium">
-                    No recent payments
+                    {t('dashboard.noRecentPayments')}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Payment transactions will appear here once students purchase
-                    your courses.
+                    {t('dashboard.paymentsWillAppear')}
                   </p>
                 </div>
               ) : (
@@ -155,10 +164,10 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                     </div>
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {payment.user?.name || 'Unknown User'}
+                        {payment.user?.name || t('dashboard.unknownUser')}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {payment.course?.title || 'Unknown Course'}
+                        {payment.course?.title || t('dashboard.unknownCourse')}
                       </p>
                     </div>
                     <div className="text-right">

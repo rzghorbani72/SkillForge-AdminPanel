@@ -125,9 +125,9 @@ export default function DashboardPage() {
         {/* Recent Activity */}
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle>{t('dashboard.recentActivity')}</CardTitle>
             <CardDescription>
-              Latest updates from your schools and courses
+              {t('dashboard.recentActivityDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -162,8 +162,10 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common tasks to get you started</CardDescription>
+            <CardTitle>{t('dashboard.quickActions')}</CardTitle>
+            <CardDescription>
+              {t('dashboard.quickActionsDescription')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -202,8 +204,10 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Course Performance</CardTitle>
-            <CardDescription>Top performing courses this month</CardDescription>
+            <CardTitle>{t('dashboard.coursePerformance')}</CardTitle>
+            <CardDescription>
+              {t('dashboard.topPerformingCourses')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -212,7 +216,7 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">{course.title}</span>
                     <span className="text-sm text-muted-foreground">
-                      {course.students_count} students
+                      {course.students_count} {t('dashboard.students')}
                     </span>
                   </div>
                   <Progress
@@ -232,16 +236,18 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Monthly Goals</CardTitle>
+            <CardTitle>{t('dashboard.monthlyGoals')}</CardTitle>
             <CardDescription>
-              Progress towards your monthly targets
+              {t('dashboard.progressTowardsTargets')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Course Creation</span>
+                  <span className="text-sm font-medium">
+                    {t('dashboard.courseCreation')}
+                  </span>
                   <span className="text-sm text-muted-foreground">3/5</span>
                 </div>
                 <Progress value={60} />
@@ -249,7 +255,7 @@ export default function DashboardPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">
-                    Student Enrollment
+                    {t('dashboard.studentEnrollment')}
                   </span>
                   <span className="text-sm text-muted-foreground">
                     1,234/2,000
@@ -259,7 +265,9 @@ export default function DashboardPage() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Revenue Target</span>
+                  <span className="text-sm font-medium">
+                    {t('dashboard.revenueTarget')}
+                  </span>
                   <span className="text-sm text-muted-foreground">
                     {formatCurrencyWithSchool(currentRevenue, school)}/
                     {formatCurrencyWithSchool(revenueTarget, school)}
