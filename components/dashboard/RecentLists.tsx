@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Card,
@@ -50,21 +52,20 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
           <CardContent>
             <div className="space-y-4">
               {courses.map((course) => (
-                <div key={course.id} className="flex items-center space-x-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+                <div key={course.id} className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-muted">
                     <BookOpen className="h-6 w-6" />
                   </div>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium leading-none">
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <p className="truncate text-sm font-medium leading-none">
                       {course.title}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="truncate text-sm text-muted-foreground">
                       {course.short_description ||
                         course.description?.substring(0, 100)}
-                      ...
                     </p>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex shrink-0 items-center gap-2">
                     <Badge
                       variant={course.is_published ? 'default' : 'secondary'}
                     >
@@ -105,11 +106,8 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                 </div>
               ) : (
                 enrollments.map((enrollment) => (
-                  <div
-                    key={enrollment.id}
-                    className="flex items-center space-x-4"
-                  >
-                    <Avatar className="h-8 w-8">
+                  <div key={enrollment.id} className="flex items-center gap-4">
+                    <Avatar className="h-8 w-8 shrink-0">
                       <AvatarFallback>
                         {enrollment.user?.name
                           ?.split(' ')
@@ -117,17 +115,19 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                           .join('') || 'U'}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <p className="truncate text-sm font-medium leading-none">
                         {enrollment.user?.name || t('dashboard.unknownUser')}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="truncate text-sm text-muted-foreground">
                         {t('dashboard.enrolledIn')}{' '}
                         {enrollment.course?.title ||
                           t('dashboard.unknownCourse')}
                       </p>
                     </div>
-                    <Badge variant="outline">{enrollment.status}</Badge>
+                    <Badge variant="outline" className="shrink-0">
+                      {enrollment.status}
+                    </Badge>
                   </div>
                 ))
               )}
@@ -158,19 +158,19 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                 </div>
               ) : (
                 payments.map((payment) => (
-                  <div key={payment.id} className="flex items-center space-x-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100">
-                      <DollarSign className="h-4 w-4 text-green-600" />
+                  <div key={payment.id} className="flex items-center gap-4">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                      <DollarSign className="h-4 w-4 text-green-600 dark:text-green-400" />
                     </div>
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <p className="truncate text-sm font-medium leading-none">
                         {payment.user?.name || t('dashboard.unknownUser')}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="truncate text-sm text-muted-foreground">
                         {payment.course?.title || t('dashboard.unknownCourse')}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="shrink-0 text-end">
                       <p className="text-sm font-medium">
                         {formatCurrencyWithSchool(payment.amount ?? 0, school)}
                       </p>

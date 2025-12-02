@@ -52,7 +52,8 @@ export const fa = {
     noData: 'داده‌ای موجود نیست',
     noResults: 'نتیجه‌ای یافت نشد',
     tryAgain: 'دوباره تلاش کنید',
-    refresh: 'به‌روزرسانی'
+    refresh: 'به‌روزرسانی',
+    viewAll: 'مشاهده همه'
   },
   navigation: {
     dashboard: 'داشبورد',
@@ -204,6 +205,7 @@ export const fa = {
     progressTowardsTargets: 'پیشرفت به سمت اهداف ماهانه شما',
     courseCreation: 'ایجاد دوره',
     studentEnrollment: 'ثبت‌نام دانشجو',
+    studentEnrollments: 'ثبت‌نام دانشجویان',
     revenueTarget: 'هدف درآمد',
     students: 'دانشجو',
     totalCourses: 'کل دوره‌ها',
@@ -247,7 +249,23 @@ export const fa = {
     timeMonthsAgo: '{{count}} ماه پیش',
     timeMonthsAgoPlural: '{{count}} ماه پیش',
     timeYearsAgo: '{{count}} سال پیش',
-    timeYearsAgoPlural: '{{count}} سال پیش'
+    timeYearsAgoPlural: '{{count}} سال پیش',
+    createProduct: 'ایجاد محصول',
+    addNewProduct: 'یک محصول جدید به فروشگاه خود اضافه کنید',
+    viewStudents: 'مشاهده دانشجویان',
+    uploadVideo: 'آپلود ویدیو',
+    uploadAudio: 'آپلود صدا',
+    moreActions: 'اقدامات بیشتر',
+    revenueOverview: 'نمای کلی درآمد',
+    last6Months: 'عملکرد ۶ ماه گذشته',
+    vsLastMonth: 'نسبت به ماه گذشته',
+    enrollments: 'ثبت‌نام‌ها',
+    monthlyEnrollments: 'روند ثبت‌نام ماهانه',
+    totalEnrollments: 'کل ثبت‌نام‌ها',
+    revenue: 'درآمد',
+    completionRate: 'نرخ تکمیل',
+    topCourses: 'دوره‌های برتر',
+    bestSellingCourses: 'پرفروش‌ترین دوره‌ها بر اساس دانشجویان'
   },
   schools: {
     title: 'مدارس',

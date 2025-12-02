@@ -55,7 +55,8 @@ export const en = {
     refresh: 'Refresh',
     none: 'None',
     selected: 'selected',
-    errorLoading: 'Error loading'
+    errorLoading: 'Error loading',
+    viewAll: 'View All'
   },
   navigation: {
     dashboard: 'Dashboard',
@@ -212,6 +213,7 @@ export const en = {
     progressTowardsTargets: 'Progress towards your monthly targets',
     courseCreation: 'Course Creation',
     studentEnrollment: 'Student Enrollment',
+    studentEnrollments: 'Student Enrollments',
     revenueTarget: 'Revenue Target',
     students: 'students',
     totalCourses: 'Total Courses',
@@ -256,7 +258,23 @@ export const en = {
     timeMonthsAgo: '{{count}} month ago',
     timeMonthsAgoPlural: '{{count}} months ago',
     timeYearsAgo: '{{count}} year ago',
-    timeYearsAgoPlural: '{{count}} years ago'
+    timeYearsAgoPlural: '{{count}} years ago',
+    createProduct: 'Create Product',
+    addNewProduct: 'Add a new product to your store',
+    viewStudents: 'View Students',
+    uploadVideo: 'Upload Video',
+    uploadAudio: 'Upload Audio',
+    moreActions: 'More Actions',
+    revenueOverview: 'Revenue Overview',
+    last6Months: 'Last 6 months performance',
+    vsLastMonth: 'vs last month',
+    enrollments: 'Enrollments',
+    monthlyEnrollments: 'Monthly enrollment trends',
+    totalEnrollments: 'total enrollments',
+    revenue: 'Revenue',
+    completionRate: 'Completion Rate',
+    topCourses: 'Top Courses',
+    bestSellingCourses: 'Best selling courses by students'
   },
   schools: {
     title: 'Schools',

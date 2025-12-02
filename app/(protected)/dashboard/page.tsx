@@ -10,15 +10,31 @@ import {
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Calendar,
+  BookOpen,
+  Users,
+  TrendingUp,
+  Clock,
+  Sparkles,
+  ArrowUpRight,
+  MoreHorizontal
+} from 'lucide-react';
 import ContentCreationHub from '@/components/content/content-creation-hub';
 import useDashboard from '@/components/dashboard/useDashboard';
 import StatsCards from '@/components/dashboard/StatsCards';
 import RecentLists from '@/components/dashboard/RecentLists';
+import RevenueChart from '@/components/dashboard/RevenueChart';
+import EnrollmentsChart from '@/components/dashboard/EnrollmentsChart';
+import CoursePerformanceChart from '@/components/dashboard/CoursePerformanceChart';
+import QuickActions from '@/components/dashboard/QuickActions';
 import { useAccessControl } from '@/hooks/useAccessControl';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 import { formatCurrencyWithSchool } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
@@ -30,15 +46,12 @@ export default function DashboardPage() {
     recentPayments,
     recentActivity,
     statsCards,
-    statsTotals
+    statsTotals,
+    monthlyChartData,
+    coursePerformanceData
   } = useDashboard();
 
-  // Test the access control hook
-  const {
-    userState,
-    isLoading: userLoading,
-    error: userError
-  } = useAccessControl();
+  const { userState, isLoading: userLoading } = useAccessControl();
 
   // Calculate monthly statistics
   const now = new Date();
@@ -66,44 +79,34 @@ export default function DashboardPage() {
     })
     .reduce((sum, p) => sum + (p.amount ?? 0), 0);
 
-  // Set revenue target as 110% of last month's revenue, or use current revenue * 1.5 if no last month data
   const revenueTarget =
     lastMonthRevenue > 0
       ? Math.round(lastMonthRevenue * 1.1)
       : currentRevenue > 0
         ? Math.round(currentRevenue * 1.5)
-        : 7500000; // Fallback default
+        : 7500000;
 
-  // Calculate courses created this month from recent courses
-  // Note: This is an approximation based on recent courses. For accurate monthly stats,
-  // you would need to fetch all courses or use a dedicated monthly stats API endpoint
   const coursesThisMonth = recentCourses.filter((course) => {
     if (!course.created_at) return false;
     const createdDate = new Date(course.created_at);
     return createdDate >= startOfMonth;
   }).length;
 
-  // Use total courses from stats for better target calculation
   const totalCourses = statsTotals?.totalCourses || recentCourses.length;
-  // Set course creation target: aim for 5 new courses per month minimum, or 10% growth
   const courseCreationTarget = Math.max(5, Math.ceil(totalCourses * 0.1));
   const courseCreationProgress =
     courseCreationTarget > 0
       ? Math.min((coursesThisMonth / courseCreationTarget) * 100, 100)
       : 0;
 
-  // Calculate enrollments this month from recent enrollments
-  // Note: This is an approximation. For accurate monthly stats, fetch all enrollments
   const enrollmentsThisMonth = recentEnrollments.filter((enrollment) => {
     if (!enrollment.enrolled_at) return false;
     const enrolledDate = new Date(enrollment.enrolled_at);
     return enrolledDate >= startOfMonth;
   }).length;
 
-  // Use active enrollments from stats for better target calculation
   const totalActiveEnrollments =
     statsTotals?.activeEnrollments || recentEnrollments.length;
-  // Set enrollment target: aim for 20% growth or minimum 100 new enrollments per month
   const enrollmentTarget = Math.max(
     100,
     Math.ceil(totalActiveEnrollments * 0.2)
@@ -113,44 +116,18 @@ export default function DashboardPage() {
       ? Math.min((enrollmentsThisMonth / enrollmentTarget) * 100, 100)
       : 0;
 
-  const quickActions = [
-    {
-      title: t('dashboard.createCourse'),
-      description: t('dashboard.addNewCourse'),
-      icon: require('lucide-react').Plus,
-      href: '/content',
-      color: 'bg-blue-500'
-    },
-    {
-      title: t('dashboard.addLesson'),
-      description: t('dashboard.createNewLesson'),
-      icon: require('lucide-react').Play,
-      href: '/content/lessons/create',
-      color: 'bg-green-500'
-    },
-    {
-      title: t('dashboard.uploadMedia'),
-      description: t('dashboard.addMedia'),
-      icon: require('lucide-react').FileText,
-      href: '/content/media',
-      color: 'bg-purple-500'
-    },
-    {
-      title: t('dashboard.viewAnalytics'),
-      description: t('dashboard.checkMetrics'),
-      icon: require('lucide-react').BarChart3,
-      href: '/analytics',
-      color: 'bg-orange-500'
-    }
-  ];
-
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
+      <div className="flex-1 p-6">
+        <div className="flex h-[calc(100vh-200px)] items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">
+            <div className="relative mx-auto h-16 w-16">
+              <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
+              <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/80 to-primary">
+                <Sparkles className="h-8 w-8 animate-pulse text-white" />
+              </div>
+            </div>
+            <p className="mt-4 text-sm font-medium text-muted-foreground">
               {t('dashboard.loadingDashboardData')}
             </p>
           </div>
@@ -161,24 +138,36 @@ export default function DashboardPage() {
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t('dashboard.title')}
-          </h1>
-          <p className="text-muted-foreground">
+      {/* Header Section */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              {t('dashboard.title')}
+            </h1>
+            <Badge variant="secondary\" className="hidden sm:flex">
+              <Sparkles className="mr-1 h-3 w-3" />
+              {t('dashboard.live')}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground sm:text-base">
             {t('dashboard.welcomeBack')} {t('dashboard.whatsHappening')}
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="hidden sm:flex">
             <Calendar className="mr-2 h-4 w-4" />
-            {t('common.today')}
+            {new Date().toLocaleDateString(
+              language === 'fa' ? 'fa-IR' : 'en-US',
+              {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              }
+            )}
           </Button>
           <ContentCreationHub
             onContentCreated={() => {
-              // Refresh dashboard data when content is created
               window.location.reload();
             }}
             courses={recentCourses}
@@ -186,51 +175,77 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Stats Cards */}
       <StatsCards cards={statsCards} />
 
-      {/* Main Content */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+      {/* Charts Section */}
+      <div className="grid gap-6 lg:grid-cols-7">
+        <RevenueChart data={monthlyChartData} />
+        <EnrollmentsChart data={monthlyChartData} />
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid gap-6 lg:grid-cols-12">
         {/* Recent Activity */}
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>{t('dashboard.recentActivity')}</CardTitle>
-            <CardDescription>
-              {t('dashboard.recentActivityDescription')}
-            </CardDescription>
+        <Card className="lg:col-span-5">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <div>
+              <CardTitle className="text-base font-semibold">
+                {t('dashboard.recentActivity')}
+              </CardTitle>
+              <CardDescription>
+                {t('dashboard.recentActivityDescription')}
+              </CardDescription>
+            </div>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {recentActivity.length === 0 ? (
-                <div className="py-8 text-center">
-                  <p className="text-sm text-muted-foreground">
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="rounded-full bg-muted p-3">
+                    <Clock className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground">
                     {t('common.noData')}
                   </p>
                 </div>
               ) : (
-                recentActivity.map((activity: any) => (
+                recentActivity.slice(0, 6).map((activity: any) => (
                   <div
                     key={activity.id}
-                    className="flex items-center space-x-4"
+                    className="group flex items-start gap-4 rounded-lg p-2 transition-colors hover:bg-muted/50"
                   >
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback>
+                    <Avatar className="h-9 w-9 border-2 border-background shadow-sm">
+                      <AvatarFallback
+                        className={
+                          activity.type === 'course_created'
+                            ? 'bg-violet-500/10 text-violet-600'
+                            : activity.type === 'student_enrolled'
+                              ? 'bg-emerald-500/10 text-emerald-600'
+                              : 'bg-amber-500/10 text-amber-600'
+                        }
+                      >
                         {activity.user
                           ?.split(' ')
                           .map((n: string) => n[0])
-                          .join('') || 'U'}
+                          .join('')
+                          .substring(0, 2) || 'U'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium leading-none">
                         {activity.title}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="line-clamp-1 text-xs text-muted-foreground">
                         {activity.description}
                       </p>
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <span className="shrink-0 text-xs text-muted-foreground">
                       {activity.timestamp}
-                    </div>
+                    </span>
                   </div>
                 ))
               )}
@@ -239,145 +254,191 @@ export default function DashboardPage() {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>{t('dashboard.quickActions')}</CardTitle>
+        <div className="lg:col-span-4">
+          <QuickActions />
+        </div>
+
+        {/* Monthly Goals */}
+        <Card className="lg:col-span-3">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base font-semibold">
+              {t('dashboard.monthlyGoals')}
+            </CardTitle>
             <CardDescription>
-              {t('dashboard.quickActionsDescription')}
+              {t('dashboard.progressTowardsTargets')}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
+            {/* Course Creation Goal */}
             <div className="space-y-3">
-              {quickActions.map((action, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="w-full justify-start"
-                  onClick={() => (window.location.href = action.href)}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10">
+                    <BookOpen className="h-4 w-4 text-violet-600" />
+                  </div>
+                  <span className="text-sm font-medium">
+                    {t('dashboard.courseCreation')}
+                  </span>
+                </div>
+                <span className="text-sm font-bold">
+                  {coursesThisMonth}/{courseCreationTarget}
+                </span>
+              </div>
+              <Progress
+                value={courseCreationProgress}
+                className="h-2 bg-violet-100 dark:bg-violet-950"
+              />
+            </div>
+
+            {/* Enrollment Goal */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
+                    <Users className="h-4 w-4 text-emerald-600" />
+                  </div>
+                  <span className="text-sm font-medium">
+                    {t('dashboard.studentEnrollment')}
+                  </span>
+                </div>
+                <span className="text-sm font-bold">
+                  {enrollmentsThisMonth.toLocaleString()}/
+                  {enrollmentTarget.toLocaleString()}
+                </span>
+              </div>
+              <Progress
+                value={enrollmentProgress}
+                className="h-2 bg-emerald-100 dark:bg-emerald-950"
+              />
+            </div>
+
+            {/* Revenue Goal */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
+                    <TrendingUp className="h-4 w-4 text-amber-600" />
+                  </div>
+                  <span className="text-sm font-medium">
+                    {t('dashboard.revenueTarget')}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>
+                  {formatCurrencyWithSchool(
+                    currentRevenue,
+                    school,
+                    undefined,
+                    language
+                  )}
+                </span>
+                <span>
+                  {formatCurrencyWithSchool(
+                    revenueTarget,
+                    school,
+                    undefined,
+                    language
+                  )}
+                </span>
+              </div>
+              <Progress
+                value={
+                  revenueTarget > 0
+                    ? Math.min((currentRevenue / revenueTarget) * 100, 100)
+                    : 0
+                }
+                className="h-2 bg-amber-100 dark:bg-amber-950"
+              />
+            </div>
+
+            {/* View Details Link */}
+            <Link
+              href="/analytics"
+              className="flex items-center justify-center gap-1 pt-2 text-sm text-primary hover:underline"
+            >
+              {t('dashboard.viewAnalytics')}
+              <ArrowUpRight className="h-3 w-3" />
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Course Performance Chart */}
+      <div className="grid gap-6 lg:grid-cols-7">
+        <CoursePerformanceChart data={coursePerformanceData} />
+
+        {/* Top Courses */}
+        <Card className="lg:col-span-3">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <div>
+              <CardTitle className="text-base font-semibold">
+                {t('dashboard.topCourses')}
+              </CardTitle>
+              <CardDescription>
+                {t('dashboard.bestSellingCourses')}
+              </CardDescription>
+            </div>
+            <Link href="/courses">
+              <Button variant="ghost" size="sm">
+                {t('common.viewAll')}
+                <ArrowUpRight className="ml-1 h-3 w-3" />
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentCourses.slice(0, 5).map((course, index) => (
+                <Link
+                  key={course.id}
+                  href={`/courses/${course.id}`}
+                  className="group flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-muted/50"
                 >
                   <div
-                    className={`mr-3 h-8 w-8 rounded-lg ${action.color} flex items-center justify-center`}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-bold ${
+                      index === 0
+                        ? 'bg-amber-500 text-white'
+                        : index === 1
+                          ? 'bg-slate-400 text-white'
+                          : index === 2
+                            ? 'bg-amber-700 text-white'
+                            : 'bg-muted text-muted-foreground'
+                    }`}
                   >
-                    <action.icon className="h-4 w-4 text-white" />
+                    {index + 1}
                   </div>
-                  <div className="text-left">
-                    <div className="font-medium">{action.title}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {action.description}
+                  <div className="flex-1 truncate">
+                    <p className="truncate text-sm font-medium group-hover:text-primary">
+                      {course.title}
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Users className="h-3 w-3" />
+                      <span>
+                        {course.students_count} {t('dashboard.students')}
+                      </span>
                     </div>
                   </div>
-                </Button>
+                  <Badge
+                    variant={course.is_published ? 'default' : 'secondary'}
+                    className="shrink-0"
+                  >
+                    {course.is_published
+                      ? t('dashboard.published')
+                      : t('dashboard.draft')}
+                  </Badge>
+                </Link>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Recent Lists Section */}
       <RecentLists
         courses={recentCourses}
         enrollments={recentEnrollments}
         payments={recentPayments}
       />
-
-      {/* Performance Metrics */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('dashboard.coursePerformance')}</CardTitle>
-            <CardDescription>
-              {t('dashboard.topPerformingCourses')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentCourses.slice(0, 3).map((course) => (
-                <div key={course.id} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{course.title}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {course.students_count} {t('dashboard.students')}
-                    </span>
-                  </div>
-                  <Progress
-                    value={
-                      (course.students_count /
-                        Math.max(
-                          ...recentCourses.map((c) => c.students_count)
-                        )) *
-                      100
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('dashboard.monthlyGoals')}</CardTitle>
-            <CardDescription>
-              {t('dashboard.progressTowardsTargets')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">
-                    {t('dashboard.courseCreation')}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {coursesThisMonth}/{courseCreationTarget}
-                  </span>
-                </div>
-                <Progress value={courseCreationProgress} />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">
-                    {t('dashboard.studentEnrollment')}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {enrollmentsThisMonth.toLocaleString()}/
-                    {enrollmentTarget.toLocaleString()}
-                  </span>
-                </div>
-                <Progress value={enrollmentProgress} />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">
-                    {t('dashboard.revenueTarget')}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {formatCurrencyWithSchool(
-                      currentRevenue,
-                      school,
-                      undefined,
-                      language
-                    )}
-                    /
-                    {formatCurrencyWithSchool(
-                      revenueTarget,
-                      school,
-                      undefined,
-                      language
-                    )}
-                  </span>
-                </div>
-                <Progress
-                  value={
-                    revenueTarget > 0
-                      ? Math.min((currentRevenue / revenueTarget) * 100, 100)
-                      : 0
-                  }
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
