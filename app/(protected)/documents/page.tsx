@@ -20,7 +20,11 @@ import {
   Eye,
   Download,
   File,
-  Clock
+  Clock,
+  X,
+  SlidersHorizontal,
+  Sparkles,
+  Files
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Media, Course } from '@/types/api';
@@ -29,6 +33,8 @@ import { useSchool } from '@/hooks/useSchool';
 import UploadDocumentDialog from '@/components/content/upload-document-dialog';
 import { AccessControlBadge } from '@/components/ui/access-control-badge';
 import { toast } from 'sonner';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { EmptyState } from '@/components/shared/EmptyState';
 import {
   Dialog,
   DialogContent,
@@ -37,6 +43,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 interface DocumentItem extends Media {
   download_url?: string;
@@ -68,13 +75,14 @@ export default function DocumentsPage() {
   const { selectedSchool } = useSchool();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [previewDocument, setPreviewDocument] = useState<DocumentItem | null>(
     null
   );
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
   useEffect(() => {
     if (selectedSchool) {
       fetchData();
@@ -182,143 +190,216 @@ export default function DocumentsPage() {
 
   if (!selectedSchool) {
     return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold text-muted-foreground">
-              No School Selected
-            </h2>
-            <p className="text-muted-foreground">
-              Please select a school from the header to view documents.
-            </p>
-          </div>
-        </div>
+      <div className="page-wrapper flex-1 p-6">
+        <EmptyState
+          icon={<FileText className="h-10 w-10" />}
+          title="No School Selected"
+          description="Please select a school from the header to view documents."
+        />
       </div>
     );
   }
 
+  if (isLoading) {
+    return <LoadingSpinner message="Loading documents..." />;
+  }
+
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="page-wrapper flex-1 space-y-6 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Documents</h1>
-          <p className="text-muted-foreground">
-            Manage documents and study materials for {selectedSchool.name}
-          </p>
+      <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <div className="icon-container-info">
+            <Files className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Documents
+              </h1>
+              <Badge
+                variant="secondary"
+                className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
+              >
+                <Sparkles className="mr-1 h-3 w-3" />
+                {documents.length} files
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground sm:text-base">
+              Manage documents and study materials for {selectedSchool.name}
+            </p>
+          </div>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+        <Button
+          onClick={() => setIsCreateDialogOpen(true)}
+          className="gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
+        >
+          <Plus className="h-4 w-4" />
           Upload Document
         </Button>
       </div>
 
       {/* Search */}
-      <div className="flex items-center space-x-2">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div
+        className="fade-in-up flex items-center gap-3"
+        style={{ animationDelay: '0.1s' }}
+      >
+        <div className="relative max-w-md flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search documents..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
+            className="h-10 rounded-xl border-border/50 bg-background/50 pl-10 pr-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
           />
+          {searchTerm && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              onClick={() => setSearchTerm('')}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 shrink-0 rounded-xl border-border/50"
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Stats Card */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Documents</CardTitle>
-          <FileText className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{documents.length}</div>
-          <p className="text-xs text-muted-foreground">
-            Documents in {selectedSchool.name}
-          </p>
+      <Card
+        className="fade-in-up stat-card"
+        style={{ animationDelay: '0.15s' }}
+      >
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Total Documents</p>
+              <p className="text-2xl font-bold">{documents.length}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Documents in {selectedSchool.name}
+              </p>
+            </div>
+            <div className="icon-container-primary">
+              <FileText className="h-5 w-5" />
+            </div>
+          </div>
         </CardContent>
       </Card>
 
       {/* Documents Grid */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {filteredDocuments.map((doc) => (
-          <Card
-            key={doc.id}
-            className="transition-shadow hover:shadow-md sm:min-w-[25rem] "
-          >
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-lg">{doc.title}</CardTitle>
-                  <CardDescription className="text-sm">
-                    {doc.description}
-                  </CardDescription>
-                </div>
-                {/* Ownership Badge */}
-                {(doc as any).access_control && (
-                  <AccessControlBadge
-                    accessControl={(doc as any).access_control}
-                    className="ml-2 text-xs"
-                  />
-                )}
+      {filteredDocuments.length === 0 ? (
+        <div
+          className="fade-in-up flex flex-1 items-center justify-center p-6"
+          style={{ animationDelay: '0.2s' }}
+        >
+          <div className="text-center">
+            <div className="relative mx-auto mb-6">
+              <div className="absolute inset-0 -z-10 mx-auto h-32 w-32 rounded-full bg-gradient-to-br from-blue-500/10 via-primary/5 to-transparent blur-2xl" />
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/50 text-muted-foreground shadow-sm">
+                <FileText className="h-10 w-10" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span className="flex items-center">
-                    <File className="mr-1 h-4 w-4" />
+            </div>
+            <h3 className="text-xl font-semibold tracking-tight">
+              No documents found
+            </h3>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+              {searchTerm
+                ? 'No documents match your search criteria.'
+                : 'Upload your first document to get started.'}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="stagger-children grid gap-5 sm:grid-cols-2">
+          {filteredDocuments.map((doc, index) => (
+            <Card
+              key={doc.id}
+              className={cn(
+                'group overflow-hidden border-border/50 transition-all duration-300',
+                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5'
+              )}
+              style={{ animationDelay: `${0.05 * (index + 1)}s` }}
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="line-clamp-1 text-base transition-colors group-hover:text-primary">
+                      {doc.title}
+                    </CardTitle>
+                    <CardDescription className="mt-1 line-clamp-2 text-xs">
+                      {doc.description}
+                    </CardDescription>
+                  </div>
+                  {(doc as any).access_control && (
+                    <AccessControlBadge
+                      accessControl={(doc as any).access_control}
+                      className="ml-2 text-[10px]"
+                    />
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <File className="h-3.5 w-3.5" />
                     {formatFileSize(doc.size)}
                   </span>
-                  <span className="flex items-center">
-                    <Clock className="mr-1 h-4 w-4" />
-                    {doc.mime_type || 'N/A'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline">
+                  <Badge
+                    variant="secondary"
+                    className="rounded-full px-2 py-0 text-[10px] font-semibold"
+                  >
                     {doc.mime_type?.split('/')[1]?.toUpperCase() || 'DOCUMENT'}
                   </Badge>
-                  <span className="text-sm text-muted-foreground">
-                    {doc?.title || 'No Title'}
-                  </span>
                 </div>
-                <div className="flex items-center space-x-2">
+
+                <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
                     onClick={() => handleViewDocument(doc)}
                     disabled={!doc.preview_url}
                   >
-                    <Eye className="mr-1 h-4 w-4" />
+                    <Eye className="mr-1.5 h-3.5 w-3.5" />
                     View
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
                     onClick={() => handleDownloadDocument(doc)}
                     disabled={!doc.download_url}
                   >
-                    <Download className="mr-1 h-4 w-4" />
+                    <Download className="mr-1.5 h-3.5 w-3.5" />
                     Download
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="mr-1 h-4 w-4" />
-                    Edit
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
+                  >
+                    <Edit className="h-3.5 w-3.5" />
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Trash2 className="mr-1 h-4 w-4" />
-                    Delete
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0 rounded-lg border-border/50 text-muted-foreground hover:border-destructive/50 hover:bg-destructive/5 hover:text-destructive"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Upload Document Dialog */}
       {isCreateDialogOpen && (
@@ -343,12 +424,12 @@ export default function DocumentsPage() {
             </DialogHeader>
             <div className="mt-4 space-y-3">
               <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                <Badge variant="outline">
+                <Badge variant="outline" className="rounded-full">
                   {previewDocument.mime_type || 'UNKNOWN'}
                 </Badge>
                 <span>{formatFileSize(previewDocument.size)}</span>
               </div>
-              <div className="max-h-[70vh] overflow-hidden rounded-md border bg-muted/30">
+              <div className="max-h-[70vh] overflow-hidden rounded-xl border bg-muted/30">
                 {canPreviewInline(previewDocument) ? (
                   <iframe
                     src={buildDocumentUrl(previewDocument.preview_url)}
@@ -365,6 +446,7 @@ export default function DocumentsPage() {
                     </p>
                     <Button
                       onClick={() => handleDownloadDocument(previewDocument)}
+                      className="rounded-xl"
                     >
                       <Download className="mr-2 h-4 w-4" />
                       Download
@@ -379,10 +461,17 @@ export default function DocumentsPage() {
               </div>
             </div>
             <DialogFooter className="mt-4 flex items-center justify-between">
-              <Button variant="outline" onClick={handleClosePreview}>
+              <Button
+                variant="outline"
+                onClick={handleClosePreview}
+                className="rounded-xl"
+              >
                 Close
               </Button>
-              <Button onClick={() => handleDownloadDocument(previewDocument)}>
+              <Button
+                onClick={() => handleDownloadDocument(previewDocument)}
+                className="rounded-xl"
+              >
                 <Download className="mr-2 h-4 w-4" />
                 Download
               </Button>

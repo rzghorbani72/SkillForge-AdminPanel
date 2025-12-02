@@ -2,19 +2,20 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Video, Star, Play, Clock, Eye, Download, Edit } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Video, Star, Play, Clock, Sparkles, Film } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useSchool } from '@/hooks/useSchool';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
-import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { VideoStats } from '@/components/videos/VideoStats';
 import { VideoGrid } from '@/components/videos/VideoGrid';
 import { formatDuration, formatFileSize } from '@/components/shared/utils';
+import { cn } from '@/lib/utils';
 
 interface VideoWithMetadata extends Media {
   lesson_type?: 'WELCOME' | 'LESSON' | 'INTRO' | 'CONCLUSION';
@@ -49,11 +50,9 @@ export default function VideosPage() {
       setIsLoading(true);
       const response = await apiClient.getVideos();
 
-      // Handle new response structure with access control
       if (response && response.data && Array.isArray(response.data)) {
         setVideos(response.data);
       } else if (Array.isArray(response)) {
-        // Fallback for old response format
         setVideos(response);
       } else {
         setVideos([]);
@@ -107,13 +106,13 @@ export default function VideosPage() {
   const getVideoTypeColor = (type?: string) => {
     switch (type) {
       case 'WELCOME':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
       case 'INTRO':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
       case 'CONCLUSION':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
     }
   };
 
@@ -131,11 +130,13 @@ export default function VideosPage() {
 
   if (!selectedSchool) {
     return (
-      <EmptyState
-        icon={<Video className="h-12 w-12" />}
-        title="No School Selected"
-        description="Please select a school from the header to view videos."
-      />
+      <div className="page-wrapper flex-1 p-6">
+        <EmptyState
+          icon={<Video className="h-10 w-10" />}
+          title="No School Selected"
+          description="Please select a school from the header to view videos."
+        />
+      </div>
     );
   }
 
@@ -144,36 +145,62 @@ export default function VideosPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
-      <PageHeader
-        title="Video Management"
-        description="Manage your course videos and welcome content"
-      >
-        <div className="flex items-center space-x-2">
-          <UploadVideoDialog onVideoUploaded={fetchData} />
+    <div className="page-wrapper flex-1 space-y-6 p-6">
+      {/* Header */}
+      <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <div className="icon-container-destructive">
+            <Film className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Video Management
+              </h1>
+              <Badge
+                variant="secondary"
+                className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
+              >
+                <Sparkles className="mr-1 h-3 w-3" />
+                {videos.length} videos
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground sm:text-base">
+              Manage your course videos and welcome content
+            </p>
+          </div>
         </div>
-      </PageHeader>
+        <UploadVideoDialog onVideoUploaded={fetchData} />
+      </div>
 
-      <VideoStats
-        totalVideos={videos.length}
-        welcomeVideos={welcomeVideos.length}
-        lessonVideos={lessonVideos.length}
-        totalDuration={videos.reduce(
-          (total, video) => total + (video.metadata?.duration || 0),
-          0
-        )}
-      />
+      {/* Stats */}
+      <div className="fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <VideoStats
+          totalVideos={videos.length}
+          welcomeVideos={welcomeVideos.length}
+          lessonVideos={lessonVideos.length}
+          totalDuration={videos.reduce(
+            (total, video) => total + (video.metadata?.duration || 0),
+            0
+          )}
+        />
+      </div>
 
-      <div className="flex items-center space-x-4">
+      {/* Search and Filter */}
+      <div
+        className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center"
+        style={{ animationDelay: '0.15s' }}
+      >
         <SearchBar
           placeholder="Search videos..."
           value={searchTerm}
           onChange={setSearchTerm}
+          className="flex-1"
         />
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="h-10 rounded-xl border border-border/50 bg-background/50 px-4 text-sm transition-all duration-200 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
         >
           <option value="all">All Videos</option>
           <option value="welcome">Welcome Videos</option>
@@ -185,17 +212,40 @@ export default function VideosPage() {
       </div>
 
       {/* Video Tabs */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">All Videos ({videos.length})</TabsTrigger>
-          <TabsTrigger value="welcome">
+      <Tabs
+        defaultValue="all"
+        className="fade-in-up space-y-6"
+        style={{ animationDelay: '0.2s' }}
+      >
+        <TabsList className="grid w-full grid-cols-5 rounded-xl bg-muted/50 p-1">
+          <TabsTrigger
+            value="all"
+            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
+            All ({videos.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="welcome"
+            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
             Welcome ({welcomeVideos.length})
           </TabsTrigger>
-          <TabsTrigger value="lessons">
+          <TabsTrigger
+            value="lessons"
+            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
             Lessons ({lessonVideos.length})
           </TabsTrigger>
-          <TabsTrigger value="intro">Intro ({introVideos.length})</TabsTrigger>
-          <TabsTrigger value="conclusion">
+          <TabsTrigger
+            value="intro"
+            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
+            Intro ({introVideos.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="conclusion"
+            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
             Conclusion ({conclusionVideos.length})
           </TabsTrigger>
         </TabsList>

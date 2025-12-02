@@ -7,6 +7,9 @@ import SearchBar from '@/components/course/SearchBar';
 import CoursesGrid from '@/components/course/CoursesGrid';
 import useCourses from '@/components/course/useCourses';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { School } from 'lucide-react';
 
 export default function CoursesPage() {
   const { t } = useTranslation();
@@ -25,42 +28,24 @@ export default function CoursesPage() {
 
   if (!selectedSchool) {
     return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold text-muted-foreground">
-              {t('common.noSchoolSelected')}
-            </h2>
-            <p className="text-muted-foreground">
-              {t('common.selectSchoolToView')}
-            </p>
-          </div>
-        </div>
+      <div className="page-wrapper flex-1 p-6">
+        <EmptyState
+          icon={<School className="h-10 w-10" />}
+          title={t('common.noSchoolSelected')}
+          description={t('common.selectSchoolToView')}
+        />
       </div>
     );
   }
 
   if (isLoading) {
-    return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">
-              {t('courses.loadingCourses')}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner message={t('courses.loadingCourses')} />;
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="page-wrapper flex-1 space-y-6 p-6">
       <Header />
-
       <SearchBar value={searchTerm} onChange={setSearchTerm} />
-
       <CoursesGrid
         courses={courses}
         searchTerm={searchTerm}

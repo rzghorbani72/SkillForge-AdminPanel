@@ -26,9 +26,31 @@ const translations = {
 export type TranslationKey = keyof typeof en;
 
 /**
- * Get translation for a key
+ * Interpolation params type
  */
-export function t(key: string, language: LanguageCode = 'en'): string {
+export type InterpolationParams = Record<string, string | number>;
+
+/**
+ * Interpolate values into a string template
+ * Replaces {{key}} with the corresponding value from params
+ */
+function interpolate(template: string, params?: InterpolationParams): string {
+  if (!params) return template;
+
+  return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+    const value = params[key];
+    return value !== undefined ? String(value) : match;
+  });
+}
+
+/**
+ * Get translation for a key with optional interpolation
+ */
+export function t(
+  key: string,
+  language: LanguageCode = 'en',
+  params?: InterpolationParams
+): string {
   const keys = key.split('.');
   let value: any = translations[language] || translations.en;
 
@@ -49,7 +71,8 @@ export function t(key: string, language: LanguageCode = 'en'): string {
     }
   }
 
-  return typeof value === 'string' ? value : key;
+  const result = typeof value === 'string' ? value : key;
+  return interpolate(result, params);
 }
 
 /**

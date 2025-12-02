@@ -7,6 +7,7 @@
 import { useI18n } from './provider';
 import { t as translate, getTranslations } from './index';
 import type { LanguageCode } from './config';
+import type { InterpolationParams } from './index';
 
 /**
  * Hook to get translation function
@@ -15,7 +16,8 @@ export function useTranslation() {
   const { language } = useI18n();
 
   return {
-    t: (key: string) => translate(key, language),
+    t: (key: string, params?: InterpolationParams) =>
+      translate(key, language, params),
     language,
     translations: getTranslations(language)
   };

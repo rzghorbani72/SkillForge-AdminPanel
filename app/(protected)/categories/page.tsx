@@ -9,12 +9,14 @@ import { toast } from 'sonner';
 import { CategoryHeader } from '@/components/category/CategoryHeader';
 import { SearchAndFilters } from '@/components/category/SearchAndFilters';
 import { ErrorDisplay } from '@/components/category/ErrorDisplay';
-import { LoadingState } from '@/components/category/LoadingState';
-import { EmptyState } from '@/components/category/EmptyState';
 import { CategoryCard } from '@/components/category/CategoryCard';
 import { CategoryDialog } from '@/components/category/CategoryDialog';
 import { CategoryType, FilterType } from '@/components/category/category-utils';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { Folder, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function CategoriesPage() {
   const searchParams = useSearchParams();
@@ -67,7 +69,7 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false);
     }
-  }, []); // Empty dependency array - store functions are stable
+  }, []);
 
   useEffect(() => {
     if (!hasFetched.current && categories.length === 0) {
@@ -76,7 +78,6 @@ export default function CategoriesPage() {
     }
   }, [categories.length]);
 
-  // Handle URL parameters for filtering
   useEffect(() => {
     const typeParam = searchParams.get('type');
     if (
@@ -159,7 +160,6 @@ export default function CategoriesPage() {
     }
   };
 
-  // Debounce the handlers to prevent multiple rapid submissions
   const handleCreateCategory = useDebouncedCallback(
     handleCreateCategoryHandler,
     500
@@ -200,11 +200,11 @@ export default function CategoriesPage() {
   };
 
   if (isLoading) {
-    return <LoadingState />;
+    return <LoadingSpinner message="Loading categories..." />;
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="page-wrapper flex-1 space-y-6 p-6">
       <CategoryHeader onCreateClick={() => setIsCreateDialogOpen(true)} />
 
       {error && (
@@ -212,6 +212,7 @@ export default function CategoriesPage() {
           error={error}
           onRetry={() => {
             clearError();
+            fetchCategories();
           }}
         />
       )}
@@ -223,20 +224,53 @@ export default function CategoriesPage() {
         onTypeChange={setSelectedType}
       />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredCategories.length === 0 ? (
-          <EmptyState searchTerm={searchTerm} selectedType={selectedType} />
-        ) : (
-          filteredCategories.map((category) => (
-            <CategoryCard
+      {filteredCategories.length === 0 ? (
+        <div
+          className="fade-in-up flex flex-1 items-center justify-center p-6"
+          style={{ animationDelay: '0.2s' }}
+        >
+          <div className="text-center">
+            <div className="relative mx-auto mb-6">
+              <div className="absolute inset-0 -z-10 mx-auto h-32 w-32 rounded-full bg-gradient-to-br from-primary/10 via-primary/5 to-transparent blur-2xl" />
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/50 text-muted-foreground shadow-sm">
+                <Folder className="h-10 w-10" />
+              </div>
+            </div>
+            <h3 className="text-xl font-semibold tracking-tight">
+              No categories found
+            </h3>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+              {searchTerm || selectedType !== 'all'
+                ? 'No categories match your search criteria.'
+                : 'Create your first category to organize your content.'}
+            </p>
+            {!searchTerm && selectedType === 'all' && (
+              <Button
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="mt-6 gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25"
+              >
+                <Plus className="h-4 w-4" />
+                Create Category
+              </Button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="stagger-children grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredCategories.map((category, index) => (
+            <div
               key={category.id}
-              category={category}
-              onEdit={openEditDialog}
-              onDelete={handleDeleteCategory}
-            />
-          ))
-        )}
-      </div>
+              style={{ animationDelay: `${0.05 * (index + 1)}s` }}
+            >
+              <CategoryCard
+                category={category}
+                onEdit={openEditDialog}
+                onDelete={handleDeleteCategory}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <CategoryDialog
         isOpen={isCreateDialogOpen}

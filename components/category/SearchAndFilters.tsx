@@ -1,4 +1,7 @@
+'use client';
+
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -7,10 +10,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Folder } from 'lucide-react';
+import { Search, X, SlidersHorizontal } from 'lucide-react';
 import {
   FilterType,
-  getCategoryTypeIcon,
   CategoryType,
   getCategoryTypeLabel
 } from './category-utils';
@@ -29,43 +31,43 @@ export function SearchAndFilters({
   onTypeChange
 }: SearchAndFiltersProps) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-1 items-center space-x-2">
-        <div className="relative flex-1 sm:max-w-xs">
-          <Input
-            placeholder="Search categories..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-8"
-          />
-          <Folder className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        </div>
+    <div
+      className="fade-in-up flex flex-col gap-3 sm:flex-row sm:items-center"
+      style={{ animationDelay: '0.1s' }}
+    >
+      <div className="relative max-w-md flex-1">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search categories..."
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="h-10 rounded-xl border-border/50 bg-background/50 pl-10 pr-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
+        />
+        {searchTerm && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            onClick={() => onSearchChange('')}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <Select value={selectedType} onValueChange={onTypeChange}>
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="h-10 w-full rounded-xl border-border/50 bg-background/50 sm:w-[180px]">
           <SelectValue placeholder="Filter by type" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-xl">
           <SelectGroup>
-            <SelectItem
-              className={
-                selectedType === 'all'
-                  ? 'items-center justify-start gap-2 bg-primary text-primary-foreground'
-                  : 'items-center justify-start gap-2'
-              }
-              value="all"
-            >
+            <SelectItem value="all" className="rounded-lg">
               {getCategoryTypeLabel('all')}
             </SelectItem>
             {Object.values(CategoryType).map((type: CategoryType) => (
               <SelectItem
-                className={
-                  selectedType === type.toString()
-                    ? 'items-center justify-start gap-2 bg-primary text-primary-foreground'
-                    : 'items-center justify-start gap-2'
-                }
                 key={type}
                 value={type.toString()}
+                className="rounded-lg"
               >
                 {getCategoryTypeLabel(type.toString())}
               </SelectItem>
@@ -73,6 +75,13 @@ export function SearchAndFilters({
           </SelectGroup>
         </SelectContent>
       </Select>
+      <Button
+        variant="outline"
+        size="icon"
+        className="h-10 w-10 shrink-0 rounded-xl border-border/50"
+      >
+        <SlidersHorizontal className="h-4 w-4" />
+      </Button>
     </div>
   );
 }

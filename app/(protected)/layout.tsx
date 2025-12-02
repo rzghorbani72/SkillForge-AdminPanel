@@ -20,11 +20,16 @@ export default function ProtectedLayout({
     <>
       {/* <CategoriesInitializer /> */}
       <ThemeInitializer />
-      <div className="flex h-screen">
+      <div className="flex h-screen overflow-hidden">
         <Sidebar />
-        <main className="flex flex-1 flex-col overflow-hidden">
+        <main className="relative flex flex-1 flex-col overflow-hidden">
+          {/* Subtle background pattern */}
+          <div className="gradient-mesh pointer-events-none absolute inset-0 -z-10 opacity-50" />
+
           <Header />
-          <div className="flex-1 overflow-auto">{children}</div>
+          <div className="beautiful-scrollbar flex-1 overflow-auto">
+            {children}
+          </div>
         </main>
       </div>
     </>

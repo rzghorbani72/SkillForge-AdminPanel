@@ -36,13 +36,13 @@ const NavItemContent = React.memo(
     item,
     isMinimized,
     isExpanded,
-    path,
+    isActive,
     translatedTitle
   }: {
     item: NavItem;
     isMinimized: boolean;
     isExpanded: boolean;
-    path: string;
+    isActive: boolean;
     translatedTitle: string;
   }) => {
     const Icon =
@@ -54,24 +54,50 @@ const NavItemContent = React.memo(
     return (
       <div
         className={cn(
-          'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-          path === item.href ? 'bg-accent' : 'transparent',
-          item.disabled && 'cursor-not-allowed opacity-80'
+          'sidebar-item group',
+          isActive && 'active',
+          item.disabled && 'cursor-not-allowed opacity-60'
         )}
       >
-        <Icon className="size-5 flex-none" />
+        <div
+          className={cn(
+            'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-200',
+            isActive
+              ? 'bg-primary/10 text-primary'
+              : 'text-muted-foreground group-hover:bg-primary/5 group-hover:text-primary'
+          )}
+        >
+          <Icon className="h-[18px] w-[18px]" />
+        </div>
         {!isMinimized && (
           <div className="flex min-w-0 flex-1 items-center gap-2">
-            <span className="truncate">{translatedTitle}</span>
+            <span
+              className={cn(
+                'truncate font-medium transition-colors',
+                isActive
+                  ? 'text-primary'
+                  : 'text-foreground/80 group-hover:text-foreground'
+              )}
+            >
+              {translatedTitle}
+            </span>
             {(item as any).badge && (
-              <Badge variant="secondary" className="h-5 px-1.5 py-0.5 text-xs">
+              <Badge
+                variant="secondary"
+                className="h-5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary"
+              >
                 {(item as any).badge}
               </Badge>
             )}
           </div>
         )}
         {hasChildren && !isMinimized && (
-          <ChevronRight className={cn('h-4 w-4', isExpanded && 'rotate-90')} />
+          <ChevronRight
+            className={cn(
+              'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
+              isExpanded && 'rotate-90 text-primary'
+            )}
+          />
         )}
       </div>
     );
@@ -92,7 +118,10 @@ const NavItemLink = React.memo(
   }) => (
     <Link
       href={item.disabled ? '/' : item.href || '#'}
-      className={cn('block', item.disabled && 'cursor-not-allowed opacity-80')}
+      className={cn(
+        'block rounded-xl transition-all duration-200',
+        item.disabled && 'cursor-not-allowed opacity-60'
+      )}
       onClick={onClick}
     >
       {children}
@@ -129,7 +158,6 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
     (label: string, title: string): string => {
       const translationKey = `navigation.${label}`;
       const translated = t(translationKey);
-      // If translation exists and is different from the key, use it
       if (translated && translated !== translationKey) {
         return translated;
       }
@@ -154,9 +182,21 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
     if (setOpen) setOpen(false);
   }, [setOpen]);
 
+  const isPathActive = useCallback(
+    (href: string | undefined) => {
+      if (!href) return false;
+      const pathWithoutQuery = path.split('?')[0];
+      const hrefWithoutQuery = href.split('?')[0];
+      return (
+        pathWithoutQuery === hrefWithoutQuery ||
+        pathWithoutQuery.startsWith(hrefWithoutQuery + '/')
+      );
+    },
+    [path]
+  );
+
   const renderNavItem = useCallback(
     (item: NavItem, depth = 0) => {
-      // Prevent infinite recursion by limiting depth
       if (depth > 5) {
         console.warn(
           'Maximum navigation depth reached, skipping item:',
@@ -170,6 +210,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         Array.isArray(item.children) &&
         item.children.length > 0;
       const isExpanded = expandedItems.has(item.title);
+      const isActive = isPathActive(item.href);
       const translatedTitle = translateNavTitle(item.label || '', item.title);
 
       const content = (
@@ -177,7 +218,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
           item={item}
           isMinimized={isMinimized}
           isExpanded={isExpanded}
-          path={path}
+          isActive={isActive}
           translatedTitle={translatedTitle}
         />
       );
@@ -189,26 +230,40 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
               {content}
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="w-48 space-y-1"
+              className="w-52 space-y-1 rounded-xl border-border/50 bg-popover/95 p-2 shadow-xl backdrop-blur-xl"
               align="start"
               side="right"
-              sideOffset={5}
+              sideOffset={8}
               avoidCollisions={true}
             >
-              <DropdownMenuLabel>{translatedTitle}</DropdownMenuLabel>
+              <DropdownMenuLabel className="px-2 text-xs font-semibold text-muted-foreground">
+                {translatedTitle}
+              </DropdownMenuLabel>
               {item.children &&
                 item.children.map((child, index) => {
                   const childTranslatedTitle = translateNavTitle(
                     child.label || '',
                     child.title
                   );
+                  const childIsActive = isPathActive(child.href);
                   return (
-                    <DropdownMenuItem key={`${child.title}-${index}`}>
+                    <DropdownMenuItem
+                      key={`${child.title}-${index}`}
+                      className={cn(
+                        'rounded-lg px-3 py-2 transition-colors',
+                        childIsActive && 'bg-primary/10 text-primary'
+                      )}
+                    >
                       {child.href ? (
                         <Link
                           href={child.href}
                           onClick={handleSetOpen}
-                          className="w-full cursor-pointer"
+                          className={cn(
+                            'w-full cursor-pointer font-medium',
+                            childIsActive
+                              ? 'text-primary'
+                              : 'text-foreground/80'
+                          )}
                         >
                           {childTranslatedTitle}
                         </Link>
@@ -243,7 +298,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
             isExpanded &&
             (() => {
               return (
-                <div className="ml-4 mt-1 space-y-1">
+                <div className="ml-5 mt-1 space-y-1 border-l-2 border-border/50 pl-3">
                   {item.children &&
                     item.children.map((child, index) => (
                       <div key={`${child.title}-${index}`}>
@@ -260,7 +315,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
       expandedItems,
       isMinimized,
       isAboveLg,
-      path,
+      isPathActive,
       handleSetOpen,
       toggleExpand,
       translateNavTitle
@@ -274,16 +329,19 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   }
 
   return (
-    <nav className={cn('grid items-start gap-2')}>
-      <TooltipProvider>
+    <nav className="grid items-start gap-1">
+      <TooltipProvider delayDuration={0}>
         {memoizedItems.map((item) => (
           <Tooltip key={item.title}>
             <TooltipTrigger asChild>{renderNavItem(item)}</TooltipTrigger>
             <TooltipContent
               align="center"
               side="right"
-              sideOffset={8}
-              className={!isMinimized ? 'hidden' : 'inline-block'}
+              sideOffset={12}
+              className={cn(
+                'rounded-lg border-border/50 bg-popover/95 px-3 py-1.5 text-sm font-medium shadow-lg backdrop-blur-xl',
+                !isMinimized && 'hidden'
+              )}
             >
               {translateNavTitle(item.label || '', item.title)}
             </TooltipContent>

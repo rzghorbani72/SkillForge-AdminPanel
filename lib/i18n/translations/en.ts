@@ -56,7 +56,15 @@ export const en = {
     none: 'None',
     selected: 'selected',
     errorLoading: 'Error loading',
-    viewAll: 'View All'
+    viewAll: 'View All',
+    noSchoolSelected: 'No School Selected',
+    selectSchoolToView:
+      'Please select a school from the header to view content.',
+    selectSchoolToViewProducts:
+      'Please select a school from the header to view products.',
+    school: 'School',
+    oneSchool: '1 school',
+    multipleSchools: '{{count}} schools'
   },
   navigation: {
     dashboard: 'Dashboard',
@@ -85,7 +93,20 @@ export const en = {
     'teacher-requests': 'Teacher Requests',
     'all-students': 'All Students',
     enrollments: 'Enrollments',
-    progress: 'Progress'
+    progress: 'Progress',
+    'analytics-overview': 'Analytics Overview',
+    'revenue-analytics': 'Revenue Analytics',
+    'course-performance': 'Course Performance',
+    'student-engagement': 'Student Engagement',
+    transactions: 'Transactions',
+    'payment-methods': 'Payment Methods',
+    invoices: 'Invoices',
+    'profile-settings': 'Profile Settings',
+    'school-settings': 'School Settings',
+    'theme-settings': 'Theme Settings',
+    'ui-template-settings': 'UI Template Settings',
+    'security-settings': 'Security Settings',
+    'progress-tracking': 'Progress Tracking'
   },
   auth: {
     login: 'Login',
@@ -339,8 +360,8 @@ export const en = {
     manageCoursesFor: 'Manage courses for',
     oneCourse: '1 course',
     multipleCourses: '{{count}} courses',
-    showingMatching: 'Showing {{count}} course(s) matching "{{term}}".',
-    showingCount: 'Showing {{count}} course(s).',
+    showingMatching: 'Showing {{count}} course(s) matching "{{term}}"',
+    showingCount: 'Showing {{count}} course(s)',
     noCoursesMatch: 'No courses match "{{term}}"',
     getStarted: 'Get started by creating your first course.',
     noRating: 'No rating',
@@ -370,7 +391,9 @@ export const en = {
     videoIdPlaceholder: 'Video ID (optional)',
     coverId: 'Cover ID',
     coverIdPlaceholder: 'Cover ID (optional)',
-    courses: 'courses'
+    courses: 'courses',
+    lessonsCount: '{{count}} lessons',
+    studentsCount: '{{count}} students'
   },
   students: {
     title: 'Students',
@@ -459,15 +482,16 @@ export const en = {
     manageDescription: 'Manage your products and inventory',
     oneProduct: '1 product',
     multipleProducts: '{{count}} products',
-    showingMatching: 'Showing {{count}} product(s) matching "{{term}}".',
-    showingCount: 'Showing {{count}} product(s).',
+    showingMatching: 'Showing {{count}} product(s) matching "{{term}}"',
+    showingCount: 'Showing {{count}} product(s)',
     noProductsMatch: 'No products match "{{term}}"',
     getStarted: 'Get started by creating your first product.',
     physical: 'Physical',
     digital: 'Digital',
     stock: 'Stock',
     reviews: 'reviews',
-    searchProducts: 'Search products by title, description, SKU...',
+    searchProducts: 'Search products...',
+    searchManagers: 'Search managers...',
     pricing: 'Pricing',
     price: 'Price',
     pricePlaceholder: '0 (0-999,999,999)',
@@ -495,6 +519,7 @@ export const en = {
       'Make this product visible to customers immediately',
     featuredProduct: 'Featured Product',
     featuredProductDescription: 'Highlight this product on the storefront',
+    featured: 'Featured',
     associations: 'Associations',
     category: 'Category',
     selectCategory: 'Select category',
@@ -511,7 +536,10 @@ export const en = {
     noCoverImageSelected: 'No cover image selected',
     uploadImageToPreview: 'Upload an image to preview it here',
     uploadCoverImage: 'Upload Cover Image',
-    selectImageFirst: 'Select an image first'
+    selectImageFirst: 'Select an image first',
+    inStock: 'In Stock',
+    outOfStock: 'Out of Stock',
+    noReviewsYet: 'No reviews yet'
   },
   categories: {
     title: 'Categories',

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Card,
@@ -8,15 +10,25 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Eye, Plus, Trash2, Package, ShoppingCart } from 'lucide-react';
+import {
+  Edit,
+  Eye,
+  Plus,
+  Trash2,
+  Package,
+  ShoppingCart,
+  Star,
+  Box
+} from 'lucide-react';
 import { Product } from '@/types/api';
 import {
   AccessControlBadge,
   AccessControlActions
 } from '@/components/ui/access-control-badge';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { formatCurrencyWithSchool, cn } from '@/lib/utils';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 import Image from 'next/image';
 
 type Props = {
@@ -59,10 +71,6 @@ const ProductsGrid = ({
     }
   };
 
-  const resultsLabel =
-    products.length === 1
-      ? t('products.oneProduct')
-      : t('products.multipleProducts', { count: products.length });
   const headerDescription = searchTerm
     ? t('products.showingMatching', {
         count: products.length,
@@ -72,27 +80,45 @@ const ProductsGrid = ({
 
   if (products.length === 0) {
     return (
-      <Card className="py-12 text-center">
-        <Package className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-2 text-sm font-medium">{t('products.noProducts')}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {searchTerm
-            ? t('products.noProductsMatch', { term: searchTerm })
-            : t('products.getStarted')}
-        </p>
-        {!searchTerm && onCreate && (
-          <Button onClick={onCreate} className="mt-4">
-            <Plus className="mr-2 h-4 w-4" />
-            {t('products.createProduct')}
-          </Button>
-        )}
-      </Card>
+      <div
+        className="fade-in-up flex flex-1 items-center justify-center p-6"
+        style={{ animationDelay: '0.2s' }}
+      >
+        <div className="text-center">
+          <div className="relative mx-auto mb-6">
+            <div className="absolute inset-0 -z-10 mx-auto h-32 w-32 rounded-full bg-gradient-to-br from-blue-500/10 via-primary/5 to-transparent blur-2xl" />
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/50 text-muted-foreground shadow-sm">
+              <Package className="h-10 w-10" />
+            </div>
+          </div>
+          <h3 className="text-xl font-semibold tracking-tight">
+            {t('products.noProducts')}
+          </h3>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+            {searchTerm
+              ? t('products.noProductsMatch', { term: searchTerm })
+              : t('products.getStarted')}
+          </p>
+          {!searchTerm && onCreate && (
+            <Button
+              onClick={onCreate}
+              className="mt-6 gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25"
+            >
+              <Plus className="h-4 w-4" />
+              {t('products.createProduct')}
+            </Button>
+          )}
+        </div>
+      </div>
     );
   }
 
   return (
     <>
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        className="fade-in-up mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+        style={{ animationDelay: '0.15s' }}
+      >
         <div>
           <h2 className="text-lg font-semibold text-foreground">
             {t('products.title')}
@@ -101,56 +127,56 @@ const ProductsGrid = ({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4">
-        {products.map((product) => (
+      <div className="stagger-children grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {products.map((product, index) => (
           <div
             key={product.id}
             onClick={() => onView(product)}
-            className="flex min-w-[300px] max-w-full flex-1 cursor-pointer flex-col gap-3 sm:max-w-[340px] lg:max-w-[380px] xl:max-w-[420px]"
+            className="cursor-pointer"
+            style={{ animationDelay: `${0.05 * (index + 1)}s` }}
           >
-            <Card className="flex h-full w-full flex-col border-border/60 hover:shadow-md">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1">
-                    <CardTitle className="line-clamp-2 text-lg">
-                      {product.title}
-                    </CardTitle>
-                    <CardDescription className="line-clamp-2 text-sm">
-                      {product.short_description || product.description}
-                    </CardDescription>
-                  </div>
-                  {product.access_control && (
-                    <AccessControlBadge
-                      accessControl={product.access_control}
-                      className="shrink-0 text-xs"
-                    />
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="flex flex-1 flex-col gap-4 pt-0">
-                {product.cover && (
-                  <div className="relative h-48 w-full overflow-hidden rounded-lg">
-                    <Image
-                      src={product.cover.url || '/placeholder.svg'}
-                      alt={product.cover.alt || product.title}
-                      fill
-                      className="object-cover"
-                    />
+            <Card
+              className={cn(
+                'group flex h-full flex-col overflow-hidden border-border/50 transition-all duration-300',
+                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5'
+              )}
+            >
+              {/* Product Cover */}
+              <div className="relative aspect-[4/3] overflow-hidden bg-muted/50">
+                {product.cover?.url ? (
+                  <Image
+                    src={product.cover.url}
+                    alt={product.cover.alt || product.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center">
+                    <Package className="h-12 w-12 text-muted-foreground/40" />
                   </div>
                 )}
-
-                <div className="flex items-center gap-2">
+                {/* Gradient overlay */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                {/* Featured badge */}
+                {product.is_featured && (
+                  <Badge className="absolute left-3 top-3 gap-1 rounded-full bg-amber-500/90 text-white backdrop-blur-sm">
+                    <Star className="h-3 w-3 fill-current" />
+                    {t('courses.featured')}
+                  </Badge>
+                )}
+                {/* Product type badge */}
+                <div className="absolute right-3 top-3">
                   <Badge
-                    variant={
+                    className={cn(
+                      'rounded-full backdrop-blur-sm',
                       product.product_type === 'PHYSICAL'
-                        ? 'default'
-                        : 'secondary'
-                    }
-                    className="text-xs"
+                        ? 'bg-blue-500/90 text-white'
+                        : 'bg-purple-500/90 text-white'
+                    )}
                   >
                     {product.product_type === 'PHYSICAL' ? (
                       <>
-                        <Package className="mr-1 h-3 w-3" />
+                        <Box className="mr-1 h-3 w-3" />
                         {t('products.physical')}
                       </>
                     ) : (
@@ -160,56 +186,90 @@ const ProductsGrid = ({
                       </>
                     )}
                   </Badge>
-                  {product.product_type === 'PHYSICAL' &&
-                    product.stock_quantity !== null && (
-                      <Badge variant="outline" className="text-xs">
-                        {t('products.stock')}: {product.stock_quantity}
-                      </Badge>
-                    )}
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge
-                      variant={product.is_published ? 'default' : 'secondary'}
-                      className="text-xs"
-                    >
-                      {product.is_published
-                        ? t('courses.published')
-                        : t('courses.draft')}
-                    </Badge>
-                    {product.is_featured && (
-                      <Badge
-                        variant="outline"
-                        className="border-yellow-600 text-xs text-yellow-600"
-                      >
-                        {t('courses.featured')}
-                      </Badge>
-                    )}
-                  </div>
+                {/* Price badge */}
+                <div className="absolute bottom-3 right-3">
                   {product.price && product.price > 0 ? (
-                    <span className="text-sm font-semibold text-foreground">
+                    <Badge className="rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-foreground backdrop-blur-sm dark:bg-black/90 dark:text-white">
                       {formatCurrencyWithSchool(product.price, school)}
-                    </span>
+                    </Badge>
                   ) : (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge className="rounded-full bg-emerald-500/90 px-3 py-1 text-sm font-semibold text-white backdrop-blur-sm">
                       {t('courses.free')}
                     </Badge>
                   )}
                 </div>
+              </div>
 
-                {product.rating > 0 && (
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <span>⭐ {product.rating.toFixed(1)}</span>
-                    {product.rating_count > 0 && (
-                      <span>
-                        ({product.rating_count} {t('products.reviews')})
-                      </span>
-                    )}
+              <CardHeader className="pb-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 space-y-1">
+                    <CardTitle className="line-clamp-2 text-base font-semibold leading-tight transition-colors group-hover:text-primary">
+                      {product.title}
+                    </CardTitle>
+                    <CardDescription className="line-clamp-2 text-xs">
+                      {product.short_description || product.description}
+                    </CardDescription>
                   </div>
-                )}
+                  {product.access_control && (
+                    <AccessControlBadge
+                      accessControl={product.access_control}
+                      className="shrink-0 text-[10px]"
+                    />
+                  )}
+                </div>
+              </CardHeader>
 
-                <div className="mt-auto flex flex-wrap items-center gap-2">
+              <CardContent className="flex flex-1 flex-col gap-3 pt-0">
+                {/* Stock and rating info */}
+                <div className="flex items-center justify-between rounded-xl bg-muted/50 px-3 py-2 text-xs">
+                  {product.product_type === 'PHYSICAL' &&
+                    product.stock_quantity !== null && (
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Package className="h-3.5 w-3.5" />
+                        <span className="font-medium">
+                          {product.stock_quantity} in stock
+                        </span>
+                      </div>
+                    )}
+                  {product.rating > 0 ? (
+                    <div className="flex items-center gap-1 text-amber-500">
+                      <Star className="h-3.5 w-3.5 fill-current" />
+                      <span className="font-semibold">
+                        {product.rating.toFixed(1)}
+                      </span>
+                      {product.rating_count > 0 && (
+                        <span className="text-muted-foreground">
+                          ({product.rating_count})
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground/60">
+                      No reviews yet
+                    </div>
+                  )}
+                </div>
+
+                {/* Status badges */}
+                <div className="flex items-center justify-between">
+                  <Badge
+                    variant={product.is_published ? 'default' : 'secondary'}
+                    className={cn(
+                      'rounded-full text-[10px] font-semibold',
+                      product.is_published
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                        : 'bg-muted text-muted-foreground'
+                    )}
+                  >
+                    {product.is_published
+                      ? t('courses.published')
+                      : t('courses.draft')}
+                  </Badge>
+                </div>
+
+                {/* Action buttons */}
+                <div className="mt-auto flex items-center gap-2 pt-2">
                   {product.access_control ? (
                     <AccessControlActions
                       accessControl={product.access_control}
@@ -218,34 +278,45 @@ const ProductsGrid = ({
                       onDelete={
                         onDelete ? () => handleDeleteClick(product) : undefined
                       }
-                      className="w-full justify-between gap-2 sm:flex sm:w-auto"
+                      className="flex w-full justify-between gap-2"
                     />
                   ) : (
                     <>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="min-w-[110px] flex-1"
+                        className="flex-1 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDeleteClick(product);
+                          onView(product);
                         }}
                       >
-                        <Trash2 className="mr-1 h-4 w-4" />
-                        {t('common.delete')}
+                        <Eye className="mr-1.5 h-3.5 w-3.5" />
+                        View
                       </Button>
-                      {onEdit && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(product);
+                        }}
+                      >
+                        <Edit className="mr-1.5 h-3.5 w-3.5" />
+                        Edit
+                      </Button>
+                      {onDelete && (
                         <Button
                           variant="outline"
-                          size="sm"
-                          className="min-w-[110px] flex-1"
+                          size="icon"
+                          className="shrink-0 rounded-lg border-border/50 text-muted-foreground hover:border-destructive/50 hover:bg-destructive/5 hover:text-destructive"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onEdit(product);
+                            handleDeleteClick(product);
                           }}
                         >
-                          <Edit className="mr-1 h-4 w-4" />
-                          {t('common.edit')}
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       )}
                     </>
@@ -256,6 +327,7 @@ const ProductsGrid = ({
           </div>
         ))}
       </div>
+
       {productToDelete && (
         <ConfirmDeleteModal
           open={Boolean(productToDelete)}
