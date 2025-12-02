@@ -24,11 +24,15 @@ type Props = {
 };
 
 const RecentLists = ({ courses, enrollments, payments }: Props) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const school = useCurrentSchool();
 
   return (
-    <Tabs defaultValue="courses" className="space-y-4">
+    <Tabs
+      defaultValue="courses"
+      className="space-y-4"
+      dir={language === 'fa' ? 'rtl' : 'ltr'}
+    >
       <TabsList>
         <TabsTrigger value="courses">
           {t('dashboard.recentCourses')}
