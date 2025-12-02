@@ -104,7 +104,7 @@ export function VerificationStep(props: VerificationStepProps) {
                 onChange={(e) => onChange('phoneOtp', e.target.value)}
                 className={errors.phoneOtp ? 'border-red-500' : ''}
                 disabled={isLoading || otpLoading}
-                dir={isRTL ? 'rtl' : 'ltr'}
+                dir="ltr"
               />
             </div>
             <Button
@@ -163,7 +163,7 @@ export function VerificationStep(props: VerificationStepProps) {
                 onChange={(e) => onChange('emailOtp', e.target.value)}
                 className={errors.emailOtp ? 'border-red-500' : ''}
                 disabled={isLoading || otpLoading}
-                dir={isRTL ? 'rtl' : 'ltr'}
+                dir="ltr"
               />
             </div>
             <Button

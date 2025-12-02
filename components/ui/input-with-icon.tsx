@@ -55,7 +55,7 @@ export function InputWithIcon({
           )}
           disabled={disabled}
           maxLength={maxLength}
-          dir={isRTL ? 'rtl' : 'ltr'}
+          dir="ltr"
         />
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}

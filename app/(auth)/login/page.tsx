@@ -45,6 +45,7 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
+    fullPhoneNumber: '',
     password: '',
     school_id: ''
   });
@@ -122,7 +123,10 @@ export default function LoginPage() {
 
     try {
       const credentials = {
-        identifier: authMethod === 'phone' ? formData.phone : formData.email,
+        identifier:
+          authMethod === 'phone'
+            ? formData.fullPhoneNumber || formData.phone
+            : formData.email,
         password: formData.password,
         school_id: formData.school_id ? parseInt(formData.school_id) : undefined
       };
@@ -210,7 +214,10 @@ export default function LoginPage() {
     // Retry login with school_id
     try {
       const credentials = {
-        identifier: authMethod === 'phone' ? formData.phone : formData.email,
+        identifier:
+          authMethod === 'phone'
+            ? formData.fullPhoneNumber || formData.phone
+            : formData.email,
         password: formData.password,
         school_id: schoolId
       };
@@ -353,6 +360,7 @@ export default function LoginPage() {
                             errors.password ? 'border-red-500' : ''
                           }`}
                           disabled={isLoading}
+                          dir="ltr"
                         />
                         <Button
                           type="button"
@@ -456,6 +464,9 @@ export default function LoginPage() {
                       placeholder={t('auth.enterPhone')}
                       value={formData.phone}
                       onChange={(value) => handleInputChange('phone', value)}
+                      onFullPhoneChange={(fullPhone) =>
+                        handleInputChange('fullPhoneNumber', fullPhone)
+                      }
                       error={errors.phone}
                       disabled={isLoading}
                     />
@@ -480,7 +491,7 @@ export default function LoginPage() {
                             errors.password ? 'border-red-500' : ''
                           }`}
                           disabled={isLoading}
-                          dir={isRTL ? 'rtl' : 'ltr'}
+                          dir="ltr"
                         />
                         <Button
                           type="button"

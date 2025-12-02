@@ -341,5 +341,41 @@ export const ar = {
     title: 'الصفحة غير موجودة',
     description: 'الصفحة التي تبحث عنها غير موجودة.',
     backHome: 'العودة إلى الرئيسية'
+  },
+  forgotPassword: {
+    title: 'إعادة تعيين كلمة المرور',
+    enterIdentifier:
+      'أدخل بريدك الإلكتروني أو رقم هاتفك واختر المدرسة (إن وجدت) لتلقي رمز التحقق',
+    enterOtp: 'أدخل رمز التحقق المرسل إلى جهازك',
+    enterNewPassword: 'أدخل كلمة المرور الجديدة',
+    passwordResetSuccess: 'تم إعادة تعيين كلمة المرور بنجاح',
+    emailOrPhoneRequired: 'البريد الإلكتروني أو رقم الهاتف مطلوب',
+    validEmailAddress: 'الرجاء إدخال عنوان بريد إلكتروني صالح',
+    validPhoneNumber: 'الرجاء إدخال رقم هاتف صالح',
+    otpRequired: 'رمز التحقق مطلوب',
+    invalidOtp: 'رمز التحقق غير صالح',
+    otpSentToEmail: 'تم إرسال رمز التحقق إلى عنوان بريدك الإلكتروني',
+    otpSentToPhone: 'تم إرسال رمز التحقق إلى رقم هاتفك',
+    otpVerifiedSuccess: 'تم التحقق من رمز التحقق بنجاح',
+    passwordResetFailed: 'فشل إعادة تعيين كلمة المرور',
+    sendOtp: 'إرسال رمز التحقق',
+    verifyOtp: 'التحقق من رمز التحقق',
+    resetPassword: 'إعادة تعيين كلمة المرور',
+    backToLogin: 'العودة إلى تسجيل الدخول',
+    tryAgain: 'حاول مرة أخرى',
+    selectSchoolDescription:
+      'اختر مدرستك إذا كنت طالباً، أو اتركه فارغاً للمدير/المعلم',
+    checkDeviceForCode: 'تحقق من جهازك للحصول على رمز التحقق',
+    createNewPassword: 'قم بإنشاء كلمة مرور آمنة جديدة',
+    canLoginNow: 'يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة',
+    verificationCode: 'رمز التحقق',
+    enter6DigitCode: 'أدخل الرمز المكون من 6 أرقام',
+    newPassword: 'كلمة المرور الجديدة',
+    confirmNewPassword: 'تأكيد كلمة المرور الجديدة',
+    passwordResetSuccessTitle: 'تم إعادة تعيين كلمة المرور بنجاح!',
+    passwordResetSuccessMessage:
+      'تم إعادة تعيين كلمة المرور الخاصة بك. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.',
+    resetAnotherPassword: 'إعادة تعيين كلمة مرور أخرى',
+    goToLogin: 'الذهاب إلى تسجيل الدخول'
   }
 };

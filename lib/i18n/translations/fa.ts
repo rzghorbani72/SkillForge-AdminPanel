@@ -348,5 +348,41 @@ export const fa = {
     title: 'صفحه یافت نشد',
     description: 'صفحه‌ای که به دنبال آن هستید وجود ندارد.',
     backHome: 'بازگشت به خانه'
+  },
+  forgotPassword: {
+    title: 'بازیابی رمز عبور',
+    enterIdentifier:
+      'ایمیل یا شماره تلفن خود را وارد کنید و مدرسه را انتخاب کنید (در صورت وجود) تا کد تأیید دریافت کنید',
+    enterOtp: 'کد تأیید ارسال شده به دستگاه خود را وارد کنید',
+    enterNewPassword: 'رمز عبور جدید خود را وارد کنید',
+    passwordResetSuccess: 'رمز عبور با موفقیت بازنشانی شد',
+    emailOrPhoneRequired: 'ایمیل یا شماره تلفن الزامی است',
+    validEmailAddress: 'لطفاً یک آدرس ایمیل معتبر وارد کنید',
+    validPhoneNumber: 'لطفاً یک شماره تلفن معتبر وارد کنید',
+    otpRequired: 'کد تأیید الزامی است',
+    invalidOtp: 'کد تأیید نامعتبر است',
+    otpSentToEmail: 'کد تأیید به آدرس ایمیل شما ارسال شد',
+    otpSentToPhone: 'کد تأیید به شماره تلفن شما ارسال شد',
+    otpVerifiedSuccess: 'کد تأیید با موفقیت تأیید شد',
+    passwordResetFailed: 'بازنشانی رمز عبور ناموفق بود',
+    sendOtp: 'ارسال کد تأیید',
+    verifyOtp: 'تأیید کد تأیید',
+    resetPassword: 'بازنشانی رمز عبور',
+    backToLogin: 'بازگشت به ورود',
+    tryAgain: 'دوباره تلاش کنید',
+    selectSchoolDescription:
+      'اگر دانش‌آموز هستید مدرسه خود را انتخاب کنید، یا برای مدیر/معلم خالی بگذارید',
+    checkDeviceForCode: 'دستگاه خود را برای کد تأیید بررسی کنید',
+    createNewPassword: 'یک رمز عبور امن جدید ایجاد کنید',
+    canLoginNow: 'اکنون می‌توانید با رمز عبور جدید خود وارد شوید',
+    verificationCode: 'کد تأیید',
+    enter6DigitCode: 'کد ۶ رقمی را وارد کنید',
+    newPassword: 'رمز عبور جدید',
+    confirmNewPassword: 'رمز عبور جدید را تأیید کنید',
+    passwordResetSuccessTitle: 'رمز عبور با موفقیت بازنشانی شد!',
+    passwordResetSuccessMessage:
+      'رمز عبور شما بازنشانی شد. اکنون می‌توانید با رمز عبور جدید خود وارد شوید.',
+    resetAnotherPassword: 'بازنشانی رمز عبور دیگر',
+    goToLogin: 'رفتن به ورود'
   }
 };

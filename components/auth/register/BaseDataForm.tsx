@@ -114,7 +114,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
             onChange={(e) => onChange('name', e.target.value)}
             className={errors.name ? 'border-red-500' : ''}
             disabled={isLoading}
-            dir={isRTL ? 'rtl' : 'ltr'}
+            dir="ltr"
           />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -132,7 +132,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
                 onChange={(e) => onChange('password', e.target.value)}
                 className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${errors.password ? 'border-red-500' : ''}`}
                 disabled={isLoading}
-                dir={isRTL ? 'rtl' : 'ltr'}
+                dir="ltr"
               />
               <Button
                 type="button"
@@ -164,7 +164,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
                 onChange={(e) => onChange('confirmPassword', e.target.value)}
                 className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${errors.confirmPassword ? 'border-red-500' : ''}`}
                 disabled={isLoading}
-                dir={isRTL ? 'rtl' : 'ltr'}
+                dir="ltr"
               />
               <Button
                 type="button"
@@ -201,7 +201,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
               }}
               className={errors.schoolName ? 'border-red-500' : ''}
               disabled={isLoading}
-              dir={isRTL ? 'rtl' : 'ltr'}
+              dir="ltr"
             />
           </div>
           <div className="space-y-2">
@@ -215,7 +215,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
                 onChange={(e) => onChange('schoolSlug', e.target.value)}
                 className={`${isRTL ? 'pl-20 ps-20' : 'pe-20 pr-20'} ${errors.schoolSlug ? 'border-red-500' : ''}`}
                 disabled={isLoading}
-                dir={isRTL ? 'rtl' : 'ltr'}
+                dir="ltr"
               />
               <span
                 className={`absolute top-3 text-sm text-gray-500 ${isRTL ? 'left-3' : 'right-3'}`}
@@ -235,7 +235,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
               onChange={(e) => onChange('schoolDescription', e.target.value)}
               disabled={isLoading}
               rows={3}
-              dir={isRTL ? 'rtl' : 'ltr'}
+              dir="ltr"
             />
           </div>
         </div>
@@ -304,7 +304,7 @@ export function BaseDataForm(props: BaseDataFormProps) {
                   className={
                     errors.teacherRequestReason ? 'border-red-500' : ''
                   }
-                  dir={isRTL ? 'rtl' : 'ltr'}
+                  dir="ltr"
                 />
               </div>
             )}

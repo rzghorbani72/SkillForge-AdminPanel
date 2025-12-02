@@ -22,7 +22,8 @@ import {
 import {
   cleanPhoneNumber,
   isValidPhoneNumber,
-  formatPhoneNumber
+  formatPhoneNumber,
+  getFullPhoneNumber
 } from '@/lib/phone-utils';
 import { useLanguage } from '@/lib/i18n/hooks';
 import { getDefaultCountryByLanguage } from '@/lib/country-codes';
@@ -34,6 +35,7 @@ interface PhoneInputWithCountryProps {
   value: string;
   onChange: (value: string) => void;
   onCountryChange?: (countryCode: string) => void;
+  onFullPhoneChange?: (fullPhoneNumber: string) => void;
   error?: string;
   disabled?: boolean;
   className?: string;
@@ -48,6 +50,7 @@ export function PhoneInputWithCountry({
   value,
   onChange,
   onCountryChange,
+  onFullPhoneChange,
   error,
   disabled = false,
   className,
@@ -109,19 +112,49 @@ export function PhoneInputWithCountry({
     initializeCountry();
   }, [language]);
 
+  // Update full phone number whenever value or selectedCountry changes
+  useEffect(() => {
+    if (value && selectedCountry && !isLoadingCountry && onFullPhoneChange) {
+      const fullPhoneNumber = getFullPhoneNumber(value, selectedCountry);
+      onFullPhoneChange(fullPhoneNumber);
+    } else if (!value && onFullPhoneChange) {
+      // Clear full phone number if value is empty
+      onFullPhoneChange('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, selectedCountry, isLoadingCountry]);
+
   const handleCountryChange = (countryCode: string) => {
     const country = COUNTRY_CODES.find((c) => c.code === countryCode);
     if (country) {
       setSelectedCountry(country);
       storeCountry(country);
       onCountryChange?.(countryCode);
+
+      // Update full phone number when country changes
+      if (value && onFullPhoneChange) {
+        const fullPhoneNumber = getFullPhoneNumber(value, country);
+        onFullPhoneChange(fullPhoneNumber);
+      }
     }
   };
 
   const handlePhoneChange = (phoneValue: string) => {
     // Clean the phone number by removing country codes, leading zeros, etc.
-    const cleanedValue = cleanPhoneNumber(phoneValue, selectedCountry);
+    let cleanedValue = cleanPhoneNumber(phoneValue, selectedCountry);
+
+    // Limit to maxLength digits (apply to raw value, not formatted)
+    if (cleanedValue.length > maxLength) {
+      cleanedValue = cleanedValue.slice(0, maxLength);
+    }
+
     onChange(cleanedValue);
+
+    // Get full phone number with country code and call callback if provided
+    if (onFullPhoneChange) {
+      const fullPhoneNumber = getFullPhoneNumber(cleanedValue, selectedCountry);
+      onFullPhoneChange(fullPhoneNumber);
+    }
 
     // Validate the cleaned phone number
     const phoneIsValid = isValidPhoneNumber(cleanedValue, selectedCountry);
@@ -191,8 +224,8 @@ export function PhoneInputWithCountry({
                 className
               )}
               disabled={disabled}
-              maxLength={maxLength}
-              dir={isRTL ? 'rtl' : 'ltr'}
+              autoComplete="tel"
+              dir="ltr"
             />
           </div>
         </div>

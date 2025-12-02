@@ -346,5 +346,41 @@ export const tr = {
     title: 'Sayfa Bulunamadı',
     description: 'Aradığınız sayfa mevcut değil.',
     backHome: 'Ana Sayfaya Dön'
+  },
+  forgotPassword: {
+    title: 'Şifreyi Sıfırla',
+    enterIdentifier:
+      'E-posta veya telefon numaranızı girin ve OTP almak için okulu seçin (varsa)',
+    enterOtp: 'Cihazınıza gönderilen OTP kodunu girin',
+    enterNewPassword: 'Yeni şifrenizi girin',
+    passwordResetSuccess: 'Şifre başarıyla sıfırlandı',
+    emailOrPhoneRequired: 'E-posta veya telefon numarası gereklidir',
+    validEmailAddress: 'Lütfen geçerli bir e-posta adresi girin',
+    validPhoneNumber: 'Lütfen geçerli bir telefon numarası girin',
+    otpRequired: 'OTP gereklidir',
+    invalidOtp: 'Geçersiz OTP',
+    otpSentToEmail: 'OTP e-posta adresinize gönderildi',
+    otpSentToPhone: 'OTP telefon numaranıza gönderildi',
+    otpVerifiedSuccess: 'OTP başarıyla doğrulandı',
+    passwordResetFailed: 'Şifre sıfırlama başarısız oldu',
+    sendOtp: 'OTP Gönder',
+    verifyOtp: 'OTP Doğrula',
+    resetPassword: 'Şifreyi Sıfırla',
+    backToLogin: 'Girişe Dön',
+    tryAgain: 'Tekrar Dene',
+    selectSchoolDescription:
+      'Öğrenciyseniz okulunuzu seçin veya yönetici/öğretmen için boş bırakın',
+    checkDeviceForCode: 'Cihazınızı doğrulama kodu için kontrol edin',
+    createNewPassword: 'Yeni güvenli bir şifre oluşturun',
+    canLoginNow: 'Artık yeni şifrenizle giriş yapabilirsiniz',
+    verificationCode: 'Doğrulama Kodu',
+    enter6DigitCode: '6 haneli kodu girin',
+    newPassword: 'Yeni Şifre',
+    confirmNewPassword: 'Yeni şifreyi onaylayın',
+    passwordResetSuccessTitle: 'Şifre Başarıyla Sıfırlandı!',
+    passwordResetSuccessMessage:
+      'Şifreniz sıfırlandı. Artık yeni şifrenizle giriş yapabilirsiniz.',
+    resetAnotherPassword: 'Başka Bir Şifreyi Sıfırla',
+    goToLogin: 'Girişe Git'
   }
 };

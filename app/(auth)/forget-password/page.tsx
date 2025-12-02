@@ -31,17 +31,20 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 export default function ForgetPasswordPage() {
   const { t } = useTranslation();
+  const { isRTL } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<
     'identifier' | 'otp' | 'password' | 'success'
   >('identifier');
   const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
   const [formData, setFormData] = useState({
-    identifier: '',
+    email: '',
+    phoneNumber: '',
+    fullPhoneNumber: '',
     password: '',
     confirmed_password: '',
     otp: '',
@@ -81,20 +84,24 @@ export default function ForgetPasswordPage() {
   };
 
   const validateIdentifier = () => {
-    const { identifier } = formData;
-    if (!identifier.trim()) {
-      setErrors({ identifier: t('forgotPassword.emailOrPhoneRequired') });
-      return false;
-    }
-
-    if (authMethod === 'email' && !isValidEmail(identifier)) {
-      setErrors({ identifier: t('forgotPassword.validEmailAddress') });
-      return false;
-    }
-
-    if (authMethod === 'phone' && !isValidPhone(identifier)) {
-      setErrors({ identifier: t('forgotPassword.validPhoneNumber') });
-      return false;
+    if (authMethod === 'email') {
+      if (!formData.email.trim()) {
+        setErrors({ email: t('forgotPassword.emailOrPhoneRequired') });
+        return false;
+      }
+      if (!isValidEmail(formData.email)) {
+        setErrors({ email: t('forgotPassword.validEmailAddress') });
+        return false;
+      }
+    } else {
+      if (!formData.phoneNumber.trim()) {
+        setErrors({ phoneNumber: t('forgotPassword.emailOrPhoneRequired') });
+        return false;
+      }
+      if (!isValidPhone(formData.phoneNumber)) {
+        setErrors({ phoneNumber: t('forgotPassword.validPhoneNumber') });
+        return false;
+      }
     }
 
     return true;
@@ -133,13 +140,29 @@ export default function ForgetPasswordPage() {
     try {
       if (authMethod === 'email') {
         await apiClient.sendEmailOtp(
-          formData.identifier,
+          formData.email,
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
         setMessage(t('forgotPassword.otpSentToEmail'));
       } else {
+        // Ensure we have the full phone number with country code
+        const phoneToSend = formData.fullPhoneNumber;
+
+        if (!phoneToSend) {
+          console.error(
+            'Full phone number not available. phoneNumber:',
+            formData.phoneNumber,
+            'fullPhoneNumber:',
+            formData.fullPhoneNumber
+          );
+          setErrors({ phoneNumber: t('forgotPassword.validPhoneNumber') });
+          setIsLoading(false);
+          return;
+        }
+
+        console.log('Sending OTP to phone:', phoneToSend);
         await apiClient.sendPhoneOtp(
-          formData.identifier,
+          phoneToSend,
           OtpType.RESET_PASSWORD_BY_PHONE
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
@@ -166,13 +189,13 @@ export default function ForgetPasswordPage() {
     try {
       if (authMethod === 'email') {
         await apiClient.verifyEmailOtp(
-          formData.identifier,
+          formData.email,
           formData.otp,
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
       } else {
         await apiClient.verifyPhoneOtp(
-          formData.identifier,
+          formData.fullPhoneNumber || formData.phoneNumber,
           formData.otp,
           OtpType.RESET_PASSWORD_BY_PHONE
         );
@@ -199,7 +222,10 @@ export default function ForgetPasswordPage() {
         (school) => school.slug === formData.school_slug
       );
       await apiClient.forgetPassword({
-        identifier: formData.identifier,
+        identifier:
+          authMethod === 'phone'
+            ? formData.fullPhoneNumber || formData.phoneNumber
+            : formData.email,
         password: formData.password,
         confirmed_password: formData.confirmed_password,
         otp: formData.otp,
@@ -221,8 +247,11 @@ export default function ForgetPasswordPage() {
 
   const resetForm = () => {
     setStep('identifier');
+    setAuthMethod('email');
     setFormData({
-      identifier: '',
+      email: '',
+      phoneNumber: '',
+      fullPhoneNumber: '',
       password: '',
       confirmed_password: '',
       otp: '',
@@ -236,8 +265,8 @@ export default function ForgetPasswordPage() {
     <>
       <LanguageDetector />
       <div className="relative flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-        {/* Language Switcher - Top Right */}
-        <div className="absolute right-4 top-4 z-50">
+        {/* Language Switcher - Top Right/Left based on RTL */}
+        <div className={`absolute top-4 z-50 ${isRTL ? 'left-4' : 'right-4'}`}>
           <LanguageSwitcher />
         </div>
         <div className="w-full max-w-md space-y-8">
@@ -253,7 +282,7 @@ export default function ForgetPasswordPage() {
             </p>
           </div>
 
-          <Card>
+          <Card dir={isRTL ? 'rtl' : 'ltr'}>
             <CardHeader>
               <CardTitle className="text-center">
                 {t('forgotPassword.title')}
@@ -274,35 +303,61 @@ export default function ForgetPasswordPage() {
                     onValueChange={(value) =>
                       setAuthMethod(value as 'email' | 'phone')
                     }
+                    className="w-full"
                   >
                     <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="email">{t('auth.email')}</TabsTrigger>
-                      <TabsTrigger value="phone">{t('auth.phone')}</TabsTrigger>
+                      <TabsTrigger
+                        value="email"
+                        className="flex items-center gap-2"
+                      >
+                        <Mail className="h-4 w-4" />
+                        <span>{t('auth.email')}</span>
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="phone"
+                        className="flex items-center gap-2"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span>{t('auth.phone')}</span>
+                      </TabsTrigger>
                     </TabsList>
-                    <TabsContent value="email" className="space-y-4">
+
+                    <TabsContent
+                      value="email"
+                      className="space-y-4"
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                    >
                       <InputWithIcon
                         id="email"
                         label={t('auth.emailAddress')}
                         type="email"
                         placeholder={t('auth.enterEmail')}
-                        value={formData.identifier}
-                        onChange={(value) =>
-                          handleInputChange('identifier', value)
-                        }
+                        value={formData.email}
+                        onChange={(value) => handleInputChange('email', value)}
                         icon={Mail}
-                        error={errors.identifier}
+                        error={errors.email}
+                        disabled={isLoading}
                       />
                     </TabsContent>
-                    <TabsContent value="phone" className="space-y-4">
+
+                    <TabsContent
+                      value="phone"
+                      className="space-y-4"
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                    >
                       <PhoneInputWithCountry
                         id="phone"
                         label={t('auth.phoneNumber')}
                         placeholder={t('auth.enterPhone')}
-                        value={formData.identifier}
+                        value={formData.phoneNumber}
                         onChange={(value) =>
-                          handleInputChange('identifier', value)
+                          handleInputChange('phoneNumber', value)
                         }
-                        error={errors.identifier}
+                        onFullPhoneChange={(fullPhone) =>
+                          handleInputChange('fullPhoneNumber', fullPhone)
+                        }
+                        error={errors.phoneNumber}
+                        disabled={isLoading}
                       />
                     </TabsContent>
                   </Tabs>
@@ -320,7 +375,9 @@ export default function ForgetPasswordPage() {
                         }
                         className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         disabled={isLoadingSchools}
+                        dir={isRTL ? 'rtl' : 'ltr'}
                       >
+                        <option value="">{t('common.select')}</option>
                         {schools.map((school) => (
                           <option key={school.id} value={school.slug}>
                             {school.name}
@@ -341,7 +398,9 @@ export default function ForgetPasswordPage() {
                     className="w-full"
                   >
                     {isLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2
+                        className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                      />
                     ) : null}
                     {t('forgotPassword.sendOtp')}
                   </Button>
@@ -361,19 +420,24 @@ export default function ForgetPasswordPage() {
                       value={formData.otp}
                       onChange={(e) => handleInputChange('otp', e.target.value)}
                       maxLength={6}
+                      dir="ltr"
                     />
                     {errors.otp && (
                       <p className="mt-1 text-sm text-red-600">{errors.otp}</p>
                     )}
                   </div>
 
-                  <div className="flex space-x-2">
+                  <div
+                    className={`flex ${isRTL ? 'space-x-reverse' : 'space-x-2'}`}
+                  >
                     <Button
                       variant="outline"
                       onClick={() => setStep('identifier')}
                       className="flex-1"
                     >
-                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      <ArrowLeft
+                        className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`}
+                      />
                       {t('common.back')}
                     </Button>
                     <Button
@@ -382,7 +446,9 @@ export default function ForgetPasswordPage() {
                       className="flex-1"
                     >
                       {isLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2
+                          className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                        />
                       ) : null}
                       {t('forgotPassword.verifyOtp')}
                     </Button>
@@ -416,13 +482,17 @@ export default function ForgetPasswordPage() {
                     error={errors.confirmed_password}
                   />
 
-                  <div className="flex space-x-2">
+                  <div
+                    className={`flex ${isRTL ? 'space-x-reverse' : 'space-x-2'}`}
+                  >
                     <Button
                       variant="outline"
                       onClick={() => setStep('otp')}
                       className="flex-1"
                     >
-                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      <ArrowLeft
+                        className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`}
+                      />
                       {t('common.back')}
                     </Button>
                     <Button
@@ -431,7 +501,9 @@ export default function ForgetPasswordPage() {
                       className="flex-1"
                     >
                       {isLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2
+                          className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                        />
                       ) : null}
                       {t('forgotPassword.resetPassword')}
                     </Button>
@@ -448,7 +520,9 @@ export default function ForgetPasswordPage() {
                   <p className="text-sm text-gray-600">
                     {t('forgotPassword.passwordResetSuccessMessage')}
                   </p>
-                  <div className="flex space-x-2">
+                  <div
+                    className={`flex ${isRTL ? 'space-x-reverse' : 'space-x-2'}`}
+                  >
                     <Button
                       variant="outline"
                       onClick={resetForm}
