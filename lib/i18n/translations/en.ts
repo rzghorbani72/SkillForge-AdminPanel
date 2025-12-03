@@ -64,7 +64,8 @@ export const en = {
       'Please select a school from the header to view products.',
     school: 'School',
     oneSchool: '1 school',
-    multipleSchools: '{{count}} schools'
+    multipleSchools: '{{count}} schools',
+    moreFilters: 'More Filters'
   },
   navigation: {
     dashboard: 'Dashboard',
@@ -442,7 +443,8 @@ export const en = {
     loadingProgressData: 'Loading progress data...',
     noProgressData: 'No progress data',
     progressWillBeTracked:
-      'Progress will be tracked once students start courses.'
+      'Progress will be tracked once students start courses.',
+    enrollments: 'Enrollments'
   },
   teachers: {
     title: 'Teachers',

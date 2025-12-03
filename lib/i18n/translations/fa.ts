@@ -64,7 +64,8 @@ export const fa = {
       'لطفاً یک مدرسه از هدر انتخاب کنید تا محصولات را مشاهده کنید.',
     school: 'مدرسه',
     oneSchool: '۱ مدرسه',
-    multipleSchools: '{{count}} مدرسه'
+    multipleSchools: '{{count}} مدرسه',
+    moreFilters: 'فیلترهای بیشتر'
   },
   navigation: {
     dashboard: 'داشبورد',
@@ -443,7 +444,8 @@ export const fa = {
     loadingProgressData: 'در حال بارگذاری داده‌های پیشرفت...',
     noProgressData: 'داده پیشرفتی وجود ندارد',
     progressWillBeTracked:
-      'پیشرفت پس از شروع دوره‌ها توسط دانش‌آموزان ردیابی می‌شود.'
+      'پیشرفت پس از شروع دوره‌ها توسط دانش‌آموزان ردیابی می‌شود.',
+    enrollments: 'ثبت‌نام‌ها'
   },
   teachers: {
     title: 'معلمان',

@@ -1,46 +1,20 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Users, Filter, Plus } from 'lucide-react';
+import { Users, Filter, Plus, RefreshCw, Download } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Pagination } from '@/components/shared/Pagination';
 import { UserCard } from '@/components/users/UserCard';
 import { UserFilters } from '@/components/users/UserFilters';
+import { User, UserStatus } from '@/types/api';
 
 type UserCategory = 'all' | 'students' | 'teachers' | 'managers';
-
-interface User {
-  id: number;
-  name: string;
-  email?: string;
-  phone_number: string;
-  email_confirmed: boolean;
-  phone_confirmed: boolean;
-  is_active: boolean;
-  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
-  created_at: string;
-  updated_at: string;
-  profiles: Array<{
-    id: number;
-    display_name: string;
-    school: {
-      id: number;
-      name: string;
-      private_domain: string;
-    };
-    role: {
-      id: number;
-      name: string;
-      description: string;
-    };
-  }>;
-}
 
 interface PaginationInfo {
   page: number;
@@ -130,6 +104,7 @@ interface UsersPageContentProps {
 }
 
 export function UsersPageContent({ category }: UsersPageContentProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const categoryConfig = CATEGORY_CONFIG[category];
 
@@ -303,6 +278,56 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
     setCurrentPage(page);
   };
 
+  const handleRefresh = () => {
+    fetchUsers();
+    toast.success('Users list refreshed');
+  };
+
+  const handleViewUser = (user: User) => {
+    router.push(`/user/${user.id}`);
+  };
+
+  const handleEditUser = (user: User) => {
+    router.push(`/user/${user.id}/edit`);
+  };
+
+  const handleExport = () => {
+    // Export users data as CSV
+    if (users.length === 0) {
+      toast.error('No users to export');
+      return;
+    }
+
+    const csvHeaders = ['ID', 'Name', 'Email', 'Phone', 'Status', 'Created At'];
+    const csvRows = users.map((user) => [
+      user.id,
+      user.name,
+      user.email || '',
+      user.phone_number,
+      user.status || (user.is_active ? 'ACTIVE' : 'INACTIVE'),
+      new Date(user.created_at).toLocaleDateString()
+    ]);
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map((row) => row.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute(
+      'download',
+      `users-${category}-${new Date().toISOString().split('T')[0]}.csv`
+    );
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Users exported successfully');
+  };
+
   if (isLoading) {
     return <LoadingSpinner message="Loading users..." />;
   }
@@ -313,12 +338,16 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
         title={categoryConfig.title}
         description={categoryConfig.description}
       >
-        <div className="flex items-center space-x-2">
-          <Button variant="outline">
-            <Filter className="mr-2 h-4 w-4" />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleRefresh}>
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Refresh
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleExport}>
+            <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
-          <Button>
+          <Button size="sm">
             <Plus className="mr-2 h-4 w-4" />
             Add User
           </Button>
@@ -355,8 +384,8 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
             <UserCard
               key={user.id}
               user={user}
-              onEdit={(item) => console.log('Edit user', item.id)}
-              onView={(item) => console.log('View user', item.id)}
+              onEdit={handleEditUser}
+              onView={handleViewUser}
             />
           ))
         )}

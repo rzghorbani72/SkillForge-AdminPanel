@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Card,
@@ -16,13 +17,24 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import {
   Users,
   GraduationCap,
   TrendingUp,
   Plus,
   Search,
   Filter,
-  CheckCircle
+  CheckCircle,
+  XCircle,
+  Mail,
+  Phone
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { User, Enrollment } from '@/types/api';
@@ -49,6 +61,27 @@ interface PaginationInfo {
 
 export default function StudentsPage() {
   const { t } = useTranslation();
+  const { language } = useTranslation();
+  const searchParams = useSearchParams();
+
+  // Get role from query parameter and determine default tab
+  const roleParam = searchParams.get('role');
+  const getDefaultTab = () => {
+    if (!roleParam) return 'users';
+    switch (roleParam.toUpperCase()) {
+      case 'MANAGER':
+        return 'managers';
+      case 'TEACHER':
+        return 'teachers';
+      case 'STUDENT':
+        return 'students';
+      case 'USER':
+        return 'users';
+      default:
+        return 'users';
+    }
+  };
+  const defaultTab = getDefaultTab();
 
   const STUDENT_STATUS_OPTIONS: Array<{ label: string; value: StudentStatus }> =
     [
@@ -66,7 +99,19 @@ export default function StudentsPage() {
     { label: t('students.cancelled'), value: 'CANCELLED' },
     { label: t('students.expired'), value: 'EXPIRED' }
   ];
+  // State for all user groups
+  const [managers, setManagers] = useState<User[]>([]);
+  const [teachers, setTeachers] = useState<User[]>([]);
   const [students, setStudents] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [totals, setTotals] = useState({
+    managers: 0,
+    teachers: 0,
+    students: 0,
+    users: 0,
+    total: 0
+  });
+
   const [studentPagination, setStudentPagination] =
     useState<PaginationInfo | null>(null);
   const [studentsLoading, setStudentsLoading] = useState(true);
@@ -87,27 +132,77 @@ export default function StudentsPage() {
   const fetchStudents = useCallback(async () => {
     try {
       setStudentsLoading(true);
-      const response = await apiClient.getStudentUsers({
-        page: studentPage,
-        limit: studentPageSize,
+
+      // Use the new grouped API endpoint
+      const response = await apiClient.getUsers({
+        group_by_role: true,
         search: searchTerm || undefined,
-        status: studentStatusFilter !== 'all' ? studentStatusFilter : undefined
+        is_active:
+          studentStatusFilter !== 'all'
+            ? studentStatusFilter === 'ACTIVE'
+            : undefined
       });
 
       const payload = response as any;
-      const users = Array.isArray(payload)
-        ? payload
-        : ((payload?.users as User[]) ?? []);
-      setStudents(users);
 
-      if (payload?.pagination) {
-        setStudentPagination(payload.pagination as PaginationInfo);
+      // Extract all groups from the grouped response
+      if (payload?.data?.grouped) {
+        const grouped = payload.data.grouped;
+
+        // Set all groups
+        setManagers(grouped.managers || []);
+        setTeachers(grouped.teachers || []);
+        setStudents(grouped.students || []);
+        setUsers(grouped.users || []);
+
+        // Set totals
+        if (payload.data.totals) {
+          setTotals(payload.data.totals);
+        }
+
+        // Apply status filter to students for pagination
+        const studentsData = (grouped.students as User[]) || [];
+        let filteredStudents = studentsData;
+        if (studentStatusFilter !== 'all') {
+          filteredStudents = studentsData.filter((student: User) => {
+            const status =
+              student.status || (student.is_active ? 'ACTIVE' : 'INACTIVE');
+            return status === studentStatusFilter;
+          });
+        }
+
+        // Set pagination info for students tab
+        const total = filteredStudents.length;
+        const totalPages = Math.ceil(total / studentPageSize);
+        setStudentPagination({
+          page: studentPage,
+          limit: studentPageSize,
+          total,
+          totalPages,
+          hasNextPage: studentPage < totalPages,
+          hasPreviousPage: studentPage > 1
+        });
       } else {
+        setManagers([]);
+        setTeachers([]);
+        setStudents([]);
+        setUsers([]);
+        setTotals({
+          managers: 0,
+          teachers: 0,
+          students: 0,
+          users: 0,
+          total: 0
+        });
         setStudentPagination(null);
       }
     } catch (error) {
-      console.error('Error fetching students:', error);
+      console.error('Error fetching users:', error);
+      setManagers([]);
+      setTeachers([]);
       setStudents([]);
+      setUsers([]);
+      setTotals({ managers: 0, teachers: 0, students: 0, users: 0, total: 0 });
       setStudentPagination(null);
       ErrorHandler.handleApiError(error);
     } finally {
@@ -193,7 +288,7 @@ export default function StudentsPage() {
     );
   }, [enrollments, enrollmentStatusFilter]);
 
-  const totalStudents = studentPagination?.total ?? students.length;
+  const totalStudents = totals.students;
   const activeEnrollmentsCount = enrollments.filter(
     (e) => e.status === 'ACTIVE'
   ).length;
@@ -210,15 +305,99 @@ export default function StudentsPage() {
         )
       : 0;
 
-  if (studentsLoading && students.length === 0) {
+  // Reusable function to render user table
+  const renderUserList = (userList: User[], emptyMessage: string) => {
+    if (userList.length === 0) {
+      return (
+        <div className="py-8 text-center">
+          <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+          <h3 className="mt-2 text-sm font-medium">No users found</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{emptyMessage}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">Name</TableHead>
+              <TableHead className="text-center">Email</TableHead>
+              <TableHead className="text-center">Phone</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {userList.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="font-medium">{user.name}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    {user.email ? (
+                      <>
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{user.email}</span>
+                        {user.email_confirmed ? (
+                          <span title="Email verified">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          </span>
+                        ) : (
+                          <span title="Email not verified">
+                            <XCircle className="h-4 w-4 text-red-600" />
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">-</span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm" dir="ltr">
+                      {user.phone_number}
+                    </span>
+                    {user.phone_confirmed ? (
+                      <span title="Phone verified">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      </span>
+                    ) : (
+                      <span title="Phone not verified">
+                        <XCircle className="h-4 w-4 text-red-600" />
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex justify-center">
+                    <Badge variant={user.is_active ? 'default' : 'secondary'}>
+                      {user.is_active
+                        ? t('common.active')
+                        : t('common.inactive')}
+                    </Badge>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  };
+
+  if (studentsLoading && totals.total === 0) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
-            <p className="mt-2 text-sm text-gray-600">
-              {t('students.loadingStudentsData')}
-            </p>
+            <p className="mt-2 text-sm text-gray-600">Loading users data...</p>
           </div>
         </div>
       </div>
@@ -229,17 +408,15 @@ export default function StudentsPage() {
     <div className="flex-1 space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t('students.title')}
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">All Users</h1>
           <p className="text-muted-foreground">
-            {t('students.manageDescription')}
+            Manage all users across different roles
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            {t('students.addStudent')}
+            Add User
           </Button>
         </div>
       </div>
@@ -248,7 +425,7 @@ export default function StudentsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={t('students.searchStudents')}
+            placeholder="Search users by name, email, or phone..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="pl-8"
@@ -281,69 +458,66 @@ export default function StudentsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('students.totalStudents')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalStudents}</div>
+            <div className="text-2xl font-bold">{totals.total}</div>
             <p className="text-xs text-muted-foreground">
-              {t('students.registeredStudents')}
+              All registered users
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('students.activeEnrollments')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Managers</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totals.managers}</div>
+            <p className="text-xs text-muted-foreground">
+              School administrators
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Teachers</CardTitle>
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeEnrollmentsCount}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('students.currentlyEnrolled')}
-            </p>
+            <div className="text-2xl font-bold">{totals.teachers}</div>
+            <p className="text-xs text-muted-foreground">Course instructors</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('students.completedCourses')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Students</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {completedEnrollmentsCount}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('students.successfullyCompleted')}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('students.avgProgress')}
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{averageProgress}%</div>
-            <p className="text-xs text-muted-foreground">
-              {t('students.acrossAllCourses')}
-            </p>
+            <div className="text-2xl font-bold">{totals.students}</div>
+            <p className="text-xs text-muted-foreground">Course learners</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="students" className="space-y-4">
+      <Tabs
+        defaultValue={defaultTab}
+        className="space-y-4"
+        dir={language === 'fa' ? 'rtl' : 'ltr'}
+      >
         <TabsList>
-          <TabsTrigger value="students">
-            {t('students.title')} ({totalStudents})
+          <TabsTrigger value="managers">
+            Managers ({totals.managers})
           </TabsTrigger>
+          <TabsTrigger value="teachers">
+            Teachers ({totals.teachers})
+          </TabsTrigger>
+          <TabsTrigger value="students">
+            Students ({totals.students})
+          </TabsTrigger>
+          <TabsTrigger value="users">Users ({totals.users})</TabsTrigger>
           <TabsTrigger value="enrollments">
             {t('students.enrollments')} ({filteredEnrollments.length})
           </TabsTrigger>
@@ -351,6 +525,34 @@ export default function StudentsPage() {
             {t('students.progressTracking')}
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="managers" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Managers</CardTitle>
+              <CardDescription>
+                School managers and administrators
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {renderUserList(managers, 'No managers found in the system')}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="teachers" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Teachers</CardTitle>
+              <CardDescription>
+                Course instructors and educators
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {renderUserList(teachers, 'No teachers found in the system')}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="students" className="space-y-4">
           <Card>
@@ -361,74 +563,21 @@ export default function StudentsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {students.length === 0 ? (
-                <div className="py-8 text-center">
-                  <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-2 text-sm font-medium">
-                    {t('students.noStudents')}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {t('students.willAppearWhenRegistered')}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {students.map((student) => (
-                    <div
-                      key={student.id}
-                      className="flex items-center justify-between gap-4"
-                    >
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src="" />
-                          <AvatarFallback>
-                            {student.name
-                              .split(' ')
-                              .map((n) => n[0])
-                              .join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-medium leading-none">
-                            {student.name}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {student.email ?? 'No email'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {student.phone_number && (
-                          <Badge variant="outline">
-                            {student.phone_number}
-                          </Badge>
-                        )}
-                        <Badge
-                          variant={student.is_active ? 'default' : 'secondary'}
-                        >
-                          {student.is_active
-                            ? t('common.active')
-                            : t('common.inactive')}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              {renderUserList(students, t('students.willAppearWhenRegistered'))}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-              {studentPagination && studentPagination.totalPages > 1 && (
-                <div className="pt-4">
-                  <Pagination
-                    currentPage={studentPagination.page}
-                    totalPages={studentPagination.totalPages}
-                    hasNextPage={studentPagination.hasNextPage}
-                    hasPreviousPage={studentPagination.hasPreviousPage}
-                    onPageChange={setStudentPage}
-                    itemsPerPage={studentPagination.limit}
-                    totalItems={studentPagination.total}
-                  />
-                </div>
-              )}
+        <TabsContent value="users" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Users</CardTitle>
+              <CardDescription>
+                General users without specific roles
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {renderUserList(users, 'No general users found in the system')}
             </CardContent>
           </Card>
         </TabsContent>

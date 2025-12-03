@@ -52,7 +52,8 @@ export const tr = {
     noData: 'Veri bulunamadı',
     noResults: 'Sonuç bulunamadı',
     tryAgain: 'Tekrar deneyin',
-    refresh: 'Yenile'
+    refresh: 'Yenile',
+    moreFilters: 'Daha Fazla Filtre'
   },
   navigation: {
     dashboard: 'Kontrol Paneli',
@@ -302,7 +303,8 @@ export const tr = {
     enrolledCourses: 'Kayıtlı Kurslar',
     status: 'Durum',
     allStudents: 'Tüm Öğrenciler',
-    noStudents: 'Öğrenci bulunamadı'
+    noStudents: 'Öğrenci bulunamadı',
+    enrollments: 'Kayıtlar'
   },
   teachers: {
     title: 'Öğretmenler',

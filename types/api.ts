@@ -1,3 +1,6 @@
+// User Status Type
+export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+
 // User and Authentication Types
 export interface User {
   id: number;
@@ -8,8 +11,30 @@ export interface User {
   email_confirmed: boolean;
   phone_confirmed: boolean;
   is_active: boolean;
+  status?: UserStatus;
   created_at: string;
   updated_at: string;
+  profiles?: UserProfile[];
+}
+
+// User Profile (embedded in User response from /users endpoints)
+export interface UserProfile {
+  id: number;
+  display_name: string;
+  bio?: string;
+  avatar_id?: number;
+  is_active: boolean;
+  school: {
+    id: number;
+    name: string;
+    private_domain: string;
+  };
+  role: {
+    id: number;
+    name: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+    description?: string;
+  };
+  avatar?: Media;
 }
 
 export interface Profile {

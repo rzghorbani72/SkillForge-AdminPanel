@@ -1311,11 +1311,32 @@ class ApiClient {
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
     school_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+    is_active?: boolean;
+    group_by_role?: boolean;
   }) {
-    const query = this.buildUserQuery(params);
-    const endpoint = `/users${query}${params?.role ? `${query ? '&' : '?'}role=${params.role}` : ''}`;
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.role) queryParams.append('role', params.role);
+    if (params?.school_id)
+      queryParams.append('school_id', params.school_id.toString());
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.is_active !== undefined)
+      queryParams.append('is_active', params.is_active.toString());
+    if (params?.group_by_role) queryParams.append('group_by_role', 'true');
+
+    const queryString = queryParams.toString();
+    const endpoint = `/users${queryString ? `?${queryString}` : ''}`;
 
     const response = await this.request(endpoint);
+
+    // If grouped by role, return the full response structure
+    if (params?.group_by_role) {
+      return response.data;
+    }
+
     return this.mapUsersResponse(response);
   }
 

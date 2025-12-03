@@ -52,7 +52,8 @@ export const ar = {
     noData: 'لا توجد بيانات متاحة',
     noResults: 'لم يتم العثور على نتائج',
     tryAgain: 'حاول مرة أخرى',
-    refresh: 'تحديث'
+    refresh: 'تحديث',
+    moreFilters: 'المزيد من الفلاتر'
   },
   navigation: {
     dashboard: 'لوحة التحكم',
@@ -295,7 +296,8 @@ export const ar = {
     enrolledCourses: 'الدورات المسجلة',
     status: 'الحالة',
     allStudents: 'جميع الطلاب',
-    noStudents: 'لم يتم العثور على طلاب'
+    noStudents: 'لم يتم العثور على طلاب',
+    enrollments: 'التسجيلات'
   },
   teachers: {
     title: 'المعلمون',
