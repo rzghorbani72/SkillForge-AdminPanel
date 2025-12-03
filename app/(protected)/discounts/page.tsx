@@ -25,6 +25,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface DiscountCode {
   id: number;
@@ -46,6 +47,7 @@ interface DiscountCode {
 }
 
 export default function DiscountsPage() {
+  const { t, language } = useTranslation();
   const [discounts, setDiscounts] = useState<DiscountCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -167,7 +169,7 @@ export default function DiscountsPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this discount code?')) return;
+    if (!confirm(t('discounts.confirmDelete'))) return;
     try {
       const response = await apiClient.deleteDiscount(id);
       toast.success(response?.message || 'Discount code deleted successfully');
@@ -266,28 +268,29 @@ export default function DiscountsPage() {
     discount.is_active && !isExpired(discount.end_date);
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Discount Codes</h1>
-          <p className="text-muted-foreground">
-            Manage discount codes and promotions
-          </p>
+          <h1 className="text-3xl font-bold">{t('discounts.title')}</h1>
+          <p className="text-muted-foreground">{t('discounts.description')}</p>
         </div>
         <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Discount
+          <Plus className="me-2 h-4 w-4" />
+          {t('discounts.createDiscount')}
         </Button>
       </div>
 
       <div className="flex items-center gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search discount codes..."
+            placeholder={t('discounts.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
+            className="ps-9"
           />
         </div>
       </div>
@@ -296,7 +299,9 @@ export default function DiscountsPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading discounts...</p>
+            <p className="mt-2 text-sm text-gray-600">
+              {t('discounts.loadingDiscounts')}
+            </p>
           </div>
         </div>
       ) : (
@@ -304,14 +309,14 @@ export default function DiscountsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Usage</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>End Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('discounts.code')}</TableHead>
+                <TableHead>{t('discounts.type')}</TableHead>
+                <TableHead>{t('discounts.value')}</TableHead>
+                <TableHead>{t('discounts.usage')}</TableHead>
+                <TableHead>{t('discounts.startDate')}</TableHead>
+                <TableHead>{t('discounts.endDate')}</TableHead>
+                <TableHead>{t('common.status')}</TableHead>
+                <TableHead>{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -321,7 +326,7 @@ export default function DiscountsPage() {
                     colSpan={8}
                     className="text-center text-muted-foreground"
                   >
-                    No discount codes found
+                    {t('discounts.noDiscountsFound')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -362,10 +367,10 @@ export default function DiscountsPage() {
                         variant={isActive(discount) ? 'default' : 'destructive'}
                       >
                         {isActive(discount)
-                          ? 'Active'
+                          ? t('common.active')
                           : isExpired(discount.end_date)
-                            ? 'Expired'
-                            : 'Inactive'}
+                            ? t('discounts.expired')
+                            : t('common.inactive')}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -398,9 +403,9 @@ export default function DiscountsPage() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Create Discount Code</DialogTitle>
+            <DialogTitle>{t('discounts.createDialogTitle')}</DialogTitle>
             <DialogDescription>
-              Create a new discount code for your courses
+              {t('discounts.createDialogDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -645,9 +650,9 @@ export default function DiscountsPage() {
                 resetForm();
               }}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
-            <Button onClick={handleCreate}>Create</Button>
+            <Button onClick={handleCreate}>{t('common.create')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -656,8 +661,10 @@ export default function DiscountsPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Discount Code</DialogTitle>
-            <DialogDescription>Update discount code details</DialogDescription>
+            <DialogTitle>{t('discounts.editDialogTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('discounts.editDialogDescription')}
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -886,9 +893,9 @@ export default function DiscountsPage() {
                 resetForm();
               }}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
-            <Button onClick={handleUpdate}>Update</Button>
+            <Button onClick={handleUpdate}>{t('common.update')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

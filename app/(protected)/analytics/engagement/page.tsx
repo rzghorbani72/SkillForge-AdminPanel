@@ -22,6 +22,7 @@ import {
 } from 'recharts';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
 import { Progress } from '@/components/ui/progress';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface EngagementSlice {
   name: string;
@@ -30,6 +31,7 @@ interface EngagementSlice {
 }
 
 export default function StudentEngagementPage() {
+  const { t, language } = useTranslation();
   const { enrollments, courses, isLoading } = useAnalyticsData();
 
   const {
@@ -127,7 +129,7 @@ export default function StudentEngagementPage() {
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
             <p className="mt-2 text-sm text-muted-foreground">
-              Loading engagement insights...
+              {t('common.loading')}
             </p>
           </div>
         </div>
@@ -136,14 +138,16 @@ export default function StudentEngagementPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
-          Student Engagement
+          {t('analytics.studentEngagement')}
         </h1>
         <p className="text-muted-foreground">
-          Diagnose learner health by monitoring activity, completion, and
-          progress signals.
+          {t('analytics.studentEngagementDescription')}
         </p>
       </div>
 
@@ -151,7 +155,7 @@ export default function StudentEngagementPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Average Progress
+              {t('analytics.averageProgress')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -162,20 +166,20 @@ export default function StudentEngagementPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Lagging Students
+              {t('analytics.laggingStudents')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-red-500">{laggingStudents}</p>
             <p className="text-xs text-muted-foreground">
-              Learners below 50% completion
+              {t('analytics.laggingStudentsDescription')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Completed Students
+              {t('analytics.completedStudents')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -183,14 +187,14 @@ export default function StudentEngagementPage() {
               {completedStudents}
             </p>
             <p className="text-xs text-muted-foreground">
-              Finished their course
+              {t('analytics.completedStudentsDescription')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Courses
+              {t('analytics.activeCourses')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -198,7 +202,7 @@ export default function StudentEngagementPage() {
               {topEngagedCourses.length}
             </p>
             <p className="text-xs text-muted-foreground">
-              Courses with active learners
+              {t('analytics.activeCoursesDescription')}
             </p>
           </CardContent>
         </Card>
@@ -207,9 +211,9 @@ export default function StudentEngagementPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Engagement Distribution</CardTitle>
+            <CardTitle>{t('analytics.engagementBreakdown')}</CardTitle>
             <CardDescription>
-              Share of students per engagement segment.
+              {t('analytics.engagementDistributionDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -242,9 +246,9 @@ export default function StudentEngagementPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Courses by Engagement</CardTitle>
+            <CardTitle>{t('analytics.coursesByEngagement')}</CardTitle>
             <CardDescription>
-              Active vs completed status per course.
+              {t('analytics.coursesByEngagementDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>

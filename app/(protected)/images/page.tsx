@@ -33,6 +33,7 @@ import ImageEditModal from '@/components/modal/image-edit-modal';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface ImageItem {
   id: number;
@@ -53,6 +54,7 @@ interface ImageItem {
 }
 
 export default function ImagesPage() {
+  const { t, language } = useTranslation();
   const [images, setImages] = useState<ImageItem[]>([]);
   const [filteredImages, setFilteredImages] = useState<ImageItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -164,7 +166,7 @@ export default function ImagesPage() {
   };
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading images..." />;
+    return <LoadingSpinner message={t('media.loadingImages')} />;
   }
 
   if (error) {
@@ -175,10 +177,12 @@ export default function ImagesPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
               <ImageIcon className="h-8 w-8 text-destructive" />
             </div>
-            <h2 className="mb-2 text-xl font-semibold">Something went wrong</h2>
+            <h2 className="mb-2 text-xl font-semibold">
+              {t('media.somethingWentWrong')}
+            </h2>
             <p className="mb-4 text-muted-foreground">{error}</p>
             <Button onClick={fetchImages} variant="outline">
-              Try Again
+              {t('media.tryAgain')}
             </Button>
           </div>
         </div>
@@ -187,7 +191,10 @@ export default function ImagesPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6">
+    <div
+      className="page-wrapper flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       {/* Header */}
       <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -197,19 +204,19 @@ export default function ImagesPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                Images
+                {t('media.images')}
               </h1>
               <Badge
                 variant="secondary"
                 className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
               >
-                <Sparkles className="mr-1 h-3 w-3" />
-                {images.length} files
+                <Sparkles className="me-1 h-3 w-3" />
+                {images.length} {t('media.files')}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Manage your image library ({filteredImages.length} of{' '}
-              {images.length} images)
+              {t('media.manageImageLibrary')} ({filteredImages.length} /{' '}
+              {images.length})
             </p>
           </div>
         </div>
@@ -217,7 +224,7 @@ export default function ImagesPage() {
           trigger={
             <Button className="gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30">
               <ImagePlus className="h-4 w-4" />
-              Upload Image
+              {t('media.uploadImage')}
             </Button>
           }
           onSuccess={(image) => {
@@ -227,8 +234,8 @@ export default function ImagesPage() {
             console.error('Error uploading image:', error);
             ErrorHandler.handleApiError(error);
           }}
-          modalTitle="Upload Image"
-          modalDescription="Upload a new image or select from your library"
+          modalTitle={t('media.uploadImage')}
+          modalDescription={t('media.manageImageLibrary')}
         />
       </div>
 
@@ -238,12 +245,12 @@ export default function ImagesPage() {
         style={{ animationDelay: '0.1s' }}
       >
         <div className="relative max-w-md flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search images by title or owner..."
+            placeholder={t('media.searchImages')}
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="h-10 rounded-xl border-border/50 bg-background/50 pl-10 pr-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
+            className="h-10 rounded-xl border-border/50 bg-background/50 pe-10 ps-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
           />
           {searchQuery && (
             <Button
@@ -279,12 +286,12 @@ export default function ImagesPage() {
               </div>
             </div>
             <h3 className="text-xl font-semibold tracking-tight">
-              No images found
+              {t('media.noImagesFound')}
             </h3>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
               {searchQuery
-                ? 'No images match your search criteria.'
-                : 'Upload your first image to get started.'}
+                ? t('media.noImagesMatch')
+                : t('media.uploadFirstImage')}
             </p>
           </div>
         </div>

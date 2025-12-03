@@ -17,8 +17,10 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Folder, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function CategoriesPage() {
+  const { t, language } = useTranslation();
   const searchParams = useSearchParams();
   const {
     categories,
@@ -200,11 +202,14 @@ export default function CategoriesPage() {
   };
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading categories..." />;
+    return <LoadingSpinner message={t('media.loadingCategories')} />;
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6">
+    <div
+      className="page-wrapper flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <CategoryHeader onCreateClick={() => setIsCreateDialogOpen(true)} />
 
       {error && (
@@ -237,12 +242,12 @@ export default function CategoriesPage() {
               </div>
             </div>
             <h3 className="text-xl font-semibold tracking-tight">
-              No categories found
+              {t('media.noCategoriesFound')}
             </h3>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
               {searchTerm || selectedType !== 'all'
-                ? 'No categories match your search criteria.'
-                : 'Create your first category to organize your content.'}
+                ? t('media.noCategoriesMatch')
+                : t('media.createFirstCategory')}
             </p>
             {!searchTerm && selectedType === 'all' && (
               <Button
@@ -250,7 +255,7 @@ export default function CategoriesPage() {
                 className="mt-6 gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25"
               >
                 <Plus className="h-4 w-4" />
-                Create Category
+                {t('media.createCategory')}
               </Button>
             )}
           </div>

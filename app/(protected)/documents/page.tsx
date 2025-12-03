@@ -44,6 +44,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface DocumentItem extends Media {
   download_url?: string;
@@ -72,6 +73,7 @@ const buildDocumentUrl = (path?: string | null) => {
 };
 
 export default function DocumentsPage() {
+  const { t, language } = useTranslation();
   const { selectedSchool } = useSchool();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -193,19 +195,22 @@ export default function DocumentsPage() {
       <div className="page-wrapper flex-1 p-6">
         <EmptyState
           icon={<FileText className="h-10 w-10" />}
-          title="No School Selected"
-          description="Please select a school from the header to view documents."
+          title={t('media.noSchoolSelected')}
+          description={t('media.selectSchoolToView')}
         />
       </div>
     );
   }
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading documents..." />;
+    return <LoadingSpinner message={t('media.loadingDocuments')} />;
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6">
+    <div
+      className="page-wrapper flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       {/* Header */}
       <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -215,18 +220,18 @@ export default function DocumentsPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                Documents
+                {t('media.documents')}
               </h1>
               <Badge
                 variant="secondary"
                 className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
               >
-                <Sparkles className="mr-1 h-3 w-3" />
-                {documents.length} files
+                <Sparkles className="me-1 h-3 w-3" />
+                {documents.length} {t('media.files')}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Manage documents and study materials for {selectedSchool.name}
+              {t('media.manageDocuments')} - {selectedSchool.name}
             </p>
           </div>
         </div>
@@ -235,7 +240,7 @@ export default function DocumentsPage() {
           className="gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
         >
           <Plus className="h-4 w-4" />
-          Upload Document
+          {t('media.uploadDocument')}
         </Button>
       </div>
 
@@ -245,12 +250,12 @@ export default function DocumentsPage() {
         style={{ animationDelay: '0.1s' }}
       >
         <div className="relative max-w-md flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search documents..."
+            placeholder={t('media.searchDocuments')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-10 rounded-xl border-border/50 bg-background/50 pl-10 pr-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
+            className="h-10 rounded-xl border-border/50 bg-background/50 pe-10 ps-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
           />
           {searchTerm && (
             <Button
@@ -280,10 +285,12 @@ export default function DocumentsPage() {
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Documents</p>
+              <p className="text-sm text-muted-foreground">
+                {t('media.totalDocuments')}
+              </p>
               <p className="text-2xl font-bold">{documents.length}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Documents in {selectedSchool.name}
+                {t('media.documentsIn')} {selectedSchool.name}
               </p>
             </div>
             <div className="icon-container-primary">
@@ -307,12 +314,12 @@ export default function DocumentsPage() {
               </div>
             </div>
             <h3 className="text-xl font-semibold tracking-tight">
-              No documents found
+              {t('media.noDocumentsFound')}
             </h3>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
               {searchTerm
-                ? 'No documents match your search criteria.'
-                : 'Upload your first document to get started.'}
+                ? t('media.noDocumentsMatch')
+                : t('media.uploadFirstDocument')}
             </p>
           </div>
         </div>

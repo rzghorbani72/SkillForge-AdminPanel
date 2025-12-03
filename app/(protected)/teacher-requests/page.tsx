@@ -47,6 +47,7 @@ import {
 } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
 import { apiClient } from '@/lib/api';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface TeacherRequest {
   id: number;
@@ -80,6 +81,7 @@ interface TeacherRequest {
 }
 
 export default function TeacherRequestsPage() {
+  const { t, language } = useTranslation();
   const [requests, setRequests] = useState<TeacherRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [reviewing, setReviewing] = useState(false);
@@ -182,19 +184,19 @@ export default function TeacherRequestsPage() {
       case 'PENDING':
         return (
           <Badge variant="secondary" className="flex items-center gap-1">
-            <Clock className="h-3 w-3" /> Pending
+            <Clock className="h-3 w-3" /> {t('teacherRequests.pending')}
           </Badge>
         );
       case 'APPROVED':
         return (
           <Badge variant="default" className="flex items-center gap-1">
-            <CheckCircle className="h-3 w-3" /> Approved
+            <CheckCircle className="h-3 w-3" /> {t('teacherRequests.approved')}
           </Badge>
         );
       case 'REJECTED':
         return (
           <Badge variant="destructive" className="flex items-center gap-1">
-            <XCircle className="h-3 w-3" /> Rejected
+            <XCircle className="h-3 w-3" /> {t('teacherRequests.rejected')}
           </Badge>
         );
       default:
@@ -221,14 +223,17 @@ export default function TeacherRequestsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div
+      className="space-y-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Teacher Requests
+            {t('teacherRequests.title')}
           </h1>
           <p className="text-muted-foreground">
-            Review and manage teacher role requests from students
+            {t('teacherRequests.description')}
           </p>
         </div>
       </div>
@@ -237,30 +242,32 @@ export default function TeacherRequestsPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <GraduationCap className="mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-2 text-lg font-semibold">No Teacher Requests</h3>
+            <h3 className="mb-2 text-lg font-semibold">
+              {t('teacherRequests.noRequests')}
+            </h3>
             <p className="text-center text-muted-foreground">
-              There are no pending teacher requests at the moment.
+              {t('teacherRequests.noRequestsDescription')}
             </p>
           </CardContent>
         </Card>
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Teacher Requests</CardTitle>
+            <CardTitle>{t('teacherRequests.title')}</CardTitle>
             <CardDescription>
-              Review requests from students who want to become teachers
+              {t('teacherRequests.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead>School</TableHead>
-                  <TableHead>Request Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Reviewed By</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t('users.students')}</TableHead>
+                  <TableHead>{t('common.school')}</TableHead>
+                  <TableHead>{t('common.date')}</TableHead>
+                  <TableHead>{t('common.status')}</TableHead>
+                  <TableHead>{t('common.reviewedBy')}</TableHead>
+                  <TableHead>{t('common.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -307,8 +314,8 @@ export default function TeacherRequestsPage() {
                           }}
                           disabled={request.status !== 'PENDING'}
                         >
-                          <Eye className="mr-1 h-4 w-4" />
-                          Review
+                          <Eye className="me-1 h-4 w-4" />
+                          {t('common.review')}
                         </Button>
                       </div>
                     </TableCell>
@@ -321,14 +328,16 @@ export default function TeacherRequestsPage() {
             {pagination.totalPages > 1 && (
               <div className="mt-4 flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                  Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                  {Math.min(
-                    pagination.page * pagination.limit,
-                    pagination.total
-                  )}{' '}
-                  of {pagination.total} results
+                  {t('common.showingResults', {
+                    from: (pagination.page - 1) * pagination.limit + 1,
+                    to: Math.min(
+                      pagination.page * pagination.limit,
+                      pagination.total
+                    ),
+                    total: pagination.total
+                  })}
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -340,7 +349,7 @@ export default function TeacherRequestsPage() {
                     }
                     disabled={!pagination.hasPreviousPage}
                   >
-                    Previous
+                    {t('common.previous')}
                   </Button>
                   <Button
                     variant="outline"
@@ -353,7 +362,7 @@ export default function TeacherRequestsPage() {
                     }
                     disabled={!pagination.hasNextPage}
                   >
-                    Next
+                    {t('common.next')}
                   </Button>
                 </div>
               </div>
@@ -366,10 +375,11 @@ export default function TeacherRequestsPage() {
       <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Review Teacher Request</DialogTitle>
+            <DialogTitle>
+              {t('common.review')} {t('teacherRequests.title')}
+            </DialogTitle>
             <DialogDescription>
-              Review the teacher request and decide whether to approve or reject
-              it.
+              {t('teacherRequests.description')}
             </DialogDescription>
           </DialogHeader>
 
@@ -377,25 +387,33 @@ export default function TeacherRequestsPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Student Name</Label>
+                  <Label className="text-sm font-medium">
+                    {t('common.name')}
+                  </Label>
                   <p className="text-sm text-muted-foreground">
                     {selectedRequest.profile.user.name}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Email</Label>
+                  <Label className="text-sm font-medium">
+                    {t('common.email')}
+                  </Label>
                   <p className="text-sm text-muted-foreground">
                     {selectedRequest.profile.user.email}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Phone</Label>
+                  <Label className="text-sm font-medium">
+                    {t('common.phone')}
+                  </Label>
                   <p className="text-sm text-muted-foreground">
                     {selectedRequest.profile.user.phone_number}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">School</Label>
+                  <Label className="text-sm font-medium">
+                    {t('common.school')}
+                  </Label>
                   <p className="text-sm text-muted-foreground">
                     {selectedRequest.school.name}
                   </p>
@@ -403,7 +421,9 @@ export default function TeacherRequestsPage() {
               </div>
 
               <div>
-                <Label className="text-sm font-medium">Request Reason</Label>
+                <Label className="text-sm font-medium">
+                  {t('common.reason')}
+                </Label>
                 <div className="mt-1 rounded-md bg-muted p-3">
                   <p className="text-sm">{selectedRequest.reason}</p>
                 </div>
@@ -411,7 +431,7 @@ export default function TeacherRequestsPage() {
 
               <div>
                 <Label htmlFor="review-status" className="text-sm font-medium">
-                  Decision
+                  {t('common.decision')}
                 </Label>
                 <Select
                   value={reviewStatus}
@@ -423,19 +443,23 @@ export default function TeacherRequestsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="APPROVED">Approve</SelectItem>
-                    <SelectItem value="REJECTED">Reject</SelectItem>
+                    <SelectItem value="APPROVED">
+                      {t('teacherRequests.approve')}
+                    </SelectItem>
+                    <SelectItem value="REJECTED">
+                      {t('teacherRequests.reject')}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
                 <Label htmlFor="review-notes" className="text-sm font-medium">
-                  Review Notes (Optional)
+                  {t('common.notes')} ({t('common.optional')})
                 </Label>
                 <Textarea
                   id="review-notes"
-                  placeholder="Add any notes about your decision..."
+                  placeholder={t('common.addNotes')}
                   value={reviewNotes}
                   onChange={(e) => setReviewNotes(e.target.value)}
                   className="mt-1"
@@ -451,16 +475,16 @@ export default function TeacherRequestsPage() {
               onClick={() => setReviewDialogOpen(false)}
               disabled={reviewing}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleReview} disabled={reviewing}>
               {reviewing ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Reviewing...
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                  {t('common.loading')}
                 </>
               ) : (
-                `Review Request`
+                t('common.review')
               )}
             </Button>
           </DialogFooter>

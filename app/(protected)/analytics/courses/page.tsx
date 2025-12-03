@@ -24,6 +24,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface CoursePerformance {
   name: string;
@@ -34,6 +35,7 @@ interface CoursePerformance {
 }
 
 export default function CoursePerformancePage() {
+  const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
   const school = useCurrentSchool();
 
@@ -169,7 +171,7 @@ export default function CoursePerformancePage() {
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
             <p className="mt-2 text-sm text-muted-foreground">
-              Loading course analytics...
+              {t('common.loading')}
             </p>
           </div>
         </div>
@@ -178,22 +180,24 @@ export default function CoursePerformancePage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
-          Course Performance
+          {t('analytics.coursePerformance')}
         </h1>
         <p className="text-muted-foreground">
-          Understand which courses attract the most students and deliver the
-          highest revenue.
+          {t('analytics.coursePerformanceDescription')}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Active vs Completed Enrolments</CardTitle>
+          <CardTitle>{t('analytics.activeVsCompleted')}</CardTitle>
           <CardDescription>
-            Trend of learner activity across recent months.
+            {t('analytics.activeVsCompletedDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -227,9 +231,9 @@ export default function CoursePerformancePage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Top Courses by Enrolments</CardTitle>
+            <CardTitle>{t('analytics.topCoursesByEnrollments')}</CardTitle>
             <CardDescription>
-              Most popular courses among your students.
+              {t('analytics.topCoursesByEnrollmentsDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -249,7 +253,9 @@ export default function CoursePerformancePage() {
                   className="flex items-center justify-between"
                 >
                   <span className="truncate">{course.name}</span>
-                  <Badge variant="outline">{course.enrollments} students</Badge>
+                  <Badge variant="outline">
+                    {course.enrollments} {t('users.students')}
+                  </Badge>
                 </div>
               ))}
             </div>
@@ -258,9 +264,9 @@ export default function CoursePerformancePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Revenue Leaderboard</CardTitle>
+            <CardTitle>{t('analytics.revenueLeaderboard')}</CardTitle>
             <CardDescription>
-              Courses with the highest payment totals.
+              {t('analytics.revenueLeaderboardDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>

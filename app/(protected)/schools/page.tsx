@@ -23,8 +23,10 @@ import { SchoolCard } from '@/components/schools/SchoolCard';
 import { SchoolForm } from '@/components/schools/SchoolForm';
 import { useSchool } from '@/hooks/useSchool';
 import { extractDomainPart, formatDomain } from '@/lib/school-utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function SchoolsPage() {
+  const { t, language } = useTranslation();
   const { schools, isLoading, error, refreshSchools } = useSchool();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -290,17 +292,19 @@ export default function SchoolsPage() {
   );
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading schools..." />;
+    return <LoadingSpinner message={t('common.loading')} />;
   }
 
   if (error) {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="text-center">
-          <h2 className="mb-4 text-2xl font-bold text-destructive">Error</h2>
+          <h2 className="mb-4 text-2xl font-bold text-destructive">
+            {t('common.error')}
+          </h2>
           <p className="mb-4 text-muted-foreground">{error}</p>
           <Button onClick={refreshSchools} variant="outline">
-            Try Again
+            {t('common.tryAgain')}
           </Button>
         </div>
       </div>
@@ -308,23 +312,26 @@ export default function SchoolsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <PageHeader
-        title="Schools Management"
-        description="Manage your schools and their settings"
+        title={t('schools.schoolsManagement')}
+        description={t('schools.manageSchoolsDescription')}
       >
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create School
+              <Plus className="me-2 h-4 w-4" />
+              {t('schools.createSchool')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Create New School</DialogTitle>
+              <DialogTitle>{t('schools.createSchool')}</DialogTitle>
               <DialogDescription>
-                Create a new school with a unique domain name
+                {t('schools.manageSchoolsDescription')}
               </DialogDescription>
             </DialogHeader>
             <SchoolForm
@@ -341,7 +348,7 @@ export default function SchoolsPage() {
                   !formData.name || !formData.private_domain || isLoading
                 }
               >
-                {isLoading ? 'Creating...' : 'Create School'}
+                {isLoading ? t('common.loading') : t('schools.createSchool')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -349,7 +356,7 @@ export default function SchoolsPage() {
       </PageHeader>
 
       <SearchBar
-        placeholder="Search schools..."
+        placeholder={t('schools.searchSchools')}
         value={searchTerm}
         onChange={setSearchTerm}
         className="max-w-sm"
@@ -382,11 +389,11 @@ export default function SchoolsPage() {
       {filteredSchools.length === 0 && (
         <EmptyState
           icon={<Building2 className="h-12 w-12" />}
-          title="No schools found"
+          title={t('schools.noSchoolsFound')}
           description={
             searchTerm
-              ? 'No schools match your search criteria.'
-              : 'Get started by creating your first school.'
+              ? t('common.noResults')
+              : t('schools.manageSchoolsDescription')
           }
         />
       )}
@@ -395,9 +402,9 @@ export default function SchoolsPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit School</DialogTitle>
+            <DialogTitle>{t('common.edit')}</DialogTitle>
             <DialogDescription>
-              Update school information and settings
+              {t('schools.manageSchoolsDescription')}
             </DialogDescription>
           </DialogHeader>
           <SchoolForm
@@ -412,7 +419,7 @@ export default function SchoolsPage() {
               onClick={handleUpdateSchool}
               disabled={!formData.name || !formData.private_domain || isLoading}
             >
-              {isLoading ? 'Updating...' : 'Update School'}
+              {isLoading ? t('common.loading') : t('common.save')}
             </Button>
           </DialogFooter>
         </DialogContent>

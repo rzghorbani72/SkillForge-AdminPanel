@@ -403,7 +403,9 @@ export default function StudentsPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
-            <p className="mt-2 text-sm text-gray-600">Loading users data...</p>
+            <p className="mt-2 text-sm text-gray-600">
+              {t('students.loadingUsersData')}
+            </p>
           </div>
         </div>
       </div>
@@ -411,30 +413,35 @@ export default function StudentsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">All Users</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('students.allUsers')}
+          </h1>
           <p className="text-muted-foreground">
-            Manage all users across different roles
+            {t('students.manageAllUsers')}
           </p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Add User
+            <Plus className="me-2 h-4 w-4" />
+            {t('students.addUser')}
           </Button>
         </div>
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search users by name, email, or phone..."
+            placeholder={t('students.searchUsersByNameEmailPhone')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="pl-8"
+            className="ps-8"
             autoComplete="off"
           />
         </div>
@@ -456,7 +463,7 @@ export default function StudentsPage() {
           </SelectContent>
         </Select>
         <Button variant="outline" className="hidden md:inline-flex">
-          <Filter className="mr-2 h-4 w-4" />
+          <Filter className="me-2 h-4 w-4" />
           {t('common.moreFilters')}
         </Button>
       </div>
@@ -464,46 +471,58 @@ export default function StudentsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('students.totalUsersCard')}
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.total}</div>
             <p className="text-xs text-muted-foreground">
-              All registered users
+              {t('students.allRegisteredUsers')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Managers</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('students.managers')}
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.managers}</div>
             <p className="text-xs text-muted-foreground">
-              School administrators
+              {t('students.schoolAdministrators')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Teachers</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('students.teachers')}
+            </CardTitle>
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.teachers}</div>
-            <p className="text-xs text-muted-foreground">Course instructors</p>
+            <p className="text-xs text-muted-foreground">
+              {t('students.courseInstructors')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Students</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('navigation.students')}
+            </CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.students}</div>
-            <p className="text-xs text-muted-foreground">Course learners</p>
+            <p className="text-xs text-muted-foreground">
+              {t('students.courseLearners')}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -512,19 +531,21 @@ export default function StudentsPage() {
         value={activeTab}
         onValueChange={setActiveTab}
         className="space-y-4"
-        dir={language === 'fa' ? 'rtl' : 'ltr'}
+        dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
       >
         <TabsList>
           <TabsTrigger value="managers">
-            Managers ({totals.managers})
+            {t('students.managers')} ({totals.managers})
           </TabsTrigger>
           <TabsTrigger value="teachers">
-            Teachers ({totals.teachers})
+            {t('students.teachers')} ({totals.teachers})
           </TabsTrigger>
           <TabsTrigger value="students">
-            Students ({totals.students})
+            {t('navigation.students')} ({totals.students})
           </TabsTrigger>
-          <TabsTrigger value="users">Users ({totals.users})</TabsTrigger>
+          <TabsTrigger value="users">
+            {t('students.users')} ({totals.users})
+          </TabsTrigger>
           <TabsTrigger value="enrollments">
             {t('students.enrollments')} ({filteredEnrollments.length})
           </TabsTrigger>
@@ -536,13 +557,13 @@ export default function StudentsPage() {
         <TabsContent value="managers" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Managers</CardTitle>
+              <CardTitle>{t('students.allManagers')}</CardTitle>
               <CardDescription>
-                School managers and administrators
+                {t('students.schoolManagersAndAdmins')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {renderUserList(managers, 'No managers found in the system')}
+              {renderUserList(managers, t('students.noManagersFound'))}
             </CardContent>
           </Card>
         </TabsContent>
@@ -550,13 +571,13 @@ export default function StudentsPage() {
         <TabsContent value="teachers" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Teachers</CardTitle>
+              <CardTitle>{t('students.allTeachers')}</CardTitle>
               <CardDescription>
-                Course instructors and educators
+                {t('students.courseInstructorsAndEducators')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {renderUserList(teachers, 'No teachers found in the system')}
+              {renderUserList(teachers, t('students.noTeachersFound'))}
             </CardContent>
           </Card>
         </TabsContent>
@@ -578,13 +599,13 @@ export default function StudentsPage() {
         <TabsContent value="users" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Users</CardTitle>
+              <CardTitle>{t('students.allUsers')}</CardTitle>
               <CardDescription>
-                General users without specific roles
+                {t('students.generalUsersNoRoles')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {renderUserList(users, 'No general users found in the system')}
+              {renderUserList(users, t('students.noGeneralUsersFound'))}
             </CardContent>
           </Card>
         </TabsContent>
@@ -592,15 +613,15 @@ export default function StudentsPage() {
         <TabsContent value="enrollments" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>{t('students.courseEnrollments')}</CardTitle>
+              <CardTitle>{t('students.studentEnrollments')}</CardTitle>
               <CardDescription>
-                {t('students.trackEnrollmentsDescription')}
+                {t('students.enrollmentsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  {t('students.showingRecentEnrollments')}
+                  {t('students.useSearchAndFilters')}
                 </p>
                 <Select
                   value={enrollmentStatusFilter}
@@ -616,7 +637,7 @@ export default function StudentsPage() {
                   }
                 >
                   <SelectTrigger className="w-[160px]">
-                    <SelectValue placeholder="Filter by status" />
+                    <SelectValue placeholder={t('students.filterByStatus')} />
                   </SelectTrigger>
                   <SelectContent>
                     {ENROLLMENT_STATUS_FILTERS.map((option) => (
@@ -632,17 +653,17 @@ export default function StudentsPage() {
                 <div className="py-8 text-center">
                   <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Loading enrollments...
+                    {t('students.loadingEnrollments')}
                   </p>
                 </div>
               ) : filteredEnrollments.length === 0 ? (
                 <div className="py-8 text-center">
                   <GraduationCap className="mx-auto h-12 w-12 text-muted-foreground" />
                   <h3 className="mt-2 text-sm font-medium">
-                    No enrollments found
+                    {t('students.noEnrollmentsFound')}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Adjust the filters to see different enrollment records.
+                    {t('students.adjustFilters')}
                   </p>
                 </div>
               ) : (

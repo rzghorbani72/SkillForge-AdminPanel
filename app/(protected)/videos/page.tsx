@@ -16,6 +16,7 @@ import { VideoStats } from '@/components/videos/VideoStats';
 import { VideoGrid } from '@/components/videos/VideoGrid';
 import { formatDuration, formatFileSize } from '@/components/shared/utils';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface VideoWithMetadata extends Media {
   lesson_type?: 'WELCOME' | 'LESSON' | 'INTRO' | 'CONCLUSION';
@@ -37,6 +38,7 @@ interface VideoWithMetadata extends Media {
 }
 
 export default function VideosPage() {
+  const { t, language } = useTranslation();
   const { selectedSchool } = useSchool();
   const [videos, setVideos] = useState<VideoWithMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,19 +135,22 @@ export default function VideosPage() {
       <div className="page-wrapper flex-1 p-6">
         <EmptyState
           icon={<Video className="h-10 w-10" />}
-          title="No School Selected"
-          description="Please select a school from the header to view videos."
+          title={t('media.noSchoolSelected')}
+          description={t('media.selectSchoolToView')}
         />
       </div>
     );
   }
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading videos..." />;
+    return <LoadingSpinner message={t('media.loadingVideos')} />;
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6">
+    <div
+      className="page-wrapper flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       {/* Header */}
       <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -155,18 +160,18 @@ export default function VideosPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                Video Management
+                {t('media.videoManagement')}
               </h1>
               <Badge
                 variant="secondary"
                 className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
               >
-                <Sparkles className="mr-1 h-3 w-3" />
-                {videos.length} videos
+                <Sparkles className="me-1 h-3 w-3" />
+                {videos.length} {t('media.videos')}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Manage your course videos and welcome content
+              {t('media.manageVideos')}
             </p>
           </div>
         </div>
@@ -192,7 +197,7 @@ export default function VideosPage() {
         style={{ animationDelay: '0.15s' }}
       >
         <SearchBar
-          placeholder="Search videos..."
+          placeholder={t('media.searchVideos')}
           value={searchTerm}
           onChange={setSearchTerm}
           className="flex-1"
@@ -202,12 +207,12 @@ export default function VideosPage() {
           onChange={(e) => setFilterType(e.target.value)}
           className="h-10 rounded-xl border border-border/50 bg-background/50 px-4 text-sm transition-all duration-200 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
         >
-          <option value="all">All Videos</option>
-          <option value="welcome">Welcome Videos</option>
-          <option value="WELCOME">Welcome Type</option>
-          <option value="LESSON">Lesson Content</option>
-          <option value="INTRO">Introduction</option>
-          <option value="CONCLUSION">Conclusion</option>
+          <option value="all">{t('media.allVideos')}</option>
+          <option value="welcome">{t('media.welcomeVideos')}</option>
+          <option value="WELCOME">{t('media.welcomeType')}</option>
+          <option value="LESSON">{t('media.lessonContent')}</option>
+          <option value="INTRO">{t('media.introduction')}</option>
+          <option value="CONCLUSION">{t('media.conclusion')}</option>
         </select>
       </div>
 
@@ -216,37 +221,38 @@ export default function VideosPage() {
         defaultValue="all"
         className="fade-in-up space-y-6"
         style={{ animationDelay: '0.2s' }}
+        dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
       >
         <TabsList className="grid w-full grid-cols-5 rounded-xl bg-muted/50 p-1">
           <TabsTrigger
             value="all"
             className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
-            All ({videos.length})
+            {t('media.allVideos')} ({videos.length})
           </TabsTrigger>
           <TabsTrigger
             value="welcome"
             className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
-            Welcome ({welcomeVideos.length})
+            {t('media.welcomeVideos')} ({welcomeVideos.length})
           </TabsTrigger>
           <TabsTrigger
             value="lessons"
             className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
-            Lessons ({lessonVideos.length})
+            {t('media.lessonVideos')} ({lessonVideos.length})
           </TabsTrigger>
           <TabsTrigger
             value="intro"
             className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
-            Intro ({introVideos.length})
+            {t('media.introVideos')} ({introVideos.length})
           </TabsTrigger>
           <TabsTrigger
             value="conclusion"
             className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
-            Conclusion ({conclusionVideos.length})
+            {t('media.conclusionVideos')} ({conclusionVideos.length})
           </TabsTrigger>
         </TabsList>
 

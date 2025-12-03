@@ -48,8 +48,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 type UserStatus = 'all' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 
 export default function UsersPage() {
-  const { t } = useTranslation();
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
   const searchParams = useSearchParams();
 
   // Get role from query parameter and manage active tab
@@ -185,9 +184,9 @@ export default function UsersPage() {
       return (
         <div className="py-8 text-center">
           <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-2 text-sm font-medium">No users found</h3>
+          <h3 className="mt-2 text-sm font-medium">{t('common.noResults')}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Try adjusting your search or filters
+            {t('common.tryAdjustingFilters')}
           </p>
         </div>
       );
@@ -198,10 +197,12 @@ export default function UsersPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center">Name</TableHead>
-              <TableHead className="text-center">Email</TableHead>
-              <TableHead className="text-center">Phone</TableHead>
-              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">{t('common.name')}</TableHead>
+              <TableHead className="text-center">{t('common.email')}</TableHead>
+              <TableHead className="text-center">{t('common.phone')}</TableHead>
+              <TableHead className="text-center">
+                {t('common.status')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -273,7 +274,7 @@ export default function UsersPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
-            <p className="mt-2 text-sm text-gray-600">Loading users data...</p>
+            <p className="mt-2 text-sm text-gray-600">{t('common.loading')}</p>
           </div>
         </div>
       </div>
@@ -281,30 +282,35 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">All Users</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('users.allUsers')}
+          </h1>
           <p className="text-muted-foreground">
-            Manage all users across different roles
+            {t('users.manageAllUsersDescription')}
           </p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Add User
+            <Plus className="me-2 h-4 w-4" />
+            {t('users.addUser')}
           </Button>
         </div>
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search users by name, email, or phone..."
+            placeholder={t('users.searchUsersPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="pl-8"
+            className="ps-8"
             autoComplete="off"
           />
         </div>
@@ -324,7 +330,7 @@ export default function UsersPage() {
           </SelectContent>
         </Select>
         <Button variant="outline" className="hidden md:inline-flex">
-          <Filter className="mr-2 h-4 w-4" />
+          <Filter className="me-2 h-4 w-4" />
           {t('common.moreFilters')}
         </Button>
       </div>
@@ -332,46 +338,58 @@ export default function UsersPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('users.totalUsers')}
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.total}</div>
             <p className="text-xs text-muted-foreground">
-              All registered users
+              {t('users.allRegisteredUsers')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Managers</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('users.managers')}
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.managers}</div>
             <p className="text-xs text-muted-foreground">
-              School administrators
+              {t('users.schoolAdministrators')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Teachers</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('users.teachers')}
+            </CardTitle>
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.teachers}</div>
-            <p className="text-xs text-muted-foreground">Course instructors</p>
+            <p className="text-xs text-muted-foreground">
+              {t('users.courseInstructors')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Students</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('users.students')}
+            </CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.students}</div>
-            <p className="text-xs text-muted-foreground">Course learners</p>
+            <p className="text-xs text-muted-foreground">
+              {t('users.courseLearners')}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -380,27 +398,29 @@ export default function UsersPage() {
         value={activeTab}
         onValueChange={setActiveTab}
         className="space-y-4"
-        dir={language === 'fa' ? 'rtl' : 'ltr'}
+        dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
       >
         <TabsList>
           <TabsTrigger value="managers">
-            Managers ({totals.managers})
+            {t('users.managers')} ({totals.managers})
           </TabsTrigger>
           <TabsTrigger value="teachers">
-            Teachers ({totals.teachers})
+            {t('users.teachers')} ({totals.teachers})
           </TabsTrigger>
           <TabsTrigger value="students">
-            Students ({totals.students})
+            {t('users.students')} ({totals.students})
           </TabsTrigger>
-          <TabsTrigger value="users">Users ({totals.users})</TabsTrigger>
+          <TabsTrigger value="users">
+            {t('users.users')} ({totals.users})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="managers" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Managers</CardTitle>
+              <CardTitle>{t('users.managers')}</CardTitle>
               <CardDescription>
-                School managers and administrators
+                {t('users.schoolAdministrators')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -412,10 +432,8 @@ export default function UsersPage() {
         <TabsContent value="teachers" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Teachers</CardTitle>
-              <CardDescription>
-                Course instructors and educators
-              </CardDescription>
+              <CardTitle>{t('users.teachers')}</CardTitle>
+              <CardDescription>{t('users.courseInstructors')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {renderUserTable(teachers)}
@@ -426,8 +444,8 @@ export default function UsersPage() {
         <TabsContent value="students" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Students</CardTitle>
-              <CardDescription>Course learners and students</CardDescription>
+              <CardTitle>{t('users.students')}</CardTitle>
+              <CardDescription>{t('users.courseLearners')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {renderUserTable(students)}
@@ -438,9 +456,9 @@ export default function UsersPage() {
         <TabsContent value="users" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Users</CardTitle>
+              <CardTitle>{t('users.allUsers')}</CardTitle>
               <CardDescription>
-                General users without specific roles
+                {t('users.generalUsersNoRoles')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

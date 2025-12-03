@@ -27,6 +27,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from './_hooks/use-analytics-data';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface RevenuePoint {
   month: string;
@@ -56,6 +57,7 @@ const MONTH_NAMES = [
 ];
 
 export default function AnalyticsPage() {
+  const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
   const school = useCurrentSchool();
 
@@ -151,27 +153,27 @@ export default function AnalyticsPage() {
 
   const engagementSlices = useMemo<EngagementSlice[]>(() => {
     if (enrollments.length === 0) {
-      return [{ name: 'No Data', value: 1, color: '#CBD5F5' }];
+      return [{ name: t('analytics.noData'), value: 1, color: '#CBD5F5' }];
     }
 
     return [
       {
-        name: 'Active',
+        name: t('common.active'),
         value: enrollments.filter((e) => e.status === 'ACTIVE').length,
         color: '#10b981'
       },
       {
-        name: 'Completed',
+        name: t('students.completed'),
         value: enrollments.filter((e) => e.status === 'COMPLETED').length,
         color: '#3b82f6'
       },
       {
-        name: 'Cancelled',
+        name: t('students.cancelled'),
         value: enrollments.filter((e) => e.status === 'CANCELLED').length,
         color: '#ef4444'
       }
     ].filter((slice) => slice.value > 0);
-  }, [enrollments]);
+  }, [enrollments, t]);
 
   const topCourses = useMemo(() => {
     if (courses.length === 0) return [];
@@ -200,7 +202,7 @@ export default function AnalyticsPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
-            <p className="mt-2 text-sm text-gray-600">Loading analytics...</p>
+            <p className="mt-2 text-sm text-gray-600">{t('common.loading')}</p>
           </div>
         </div>
       </div>
@@ -208,25 +210,27 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Analytics Overview
+            {t('analytics.overview')}
           </h1>
           <p className="text-muted-foreground">
-            Snapshot of revenue, engagement, and course performance across your
-            organisation.
+            {t('analytics.overviewDescription')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
-            <Calendar className="mr-2 h-4 w-4" />
-            Last 30 days
+            <Calendar className="me-2 h-4 w-4" />
+            {t('analytics.last30Days')}
           </Button>
           <Button variant="outline">
-            <Filter className="mr-2 h-4 w-4" />
-            Export
+            <Filter className="me-2 h-4 w-4" />
+            {t('analytics.export')}
           </Button>
         </div>
       </div>
@@ -234,7 +238,9 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('analytics.totalRevenue')}
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -242,49 +248,49 @@ export default function AnalyticsPage() {
               {formatCurrencyWithSchool(totalRevenue, school)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Combined payments collected
+              {t('analytics.combinedPayments')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Enrollments
+              {t('analytics.totalEnrollments')}
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalEnrollments}</div>
             <p className="text-xs text-muted-foreground">
-              Recent enrollment activity
+              {t('analytics.recentEnrollmentActivity')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Students
+              {t('analytics.activeStudents')}
             </CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeEnrollments}</div>
             <p className="text-xs text-muted-foreground">
-              Currently progressing courses
+              {t('analytics.currentlyProgressingCourses')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Completion Rate
+              {t('analytics.completionRate')}
             </CardTitle>
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{completionRate}%</div>
             <p className="text-xs text-muted-foreground">
-              Share of finished enrolments
+              {t('analytics.shareOfFinishedEnrollments')}
             </p>
           </CardContent>
         </Card>
@@ -293,9 +299,9 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Revenue Trend</CardTitle>
+            <CardTitle>{t('analytics.revenueTrend')}</CardTitle>
             <CardDescription>
-              Monthly revenue alongside new enrolments.
+              {t('analytics.revenueTrendDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -307,8 +313,11 @@ export default function AnalyticsPage() {
                 <Tooltip
                   formatter={(value: number, name: string) =>
                     name === 'revenue'
-                      ? [formatCurrencyWithSchool(value, school), 'Revenue']
-                      : [value, 'Enrollments']
+                      ? [
+                          formatCurrencyWithSchool(value, school),
+                          t('analytics.totalRevenue')
+                        ]
+                      : [value, t('students.enrollments')]
                   }
                 />
                 <Area
@@ -332,9 +341,9 @@ export default function AnalyticsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Engagement Breakdown</CardTitle>
+            <CardTitle>{t('analytics.engagementBreakdown')}</CardTitle>
             <CardDescription>
-              Distribution of current enrolment states.
+              {t('analytics.engagementBreakdownDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -357,15 +366,15 @@ export default function AnalyticsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Top Performing Courses</CardTitle>
+          <CardTitle>{t('analytics.topPerformingCourses')}</CardTitle>
           <CardDescription>
-            Leaderboard of courses by recent enrolments.
+            {t('analytics.topPerformingCoursesDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {topCourses.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No recent course enrolment data available yet.
+              {t('analytics.noCourseRevenueData')}
             </p>
           ) : (
             topCourses.map((course, index) => (

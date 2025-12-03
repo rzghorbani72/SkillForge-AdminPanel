@@ -24,6 +24,7 @@ import { useAnalyticsData } from '../_hooks/use-analytics-data';
 import { Progress } from '@/components/ui/progress';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface RevenuePoint {
   month: string;
@@ -83,6 +84,7 @@ function groupPaymentsByMonth(payments: any[]): RevenuePoint[] {
 }
 
 export default function RevenueAnalyticsPage() {
+  const { t, language } = useTranslation();
   const { payments, enrollments, isLoading } = useAnalyticsData();
   const school = useCurrentSchool();
 
@@ -191,7 +193,7 @@ export default function RevenueAnalyticsPage() {
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
             <p className="mt-2 text-sm text-muted-foreground">
-              Loading revenue analytics...
+              {t('common.loading')}
             </p>
           </div>
         </div>
@@ -200,33 +202,39 @@ export default function RevenueAnalyticsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Revenue Analytics</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('analytics.revenueAnalytics')}
+        </h1>
         <p className="text-muted-foreground">
-          Monitor earning trends, average ticket value, and course contribution
-          to revenue.
+          {t('analytics.revenueAnalyticsDescription')}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('analytics.totalRevenue')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
               {formatCurrencyWithSchool(total, school)}
             </p>
             <p className="text-xs text-muted-foreground">
-              Across all recorded payments
+              {t('analytics.acrossAllPayments')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Average Ticket
+              {t('analytics.averageTicket')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -234,27 +242,29 @@ export default function RevenueAnalyticsPage() {
               {formatCurrencyWithSchool(averageTicket, school)}
             </p>
             <p className="text-xs text-muted-foreground">
-              Per successful payment
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Refunds</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-red-500">
-              {formatCurrencyWithSchool(totalRefunds, school)}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Processed refunds to date
+              {t('analytics.perSuccessfulPayment')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Month over Month
+              {t('analytics.refunds')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-red-500">
+              {formatCurrencyWithSchool(totalRefunds, school)}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t('analytics.processedRefunds')}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">
+              {t('analytics.monthOverMonth')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -267,7 +277,7 @@ export default function RevenueAnalyticsPage() {
               {monthOverMonth}%
             </p>
             <p className="text-xs text-muted-foreground">
-              Change compared with previous month
+              {t('analytics.changeComparedPrevious')}
             </p>
           </CardContent>
         </Card>
@@ -275,9 +285,9 @@ export default function RevenueAnalyticsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Monthly Revenue vs Enrollments</CardTitle>
+          <CardTitle>{t('analytics.monthlyRevenueVsEnrollments')}</CardTitle>
           <CardDescription>
-            Track total revenue alongside transaction volume.
+            {t('analytics.monthlyRevenueDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -292,8 +302,11 @@ export default function RevenueAnalyticsPage() {
               <Tooltip
                 formatter={(value: number, name: string) =>
                   name === 'revenue'
-                    ? [formatCurrencyWithSchool(value, school), 'Revenue']
-                    : [value, 'Transactions']
+                    ? [
+                        formatCurrencyWithSchool(value, school),
+                        t('analytics.totalRevenue')
+                      ]
+                    : [value, t('students.enrollments')]
                 }
               />
               <Line
@@ -318,15 +331,15 @@ export default function RevenueAnalyticsPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Revenue by Course</CardTitle>
+            <CardTitle>{t('analytics.revenueByCourse')}</CardTitle>
             <CardDescription>
-              Top course contributors across recorded payments.
+              {t('analytics.revenueByCourseDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {topCourses.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No course revenue data available yet.
+                {t('analytics.noCourseRevenueData')}
               </p>
             ) : (
               topCourses.map((course, index) => (
@@ -368,9 +381,9 @@ export default function RevenueAnalyticsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Enrolment Value by Course</CardTitle>
+            <CardTitle>{t('analytics.enrollmentValueByCourse')}</CardTitle>
             <CardDescription>
-              Aggregation of payments captured per enrolment.
+              {t('analytics.enrollmentValueDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -15,6 +15,7 @@ import { usePaymentsData } from '../_hooks/use-payments-data';
 import { Progress } from '@/components/ui/progress';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
 import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const METHOD_CONFIG = [
   {
@@ -58,6 +59,7 @@ const TONE_STYLES: Record<Tone, string> = {
 };
 
 export default function PaymentMethodsPage() {
+  const { t, language } = useTranslation();
   const { payments } = usePaymentsData();
   const school = useCurrentSchool();
 
@@ -92,20 +94,28 @@ export default function PaymentMethodsPage() {
   }, [payments]);
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Payment Methods</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('payments.paymentMethodsTitle')}
+        </h1>
         <p className="text-muted-foreground">
-          Configure gateways, monitor adoption, and plan new payment experiences
-          for your students.
+          {t('payments.paymentMethodsPageDescription')}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <CardDescription>Captured through all gateways.</CardDescription>
+            <CardTitle className="text-sm font-medium">
+              {t('analytics.totalRevenue')}
+            </CardTitle>
+            <CardDescription>
+              {t('payments.capturedThroughGateways')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
@@ -116,9 +126,11 @@ export default function PaymentMethodsPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Methods
+              {t('payments.activeMethods')}
             </CardTitle>
-            <CardDescription>Currently available to students.</CardDescription>
+            <CardDescription>
+              {t('payments.activeMethodsDescription')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
@@ -132,8 +144,12 @@ export default function PaymentMethodsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">In Pipeline</CardTitle>
-            <CardDescription>Methods scheduled or in beta.</CardDescription>
+            <CardTitle className="text-sm font-medium">
+              {t('payments.inPipeline')}
+            </CardTitle>
+            <CardDescription>
+              {t('payments.inPipelineDescription')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
@@ -151,16 +167,15 @@ export default function PaymentMethodsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Gateway Performance</CardTitle>
+          <CardTitle>{t('payments.gatewayPerformance')}</CardTitle>
           <CardDescription>
-            Share of revenue and total payments per method.
+            {t('payments.gatewayPerformanceDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           {methodMetrics.breakdown.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No payments have been processed yet. Once transactions occur, you
-              will see method-level metrics here.
+              {t('payments.noPaymentsProcessed')}
             </p>
           ) : (
             methodMetrics.breakdown.map((item) => (
@@ -212,10 +227,11 @@ export default function PaymentMethodsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm">
-                    <Lock className="mr-2 h-4 w-4" /> Manage Access
+                    <Lock className="me-2 h-4 w-4" />{' '}
+                    {t('payments.manageAccess')}
                   </Button>
                   <Button variant="outline" size="sm">
-                    <Plus className="mr-2 h-4 w-4" /> Configure
+                    <Plus className="me-2 h-4 w-4" /> {t('payments.configure')}
                   </Button>
                 </div>
               </CardContent>

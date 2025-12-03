@@ -22,6 +22,7 @@ import {
 import { usePaymentsData } from './_hooks/use-payments-data';
 import { cn, formatCurrencyWithSchool } from '@/lib/utils';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const STATUS_BADGES: Record<string, string> = {
   COMPLETED: 'bg-green-100 text-green-800',
@@ -36,6 +37,7 @@ function formatDate(value?: string | null): string {
 }
 
 export default function PaymentsPage() {
+  const { t, language } = useTranslation();
   const { payments, transactions, isLoading, refresh } = usePaymentsData();
   const school = useCurrentSchool();
   const [searchTerm, setSearchTerm] = useState('');
@@ -105,7 +107,7 @@ export default function PaymentsPage() {
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
             <p className="mt-2 text-sm text-muted-foreground">
-              Loading payments…
+              {t('common.loading')}
             </p>
           </div>
         </div>
@@ -114,21 +116,25 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('payments.transactions')}
+          </h1>
           <p className="text-muted-foreground">
-            Review processed payments, track transaction status, and drill into
-            order details.
+            {t('payments.transactionsDescription')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={refresh}>
-            <RefreshCw className="mr-2 h-4 w-4" /> Refresh
+            <RefreshCw className="me-2 h-4 w-4" /> {t('payments.refresh')}
           </Button>
           <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" /> Export CSV
+            <Download className="me-2 h-4 w-4" /> {t('payments.exportCsv')}
           </Button>
         </div>
       </div>
@@ -136,76 +142,91 @@ export default function PaymentsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('analytics.totalRevenue')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
               {formatCurrencyWithSchool(totals.revenue, school)}
             </p>
             <p className="text-xs text-muted-foreground">
-              Across all recorded payments
+              {t('analytics.acrossAllPayments')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('payments.completed')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.completed}</p>
-            <p className="text-xs text-muted-foreground">Successful payments</p>
+            <p className="text-xs text-muted-foreground">
+              {t('payments.successfulPayments')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('payments.pending')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.pending}</p>
             <p className="text-xs text-muted-foreground">
-              Awaiting confirmation
+              {t('payments.awaitingConfirmation')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Failed</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('payments.failed')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.failed}</p>
-            <p className="text-xs text-muted-foreground">Requires follow-up</p>
+            <p className="text-xs text-muted-foreground">
+              {t('payments.requiresFollowUp')}
+            </p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle>Search Payments</CardTitle>
+          <CardTitle>{t('payments.searchPayments')}</CardTitle>
           <CardDescription>
-            Filter by student, course, invoice, or status.
+            {t('payments.searchPaymentsDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search payments…"
-              className="pl-9"
+              placeholder={t('payments.searchPaymentsPlaceholder')}
+              className="ps-9"
             />
           </div>
           <div className="text-sm text-muted-foreground">
-            Showing {filteredPayments.length} of {payments.length} payments
+            {t('payments.showingPayments', {
+              count: filteredPayments.length,
+              total: payments.length
+            })}
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle>Recent Transactions</CardTitle>
+          <CardTitle>{t('payments.recentTransactions')}</CardTitle>
           <CardDescription>
-            Latest payments across your organisation.
+            {t('payments.recentTransactionsDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -213,10 +234,10 @@ export default function PaymentsPage() {
             <div className="py-12 text-center">
               <CreditCard className="mx-auto h-12 w-12 text-muted-foreground" />
               <p className="mt-3 text-sm font-medium">
-                No transactions match your filters.
+                {t('payments.noTransactionsMatch')}
               </p>
               <p className="text-xs text-muted-foreground">
-                Adjust the search or refresh to try again.
+                {t('payments.adjustFilters')}
               </p>
             </div>
           ) : (
@@ -231,10 +252,10 @@ export default function PaymentsPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">
-                      {payment.user?.name ?? 'Unknown student'}
+                      {payment.user?.name ?? t('payments.unknownStudent')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {payment.course?.title ?? 'Unknown course'}
+                      {payment.course?.title ?? t('payments.unknownCourse')}
                     </p>
                   </div>
                 </div>
@@ -265,13 +286,15 @@ export default function PaymentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Payment Methods</CardTitle>
-          <CardDescription>Breakdown by gateway and method.</CardDescription>
+          <CardTitle>{t('payments.paymentMethods')}</CardTitle>
+          <CardDescription>
+            {t('payments.paymentMethodsDescription')}
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           {methodBreakdown.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No payment method information available yet.
+              {t('payments.noPaymentMethodInfo')}
             </p>
           ) : (
             methodBreakdown.map((item) => (
@@ -298,15 +321,15 @@ export default function PaymentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Latest Ledger Entries</CardTitle>
+          <CardTitle>{t('payments.latestLedgerEntries')}</CardTitle>
           <CardDescription>
-            Financial transactions recorded in the system.
+            {t('payments.latestLedgerDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {transactions.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No transaction ledger entries available.
+              {t('payments.noLedgerEntries')}
             </p>
           ) : (
             transactions.slice(0, 10).map((transaction) => (

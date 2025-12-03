@@ -16,6 +16,7 @@ import {
   CategoryType,
   getCategoryTypeLabel
 } from './category-utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface SearchAndFiltersProps {
   searchTerm: string;
@@ -30,24 +31,26 @@ export function SearchAndFilters({
   selectedType,
   onTypeChange
 }: SearchAndFiltersProps) {
+  const { t } = useTranslation();
+
   return (
     <div
       className="fade-in-up flex flex-col gap-3 sm:flex-row sm:items-center"
       style={{ animationDelay: '0.1s' }}
     >
       <div className="relative max-w-md flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search categories..."
+          placeholder={t('media.searchCategories')}
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="h-10 rounded-xl border-border/50 bg-background/50 pl-10 pr-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
+          className="h-10 rounded-xl border-border/50 bg-background/50 pe-10 ps-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
         />
         {searchTerm && (
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute end-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             onClick={() => onSearchChange('')}
           >
             <X className="h-4 w-4" />
@@ -56,7 +59,7 @@ export function SearchAndFilters({
       </div>
       <Select value={selectedType} onValueChange={onTypeChange}>
         <SelectTrigger className="h-10 w-full rounded-xl border-border/50 bg-background/50 sm:w-[180px]">
-          <SelectValue placeholder="Filter by type" />
+          <SelectValue placeholder={t('media.all')} />
         </SelectTrigger>
         <SelectContent className="rounded-xl">
           <SelectGroup>

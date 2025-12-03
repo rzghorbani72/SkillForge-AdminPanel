@@ -32,6 +32,7 @@ import { Search } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Enrollment } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface PaginationInfo {
   page: number;
@@ -49,16 +50,19 @@ type EnrollmentStatusFilter =
   | 'CANCELLED'
   | 'EXPIRED';
 
-const STATUS_OPTIONS: Array<{ label: string; value: EnrollmentStatusFilter }> =
-  [
-    { label: 'All statuses', value: 'all' },
-    { label: 'Active', value: 'ACTIVE' },
-    { label: 'Completed', value: 'COMPLETED' },
-    { label: 'Cancelled', value: 'CANCELLED' },
-    { label: 'Expired', value: 'EXPIRED' }
-  ];
-
 export default function StudentEnrollmentsPage() {
+  const { t, language } = useTranslation();
+
+  const STATUS_OPTIONS: Array<{
+    label: string;
+    value: EnrollmentStatusFilter;
+  }> = [
+    { label: t('students.allStatuses'), value: 'all' },
+    { label: t('common.active'), value: 'ACTIVE' },
+    { label: t('students.completed'), value: 'COMPLETED' },
+    { label: t('students.cancelled'), value: 'CANCELLED' },
+    { label: t('students.expired'), value: 'EXPIRED' }
+  ];
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,9 +119,9 @@ export default function StudentEnrollmentsPage() {
   }, [searchInput]);
 
   const filteredCountLabel = useMemo(() => {
-    if (!pagination) return `${enrollments.length} results`;
-    return `${pagination.total} results`;
-  }, [enrollments.length, pagination]);
+    const count = pagination ? pagination.total : enrollments.length;
+    return `${count} ${t('students.resultsCount')}`;
+  }, [enrollments.length, pagination, t]);
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
@@ -140,15 +144,17 @@ export default function StudentEnrollmentsPage() {
       : 0;
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Student Enrollments
+            {t('students.studentEnrollments')}
           </h1>
           <p className="text-muted-foreground">
-            Review enrollment activity, filter by status, and drill into
-            student-course relationships.
+            {t('students.enrollmentsDescription')}
           </p>
         </div>
         <p className="text-sm text-muted-foreground">{filteredCountLabel}</p>
@@ -156,20 +162,18 @@ export default function StudentEnrollmentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Enrollments</CardTitle>
-          <CardDescription>
-            Use the search and filters below to narrow down specific records.
-          </CardDescription>
+          <CardTitle>{t('students.enrollments')}</CardTitle>
+          <CardDescription>{t('students.useSearchAndFilters')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-col gap-3 md:flex-row">
             <div className="relative flex-1">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by student or course..."
+                placeholder={t('students.searchByStudentOrCourse')}
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
-                className="pl-8"
+                className="ps-8"
               />
             </div>
             <Select
@@ -179,7 +183,7 @@ export default function StudentEnrollmentsPage() {
               }
             >
               <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder={t('students.allStatuses')} />
               </SelectTrigger>
               <SelectContent>
                 {STATUS_OPTIONS.map((option) => (
@@ -195,11 +199,15 @@ export default function StudentEnrollmentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Course</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-[160px]">Progress</TableHead>
-                  <TableHead className="text-right">Enrolled At</TableHead>
+                  <TableHead>{t('students.student')}</TableHead>
+                  <TableHead>{t('students.course')}</TableHead>
+                  <TableHead>{t('common.status')}</TableHead>
+                  <TableHead className="w-[160px]">
+                    {t('students.progress')}
+                  </TableHead>
+                  <TableHead className="text-end">
+                    {t('students.enrolledAt')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -209,7 +217,7 @@ export default function StudentEnrollmentsPage() {
                       <div className="flex flex-col items-center gap-2">
                         <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
                         <span className="text-sm text-muted-foreground">
-                          Loading enrollments...
+                          {t('students.loadingEnrollments')}
                         </span>
                       </div>
                     </TableCell>
@@ -218,13 +226,27 @@ export default function StudentEnrollmentsPage() {
                   <TableRow>
                     <TableCell colSpan={5} className="h-32 text-center">
                       <span className="text-sm text-muted-foreground">
-                        No enrollments match the current filters.
+                        {t('students.noEnrollmentsMatch')}
                       </span>
                     </TableCell>
                   </TableRow>
                 ) : (
                   enrollments.map((enrollment) => {
                     const progressValue = getProgressValue(enrollment);
+                    const getStatusLabel = (status: string) => {
+                      switch (status) {
+                        case 'ACTIVE':
+                          return t('common.active');
+                        case 'COMPLETED':
+                          return t('students.completed');
+                        case 'CANCELLED':
+                          return t('students.cancelled');
+                        case 'EXPIRED':
+                          return t('students.expired');
+                        default:
+                          return status;
+                      }
+                    };
                     return (
                       <TableRow key={enrollment.id}>
                         <TableCell>
@@ -239,10 +261,12 @@ export default function StudentEnrollmentsPage() {
                             </Avatar>
                             <div className="space-y-0.5">
                               <p className="text-sm font-medium">
-                                {enrollment.user?.name || 'Unknown student'}
+                                {enrollment.user?.name ||
+                                  t('students.unknownStudent')}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {enrollment.user?.email || 'No email'}
+                                {enrollment.user?.email ||
+                                  t('students.noEmail')}
                               </p>
                             </div>
                           </div>
@@ -250,7 +274,8 @@ export default function StudentEnrollmentsPage() {
                         <TableCell>
                           <div className="space-y-0.5">
                             <p className="text-sm font-medium">
-                              {enrollment.course?.title || 'Unknown course'}
+                              {enrollment.course?.title ||
+                                t('students.unknownCourse')}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               {enrollment.course?.school?.name || '—'}
@@ -261,21 +286,21 @@ export default function StudentEnrollmentsPage() {
                           <Badge
                             className={getStatusBadgeClass(enrollment.status)}
                           >
-                            {enrollment.status}
+                            {getStatusLabel(enrollment.status)}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="space-y-1">
                             <Progress value={progressValue} className="h-2" />
-                            <p className="text-right text-xs text-muted-foreground">
+                            <p className="text-end text-xs text-muted-foreground">
                               {progressValue}%
                             </p>
                           </div>
                         </TableCell>
-                        <TableCell className="text-right text-sm text-muted-foreground">
-                          {new Date(
-                            enrollment.enrolled_at
-                          ).toLocaleDateString()}
+                        <TableCell className="text-end text-sm text-muted-foreground">
+                          {new Date(enrollment.enrolled_at).toLocaleDateString(
+                            language === 'fa' ? 'fa-IR' : undefined
+                          )}
                         </TableCell>
                       </TableRow>
                     );

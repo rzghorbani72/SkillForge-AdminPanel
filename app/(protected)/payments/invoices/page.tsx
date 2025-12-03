@@ -15,6 +15,7 @@ import { FileText, Filter, Plus, Search } from 'lucide-react';
 import { usePaymentsData } from '../_hooks/use-payments-data';
 import { cn, formatCurrencyWithSchool } from '@/lib/utils';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const STATUS_COLORS: Record<string, string> = {
   COMPLETED: 'bg-green-100 text-green-800',
@@ -29,6 +30,7 @@ function formatDate(value?: string | null): string {
 }
 
 export default function InvoicesPage() {
+  const { t, language } = useTranslation();
   const { payments, isLoading } = usePaymentsData();
   const school = useCurrentSchool();
   const [searchTerm, setSearchTerm] = useState('');
@@ -74,7 +76,7 @@ export default function InvoicesPage() {
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
             <p className="mt-2 text-sm text-muted-foreground">
-              Loading invoices…
+              {t('common.loading')}
             </p>
           </div>
         </div>
@@ -83,21 +85,25 @@ export default function InvoicesPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div
+      className="flex-1 space-y-6 p-6"
+      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Invoices</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('payments.invoices')}
+          </h1>
           <p className="text-muted-foreground">
-            Generate, monitor, and download invoices related to course
-            purchases.
+            {t('payments.invoicesDescription')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
-            <Filter className="mr-2 h-4 w-4" /> Filters
+            <Filter className="me-2 h-4 w-4" /> {t('payments.filters')}
           </Button>
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> Create Invoice
+            <Plus className="me-2 h-4 w-4" /> {t('payments.createInvoice')}
           </Button>
         </div>
       </div>
@@ -105,8 +111,10 @@ export default function InvoicesPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Issued</CardTitle>
-            <CardDescription>Total invoices generated.</CardDescription>
+            <CardTitle className="text-sm font-medium">
+              {t('payments.issued')}
+            </CardTitle>
+            <CardDescription>{t('payments.issuedDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.issued}</p>
@@ -114,8 +122,10 @@ export default function InvoicesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Paid</CardTitle>
-            <CardDescription>Fully settled invoices.</CardDescription>
+            <CardTitle className="text-sm font-medium">
+              {t('payments.paid')}
+            </CardTitle>
+            <CardDescription>{t('payments.paidDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.paid}</p>
@@ -123,8 +133,12 @@ export default function InvoicesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-            <CardDescription>Awaiting payment or confirmation.</CardDescription>
+            <CardTitle className="text-sm font-medium">
+              {t('payments.outstanding')}
+            </CardTitle>
+            <CardDescription>
+              {t('payments.outstandingDescription')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.outstanding}</p>
@@ -132,8 +146,12 @@ export default function InvoicesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Refunded</CardTitle>
-            <CardDescription>Invoices refunded to students.</CardDescription>
+            <CardTitle className="text-sm font-medium">
+              {t('payments.refunded')}
+            </CardTitle>
+            <CardDescription>
+              {t('payments.refundedDescription')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.refunds}</p>
@@ -143,32 +161,35 @@ export default function InvoicesPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Find Invoice</CardTitle>
+          <CardTitle>{t('payments.findInvoice')}</CardTitle>
           <CardDescription>
-            Search by student, course, invoice number, or status.
+            {t('payments.findInvoiceDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search invoices…"
-              className="pl-9"
+              placeholder={t('payments.searchInvoicesPlaceholder')}
+              className="ps-9"
             />
           </div>
           <div className="text-sm text-muted-foreground">
-            Showing {invoices.length} of {payments.length}
+            {t('payments.showingInvoices', {
+              count: invoices.length,
+              total: payments.length
+            })}
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Invoice Ledger</CardTitle>
+          <CardTitle>{t('payments.invoiceLedger')}</CardTitle>
           <CardDescription>
-            Detailed list of recently generated invoices.
+            {t('payments.invoiceLedgerDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -176,10 +197,10 @@ export default function InvoicesPage() {
             <div className="py-12 text-center">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
               <p className="mt-3 text-sm font-medium">
-                No invoices to show right now.
+                {t('payments.noInvoices')}
               </p>
               <p className="text-xs text-muted-foreground">
-                Create a new invoice or adjust your filters.
+                {t('payments.createOrAdjust')}
               </p>
             </div>
           ) : (
@@ -221,7 +242,7 @@ export default function InvoicesPage() {
                     {payment.status?.toLowerCase() ?? 'unknown'}
                   </Badge>
                   <Button variant="outline" size="sm">
-                    Download
+                    {t('payments.download')}
                   </Button>
                 </div>
               </div>
