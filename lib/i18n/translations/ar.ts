@@ -87,7 +87,7 @@ export const ar = {
     audios: 'الصوتيات',
     documents: 'المستندات',
     payments: 'المدفوعات',
-    discounts: 'الخصومات'
+    vouchers: 'القسائم'
   },
   auth: {
     login: 'تسجيل الدخول',
@@ -870,11 +870,11 @@ export const ar = {
     createOrAdjust: 'أنشئ فاتورة جديدة أو قم بتعديل الفلاتر.',
     download: 'تنزيل'
   },
-  discounts: {
-    title: 'أكواد الخصم',
-    description: 'إدارة أكواد الخصم والعروض الترويجية',
-    createDiscount: 'إنشاء خصم',
-    searchPlaceholder: 'البحث في أكواد الخصم...',
+  vouchers: {
+    title: 'القسائم',
+    description: 'إدارة القسائم والعروض الترويجية',
+    createVoucher: 'إنشاء قسيمة',
+    searchPlaceholder: 'البحث في القسائم...',
     code: 'الكود',
     type: 'النوع',
     value: 'القيمة',
@@ -882,12 +882,12 @@ export const ar = {
     startDate: 'تاريخ البدء',
     endDate: 'تاريخ الانتهاء',
     actions: 'الإجراءات',
-    noDiscountsFound: 'لم يتم العثور على أكواد خصم',
+    noVouchersFound: 'لم يتم العثور على قسائم',
     expired: 'منتهية الصلاحية',
-    createDialogTitle: 'إنشاء كود خصم',
-    createDialogDescription: 'إنشاء كود خصم جديد لدوراتك',
-    editDialogTitle: 'تعديل كود الخصم',
-    editDialogDescription: 'تحديث تفاصيل كود الخصم',
+    createDialogTitle: 'إنشاء قسيمة',
+    createDialogDescription: 'إنشاء قسيمة جديدة لدوراتك',
+    editDialogTitle: 'تعديل القسيمة',
+    editDialogDescription: 'تحديث تفاصيل القسيمة',
     codeRequired: 'الكود مطلوب',
     discountType: 'نوع الخصم',
     discountValue: 'قيمة الخصم',
@@ -900,7 +900,7 @@ export const ar = {
     usageLimit: 'حد الاستخدام',
     minPurchaseAmount: 'الحد الأدنى لمبلغ الشراء',
     maxDiscountAmount: 'الحد الأقصى لمبلغ الخصم',
-    confirmDelete: 'هل أنت متأكد أنك تريد حذف كود الخصم هذا؟',
-    loadingDiscounts: 'جاري تحميل الخصومات...'
+    confirmDelete: 'هل أنت متأكد أنك تريد حذف هذه القسيمة؟',
+    loadingVouchers: 'جاري تحميل القسائم...'
   }
 };

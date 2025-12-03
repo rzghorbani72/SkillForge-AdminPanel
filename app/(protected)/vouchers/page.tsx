@@ -46,14 +46,14 @@ interface DiscountCode {
   updated_at: string;
 }
 
-export default function DiscountsPage() {
+export default function VouchersPage() {
   const { t, language } = useTranslation();
-  const [discounts, setDiscounts] = useState<DiscountCode[]>([]);
+  const [vouchers, setVouchers] = useState<DiscountCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingDiscount, setEditingDiscount] = useState<DiscountCode | null>(
+  const [editingVoucher, setEditingVoucher] = useState<DiscountCode | null>(
     null
   );
   const [formData, setFormData] = useState({
@@ -75,7 +75,7 @@ export default function DiscountsPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const fetchDiscounts = useCallback(async () => {
+  const fetchVouchers = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await apiClient.getDiscounts({ search: searchTerm });
@@ -83,31 +83,31 @@ export default function DiscountsPage() {
       // Handle different response structures
       if (response?.data?.discounts) {
         // Response from backend: { message, status, data: { discounts, pagination } }
-        setDiscounts(response.data.discounts);
+        setVouchers(response.data.discounts);
       } else if (response?.discounts) {
         // Direct discounts array in response
-        setDiscounts(response.discounts);
+        setVouchers(response.discounts);
       } else if (Array.isArray(response?.data)) {
         // Array directly in data
-        setDiscounts(response.data);
+        setVouchers(response.data);
       } else if (Array.isArray(response)) {
         // Response is directly an array
-        setDiscounts(response);
+        setVouchers(response);
       } else {
-        setDiscounts([]);
+        setVouchers([]);
       }
     } catch (error) {
-      console.error('Error fetching discounts:', error);
-      toast.error('Failed to fetch discount codes');
-      setDiscounts([]);
+      console.error('Error fetching vouchers:', error);
+      toast.error('Failed to fetch vouchers');
+      setVouchers([]);
     } finally {
       setIsLoading(false);
     }
   }, [searchTerm]);
 
   useEffect(() => {
-    fetchDiscounts();
-  }, [fetchDiscounts]);
+    fetchVouchers();
+  }, [fetchVouchers]);
 
   const handleCreate = async () => {
     if (!validateForm()) {
@@ -121,17 +121,17 @@ export default function DiscountsPage() {
         start_date: new Date(formData.start_date).toISOString(),
         end_date: new Date(formData.end_date).toISOString()
       });
-      toast.success(response?.message || 'Discount code created successfully');
+      toast.success(response?.message || 'Voucher created successfully');
       setIsCreateDialogOpen(false);
       resetForm();
-      fetchDiscounts();
+      fetchVouchers();
     } catch (error: any) {
-      toast.error(error?.message || 'Failed to create discount code');
+      toast.error(error?.message || 'Failed to create voucher');
     }
   };
 
   const handleUpdate = async () => {
-    if (!editingDiscount) return;
+    if (!editingVoucher) return;
 
     const updateErrors: Record<string, string> = {};
     if (formData.start_date && formData.end_date) {
@@ -149,7 +149,7 @@ export default function DiscountsPage() {
     }
 
     try {
-      const response = await apiClient.updateDiscount(editingDiscount.id, {
+      const response = await apiClient.updateDiscount(editingVoucher.id, {
         ...formData,
         start_date: formData.start_date
           ? new Date(formData.start_date).toISOString()
@@ -158,41 +158,41 @@ export default function DiscountsPage() {
           ? new Date(formData.end_date).toISOString()
           : undefined
       });
-      toast.success(response?.message || 'Discount code updated successfully');
+      toast.success(response?.message || 'Voucher updated successfully');
       setIsEditDialogOpen(false);
-      setEditingDiscount(null);
+      setEditingVoucher(null);
       resetForm();
-      fetchDiscounts();
+      fetchVouchers();
     } catch (error: any) {
-      toast.error(error?.message || 'Failed to update discount code');
+      toast.error(error?.message || 'Failed to update voucher');
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm(t('discounts.confirmDelete'))) return;
+    if (!confirm(t('vouchers.confirmDelete'))) return;
     try {
       const response = await apiClient.deleteDiscount(id);
-      toast.success(response?.message || 'Discount code deleted successfully');
-      fetchDiscounts();
+      toast.success(response?.message || 'Voucher deleted successfully');
+      fetchVouchers();
     } catch (error: any) {
-      toast.error(error?.message || 'Failed to delete discount code');
+      toast.error(error?.message || 'Failed to delete voucher');
     }
   };
 
-  const openEditDialog = (discount: DiscountCode) => {
-    setEditingDiscount(discount);
+  const openEditDialog = (voucher: DiscountCode) => {
+    setEditingVoucher(voucher);
     setFormData({
-      code: discount.code,
-      description: discount.description || '',
-      discount_type: discount.discount_type,
-      discount_value: discount.discount_value,
-      usage_limit: discount.usage_limit,
-      usage_type: discount.usage_type,
-      start_date: format(new Date(discount.start_date), "yyyy-MM-dd'T'HH:mm"),
-      end_date: format(new Date(discount.end_date), "yyyy-MM-dd'T'HH:mm"),
-      is_active: discount.is_active,
-      min_purchase_amount: discount.min_purchase_amount,
-      max_discount_amount: discount.max_discount_amount
+      code: voucher.code,
+      description: voucher.description || '',
+      discount_type: voucher.discount_type,
+      discount_value: voucher.discount_value,
+      usage_limit: voucher.usage_limit,
+      usage_type: voucher.usage_type,
+      start_date: format(new Date(voucher.start_date), "yyyy-MM-dd'T'HH:mm"),
+      end_date: format(new Date(voucher.end_date), "yyyy-MM-dd'T'HH:mm"),
+      is_active: voucher.is_active,
+      min_purchase_amount: voucher.min_purchase_amount,
+      max_discount_amount: voucher.max_discount_amount
     });
     setIsEditDialogOpen(true);
   };
@@ -257,15 +257,15 @@ export default function DiscountsPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const filteredDiscounts = discounts.filter(
-    (discount) =>
-      discount.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      discount.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredVouchers = vouchers.filter(
+    (voucher) =>
+      voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      voucher.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const isExpired = (endDate: string) => new Date(endDate) < new Date();
-  const isActive = (discount: DiscountCode) =>
-    discount.is_active && !isExpired(discount.end_date);
+  const isActive = (voucher: DiscountCode) =>
+    voucher.is_active && !isExpired(voucher.end_date);
 
   return (
     <div
@@ -274,12 +274,12 @@ export default function DiscountsPage() {
     >
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t('discounts.title')}</h1>
-          <p className="text-muted-foreground">{t('discounts.description')}</p>
+          <h1 className="text-3xl font-bold">{t('vouchers.title')}</h1>
+          <p className="text-muted-foreground">{t('vouchers.description')}</p>
         </div>
         <Button onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="me-2 h-4 w-4" />
-          {t('discounts.createDiscount')}
+          {t('vouchers.createVoucher')}
         </Button>
       </div>
 
@@ -287,7 +287,7 @@ export default function DiscountsPage() {
         <div className="relative flex-1">
           <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder={t('discounts.searchPlaceholder')}
+            placeholder={t('vouchers.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="ps-9"
@@ -300,7 +300,7 @@ export default function DiscountsPage() {
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
             <p className="mt-2 text-sm text-gray-600">
-              {t('discounts.loadingDiscounts')}
+              {t('vouchers.loadingVouchers')}
             </p>
           </div>
         </div>
@@ -309,67 +309,67 @@ export default function DiscountsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('discounts.code')}</TableHead>
-                <TableHead>{t('discounts.type')}</TableHead>
-                <TableHead>{t('discounts.value')}</TableHead>
-                <TableHead>{t('discounts.usage')}</TableHead>
-                <TableHead>{t('discounts.startDate')}</TableHead>
-                <TableHead>{t('discounts.endDate')}</TableHead>
+                <TableHead>{t('vouchers.code')}</TableHead>
+                <TableHead>{t('vouchers.type')}</TableHead>
+                <TableHead>{t('vouchers.value')}</TableHead>
+                <TableHead>{t('vouchers.usage')}</TableHead>
+                <TableHead>{t('vouchers.startDate')}</TableHead>
+                <TableHead>{t('vouchers.endDate')}</TableHead>
                 <TableHead>{t('common.status')}</TableHead>
                 <TableHead>{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredDiscounts.length === 0 ? (
+              {filteredVouchers.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={8}
                     className="text-center text-muted-foreground"
                   >
-                    {t('discounts.noDiscountsFound')}
+                    {t('vouchers.noVouchersFound')}
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredDiscounts.map((discount) => (
-                  <TableRow key={discount.id}>
+                filteredVouchers.map((voucher) => (
+                  <TableRow key={voucher.id}>
                     <TableCell className="font-mono font-semibold">
-                      {discount.code}
+                      {voucher.code}
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant={
-                          discount.discount_type === 'PERCENT'
+                          voucher.discount_type === 'PERCENT'
                             ? 'default'
                             : 'secondary'
                         }
                       >
-                        {discount.discount_type}
+                        {voucher.discount_type}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {discount.discount_type === 'PERCENT'
-                        ? `${discount.discount_value}%`
-                        : discount.discount_value}
+                      {voucher.discount_type === 'PERCENT'
+                        ? `${voucher.discount_value}%`
+                        : voucher.discount_value}
                     </TableCell>
                     <TableCell>
-                      {discount.usage_limit
-                        ? `${discount.used_count}/${discount.usage_limit}`
-                        : `${discount.used_count} (${discount.usage_type})`}
+                      {voucher.usage_limit
+                        ? `${voucher.used_count}/${voucher.usage_limit}`
+                        : `${voucher.used_count} (${voucher.usage_type})`}
                     </TableCell>
                     <TableCell>
-                      {format(new Date(discount.start_date), 'MMM dd, yyyy')}
+                      {format(new Date(voucher.start_date), 'MMM dd, yyyy')}
                     </TableCell>
                     <TableCell>
-                      {format(new Date(discount.end_date), 'MMM dd, yyyy')}
+                      {format(new Date(voucher.end_date), 'MMM dd, yyyy')}
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={isActive(discount) ? 'default' : 'destructive'}
+                        variant={isActive(voucher) ? 'default' : 'destructive'}
                       >
-                        {isActive(discount)
+                        {isActive(voucher)
                           ? t('common.active')
-                          : isExpired(discount.end_date)
-                            ? t('discounts.expired')
+                          : isExpired(voucher.end_date)
+                            ? t('vouchers.expired')
                             : t('common.inactive')}
                       </Badge>
                     </TableCell>
@@ -378,14 +378,14 @@ export default function DiscountsPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => openEditDialog(discount)}
+                          onClick={() => openEditDialog(voucher)}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleDelete(discount.id)}
+                          onClick={() => handleDelete(voucher.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -403,9 +403,9 @@ export default function DiscountsPage() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{t('discounts.createDialogTitle')}</DialogTitle>
+            <DialogTitle>{t('vouchers.createDialogTitle')}</DialogTitle>
             <DialogDescription>
-              {t('discounts.createDialogDescription')}
+              {t('vouchers.createDialogDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -661,9 +661,9 @@ export default function DiscountsPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{t('discounts.editDialogTitle')}</DialogTitle>
+            <DialogTitle>{t('vouchers.editDialogTitle')}</DialogTitle>
             <DialogDescription>
-              {t('discounts.editDialogDescription')}
+              {t('vouchers.editDialogDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -889,7 +889,7 @@ export default function DiscountsPage() {
               variant="outline"
               onClick={() => {
                 setIsEditDialogOpen(false);
-                setEditingDiscount(null);
+                setEditingVoucher(null);
                 resetForm();
               }}
             >

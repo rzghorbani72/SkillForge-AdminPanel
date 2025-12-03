@@ -99,7 +99,7 @@ export const fa = {
     audios: 'صداها',
     documents: 'اسناد',
     payments: 'پرداخت‌ها',
-    discounts: 'تخفیف‌ها',
+    vouchers: 'کوپن‌ها',
     'all-users': 'همه کاربران',
     managers: 'مدیران',
     'teacher-requests': 'درخواست‌های معلم',
@@ -1089,11 +1089,11 @@ export const fa = {
     createOrAdjust: 'یک فاکتور جدید ایجاد کنید یا فیلترها را تنظیم کنید.',
     download: 'دانلود'
   },
-  discounts: {
-    title: 'کدهای تخفیف',
-    description: 'مدیریت کدهای تخفیف و تبلیغات',
-    createDiscount: 'ایجاد تخفیف',
-    searchPlaceholder: 'جستجوی کدهای تخفیف...',
+  vouchers: {
+    title: 'کوپن‌ها',
+    description: 'مدیریت کوپن‌ها و تبلیغات',
+    createVoucher: 'ایجاد کوپن',
+    searchPlaceholder: 'جستجوی کوپن‌ها...',
     code: 'کد',
     type: 'نوع',
     value: 'مقدار',
@@ -1101,12 +1101,12 @@ export const fa = {
     startDate: 'تاریخ شروع',
     endDate: 'تاریخ پایان',
     actions: 'عملیات',
-    noDiscountsFound: 'کد تخفیفی یافت نشد',
+    noVouchersFound: 'کوپنی یافت نشد',
     expired: 'منقضی شده',
-    createDialogTitle: 'ایجاد کد تخفیف',
-    createDialogDescription: 'یک کد تخفیف جدید برای دوره‌های خود ایجاد کنید',
-    editDialogTitle: 'ویرایش کد تخفیف',
-    editDialogDescription: 'به‌روزرسانی جزئیات کد تخفیف',
+    createDialogTitle: 'ایجاد کوپن',
+    createDialogDescription: 'یک کوپن جدید برای دوره‌های خود ایجاد کنید',
+    editDialogTitle: 'ویرایش کوپن',
+    editDialogDescription: 'به‌روزرسانی جزئیات کوپن',
     codeRequired: 'کد الزامی است',
     discountType: 'نوع تخفیف',
     discountValue: 'مقدار تخفیف',
@@ -1119,7 +1119,7 @@ export const fa = {
     usageLimit: 'محدودیت استفاده',
     minPurchaseAmount: 'حداقل مبلغ خرید',
     maxDiscountAmount: 'حداکثر مبلغ تخفیف',
-    confirmDelete: 'آیا مطمئن هستید که می‌خواهید این کد تخفیف را حذف کنید؟',
-    loadingDiscounts: 'در حال بارگذاری تخفیف‌ها...'
+    confirmDelete: 'آیا مطمئن هستید که می‌خواهید این کوپن را حذف کنید؟',
+    loadingVouchers: 'در حال بارگذاری کوپن‌ها...'
   }
 };

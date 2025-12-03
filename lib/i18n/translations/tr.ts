@@ -87,7 +87,7 @@ export const tr = {
     audios: 'Sesler',
     documents: 'Belgeler',
     payments: 'Ödemeler',
-    discounts: 'İndirimler'
+    vouchers: 'Kuponlar'
   },
   auth: {
     login: 'Giriş Yap',
@@ -890,11 +890,11 @@ export const tr = {
     createOrAdjust: 'Yeni bir fatura oluşturun veya filtrelerinizi ayarlayın.',
     download: 'İndir'
   },
-  discounts: {
-    title: 'İndirim Kodları',
-    description: 'İndirim kodlarını ve promosyonları yönetin',
-    createDiscount: 'İndirim Oluştur',
-    searchPlaceholder: 'İndirim kodlarını ara...',
+  vouchers: {
+    title: 'Kuponlar',
+    description: 'Kuponları ve promosyonları yönetin',
+    createVoucher: 'Kupon Oluştur',
+    searchPlaceholder: 'Kuponları ara...',
     code: 'Kod',
     type: 'Tür',
     value: 'Değer',
@@ -902,12 +902,12 @@ export const tr = {
     startDate: 'Başlangıç Tarihi',
     endDate: 'Bitiş Tarihi',
     actions: 'İşlemler',
-    noDiscountsFound: 'İndirim kodu bulunamadı',
+    noVouchersFound: 'Kupon bulunamadı',
     expired: 'Süresi Doldu',
-    createDialogTitle: 'İndirim Kodu Oluştur',
-    createDialogDescription: 'Kurslarınız için yeni bir indirim kodu oluşturun',
-    editDialogTitle: 'İndirim Kodunu Düzenle',
-    editDialogDescription: 'İndirim kodu detaylarını güncelle',
+    createDialogTitle: 'Kupon Oluştur',
+    createDialogDescription: 'Kurslarınız için yeni bir kupon oluşturun',
+    editDialogTitle: 'Kuponu Düzenle',
+    editDialogDescription: 'Kupon detaylarını güncelle',
     codeRequired: 'Kod gerekli',
     discountType: 'İndirim Türü',
     discountValue: 'İndirim Değeri',
@@ -920,7 +920,7 @@ export const tr = {
     usageLimit: 'Kullanım Limiti',
     minPurchaseAmount: 'Minimum Satın Alma Tutarı',
     maxDiscountAmount: 'Maksimum İndirim Tutarı',
-    confirmDelete: 'Bu indirim kodunu silmek istediğinizden emin misiniz?',
-    loadingDiscounts: 'İndirimler yükleniyor...'
+    confirmDelete: 'Bu kuponu silmek istediğinizden emin misiniz?',
+    loadingVouchers: 'Kuponlar yükleniyor...'
   }
 };

@@ -299,10 +299,10 @@ export const navItems: NavItem[] = [
         label: 'invoices'
       },
       {
-        title: 'Discount Codes',
-        href: '/discounts',
+        title: 'Vouchers',
+        href: '/vouchers',
         icon: 'tag' as IconType,
-        label: 'discounts'
+        label: 'vouchers'
       }
     ]
   },

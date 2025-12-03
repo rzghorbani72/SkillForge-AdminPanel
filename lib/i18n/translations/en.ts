@@ -99,7 +99,7 @@ export const en = {
     audios: 'Audios',
     documents: 'Documents',
     payments: 'Payments',
-    discounts: 'Discounts',
+    vouchers: 'Vouchers',
     'all-users': 'All Users',
     managers: 'Managers',
     'teacher-requests': 'Teacher Requests',
@@ -1215,11 +1215,11 @@ export const en = {
     createOrAdjust: 'Create a new invoice or adjust your filters.',
     download: 'Download'
   },
-  discounts: {
-    title: 'Discount Codes',
-    description: 'Manage discount codes and promotions',
-    createDiscount: 'Create Discount',
-    searchPlaceholder: 'Search discount codes...',
+  vouchers: {
+    title: 'Vouchers',
+    description: 'Manage vouchers and promotions',
+    createVoucher: 'Create Voucher',
+    searchPlaceholder: 'Search vouchers...',
     code: 'Code',
     type: 'Type',
     value: 'Value',
@@ -1227,12 +1227,12 @@ export const en = {
     startDate: 'Start Date',
     endDate: 'End Date',
     actions: 'Actions',
-    noDiscountsFound: 'No discount codes found',
+    noVouchersFound: 'No vouchers found',
     expired: 'Expired',
-    createDialogTitle: 'Create Discount Code',
-    createDialogDescription: 'Create a new discount code for your courses',
-    editDialogTitle: 'Edit Discount Code',
-    editDialogDescription: 'Update discount code details',
+    createDialogTitle: 'Create Voucher',
+    createDialogDescription: 'Create a new voucher for your courses',
+    editDialogTitle: 'Edit Voucher',
+    editDialogDescription: 'Update voucher details',
     codeRequired: 'Code is required',
     discountType: 'Discount Type',
     discountValue: 'Discount Value',
@@ -1245,7 +1245,7 @@ export const en = {
     usageLimit: 'Usage Limit',
     minPurchaseAmount: 'Min Purchase Amount',
     maxDiscountAmount: 'Max Discount Amount',
-    confirmDelete: 'Are you sure you want to delete this discount code?',
-    loadingDiscounts: 'Loading discounts...'
+    confirmDelete: 'Are you sure you want to delete this voucher?',
+    loadingVouchers: 'Loading vouchers...'
   }
 };
