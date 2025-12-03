@@ -23,14 +23,73 @@ export interface PaginatedResponse<T> {
 
 class ApiClient {
   private baseURL: string;
+  private isRefreshing: boolean = false;
+  private refreshPromise: Promise<boolean> | null = null;
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
   }
 
+  /**
+   * Attempt to refresh the access token using the refresh token cookie
+   * Returns true if refresh was successful, false otherwise
+   */
+  private async refreshToken(): Promise<boolean> {
+    // If already refreshing, wait for the existing refresh to complete
+    if (this.isRefreshing && this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.isRefreshing = true;
+    this.refreshPromise = (async () => {
+      try {
+        const response = await fetch(`${this.baseURL}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          console.log('[Auth] Token refreshed successfully');
+          return true;
+        }
+
+        console.warn('[Auth] Token refresh failed:', response.status);
+        return false;
+      } catch (error) {
+        console.error('[Auth] Token refresh error:', error);
+        return false;
+      } finally {
+        this.isRefreshing = false;
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
+  }
+
+  /**
+   * Redirect to login page (client-side only)
+   */
+  private redirectToLogin(): void {
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname + window.location.search;
+      // Don't redirect if already on auth pages
+      if (
+        !currentPath.includes('/login') &&
+        !currentPath.includes('/register')
+      ) {
+        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+      }
+    }
+  }
+
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    retryAfterRefresh: boolean = true
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
 
@@ -103,25 +162,32 @@ class ApiClient {
         // Response has no JSON body or failed to parse; keep data as null
       }
 
-      // Handle unauthorized responses globally
-      if (response.status === 401) {
-        const errorMessage =
-          (data && (data.message || data.error)) || 'Unauthorized (401)';
+      // Handle unauthorized responses - attempt token refresh
+      if (response.status === 401 && retryAfterRefresh) {
+        // Skip refresh for auth endpoints (login, register, etc.)
+        const isAuthEndpoint =
+          endpoint.includes('/auth/login') ||
+          endpoint.includes('/auth/register') ||
+          endpoint.includes('/auth/refresh');
 
-        // In the browser, show toast error instead of redirecting on protected pages
-        if (typeof window !== 'undefined') {
-          const currentPath = window.location.pathname + window.location.search;
+        if (!isAuthEndpoint) {
+          console.log('[Auth] Access token expired, attempting refresh...');
+          const refreshSuccess = await this.refreshToken();
 
-          // Only redirect if on auth pages, otherwise show toast
-          if (
-            currentPath.includes('/login') ||
-            currentPath.includes('/register')
-          ) {
-            return null as unknown as ApiResponse<T>;
+          if (refreshSuccess) {
+            // Retry the original request with the new token
+            return this.request<T>(endpoint, options, false);
           }
+        }
 
-          // Show toast error for protected pages
+        // Refresh failed or was auth endpoint - redirect to login
+        const errorMessage =
+          (data && (data.message || data.error)) ||
+          'Session expired. Please log in again.';
+
+        if (typeof window !== 'undefined') {
           toast.error(errorMessage);
+          this.redirectToLogin();
         }
 
         throw new Error(errorMessage);
