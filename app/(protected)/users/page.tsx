@@ -1,5 +1,454 @@
-import { UsersPageContent } from './_components/users-page-content';
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n/hooks';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import {
+  Users,
+  GraduationCap,
+  Plus,
+  Search,
+  Filter,
+  CheckCircle,
+  XCircle,
+  Mail,
+  Phone
+} from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { User } from '@/types/api';
+import { ErrorHandler } from '@/lib/error-handler';
+
+type UserStatus = 'all' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 
 export default function UsersPage() {
-  return <UsersPageContent category="all" />;
+  const { t } = useTranslation();
+  const { language } = useTranslation();
+  const searchParams = useSearchParams();
+
+  // Get role from query parameter and manage active tab
+  const roleParam = searchParams.get('role');
+  const filterParam = searchParams.get('filter');
+
+  const getTabFromParams = () => {
+    if (!roleParam && !filterParam) return 'users';
+    if (filterParam === 'none') return 'users';
+    if (!roleParam) return 'users';
+
+    switch (roleParam.toUpperCase()) {
+      case 'MANAGER':
+        return 'managers';
+      case 'TEACHER':
+        return 'teachers';
+      case 'STUDENT':
+        return 'students';
+      case 'USER':
+        return 'users';
+      default:
+        return 'users';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState(getTabFromParams());
+
+  // Update active tab when URL params change
+  useEffect(() => {
+    setActiveTab(getTabFromParams());
+  }, [roleParam, filterParam]);
+
+  const STATUS_OPTIONS: Array<{ label: string; value: UserStatus }> = [
+    { label: t('students.allStatuses'), value: 'all' },
+    { label: t('common.active'), value: 'ACTIVE' },
+    { label: t('common.inactive'), value: 'INACTIVE' },
+    { label: t('students.suspended'), value: 'SUSPENDED' },
+    { label: t('students.banned'), value: 'BANNED' }
+  ];
+
+  const [managers, setManagers] = useState<User[]>([]);
+  const [teachers, setTeachers] = useState<User[]>([]);
+  const [students, setStudents] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [totals, setTotals] = useState({
+    managers: 0,
+    teachers: 0,
+    students: 0,
+    users: 0,
+    total: 0
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<UserStatus>('all');
+  const [searchInput, setSearchInput] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      // Use the grouped API endpoint
+      const response = await apiClient.getUsers({
+        group_by_role: true,
+        search: searchTerm || undefined,
+        is_active:
+          statusFilter !== 'all' ? statusFilter === 'ACTIVE' : undefined
+      });
+
+      const payload = response as any;
+
+      // Extract all groups from the grouped response
+      if (payload?.data?.grouped) {
+        const grouped = payload.data.grouped;
+
+        // Set all groups
+        setManagers(grouped.managers || []);
+        setTeachers(grouped.teachers || []);
+        setStudents(grouped.students || []);
+        setUsers(grouped.users || []);
+
+        // Set totals
+        if (payload.data.totals) {
+          setTotals(payload.data.totals);
+        }
+      } else {
+        setManagers([]);
+        setTeachers([]);
+        setStudents([]);
+        setUsers([]);
+        setTotals({
+          managers: 0,
+          teachers: 0,
+          students: 0,
+          users: 0,
+          total: 0
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setManagers([]);
+      setTeachers([]);
+      setStudents([]);
+      setUsers([]);
+      setTotals({
+        managers: 0,
+        teachers: 0,
+        students: 0,
+        users: 0,
+        total: 0
+      });
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchTerm, statusFilter]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchTerm(searchInput.trim());
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [searchInput]);
+
+  // Render user table
+  const renderUserTable = (userList: User[]) => {
+    if (userList.length === 0) {
+      return (
+        <div className="py-8 text-center">
+          <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+          <h3 className="mt-2 text-sm font-medium">No users found</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Try adjusting your search or filters
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">Name</TableHead>
+              <TableHead className="text-center">Email</TableHead>
+              <TableHead className="text-center">Phone</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {userList.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="font-medium">{user.name}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    {user.email ? (
+                      <>
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{user.email}</span>
+                        {user.email_confirmed ? (
+                          <span title="Email verified">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          </span>
+                        ) : (
+                          <span title="Email not verified">
+                            <XCircle className="h-4 w-4 text-red-600" />
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">-</span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm" dir="ltr">
+                      {user.phone_number}
+                    </span>
+                    {user.phone_confirmed ? (
+                      <span title="Phone verified">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      </span>
+                    ) : (
+                      <span title="Phone not verified">
+                        <XCircle className="h-4 w-4 text-red-600" />
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex justify-center">
+                    <Badge variant={user.is_active ? 'default' : 'secondary'}>
+                      {user.is_active
+                        ? t('common.active')
+                        : t('common.inactive')}
+                    </Badge>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  };
+
+  if (isLoading && totals.total === 0) {
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
+            <p className="mt-2 text-sm text-gray-600">Loading users data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 space-y-6 p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">All Users</h1>
+          <p className="text-muted-foreground">
+            Manage all users across different roles
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            Add User
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3 md:flex-row md:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search users by name, email, or phone..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="pl-8"
+            autoComplete="off"
+          />
+        </div>
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => setStatusFilter(value as UserStatus)}
+        >
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder={t('common.filter')} />
+          </SelectTrigger>
+          <SelectContent>
+            {STATUS_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button variant="outline" className="hidden md:inline-flex">
+          <Filter className="mr-2 h-4 w-4" />
+          {t('common.moreFilters')}
+        </Button>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totals.total}</div>
+            <p className="text-xs text-muted-foreground">
+              All registered users
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Managers</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totals.managers}</div>
+            <p className="text-xs text-muted-foreground">
+              School administrators
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Teachers</CardTitle>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totals.teachers}</div>
+            <p className="text-xs text-muted-foreground">Course instructors</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Students</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totals.students}</div>
+            <p className="text-xs text-muted-foreground">Course learners</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+        dir={language === 'fa' ? 'rtl' : 'ltr'}
+      >
+        <TabsList>
+          <TabsTrigger value="managers">
+            Managers ({totals.managers})
+          </TabsTrigger>
+          <TabsTrigger value="teachers">
+            Teachers ({totals.teachers})
+          </TabsTrigger>
+          <TabsTrigger value="students">
+            Students ({totals.students})
+          </TabsTrigger>
+          <TabsTrigger value="users">Users ({totals.users})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="managers" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Managers</CardTitle>
+              <CardDescription>
+                School managers and administrators
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {renderUserTable(managers)}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="teachers" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Teachers</CardTitle>
+              <CardDescription>
+                Course instructors and educators
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {renderUserTable(teachers)}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="students" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Students</CardTitle>
+              <CardDescription>Course learners and students</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {renderUserTable(students)}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="users" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Users</CardTitle>
+              <CardDescription>
+                General users without specific roles
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {renderUserTable(users)}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Card,
@@ -64,9 +64,9 @@ export default function StudentsPage() {
   const { language } = useTranslation();
   const searchParams = useSearchParams();
 
-  // Get role from query parameter and determine default tab
+  // Get role from query parameter and manage active tab
   const roleParam = searchParams.get('role');
-  const getDefaultTab = () => {
+  const getTabFromParams = () => {
     if (!roleParam) return 'users';
     switch (roleParam.toUpperCase()) {
       case 'MANAGER':
@@ -81,7 +81,13 @@ export default function StudentsPage() {
         return 'users';
     }
   };
-  const defaultTab = getDefaultTab();
+
+  const [activeTab, setActiveTab] = useState(getTabFromParams());
+
+  // Update active tab when URL params change
+  useEffect(() => {
+    setActiveTab(getTabFromParams());
+  }, [roleParam]);
 
   const STUDENT_STATUS_OPTIONS: Array<{ label: string; value: StudentStatus }> =
     [
@@ -329,7 +335,7 @@ export default function StudentsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {userList.map((user) => (
+            {userList?.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>
                   <div className="flex items-center justify-center gap-3">
@@ -503,7 +509,8 @@ export default function StudentsPage() {
       </div>
 
       <Tabs
-        defaultValue={defaultTab}
+        value={activeTab}
+        onValueChange={setActiveTab}
         className="space-y-4"
         dir={language === 'fa' ? 'rtl' : 'ltr'}
       >
