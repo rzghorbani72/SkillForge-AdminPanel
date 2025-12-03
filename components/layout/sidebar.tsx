@@ -4,6 +4,7 @@ import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, Sparkles } from 'lucide-react';
+import { Suspense } from 'react';
 
 type SidebarProps = {
   className?: string;
@@ -61,7 +62,15 @@ export default function Sidebar({ className }: SidebarProps) {
 
       {/* Navigation */}
       <div className="beautiful-scrollbar h-[calc(100vh-88px)] overflow-y-auto px-3 py-4">
-        <DashboardNav items={navItems} />
+        <Suspense
+          fallback={
+            <div className="p-4 text-center text-muted-foreground">
+              Loading...
+            </div>
+          }
+        >
+          <DashboardNav items={navItems} />
+        </Suspense>
       </div>
 
       {/* Bottom decorative element */}

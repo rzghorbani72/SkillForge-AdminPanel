@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { NavItem } from '@/types';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -149,10 +149,17 @@ NavItemButton.displayName = 'NavItemButton';
 
 export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const { t } = useTranslation();
-  const path = usePathname();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { isMinimized } = useSidebar();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const { isAboveLg } = useBreakpoint('lg');
+
+  // Construct full path with query parameters
+  const fullPath = searchParams.toString()
+    ? `${pathname}?${searchParams.toString()}`
+    : pathname;
 
   const translateNavTitle = useCallback(
     (label: string, title: string): string => {
@@ -185,18 +192,68 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const isPathActive = useCallback(
     (href: string | undefined) => {
       if (!href) return false;
-      const pathWithoutQuery = path.split('?')[0];
-      const hrefWithoutQuery = href.split('?')[0];
-      return (
-        pathWithoutQuery === hrefWithoutQuery ||
-        pathWithoutQuery.startsWith(hrefWithoutQuery + '/')
-      );
+
+      const [currentPath, currentQuery] = fullPath.split('?');
+      const [hrefPath, hrefQuery] = href.split('?');
+
+      if (currentPath !== hrefPath) return false;
+
+      if (!hrefQuery) {
+        return !currentQuery;
+      }
+
+      if (!currentQuery) return false;
+
+      const currentParams = new URLSearchParams(currentQuery);
+      const hrefParams = new URLSearchParams(hrefQuery);
+
+      const currentParamsArray: [string, string][] = [];
+      const hrefParamsArray: [string, string][] = [];
+
+      currentParams.forEach((value, key) => {
+        currentParamsArray.push([key, value]);
+      });
+
+      hrefParams.forEach((value, key) => {
+        hrefParamsArray.push([key, value]);
+      });
+
+      if (currentParamsArray.length !== hrefParamsArray.length) {
+        return false;
+      }
+
+      for (const [key, value] of hrefParamsArray) {
+        if (currentParams.get(key) !== value) {
+          return false;
+        }
+      }
+
+      return true;
     },
-    [path]
+    [fullPath]
   );
 
+  const hasActiveChild = useCallback(
+    (item: NavItem) => {
+      if (!item.children || item.children.length === 0) return false;
+      return item.children.some((child) => isPathActive(child.href));
+    },
+    [isPathActive]
+  );
+
+  // Auto-expand parent items when their children are active
+  React.useEffect(() => {
+    const newExpandedItems = new Set<string>();
+    items.forEach((item) => {
+      if (hasActiveChild(item)) {
+        newExpandedItems.add(item.title);
+      }
+    });
+    setExpandedItems(newExpandedItems);
+  }, [fullPath, items, hasActiveChild]);
+
   const renderNavItem = useCallback(
-    (item: NavItem, depth = 0) => {
+    (item: NavItem, depth = 0, parentItem?: NavItem) => {
       if (depth > 5) {
         console.warn(
           'Maximum navigation depth reached, skipping item:',
@@ -210,7 +267,11 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         Array.isArray(item.children) &&
         item.children.length > 0;
       const isExpanded = expandedItems.has(item.title);
-      const isActive = isPathActive(item.href);
+
+      const isChildActive = depth > 0 && isPathActive(item.href);
+      const isParentActive = depth === 0 && hasActiveChild(item);
+      const isActive = isChildActive || isParentActive;
+
       const translatedTitle = translateNavTitle(item.label || '', item.title);
 
       const content = (
@@ -226,8 +287,8 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
       if (hasChildren && isAboveLg && isMinimized) {
         return (
           <DropdownMenu key={item.title}>
-            <DropdownMenuTrigger className="w-full">
-              {content}
+            <DropdownMenuTrigger className="w-full" asChild>
+              <div>{content}</div>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className="w-52 space-y-1 rounded-xl border-border/50 bg-popover/95 p-2 shadow-xl backdrop-blur-xl"
@@ -235,6 +296,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
               side="right"
               sideOffset={8}
               avoidCollisions={true}
+              onOpenAutoFocus={(e: Event) => e.preventDefault()}
             >
               <DropdownMenuLabel className="px-2 text-xs font-semibold text-muted-foreground">
                 {translatedTitle}
@@ -253,6 +315,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
                         'rounded-lg px-3 py-2 transition-colors',
                         childIsActive && 'bg-primary/10 text-primary'
                       )}
+                      asChild
                     >
                       {child.href ? (
                         <Link
@@ -280,12 +343,21 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         );
       }
 
+      const handleParentClick = () => {
+        if (hasChildren && item.children && item.children.length > 0) {
+          const firstChild = item.children[0];
+          if (firstChild.href) {
+            router.push(firstChild.href);
+            if (setOpen) setOpen(false);
+          }
+        }
+        toggleExpand(item.title);
+      };
+
       return (
         <div key={item.title}>
           {hasChildren ? (
-            <NavItemButton onClick={() => toggleExpand(item.title)}>
-              {content}
-            </NavItemButton>
+            <NavItemButton onClick={handleParentClick}>{content}</NavItemButton>
           ) : item.href ? (
             <NavItemLink item={item} onClick={handleSetOpen}>
               {content}
@@ -302,7 +374,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
                   {item.children &&
                     item.children.map((child, index) => (
                       <div key={`${child.title}-${index}`}>
-                        {renderNavItem(child, depth + 1)}
+                        {renderNavItem(child, depth + 1, item)}
                       </div>
                     ))}
                 </div>
@@ -316,9 +388,12 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
       isMinimized,
       isAboveLg,
       isPathActive,
+      hasActiveChild,
       handleSetOpen,
       toggleExpand,
-      translateNavTitle
+      translateNavTitle,
+      router,
+      setOpen
     ]
   );
 

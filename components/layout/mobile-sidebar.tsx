@@ -3,7 +3,7 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { navItems } from '@/constants/data';
 import { MenuIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 
 // import { Playlist } from "../data/playlists";
 
@@ -22,11 +22,19 @@ export function MobileSidebar() {
                 Overview
               </h2>
               <div className="space-y-1">
-                <DashboardNav
-                  items={navItems}
-                  isMobileNav={true}
-                  setOpen={setOpen}
-                />
+                <Suspense
+                  fallback={
+                    <div className="p-4 text-center text-muted-foreground">
+                      Loading...
+                    </div>
+                  }
+                >
+                  <DashboardNav
+                    items={navItems}
+                    isMobileNav={true}
+                    setOpen={setOpen}
+                  />
+                </Suspense>
               </div>
             </div>
           </div>

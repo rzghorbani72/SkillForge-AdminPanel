@@ -189,7 +189,6 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Users',
-    href: '/users',
     icon: 'users' as IconType,
     label: 'users',
     children: [
@@ -201,7 +200,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Students',
-        href: '/students?role=STUDENT',
+        href: '/users?role=STUDENT',
         icon: 'user' as IconType,
         label: 'students'
       },
@@ -228,16 +227,9 @@ export const navItems: NavItem[] = [
 
   {
     title: 'Students',
-    href: '/students',
     icon: 'users' as IconType,
     label: 'students',
     children: [
-      {
-        title: 'All Students',
-        href: '/students',
-        icon: 'list' as IconType,
-        label: 'all-students'
-      },
       {
         title: 'Enrollments',
         href: '/students/enrollments',
@@ -254,7 +246,6 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Analytics',
-    href: '/analytics',
     icon: 'barChart' as IconType,
     label: 'analytics',
     children: [
@@ -286,7 +277,6 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Payments',
-    href: '/payments',
     icon: 'creditCard' as IconType,
     label: 'payments',
     children: [
@@ -318,7 +308,6 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Settings',
-    href: '/settings',
     icon: 'settings' as IconType,
     label: 'settings',
     children: [
