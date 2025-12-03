@@ -90,17 +90,27 @@ class AuthService {
   private currentUser: AuthUser | null = null;
   private authType: AuthType['type'] = 'admin';
 
+  /**
+   * Persist session data - SECURITY NOTE:
+   * - Access tokens are NO LONGER stored in localStorage (XSS vulnerability)
+   * - JWT is stored in HttpOnly cookie by the backend
+   * - Only non-sensitive user info is stored for UI purposes
+   */
   private persistSession(user: AuthUser | null) {
     if (typeof window === 'undefined') return;
 
     try {
       if (!user) {
-        window.localStorage.removeItem('auth_token');
+        // Clear all stored data on logout
         window.localStorage.removeItem('user_data');
         window.localStorage.removeItem('current_profile');
         window.localStorage.removeItem('current_school');
         window.localStorage.removeItem('user_permissions');
         window.localStorage.removeItem('auth_user');
+        // Also remove legacy token storage keys if they exist
+        window.localStorage.removeItem('auth_token');
+        window.localStorage.removeItem('jwt');
+        window.localStorage.removeItem('token');
         return;
       }
 
@@ -113,14 +123,21 @@ class AuthService {
                 []
             );
 
-      if (user.access_token) {
-        window.localStorage.setItem('auth_token', user.access_token);
-      } else {
-        window.localStorage.removeItem('auth_token');
-      }
+      // SECURITY: DO NOT store access_token in localStorage
+      // The JWT is securely stored in an HttpOnly cookie by the backend
+      // We only store non-sensitive user data for UI purposes
 
       if (user.user) {
-        window.localStorage.setItem('user_data', JSON.stringify(user.user));
+        // Store minimal user info (no sensitive data)
+        const safeUserData = {
+          id: user.user.id,
+          name: user.user.name,
+          email: user.user.email
+            ? user.user.email.substring(0, 3) + '***'
+            : null, // Mask email
+          role: user.user.role
+        };
+        window.localStorage.setItem('user_data', JSON.stringify(safeUserData));
       } else {
         window.localStorage.removeItem('user_data');
       }
@@ -147,7 +164,13 @@ class AuthService {
         'user_permissions',
         JSON.stringify(derivedPermissions)
       );
-      window.localStorage.setItem('auth_user', JSON.stringify(user));
+
+      // Store auth user data without access_token
+      const safeAuthUser = {
+        ...user,
+        access_token: undefined // Remove token from stored data
+      };
+      window.localStorage.setItem('auth_user', JSON.stringify(safeAuthUser));
     } catch (error) {
       console.error('Failed to persist auth session', error);
     }

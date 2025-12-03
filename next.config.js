@@ -32,18 +32,10 @@ const SECURITY_HEADERS = [
   {
     key: 'Referrer-Policy',
     value: 'origin-when-cross-origin'
-  },
-  { key: 'Access-Control-Allow-Credentials', value: 'true' },
-  { key: 'Access-Control-Allow-Origin', value: '*' },
-  {
-    key: 'Access-Control-Allow-Methods',
-    value: 'GET,DELETE,PATCH,POST,PUT'
-  },
-  {
-    key: 'Access-Control-Allow-Headers',
-    value:
-      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   }
+  // CORS headers are handled by the backend API
+  // Don't set Access-Control-Allow-Origin: * as it conflicts with credentials: true
+  // and is a security risk for authenticated requests
 ];
 
 const nextConfig = {

@@ -34,37 +34,9 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
 
-    // Get JWT token from localStorage or cookie
-    // Note: HttpOnly cookies cannot be read by JavaScript, but will be sent automatically by browser
-    // We prioritize localStorage token (stored by authService) as it's accessible
-    let token: string | null = null;
-    if (typeof window !== 'undefined') {
-      // Try localStorage first (AdminPanel stores token here after login)
-      token =
-        window.localStorage.getItem('auth_token') ||
-        window.localStorage.getItem('jwt') ||
-        window.localStorage.getItem('token') ||
-        null;
-
-      // If not in localStorage, try to read from cookie (for non-HttpOnly cookies)
-      if (!token) {
-        try {
-          const cookies = document.cookie.split(';');
-          const jwtCookie = cookies.find((cookie) => {
-            const trimmed = cookie.trim();
-            return trimmed.startsWith('jwt=') || trimmed.startsWith('JWT=');
-          });
-          if (jwtCookie) {
-            const parts = jwtCookie.split('=');
-            if (parts.length >= 2) {
-              token = parts.slice(1).join('=').trim(); // Handle tokens with '=' in them
-            }
-          }
-        } catch (e) {
-          // Cookie might be HttpOnly, ignore error
-        }
-      }
-    }
+    // SECURITY: JWT token is stored in HttpOnly cookie and sent automatically by browser
+    // We no longer read tokens from localStorage to prevent XSS attacks
+    // The browser will automatically include the HttpOnly cookie with credentials: 'include'
 
     // Don't set Content-Type for FormData (let browser set it to multipart/form-data)
     const headersObj: Record<string, string> =
@@ -75,13 +47,26 @@ class ApiClient {
             ...(options.headers as Record<string, string>)
           };
 
-    // Add Authorization header if token is available
-    // This is important as a fallback if the HttpOnly cookie isn't being sent
-    if (token && !headersObj['Authorization']) {
-      headersObj['Authorization'] = `Bearer ${token}`;
+    // SECURITY: JWT is automatically sent via HttpOnly cookie with credentials: 'include'
+    // No need to manually add Authorization header for cookie-based auth
+
+    // Add CSRF token for state-changing requests (POST, PUT, PATCH, DELETE)
+    if (
+      typeof window !== 'undefined' &&
+      options.method &&
+      !['GET', 'HEAD'].includes(options.method)
+    ) {
+      const csrfToken = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('csrf-token='))
+        ?.split('=')[1];
+
+      if (csrfToken && !headersObj['X-CSRF-Token']) {
+        headersObj['X-CSRF-Token'] = csrfToken;
+      }
     }
 
-    // Add school ID header if available (from localStorage)
+    // Add school ID header if available (from localStorage - non-sensitive context data)
     if (typeof window !== 'undefined') {
       // Use the same key as school-utils.ts
       const schoolId = window.localStorage.getItem(
@@ -89,20 +74,6 @@ class ApiClient {
       );
       if (schoolId && !headersObj['X-School-ID']) {
         headersObj['X-School-ID'] = schoolId;
-      }
-
-      // Debug logging in development
-      if (process.env.NODE_ENV === 'development') {
-        if (!token) {
-          console.warn(
-            '[API Client] No token found in localStorage. Make sure you are logged in.'
-          );
-        }
-        if (!schoolId) {
-          console.warn(
-            '[API Client] No school ID found. Make sure a school is selected.'
-          );
-        }
       }
     }
 

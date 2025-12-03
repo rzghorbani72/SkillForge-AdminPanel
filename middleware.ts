@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { jwtVerify, decodeJwt } from 'jose';
 
 // Define public routes that don't require authentication
 const publicRoutes = [
@@ -23,31 +24,46 @@ const authRoutes = ['/login', '/register'];
 const ALLOWED_ADMIN_ROLES = ['ADMIN', 'MANAGER', 'TEACHER'];
 
 /**
- * Decode JWT token without verification (for middleware)
- * Note: In production, you should verify the token signature
+ * Verify JWT token signature and decode payload
+ * Uses jose library for secure JWT verification in Edge runtime
  */
-function decodeJWT(token: string): any {
+async function verifyJWT(
+  token: string
+): Promise<{ valid: boolean; payload: any }> {
   try {
-    const base64Url = token.split('.')[1];
-    if (!base64Url) return null;
+    const secret = process.env.JWT_SECRET;
 
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+    // In development or if no secret, fall back to decode-only (with warning)
+    if (!secret) {
+      console.warn(
+        '⚠️ JWT_SECRET not set - JWT signature verification disabled. Set JWT_SECRET in production!'
+      );
+      const payload = decodeJwt(token);
+      // At minimum, check expiration
+      const isExpired =
+        payload.exp &&
+        typeof payload.exp === 'number' &&
+        payload.exp < Date.now() / 1000;
+      if (isExpired) {
+        return { valid: false, payload: null };
+      }
+      return { valid: true, payload };
+    }
 
-    // Use atob for base64 decoding in browser/edge runtime
-    const binaryString = atob(padded);
-    const jsonPayload = binaryString
-      .split('')
-      .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('');
+    // Verify the token signature using the secret
+    const secretKey = new TextEncoder().encode(secret);
+    const { payload } = await jwtVerify(token, secretKey, {
+      algorithms: ['HS256']
+    });
 
-    return JSON.parse(decodeURIComponent(jsonPayload));
+    return { valid: true, payload };
   } catch (error) {
-    return null;
+    // Token verification failed (invalid signature, expired, malformed)
+    return { valid: false, payload: null };
   }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if the route is public
@@ -60,10 +76,17 @@ export function middleware(request: NextRequest) {
     (route) => pathname.startsWith(route) || pathname === route
   );
 
-  // Get the token from cookies
+  // Get the token from cookies and verify it
   const token = request.cookies.get('jwt')?.value || '';
-  const isAuthenticated = !!token;
-  const decoded = decodeJWT(token);
+  let isAuthenticated = false;
+  let decoded: any = null;
+
+  if (token) {
+    const { valid, payload } = await verifyJWT(token);
+    isAuthenticated = valid;
+    decoded = payload;
+  }
+
   const userRole = decoded?.roles?.[0] || decoded?.role || null;
 
   // If user has USER or STUDENT role, redirect to login with error

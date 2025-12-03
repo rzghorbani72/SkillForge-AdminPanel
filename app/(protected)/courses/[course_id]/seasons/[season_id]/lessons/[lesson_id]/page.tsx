@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Lesson, Season, Course } from '@/types/api';
+import { sanitizeRichText } from '@/lib/sanitize';
 import { useSchool } from '@/hooks/useSchool';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
@@ -335,7 +336,11 @@ export default function LessonViewPage() {
           </CardHeader>
           <CardContent>
             <div className="prose max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeRichText(lesson.content || '')
+                }}
+              />
             </div>
           </CardContent>
         </Card>
