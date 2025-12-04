@@ -102,14 +102,8 @@ export default function ThemeSettingsPage() {
   const applyLivePreview = (nextState: ThemeFormState) => {
     const payload = buildConfigPayload(nextState);
     applyThemeVariables(payload);
-    const darkModeValue = getDarkModeValue(nextState.darkMode);
-    if (setNextTheme) {
-      if (darkModeValue === null) {
-        setNextTheme('system');
-      } else {
-        setNextTheme(darkModeValue ? 'dark' : 'light');
-      }
-    }
+    // Note: We don't change AdminPanel's theme here - these settings are only for edusphere
+    // The preview shows how edusphere will look, but AdminPanel keeps its own theme
     dispatchThemeUpdate(payload);
   };
 
@@ -198,27 +192,13 @@ export default function ThemeSettingsPage() {
         });
         setThemeId(config.themeId);
         applyThemeVariables(config);
-        const darkModeValue = config.dark_mode;
-        if (setNextTheme) {
-          if (darkModeValue === null) {
-            setNextTheme('system');
-          } else {
-            setNextTheme(darkModeValue ? 'dark' : 'light');
-          }
-        }
+        // Note: We don't change AdminPanel's theme here - these settings are only for edusphere
       } catch (error) {
         console.error('Failed to load theme configuration', error);
         if (!mounted) return;
         setTheme(DEFAULT_THEME);
         applyThemeVariables(DEFAULT_THEME_CONFIG);
-        const defaultDarkMode = DEFAULT_THEME_CONFIG.dark_mode;
-        if (setNextTheme) {
-          if (defaultDarkMode === null) {
-            setNextTheme('system');
-          } else {
-            setNextTheme(defaultDarkMode ? 'dark' : 'light');
-          }
-        }
+        // Note: We don't change AdminPanel's theme here - these settings are only for edusphere
       } finally {
         if (mounted) setIsLoading(false);
       }
@@ -272,14 +252,7 @@ export default function ThemeSettingsPage() {
       setThemeId(updatedConfig.themeId);
 
       applyThemeVariables(updatedConfig);
-      const darkModeValue = updatedConfig.dark_mode;
-      if (setNextTheme) {
-        if (darkModeValue === null) {
-          setNextTheme('system');
-        } else {
-          setNextTheme(darkModeValue ? 'dark' : 'light');
-        }
-      }
+      // Note: We don't change AdminPanel's theme here - these settings are only for edusphere
       dispatchThemeUpdate(updatedConfig);
 
       ErrorHandler.showSuccess(t('settings.themePreferencesSaved'));
@@ -565,17 +538,16 @@ export default function ThemeSettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            Advanced Customization
+            {t('settings.advancedCustomization')}
           </CardTitle>
           <CardDescription>
-            Customize animations, patterns, and visual effects for your school
-            website
+            {t('settings.advancedCustomizationDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="backgroundAnimationType">
-              Background Animation
+              {t('settings.backgroundAnimation')}
             </Label>
             <Select
               value={theme.backgroundAnimationType}
@@ -594,22 +566,37 @@ export default function ThemeSettingsPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                <SelectItem value="gradient">Gradient Flow</SelectItem>
-                <SelectItem value="particles">Particles</SelectItem>
-                <SelectItem value="waves">Waves</SelectItem>
-                <SelectItem value="mesh">Mesh Gradient</SelectItem>
-                <SelectItem value="grid">Animated Grid</SelectItem>
+                <SelectItem value="none">{t('common.none')}</SelectItem>
+                <SelectItem value="gradient">
+                  {t('settings.backgroundAnimationGradient')}
+                </SelectItem>
+                <SelectItem value="blobs">
+                  {t('settings.backgroundAnimationBlobs')}
+                </SelectItem>
+                <SelectItem value="particles">
+                  {t('settings.backgroundAnimationParticles')}
+                </SelectItem>
+                <SelectItem value="waves">
+                  {t('settings.backgroundAnimationWaves')}
+                </SelectItem>
+                <SelectItem value="mesh">
+                  {t('settings.backgroundAnimationMesh')}
+                </SelectItem>
+                <SelectItem value="grid">
+                  {t('settings.backgroundAnimationGrid')}
+                </SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Choose an animated background effect for your website
+              {t('settings.backgroundAnimationHelp')}
             </p>
           </div>
 
           {theme.backgroundAnimationType !== 'none' && (
             <div className="space-y-2">
-              <Label htmlFor="backgroundAnimationSpeed">Animation Speed</Label>
+              <Label htmlFor="backgroundAnimationSpeed">
+                {t('settings.animationSpeed')}
+              </Label>
               <Select
                 value={theme.backgroundAnimationSpeed}
                 onValueChange={(value) =>
@@ -627,19 +614,27 @@ export default function ThemeSettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="slow">Slow</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="fast">Fast</SelectItem>
+                  <SelectItem value="slow">
+                    {t('settings.speedSlow')}
+                  </SelectItem>
+                  <SelectItem value="medium">
+                    {t('settings.speedMedium')}
+                  </SelectItem>
+                  <SelectItem value="fast">
+                    {t('settings.speedFast')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="backgroundSvgPattern">SVG Pattern (Optional)</Label>
+            <Label htmlFor="backgroundSvgPattern">
+              {t('settings.svgPatternOptional')}
+            </Label>
             <Input
               id="backgroundSvgPattern"
-              placeholder="pattern-dots, pattern-grid, pattern-waves, etc."
+              placeholder={t('settings.svgPatternPlaceholder')}
               value={theme.backgroundSvgPattern}
               onChange={(event) =>
                 setTheme((prev) => {
@@ -653,14 +648,13 @@ export default function ThemeSettingsPage() {
               }
             />
             <p className="text-xs text-muted-foreground">
-              Enter a pattern ID to use as background overlay (leave empty for
-              none)
+              {t('settings.svgPatternHelper')}
             </p>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="elementAnimationStyle">
-              Element Animation Style
+              {t('settings.elementAnimationStyle')}
             </Label>
             <Select
               value={theme.elementAnimationStyle}
@@ -679,19 +673,27 @@ export default function ThemeSettingsPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="subtle">Subtle</SelectItem>
-                <SelectItem value="moderate">Moderate</SelectItem>
-                <SelectItem value="dynamic">Dynamic</SelectItem>
+                <SelectItem value="subtle">
+                  {t('settings.elementAnimationSubtle')}
+                </SelectItem>
+                <SelectItem value="moderate">
+                  {t('settings.elementAnimationModerate')}
+                </SelectItem>
+                <SelectItem value="dynamic">
+                  {t('settings.elementAnimationDynamic')}
+                </SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Control how animated elements appear on the page
+              {t('settings.elementAnimationHelp')}
             </p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="borderRadiusStyle">Border Radius Style</Label>
+              <Label htmlFor="borderRadiusStyle">
+                {t('settings.borderRadiusStyle')}
+              </Label>
               <Select
                 value={theme.borderRadiusStyle}
                 onValueChange={(value) =>
@@ -709,15 +711,21 @@ export default function ThemeSettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="rounded">Rounded</SelectItem>
-                  <SelectItem value="soft">Soft</SelectItem>
-                  <SelectItem value="sharp">Sharp</SelectItem>
+                  <SelectItem value="rounded">
+                    {t('settings.borderRadiusRounded')}
+                  </SelectItem>
+                  <SelectItem value="soft">
+                    {t('settings.borderRadiusSoft')}
+                  </SelectItem>
+                  <SelectItem value="sharp">
+                    {t('settings.borderRadiusSharp')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="shadowStyle">Shadow Style</Label>
+              <Label htmlFor="shadowStyle">{t('settings.shadowStyle')}</Label>
               <Select
                 value={theme.shadowStyle}
                 onValueChange={(value) =>
@@ -735,10 +743,16 @@ export default function ThemeSettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  <SelectItem value="subtle">Subtle</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="strong">Strong</SelectItem>
+                  <SelectItem value="none">{t('common.none')}</SelectItem>
+                  <SelectItem value="subtle">
+                    {t('settings.shadowSubtle')}
+                  </SelectItem>
+                  <SelectItem value="medium">
+                    {t('settings.shadowMedium')}
+                  </SelectItem>
+                  <SelectItem value="strong">
+                    {t('settings.shadowStrong')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
