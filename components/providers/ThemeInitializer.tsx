@@ -12,9 +12,12 @@ import { useTheme } from 'next-themes';
 import { ThemeConfigPayload } from '@/types/api';
 
 export function ThemeInitializer() {
-  const { setTheme } = useTheme();
+  const themeContext = useTheme();
+  const setTheme = themeContext?.setTheme;
 
   useEffect(() => {
+    if (!setTheme) return;
+
     let isMounted = true;
 
     const loadTheme = async () => {
@@ -39,6 +42,7 @@ export function ThemeInitializer() {
 
     const unsubscribe = subscribeToThemeUpdates(
       (config: ThemeConfigPayload) => {
+        if (!setTheme) return;
         applyThemeVariables(config);
         if (config.dark_mode === null) {
           setTheme('system');

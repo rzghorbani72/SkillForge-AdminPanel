@@ -44,7 +44,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Input } from '@/components/ui/input';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 const DEFAULT_BLOCKS: UIBlockConfig[] = [
   {
@@ -345,6 +345,7 @@ function SortableBlock({
 
 export default function UITemplateSettingsPage() {
   const { t } = useTranslation();
+  const { direction, isRTL } = useLanguage();
   const [blocks, setBlocks] = useState<UIBlockConfig[]>(DEFAULT_BLOCKS);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -597,99 +598,153 @@ export default function UITemplateSettingsPage() {
           >
             <DialogTrigger asChild>
               <Button variant="outline">
-                <Layout className="mr-2 h-4 w-4" />
+                <Layout className={`${isRTL ? 'ml-2' : 'mr-2'} h-4 w-4`} />
                 {t('settings.chooseTemplate')}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[80vh] max-w-4xl overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>{t('settings.chooseTemplateLayout')}</DialogTitle>
-                <DialogDescription>
+            <DialogContent
+              className="max-h-[80vh] max-w-4xl overflow-y-auto"
+              dir={direction}
+            >
+              <DialogHeader
+                dir={direction}
+                className={isRTL ? 'text-right' : 'text-left'}
+              >
+                <DialogTitle
+                  className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}
+                >
+                  {t('settings.chooseTemplateLayout')}
+                </DialogTitle>
+                <DialogDescription
+                  className={`mt-2 ${isRTL ? 'text-right' : 'text-left'}`}
+                >
                   {t('settings.chooseTemplateLayoutDescription')}
                 </DialogDescription>
               </DialogHeader>
-              <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+              <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-2">
                 {isLoadingPresets
                   ? Array.from({ length: 6 }).map((_, i) => (
-                      <Skeleton key={i} className="h-80" />
+                      <Skeleton key={i} className="h-[420px] rounded-xl" />
                     ))
-                  : availablePresets.map((preset) => (
-                      <Card
-                        key={preset.id}
-                        className={`cursor-pointer transition-all hover:border-primary hover:shadow-md ${
-                          currentPreset === preset.id
-                            ? 'border-2 border-primary shadow-md'
-                            : ''
-                        }`}
-                        onClick={() => handleApplyPreset(preset.id)}
-                      >
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">
-                              {preset.name}
-                            </CardTitle>
-                            {currentPreset === preset.id && (
-                              <Badge variant="default" className="gap-1">
-                                <Check className="h-3 w-3" />
-                                {t('settings.active')}
-                              </Badge>
-                            )}
-                          </div>
-                          <CardDescription className="mt-1 text-sm">
-                            {preset.description}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          {/* Visual Preview */}
-                          <div className="rounded-lg border bg-slate-50 p-3 dark:bg-slate-800/50">
-                            <div className="flex justify-center">
-                              <div className="w-full max-w-[280px]">
-                                <TemplatePreview preset={preset} scale={0.8} />
+                  : availablePresets.map((preset) => {
+                      const isActive = currentPreset === preset.id;
+                      return (
+                        <Card
+                          key={preset.id}
+                          className={`group relative cursor-pointer overflow-hidden border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
+                            isActive
+                              ? 'border-primary shadow-lg ring-2 ring-primary/20'
+                              : 'border-border hover:border-primary/50 hover:shadow-lg'
+                          }`}
+                          onClick={() => handleApplyPreset(preset.id)}
+                        >
+                          {/* Active Indicator Gradient */}
+                          {isActive && (
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5" />
+                          )}
+
+                          {/* Header with gradient background */}
+                          <CardHeader
+                            className={`relative pb-4 ${
+                              isActive
+                                ? 'bg-gradient-to-r from-primary/10 to-transparent'
+                                : 'bg-gradient-to-r from-slate-50/50 to-transparent dark:from-slate-900/50'
+                            }`}
+                            dir={direction}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex-1">
+                                <CardTitle className="text-xl font-bold tracking-tight">
+                                  {preset.name}
+                                </CardTitle>
+                                <CardDescription className="mt-1.5 text-sm leading-relaxed">
+                                  {preset.description}
+                                </CardDescription>
+                              </div>
+                              {isActive && (
+                                <Badge
+                                  variant="default"
+                                  className={`gap-1.5 shadow-md ${isRTL ? 'flex-row-reverse' : ''}`}
+                                >
+                                  <Check className="h-3.5 w-3.5" />
+                                  {t('settings.active')}
+                                </Badge>
+                              )}
+                            </div>
+                          </CardHeader>
+
+                          <CardContent
+                            className="space-y-5 p-6 pt-4"
+                            dir={direction}
+                          >
+                            {/* Enhanced Visual Preview */}
+                            <div className="relative overflow-hidden rounded-xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 p-4 shadow-inner dark:border-slate-700 dark:from-slate-800 dark:to-slate-900">
+                              <div className="flex justify-center">
+                                <div className="w-full max-w-[300px] transform transition-transform duration-300 group-hover:scale-105">
+                                  <TemplatePreview
+                                    preset={preset}
+                                    scale={0.85}
+                                  />
+                                </div>
+                              </div>
+                              {/* Preview overlay effect */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                            </div>
+
+                            {/* Enhanced Blocks Info */}
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                  {t('settings.blocks')}
+                                </p>
+                                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
+                                  {
+                                    preset.blocks.filter((b) => b.isVisible)
+                                      .length
+                                  }
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                {preset.blocks
+                                  .filter((b) => b.isVisible)
+                                  .map((block) => (
+                                    <Badge
+                                      key={block.id}
+                                      variant="secondary"
+                                      className="text-xs font-medium shadow-sm transition-all hover:scale-105"
+                                    >
+                                      {block.type}
+                                    </Badge>
+                                  ))}
                               </div>
                             </div>
-                          </div>
 
-                          {/* Blocks Info */}
-                          <div className="space-y-2">
-                            <p className="text-xs font-medium text-muted-foreground">
-                              {t('settings.blocks')} (
-                              {preset.blocks.filter((b) => b.isVisible).length}
-                              ):
-                            </p>
-                            <div className="flex flex-wrap gap-1">
-                              {preset.blocks
-                                .filter((b) => b.isVisible)
-                                .map((block) => (
-                                  <Badge
-                                    key={block.id}
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
-                                    {block.type}
-                                  </Badge>
-                                ))}
-                            </div>
-                          </div>
-
-                          <Button
-                            className="w-full"
-                            variant={
-                              currentPreset === preset.id
-                                ? 'secondary'
-                                : 'default'
-                            }
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleApplyPreset(preset.id);
-                            }}
-                          >
-                            {currentPreset === preset.id
-                              ? t('settings.currentlyActive')
-                              : t('settings.applyTemplate')}
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
+                            {/* Enhanced Button */}
+                            <Button
+                              className={`w-full font-semibold shadow-md transition-all duration-200 ${
+                                isActive
+                                  ? 'bg-primary/90 hover:bg-primary'
+                                  : 'hover:shadow-lg'
+                              }`}
+                              variant={isActive ? 'default' : 'default'}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleApplyPreset(preset.id);
+                              }}
+                            >
+                              {isActive ? (
+                                <span className="flex items-center gap-2">
+                                  <Check className="h-4 w-4" />
+                                  {t('settings.currentlyActive')}
+                                </span>
+                              ) : (
+                                t('settings.applyTemplate')
+                              )}
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
               </div>
             </DialogContent>
           </Dialog>

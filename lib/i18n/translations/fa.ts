@@ -526,13 +526,43 @@ export const fa = {
   },
   settings: {
     title: 'تنظیمات',
+    description:
+      'پروفایل، پیکربندی مدرسه، برندینگ و تنظیمات امنیتی خود را مدیریت کنید.',
+    refreshData: 'به‌روزرسانی داده‌ها',
+    accountSummary: 'خلاصه حساب کاربری',
+    accountSummaryDescription: 'اطلاعات کلیدی حساب مدیر شما.',
+    administrator: 'مدیر',
+    email: 'ایمیل',
+    phone: 'تلفن',
+    joined: 'عضویت',
+    schoolSnapshot: 'نمای کلی مدرسه',
+    schoolSnapshotDescription: 'مدرسه اصلی شما در SkillForge.',
+    name: 'نام',
+    domain: 'دامنه',
+    students: 'دانش‌آموزان',
+    created: 'ایجاد شده',
+    profileSettings: 'تنظیمات پروفایل',
+    profileSettingsDescription:
+      'جزئیات شخصی، آواتار و اطلاعات تماس خود را به‌روزرسانی کنید.',
+    schoolSettings: 'تنظیمات مدرسه',
+    schoolSettingsDescription:
+      'نام مدرسه، توضیحات و پیکربندی دامنه را مدیریت کنید.',
+    themeBranding: 'تم و برندینگ',
+    themeBrandingDescription:
+      'رنگ‌ها، لوگوها و ظاهر بصری را برای دانش‌آموزان سفارشی کنید.',
+    uiTemplateBuilder: 'سازنده قالب رابط کاربری',
+    uiTemplateBuilderDescription:
+      'چیدمان، قابلیت مشاهده و پیکربندی بلوک‌های رابط کاربری در وب‌سایت مدرسه خود را سفارشی کنید.',
+    security: 'امنیت',
+    securityDescription:
+      'رمزهای عبور را تغییر دهید، احراز هویت دو مرحله‌ای را فعال کنید و اعلان‌ها را مدیریت کنید.',
+    openSettings: 'باز کردن تنظیمات',
     general: 'عمومی',
     language: 'زبان',
     theme: 'تم',
     notifications: 'اعلان‌ها',
     account: 'حساب کاربری',
     school: 'مدرسه',
-    security: 'امنیت',
     profile: 'پروفایل',
     profileSettingsTitle: 'تنظیمات پروفایل',
     profileSettingsSubtitle:
@@ -609,7 +639,33 @@ export const fa = {
       'یک آدرس تصویر قابل دسترسی عمومی ارائه دهید. SVG برای نتایج واضح توصیه می‌شود.',
     preview: 'پیش‌نمایش',
     noLogoProvided: 'لوگویی ارائه نشده است',
-    saveTheme: 'ذخیره تم'
+    saveTheme: 'ذخیره تم',
+    uiTemplateBuilderTitle: 'سازنده قالب رابط کاربری',
+    uiTemplateBuilderSubtitle:
+      'چیدمان، قابلیت مشاهده و پیکربندی بلوک‌های رابط کاربری در وب‌سایت مدرسه خود را سفارشی کنید.',
+    basedOn: 'بر اساس',
+    chooseTemplate: 'انتخاب قالب',
+    chooseTemplateLayout: 'انتخاب چیدمان قالب',
+    chooseTemplateLayoutDescription:
+      'یک چیدمان قالب از پیش طراحی شده را انتخاب کنید تا به سرعت صفحه اصلی مدرسه خود را راه‌اندازی کنید. می‌توانید بعداً آن را سفارشی کنید.',
+    pageBlocks: 'بلوک‌های صفحه',
+    pageBlocksDescription:
+      'برای تغییر ترتیب بلوک‌ها، آن‌ها را بکشید و رها کنید. قابلیت مشاهده را تغییر دهید و هر بلوک را پیکربندی کنید تا صفحه اصلی خود را سفارشی کنید.',
+    header: 'هدر',
+    heroSection: 'بخش قهرمان',
+    featuresSection: 'بخش ویژگی‌ها',
+    coursesSection: 'بخش دوره‌ها',
+    testimonials: 'نظرات',
+    footer: 'فوتر',
+    order: 'ترتیب',
+    type: 'نوع',
+    customized: 'سفارشی شده',
+    configure: 'پیکربندی',
+    saveTemplate: 'ذخیره قالب',
+    active: 'فعال',
+    blocks: 'بلوک‌ها',
+    currentlyActive: 'در حال حاضر فعال',
+    applyTemplate: 'اعمال قالب'
   },
   products: {
     title: 'محصولات',

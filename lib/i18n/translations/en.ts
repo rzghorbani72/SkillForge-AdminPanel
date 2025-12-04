@@ -893,6 +893,14 @@ export const en = {
     uiTemplateBuilderTitle: 'UI Template Builder',
     uiTemplateBuilderSubtitle:
       'Customize the layout, visibility, and configuration of UI blocks on your school website.',
+    basedOn: 'Based on',
+    chooseTemplate: 'Choose Template',
+    chooseTemplateLayout: 'Choose Template Layout',
+    chooseTemplateLayoutDescription:
+      'Select a pre-designed template layout to quickly set up your school homepage. You can customize it later.',
+    pageBlocks: 'Page Blocks',
+    pageBlocksDescription:
+      'Drag and drop to reorder blocks. Toggle visibility and configure each block to customize your homepage.',
     header: 'Header',
     heroSection: 'Hero Section',
     featuresSection: 'Features Section',
@@ -904,6 +912,11 @@ export const en = {
     type: 'Type',
     customized: 'Customized',
     configure: 'Configure',
+    saveTemplate: 'Save Template',
+    active: 'Active',
+    blocks: 'Blocks',
+    currentlyActive: 'Currently Active',
+    applyTemplate: 'Apply Template',
     done: 'Done',
     title: 'Title',
     subtitle: 'Subtitle',

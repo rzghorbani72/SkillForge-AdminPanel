@@ -13,15 +13,24 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
 
   const getBlockColor = (type: string) => {
     const colors: Record<string, string> = {
-      header: 'bg-slate-300 dark:bg-slate-700',
-      hero: 'bg-blue-300 dark:bg-blue-700',
-      features: 'bg-green-300 dark:bg-green-700',
-      courses: 'bg-purple-300 dark:bg-purple-700',
-      testimonials: 'bg-orange-300 dark:bg-orange-700',
-      footer: 'bg-slate-400 dark:bg-slate-600',
-      sidebar: 'bg-amber-300 dark:bg-amber-700'
+      header:
+        'bg-gradient-to-r from-slate-400 to-slate-500 dark:from-slate-600 dark:to-slate-700',
+      hero: 'bg-gradient-to-r from-blue-400 to-blue-500 dark:from-blue-600 dark:to-blue-700',
+      features:
+        'bg-gradient-to-r from-emerald-400 to-emerald-500 dark:from-emerald-600 dark:to-emerald-700',
+      courses:
+        'bg-gradient-to-r from-purple-400 to-purple-500 dark:from-purple-600 dark:to-purple-700',
+      testimonials:
+        'bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700',
+      footer:
+        'bg-gradient-to-r from-slate-500 to-slate-600 dark:from-slate-700 dark:to-slate-800',
+      sidebar:
+        'bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700'
     };
-    return colors[type] || 'bg-gray-300 dark:bg-gray-700';
+    return (
+      colors[type] ||
+      'bg-gradient-to-r from-gray-400 to-gray-500 dark:from-gray-600 dark:to-gray-700'
+    );
   };
 
   const getBlockLabel = (type: string) => {
@@ -47,14 +56,14 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
 
     return (
       <div
-        className="w-full overflow-hidden rounded-md border bg-white dark:bg-slate-900"
+        className="w-full overflow-hidden rounded-lg border-2 border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
         style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
       >
         <div
           className={`flex ${isLeftSidebar ? 'flex-row' : 'flex-row-reverse'}`}
         >
           {/* Sidebar */}
-          <div className="w-1/4 border-r dark:border-slate-700">
+          <div className="w-1/4 border-r border-slate-200 dark:border-slate-700">
             <div
               className={`h-full ${getBlockColor('sidebar')} p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-200`}
             >
@@ -80,10 +89,10 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
                 return (
                   <div
                     key={block.id}
-                    className={`${height} border-b dark:border-slate-700`}
+                    className={`${height} border-b border-slate-200 dark:border-slate-700`}
                   >
                     <div
-                      className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-200`}
+                      className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-semibold text-white shadow-sm`}
                     >
                       <span>{getBlockLabel(block.type)}</span>
                       <span className="text-[10px] opacity-70">
@@ -100,10 +109,10 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
                 return (
                   <div
                     key={block.id}
-                    className={`${height} border-b dark:border-slate-700`}
+                    className={`${height} border-b border-slate-200 dark:border-slate-700`}
                   >
                     <div
-                      className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-200`}
+                      className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-semibold text-white shadow-sm`}
                     >
                       <span>{getBlockLabel(block.type)}</span>
                       <span className="text-[10px] opacity-70">
@@ -117,10 +126,10 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
               return (
                 <div
                   key={block.id}
-                  className={`${height} border-b dark:border-slate-700`}
+                  className={`${height} border-b border-slate-200 dark:border-slate-700`}
                 >
                   <div
-                    className={`${getBlockColor(block.type)} flex h-full items-center justify-center p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-200`}
+                    className={`${getBlockColor(block.type)} flex h-full items-center justify-center p-2 text-center text-xs font-semibold text-white shadow-sm`}
                   >
                     {getBlockLabel(block.type)}
                   </div>
@@ -136,7 +145,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
   // Standard layout without sidebar
   return (
     <div
-      className="w-full overflow-hidden rounded-md border bg-white dark:bg-slate-900"
+      className="w-full overflow-hidden rounded-lg border-2 border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
       style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
     >
       {blocks.map((block, index) => {
@@ -171,7 +180,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
               className={`${height} relative border-b dark:border-slate-700`}
             >
               <div
-                className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-200`}
+                className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-semibold text-white shadow-sm`}
               >
                 <span>{getBlockLabel(block.type)}</span>
                 <span className="text-[10px] opacity-70">({cols} cols)</span>
@@ -199,7 +208,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
               className={`${height} relative border-b dark:border-slate-700`}
             >
               <div
-                className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-200`}
+                className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-semibold text-white shadow-sm`}
               >
                 <span>{getBlockLabel(block.type)}</span>
                 <span className="text-[10px] opacity-70">
@@ -225,7 +234,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
             className={`${height} border-b dark:border-slate-700`}
           >
             <div
-              className={`${getBlockColor(block.type)} flex h-full items-center justify-center p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-200`}
+              className={`${getBlockColor(block.type)} flex h-full items-center justify-center p-2 text-center text-xs font-semibold text-white shadow-sm`}
             >
               {getBlockLabel(block.type)}
             </div>

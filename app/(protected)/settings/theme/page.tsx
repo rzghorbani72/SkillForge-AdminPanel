@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Palette, Image, Save } from 'lucide-react';
+import { Palette, Image, Save, Sparkles, Layers, Zap } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
 import { apiClient } from '@/lib/api';
 import {
@@ -43,6 +43,12 @@ interface ThemeFormState {
   backgroundDark: string;
   darkMode: ThemeMode;
   logoUrl: string;
+  backgroundAnimationType: string;
+  backgroundAnimationSpeed: string;
+  backgroundSvgPattern: string;
+  elementAnimationStyle: string;
+  borderRadiusStyle: string;
+  shadowStyle: string;
 }
 
 const getThemeMode = (darkMode: boolean | null): ThemeMode => {
@@ -70,25 +76,39 @@ const DEFAULT_THEME: ThemeFormState = {
     DEFAULT_THEME_CONFIG.background_color,
   backgroundDark: DEFAULT_THEME_CONFIG.background_color_dark ?? '#0f172a',
   darkMode: getThemeMode(DEFAULT_THEME_CONFIG.dark_mode),
-  logoUrl: ''
+  logoUrl: '',
+  backgroundAnimationType: 'none',
+  backgroundAnimationSpeed: 'medium',
+  backgroundSvgPattern: '',
+  elementAnimationStyle: 'subtle',
+  borderRadiusStyle: 'rounded',
+  shadowStyle: 'medium'
 };
 
 export default function ThemeSettingsPage() {
   const { t } = useTranslation();
-  const { setTheme: setNextTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const themeContext = useTheme();
+  const setNextTheme = themeContext?.setTheme;
   const [theme, setTheme] = useState<ThemeFormState>(DEFAULT_THEME);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [themeId, setThemeId] = useState<number | undefined>(undefined);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const applyLivePreview = (nextState: ThemeFormState) => {
     const payload = buildConfigPayload(nextState);
     applyThemeVariables(payload);
     const darkModeValue = getDarkModeValue(nextState.darkMode);
-    if (darkModeValue === null) {
-      setNextTheme('system');
-    } else {
-      setNextTheme(darkModeValue ? 'dark' : 'light');
+    if (setNextTheme) {
+      if (darkModeValue === null) {
+        setNextTheme('system');
+      } else {
+        setNextTheme(darkModeValue ? 'dark' : 'light');
+      }
     }
     dispatchThemeUpdate(payload);
   };
@@ -106,7 +126,13 @@ export default function ThemeSettingsPage() {
     background_color: state.backgroundLight,
     background_color_light: state.backgroundLight,
     background_color_dark: state.backgroundDark,
-    dark_mode: getDarkModeValue(state.darkMode)
+    dark_mode: getDarkModeValue(state.darkMode),
+    background_animation_type: state.backgroundAnimationType,
+    background_animation_speed: state.backgroundAnimationSpeed,
+    background_svg_pattern: state.backgroundSvgPattern,
+    element_animation_style: state.elementAnimationStyle,
+    border_radius_style: state.borderRadiusStyle,
+    shadow_style: state.shadowStyle
   });
 
   const getEffectiveDarkMode = (mode: ThemeMode): boolean => {
@@ -146,6 +172,9 @@ export default function ThemeSettingsPage() {
         const response = await apiClient.getCurrentThemeConfig();
         if (!mounted) return;
         const config = parseThemeResponse(response);
+        const configs = (response?.data?.configs ||
+          response?.data ||
+          {}) as any;
         setTheme({
           primaryLight: config.primary_color_light ?? config.primary_color,
           primaryDark: config.primary_color_dark ?? config.primary_color,
@@ -158,15 +187,24 @@ export default function ThemeSettingsPage() {
           backgroundDark:
             config.background_color_dark ?? config.background_color,
           darkMode: getThemeMode(config.dark_mode),
-          logoUrl: ''
+          logoUrl: '',
+          backgroundAnimationType: configs.background_animation_type || 'none',
+          backgroundAnimationSpeed:
+            configs.background_animation_speed || 'medium',
+          backgroundSvgPattern: configs.background_svg_pattern || '',
+          elementAnimationStyle: configs.element_animation_style || 'subtle',
+          borderRadiusStyle: configs.border_radius_style || 'rounded',
+          shadowStyle: configs.shadow_style || 'medium'
         });
         setThemeId(config.themeId);
         applyThemeVariables(config);
         const darkModeValue = config.dark_mode;
-        if (darkModeValue === null) {
-          setNextTheme('system');
-        } else {
-          setNextTheme(darkModeValue ? 'dark' : 'light');
+        if (setNextTheme) {
+          if (darkModeValue === null) {
+            setNextTheme('system');
+          } else {
+            setNextTheme(darkModeValue ? 'dark' : 'light');
+          }
         }
       } catch (error) {
         console.error('Failed to load theme configuration', error);
@@ -174,10 +212,12 @@ export default function ThemeSettingsPage() {
         setTheme(DEFAULT_THEME);
         applyThemeVariables(DEFAULT_THEME_CONFIG);
         const defaultDarkMode = DEFAULT_THEME_CONFIG.dark_mode;
-        if (defaultDarkMode === null) {
-          setNextTheme('system');
-        } else {
-          setNextTheme(defaultDarkMode ? 'dark' : 'light');
+        if (setNextTheme) {
+          if (defaultDarkMode === null) {
+            setNextTheme('system');
+          } else {
+            setNextTheme(defaultDarkMode ? 'dark' : 'light');
+          }
         }
       } finally {
         if (mounted) setIsLoading(false);
@@ -189,7 +229,7 @@ export default function ThemeSettingsPage() {
     return () => {
       mounted = false;
     };
-  }, [setNextTheme]);
+  }, []);
 
   const handleSave = async () => {
     try {
@@ -199,6 +239,7 @@ export default function ThemeSettingsPage() {
       );
 
       const updatedConfig = parseThemeResponse(response);
+      const configs = (response?.data?.configs || response?.data || {}) as any;
       setTheme({
         primaryLight:
           updatedConfig.primary_color_light ?? updatedConfig.primary_color,
@@ -215,16 +256,29 @@ export default function ThemeSettingsPage() {
         backgroundDark:
           updatedConfig.background_color_dark ?? updatedConfig.background_color,
         darkMode: getThemeMode(updatedConfig.dark_mode),
-        logoUrl: theme.logoUrl
+        logoUrl: theme.logoUrl,
+        backgroundAnimationType:
+          configs.background_animation_type || theme.backgroundAnimationType,
+        backgroundAnimationSpeed:
+          configs.background_animation_speed || theme.backgroundAnimationSpeed,
+        backgroundSvgPattern:
+          configs.background_svg_pattern || theme.backgroundSvgPattern,
+        elementAnimationStyle:
+          configs.element_animation_style || theme.elementAnimationStyle,
+        borderRadiusStyle:
+          configs.border_radius_style || theme.borderRadiusStyle,
+        shadowStyle: configs.shadow_style || theme.shadowStyle
       });
       setThemeId(updatedConfig.themeId);
 
       applyThemeVariables(updatedConfig);
       const darkModeValue = updatedConfig.dark_mode;
-      if (darkModeValue === null) {
-        setNextTheme('system');
-      } else {
-        setNextTheme(darkModeValue ? 'dark' : 'light');
+      if (setNextTheme) {
+        if (darkModeValue === null) {
+          setNextTheme('system');
+        } else {
+          setNextTheme(darkModeValue ? 'dark' : 'light');
+        }
       }
       dispatchThemeUpdate(updatedConfig);
 
@@ -236,7 +290,7 @@ export default function ThemeSettingsPage() {
     }
   };
 
-  if (isLoading) {
+  if (!mounted || isLoading) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <Skeleton className="h-9 w-64" />
@@ -506,6 +560,191 @@ export default function ThemeSettingsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5" />
+            Advanced Customization
+          </CardTitle>
+          <CardDescription>
+            Customize animations, patterns, and visual effects for your school
+            website
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="backgroundAnimationType">
+              Background Animation
+            </Label>
+            <Select
+              value={theme.backgroundAnimationType}
+              onValueChange={(value) =>
+                setTheme((prev) => {
+                  const nextState = {
+                    ...prev,
+                    backgroundAnimationType: value
+                  } as ThemeFormState;
+                  applyLivePreview(nextState);
+                  return nextState;
+                })
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="gradient">Gradient Flow</SelectItem>
+                <SelectItem value="particles">Particles</SelectItem>
+                <SelectItem value="waves">Waves</SelectItem>
+                <SelectItem value="mesh">Mesh Gradient</SelectItem>
+                <SelectItem value="grid">Animated Grid</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Choose an animated background effect for your website
+            </p>
+          </div>
+
+          {theme.backgroundAnimationType !== 'none' && (
+            <div className="space-y-2">
+              <Label htmlFor="backgroundAnimationSpeed">Animation Speed</Label>
+              <Select
+                value={theme.backgroundAnimationSpeed}
+                onValueChange={(value) =>
+                  setTheme((prev) => {
+                    const nextState = {
+                      ...prev,
+                      backgroundAnimationSpeed: value
+                    } as ThemeFormState;
+                    applyLivePreview(nextState);
+                    return nextState;
+                  })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="slow">Slow</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="fast">Fast</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="backgroundSvgPattern">SVG Pattern (Optional)</Label>
+            <Input
+              id="backgroundSvgPattern"
+              placeholder="pattern-dots, pattern-grid, pattern-waves, etc."
+              value={theme.backgroundSvgPattern}
+              onChange={(event) =>
+                setTheme((prev) => {
+                  const nextState = {
+                    ...prev,
+                    backgroundSvgPattern: event.target.value
+                  } as ThemeFormState;
+                  applyLivePreview(nextState);
+                  return nextState;
+                })
+              }
+            />
+            <p className="text-xs text-muted-foreground">
+              Enter a pattern ID to use as background overlay (leave empty for
+              none)
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="elementAnimationStyle">
+              Element Animation Style
+            </Label>
+            <Select
+              value={theme.elementAnimationStyle}
+              onValueChange={(value) =>
+                setTheme((prev) => {
+                  const nextState = {
+                    ...prev,
+                    elementAnimationStyle: value
+                  } as ThemeFormState;
+                  applyLivePreview(nextState);
+                  return nextState;
+                })
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="subtle">Subtle</SelectItem>
+                <SelectItem value="moderate">Moderate</SelectItem>
+                <SelectItem value="dynamic">Dynamic</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Control how animated elements appear on the page
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="borderRadiusStyle">Border Radius Style</Label>
+              <Select
+                value={theme.borderRadiusStyle}
+                onValueChange={(value) =>
+                  setTheme((prev) => {
+                    const nextState = {
+                      ...prev,
+                      borderRadiusStyle: value
+                    } as ThemeFormState;
+                    applyLivePreview(nextState);
+                    return nextState;
+                  })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rounded">Rounded</SelectItem>
+                  <SelectItem value="soft">Soft</SelectItem>
+                  <SelectItem value="sharp">Sharp</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="shadowStyle">Shadow Style</Label>
+              <Select
+                value={theme.shadowStyle}
+                onValueChange={(value) =>
+                  setTheme((prev) => {
+                    const nextState = {
+                      ...prev,
+                      shadowStyle: value
+                    } as ThemeFormState;
+                    applyLivePreview(nextState);
+                    return nextState;
+                  })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="subtle">Subtle</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="strong">Strong</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

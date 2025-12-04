@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { ThemeProvider } from '@/components/providers/theme-provider';
+import { ThemeProviderWrapper } from '@/components/providers/theme-provider-wrapper';
 import { Toaster } from '@/components/ui/toaster';
 import { I18nProvider } from '@/lib/i18n/provider';
 import { getAdminLanguage, getAdminDirection } from '@/lib/i18n/server';
@@ -33,19 +33,14 @@ export default async function RootLayout({
   return (
     <html lang={language} dir={direction} suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProviderWrapper>
           <I18nProvider initialLanguage={language}>
             <LanguageSync />
             {children}
             <Toaster />
             <ToastContainerWrapper />
           </I18nProvider>
-        </ThemeProvider>
+        </ThemeProviderWrapper>
       </body>
     </html>
   );
