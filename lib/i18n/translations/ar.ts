@@ -99,6 +99,7 @@ export const ar = {
     forgotPassword: 'نسيت كلمة المرور؟',
     rememberMe: 'تذكرني',
     signIn: 'تسجيل الدخول',
+    signin: 'تسجيل الدخول',
     signUp: 'التسجيل',
     enterEmail: 'أدخل بريدك الإلكتروني',
     enterPassword: 'أدخل كلمة المرور',

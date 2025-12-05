@@ -130,6 +130,7 @@ export const fa = {
     forgotPassword: 'رمز عبور را فراموش کرده‌اید؟',
     rememberMe: 'مرا به خاطر بسپار',
     signIn: 'ورود',
+    signin: 'ورود',
     signUp: 'ثبت‌نام',
     enterEmail: 'ایمیل خود را وارد کنید',
     enterPassword: 'رمز عبور خود را وارد کنید',

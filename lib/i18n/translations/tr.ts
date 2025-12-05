@@ -99,6 +99,7 @@ export const tr = {
     forgotPassword: 'Şifrenizi mi unuttunuz?',
     rememberMe: 'Beni hatırla',
     signIn: 'Giriş Yap',
+    signin: 'Giriş Yap',
     signUp: 'Kayıt Ol',
     enterEmail: 'E-postanızı girin',
     enterPassword: 'Şifrenizi girin',

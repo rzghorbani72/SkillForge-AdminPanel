@@ -130,6 +130,7 @@ export const en = {
     forgotPassword: 'Forgot Password?',
     rememberMe: 'Remember me',
     signIn: 'Sign In',
+    signin: 'Sign In',
     signUp: 'Sign Up',
     enterEmail: 'Enter your email',
     enterPassword: 'Enter your password',
