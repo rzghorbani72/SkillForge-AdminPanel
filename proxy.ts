@@ -63,7 +63,7 @@ async function verifyJWT(
   }
 }
 
-export async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if the route is public

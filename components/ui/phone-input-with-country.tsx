@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -168,6 +168,18 @@ export function PhoneInputWithCountry({
     return formatPhoneNumber(value, selectedCountry);
   };
 
+  // Deduplicate country codes to ensure unique keys
+  const uniqueCountryCodes = useMemo(() => {
+    const seen = new Set<string>();
+    return COUNTRY_CODES.filter((country) => {
+      if (seen.has(country.code)) {
+        return false;
+      }
+      seen.add(country.code);
+      return true;
+    });
+  }, []);
+
   return (
     <div className="space-y-2" dir={isRTL ? 'rtl' : 'ltr'}>
       <Label htmlFor={id}>{label}</Label>
@@ -191,7 +203,7 @@ export function PhoneInputWithCountry({
               </div>
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
-              {COUNTRY_CODES.map((country) => (
+              {uniqueCountryCodes.map((country) => (
                 <SelectItem key={country.code} value={country.code}>
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{country.flag}</span>

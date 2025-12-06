@@ -14,7 +14,8 @@ export default async function UserLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if (!isAuth(cookies())) {
+  const cookieStore = await cookies();
+  if (!isAuth(cookieStore)) {
     redirect('/login');
   }
   return (

@@ -6,12 +6,12 @@ import Header from '@/components/layout/header';
 import { CategoriesInitializer } from '@/components/providers/CategoriesInitializer';
 import { ThemeInitializer } from '@/components/providers/ThemeInitializer';
 
-export default function ProtectedLayout({
+export default async function ProtectedLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   if (!isAuth(cookieStore)) {
     redirect('/login');
   }

@@ -63,8 +63,7 @@ export const COUNTRY_CODES: CountryCode[] = [
   { code: 'PH', name: 'Philippines', flag: '🇵🇭', dialCode: '+63' },
   { code: 'TW', name: 'Taiwan', flag: '🇹🇼', dialCode: '+886' },
   { code: 'HK', name: 'Hong Kong', flag: '🇭🇰', dialCode: '+852' },
-  { code: 'NZ', name: 'New Zealand', flag: '🇳🇿', dialCode: '+64' },
-  { code: 'ZA', name: 'South Africa', flag: '🇿🇦', dialCode: '+27' }
+  { code: 'NZ', name: 'New Zealand', flag: '🇳🇿', dialCode: '+64' }
 ];
 
 export const getCountryByCode = (code: string): CountryCode | undefined => {

@@ -10,10 +10,10 @@ type DraggableData = ColumnDragData | TaskDragData;
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export function isAuth(cookies: {
+export function isAuth(cookieStore: {
   get: (name: string) => { value?: string } | undefined;
 }) {
-  const token = cookies.get('jwt')?.value;
+  const token = cookieStore.get('jwt')?.value;
   return !!token;
 }
 export function hasDraggableData<T extends Active | Over>(
