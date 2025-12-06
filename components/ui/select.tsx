@@ -14,7 +14,7 @@ const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef<
   HTMLElement,
-  Omit<React.ComponentProps<typeof SelectPrimitive.Trigger>, 'ref'>
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
@@ -34,7 +34,7 @@ SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectContent = React.forwardRef<
   HTMLElement,
-  Omit<React.ComponentProps<typeof SelectPrimitive.Content>, 'ref'>
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = 'popper', ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
@@ -64,7 +64,7 @@ SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef<
   HTMLElement,
-  Omit<React.ComponentProps<typeof SelectPrimitive.Label>, 'ref'>
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
@@ -76,7 +76,7 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
 const SelectItem = React.forwardRef<
   HTMLElement,
-  Omit<React.ComponentProps<typeof SelectPrimitive.Item>, 'ref'>
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
@@ -98,7 +98,7 @@ SelectItem.displayName = SelectPrimitive.Item.displayName;
 
 const SelectSeparator = React.forwardRef<
   HTMLElement,
-  Omit<React.ComponentProps<typeof SelectPrimitive.Separator>, 'ref'>
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
