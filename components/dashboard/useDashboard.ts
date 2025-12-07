@@ -4,10 +4,10 @@ import { Course, Enrollment, Payment } from '@/types/api';
 import {
   formatCurrency,
   formatNumber,
-  formatCurrencyWithSchool,
+  formatCurrencyWithStore,
   formatRelativeTime
 } from '@/lib/utils';
-import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 export type DashboardStatsCard = {
@@ -35,7 +35,7 @@ export type CoursePerformance = {
 
 const useDashboard = () => {
   const { t, language } = useTranslation();
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
   const [recentCourses, setRecentCourses] = useState<Course[]>([]);
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
@@ -279,7 +279,7 @@ const useDashboard = () => {
       },
       {
         title: t('dashboard.totalRevenue'),
-        value: formatCurrencyWithSchool(statsTotals.totalRevenue, school),
+        value: formatCurrencyWithStore(statsTotals.totalRevenue, store),
         icon: require('lucide-react').DollarSign,
         change: t('dashboard.live'),
         changeType: 'increase',
@@ -294,7 +294,7 @@ const useDashboard = () => {
         description: t('dashboard.studentsCurrentlyProgressing')
       }
     ],
-    [statsTotals, school, t]
+    [statsTotals, store, t]
   );
 
   const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];
@@ -357,9 +357,9 @@ const useDashboard = () => {
           const userName = payment.user?.name || t('dashboard.unknownUser');
           const courseName =
             payment.course?.title || t('dashboard.unknownCourse');
-          const amount = formatCurrencyWithSchool(
+          const amount = formatCurrencyWithStore(
             payment.amount ?? 0,
-            school,
+            store,
             undefined,
             language
           );
@@ -388,7 +388,7 @@ const useDashboard = () => {
     safeRecentCourses,
     safeRecentEnrollments,
     safeRecentPayments,
-    school,
+    store,
     t,
     language
   ]);

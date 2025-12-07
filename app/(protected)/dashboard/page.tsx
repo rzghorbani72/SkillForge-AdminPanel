@@ -31,14 +31,14 @@ import EnrollmentsChart from '@/components/dashboard/EnrollmentsChart';
 import CoursePerformanceChart from '@/components/dashboard/CoursePerformanceChart';
 import QuickActions from '@/components/dashboard/QuickActions';
 import { useAccessControl } from '@/hooks/useAccessControl';
-import { useCurrentSchool } from '@/hooks/useCurrentSchool';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import Link from 'next/link';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
   const {
     isLoading,
     recentCourses,
@@ -145,7 +145,7 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
               {t('dashboard.title')}
             </h1>
-            <Badge variant="secondary\" className="hidden sm:flex">
+            <Badge variant="secondary" className="hidden sm:flex">
               <Sparkles className="mr-1 h-3 w-3" />
               {t('dashboard.live')}
             </Badge>
@@ -326,17 +326,17 @@ export default function DashboardPage() {
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>
-                  {formatCurrencyWithSchool(
+                  {formatCurrencyWithStore(
                     currentRevenue,
-                    school,
+                    store,
                     undefined,
                     language
                   )}
                 </span>
                 <span>
-                  {formatCurrencyWithSchool(
+                  {formatCurrencyWithStore(
                     revenueTarget,
-                    school,
+                    store,
                     undefined,
                     language
                   )}

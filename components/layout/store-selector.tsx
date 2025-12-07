@@ -1,6 +1,6 @@
 'use client';
 
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -13,15 +13,15 @@ import { Badge } from '@/components/ui/badge';
 import { Building2, ChevronDown } from 'lucide-react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
-export function SchoolSelector() {
+export function StoreSelector() {
   const {
-    selectedSchool,
-    schools,
+    selectedStore,
+    stores,
     isLoading,
     error,
-    refreshSchools,
-    selectSchool
-  } = useSchool();
+    refreshStores,
+    selectStore
+  } = useStore();
 
   if (isLoading) {
     return (
@@ -35,11 +35,11 @@ export function SchoolSelector() {
     return (
       <div className="flex items-center space-x-2">
         <AlertCircle className="h-4 w-4 text-destructive" />
-        <span className="text-sm text-destructive">Error loading schools</span>
+        <span className="text-sm text-destructive">Error loading stores</span>
         <Button
           variant="ghost"
           size="sm"
-          onClick={refreshSchools}
+          onClick={refreshStores}
           className="h-6 w-6 p-0"
         >
           <RefreshCw className="h-3 w-3" />
@@ -48,17 +48,17 @@ export function SchoolSelector() {
     );
   }
 
-  if (schools.length === 0) {
+  if (stores.length === 0) {
     return (
       <div className="flex items-center space-x-2">
         <AlertCircle className="h-4 w-4 text-amber-500" />
         <Badge variant="secondary" className="text-xs">
-          No schools available
+          No stores available
         </Badge>
         <Button
           variant="ghost"
           size="sm"
-          onClick={refreshSchools}
+          onClick={refreshStores}
           className="h-6 w-6 p-0"
         >
           <RefreshCw className="h-3 w-3" />
@@ -67,10 +67,10 @@ export function SchoolSelector() {
     );
   }
 
-  const handleSchoolChange = (schoolId: string) => {
-    const school = schools.find((s) => s.id.toString() === schoolId);
-    if (school) {
-      selectSchool(school.id);
+  const handleStoreChange = (storeId: string) => {
+    const store = stores.find((s) => s.id.toString() === storeId);
+    if (store) {
+      selectStore(store.id);
     }
   };
 
@@ -82,29 +82,29 @@ export function SchoolSelector() {
       </div>
 
       <Select
-        value={selectedSchool?.id.toString()}
-        onValueChange={handleSchoolChange}
+        value={selectedStore?.id.toString()}
+        onValueChange={handleStoreChange}
       >
         <SelectTrigger className="w-auto min-w-[180px] border-0 bg-transparent focus:ring-0 focus:ring-offset-0">
           <SelectValue>
             <div className="flex items-center space-x-2">
               <Badge variant="outline" className="font-medium">
-                {selectedSchool?.name || 'Select School'}
+                {selectedStore?.name || 'Select Store'}
               </Badge>
               <ChevronDown className="h-3 w-3 text-muted-foreground" />
             </div>
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {schools.map((school) => (
-            <SelectItem key={school.id} value={school.id.toString()}>
+          {stores.map((store) => (
+            <SelectItem key={store.id} value={store.id.toString()}>
               <div className="flex items-center space-x-2">
-                <span className="font-medium">{school.name}</span>
+                <span className="font-medium">{store.name}</span>
                 <Badge variant="secondary" className="text-xs">
-                  {school.domain?.private_address?.replace(
+                  {store.domain?.private_address?.replace(
                     '.skillforge.com',
                     ''
-                  ) || school.slug}
+                  ) || store.slug}
                 </Badge>
               </div>
             </SelectItem>
@@ -113,7 +113,7 @@ export function SchoolSelector() {
       </Select>
 
       <div className="text-xs text-muted-foreground">
-        ({schools.length} school{schools.length !== 1 ? 's' : ''})
+        ({stores.length} store{stores.length !== 1 ? 's' : ''})
       </div>
     </div>
   );

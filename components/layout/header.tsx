@@ -2,7 +2,7 @@ import ThemeToggle from '@/components/layout/ThemeToggle/theme-toggle';
 import { cn } from '@/lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
-import { SchoolSelector } from './school-selector';
+import { StoreSelector } from './StoreSelector';
 import { LanguageSwitcher } from '@/components/language-switcher';
 
 export default function Header() {
@@ -22,7 +22,7 @@ export default function Header() {
 
         {/* Right side controls */}
         <div className="flex items-center gap-2">
-          <SchoolSelector />
+          <StoreSelector />
 
           <div className="h-6 w-px bg-border/50" />
 

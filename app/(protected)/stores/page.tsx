@@ -13,21 +13,21 @@ import {
 } from '@/components/ui/dialog';
 import { Plus, Search, Building2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { School } from '@/types/api';
+import { Store } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { SearchBar } from '@/components/shared/SearchBar';
-import { SchoolCard } from '@/components/schools/SchoolCard';
-import { SchoolForm } from '@/components/schools/SchoolForm';
-import { useSchool } from '@/hooks/useSchool';
-import { extractDomainPart, formatDomain } from '@/lib/school-utils';
+import { StoreCard } from '@/components/stores/StoreCard';
+import { StoreForm } from '@/components/stores/StoreForm';
+import { useStore } from '@/hooks/useStore';
+import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-export default function SchoolsPage() {
+export default function StoresPage() {
   const { t, language } = useTranslation();
-  const { schools, isLoading, error, refreshSchools } = useSchool();
+  const { stores, isLoading, error, refreshStores } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
@@ -334,7 +334,7 @@ export default function SchoolsPage() {
                 {t('schools.manageSchoolsDescription')}
               </DialogDescription>
             </DialogHeader>
-            <SchoolForm
+            <StoreForm
               formData={formData}
               onFormDataChange={(data) => setFormData(data)}
               domainValidation={domainValidation}
@@ -363,10 +363,10 @@ export default function SchoolsPage() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredSchools.map((school) => (
-          <SchoolCard
-            key={school.id}
-            school={school}
+        {filteredStores.map((store) => (
+          <StoreCard
+            key={store.id}
+            store={store}
             onEdit={(school) => {
               const newFormData = {
                 name: school?.name || '',

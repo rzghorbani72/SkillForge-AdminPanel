@@ -24,7 +24,7 @@ export interface UserProfile {
   bio?: string;
   avatar_id?: number;
   is_active: boolean;
-  school: {
+  store: {
     id: number;
     name: string;
     private_domain: string;
@@ -49,7 +49,7 @@ export interface Profile {
   created_at: string;
   updated_at: string;
   user?: User;
-  school?: School;
+  store?: Store;
   role?: Role;
   avatar?: Media;
 }
@@ -62,7 +62,7 @@ export interface Role {
   updated_at: string;
 }
 
-// School and Domain Types
+// Store and Domain Types
 // Currency configuration
 export type CurrencyCode = 'USD' | 'IRR' | 'TL' | 'EUR' | 'GBP' | 'TRY';
 
@@ -89,7 +89,7 @@ export interface CurrencyConfig {
   is_default: boolean;
 }
 
-export interface School {
+export interface Store {
   id: number;
   name: string;
   slug: string;
@@ -125,7 +125,7 @@ export interface Domain {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  schools?: School[];
+  stores?: Store[];
 }
 
 // Media Types
@@ -147,7 +147,7 @@ export interface Media {
   updated_at: string;
   deleted_at?: string;
   owner?: User;
-  school?: School;
+  store?: Store;
 }
 
 // Course and Learning Types
@@ -191,7 +191,7 @@ export interface Course {
   updated_at: string;
   deleted_at?: string;
   author?: Profile;
-  school?: School;
+  store?: Store;
   category?: Category;
   cover?: Media;
   seasons?: Season[];
@@ -235,7 +235,7 @@ export interface Product {
   updated_at: string;
   deleted_at?: string;
   author?: Profile;
-  school?: School;
+  store?: Store;
   category?: Category;
   cover?: Media;
   images?: Media[];
@@ -503,7 +503,7 @@ export interface Theme {
   school_id: number;
   created_at: string;
   updated_at: string;
-  school?: School;
+  store?: Store;
 }
 
 // UI Template Types
@@ -530,7 +530,7 @@ export interface UITemplate {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  school?: School;
+  store?: Store;
 }
 
 export interface TemplatePreset {
@@ -580,13 +580,13 @@ export interface PaginatedResponse<T> {
 }
 
 // Form Data Types
-export interface CreateSchoolData {
+export interface CreateStoreData {
   name: string;
   private_domain: string;
   description?: string;
 }
 
-export interface UpdateSchoolData {
+export interface UpdateStoreData {
   name?: string;
   private_domain?: string;
   description?: string;
@@ -690,7 +690,7 @@ export interface FileUploadResponse {
 }
 
 // Financial Management Types
-export type FormulaScope = 'SCHOOL' | 'PLATFORM';
+export type FormulaScope = 'STORE' | 'PLATFORM';
 
 export interface CostCategory {
   id: number;
@@ -701,9 +701,9 @@ export interface CostCategory {
   updated_at: string;
 }
 
-export interface SchoolFinancialRecord {
+export interface StoreFinancialRecord {
   id: number;
-  school_id: number;
+  store_id: number;
   cost_category_id?: number;
   period_start: string;
   period_end: string;
@@ -716,7 +716,7 @@ export interface SchoolFinancialRecord {
   notes?: string;
   created_at: string;
   updated_at: string;
-  school?: {
+  store?: {
     id: number;
     name: string;
     slug: string;
@@ -818,6 +818,6 @@ export interface FinancialSummary {
 
 export interface PlatformFinancialSummary {
   platform: FinancialSummary;
-  schools: FinancialSummary;
+  stores: FinancialSummary;
   total: FinancialSummary;
 }

@@ -24,8 +24,8 @@ import {
 } from 'recharts';
 import { ChartDataPoint } from './useDashboard';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useCurrentSchool } from '@/hooks/useCurrentSchool';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { formatCurrencyWithStore } from '@/lib/utils';
 import { TrendingUp } from 'lucide-react';
 
 type Props = {
@@ -34,7 +34,7 @@ type Props = {
 
 const RevenueChart = ({ data }: Props) => {
   const { t, language } = useTranslation();
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
 
   const chartConfig: ChartConfig = {
     revenue: {
@@ -65,12 +65,7 @@ const RevenueChart = ({ data }: Props) => {
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold">
-            {formatCurrencyWithSchool(
-              totalRevenue,
-              school,
-              undefined,
-              language
-            )}
+            {formatCurrencyWithStore(totalRevenue, store, undefined, language)}
           </p>
           {growth !== 0 && (
             <p
@@ -123,16 +118,16 @@ const RevenueChart = ({ data }: Props) => {
               tickMargin={8}
               className="text-xs"
               tickFormatter={(value) =>
-                formatCurrencyWithSchool(value, school, 1, language)
+                formatCurrencyWithStore(value, store, 1, language)
               }
             />
             <ChartTooltip
               content={
                 <ChartTooltipContent
                   formatter={(value) =>
-                    formatCurrencyWithSchool(
+                    formatCurrencyWithStore(
                       Number(value),
-                      school,
+                      store,
                       undefined,
                       language
                     )

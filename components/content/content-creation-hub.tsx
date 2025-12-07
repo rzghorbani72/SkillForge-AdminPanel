@@ -28,7 +28,7 @@ import {
   Plus
 } from 'lucide-react';
 import { Course } from '@/types/api';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 // Import dialogs
@@ -49,7 +49,7 @@ export default function ContentCreationHub({
 }: ContentCreationHubProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -121,7 +121,7 @@ export default function ContentCreationHub({
   };
 
   const renderDialog = () => {
-    if (!selectedType || !selectedSchool) return null;
+    if (!selectedType || !selectedStore) return null;
 
     const contentType = contentTypes.find((type) => type.id === selectedType);
     if (!contentType || !contentType.dialog) return null;
@@ -169,11 +169,11 @@ export default function ContentCreationHub({
     }
   };
 
-  if (!selectedSchool) {
+  if (!selectedStore) {
     return (
       <Button disabled>
         <Plus className="mr-2 h-4 w-4" />
-        {t('content.selectSchoolFirst')}
+        {t('content.selectStoreFirst')}
       </Button>
     );
   }
@@ -212,7 +212,7 @@ export default function ContentCreationHub({
                 </CardHeader>
                 <CardContent className="text-center">
                   <Badge variant="outline" className="text-xs">
-                    {selectedSchool.name}
+                    {selectedStore.name}
                   </Badge>
                 </CardContent>
               </Card>

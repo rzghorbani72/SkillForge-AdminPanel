@@ -17,7 +17,7 @@ import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
-import { extractDomainPart, formatDomain } from '@/lib/school-utils';
+import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface SchoolFormState {

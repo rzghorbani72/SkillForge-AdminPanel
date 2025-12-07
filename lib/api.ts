@@ -125,14 +125,14 @@ class ApiClient {
       }
     }
 
-    // Add school ID header if available (from localStorage - non-sensitive context data)
+    // Add store ID header if available (from localStorage - non-sensitive context data)
     if (typeof window !== 'undefined') {
-      // Use the same key as school-utils.ts
-      const schoolId = window.localStorage.getItem(
-        'skillforge_selected_school_id'
+      // Use the same key as store-utils.ts
+      const storeId = window.localStorage.getItem(
+        'skillforge_selected_store_id'
       );
-      if (schoolId && !headersObj['X-School-ID']) {
-        headersObj['X-School-ID'] = schoolId;
+      if (storeId && !headersObj['X-Store-ID']) {
+        headersObj['X-Store-ID'] = storeId;
       }
     }
 
@@ -235,10 +235,10 @@ class ApiClient {
     bio?: string;
     website?: string;
     location?: string;
-    // School creation data (for MANAGER role)
-    school_name?: string;
-    school_slug?: string;
-    school_description?: string;
+    // Store creation data (for MANAGER role)
+    store_name?: string;
+    store_slug?: string;
+    store_description?: string;
     // Teacher request data
     teacher_request?: boolean;
     teacher_request_reason?: string;
@@ -292,13 +292,13 @@ class ApiClient {
     );
   }
 
-  async getUserSchools() {
-    const response = await this.request('/schools');
+  async getUserStores() {
+    const response = await this.request('/stores');
     return response.data;
   }
 
   async createProfile(profileData: {
-    school_id: number;
+    store_id: number;
     role: string;
     display_name: string;
     bio?: string;
@@ -1320,7 +1320,7 @@ class ApiClient {
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
     if (params?.school_id)
-      queryParams.append('school_id', params.school_id.toString());
+      queryParams.append('store_id', params.store_id.toString());
     if (params?.status) queryParams.append('status', params.status);
 
     const queryString = queryParams.toString();
@@ -1358,7 +1358,7 @@ class ApiClient {
     if (params?.search) queryParams.append('search', params.search);
     if (params?.role) queryParams.append('role', params.role);
     if (params?.school_id)
-      queryParams.append('school_id', params.school_id.toString());
+      queryParams.append('store_id', params.store_id.toString());
     if (params?.status) queryParams.append('status', params.status);
     if (params?.is_active !== undefined)
       queryParams.append('is_active', params.is_active.toString());
@@ -1424,7 +1424,7 @@ class ApiClient {
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.school_id)
-      queryParams.append('school_id', params.school_id.toString());
+      queryParams.append('store_id', params.store_id.toString());
     if (params?.status) queryParams.append('status', params.status);
 
     const queryString = queryParams.toString();
@@ -1831,7 +1831,7 @@ class ApiClient {
     if (params?.is_active !== undefined)
       queryParams.append('is_active', params.is_active.toString());
     if (params?.school_id)
-      queryParams.append('school_id', params.school_id.toString());
+      queryParams.append('store_id', params.store_id.toString());
 
     const query = queryParams.toString();
     const response = await this.request<any>(
@@ -2010,7 +2010,7 @@ class ApiClient {
   }) {
     const queryParams = new URLSearchParams();
     if (params?.school_id)
-      queryParams.append('school_id', params.school_id.toString());
+      queryParams.append('store_id', params.store_id.toString());
     if (params?.cost_category_id)
       queryParams.append(
         'cost_category_id',
@@ -2022,13 +2022,13 @@ class ApiClient {
     if (params?.year) queryParams.append('year', params.year.toString());
     if (params?.month) queryParams.append('month', params.month.toString());
 
-    const url = `/financial/school-records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `/financial/store-records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any[];
   }
 
-  async getSchoolFinancialSummary(schoolId?: number) {
-    const url = `/financial/school-records/summary${schoolId ? `?school_id=${schoolId}` : ''}`;
+  async getStoreFinancialSummary(storeId?: number) {
+    const url = `/financial/store-records/summary${storeId ? `?store_id=${storeId}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any;
   }
@@ -2048,23 +2048,23 @@ class ApiClient {
     return response.data as any;
   }
 
-  async getSchoolFinancialOverview(
-    schoolId?: number,
+  async getStoreFinancialOverview(
+    storeId?: number,
     startDate?: string,
     endDate?: string
   ) {
     const queryParams = new URLSearchParams();
-    if (schoolId) queryParams.append('school_id', schoolId.toString());
+    if (storeId) queryParams.append('store_id', storeId.toString());
     if (startDate) queryParams.append('start_date', startDate);
     if (endDate) queryParams.append('end_date', endDate);
 
-    const url = `/financial/school/overview${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `/financial/store/overview${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any;
   }
 
   async createSchoolFinancialRecord(data: {
-    school_id: number;
+    store_id: number;
     cost_category_id?: number;
     period_start: string;
     period_end: string;
@@ -2073,7 +2073,7 @@ class ApiClient {
     currency?: string;
     notes?: string;
   }) {
-    const response = await this.request<any>('/financial/school-records', {
+    const response = await this.request<any>('/financial/store-records', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -2093,23 +2093,17 @@ class ApiClient {
       notes?: string;
     }>
   ) {
-    const response = await this.request<any>(
-      `/financial/school-records/${id}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request<any>(`/financial/store-records/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
     return response.data as any;
   }
 
   async deleteSchoolFinancialRecord(id: number) {
-    const response = await this.request<any>(
-      `/financial/school-records/${id}`,
-      {
-        method: 'DELETE'
-      }
-    );
+    const response = await this.request<any>(`/financial/store-records/${id}`, {
+      method: 'DELETE'
+    });
     return response.data as any;
   }
 
@@ -2232,7 +2226,7 @@ class ApiClient {
       percentage?: number;
     }>;
     type: 'REVENUE' | 'COST' | 'BENEFIT';
-    scope: 'SCHOOL' | 'PLATFORM';
+    scope: 'STORE' | 'PLATFORM';
     is_active?: boolean;
   }) {
     const response = await this.request<any>('/financial/formulas', {
@@ -2322,7 +2316,7 @@ class ApiClient {
   }) {
     const queryParams = new URLSearchParams();
     if (params?.school_id)
-      queryParams.append('school_id', params.school_id.toString());
+      queryParams.append('store_id', params.store_id.toString());
     if (params?.formula_id)
       queryParams.append('formula_id', params.formula_id.toString());
 

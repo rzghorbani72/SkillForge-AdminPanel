@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { Active, DataRef, Over } from '@dnd-kit/core';
 import { ColumnDragData } from '@/sections/kanban/board-column';
 import { TaskDragData } from '@/sections/kanban/task-card';
-import { School } from '@/types/api';
+import { Store } from '@/types/api';
 
 type DraggableData = ColumnDragData | TaskDragData;
 
@@ -120,49 +120,40 @@ export function formatCurrency(
  * @param divideBy - Divisor to convert from smallest unit (default: 100 for cents, 1 for tomans)
  * @returns Formatted currency string
  */
-export function formatCurrencyWithSchool(
+export function formatCurrencyWithStore(
   amount: number,
-  school?: School | null,
+  store?: Store | null,
   divideBy?: number,
   language?: string
 ): string {
-  if (!school) {
-    // Fallback to USD if no school
+  if (!store) {
+    // Fallback to USD if no store
     return formatCurrency(amount, { divideBy: divideBy || 100, language });
   }
 
-  // Check if school has currency configuration
+  // Check if store has currency configuration
   // Use type assertion to access currency properties safely
-  const schoolWithCurrency = school as School & {
+  const storeWithCurrency = store as Store & {
     currency?: string;
     currency_symbol?: string;
     currency_position?: 'before' | 'after';
   };
 
   const hasCurrencyConfig =
-    schoolWithCurrency.currency || schoolWithCurrency.currency_symbol;
+    storeWithCurrency.currency || storeWithCurrency.currency_symbol;
 
   if (!hasCurrencyConfig) {
     // Fallback to default USD formatting if no currency config
     if (process.env.NODE_ENV === 'development') {
-      console.warn('School missing currency config:', {
-        schoolId: school.id,
-        schoolName: school.name,
-        hasCurrency: !!schoolWithCurrency.currency,
-        hasCurrencySymbol: !!schoolWithCurrency.currency_symbol
+      console.warn('Store missing currency config:', {
+        storeId: store.id,
+        storeName: store.name,
+        hasCurrency: !!storeWithCurrency.currency,
+        hasCurrencySymbol: !!storeWithCurrency.currency_symbol
       });
     }
     return formatCurrency(amount, { divideBy: divideBy || 100, language });
   }
-
-  // For Toman (IRR), typically no division needed as it's already in the base unit
-  // For Turkish Lira (TRY/TL), also typically no division needed
-  const defaultDivideBy =
-    schoolWithCurrency.currency === 'IRR' ||
-    schoolWithCurrency.currency === 'TRY' ||
-    schoolWithCurrency.currency === 'TL'
-      ? 1
-      : 100;
 
   // Try to get language from localStorage if not provided (client-side only)
   let currentLanguage = language;
@@ -171,10 +162,10 @@ export function formatCurrencyWithSchool(
   }
 
   return formatCurrency(amount, {
-    currency: schoolWithCurrency.currency || 'USD',
-    currency_symbol: schoolWithCurrency.currency_symbol,
-    currency_position: schoolWithCurrency.currency_position || 'after',
-    divideBy: divideBy ?? defaultDivideBy,
+    currency: storeWithCurrency.currency || 'USD',
+    currency_symbol: storeWithCurrency.currency_symbol,
+    currency_position: storeWithCurrency.currency_position || 'after',
+    divideBy: divideBy ?? 100,
     language: currentLanguage
   });
 }
