@@ -57,14 +57,14 @@ export const fa = {
     none: 'هیچ',
     selected: 'انتخاب شده',
     errorLoading: 'خطا در بارگذاری',
-    noSchoolSelected: 'مدرسه‌ای انتخاب نشده',
-    selectSchoolToView:
-      'لطفاً یک مدرسه از هدر انتخاب کنید تا محتوا را مشاهده کنید.',
-    selectSchoolToViewProducts:
-      'لطفاً یک مدرسه از هدر انتخاب کنید تا محصولات را مشاهده کنید.',
-    school: 'مدرسه',
-    oneSchool: '۱ مدرسه',
-    multipleSchools: '{{count}} مدرسه',
+    noStoreSelected: 'آکادمی‌ای انتخاب نشده',
+    selectStoreToView:
+      'لطفاً یک آکادمی از هدر انتخاب کنید تا محتوا را مشاهده کنید.',
+    selectStoreToViewProducts:
+      'لطفاً یک آکادمی از هدر انتخاب کنید تا محصولات را مشاهده کنید.',
+    store: 'آکادمی',
+    oneStore: '۱ آکادمی',
+    multipleStores: '{{count}} آکادمی',
     moreFilters: 'فیلترهای بیشتر',
     tryAdjustingFilters: 'سعی کنید جستجو یا فیلترها را تنظیم کنید',
     email: 'ایمیل',
@@ -114,17 +114,17 @@ export const fa = {
     'payment-methods': 'روش‌های پرداخت',
     invoices: 'فاکتورها',
     'profile-settings': 'تنظیمات پروفایل',
-    'school-settings': 'تنظیمات مدرسه',
+    'store-settings': 'تنظیمات آکادمی',
     'theme-settings': 'تنظیمات تم',
     'ui-template-settings': 'تنظیمات قالب UI',
     'security-settings': 'تنظیمات امنیت',
     'progress-tracking': 'ردیابی پیشرفت',
-    'school-financial': 'مالی مدرسه',
-    'school-financial-overview': 'نمای کلی',
-    'school-revenue': 'درآمد و مزایا',
-    'school-costs': 'هزینه‌ها',
-    'school-payments': 'پرداخت‌ها',
-    'school-reports': 'گزارش‌ها',
+    'store-financial': 'مالی آکادمی',
+    'store-financial-overview': 'نمای کلی',
+    'store-revenue': 'درآمد و مزایا',
+    'store-costs': 'هزینه‌ها',
+    'store-payments': 'پرداخت‌ها',
+    'store-reports': 'گزارش‌ها',
     'platform-financial': 'مالی پلتفرم'
   },
   auth: {
@@ -262,8 +262,8 @@ export const fa = {
     totalStudents: 'کل دانشجویان',
     totalRevenue: 'کل درآمد',
     activeEnrollments: 'ثبت‌نام‌های فعال',
-    coursesAcrossSchools: 'دوره‌های مدارس شما',
-    studentsEnrolledAcrossSchools: 'دانشجویان ثبت‌نام شده در مدارس',
+    coursesAcrossStores: 'دوره‌های فروشگاه‌های شما',
+    studentsEnrolledAcrossStores: 'دانشجویان ثبت‌نام شده در فروشگاه‌ها',
     completedPaymentsToDate: 'پرداخت‌های تکمیل شده تا به امروز',
     studentsCurrentlyProgressing: 'دانشجویان در حال پیشرفت',
     live: 'زنده',
@@ -570,7 +570,7 @@ export const fa = {
     theme: 'تم',
     notifications: 'اعلان‌ها',
     account: 'حساب کاربری',
-    school: 'مدرسه',
+    store: 'آکادمی',
     profile: 'پروفایل',
     profileSettingsTitle: 'تنظیمات پروفایل',
     profileSettingsSubtitle:
@@ -1227,8 +1227,8 @@ export const fa = {
     loadingVouchers: 'در حال بارگذاری کوپن‌ها...'
   },
   financial: {
-    school: {
-      title: 'مدیریت مالی مدرسه',
+    store: {
+      title: 'مدیریت مالی آکادمی',
       description: 'نمای کلی درآمد، هزینه‌ها و مزایا',
       overview: {
         title: 'مدیریت مالی مدرسه',

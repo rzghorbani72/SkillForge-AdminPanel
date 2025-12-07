@@ -214,7 +214,7 @@ class ApiClient {
   async login(credentials: {
     identifier: string;
     password: string;
-    school_id?: number;
+    store_id?: number;
   }) {
     const response = this.request('/auth/login', {
       method: 'POST',
@@ -230,7 +230,7 @@ class ApiClient {
     password: string;
     confirmed_password: string;
     role: string;
-    school_id?: number;
+    store_id?: number;
     display_name: string;
     bio?: string;
     website?: string;
@@ -258,7 +258,7 @@ class ApiClient {
   async loginPhoneByOtp(credentials: {
     phone_number: string;
     otp: string;
-    school_id?: number;
+    store_id?: number;
   }) {
     return this.request('/auth/login-by-phone-otp', {
       method: 'POST',
@@ -269,7 +269,7 @@ class ApiClient {
   async loginEmailByOtp(credentials: {
     email: string;
     otp: string;
-    school_id?: number;
+    store_id?: number;
   }) {
     return this.request('/auth/login-by-email-otp', {
       method: 'POST',
@@ -277,8 +277,8 @@ class ApiClient {
     });
   }
 
-  async selectSchool(data: { temp_token: string; school_id: number }) {
-    return this.request('/auth/select-school', {
+  async selectStore(data: { temp_token: string; store_id: number }) {
+    return this.request('/auth/select-store', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -347,7 +347,7 @@ class ApiClient {
     confirmed_password: string;
     otp: string;
     role?: string;
-    school_id?: number;
+    store_id?: number;
   }) {
     return this.request('/auth/forget-password', {
       method: 'POST',
@@ -355,52 +355,52 @@ class ApiClient {
     });
   }
 
-  // Schools endpoints
-  async getSchools() {
-    const response = await this.request('/schools');
+  // Stores endpoints
+  async getStores() {
+    const response = await this.request('/stores');
     if (response.data) {
       return response.data as any;
     }
     return null as any;
   }
 
-  async getSchoolsPublic() {
-    const response = await this.request('/schools/public');
+  async getStoresPublic() {
+    const response = await this.request('/stores/public');
     if (response.data) {
       return response.data as any;
     }
     return null as any;
   }
 
-  async getMySchools() {
-    const response = await this.request('/schools/my-schools');
+  async getMyStores() {
+    const response = await this.request('/stores/my-stores');
     return response;
   }
 
-  async getCurrentSchool() {
-    const response = await this.request('/schools/current');
+  async getCurrentStore() {
+    const response = await this.request('/stores/current');
     return response;
   }
 
-  async createSchool(schoolData: {
+  async createStore(storeData: {
     name: string;
     private_domain: string;
     description?: string;
   }) {
-    return this.request('/schools', {
+    return this.request('/stores', {
       method: 'POST',
-      body: JSON.stringify(schoolData)
+      body: JSON.stringify(storeData)
     });
   }
 
-  async updateSchool(schoolData: {
+  async updateStore(storeData: {
     name?: string;
     private_domain?: string;
     description?: string;
   }) {
-    return this.request('/schools/current', {
+    return this.request('/stores/current', {
       method: 'PATCH',
-      body: JSON.stringify(schoolData)
+      body: JSON.stringify(storeData)
     });
   }
 
@@ -410,7 +410,7 @@ class ApiClient {
     limit?: number;
     search?: string;
     category_id?: number;
-    school_id?: number;
+    store_id?: number;
   }) {
     const queryParams = new URLSearchParams();
     if (params) {
@@ -1311,7 +1311,7 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
-    school_id?: number;
+    store_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
     const queryParams = new URLSearchParams();
@@ -1319,7 +1319,7 @@ class ApiClient {
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
-    if (params?.school_id)
+    if (params?.store_id)
       queryParams.append('store_id', params.store_id.toString());
     if (params?.status) queryParams.append('status', params.status);
 
@@ -1346,7 +1346,7 @@ class ApiClient {
     limit?: number;
     search?: string;
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
-    school_id?: number;
+    store_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
     is_active?: boolean;
     group_by_role?: boolean;
@@ -1357,7 +1357,7 @@ class ApiClient {
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
     if (params?.role) queryParams.append('role', params.role);
-    if (params?.school_id)
+    if (params?.store_id)
       queryParams.append('store_id', params.store_id.toString());
     if (params?.status) queryParams.append('status', params.status);
     if (params?.is_active !== undefined)
@@ -1381,7 +1381,7 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
-    school_id?: number;
+    store_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
     const query = this.buildUserQuery(params);
@@ -1393,7 +1393,7 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
-    school_id?: number;
+    store_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
     const query = this.buildUserQuery(params);
@@ -1405,7 +1405,7 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
-    school_id?: number;
+    store_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
     const query = this.buildUserQuery(params);
@@ -1416,14 +1416,14 @@ class ApiClient {
   async getTeacherRequests(params?: {
     page?: number;
     limit?: number;
-    school_id?: number;
+    store_id?: number;
     status?: 'PENDING' | 'APPROVED' | 'REJECTED';
   }) {
     const queryParams = new URLSearchParams();
 
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.school_id)
+    if (params?.store_id)
       queryParams.append('store_id', params.store_id.toString());
     if (params?.status) queryParams.append('status', params.status);
 
@@ -1607,7 +1607,7 @@ class ApiClient {
     status?: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
     course_id?: number;
     user_id?: number;
-    school_id?: number;
+    store_id?: number;
   }) {
     const queryParams = new URLSearchParams();
     if (params) {
@@ -1676,7 +1676,7 @@ class ApiClient {
     limit?: number;
     search?: string;
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
-    school_id?: number;
+    store_id?: number;
     is_active?: boolean;
   }) {
     const queryParams = new URLSearchParams();
@@ -1822,7 +1822,7 @@ class ApiClient {
     limit?: number;
     search?: string;
     is_active?: boolean;
-    school_id?: number;
+    store_id?: number;
   }) {
     const queryParams = new URLSearchParams();
     if (params?.page) queryParams.append('page', params.page.toString());
@@ -1830,7 +1830,7 @@ class ApiClient {
     if (params?.search) queryParams.append('search', params.search);
     if (params?.is_active !== undefined)
       queryParams.append('is_active', params.is_active.toString());
-    if (params?.school_id)
+    if (params?.store_id)
       queryParams.append('store_id', params.store_id.toString());
 
     const query = queryParams.toString();
@@ -1869,7 +1869,7 @@ class ApiClient {
     description?: string;
     discount_type: 'PERCENT' | 'FIXED';
     discount_value: number;
-    school_id?: number;
+    store_id?: number;
     usage_limit?: number;
     usage_type: 'ONE_TIME' | 'LIMITED' | 'UNLIMITED' | 'USER_SPECIFIC';
     start_date: string;
@@ -1999,9 +1999,9 @@ class ApiClient {
     return response.data as any;
   }
 
-  // School Financial Records
-  async getSchoolFinancialRecords(params?: {
-    school_id?: number;
+  // Store Financial Records
+  async getStoreFinancialRecords(params?: {
+    store_id?: number;
     cost_category_id?: number;
     period_start?: string;
     period_end?: string;
@@ -2009,7 +2009,7 @@ class ApiClient {
     month?: number;
   }) {
     const queryParams = new URLSearchParams();
-    if (params?.school_id)
+    if (params?.store_id)
       queryParams.append('store_id', params.store_id.toString());
     if (params?.cost_category_id)
       queryParams.append(
@@ -2033,17 +2033,17 @@ class ApiClient {
     return response.data as any;
   }
 
-  async getSchoolRevenueFromPayments(
-    schoolId?: number,
+  async getStoreRevenueFromPayments(
+    storeId?: number,
     startDate?: string,
     endDate?: string
   ) {
     const queryParams = new URLSearchParams();
-    if (schoolId) queryParams.append('school_id', schoolId.toString());
+    if (storeId) queryParams.append('store_id', storeId.toString());
     if (startDate) queryParams.append('start_date', startDate);
     if (endDate) queryParams.append('end_date', endDate);
 
-    const url = `/financial/school/revenue${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `/financial/store/revenue${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any;
   }
@@ -2063,7 +2063,7 @@ class ApiClient {
     return response.data as any;
   }
 
-  async createSchoolFinancialRecord(data: {
+  async createStoreFinancialRecord(data: {
     store_id: number;
     cost_category_id?: number;
     period_start: string;
@@ -2080,10 +2080,10 @@ class ApiClient {
     return response.data as any;
   }
 
-  async updateSchoolFinancialRecord(
+  async updateStoreFinancialRecord(
     id: number,
     data: Partial<{
-      school_id?: number;
+      store_id?: number;
       cost_category_id?: number;
       period_start?: string;
       period_end?: string;
@@ -2100,7 +2100,7 @@ class ApiClient {
     return response.data as any;
   }
 
-  async deleteSchoolFinancialRecord(id: number) {
+  async deleteStoreFinancialRecord(id: number) {
     const response = await this.request<any>(`/financial/store-records/${id}`, {
       method: 'DELETE'
     });
@@ -2291,7 +2291,7 @@ class ApiClient {
   // Formula Applications
   async createFormulaApplication(data: {
     formula_id: number;
-    school_id?: number;
+    store_id?: number;
     period_start: string;
     period_end: string;
     adjustment_type: 'AUTOMATIC' | 'MANUAL' | 'GIFT' | 'INCENTIVE';
@@ -2311,11 +2311,11 @@ class ApiClient {
   }
 
   async getFormulaApplications(params?: {
-    school_id?: number;
+    store_id?: number;
     formula_id?: number;
   }) {
     const queryParams = new URLSearchParams();
-    if (params?.school_id)
+    if (params?.store_id)
       queryParams.append('store_id', params.store_id.toString());
     if (params?.formula_id)
       queryParams.append('formula_id', params.formula_id.toString());

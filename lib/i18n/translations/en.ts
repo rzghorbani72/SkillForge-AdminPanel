@@ -57,14 +57,13 @@ export const en = {
     selected: 'selected',
     errorLoading: 'Error loading',
     viewAll: 'View All',
-    noSchoolSelected: 'No School Selected',
-    selectSchoolToView:
-      'Please select a school from the header to view content.',
-    selectSchoolToViewProducts:
-      'Please select a school from the header to view products.',
-    school: 'School',
-    oneSchool: '1 school',
-    multipleSchools: '{{count}} schools',
+    noStoreSelected: 'No Store Selected',
+    selectStoreToView: 'Please select a store from the header to view content.',
+    selectStoreToViewProducts:
+      'Please select a store from the header to view products.',
+    store: 'Store',
+    oneStore: '1 store',
+    multipleStores: '{{count}} stores',
     moreFilters: 'More Filters',
     tryAdjustingFilters: 'Try adjusting your search or filters',
     email: 'Email',
@@ -114,17 +113,17 @@ export const en = {
     'payment-methods': 'Payment Methods',
     invoices: 'Invoices',
     'profile-settings': 'Profile Settings',
-    'school-settings': 'School Settings',
+    'store-settings': 'Store Settings',
     'theme-settings': 'Theme Settings',
     'ui-template-settings': 'UI Template Settings',
     'security-settings': 'Security Settings',
     'progress-tracking': 'Progress Tracking',
-    'school-financial': 'School Financial',
-    'school-financial-overview': 'Overview',
-    'school-revenue': 'Revenue & Benefits',
-    'school-costs': 'Costs',
-    'school-payments': 'Payments',
-    'school-reports': 'Reports',
+    'store-financial': 'Store Financial',
+    'store-financial-overview': 'Overview',
+    'store-revenue': 'Revenue & Benefits',
+    'store-costs': 'Costs',
+    'store-payments': 'Payments',
+    'store-reports': 'Reports',
     'platform-financial': 'Platform Financial'
   },
   auth: {
@@ -150,12 +149,12 @@ export const en = {
     panelForStaff: 'This panel is for',
     teachersManagersAdmins: 'Teachers, Managers, and Administrators',
     staffOnly: 'only.',
-    studentsLoginThroughSchool:
-      "Students should login through their school's website.",
+    studentsLoginThroughStore:
+      "Students should login through their store's website.",
     dontHaveAccount: "Don't have an admin account?",
-    registerSchool: 'Register your School',
+    registerStore: 'Register your Store',
     areYouStudent: 'Are you a student?',
-    findSchool: 'Find your school',
+    findStore: 'Find your store',
     phone: 'Phone',
     emailAddress: 'Email address',
     phoneNumber: 'Phone number',
@@ -164,13 +163,13 @@ export const en = {
     phoneRequired: 'Phone number is required',
     emailRequired: 'Email is required',
     passwordTooShort: 'Password must be at least 6 characters',
-    selectSchool: 'Please select a school',
+    selectStore: 'Please select a store',
     backToLogin: 'Back to Login',
     verifyYourContact: 'Verify Your Contact',
-    createSchoolAccount: 'Create School Account',
+    createStoreAccount: 'Create Store Account',
     verifyContactDescription:
       'Verify phone (and email if provided) first. Then fill base data.',
-    registerDescription: 'Register as a school manager or join as a student',
+    registerDescription: 'Register as a store manager or join as a student',
     fullNameRequired: 'Full name is required',
     phoneNumberRequired: 'Phone number is required',
     validPhoneNumber: 'Please enter a valid phone number (7-15 digits)',
@@ -179,11 +178,11 @@ export const en = {
     passwordRequired: 'Password is required',
     confirmPasswordRequired: 'Please confirm your password',
     passwordsDoNotMatch: 'Passwords do not match',
-    schoolNameRequired: 'School name is required',
-    schoolSlugRequired: 'School slug is required',
-    schoolSlugInvalid:
-      'School slug can only contain lowercase letters, numbers, and hyphens',
-    selectSchoolRequired: 'Please select a school',
+    storeNameRequired: 'Store name is required',
+    storeSlugRequired: 'Store slug is required',
+    storeSlugInvalid:
+      'Store slug can only contain lowercase letters, numbers, and hyphens',
+    selectStoreRequired: 'Please select a store',
     teacherRequestReasonRequired: 'Please explain why you want to be a teacher',
     registering: 'Registering User...',
     continueToBaseData: 'Continue to Base Data',
@@ -208,22 +207,22 @@ export const en = {
       'You can verify your email address later in account settings',
     stepVerification: 'Verification',
     stepBaseData: 'Base Data',
-    createNewSchool: 'Create New School',
-    createNewSchoolDescription:
+    createNewStore: 'Create New Store',
+    createNewStoreDescription:
       'Start your own educational institution as a manager',
-    joinExistingSchool: 'Join Existing School',
-    joinExistingSchoolDescription:
+    joinExistingStore: 'Join Existing Store',
+    joinExistingStoreDescription:
       'Join as a student and optionally request teacher role',
     fullName: 'Full Name',
     enterFullName: 'Enter your full name',
     createPassword: 'Create a password',
     confirmPasswordPlaceholder: 'Confirm your password',
-    selectSchool: 'Select School',
-    chooseSchoolToJoin: 'Choose a school to join',
+    selectStore: 'Select Store',
+    chooseStoreToJoin: 'Choose a store to join',
     requestTeacherRole: 'Request Teacher Role',
     whyWantToBeTeacher: 'Why do you want to be a teacher?',
     teacherRequestReasonPlaceholder:
-      'Please explain your teaching experience, qualifications, and why you want to teach at this school...'
+      'Please explain your teaching experience, qualifications, and why you want to teach at this store...'
   },
   dashboard: {
     title: 'Dashboard',
@@ -235,7 +234,7 @@ export const en = {
     recentActivity: 'Recent Activity',
     loadingDashboardData: 'Loading dashboard data...',
     createCourse: 'Create Course',
-    addNewCourse: 'Add a new course to your school',
+    addNewCourse: 'Add a new course to your store',
     addLesson: 'Add Lesson',
     createNewLesson: 'Create a new lesson for your courses',
     uploadMedia: 'Upload Media',
@@ -261,8 +260,8 @@ export const en = {
     totalStudents: 'Total Students',
     totalRevenue: 'Total Revenue',
     activeEnrollments: 'Active Enrollments',
-    coursesAcrossSchools: 'Courses across your schools',
-    studentsEnrolledAcrossSchools: 'Students enrolled across schools',
+    coursesAcrossStores: 'Courses across your stores',
+    studentsEnrolledAcrossStores: 'Students enrolled across stores',
     completedPaymentsToDate: 'Completed payments to date',
     studentsCurrentlyProgressing: 'Students currently progressing',
     live: 'Live',
@@ -317,36 +316,36 @@ export const en = {
     topCourses: 'Top Courses',
     bestSellingCourses: 'Best selling courses by students'
   },
-  schools: {
-    title: 'Schools',
-    createSchool: 'Create School',
-    editSchool: 'Edit School',
-    schoolName: 'School Name',
-    schoolSlug: 'School Slug',
+  stores: {
+    title: 'Stores',
+    createStore: 'Create Store',
+    editStore: 'Edit Store',
+    storeName: 'Store Name',
+    storeSlug: 'Store Slug',
     country: 'Country',
     language: 'Language',
     status: 'Status',
     active: 'Active',
     inactive: 'Inactive',
-    selectSchool: 'Select School',
-    noSchools: 'No schools found',
-    createFirstSchool: 'Create your first school',
-    enterSchoolName: 'Enter school name',
+    selectStore: 'Select Store',
+    noStores: 'No stores found',
+    createFirstStore: 'Create your first store',
+    enterStoreName: 'Enter store name',
     domainName: 'Domain Name',
     mustBeUnique: 'Must be unique',
     enterDomainName:
       'Enter domain name (auto-formatted to lowercase, kebab-case)',
-    schoolUrlWillBe: "This will be your school's URL:",
-    uniqueDomainRequired: 'Each school must have a unique domain name',
+    storeUrlWillBe: "This will be your store's URL:",
+    uniqueDomainRequired: 'Each store must have a unique domain name',
     publicDomain: 'Public Domain',
-    enterPublicDomain: 'Enter public domain (e.g., www.myschool.com)',
-    optionalCustomDomain: 'Optional custom domain for your school',
-    describeSchool: 'Describe your school',
-    schoolDescription: 'School Description',
-    schoolDescriptionPlaceholder: 'Brief description of your school...',
-    schoolUrlSlug: 'School URL Slug',
-    schoolSlugPlaceholder: 'your-school-name',
-    toggleStatusDescription: 'Toggle to activate or deactivate this school',
+    enterPublicDomain: 'Enter public domain (e.g., www.mystore.com)',
+    optionalCustomDomain: 'Optional custom domain for your store',
+    describeStore: 'Describe your store',
+    storeDescription: 'Store Description',
+    storeDescriptionPlaceholder: 'Brief description of your store...',
+    storeUrlSlug: 'Store URL Slug',
+    storeSlugPlaceholder: 'your-store-name',
+    toggleStatusDescription: 'Toggle to activate or deactivate this store',
     toggleActiveStatus: 'Toggle active status'
   },
   courses: {
@@ -506,14 +505,14 @@ export const en = {
     totalUsersCard: 'Total Users',
     allRegisteredUsers: 'All registered users',
     managers: 'Managers',
-    schoolAdministrators: 'School administrators',
+    storeAdministrators: 'Store administrators',
     teachers: 'Teachers',
     courseInstructors: 'Course instructors',
     courseLearners: 'Course learners',
     users: 'Users',
     loadingUsersData: 'Loading users data...',
     allManagers: 'All Managers',
-    schoolManagersAndAdmins: 'School managers and administrators',
+    storeManagersAndAdmins: 'Store managers and administrators',
     noManagersFound: 'No managers found in the system',
     allTeachers: 'All Teachers',
     courseInstructorsAndEducators: 'Course instructors and educators',
@@ -538,7 +537,7 @@ export const en = {
     theme: 'Theme',
     notifications: 'Notifications',
     account: 'Account',
-    school: 'School',
+    store: 'Store',
     security: 'Security',
     profile: 'Profile'
   },
@@ -663,18 +662,18 @@ export const en = {
   unauthorized: {
     title: 'Unauthorized Access',
     description:
-      "This admin panel is restricted to teachers, managers, and administrators only. Students should access their learning dashboard through their school's website.",
+      "This admin panel is restricted to teachers, managers, and administrators only. Students should access their learning dashboard through their store's website.",
     note: 'Note:',
     contactAdmin:
-      'If you believe you should have access to this panel, please contact your school administrator.',
+      'If you believe you should have access to this panel, please contact your store administrator.',
     whatYouCanDo: 'What you can do:',
-    accessStudentDashboard: "Access your school's student dashboard",
-    contactSchoolAdmin: 'Contact your school administrator',
+    accessStudentDashboard: "Access your store's student dashboard",
+    contactStoreAdmin: 'Contact your store administrator',
     joinAsTeacher:
-      "Join a school and request teacher role if you're an educator",
+      "Join a store and request teacher role if you're an educator",
     needHelp: 'Need help?',
     contactSupport:
-      'If you believe you should have access to this panel, please contact your school administrator or our support team.'
+      'If you believe you should have access to this panel, please contact your store administrator or our support team.'
   },
   notFound: {
     title: 'Page Not Found',
@@ -701,14 +700,14 @@ export const en = {
     uploadAudioDescription: 'Upload audio files for lessons and courses',
     uploadDocumentDescription: 'Upload documents and study materials',
     uploadVideoDescription: 'Upload video content for lessons',
-    selectSchoolFirst: 'Select School First',
+    selectStoreFirst: 'Select Store First',
     createContent: 'Create Content',
     createNewContent: 'Create New Content'
   },
   forgotPassword: {
     title: 'Reset Password',
     enterIdentifier:
-      'Enter your email or phone number and select school (if applicable) to receive OTP',
+      'Enter your email or phone number and select store (if applicable) to receive OTP',
     enterOtp: 'Enter the OTP sent to your device',
     enterNewPassword: 'Enter your new password',
     passwordResetSuccess: 'Password reset successfully',
@@ -726,8 +725,8 @@ export const en = {
     resetPassword: 'Reset Password',
     backToLogin: 'Back to Login',
     tryAgain: 'Try Again',
-    selectSchoolDescription:
-      "Select your school if you're a student, or leave blank for manager/teacher",
+    selectStoreDescription:
+      "Select your store if you're a student, or leave blank for manager/teacher",
     checkDeviceForCode: 'Check your device for the verification code',
     createNewPassword: 'Create a new secure password',
     canLoginNow: 'You can now login with your new password',
@@ -744,7 +743,7 @@ export const en = {
   settings: {
     title: 'Settings',
     description:
-      'Manage your profile, school configuration, branding, and security preferences.',
+      'Manage your profile, store configuration, branding, and security preferences.',
     refreshData: 'Refresh Data',
     accountSummary: 'Account Summary',
     accountSummaryDescription: 'Key information for your admin account.',
@@ -752,8 +751,8 @@ export const en = {
     email: 'Email',
     phone: 'Phone',
     joined: 'Joined',
-    schoolSnapshot: 'School Snapshot',
-    schoolSnapshotDescription: 'Your primary school on SkillForge.',
+    storeSnapshot: 'Store Snapshot',
+    storeSnapshotDescription: 'Your primary store on SkillForge.',
     name: 'Name',
     domain: 'Domain',
     students: 'Students',
@@ -761,15 +760,15 @@ export const en = {
     profileSettings: 'Profile Settings',
     profileSettingsDescription:
       'Update your personal details, avatar, and contact information.',
-    schoolSettings: 'School Settings',
-    schoolSettingsDescription:
-      'Manage your school name, description, and domain configuration.',
+    storeSettings: 'Store Settings',
+    storeSettingsDescription:
+      'Manage your store name, description, and domain configuration.',
     themeBranding: 'Theme & Branding',
     themeBrandingDescription:
       'Customize colours, logos, and visual appearance for students.',
     uiTemplateBuilder: 'UI Template Builder',
     uiTemplateBuilderDescription:
-      'Customize the layout, visibility, and configuration of UI blocks on your school website.',
+      'Customize the layout, visibility, and configuration of UI blocks on your store website.',
     security: 'Security',
     securityDescription:
       'Change passwords, enable two-factor authentication, and manage notifications.',
@@ -792,19 +791,19 @@ export const en = {
     saving: 'Saving…',
     saveChanges: 'Save changes',
     profileUpdatedSuccess: 'Profile updated successfully',
-    schoolSettingsTitle: 'School Settings',
-    schoolSettingsSubtitle:
-      'Manage how your school appears across the SkillForge ecosystem.',
+    storeSettingsTitle: 'Store Settings',
+    storeSettingsSubtitle:
+      'Manage how your store appears across the SkillForge ecosystem.',
     generalInformation: 'General Information',
     generalInformationDescription:
-      'Update the name, description, and domain for your school.',
-    schoolName: 'School name',
-    schoolNamePlaceholder: 'SkillForge Academy',
+      'Update the name, description, and domain for your store.',
+    storeName: 'Store name',
+    storeNamePlaceholder: 'SkillForge Academy',
     customDomain: 'Custom domain',
     customDomainPlaceholder: 'academy',
     description: 'Description',
-    descriptionPlaceholder: 'Describe your school for prospective students',
-    schoolSettingsUpdatedSuccess: 'School settings updated successfully',
+    descriptionPlaceholder: 'Describe your store for prospective students',
+    storeSettingsUpdatedSuccess: 'Store settings updated successfully',
     currentOverview: 'Current overview',
     teachers: 'Teachers',
     managers: 'Managers',
@@ -881,7 +880,7 @@ export const en = {
     system: 'System',
     livePreview: 'Live preview',
     previewBadge: 'Preview badge',
-    welcomeToYourSchool: 'Welcome to your school',
+    welcomeToYourStore: 'Welcome to your store',
     previewDescription:
       'Primary buttons, highlights, and accents will use your selected palette. Toggle dark mode to preview the student experience.',
     primaryAction: 'Primary action',
@@ -893,7 +892,7 @@ export const en = {
     logoUrlHint:
       'Provide a publicly accessible image URL. SVG is recommended for crisp results.',
     preview: 'Preview',
-    schoolLogoPreview: 'School logo preview',
+    storeLogoPreview: 'Store logo preview',
     noLogoProvided: 'No logo provided yet. Paste a URL to preview.',
     savingTheme: 'Saving…',
     saveTheme: 'Save theme',
@@ -901,7 +900,7 @@ export const en = {
     // Advanced customization & motion
     advancedCustomization: 'Advanced Customization',
     advancedCustomizationDescription:
-      'Customize animations, patterns, and visual effects for your school website',
+      'Customize animations, patterns, and visual effects for your store website',
     backgroundAnimation: 'Background Animation',
     backgroundAnimationHelp:
       'Choose an animated background effect for your website',
@@ -934,12 +933,12 @@ export const en = {
     shadowStrong: 'Strong',
     uiTemplateBuilderTitle: 'UI Template Builder',
     uiTemplateBuilderSubtitle:
-      'Customize the layout, visibility, and configuration of UI blocks on your school website.',
+      'Customize the layout, visibility, and configuration of UI blocks on your store website.',
     basedOn: 'Based on',
     chooseTemplate: 'Choose Template',
     chooseTemplateLayout: 'Choose Template Layout',
     chooseTemplateLayoutDescription:
-      'Select a pre-designed template layout to quickly set up your school homepage. You can customize it later.',
+      'Select a pre-designed template layout to quickly set up your store homepage. You can customize it later.',
     pageBlocks: 'Page Blocks',
     pageBlocksDescription:
       'Drag and drop to reorder blocks. Toggle visibility and configure each block to customize your homepage.',
@@ -970,8 +969,8 @@ export const en = {
   },
   media: {
     // Common
-    noSchoolSelected: 'No School Selected',
-    selectSchoolToView: 'Please select a school from the header to view',
+    noStoreSelected: 'No Store Selected',
+    selectStoreToView: 'Please select a store from the header to view',
     loading: 'Loading...',
     searchPlaceholder: 'Search...',
     noResults: 'No results found',
@@ -1048,8 +1047,7 @@ export const en = {
     editAudio: 'Edit Audio',
     updateMetadata: 'Update the metadata for this audio file.',
     publiclyAccessible: 'Publicly accessible',
-    allowMembersAccess:
-      'Allow members of the school to access this audio file.',
+    allowMembersAccess: 'Allow members of the store to access this audio file.',
     untitledAudio: 'Untitled audio',
     fileSize: 'File size',
     duration: 'Duration',
@@ -1082,15 +1080,15 @@ export const en = {
     courseContentVideos: 'Course content videos',
     combinedVideoLength: 'Combined video length'
   },
-  schools: {
-    schoolsManagement: 'Schools Management',
-    manageSchoolsDescription: 'Manage your schools and their settings',
-    createSchool: 'Create School',
-    searchSchools: 'Search schools...',
-    noSchoolsFound: 'No schools found',
-    schoolCreated: 'School created successfully',
-    schoolUpdated: 'School updated successfully',
-    schoolDeleted: 'School deleted successfully'
+  stores: {
+    storesManagement: 'Stores Management',
+    manageStoresDescription: 'Manage your stores and their settings',
+    createStore: 'Create Store',
+    searchStores: 'Search stores...',
+    noStoresFound: 'No stores found',
+    storeCreated: 'Store created successfully',
+    storeUpdated: 'Store updated successfully',
+    storeDeleted: 'Store deleted successfully'
   },
   users: {
     allUsers: 'All Users',
@@ -1100,7 +1098,7 @@ export const en = {
     totalUsers: 'Total Users',
     allRegisteredUsers: 'All registered users',
     managers: 'Managers',
-    schoolAdministrators: 'School administrators',
+    storeAdministrators: 'Store administrators',
     teachers: 'Teachers',
     courseInstructors: 'Course instructors',
     students: 'Students',
@@ -1304,14 +1302,14 @@ export const en = {
     loadingVouchers: 'Loading vouchers...'
   },
   financial: {
-    school: {
-      title: 'School Financial Management',
+    store: {
+      title: 'Store Financial Management',
       description: 'Revenue, Costs, and Benefits Overview',
       overview: {
-        title: 'School Financial Management',
+        title: 'Store Financial Management',
         description: 'Revenue, Costs, and Benefits Overview',
         loading: 'Loading financial data...',
-        noSchool: 'No school selected',
+        noStore: 'No store selected',
         filters: 'Filters',
         year: 'Year',
         month: 'Month (Optional)',
@@ -1339,7 +1337,7 @@ export const en = {
         title: 'Revenue & Benefits',
         description: 'Revenue from student payments and course enrollments',
         loading: 'Loading revenue data...',
-        noSchool: 'No school selected',
+        noStore: 'No store selected',
         filters: 'Filters',
         year: 'Year',
         month: 'Month (Optional)',
@@ -1365,10 +1363,10 @@ export const en = {
         noPayments: 'No payments found'
       },
       costs: {
-        title: 'School Costs',
+        title: 'Store Costs',
         description: 'Cost records and financial expenses',
         loading: 'Loading costs data...',
-        noSchool: 'No school selected',
+        noStore: 'No store selected',
         filters: 'Filters',
         year: 'Year',
         month: 'Month (Optional)',
@@ -1397,7 +1395,7 @@ export const en = {
         title: 'Student Payments',
         description: 'Payment transactions and history',
         loading: 'Loading payments data...',
-        noSchool: 'No school selected',
+        noStore: 'No store selected',
         filters: 'Filters',
         year: 'Year',
         month: 'Month (Optional)',
@@ -1429,7 +1427,7 @@ export const en = {
         title: 'Financial Reports',
         description: 'Comprehensive financial analysis and reports',
         loading: 'Loading reports...',
-        noSchool: 'No school selected',
+        noStore: 'No store selected',
         filters: 'Filters',
         year: 'Year',
         month: 'Month (Optional)',

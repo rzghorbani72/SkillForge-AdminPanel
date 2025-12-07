@@ -267,7 +267,7 @@ const useDashboard = () => {
         icon: require('lucide-react').BookOpen,
         change: t('dashboard.live'),
         changeType: 'increase',
-        description: t('dashboard.coursesAcrossSchools')
+        description: t('dashboard.coursesAcrossStores')
       },
       {
         title: t('dashboard.totalStudents'),
@@ -275,7 +275,7 @@ const useDashboard = () => {
         icon: require('lucide-react').Users,
         change: t('dashboard.live'),
         changeType: 'increase',
-        description: t('dashboard.studentsEnrolledAcrossSchools')
+        description: t('dashboard.studentsEnrolledAcrossStores')
       },
       {
         title: t('dashboard.totalRevenue'),

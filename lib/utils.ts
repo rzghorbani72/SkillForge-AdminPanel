@@ -114,9 +114,9 @@ export function formatCurrency(
 }
 
 /**
- * Format currency using school's currency configuration
+ * Format currency using store's currency configuration
  * @param amount - Amount in smallest currency unit (e.g., cents, tomans)
- * @param school - School object with currency configuration
+ * @param store - Store object with currency configuration
  * @param divideBy - Divisor to convert from smallest unit (default: 100 for cents, 1 for tomans)
  * @returns Formatted currency string
  */
