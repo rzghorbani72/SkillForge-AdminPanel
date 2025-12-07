@@ -29,6 +29,7 @@ import { apiClient } from '@/lib/api';
 import { formatCurrencyWithSchool } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Table,
   TableBody,
@@ -40,6 +41,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function SchoolRevenuePage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
@@ -127,7 +129,9 @@ export default function SchoolRevenuePage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading revenue data...</p>
+          <p className="mt-4 text-muted-foreground">
+            {t('financial.school.revenue.loading')}
+          </p>
         </div>
       </div>
     );
@@ -136,7 +140,9 @@ export default function SchoolRevenuePage() {
   if (!school) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">No school selected</p>
+        <p className="text-muted-foreground">
+          {t('financial.school.revenue.noSchool')}
+        </p>
       </div>
     );
   }
@@ -145,9 +151,11 @@ export default function SchoolRevenuePage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Revenue & Benefits</h1>
+          <h1 className="text-3xl font-bold">
+            {t('financial.school.revenue.title')}
+          </h1>
           <p className="mt-1 text-muted-foreground">
-            {school.name} - Revenue from student payments and course enrollments
+            {school.name} - {t('financial.school.revenue.description')}
           </p>
         </div>
       </div>
@@ -155,12 +163,14 @@ export default function SchoolRevenuePage() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>{t('financial.school.revenue.filters')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">Year</label>
+              <label className="mb-2 block text-sm font-medium">
+                {t('financial.school.revenue.year')}
+              </label>
               <Select
                 value={selectedYear.toString()}
                 onValueChange={(value) => setSelectedYear(parseInt(value))}
@@ -179,7 +189,7 @@ export default function SchoolRevenuePage() {
             </div>
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium">
-                Month (Optional)
+                {t('financial.school.revenue.month')}
               </label>
               <Select
                 value={selectedMonth?.toString() || 'all'}
@@ -191,7 +201,9 @@ export default function SchoolRevenuePage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Months</SelectItem>
+                  <SelectItem value="all">
+                    {t('financial.school.revenue.allMonths')}
+                  </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
                       {new Date(2000, month - 1).toLocaleString('en-US', {
@@ -212,7 +224,7 @@ export default function SchoolRevenuePage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Revenue
+                {t('financial.school.revenue.totalRevenue')}
               </CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -224,7 +236,9 @@ export default function SchoolRevenuePage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                From {revenueData.payment_count} payments
+                {t('financial.school.revenue.fromPayments', {
+                  count: revenueData.payment_count
+                })}
               </p>
             </CardContent>
           </Card>
@@ -232,7 +246,7 @@ export default function SchoolRevenuePage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Payments
+                {t('financial.school.revenue.totalPayments')}
               </CardTitle>
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -241,7 +255,7 @@ export default function SchoolRevenuePage() {
                 {revenueData.payment_count}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Successful transactions
+                {t('financial.school.revenue.successfulTransactions')}
               </p>
             </CardContent>
           </Card>
@@ -249,7 +263,7 @@ export default function SchoolRevenuePage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Average Payment
+                {t('financial.school.revenue.averagePayment')}
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -263,14 +277,16 @@ export default function SchoolRevenuePage() {
                   : formatCurrency(0, revenueData.currency)}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Per transaction
+                {t('financial.school.revenue.perTransaction')}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Courses</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                {t('financial.school.revenue.courses')}
+              </CardTitle>
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -278,7 +294,7 @@ export default function SchoolRevenuePage() {
                 {paymentsByCourse.length}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Courses with payments
+                {t('financial.school.revenue.coursesWithPayments')}
               </p>
             </CardContent>
           </Card>
@@ -288,8 +304,12 @@ export default function SchoolRevenuePage() {
       {/* Detailed View */}
       <Tabs defaultValue="payments" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="payments">All Payments</TabsTrigger>
-          <TabsTrigger value="courses">By Course</TabsTrigger>
+          <TabsTrigger value="payments">
+            {t('financial.school.revenue.allPayments')}
+          </TabsTrigger>
+          <TabsTrigger value="courses">
+            {t('financial.school.revenue.revenueByCourse')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="payments" className="space-y-4">
@@ -297,9 +317,11 @@ export default function SchoolRevenuePage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Student Payments</CardTitle>
+                  <CardTitle>
+                    {t('financial.school.revenue.allPayments')}
+                  </CardTitle>
                   <CardDescription>
-                    All payments received from students for courses
+                    {t('financial.school.revenue.paymentsDescription')}
                   </CardDescription>
                 </div>
               </div>
@@ -308,10 +330,16 @@ export default function SchoolRevenuePage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Student</TableHead>
-                    <TableHead>Course</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>{t('financial.school.revenue.date')}</TableHead>
+                    <TableHead>
+                      {t('financial.school.revenue.student')}
+                    </TableHead>
+                    <TableHead>
+                      {t('financial.school.revenue.course')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.school.revenue.amount')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -321,7 +349,7 @@ export default function SchoolRevenuePage() {
                         colSpan={4}
                         className="text-center text-muted-foreground"
                       >
-                        No payments found
+                        {t('financial.school.revenue.noPayments')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -358,18 +386,26 @@ export default function SchoolRevenuePage() {
         <TabsContent value="courses" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Revenue by Course</CardTitle>
+              <CardTitle>
+                {t('financial.school.revenue.revenueByCourse')}
+              </CardTitle>
               <CardDescription>
-                Total revenue breakdown by course
+                {t('financial.school.revenue.revenueByCourseDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Course</TableHead>
-                    <TableHead className="text-right">Payments</TableHead>
-                    <TableHead className="text-right">Total Revenue</TableHead>
+                    <TableHead>
+                      {t('financial.school.revenue.course')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.school.revenue.payments')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.school.revenue.totalRevenue')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -379,7 +415,7 @@ export default function SchoolRevenuePage() {
                         colSpan={3}
                         className="text-center text-muted-foreground"
                       >
-                        No course revenue data found
+                        {t('financial.school.revenue.noCourseRevenue')}
                       </TableCell>
                     </TableRow>
                   ) : (

@@ -2350,6 +2350,94 @@ class ApiClient {
     );
     return response.data as any;
   }
+
+  // ============================================================================
+  // DATABASE DASHBOARD API METHODS
+  // ============================================================================
+
+  async getDatabaseModels() {
+    const response = await this.request<any>('/database/models', {
+      method: 'GET'
+    });
+    return response.data as string[];
+  }
+
+  async getModelFields(modelName: string) {
+    const response = await this.request<any>(
+      `/database/models/${modelName}/fields`,
+      {
+        method: 'GET'
+      }
+    );
+    return response.data as { fields: any[]; sample: any };
+  }
+
+  async getModelRecords(
+    modelName: string,
+    params?: {
+      page?: number;
+      limit?: number;
+      where?: string;
+      orderBy?: string;
+    }
+  ) {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.where) queryParams.append('where', params.where);
+    if (params?.orderBy) queryParams.append('orderBy', params.orderBy);
+
+    const url = `/database/models/${modelName}/records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as {
+      data: any[];
+      total: number;
+      page: number;
+      limit: number;
+    };
+  }
+
+  async getModelRecord(modelName: string, id: number) {
+    const response = await this.request<any>(
+      `/database/models/${modelName}/records/${id}`,
+      {
+        method: 'GET'
+      }
+    );
+    return response.data as any;
+  }
+
+  async createModelRecord(modelName: string, data: any) {
+    const response = await this.request<any>(
+      `/database/models/${modelName}/records`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
+    return response.data as any;
+  }
+
+  async updateModelRecord(modelName: string, id: number, data: any) {
+    const response = await this.request<any>(
+      `/database/models/${modelName}/records/${id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      }
+    );
+    return response.data as any;
+  }
+
+  async deleteModelRecord(modelName: string, id: number) {
+    const response = await this.request<any>(
+      `/database/models/${modelName}/records/${id}`,
+      {
+        method: 'DELETE'
+      }
+    );
+    return response.data as any;
+  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

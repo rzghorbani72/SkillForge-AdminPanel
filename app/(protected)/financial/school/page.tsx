@@ -30,6 +30,7 @@ import { apiClient } from '@/lib/api';
 import { formatCurrencyWithSchool } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Table,
   TableBody,
@@ -41,6 +42,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function SchoolFinancialPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
@@ -109,7 +111,7 @@ export default function SchoolFinancialPage() {
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
           <p className="mt-4 text-muted-foreground">
-            Loading financial data...
+            {t('financial.school.overview.loading')}
           </p>
         </div>
       </div>
@@ -119,7 +121,9 @@ export default function SchoolFinancialPage() {
   if (!school) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">No school selected</p>
+        <p className="text-muted-foreground">
+          {t('financial.school.overview.noSchool')}
+        </p>
       </div>
     );
   }
@@ -128,9 +132,11 @@ export default function SchoolFinancialPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">School Financial Management</h1>
+          <h1 className="text-3xl font-bold">
+            {t('financial.school.overview.title')}
+          </h1>
           <p className="mt-1 text-muted-foreground">
-            {school.name} - Revenue, Costs, and Benefits Overview
+            {school.name} - {t('financial.school.overview.description')}
           </p>
         </div>
       </div>
@@ -138,12 +144,14 @@ export default function SchoolFinancialPage() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>{t('financial.school.overview.filters')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">Year</label>
+              <label className="mb-2 block text-sm font-medium">
+                {t('financial.school.overview.year')}
+              </label>
               <Select
                 value={selectedYear.toString()}
                 onValueChange={(value) => setSelectedYear(parseInt(value))}
@@ -162,7 +170,7 @@ export default function SchoolFinancialPage() {
             </div>
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium">
-                Month (Optional)
+                {t('financial.school.overview.month')}
               </label>
               <Select
                 value={selectedMonth?.toString() || 'all'}
@@ -174,7 +182,9 @@ export default function SchoolFinancialPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Months</SelectItem>
+                  <SelectItem value="all">
+                    {t('financial.school.overview.allMonths')}
+                  </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
                       {new Date(2000, month - 1).toLocaleString('en-US', {
@@ -195,7 +205,7 @@ export default function SchoolFinancialPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Revenue
+                {t('financial.school.overview.totalRevenue')}
               </CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -207,22 +217,9 @@ export default function SchoolFinancialPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                From {overview.revenue.from_payments} payments
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
-              <TrendingDown className="h-4 w-4 text-red-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                {formatCurrency(overview.cost.total, overview.cost.currency)}
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Platform and operational costs
+                {t('financial.school.overview.fromPayments', {
+                  count: overview.revenue.from_payments
+                })}
               </p>
             </CardContent>
           </Card>
@@ -230,7 +227,24 @@ export default function SchoolFinancialPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Profit
+                {t('financial.school.overview.totalCost')}
+              </CardTitle>
+              <TrendingDown className="h-4 w-4 text-red-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">
+                {formatCurrency(overview.cost.total, overview.cost.currency)}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t('financial.school.overview.platformCosts')}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {t('financial.school.overview.totalProfit')}
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-green-500" />
             </CardHeader>
@@ -242,14 +256,18 @@ export default function SchoolFinancialPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Profit margin: {overview.profit.margin}%
+                {t('financial.school.overview.profitMargin', {
+                  margin: overview.profit.margin
+                })}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Enrollments</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                {t('financial.school.overview.enrollments')}
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -257,7 +275,9 @@ export default function SchoolFinancialPage() {
                 {overview.statistics.enrollments}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {overview.statistics.courses} courses
+                {t('financial.school.overview.courses', {
+                  count: overview.statistics.courses
+                })}
               </p>
             </CardContent>
           </Card>
@@ -267,8 +287,12 @@ export default function SchoolFinancialPage() {
       {/* Detailed View */}
       <Tabs defaultValue="payments" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="payments">Student Payments</TabsTrigger>
-          <TabsTrigger value="courses">Course Revenue</TabsTrigger>
+          <TabsTrigger value="payments">
+            {t('financial.school.overview.studentPayments')}
+          </TabsTrigger>
+          <TabsTrigger value="courses">
+            {t('financial.school.overview.courseRevenue')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="payments" className="space-y-4">
@@ -276,9 +300,11 @@ export default function SchoolFinancialPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Student Payments</CardTitle>
+                  <CardTitle>
+                    {t('financial.school.overview.studentPayments')}
+                  </CardTitle>
                   <CardDescription>
-                    Payments received from students for courses
+                    {t('financial.school.overview.paymentsDescription')}
                   </CardDescription>
                 </div>
               </div>
@@ -287,10 +313,16 @@ export default function SchoolFinancialPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Student</TableHead>
-                    <TableHead>Course</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>{t('financial.school.overview.date')}</TableHead>
+                    <TableHead>
+                      {t('financial.school.overview.student')}
+                    </TableHead>
+                    <TableHead>
+                      {t('financial.school.overview.course')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.school.overview.amount')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -300,7 +332,7 @@ export default function SchoolFinancialPage() {
                         colSpan={4}
                         className="text-center text-muted-foreground"
                       >
-                        No payments found
+                        {t('financial.school.overview.noPayments')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -337,12 +369,16 @@ export default function SchoolFinancialPage() {
         <TabsContent value="courses" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Course Revenue Breakdown</CardTitle>
-              <CardDescription>Revenue by course</CardDescription>
+              <CardTitle>
+                {t('financial.school.overview.courseRevenue')}
+              </CardTitle>
+              <CardDescription>
+                {t('financial.school.overview.courseRevenueDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="py-8 text-center text-muted-foreground">
-                Course revenue breakdown coming soon
+                {t('financial.school.overview.comingSoon')}
               </div>
             </CardContent>
           </Card>
