@@ -137,7 +137,7 @@ export function UserCard({ user, onEdit, onView }: UserCardProps) {
                     key={profile.id}
                     className="rounded bg-muted px-2 py-0.5 text-xs"
                   >
-                    {profile.school.name}
+                    {profile.store.name}
                   </span>
                 ))}
               </div>

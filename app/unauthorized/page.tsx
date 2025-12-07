@@ -68,7 +68,7 @@ export default function UnauthorizedPage() {
             </div>
 
             <div className="flex flex-col space-y-3">
-              <Link href="/find-school">
+              <Link href="/find-store">
                 <Button className="w-full" variant="outline">
                   <School className="mr-2 h-4 w-4" />
                   {t('auth.findSchool')}

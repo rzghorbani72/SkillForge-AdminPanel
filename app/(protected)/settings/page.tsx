@@ -24,7 +24,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function SettingsOverviewPage() {
   const { t } = useTranslation();
-  const { user, school, isLoading, refresh } = useSettingsData();
+  const { user, store, isLoading, refresh } = useSettingsData();
 
   const SECTIONS = [
     {
@@ -36,7 +36,7 @@ export default function SettingsOverviewPage() {
     {
       title: t('settings.schoolSettings'),
       description: t('settings.schoolSettingsDescription'),
-      href: '/settings/school',
+      href: '/settings/store',
       icon: Building
     },
     {
@@ -138,26 +138,26 @@ export default function SettingsOverviewPage() {
             <div className="flex justify-between">
               <span>{t('settings.name')}</span>
               <span className="font-medium text-foreground">
-                {school?.name ?? '—'}
+                {store?.name ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
               <span>{t('settings.domain')}</span>
               <span className="font-medium text-foreground">
-                {school?.private_address ?? '—'}
+                {store?.private_address ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
               <span>{t('settings.students')}</span>
               <span className="font-medium text-foreground">
-                {school?.students_count ?? '—'}
+                {store?.students_count ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
               <span>{t('settings.created')}</span>
               <span className="font-medium text-foreground">
-                {school?.created_at
-                  ? format(new Date(school.created_at), 'dd MMM yyyy')
+                {store?.created_at
+                  ? format(new Date(store.created_at), 'dd MMM yyyy')
                   : '—'}
               </span>
             </div>

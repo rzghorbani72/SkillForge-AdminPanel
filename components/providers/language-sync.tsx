@@ -16,7 +16,7 @@ export function LanguageSync() {
       return; // Don't override user preference
     }
 
-    // Try to get country code from current school
+    // Try to get country code from current store
     const currentUser = authService.getCurrentUser();
     const countryCode = currentUser?.currentSchool?.country_code;
 

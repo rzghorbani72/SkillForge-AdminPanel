@@ -25,7 +25,7 @@ export default async function RootLayout({
   const languagePreference =
     cookieStore.get('preferred_language')?.value || null;
 
-  // Try to get country code from school data if available
+  // Try to get country code from store data if available
   // For now, we'll use language preference or default to English
   const language = getAdminLanguage(languagePreference, null);
   const direction = getAdminDirection(languagePreference, null);

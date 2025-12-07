@@ -42,11 +42,11 @@ import {
 import { apiClient } from '@/lib/api';
 import {
   PlatformFinancialSummary,
-  SchoolFinancialRecord,
+  StoreFinancialRecord,
   PlatformFinancialRecord,
   CostCategory
 } from '@/types/api';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { useAccessControl } from '@/hooks/useAccessControl';
@@ -55,9 +55,7 @@ import { useRouter } from 'next/navigation';
 export default function PlatformFinancialPage() {
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<PlatformFinancialSummary | null>(null);
-  const [schoolRecords, setSchoolRecords] = useState<SchoolFinancialRecord[]>(
-    []
-  );
+  const [storeRecords, setStoreRecords] = useState<StoreFinancialRecord[]>([]);
   const [platformRecords, setPlatformRecords] = useState<
     PlatformFinancialRecord[]
   >([]);
@@ -92,7 +90,7 @@ export default function PlatformFinancialPage() {
       const [summaryData, schoolData, platformData, categoriesData] =
         await Promise.all([
           apiClient.getPlatformFinancialSummary(),
-          apiClient.getSchoolFinancialRecords({
+          apiClient.getStoreFinancialRecords({
             year: selectedYear,
             month: selectedMonth || undefined
           }),
@@ -104,7 +102,7 @@ export default function PlatformFinancialPage() {
         ]);
 
       setSummary(summaryData);
-      setSchoolRecords(schoolData);
+      setStoreRecords(schoolData);
       setPlatformRecords(platformData);
       setCostCategories(categoriesData);
     } catch (error: any) {
@@ -116,7 +114,7 @@ export default function PlatformFinancialPage() {
   };
 
   const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithSchool(amount, {
+    return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
       currency_position: 'after'
@@ -472,9 +470,9 @@ export default function PlatformFinancialPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>All Schools Financial Records</CardTitle>
+                  <CardTitle>All Stores Financial Records</CardTitle>
                   <CardDescription>
-                    Per-school costs and revenue records across all schools
+                    Per-store costs and revenue records across all stores
                   </CardDescription>
                 </div>
               </div>
@@ -483,7 +481,7 @@ export default function PlatformFinancialPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>School</TableHead>
+                    <TableHead>Store</TableHead>
                     <TableHead>Period</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead className="text-right">Revenue</TableHead>
@@ -500,17 +498,16 @@ export default function PlatformFinancialPage() {
                         colSpan={8}
                         className="text-center text-muted-foreground"
                       >
-                        No school financial records found
+                        No store financial records found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    schoolRecords.map((record) => {
+                    storeRecords.map((record) => {
                       const margin = profitMargin(record.revenue, record.cost);
                       return (
                         <TableRow key={record.id}>
                           <TableCell className="font-medium">
-                            {record.school?.name ||
-                              `School #${record.school_id}`}
+                            {record.store?.name || `Store #${record.store_id}`}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
@@ -560,7 +557,7 @@ export default function PlatformFinancialPage() {
                           <TableCell>
                             <div className="flex gap-2">
                               <Link
-                                href={`/financial/platform/schools/${record.school_id}`}
+                                href={`/financial/platform/stores/${record.store_id}`}
                               >
                                 <Button variant="ghost" size="sm">
                                   View

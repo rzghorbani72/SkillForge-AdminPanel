@@ -832,7 +832,7 @@ export default function AudiosPage() {
                 <div>
                   <p className="text-sm font-medium">Publicly accessible</p>
                   <p className="text-xs text-muted-foreground">
-                    Allow members of the school to access this audio file.
+                    Allow members of the store to access this audio file.
                   </p>
                 </div>
                 <Switch

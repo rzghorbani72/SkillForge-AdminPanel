@@ -1,4 +1,4 @@
-# School Domain Validation Enhancement Summary
+# Store Domain Validation Enhancement Summary
 
 ## Version: v1.2-20250901-182642
 
@@ -13,7 +13,7 @@
 - **Feature**: Real-time domain availability checking
 - **Implementation**:
   - Added domain availability state management
-  - Check if domain is already taken by other schools
+  - Check if domain is already taken by other stores
   - Visual feedback for domain availability status
   - Prevent duplicate domain names
 
@@ -21,7 +21,7 @@
 
 - **Feature**: Show current domain name in edit dialog placeholder
 - **Implementation**:
-  - Dynamic placeholder showing current school domain
+  - Dynamic placeholder showing current store domain
   - Clear indication of existing domain name
   - Better user experience for domain editing
 
@@ -90,11 +90,11 @@
 
 ### Domain Validation:
 
-- [ ] Create school with valid unique domain
-- [ ] Create school with duplicate domain (should show error)
-- [ ] Edit school keeping same domain (should work)
-- [ ] Edit school with new unique domain (should work)
-- [ ] Edit school with duplicate domain (should show error)
+- [ ] Create store with valid unique domain
+- [ ] Create store with duplicate domain (should show error)
+- [ ] Edit store keeping same domain (should work)
+- [ ] Edit store with new unique domain (should work)
+- [ ] Edit store with duplicate domain (should show error)
 - [ ] Verify real-time domain availability checking
 - [ ] Verify visual feedback for domain status
 

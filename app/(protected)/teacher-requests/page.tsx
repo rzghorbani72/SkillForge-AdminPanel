@@ -68,7 +68,7 @@ interface TeacherRequest {
       name: string;
     };
   };
-  school: {
+  store: {
     id: number;
     name: string;
     slug: string;
@@ -263,7 +263,7 @@ export default function TeacherRequestsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('users.students')}</TableHead>
-                  <TableHead>{t('common.school')}</TableHead>
+                  <TableHead>{t('common.store')}</TableHead>
                   <TableHead>{t('common.date')}</TableHead>
                   <TableHead>{t('common.status')}</TableHead>
                   <TableHead>{t('common.reviewedBy')}</TableHead>
@@ -289,7 +289,7 @@ export default function TeacherRequestsPage() {
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <Building className="h-4 w-4 text-muted-foreground" />
-                        <span>{request.school.name}</span>
+                        <span>{request.store.name}</span>
                       </div>
                     </TableCell>
                     <TableCell>{formatDate(request.created_at)}</TableCell>
@@ -412,10 +412,10 @@ export default function TeacherRequestsPage() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium">
-                    {t('common.school')}
+                    {t('common.store')}
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedRequest.school.name}
+                    {selectedRequest.store.name}
                   </p>
                 </div>
               </div>

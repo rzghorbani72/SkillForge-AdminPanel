@@ -65,7 +65,7 @@ const DEFAULT_BLOCKS: UIBlockConfig[] = [
     order: 2,
     isVisible: true,
     config: {
-      title: 'Welcome to Our School',
+      title: 'Welcome to Our Store',
       subtitle: 'Learn something new today',
       showCTA: true,
       ctaText: 'Browse Courses',

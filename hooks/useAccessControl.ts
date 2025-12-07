@@ -6,7 +6,7 @@ import { Profile } from '@/types/api';
 
 export interface UserState {
   user_id: number;
-  school_id: number;
+  store_id: number;
   role: string;
   is_admin: boolean;
   is_manager: boolean;
@@ -177,10 +177,10 @@ export function useAccessControl() {
                   []
               );
 
-        const currentProfileSchoolId =
-          (currentUser.currentProfile as any)?.school_id ??
-          (currentUser.currentProfile as any)?.schoolId ??
-          currentUser.currentSchool?.id ??
+        const currentProfileStoreId =
+          (currentUser.currentProfile as any)?.store_id ??
+          (currentUser.currentProfile as any)?.storeId ??
+          currentUser.currentStore?.id ??
           0;
 
         const roleName =
@@ -192,7 +192,7 @@ export function useAccessControl() {
 
         const userState: UserState = {
           user_id: currentUser.user.id,
-          school_id: currentProfileSchoolId,
+          store_id: currentProfileStoreId,
           role: roleName,
           is_admin: roleName === 'ADMIN',
           is_manager: roleName === 'MANAGER',
@@ -297,15 +297,15 @@ export function useAccessControl() {
 
   const canModifyResource = (
     resourceOwnerId: number,
-    resourceSchoolId?: number
+    resourceStoreId?: number
   ): boolean => {
     if (!userState) return false;
 
     // Admin can modify everything
     if (isAdmin()) return true;
 
-    // Manager can modify everything in their school
-    if (isManager() && resourceSchoolId === userState.school_id) return true;
+    // Manager can modify everything in their store
+    if (isManager() && resourceStoreId === userState.store_id) return true;
 
     // Teacher can only modify their own resources
     if (isTeacher() && resourceOwnerId === userState.user_id) return true;
@@ -315,22 +315,19 @@ export function useAccessControl() {
 
   const canDeleteResource = (
     resourceOwnerId: number,
-    resourceSchoolId?: number
+    resourceStoreId?: number
   ): boolean => {
-    return canModifyResource(resourceOwnerId, resourceSchoolId);
+    return canModifyResource(resourceOwnerId, resourceStoreId);
   };
 
-  const canViewResource = (resourceSchoolId?: number): boolean => {
+  const canViewResource = (resourceStoreId?: number): boolean => {
     if (!userState) return false;
 
     // Admin can view everything
     if (isAdmin()) return true;
 
-    // Manager and Teacher can view everything in their school
-    if (
-      (isManager() || isTeacher()) &&
-      resourceSchoolId === userState.school_id
-    )
+    // Manager and Teacher can view everything in their store
+    if ((isManager() || isTeacher()) && resourceStoreId === userState.store_id)
       return true;
 
     return false;
@@ -338,7 +335,7 @@ export function useAccessControl() {
 
   const checkResourceAccess = (resource: {
     owner_id?: number;
-    school_id?: number;
+    store_id?: number;
     access_control?: AccessControl;
   }): ResourceAccessControl => {
     if (resource.access_control) {
@@ -355,12 +352,12 @@ export function useAccessControl() {
 
     // Fallback to frontend calculation
     const ownerId = resource.owner_id || 0;
-    const schoolId = resource.school_id;
+    const storeId = resource.store_id;
 
     return {
-      canModify: canModifyResource(ownerId, schoolId),
-      canDelete: canDeleteResource(ownerId, schoolId),
-      canView: canViewResource(schoolId),
+      canModify: canModifyResource(ownerId, storeId),
+      canDelete: canDeleteResource(ownerId, storeId),
+      canView: canViewResource(storeId),
       isOwner: ownerId === userState?.user_id,
       userRole: userState?.role || '',
       userPermissions: userState?.permissions || []
@@ -389,7 +386,7 @@ export function useAccessControl() {
   const requireResourceAccess = (
     resource: {
       owner_id?: number;
-      school_id?: number;
+      store_id?: number;
       access_control?: AccessControl;
     },
     action: 'view' | 'modify' | 'delete' = 'view',

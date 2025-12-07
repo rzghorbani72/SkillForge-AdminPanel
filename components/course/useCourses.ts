@@ -20,7 +20,7 @@ type UseCoursesReturn = {
 
 const useCourses = (): UseCoursesReturn => {
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore: selectedSchool } = useSchool();
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,7 +77,7 @@ const useCourses = (): UseCoursesReturn => {
         nextCourses = response.courses;
       }
 
-      // Optionally filter by school if present on objects
+      // Optionally filter by store if present on objects
       if (selectedSchool && nextCourses.length > 0) {
         nextCourses = nextCourses.filter((c) =>
           (c as any).school_id

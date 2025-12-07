@@ -150,7 +150,7 @@ export const fa = {
     panelForStaff: 'این پنل مخصوص',
     teachersManagersAdmins: 'معلمان، مدیران و مدیران کل',
     staffOnly: 'است.',
-    studentsLoginThroughSchool:
+    studentsLoginThroughStore:
       'دانش‌آموزان باید از طریق وب‌سایت مدرسه خود وارد شوند.',
     dontHaveAccount: 'حساب مدیریتی ندارید؟',
     registerSchool: 'مدرسه خود را ثبت کنید',
@@ -164,10 +164,10 @@ export const fa = {
     phoneRequired: 'شماره تلفن الزامی است',
     emailRequired: 'ایمیل الزامی است',
     passwordTooShort: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
-    selectSchool: 'لطفاً یک مدرسه انتخاب کنید',
+    selectStore: 'لطفاً یک آکادمی انتخاب کنید',
     backToLogin: 'بازگشت به ورود',
     verifyYourContact: 'اطلاعات تماس خود را تأیید کنید',
-    createSchoolAccount: 'ایجاد حساب مدرسه',
+    createStoreAccount: 'ایجاد حساب آکادمی',
     verifyContactDescription:
       'ابتدا تلفن (و ایمیل در صورت وجود) را تأیید کنید. سپس اطلاعات پایه را پر کنید.',
     registerDescription:
@@ -180,11 +180,11 @@ export const fa = {
     passwordRequired: 'رمز عبور الزامی است',
     confirmPasswordRequired: 'لطفاً رمز عبور خود را تأیید کنید',
     passwordsDoNotMatch: 'رمزهای عبور مطابقت ندارند',
-    schoolNameRequired: 'نام مدرسه الزامی است',
-    schoolSlugRequired: 'نامک مدرسه الزامی است',
+    storeNameRequired: 'نام آکادمی الزامی است',
+    storeSlugRequired: 'نامک آکادمی الزامی است',
     schoolSlugInvalid:
       'نامک مدرسه فقط می‌تواند شامل حروف کوچک، اعداد و خط تیره باشد',
-    selectSchoolRequired: 'لطفاً یک مدرسه انتخاب کنید',
+    selectStoreRequired: 'لطفاً یک آکادمی انتخاب کنید',
     teacherRequestReasonRequired: 'لطفاً توضیح دهید چرا می‌خواهید معلم شوید',
     registering: 'در حال ثبت‌نام کاربر...',
     continueToBaseData: 'ادامه به اطلاعات پایه',
@@ -218,8 +218,8 @@ export const fa = {
     enterFullName: 'نام کامل خود را وارد کنید',
     createPassword: 'یک رمز عبور ایجاد کنید',
     confirmPasswordPlaceholder: 'رمز عبور خود را تأیید کنید',
-    selectSchool: 'انتخاب مدرسه',
-    chooseSchoolToJoin: 'یک مدرسه برای پیوستن انتخاب کنید',
+    selectStore: 'انتخاب آکادمی',
+    chooseStoreToJoin: 'یک آکادمی برای پیوستن انتخاب کنید',
     requestTeacherRole: 'درخواست نقش معلم',
     whyWantToBeTeacher: 'چرا می‌خواهید معلم شوید؟',
     teacherRequestReasonPlaceholder:
@@ -328,26 +328,26 @@ export const fa = {
     status: 'وضعیت',
     active: 'فعال',
     inactive: 'غیرفعال',
-    selectSchool: 'انتخاب مدرسه',
-    noSchools: 'مدرسه‌ای یافت نشد',
-    createFirstSchool: 'اولین مدرسه خود را ایجاد کنید',
-    enterSchoolName: 'نام مدرسه را وارد کنید',
+    selectStore: 'انتخاب آکادمی',
+    noStores: 'آکادمی‌ای یافت نشد',
+    createFirstStore: 'اولین آکادمی خود را ایجاد کنید',
+    enterStoreName: 'نام آکادمی را وارد کنید',
     domainName: 'نام دامنه',
     mustBeUnique: 'باید یکتا باشد',
     enterDomainName:
       'نام دامنه را وارد کنید (به صورت خودکار به حروف کوچک تبدیل می‌شود)',
-    schoolUrlWillBe: 'آدرس مدرسه شما این خواهد بود:',
-    uniqueDomainRequired: 'هر مدرسه باید یک نام دامنه یکتا داشته باشد',
+    storeUrlWillBe: 'آدرس آکادمی شما این خواهد بود:',
+    uniqueDomainRequired: 'هر آکادمی باید یک نام دامنه یکتا داشته باشد',
     publicDomain: 'دامنه عمومی',
-    enterPublicDomain: 'دامنه عمومی را وارد کنید (مثال: www.myschool.com)',
-    optionalCustomDomain: 'دامنه سفارشی اختیاری برای مدرسه شما',
-    describeSchool: 'مدرسه خود را توصیف کنید',
-    schoolDescription: 'توضیحات مدرسه',
-    schoolDescriptionPlaceholder: 'توضیح مختصری از مدرسه شما...',
-    schoolUrlSlug: 'نامک آدرس مدرسه',
-    schoolSlugPlaceholder: 'نام-مدرسه-شما',
+    enterPublicDomain: 'دامنه عمومی را وارد کنید (مثال: www.mystore.com)',
+    optionalCustomDomain: 'دامنه سفارشی اختیاری برای آکادمی شما',
+    describeStore: 'آکادمی خود را توصیف کنید',
+    storeDescription: 'توضیحات آکادمی',
+    storeDescriptionPlaceholder: 'توضیح مختصری از آکادمی شما...',
+    storeUrlSlug: 'نامک آدرس آکادمی',
+    storeSlugPlaceholder: 'نام-آکادمی-شما',
     toggleStatusDescription:
-      'برای فعال یا غیرفعال کردن این مدرسه تغییر وضعیت دهید',
+      'برای فعال یا غیرفعال کردن این آکادمی تغییر وضعیت دهید',
     toggleActiveStatus: 'تغییر وضعیت فعال'
   },
   courses: {
@@ -595,8 +595,8 @@ export const fa = {
     generalInformation: 'اطلاعات عمومی',
     generalInformationDescription:
       'نام، توضیحات و دامنه مدرسه خود را به‌روزرسانی کنید.',
-    schoolName: 'نام مدرسه',
-    schoolNamePlaceholder: 'آکادمی SkillForge',
+    storeName: 'نام آکادمی',
+    storeNamePlaceholder: 'آکادمی SkillForge',
     customDomain: 'دامنه اختصاصی',
     customDomainPlaceholder: 'academy',
     description: 'توضیحات',
@@ -868,7 +868,7 @@ export const fa = {
     uploadAudioDescription: 'آپلود فایل‌های صوتی برای دروس و دوره‌ها',
     uploadDocumentDescription: 'آپلود اسناد و مواد آموزشی',
     uploadVideoDescription: 'آپلود محتوای ویدیویی برای دروس',
-    selectSchoolFirst: 'ابتدا مدرسه را انتخاب کنید',
+    selectStoreFirst: 'ابتدا آکادمی را انتخاب کنید',
     createContent: 'ایجاد محتوا',
     createNewContent: 'ایجاد محتوای جدید'
   },
@@ -893,7 +893,7 @@ export const fa = {
     resetPassword: 'بازنشانی رمز عبور',
     backToLogin: 'بازگشت به ورود',
     tryAgain: 'دوباره تلاش کنید',
-    selectSchoolDescription:
+    selectStoreDescription:
       'اگر دانش‌آموز هستید مدرسه خود را انتخاب کنید، یا برای مدیر/معلم خالی بگذارید',
     checkDeviceForCode: 'دستگاه خود را برای کد تأیید بررسی کنید',
     createNewPassword: 'یک رمز عبور امن جدید ایجاد کنید',
@@ -910,7 +910,7 @@ export const fa = {
   },
   media: {
     noSchoolSelected: 'مدرسه‌ای انتخاب نشده',
-    selectSchoolToView: 'لطفاً یک مدرسه از هدر انتخاب کنید تا مشاهده کنید',
+    selectStoreToView: 'لطفاً یک آکادمی از هدر انتخاب کنید تا مشاهده کنید',
     loading: 'در حال بارگذاری...',
     searchPlaceholder: 'جستجو...',
     noResults: 'نتیجه‌ای یافت نشد',
@@ -1015,15 +1015,15 @@ export const fa = {
     courseContentVideos: 'ویدیوهای محتوای دوره',
     combinedVideoLength: 'مجموع طول ویدیوها'
   },
-  schools: {
-    schoolsManagement: 'مدیریت مدارس',
-    manageSchoolsDescription: 'مدیریت مدارس و تنظیمات آن‌ها',
-    createSchool: 'ایجاد مدرسه',
-    searchSchools: 'جستجوی مدارس...',
-    noSchoolsFound: 'مدرسه‌ای یافت نشد',
-    schoolCreated: 'مدرسه با موفقیت ایجاد شد',
-    schoolUpdated: 'مدرسه با موفقیت به‌روزرسانی شد',
-    schoolDeleted: 'مدرسه با موفقیت حذف شد'
+  stores: {
+    storesManagement: 'مدیریت آکادمی‌ها',
+    manageStoresDescription: 'مدیریت آکادمی‌ها و تنظیمات آن‌ها',
+    createStore: 'ایجاد آکادمی',
+    searchStores: 'جستجوی آکادمی‌ها...',
+    noStoresFound: 'آکادمی‌ای یافت نشد',
+    storeCreated: 'آکادمی با موفقیت ایجاد شد',
+    storeUpdated: 'آکادمی با موفقیت به‌روزرسانی شد',
+    storeDeleted: 'آکادمی با موفقیت حذف شد'
   },
   users: {
     allUsers: 'همه کاربران',

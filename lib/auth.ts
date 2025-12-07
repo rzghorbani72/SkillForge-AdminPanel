@@ -1,17 +1,17 @@
 import { apiClient } from './api';
 import { ErrorHandler } from './error-handler';
-import { User, Profile, School } from '@/types/api';
-import { isDevelopmentMode, getSchoolUrl, logDevInfo } from './dev-utils';
+import { User, Profile, Store } from '@/types/api';
+import { isDevelopmentMode, getStoreUrl, logDevInfo } from './dev-utils';
 
 export interface AuthUser {
   user: User;
   access_token: string;
   currentProfile?: Profile;
-  currentSchool?: School;
-  requires_school_selection?: boolean;
-  available_schools?: School[];
+  currentStore?: Store;
+  requires_store_selection?: boolean;
+  available_stores?: Store[];
   availableProfiles?: Profile[];
-  availableSchools?: School[];
+  availableStores?: Store[];
   permissions?: string[];
   expires_at?: Date;
   isStaff?: boolean;
@@ -20,7 +20,7 @@ export interface AuthUser {
 export interface UserProfile {
   id: number;
   userId: number;
-  schoolId: number;
+  storeId: number;
   role: string;
   displayName: string;
   isActive: boolean;
@@ -35,7 +35,7 @@ export interface AuthType {
 export interface LoginCredentials {
   identifier: string;
   password: string;
-  school_id?: number;
+  store_id?: number;
 }
 
 export interface RegisterData {
@@ -45,15 +45,15 @@ export interface RegisterData {
   password: string;
   confirmed_password: string;
   role: string;
-  school_id?: number;
+  store_id?: number;
   display_name: string;
   bio?: string;
   website?: string;
   location?: string;
-  // School creation data (for MANAGER role)
-  school_name?: string;
-  school_slug?: string;
-  school_description?: string;
+  // Store creation data (for MANAGER role)
+  store_name?: string;
+  store_slug?: string;
+  store_description?: string;
   // Teacher request data
   teacher_request?: boolean;
   teacher_request_reason?: string;
@@ -151,13 +151,13 @@ class AuthService {
         window.localStorage.removeItem('current_profile');
       }
 
-      if (user.currentSchool) {
+      if (user.currentStore) {
         window.localStorage.setItem(
-          'current_school',
-          JSON.stringify(user.currentSchool)
+          'current_store',
+          JSON.stringify(user.currentStore)
         );
       } else {
-        window.localStorage.removeItem('current_school');
+        window.localStorage.removeItem('current_store');
       }
 
       window.localStorage.setItem(
@@ -215,7 +215,7 @@ class AuthService {
   async loginPhoneByOtp(credentials: {
     phone_number: string;
     otp: string;
-    school_id?: number;
+    store_id?: number;
   }): Promise<AuthUser> {
     try {
       const response = await apiClient.loginPhoneByOtp(credentials);
@@ -237,7 +237,7 @@ class AuthService {
   async loginEmailByOtp(credentials: {
     email: string;
     otp: string;
-    school_id?: number;
+    store_id?: number;
   }): Promise<AuthUser> {
     try {
       const response = await apiClient.loginEmailByOtp(credentials);
@@ -255,13 +255,13 @@ class AuthService {
     }
   }
 
-  // Select school after login
-  async selectSchool(data: {
+  // Select store after login
+  async selectStore(data: {
     temp_token: string;
-    school_id: number;
+    store_id: number;
   }): Promise<AuthUser> {
     try {
-      const response = await apiClient.selectSchool(data);
+      const response = await apiClient.selectStore(data);
 
       if (response?.data) {
         this.currentUser = response.data as AuthUser;
@@ -269,7 +269,7 @@ class AuthService {
         return this.currentUser;
       }
 
-      throw new Error('School selection failed');
+      throw new Error('Store selection failed');
     } catch (error) {
       ErrorHandler.handleValidationErrors(error);
       throw error;
@@ -316,9 +316,9 @@ class AuthService {
     return user.permissions?.includes(permission) || false;
   }
 
-  // Check if user can manage school
-  canManageSchool(user: AuthUser): boolean {
-    return this.hasPermission(user, 'manage_school');
+  // Check if user can manage store
+  canManageStore(user: AuthUser): boolean {
+    return this.hasPermission(user, 'manage_store');
   }
 
   // Check if user can manage users
@@ -336,17 +336,17 @@ class AuthService {
     return this.hasPermission(user, 'enroll_courses');
   }
 
-  // Get user's role in current school
+  // Get user's role in current store
   getCurrentRole(user: AuthUser): string {
     return user.currentProfile?.role?.name || '';
   }
 
-  // Get user's current school (overloaded method)
-  getCurrentSchool(user?: AuthUser): School | null {
+  // Get user's current store (overloaded method)
+  getCurrentStore(user?: AuthUser): Store | null {
     if (user) {
-      return user.currentSchool || null;
+      return user.currentStore || null;
     }
-    return this.currentUser?.currentSchool || null;
+    return this.currentUser?.currentStore || null;
   }
 
   // Get available profiles for user
@@ -354,45 +354,45 @@ class AuthService {
     return user.availableProfiles || [];
   }
 
-  // Get available schools for user
-  getAvailableSchools(user: AuthUser): School[] {
-    return user.availableSchools || [];
+  // Get available stores for user
+  getAvailableStores(user: AuthUser): Store[] {
+    return user.availableStores || [];
   }
 
-  // Get school dashboard URL
-  getSchoolDashboardUrl(school: School): string {
+  // Get store dashboard URL
+  getStoreDashboardUrl(store: Store): string {
     if (isDevelopmentMode()) {
-      // In development, use localhost with school slug as subdomain
-      const schoolUrl = getSchoolUrl(school.slug);
-      logDevInfo('School URL for development:', schoolUrl);
-      return schoolUrl;
+      // In development, use localhost with store slug as subdomain
+      const storeUrl = getStoreUrl(store.slug);
+      logDevInfo('Store URL for development:', storeUrl);
+      return storeUrl;
     }
 
-    // If school has a public domain, use it
-    if (school.domain?.public_address) {
-      return `https://${school.domain.public_address}`;
+    // If store has a public domain, use it
+    if (store.domain?.public_address) {
+      return `https://${store.domain.public_address}`;
     }
 
     // Otherwise, use the private domain with the main domain
-    const privateDomain = school.slug;
+    const privateDomain = store.slug;
     return `https://${privateDomain}.skillforge.com`;
   }
 
-  // Get school login URL
-  getSchoolLoginUrl(school: School): string {
-    const baseUrl = this.getSchoolDashboardUrl(school);
+  // Get store login URL
+  getStoreLoginUrl(store: Store): string {
+    const baseUrl = this.getStoreDashboardUrl(store);
     return `${baseUrl}/login`;
   }
 
-  // Check if user is a teacher in any school
-  async isTeacherInAnySchool(): Promise<boolean> {
+  // Check if user is a teacher in any store
+  async isTeacherInAnyStore(): Promise<boolean> {
     const response = await apiClient.getUserProfiles();
     const profiles = response?.data || ([] as UserProfile[]);
     return profiles.some((profile: UserProfile) => profile.role === 'TEACHER');
   }
 
-  // Check if user is a manager in any school
-  async isManagerInAnySchool(): Promise<boolean> {
+  // Check if user is a manager in any store
+  async isManagerInAnyStore(): Promise<boolean> {
     const response = await apiClient.getUserProfiles();
     const profiles = response?.data || ([] as UserProfile[]);
     return profiles.some((profile: UserProfile) => profile.role === 'MANAGER');
@@ -405,23 +405,23 @@ class AuthService {
     return profiles.some((profile: UserProfile) => profile.role === 'ADMIN');
   }
 
-  // Get user's role in a specific school
-  async getUserRoleInSchool(schoolId: number): Promise<string | null> {
+  // Get user's role in a specific store
+  async getUserRoleInStore(storeId: number): Promise<string | null> {
     const response = await apiClient.getUserProfiles();
     const profiles = response?.data || ([] as UserProfile[]);
-    const profile = profiles.find((p: UserProfile) => p.schoolId === schoolId);
+    const profile = profiles.find((p: UserProfile) => p.storeId === storeId);
     return profile?.role || null;
   }
 
-  // Check if user can manage a specific school
-  async canManageSchoolById(schoolId: number): Promise<boolean> {
-    const role = await this.getUserRoleInSchool(schoolId);
+  // Check if user can manage a specific store
+  async canManageStoreById(storeId: number): Promise<boolean> {
+    const role = await this.getUserRoleInStore(storeId);
     return role === 'ADMIN' || role === 'MANAGER' || role === 'TEACHER';
   }
 
-  // Check if user can access admin features in a school
-  async canAccessSchoolAdmin(schoolId: number): Promise<boolean> {
-    const role = await this.getUserRoleInSchool(schoolId);
+  // Check if user can access admin features in a store
+  async canAccessStoreAdmin(storeId: number): Promise<boolean> {
+    const role = await this.getUserRoleInStore(storeId);
     return role === 'ADMIN' || role === 'MANAGER';
   }
 
@@ -480,13 +480,13 @@ class AuthService {
     this.persistSession(user);
   }
 
-  // Get user's schools
-  async getUserSchools(): Promise<School[]> {
+  // Get user's stores
+  async getUserStores(): Promise<Store[]> {
     try {
-      const response = await apiClient.getUserSchools();
-      return (response as School[]) || [];
+      const response = await apiClient.getUserStores();
+      return (response as Store[]) || [];
     } catch (error) {
-      console.error('Failed to fetch user schools:', error);
+      console.error('Failed to fetch user stores:', error);
       return [];
     }
   }

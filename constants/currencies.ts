@@ -51,9 +51,9 @@ export const REGIONAL_CURRENCIES: Record<string, CurrencyCode[]> = {
   asia: ['USD', 'EUR']
 };
 
-// Get available currencies for a school based on its name or preferences
-export const getSchoolCurrencies = (schoolName: string): CurrencyConfig[] => {
-  const name = schoolName.toLowerCase();
+// Get available currencies for a store based on its name or preferences
+export const getStoreCurrencies = (storeName: string): CurrencyConfig[] => {
+  const name = storeName.toLowerCase();
 
   // Check for specific country/region matches
   if (
@@ -100,13 +100,13 @@ export const getSchoolCurrencies = (schoolName: string): CurrencyConfig[] => {
     return [ALL_CURRENCIES.EUR, ALL_CURRENCIES.USD];
   }
 
-  // Default to USD for international schools
+  // Default to USD for international stores
   return [ALL_CURRENCIES.USD];
 };
 
-// Get default currency for a school
-export const getSchoolDefaultCurrency = (schoolName: string): CurrencyCode => {
-  const currencies = getSchoolCurrencies(schoolName);
+// Get default currency for a store
+export const getStoreDefaultCurrency = (storeName: string): CurrencyCode => {
+  const currencies = getStoreCurrencies(storeName);
   return currencies[0]?.code || 'USD';
 };
 

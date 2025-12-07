@@ -52,14 +52,14 @@ export default function ForgetPasswordPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState('');
-  const [schools, setSchools] = useState<
+  const [stores, setStores] = useState<
     Array<{ id: number; name: string; slug: string }>
   >([]);
-  const [isLoadingSchools, setIsLoadingSchools] = useState(false);
+  const [isLoadingStores, setIsLoadingStores] = useState(false);
 
   const router = useRouter();
 
-  // Fetch schools on component mount
+  // Fetch stores on component mount
   useEffect(() => {
     const fetchSchools = async () => {
       setIsLoadingSchools(true);
@@ -67,7 +67,7 @@ export default function ForgetPasswordPage() {
         const response = await apiClient.getSchoolsPublic();
         setSchools(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
-        console.error('Failed to fetch schools:', error);
+        console.error('Failed to fetch stores:', error);
       } finally {
         setIsLoadingSchools(false);
       }
@@ -218,8 +218,8 @@ export default function ForgetPasswordPage() {
     setErrors({});
 
     try {
-      const selectedSchool = schools.find(
-        (school) => school.slug === formData.school_slug
+      const selectedStore = stores.find(
+        (store) => store.slug === formData.store_slug
       );
       await apiClient.forgetPassword({
         identifier:
@@ -229,7 +229,7 @@ export default function ForgetPasswordPage() {
         password: formData.password,
         confirmed_password: formData.confirmed_password,
         otp: formData.otp,
-        school_id: selectedSchool?.id
+        store_id: selectedStore?.id
       });
 
       setStep('success');
@@ -255,7 +255,7 @@ export default function ForgetPasswordPage() {
       password: '',
       confirmed_password: '',
       otp: '',
-      school_slug: ''
+      store_slug: ''
     });
     setErrors({});
     setMessage('');
@@ -289,7 +289,7 @@ export default function ForgetPasswordPage() {
               </CardTitle>
               <CardDescription className="text-center">
                 {step === 'identifier' &&
-                  t('forgotPassword.selectSchoolDescription')}
+                  t('forgotPassword.selectStoreDescription')}
                 {step === 'otp' && t('forgotPassword.checkDeviceForCode')}
                 {step === 'password' && t('forgotPassword.createNewPassword')}
                 {step === 'success' && t('forgotPassword.canLoginNow')}
@@ -364,23 +364,23 @@ export default function ForgetPasswordPage() {
 
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="school_slug">
-                        {t('schools.title')} ({t('common.optional')})
+                      <Label htmlFor="store_slug">
+                        {t('stores.title')} ({t('common.optional')})
                       </Label>
                       <select
-                        id="school_slug"
-                        value={formData.school_slug}
+                        id="store_slug"
+                        value={formData.store_slug}
                         onChange={(e) =>
-                          handleInputChange('school_slug', e.target.value)
+                          handleInputChange('store_slug', e.target.value)
                         }
                         className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        disabled={isLoadingSchools}
+                        disabled={isLoadingStores}
                         dir={isRTL ? 'rtl' : 'ltr'}
                       >
                         <option value="">{t('common.select')}</option>
-                        {schools.map((school) => (
-                          <option key={school.id} value={school.slug}>
-                            {school.name}
+                        {stores.map((store) => (
+                          <option key={store.id} value={store.slug}>
+                            {store.name}
                           </option>
                         ))}
                       </select>

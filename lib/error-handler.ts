@@ -249,7 +249,7 @@ export class ErrorHandler {
       email: 'Email',
       name: 'Name',
       role: 'Role',
-      school_id: 'School',
+      store_id: 'Store',
       display_name: 'Display name'
     };
 
@@ -271,7 +271,7 @@ export class ErrorHandler {
       email: 'email',
       name: 'name',
       role: 'role',
-      school_id: 'existingSchoolId',
+      store_id: 'existingStoreId',
       display_name: 'name'
     };
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api';
 
-export interface School {
+export interface Store {
   id: number;
   name: string;
   slug?: string;
@@ -15,61 +15,61 @@ export interface School {
   }>;
 }
 
-interface UseSchoolsReturn {
-  schools: School[];
+interface UseStoresReturn {
+  stores: Store[];
   isLoading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
 }
 
-export function useSchools(): UseSchoolsReturn {
-  const [schools, setSchools] = useState<School[]>([]);
+export function useStores(): UseStoresReturn {
+  const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSchools = async () => {
+  const fetchStores = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const response = await apiClient.getSchoolsPublic();
+      const response = await apiClient.getStoresPublic();
 
       if (response.status === 200 && response.data) {
-        let schoolsData: School[] = [];
+        let storesData: Store[] = [];
 
         // Handle response structure - data is now directly available
         if (Array.isArray(response.data)) {
-          schoolsData = response.data;
+          storesData = response.data;
         } else if (response.data.status === 'ok' && response.data.data) {
           // Fallback for legacy response structure
-          schoolsData = response.data.data;
+          storesData = response.data.data;
         } else {
           console.error('Unexpected response structure:', response.data);
           setError('Invalid response structure from server');
           return;
         }
 
-        setSchools(schoolsData);
+        setStores(storesData);
       } else {
         console.error('Unexpected response:', response);
-        setError('Failed to fetch schools');
+        setError('Failed to fetch stores');
       }
     } catch (err) {
-      console.error('Error fetching schools:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch schools');
+      console.error('Error fetching stores:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch stores');
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchSchools();
+    fetchStores();
   }, []);
 
   return {
-    schools,
+    stores,
     isLoading,
     error,
-    refetch: fetchSchools
+    refetch: fetchStores
   };
 }

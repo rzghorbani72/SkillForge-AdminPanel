@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select';
 import { TrendingDown, Calendar, Tag, DollarSign } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -29,15 +29,15 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { SchoolFinancialRecord } from '@/types/api';
+import { StoreFinancialRecord } from '@/types/api';
 
-export default function SchoolCostsPage() {
+export default function StoreCostsPage() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
-  const [records, setRecords] = useState<SchoolFinancialRecord[]>([]);
+  const [records, setRecords] = useState<StoreFinancialRecord[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -46,16 +46,16 @@ export default function SchoolCostsPage() {
 
   useEffect(() => {
     loadData();
-  }, [selectedYear, selectedMonth, school?.id]);
+  }, [selectedYear, selectedMonth, store?.id]);
 
   const loadData = async () => {
-    if (!school?.id) return;
+    if (!store?.id) return;
 
     try {
       setLoading(true);
 
       const params: any = {
-        school_id: school.id,
+        store_id: store.id,
         year: selectedYear
       };
 
@@ -63,7 +63,7 @@ export default function SchoolCostsPage() {
         params.month = selectedMonth;
       }
 
-      const data = await apiClient.getSchoolFinancialRecords(params);
+      const data = await apiClient.getStoreFinancialRecords(params);
       setRecords(data);
     } catch (error: any) {
       console.error('Error loading costs data:', error);
@@ -74,7 +74,7 @@ export default function SchoolCostsPage() {
   };
 
   const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithSchool(amount, {
+    return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
       currency_position: 'after'
@@ -101,7 +101,7 @@ export default function SchoolCostsPage() {
 
     records.forEach((record) => {
       const categoryName =
-        record.costCategory?.name || t('financial.school.costs.uncategorized');
+        record.costCategory?.name || t('financial.store.costs.uncategorized');
       const categoryId = record.costCategory?.id?.toString() || 'uncategorized';
 
       if (!grouped[categoryId]) {
@@ -126,18 +126,18 @@ export default function SchoolCostsPage() {
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
           <p className="mt-4 text-muted-foreground">
-            {t('financial.school.costs.loading')}
+            {t('financial.store.costs.loading')}
           </p>
         </div>
       </div>
     );
   }
 
-  if (!school) {
+  if (!store) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
-          {t('financial.school.costs.noSchool')}
+          {t('financial.store.costs.noStore')}
         </p>
       </div>
     );
@@ -148,10 +148,10 @@ export default function SchoolCostsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">
-            {t('financial.school.costs.title')}
+            {t('financial.store.costs.title')}
           </h1>
           <p className="mt-1 text-muted-foreground">
-            {school.name} - {t('financial.school.costs.description')}
+            {store.name} - {t('financial.store.costs.description')}
           </p>
         </div>
       </div>
@@ -159,13 +159,13 @@ export default function SchoolCostsPage() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('financial.school.costs.filters')}</CardTitle>
+          <CardTitle>{t('financial.store.costs.filters')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium">
-                {t('financial.school.costs.year')}
+                {t('financial.store.costs.year')}
               </label>
               <Select
                 value={selectedYear.toString()}
@@ -185,7 +185,7 @@ export default function SchoolCostsPage() {
             </div>
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium">
-                {t('financial.school.costs.month')}
+                {t('financial.store.costs.month')}
               </label>
               <Select
                 value={selectedMonth?.toString() || 'all'}
@@ -198,7 +198,7 @@ export default function SchoolCostsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
-                    {t('financial.school.costs.allMonths')}
+                    {t('financial.store.costs.allMonths')}
                   </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
@@ -219,7 +219,7 @@ export default function SchoolCostsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('financial.school.costs.totalCost')}
+              {t('financial.store.costs.totalCost')}
             </CardTitle>
             <TrendingDown className="h-4 w-4 text-red-500" />
           </CardHeader>
@@ -228,7 +228,7 @@ export default function SchoolCostsPage() {
               {formatCurrency(totals.cost, totals.currency)}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {t('financial.school.costs.totalExpenses')}
+              {t('financial.store.costs.totalExpenses')}
             </p>
           </CardContent>
         </Card>
@@ -236,7 +236,7 @@ export default function SchoolCostsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('financial.school.costs.totalRevenue')}
+              {t('financial.store.costs.totalRevenue')}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -245,7 +245,7 @@ export default function SchoolCostsPage() {
               {formatCurrency(totals.revenue, totals.currency)}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {t('financial.school.costs.totalIncome')}
+              {t('financial.store.costs.totalIncome')}
             </p>
           </CardContent>
         </Card>
@@ -253,7 +253,7 @@ export default function SchoolCostsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('financial.school.costs.netProfit')}
+              {t('financial.store.costs.netProfit')}
             </CardTitle>
             <TrendingDown className="h-4 w-4 text-green-500" />
           </CardHeader>
@@ -262,7 +262,7 @@ export default function SchoolCostsPage() {
               {formatCurrency(totals.profit, totals.currency)}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {t('financial.school.costs.revenueMinusCost')}
+              {t('financial.store.costs.revenueMinusCost')}
             </p>
           </CardContent>
         </Card>
@@ -272,21 +272,21 @@ export default function SchoolCostsPage() {
       {recordsByCategory.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>{t('financial.school.costs.costsByCategory')}</CardTitle>
+            <CardTitle>{t('financial.store.costs.costsByCategory')}</CardTitle>
             <CardDescription>
-              {t('financial.school.costs.costsByCategoryDescription')}
+              {t('financial.store.costs.costsByCategoryDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('financial.school.costs.category')}</TableHead>
+                  <TableHead>{t('financial.store.costs.category')}</TableHead>
                   <TableHead className="text-right">
-                    {t('financial.school.costs.records')}
+                    {t('financial.store.costs.records')}
                   </TableHead>
                   <TableHead className="text-right">
-                    {t('financial.school.costs.totalCostLabel')}
+                    {t('financial.store.costs.totalCostLabel')}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -318,25 +318,25 @@ export default function SchoolCostsPage() {
       {/* All Records */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('financial.school.costs.allCostRecords')}</CardTitle>
+          <CardTitle>{t('financial.store.costs.allCostRecords')}</CardTitle>
           <CardDescription>
-            {t('financial.school.costs.allCostRecordsDescription')}
+            {t('financial.store.costs.allCostRecordsDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('financial.school.costs.period')}</TableHead>
-                <TableHead>{t('financial.school.costs.category')}</TableHead>
+                <TableHead>{t('financial.store.costs.period')}</TableHead>
+                <TableHead>{t('financial.store.costs.category')}</TableHead>
                 <TableHead className="text-right">
-                  {t('financial.school.costs.revenue')}
+                  {t('financial.store.costs.revenue')}
                 </TableHead>
                 <TableHead className="text-right">
-                  {t('financial.school.costs.cost')}
+                  {t('financial.store.costs.cost')}
                 </TableHead>
                 <TableHead className="text-right">
-                  {t('financial.school.costs.profit')}
+                  {t('financial.store.costs.profit')}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -347,7 +347,7 @@ export default function SchoolCostsPage() {
                     colSpan={5}
                     className="text-center text-muted-foreground"
                   >
-                    {t('financial.school.costs.noCostRecords')}
+                    {t('financial.store.costs.noCostRecords')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -369,7 +369,7 @@ export default function SchoolCostsPage() {
                     </TableCell>
                     <TableCell>
                       {record.costCategory?.name ||
-                        t('financial.school.costs.uncategorized')}
+                        t('financial.store.costs.uncategorized')}
                     </TableCell>
                     <TableCell className="text-right">
                       {formatCurrency(record.revenue, record.currency)}

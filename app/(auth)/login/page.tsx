@@ -47,13 +47,13 @@ export default function LoginPage() {
     phone: '',
     fullPhoneNumber: '',
     password: '',
-    school_id: ''
+    store_id: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [availableSchools, setAvailableSchools] = useState<
+  const [availableStores, setAvailableStores] = useState<
     Array<{ id: number; name: string; slug: string }>
   >([]);
-  const [showSchoolSelection, setShowSchoolSelection] = useState(false);
+  const [showStoreSelection, setShowStoreSelection] = useState(false);
   const [unauthorizedError, setUnauthorizedError] = useState<string | null>(
     null
   );
@@ -104,8 +104,8 @@ export default function LoginPage() {
       newErrors.password = t('auth.passwordTooShort');
     }
 
-    if (showSchoolSelection && !formData.school_id) {
-      newErrors.school_id = t('auth.selectSchool');
+    if (showStoreSelection && !formData.store_id) {
+      newErrors.store_id = t('auth.selectStore');
     }
 
     setErrors(newErrors);
@@ -128,43 +128,43 @@ export default function LoginPage() {
             ? formData.fullPhoneNumber || formData.phone
             : formData.email,
         password: formData.password,
-        school_id: formData.school_id ? parseInt(formData.school_id) : undefined
+        store_id: formData.store_id ? parseInt(formData.store_id) : undefined
       };
 
       const response = await authService.login(credentials);
 
       if (response) {
-        // Check if school selection is required
+        // Check if store selection is required
         if (
-          response.requires_school_selection ||
-          (response.availableSchools && response.availableSchools.length > 0)
+          response.requires_store_selection ||
+          (response.availableStores && response.availableStores.length > 0)
         ) {
-          // Show school selection UI
-          setAvailableSchools(response.availableSchools || []);
-          setShowSchoolSelection(true);
+          // Show store selection UI
+          setAvailableStores(response.availableStores || []);
+          setShowStoreSelection(true);
           return;
         }
 
-        // Single school or specific school - proceed with normal login
+        // Single store or specific store - proceed with normal login
         ErrorHandler.showSuccess('Login successful!');
         // Check user role and redirect accordingly
         const userRole = response.currentProfile?.role?.name;
         if (userRole === 'STUDENT' || userRole === 'USER') {
-          // User is a student, redirect to their school
+          // User is a student, redirect to their store
           if (isDevelopmentMode()) {
             // In development, show info instead of redirecting
             ErrorHandler.showInfo(
-              'Development mode: Student would be redirected to school dashboard'
+              'Development mode: Student would be redirected to store dashboard'
             );
             logDevInfo(
-              'Development mode: Would redirect student to school dashboard'
+              'Development mode: Would redirect student to store dashboard'
             );
             // For development, redirect to dashboard instead
             router.push('/dashboard');
             return;
           } else {
-            // In production, redirect to school
-            ErrorHandler.showInfo('Redirecting to your school dashboard...');
+            // In production, redirect to store
+            ErrorHandler.showInfo('Redirecting to your store dashboard...');
             window.location.href = '/student-dashboard';
             return;
           }
@@ -207,11 +207,11 @@ export default function LoginPage() {
     }
   };
 
-  const handleSchoolSelection = async (schoolId: number) => {
-    setFormData((prev) => ({ ...prev, school_id: schoolId.toString() }));
-    setShowSchoolSelection(false);
+  const handleStoreSelection = async (storeId: number) => {
+    setFormData((prev) => ({ ...prev, store_id: storeId.toString() }));
+    setShowStoreSelection(false);
 
-    // Retry login with school_id
+    // Retry login with store_id
     try {
       const credentials = {
         identifier:
@@ -219,7 +219,7 @@ export default function LoginPage() {
             ? formData.fullPhoneNumber || formData.phone
             : formData.email,
         password: formData.password,
-        school_id: schoolId
+        store_id: storeId
       };
 
       const response = await authService.login(credentials);
@@ -286,7 +286,7 @@ export default function LoginPage() {
             <AlertDescription>
               {t('auth.panelForStaff')}{' '}
               <strong>{t('auth.teachersManagersAdmins')}</strong>{' '}
-              {t('auth.staffOnly')} {t('auth.studentsLoginThroughSchool')}
+              {t('auth.staffOnly')} {t('auth.studentsLoginThroughStore')}
             </AlertDescription>
           </Alert>
 
@@ -384,27 +384,27 @@ export default function LoginPage() {
                       )}
                     </div>
 
-                    {showSchoolSelection && (
+                    {showStoreSelection && (
                       <div className="space-y-2">
-                        <Label htmlFor="school">{t('auth.selectSchool')}</Label>
+                        <Label htmlFor="store">{t('auth.selectStore')}</Label>
                         <div className="space-y-2">
-                          {availableSchools.map((school) => (
+                          {availableStores.map((store) => (
                             <button
-                              key={school.id}
+                              key={store.id}
                               type="button"
-                              onClick={() => handleSchoolSelection(school.id)}
+                              onClick={() => handleStoreSelection(store.id)}
                               className={`w-full rounded-lg border p-3 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isRTL ? 'text-right' : 'text-left'}`}
                             >
-                              <div className="font-medium">{school.name}</div>
+                              <div className="font-medium">{store.name}</div>
                               <div className="text-sm text-gray-500">
-                                {school.slug}
+                                {store.slug}
                               </div>
                             </button>
                           ))}
                         </div>
-                        {errors.school_id && (
+                        {errors.store_id && (
                           <p className="text-sm text-red-500">
-                            {errors.school_id}
+                            {errors.store_id}
                           </p>
                         )}
                       </div>
@@ -515,29 +515,29 @@ export default function LoginPage() {
                       )}
                     </div>
 
-                    {showSchoolSelection && (
+                    {showStoreSelection && (
                       <div className="space-y-2">
-                        <Label htmlFor="school-phone">
-                          {t('auth.selectSchool')}
+                        <Label htmlFor="store-phone">
+                          {t('auth.selectStore')}
                         </Label>
                         <div className="space-y-2">
-                          {availableSchools.map((school) => (
+                          {availableStores.map((store) => (
                             <button
-                              key={school.id}
+                              key={store.id}
                               type="button"
-                              onClick={() => handleSchoolSelection(school.id)}
+                              onClick={() => handleStoreSelection(store.id)}
                               className={`w-full rounded-lg border p-3 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isRTL ? 'text-right' : 'text-left'}`}
                             >
-                              <div className="font-medium">{school.name}</div>
+                              <div className="font-medium">{store.name}</div>
                               <div className="text-sm text-gray-500">
-                                {school.slug}
+                                {store.slug}
                               </div>
                             </button>
                           ))}
                         </div>
-                        {errors.school_id && (
+                        {errors.store_id && (
                           <p className="text-sm text-red-500">
-                            {errors.school_id}
+                            {errors.store_id}
                           </p>
                         )}
                       </div>
@@ -602,7 +602,7 @@ export default function LoginPage() {
                 <p className="text-xs text-gray-500">
                   {t('auth.areYouStudent')}{' '}
                   <Link
-                    href="/find-school"
+                    href="/find-store"
                     className="text-blue-600 hover:text-blue-500"
                   >
                     {t('auth.findSchool')}

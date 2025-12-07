@@ -20,8 +20,8 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { usePaymentsData } from './_hooks/use-payments-data';
-import { cn, formatCurrencyWithSchool } from '@/lib/utils';
-import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { cn, formatCurrencyWithStore } from '@/lib/utils';
+import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const STATUS_BADGES: Record<string, string> = {
@@ -39,7 +39,7 @@ function formatDate(value?: string | null): string {
 export default function PaymentsPage() {
   const { t, language } = useTranslation();
   const { payments, transactions, isLoading, refresh } = usePaymentsData();
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredPayments = useMemo(() => {
@@ -148,7 +148,7 @@ export default function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithSchool(totals.revenue, school)}
+              {formatCurrencyWithStore(totals.revenue, store)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.acrossAllPayments')}
@@ -262,7 +262,7 @@ export default function PaymentsPage() {
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="text-right text-sm">
                     <p className="font-semibold">
-                      {formatCurrencyWithSchool(payment.amount ?? 0, school)}
+                      {formatCurrencyWithStore(payment.amount ?? 0, store)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(payment.payment_date)}
@@ -311,7 +311,7 @@ export default function PaymentsPage() {
                   </p>
                 </div>
                 <p className="text-sm font-semibold">
-                  {formatCurrencyWithSchool(item.total, school)}
+                  {formatCurrencyWithStore(item.total, store)}
                 </p>
               </div>
             ))
@@ -347,7 +347,7 @@ export default function PaymentsPage() {
                 </div>
                 <div className="text-right text-sm">
                   <p className="font-semibold">
-                    {formatCurrencyWithSchool(transaction.amount ?? 0, school)}
+                    {formatCurrencyWithStore(transaction.amount ?? 0, store)}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {formatDate(transaction.created_at)}

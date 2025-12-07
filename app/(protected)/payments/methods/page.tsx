@@ -13,8 +13,8 @@ import { Button } from '@/components/ui/button';
 import { CreditCard, DollarSign, Globe, Lock, Plus } from 'lucide-react';
 import { usePaymentsData } from '../_hooks/use-payments-data';
 import { Progress } from '@/components/ui/progress';
-import { useCurrentSchool } from '@/hooks/useCurrentSchool';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const METHOD_CONFIG = [
@@ -61,7 +61,7 @@ const TONE_STYLES: Record<Tone, string> = {
 export default function PaymentMethodsPage() {
   const { t, language } = useTranslation();
   const { payments } = usePaymentsData();
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
 
   const methodMetrics = useMemo(() => {
     const map = new Map<string, { count: number; total: number }>();
@@ -119,7 +119,7 @@ export default function PaymentMethodsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithSchool(methodMetrics.totalRevenue, school)}
+              {formatCurrencyWithStore(methodMetrics.totalRevenue, store)}
             </p>
           </CardContent>
         </Card>
@@ -190,7 +190,7 @@ export default function PaymentMethodsPage() {
                   <Badge variant="outline">{item.count} payments</Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span>{formatCurrencyWithSchool(item.total, school)}</span>
+                  <span>{formatCurrencyWithStore(item.total, store)}</span>
                   <span className="text-muted-foreground">
                     {item.share}% of revenue
                   </span>

@@ -40,7 +40,7 @@ export interface UserProfile {
 export interface Profile {
   id: number;
   user_id: number;
-  school_id: number;
+  store_id: number;
   role_id: number;
   display_name: string;
   bio?: string;
@@ -142,7 +142,7 @@ export interface Media {
   metadata?: any;
   is_public: boolean;
   owner_id: number;
-  school_id?: number;
+  store_id?: number;
   created_at: string;
   updated_at: string;
   deleted_at?: string;
@@ -222,7 +222,7 @@ export interface Product {
   is_published: boolean;
   is_featured: boolean;
   author_id: number;
-  school_id: number;
+  store_id: number;
   category_id?: number;
   sales_count: number;
   revenue: number;
@@ -500,7 +500,7 @@ export interface Theme {
   background_color: string;
   text_color: string;
   is_active: boolean;
-  school_id: number;
+  store_id: number;
   created_at: string;
   updated_at: string;
   store?: Store;
@@ -524,7 +524,7 @@ export interface UIBlockConfig {
 
 export interface UITemplate {
   id: number;
-  school_id: number;
+  store_id: number;
   blocks: UIBlockConfig[];
   template_preset?: string;
   is_active: boolean;
@@ -650,7 +650,7 @@ export interface CourseFilters {
   limit?: number;
   search?: string;
   category_id?: number;
-  school_id?: number;
+  store_id?: number;
   difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   is_free?: boolean;
   is_published?: boolean;
@@ -784,7 +784,7 @@ export interface FinancialFormula {
 export interface FormulaApplication {
   id: number;
   formula_id: number;
-  school_id?: number;
+  store_id?: number;
   period_start: string;
   period_end: string;
   adjustment_type: AdjustmentType;
@@ -797,7 +797,7 @@ export interface FormulaApplication {
   created_at: string;
   updated_at: string;
   formula?: FinancialFormula;
-  school?: {
+  store?: {
     id: number;
     name: string;
     slug: string;

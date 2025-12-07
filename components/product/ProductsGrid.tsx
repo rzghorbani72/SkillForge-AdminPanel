@@ -26,8 +26,8 @@ import {
   AccessControlActions
 } from '@/components/ui/access-control-badge';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
-import { formatCurrencyWithSchool, cn } from '@/lib/utils';
-import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { formatCurrencyWithStore, cn } from '@/lib/utils';
+import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 import Image from 'next/image';
 
@@ -49,7 +49,7 @@ const ProductsGrid = ({
   onDelete
 }: Props) => {
   const { t } = useTranslation();
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
   const [productToDelete, setProductToDelete] = React.useState<Product | null>(
     null
   );
@@ -191,7 +191,7 @@ const ProductsGrid = ({
                 <div className="absolute bottom-3 right-3">
                   {product.price && product.price > 0 ? (
                     <Badge className="rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-foreground backdrop-blur-sm dark:bg-black/90 dark:text-white">
-                      {formatCurrencyWithSchool(product.price, school)}
+                      {formatCurrencyWithStore(product.price, store)}
                     </Badge>
                   ) : (
                     <Badge className="rounded-full bg-emerald-500/90 px-3 py-1 text-sm font-semibold text-white backdrop-blur-sm">

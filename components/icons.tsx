@@ -57,8 +57,8 @@ export type IconType =
   | 'logout'
   | 'article'
   | 'course'
-  | 'school'
-  | 'createSchool'
+  | 'store'
+  | 'createStore'
   | 'close'
   | 'product'
   | 'spinner'
@@ -113,8 +113,8 @@ export const Icons = {
   logout: LogOut,
   article: Newspaper,
   course: TvMinimalPlay,
-  school: School,
-  createSchool: CirclePlus,
+  store: School,
+  createStore: CirclePlus,
   close: X,
   product: LucideShoppingBag,
   spinner: Loader2,

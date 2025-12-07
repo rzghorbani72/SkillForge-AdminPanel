@@ -2,7 +2,7 @@
 
 ## 🎯 What We Built
 
-I've created a comprehensive content management system for your SkillForge school platform that allows you to create and manage:
+I've created a comprehensive content management system for your SkillForge store platform that allows you to create and manage:
 
 ### 📚 **Courses**
 
@@ -157,7 +157,7 @@ The deployment script has created a complete package with:
 - File type validation
 - File size limits
 - User authentication required
-- School context isolation
+- Store context isolation
 - Input sanitization
 
 ### **Performance Optimizations**
@@ -197,7 +197,7 @@ Your backend needs these endpoints:
 
 ## 🎉 **Benefits**
 
-### **For Your School**
+### **For Your Store**
 
 - **Complete Content Management** - Everything in one place
 - **Professional Course Creation** - Rich, detailed course setup

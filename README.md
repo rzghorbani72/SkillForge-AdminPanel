@@ -1,21 +1,21 @@
 # SkillForge AdminPanel
 
-A comprehensive admin panel for SkillForge - a Teachable-like platform where users can create schools, manage courses, and handle student enrollments.
+A comprehensive admin panel for SkillForge - a Teachable-like platform where users can create stores, manage courses, and handle student enrollments.
 
 ## 🎯 **Project Overview**
 
-SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators** to manage their educational institutions. The system implements sophisticated role-based access control and multi-school support.
+SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators** to manage their educational institutions. The system implements sophisticated role-based access control and multi-store support.
 
 ## 🔐 **Authentication & Access Control**
 
 ### **User Roles & Permissions**
 
-| Role               | Admin Panel Access | School Management | Course Management | Student Management |
-| ------------------ | ------------------ | ----------------- | ----------------- | ------------------ |
-| **ADMIN**          | ✅ Full Access     | ✅ Full Access    | ✅ Full Access    | ✅ Full Access     |
-| **MANAGER**        | ✅ Full Access     | ✅ Full Access    | ✅ Full Access    | ✅ Full Access     |
-| **TEACHER**        | ✅ Limited Access  | ✅ Own Courses    | ✅ Own Courses    | ✅ Own Students    |
-| **USER (Student)** | ❌ No Access       | ❌ No Access      | ❌ No Access      | ❌ No Access       |
+| Role               | Admin Panel Access | Store Management | Course Management | Student Management |
+| ------------------ | ------------------ | ---------------- | ----------------- | ------------------ |
+| **ADMIN**          | ✅ Full Access     | ✅ Full Access   | ✅ Full Access    | ✅ Full Access     |
+| **MANAGER**        | ✅ Full Access     | ✅ Full Access   | ✅ Full Access    | ✅ Full Access     |
+| **TEACHER**        | ✅ Limited Access  | ✅ Own Courses   | ✅ Own Courses    | ✅ Own Students    |
+| **USER (Student)** | ❌ No Access       | ❌ No Access     | ❌ No Access      | ❌ No Access       |
 
 ### **Authentication Flow**
 
@@ -23,20 +23,20 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 
 - Users can login with **email OR phone** + password
 - System checks user role and redirects accordingly:
-  - **Students (USER role)**: Redirected to their school's dashboard
+  - **Students (USER role)**: Redirected to their store's dashboard
   - **Teachers/Managers/Admins**: Access admin panel
 
-#### **2. Multi-School Support**
+#### **2. Multi-Store Support**
 
-- Users can be enrolled in multiple schools with different roles
-- If user has multiple schools:
-  - **Students**: School selection page → Redirect to chosen school
-  - **Teachers**: Access admin panel with school switching
+- Users can be enrolled in multiple stores with different roles
+- If user has multiple stores:
+  - **Students**: Store selection page → Redirect to chosen store
+  - **Teachers**: Access admin panel with store switching
 
-#### **3. School-Specific Access**
+#### **3. Store-Specific Access**
 
-- Each school has a unique domain/subdomain
-- Students access: `schoolname.skillforge.com`
+- Each store has a unique domain/subdomain
+- Students access: `storename.skillforge.com`
 - Teachers access: `admin.skillforge.com` (this panel)
 
 ### **Route Protection**
@@ -45,15 +45,15 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 
 - `/login` - Authentication page
 - `/register` - Teacher registration
-- `/find-school` - School discovery for students
-- `/select-school` - School selection for multi-school users
+- `/find-store` - Store discovery for students
+- `/select-store` - Store selection for multi-store users
 - `/unauthorized` - Access denied page
 - `/support`, `/terms`, `/privacy` - Static pages
 
 #### **Protected Routes** (Authentication Required)
 
 - `/dashboard` - Main admin dashboard
-- `/schools` - School management
+- `/stores` - Store management
 - `/courses` - Course management
 - `/students` - Student management
 - `/analytics` - Analytics and reports
@@ -83,16 +83,16 @@ SkillForge AdminPanel is designed for **Teachers, Managers, and Administrators**
 ### **Authentication System**
 
 - ✅ Role-based access control
-- ✅ Multi-school user support
+- ✅ Multi-store user support
 - ✅ JWT token management
 - ✅ Automatic redirects based on user role
-- ✅ School selection for multi-school users
+- ✅ Store selection for multi-store users
 
-### **School Management**
+### **Store Management**
 
-- ✅ Create and manage schools
+- ✅ Create and manage stores
 - ✅ Custom domain support
-- ✅ School-specific settings
+- ✅ Store-specific settings
 - ✅ Teacher and student management
 
 ### **Course Management**
@@ -124,10 +124,10 @@ SkillForge-AdminPanel/
 │   ├── (auth)/                   # Authentication pages
 │   │   ├── login/               # Login page
 │   │   ├── register/            # Teacher registration
-│   │   ├── find-school/         # School discovery
-│   │   └── select-school/       # School selection
+│   │   ├── find-store/          # Store discovery
+│   │   └── select-store/        # Store selection
 │   ├── dashboard/               # Main dashboard
-│   ├── schools/                 # School management
+│   ├── stores/                  # Store management
 │   ├── courses/                 # Course management
 │   ├── students/                # Student management
 │   ├── analytics/               # Analytics & reports
@@ -213,7 +213,7 @@ SkillForge-AdminPanel/
 1. Student visits `/login`
 2. Enters credentials
 3. System detects USER role
-4. Redirects to school dashboard: `schoolname.skillforge.com`
+4. Redirects to store dashboard: `storename.skillforge.com`
 
 ### **Scenario 2: Teacher Login**
 
@@ -222,21 +222,21 @@ SkillForge-AdminPanel/
 3. System detects TEACHER role
 4. Redirects to admin panel: `/dashboard`
 
-### **Scenario 3: Multi-School Student**
+### **Scenario 3: Multi-Store Student**
 
 1. Student visits `/login`
 2. Enters credentials
-3. System detects multiple schools
-4. Shows school selection page
-5. Student chooses school
-6. Redirects to chosen school dashboard
+3. System detects multiple stores
+4. Shows store selection page
+5. Student chooses store
+6. Redirects to chosen store dashboard
 
 ### **Scenario 4: New Teacher Registration**
 
 1. Teacher visits `/register`
-2. Chooses "Create New School" or "Join Existing School"
+2. Chooses "Create New Store" or "Join Existing Store"
 3. Fills registration form
-4. System creates account and school (if new)
+4. System creates account and store (if new)
 5. Redirects to admin panel
 
 ## 🛡️ **Security Features**
@@ -253,7 +253,7 @@ SkillForge-AdminPanel/
 The frontend integrates with the SkillForge Backend API:
 
 - **Authentication**: Login, register, logout
-- **Schools**: CRUD operations for schools
+- **Stores**: CRUD operations for stores
 - **Courses**: Course and lesson management
 - **Users**: User and profile management
 - **Media**: File upload and management
@@ -288,7 +288,7 @@ Ensure all production environment variables are configured:
 
 ### **Domain Configuration**
 
-- Configure custom domains for schools
+- Configure custom domains for stores
 - Set up SSL certificates
 - Configure DNS records
 

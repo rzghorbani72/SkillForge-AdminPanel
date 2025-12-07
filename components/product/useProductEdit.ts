@@ -17,7 +17,7 @@ export type ProductEditFormData = ProductCreateFormData;
 export const useProductEdit = () => {
   const router = useRouter();
   const params = useParams();
-  const { selectedSchool } = useSchool();
+  const { selectedStore: selectedSchool } = useSchool();
   const productId = params.id as string;
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -105,7 +105,7 @@ export const useProductEdit = () => {
 
   const onSubmitHandler = async (data: ProductEditFormData) => {
     if (!selectedSchool || !product) {
-      toast.error('Product or school not found');
+      toast.error('Product or store not found');
       return;
     }
 

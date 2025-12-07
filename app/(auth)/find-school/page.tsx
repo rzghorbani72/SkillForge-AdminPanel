@@ -24,7 +24,7 @@ import {
 import { ErrorHandler } from '@/lib/error-handler';
 import Link from 'next/link';
 
-export default function FindSchoolPage() {
+export default function FindStorePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
@@ -32,14 +32,14 @@ export default function FindSchoolPage() {
     e.preventDefault();
 
     if (!searchTerm.trim()) {
-      ErrorHandler.showWarning('Please enter a school name or domain');
+      ErrorHandler.showWarning('Please enter a store name or domain');
       return;
     }
 
     setIsSearching(true);
 
     try {
-      // This would call the backend API to search for schools
+      // This would call the backend API to search for stores
       // For now, we'll simulate the search
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -61,15 +61,15 @@ export default function FindSchoolPage() {
         domain = domain.replace(/\.skillforge\.com$/, '');
       }
 
-      // Construct the school URL
-      const schoolUrl = `https://${domain}.skillforge.com`;
+      // Construct the store URL
+      const storeUrl = `https://${domain}.skillforge.com`;
 
-      ErrorHandler.showSuccess(`Redirecting to ${schoolUrl}`);
-      window.location.href = schoolUrl;
+      ErrorHandler.showSuccess(`Redirecting to ${storeUrl}`);
+      window.location.href = storeUrl;
     } catch (error) {
       console.error('Search error:', error);
       ErrorHandler.showWarning(
-        'Failed to find school. Please check the domain or contact support.'
+        'Failed to find store. Please check the domain or contact support.'
       );
     } finally {
       setIsSearching(false);
@@ -85,10 +85,10 @@ export default function FindSchoolPage() {
             <School className="h-8 w-8 text-white" />
           </div>
           <h1 className="mb-2 text-3xl font-bold text-gray-900">
-            Find Your School
+            Find Your Store
           </h1>
           <p className="text-gray-600">
-            Enter your school&apos;s domain or name to access your learning
+            Enter your store&apos;s domain or name to access your learning
             dashboard
           </p>
         </div>
@@ -96,22 +96,22 @@ export default function FindSchoolPage() {
         {/* Search Form */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Search for Your School</CardTitle>
+            <CardTitle>Search for Your Store</CardTitle>
             <CardDescription>
-              Enter your school&apos;s domain (e.g., myschool.skillforge.com) or
-              school name
+              Enter your store&apos;s domain (e.g., mystore.skillforge.com) or
+              store name
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSearch} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="school-search">School Domain or Name</Label>
+                <Label htmlFor="store-search">Store Domain or Name</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    id="school-search"
+                    id="store-search"
                     type="text"
-                    placeholder="e.g., myschool.skillforge.com or My School Name"
+                    placeholder="e.g., mystore.skillforge.com or My Store Name"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -128,7 +128,7 @@ export default function FindSchoolPage() {
                 ) : (
                   <>
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    Go to School
+                    Go to Store
                   </>
                 )}
               </Button>
@@ -171,14 +171,14 @@ export default function FindSchoolPage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <MapPin className="h-5 w-5 text-green-600" />
-                <span>By School Name</span>
+                <span>By Store Name</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="rounded-lg bg-gray-50 p-3">
                   <p className="text-sm font-medium text-gray-900">
-                    Full School Name
+                    Full Store Name
                   </p>
                   <p className="text-sm text-gray-600">Harvard University</p>
                 </div>
@@ -193,12 +193,12 @@ export default function FindSchoolPage() {
           </Card>
         </div>
 
-        {/* Popular Schools */}
+        {/* Popular Stores */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Popular Schools</CardTitle>
+            <CardTitle>Popular Stores</CardTitle>
             <CardDescription>
-              Quick access to some of the most popular schools on SkillForge
+              Quick access to some of the most popular stores on SkillForge
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -240,13 +240,13 @@ export default function FindSchoolPage() {
                   students: '35K+',
                   courses: '350+'
                 }
-              ].map((school) => (
+              ].map((store) => (
                 <div
-                  key={school.domain}
+                  key={store.domain}
                   className="cursor-pointer rounded-lg border p-4 transition-shadow hover:shadow-md"
                   onClick={() => {
-                    const schoolUrl = `https://${school.domain}.skillforge.com`;
-                    window.location.href = schoolUrl;
+                    const storeUrl = `https://${store.domain}.skillforge.com`;
+                    window.location.href = storeUrl;
                   }}
                 >
                   <div className="mb-3 flex items-center space-x-3">
@@ -255,21 +255,21 @@ export default function FindSchoolPage() {
                     </div>
                     <div>
                       <h3 className="font-medium text-gray-900">
-                        {school.name}
+                        {store.name}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {school.domain}.skillforge.com
+                        {store.domain}.skillforge.com
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <span className="flex items-center">
                       <Users className="mr-1 h-4 w-4" />
-                      {school.students}
+                      {store.students}
                     </span>
                     <span className="flex items-center">
                       <BookOpen className="mr-1 h-4 w-4" />
-                      {school.courses}
+                      {store.courses}
                     </span>
                   </div>
                 </div>
@@ -282,7 +282,7 @@ export default function FindSchoolPage() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <Alert>
             <AlertDescription>
-              <strong>Can&apos;t find your school?</strong> Contact your school
+              <strong>Can&apos;t find your store?</strong> Contact your store
               administrator to get the correct domain or ask them to set up a
               SkillForge account.
             </AlertDescription>
@@ -290,7 +290,7 @@ export default function FindSchoolPage() {
 
           <Alert>
             <AlertDescription>
-              <strong>Need to create a school?</strong> If you&apos;re a teacher
+              <strong>Need to create a store?</strong> If you&apos;re a teacher
               or administrator, you can{' '}
               <Link
                 href="/register"
@@ -298,7 +298,7 @@ export default function FindSchoolPage() {
               >
                 register here
               </Link>{' '}
-              to create your own school on SkillForge.
+              to create your own store on SkillForge.
             </AlertDescription>
           </Alert>
         </div>
@@ -310,7 +310,7 @@ export default function FindSchoolPage() {
               <Button variant="outline">Back to Login</Button>
             </Link>
             <Link href="/register">
-              <Button>Create New School</Button>
+              <Button>Create New Store</Button>
             </Link>
           </div>
 

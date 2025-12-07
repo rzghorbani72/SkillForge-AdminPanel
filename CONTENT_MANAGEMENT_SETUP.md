@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides step-by-step instructions for setting up the comprehensive content management system for your SkillForge school platform. The system includes course creation, lesson management, season organization, audio uploads, and document management.
+This guide provides step-by-step instructions for setting up the comprehensive content management system for your SkillForge store platform. The system includes course creation, lesson management, season organization, audio uploads, and document management.
 
 ## New Components Created
 
@@ -231,7 +231,7 @@ Verify these endpoints are available in your backend:
 
 - File uploads are validated for type and size
 - User authentication is required for all operations
-- Content is associated with the current school context
+- Content is associated with the current store context
 - File access is controlled through proper permissions
 
 ## Performance Notes

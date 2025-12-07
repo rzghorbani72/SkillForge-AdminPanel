@@ -140,10 +140,10 @@ export const navItems: NavItem[] = [
     label: 'dashboard'
   },
   {
-    title: 'My Schools',
-    href: '/schools?filter=none',
-    icon: 'school' as IconType,
-    label: 'schools'
+    title: 'My Stores',
+    href: '/stores?filter=none',
+    icon: 'store' as IconType,
+    label: 'stores'
   },
   {
     title: 'Categories',
@@ -307,44 +307,44 @@ export const navItems: NavItem[] = [
     ]
   },
   {
-    title: 'School Financial',
+    title: 'Store Financial',
     icon: 'building2' as IconType,
-    label: 'school-financial',
-    roles: ['ADMIN', 'MANAGER'], // Managers and Admins can see school financial
+    label: 'store-financial',
+    roles: ['ADMIN', 'MANAGER'], // Managers and Admins can see store financial
     children: [
       {
         title: 'Overview',
-        href: '/financial/school',
+        href: '/financial/store',
         icon: 'dashboard' as IconType,
-        label: 'school-financial-overview',
+        label: 'store-financial-overview',
         roles: ['ADMIN', 'MANAGER']
       },
       {
         title: 'Revenue & Benefits',
-        href: '/financial/school/revenue',
+        href: '/financial/store/revenue',
         icon: 'trendingUp' as IconType,
-        label: 'school-revenue',
+        label: 'store-revenue',
         roles: ['ADMIN', 'MANAGER']
       },
       {
         title: 'Costs',
-        href: '/financial/school/costs',
+        href: '/financial/store/costs',
         icon: 'trendingDown' as IconType,
-        label: 'school-costs',
+        label: 'store-costs',
         roles: ['ADMIN', 'MANAGER']
       },
       {
         title: 'Payments',
-        href: '/financial/school/payments',
+        href: '/financial/store/payments',
         icon: 'creditCard' as IconType,
-        label: 'school-payments',
+        label: 'store-payments',
         roles: ['ADMIN', 'MANAGER']
       },
       {
         title: 'Reports',
-        href: '/financial/school/reports',
+        href: '/financial/store/reports',
         icon: 'fileText' as IconType,
-        label: 'school-reports',
+        label: 'store-reports',
         roles: ['ADMIN', 'MANAGER']
       }
     ]
@@ -411,10 +411,10 @@ export const navItems: NavItem[] = [
         label: 'profile-settings'
       },
       {
-        title: 'School Settings',
-        href: '/settings/school',
-        icon: 'school' as IconType,
-        label: 'school-settings'
+        title: 'Store Settings',
+        href: '/settings/store',
+        icon: 'store' as IconType,
+        label: 'store-settings'
       },
       {
         title: 'Theme & Branding',

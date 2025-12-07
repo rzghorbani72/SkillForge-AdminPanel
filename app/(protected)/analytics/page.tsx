@@ -25,8 +25,8 @@ import {
 import { Calendar, DollarSign, Eye, Filter, Star, Users } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from './_hooks/use-analytics-data';
-import { useCurrentSchool } from '@/hooks/useCurrentSchool';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface RevenuePoint {
@@ -59,15 +59,15 @@ const MONTH_NAMES = [
 export default function AnalyticsPage() {
   const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
 
-  // Debug: Log school currency info
-  if (process.env.NODE_ENV === 'development' && school) {
-    console.log('School currency config:', {
-      currency: school.currency,
-      currency_symbol: school.currency_symbol,
-      currency_position: school.currency_position,
-      country_code: school.country_code
+  // Debug: Log store currency info
+  if (process.env.NODE_ENV === 'development' && store) {
+    console.log('Store currency config:', {
+      currency: store.currency,
+      currency_symbol: store.currency_symbol,
+      currency_position: store.currency_position,
+      country_code: store.country_code
     });
   }
 
@@ -245,7 +245,7 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrencyWithSchool(totalRevenue, school)}
+              {formatCurrencyWithStore(totalRevenue, store)}
             </div>
             <p className="text-xs text-muted-foreground">
               {t('analytics.combinedPayments')}
@@ -314,7 +314,7 @@ export default function AnalyticsPage() {
                   formatter={(value: number, name: string) =>
                     name === 'revenue'
                       ? [
-                          formatCurrencyWithSchool(value, school),
+                          formatCurrencyWithStore(value, store),
                           t('analytics.totalRevenue')
                         ]
                       : [value, t('students.enrollments')]
@@ -397,7 +397,7 @@ export default function AnalyticsPage() {
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>Revenue</span>
                     <Badge variant="outline">
-                      {formatCurrencyWithSchool(course.revenue, school)}
+                      {formatCurrencyWithStore(course.revenue, store)}
                     </Badge>
                   </div>
                   <Progress

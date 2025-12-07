@@ -30,7 +30,7 @@ export default function StoresPage() {
   const { stores, isLoading, error, refreshStores } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -75,10 +75,10 @@ export default function StoresPage() {
 
   // Monitor formData changes for validation
   useEffect(() => {
-    if (formData.private_domain && selectedSchool && isEditDialogOpen) {
+    if (formData.private_domain && selectedStore && isEditDialogOpen) {
       validateDomain(formData.private_domain);
     }
-  }, [formData.private_domain, selectedSchool, isEditDialogOpen]);
+  }, [formData.private_domain, selectedStore, isEditDialogOpen]);
 
   // Validate domain format and length
   const validateDomain = (domain: string) => {
@@ -111,21 +111,21 @@ export default function StoresPage() {
     });
 
     setTimeout(() => {
-      const isTaken = schools.some((school) => {
-        const schoolDomainPart = extractDomainPart(
-          school.domain?.private_address || ''
+      const isTaken = stores.some((store) => {
+        const storeDomainPart = extractDomainPart(
+          store.domain?.private_address || ''
         );
         const inputDomainPart = extractDomainPart(domain);
         return (
-          schoolDomainPart === inputDomainPart &&
-          school.id !== (selectedSchool?.id || 0)
+          storeDomainPart === inputDomainPart &&
+          store.id !== (selectedStore?.id || 0)
         );
       });
 
       if (
-        selectedSchool &&
+        selectedStore &&
         extractDomainPart(domain) ===
-          extractDomainPart(selectedSchool.domain?.private_address || '')
+          extractDomainPart(selectedStore.domain?.private_address || '')
       ) {
         setDomainAvailability({
           isChecking: false,
@@ -136,7 +136,7 @@ export default function StoresPage() {
         setDomainAvailability({
           isChecking: false,
           isAvailable: false,
-          message: 'This domain name is already taken by another school'
+          message: 'This domain name is already taken by another store'
         });
       } else {
         setDomainAvailability({
@@ -148,78 +148,78 @@ export default function StoresPage() {
     }, 500);
   };
 
-  const handleCreateSchool = async () => {
+  const handleCreateStore = async () => {
     try {
       if (!formData.name) {
-        ErrorHandler.showWarning('School name is required');
+        ErrorHandler.showWarning('Store name is required');
         return;
       }
 
       if (!formData.private_domain) {
         ErrorHandler.showWarning(
-          'Domain name is required. Each school must have a unique domain name.'
+          'Domain name is required. Each store must have a unique domain name.'
         );
         return;
       }
 
-      const isDomainTaken = schools.some((school) => {
-        const schoolDomainPart = extractDomainPart(
-          school.domain?.private_address || ''
+      const isDomainTaken = stores.some((store) => {
+        const storeDomainPart = extractDomainPart(
+          store.domain?.private_address || ''
         );
         const inputDomainPart = extractDomainPart(formData.private_domain);
-        return schoolDomainPart === inputDomainPart;
+        return storeDomainPart === inputDomainPart;
       });
 
       if (isDomainTaken) {
         ErrorHandler.showWarning(
-          'This domain name is already taken by another school. Please choose a unique domain name.'
+          'This domain name is already taken by another store. Please choose a unique domain name.'
         );
         return;
       }
 
       setIsSubmitting(true);
 
-      const schoolData = {
+      const storeData = {
         name: formData.name,
         private_domain: formatDomain(formData.private_domain),
         description: formData.description
       };
 
-      const response = (await apiClient.createSchool(schoolData)) as any;
+      const response = (await apiClient.createStore(storeData)) as any;
       if (response.data.status === 'fail') {
         ErrorHandler.showWarning(response.message);
         return;
       }
-      ErrorHandler.showSuccess('School updated successfully');
+      ErrorHandler.showSuccess('Store created successfully');
 
-      // Refresh schools list
-      await refreshSchools();
+      // Refresh stores list
+      await refreshStores();
 
       setIsCreateDialogOpen(false);
       resetFormState();
     } catch (error) {
-      console.error('Error creating school:', error);
+      console.error('Error creating store:', error);
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleUpdateSchool = async () => {
+  const handleUpdateStore = async () => {
     try {
-      if (!selectedSchool) {
-        console.error('No school selected for update');
+      if (!selectedStore) {
+        console.error('No store selected for update');
         return;
       }
 
       if (!formData.name) {
-        ErrorHandler.showWarning('School name is required');
+        ErrorHandler.showWarning('Store name is required');
         return;
       }
 
       if (!formData.private_domain) {
         ErrorHandler.showWarning(
-          'Domain name is required. Each school must have a unique domain name.'
+          'Domain name is required. Each store must have a unique domain name.'
         );
         return;
       }
@@ -231,21 +231,20 @@ export default function StoresPage() {
         return;
       }
 
-      const isDomainTaken = schools.some((school) => {
-        if (!school.domain) return false;
-        const schoolDomainPart = extractDomainPart(
-          school.domain?.private_address || ''
+      const isDomainTaken = stores.some((store) => {
+        if (!store.domain) return false;
+        const storeDomainPart = extractDomainPart(
+          store.domain?.private_address || ''
         );
         const inputDomainPart = extractDomainPart(formData.private_domain);
         return (
-          schoolDomainPart === inputDomainPart &&
-          school.id !== selectedSchool.id
+          storeDomainPart === inputDomainPart && store.id !== selectedStore.id
         );
       });
 
       if (isDomainTaken) {
         ErrorHandler.showWarning(
-          'This domain name is already taken by another school. Please choose a unique domain name.'
+          'This domain name is already taken by another store. Please choose a unique domain name.'
         );
         return;
       }
@@ -261,32 +260,32 @@ export default function StoresPage() {
       if (typeof formData.is_active === 'boolean')
         updateData.is_active = formData.is_active;
 
-      const response = (await apiClient.updateSchool(updateData)) as any;
+      const response = (await apiClient.updateStore(updateData)) as any;
       if (response.data.status === 'fail') {
         ErrorHandler.showWarning(response.message);
         return;
       }
-      ErrorHandler.showSuccess('School updated successfully');
+      ErrorHandler.showSuccess('Store updated successfully');
 
-      // Refresh schools list
-      await refreshSchools();
+      // Refresh stores list
+      await refreshStores();
 
       setIsEditDialogOpen(false);
       resetFormState();
-      setSelectedSchool(null);
+      setSelectedStore(null);
     } catch (error) {
-      console.error('Error updating school:', error);
+      console.error('Error updating store:', error);
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Filter schools based on search term
-  const filteredSchools = schools.filter(
-    (school) =>
-      school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      school.domain?.private_address
+  // Filter stores based on search term
+  const filteredStores = stores.filter(
+    (store) =>
+      store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      store.domain?.private_address
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase())
   );
@@ -303,7 +302,7 @@ export default function StoresPage() {
             {t('common.error')}
           </h2>
           <p className="mb-4 text-muted-foreground">{error}</p>
-          <Button onClick={refreshSchools} variant="outline">
+          <Button onClick={refreshStores} variant="outline">
             {t('common.tryAgain')}
           </Button>
         </div>
@@ -317,21 +316,21 @@ export default function StoresPage() {
       dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
     >
       <PageHeader
-        title={t('schools.schoolsManagement')}
-        description={t('schools.manageSchoolsDescription')}
+        title={t('stores.storesManagement')}
+        description={t('stores.manageStoresDescription')}
       >
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="me-2 h-4 w-4" />
-              {t('schools.createSchool')}
+              {t('stores.createStore')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>{t('schools.createSchool')}</DialogTitle>
+              <DialogTitle>{t('stores.createStore')}</DialogTitle>
               <DialogDescription>
-                {t('schools.manageSchoolsDescription')}
+                {t('stores.manageStoresDescription')}
               </DialogDescription>
             </DialogHeader>
             <StoreForm
@@ -343,12 +342,12 @@ export default function StoresPage() {
             />
             <DialogFooter>
               <Button
-                onClick={handleCreateSchool}
+                onClick={handleCreateStore}
                 disabled={
                   !formData.name || !formData.private_domain || isLoading
                 }
               >
-                {isLoading ? t('common.loading') : t('schools.createSchool')}
+                {isLoading ? t('common.loading') : t('stores.createStore')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -356,7 +355,7 @@ export default function StoresPage() {
       </PageHeader>
 
       <SearchBar
-        placeholder={t('schools.searchSchools')}
+        placeholder={t('stores.searchStores')}
         value={searchTerm}
         onChange={setSearchTerm}
         className="max-w-sm"
@@ -367,18 +366,18 @@ export default function StoresPage() {
           <StoreCard
             key={store.id}
             store={store}
-            onEdit={(school) => {
+            onEdit={(store) => {
               const newFormData = {
-                name: school?.name || '',
+                name: store?.name || '',
                 private_domain: extractDomainPart(
-                  school?.domain?.private_address || ''
+                  store?.domain?.private_address || ''
                 ),
-                public_domain: school?.domain?.public_address || '',
-                description: school?.description || '',
-                is_active: school?.is_active ?? false
+                public_domain: store?.domain?.public_address || '',
+                description: store?.description || '',
+                is_active: store?.is_active ?? false
               };
 
-              setSelectedSchool(school);
+              setSelectedStore(store);
               setFormData(newFormData);
               setIsEditDialogOpen(true);
             }}
@@ -386,14 +385,14 @@ export default function StoresPage() {
         ))}
       </div>
 
-      {filteredSchools.length === 0 && (
+      {filteredStores.length === 0 && (
         <EmptyState
           icon={<Building2 className="h-12 w-12" />}
-          title={t('schools.noSchoolsFound')}
+          title={t('stores.noStoresFound')}
           description={
             searchTerm
               ? t('common.noResults')
-              : t('schools.manageSchoolsDescription')
+              : t('stores.manageStoresDescription')
           }
         />
       )}
@@ -404,10 +403,10 @@ export default function StoresPage() {
           <DialogHeader>
             <DialogTitle>{t('common.edit')}</DialogTitle>
             <DialogDescription>
-              {t('schools.manageSchoolsDescription')}
+              {t('stores.manageStoresDescription')}
             </DialogDescription>
           </DialogHeader>
-          <SchoolForm
+          <StoreForm
             formData={formData}
             onFormDataChange={(data) => setFormData(data)}
             domainValidation={domainValidation}
@@ -416,7 +415,7 @@ export default function StoresPage() {
           />
           <DialogFooter>
             <Button
-              onClick={handleUpdateSchool}
+              onClick={handleUpdateStore}
               disabled={!formData.name || !formData.private_domain || isLoading}
             >
               {isLoading ? t('common.loading') : t('common.save')}

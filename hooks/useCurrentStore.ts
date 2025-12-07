@@ -29,6 +29,7 @@ export function useHasStoreAccess(): boolean {
 }
 
 // Legacy exports for backward compatibility
+// Legacy exports for backward compatibility - use useCurrentStore instead
 export const useCurrentSchoolId = useCurrentStoreId;
 export const useCurrentSchool = useCurrentStore;
 export const useHasSchoolAccess = useHasStoreAccess;

@@ -41,30 +41,28 @@ import {
 import { apiClient } from '@/lib/api';
 import {
   PlatformFinancialSummary,
-  SchoolFinancialRecord,
+  StoreFinancialRecord,
   PlatformFinancialRecord,
   CostCategory
 } from '@/types/api';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useAccessControl } from '@/hooks/useAccessControl';
 import { useRouter } from 'next/navigation';
 
 export default function FinancialDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<PlatformFinancialSummary | null>(null);
-  const [schoolRecords, setSchoolRecords] = useState<SchoolFinancialRecord[]>(
-    []
-  );
+  const [storeRecords, setStoreRecords] = useState<StoreFinancialRecord[]>([]);
   const [platformRecords, setPlatformRecords] = useState<
     PlatformFinancialRecord[]
   >([]);
   const [costCategories, setCostCategories] = useState<CostCategory[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
   const { userState } = useAccessControl();
   const router = useRouter();
 
@@ -72,7 +70,7 @@ export default function FinancialDashboardPage() {
   useEffect(() => {
     if (userState) {
       if (userState.userRole === 'MANAGER') {
-        router.replace('/financial/school');
+        router.replace('/financial/store');
         return;
       }
       if (userState.userRole === 'ADMIN') {
@@ -100,7 +98,7 @@ export default function FinancialDashboardPage() {
       const [summaryData, schoolData, platformData, categoriesData] =
         await Promise.all([
           apiClient.getPlatformFinancialSummary(),
-          apiClient.getSchoolFinancialRecords({
+          apiClient.getStoreFinancialRecords({
             year: selectedYear,
             month: selectedMonth || undefined
           }),
@@ -112,7 +110,7 @@ export default function FinancialDashboardPage() {
         ]);
 
       setSummary(summaryData);
-      setSchoolRecords(schoolData);
+      setStoreRecords(schoolData);
       setPlatformRecords(platformData);
       setCostCategories(categoriesData);
     } catch (error: any) {
@@ -124,7 +122,7 @@ export default function FinancialDashboardPage() {
   };
 
   const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithSchool(amount, {
+    return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
       currency_position: 'after'
@@ -331,7 +329,7 @@ export default function FinancialDashboardPage() {
       <Tabs defaultValue="platform" className="space-y-4">
         <TabsList>
           <TabsTrigger value="platform">Platform Records</TabsTrigger>
-          <TabsTrigger value="schools">School Records</TabsTrigger>
+          <TabsTrigger value="stores">Store Records</TabsTrigger>
         </TabsList>
 
         <TabsContent value="platform" className="space-y-4">
@@ -476,17 +474,17 @@ export default function FinancialDashboardPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="schools" className="space-y-4">
+        <TabsContent value="stores" className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>School Financial Records</CardTitle>
+                  <CardTitle>Store Financial Records</CardTitle>
                   <CardDescription>
-                    Per-school costs and revenue records
+                    Per-store costs and revenue records
                   </CardDescription>
                 </div>
-                <Link href="/financial/school-records/create">
+                <Link href="/financial/store-records/create">
                   <Button size="sm">
                     <Plus className="mr-2 h-4 w-4" />
                     Add Record
@@ -498,7 +496,7 @@ export default function FinancialDashboardPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>School</TableHead>
+                    <TableHead>Store</TableHead>
                     <TableHead>Period</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead className="text-right">Revenue</TableHead>
@@ -509,23 +507,22 @@ export default function FinancialDashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {schoolRecords.length === 0 ? (
+                  {storeRecords.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={8}
                         className="text-center text-muted-foreground"
                       >
-                        No school financial records found
+                        No store financial records found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    schoolRecords.map((record) => {
+                    storeRecords.map((record) => {
                       const margin = profitMargin(record.revenue, record.cost);
                       return (
                         <TableRow key={record.id}>
                           <TableCell className="font-medium">
-                            {record.school?.name ||
-                              `School #${record.school_id}`}
+                            {record.store?.name || `Store #${record.store_id}`}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
@@ -575,7 +572,7 @@ export default function FinancialDashboardPage() {
                           <TableCell>
                             <div className="flex gap-2">
                               <Link
-                                href={`/financial/school-records/${record.id}/edit`}
+                                href={`/financial/store-records/${record.id}/edit`}
                               >
                                 <Button variant="ghost" size="sm">
                                   <Edit className="h-4 w-4" />
@@ -591,7 +588,7 @@ export default function FinancialDashboardPage() {
                                     )
                                   ) {
                                     try {
-                                      await apiClient.deleteSchoolFinancialRecord(
+                                      await apiClient.deleteStoreFinancialRecord(
                                         record.id
                                       );
                                       toast.success(

@@ -18,7 +18,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 interface Profile {
   id: number;
   display_name: string;
-  school: {
+  store: {
     id: number;
     name: string;
     slug: string;
@@ -163,7 +163,7 @@ export function ProfilePasswordManager() {
       <div>
         <h2 className="text-2xl font-bold">Profile Password Management</h2>
         <p className="text-gray-600">
-          Manage passwords for your different school profiles. Each profile can
+          Manage passwords for your different store profiles. Each profile can
           have its own password.
         </p>
       </div>
@@ -196,7 +196,7 @@ export function ProfilePasswordManager() {
                     {profile.display_name}
                   </CardTitle>
                   <CardDescription>
-                    {profile.school.name} • {profile.role}
+                    {profile.store.name} • {profile.role}
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">

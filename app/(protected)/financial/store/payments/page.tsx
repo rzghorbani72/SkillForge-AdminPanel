@@ -23,7 +23,7 @@ import {
   Users
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { formatCurrencyWithSchool } from '@/lib/utils';
+import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -44,7 +44,7 @@ export default function SchoolPaymentsPage() {
   const [payments, setPayments] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const school = useCurrentSchool();
+  const store = useCurrentStore();
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -53,10 +53,10 @@ export default function SchoolPaymentsPage() {
 
   useEffect(() => {
     loadData();
-  }, [selectedYear, selectedMonth, school?.id]);
+  }, [selectedYear, selectedMonth, store?.id]);
 
   const loadData = async () => {
-    if (!school?.id) return;
+    if (!store?.id) return;
 
     try {
       setLoading(true);
@@ -70,8 +70,8 @@ export default function SchoolPaymentsPage() {
           ? new Date(selectedYear, selectedMonth, 0, 23, 59, 59)
           : new Date(selectedYear, 11, 31, 23, 59, 59);
 
-      const data = await apiClient.getSchoolRevenueFromPayments(
-        school.id,
+      const data = await apiClient.getStoreRevenueFromPayments(
+        store.id,
         startDate.toISOString(),
         endDate.toISOString()
       );
@@ -87,7 +87,7 @@ export default function SchoolPaymentsPage() {
   };
 
   const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithSchool(amount, {
+    return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
       currency_position: 'after'
@@ -138,18 +138,18 @@ export default function SchoolPaymentsPage() {
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
           <p className="mt-4 text-muted-foreground">
-            {t('financial.school.payments.loading')}
+            {t('financial.store.payments.loading')}
           </p>
         </div>
       </div>
     );
   }
 
-  if (!school) {
+  if (!store) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
-          {t('financial.school.payments.noSchool')}
+          {t('financial.store.payments.noSchool')}
         </p>
       </div>
     );
@@ -160,10 +160,10 @@ export default function SchoolPaymentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">
-            {t('financial.school.payments.title')}
+            {t('financial.store.payments.title')}
           </h1>
           <p className="mt-1 text-muted-foreground">
-            {school.name} - {t('financial.school.payments.description')}
+            {store.name} - {t('financial.store.payments.description')}
           </p>
         </div>
       </div>
@@ -171,13 +171,13 @@ export default function SchoolPaymentsPage() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('financial.school.payments.filters')}</CardTitle>
+          <CardTitle>{t('financial.store.payments.filters')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium">
-                {t('financial.school.payments.year')}
+                {t('financial.store.payments.year')}
               </label>
               <Select
                 value={selectedYear.toString()}
@@ -197,7 +197,7 @@ export default function SchoolPaymentsPage() {
             </div>
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium">
-                {t('financial.school.payments.month')}
+                {t('financial.store.payments.month')}
               </label>
               <Select
                 value={selectedMonth?.toString() || 'all'}
@@ -210,7 +210,7 @@ export default function SchoolPaymentsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
-                    {t('financial.school.payments.allMonths')}
+                    {t('financial.store.payments.allMonths')}
                   </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
@@ -232,7 +232,7 @@ export default function SchoolPaymentsPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                {t('financial.school.payments.totalRevenue')}
+                {t('financial.store.payments.totalRevenue')}
               </CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -244,7 +244,7 @@ export default function SchoolPaymentsPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.school.payments.fromPayments', {
+                {t('financial.store.payments.fromPayments', {
                   count: revenueData.payment_count
                 })}
               </p>
@@ -254,7 +254,7 @@ export default function SchoolPaymentsPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                {t('financial.school.payments.completed')}
+                {t('financial.store.payments.completed')}
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-green-500" />
             </CardHeader>
@@ -263,7 +263,7 @@ export default function SchoolPaymentsPage() {
                 {paymentStats.completed}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.school.payments.successfulPayments')}
+                {t('financial.store.payments.successfulPayments')}
               </p>
             </CardContent>
           </Card>
@@ -271,7 +271,7 @@ export default function SchoolPaymentsPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                {t('financial.school.payments.pending')}
+                {t('financial.store.payments.pending')}
               </CardTitle>
               <CreditCard className="h-4 w-4 text-yellow-500" />
             </CardHeader>
@@ -280,7 +280,7 @@ export default function SchoolPaymentsPage() {
                 {paymentStats.pending}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.school.payments.awaitingProcessing')}
+                {t('financial.store.payments.awaitingProcessing')}
               </p>
             </CardContent>
           </Card>
@@ -288,7 +288,7 @@ export default function SchoolPaymentsPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                {t('financial.school.payments.failed')}
+                {t('financial.store.payments.failed')}
               </CardTitle>
               <CreditCard className="h-4 w-4 text-red-500" />
             </CardHeader>
@@ -297,7 +297,7 @@ export default function SchoolPaymentsPage() {
                 {paymentStats.failed}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.school.payments.failed')} transactions
+                {t('financial.store.payments.failed')} transactions
               </p>
             </CardContent>
           </Card>
@@ -309,10 +309,10 @@ export default function SchoolPaymentsPage() {
         <Card>
           <CardHeader>
             <CardTitle>
-              {t('financial.school.payments.paymentsByMethod')}
+              {t('financial.store.payments.paymentsByMethod')}
             </CardTitle>
             <CardDescription>
-              {t('financial.school.payments.paymentsByMethodDescription')}
+              {t('financial.store.payments.paymentsByMethodDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -320,13 +320,13 @@ export default function SchoolPaymentsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>
-                    {t('financial.school.payments.paymentMethod')}
+                    {t('financial.store.payments.paymentMethod')}
                   </TableHead>
                   <TableHead className="text-right">
-                    {t('financial.school.payments.count')}
+                    {t('financial.store.payments.count')}
                   </TableHead>
                   <TableHead className="text-right">
-                    {t('financial.school.payments.totalAmount')}
+                    {t('financial.store.payments.totalAmount')}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -355,22 +355,22 @@ export default function SchoolPaymentsPage() {
       {/* All Payments */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('financial.school.payments.allPayments')}</CardTitle>
+          <CardTitle>{t('financial.store.payments.allPayments')}</CardTitle>
           <CardDescription>
-            {t('financial.school.payments.allPaymentsDescription')}
+            {t('financial.store.payments.allPaymentsDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('financial.school.payments.date')}</TableHead>
-                <TableHead>{t('financial.school.payments.student')}</TableHead>
-                <TableHead>{t('financial.school.payments.course')}</TableHead>
-                <TableHead>{t('financial.school.payments.method')}</TableHead>
-                <TableHead>{t('financial.school.payments.status')}</TableHead>
+                <TableHead>{t('financial.store.payments.date')}</TableHead>
+                <TableHead>{t('financial.store.payments.student')}</TableHead>
+                <TableHead>{t('financial.store.payments.course')}</TableHead>
+                <TableHead>{t('financial.store.payments.method')}</TableHead>
+                <TableHead>{t('financial.store.payments.status')}</TableHead>
                 <TableHead className="text-right">
-                  {t('financial.school.payments.amount')}
+                  {t('financial.store.payments.amount')}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -381,7 +381,7 @@ export default function SchoolPaymentsPage() {
                     colSpan={6}
                     className="text-center text-muted-foreground"
                   >
-                    {t('financial.school.payments.noPayments')}
+                    {t('financial.store.payments.noPayments')}
                   </TableCell>
                 </TableRow>
               ) : (

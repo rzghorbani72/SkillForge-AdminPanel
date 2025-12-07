@@ -24,7 +24,7 @@ type UseCourseEditReturn = {
 const useCourseEdit = (): UseCourseEditReturn => {
   const router = useRouter();
   const params = useParams();
-  const { selectedSchool } = useSchool();
+  const { selectedStore: selectedSchool } = useSchool();
   const courseId = params.course_id as string;
 
   const [course, setCourse] = useState<Course | null>(null);
@@ -88,7 +88,7 @@ const useCourseEdit = (): UseCourseEditReturn => {
 
   const onSubmitHandler = async (data: CourseFormData) => {
     if (!selectedSchool || !course) {
-      toast.error('Course or school not found');
+      toast.error('Course or store not found');
       return;
     }
 

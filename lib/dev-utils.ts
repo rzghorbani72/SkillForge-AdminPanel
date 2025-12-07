@@ -23,13 +23,13 @@ export function getBaseUrl(): string {
 }
 
 /**
- * Get school URL for development or production
+ * Get store URL for development or production
  */
-export function getSchoolUrl(schoolSlug: string): string {
+export function getStoreUrl(storeSlug: string): string {
   if (isDevelopmentMode()) {
-    return `http://${schoolSlug}.localhost:3000`;
+    return `http://${storeSlug}.localhost:3000`;
   }
-  return `https://${schoolSlug}.skillforge.com`;
+  return `https://${storeSlug}.skillforge.com`;
 }
 
 /**

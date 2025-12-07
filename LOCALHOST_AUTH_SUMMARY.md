@@ -14,16 +14,16 @@ This update makes the authentication system work seamlessly in both development 
 
 ### 🏠 **Development Mode Behavior**
 
-- **School URLs**: `http://school-slug.localhost:3000` instead of `https://school-slug.skillforge.com`
+- **Store URLs**: `http://store-slug.localhost:3000` instead of `https://store-slug.skillforge.com`
 - **Admin Panel**: `http://localhost:3000` instead of `https://admin.skillforge.com`
 - **Student Redirects**: Shows development notifications instead of redirecting to external domains
 - **Logout**: Redirects to localhost login page
 
 ### 🚀 **Production Mode Behavior**
 
-- **School URLs**: `https://school-slug.skillforge.com` (or custom domains)
+- **Store URLs**: `https://store-slug.skillforge.com` (or custom domains)
 - **Admin Panel**: `https://admin.skillforge.com`
-- **Student Redirects**: Redirects to actual school websites
+- **Student Redirects**: Redirects to actual store websites
 - **Logout**: Redirects to appropriate production login pages
 
 ## Files Modified
@@ -68,13 +68,13 @@ function isDevelopmentMode(): boolean {
 ### **URL Generation**
 
 ```typescript
-// Development: http://school-slug.localhost:3000
-// Production: https://school-slug.skillforge.com
-function getSchoolUrl(schoolSlug: string): string {
+// Development: http://store-slug.localhost:3000
+// Production: https://store-slug.skillforge.com
+function getStoreUrl(storeSlug: string): string {
   if (isDevelopmentMode()) {
-    return `http://${schoolSlug}.localhost:3000`;
+    return `http://${storeSlug}.localhost:3000`;
   }
-  return `https://${schoolSlug}.skillforge.com`;
+  return `https://${storeSlug}.skillforge.com`;
 }
 ```
 
@@ -83,12 +83,12 @@ function getSchoolUrl(schoolSlug: string): string {
 ```typescript
 if (isDevelopmentMode()) {
   // Show development notification
-  logDevInfo('Development mode: Would redirect student to:', schoolUrl);
+  logDevInfo('Development mode: Would redirect student to:', storeUrl);
   // Stay on current page or redirect to dashboard
   router.push('/dashboard');
 } else {
-  // Production: redirect to actual school
-  window.location.href = schoolUrl;
+  // Production: redirect to actual store
+  window.location.href = storeUrl;
 }
 ```
 
@@ -99,14 +99,14 @@ if (isDevelopmentMode()) {
 1. **Start Development Server**: `npm run dev`
 2. **Access Admin Panel**: `http://localhost:3000`
 3. **Test Student Login**: Will show development notifications
-4. **Test School URLs**: Will generate localhost URLs
+4. **Test Store URLs**: Will generate localhost URLs
 5. **Check Console**: Development logs will show redirect information
 
 ### **For Testing**
 
 1. **Staff Login**: Works normally, redirects to dashboard
 2. **Student Login**: Shows development notification, redirects to dashboard
-3. **School URLs**: Generated as localhost URLs
+3. **Store URLs**: Generated as localhost URLs
 4. **Logout**: Redirects to localhost login
 
 ## Production Workflow
@@ -115,8 +115,8 @@ if (isDevelopmentMode()) {
 
 1. **Deploy to Production**: Environment automatically detected
 2. **Staff Login**: Works normally, redirects to dashboard
-3. **Student Login**: Redirects to actual school websites
-4. **School URLs**: Generated as production URLs
+3. **Student Login**: Redirects to actual store websites
+4. **Store URLs**: Generated as production URLs
 5. **Logout**: Redirects to appropriate production login pages
 
 ## Benefits
@@ -141,7 +141,7 @@ if (isDevelopmentMode()) {
 ### **Development Mode Testing**
 
 - [ ] Environment detection works correctly
-- [ ] School URLs generate as localhost URLs
+- [ ] Store URLs generate as localhost URLs
 - [ ] Student redirects show development notifications
 - [ ] Staff redirects work normally
 - [ ] Logout redirects to localhost login
@@ -150,8 +150,8 @@ if (isDevelopmentMode()) {
 ### **Production Mode Testing**
 
 - [ ] Environment detection works correctly
-- [ ] School URLs generate as production URLs
-- [ ] Student redirects go to actual school websites
+- [ ] Store URLs generate as production URLs
+- [ ] Student redirects go to actual store websites
 - [ ] Staff redirects work normally
 - [ ] Logout redirects to production login pages
 - [ ] No development logs in production
@@ -208,7 +208,7 @@ For localhost subdomain testing, you may need to:
 2. **Check URL Generation**
 
    ```javascript
-   console.log('School URL:', getSchoolUrl('test-school'));
+   console.log('Store URL:', getStoreUrl('test-store'));
    console.log('Base URL:', getBaseUrl());
    ```
 

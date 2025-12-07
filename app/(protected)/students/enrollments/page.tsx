@@ -278,7 +278,7 @@ export default function StudentEnrollmentsPage() {
                                 t('students.unknownCourse')}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {enrollment.course?.school?.name || '—'}
+                              {enrollment.course?.store?.name || '—'}
                             </p>
                           </div>
                         </TableCell>

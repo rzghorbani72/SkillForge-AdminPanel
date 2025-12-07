@@ -17,20 +17,20 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
-interface SchoolOption {
+interface StoreOption {
   id: number;
   name: string;
 }
 
 interface BaseDataFormProps {
-  registrationType: 'new-school' | 'existing-school';
-  setRegistrationType: (t: 'new-school' | 'existing-school') => void;
+  registrationType: 'new-store' | 'existing-store';
+  setRegistrationType: (t: 'new-store' | 'existing-store') => void;
   formData: any;
   errors: Record<string, string>;
   isLoading: boolean;
-  schools: SchoolOption[];
-  schoolsLoading: boolean;
-  schoolsError?: string;
+  stores: StoreOption[];
+  storesLoading: boolean;
+  storesError?: string;
   joinAsTeacher: boolean;
   setJoinAsTeacher: (b: boolean) => void;
   onChange: (field: string, value: string) => void;
@@ -46,9 +46,9 @@ export function BaseDataForm(props: BaseDataFormProps) {
     formData,
     errors,
     isLoading,
-    schools,
-    schoolsLoading,
-    schoolsError,
+    stores,
+    storesLoading,
+    storesError,
     joinAsTeacher,
     setJoinAsTeacher,
     onChange,
@@ -65,36 +65,36 @@ export function BaseDataForm(props: BaseDataFormProps) {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div
             className={`cursor-pointer rounded-lg border-2 p-4 transition-colors ${
-              registrationType === 'new-school'
+              registrationType === 'new-store'
                 ? 'border-blue-500 bg-blue-50'
                 : 'border-gray-200 hover:border-gray-300'
             }`}
-            onClick={() => setRegistrationType('new-school')}
+            onClick={() => setRegistrationType('new-store')}
           >
             <div className="flex items-center gap-3">
               <Building className="h-5 w-5 text-blue-600" />
               <div>
-                <h3 className="font-medium">{t('auth.createNewSchool')}</h3>
+                <h3 className="font-medium">{t('auth.createNewStore')}</h3>
                 <p className="text-sm text-gray-600">
-                  {t('auth.createNewSchoolDescription')}
+                  {t('auth.createNewStoreDescription')}
                 </p>
               </div>
             </div>
           </div>
           <div
             className={`cursor-pointer rounded-lg border-2 p-4 transition-colors ${
-              registrationType === 'existing-school'
+              registrationType === 'existing-store'
                 ? 'border-blue-500 bg-blue-50'
                 : 'border-gray-200 hover:border-gray-300'
             }`}
-            onClick={() => setRegistrationType('existing-school')}
+            onClick={() => setRegistrationType('existing-store')}
           >
             <div className="flex items-center gap-3">
               <GraduationCap className="h-5 w-5 text-green-600" />
               <div>
-                <h3 className="font-medium">{t('auth.joinExistingSchool')}</h3>
+                <h3 className="font-medium">{t('auth.joinExistingStore')}</h3>
                 <p className="text-sm text-gray-600">
-                  {t('auth.joinExistingSchoolDescription')}
+                  {t('auth.joinExistingStoreDescription')}
                 </p>
               </div>
             </div>
@@ -185,35 +185,35 @@ export function BaseDataForm(props: BaseDataFormProps) {
         </div>
       </div>
 
-      {/* School Information */}
-      {registrationType === 'new-school' ? (
+      {/* Store Information */}
+      {registrationType === 'new-store' ? (
         <div className="space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="space-y-2">
-            <Label htmlFor="schoolName">{t('schools.schoolName')}</Label>
+            <Label htmlFor="storeName">{t('stores.storeName')}</Label>
             <Input
-              id="schoolName"
+              id="storeName"
               type="text"
-              placeholder={t('schools.enterSchoolName')}
-              value={formData.schoolName}
+              placeholder={t('stores.enterStoreName')}
+              value={formData.storeName}
               onChange={(e) => {
-                onChange('schoolName', e.target.value);
+                onChange('storeName', e.target.value);
                 onGenerateSlug(e.target.value);
               }}
-              className={errors.schoolName ? 'border-red-500' : ''}
+              className={errors.storeName ? 'border-red-500' : ''}
               disabled={isLoading}
               dir="ltr"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="schoolSlug">{t('schools.schoolUrlSlug')}</Label>
+            <Label htmlFor="storeSlug">{t('stores.storeUrlSlug')}</Label>
             <div className="relative">
               <Input
-                id="schoolSlug"
+                id="storeSlug"
                 type="text"
-                placeholder={t('schools.schoolSlugPlaceholder')}
-                value={formData.schoolSlug}
-                onChange={(e) => onChange('schoolSlug', e.target.value)}
-                className={`${isRTL ? 'pl-20 ps-20' : 'pe-20 pr-20'} ${errors.schoolSlug ? 'border-red-500' : ''}`}
+                placeholder={t('stores.storeSlugPlaceholder')}
+                value={formData.storeSlug}
+                onChange={(e) => onChange('storeSlug', e.target.value)}
+                className={`${isRTL ? 'pl-20 ps-20' : 'pe-20 pr-20'} ${errors.storeSlug ? 'border-red-500' : ''}`}
                 disabled={isLoading}
                 dir="ltr"
               />
@@ -225,14 +225,14 @@ export function BaseDataForm(props: BaseDataFormProps) {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="schoolDescription">
-              {t('schools.schoolDescription')} ({t('common.optional')})
+            <Label htmlFor="storeDescription">
+              {t('stores.storeDescription')} ({t('common.optional')})
             </Label>
             <Textarea
-              id="schoolDescription"
-              placeholder={t('schools.schoolDescriptionPlaceholder')}
-              value={formData.schoolDescription}
-              onChange={(e) => onChange('schoolDescription', e.target.value)}
+              id="storeDescription"
+              placeholder={t('stores.storeDescriptionPlaceholder')}
+              value={formData.storeDescription}
+              onChange={(e) => onChange('storeDescription', e.target.value)}
               disabled={isLoading}
               rows={3}
               dir="ltr"
@@ -242,29 +242,29 @@ export function BaseDataForm(props: BaseDataFormProps) {
       ) : (
         <div className="space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="space-y-2">
-            <Label htmlFor="existingSchool">{t('auth.selectSchool')}</Label>
+            <Label htmlFor="existingStore">{t('auth.selectStore')}</Label>
             <Select
-              value={formData.existingSchoolId}
-              onValueChange={(value) => onChange('existingSchoolId', value)}
-              disabled={isLoading || schoolsLoading}
+              value={formData.existingStoreId}
+              onValueChange={(value) => onChange('existingStoreId', value)}
+              disabled={isLoading || storesLoading}
             >
               <SelectTrigger
-                className={errors.existingSchoolId ? 'border-red-500' : ''}
+                className={errors.existingStoreId ? 'border-red-500' : ''}
               >
                 <SelectValue
                   placeholder={
-                    schoolsLoading
+                    storesLoading
                       ? t('common.loading')
-                      : schoolsError
+                      : storesError
                         ? t('common.errorLoading')
-                        : t('auth.chooseSchoolToJoin')
+                        : t('auth.chooseStoreToJoin')
                   }
                 />
               </SelectTrigger>
               <SelectContent>
-                {schools.map((school) => (
-                  <SelectItem key={school.id} value={school.id.toString()}>
-                    {school.name}
+                {stores.map((store) => (
+                  <SelectItem key={store.id} value={store.id.toString()}>
+                    {store.name}
                   </SelectItem>
                 ))}
               </SelectContent>

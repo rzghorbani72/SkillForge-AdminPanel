@@ -35,7 +35,7 @@ type UseLessonFormReturn = {
 const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
   const router = useRouter();
   const params = useParams();
-  const { selectedSchool } = useSchool();
+  const { selectedStore: selectedSchool } = useSchool();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
   const lessonId = params.lesson_id as string;
@@ -124,7 +124,7 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
 
   const onSubmitHandler = async (data: LessonFormData) => {
     if (!selectedSchool) {
-      toast.error('Please select a school first');
+      toast.error('Please select a store first');
       return;
     }
 

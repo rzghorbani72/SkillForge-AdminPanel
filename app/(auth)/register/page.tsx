@@ -17,7 +17,7 @@ import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useSchools } from '@/hooks/useSchools';
+import { useStores } from '@/hooks/useStores';
 import { StepIndicator } from '@/components/auth/register/StepIndicator';
 import { VerificationStep } from '@/components/auth/register/VerificationStep';
 import { BaseDataForm } from '@/components/auth/register/BaseDataForm';
@@ -31,16 +31,12 @@ export default function RegisterPage() {
   const { isRTL } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [registrationType, setRegistrationType] = useState<
-    'new-school' | 'existing-school'
-  >('new-school');
+    'new-store' | 'existing-store'
+  >('new-store');
   const [joinAsTeacher, setJoinAsTeacher] = useState(false);
 
-  // Fetch schools for the dropdown
-  const {
-    schools,
-    isLoading: schoolsLoading,
-    error: schoolsError
-  } = useSchools();
+  // Fetch stores for the dropdown
+  const { stores, isLoading: storesLoading, error: storesError } = useStores();
 
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [emailOtpSent, setEmailOtpSent] = useState(false);
@@ -60,30 +56,28 @@ export default function RegisterPage() {
     confirmPassword: '',
     phoneOtp: '',
     emailOtp: '',
-    schoolName: '',
-    schoolDescription: '',
-    schoolSlug: '',
-    existingSchoolId: '',
+    storeName: '',
+    storeDescription: '',
+    storeSlug: '',
+    existingStoreId: '',
     teacherRequestReason: ''
   });
 
-  // Update primary verification method when school is selected
+  // Update primary verification method when store is selected
   useEffect(() => {
-    if (registrationType === 'existing-school' && formData.existingSchoolId) {
-      const selectedSchool = schools.find(
-        (s) => s.id === parseInt(formData.existingSchoolId)
+    if (registrationType === 'existing-store' && formData.existingStoreId) {
+      const selectedStore = stores.find(
+        (s) => s.id === parseInt(formData.existingStoreId)
       );
-      if (selectedSchool?.primary_verification_method) {
-        setPrimaryVerificationMethod(
-          selectedSchool.primary_verification_method
-        );
+      if (selectedStore?.primary_verification_method) {
+        setPrimaryVerificationMethod(selectedStore.primary_verification_method);
       } else {
         setPrimaryVerificationMethod('phone'); // Default
       }
-    } else if (registrationType === 'new-school') {
-      setPrimaryVerificationMethod('phone'); // Default for new schools
+    } else if (registrationType === 'new-store') {
+      setPrimaryVerificationMethod('phone'); // Default for new stores
     }
-  }, [formData.existingSchoolId, registrationType, schools]);
+  }, [formData.existingStoreId, registrationType, stores]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const isSubmittingRef = useRef(false);
 
@@ -297,21 +291,21 @@ export default function RegisterPage() {
     // Note: OTP verification is handled separately after form submission
     // Users can enter and verify OTPs after clicking "Create Account"
 
-    // School validation based on registration type
-    if (registrationType === 'new-school') {
-      if (!formData.schoolName.trim()) {
-        newErrors.schoolName = t('auth.schoolNameRequired');
+    // Store validation based on registration type
+    if (registrationType === 'new-store') {
+      if (!formData.storeName.trim()) {
+        newErrors.storeName = t('auth.storeNameRequired');
       }
-      if (!formData.schoolSlug.trim()) {
-        newErrors.schoolSlug = t('auth.schoolSlugRequired');
-        // Note: When creating a new school, the user automatically becomes the manager
-        // regardless of their selected user type. They can also be students/teachers in other schools.
-      } else if (!/^[a-z0-9-]+$/.test(formData.schoolSlug)) {
-        newErrors.schoolSlug = t('auth.schoolSlugInvalid');
+      if (!formData.storeSlug.trim()) {
+        newErrors.storeSlug = t('auth.storeSlugRequired');
+        // Note: When creating a new store, the user automatically becomes the manager
+        // regardless of their selected user type. They can also be students/teachers in other stores.
+      } else if (!/^[a-z0-9-]+$/.test(formData.storeSlug)) {
+        newErrors.storeSlug = t('auth.storeSlugInvalid');
       }
     } else {
-      if (!formData.existingSchoolId) {
-        newErrors.existingSchoolId = t('auth.selectSchoolRequired');
+      if (!formData.existingStoreId) {
+        newErrors.existingStoreId = t('auth.selectStoreRequired');
       }
 
       // Validate teacher request reason if requesting teacher role
@@ -349,10 +343,10 @@ export default function RegisterPage() {
 
       // Determine role based on registration type
       let role: string;
-      if (registrationType === 'new-school') {
+      if (registrationType === 'new-store') {
         role = 'MANAGER';
       } else {
-        // When joining existing school, register as teacher
+        // When joining existing store, register as teacher
         // Only teachers, managers, and admins can access this panel
         role = 'TEACHER';
       }
@@ -365,9 +359,9 @@ export default function RegisterPage() {
         password: formData.password,
         confirmed_password: formData.confirmPassword,
         role: role,
-        school_id:
-          registrationType === 'existing-school'
-            ? parseInt(formData.existingSchoolId)
+        store_id:
+          registrationType === 'existing-store'
+            ? parseInt(formData.existingStoreId)
             : undefined,
         display_name: formData.name,
         ...(phoneOtpVerified &&
@@ -376,16 +370,16 @@ export default function RegisterPage() {
           emailOtpVerified &&
           formData.emailOtp?.trim() && { email_otp: formData.emailOtp.trim() }),
         // Teacher request data (only when requesting teacher role)
-        ...(registrationType === 'existing-school' &&
+        ...(registrationType === 'existing-store' &&
           joinAsTeacher && {
             teacher_request: true,
             teacher_request_reason: formData.teacherRequestReason
           }),
-        // School creation data (only when creating new school)
-        ...(registrationType === 'new-school' && {
-          school_name: formData.schoolName,
-          school_slug: formData.schoolSlug,
-          school_description: formData.schoolDescription
+        // Store creation data (only when creating new store)
+        ...(registrationType === 'new-store' && {
+          store_name: formData.storeName,
+          store_slug: formData.storeSlug,
+          store_description: formData.storeDescription
         })
       };
 
@@ -442,11 +436,11 @@ export default function RegisterPage() {
 
     // Determine role based on registration type
     let role: string;
-    if (registrationType === 'new-school') {
-      // When creating a new school, the user automatically becomes the manager
+    if (registrationType === 'new-store') {
+      // When creating a new store, the user automatically becomes the manager
       role = 'MANAGER';
     } else {
-      // Anyone joining an existing school becomes a teacher by default
+      // Anyone joining an existing store becomes a teacher by default
       // Only teachers, managers, and admins can access this panel
       role = 'TEACHER';
     }
@@ -491,16 +485,16 @@ export default function RegisterPage() {
         password: formData.password,
         confirmed_password: formData.confirmPassword,
         role: role,
-        school_id:
-          registrationType === 'existing-school'
-            ? parseInt(formData.existingSchoolId)
-            : undefined, // No school ID when creating new school
+        store_id:
+          registrationType === 'existing-store'
+            ? parseInt(formData.existingStoreId)
+            : undefined, // No store ID when creating new store
         display_name: formData.name,
-        // School creation data (only when creating new school)
-        ...(registrationType === 'new-school' && {
-          school_name: formData.schoolName,
-          school_slug: formData.schoolSlug,
-          school_description: formData.schoolDescription
+        // Store creation data (only when creating new store)
+        ...(registrationType === 'new-store' && {
+          store_name: formData.storeName,
+          store_slug: formData.storeSlug,
+          store_description: formData.storeDescription
         })
       };
 
@@ -527,18 +521,18 @@ export default function RegisterPage() {
         ErrorHandler.showSuccess('Registration successful!');
 
         console.log('success registrationType', user, registrationType);
-        // Handle school creation or joining
+        // Handle store creation or joining
 
         const nextStep = (user as any)?.data?.next_step as string | undefined;
-        if (registrationType === 'new-school') {
-          // Create new school - user becomes manager automatically
+        if (registrationType === 'new-store') {
+          // Create new store - user becomes manager automatically
           ErrorHandler.showInfo(
-            'Registration completed! Your school has been created and you are the manager. You can now login.'
+            'Registration completed! Your store has been created and you are the manager. You can now login.'
           );
           // Redirect to login
           router.push('/login');
         } else {
-          // Join existing school - becomes teacher
+          // Join existing store - becomes teacher
           ErrorHandler.showInfo(
             'Registration completed! You have been registered as a teacher. You can now login.'
           );
@@ -570,14 +564,14 @@ export default function RegisterPage() {
     }
   };
 
-  const generateSchoolSlug = (schoolName: string) => {
-    const slug = schoolName
+  const generateStoreSlug = (storeName: string) => {
+    const slug = storeName
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim();
-    handleInputChange('schoolSlug', slug);
+    handleInputChange('storeSlug', slug);
   };
 
   return (
@@ -607,7 +601,7 @@ export default function RegisterPage() {
             <AlertDescription>
               {t('auth.panelForStaff')}{' '}
               <strong>{t('auth.teachersManagersAdmins')}</strong>.{' '}
-              {t('auth.studentsLoginThroughSchool')}
+              {t('auth.studentsLoginThroughStore')}
             </AlertDescription>
           </Alert>
 
@@ -618,7 +612,7 @@ export default function RegisterPage() {
               <CardTitle className="text-center text-2xl">
                 {step === 'verification'
                   ? t('auth.verifyYourContact')
-                  : t('auth.createSchoolAccount')}
+                  : t('auth.createStoreAccount')}
               </CardTitle>
               <CardDescription className="text-center">
                 {step === 'verification'
@@ -654,13 +648,13 @@ export default function RegisterPage() {
                     formData={formData}
                     errors={errors}
                     isLoading={isLoading}
-                    schools={schools}
-                    schoolsLoading={schoolsLoading}
-                    schoolsError={schoolsError as any}
+                    stores={stores}
+                    storesLoading={storesLoading}
+                    storesError={storesError as any}
                     joinAsTeacher={joinAsTeacher}
                     setJoinAsTeacher={setJoinAsTeacher}
                     onChange={handleInputChange}
-                    onGenerateSlug={generateSchoolSlug}
+                    onGenerateSlug={generateStoreSlug}
                   />
                 )}
 

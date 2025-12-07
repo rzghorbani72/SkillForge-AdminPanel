@@ -20,36 +20,36 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-interface SchoolFormState {
+interface StoreFormState {
   name: string;
   description: string;
   domain: string;
 }
 
-const DEFAULT_FORM: SchoolFormState = {
+const DEFAULT_FORM: StoreFormState = {
   name: '',
   description: '',
   domain: ''
 };
 
-export default function SchoolSettingsPage() {
+export default function StoreSettingsPage() {
   const { t } = useTranslation();
-  const { school, isLoading } = useSettingsData();
-  const [form, setForm] = useState<SchoolFormState>(DEFAULT_FORM);
+  const { store, isLoading } = useSettingsData();
+  const [form, setForm] = useState<StoreFormState>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!school) {
+    if (!store) {
       setForm(DEFAULT_FORM);
       return;
     }
 
     setForm({
-      name: school.name ?? '',
-      description: school.description ?? '',
-      domain: school.private_address ?? ''
+      name: store.name ?? '',
+      description: store.description ?? '',
+      domain: store.private_address ?? ''
     });
-  }, [school]);
+  }, [store]);
 
   const handleSave = async () => {
     try {
@@ -72,10 +72,10 @@ export default function SchoolSettingsPage() {
         }
       }
 
-      await apiClient.updateSchool(updateData);
-      ErrorHandler.showSuccess(t('settings.schoolSettingsUpdatedSuccess'));
+      await apiClient.updateStore(updateData);
+      ErrorHandler.showSuccess(t('settings.storeSettingsUpdatedSuccess'));
     } catch (error) {
-      console.error('Error updating school settings', error);
+      console.error('Error updating store settings', error);
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSaving(false);
@@ -169,19 +169,19 @@ export default function SchoolSettingsPage() {
               <div className="flex justify-between">
                 <span>{t('settings.students')}</span>
                 <span className="font-medium text-foreground">
-                  {school?.students_count ?? '—'}
+                  {store?.students_count ?? '—'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>{t('settings.teachers')}</span>
                 <span className="font-medium text-foreground">
-                  {school?.teachers_count ?? '—'}
+                  {store?.teachers_count ?? '—'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>{t('settings.managers')}</span>
                 <span className="font-medium text-foreground">
-                  {school?.managers_count ?? '—'}
+                  {store?.managers_count ?? '—'}
                 </span>
               </div>
             </CardContent>

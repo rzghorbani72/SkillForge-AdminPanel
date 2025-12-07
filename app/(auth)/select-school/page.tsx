@@ -24,9 +24,9 @@ import { authService } from '@/lib/auth';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 
-export default function SelectSchoolPage() {
-  const [schools, setSchools] = useState<any[]>([]);
-  const [filteredSchools, setFilteredSchools] = useState<any[]>([]);
+export default function SelectStorePage() {
+  const [stores, setStores] = useState<any[]>([]);
+  const [filteredStores, setFilteredStores] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<unknown>(null);
@@ -34,7 +34,7 @@ export default function SelectSchoolPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const loadUserSchools = async () => {
+    const loadUserStores = async () => {
       try {
         const currentUser = await authService.getCurrentUser();
         if (!currentUser) {
@@ -44,26 +44,26 @@ export default function SelectSchoolPage() {
 
         setUser(currentUser);
 
-        // Load user's schools for selection
-        const userSchools = await authService.getUserSchools();
+        // Load user's stores for selection
+        const userStores = await authService.getUserStores();
 
-        if (userSchools.length === 0) {
-          ErrorHandler.showWarning('No schools found for your account');
+        if (userStores.length === 0) {
+          ErrorHandler.showWarning('No stores found for your account');
           router.push('/login');
           return;
         }
 
-        if (userSchools.length === 1) {
-          // Only one school, redirect directly to dashboard
+        if (userStores.length === 1) {
+          // Only one store, redirect directly to dashboard
           router.push('/dashboard');
           return;
         }
 
-        // Multiple schools, show selection
-        setSchools(userSchools);
-        setFilteredSchools(userSchools);
+        // Multiple stores, show selection
+        setStores(userStores);
+        setFilteredStores(userStores);
       } catch (error) {
-        console.error('Failed to load schools:', error);
+        console.error('Failed to load stores:', error);
         ErrorHandler.handleApiError(error);
         router.push('/login');
       } finally {
@@ -71,23 +71,23 @@ export default function SelectSchoolPage() {
       }
     };
 
-    loadUserSchools();
+    loadUserStores();
   }, [router]);
 
   useEffect(() => {
-    // Filter schools based on search term
-    const filtered = schools.filter(
-      (school) =>
-        school.school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        school.school.slug.toLowerCase().includes(searchTerm.toLowerCase())
+    // Filter stores based on search term
+    const filtered = stores.filter(
+      (store) =>
+        store.store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        store.store.slug.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredSchools(filtered);
-  }, [searchTerm, schools]);
+    setFilteredStores(filtered);
+  }, [searchTerm, stores]);
 
-  const handleSchoolSelect = (userSchool: any) => {
-    const schoolUrl = authService.getSchoolDashboardUrl(userSchool);
-    ErrorHandler.showInfo(`Redirecting to ${userSchool.name}...`);
-    window.location.href = schoolUrl;
+  const handleStoreSelect = (userStore: any) => {
+    const storeUrl = authService.getStoreDashboardUrl(userStore.store);
+    ErrorHandler.showInfo(`Redirecting to ${userStore.store.name}...`);
+    window.location.href = storeUrl;
   };
 
   const handleLogout = async () => {
@@ -99,7 +99,7 @@ export default function SelectSchoolPage() {
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading your schools...</span>
+          <span>Loading your stores...</span>
         </div>
       </div>
     );
@@ -114,11 +114,11 @@ export default function SelectSchoolPage() {
             <GraduationCap className="h-8 w-8 text-white" />
           </div>
           <h1 className="mb-2 text-3xl font-bold text-gray-900">
-            Select Your School
+            Select Your Store
           </h1>
           <p className="text-gray-600">
-            You&apos;re enrolled in multiple schools. Choose which one
-            you&apos;d like to access.
+            You&apos;re enrolled in multiple stores. Choose which one you&apos;d
+            like to access.
           </p>
           {user &&
           typeof user === 'object' &&
@@ -135,14 +135,14 @@ export default function SelectSchoolPage() {
         {/* Search */}
         <div className="mb-6">
           <Label htmlFor="search" className="sr-only">
-            Search schools
+            Search stores
           </Label>
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               id="search"
               type="text"
-              placeholder="Search your schools..."
+              placeholder="Search your stores..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -150,13 +150,13 @@ export default function SelectSchoolPage() {
           </div>
         </div>
 
-        {/* Schools Grid */}
+        {/* Stores Grid */}
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredSchools.map((userSchool) => (
+          {filteredStores.map((userStore) => (
             <Card
-              key={userSchool.school.id}
+              key={userStore.store.id}
               className="cursor-pointer transition-shadow hover:shadow-lg"
-              onClick={() => handleSchoolSelect(userSchool)}
+              onClick={() => handleStoreSelect(userStore)}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center space-x-3">
@@ -165,10 +165,10 @@ export default function SelectSchoolPage() {
                   </div>
                   <div>
                     <CardTitle className="text-lg">
-                      {userSchool.school.name}
+                      {userStore.store.name}
                     </CardTitle>
                     <CardDescription>
-                      {userSchool.school.slug}.skillforge.com
+                      {userStore.store.slug}.skillforge.com
                     </CardDescription>
                   </div>
                 </div>
@@ -178,25 +178,25 @@ export default function SelectSchoolPage() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Your Role:</span>
                     <span className="font-medium capitalize">
-                      {userSchool.profile.role?.name || 'Student'}
+                      {userStore.profile.role?.name || 'Student'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Status:</span>
                     <span className="font-medium text-green-600">Active</span>
                   </div>
-                  {userSchool.school.domain?.public_address && (
+                  {userStore.store.domain?.public_address && (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Domain:</span>
                       <span className="font-medium text-blue-600">
-                        {userSchool.school.domain.public_address}
+                        {userStore.store.domain.public_address}
                       </span>
                     </div>
                   )}
                 </div>
                 <Button className="mt-4 w-full" variant="outline">
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  Access School
+                  Access Store
                 </Button>
               </CardContent>
             </Card>
@@ -204,15 +204,15 @@ export default function SelectSchoolPage() {
         </div>
 
         {/* No Results */}
-        {filteredSchools.length === 0 && searchTerm && (
+        {filteredStores.length === 0 && searchTerm && (
           <Card className="py-8 text-center">
             <CardContent>
               <School className="mx-auto mb-4 h-12 w-12 text-gray-400" />
               <h3 className="mb-2 text-lg font-medium text-gray-900">
-                No schools found
+                No stores found
               </h3>
               <p className="mb-4 text-gray-600">
-                No schools match your search for &quot;{searchTerm}&quot;
+                No stores match your search for &quot;{searchTerm}&quot;
               </p>
               <Button variant="outline" onClick={() => setSearchTerm('')}>
                 Clear search
@@ -243,9 +243,9 @@ export default function SelectSchoolPage() {
         <Alert className="mt-8">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Need help?</strong> If you can&apos;t find your school or
-            need to enroll in a new one, please contact your school
-            administrator or{' '}
+            <strong>Need help?</strong> If you can&apos;t find your store or
+            need to enroll in a new one, please contact your store administrator
+            or{' '}
             <a
               href="/support"
               className="text-blue-600 underline hover:text-blue-500"

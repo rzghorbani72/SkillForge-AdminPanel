@@ -112,7 +112,7 @@ export const tr = {
     panelForStaff: 'Bu panel yalnızca',
     teachersManagersAdmins: 'Öğretmenler, Yöneticiler ve Yöneticiler',
     staffOnly: 'içindir.',
-    studentsLoginThroughSchool:
+    studentsLoginThroughStore:
       'Öğrenciler okullarının web sitesi üzerinden giriş yapmalıdır.',
     dontHaveAccount: 'Yönetim hesabınız yok mu?',
     registerSchool: 'Okulunuzu Kaydedin',
@@ -126,10 +126,10 @@ export const tr = {
     phoneRequired: 'Telefon numarası gereklidir',
     emailRequired: 'E-posta gereklidir',
     passwordTooShort: 'Şifre en az 6 karakter olmalıdır',
-    selectSchool: 'Lütfen bir okul seçin',
+    selectStore: 'Lütfen bir enstitü seçin',
     backToLogin: 'Girişe Dön',
     verifyYourContact: 'İletişim Bilgilerinizi Doğrulayın',
-    createSchoolAccount: 'Okul Hesabı Oluştur',
+    createStoreAccount: 'Enstitü Hesabı Oluştur',
     verifyContactDescription:
       'Önce telefonu (ve varsa e-postayı) doğrulayın. Ardından temel verileri doldurun.',
     registerDescription:
@@ -146,7 +146,7 @@ export const tr = {
     schoolSlugRequired: 'Okul kısa adı gereklidir',
     schoolSlugInvalid:
       'Okul kısa adı yalnızca küçük harfler, rakamlar ve tire içerebilir',
-    selectSchoolRequired: 'Lütfen bir okul seçin',
+    selectStoreRequired: 'Lütfen bir enstitü seçin',
     teacherRequestReasonRequired:
       'Lütfen neden öğretmen olmak istediğinizi açıklayın',
     registering: 'Kullanıcı kaydediliyor...',
@@ -182,7 +182,7 @@ export const tr = {
     enterFullName: 'Adınızı ve soyadınızı girin',
     createPassword: 'Bir şifre oluşturun',
     confirmPasswordPlaceholder: 'Şifrenizi onaylayın',
-    selectSchool: 'Okul Seç',
+    selectStore: 'Enstitü Seç',
     chooseSchoolToJoin: 'Katılmak için bir okul seçin',
     requestTeacherRole: 'Öğretmen Rolü Talep Et',
     whyWantToBeTeacher: 'Neden öğretmen olmak istiyorsunuz?',
@@ -225,8 +225,8 @@ export const tr = {
     totalStudents: 'Toplam Öğrenciler',
     totalRevenue: 'Toplam Gelir',
     activeEnrollments: 'Aktif Kayıtlar',
-    coursesAcrossSchools: 'Okullarınızdaki kurslar',
-    studentsEnrolledAcrossSchools: 'Okullarda kayıtlı öğrenciler',
+    coursesAcrossStores: 'Enstitülerinizdeki kurslar',
+    studentsEnrolledAcrossStores: 'Enstitülerde kayıtlı öğrenciler',
     completedPaymentsToDate: 'Bugüne kadar tamamlanan ödemeler',
     studentsCurrentlyProgressing: 'Şu anda ilerleyen öğrenciler',
     live: 'Canlı',
@@ -264,20 +264,20 @@ export const tr = {
     timeYearsAgo: '{{count}} yıl önce',
     timeYearsAgoPlural: '{{count}} yıl önce'
   },
-  schools: {
-    title: 'Okullar',
-    createSchool: 'Okul Oluştur',
-    editSchool: 'Okulu Düzenle',
-    schoolName: 'Okul Adı',
-    schoolSlug: 'Okul Kısa Adı',
+  stores: {
+    title: 'Enstitüler',
+    createStore: 'Enstitü Oluştur',
+    editStore: 'Enstitüyü Düzenle',
+    storeName: 'Enstitü Adı',
+    storeSlug: 'Enstitü Kısa Adı',
     country: 'Ülke',
     language: 'Dil',
     status: 'Durum',
     active: 'Aktif',
     inactive: 'Pasif',
-    selectSchool: 'Okul Seç',
-    noSchools: 'Okul bulunamadı',
-    createFirstSchool: 'İlk okulunuzu oluşturun'
+    selectStore: 'Enstitü Seç',
+    noStores: 'Enstitü bulunamadı',
+    createFirstStore: 'İlk enstitünüzü oluşturun'
   },
   courses: {
     title: 'Kurslar',
@@ -449,7 +449,7 @@ export const tr = {
     theme: 'Tema',
     notifications: 'Bildirimler',
     account: 'Hesap',
-    school: 'Okul',
+    store: 'Enstitü',
     profile: 'Profil',
     profileSettingsTitle: 'Profil Ayarları',
     profileSettingsSubtitle:
@@ -658,7 +658,7 @@ export const tr = {
     uploadAudioDescription: 'Dersler ve kurslar için ses dosyaları yükleyin',
     uploadDocumentDescription: 'Belgeler ve çalışma materyalleri yükleyin',
     uploadVideoDescription: 'Dersler için video içeriği yükleyin',
-    selectSchoolFirst: 'Önce Okul Seçin',
+    selectStoreFirst: 'Önce Enstitü Seçin',
     createContent: 'İçerik Oluştur',
     createNewContent: 'Yeni İçerik Oluştur'
   },
@@ -683,8 +683,8 @@ export const tr = {
     resetPassword: 'Şifreyi Sıfırla',
     backToLogin: 'Girişe Dön',
     tryAgain: 'Tekrar Dene',
-    selectSchoolDescription:
-      'Öğrenciyseniz okulunuzu seçin veya yönetici/öğretmen için boş bırakın',
+    selectStoreDescription:
+      'Öğrenciyseniz enstitünüzü seçin veya yönetici/öğretmen için boş bırakın',
     checkDeviceForCode: 'Cihazınızı doğrulama kodu için kontrol edin',
     createNewPassword: 'Yeni güvenli bir şifre oluşturun',
     canLoginNow: 'Artık yeni şifrenizle giriş yapabilirsiniz',
@@ -700,7 +700,7 @@ export const tr = {
   },
   media: {
     noSchoolSelected: 'Okul Seçilmedi',
-    selectSchoolToView: 'Görüntülemek için lütfen başlıktan bir okul seçin',
+    selectStoreToView: 'Görüntülemek için lütfen başlıktan bir enstitü seçin',
     loading: 'Yükleniyor...',
     searchPlaceholder: 'Ara...',
     noResults: 'Sonuç bulunamadı',
@@ -806,15 +806,15 @@ export const tr = {
     courseContentVideos: 'Kurs içerik videoları',
     combinedVideoLength: 'Toplam video süresi'
   },
-  schools: {
-    schoolsManagement: 'Okul Yönetimi',
-    manageSchoolsDescription: 'Okullarınızı ve ayarlarını yönetin',
-    createSchool: 'Okul Oluştur',
-    searchSchools: 'Okullarda ara...',
-    noSchoolsFound: 'Okul bulunamadı',
-    schoolCreated: 'Okul başarıyla oluşturuldu',
-    schoolUpdated: 'Okul başarıyla güncellendi',
-    schoolDeleted: 'Okul başarıyla silindi'
+  stores: {
+    storesManagement: 'Enstitü Yönetimi',
+    manageStoresDescription: 'Enstitülerinizi ve ayarlarını yönetin',
+    createStore: 'Enstitü Oluştur',
+    searchStores: 'Enstitülerde ara...',
+    noStoresFound: 'Enstitü bulunamadı',
+    storeCreated: 'Enstitü başarıyla oluşturuldu',
+    storeUpdated: 'Enstitü başarıyla güncellendi',
+    storeDeleted: 'Enstitü başarıyla silindi'
   },
   users: {
     allUsers: 'Tüm Kullanıcılar',

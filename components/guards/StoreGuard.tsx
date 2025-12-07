@@ -31,7 +31,7 @@ export function SchoolGuard({ children, fallback }: SchoolGuardProps) {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <LoadingSpinner message="Loading school access..." />
+        <LoadingSpinner message="Loading store access..." />
       </div>
     );
   }
@@ -42,10 +42,10 @@ export function SchoolGuard({ children, fallback }: SchoolGuardProps) {
         <div className="max-w-md text-center">
           <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-destructive" />
           <h2 className="mb-2 text-2xl font-bold text-destructive">
-            School Access Required
+            Store Access Required
           </h2>
           <p className="mb-4 text-muted-foreground">
-            {error || 'You need access to a school to use this application.'}
+            {error || 'You need access to a store to use this application.'}
           </p>
           <div className="flex justify-center gap-2">
             <Button variant="outline" onClick={() => router.push('/schools')}>

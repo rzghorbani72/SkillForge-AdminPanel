@@ -54,7 +54,7 @@ export type ProductCreateFormData = z.infer<typeof productFormSchema>;
 
 export const useProductCreate = () => {
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore: selectedSchool } = useSchool();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<ProductCreateFormData>({
@@ -88,7 +88,7 @@ export const useProductCreate = () => {
 
   const onSubmitHandler = async (data: ProductCreateFormData) => {
     if (!selectedSchool) {
-      toast.error('Please select a school first');
+      toast.error('Please select a store first');
       return;
     }
 

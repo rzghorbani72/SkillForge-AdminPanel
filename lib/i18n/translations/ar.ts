@@ -112,7 +112,7 @@ export const ar = {
     panelForStaff: 'هذه اللوحة مخصصة لـ',
     teachersManagersAdmins: 'المعلمين والمديرين والمسؤولين',
     staffOnly: 'فقط.',
-    studentsLoginThroughSchool:
+    studentsLoginThroughStore:
       'يجب على الطلاب تسجيل الدخول من خلال موقع مدرستهم.',
     dontHaveAccount: 'ليس لديك حساب إداري؟',
     registerSchool: 'سجل مدرستك',
@@ -126,13 +126,13 @@ export const ar = {
     phoneRequired: 'رقم الهاتف مطلوب',
     emailRequired: 'البريد الإلكتروني مطلوب',
     passwordTooShort: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
-    selectSchool: 'الرجاء اختيار مدرسة',
+    selectStore: 'الرجاء اختيار معهد',
     backToLogin: 'العودة إلى تسجيل الدخول',
     verifyYourContact: 'تحقق من معلومات الاتصال الخاصة بك',
-    createSchoolAccount: 'إنشاء حساب مدرسة',
+    createStoreAccount: 'إنشاء حساب معهد',
     verifyContactDescription:
       'تحقق من الهاتف (والبريد الإلكتروني إن وجد) أولاً. ثم املأ البيانات الأساسية.',
-    registerDescription: 'سجل كمدير مدرسة أو انضم كطالب',
+    registerDescription: 'سجل كمدير معهد أو انضم كطالب',
     fullNameRequired: 'الاسم الكامل مطلوب',
     phoneNumberRequired: 'رقم الهاتف مطلوب',
     validPhoneNumber: 'الرجاء إدخال رقم هاتف صالح (7-15 رقم)',
@@ -141,11 +141,11 @@ export const ar = {
     passwordRequired: 'كلمة المرور مطلوبة',
     confirmPasswordRequired: 'الرجاء تأكيد كلمة المرور',
     passwordsDoNotMatch: 'كلمات المرور غير متطابقة',
-    schoolNameRequired: 'اسم المدرسة مطلوب',
-    schoolSlugRequired: 'معرف المدرسة مطلوب',
-    schoolSlugInvalid:
-      'يمكن أن يحتوي معرف المدرسة فقط على أحرف صغيرة وأرقام وشرطات',
-    selectSchoolRequired: 'الرجاء اختيار مدرسة',
+    storeNameRequired: 'اسم المعهد مطلوب',
+    storeSlugRequired: 'معرف المعهد مطلوب',
+    storeSlugInvalid:
+      'يمكن أن يحتوي معرف المعهد فقط على أحرف صغيرة وأرقام وشرطات',
+    selectStoreRequired: 'الرجاء اختيار معهد',
     teacherRequestReasonRequired: 'الرجاء شرح سبب رغبتك في أن تكون معلماً',
     registering: 'جاري تسجيل المستخدم...',
     continueToBaseData: 'المتابعة إلى البيانات الأساسية',
@@ -177,8 +177,8 @@ export const ar = {
     enterFullName: 'أدخل اسمك الكامل',
     createPassword: 'إنشاء كلمة مرور',
     confirmPasswordPlaceholder: 'تأكيد كلمة المرور الخاصة بك',
-    selectSchool: 'اختر المدرسة',
-    chooseSchoolToJoin: 'اختر مدرسة للانضمام إليها',
+    selectStore: 'اختر المعهد',
+    chooseStoreToJoin: 'اختر معهد للانضمام إليه',
     requestTeacherRole: 'طلب دور المعلم',
     whyWantToBeTeacher: 'لماذا تريد أن تكون معلماً؟',
     teacherRequestReasonPlaceholder:
@@ -219,8 +219,8 @@ export const ar = {
     totalStudents: 'إجمالي الطلاب',
     totalRevenue: 'إجمالي الإيرادات',
     activeEnrollments: 'التسجيلات النشطة',
-    coursesAcrossSchools: 'الدورات في مدارسك',
-    studentsEnrolledAcrossSchools: 'الطلاب المسجلون في المدارس',
+    coursesAcrossStores: 'الدورات في معاهدك',
+    studentsEnrolledAcrossStores: 'الطلاب المسجلون في المعاهد',
     completedPaymentsToDate: 'المدفوعات المكتملة حتى الآن',
     studentsCurrentlyProgressing: 'الطلاب الذين يتقدمون حالياً',
     live: 'مباشر',
@@ -257,20 +257,20 @@ export const ar = {
     timeYearsAgo: 'منذ {{count}} سنة',
     timeYearsAgoPlural: 'منذ {{count}} سنة'
   },
-  schools: {
-    title: 'المدارس',
-    createSchool: 'إنشاء مدرسة',
-    editSchool: 'تعديل مدرسة',
-    schoolName: 'اسم المدرسة',
-    schoolSlug: 'معرف المدرسة',
+  stores: {
+    title: 'المعاهد',
+    createStore: 'إنشاء معهد',
+    editStore: 'تعديل معهد',
+    storeName: 'اسم المعهد',
+    storeSlug: 'معرف المعهد',
     country: 'البلد',
     language: 'اللغة',
     status: 'الحالة',
     active: 'نشط',
     inactive: 'غير نشط',
-    selectSchool: 'اختر مدرسة',
-    noSchools: 'لم يتم العثور على مدارس',
-    createFirstSchool: 'أنشئ مدرستك الأولى'
+    selectStore: 'اختر المعهد',
+    noStores: 'لم يتم العثور على معاهد',
+    createFirstStore: 'أنشئ معهدك الأول'
   },
   courses: {
     title: 'الدورات',
@@ -441,7 +441,7 @@ export const ar = {
     theme: 'المظهر',
     notifications: 'الإشعارات',
     account: 'الحساب',
-    school: 'المدرسة',
+    store: 'المعهد',
     profile: 'الملف الشخصي',
     profileSettingsTitle: 'إعدادات الملف الشخصي',
     profileSettingsSubtitle:
@@ -643,14 +643,14 @@ export const ar = {
     uploadAudioDescription: 'رفع ملفات صوتية للدروس والدورات',
     uploadDocumentDescription: 'رفع المستندات ومواد الدراسة',
     uploadVideoDescription: 'رفع محتوى فيديو للدروس',
-    selectSchoolFirst: 'اختر المدرسة أولاً',
+    selectStoreFirst: 'اختر المعهد أولاً',
     createContent: 'إنشاء محتوى',
     createNewContent: 'إنشاء محتوى جديد'
   },
   forgotPassword: {
     title: 'إعادة تعيين كلمة المرور',
     enterIdentifier:
-      'أدخل بريدك الإلكتروني أو رقم هاتفك واختر المدرسة (إن وجدت) لتلقي رمز التحقق',
+      'أدخل بريدك الإلكتروني أو رقم هاتفك واختر المعهد (إن وجد) لتلقي رمز التحقق',
     enterOtp: 'أدخل رمز التحقق المرسل إلى جهازك',
     enterNewPassword: 'أدخل كلمة المرور الجديدة',
     passwordResetSuccess: 'تم إعادة تعيين كلمة المرور بنجاح',
@@ -668,8 +668,8 @@ export const ar = {
     resetPassword: 'إعادة تعيين كلمة المرور',
     backToLogin: 'العودة إلى تسجيل الدخول',
     tryAgain: 'حاول مرة أخرى',
-    selectSchoolDescription:
-      'اختر مدرستك إذا كنت طالباً، أو اتركه فارغاً للمدير/المعلم',
+    selectStoreDescription:
+      'اختر معهدك إذا كنت طالباً، أو اتركه فارغاً للمدير/المعلم',
     checkDeviceForCode: 'تحقق من جهازك للحصول على رمز التحقق',
     createNewPassword: 'قم بإنشاء كلمة مرور آمنة جديدة',
     canLoginNow: 'يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة',
@@ -684,8 +684,8 @@ export const ar = {
     goToLogin: 'الذهاب إلى تسجيل الدخول'
   },
   media: {
-    noSchoolSelected: 'لم يتم اختيار مدرسة',
-    selectSchoolToView: 'الرجاء اختيار مدرسة من الرأس للعرض',
+    noStoreSelected: 'لم يتم اختيار معهد',
+    selectStoreToView: 'الرجاء اختيار معهد من الرأس للعرض',
     loading: 'جاري التحميل...',
     searchPlaceholder: 'بحث...',
     noResults: 'لم يتم العثور على نتائج',
@@ -789,15 +789,15 @@ export const ar = {
     courseContentVideos: 'فيديوهات محتوى الدورة',
     combinedVideoLength: 'المدة الإجمالية للفيديوهات'
   },
-  schools: {
-    schoolsManagement: 'إدارة المدارس',
-    manageSchoolsDescription: 'إدارة مدارسك وإعداداتها',
-    createSchool: 'إنشاء مدرسة',
-    searchSchools: 'البحث في المدارس...',
-    noSchoolsFound: 'لم يتم العثور على مدارس',
-    schoolCreated: 'تم إنشاء المدرسة بنجاح',
-    schoolUpdated: 'تم تحديث المدرسة بنجاح',
-    schoolDeleted: 'تم حذف المدرسة بنجاح'
+  stores: {
+    storesManagement: 'إدارة المعاهد',
+    manageStoresDescription: 'إدارة معاهدك وإعداداتها',
+    createStore: 'إنشاء معهد',
+    searchStores: 'البحث في المعاهد...',
+    noStoresFound: 'لم يتم العثور على معاهد',
+    storeCreated: 'تم إنشاء المعهد بنجاح',
+    storeUpdated: 'تم تحديث المعهد بنجاح',
+    storeDeleted: 'تم حذف المعهد بنجاح'
   },
   users: {
     allUsers: 'جميع المستخدمين',

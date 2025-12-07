@@ -47,7 +47,7 @@ interface TeacherRequest {
       phone_number: string | null;
     };
   };
-  school: {
+  store: {
     id: number;
     name: string;
     slug: string;
@@ -192,7 +192,7 @@ export function TeacherRequestsPageContent() {
                         request.profile.display_name}
                     </CardTitle>
                     <CardDescription>
-                      Requested {submittedAt} • School: {request.school.name}
+                      Requested {submittedAt} • Store: {request.store.name}
                     </CardDescription>
                   </div>
                   <Badge variant={statusVariant.variant}>
