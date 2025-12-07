@@ -1,0 +1,410 @@
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import {
+  DollarSign,
+  TrendingUp,
+  Calendar,
+  CreditCard,
+  Users,
+  BookOpen
+} from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { formatCurrencyWithSchool } from '@/lib/utils';
+import { toast } from 'react-toastify';
+import { useCurrentSchool } from '@/hooks/useCurrentSchool';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+export default function SchoolRevenuePage() {
+  const [loading, setLoading] = useState(true);
+  const [revenueData, setRevenueData] = useState<any>(null);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const school = useCurrentSchool();
+
+  const years = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: 5 }, (_, i) => currentYear - i);
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [selectedYear, selectedMonth, school?.id]);
+
+  const loadData = async () => {
+    if (!school?.id) return;
+
+    try {
+      setLoading(true);
+
+      const startDate =
+        selectedMonth && selectedYear
+          ? new Date(selectedYear, selectedMonth - 1, 1)
+          : new Date(selectedYear, 0, 1);
+      const endDate =
+        selectedMonth && selectedYear
+          ? new Date(selectedYear, selectedMonth, 0, 23, 59, 59)
+          : new Date(selectedYear, 11, 31, 23, 59, 59);
+
+      const data = await apiClient.getSchoolRevenueFromPayments(
+        school.id,
+        startDate.toISOString(),
+        endDate.toISOString()
+      );
+
+      setRevenueData(data);
+      setPayments(data.payments || []);
+    } catch (error: any) {
+      console.error('Error loading revenue data:', error);
+      toast.error(error?.message || 'Failed to load revenue data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (amount: number, currency = 'IRR') => {
+    return formatCurrencyWithSchool(amount, {
+      currency: currency as any,
+      currency_symbol: currency === 'IRR' ? 'Toman' : currency,
+      currency_position: 'after'
+    });
+  };
+
+  // Group payments by course
+  const paymentsByCourse = useMemo(() => {
+    const grouped: Record<
+      string,
+      { course: string; count: number; total: number; currency: string }
+    > = {};
+
+    payments.forEach((payment: any) => {
+      const courseName = payment.course?.title || 'Unknown Course';
+      const courseId = payment.course?.id || 'unknown';
+
+      if (!grouped[courseId]) {
+        grouped[courseId] = {
+          course: courseName,
+          count: 0,
+          total: 0,
+          currency: payment.currency || 'IRR'
+        };
+      }
+
+      grouped[courseId].count += 1;
+      grouped[courseId].total += payment.amount || 0;
+    });
+
+    return Object.values(grouped);
+  }, [payments]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Loading revenue data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!school) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-muted-foreground">No school selected</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Revenue & Benefits</h1>
+          <p className="mt-1 text-muted-foreground">
+            {school.name} - Revenue from student payments and course enrollments
+          </p>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="mb-2 block text-sm font-medium">Year</label>
+              <Select
+                value={selectedYear.toString()}
+                onValueChange={(value) => setSelectedYear(parseInt(value))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1">
+              <label className="mb-2 block text-sm font-medium">
+                Month (Optional)
+              </label>
+              <Select
+                value={selectedMonth?.toString() || 'all'}
+                onValueChange={(value) =>
+                  setSelectedMonth(value === 'all' ? null : parseInt(value))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Months</SelectItem>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                    <SelectItem key={month} value={month.toString()}>
+                      {new Date(2000, month - 1).toLocaleString('en-US', {
+                        month: 'long'
+                      })}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Summary Cards */}
+      {revenueData && (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total Revenue
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {formatCurrency(
+                  revenueData.total_revenue,
+                  revenueData.currency
+                )}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                From {revenueData.payment_count} payments
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total Payments
+              </CardTitle>
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {revenueData.payment_count}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Successful transactions
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Average Payment
+              </CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {revenueData.payment_count > 0
+                  ? formatCurrency(
+                      revenueData.total_revenue / revenueData.payment_count,
+                      revenueData.currency
+                    )
+                  : formatCurrency(0, revenueData.currency)}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Per transaction
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Courses</CardTitle>
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {paymentsByCourse.length}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Courses with payments
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Detailed View */}
+      <Tabs defaultValue="payments" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="payments">All Payments</TabsTrigger>
+          <TabsTrigger value="courses">By Course</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="payments" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Student Payments</CardTitle>
+                  <CardDescription>
+                    All payments received from students for courses
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Student</TableHead>
+                    <TableHead>Course</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {payments.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={4}
+                        className="text-center text-muted-foreground"
+                      >
+                        No payments found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    payments.map((payment: any) => (
+                      <TableRow key={payment.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <div>
+                              {new Date(
+                                payment.created_at
+                              ).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {payment.profile?.display_name || 'Unknown'}
+                        </TableCell>
+                        <TableCell>
+                          {payment.course?.title || 'Unknown Course'}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {formatCurrency(payment.amount, payment.currency)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="courses" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Revenue by Course</CardTitle>
+              <CardDescription>
+                Total revenue breakdown by course
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Course</TableHead>
+                    <TableHead className="text-right">Payments</TableHead>
+                    <TableHead className="text-right">Total Revenue</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paymentsByCourse.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={3}
+                        className="text-center text-muted-foreground"
+                      >
+                        No course revenue data found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paymentsByCourse
+                      .sort((a, b) => b.total - a.total)
+                      .map((course, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">
+                            {course.course}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">{course.count}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            {formatCurrency(course.total, course.currency)}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

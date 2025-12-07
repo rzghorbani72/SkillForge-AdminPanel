@@ -1950,6 +1950,406 @@ class ApiClient {
     }
     return response.data as any;
   }
+
+  // ============================================================================
+  // FINANCIAL MANAGEMENT API METHODS
+  // ============================================================================
+
+  // Cost Categories
+  async getCostCategories() {
+    const response = await this.request<any>('/financial/cost-categories', {
+      method: 'GET'
+    });
+    return response.data as any[];
+  }
+
+  async createCostCategory(data: {
+    name: string;
+    description?: string;
+    is_active?: boolean;
+  }) {
+    const response = await this.request<any>('/financial/cost-categories', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return response.data as any;
+  }
+
+  async updateCostCategory(
+    id: number,
+    data: Partial<{ name: string; description?: string; is_active?: boolean }>
+  ) {
+    const response = await this.request<any>(
+      `/financial/cost-categories/${id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      }
+    );
+    return response.data as any;
+  }
+
+  async deleteCostCategory(id: number) {
+    const response = await this.request<any>(
+      `/financial/cost-categories/${id}`,
+      {
+        method: 'DELETE'
+      }
+    );
+    return response.data as any;
+  }
+
+  // School Financial Records
+  async getSchoolFinancialRecords(params?: {
+    school_id?: number;
+    cost_category_id?: number;
+    period_start?: string;
+    period_end?: string;
+    year?: number;
+    month?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.school_id)
+      queryParams.append('school_id', params.school_id.toString());
+    if (params?.cost_category_id)
+      queryParams.append(
+        'cost_category_id',
+        params.cost_category_id.toString()
+      );
+    if (params?.period_start)
+      queryParams.append('period_start', params.period_start);
+    if (params?.period_end) queryParams.append('period_end', params.period_end);
+    if (params?.year) queryParams.append('year', params.year.toString());
+    if (params?.month) queryParams.append('month', params.month.toString());
+
+    const url = `/financial/school-records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any[];
+  }
+
+  async getSchoolFinancialSummary(schoolId?: number) {
+    const url = `/financial/school-records/summary${schoolId ? `?school_id=${schoolId}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any;
+  }
+
+  async getSchoolRevenueFromPayments(
+    schoolId?: number,
+    startDate?: string,
+    endDate?: string
+  ) {
+    const queryParams = new URLSearchParams();
+    if (schoolId) queryParams.append('school_id', schoolId.toString());
+    if (startDate) queryParams.append('start_date', startDate);
+    if (endDate) queryParams.append('end_date', endDate);
+
+    const url = `/financial/school/revenue${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any;
+  }
+
+  async getSchoolFinancialOverview(
+    schoolId?: number,
+    startDate?: string,
+    endDate?: string
+  ) {
+    const queryParams = new URLSearchParams();
+    if (schoolId) queryParams.append('school_id', schoolId.toString());
+    if (startDate) queryParams.append('start_date', startDate);
+    if (endDate) queryParams.append('end_date', endDate);
+
+    const url = `/financial/school/overview${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any;
+  }
+
+  async createSchoolFinancialRecord(data: {
+    school_id: number;
+    cost_category_id?: number;
+    period_start: string;
+    period_end: string;
+    revenue: number;
+    cost: number;
+    currency?: string;
+    notes?: string;
+  }) {
+    const response = await this.request<any>('/financial/school-records', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return response.data as any;
+  }
+
+  async updateSchoolFinancialRecord(
+    id: number,
+    data: Partial<{
+      school_id?: number;
+      cost_category_id?: number;
+      period_start?: string;
+      period_end?: string;
+      revenue?: number;
+      cost?: number;
+      currency?: string;
+      notes?: string;
+    }>
+  ) {
+    const response = await this.request<any>(
+      `/financial/school-records/${id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      }
+    );
+    return response.data as any;
+  }
+
+  async deleteSchoolFinancialRecord(id: number) {
+    const response = await this.request<any>(
+      `/financial/school-records/${id}`,
+      {
+        method: 'DELETE'
+      }
+    );
+    return response.data as any;
+  }
+
+  // Platform Financial Records
+  async getPlatformFinancialRecords(params?: {
+    cost_category_id?: number;
+    period_start?: string;
+    period_end?: string;
+    year?: number;
+    month?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.cost_category_id)
+      queryParams.append(
+        'cost_category_id',
+        params.cost_category_id.toString()
+      );
+    if (params?.period_start)
+      queryParams.append('period_start', params.period_start);
+    if (params?.period_end) queryParams.append('period_end', params.period_end);
+    if (params?.year) queryParams.append('year', params.year.toString());
+    if (params?.month) queryParams.append('month', params.month.toString());
+
+    const url = `/financial/platform-records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any[];
+  }
+
+  async getPlatformFinancialSummary() {
+    const response = await this.request<any>(
+      '/financial/platform-records/summary',
+      {
+        method: 'GET'
+      }
+    );
+    return response.data as any;
+  }
+
+  async createPlatformFinancialRecord(data: {
+    cost_category_id?: number;
+    period_start: string;
+    period_end: string;
+    revenue: number;
+    cost: number;
+    currency?: string;
+    notes?: string;
+  }) {
+    const response = await this.request<any>('/financial/platform-records', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return response.data as any;
+  }
+
+  async updatePlatformFinancialRecord(
+    id: number,
+    data: Partial<{
+      cost_category_id?: number;
+      period_start?: string;
+      period_end?: string;
+      revenue?: number;
+      cost?: number;
+      currency?: string;
+      notes?: string;
+    }>
+  ) {
+    const response = await this.request<any>(
+      `/financial/platform-records/${id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      }
+    );
+    return response.data as any;
+  }
+
+  async deletePlatformFinancialRecord(id: number) {
+    const response = await this.request<any>(
+      `/financial/platform-records/${id}`,
+      {
+        method: 'DELETE'
+      }
+    );
+    return response.data as any;
+  }
+
+  // Financial Formulas
+  async getFinancialFormulas(scope?: string) {
+    const url = `/financial/formulas${scope ? `?scope=${scope}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any[];
+  }
+
+  async getFinancialFormula(id: number) {
+    const response = await this.request<any>(`/financial/formulas/${id}`, {
+      method: 'GET'
+    });
+    return response.data as any;
+  }
+
+  async createFinancialFormula(data: {
+    name: string;
+    description?: string;
+    template:
+      | 'SIMPLE'
+      | 'PERCENTAGE_OF'
+      | 'FIXED_AMOUNT'
+      | 'PERCENTAGE_BONUS'
+      | 'CUSTOM';
+    steps: Array<{
+      operation:
+        | 'ADD'
+        | 'SUBTRACT'
+        | 'MULTIPLY'
+        | 'DIVIDE'
+        | 'PERCENTAGE'
+        | 'FIXED';
+      value?: number | string;
+      variable?: 'REVENUE' | 'COST' | 'PROFIT' | 'FINAL_PROFIT';
+      percentage?: number;
+    }>;
+    type: 'REVENUE' | 'COST' | 'BENEFIT';
+    scope: 'SCHOOL' | 'PLATFORM';
+    is_active?: boolean;
+  }) {
+    const response = await this.request<any>('/financial/formulas', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return response.data as any;
+  }
+
+  async updateFinancialFormula(
+    id: number,
+    data: Partial<{
+      name?: string;
+      description?: string;
+      template?:
+        | 'SIMPLE'
+        | 'PERCENTAGE_OF'
+        | 'FIXED_AMOUNT'
+        | 'PERCENTAGE_BONUS'
+        | 'CUSTOM';
+      steps?: Array<{
+        operation:
+          | 'ADD'
+          | 'SUBTRACT'
+          | 'MULTIPLY'
+          | 'DIVIDE'
+          | 'PERCENTAGE'
+          | 'FIXED';
+        value?: number | string;
+        variable?: 'REVENUE' | 'COST' | 'PROFIT' | 'FINAL_PROFIT';
+        percentage?: number;
+      }>;
+      type?: 'REVENUE' | 'COST' | 'BENEFIT';
+      is_active?: boolean;
+    }>
+  ) {
+    const response = await this.request<any>(`/financial/formulas/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return response.data as any;
+  }
+
+  async deleteFinancialFormula(id: number) {
+    const response = await this.request<any>(`/financial/formulas/${id}`, {
+      method: 'DELETE'
+    });
+    return response.data as any;
+  }
+
+  async executeFormula(name: string, variables: Record<string, any>) {
+    const response = await this.request<any>(
+      `/financial/formulas/${name}/execute`,
+      {
+        method: 'POST',
+        body: JSON.stringify(variables)
+      }
+    );
+    return response.data as { result: number };
+  }
+
+  // Formula Applications
+  async createFormulaApplication(data: {
+    formula_id: number;
+    school_id?: number;
+    period_start: string;
+    period_end: string;
+    adjustment_type: 'AUTOMATIC' | 'MANUAL' | 'GIFT' | 'INCENTIVE';
+    adjustment_amount?: number;
+    adjustment_percent?: number;
+    reason?: string;
+    apply_immediately?: boolean;
+  }) {
+    const response = await this.request<any>(
+      '/financial/formula-applications',
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
+    return response.data as any;
+  }
+
+  async getFormulaApplications(params?: {
+    school_id?: number;
+    formula_id?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.school_id)
+      queryParams.append('school_id', params.school_id.toString());
+    if (params?.formula_id)
+      queryParams.append('formula_id', params.formula_id.toString());
+
+    const url = `/financial/formula-applications${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any[];
+  }
+
+  async applyFormulaApplication(id: number) {
+    const response = await this.request<any>(
+      `/financial/formula-applications/${id}/apply`,
+      {
+        method: 'POST'
+      }
+    );
+    return response.data as any;
+  }
+
+  async deleteFormulaApplication(id: number) {
+    const response = await this.request<any>(
+      `/financial/formula-applications/${id}`,
+      {
+        method: 'DELETE'
+      }
+    );
+    return response.data as any;
+  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

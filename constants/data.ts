@@ -307,6 +307,99 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'School Financial',
+    icon: 'building2' as IconType,
+    label: 'school-financial',
+    roles: ['ADMIN', 'MANAGER'], // Managers and Admins can see school financial
+    children: [
+      {
+        title: 'Overview',
+        href: '/financial/school',
+        icon: 'dashboard' as IconType,
+        label: 'school-financial-overview',
+        roles: ['ADMIN', 'MANAGER']
+      },
+      {
+        title: 'Revenue & Benefits',
+        href: '/financial/school/revenue',
+        icon: 'trendingUp' as IconType,
+        label: 'school-revenue',
+        roles: ['ADMIN', 'MANAGER']
+      },
+      {
+        title: 'Costs',
+        href: '/financial/school/costs',
+        icon: 'trendingDown' as IconType,
+        label: 'school-costs',
+        roles: ['ADMIN', 'MANAGER']
+      },
+      {
+        title: 'Payments',
+        href: '/financial/school/payments',
+        icon: 'creditCard' as IconType,
+        label: 'school-payments',
+        roles: ['ADMIN', 'MANAGER']
+      },
+      {
+        title: 'Reports',
+        href: '/financial/school/reports',
+        icon: 'fileText' as IconType,
+        label: 'school-reports',
+        roles: ['ADMIN', 'MANAGER']
+      }
+    ]
+  },
+  {
+    title: 'Platform Financial',
+    icon: 'dollarSign' as IconType,
+    label: 'platform-financial',
+    roles: ['ADMIN'], // Only Admins can see platform financial
+    children: [
+      {
+        title: 'Dashboard',
+        href: '/financial/platform',
+        icon: 'dashboard' as IconType,
+        label: 'platform-financial-dashboard',
+        roles: ['ADMIN']
+      },
+      {
+        title: 'All Schools',
+        href: '/financial/platform/schools',
+        icon: 'building2' as IconType,
+        label: 'platform-schools',
+        roles: ['ADMIN']
+      },
+      {
+        title: 'Platform Records',
+        href: '/financial/platform/records',
+        icon: 'trendingUp' as IconType,
+        label: 'platform-records',
+        roles: ['ADMIN']
+      },
+      {
+        title: 'Formulas',
+        href: '/financial/platform/formulas',
+        icon: 'calculator' as IconType,
+        label: 'platform-formulas',
+        roles: ['ADMIN']
+      },
+      {
+        title: 'Cost Categories',
+        href: '/financial/platform/categories',
+        icon: 'tag' as IconType,
+        label: 'platform-categories',
+        roles: ['ADMIN']
+      },
+      {
+        title: 'Business Flow',
+        href: '/financial/platform/business-flow',
+        icon: 'workflow' as IconType,
+        label: 'business-flow',
+        roles: ['ADMIN']
+      }
+    ]
+  },
+  {
     title: 'Settings',
     icon: 'settings' as IconType,
     label: 'settings',

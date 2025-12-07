@@ -10,6 +10,7 @@ export interface NavItem {
   label?: string;
   description?: string;
   children?: NavItem[];
+  roles?: ('ADMIN' | 'MANAGER' | 'TEACHER')[]; // If not specified, all roles can access
 }
 
 export interface NavItemWithChildren extends NavItem {

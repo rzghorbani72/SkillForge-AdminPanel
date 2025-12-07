@@ -4,7 +4,9 @@ import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, Sparkles } from 'lucide-react';
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
+import { filterNavItemsByRole } from '@/lib/nav-filter';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 type SidebarProps = {
   className?: string;
@@ -12,6 +14,37 @@ type SidebarProps = {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
+  const { user, isLoading } = useAuthUser();
+
+  // Extract role from authenticated user (fetched from API using JWT cookie)
+  const userRole = useMemo(() => {
+    if (!user) return null;
+    return user.role;
+  }, [user]);
+  console.log('userRole', userRole);
+  const filteredNavItems = useMemo(() => {
+    return filterNavItemsByRole(navItems, userRole);
+  }, [userRole]);
+
+  // Show loading state while fetching user
+  if (isLoading) {
+    return (
+      <aside
+        className={cn(
+          'relative hidden h-screen flex-none border-r border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:block',
+          !isMinimized ? 'w-72' : 'w-[72px]',
+          className
+        )}
+      >
+        <div className="flex h-full items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+            <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </aside>
+    );
+  }
 
   const handleToggle = () => {
     toggle();
@@ -69,7 +102,7 @@ export default function Sidebar({ className }: SidebarProps) {
             </div>
           }
         >
-          <DashboardNav items={navItems} />
+          <DashboardNav items={filteredNavItems} />
         </Suspense>
       </div>
 

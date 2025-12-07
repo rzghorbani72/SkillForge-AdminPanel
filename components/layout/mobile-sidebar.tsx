@@ -3,12 +3,26 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { navItems } from '@/constants/data';
 import { MenuIcon } from 'lucide-react';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useMemo } from 'react';
+import { filterNavItemsByRole } from '@/lib/nav-filter';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 // import { Playlist } from "../data/playlists";
 
 export function MobileSidebar() {
   const [open, setOpen] = useState(false);
+  const { user } = useAuthUser();
+
+  // Extract role from authenticated user (fetched from API using JWT cookie)
+  const userRole = useMemo(() => {
+    if (!user) return null;
+    return user.role;
+  }, [user]);
+
+  const filteredNavItems = useMemo(() => {
+    return filterNavItemsByRole(navItems, userRole);
+  }, [userRole]);
+
   return (
     <>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -30,7 +44,7 @@ export function MobileSidebar() {
                   }
                 >
                   <DashboardNav
-                    items={navItems}
+                    items={filteredNavItems}
                     isMobileNav={true}
                     setOpen={setOpen}
                   />
