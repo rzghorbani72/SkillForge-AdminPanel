@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { School, Loader2, AlertCircle } from 'lucide-react';
+import { Building2, Loader2, AlertCircle } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
@@ -589,7 +589,7 @@ export default function RegisterPage() {
           {/* Logo/Brand */}
           <div className="mb-8 text-center">
             <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-              <School className="h-8 w-8 text-white" />
+              <Building2 className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
             <p className="text-gray-600">{t('auth.register')}</p>

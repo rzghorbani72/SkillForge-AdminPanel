@@ -40,7 +40,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function SchoolRevenuePage() {
+export default function StoreRevenuePage() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<any>(null);
@@ -141,7 +141,7 @@ export default function SchoolRevenuePage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
-          {t('financial.store.revenue.noSchool')}
+          {t('financial.store.revenue.noStore')}
         </p>
       </div>
     );

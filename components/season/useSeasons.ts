@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { Course, Season } from '@/types/api';
 
 type UseSeasonsReturn = {
@@ -14,7 +14,7 @@ type UseSeasonsReturn = {
 };
 
 const useSeasons = (): UseSeasonsReturn => {
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
 
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -22,13 +22,13 @@ const useSeasons = (): UseSeasonsReturn => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (selectedSchool) {
+    if (selectedStore) {
       fetchData();
     }
-  }, [selectedSchool]);
+  }, [selectedStore]);
 
   const fetchData = async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
     try {
       setIsLoading(true);
       const [seasonsResponse, coursesResponse] = await Promise.all([
@@ -47,11 +47,9 @@ const useSeasons = (): UseSeasonsReturn => {
       )
         nextSeasons = (seasonsResponse as any).data;
 
-      if (selectedSchool && nextSeasons.length > 0) {
+      if (selectedStore && nextSeasons.length > 0) {
         nextSeasons = nextSeasons.filter((s) =>
-          (s as any).school_id
-            ? (s as any).school_id === selectedSchool.id
-            : true
+          (s as any).store_id ? (s as any).store_id === selectedStore.id : true
         );
       }
       setSeasons(nextSeasons);
@@ -63,11 +61,9 @@ const useSeasons = (): UseSeasonsReturn => {
       else if (cData && Array.isArray(cData.data)) nextCourses = cData.data;
       else if (cData && Array.isArray(cData.courses))
         nextCourses = cData.courses;
-      if (selectedSchool && nextCourses.length > 0) {
+      if (selectedStore && nextCourses.length > 0) {
         nextCourses = nextCourses.filter((c) =>
-          (c as any).school_id
-            ? (c as any).school_id === selectedSchool.id
-            : true
+          (c as any).store_id ? (c as any).store_id === selectedStore.id : true
         );
       }
       setCourses(nextCourses);

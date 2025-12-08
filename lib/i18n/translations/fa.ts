@@ -80,7 +80,7 @@ export const fa = {
   },
   navigation: {
     dashboard: 'داشبورد',
-    schools: 'مدارس من',
+    stores: 'آکادمی‌های من',
     courses: 'دوره‌ها',
     students: 'دانش‌آموزان',
     teachers: 'معلمان',
@@ -151,11 +151,11 @@ export const fa = {
     teachersManagersAdmins: 'معلمان، مدیران و مدیران کل',
     staffOnly: 'است.',
     studentsLoginThroughStore:
-      'دانش‌آموزان باید از طریق وب‌سایت مدرسه خود وارد شوند.',
+      'دانش‌آموزان باید از طریق وب‌سایت آکادمی خود وارد شوند.',
     dontHaveAccount: 'حساب مدیریتی ندارید؟',
-    registerSchool: 'مدرسه خود را ثبت کنید',
+    registerStore: 'آکادمی خود را ثبت کنید',
     areYouStudent: 'دانش‌آموز هستید؟',
-    findSchool: 'مدرسه خود را پیدا کنید',
+    findStore: 'آکادمی خود را پیدا کنید',
     phone: 'تلفن',
     emailAddress: 'آدرس ایمیل',
     phoneNumber: 'شماره تلفن',
@@ -171,19 +171,18 @@ export const fa = {
     verifyContactDescription:
       'ابتدا تلفن (و ایمیل در صورت وجود) را تأیید کنید. سپس اطلاعات پایه را پر کنید.',
     registerDescription:
-      'به عنوان مدیر مدرسه ثبت‌نام کنید یا به عنوان دانش‌آموز بپیوندید',
+      'به عنوان مدیر آکادمی ثبت‌نام کنید یا به عنوان دانش‌آموز بپیوندید',
     fullNameRequired: 'نام کامل الزامی است',
     phoneNumberRequired: 'شماره تلفن الزامی است',
     validPhoneNumber: 'لطفاً یک شماره تلفن معتبر وارد کنید (۷ تا ۱۵ رقم)',
     validEmailAddress: 'لطفاً یک آدرس ایمیل معتبر وارد کنید',
     emailAddressRequired: 'آدرس ایمیل الزامی است',
-    passwordRequired: 'رمز عبور الزامی است',
     confirmPasswordRequired: 'لطفاً رمز عبور خود را تأیید کنید',
     passwordsDoNotMatch: 'رمزهای عبور مطابقت ندارند',
     storeNameRequired: 'نام آکادمی الزامی است',
     storeSlugRequired: 'نامک آکادمی الزامی است',
-    schoolSlugInvalid:
-      'نامک مدرسه فقط می‌تواند شامل حروف کوچک، اعداد و خط تیره باشد',
+    storeSlugInvalid:
+      'نامک آکادمی فقط می‌تواند شامل حروف کوچک، اعداد و خط تیره باشد',
     selectStoreRequired: 'لطفاً یک آکادمی انتخاب کنید',
     teacherRequestReasonRequired: 'لطفاً توضیح دهید چرا می‌خواهید معلم شوید',
     registering: 'در حال ثبت‌نام کاربر...',
@@ -209,34 +208,33 @@ export const fa = {
       'می‌توانید آدرس ایمیل خود را بعداً در تنظیمات حساب تأیید کنید',
     stepVerification: 'تأیید',
     stepBaseData: 'اطلاعات پایه',
-    createNewSchool: 'ایجاد مدرسه جدید',
-    createNewSchoolDescription: 'مؤسسه آموزشی خود را به عنوان مدیر شروع کنید',
-    joinExistingSchool: 'پیوستن به مدرسه موجود',
-    joinExistingSchoolDescription:
+    createNewStore: 'ایجاد آکادمی جدید',
+    createNewStoreDescription: 'مؤسسه آموزشی خود را به عنوان مدیر شروع کنید',
+    joinExistingStore: 'پیوستن به آکادمی موجود',
+    joinExistingStoreDescription:
       'به عنوان دانش‌آموز بپیوندید و در صورت تمایل درخواست نقش معلم دهید',
     fullName: 'نام کامل',
     enterFullName: 'نام کامل خود را وارد کنید',
     createPassword: 'یک رمز عبور ایجاد کنید',
     confirmPasswordPlaceholder: 'رمز عبور خود را تأیید کنید',
-    selectStore: 'انتخاب آکادمی',
     chooseStoreToJoin: 'یک آکادمی برای پیوستن انتخاب کنید',
     requestTeacherRole: 'درخواست نقش معلم',
     whyWantToBeTeacher: 'چرا می‌خواهید معلم شوید؟',
     teacherRequestReasonPlaceholder:
-      'لطفاً تجربه تدریس، مدارک و دلیل تمایل به تدریس در این مدرسه را توضیح دهید...'
+      'لطفاً تجربه تدریس، مدارک و دلیل تمایل به تدریس در این آکادمی را توضیح دهید...'
   },
   dashboard: {
     title: 'داشبورد',
     welcome: 'به پنل مدیریت خوش آمدید',
     welcomeBack: 'خوش برگشتید!',
     whatsHappening:
-      'در اینجا آنچه امروز با مدارس شما اتفاق می‌افتد را می‌بینید.',
+      'در اینجا آنچه امروز با آکادمی‌های شما اتفاق می‌افتد را می‌بینید.',
     overview: 'نمای کلی',
     statistics: 'آمار',
     recentActivity: 'فعالیت‌های اخیر',
     loadingDashboardData: 'در حال بارگذاری داده‌های داشبورد...',
     createCourse: 'ایجاد دوره',
-    addNewCourse: 'یک دوره جدید به مدرسه خود اضافه کنید',
+    addNewCourse: 'یک دوره جدید به آکادمی خود اضافه کنید',
     addLesson: 'افزودن درس',
     createNewLesson: 'یک درس جدید برای دوره‌های خود ایجاد کنید',
     uploadMedia: 'آپلود رسانه',
@@ -245,7 +243,8 @@ export const fa = {
     checkMetrics: 'معیارهای عملکرد خود را بررسی کنید',
     quickActions: 'اقدامات سریع',
     quickActionsDescription: 'کارهای رایج برای شروع',
-    recentActivityDescription: 'آخرین به‌روزرسانی‌ها از مدارس و دوره‌های شما',
+    recentActivityDescription:
+      'آخرین به‌روزرسانی‌ها از آکادمی‌ها و دوره‌های شما',
     recentCourses: 'دوره‌های اخیر',
     recentEnrollments: 'ثبت‌نام‌های اخیر',
     recentPayments: 'پرداخت‌های اخیر',
@@ -317,12 +316,12 @@ export const fa = {
     topCourses: 'دوره‌های برتر',
     bestSellingCourses: 'پرفروش‌ترین دوره‌ها بر اساس دانشجویان'
   },
-  schools: {
-    title: 'مدارس',
-    createSchool: 'ایجاد مدرسه',
-    editSchool: 'ویرایش مدرسه',
-    schoolName: 'نام مدرسه',
-    schoolSlug: 'نامک مدرسه',
+  stores: {
+    title: 'آکادمی‌ها',
+    createStore: 'ایجاد آکادمی',
+    editStore: 'ویرایش آکادمی',
+    storeName: 'نام آکادمی',
+    storeSlug: 'نامک آکادمی',
     country: 'کشور',
     language: 'زبان',
     status: 'وضعیت',
@@ -348,7 +347,14 @@ export const fa = {
     storeSlugPlaceholder: 'نام-آکادمی-شما',
     toggleStatusDescription:
       'برای فعال یا غیرفعال کردن این آکادمی تغییر وضعیت دهید',
-    toggleActiveStatus: 'تغییر وضعیت فعال'
+    toggleActiveStatus: 'تغییر وضعیت فعال',
+    storesManagement: 'مدیریت آکادمی‌ها',
+    manageStoresDescription: 'مدیریت آکادمی‌ها و تنظیمات آن‌ها',
+    searchStores: 'جستجوی آکادمی‌ها...',
+    noStoresFound: 'آکادمی‌ای یافت نشد',
+    storeCreated: 'آکادمی با موفقیت ایجاد شد',
+    storeUpdated: 'آکادمی با موفقیت به‌روزرسانی شد',
+    storeDeleted: 'آکادمی با موفقیت حذف شد'
   },
   courses: {
     title: 'دوره‌ها',
@@ -450,7 +456,7 @@ export const fa = {
       'دانش‌آموزان پس از ثبت‌نام در اینجا ظاهر می‌شوند.',
     courseEnrollments: 'ثبت‌نام‌های دوره',
     trackEnrollmentsDescription: 'پیگیری ثبت‌نام دانش‌آموزان و وضعیت آن‌ها',
-    showingRecentEnrollments: 'نمایش ثبت‌نام‌های اخیر از مدارس شما',
+    showingRecentEnrollments: 'نمایش ثبت‌نام‌های اخیر از آکادمی‌های شما',
     loadingEnrollments: 'در حال بارگذاری ثبت‌نام‌ها...',
     noEnrollmentsFound: 'ثبت‌نامی یافت نشد',
     adjustFilters: 'فیلترها را تنظیم کنید تا رکوردهای ثبت‌نام متفاوتی ببینید.',
@@ -507,14 +513,14 @@ export const fa = {
     totalUsersCard: 'کل کاربران',
     allRegisteredUsers: 'همه کاربران ثبت‌نام شده',
     managers: 'مدیران',
-    schoolAdministrators: 'مدیران مدرسه',
+    storeAdministrators: 'مدیران آکادمی',
     teachers: 'معلمان',
     courseInstructors: 'مدرسان دوره',
     courseLearners: 'یادگیرندگان دوره',
     users: 'کاربران',
     loadingUsersData: 'در حال بارگذاری داده‌های کاربران...',
     allManagers: 'همه مدیران',
-    schoolManagersAndAdmins: 'مدیران مدرسه و ادمین‌ها',
+    storeManagersAndAdmins: 'مدیران آکادمی و ادمین‌ها',
     noManagersFound: 'مدیری در سیستم یافت نشد',
     allTeachers: 'همه معلمان',
     courseInstructorsAndEducators: 'مدرسان و آموزگاران دوره',
@@ -535,7 +541,7 @@ export const fa = {
   settings: {
     title: 'تنظیمات',
     description:
-      'پروفایل، پیکربندی مدرسه، برندینگ و تنظیمات امنیتی خود را مدیریت کنید.',
+      'پروفایل، پیکربندی آکادمی، برندینگ و تنظیمات امنیتی خود را مدیریت کنید.',
     refreshData: 'به‌روزرسانی داده‌ها',
     accountSummary: 'خلاصه حساب کاربری',
     accountSummaryDescription: 'اطلاعات کلیدی حساب مدیر شما.',
@@ -543,8 +549,8 @@ export const fa = {
     email: 'ایمیل',
     phone: 'تلفن',
     joined: 'عضویت',
-    schoolSnapshot: 'نمای کلی مدرسه',
-    schoolSnapshotDescription: 'مدرسه اصلی شما در SkillForge.',
+    storeSnapshot: 'نمای کلی آکادمی',
+    storeSnapshotDescription: 'آکادمی اصلی شما در SkillForge.',
     name: 'نام',
     domain: 'دامنه',
     students: 'دانش‌آموزان',
@@ -552,15 +558,15 @@ export const fa = {
     profileSettings: 'تنظیمات پروفایل',
     profileSettingsDescription:
       'جزئیات شخصی، آواتار و اطلاعات تماس خود را به‌روزرسانی کنید.',
-    schoolSettings: 'تنظیمات مدرسه',
-    schoolSettingsDescription:
-      'نام مدرسه، توضیحات و پیکربندی دامنه را مدیریت کنید.',
+    storeSettings: 'تنظیمات آکادمی',
+    storeSettingsDescription:
+      'نام آکادمی، توضیحات و پیکربندی دامنه را مدیریت کنید.',
     themeBranding: 'تم و برندینگ',
     themeBrandingDescription:
       'رنگ‌ها، لوگوها و ظاهر بصری را برای دانش‌آموزان سفارشی کنید.',
     uiTemplateBuilder: 'سازنده قالب رابط کاربری',
     uiTemplateBuilderDescription:
-      'چیدمان، قابلیت مشاهده و پیکربندی بلوک‌های رابط کاربری در وب‌سایت مدرسه خود را سفارشی کنید.',
+      'چیدمان، قابلیت مشاهده و پیکربندی بلوک‌های رابط کاربری در وب‌سایت آکادمی خود را سفارشی کنید.',
     security: 'امنیت',
     securityDescription:
       'رمزهای عبور را تغییر دهید، احراز هویت دو مرحله‌ای را فعال کنید و اعلان‌ها را مدیریت کنید.',
@@ -582,32 +588,29 @@ export const fa = {
     photoFormatHint: 'JPG، PNG یا GIF حداکثر ۲ مگابایت.',
     fullName: 'نام کامل',
     fullNamePlaceholder: 'نام و نام خانوادگی',
-    email: 'ایمیل',
     emailPlaceholder: 'example@skillforge.com',
     phoneNumber: 'شماره تلفن',
     phoneNumberPlaceholder: '۰۹۱۲ ۰۰۰ ۰۰۰۰',
     bio: 'بیوگرافی',
     bioPlaceholder: 'درباره خودتان بیشتر بنویسید',
     saveChanges: 'ذخیره تغییرات',
-    schoolSettingsTitle: 'تنظیمات مدرسه',
-    schoolSettingsSubtitle:
-      'نحوه نمایش مدرسه شما در اکوسیستم SkillForge را مدیریت کنید.',
+    storeSettingsTitle: 'تنظیمات آکادمی',
+    storeSettingsSubtitle:
+      'نحوه نمایش آکادمی شما در اکوسیستم SkillForge را مدیریت کنید.',
     generalInformation: 'اطلاعات عمومی',
     generalInformationDescription:
-      'نام، توضیحات و دامنه مدرسه خود را به‌روزرسانی کنید.',
+      'نام، توضیحات و دامنه آکادمی خود را به‌روزرسانی کنید.',
     storeName: 'نام آکادمی',
     storeNamePlaceholder: 'آکادمی SkillForge',
     customDomain: 'دامنه اختصاصی',
     customDomainPlaceholder: 'academy',
-    description: 'توضیحات',
-    descriptionPlaceholder: 'مدرسه خود را برای دانش‌آموزان آینده توصیف کنید',
+    descriptionPlaceholder: 'آکادمی خود را برای دانش‌آموزان آینده توصیف کنید',
     currentOverview: 'نمای کلی فعلی',
-    students: 'دانش‌آموزان',
     teachers: 'معلمان',
     managers: 'مدیران',
     domainTips: 'نکات دامنه',
     domainTipsText1:
-      'برای بهترین تجربه برندینگ از یک زیردامنه که کنترل آن را دارید استفاده کنید (مثلاً academy.yourschool.com).',
+      'برای بهترین تجربه برندینگ از یک زیردامنه که کنترل آن را دارید استفاده کنید (مثلاً academy.yourstore.com).',
     domainTipsText2:
       'می‌توانید با تماس با پشتیبانی SkillForge درخواست گواهی SSL و پشتیبانی DNS سفارشی کنید.',
     needHelp: 'نیاز به کمک دارید؟',
@@ -636,25 +639,25 @@ export const fa = {
     lightModeDescription: 'از پس‌زمینه روشن با متن تیره استفاده می‌کند.',
     livePreview: 'پیش‌نمایش زنده',
     previewBadge: 'نشان پیش‌نمایش',
-    welcomeToYourSchool: 'به مدرسه شما خوش آمدید',
-    previewDescription: 'این یک پیش‌نمایش از ظاهر مدرسه شماست.',
+    welcomeToYourStore: 'به آکادمی شما خوش آمدید',
+    previewDescription: 'این یک پیش‌نمایش از ظاهر آکادمی شماست.',
     primaryAction: 'اقدام اصلی',
     brandAssets: 'دارایی‌های برند',
     brandAssetsDescription:
       'لوگوها را بارگذاری کنید و منابع برندینگ برای گواهینامه‌ها و ایمیل‌ها تنظیم کنید.',
     logoUrl: 'آدرس لوگو',
-    logoUrlPlaceholder: 'https://cdn.yourschool.com/logo.png',
+    logoUrlPlaceholder: 'https://cdn.yourstore.com/logo.png',
     logoUrlHint:
       'یک آدرس تصویر قابل دسترسی عمومی ارائه دهید. SVG برای نتایج واضح توصیه می‌شود.',
     preview: 'پیش‌نمایش',
-    schoolLogoPreview: 'پیش‌نمایش لوگوی مدرسه',
+    storeLogoPreview: 'پیش‌نمایش لوگوی آکادمی',
     noLogoProvided: 'لوگویی ارائه نشده است',
     dark: 'تاریک',
     darkModeDescription: 'تم تاریک را برای همه دانش‌آموزان اعمال می‌کند',
     system: 'سیستم',
     advancedCustomization: 'سفارشی‌سازی پیشرفته',
     advancedCustomizationDescription:
-      'انیمیشن‌ها، الگوها و جلوه‌های بصری وب‌سایت مدرسه خود را سفارشی کنید',
+      'انیمیشن‌ها، الگوها و جلوه‌های بصری وب‌سایت آکادمی خود را سفارشی کنید',
     backgroundAnimation: 'انیمیشن پس‌زمینه',
     backgroundAnimationHelp:
       'یک جلوه انیمیشن پس‌زمینه برای وب‌سایت خود انتخاب کنید',
@@ -690,12 +693,12 @@ export const fa = {
     themePreferencesSaved: 'تنظیمات تم با موفقیت ذخیره شد',
     uiTemplateBuilderTitle: 'سازنده قالب رابط کاربری',
     uiTemplateBuilderSubtitle:
-      'چیدمان، قابلیت مشاهده و پیکربندی بلوک‌های رابط کاربری در وب‌سایت مدرسه خود را سفارشی کنید.',
+      'چیدمان، قابلیت مشاهده و پیکربندی بلوک‌های رابط کاربری در وب‌سایت آکادمی خود را سفارشی کنید.',
     basedOn: 'بر اساس',
     chooseTemplate: 'انتخاب قالب',
     chooseTemplateLayout: 'انتخاب چیدمان قالب',
     chooseTemplateLayoutDescription:
-      'یک چیدمان قالب از پیش طراحی شده را انتخاب کنید تا به سرعت صفحه اصلی مدرسه خود را راه‌اندازی کنید. می‌توانید بعداً آن را سفارشی کنید.',
+      'یک چیدمان قالب از پیش طراحی شده را انتخاب کنید تا به سرعت صفحه اصلی آکادمی خود را راه‌اندازی کنید. می‌توانید بعداً آن را سفارشی کنید.',
     pageBlocks: 'بلوک‌های صفحه',
     pageBlocksDescription:
       'برای تغییر ترتیب بلوک‌ها، آن‌ها را بکشید و رها کنید. قابلیت مشاهده را تغییر دهید و هر بلوک را پیکربندی کنید تا صفحه اصلی خود را سفارشی کنید.',
@@ -836,19 +839,19 @@ export const fa = {
   unauthorized: {
     title: 'دسترسی غیرمجاز',
     description:
-      'این پنل مدیریت فقط برای معلمان، مدیران و مدیران کل محدود شده است. دانش‌آموزان باید از طریق وب‌سایت مدرسه خود به داشبورد یادگیری خود دسترسی داشته باشند.',
+      'این پنل مدیریت فقط برای معلمان، مدیران و مدیران کل محدود شده است. دانش‌آموزان باید از طریق وب‌سایت آکادمی خود به داشبورد یادگیری خود دسترسی داشته باشند.',
     note: 'توجه:',
     contactAdmin:
-      'اگر فکر می‌کنید باید به این پنل دسترسی داشته باشید، لطفاً با مدیر مدرسه خود تماس بگیرید.',
+      'اگر فکر می‌کنید باید به این پنل دسترسی داشته باشید، لطفاً با مدیر آکادمی خود تماس بگیرید.',
     whatYouCanDo: 'چه کاری می‌توانید انجام دهید:',
     accessStudentDashboard:
-      'به داشبورد دانش‌آموزی مدرسه خود دسترسی داشته باشید',
-    contactSchoolAdmin: 'با مدیر مدرسه خود تماس بگیرید',
+      'به داشبورد دانش‌آموزی آکادمی خود دسترسی داشته باشید',
+    contactStoreAdmin: 'با مدیر آکادمی خود تماس بگیرید',
     joinAsTeacher:
-      'به یک مدرسه بپیوندید و درخواست نقش معلم دهید اگر معلم هستید',
+      'به یک آکادمی بپیوندید و درخواست نقش معلم دهید اگر معلم هستید',
     needHelp: 'کمک می‌خواهید؟',
     contactSupport:
-      'اگر فکر می‌کنید باید به این پنل دسترسی داشته باشید، لطفاً با مدیر مدرسه خود یا تیم پشتیبانی ما تماس بگیرید.'
+      'اگر فکر می‌کنید باید به این پنل دسترسی داشته باشید، لطفاً با مدیر آکادمی خود یا تیم پشتیبانی ما تماس بگیرید.'
   },
   notFound: {
     title: 'صفحه یافت نشد',
@@ -875,7 +878,7 @@ export const fa = {
   forgotPassword: {
     title: 'بازیابی رمز عبور',
     enterIdentifier:
-      'ایمیل یا شماره تلفن خود را وارد کنید و مدرسه را انتخاب کنید (در صورت وجود) تا کد تأیید دریافت کنید',
+      'ایمیل یا شماره تلفن خود را وارد کنید و آکادمی را انتخاب کنید (در صورت وجود) تا کد تأیید دریافت کنید',
     enterOtp: 'کد تأیید ارسال شده به دستگاه خود را وارد کنید',
     enterNewPassword: 'رمز عبور جدید خود را وارد کنید',
     passwordResetSuccess: 'رمز عبور با موفقیت بازنشانی شد',
@@ -894,7 +897,7 @@ export const fa = {
     backToLogin: 'بازگشت به ورود',
     tryAgain: 'دوباره تلاش کنید',
     selectStoreDescription:
-      'اگر دانش‌آموز هستید مدرسه خود را انتخاب کنید، یا برای مدیر/معلم خالی بگذارید',
+      'اگر دانش‌آموز هستید آکادمی خود را انتخاب کنید، یا برای مدیر/معلم خالی بگذارید',
     checkDeviceForCode: 'دستگاه خود را برای کد تأیید بررسی کنید',
     createNewPassword: 'یک رمز عبور امن جدید ایجاد کنید',
     canLoginNow: 'اکنون می‌توانید با رمز عبور جدید خود وارد شوید',
@@ -909,7 +912,7 @@ export const fa = {
     goToLogin: 'رفتن به ورود'
   },
   media: {
-    noSchoolSelected: 'مدرسه‌ای انتخاب نشده',
+    noStoreSelected: 'آکادمی‌ای انتخاب نشده',
     selectStoreToView: 'لطفاً یک آکادمی از هدر انتخاب کنید تا مشاهده کنید',
     loading: 'در حال بارگذاری...',
     searchPlaceholder: 'جستجو...',
@@ -983,7 +986,7 @@ export const fa = {
     editAudio: 'ویرایش صوتی',
     updateMetadata: 'به‌روزرسانی متادیتای این فایل صوتی.',
     publiclyAccessible: 'دسترسی عمومی',
-    allowMembersAccess: 'اجازه دسترسی اعضای مدرسه به این فایل صوتی.',
+    allowMembersAccess: 'اجازه دسترسی اعضای آکادمی به این فایل صوتی.',
     untitledAudio: 'صوتی بدون عنوان',
     fileSize: 'حجم فایل',
     duration: 'مدت',
@@ -1015,16 +1018,6 @@ export const fa = {
     courseContentVideos: 'ویدیوهای محتوای دوره',
     combinedVideoLength: 'مجموع طول ویدیوها'
   },
-  stores: {
-    storesManagement: 'مدیریت آکادمی‌ها',
-    manageStoresDescription: 'مدیریت آکادمی‌ها و تنظیمات آن‌ها',
-    createStore: 'ایجاد آکادمی',
-    searchStores: 'جستجوی آکادمی‌ها...',
-    noStoresFound: 'آکادمی‌ای یافت نشد',
-    storeCreated: 'آکادمی با موفقیت ایجاد شد',
-    storeUpdated: 'آکادمی با موفقیت به‌روزرسانی شد',
-    storeDeleted: 'آکادمی با موفقیت حذف شد'
-  },
   users: {
     allUsers: 'همه کاربران',
     manageAllUsersDescription: 'مدیریت همه کاربران در نقش‌های مختلف',
@@ -1033,7 +1026,7 @@ export const fa = {
     totalUsers: 'کل کاربران',
     allRegisteredUsers: 'همه کاربران ثبت‌نام شده',
     managers: 'مدیران',
-    schoolAdministrators: 'مدیران مدرسه',
+    storeAdministrators: 'مدیران آکادمی',
     teachers: 'معلمان',
     courseInstructors: 'مدرسان دوره',
     students: 'دانش‌آموزان',
@@ -1231,10 +1224,10 @@ export const fa = {
       title: 'مدیریت مالی آکادمی',
       description: 'نمای کلی درآمد، هزینه‌ها و مزایا',
       overview: {
-        title: 'مدیریت مالی مدرسه',
+        title: 'مدیریت مالی آکادمی',
         description: 'نمای کلی درآمد، هزینه‌ها و مزایا',
         loading: 'در حال بارگذاری اطلاعات مالی...',
-        noSchool: 'مدرسه‌ای انتخاب نشده است',
+        noStore: 'آکادمی‌ای انتخاب نشده است',
         filters: 'فیلترها',
         year: 'سال',
         month: 'ماه (اختیاری)',
@@ -1263,7 +1256,7 @@ export const fa = {
         title: 'درآمد و مزایا',
         description: 'درآمد از پرداخت‌های دانش‌آموزان و ثبت‌نام در دوره‌ها',
         loading: 'در حال بارگذاری اطلاعات درآمد...',
-        noSchool: 'مدرسه‌ای انتخاب نشده است',
+        noStore: 'آکادمی‌ای انتخاب نشده است',
         filters: 'فیلترها',
         year: 'سال',
         month: 'ماه (اختیاری)',
@@ -1285,10 +1278,10 @@ export const fa = {
         payments: 'پرداخت‌ها'
       },
       costs: {
-        title: 'هزینه‌های مدرسه',
+        title: 'هزینه‌های آکادمی',
         description: 'سوابق هزینه و هزینه‌های مالی',
         loading: 'در حال بارگذاری اطلاعات هزینه...',
-        noSchool: 'مدرسه‌ای انتخاب نشده است',
+        noStore: 'آکادمی‌ای انتخاب نشده است',
         filters: 'فیلترها',
         year: 'سال',
         month: 'ماه (اختیاری)',
@@ -1317,7 +1310,7 @@ export const fa = {
         title: 'پرداخت‌های دانش‌آموزان',
         description: 'تراکنش‌ها و تاریخچه پرداخت',
         loading: 'در حال بارگذاری اطلاعات پرداخت...',
-        noSchool: 'مدرسه‌ای انتخاب نشده است',
+        noStore: 'آکادمی‌ای انتخاب نشده است',
         filters: 'فیلترها',
         year: 'سال',
         month: 'ماه (اختیاری)',
@@ -1349,7 +1342,7 @@ export const fa = {
         title: 'گزارش‌های مالی',
         description: 'تحلیل و گزارش‌های جامع مالی',
         loading: 'در حال بارگذاری گزارش‌ها...',
-        noSchool: 'مدرسه‌ای انتخاب نشده است',
+        noStore: 'آکادمی‌ای انتخاب نشده است',
         filters: 'فیلترها',
         year: 'سال',
         month: 'ماه (اختیاری)',
@@ -1374,7 +1367,6 @@ export const fa = {
         noSummaryData: 'داده خلاصه در دسترس نیست',
         monthlyBreakdown: 'تفکیک ماهانه',
         monthlyBreakdownDescription: 'درآمد، هزینه و سود بر اساس ماه',
-        month: 'ماه',
         revenue: 'درآمد',
         cost: 'هزینه',
         profit: 'سود',

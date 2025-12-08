@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { Course, Lesson, Season } from '@/types/api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 const useLesson = () => {
   const params = useParams();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
 
@@ -20,13 +20,13 @@ const useLesson = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (courseId && seasonId && selectedSchool) {
+    if (courseId && seasonId && selectedStore) {
       fetchData();
     }
-  }, [courseId, seasonId, selectedSchool]);
+  }, [courseId, seasonId, selectedStore]);
 
   const fetchData = async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
 
     try {
       setIsLoading(true);

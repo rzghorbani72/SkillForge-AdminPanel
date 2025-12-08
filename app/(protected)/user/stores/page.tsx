@@ -1,3 +1,3 @@
-export default function SchoolsPage() {
-  return <div>SchoolsPage</div>;
+export default function StoresPage() {
+  return <div>StoresPage</div>;
 }

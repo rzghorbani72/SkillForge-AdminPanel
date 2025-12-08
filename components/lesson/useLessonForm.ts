@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { Course, Lesson, Season } from '@/types/api';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
@@ -14,7 +14,6 @@ type LessonFormData = {
   video_id?: string;
   cover_id?: string;
   document_id?: string;
-  category_id?: string;
   published: boolean;
   is_free: boolean;
   lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ';
@@ -35,7 +34,7 @@ type UseLessonFormReturn = {
 const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
   const router = useRouter();
   const params = useParams();
-  const { selectedStore: selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
   const lessonId = params.lesson_id as string;
@@ -50,13 +49,13 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
   );
 
   useEffect(() => {
-    if (courseId && seasonId && selectedSchool) {
+    if (courseId && seasonId && selectedStore) {
       fetchData();
     }
-  }, [courseId, seasonId, selectedSchool, isEdit, lessonId]);
+  }, [courseId, seasonId, selectedStore, isEdit, lessonId]);
 
   const fetchData = async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
 
     try {
       setIsLoading(true);
@@ -88,9 +87,6 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
           document_id: lessonData.document_id
             ? String(lessonData.document_id)
             : '',
-          category_id: lessonData.category_id
-            ? String(lessonData.category_id)
-            : '',
           published: Boolean(
             (lessonData as any).published ??
               (lessonData as any).is_active ??
@@ -108,7 +104,6 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
           video_id: '',
           cover_id: '',
           document_id: '',
-          category_id: '',
           published: false,
           is_free: false,
           lesson_type: 'VIDEO'
@@ -123,7 +118,7 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
   };
 
   const onSubmitHandler = async (data: LessonFormData) => {
-    if (!selectedSchool) {
+    if (!selectedStore) {
       toast.error('Please select a store first');
       return;
     }
@@ -143,7 +138,6 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
         video_id: data.video_id ? parseInt(data.video_id) : undefined,
         cover_id: data.cover_id ? parseInt(data.cover_id) : undefined,
         document_id: data.document_id ? parseInt(data.document_id) : undefined,
-        category_id: data.category_id ? parseInt(data.category_id) : undefined,
         published: data.published,
         is_free: data.is_free,
         lesson_type: data.lesson_type
@@ -170,11 +164,6 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
 
   // Debounce the submit handler to prevent multiple rapid submissions
   const onSubmit = useDebouncedCallback(onSubmitHandler, 500);
-
-  console.log('initialValues', initialValues);
-  console.log('lesson', lesson);
-  console.log('season', season);
-  console.log('course', course);
 
   return {
     lesson,

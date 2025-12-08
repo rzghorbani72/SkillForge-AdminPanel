@@ -363,10 +363,10 @@ export const navItems: NavItem[] = [
         roles: ['ADMIN']
       },
       {
-        title: 'All Schools',
-        href: '/financial/platform/schools',
+        title: 'All Stores',
+        href: '/financial/platform/stores',
         icon: 'building2' as IconType,
-        label: 'platform-schools',
+        label: 'platform-stores',
         roles: ['ADMIN']
       },
       {

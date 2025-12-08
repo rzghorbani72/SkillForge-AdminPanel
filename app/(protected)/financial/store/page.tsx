@@ -41,7 +41,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function SchoolFinancialPage() {
+export default function StoreFinancialPage() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<any>(null);
@@ -122,7 +122,7 @@ export default function SchoolFinancialPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
-          {t('financial.store.overview.noSchool')}
+          {t('financial.store.overview.noStore')}
         </p>
       </div>
     );

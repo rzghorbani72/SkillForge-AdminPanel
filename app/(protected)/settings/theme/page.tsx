@@ -697,7 +697,7 @@ function LivePreview({
             {t('settings.previewBadge')}
           </span>
           <h3 className="text-lg font-semibold">
-            {t('settings.welcomeToYourSchool')}
+            {t('settings.welcomeToYourStore')}
           </h3>
           <p className="text-sm opacity-80">
             {t('settings.previewDescription')}
@@ -1021,7 +1021,7 @@ const DEFAULT_THEME: ThemeFormState = {
     DEFAULT_THEME_CONFIG.background_color,
   backgroundDark: DEFAULT_THEME_CONFIG.background_color_dark ?? '#0f172a',
   darkMode: getThemeMode(DEFAULT_THEME_CONFIG.dark_mode),
-  logoUrl: 'https://cdn.yourschool.com/logo.png',
+  logoUrl: 'https://cdn.yourstore.com/logo.png',
   backgroundAnimationType: 'none',
   backgroundAnimationSpeed: 'medium',
   backgroundSvgPattern: '',
@@ -1130,7 +1130,7 @@ export default function ThemeSettingsPage() {
           logoUrl:
             configs.logo_url ||
             configs.logoUrl ||
-            'https://cdn.yourschool.com/logo.png',
+            'https://cdn.yourstore.com/logo.png',
           backgroundAnimationType: configs.background_animation_type || 'none',
           backgroundAnimationSpeed:
             configs.background_animation_speed || 'medium',
@@ -1777,7 +1777,7 @@ export default function ThemeSettingsPage() {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={theme.logoUrl}
-                alt={t('settings.schoolLogoPreview')}
+                alt={t('settings.storeLogoPreview')}
                 className="h-16"
               />
             ) : (

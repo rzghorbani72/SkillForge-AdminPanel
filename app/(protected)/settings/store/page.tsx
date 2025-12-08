@@ -96,10 +96,10 @@ export default function StoreSettingsPage() {
     <div className="flex-1 space-y-6 p-6">
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">
-          {t('settings.schoolSettingsTitle')}
+          {t('settings.storeSettingsTitle')}
         </h1>
         <p className="text-muted-foreground">
-          {t('settings.schoolSettingsSubtitle')}
+          {t('settings.storeSettingsSubtitle')}
         </p>
       </div>
 
@@ -114,14 +114,14 @@ export default function StoreSettingsPage() {
           <CardContent className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="schoolName">{t('settings.schoolName')}</Label>
+                <Label htmlFor="storeName">{t('settings.storeName')}</Label>
                 <Input
-                  id="schoolName"
+                  id="storeName"
                   value={form.name}
                   onChange={(event) =>
                     setForm({ ...form, name: event.target.value })
                   }
-                  placeholder={t('settings.schoolNamePlaceholder')}
+                  placeholder={t('settings.storeNamePlaceholder')}
                 />
               </div>
               <div className="space-y-2">

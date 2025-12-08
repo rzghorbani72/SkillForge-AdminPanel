@@ -166,7 +166,7 @@ export interface Course {
   is_certificate?: boolean;
   cover_id?: number;
   author_id: number;
-  school_id: number;
+  store_id: number;
   category_id?: number;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   duration?: number;

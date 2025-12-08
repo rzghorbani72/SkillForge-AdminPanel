@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Building2 } from 'lucide-react';
 
-interface SchoolGuardProps {
+interface StoreGuardProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
 
-export function SchoolGuard({ children, fallback }: SchoolGuardProps) {
-  const { schools, isLoading, error } = useSchool();
+export function StoreGuard({ children, fallback }: StoreGuardProps) {
+  const { stores, isLoading, error } = useStore();
   const [showError, setShowError] = useState(false);
   const router = useRouter();
 
@@ -21,12 +21,12 @@ export function SchoolGuard({ children, fallback }: SchoolGuardProps) {
     if (!isLoading) {
       if (error) {
         setShowError(true);
-      } else if (schools.length === 0) {
-        // No schools found, redirect to schools page or show error
+      } else if (stores.length === 0) {
+        // No stores found, redirect to stores page or show error
         setShowError(true);
       }
     }
-  }, [isLoading, error, schools.length]);
+  }, [isLoading, error, stores.length]);
 
   if (isLoading) {
     return (
@@ -48,9 +48,9 @@ export function SchoolGuard({ children, fallback }: SchoolGuardProps) {
             {error || 'You need access to a store to use this application.'}
           </p>
           <div className="flex justify-center gap-2">
-            <Button variant="outline" onClick={() => router.push('/schools')}>
+            <Button variant="outline" onClick={() => router.push('/stores')}>
               <Building2 className="mr-2 h-4 w-4" />
-              Manage Schools
+              Manage Stores
             </Button>
             <Button variant="outline" onClick={() => router.push('/login')}>
               Login Again

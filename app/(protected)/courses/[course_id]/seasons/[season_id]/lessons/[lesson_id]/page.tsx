@@ -29,7 +29,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { Lesson, Season, Course } from '@/types/api';
 import { sanitizeRichText } from '@/lib/sanitize';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
 import AccessControlGuard from '@/components/access-control/AccessControlGuard';
@@ -37,7 +37,7 @@ import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 export default function LessonViewPage() {
   const params = useParams();
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
   const lessonId = params.lesson_id as string;
@@ -48,13 +48,13 @@ export default function LessonViewPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (courseId && seasonId && lessonId && selectedSchool) {
+    if (courseId && seasonId && lessonId && selectedStore) {
       fetchData();
     }
-  }, [courseId, seasonId, lessonId, selectedSchool]);
+  }, [courseId, seasonId, lessonId, selectedStore]);
 
   const fetchData = async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
 
     try {
       setIsLoading(true);

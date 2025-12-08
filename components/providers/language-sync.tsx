@@ -18,7 +18,7 @@ export function LanguageSync() {
 
     // Try to get country code from current store
     const currentUser = authService.getCurrentUser();
-    const countryCode = currentUser?.currentSchool?.country_code;
+    const countryCode = currentUser?.currentStore?.country_code;
 
     if (countryCode) {
       const detectedLanguage = getDefaultLanguageForCountry(countryCode);

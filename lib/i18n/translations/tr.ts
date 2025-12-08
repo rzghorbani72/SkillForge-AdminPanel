@@ -68,7 +68,7 @@ export const tr = {
   },
   navigation: {
     dashboard: 'Kontrol Paneli',
-    schools: 'Okullar',
+    stores: 'Enstitüler',
     courses: 'Kurslar',
     students: 'Öğrenciler',
     teachers: 'Öğretmenler',
@@ -113,11 +113,11 @@ export const tr = {
     teachersManagersAdmins: 'Öğretmenler, Yöneticiler ve Yöneticiler',
     staffOnly: 'içindir.',
     studentsLoginThroughStore:
-      'Öğrenciler okullarının web sitesi üzerinden giriş yapmalıdır.',
+      'Öğrenciler enstitülerinin web sitesi üzerinden giriş yapmalıdır.',
     dontHaveAccount: 'Yönetim hesabınız yok mu?',
-    registerSchool: 'Okulunuzu Kaydedin',
+    registerStore: 'Enstitünüzü Kaydedin',
     areYouStudent: 'Öğrenci misiniz?',
-    findSchool: 'Okulunuzu bulun',
+    findStore: 'Enstitünüzü bulun',
     phone: 'Telefon',
     emailAddress: 'E-posta adresi',
     phoneNumber: 'Telefon numarası',
@@ -133,19 +133,18 @@ export const tr = {
     verifyContactDescription:
       'Önce telefonu (ve varsa e-postayı) doğrulayın. Ardından temel verileri doldurun.',
     registerDescription:
-      'Okul yöneticisi olarak kaydolun veya öğrenci olarak katılın',
+      'Enstitü yöneticisi olarak kaydolun veya öğrenci olarak katılın',
     fullNameRequired: 'Ad soyad gereklidir',
     phoneNumberRequired: 'Telefon numarası gereklidir',
     validPhoneNumber: 'Lütfen geçerli bir telefon numarası girin (7-15 rakam)',
     validEmailAddress: 'Lütfen geçerli bir e-posta adresi girin',
     emailAddressRequired: 'E-posta adresi gereklidir',
-    passwordRequired: 'Şifre gereklidir',
     confirmPasswordRequired: 'Lütfen şifrenizi onaylayın',
     passwordsDoNotMatch: 'Şifreler eşleşmiyor',
-    schoolNameRequired: 'Okul adı gereklidir',
-    schoolSlugRequired: 'Okul kısa adı gereklidir',
-    schoolSlugInvalid:
-      'Okul kısa adı yalnızca küçük harfler, rakamlar ve tire içerebilir',
+    storeNameRequired: 'Enstitü adı gereklidir',
+    storeSlugRequired: 'Enstitü kısa adı gereklidir',
+    storeSlugInvalid:
+      'Enstitü kısa adı yalnızca küçük harfler, rakamlar ve tire içerebilir',
     selectStoreRequired: 'Lütfen bir enstitü seçin',
     teacherRequestReasonRequired:
       'Lütfen neden öğretmen olmak istediğinizi açıklayın',
@@ -172,34 +171,33 @@ export const tr = {
       'E-posta adresinizi daha sonra hesap ayarlarından doğrulayabilirsiniz',
     stepVerification: 'Doğrulama',
     stepBaseData: 'Temel Veriler',
-    createNewSchool: 'Yeni Okul Oluştur',
-    createNewSchoolDescription:
+    createNewStore: 'Yeni Enstitü Oluştur',
+    createNewStoreDescription:
       'Kendi eğitim kurumunuzu yönetici olarak başlatın',
-    joinExistingSchool: 'Mevcut Okula Katıl',
-    joinExistingSchoolDescription:
+    joinExistingStore: 'Mevcut Enstitüye Katıl',
+    joinExistingStoreDescription:
       'Öğrenci olarak katılın ve isteğe bağlı olarak öğretmen rolü talep edin',
     fullName: 'Ad Soyad',
     enterFullName: 'Adınızı ve soyadınızı girin',
     createPassword: 'Bir şifre oluşturun',
     confirmPasswordPlaceholder: 'Şifrenizi onaylayın',
-    selectStore: 'Enstitü Seç',
-    chooseSchoolToJoin: 'Katılmak için bir okul seçin',
+    chooseStoreToJoin: 'Katılmak için bir enstitü seçin',
     requestTeacherRole: 'Öğretmen Rolü Talep Et',
     whyWantToBeTeacher: 'Neden öğretmen olmak istiyorsunuz?',
     teacherRequestReasonPlaceholder:
-      'Lütfen öğretim deneyiminizi, niteliklerinizi ve bu okulda öğretmek isteme nedeninizi açıklayın...'
+      'Lütfen öğretim deneyiminizi, niteliklerinizi ve bu enstitüde öğretmek isteme nedeninizi açıklayın...'
   },
   dashboard: {
     title: 'Kontrol Paneli',
     welcome: 'Yönetim Paneline Hoş Geldiniz',
     welcomeBack: 'Tekrar hoş geldiniz!',
-    whatsHappening: 'İşte okullarınızla bugün olanlar.',
+    whatsHappening: 'İşte enstitülerinizle bugün olanlar.',
     overview: 'Genel Bakış',
     statistics: 'İstatistikler',
     recentActivity: 'Son Aktiviteler',
     loadingDashboardData: 'Kontrol paneli verileri yükleniyor...',
     createCourse: 'Kurs Oluştur',
-    addNewCourse: 'Okulunuza yeni bir kurs ekleyin',
+    addNewCourse: 'Enstitünüze yeni bir kurs ekleyin',
     addLesson: 'Ders Ekle',
     createNewLesson: 'Kurslarınız için yeni bir ders oluşturun',
     uploadMedia: 'Medya Yükle',
@@ -209,7 +207,7 @@ export const tr = {
     quickActions: 'Hızlı İşlemler',
     quickActionsDescription: 'Başlamanız için ortak görevler',
     recentActivityDescription:
-      'Okullarınız ve kurslarınızdan son güncellemeler',
+      'Enstitüleriniz ve kurslarınızdan son güncellemeler',
     recentCourses: 'Son Kurslar',
     recentEnrollments: 'Son Kayıtlar',
     recentPayments: 'Son Ödemeler',
@@ -277,7 +275,14 @@ export const tr = {
     inactive: 'Pasif',
     selectStore: 'Enstitü Seç',
     noStores: 'Enstitü bulunamadı',
-    createFirstStore: 'İlk enstitünüzü oluşturun'
+    createFirstStore: 'İlk enstitünüzü oluşturun',
+    storesManagement: 'Enstitü Yönetimi',
+    manageStoresDescription: 'Enstitülerinizi ve ayarlarını yönetin',
+    searchStores: 'Enstitülerde ara...',
+    noStoresFound: 'Enstitü bulunamadı',
+    storeCreated: 'Enstitü başarıyla oluşturuldu',
+    storeUpdated: 'Enstitü başarıyla güncellendi',
+    storeDeleted: 'Enstitü başarıyla silindi'
   },
   courses: {
     title: 'Kurslar',
@@ -360,14 +365,14 @@ export const tr = {
     totalUsersCard: 'Toplam Kullanıcı',
     allRegisteredUsers: 'Tüm kayıtlı kullanıcılar',
     managers: 'Yöneticiler',
-    schoolAdministrators: 'Okul yöneticileri',
+    storeAdministrators: 'Enstitü yöneticileri',
     teachers: 'Öğretmenler',
     courseInstructors: 'Kurs eğitmenleri',
     courseLearners: 'Kurs öğrencileri',
     users: 'Kullanıcılar',
     loadingUsersData: 'Kullanıcı verileri yükleniyor...',
     allManagers: 'Tüm Yöneticiler',
-    schoolManagersAndAdmins: 'Okul yöneticileri ve adminler',
+    storeManagersAndAdmins: 'Enstitü yöneticileri ve adminler',
     noManagersFound: 'Sistemde yönetici bulunamadı',
     allTeachers: 'Tüm Öğretmenler',
     courseInstructorsAndEducators: 'Kurs eğitmenleri ve öğretmenler',
@@ -388,7 +393,7 @@ export const tr = {
   settings: {
     title: 'Ayarlar',
     description:
-      'Profilinizi, okul yapılandırmanızı, marka kimliğinizi ve güvenlik tercihlerinizi yönetin.',
+      'Profilinizi, enstitü yapılandırmanızı, marka kimliğinizi ve güvenlik tercihlerinizi yönetin.',
     refreshData: 'Verileri Yenile',
     accountSummary: 'Hesap Özeti',
     accountSummaryDescription: 'Yönetici hesabınız için temel bilgiler.',
@@ -396,8 +401,8 @@ export const tr = {
     email: 'E-posta',
     phone: 'Telefon',
     joined: 'Katıldı',
-    schoolSnapshot: 'Okul Özeti',
-    schoolSnapshotDescription: "SkillForge'daki birincil okulunuz.",
+    storeSnapshot: 'Enstitü Özeti',
+    storeSnapshotDescription: "SkillForge'daki birincil enstitünüz.",
     name: 'İsim',
     domain: 'Alan Adı',
     students: 'Öğrenciler',
@@ -405,27 +410,27 @@ export const tr = {
     profileSettings: 'Profil Ayarları',
     profileSettingsDescription:
       'Kişisel bilgilerinizi, avatarınızı ve iletişim bilgilerinizi güncelleyin.',
-    schoolSettings: 'Okul Ayarları',
-    schoolSettingsDescription:
-      'Okul adınızı, açıklamanızı ve alan adı yapılandırmanızı yönetin.',
+    storeSettings: 'Enstitü Ayarları',
+    storeSettingsDescription:
+      'Enstitü adınızı, açıklamanızı ve alan adı yapılandırmanızı yönetin.',
     themeBranding: 'Tema ve Marka',
     themeBrandingDescription:
       'Öğrenciler için renkleri, logoları ve görsel görünümü özelleştirin.',
     uiTemplateBuilder: 'UI Şablon Oluşturucu',
     uiTemplateBuilderDescription:
-      'Okul web sitenizdeki UI bloklarının düzenini, görünürlüğünü ve yapılandırmasını özelleştirin.',
+      'Enstitü web sitenizdeki UI bloklarının düzenini, görünürlüğünü ve yapılandırmasını özelleştirin.',
     security: 'Güvenlik',
     securityDescription:
       'Şifreleri değiştirin, iki faktörlü kimlik doğulamayı etkinleştirin ve bildirimleri yönetin.',
     openSettings: 'Ayarları aç',
     uiTemplateBuilderTitle: 'UI Şablon Oluşturucu',
     uiTemplateBuilderSubtitle:
-      'Okul web sitenizdeki UI bloklarının düzenini, görünürlüğünü ve yapılandırmasını özelleştirin.',
+      'Enstitü web sitenizdeki UI bloklarının düzenini, görünürlüğünü ve yapılandırmasını özelleştirin.',
     basedOn: 'Dayalı',
     chooseTemplate: 'Şablon Seç',
     chooseTemplateLayout: 'Şablon Düzeni Seç',
     chooseTemplateLayoutDescription:
-      'Okul ana sayfanızı hızlıca ayarlamak için önceden tasarlanmış bir şablon düzeni seçin. Daha sonra özelleştirebilirsiniz.',
+      'Enstitü ana sayfanızı hızlıca ayarlamak için önceden tasarlanmış bir şablon düzeni seçin. Daha sonra özelleştirebilirsiniz.',
     pageBlocks: 'Sayfa Blokları',
     pageBlocksDescription:
       'Blokları yeniden sıralamak için sürükleyip bırakın. Görünürlüğü değiştirin ve ana sayfanızı özelleştirmek için her bloğu yapılandırın.',
@@ -461,7 +466,6 @@ export const tr = {
     photoFormatHint: 'JPG, PNG veya GIF, maksimum 2MB.',
     fullName: 'Tam Ad',
     fullNamePlaceholder: 'Ad Soyad',
-    email: 'E-posta',
     emailPlaceholder: 'ornek@skillforge.com',
     phoneNumber: 'Telefon Numarası',
     phoneNumberPlaceholder: '+90 500 000 0000',
@@ -469,25 +473,23 @@ export const tr = {
     bioPlaceholder:
       'Meslektaşlarınıza kendiniz hakkında daha fazla bilgi verin',
     saveChanges: 'Değişiklikleri Kaydet',
-    schoolSettingsTitle: 'Okul Ayarları',
-    schoolSettingsSubtitle:
-      'Okulunuzun SkillForge ekosisteminde nasıl göründüğünü yönetin.',
+    storeSettingsTitle: 'Enstitü Ayarları',
+    storeSettingsSubtitle:
+      'Enstitünüzün SkillForge ekosisteminde nasıl göründüğünü yönetin.',
     generalInformation: 'Genel Bilgiler',
     generalInformationDescription:
-      'Okulunuzun adını, açıklamasını ve alan adını güncelleyin.',
-    schoolName: 'Okul Adı',
-    schoolNamePlaceholder: 'SkillForge Akademisi',
+      'Enstitünüzün adını, açıklamasını ve alan adını güncelleyin.',
+    storeName: 'Enstitü Adı',
+    storeNamePlaceholder: 'SkillForge Akademisi',
     customDomain: 'Özel Alan Adı',
     customDomainPlaceholder: 'academy',
-    description: 'Açıklama',
-    descriptionPlaceholder: 'Okulunuzu potansiyel öğrenciler için tanımlayın',
+    descriptionPlaceholder: 'Enstitünüzü potansiyel öğrenciler için tanımlayın',
     currentOverview: 'Mevcut Genel Bakış',
-    students: 'Öğrenciler',
     teachers: 'Öğretmenler',
     managers: 'Yöneticiler',
     domainTips: 'Alan Adı İpuçları',
     domainTipsText1:
-      'En iyi marka deneyimi için kontrol ettiğiniz bir alt alan adı kullanın (örn. academy.yourschool.com).',
+      'En iyi marka deneyimi için kontrol ettiğiniz bir alt alan adı kullanın (örn. academy.yourstore.com).',
     domainTipsText2:
       'SkillForge desteğiyle iletişime geçerek SSL sertifikaları ve özel DNS desteği talep edebilirsiniz.',
     needHelp: 'Yardıma mı ihtiyacınız var?',
@@ -516,25 +518,26 @@ export const tr = {
     lightModeDescription: 'Koyu metinli açık arka plan kullanır.',
     livePreview: 'Canlı Önizleme',
     previewBadge: 'Önizleme Rozeti',
-    welcomeToYourSchool: 'Okulunuza Hoş Geldiniz',
-    previewDescription: 'Bu, okulunuzun nasıl görüneceğinin bir önizlemesidir.',
+    welcomeToYourStore: 'Enstitünüze Hoş Geldiniz',
+    previewDescription:
+      'Bu, enstitünüzün nasıl görüneceğinin bir önizlemesidir.',
     primaryAction: 'Ana Eylem',
     brandAssets: 'Marka Varlıkları',
     brandAssetsDescription:
       'Logoları yükleyin ve sertifikalar ile e-postalar için marka kaynaklarını ayarlayın.',
     logoUrl: 'Logo URL',
-    logoUrlPlaceholder: 'https://cdn.yourschool.com/logo.png',
+    logoUrlPlaceholder: 'https://cdn.yourstore.com/logo.png',
     logoUrlHint:
       "Herkese açık bir resim URL'si sağlayın. Net sonuçlar için SVG önerilir.",
     preview: 'Önizleme',
-    schoolLogoPreview: 'Okul logosu önizlemesi',
+    storeLogoPreview: 'Enstitü logosu önizlemesi',
     noLogoProvided: 'Logo sağlanmadı',
     dark: 'Koyu',
     darkModeDescription: 'Tüm öğrenciler için koyu temayı zorlar',
     system: 'Sistem',
     advancedCustomization: 'Gelişmiş Özelleştirme',
     advancedCustomizationDescription:
-      'Okul web siteniz için animasyonlar, desenler ve görsel efektleri özelleştirin',
+      'Enstitü web siteniz için animasyonlar, desenler ve görsel efektleri özelleştirin',
     backgroundAnimation: 'Arka Plan Animasyonu',
     backgroundAnimationHelp:
       'Web siteniz için animasyonlu bir arka plan efekti seçin',
@@ -628,14 +631,15 @@ export const tr = {
   unauthorized: {
     title: 'Yetkisiz Erişim',
     description:
-      'Bu yönetim paneli yalnızca öğretmenler, yöneticiler ve yöneticiler için sınırlıdır. Öğrenciler okullarının web sitesi üzerinden öğrenme panellerine erişmelidir.',
+      'Bu yönetim paneli yalnızca öğretmenler, yöneticiler ve yöneticiler için sınırlıdır. Öğrenciler enstitülerinin web sitesi üzerinden öğrenme panellerine erişmelidir.',
     note: 'Not:',
     contactAdmin:
-      'Bu panele erişiminiz olması gerektiğini düşünüyorsanız, lütfen okul yöneticinizle iletişime geçin.',
+      'Bu panele erişiminiz olması gerektiğini düşünüyorsanız, lütfen enstitü yöneticinizle iletişime geçin.',
     whatYouCanDo: 'Ne yapabilirsiniz:',
-    accessStudentDashboard: 'Okulunuzun öğrenci paneline erişin',
-    contactSchoolAdmin: 'Okul yöneticinizle iletişime geçin',
-    joinAsTeacher: 'Bir okula katılın ve eğitimciyseniz öğretmen rolü isteyin',
+    accessStudentDashboard: 'Enstitünüzün öğrenci paneline erişin',
+    contactStoreAdmin: 'Enstitü yöneticinizle iletişime geçin',
+    joinAsTeacher:
+      'Bir enstitüye katılın ve eğitimciyseniz öğretmen rolü isteyin',
     needHelp: 'Yardıma mı ihtiyacınız var?',
     contactSupport:
       'Bu panele erişiminiz olması gerektiğini düşünüyorsanız, lütfen okul yöneticinizle veya destek ekibimizle iletişime geçin.'
@@ -665,7 +669,7 @@ export const tr = {
   forgotPassword: {
     title: 'Şifreyi Sıfırla',
     enterIdentifier:
-      'E-posta veya telefon numaranızı girin ve OTP almak için okulu seçin (varsa)',
+      'E-posta veya telefon numaranızı girin ve OTP almak için enstitüyü seçin (varsa)',
     enterOtp: 'Cihazınıza gönderilen OTP kodunu girin',
     enterNewPassword: 'Yeni şifrenizi girin',
     passwordResetSuccess: 'Şifre başarıyla sıfırlandı',
@@ -699,7 +703,7 @@ export const tr = {
     goToLogin: 'Girişe Git'
   },
   media: {
-    noSchoolSelected: 'Okul Seçilmedi',
+    noStoreSelected: 'Enstitü Seçilmedi',
     selectStoreToView: 'Görüntülemek için lütfen başlıktan bir enstitü seçin',
     loading: 'Yükleniyor...',
     searchPlaceholder: 'Ara...',
@@ -774,7 +778,7 @@ export const tr = {
     updateMetadata: 'Bu ses dosyasının meta verilerini güncelleyin.',
     publiclyAccessible: 'Herkese açık',
     allowMembersAccess:
-      'Okul üyelerinin bu ses dosyasına erişmesine izin verin.',
+      'Enstitü üyelerinin bu ses dosyasına erişmesine izin verin.',
     untitledAudio: 'Başlıksız ses',
     fileSize: 'Dosya boyutu',
     duration: 'Süre',
@@ -806,16 +810,6 @@ export const tr = {
     courseContentVideos: 'Kurs içerik videoları',
     combinedVideoLength: 'Toplam video süresi'
   },
-  stores: {
-    storesManagement: 'Enstitü Yönetimi',
-    manageStoresDescription: 'Enstitülerinizi ve ayarlarını yönetin',
-    createStore: 'Enstitü Oluştur',
-    searchStores: 'Enstitülerde ara...',
-    noStoresFound: 'Enstitü bulunamadı',
-    storeCreated: 'Enstitü başarıyla oluşturuldu',
-    storeUpdated: 'Enstitü başarıyla güncellendi',
-    storeDeleted: 'Enstitü başarıyla silindi'
-  },
   users: {
     allUsers: 'Tüm Kullanıcılar',
     manageAllUsersDescription: 'Farklı rollerdeki tüm kullanıcıları yönetin',
@@ -825,7 +819,7 @@ export const tr = {
     totalUsers: 'Toplam Kullanıcı',
     allRegisteredUsers: 'Tüm kayıtlı kullanıcılar',
     managers: 'Yöneticiler',
-    schoolAdministrators: 'Okul yöneticileri',
+    storeAdministrators: 'Enstitü yöneticileri',
     teachers: 'Öğretmenler',
     courseInstructors: 'Kurs eğitmenleri',
     students: 'Öğrenciler',

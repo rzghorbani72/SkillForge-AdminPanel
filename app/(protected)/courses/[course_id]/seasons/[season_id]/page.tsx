@@ -8,14 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit, BookOpen, Calendar, Play } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Season, Course } from '@/types/api';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function SeasonViewPage() {
   const params = useParams();
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
 
@@ -24,13 +24,13 @@ export default function SeasonViewPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (courseId && seasonId && selectedSchool) {
+    if (courseId && seasonId && selectedStore) {
       fetchData();
     }
-  }, [courseId, seasonId, selectedSchool]);
+  }, [courseId, seasonId, selectedStore]);
 
   const fetchData = async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
 
     try {
       setIsLoading(true);
@@ -94,7 +94,7 @@ export default function SeasonViewPage() {
     // <AccessControlGuard
     //   resource={{
     //     owner_id: course?.author_id,
-    //     school_id: course?.school_id,
+    //     store_id: course?.store_id ?? 0,
     //     access_control: (season as any).access_control
     //   }}
     //   action="view"

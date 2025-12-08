@@ -7,7 +7,6 @@ import { Video, Star, Play, Clock, Sparkles, Film } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
 import UploadVideoDialog from '@/components/content/upload-video-dialog';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -17,6 +16,7 @@ import { VideoGrid } from '@/components/videos/VideoGrid';
 import { formatDuration, formatFileSize } from '@/components/shared/utils';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useStore } from '@/hooks/useStore';
 
 interface VideoWithMetadata extends Media {
   lesson_type?: 'WELCOME' | 'LESSON' | 'INTRO' | 'CONCLUSION';
@@ -39,14 +39,14 @@ interface VideoWithMetadata extends Media {
 
 export default function VideosPage() {
   const { t, language } = useTranslation();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const [videos, setVideos] = useState<VideoWithMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
 
   const fetchData = useCallback(async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
 
     try {
       setIsLoading(true);
@@ -65,13 +65,13 @@ export default function VideosPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedSchool]);
+  }, [selectedStore]);
 
   useEffect(() => {
-    if (selectedSchool) {
+    if (selectedStore) {
       fetchData();
     }
-  }, [selectedSchool, fetchData]);
+  }, [selectedStore, fetchData]);
 
   const filteredVideos = videos.filter((video) => {
     const matchesSearch =
@@ -130,13 +130,13 @@ export default function VideosPage() {
     return video.access_control?.is_owner || false;
   };
 
-  if (!selectedSchool) {
+  if (!selectedStore) {
     return (
       <div className="page-wrapper flex-1 p-6">
         <EmptyState
           icon={<Video className="h-10 w-10" />}
-          title={t('media.noSchoolSelected')}
-          description={t('media.selectSchoolToView')}
+          title={t('media.noStoreSelected')}
+          description={t('media.selectStoreToView')}
         />
       </div>
     );

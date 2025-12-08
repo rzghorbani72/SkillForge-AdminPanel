@@ -39,7 +39,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function SchoolReportsPage() {
+export default function StoreReportsPage() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<any>(null);
@@ -156,7 +156,7 @@ export default function SchoolReportsPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
-          {t('financial.store.reports.noSchool')}
+          {t('financial.store.reports.noStore')}
         </p>
       </div>
     );

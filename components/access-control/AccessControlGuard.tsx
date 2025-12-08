@@ -14,7 +14,7 @@ interface AccessControlGuardProps {
   requiredRole?: string;
   resource?: {
     owner_id?: number;
-    school_id?: number;
+    store_id?: number;
     access_control?: {
       can_modify: boolean;
       can_delete: boolean;

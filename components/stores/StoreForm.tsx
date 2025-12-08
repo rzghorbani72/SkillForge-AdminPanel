@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-interface SchoolFormData {
+interface StoreFormData {
   name: string;
   private_domain: string;
   public_domain: string;
@@ -15,9 +15,9 @@ interface SchoolFormData {
   is_active: boolean;
 }
 
-interface SchoolFormProps {
-  formData: SchoolFormData;
-  onFormDataChange: (data: SchoolFormData) => void;
+interface StoreFormProps {
+  formData: StoreFormData;
+  onFormDataChange: (data: StoreFormData) => void;
   domainValidation: {
     isValid: boolean;
     message: string;
@@ -30,15 +30,15 @@ interface SchoolFormProps {
   isEdit?: boolean;
 }
 
-export function SchoolForm({
+export function StoreForm({
   formData,
   onFormDataChange,
   domainValidation,
   domainAvailability,
   isEdit = false
-}: SchoolFormProps) {
+}: StoreFormProps) {
   const { t } = useTranslation();
-  const updateFormData = (field: keyof SchoolFormData, value: any) => {
+  const updateFormData = (field: keyof StoreFormData, value: any) => {
     onFormDataChange({ ...formData, [field]: value });
   };
 
@@ -46,24 +46,24 @@ export function SchoolForm({
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
         <Label htmlFor={isEdit ? 'edit-name' : 'name'}>
-          {t('schools.schoolName')} *
+          {t('stores.storeName')} *
         </Label>
         <Input
           id={isEdit ? 'edit-name' : 'name'}
           value={formData.name}
           onChange={(e) => updateFormData('name', e.target.value)}
-          placeholder={t('schools.enterSchoolName')}
+          placeholder={t('stores.enterStoreName')}
         />
       </div>
       <div className="grid gap-2">
         <Label htmlFor={isEdit ? 'edit-domain' : 'domain'}>
-          {t('schools.domainName')} * ({t('schools.mustBeUnique')})
+          {t('stores.domainName')} * ({t('stores.mustBeUnique')})
         </Label>
         <Input
           id={isEdit ? 'edit-domain' : 'domain'}
           value={formData.private_domain}
           onChange={(e) => updateFormData('private_domain', e.target.value)}
-          placeholder={t('schools.enterDomainName')}
+          placeholder={t('stores.enterDomainName')}
           className={
             domainValidation.message
               ? domainValidation.isValid
@@ -91,30 +91,30 @@ export function SchoolForm({
           </p>
         )}
         <p className="text-xs text-muted-foreground">
-          {t('schools.schoolUrlWillBe')}{' '}
+          {t('stores.storeUrlWillBe')}{' '}
           {formData.private_domain
             ? `${formData.private_domain}.skillforge.com`
             : 'your-domain.skillforge.com'}
         </p>
         {!isEdit && (
           <p className="text-xs font-medium text-orange-600">
-            ⚠️ {t('schools.uniqueDomainRequired')}
+            ⚠️ {t('stores.uniqueDomainRequired')}
           </p>
         )}
       </div>
       {isEdit && (
         <div className="grid gap-2">
           <Label htmlFor="edit-public-domain">
-            {t('schools.publicDomain')} ({t('common.optional')})
+            {t('stores.publicDomain')} ({t('common.optional')})
           </Label>
           <Input
             id="edit-public-domain"
             value={formData.public_domain}
             onChange={(e) => updateFormData('public_domain', e.target.value)}
-            placeholder={t('schools.enterPublicDomain')}
+            placeholder={t('stores.enterPublicDomain')}
           />
           <p className="text-xs text-muted-foreground">
-            {t('schools.optionalCustomDomain')}
+            {t('stores.optionalCustomDomain')}
           </p>
         </div>
       )}
@@ -126,7 +126,7 @@ export function SchoolForm({
           id={isEdit ? 'edit-description' : 'description'}
           value={formData.description}
           onChange={(e) => updateFormData('description', e.target.value)}
-          placeholder={t('schools.describeSchool')}
+          placeholder={t('stores.describeStore')}
           rows={3}
         />
       </div>
@@ -135,7 +135,7 @@ export function SchoolForm({
           <div className="space-y-0.5">
             <Label>{t('common.status')}</Label>
             <p className="text-xs text-muted-foreground">
-              {t('schools.toggleStatusDescription')}
+              {t('stores.toggleStatusDescription')}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -147,7 +147,7 @@ export function SchoolForm({
               onCheckedChange={(checked) =>
                 updateFormData('is_active', checked)
               }
-              aria-label={t('schools.toggleActiveStatus')}
+              aria-label={t('stores.toggleActiveStatus')}
             />
           </div>
         </div>

@@ -95,7 +95,7 @@ export default function FinancialDashboardPage() {
     try {
       setLoading(true);
 
-      const [summaryData, schoolData, platformData, categoriesData] =
+      const [summaryData, storeData, platformData, categoriesData] =
         await Promise.all([
           apiClient.getPlatformFinancialSummary(),
           apiClient.getStoreFinancialRecords({
@@ -110,7 +110,7 @@ export default function FinancialDashboardPage() {
         ]);
 
       setSummary(summaryData);
-      setStoreRecords(schoolData);
+      setStoreRecords(storeData);
       setPlatformRecords(platformData);
       setCostCategories(categoriesData);
     } catch (error: any) {
@@ -162,10 +162,10 @@ export default function FinancialDashboardPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/financial/platform/schools">
+          <Link href="/financial/platform/stores">
             <Button variant="outline">
               <Building2 className="mr-2 h-4 w-4" />
-              All Schools
+              All Stores
             </Button>
           </Link>
           <Link href="/financial/platform/formulas">
@@ -255,7 +255,7 @@ export default function FinancialDashboardPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Platform + Schools combined
+                Platform + Stores combined
               </p>
             </CardContent>
           </Card>

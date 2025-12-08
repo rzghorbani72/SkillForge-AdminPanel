@@ -48,7 +48,7 @@ export default function ForgetPasswordPage() {
     password: '',
     confirmed_password: '',
     otp: '',
-    school_slug: ''
+    store_slug: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState('');
@@ -61,19 +61,19 @@ export default function ForgetPasswordPage() {
 
   // Fetch stores on component mount
   useEffect(() => {
-    const fetchSchools = async () => {
-      setIsLoadingSchools(true);
+    const fetchStores = async () => {
+      setIsLoadingStores(true);
       try {
-        const response = await apiClient.getSchoolsPublic();
-        setSchools(Array.isArray(response.data) ? response.data : []);
+        const response = await apiClient.getStoresPublic();
+        setStores(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Failed to fetch stores:', error);
       } finally {
-        setIsLoadingSchools(false);
+        setIsLoadingStores(false);
       }
     };
 
-    fetchSchools();
+    fetchStores();
   }, []);
 
   const handleInputChange = (field: string, value: string) => {
@@ -384,7 +384,7 @@ export default function ForgetPasswordPage() {
                           </option>
                         ))}
                       </select>
-                      {isLoadingSchools && (
+                      {isLoadingStores && (
                         <p className="mt-1 text-sm text-gray-500">
                           {t('common.loading')}
                         </p>

@@ -26,7 +26,7 @@ import {
   Mail,
   Phone,
   Calendar,
-  School,
+  Building2,
   Shield,
   CheckCircle2,
   XCircle,
@@ -263,7 +263,7 @@ export default function UserDetailPage() {
                                 </Badge>
                               </div>
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <School className="h-4 w-4" />
+                                <Building2 className="h-4 w-4" />
                                 <span>{profile.store.name}</span>
                               </div>
                               {profile.bio && (

@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { toast } from 'sonner';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
@@ -54,7 +54,7 @@ export type ProductCreateFormData = z.infer<typeof productFormSchema>;
 
 export const useProductCreate = () => {
   const router = useRouter();
-  const { selectedStore: selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<ProductCreateFormData>({
@@ -87,7 +87,7 @@ export const useProductCreate = () => {
   });
 
   const onSubmitHandler = async (data: ProductCreateFormData) => {
-    if (!selectedSchool) {
+    if (!selectedStore) {
       toast.error('Please select a store first');
       return;
     }
@@ -199,7 +199,7 @@ export const useProductCreate = () => {
 
   return {
     form,
-    selectedSchool,
+    selectedStore,
     isLoading,
     coverImage: imageUpload.selectedFile,
     coverPreview: imageUpload.preview,

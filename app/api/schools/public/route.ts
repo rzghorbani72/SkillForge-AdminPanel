@@ -4,7 +4,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export async function GET(request: NextRequest) {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/schools/public`, {
+    const response = await fetch(`${BACKEND_URL}/api/stores/public`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -26,9 +26,9 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Error fetching schools:', error);
+    console.error('Error fetching stores:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch schools' },
+      { error: 'Failed to fetch stores' },
       { status: 500 }
     );
   }

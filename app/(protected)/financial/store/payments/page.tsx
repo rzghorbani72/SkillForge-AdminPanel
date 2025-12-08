@@ -37,7 +37,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 
-export default function SchoolPaymentsPage() {
+export default function StorePaymentsPage() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<any>(null);
@@ -149,7 +149,7 @@ export default function SchoolPaymentsPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
-          {t('financial.store.payments.noSchool')}
+          {t('financial.store.payments.noStore')}
         </p>
       </div>
     );

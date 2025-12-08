@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { Product } from '@/types/api';
 import { toast } from 'sonner';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
@@ -20,7 +20,7 @@ type UseProductsReturn = {
 
 const useProducts = (): UseProductsReturn => {
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,13 +59,13 @@ const useProducts = (): UseProductsReturn => {
   }, [products, searchTerm]);
 
   useEffect(() => {
-    if (selectedSchool) {
+    if (selectedStore) {
       fetchProducts();
     }
-  }, [selectedSchool]);
+  }, [selectedStore]);
 
   const fetchProducts = async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
 
     try {
       setIsLoading(true);
@@ -77,11 +77,9 @@ const useProducts = (): UseProductsReturn => {
         nextProducts = response;
       }
 
-      if (selectedSchool && nextProducts.length > 0) {
+      if (selectedStore && nextProducts.length > 0) {
         nextProducts = nextProducts.filter((p) =>
-          (p as any).school_id
-            ? (p as any).school_id === selectedSchool.id
-            : true
+          (p as any).store_id ? (p as any).store_id === selectedStore.id : true
         );
       }
 

@@ -13,12 +13,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  School,
+  Building2,
   Search,
   ExternalLink,
   Loader2,
-  AlertCircle,
-  GraduationCap
+  AlertCircle
 } from 'lucide-react';
 import { authService } from '@/lib/auth';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -111,7 +110,7 @@ export default function SelectStorePage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-            <GraduationCap className="h-8 w-8 text-white" />
+            <Building2 className="h-8 w-8 text-white" />
           </div>
           <h1 className="mb-2 text-3xl font-bold text-gray-900">
             Select Your Store
@@ -161,7 +160,7 @@ export default function SelectStorePage() {
               <CardHeader className="pb-3">
                 <div className="flex items-center space-x-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                    <School className="h-6 w-6 text-blue-600" />
+                    <Building2 className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">
@@ -207,7 +206,7 @@ export default function SelectStorePage() {
         {filteredStores.length === 0 && searchTerm && (
           <Card className="py-8 text-center">
             <CardContent>
-              <School className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+              <Building2 className="mx-auto mb-4 h-12 w-12 text-gray-400" />
               <h3 className="mb-2 text-lg font-medium text-gray-900">
                 No stores found
               </h3>

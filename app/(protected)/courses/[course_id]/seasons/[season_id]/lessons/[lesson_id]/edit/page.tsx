@@ -1,13 +1,13 @@
 'use client';
 
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { useCategoriesStore } from '@/lib/store';
 import useLessonForm from '@/components/lesson/useLessonForm';
 import LessonFormPage from '@/components/lesson/LessonFormPage';
 import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function EditLessonPage() {
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const { categories } = useCategoriesStore();
   const {
     lesson,
@@ -20,7 +20,7 @@ export default function EditLessonPage() {
     isEdit
   } = useLessonForm(true);
 
-  if (!selectedSchool) {
+  if (!selectedStore) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">
@@ -66,7 +66,7 @@ export default function EditLessonPage() {
     <AccessControlGuard
       resource={{
         owner_id: course?.author_id,
-        school_id: course?.school_id,
+        store_id: course?.store_id ?? 0,
         access_control: (lesson as any)?.access_control
       }}
       action="modify"

@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 type Props = {
-  schoolName: string;
+  storeName: string;
   onBack: () => void;
 };
 
-const CreateCourseHeader = ({ schoolName, onBack }: Props) => {
+const CreateCourseHeader = ({ storeName, onBack }: Props) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-4">
@@ -25,7 +25,7 @@ const CreateCourseHeader = ({ schoolName, onBack }: Props) => {
             Create New Course
           </h1>
           <p className="text-muted-foreground">
-            Create a new course for {schoolName}
+            Create a new course for {storeName}
           </p>
         </div>
       </div>

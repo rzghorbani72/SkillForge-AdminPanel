@@ -1,12 +1,12 @@
 'use client';
 
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { useCategoriesStore } from '@/lib/store';
 import useLessonForm from '@/components/lesson/useLessonForm';
 import LessonFormPage from '@/components/lesson/LessonFormPage';
 
 export default function CreateLessonPage() {
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const { categories } = useCategoriesStore();
   const {
     season,
@@ -18,7 +18,7 @@ export default function CreateLessonPage() {
     isEdit
   } = useLessonForm(false);
 
-  if (!selectedSchool) {
+  if (!selectedStore) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">

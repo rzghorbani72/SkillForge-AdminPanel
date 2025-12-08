@@ -12,7 +12,7 @@ import CourseManagement from '@/components/course/CourseManagement';
 import CourseQnA from '@/components/course/CourseQnA';
 import LoadingState from '@/components/course/LoadingState';
 import ErrorState from '@/components/course/ErrorState';
-import NoSchoolState from '@/components/course/NoSchoolState';
+import NoStoreState from '@/components/course/NoStoreState';
 // import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function CourseViewPage() {
@@ -23,15 +23,15 @@ export default function CourseViewPage() {
     course,
     isLoading,
     isDeleting,
-    selectedSchool,
+    selectedStore,
     handleEditCourse,
     handleManageSeasons,
     handleDeleteCourse,
     handleBack
   } = useCourseView(courseId);
 
-  if (!selectedSchool) {
-    return <NoSchoolState />;
+  if (!selectedStore) {
+    return <NoStoreState />;
   }
 
   if (isLoading) {

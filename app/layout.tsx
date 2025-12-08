@@ -12,7 +12,7 @@ import { LanguageSync } from '@/components/providers/language-sync';
 export const metadata: Metadata = {
   title: 'SkillForge Admin Panel',
   description:
-    'Admin panel for SkillForge - Manage your schools, courses, and students'
+    'Admin panel for SkillForge - Manage your stores, courses, and students'
 };
 
 export default async function RootLayout({

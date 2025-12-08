@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { Course } from '@/types/api';
 import { CourseFormData } from './schema';
 import { toast } from 'sonner';
@@ -24,7 +24,7 @@ type UseCourseEditReturn = {
 const useCourseEdit = (): UseCourseEditReturn => {
   const router = useRouter();
   const params = useParams();
-  const { selectedStore: selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const courseId = params.course_id as string;
 
   const [course, setCourse] = useState<Course | null>(null);
@@ -41,10 +41,10 @@ const useCourseEdit = (): UseCourseEditReturn => {
   });
 
   useEffect(() => {
-    if (courseId && selectedSchool) {
+    if (courseId && selectedStore) {
       fetchCourse();
     }
-  }, [courseId, selectedSchool]);
+  }, [courseId, selectedStore]);
 
   const fetchCourse = async () => {
     try {
@@ -87,7 +87,7 @@ const useCourseEdit = (): UseCourseEditReturn => {
   };
 
   const onSubmitHandler = async (data: CourseFormData) => {
-    if (!selectedSchool || !course) {
+    if (!selectedStore || !course) {
       toast.error('Course or store not found');
       return;
     }

@@ -3,12 +3,12 @@
 import { useCourseCreate } from '@/components/course/useCourseCreate';
 import CreateCourseHeader from '@/components/course/CreateCourseHeader';
 import CreateCourseForm from '@/components/course/CreateCourseForm';
-import CreateCourseNoSchoolState from '@/components/course/CreateCourseNoSchoolState';
+import CreateCourseNoStoreState from '@/components/course/CreateCourseNoStoreState';
 
 export default function CreateCoursePage() {
   const {
     form,
-    selectedSchool,
+    selectedStore,
     isLoading,
     coverImage,
     coverPreview,
@@ -21,16 +21,13 @@ export default function CreateCoursePage() {
     handleBack
   } = useCourseCreate();
 
-  if (!selectedSchool) {
-    return <CreateCourseNoSchoolState />;
+  if (!selectedStore) {
+    return <CreateCourseNoStoreState />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      <CreateCourseHeader
-        schoolName={selectedSchool.name}
-        onBack={handleBack}
-      />
+      <CreateCourseHeader storeName={selectedStore.name} onBack={handleBack} />
 
       <CreateCourseForm
         form={form}

@@ -21,7 +21,7 @@ import {
   Mail,
   Phone,
   Lock,
-  School,
+  Building2,
   Loader2,
   AlertCircle
 } from 'lucide-react';
@@ -266,7 +266,7 @@ export default function LoginPage() {
           {/* Logo/Brand */}
           <div className="mb-8 text-center">
             <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-              <School className="h-8 w-8 text-white" />
+              <Building2 className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
             <p className="text-gray-600">{t('auth.adminPanel')}</p>
@@ -593,7 +593,7 @@ export default function LoginPage() {
                     href="/register"
                     className="font-medium text-blue-600 hover:text-blue-500"
                   >
-                    {t('auth.registerSchool')}
+                    {t('auth.registerStore')}
                   </Link>
                 </p>
               </div>
@@ -605,7 +605,7 @@ export default function LoginPage() {
                     href="/find-store"
                     className="text-blue-600 hover:text-blue-500"
                   >
-                    {t('auth.findSchool')}
+                    {t('auth.findStore')}
                   </Link>
                 </p>
               </div>

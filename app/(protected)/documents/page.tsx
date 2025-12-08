@@ -29,7 +29,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { Media, Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import UploadDocumentDialog from '@/components/content/upload-document-dialog';
 import { AccessControlBadge } from '@/components/ui/access-control-badge';
 import { toast } from 'sonner';
@@ -74,7 +74,7 @@ const buildDocumentUrl = (path?: string | null) => {
 
 export default function DocumentsPage() {
   const { t, language } = useTranslation();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,19 +86,19 @@ export default function DocumentsPage() {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   useEffect(() => {
-    if (selectedSchool) {
+    if (selectedStore) {
       fetchData();
     }
-  }, [selectedSchool]);
+  }, [selectedStore]);
 
   const fetchData = async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
 
     try {
       setIsLoading(true);
       const [documentsResponse, coursesResponse] = await Promise.all([
         apiClient.getDocuments(),
-        apiClient.getCourses({ school_id: selectedSchool.id })
+        apiClient.getCourses({ store_id: selectedStore.id })
       ]);
 
       if (documentsResponse?.data && Array.isArray(documentsResponse.data)) {
@@ -190,13 +190,13 @@ export default function DocumentsPage() {
     }
   }, [previewDocument]);
 
-  if (!selectedSchool) {
+  if (!selectedStore) {
     return (
       <div className="page-wrapper flex-1 p-6">
         <EmptyState
           icon={<FileText className="h-10 w-10" />}
-          title={t('media.noSchoolSelected')}
-          description={t('media.selectSchoolToView')}
+          title={t('media.noStoreSelected')}
+          description={t('media.selectStoreToView')}
         />
       </div>
     );
@@ -231,7 +231,7 @@ export default function DocumentsPage() {
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageDocuments')} - {selectedSchool.name}
+              {t('media.manageDocuments')} - {selectedStore.name}
             </p>
           </div>
         </div>
@@ -290,7 +290,7 @@ export default function DocumentsPage() {
               </p>
               <p className="text-2xl font-bold">{documents.length}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                {t('media.documentsIn')} {selectedSchool.name}
+                {t('media.documentsIn')} {selectedStore.name}
               </p>
             </div>
             <div className="icon-container-primary">

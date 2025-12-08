@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  School,
+  Building2,
   Search,
   ExternalLink,
   Globe,
@@ -82,7 +82,7 @@ export default function FindStorePage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-            <School className="h-8 w-8 text-white" />
+            <Building2 className="h-8 w-8 text-white" />
           </div>
           <h1 className="mb-2 text-3xl font-bold text-gray-900">
             Find Your Store
@@ -151,16 +151,14 @@ export default function FindStorePage() {
                   <p className="text-sm font-medium text-gray-900">
                     Custom Domain
                   </p>
-                  <p className="text-sm text-gray-600">
-                    https://yourschool.com
-                  </p>
+                  <p className="text-sm text-gray-600">https://yourstore.com</p>
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3">
                   <p className="text-sm font-medium text-gray-900">
                     SkillForge Subdomain
                   </p>
                   <p className="text-sm text-gray-600">
-                    https://yourschool.skillforge.com
+                    https://yourstore.skillforge.com
                   </p>
                 </div>
               </div>
@@ -251,7 +249,7 @@ export default function FindStorePage() {
                 >
                   <div className="mb-3 flex items-center space-x-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                      <School className="h-5 w-5 text-blue-600" />
+                      <Building2 className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
                       <h3 className="font-medium text-gray-900">

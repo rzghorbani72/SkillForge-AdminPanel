@@ -6,7 +6,7 @@ import { User, Users, Shield } from 'lucide-react';
 
 interface OwnershipBadgeProps {
   ownerId?: number;
-  schoolId?: number;
+  storeId?: number;
   accessControl?: {
     can_modify: boolean;
     can_delete: boolean;
@@ -21,7 +21,7 @@ interface OwnershipBadgeProps {
 
 export default function OwnershipBadge({
   ownerId,
-  schoolId,
+  storeId,
   accessControl,
   className = '',
   showIcon = true
@@ -44,7 +44,7 @@ export default function OwnershipBadge({
       }
     : checkResourceAccess({
         owner_id: ownerId,
-        school_id: schoolId
+        store_id: storeId
       });
 
   const isOwner = resourceAccess.isOwner;
@@ -84,7 +84,7 @@ export default function OwnershipBadge({
 // Alternative component for different styling
 export function OwnershipBadgeSimple({
   ownerId,
-  schoolId,
+  storeId,
   accessControl,
   className = ''
 }: OwnershipBadgeProps) {
@@ -100,7 +100,7 @@ export function OwnershipBadgeSimple({
       }
     : checkResourceAccess({
         owner_id: ownerId,
-        school_id: schoolId
+        store_id: storeId
       });
 
   const isOwner = resourceAccess.isOwner;

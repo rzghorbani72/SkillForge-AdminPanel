@@ -29,7 +29,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import UploadAudioDialog from '@/components/content/upload-audio-dialog';
 import {
   AccessControlBadge,
@@ -89,7 +89,7 @@ interface AudioItem {
   is_public?: boolean;
   created_at?: string;
   updated_at?: string;
-  school_id?: number | null;
+  store_id?: number | null;
   access_control?: AccessControl;
 }
 
@@ -155,7 +155,7 @@ const getAudioUrl = (audio: AudioItem) => {
 
 export default function AudiosPage() {
   const { t, language } = useTranslation();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const [audios, setAudios] = useState<AudioItem[]>([]);
   const [filteredAudios, setFilteredAudios] = useState<AudioItem[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -176,7 +176,7 @@ export default function AudiosPage() {
   const audioRefs = useRef<Record<number, HTMLAudioElement | null>>({});
 
   const fetchAudios = useCallback(async () => {
-    if (!selectedSchool) {
+    if (!selectedStore) {
       setAudios([]);
       setCourses([]);
       return;
@@ -188,7 +188,7 @@ export default function AudiosPage() {
 
       const [audiosResponse, coursesResponse] = await Promise.all([
         apiClient.getAudios(),
-        apiClient.getCourses({ school_id: selectedSchool.id })
+        apiClient.getCourses({ store_id: selectedStore.id })
       ]);
 
       const rawAudios: AudioItem[] = Array.isArray(audiosResponse)
@@ -197,8 +197,8 @@ export default function AudiosPage() {
           ? (audiosResponse as any).data
           : [];
 
-      const schoolAudios = rawAudios.filter(
-        (audio) => !audio.school_id || audio.school_id === selectedSchool.id
+      const storeAudios = rawAudios.filter(
+        (audio) => !audio.store_id || audio.store_id === selectedStore.id
       );
 
       setPlayingId((current) => {
@@ -211,10 +211,10 @@ export default function AudiosPage() {
         }
         return null;
       });
-      setAudios(schoolAudios);
+      setAudios(storeAudios);
       setDurationMap((prev) => {
         const next: Record<number, number> = {};
-        schoolAudios.forEach((audio) => {
+        storeAudios.forEach((audio) => {
           const initialDuration =
             audio.metadata?.duration ?? audio.duration ?? prev[audio.id] ?? 0;
           next[audio.id] = initialDuration;
@@ -223,17 +223,17 @@ export default function AudiosPage() {
       });
       setProgressMap((prev) => {
         const next: Record<number, number> = {};
-        schoolAudios.forEach((audio) => {
+        storeAudios.forEach((audio) => {
           next[audio.id] = prev[audio.id] ?? 0;
         });
         return next;
       });
 
       const availableCourses = coursesResponse?.courses ?? [];
-      const schoolCourses = availableCourses.filter(
-        (course: Course) => course.school_id === selectedSchool.id
+      const storeCourses = availableCourses.filter(
+        (course: Course) => course.store_id === selectedStore.id
       );
-      setCourses(schoolCourses);
+      setCourses(storeCourses);
     } catch (err) {
       console.error('Error fetching audios:', err);
       setError('Failed to load audio files. Please try again.');
@@ -241,15 +241,15 @@ export default function AudiosPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedSchool]);
+  }, [selectedStore]);
 
   useEffect(() => {
-    if (selectedSchool) {
+    if (selectedStore) {
       fetchAudios();
     } else {
       setIsLoading(false);
     }
-  }, [selectedSchool, fetchAudios]);
+  }, [selectedStore, fetchAudios]);
 
   useEffect(() => {
     if (!searchTerm.trim()) {
@@ -425,13 +425,13 @@ export default function AudiosPage() {
     0
   );
 
-  if (!selectedSchool) {
+  if (!selectedStore) {
     return (
       <div className="page-wrapper flex-1 p-6">
         <EmptyState
           icon={<Music className="h-10 w-10" />}
-          title={t('media.noSchoolSelected')}
-          description={t('media.selectSchoolToView')}
+          title={t('media.noStoreSelected')}
+          description={t('media.selectStoreToView')}
         />
       </div>
     );
@@ -466,7 +466,7 @@ export default function AudiosPage() {
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageAudio')} - {selectedSchool.name}
+              {t('media.manageAudio')} - {selectedStore.name}
             </p>
           </div>
         </div>

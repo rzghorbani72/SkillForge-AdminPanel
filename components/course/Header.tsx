@@ -4,14 +4,14 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Plus, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { Badge } from '@/components/ui/badge';
 
 const Header = () => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
 
   return (
     <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -33,7 +33,7 @@ const Header = () => {
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground sm:text-base">
-            {t('courses.manageCoursesFor')} {selectedSchool?.name}
+            {t('courses.manageCoursesFor')} {selectedStore?.name}
           </p>
         </div>
       </div>

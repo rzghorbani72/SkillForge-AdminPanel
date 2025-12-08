@@ -3,21 +3,21 @@ import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { toast } from 'sonner';
 
 export const useCourseView = (courseId: string) => {
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (courseId && selectedSchool) {
+    if (courseId && selectedStore) {
       fetchCourse();
     }
-  }, [courseId, selectedSchool]);
+  }, [courseId, selectedStore]);
 
   const fetchCourse = async () => {
     try {
@@ -65,7 +65,7 @@ export const useCourseView = (courseId: string) => {
     course,
     isLoading,
     isDeleting,
-    selectedSchool,
+    selectedStore,
     handleEditCourse,
     handleManageSeasons,
     handleDeleteCourse,

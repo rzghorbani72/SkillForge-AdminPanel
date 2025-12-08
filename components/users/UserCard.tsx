@@ -11,7 +11,7 @@ import {
   Mail,
   Phone,
   Calendar,
-  School,
+  Building2,
   CheckCircle2,
   XCircle
 } from 'lucide-react';
@@ -130,7 +130,7 @@ export function UserCard({ user, onEdit, onView }: UserCardProps) {
           </div>
           {profiles.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
-              <School className="h-4 w-4 shrink-0" />
+              <Building2 className="h-4 w-4 shrink-0" />
               <div className="flex flex-wrap gap-1">
                 {profiles.map((profile) => (
                   <span

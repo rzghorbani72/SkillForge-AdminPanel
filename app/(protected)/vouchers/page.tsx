@@ -33,7 +33,7 @@ interface DiscountCode {
   description?: string;
   discount_type: 'PERCENT' | 'FIXED';
   discount_value: number;
-  school_id?: number;
+  store_id?: number;
   usage_limit?: number;
   used_count: number;
   usage_type: 'ONE_TIME' | 'LIMITED' | 'UNLIMITED' | 'USER_SPECIFIC';

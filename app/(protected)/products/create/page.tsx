@@ -3,12 +3,12 @@
 import { useProductCreate } from '@/components/product/useProductCreate';
 import CreateProductHeader from '@/components/product/CreateProductHeader';
 import CreateProductForm from '@/components/product/CreateProductForm';
-import CreateProductNoSchoolState from '@/components/product/CreateProductNoSchoolState';
+import CreateProductNoStoreState from '@/components/product/CreateProductNoStoreState';
 
 export default function CreateProductPage() {
   const {
     form,
-    selectedSchool,
+    selectedStore,
     isLoading,
     coverImage,
     coverPreview,
@@ -21,16 +21,13 @@ export default function CreateProductPage() {
     handleBack
   } = useProductCreate();
 
-  if (!selectedSchool) {
-    return <CreateProductNoSchoolState />;
+  if (!selectedStore) {
+    return <CreateProductNoStoreState />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      <CreateProductHeader
-        schoolName={selectedSchool.name}
-        onBack={handleBack}
-      />
+      <CreateProductHeader storeName={selectedStore.name} onBack={handleBack} />
 
       <CreateProductForm
         form={form}

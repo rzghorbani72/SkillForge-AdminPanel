@@ -187,8 +187,3 @@ export function useStoreAccess(): {
     error
   };
 }
-
-// Legacy exports for backward compatibility
-export const useSchool = useStore;
-export const useSelectedSchoolId = useSelectedStoreId;
-export const useSchoolAccess = useStoreAccess;

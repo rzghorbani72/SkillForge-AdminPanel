@@ -44,7 +44,7 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Season, Course, Lesson } from '@/types/api';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import CreateSeasonDialog from '@/components/content/create-season-dialog';
 import { toast } from 'sonner';
@@ -52,7 +52,7 @@ import { toast } from 'sonner';
 export default function SeasonsPage() {
   const params = useParams();
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const courseId = params.course_id as string;
 
   const [course, setCourse] = useState<Course | null>(null);
@@ -63,13 +63,13 @@ export default function SeasonsPage() {
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
 
   useEffect(() => {
-    if (courseId && selectedSchool) {
+    if (courseId && selectedStore) {
       fetchData();
     }
-  }, [courseId, selectedSchool]);
+  }, [courseId, selectedStore]);
 
   const fetchData = async () => {
-    if (!selectedSchool) return;
+    if (!selectedStore) return;
 
     try {
       setIsLoading(true);

@@ -360,7 +360,7 @@ export default function UsersPage() {
           <CardContent>
             <div className="text-2xl font-bold">{totals.managers}</div>
             <p className="text-xs text-muted-foreground">
-              {t('users.schoolAdministrators')}
+              {t('users.storeAdministrators')}
             </p>
           </CardContent>
         </Card>
@@ -420,7 +420,7 @@ export default function UsersPage() {
             <CardHeader>
               <CardTitle>{t('users.managers')}</CardTitle>
               <CardDescription>
-                {t('users.schoolAdministrators')}
+                {t('users.storeAdministrators')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

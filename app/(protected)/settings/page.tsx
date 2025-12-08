@@ -34,8 +34,8 @@ export default function SettingsOverviewPage() {
       icon: User
     },
     {
-      title: t('settings.schoolSettings'),
-      description: t('settings.schoolSettingsDescription'),
+      title: t('settings.storeSettings'),
+      description: t('settings.storeSettingsDescription'),
       href: '/settings/store',
       icon: Building
     },
@@ -129,9 +129,9 @@ export default function SettingsOverviewPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('settings.schoolSnapshot')}</CardTitle>
+            <CardTitle>{t('settings.storeSnapshot')}</CardTitle>
             <CardDescription>
-              {t('settings.schoolSnapshotDescription')}
+              {t('settings.storeSnapshotDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">

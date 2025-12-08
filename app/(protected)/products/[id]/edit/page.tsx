@@ -5,14 +5,14 @@ import { Button } from '@/components/ui/button';
 import { useProductEdit } from '@/components/product/useProductEdit';
 import EditProductHeader from '@/components/product/EditProductHeader';
 import CreateProductForm from '@/components/product/CreateProductForm';
-import CreateProductNoSchoolState from '@/components/product/CreateProductNoSchoolState';
+import CreateProductNoStoreState from '@/components/product/CreateProductNoStoreState';
 
 export default function EditProductPage() {
   const router = useRouter();
   const {
     product,
     form,
-    selectedSchool,
+    selectedStore,
     isLoading,
     isSubmitting,
     coverImage,
@@ -26,8 +26,8 @@ export default function EditProductPage() {
     handleBack
   } = useProductEdit();
 
-  if (!selectedSchool) {
-    return <CreateProductNoSchoolState />;
+  if (!selectedStore) {
+    return <CreateProductNoStoreState />;
   }
 
   if (isLoading) {

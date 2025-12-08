@@ -66,7 +66,7 @@ const restoreUserFromStorage = (): AuthUser | null => {
   try {
     let storedUser = window.localStorage.getItem('user_data');
     let storedProfile = window.localStorage.getItem('current_profile');
-    let storedSchool = window.localStorage.getItem('current_school');
+    let storedStore = window.localStorage.getItem('current_store');
     let storedPermissions = window.localStorage.getItem('user_permissions');
     let accessToken = window.localStorage.getItem('auth_token') || '';
     const storedAuthUser = window.localStorage.getItem('auth_user');
@@ -96,8 +96,8 @@ const restoreUserFromStorage = (): AuthUser | null => {
           if (isNullish(storedProfile) && parsedAuthUser.currentProfile) {
             storedProfile = JSON.stringify(parsedAuthUser.currentProfile);
           }
-          if (isNullish(storedSchool) && parsedAuthUser.currentSchool) {
-            storedSchool = JSON.stringify(parsedAuthUser.currentSchool);
+          if (isNullish(storedStore) && parsedAuthUser.currentStore) {
+            storedStore = JSON.stringify(parsedAuthUser.currentStore);
           }
           if (isNullish(storedPermissions)) {
             storedPermissions = JSON.stringify(
@@ -124,7 +124,7 @@ const restoreUserFromStorage = (): AuthUser | null => {
 
     const user = JSON.parse(storedUser);
     const currentProfile = JSON.parse(storedProfile) as Profile;
-    const currentSchool = storedSchool ? JSON.parse(storedSchool) : undefined;
+    const currentStore = storedStore ? JSON.parse(storedStore) : undefined;
     const permissionSource = storedPermissions
       ? JSON.parse(storedPermissions)
       : (currentProfile as any)?.permissions ||
@@ -135,7 +135,7 @@ const restoreUserFromStorage = (): AuthUser | null => {
       user,
       access_token: accessToken,
       currentProfile,
-      currentSchool,
+      currentStore,
       permissions: normalizePermissionArray(permissionSource)
     };
 

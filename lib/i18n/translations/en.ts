@@ -79,7 +79,7 @@ export const en = {
   },
   navigation: {
     dashboard: 'Dashboard',
-    schools: 'My Schools',
+    stores: 'My Stores',
     courses: 'Courses',
     students: 'Students',
     teachers: 'Teachers',
@@ -175,7 +175,6 @@ export const en = {
     validPhoneNumber: 'Please enter a valid phone number (7-15 digits)',
     validEmailAddress: 'Please enter a valid email address',
     emailAddressRequired: 'Email address is required',
-    passwordRequired: 'Password is required',
     confirmPasswordRequired: 'Please confirm your password',
     passwordsDoNotMatch: 'Passwords do not match',
     storeNameRequired: 'Store name is required',
@@ -217,7 +216,6 @@ export const en = {
     enterFullName: 'Enter your full name',
     createPassword: 'Create a password',
     confirmPasswordPlaceholder: 'Confirm your password',
-    selectStore: 'Select Store',
     chooseStoreToJoin: 'Choose a store to join',
     requestTeacherRole: 'Request Teacher Role',
     whyWantToBeTeacher: 'Why do you want to be a teacher?',
@@ -228,7 +226,7 @@ export const en = {
     title: 'Dashboard',
     welcome: 'Welcome to Admin Panel',
     welcomeBack: 'Welcome back!',
-    whatsHappening: "Here's what's happening with your schools today.",
+    whatsHappening: "Here's what's happening with your stores today.",
     overview: 'Overview',
     statistics: 'Statistics',
     recentActivity: 'Recent Activity',
@@ -243,7 +241,7 @@ export const en = {
     checkMetrics: 'Check your performance metrics',
     quickActions: 'Quick Actions',
     quickActionsDescription: 'Common tasks to get you started',
-    recentActivityDescription: 'Latest updates from your schools and courses',
+    recentActivityDescription: 'Latest updates from your stores and courses',
     recentCourses: 'Recent Courses',
     recentEnrollments: 'Recent Enrollments',
     recentPayments: 'Recent Payments',
@@ -346,7 +344,14 @@ export const en = {
     storeUrlSlug: 'Store URL Slug',
     storeSlugPlaceholder: 'your-store-name',
     toggleStatusDescription: 'Toggle to activate or deactivate this store',
-    toggleActiveStatus: 'Toggle active status'
+    toggleActiveStatus: 'Toggle active status',
+    storesManagement: 'Stores Management',
+    manageStoresDescription: 'Manage your stores and their settings',
+    searchStores: 'Search stores...',
+    noStoresFound: 'No stores found',
+    storeCreated: 'Store created successfully',
+    storeUpdated: 'Store updated successfully',
+    storeDeleted: 'Store deleted successfully'
   },
   courses: {
     title: 'Courses',
@@ -448,7 +453,7 @@ export const en = {
     courseEnrollments: 'Course Enrollments',
     trackEnrollmentsDescription: 'Track student enrollments and their status',
     showingRecentEnrollments:
-      'Showing recent enrollments pulled from your schools',
+      'Showing recent enrollments pulled from your stores',
     loadingEnrollments: 'Loading enrollments...',
     noEnrollmentsFound: 'No enrollments found',
     adjustFilters: 'Adjust the filters to see different enrollment records.',
@@ -529,17 +534,6 @@ export const en = {
     status: 'Status',
     allTeachers: 'All Teachers',
     noTeachers: 'No teachers found'
-  },
-  settings: {
-    title: 'Settings',
-    general: 'General',
-    language: 'Language',
-    theme: 'Theme',
-    notifications: 'Notifications',
-    account: 'Account',
-    store: 'Store',
-    security: 'Security',
-    profile: 'Profile'
   },
   products: {
     title: 'Products',
@@ -742,6 +736,14 @@ export const en = {
   },
   settings: {
     title: 'Settings',
+    general: 'General',
+    language: 'Language',
+    theme: 'Theme',
+    notifications: 'Notifications',
+    account: 'Account',
+    store: 'Store',
+    security: 'Security',
+    profile: 'Profile',
     description:
       'Manage your profile, store configuration, branding, and security preferences.',
     refreshData: 'Refresh Data',
@@ -769,7 +771,6 @@ export const en = {
     uiTemplateBuilder: 'UI Template Builder',
     uiTemplateBuilderDescription:
       'Customize the layout, visibility, and configuration of UI blocks on your store website.',
-    security: 'Security',
     securityDescription:
       'Change passwords, enable two-factor authentication, and manage notifications.',
     openSettings: 'Open settings',
@@ -801,7 +802,6 @@ export const en = {
     storeNamePlaceholder: 'SkillForge Academy',
     customDomain: 'Custom domain',
     customDomainPlaceholder: 'academy',
-    description: 'Description',
     descriptionPlaceholder: 'Describe your store for prospective students',
     storeSettingsUpdatedSuccess: 'Store settings updated successfully',
     currentOverview: 'Current overview',
@@ -809,7 +809,7 @@ export const en = {
     managers: 'Managers',
     domainTips: 'Domain tips',
     domainTipsText1:
-      'Use a subdomain you control (e.g. academy.yourschool.com) for the best branding experience.',
+      'Use a subdomain you control (e.g. academy.yourstore.com) for the best branding experience.',
     domainTipsText2:
       'You can request SSL certificates and custom DNS support by contacting SkillForge support.',
     needHelp: 'Need help?',
@@ -857,7 +857,7 @@ export const en = {
     notificationPreferencesSaved: 'Notification preferences saved',
     themeBrandingTitle: 'Theme & Branding',
     themeBrandingSubtitle:
-      'Customize the look and feel of your SkillForge schools for students.',
+      'Customize the look and feel of your SkillForge stores for students.',
     colours: 'Colours',
     coloursDescription:
       'Choose the palette students will see across the platform.',
@@ -888,7 +888,7 @@ export const en = {
     brandAssetsDescription:
       'Upload logos and set branding resources for certificates and emails.',
     logoUrl: 'Logo URL',
-    logoUrlPlaceholder: 'https://cdn.yourschool.com/logo.png',
+    logoUrlPlaceholder: 'https://cdn.yourstore.com/logo.png',
     logoUrlHint:
       'Provide a publicly accessible image URL. SVG is recommended for crisp results.',
     preview: 'Preview',
@@ -959,7 +959,6 @@ export const en = {
     currentlyActive: 'Currently Active',
     applyTemplate: 'Apply Template',
     done: 'Done',
-    title: 'Title',
     subtitle: 'Subtitle',
     ctaText: 'CTA Text',
     showCtaButton: 'Show CTA Button',
@@ -1079,16 +1078,6 @@ export const en = {
     defaultCourseVideos: 'Default course videos',
     courseContentVideos: 'Course content videos',
     combinedVideoLength: 'Combined video length'
-  },
-  stores: {
-    storesManagement: 'Stores Management',
-    manageStoresDescription: 'Manage your stores and their settings',
-    createStore: 'Create Store',
-    searchStores: 'Search stores...',
-    noStoresFound: 'No stores found',
-    storeCreated: 'Store created successfully',
-    storeUpdated: 'Store updated successfully',
-    storeDeleted: 'Store deleted successfully'
   },
   users: {
     allUsers: 'All Users',
@@ -1452,7 +1441,6 @@ export const en = {
         noSummaryData: 'No summary data available',
         monthlyBreakdown: 'Monthly Breakdown',
         monthlyBreakdownDescription: 'Revenue, costs, and profit by month',
-        month: 'Month',
         revenue: 'Revenue',
         cost: 'Cost',
         profit: 'Profit',

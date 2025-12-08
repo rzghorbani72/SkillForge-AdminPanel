@@ -104,7 +104,7 @@ class AuthService {
         // Clear all stored data on logout
         window.localStorage.removeItem('user_data');
         window.localStorage.removeItem('current_profile');
-        window.localStorage.removeItem('current_school');
+        window.localStorage.removeItem('current_store');
         window.localStorage.removeItem('user_permissions');
         window.localStorage.removeItem('auth_user');
         // Also remove legacy token storage keys if they exist

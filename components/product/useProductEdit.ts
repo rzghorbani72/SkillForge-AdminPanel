@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { productFormSchema } from './useProductCreate';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { Product } from '@/types/api';
 import { toast } from 'sonner';
 import { useImageUpload } from '@/hooks/useImageUpload';
@@ -17,7 +17,7 @@ export type ProductEditFormData = ProductCreateFormData;
 export const useProductEdit = () => {
   const router = useRouter();
   const params = useParams();
-  const { selectedStore: selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const productId = params.id as string;
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -54,10 +54,10 @@ export const useProductEdit = () => {
   });
 
   useEffect(() => {
-    if (productId && selectedSchool) {
+    if (productId && selectedStore) {
       fetchProduct();
     }
-  }, [productId, selectedSchool]);
+  }, [productId, selectedStore]);
 
   const fetchProduct = async () => {
     try {
@@ -104,7 +104,7 @@ export const useProductEdit = () => {
   };
 
   const onSubmitHandler = async (data: ProductEditFormData) => {
-    if (!selectedSchool || !product) {
+    if (!selectedStore || !product) {
       toast.error('Product or store not found');
       return;
     }
@@ -217,7 +217,7 @@ export const useProductEdit = () => {
   return {
     product,
     form,
-    selectedSchool,
+    selectedStore,
     isLoading,
     isSubmitting,
     coverImage: imageUpload.selectedFile,

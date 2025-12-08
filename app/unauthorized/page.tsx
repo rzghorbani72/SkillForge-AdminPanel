@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, AlertTriangle, ArrowLeft, School } from 'lucide-react';
+import { Shield, AlertTriangle, ArrowLeft, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -52,7 +52,7 @@ export default function UnauthorizedPage() {
                 </h3>
                 <ul className="space-y-1 text-sm text-blue-800">
                   <li>• {t('unauthorized.accessStudentDashboard')}</li>
-                  <li>• {t('unauthorized.contactSchoolAdmin')}</li>
+                  <li>• {t('unauthorized.contactStoreAdmin')}</li>
                   <li>• {t('unauthorized.joinAsTeacher')}</li>
                 </ul>
               </div>
@@ -70,13 +70,13 @@ export default function UnauthorizedPage() {
             <div className="flex flex-col space-y-3">
               <Link href="/find-store">
                 <Button className="w-full" variant="outline">
-                  <School className="mr-2 h-4 w-4" />
-                  {t('auth.findSchool')}
+                  <Building2 className="mr-2 h-4 w-4" />
+                  {t('auth.findStore')}
                 </Button>
               </Link>
 
               <Link href="/register">
-                <Button className="w-full">{t('auth.registerSchool')}</Button>
+                <Button className="w-full">{t('auth.registerStore')}</Button>
               </Link>
 
               <Link href="/login">

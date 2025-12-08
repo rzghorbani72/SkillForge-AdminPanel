@@ -2,11 +2,11 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 type Props = {
-  schoolName: string;
+  storeName: string;
   onBack: () => void;
 };
 
-const CreateProductHeader = ({ schoolName, onBack }: Props) => {
+const CreateProductHeader = ({ storeName, onBack }: Props) => {
   return (
     <div className="flex items-center gap-4">
       <Button variant="ghost" size="icon" onClick={onBack}>
@@ -15,7 +15,7 @@ const CreateProductHeader = ({ schoolName, onBack }: Props) => {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Create Product</h1>
         <p className="text-muted-foreground">
-          Add a new product to {schoolName}
+          Add a new product to {storeName}
         </p>
       </div>
     </div>

@@ -87,7 +87,7 @@ export default function PlatformFinancialPage() {
     try {
       setLoading(true);
 
-      const [summaryData, schoolData, platformData, categoriesData] =
+      const [summaryData, storeData, platformData, categoriesData] =
         await Promise.all([
           apiClient.getPlatformFinancialSummary(),
           apiClient.getStoreFinancialRecords({
@@ -102,7 +102,7 @@ export default function PlatformFinancialPage() {
         ]);
 
       setSummary(summaryData);
-      setStoreRecords(schoolData);
+      setStoreRecords(storeData);
       setPlatformRecords(platformData);
       setCostCategories(categoriesData);
     } catch (error: any) {
@@ -149,14 +149,14 @@ export default function PlatformFinancialPage() {
         <div>
           <h1 className="text-3xl font-bold">Platform Financial Management</h1>
           <p className="mt-1 text-muted-foreground">
-            Business cash flow, benefit and cost management for all schools
+            Business cash flow, benefit and cost management for all stores
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/financial/platform/schools">
+          <Link href="/financial/platform/stores">
             <Button variant="outline">
               <Building2 className="mr-2 h-4 w-4" />
-              All Schools
+              All Stores
             </Button>
           </Link>
           <Link href="/financial/platform/formulas">
@@ -246,7 +246,7 @@ export default function PlatformFinancialPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Platform + Schools combined
+                Platform + Stores combined
               </p>
             </CardContent>
           </Card>
@@ -320,7 +320,7 @@ export default function PlatformFinancialPage() {
       <Tabs defaultValue="platform" className="space-y-4">
         <TabsList>
           <TabsTrigger value="platform">Platform Records</TabsTrigger>
-          <TabsTrigger value="schools">All Schools</TabsTrigger>
+          <TabsTrigger value="stores">All Stores</TabsTrigger>
         </TabsList>
 
         <TabsContent value="platform" className="space-y-4">
@@ -465,7 +465,7 @@ export default function PlatformFinancialPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="schools" className="space-y-4">
+        <TabsContent value="stores" className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -492,7 +492,7 @@ export default function PlatformFinancialPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {schoolRecords.length === 0 ? (
+                  {storeRecords.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={8}

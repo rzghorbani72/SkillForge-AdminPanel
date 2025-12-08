@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useSchool } from '@/hooks/useSchool';
+import { useStore } from '@/hooks/useStore';
 import { useCategoriesStore } from '@/lib/store';
 import useCourseEdit from '@/components/course/useCourseEdit';
 import CourseForm from '@/components/course/CourseForm';
@@ -11,7 +11,7 @@ import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function EditCoursePage() {
   const router = useRouter();
-  const { selectedSchool } = useSchool();
+  const { selectedStore } = useStore();
   const { categories } = useCategoriesStore();
   const {
     course,
@@ -25,7 +25,7 @@ export default function EditCoursePage() {
     coverPreview
   } = useCourseEdit();
 
-  if (!selectedSchool) {
+  if (!selectedStore) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">

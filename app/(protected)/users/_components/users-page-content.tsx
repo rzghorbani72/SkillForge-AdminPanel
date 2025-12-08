@@ -37,7 +37,7 @@ const CATEGORY_CONFIG: Record<
       limit: number;
       search?: string;
       status?: string;
-      school_id?: number | null;
+      store_id?: number | null;
     }) => Promise<any>;
   }
 > = {
@@ -52,12 +52,12 @@ const CATEGORY_CONFIG: Record<
         limit: params.limit,
         search: params.search,
         status: params.status as any,
-        school_id: params.school_id ?? undefined
+        store_id: params.store_id ?? undefined
       })
   },
   students: {
     title: 'Students',
-    description: 'Browse all student accounts across your schools',
+    description: 'Browse all student accounts across your stores',
     defaultRole: 'STUDENT',
     roleLocked: true,
     fetcher: (params) =>
@@ -66,7 +66,7 @@ const CATEGORY_CONFIG: Record<
         limit: params.limit,
         search: params.search,
         status: params.status as any,
-        school_id: params.school_id ?? undefined
+        store_id: params.store_id ?? undefined
       })
   },
   teachers: {
@@ -80,7 +80,7 @@ const CATEGORY_CONFIG: Record<
         limit: params.limit,
         search: params.search,
         status: params.status as any,
-        school_id: params.school_id ?? undefined
+        store_id: params.store_id ?? undefined
       })
   },
   managers: {
@@ -94,7 +94,7 @@ const CATEGORY_CONFIG: Record<
         limit: params.limit,
         search: params.search,
         status: params.status as any,
-        school_id: params.school_id ?? undefined
+        store_id: params.store_id ?? undefined
       })
   }
 };
@@ -119,7 +119,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   const [selectedStatus, setSelectedStatus] = useState<
     'all' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED'
   >('all');
-  const [selectedSchool, setSelectedSchool] = useState<number | null>(null);
+  const [selectedStore, setSelectedStore] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const queryKey = JSON.stringify({
@@ -129,7 +129,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
     searchTerm,
     selectedRole,
     selectedStatus,
-    selectedSchool,
+    selectedStore,
     roleLocked: categoryConfig.roleLocked,
     defaultRole: categoryConfig.defaultRole
   });
@@ -143,11 +143,11 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
         limit: number;
         search?: string;
         status?: string;
-        school_id?: number | null;
+        store_id?: number | null;
       } = {
         page: currentPage,
         limit: pageSize,
-        school_id: selectedSchool
+        store_id: selectedStore
       };
 
       if (searchTerm) params.search = searchTerm;
@@ -161,7 +161,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
           limit: params.limit,
           search: params.search,
           status: params.status as any,
-          school_id: params.school_id ?? undefined,
+          store_id: params.store_id ?? undefined,
           role: selectedRole
         });
       } else {
@@ -198,7 +198,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
     searchTerm,
     selectedRole,
     selectedStatus,
-    selectedSchool
+    selectedStore
   ]);
 
   useEffect(() => {
@@ -217,7 +217,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   useEffect(() => {
     const roleParam = searchParams.get('role');
     const statusParam = searchParams.get('status');
-    const schoolParam = searchParams.get('school_id');
+    const storeParam = searchParams.get('store_id');
 
     if (
       roleParam &&
@@ -238,13 +238,11 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
       );
     }
 
-    if (schoolParam) {
-      const parsedSchool = parseInt(schoolParam);
-      setSelectedSchool((prev) =>
-        prev === parsedSchool ? prev : parsedSchool
-      );
+    if (storeParam) {
+      const parsedStore = parseInt(storeParam);
+      setSelectedStore((prev) => (prev === parsedStore ? prev : parsedStore));
     } else {
-      setSelectedSchool((prev) => (prev === null ? prev : null));
+      setSelectedStore((prev) => (prev === null ? prev : null));
     }
 
     setIsInitialized(true);
