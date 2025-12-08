@@ -63,24 +63,24 @@ export default function FinancialDashboardPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const store = useCurrentStore();
-  const { userState } = useAccessControl();
+  const { userState, isLoading: isAccessControlLoading } = useAccessControl();
   const router = useRouter();
 
   // Redirect based on role
   useEffect(() => {
-    if (userState) {
-      if (userState.userRole === 'MANAGER') {
+    if (!isAccessControlLoading && userState) {
+      if (userState.role === 'MANAGER') {
         router.replace('/financial/store');
         return;
       }
-      if (userState.userRole === 'ADMIN') {
+      if (userState.role === 'ADMIN') {
         router.replace('/financial/platform');
         return;
       }
       // Other roles redirect to dashboard
       router.replace('/dashboard');
     }
-  }, [userState, router]);
+  }, [userState, isAccessControlLoading, router]);
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -148,7 +148,7 @@ export default function FinancialDashboardPage() {
   }
 
   // This page should redirect, but show loading while redirecting
-  if (userState.userRole !== 'ADMIN') {
+  if (userState.role !== 'ADMIN') {
     return null;
   }
 

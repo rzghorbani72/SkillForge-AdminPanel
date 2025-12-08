@@ -28,7 +28,8 @@ export function useAuthUser() {
       setError(null);
 
       // Call API endpoint which will use JWT cookie from headers
-      const currentUser = (await apiClient.getCurrentUser())?.data as any;
+      const userData = (await apiClient.getCurrentUser()) as any;
+      const currentUser = userData?.data as any;
 
       if (!currentUser) {
         // No user found, redirect to login

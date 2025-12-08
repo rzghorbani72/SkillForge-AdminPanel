@@ -21,7 +21,7 @@ export default function Sidebar({ className }: SidebarProps) {
     if (!user) return null;
     return user.role;
   }, [user]);
-  console.log('userRole', userRole);
+
   const filteredNavItems = useMemo(() => {
     return filterNavItemsByRole(navItems, userRole);
   }, [userRole]);
@@ -77,7 +77,9 @@ export default function Sidebar({ className }: SidebarProps) {
             isMinimized && 'hidden'
           )}
         >
-          <span className="text-lg font-bold tracking-tight">Admin</span>
+          <span className="text-lg font-bold tracking-tight">
+            {userRole ?? ''}
+          </span>
           <span className="text-xs text-muted-foreground">Dashboard</span>
         </div>
       </div>

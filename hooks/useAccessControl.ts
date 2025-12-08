@@ -190,14 +190,18 @@ export function useAccessControl() {
           (currentUser as any)?.role ||
           'STUDENT';
 
+        // Normalize role name to uppercase for consistent comparison
+        const normalizedRole =
+          typeof roleName === 'string' ? roleName.toUpperCase() : 'STUDENT';
+
         const userState: UserState = {
           user_id: currentUser.user.id,
           store_id: currentProfileStoreId,
-          role: roleName,
-          is_admin: roleName === 'ADMIN',
-          is_manager: roleName === 'MANAGER',
-          is_teacher: roleName === 'TEACHER',
-          is_student: roleName === 'STUDENT',
+          role: normalizedRole,
+          is_admin: normalizedRole === 'ADMIN',
+          is_manager: normalizedRole === 'MANAGER',
+          is_teacher: normalizedRole === 'TEACHER',
+          is_student: normalizedRole === 'STUDENT',
           permissions: derivedPermissions
         };
 
@@ -211,6 +215,10 @@ export function useAccessControl() {
           if (cachedState) {
             try {
               const parsed = JSON.parse(cachedState) as UserState;
+              // Normalize role from cache as well
+              if (parsed.role && typeof parsed.role === 'string') {
+                parsed.role = parsed.role.toUpperCase();
+              }
               setUserState(parsed);
               setError(null);
               setIsLoading(false);
@@ -237,6 +245,10 @@ export function useAccessControl() {
         if (cachedState) {
           try {
             const parsed = JSON.parse(cachedState) as UserState;
+            // Normalize role from cache as well
+            if (parsed.role && typeof parsed.role === 'string') {
+              parsed.role = parsed.role.toUpperCase();
+            }
             setUserState(parsed);
             setIsLoading(false);
             return;

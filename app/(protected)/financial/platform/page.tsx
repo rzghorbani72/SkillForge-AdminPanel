@@ -50,7 +50,8 @@ import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { useAccessControl } from '@/hooks/useAccessControl';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 export default function PlatformFinancialPage() {
   const [loading, setLoading] = useState(true);
@@ -62,15 +63,14 @@ export default function PlatformFinancialPage() {
   const [costCategories, setCostCategories] = useState<CostCategory[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const { userState } = useAccessControl();
-  const router = useRouter();
+  const { user } = useAuthUser();
 
   // Ensure only admins can access
   useEffect(() => {
-    if (userState && userState.userRole !== 'ADMIN') {
-      router.replace('/dashboard');
+    if (user && user?.role !== 'ADMIN') {
+      redirect('/dashboard');
     }
-  }, [userState, router]);
+  }, [user]);
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -78,10 +78,10 @@ export default function PlatformFinancialPage() {
   }, []);
 
   useEffect(() => {
-    if (userState?.userRole === 'ADMIN') {
+    if (user?.role === 'ADMIN') {
       loadData();
     }
-  }, [selectedYear, selectedMonth, userState]);
+  }, [selectedYear, selectedMonth, user]);
 
   const loadData = async () => {
     try {
@@ -117,8 +117,8 @@ export default function PlatformFinancialPage() {
     return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-      currency_position: 'after'
-    });
+      currency_position: 'after' as any
+    } as any);
   };
 
   const profitMargin = (revenue: number, cost: number) => {
@@ -139,7 +139,7 @@ export default function PlatformFinancialPage() {
     );
   }
 
-  if (userState?.userRole !== 'ADMIN') {
+  if (!user || user?.role !== 'ADMIN') {
     return null;
   }
 
