@@ -34,6 +34,8 @@ export const en = {
     status: 'Status',
     active: 'Active',
     inactive: 'Inactive',
+    activate: 'Activate',
+    deactivate: 'Deactivate',
     enabled: 'Enabled',
     disabled: 'Disabled',
     required: 'Required',
@@ -102,6 +104,7 @@ export const en = {
     payments: 'Payments',
     vouchers: 'Vouchers',
     'all-users': 'All Users',
+    admins: 'Admins',
     managers: 'Managers',
     'teacher-requests': 'Teacher Requests',
     'all-students': 'All Students',
@@ -1150,7 +1153,15 @@ export const en = {
     phoneVerified: 'Phone verified',
     phoneNotVerified: 'Phone not verified',
     emailVerified: 'Email verified',
-    emailNotVerified: 'Email not verified'
+    emailNotVerified: 'Email not verified',
+    allStatuses: 'All Statuses',
+    suspended: 'Suspended',
+    banned: 'Banned',
+    cannotModifyYourself: 'Cannot modify yourself',
+    cannotModifyOlderAdmin: 'Cannot modify older admin',
+    statusUpdatedToActive: 'Admin status updated to active',
+    statusUpdatedToInactive: 'Admin status updated to inactive',
+    failedToUpdateStatus: 'Failed to update admin status'
   },
   createAdminUser: {
     title: 'Create Admin User',

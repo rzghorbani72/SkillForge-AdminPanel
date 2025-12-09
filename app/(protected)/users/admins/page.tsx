@@ -36,23 +36,41 @@ import {
   XCircle,
   Mail,
   Phone,
-  Shield
+  Shield,
+  MoreVertical,
+  Loader2
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 import { apiClient } from '@/lib/api';
 import { User } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { CreateAdminUserDialog } from '../_components/create-admin-user-dialog';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { toast } from 'react-toastify';
 
-type UserStatus = 'all' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+type UserStatus = 'all' | 'ACTIVE' | 'INACTIVE';
 
 export default function AdminsPage() {
   const { t, language } = useTranslation();
+  const { user: currentUser } = useAuthUser();
   const [admins, setAdmins] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<UserStatus>('all');
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateAdminDialog, setShowCreateAdminDialog] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState<number | null>(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState<{
+    id: number;
+    created_at: string;
+    role: string;
+  } | null>(null);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -63,12 +81,85 @@ export default function AdminsPage() {
   });
 
   const STATUS_OPTIONS: Array<{ label: string; value: UserStatus }> = [
-    { label: t('students.allStatuses'), value: 'all' },
+    { label: t('admins.allStatuses'), value: 'all' },
     { label: t('common.active'), value: 'ACTIVE' },
-    { label: t('common.inactive'), value: 'INACTIVE' },
-    { label: t('students.suspended'), value: 'SUSPENDED' },
-    { label: t('students.banned'), value: 'BANNED' }
+    { label: t('common.inactive'), value: 'INACTIVE' }
   ];
+
+  // Fetch current user profile to get created_at for permission checks
+  useEffect(() => {
+    const fetchCurrentUserProfile = async () => {
+      try {
+        const userData = await apiClient.getCurrentUser();
+        console.log('userData', userData);
+        if (userData && (userData as any)?.data?.id) {
+          // Fetch full profile to get created_at
+          const profileResponse = await apiClient.getUsers({
+            role: 'ADMIN',
+            filter: 'none'
+          });
+          const profiles = (profileResponse as any)?.profiles || [];
+          console.log('profiles', profiles);
+          const currentProfile = profiles.find(
+            (p: any) => p.id === (userData as any).data.id
+          );
+          if (currentProfile) {
+            setCurrentUserProfile({
+              id: currentProfile.id,
+              created_at: currentProfile.created_at,
+              role: currentProfile.role?.name || 'ADMIN'
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching current user profile:', error);
+      }
+    };
+
+    if (currentUser?.role === 'ADMIN') {
+      fetchCurrentUserProfile();
+    }
+  }, [currentUser]);
+
+  // Check if current admin can modify target admin based on creation timestamp
+  const canModifyAdmin = (targetAdmin: User): boolean => {
+    if (!currentUserProfile || currentUserProfile.role !== 'ADMIN') {
+      return false;
+    }
+
+    // Cannot modify self
+    if (targetAdmin.id === currentUserProfile.id) {
+      return false;
+    }
+
+    // Can modify if current admin was created before target admin
+    const currentCreatedAt = new Date(currentUserProfile.created_at);
+    const targetCreatedAt = new Date(targetAdmin.created_at);
+    return currentCreatedAt < targetCreatedAt;
+  };
+
+  const handleStatusChange = async (adminId: number, newStatus: boolean) => {
+    try {
+      setUpdatingStatus(adminId);
+      await apiClient.updateUser(adminId, { is_active: newStatus });
+      toast.success(
+        newStatus
+          ? t('admins.statusUpdatedToActive')
+          : t('admins.statusUpdatedToInactive')
+      );
+      await fetchAdmins();
+    } catch (error: any) {
+      console.error('Error updating admin status:', error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        t('admins.failedToUpdateStatus');
+      toast.error(errorMessage);
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
 
   const fetchAdmins = useCallback(async () => {
     try {
@@ -264,81 +355,144 @@ export default function AdminsPage() {
                     <TableHead className="text-center">
                       {t('admins.created')}
                     </TableHead>
+                    {currentUserProfile?.role === 'ADMIN' && (
+                      <TableHead className="text-center">
+                        {t('common.actions')}
+                      </TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {admins.map((admin) => (
-                    <TableRow key={admin.id}>
-                      <TableCell>
-                        <div className="flex items-center justify-center gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback className="text-xs">
-                              {getInitials(admin.display_name || '')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium">
-                            {admin.display_name}
+                  {admins.map((admin) => {
+                    const canModify = canModifyAdmin(admin);
+                    return (
+                      <TableRow key={admin.id}>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarFallback className="text-xs">
+                                {getInitials(admin.display_name || '')}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="font-medium">
+                              {admin.display_name}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            {admin.email ? (
+                              <>
+                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-sm">{admin.email}</span>
+                                {admin.email_confirmed ? (
+                                  <span title={t('admins.emailVerified')}>
+                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                  </span>
+                                ) : (
+                                  <span title={t('admins.emailNotVerified')}>
+                                    <XCircle className="h-4 w-4 text-red-600" />
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <span className="text-sm text-muted-foreground">
+                                -
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <Phone className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm" dir="ltr">
+                              {admin.phone_number}
+                            </span>
+                            {admin.phone_confirmed ? (
+                              <span title={t('admins.phoneVerified')}>
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              </span>
+                            ) : (
+                              <span title={t('admins.phoneNotVerified')}>
+                                <XCircle className="h-4 w-4 text-red-600" />
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex justify-center">
+                            <Badge
+                              variant={
+                                admin.is_active ? 'default' : 'destructive'
+                              }
+                            >
+                              {admin.is_active
+                                ? t('common.active')
+                                : t('common.inactive')}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(admin.created_at).toLocaleDateString()}
                           </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          {admin.email ? (
-                            <>
-                              <Mail className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm">{admin.email}</span>
-                              {admin.email_confirmed ? (
-                                <span title={t('admins.emailVerified')}>
-                                  <CheckCircle className="h-4 w-4 text-green-600" />
-                                </span>
-                              ) : (
-                                <span title={t('admins.emailNotVerified')}>
-                                  <XCircle className="h-4 w-4 text-red-600" />
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            <span className="text-sm text-muted-foreground">
-                              -
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <Phone className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm" dir="ltr">
-                            {admin.phone_number}
-                          </span>
-                          {admin.phone_confirmed ? (
-                            <span title={t('admins.phoneVerified')}>
-                              <CheckCircle className="h-4 w-4 text-green-600" />
-                            </span>
-                          ) : (
-                            <span title={t('admins.phoneNotVerified')}>
-                              <XCircle className="h-4 w-4 text-red-600" />
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center">
-                          <Badge
-                            variant={admin.is_active ? 'default' : 'secondary'}
-                          >
-                            {admin.is_active
-                              ? t('common.active')
-                              : t('common.inactive')}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(admin.created_at).toLocaleDateString()}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                        {currentUserProfile?.role === 'ADMIN' && (
+                          <TableCell className="text-center">
+                            {canModify ? (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    disabled={updatingStatus === admin.id}
+                                  >
+                                    {updatingStatus === admin.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <MoreVertical className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleStatusChange(admin.id, true)
+                                    }
+                                    disabled={
+                                      admin.is_active ||
+                                      updatingStatus === admin.id
+                                    }
+                                  >
+                                    <CheckCircle className="me-2 h-4 w-4" />
+                                    {t('common.activate')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleStatusChange(admin.id, false)
+                                    }
+                                    disabled={
+                                      !admin.is_active ||
+                                      updatingStatus === admin.id
+                                    }
+                                  >
+                                    <XCircle className="me-2 h-4 w-4" />
+                                    {t('common.deactivate')}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                {admin.id === currentUserProfile.id
+                                  ? t('admins.cannotModifyYourself')
+                                  : t('admins.cannotModifyOlderAdmin')}
+                              </span>
+                            )}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>

@@ -34,6 +34,8 @@ export const fa = {
     status: 'وضعیت',
     active: 'فعال',
     inactive: 'غیرفعال',
+    activate: 'فعال‌سازی',
+    deactivate: 'غیرفعال‌سازی',
     enabled: 'فعال',
     disabled: 'غیرفعال',
     required: 'الزامی',
@@ -103,6 +105,7 @@ export const fa = {
     payments: 'پرداخت‌ها',
     vouchers: 'کوپن‌ها',
     'all-users': 'همه کاربران',
+    admins: 'ادمین‌ها',
     managers: 'مدیران',
     'teacher-requests': 'درخواست‌های معلم',
     'all-students': 'همه دانش‌آموزان',
@@ -1089,7 +1092,15 @@ export const fa = {
     phoneVerified: 'تلفن تأیید شده',
     phoneNotVerified: 'تلفن تأیید نشده',
     emailVerified: 'ایمیل تأیید شده',
-    emailNotVerified: 'ایمیل تأیید نشده'
+    emailNotVerified: 'ایمیل تأیید نشده',
+    allStatuses: 'همه وضعیت‌ها',
+    suspended: 'تعلیق شده',
+    banned: 'مسدود شده',
+    cannotModifyYourself: 'نمی‌توانید خود را تغییر دهید',
+    cannotModifyOlderAdmin: 'نمی‌توانید ادمین قدیمی‌تر را تغییر دهید',
+    statusUpdatedToActive: 'وضعیت ادمین به فعال به‌روزرسانی شد',
+    statusUpdatedToInactive: 'وضعیت ادمین به غیرفعال به‌روزرسانی شد',
+    failedToUpdateStatus: 'به‌روزرسانی وضعیت ادمین ناموفق بود'
   },
   createAdminUser: {
     title: 'ایجاد کاربر ادمین',
