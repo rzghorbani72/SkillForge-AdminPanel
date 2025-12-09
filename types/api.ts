@@ -5,7 +5,7 @@ export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 export interface User {
   id: number;
   email?: string;
-  name: string;
+  display_name: string;
   phone_number: string;
   birthday?: string;
   email_confirmed: boolean;

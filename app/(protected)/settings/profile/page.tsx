@@ -13,25 +13,24 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Save, Upload } from 'lucide-react';
+import { Save, Upload, LogOut } from 'lucide-react';
 import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { authService } from '@/lib/auth';
 
 interface ProfileFormState {
   name: string;
   email: string;
   phone: string;
-  bio: string;
 }
 
 const DEFAULT_FORM: ProfileFormState = {
   name: '',
   email: '',
-  phone: '',
-  bio: ''
+  phone: ''
 };
 
 export default function ProfileSettingsPage() {
@@ -39,29 +38,30 @@ export default function ProfileSettingsPage() {
   const { user, isLoading } = useSettingsData();
   const [form, setForm] = useState<ProfileFormState>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
 
   useEffect(() => {
     if (!user) {
       setForm(DEFAULT_FORM);
       return;
     }
+    console.log('user', user);
 
     setForm({
-      name: user.name ?? '',
+      name: user.display_name ?? '',
       email: user.email ?? '',
-      phone: user.phone_number ?? '',
-      bio: ''
+      phone: user.phone_number ?? ''
     });
   }, [user]);
 
   const initials = useMemo(() => {
-    if (!user?.name) return 'U';
-    return user.name
+    if (!user?.display_name) return 'U';
+    return user.display_name
       .split(' ')
       .filter(Boolean)
       .map((part) => part[0]?.toUpperCase())
       .join('');
-  }, [user?.name]);
+  }, [user?.display_name]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -71,8 +71,7 @@ export default function ProfileSettingsPage() {
       await apiClient.updateUser(user.id, {
         name: form.name,
         email: form.email,
-        phone_number: form.phone,
-        bio: form.bio
+        phone_number: form.phone
       });
       ErrorHandler.showSuccess(t('settings.profileUpdatedSuccess'));
     } catch (error) {
@@ -80,6 +79,17 @@ export default function ProfileSettingsPage() {
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await authService.logout();
+    } catch (error) {
+      console.error('Error logging out', error);
+      ErrorHandler.handleApiError(error);
+      setIsLoggingOut(false);
     }
   };
 
@@ -114,7 +124,7 @@ export default function ProfileSettingsPage() {
         <CardContent className="space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <Avatar className="h-20 w-20">
-              <AvatarImage src="" alt={user?.name ?? ''} />
+              <AvatarImage src="" alt={user?.display_name ?? ''} />
               <AvatarFallback className="text-lg">{initials}</AvatarFallback>
             </Avatar>
             <div className="space-y-2">
@@ -156,27 +166,25 @@ export default function ProfileSettingsPage() {
               <Input
                 id="phone"
                 value={form.phone}
+                dir="ltr"
+                className="text-right"
                 onChange={(event) =>
                   setForm({ ...form, phone: event.target.value })
                 }
                 placeholder={t('settings.phoneNumberPlaceholder')}
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="bio">{t('settings.bio')}</Label>
-              <Textarea
-                id="bio"
-                rows={4}
-                value={form.bio}
-                onChange={(event) =>
-                  setForm({ ...form, bio: event.target.value })
-                }
-                placeholder={t('settings.bioPlaceholder')}
-              />
-            </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            <Button
+              variant="destructive"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              {isLoggingOut ? t('settings.saving') : t('auth.logout')}
+            </Button>
             <Button onClick={handleSave} disabled={isSaving || !user}>
               <Save className="mr-2 h-4 w-4" />
               {isSaving ? t('settings.saving') : t('settings.saveChanges')}

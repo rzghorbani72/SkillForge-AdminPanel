@@ -37,7 +37,7 @@ export function useSettingsData(): SettingsSnapshot {
         if (!isMounted) return;
 
         if (userResult.status === 'fulfilled') {
-          setUser(userResult.value ?? null);
+          setUser(((userResult.value as any)?.data as User) ?? null);
         } else {
           console.error('Failed to load current user', userResult.reason);
           setUser(null);

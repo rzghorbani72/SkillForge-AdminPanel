@@ -107,9 +107,6 @@ export default function Sidebar({ className }: SidebarProps) {
           <DashboardNav items={filteredNavItems} />
         </Suspense>
       </div>
-
-      {/* Bottom decorative element */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[hsl(var(--sidebar-bg))] to-transparent" />
     </aside>
   );
 }
