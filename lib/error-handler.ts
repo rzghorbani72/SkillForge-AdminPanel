@@ -1,4 +1,35 @@
 import { toast } from 'react-toastify';
+import { t } from './i18n';
+import type { LanguageCode } from './i18n/config';
+
+/**
+ * Get current language from localStorage or default to 'en'
+ */
+function getCurrentLanguage(): LanguageCode {
+  if (typeof window === 'undefined') return 'en';
+  const stored = localStorage.getItem('preferred_language');
+  const validLanguages: LanguageCode[] = [
+    'en',
+    'fa',
+    'ar',
+    'tr',
+    'de',
+    'fr',
+    'es',
+    'it',
+    'ru',
+    'zh',
+    'ja',
+    'ko',
+    'hi',
+    'ur',
+    'he'
+  ];
+  if (stored && validLanguages.includes(stored as LanguageCode)) {
+    return stored as LanguageCode;
+  }
+  return 'en';
+}
 
 export interface ValidationError {
   field: string;
@@ -116,7 +147,7 @@ export class ErrorHandler {
     } else {
       // Fallback error message
       try {
-        toast.error('An unexpected error occurred. Please try again.');
+        toast.error(t('error.unexpected', getCurrentLanguage()));
       } catch (error) {
         console.error('Error displaying toast:', error);
         console.error('Fallback error message');
@@ -130,21 +161,23 @@ export class ErrorHandler {
   static handleApiError(error: any): void {
     console.error('API Error:', error);
 
+    const language = getCurrentLanguage();
+
     if (error?.response?.status === 401) {
       try {
-        toast.error('Authentication failed. Please log in again.');
+        toast.error(t('error.authenticationFailed', language));
       } catch (toastError) {
         console.error('Authentication failed. Please log in again.');
       }
     } else if (error?.response?.status === 403) {
       try {
-        toast.error('You do not have permission to perform this action.');
+        toast.error(t('error.noPermission', language));
       } catch (toastError) {
         console.error('You do not have permission to perform this action.');
       }
     } else if (error?.response?.status === 404) {
       try {
-        toast.error('The requested resource was not found.');
+        toast.error(t('error.resourceNotFound', language));
       } catch (toastError) {
         console.error('The requested resource was not found.');
       }
@@ -153,7 +186,7 @@ export class ErrorHandler {
       this.handleValidationErrors(error);
     } else if (error?.response?.status >= 500) {
       try {
-        toast.error('Server error. Please try again later.');
+        toast.error(t('error.serverError', language));
       } catch (toastError) {
         console.error('Server error. Please try again later.');
       }
@@ -280,10 +313,14 @@ export class ErrorHandler {
 
   /**
    * Show success message
+   * Can accept either a translation key (e.g., 'success.loginSuccess') or a plain string
    */
-  static showSuccess(message: string): void {
+  static showSuccess(message: string, useTranslation: boolean = false): void {
     try {
-      toast.success(message);
+      const displayMessage = useTranslation
+        ? t(message, getCurrentLanguage())
+        : message;
+      toast.success(displayMessage);
     } catch (error) {
       console.log('Success:', message);
     }

@@ -51,8 +51,10 @@ import Link from 'next/link';
 import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useAccessControl } from '@/hooks/useAccessControl';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function FinancialDashboardPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<PlatformFinancialSummary | null>(null);
   const [storeRecords, setStoreRecords] = useState<StoreFinancialRecord[]>([]);
@@ -140,7 +142,7 @@ export default function FinancialDashboardPage() {
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
           <p className="mt-4 text-muted-foreground">
-            Loading financial data...
+            {t('financial.platform.loading')}
           </p>
         </div>
       </div>
@@ -156,28 +158,30 @@ export default function FinancialDashboardPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Platform Financial Management</h1>
+          <h1 className="text-3xl font-bold">
+            {t('financial.platform.title')}
+          </h1>
           <p className="mt-1 text-muted-foreground">
-            Platform-wide financial overview and business cash flow management
+            {t('financial.platform.description')}
           </p>
         </div>
         <div className="flex gap-2">
           <Link href="/financial/platform/stores">
             <Button variant="outline">
               <Building2 className="mr-2 h-4 w-4" />
-              All Stores
+              {t('financial.platform.allStores')}
             </Button>
           </Link>
           <Link href="/financial/platform/formulas">
             <Button variant="outline">
               <Calculator className="mr-2 h-4 w-4" />
-              Formulas
+              {t('financial.platform.formulas')}
             </Button>
           </Link>
           <Link href="/financial/platform/categories">
             <Button variant="outline">
               <Settings className="mr-2 h-4 w-4" />
-              Cost Categories
+              {t('financial.platform.costCategories')}
             </Button>
           </Link>
         </div>
@@ -186,12 +190,14 @@ export default function FinancialDashboardPage() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>{t('financial.platform.filters')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">Year</label>
+              <label className="mb-2 block text-sm font-medium">
+                {t('financial.platform.year')}
+              </label>
               <Select
                 value={selectedYear.toString()}
                 onValueChange={(value) => setSelectedYear(parseInt(value))}
@@ -210,7 +216,7 @@ export default function FinancialDashboardPage() {
             </div>
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium">
-                Month (Optional)
+                {t('financial.platform.month')}
               </label>
               <Select
                 value={selectedMonth?.toString() || 'all'}
@@ -222,7 +228,9 @@ export default function FinancialDashboardPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Months</SelectItem>
+                  <SelectItem value="all">
+                    {t('financial.platform.allMonths')}
+                  </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
                       {new Date(2000, month - 1).toLocaleString('en-US', {
@@ -243,7 +251,7 @@ export default function FinancialDashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Revenue
+                {t('financial.platform.totalRevenue')}
               </CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -255,14 +263,16 @@ export default function FinancialDashboardPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Platform + Stores combined
+                {t('financial.platform.platformStoresCombined')}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                {t('financial.platform.totalCost')}
+              </CardTitle>
               <TrendingDown className="h-4 w-4 text-red-500" />
             </CardHeader>
             <CardContent>
@@ -273,7 +283,7 @@ export default function FinancialDashboardPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                All costs combined
+                {t('financial.platform.allCostsCombined')}
               </p>
             </CardContent>
           </Card>
@@ -281,7 +291,7 @@ export default function FinancialDashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Profit
+                {t('financial.platform.totalProfit')}
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-green-500" />
             </CardHeader>
@@ -293,12 +303,12 @@ export default function FinancialDashboardPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Profit margin:{' '}
-                {profitMargin(
-                  summary.total.total_revenue,
-                  summary.total.total_cost
-                ).toFixed(1)}
-                %
+                {t('financial.platform.profitMargin', {
+                  margin: profitMargin(
+                    summary.total.total_revenue,
+                    summary.total.total_cost
+                  ).toFixed(1)
+                })}
               </p>
             </CardContent>
           </Card>
@@ -306,7 +316,7 @@ export default function FinancialDashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Platform Revenue
+                {t('financial.platform.platformRevenue')}
               </CardTitle>
               <Building2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -318,7 +328,9 @@ export default function FinancialDashboardPage() {
                 )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {summary.platform.record_count} records
+                {t('financial.platform.records', {
+                  count: summary.platform.record_count
+                })}
               </p>
             </CardContent>
           </Card>
@@ -328,8 +340,12 @@ export default function FinancialDashboardPage() {
       {/* Detailed View */}
       <Tabs defaultValue="platform" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="platform">Platform Records</TabsTrigger>
-          <TabsTrigger value="stores">Store Records</TabsTrigger>
+          <TabsTrigger value="platform">
+            {t('financial.platform.tabs.platformRecords')}
+          </TabsTrigger>
+          <TabsTrigger value="stores">
+            {t('financial.platform.tabs.storeRecords')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="platform" className="space-y-4">
@@ -337,15 +353,17 @@ export default function FinancialDashboardPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Platform Financial Records</CardTitle>
+                  <CardTitle>
+                    {t('financial.platform.platformRecords.title')}
+                  </CardTitle>
                   <CardDescription>
-                    Platform-wide costs and revenue records
+                    {t('financial.platform.platformRecords.description')}
                   </CardDescription>
                 </div>
                 <Link href="/financial/platform-records/create">
                   <Button size="sm">
                     <Plus className="mr-2 h-4 w-4" />
-                    Add Record
+                    {t('financial.platform.platformRecords.addRecord')}
                   </Button>
                 </Link>
               </div>
@@ -354,13 +372,27 @@ export default function FinancialDashboardPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Period</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead className="text-right">Revenue</TableHead>
-                    <TableHead className="text-right">Cost</TableHead>
-                    <TableHead className="text-right">Profit</TableHead>
-                    <TableHead className="text-right">Margin</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>
+                      {t('financial.platform.platformRecords.period')}
+                    </TableHead>
+                    <TableHead>
+                      {t('financial.platform.platformRecords.category')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.platform.platformRecords.revenue')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.platform.platformRecords.cost')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.platform.platformRecords.profit')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.platform.platformRecords.margin')}
+                    </TableHead>
+                    <TableHead>
+                      {t('financial.platform.platformRecords.actions')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -370,7 +402,7 @@ export default function FinancialDashboardPage() {
                         colSpan={7}
                         className="text-center text-muted-foreground"
                       >
-                        No platform financial records found
+                        {t('financial.platform.platformRecords.noRecords')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -440,7 +472,9 @@ export default function FinancialDashboardPage() {
                                 onClick={async () => {
                                   if (
                                     confirm(
-                                      'Are you sure you want to delete this record?'
+                                      t(
+                                        'financial.platform.platformRecords.deleteConfirm'
+                                      )
                                     )
                                   ) {
                                     try {
@@ -448,13 +482,17 @@ export default function FinancialDashboardPage() {
                                         record.id
                                       );
                                       toast.success(
-                                        'Record deleted successfully'
+                                        t(
+                                          'financial.platform.platformRecords.deleteSuccess'
+                                        )
                                       );
                                       loadData();
                                     } catch (error: any) {
                                       toast.error(
                                         error?.message ||
-                                          'Failed to delete record'
+                                          t(
+                                            'financial.platform.platformRecords.deleteError'
+                                          )
                                       );
                                     }
                                   }
@@ -479,15 +517,17 @@ export default function FinancialDashboardPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Store Financial Records</CardTitle>
+                  <CardTitle>
+                    {t('financial.platform.storeRecords.title')}
+                  </CardTitle>
                   <CardDescription>
-                    Per-store costs and revenue records
+                    {t('financial.platform.storeRecords.description')}
                   </CardDescription>
                 </div>
                 <Link href="/financial/store-records/create">
                   <Button size="sm">
                     <Plus className="mr-2 h-4 w-4" />
-                    Add Record
+                    {t('financial.platform.storeRecords.addRecord')}
                   </Button>
                 </Link>
               </div>
@@ -496,14 +536,30 @@ export default function FinancialDashboardPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Store</TableHead>
-                    <TableHead>Period</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead className="text-right">Revenue</TableHead>
-                    <TableHead className="text-right">Cost</TableHead>
-                    <TableHead className="text-right">Profit</TableHead>
-                    <TableHead className="text-right">Margin</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>
+                      {t('financial.platform.storeRecords.store')}
+                    </TableHead>
+                    <TableHead>
+                      {t('financial.platform.storeRecords.period')}
+                    </TableHead>
+                    <TableHead>
+                      {t('financial.platform.storeRecords.category')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.platform.storeRecords.revenue')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.platform.storeRecords.cost')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.platform.storeRecords.profit')}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t('financial.platform.storeRecords.margin')}
+                    </TableHead>
+                    <TableHead>
+                      {t('financial.platform.storeRecords.actions')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -513,7 +569,7 @@ export default function FinancialDashboardPage() {
                         colSpan={8}
                         className="text-center text-muted-foreground"
                       >
-                        No store financial records found
+                        {t('financial.platform.storeRecords.noRecords')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -584,7 +640,9 @@ export default function FinancialDashboardPage() {
                                 onClick={async () => {
                                   if (
                                     confirm(
-                                      'Are you sure you want to delete this record?'
+                                      t(
+                                        'financial.platform.platformRecords.deleteConfirm'
+                                      )
                                     )
                                   ) {
                                     try {
@@ -592,13 +650,17 @@ export default function FinancialDashboardPage() {
                                         record.id
                                       );
                                       toast.success(
-                                        'Record deleted successfully'
+                                        t(
+                                          'financial.platform.platformRecords.deleteSuccess'
+                                        )
                                       );
                                       loadData();
                                     } catch (error: any) {
                                       toast.error(
                                         error?.message ||
-                                          'Failed to delete record'
+                                          t(
+                                            'financial.platform.platformRecords.deleteError'
+                                          )
                                       );
                                     }
                                   }

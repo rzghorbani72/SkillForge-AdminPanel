@@ -75,7 +75,9 @@ export const en = {
     reason: 'Reason',
     decision: 'Decision',
     notes: 'Notes',
-    addNotes: 'Add any notes about your decision...'
+    addNotes: 'Add any notes about your decision...',
+    validPhoneNumberFormat: '✓ Valid phone number',
+    invalidPhoneNumberFormat: '⚠ Invalid phone number format'
   },
   navigation: {
     dashboard: 'Dashboard',
@@ -651,7 +653,37 @@ export const en = {
     created: 'Created successfully',
     updated: 'Updated successfully',
     loginSuccess: 'Login successful!',
-    registrationSuccess: 'Registration successful!'
+    registrationSuccess: 'Registration successful!',
+    logoutSuccess: 'Logged out successfully',
+    passwordReset: 'Password reset successfully',
+    otpVerified: 'OTP verified successfully',
+    profileUpdated: 'Profile updated successfully',
+    passwordUpdated: 'Password updated successfully',
+    exported: 'Exported successfully',
+    refreshed: 'Refreshed successfully',
+    uploaded: 'Uploaded successfully',
+    operationCompleted: 'Operation completed successfully'
+  },
+  error: {
+    unexpected: 'An unexpected error occurred. Please try again.',
+    authenticationFailed: 'Authentication failed. Please log in again.',
+    noPermission: 'You do not have permission to perform this action.',
+    resourceNotFound: 'The requested resource was not found.',
+    serverError: 'Server error. Please try again later.',
+    networkError: 'Network error. Please check your connection.',
+    sessionExpired: 'Session expired. Please log in again.',
+    failedToLoad: 'Failed to load data',
+    failedToSave: 'Failed to save',
+    failedToDelete: 'Failed to delete',
+    failedToCreate: 'Failed to create',
+    failedToUpdate: 'Failed to update',
+    failedToExport: 'Failed to export',
+    failedToUpload: 'Failed to upload',
+    validationError: 'Please fix the validation errors',
+    requiredFields: 'Please fill in all required fields',
+    noDataToExport: 'No data to export',
+    accessDenied: 'You do not have permission to access this resource',
+    roleRequired: 'You do not have the required role to access this resource'
   },
   unauthorized: {
     title: 'Unauthorized Access',
@@ -1453,6 +1485,67 @@ export const en = {
         category: 'Category',
         finalProfit: 'Final Profit',
         uncategorized: 'Uncategorized'
+      }
+    },
+    platform: {
+      title: 'Platform Financial Management',
+      description:
+        'Platform-wide financial overview and business cash flow management',
+      loading: 'Loading financial data...',
+      filters: 'Filters',
+      year: 'Year',
+      month: 'Month (Optional)',
+      allMonths: 'All Months',
+      totalRevenue: 'Total Revenue',
+      platformStoresCombined: 'Platform + Stores combined',
+      totalCost: 'Total Cost',
+      allCostsCombined: 'All costs combined',
+      totalProfit: 'Total Profit',
+      profitMargin: 'Profit margin: {{margin}}%',
+      platformRevenue: 'Platform Revenue',
+      records: '{{count}} records',
+      allStores: 'All Stores',
+      formulas: 'Formulas',
+      costCategories: 'Cost Categories',
+      businessFlow: 'Business Flow',
+      tabs: {
+        platformRecords: 'Platform Records',
+        allStores: 'All Stores',
+        storeRecords: 'Store Records'
+      },
+      platformRecords: {
+        title: 'Platform Financial Records',
+        description: 'Platform-wide costs and revenue records',
+        addRecord: 'Add Record',
+        period: 'Period',
+        category: 'Category',
+        revenue: 'Revenue',
+        cost: 'Cost',
+        profit: 'Profit',
+        margin: 'Margin',
+        actions: 'Actions',
+        noRecords: 'No platform financial records found',
+        deleteConfirm: 'Are you sure you want to delete this record?',
+        deleteSuccess: 'Record deleted successfully',
+        deleteError: 'Failed to delete record'
+      },
+      storeRecords: {
+        title: 'Store Financial Records',
+        description: 'Per-store costs and revenue records',
+        allStoresTitle: 'All Stores Financial Records',
+        allStoresDescription:
+          'Per-store costs and revenue records across all stores',
+        addRecord: 'Add Record',
+        store: 'Store',
+        period: 'Period',
+        category: 'Category',
+        revenue: 'Revenue',
+        cost: 'Cost',
+        profit: 'Profit',
+        margin: 'Margin',
+        actions: 'Actions',
+        view: 'View',
+        noRecords: 'No store financial records found'
       }
     }
   }

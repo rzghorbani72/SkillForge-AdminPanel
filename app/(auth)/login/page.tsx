@@ -146,7 +146,7 @@ export default function LoginPage() {
         }
 
         // Single store or specific store - proceed with normal login
-        ErrorHandler.showSuccess('Login successful!');
+        ErrorHandler.showSuccess('success.loginSuccess', true);
         // Check user role and redirect accordingly
         const userRole = response.currentProfile?.role?.name;
         if (userRole === 'STUDENT' || userRole === 'USER') {

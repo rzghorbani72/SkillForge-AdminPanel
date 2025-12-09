@@ -25,7 +25,7 @@ import {
   formatPhoneNumber,
   getFullPhoneNumber
 } from '@/lib/phone-utils';
-import { useLanguage } from '@/lib/i18n/hooks';
+import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { getDefaultCountryByLanguage } from '@/lib/country-codes';
 
 interface PhoneInputWithCountryProps {
@@ -58,6 +58,7 @@ export function PhoneInputWithCountry({
   onValidationChange
 }: PhoneInputWithCountryProps) {
   const { isRTL, language } = useLanguage();
+  const { t } = useTranslation();
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
     getDefaultCountryByLanguage(language)
   );
@@ -250,7 +251,9 @@ export function PhoneInputWithCountry({
             isValid ? 'text-green-600' : 'text-amber-600'
           )}
         >
-          {isValid ? '✓ Valid phone number' : '⚠ Invalid phone number format'}
+          {isValid
+            ? t('common.validPhoneNumberFormat')
+            : t('common.invalidPhoneNumberFormat')}
         </p>
       )}
     </div>

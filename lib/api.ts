@@ -1,6 +1,8 @@
 import { OtpType } from '@/constants/data';
 import { User as UserType } from '@/types/api';
 import { toast } from 'react-toastify';
+import { t } from './i18n';
+import type { LanguageCode } from './i18n/config';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
@@ -181,9 +183,34 @@ class ApiClient {
         }
 
         // Refresh failed or was auth endpoint - redirect to login
+        const getCurrentLanguage = (): LanguageCode => {
+          if (typeof window === 'undefined') return 'en';
+          const stored = localStorage.getItem('preferred_language');
+          const validLanguages: LanguageCode[] = [
+            'en',
+            'fa',
+            'ar',
+            'tr',
+            'de',
+            'fr',
+            'es',
+            'it',
+            'ru',
+            'zh',
+            'ja',
+            'ko',
+            'hi',
+            'ur',
+            'he'
+          ];
+          return stored && validLanguages.includes(stored as LanguageCode)
+            ? (stored as LanguageCode)
+            : 'en';
+        };
+
         const errorMessage =
           (data && (data.message || data.error)) ||
-          'Session expired. Please log in again.';
+          t('error.sessionExpired', getCurrentLanguage());
 
         if (typeof window !== 'undefined') {
           toast.error(errorMessage);

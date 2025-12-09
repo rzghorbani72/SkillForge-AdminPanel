@@ -76,7 +76,9 @@ export const fa = {
     reason: 'دلیل',
     decision: 'تصمیم',
     notes: 'یادداشت‌ها',
-    addNotes: 'یادداشتی درباره تصمیم خود اضافه کنید...'
+    addNotes: 'یادداشتی درباره تصمیم خود اضافه کنید...',
+    validPhoneNumberFormat: '✓ شماره تلفن معتبر',
+    invalidPhoneNumberFormat: '⚠ فرمت شماره تلفن نامعتبر است'
   },
   navigation: {
     dashboard: 'داشبورد',
@@ -834,7 +836,37 @@ export const fa = {
     created: 'با موفقیت ایجاد شد',
     updated: 'با موفقیت به‌روزرسانی شد',
     loginSuccess: 'ورود موفق!',
-    registrationSuccess: 'ثبت‌نام موفق!'
+    registrationSuccess: 'ثبت‌نام موفق!',
+    logoutSuccess: 'خروج موفق',
+    passwordReset: 'رمز عبور با موفقیت بازنشانی شد',
+    otpVerified: 'کد تأیید با موفقیت تأیید شد',
+    profileUpdated: 'پروفایل با موفقیت به‌روزرسانی شد',
+    passwordUpdated: 'رمز عبور با موفقیت به‌روزرسانی شد',
+    exported: 'با موفقیت صادر شد',
+    refreshed: 'با موفقیت به‌روزرسانی شد',
+    uploaded: 'با موفقیت آپلود شد',
+    operationCompleted: 'عملیات با موفقیت انجام شد'
+  },
+  error: {
+    unexpected: 'خطای غیرمنتظره‌ای رخ داد. لطفاً دوباره تلاش کنید.',
+    authenticationFailed: 'احراز هویت ناموفق بود. لطفاً دوباره وارد شوید.',
+    noPermission: 'شما مجوز انجام این عمل را ندارید.',
+    resourceNotFound: 'منبع درخواستی یافت نشد.',
+    serverError: 'خطای سرور. لطفاً بعداً تلاش کنید.',
+    networkError: 'خطای شبکه. لطفاً اتصال خود را بررسی کنید.',
+    sessionExpired: 'جلسه منقضی شده است. لطفاً دوباره وارد شوید.',
+    failedToLoad: 'بارگذاری داده ناموفق بود',
+    failedToSave: 'ذخیره ناموفق بود',
+    failedToDelete: 'حذف ناموفق بود',
+    failedToCreate: 'ایجاد ناموفق بود',
+    failedToUpdate: 'به‌روزرسانی ناموفق بود',
+    failedToExport: 'صدور ناموفق بود',
+    failedToUpload: 'آپلود ناموفق بود',
+    validationError: 'لطفاً خطاهای اعتبارسنجی را برطرف کنید',
+    requiredFields: 'لطفاً تمام فیلدهای الزامی را پر کنید',
+    noDataToExport: 'داده‌ای برای صدور وجود ندارد',
+    accessDenied: 'شما مجوز دسترسی به این منبع را ندارید',
+    roleRequired: 'شما نقش مورد نیاز برای دسترسی به این منبع را ندارید'
   },
   unauthorized: {
     title: 'دسترسی غیرمجاز',
@@ -1378,6 +1410,65 @@ export const fa = {
         category: 'دسته',
         finalProfit: 'سود نهایی',
         uncategorized: 'دسته‌بندی نشده'
+      }
+    },
+    platform: {
+      title: 'مدیریت مالی پلتفرم',
+      description: 'نمای کلی مالی پلتفرم و مدیریت جریان نقدی کسب‌وکار',
+      loading: 'در حال بارگذاری اطلاعات مالی...',
+      filters: 'فیلترها',
+      year: 'سال',
+      month: 'ماه (اختیاری)',
+      allMonths: 'همه ماه‌ها',
+      totalRevenue: 'کل درآمد',
+      platformStoresCombined: 'پلتفرم + آکادمی‌ها',
+      totalCost: 'کل هزینه',
+      allCostsCombined: 'همه هزینه‌ها',
+      totalProfit: 'کل سود',
+      profitMargin: 'حاشیه سود: {{margin}}%',
+      platformRevenue: 'درآمد پلتفرم',
+      records: '{{count}} سابقه',
+      allStores: 'همه آکادمی‌ها',
+      formulas: 'فرمول‌ها',
+      costCategories: 'دسته‌های هزینه',
+      businessFlow: 'جریان کسب‌وکار',
+      tabs: {
+        platformRecords: 'سوابق پلتفرم',
+        allStores: 'همه آکادمی‌ها',
+        storeRecords: 'سوابق آکادمی'
+      },
+      platformRecords: {
+        title: 'سوابق مالی پلتفرم',
+        description: 'سوابق هزینه و درآمد در سطح پلتفرم',
+        addRecord: 'افزودن سابقه',
+        period: 'دوره',
+        category: 'دسته',
+        revenue: 'درآمد',
+        cost: 'هزینه',
+        profit: 'سود',
+        margin: 'حاشیه',
+        actions: 'عملیات',
+        noRecords: 'سابقه مالی پلتفرمی یافت نشد',
+        deleteConfirm: 'آیا مطمئن هستید که می‌خواهید این سابقه را حذف کنید؟',
+        deleteSuccess: 'سابقه با موفقیت حذف شد',
+        deleteError: 'حذف سابقه ناموفق بود'
+      },
+      storeRecords: {
+        title: 'سوابق مالی آکادمی',
+        description: 'سوابق هزینه و درآمد هر آکادمی',
+        allStoresTitle: 'سوابق مالی همه آکادمی‌ها',
+        allStoresDescription: 'سوابق هزینه و درآمد هر آکادمی در همه آکادمی‌ها',
+        addRecord: 'افزودن سابقه',
+        store: 'آکادمی',
+        period: 'دوره',
+        category: 'دسته',
+        revenue: 'درآمد',
+        cost: 'هزینه',
+        profit: 'سود',
+        margin: 'حاشیه',
+        actions: 'عملیات',
+        view: 'مشاهده',
+        noRecords: 'سابقه مالی آکادمی یافت نشد'
       }
     }
   }
