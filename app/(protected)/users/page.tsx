@@ -53,16 +53,11 @@ export default function UsersPage() {
 
   // Get role from query parameter and manage active tab
   const roleParam = searchParams.get('role');
-  const filterParam = searchParams.get('filter');
 
   const getTabFromParams = () => {
-    if (!roleParam && !filterParam) return 'users';
-    if (filterParam === 'none') return 'users';
     if (!roleParam) return 'users';
 
     switch (roleParam.toUpperCase()) {
-      case 'MANAGER':
-        return 'managers';
       case 'TEACHER':
         return 'teachers';
       case 'STUDENT':
@@ -79,7 +74,7 @@ export default function UsersPage() {
   // Update active tab when URL params change
   useEffect(() => {
     setActiveTab(getTabFromParams());
-  }, [roleParam, filterParam]);
+  }, [roleParam]);
 
   const STATUS_OPTIONS: Array<{ label: string; value: UserStatus }> = [
     { label: t('students.allStatuses'), value: 'all' },
@@ -89,7 +84,6 @@ export default function UsersPage() {
     { label: t('students.banned'), value: 'BANNED' }
   ];
 
-  const [managers, setManagers] = useState<User[]>([]);
   const [teachers, setTeachers] = useState<User[]>([]);
   const [students, setStudents] = useState<User[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -110,7 +104,7 @@ export default function UsersPage() {
     try {
       setIsLoading(true);
 
-      // Use the grouped API endpoint
+      // Managers see users in their store (role-based filtering)
       const response = await apiClient.getUsers({
         group_by_role: true,
         search: searchTerm || undefined,
@@ -124,18 +118,25 @@ export default function UsersPage() {
       if (payload?.data?.grouped) {
         const grouped = payload.data.grouped;
 
-        // Set all groups
-        setManagers(grouped.managers || []);
+        // Managers only see teachers, students, and users (not managers or admins)
         setTeachers(grouped.teachers || []);
         setStudents(grouped.students || []);
         setUsers(grouped.users || []);
 
-        // Set totals
+        // Set totals (excluding managers and admins)
         if (payload.data.totals) {
-          setTotals(payload.data.totals);
+          setTotals({
+            managers: 0,
+            teachers: payload.data.totals.teachers || 0,
+            students: payload.data.totals.students || 0,
+            users: payload.data.totals.users || 0,
+            total:
+              (payload.data.totals.teachers || 0) +
+              (payload.data.totals.students || 0) +
+              (payload.data.totals.users || 0)
+          });
         }
       } else {
-        setManagers([]);
         setTeachers([]);
         setStudents([]);
         setUsers([]);
@@ -149,7 +150,6 @@ export default function UsersPage() {
       }
     } catch (error) {
       console.error('Error fetching users:', error);
-      setManagers([]);
       setTeachers([]);
       setStudents([]);
       setUsers([]);
@@ -291,15 +291,10 @@ export default function UsersPage() {
           <h1 className="text-3xl font-bold tracking-tight">
             {t('users.allUsers')}
           </h1>
-          <p className="text-muted-foreground">
-            {t('users.manageAllUsersDescription')}
-          </p>
+          <p className="text-muted-foreground">Manage users in your store</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button>
-            <Plus className="me-2 h-4 w-4" />
-            {t('users.addUser')}
-          </Button>
+          {/* Managers can manage users in their store */}
         </div>
       </div>
 
@@ -335,7 +330,7 @@ export default function UsersPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -345,23 +340,7 @@ export default function UsersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.total}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('users.allRegisteredUsers')}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('users.managers')}
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totals.managers}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('users.storeAdministrators')}
-            </p>
+            <p className="text-xs text-muted-foreground">Users in your store</p>
           </CardContent>
         </Card>
         <Card>
@@ -401,9 +380,6 @@ export default function UsersPage() {
         dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
       >
         <TabsList>
-          <TabsTrigger value="managers">
-            {t('users.managers')} ({totals.managers})
-          </TabsTrigger>
           <TabsTrigger value="teachers">
             {t('users.teachers')} ({totals.teachers})
           </TabsTrigger>
@@ -414,20 +390,6 @@ export default function UsersPage() {
             {t('users.users')} ({totals.users})
           </TabsTrigger>
         </TabsList>
-
-        <TabsContent value="managers" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('users.managers')}</CardTitle>
-              <CardDescription>
-                {t('users.storeAdministrators')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {renderUserTable(managers)}
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="teachers" className="space-y-4">
           <Card>

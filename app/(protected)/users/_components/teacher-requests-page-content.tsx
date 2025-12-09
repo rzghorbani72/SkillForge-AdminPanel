@@ -21,9 +21,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Users } from 'lucide-react';
+import { Users, Check, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { ErrorHandler } from '@/lib/error-handler';
 
 type TeacherRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -137,6 +139,19 @@ export function TeacherRequestsPageContent() {
     setCurrentPage(page);
   };
 
+  const handleReviewRequest = async (
+    requestId: number,
+    status: 'APPROVED' | 'REJECTED'
+  ) => {
+    try {
+      await apiClient.reviewTeacherRequest(requestId, { status });
+      toast.success(`Request ${status.toLowerCase()} successfully`);
+      fetchRequests();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    }
+  };
+
   if (isLoading) {
     return <LoadingSpinner message="Loading teacher requests..." />;
   }
@@ -231,6 +246,32 @@ export function TeacherRequestsPageContent() {
                       </div>
                     )}
                   </div>
+                  {request.status === 'PENDING' && (
+                    <div className="flex gap-2 border-t pt-2">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() =>
+                          handleReviewRequest(request.id, 'APPROVED')
+                        }
+                        className="flex-1"
+                      >
+                        <Check className="mr-2 h-4 w-4" />
+                        Approve
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() =>
+                          handleReviewRequest(request.id, 'REJECTED')
+                        }
+                        className="flex-1"
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Reject
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             );

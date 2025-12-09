@@ -1377,6 +1377,7 @@ class ApiClient {
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
     is_active?: boolean;
     group_by_role?: boolean;
+    filter?: 'none';
   }) {
     const queryParams = new URLSearchParams();
 
@@ -1390,6 +1391,7 @@ class ApiClient {
     if (params?.is_active !== undefined)
       queryParams.append('is_active', params.is_active.toString());
     if (params?.group_by_role) queryParams.append('group_by_role', 'true');
+    if (params?.filter) queryParams.append('filter', params.filter);
 
     const queryString = queryParams.toString();
     const endpoint = `/users${queryString ? `?${queryString}` : ''}`;
@@ -1498,6 +1500,33 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(userData)
     });
+  }
+
+  async createAdminUser(userData: {
+    name: string;
+    phone_number: string;
+    email: string;
+    password: string;
+    phone_otp: string;
+    email_otp: string;
+    store_id?: string;
+  }) {
+    const response = await this.request('/users/admin', {
+      method: 'POST',
+      body: JSON.stringify(userData)
+    });
+    return response.data as any;
+  }
+
+  async changeUserRole(
+    id: number,
+    role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER'
+  ) {
+    const response = await this.request(`/users/${id}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role })
+    });
+    return response.data as any;
   }
 
   // Transactions endpoints

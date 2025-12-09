@@ -191,36 +191,49 @@ export const navItems: NavItem[] = [
     title: 'Users',
     icon: 'users' as IconType,
     label: 'users',
+    roles: ['ADMIN', 'MANAGER'], // Both admins and managers can see users
     children: [
       {
         title: 'All Users',
-        href: '/users?filter=none',
+        href: '/users',
         icon: 'list' as IconType,
-        label: 'all-users'
+        label: 'all-users',
+        roles: ['MANAGER'] // Managers see this (their users page)
+      },
+      {
+        title: 'Admins',
+        href: '/users/admins',
+        icon: 'shield' as IconType,
+        label: 'admins',
+        roles: ['ADMIN'] // Only admins can see and manage admins
       },
       {
         title: 'Students',
         href: '/users?role=STUDENT',
         icon: 'user' as IconType,
-        label: 'students'
+        label: 'students',
+        roles: ['MANAGER'] // Managers can see students
       },
       {
         title: 'Teachers',
         href: '/users?role=TEACHER',
         icon: 'graduationCap' as IconType,
-        label: 'teachers'
+        label: 'teachers',
+        roles: ['MANAGER'] // Managers can see teachers
       },
       {
         title: 'Managers',
         href: '/users?role=MANAGER',
         icon: 'shield' as IconType,
-        label: 'managers'
+        label: 'managers',
+        roles: ['ADMIN'] // Only admins can see managers list
       },
       {
         title: 'Teacher Requests',
-        href: '/teacher-requests',
+        href: '/users/teacher-requests',
         icon: 'graduationCap' as IconType,
-        label: 'teacher-requests'
+        label: 'teacher-requests',
+        roles: ['ADMIN', 'MANAGER'] // Both can see teacher requests
       }
     ]
   },

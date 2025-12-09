@@ -13,7 +13,8 @@ import {
   Calendar,
   Building2,
   CheckCircle2,
-  XCircle
+  XCircle,
+  UserCog
 } from 'lucide-react';
 import { getRoleColor, getStatusColor } from '@/components/shared/utils';
 import {
@@ -27,9 +28,17 @@ interface UserCardProps {
   user: User;
   onEdit: (user: User) => void;
   onView: (user: User) => void;
+  onRoleChange?: (user: User) => void;
+  canChangeRole?: boolean;
 }
 
-export function UserCard({ user, onEdit, onView }: UserCardProps) {
+export function UserCard({
+  user,
+  onEdit,
+  onView,
+  onRoleChange,
+  canChangeRole
+}: UserCardProps) {
   // Get user initials for avatar
   const getInitials = (name: string) => {
     return name
@@ -152,6 +161,22 @@ export function UserCard({ user, onEdit, onView }: UserCardProps) {
             {userStatus}
           </Badge>
           <div className="flex items-center gap-2">
+            {canChangeRole && onRoleChange && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onRoleChange(user)}
+                    >
+                      <UserCog className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Change Role</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

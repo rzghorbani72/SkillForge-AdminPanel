@@ -13,6 +13,8 @@ import { Pagination } from '@/components/shared/Pagination';
 import { UserCard } from '@/components/users/UserCard';
 import { UserFilters } from '@/components/users/UserFilters';
 import { User, UserStatus } from '@/types/api';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { ChangeUserRoleDialog } from './change-user-role-dialog';
 
 type UserCategory = 'all' | 'students' | 'teachers' | 'managers';
 
@@ -107,6 +109,11 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryConfig = CATEGORY_CONFIG[category];
+  const { user: authUser } = useAuthUser();
+  const [roleChangeDialog, setRoleChangeDialog] = useState<{
+    open: boolean;
+    user: User | null;
+  }>({ open: false, user: null });
 
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
@@ -289,6 +296,12 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
     router.push(`/user/${user.id}/edit`);
   };
 
+  const handleRoleChange = (user: User) => {
+    setRoleChangeDialog({ open: true, user });
+  };
+
+  const canChangeRole = authUser?.role === 'MANAGER' && category === 'students';
+
   const handleExport = () => {
     // Export users data as CSV
     if (users.length === 0) {
@@ -384,6 +397,8 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
               user={user}
               onEdit={handleEditUser}
               onView={handleViewUser}
+              onRoleChange={handleRoleChange}
+              canChangeRole={canChangeRole}
             />
           ))
         )}
@@ -400,6 +415,16 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
           itemsPerPage={pagination.limit}
         />
       )}
+
+      <ChangeUserRoleDialog
+        open={roleChangeDialog.open}
+        onOpenChange={(open) => setRoleChangeDialog({ open, user: null })}
+        user={roleChangeDialog.user}
+        currentRole={authUser?.role || null}
+        onSuccess={() => {
+          fetchUsers();
+        }}
+      />
     </div>
   );
 }
