@@ -291,7 +291,9 @@ export default function UsersPage() {
           <h1 className="text-3xl font-bold tracking-tight">
             {t('users.allUsers')}
           </h1>
-          <p className="text-muted-foreground">Manage users in your store</p>
+          <p className="text-muted-foreground">
+            {t('users.manageUsersInStore')}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {/* Managers can manage users in their store */}

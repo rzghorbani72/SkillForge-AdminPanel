@@ -43,7 +43,8 @@ export function filterNavItemsByRole(
       }));
   }
 
-  // For admins without a store, filter out store-specific items
+  // For platform-level admins (AdminProfile), filter out store-specific items
+  // Check both hasStore === false and explicit platform-level flags
   const isAdminWithoutStore = userRole === 'ADMIN' && hasStore === false;
 
   return items

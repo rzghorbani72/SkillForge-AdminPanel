@@ -36,6 +36,7 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import Link from 'next/link';
+import { useMemo } from 'react';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
@@ -55,11 +56,26 @@ export default function DashboardPage() {
 
   const { userState, isLoading: userLoading } = useAccessControl();
 
-  // Check if user is admin without a store
-  const isAdminWithoutStore =
-    user &&
-    user.role === 'ADMIN' &&
-    (user.storeId === null || user.storeId === undefined);
+  // Check if user is platform-level admin (AdminProfile)
+  const isAdminWithoutStore = useMemo(() => {
+    if (!user || user.role !== 'ADMIN') return false;
+
+    // Use explicit flags from API (preferred)
+    const isAdminProfile =
+      user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
+    const platformLevel =
+      user.platformLevel ?? user.profile?.platformLevel ?? false;
+
+    if (isAdminProfile || platformLevel) {
+      return true; // Platform-level admin
+    }
+
+    // Fallback: Check storeId
+    const storeId =
+      user.storeId ?? user.profile?.storeId ?? user.profile?.store_id ?? null;
+    return storeId === null || storeId === undefined || storeId === 0;
+  }, [user]);
+
   const effectiveStore = isAdminWithoutStore ? null : store;
 
   // Calculate monthly statistics

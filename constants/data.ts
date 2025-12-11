@@ -148,10 +148,10 @@ export const navItems: NavItem[] = [
     adminOnly: true // Only admins without stores see this
   },
   {
-    title: 'All Schools',
-    href: '/platform/schools',
+    title: 'All Stores',
+    href: '/platform/stores',
     icon: 'store' as IconType,
-    label: 'all-schools',
+    label: 'all-stores',
     roles: ['ADMIN'], // Only platform-level admins see this
     adminOnly: true // Only admins without stores see this
   },

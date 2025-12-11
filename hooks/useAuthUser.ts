@@ -8,6 +8,10 @@ interface AuthUser {
   id: number;
   role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
   storeId?: number | null; // Store ID from /me endpoint (top level)
+  isAdminProfile?: boolean; // Flag indicating platform-level admin (AdminProfile)
+  platformLevel?: boolean; // Flag indicating platform-level access
+  canManageAllStores?: boolean; // Flag indicating can manage all stores
+  canManagePlatform?: boolean; // Flag indicating can manage platform
   profile?: {
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
     store_id?: number | null;
@@ -61,20 +65,32 @@ export function useAuthUser() {
       }
 
       // Extract store information
-      // API returns: storeId (can be null for admins), currentStore (can be null)
+      // API returns: storeId (can be 0/null for admins), currentStore (can be null)
       const storeId = currentUser?.storeId ?? currentUser?.store_id ?? null;
       const currentStore = currentUser?.currentStore ?? null;
+
+      // Extract platform-level admin flags
+      const isAdminProfile = currentUser?.isAdminProfile ?? false;
+      const platformLevel = currentUser?.platformLevel ?? false;
+      const canManageAllStores = currentUser?.canManageAllStores ?? false;
+      const canManagePlatform = currentUser?.canManagePlatform ?? false;
 
       setUser({
         id: (currentUser as any)?.id || 0,
         role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
-        storeId: storeId, // Store at top level for easy access
+        storeId: storeId, // Store at top level for easy access (0 for platform-level admins)
+        isAdminProfile: isAdminProfile, // Platform-level admin flag
+        platformLevel: platformLevel, // Platform-level access flag
+        canManageAllStores: canManageAllStores, // Can manage all stores
+        canManagePlatform: canManagePlatform, // Can manage platform
         profile: {
           ...((currentUser as any)?.profile || {}),
-          store_id: storeId, // Can be null for admins
-          storeId: storeId, // Can be null for admins
+          store_id: storeId, // Can be 0/null for platform-level admins
+          storeId: storeId, // Can be 0/null for platform-level admins
           store: currentStore || (currentUser as any)?.profile?.store || null,
-          role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT'
+          role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
+          isAdminProfile: isAdminProfile,
+          platformLevel: platformLevel
         }
       });
     } catch (err: any) {

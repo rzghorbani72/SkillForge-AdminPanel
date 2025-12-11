@@ -72,12 +72,15 @@ export const fa = {
     email: 'ایمیل',
     phone: 'تلفن',
     date: 'تاریخ',
+    contact: 'تماس',
     reviewedBy: 'بررسی توسط',
     review: 'بررسی',
     showingResults: 'نمایش {{from}} تا {{to}} از {{total}} نتیجه',
     reason: 'دلیل',
     decision: 'تصمیم',
     notes: 'یادداشت‌ها',
+    currentRole: 'نقش فعلی',
+    requested: 'درخواست شده',
     addNotes: 'یادداشتی درباره تصمیم خود اضافه کنید...',
     validPhoneNumberFormat: '✓ شماره تلفن معتبر',
     invalidPhoneNumberFormat: '⚠ فرمت شماره تلفن نامعتبر است'
@@ -130,7 +133,14 @@ export const fa = {
     'store-costs': 'هزینه‌ها',
     'store-payments': 'پرداخت‌ها',
     'store-reports': 'گزارش‌ها',
-    'platform-financial': 'مالی پلتفرم'
+    'platform-financial': 'مالی پلتفرم',
+    'platform-overview': 'نمای کلی پلتفرم',
+    'all-schools': 'همه آکادمی‌ها',
+    'all-stores': 'همه آکادمی‌ها',
+    'platform-records': 'سوابق پلتفرم',
+    formulas: 'فرمول‌ها',
+    'cost-categories': 'دسته‌بندی هزینه‌ها',
+    'business-flow': 'جریان کسب‌وکار'
   },
   auth: {
     login: 'ورود',
@@ -325,7 +335,10 @@ export const fa = {
     revenue: 'درآمد',
     completionRate: 'نرخ تکمیل',
     topCourses: 'دوره‌های برتر',
-    bestSellingCourses: 'پرفروش‌ترین دوره‌ها بر اساس دانشجویان'
+    bestSellingCourses: 'پرفروش‌ترین دوره‌ها بر اساس دانشجویان',
+    platformRevenue: 'درآمد پلتفرم',
+    allPlatformCourses: 'همه دوره‌های پلتفرم',
+    allPlatformStudents: 'همه دانشجویان پلتفرم'
   },
   stores: {
     title: 'آکادمی‌ها',
@@ -1062,6 +1075,7 @@ export const fa = {
   users: {
     allUsers: 'همه کاربران',
     manageAllUsersDescription: 'مدیریت همه کاربران در نقش‌های مختلف',
+    manageUsersInStore: 'مدیریت کاربران در فروشگاه شما',
     addUser: 'افزودن کاربر',
     searchUsersPlaceholder: 'جستجوی کاربران بر اساس نام، ایمیل یا تلفن...',
     totalUsers: 'کل کاربران',
@@ -1154,8 +1168,12 @@ export const fa = {
   },
   teacherRequests: {
     title: 'درخواست‌های معلم',
-    description: 'بررسی و مدیریت درخواست‌های نقش معلم از دانش‌آموزان',
+    description: 'بررسی و مدیریت درخواست‌های دسترسی معلم از دانش‌آموزان',
     noRequests: 'بدون درخواست معلم',
+    allStatuses: 'همه وضعیت‌ها',
+    noRequestsFound: 'هیچ درخواست معلمی یافت نشد',
+    noRequestsFoundDescription:
+      'درخواست‌های معلم زمانی که دانش‌آموزان آن‌ها را ارسال کنند، در اینجا نمایش داده می‌شوند.',
     noRequestsDescription: 'در حال حاضر درخواست معلم در انتظار وجود ندارد.',
     approve: 'تأیید',
     reject: 'رد',
@@ -1556,6 +1574,71 @@ export const fa = {
         view: 'مشاهده',
         noRecords: 'سابقه مالی آکادمی یافت نشد'
       }
+    }
+  },
+  platform: {
+    overview: {
+      title: 'نمای کلی پلتفرم',
+      description: 'مدیریت و نظارت بر تمام آکادمی‌ها و آمارهای سراسر پلتفرم',
+      loading: 'در حال بارگذاری نمای کلی پلتفرم...',
+      totalSchools: 'کل آکادمی‌ها',
+      activeSchools: '{{count}} آکادمی فعال',
+      totalUsers: 'کل کاربران',
+      acrossAllSchools: 'در تمام آکادمی‌ها',
+      totalCourses: 'کل دوره‌ها',
+      platformWideCourses: 'دوره‌های سراسر پلتفرم',
+      platformRevenue: 'درآمد پلتفرم',
+      allTimeRevenue: 'درآمد کل زمان',
+      allSchools: 'همه آکادمی‌ها',
+      allSchoolsDescription: 'مشاهده و مدیریت تمام آکادمی‌های پلتفرم',
+      allSchoolsAccess: 'دسترسی به ابزارهای جامع مدیریت آکادمی',
+      platformUsers: 'کاربران پلتفرم',
+      platformUsersDescription: 'مدیریت تمام کاربران در سراسر پلتفرم',
+      platformUsersAccess:
+        'مشاهده و مدیریت مدیران، مدیران اجرایی، معلمان و دانش‌آموزان',
+      platformAnalytics: 'تحلیل‌های پلتفرم',
+      platformAnalyticsDescription: 'مشاهده تحلیل‌ها و بینش‌های سراسر پلتفرم',
+      platformAnalyticsAccess: 'نظارت بر عملکرد و معیارهای رشد پلتفرم',
+      quickActions: 'اقدامات سریع',
+      quickActionsDescription: 'وظایف رایج مدیریت پلتفرم',
+      manageSchools: 'مدیریت آکادمی‌ها',
+      manageAdmins: 'مدیریت مدیران',
+      allUsers: 'همه کاربران',
+      platformAnalyticsLink: 'تحلیل‌های پلتفرم',
+      accessDenied: 'دسترسی رد شد',
+      accessDeniedDescription:
+        'این صفحه فقط برای مدیران سطح پلتفرم قابل دسترسی است.'
+    },
+    stores: {
+      title: 'همه آکادمی‌ها',
+      description: 'مشاهده و مدیریت تمام آکادمی‌های پلتفرم',
+      loading: 'در حال بارگذاری آکادمی‌ها...',
+      searchPlaceholder: 'جستجوی آکادمی‌ها بر اساس نام یا slug...',
+      totalStores: 'کل آکادمی‌ها',
+      activeStores: 'آکادمی‌های فعال',
+      inactiveStores: 'آکادمی‌های غیرفعال',
+      createStore: 'ایجاد آکادمی',
+      noStoresFound: 'آکادمی یافت نشد',
+      tryAdjustingSearch: 'سعی کنید پرس‌وجوی جستجوی خود را تنظیم کنید',
+      noStoresCreated: 'هنوز آکادمی ایجاد نشده است',
+      viewDetails: 'مشاهده جزئیات',
+      edit: 'ویرایش',
+      public: 'عمومی',
+      private: 'خصوصی',
+      storeDetails: 'جزئیات آکادمی',
+      financialOverview: 'نمای کلی مالی',
+      financialOverviewDescription: 'آمارهای مالی سطح پلتفرم برای این آکادمی',
+      payments: 'پرداخت‌ها',
+      recentPayments: 'پرداخت‌های اخیر',
+      recentPaymentsDescription: 'آخرین تراکنش‌های پرداخت برای این آکادمی',
+      storeInformation: 'اطلاعات آکادمی',
+      publicDomain: 'دامنه عمومی',
+      privateDomain: 'دامنه خصوصی',
+      totalRevenue: 'کل درآمد',
+      totalCosts: 'کل هزینه‌ها',
+      netProfit: 'سود خالص',
+      noFinancialData: 'داده مالی موجود نیست',
+      noPayments: 'پرداختی یافت نشد'
     }
   }
 };

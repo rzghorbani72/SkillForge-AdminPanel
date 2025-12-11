@@ -51,12 +51,26 @@ const useDashboard = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check if user is admin without a store
+  // Check if user is platform-level admin (AdminProfile)
   const isAdminWithoutStore = useMemo(() => {
     if (!user || user.role !== 'ADMIN') return false;
+
+    // Use explicit flags from API (preferred)
+    const isAdminProfile =
+      user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
+    const platformLevel =
+      user.platformLevel ?? user.profile?.platformLevel ?? false;
+
+    if (isAdminProfile || platformLevel) {
+      return true; // Platform-level admin
+    }
+
+    // Fallback: Check storeId
     const userStoreId =
       user.storeId ?? user.profile?.storeId ?? user.profile?.store_id ?? null;
-    return userStoreId === null;
+    return (
+      userStoreId === null || userStoreId === undefined || userStoreId === 0
+    );
   }, [user]);
 
   // For admins without stores, don't use store context

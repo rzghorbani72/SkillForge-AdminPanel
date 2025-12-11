@@ -71,12 +71,15 @@ export const en = {
     email: 'Email',
     phone: 'Phone',
     date: 'Date',
+    contact: 'Contact',
     reviewedBy: 'Reviewed By',
     review: 'Review',
     showingResults: 'Showing {{from}} to {{to}} of {{total}} results',
     reason: 'Reason',
     decision: 'Decision',
     notes: 'Notes',
+    currentRole: 'Current Role',
+    requested: 'Requested',
     addNotes: 'Add any notes about your decision...',
     validPhoneNumberFormat: '✓ Valid phone number',
     invalidPhoneNumberFormat: '⚠ Invalid phone number format'
@@ -129,7 +132,14 @@ export const en = {
     'store-costs': 'Costs',
     'store-payments': 'Payments',
     'store-reports': 'Reports',
-    'platform-financial': 'Platform Financial'
+    'platform-financial': 'Platform Financial',
+    'platform-overview': 'Platform Overview',
+    'all-schools': 'All Schools',
+    'all-stores': 'All Stores',
+    'platform-records': 'Platform Records',
+    formulas: 'Formulas',
+    'cost-categories': 'Cost Categories',
+    'business-flow': 'Business Flow'
   },
   auth: {
     login: 'Login',
@@ -323,7 +333,10 @@ export const en = {
     revenue: 'Revenue',
     completionRate: 'Completion Rate',
     topCourses: 'Top Courses',
-    bestSellingCourses: 'Best selling courses by students'
+    bestSellingCourses: 'Best selling courses by students',
+    platformRevenue: 'Platform Revenue',
+    allPlatformCourses: 'All Platform Courses',
+    allPlatformStudents: 'All Platform Students'
   },
   stores: {
     title: 'Stores',
@@ -1123,6 +1136,7 @@ export const en = {
   users: {
     allUsers: 'All Users',
     manageAllUsersDescription: 'Manage all users across different roles',
+    manageUsersInStore: 'Manage users in your store',
     addUser: 'Add User',
     searchUsersPlaceholder: 'Search users by name, email, or phone...',
     totalUsers: 'Total Users',
@@ -1229,10 +1243,14 @@ export const en = {
   },
   teacherRequests: {
     title: 'Teacher Requests',
-    description: 'Review and manage teacher role requests from students',
+    description: 'Review and manage teacher access requests from students',
     noRequests: 'No Teacher Requests',
     noRequestsDescription:
       'There are no pending teacher requests at the moment.',
+    allStatuses: 'All Statuses',
+    noRequestsFound: 'No teacher requests found',
+    noRequestsFoundDescription:
+      'Teacher requests will appear here when students submit them.',
     approve: 'Approve',
     reject: 'Reject',
     pending: 'Pending',
@@ -1647,6 +1665,74 @@ export const en = {
         view: 'View',
         noRecords: 'No store financial records found'
       }
+    }
+  },
+  platform: {
+    overview: {
+      title: 'Platform Overview',
+      description:
+        'Manage and monitor all schools and platform-wide statistics',
+      loading: 'Loading platform overview...',
+      totalSchools: 'Total Schools',
+      activeSchools: '{{count}} active schools',
+      totalUsers: 'Total Users',
+      acrossAllSchools: 'Across all schools',
+      totalCourses: 'Total Courses',
+      platformWideCourses: 'Platform-wide courses',
+      platformRevenue: 'Platform Revenue',
+      allTimeRevenue: 'All-time platform revenue',
+      allSchools: 'All Schools',
+      allSchoolsDescription: 'View and manage all schools on the platform',
+      allSchoolsAccess: 'Access comprehensive school management tools',
+      platformUsers: 'Platform Users',
+      platformUsersDescription: 'Manage all users across the platform',
+      platformUsersAccess:
+        'View and manage administrators, managers, teachers, and students',
+      platformAnalytics: 'Platform Analytics',
+      platformAnalyticsDescription: 'View platform-wide analytics and insights',
+      platformAnalyticsAccess:
+        'Monitor platform performance and growth metrics',
+      quickActions: 'Quick Actions',
+      quickActionsDescription: 'Common platform management tasks',
+      manageSchools: 'Manage Schools',
+      manageAdmins: 'Manage Admins',
+      allUsers: 'All Users',
+      platformAnalyticsLink: 'Platform Analytics',
+      accessDenied: 'Access Denied',
+      accessDeniedDescription:
+        'This page is only accessible to platform-level administrators.'
+    },
+    stores: {
+      title: 'All Stores',
+      description: 'View and manage all stores on the platform',
+      loading: 'Loading stores...',
+      searchPlaceholder: 'Search stores by name or slug...',
+      totalStores: 'Total Stores',
+      activeStores: 'Active Stores',
+      inactiveStores: 'Inactive Stores',
+      createStore: 'Create Store',
+      noStoresFound: 'No stores found',
+      tryAdjustingSearch: 'Try adjusting your search query',
+      noStoresCreated: 'No stores have been created yet',
+      viewDetails: 'View Details',
+      edit: 'Edit',
+      public: 'Public',
+      private: 'Private',
+      storeDetails: 'Store Details',
+      financialOverview: 'Financial Overview',
+      financialOverviewDescription:
+        'Platform-level financial statistics for this store',
+      payments: 'Payments',
+      recentPayments: 'Recent Payments',
+      recentPaymentsDescription: 'Latest payment transactions for this store',
+      storeInformation: 'Store Information',
+      publicDomain: 'Public Domain',
+      privateDomain: 'Private Domain',
+      totalRevenue: 'Total Revenue',
+      totalCosts: 'Total Costs',
+      netProfit: 'Net Profit',
+      noFinancialData: 'No financial data available',
+      noPayments: 'No payments found'
     }
   }
 };

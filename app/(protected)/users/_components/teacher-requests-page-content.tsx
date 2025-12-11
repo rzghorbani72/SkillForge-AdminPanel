@@ -26,6 +26,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type TeacherRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -72,16 +73,8 @@ interface PaginationInfo {
   hasPreviousPage: boolean;
 }
 
-const STATUS_BADGE_VARIANTS: Record<
-  TeacherRequestStatus,
-  { variant: 'default' | 'secondary' | 'destructive'; label: string }
-> = {
-  PENDING: { variant: 'secondary', label: 'Pending' },
-  APPROVED: { variant: 'default', label: 'Approved' },
-  REJECTED: { variant: 'destructive', label: 'Rejected' }
-};
-
 export function TeacherRequestsPageContent() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState<TeacherRequest[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -90,6 +83,15 @@ export function TeacherRequestsPageContent() {
   >('all');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+
+  const STATUS_BADGE_VARIANTS: Record<
+    TeacherRequestStatus,
+    { variant: 'default' | 'secondary' | 'destructive'; label: string }
+  > = {
+    PENDING: { variant: 'secondary', label: t('teacherRequests.pending') },
+    APPROVED: { variant: 'default', label: t('teacherRequests.approved') },
+    REJECTED: { variant: 'destructive', label: t('teacherRequests.rejected') }
+  };
 
   const fetchRequests = useCallback(async () => {
     try {
@@ -118,13 +120,13 @@ export function TeacherRequestsPageContent() {
       }
     } catch (error) {
       console.error('Error fetching teacher requests:', error);
-      toast.error('Failed to load teacher requests');
+      toast.error(t('common.errorLoading'));
       setRequests([]);
       setPagination(null);
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, pageSize, selectedStatus]);
+  }, [currentPage, pageSize, selectedStatus, t]);
 
   useEffect(() => {
     fetchRequests();
@@ -145,7 +147,11 @@ export function TeacherRequestsPageContent() {
   ) => {
     try {
       await apiClient.reviewTeacherRequest(requestId, { status });
-      toast.success(`Request ${status.toLowerCase()} successfully`);
+      const statusText =
+        status === 'APPROVED'
+          ? t('teacherRequests.approved').toLowerCase()
+          : t('teacherRequests.rejected').toLowerCase();
+      toast.success(t('common.success'));
       fetchRequests();
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -153,14 +159,14 @@ export function TeacherRequestsPageContent() {
   };
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading teacher requests..." />;
+    return <LoadingSpinner message={t('common.loadingData')} />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
       <PageHeader
-        title="Teacher Requests"
-        description="Review and manage teacher access requests from students"
+        title={t('teacherRequests.title')}
+        description={t('teacherRequests.description')}
       >
         <div className="flex items-center gap-2">
           <Select value={selectedStatus} onValueChange={handleStatusChange}>
@@ -168,10 +174,18 @@ export function TeacherRequestsPageContent() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-              <SelectItem value="APPROVED">Approved</SelectItem>
-              <SelectItem value="REJECTED">Rejected</SelectItem>
+              <SelectItem value="all">
+                {t('teacherRequests.allStatuses')}
+              </SelectItem>
+              <SelectItem value="PENDING">
+                {t('teacherRequests.pending')}
+              </SelectItem>
+              <SelectItem value="APPROVED">
+                {t('teacherRequests.approved')}
+              </SelectItem>
+              <SelectItem value="REJECTED">
+                {t('teacherRequests.rejected')}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -180,11 +194,11 @@ export function TeacherRequestsPageContent() {
       {requests.length === 0 ? (
         <EmptyState
           icon={<Users className="h-12 w-12" />}
-          title="No teacher requests found"
+          title={t('teacherRequests.noRequestsFound')}
           description={
             selectedStatus !== 'all'
-              ? 'Try adjusting the status filter to see more requests.'
-              : 'Teacher requests will appear here when students submit them.'
+              ? t('common.tryAdjustingFilters')
+              : t('teacherRequests.noRequestsFoundDescription')
           }
         />
       ) : (
@@ -207,7 +221,8 @@ export function TeacherRequestsPageContent() {
                         request.profile.display_name}
                     </CardTitle>
                     <CardDescription>
-                      Requested {submittedAt} • Store: {request.store.name}
+                      {t('common.requested')} {submittedAt} •{' '}
+                      {t('common.store')}: {request.store.name}
                     </CardDescription>
                   </div>
                   <Badge variant={statusVariant.variant}>
@@ -216,32 +231,35 @@ export function TeacherRequestsPageContent() {
                 </CardHeader>
                 <CardContent className="space-y-4 text-sm">
                   <div className="space-y-1">
-                    <p className="font-medium">Reason</p>
+                    <p className="font-medium">{t('common.reason')}</p>
                     <p className="text-muted-foreground">{request.reason}</p>
                   </div>
                   <div className="grid gap-3">
                     <div>
                       <p className="text-xs uppercase text-muted-foreground">
-                        Contact
+                        {t('common.contact')}
                       </p>
-                      <p>{request.profile.user.email || 'No email provided'}</p>
+                      <p>{request.profile.user.email || t('common.noData')}</p>
                       <p>
-                        {request.profile.user.phone_number || 'No phone number'}
+                        {request.profile.user.phone_number ||
+                          t('common.noData')}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-muted-foreground">
-                        Current Role
+                        {t('common.currentRole')}
                       </p>
                       <p>{request.profile.role?.name}</p>
                     </div>
                     {request.reviewer && (
                       <div>
                         <p className="text-xs uppercase text-muted-foreground">
-                          Reviewed By
+                          {t('common.reviewedBy')}
                         </p>
                         <p>
-                          {request.reviewer.user?.name || 'Unknown reviewer'}
+                          {request.reviewer.user?.name ||
+                            t('common.unknownUser') ||
+                            'Unknown reviewer'}
                         </p>
                       </div>
                     )}
@@ -257,7 +275,7 @@ export function TeacherRequestsPageContent() {
                         className="flex-1"
                       >
                         <Check className="mr-2 h-4 w-4" />
-                        Approve
+                        {t('teacherRequests.approve')}
                       </Button>
                       <Button
                         size="sm"
@@ -268,7 +286,7 @@ export function TeacherRequestsPageContent() {
                         className="flex-1"
                       >
                         <X className="mr-2 h-4 w-4" />
-                        Reject
+                        {t('teacherRequests.reject')}
                       </Button>
                     </div>
                   )}

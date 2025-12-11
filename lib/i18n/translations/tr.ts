@@ -60,12 +60,15 @@ export const tr = {
     email: 'E-posta',
     phone: 'Telefon',
     date: 'Tarih',
+    contact: 'İletişim',
     reviewedBy: 'İnceleyen',
     review: 'İncele',
     showingResults: '{{from}} ile {{to}} arası, toplam {{total}} sonuç',
     reason: 'Sebep',
     decision: 'Karar',
     notes: 'Notlar',
+    currentRole: 'Mevcut Rol',
+    requested: 'Talep Edildi',
     addNotes: 'Kararınızla ilgili not ekleyin...',
     validPhoneNumberFormat: '✓ Geçerli telefon numarası',
     invalidPhoneNumberFormat: '⚠ Geçersiz telefon numarası formatı'
@@ -95,7 +98,37 @@ export const tr = {
     audios: 'Sesler',
     documents: 'Belgeler',
     payments: 'Ödemeler',
-    vouchers: 'Kuponlar'
+    vouchers: 'Kuponlar',
+    'all-students': 'Tüm Öğrenciler',
+    enrollments: 'Kayıtlar',
+    progress: 'İlerleme',
+    'analytics-overview': 'Analitik Genel Bakış',
+    'revenue-analytics': 'Gelir Analitiği',
+    'course-performance': 'Kurs Performansı',
+    'student-engagement': 'Öğrenci Katılımı',
+    transactions: 'İşlemler',
+    'payment-methods': 'Ödeme Yöntemleri',
+    invoices: 'Faturalar',
+    'profile-settings': 'Profil Ayarları',
+    'store-settings': 'Mağaza Ayarları',
+    'theme-settings': 'Tema Ayarları',
+    'ui-template-settings': 'UI Şablon Ayarları',
+    'security-settings': 'Güvenlik Ayarları',
+    'progress-tracking': 'İlerleme Takibi',
+    'store-financial': 'Mağaza Finansal',
+    'store-financial-overview': 'Genel Bakış',
+    'store-revenue': 'Gelir ve Faydalar',
+    'store-costs': 'Maliyetler',
+    'store-payments': 'Ödemeler',
+    'store-reports': 'Raporlar',
+    'platform-financial': 'Platform Finansal',
+    'platform-overview': 'Platform Genel Bakış',
+    'all-schools': 'Tüm Okullar',
+    'all-stores': 'Tüm Mağazalar',
+    'platform-records': 'Platform Kayıtları',
+    formulas: 'Formüller',
+    'cost-categories': 'Maliyet Kategorileri',
+    'business-flow': 'İş Akışı'
   },
   auth: {
     login: 'Giriş Yap',
@@ -274,7 +307,10 @@ export const tr = {
     timeMonthsAgo: '{{count}} ay önce',
     timeMonthsAgoPlural: '{{count}} ay önce',
     timeYearsAgo: '{{count}} yıl önce',
-    timeYearsAgoPlural: '{{count}} yıl önce'
+    timeYearsAgoPlural: '{{count}} yıl önce',
+    platformRevenue: 'Platform Geliri',
+    allPlatformCourses: 'Tüm Platform Kursları',
+    allPlatformStudents: 'Tüm Platform Öğrencileri'
   },
   stores: {
     title: 'Enstitüler',
@@ -858,6 +894,7 @@ export const tr = {
   users: {
     allUsers: 'Tüm Kullanıcılar',
     manageAllUsersDescription: 'Farklı rollerdeki tüm kullanıcıları yönetin',
+    manageUsersInStore: 'Mağazanızdaki kullanıcıları yönetin',
     addUser: 'Kullanıcı Ekle',
     searchUsersPlaceholder:
       'Kullanıcıları ad, e-posta veya telefona göre ara...',
@@ -955,9 +992,13 @@ export const tr = {
   teacherRequests: {
     title: 'Öğretmen Talepleri',
     description:
-      'Öğrencilerden gelen öğretmen rolü taleplerini inceleyin ve yönetin',
+      'Öğrencilerden gelen öğretmen erişim taleplerini inceleyin ve yönetin',
     noRequests: 'Öğretmen Talebi Yok',
     noRequestsDescription: 'Şu anda bekleyen öğretmen talebi bulunmuyor.',
+    allStatuses: 'Tüm Durumlar',
+    noRequestsFound: 'Öğretmen talebi bulunamadı',
+    noRequestsFoundDescription:
+      'Öğrenciler talep gönderdiğinde öğretmen talepleri burada görünecektir.',
     approve: 'Onayla',
     reject: 'Reddet',
     pending: 'Beklemede',
@@ -1364,6 +1405,77 @@ export const tr = {
         view: 'Görüntüle',
         noRecords: 'Mağaza mali kaydı bulunamadı'
       }
+    }
+  },
+  platform: {
+    overview: {
+      title: 'Platform Genel Bakış',
+      description:
+        'Tüm okulları ve platform genelindeki istatistikleri yönetin ve izleyin',
+      loading: 'Platform genel bakışı yükleniyor...',
+      totalSchools: 'Toplam Okullar',
+      activeSchools: '{{count}} aktif okul',
+      totalUsers: 'Toplam Kullanıcılar',
+      acrossAllSchools: 'Tüm okullarda',
+      totalCourses: 'Toplam Kurslar',
+      platformWideCourses: 'Platform genelindeki kurslar',
+      platformRevenue: 'Platform Geliri',
+      allTimeRevenue: 'Tüm zamanların geliri',
+      allSchools: 'Tüm Okullar',
+      allSchoolsDescription:
+        'Platformdaki tüm okulları görüntüleyin ve yönetin',
+      allSchoolsAccess: 'Kapsamlı okul yönetim araçlarına erişin',
+      platformUsers: 'Platform Kullanıcıları',
+      platformUsersDescription:
+        'Platform genelindeki tüm kullanıcıları yönetin',
+      platformUsersAccess:
+        'Yöneticileri, yöneticileri, öğretmenleri ve öğrencileri görüntüleyin ve yönetin',
+      platformAnalytics: 'Platform Analitiği',
+      platformAnalyticsDescription:
+        'Platform genelindeki analitikleri ve içgörüleri görüntüleyin',
+      platformAnalyticsAccess:
+        'Platform performansını ve büyüme metriklerini izleyin',
+      quickActions: 'Hızlı İşlemler',
+      quickActionsDescription: 'Yaygın platform yönetim görevleri',
+      manageSchools: 'Okulları Yönet',
+      manageAdmins: 'Yöneticileri Yönet',
+      allUsers: 'Tüm Kullanıcılar',
+      platformAnalyticsLink: 'Platform Analitiği',
+      accessDenied: 'Erişim Reddedildi',
+      accessDeniedDescription:
+        'Bu sayfa yalnızca platform seviyesindeki yöneticiler tarafından erişilebilir.'
+    },
+    stores: {
+      title: 'Tüm Mağazalar',
+      description: 'Platformdaki tüm mağazaları görüntüleyin ve yönetin',
+      loading: 'Mağazalar yükleniyor...',
+      searchPlaceholder: "Mağazaları ada veya slug'a göre ara...",
+      totalStores: 'Toplam Mağazalar',
+      activeStores: 'Aktif Mağazalar',
+      inactiveStores: 'Pasif Mağazalar',
+      createStore: 'Mağaza Oluştur',
+      noStoresFound: 'Mağaza bulunamadı',
+      tryAdjustingSearch: 'Arama sorgunuzu ayarlamayı deneyin',
+      noStoresCreated: 'Henüz mağaza oluşturulmadı',
+      viewDetails: 'Detayları Görüntüle',
+      edit: 'Düzenle',
+      public: 'Genel',
+      private: 'Özel',
+      storeDetails: 'Mağaza Detayları',
+      financialOverview: 'Finansal Genel Bakış',
+      financialOverviewDescription:
+        'Bu mağaza için platform seviyesindeki finansal istatistikler',
+      payments: 'Ödemeler',
+      recentPayments: 'Son Ödemeler',
+      recentPaymentsDescription: 'Bu mağaza için en son ödeme işlemleri',
+      storeInformation: 'Mağaza Bilgileri',
+      publicDomain: 'Genel Alan Adı',
+      privateDomain: 'Özel Alan Adı',
+      totalRevenue: 'Toplam Gelir',
+      totalCosts: 'Toplam Maliyetler',
+      netProfit: 'Net Kar',
+      noFinancialData: 'Finansal veri mevcut değil',
+      noPayments: 'Ödeme bulunamadı'
     }
   }
 };

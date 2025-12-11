@@ -22,27 +22,36 @@ export default function Sidebar({ className }: SidebarProps) {
     return user.role;
   }, [user]);
 
-  // Check if admin has a store
+  // Check if admin is platform-level (AdminProfile) or has a store
   const hasStore = useMemo(() => {
     if (!user || userRole !== 'ADMIN') return undefined;
 
-    // Check if profile has store information
-    const profile = (user as any)?.profile;
+    // Use explicit flags from API response (preferred method)
+    const isAdminProfile =
+      user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
+    const platformLevel =
+      user.platformLevel ?? user.profile?.platformLevel ?? false;
 
-    // Check various possible store fields from API response
-    // API returns: storeId, currentStore, or profile.store
-    const storeId = profile?.store_id ?? profile?.storeId ?? null;
+    // If explicitly marked as platform-level admin, they have no store
+    if (isAdminProfile || platformLevel) {
+      return false; // Platform-level admin has no store
+    }
+
+    // Fallback: Check if profile has store information
+    const profile = (user as any)?.profile;
+    const storeId =
+      profile?.store_id ?? profile?.storeId ?? user.storeId ?? null;
     const currentStore = profile?.store ?? null;
 
-    // If storeId is explicitly null or undefined, and no store object, admin has no store
-    if (storeId === null || storeId === undefined) {
+    // If storeId is 0, null, or undefined, and no store object, admin has no store
+    if (storeId === null || storeId === undefined || storeId === 0) {
       if (!currentStore) {
         return false; // Admin has no store
       }
     }
 
-    // If storeId exists and is not null, admin has a store
-    if (storeId !== null && storeId !== undefined) {
+    // If storeId exists and is not 0/null, admin has a store
+    if (storeId !== null && storeId !== undefined && storeId !== 0) {
       return true;
     }
 
