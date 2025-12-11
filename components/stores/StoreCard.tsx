@@ -8,14 +8,25 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Building2, Edit } from 'lucide-react';
+import { Building2, Edit, X } from 'lucide-react';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 interface StoreCardProps {
   store: Store;
   onEdit: (store: Store) => void;
+  onDisconnect?: (store: Store) => void;
+  isManager?: boolean;
+  canDisconnect?: boolean;
 }
 
-export function StoreCard({ store, onEdit }: StoreCardProps) {
+export function StoreCard({
+  store,
+  onEdit,
+  onDisconnect,
+  isManager = false,
+  canDisconnect = false
+}: StoreCardProps) {
+  console.log('store', store);
   return (
     <Card key={store.id}>
       <CardHeader>
@@ -37,13 +48,29 @@ export function StoreCard({ store, onEdit }: StoreCardProps) {
           {store?.description || 'No description provided'}
         </p>
         <div className="flex items-center justify-between">
-          <Badge variant="outline">
-            {store?.is_active ? 'Active' : 'Inactive'}
-          </Badge>
-          <Button variant="outline" size="sm" onClick={() => onEdit(store)}>
-            <Edit className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">
+              {store?.is_active ? 'Active' : 'Inactive'}
+            </Badge>
+            {isManager && <Badge variant="secondary">Manager</Badge>}
+          </div>
+          <div className="flex items-center gap-2">
+            {canDisconnect && onDisconnect && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onDisconnect(store)}
+                className="text-destructive hover:text-destructive"
+              >
+                <X className="mr-2 h-4 w-4" />
+                Disconnect
+              </Button>
+            )}
+            <Button variant="outline" size="sm" onClick={() => onEdit(store)}>
+              <Edit className="mr-2 h-4 w-4" />
+              Edit
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

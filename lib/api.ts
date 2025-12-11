@@ -128,13 +128,40 @@ class ApiClient {
     }
 
     // Add store ID header if available (from localStorage - non-sensitive context data)
+    // But don't add it for admins without stores
     if (typeof window !== 'undefined') {
-      // Use the same key as store-utils.ts
-      const storeId = window.localStorage.getItem(
-        'skillforge_selected_store_id'
-      );
-      if (storeId && !headersObj['X-Store-ID']) {
-        headersObj['X-Store-ID'] = storeId;
+      // Check if user is admin without store by checking cached user state
+      let shouldAddStoreHeader = true;
+      try {
+        const userStateStr = window.localStorage.getItem('user_state');
+        if (userStateStr) {
+          const userState = JSON.parse(userStateStr);
+          // If user is admin and has no store_id, don't add store header
+          if (
+            userState?.role === 'ADMIN' &&
+            (userState?.store_id === null || userState?.store_id === undefined)
+          ) {
+            shouldAddStoreHeader = false;
+          }
+        }
+      } catch (e) {
+        // If parsing fails, continue with default behavior
+      }
+
+      if (shouldAddStoreHeader) {
+        // Use the same key as store-utils.ts
+        const storeId = window.localStorage.getItem(
+          'skillforge_selected_store_id'
+        );
+        // Only add store header if storeId exists and is not empty/null
+        if (
+          storeId &&
+          storeId !== 'null' &&
+          storeId !== '' &&
+          !headersObj['X-Store-ID']
+        ) {
+          headersObj['X-Store-ID'] = storeId;
+        }
       }
     }
 
@@ -238,12 +265,48 @@ class ApiClient {
   }
 
   // Auth endpoints
+  /**
+   * Staff login for MANAGER/TEACHER (admin panel)
+   * store_id is optional - if user has multiple stores, will return available stores for selection
+   */
   async login(credentials: {
     identifier: string;
     password: string;
     store_id?: number;
   }) {
-    const response = this.request('/auth/login', {
+    const response = this.request('/auth/staff/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+    return response;
+  }
+
+  /**
+   * Public login for STUDENT/USER (store-specific)
+   * store_id is REQUIRED
+   */
+  async publicLogin(credentials: {
+    identifier: string;
+    password: string;
+    store_id: number;
+  }) {
+    const response = this.request('/auth/public/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+    return response;
+  }
+
+  /**
+   * Admin login for ADMIN role (platform-level)
+   * Requires email + phone + password
+   */
+  async adminLogin(credentials: {
+    email: string;
+    phone_number: string;
+    password: string;
+  }) {
+    const response = this.request('/auth/admin/login', {
       method: 'POST',
       body: JSON.stringify(credentials)
     });
@@ -1502,6 +1565,20 @@ class ApiClient {
     });
   }
 
+  async disconnectFromStore(adminId: number, storeId?: number) {
+    const queryParams = new URLSearchParams();
+    if (storeId !== undefined) {
+      queryParams.append('store_id', storeId.toString());
+    }
+    const queryString = queryParams.toString();
+    return this.request(
+      `/users/${adminId}/disconnect-store${queryString ? `?${queryString}` : ''}`,
+      {
+        method: 'PATCH'
+      }
+    );
+  }
+
   async createAdminUser(userData: {
     name: string;
     phone_number: string;
@@ -1509,7 +1586,7 @@ class ApiClient {
     password: string;
     phone_otp: string;
     email_otp: string;
-    store_id?: string;
+    // Note: store_id is not included - new admins are always created without a store
   }) {
     const response = await this.request('/users/admin', {
       method: 'POST',

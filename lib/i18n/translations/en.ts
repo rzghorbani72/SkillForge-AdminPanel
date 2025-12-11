@@ -225,7 +225,13 @@ export const en = {
     requestTeacherRole: 'Request Teacher Role',
     whyWantToBeTeacher: 'Why do you want to be a teacher?',
     teacherRequestReasonPlaceholder:
-      'Please explain your teaching experience, qualifications, and why you want to teach at this store...'
+      'Please explain your teaching experience, qualifications, and why you want to teach at this store...',
+    adminLogin: 'Admin Login',
+    adminOnly: 'This panel is for',
+    adminsOnly: 'admins only.',
+    signInAsAdmin: 'Sign in as administrator',
+    notAdmin: 'Not an admin?',
+    regularLogin: 'Regular Login'
   },
   dashboard: {
     title: 'Dashboard',

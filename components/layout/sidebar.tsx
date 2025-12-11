@@ -22,9 +22,42 @@ export default function Sidebar({ className }: SidebarProps) {
     return user.role;
   }, [user]);
 
+  // Check if admin has a store
+  const hasStore = useMemo(() => {
+    if (!user || userRole !== 'ADMIN') return undefined;
+
+    // Check if profile has store information
+    const profile = (user as any)?.profile;
+
+    // Check various possible store fields from API response
+    // API returns: storeId, currentStore, or profile.store
+    const storeId = profile?.store_id ?? profile?.storeId ?? null;
+    const currentStore = profile?.store ?? null;
+
+    // If storeId is explicitly null or undefined, and no store object, admin has no store
+    if (storeId === null || storeId === undefined) {
+      if (!currentStore) {
+        return false; // Admin has no store
+      }
+    }
+
+    // If storeId exists and is not null, admin has a store
+    if (storeId !== null && storeId !== undefined) {
+      return true;
+    }
+
+    // If store object exists, admin has a store
+    if (currentStore && currentStore.id) {
+      return true;
+    }
+
+    // Default to false if we can't determine
+    return false;
+  }, [user, userRole]);
+
   const filteredNavItems = useMemo(() => {
-    return filterNavItemsByRole(navItems, userRole);
-  }, [userRole]);
+    return filterNavItemsByRole(navItems, userRole, hasStore);
+  }, [userRole, hasStore]);
 
   // Show loading state while fetching user
   if (isLoading) {

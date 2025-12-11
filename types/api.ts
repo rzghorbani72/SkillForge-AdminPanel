@@ -40,7 +40,7 @@ export interface UserProfile {
 export interface Profile {
   id: number;
   user_id: number;
-  store_id: number;
+  store_id: number | null; // Nullable: Admins can have no store
   role_id: number;
   display_name: string;
   bio?: string;
@@ -52,6 +52,8 @@ export interface Profile {
   store?: Store;
   role?: Role;
   avatar?: Media;
+  email?: string;
+  phone_number?: string;
 }
 
 export interface Role {

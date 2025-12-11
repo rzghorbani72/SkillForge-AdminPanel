@@ -11,6 +11,17 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Plus, Search, Building2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Store } from '@/types/api';
@@ -24,15 +35,22 @@ import { StoreForm } from '@/components/stores/StoreForm';
 import { useStore } from '@/hooks/useStore';
 import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { toast } from 'react-toastify';
 
 export default function StoresPage() {
   const { t, language } = useTranslation();
   const { stores, isLoading, error, refreshStores } = useStore();
+  const { user } = useAuthUser();
+  const role = user?.role;
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [disconnectStore, setDisconnectStore] = useState<Store | null>(null);
+  const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -281,6 +299,114 @@ export default function StoresPage() {
     }
   };
 
+  // Check if user is manager in a store
+  // Admins can have separate MANAGER profiles in stores (different from their main ADMIN profile)
+  const isManagerInStore = (store: Store): boolean => {
+    if (!user || !store.profiles || store.profiles.length === 0) return false;
+
+    // Get user's identifying information (email and phone are unique identifiers)
+    const userEmail = (user as any)?.profile?.email || (user as any)?.email;
+    const userPhone =
+      (user as any)?.profile?.phone_number || (user as any)?.phone_number;
+
+    if (!userEmail && !userPhone) {
+      console.warn('User email and phone not available for manager check');
+      return false;
+    }
+
+    // Check if any profile in the store matches the user's email/phone and is a MANAGER
+    const isManager = store.profiles.some((profile: any) => {
+      // Match by email or phone (admins have separate MANAGER profiles with same email/phone)
+      const emailMatch =
+        userEmail && profile.email && profile.email === userEmail;
+      const phoneMatch =
+        userPhone && profile.phone_number && profile.phone_number === userPhone;
+
+      const isMatch = emailMatch || phoneMatch;
+
+      // Must be MANAGER role and active
+      const isManagerRole =
+        profile.role?.name === 'MANAGER' && profile.is_active;
+
+      return isMatch && isManagerRole;
+    });
+
+    return isManager;
+  };
+
+  // Check if store has other managers (for disconnect validation)
+  const hasOtherManagers = (store: Store): boolean => {
+    if (!store.profiles || store.profiles.length === 0) return false;
+
+    // Get user's identifying information
+    const userEmail = (user as any)?.profile?.email || (user as any)?.email;
+    const userPhone =
+      (user as any)?.profile?.phone_number || (user as any)?.phone_number;
+
+    if (!userEmail && !userPhone) {
+      console.warn(
+        'User email and phone not available for other managers check'
+      );
+      return false;
+    }
+
+    const otherManagers = store.profiles.filter((profile: any) => {
+      // Check if this profile is NOT the current user (match by email or phone)
+      const emailMatch =
+        userEmail && profile.email && profile.email === userEmail;
+      const phoneMatch =
+        userPhone && profile.phone_number && profile.phone_number === userPhone;
+      const isCurrentUser = emailMatch || phoneMatch;
+
+      // Must be MANAGER role and active, and NOT the current user
+      return (
+        !isCurrentUser && profile.role?.name === 'MANAGER' && profile.is_active
+      );
+    });
+
+    return otherManagers.length > 0;
+  };
+
+  const handleDisconnect = async () => {
+    if (!disconnectStore || !user) return;
+
+    try {
+      setIsDisconnecting(true);
+      // Use profile ID (user.id is the ADMIN profile ID from /me endpoint)
+      // Note: ADMIN profiles are platform-level (store_id = null)
+      // This will remove the MANAGER profile from the store, not the ADMIN profile
+      const adminId = user.id;
+      const response = await apiClient.disconnectFromStore(
+        adminId,
+        disconnectStore.id
+      );
+
+      if ((response as any)?.data?.status === 'ok') {
+        toast.success('Disconnected from store successfully');
+        await refreshStores();
+        setIsDisconnectDialogOpen(false);
+        setDisconnectStore(null);
+      } else {
+        const errorMessage =
+          (response as any)?.data?.data ||
+          (response as any)?.data?.message ||
+          'Failed to disconnect from store';
+        toast.error(errorMessage);
+        ErrorHandler.handleApiError(new Error(errorMessage));
+      }
+    } catch (error: any) {
+      console.error('Error disconnecting from store:', error);
+      const errorMessage =
+        error?.response?.data?.data ||
+        error?.message ||
+        'Failed to disconnect from store';
+      toast.error(errorMessage);
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsDisconnecting(false);
+    }
+  };
+
   // Filter stores based on search term
   const filteredStores = stores.filter(
     (store) =>
@@ -361,28 +487,102 @@ export default function StoresPage() {
         className="max-w-sm"
       />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredStores.map((store) => (
-          <StoreCard
-            key={store.id}
-            store={store}
-            onEdit={(store) => {
-              const newFormData = {
-                name: store?.name || '',
-                private_domain: extractDomainPart(
-                  store?.domain?.private_address || ''
-                ),
-                public_domain: store?.domain?.public_address || '',
-                description: store?.description || '',
-                is_active: store?.is_active ?? false
-              };
+      {/* Show other stores user can access */}
+      {user &&
+        (user.role === 'MANAGER' || user.role === 'TEACHER') &&
+        (() => {
+          // Find stores where user has profiles but is not currently logged in
+          const otherStores = stores.filter((store) => {
+            if (!store.profiles || store.profiles.length === 0) return false;
 
-              setSelectedStore(store);
-              setFormData(newFormData);
-              setIsEditDialogOpen(true);
-            }}
-          />
-        ))}
+            const userEmail =
+              (user as any)?.profile?.email || (user as any)?.email;
+            const userPhone =
+              (user as any)?.profile?.phone_number ||
+              (user as any)?.phone_number;
+            const currentStoreId =
+              (user as any)?.storeId || (user as any)?.store_id;
+
+            // Check if user has a profile in this store (by email/phone match)
+            const hasProfile = store.profiles.some((profile: any) => {
+              const emailMatch =
+                userEmail && profile.email && profile.email === userEmail;
+              const phoneMatch =
+                userPhone &&
+                profile.phone_number &&
+                profile.phone_number === userPhone;
+              const isMatch = emailMatch || phoneMatch;
+              const isManagerOrTeacher =
+                (profile.role?.name === 'MANAGER' ||
+                  profile.role?.name === 'TEACHER') &&
+                profile.is_active;
+              return isMatch && isManagerOrTeacher;
+            });
+
+            // Show if user has profile but is not currently logged into this store
+            return hasProfile && store.id !== currentStoreId;
+          });
+
+          if (otherStores.length > 0) {
+            return (
+              <Alert className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>You have access to other stores:</strong> You are
+                  logged in as {user.role} in the current store, but you also
+                  have {user.role} profiles in {otherStores.length} other store
+                  {otherStores.length > 1 ? 's' : ''}:{' '}
+                  {otherStores.map((s, idx) => (
+                    <span key={s.id}>
+                      <strong>{s.name}</strong>
+                      {idx < otherStores.length - 1 ? ', ' : ''}
+                    </span>
+                  ))}
+                  <br />
+                  <span className="mt-2 block text-sm text-muted-foreground">
+                    To access these stores, please logout and login again. The
+                    login page will show all available stores for selection.
+                  </span>
+                </AlertDescription>
+              </Alert>
+            );
+          }
+          return null;
+        })()}
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filteredStores.map((store) => {
+          const isManager = isManagerInStore(store);
+          const canDisconnect = isManager && hasOtherManagers(store);
+
+          return (
+            <StoreCard
+              key={store.id}
+              store={store}
+              isManager={isManager}
+              canDisconnect={canDisconnect}
+              onEdit={(store) => {
+                const newFormData = {
+                  name: store?.name || '',
+                  private_domain: extractDomainPart(
+                    store?.domain?.private_address || ''
+                  ),
+                  public_domain: store?.domain?.public_address || '',
+                  description: store?.description || '',
+                  is_active: store?.is_active ?? false
+                };
+
+                setSelectedStore(store);
+                setFormData(newFormData);
+                setIsEditDialogOpen(true);
+              }}
+              onDisconnect={(store) => {
+                setDisconnectStore(store);
+                setIsDisconnectDialogOpen(true);
+              }}
+            />
+          );
+        })}
       </div>
 
       {filteredStores.length === 0 && (
@@ -423,6 +623,53 @@ export default function StoresPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Disconnect Confirmation Dialog */}
+      <AlertDialog
+        open={isDisconnectDialogOpen}
+        onOpenChange={setIsDisconnectDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disconnect from Store</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disconnect from "{disconnectStore?.name}
+              "?
+              <br />
+              <br />
+              This will remove your <strong>MANAGER</strong> profile from this
+              store. Your <strong>ADMIN</strong> role (platform-level) will
+              remain unchanged.
+              <br />
+              <br />
+              <strong>Note:</strong> ADMIN roles are platform-level only and are
+              never connected to stores. Only your MANAGER role in this store
+              will be removed.
+              {!hasOtherManagers(disconnectStore || ({} as Store)) && (
+                <span className="mt-2 block text-destructive">
+                  <strong>Warning:</strong> This store has no other managers.
+                  Please assign a manager before disconnecting.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDisconnecting}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDisconnect}
+              disabled={
+                isDisconnecting ||
+                !hasOtherManagers(disconnectStore || ({} as Store))
+              }
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

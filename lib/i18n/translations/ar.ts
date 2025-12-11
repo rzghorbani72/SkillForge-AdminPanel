@@ -188,7 +188,13 @@ export const ar = {
     requestTeacherRole: 'طلب دور المعلم',
     whyWantToBeTeacher: 'لماذا تريد أن تكون معلماً؟',
     teacherRequestReasonPlaceholder:
-      'يرجى شرح خبرتك في التدريس ومؤهلاتك وسبب رغبتك في التدريس في هذا المعهد...'
+      'يرجى شرح خبرتك في التدريس ومؤهلاتك وسبب رغبتك في التدريس في هذا المعهد...',
+    adminLogin: 'تسجيل دخول المدير',
+    adminOnly: 'هذه اللوحة مخصصة لـ',
+    adminsOnly: 'المديرين فقط.',
+    signInAsAdmin: 'تسجيل الدخول كمدير',
+    notAdmin: 'لست مديراً؟',
+    regularLogin: 'تسجيل الدخول العادي'
   },
   dashboard: {
     title: 'لوحة التحكم',

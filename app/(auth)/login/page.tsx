@@ -142,6 +142,7 @@ export default function LoginPage() {
           // Show store selection UI
           setAvailableStores(response.availableStores || []);
           setShowStoreSelection(true);
+          setIsLoading(false);
           return;
         }
 
@@ -173,6 +174,21 @@ export default function LoginPage() {
           userRole === 'MANAGER' ||
           userRole === 'TEACHER'
         ) {
+          // Check if admin has no store - clear store selection
+          const currentStore = response.currentStore;
+          const storeId =
+            response.currentProfile?.storeId ||
+            response.currentProfile?.store_id;
+          if (
+            userRole === 'ADMIN' &&
+            (!currentStore || storeId === null || storeId === undefined)
+          ) {
+            // Admin without store - clear any stored store selection
+            if (typeof window !== 'undefined') {
+              window.localStorage.removeItem('skillforge_selected_store_id');
+            }
+          }
+
           // User is admin/manager/teacher, redirect to admin dashboard
           router.push('/dashboard');
           return;
@@ -234,6 +250,21 @@ export default function LoginPage() {
           userRole === 'MANAGER' ||
           userRole === 'TEACHER'
         ) {
+          // Check if admin has no store - clear store selection
+          const currentStore = response.currentStore;
+          const storeId =
+            response.currentProfile?.storeId ||
+            response.currentProfile?.store_id;
+          if (
+            userRole === 'ADMIN' &&
+            (!currentStore || storeId === null || storeId === undefined)
+          ) {
+            // Admin without store - clear any stored store selection
+            if (typeof window !== 'undefined') {
+              window.localStorage.removeItem('skillforge_selected_store_id');
+            }
+          }
+
           router.push('/dashboard');
           return;
         } else {

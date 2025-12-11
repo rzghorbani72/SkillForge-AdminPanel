@@ -91,7 +91,6 @@ export default function AdminsPage() {
     const fetchCurrentUserProfile = async () => {
       try {
         const userData = await apiClient.getCurrentUser();
-        console.log('userData', userData);
         if (userData && (userData as any)?.data?.id) {
           // Fetch full profile to get created_at
           const profileResponse = await apiClient.getUsers({
@@ -99,7 +98,6 @@ export default function AdminsPage() {
             filter: 'none'
           });
           const profiles = (profileResponse as any)?.profiles || [];
-          console.log('profiles', profiles);
           const currentProfile = profiles.find(
             (p: any) => p.id === (userData as any).data.id
           );

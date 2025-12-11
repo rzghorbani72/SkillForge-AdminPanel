@@ -7,8 +7,17 @@ import { apiClient } from '@/lib/api';
 interface AuthUser {
   id: number;
   role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+  storeId?: number | null; // Store ID from /me endpoint (top level)
   profile?: {
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+    store_id?: number | null;
+    storeId?: number | null;
+    store?: {
+      id: number;
+      name?: string;
+      [key: string]: any;
+    };
+    [key: string]: any;
   };
 }
 
@@ -51,10 +60,22 @@ export function useAuthUser() {
         return;
       }
 
+      // Extract store information
+      // API returns: storeId (can be null for admins), currentStore (can be null)
+      const storeId = currentUser?.storeId ?? currentUser?.store_id ?? null;
+      const currentStore = currentUser?.currentStore ?? null;
+
       setUser({
         id: (currentUser as any)?.id || 0,
         role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
-        profile: (currentUser as any)?.profile || currentUser
+        storeId: storeId, // Store at top level for easy access
+        profile: {
+          ...((currentUser as any)?.profile || {}),
+          store_id: storeId, // Can be null for admins
+          storeId: storeId, // Can be null for admins
+          store: currentStore || (currentUser as any)?.profile?.store || null,
+          role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT'
+        }
       });
     } catch (err: any) {
       console.error('Error fetching authenticated user:', err);

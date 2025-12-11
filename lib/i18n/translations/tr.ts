@@ -193,7 +193,13 @@ export const tr = {
     requestTeacherRole: 'Öğretmen Rolü Talep Et',
     whyWantToBeTeacher: 'Neden öğretmen olmak istiyorsunuz?',
     teacherRequestReasonPlaceholder:
-      'Lütfen öğretim deneyiminizi, niteliklerinizi ve bu enstitüde öğretmek isteme nedeninizi açıklayın...'
+      'Lütfen öğretim deneyiminizi, niteliklerinizi ve bu enstitüde öğretmek isteme nedeninizi açıklayın...',
+    adminLogin: 'Yönetici Girişi',
+    adminOnly: 'Bu panel yalnızca',
+    adminsOnly: 'yöneticiler içindir.',
+    signInAsAdmin: 'Yönetici olarak giriş yapın',
+    notAdmin: 'Yönetici değil misiniz?',
+    regularLogin: 'Normal Giriş'
   },
   dashboard: {
     title: 'Kontrol Paneli',

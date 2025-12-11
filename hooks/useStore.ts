@@ -16,6 +16,7 @@ import {
   autoSelectStore,
   validateStoreCurrencyFields
 } from '@/lib/store-utils';
+import { useAuthUser } from './useAuthUser';
 
 interface UseStoreReturn {
   stores: Store[];
@@ -29,25 +30,44 @@ interface UseStoreReturn {
 
 export function useStore(): UseStoreReturn {
   const router = useRouter();
+  const { user } = useAuthUser();
   const [stores, setStores] = useState<Store[]>([]);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Get preferred store ID from user's /me response
+  // Priority: top-level storeId > profile.storeId > profile.store_id > profile.store.id
+  const preferredStoreId = user
+    ? ((user as any)?.storeId ??
+      (user as any)?.profile?.storeId ??
+      (user as any)?.profile?.store_id ??
+      (user as any)?.profile?.store?.id ??
+      null)
+    : null;
 
   // Load stores on mount
   useEffect(() => {
     loadStores();
   }, []);
 
-  // Update selected store when stores change
+  // Update selected store when stores change or user changes
   useEffect(() => {
+    // If user is admin without a store, don't select any store
+    if (user && user.role === 'ADMIN' && preferredStoreId === null) {
+      setSelectedStore(null);
+      return;
+    }
+
     if (stores.length > 0) {
-      const validStore = autoSelectStore(stores);
+      // Use preferred store ID from /me endpoint if available
+      // This ensures the dashboard shows the correct store from the API
+      const validStore = autoSelectStore(stores, preferredStoreId);
       setSelectedStore(validStore);
     } else {
       setSelectedStore(null);
     }
-  }, [stores]);
+  }, [stores, preferredStoreId, user]);
 
   const loadStores = useCallback(async () => {
     try {

@@ -9,6 +9,7 @@ import {
 } from '@/lib/utils';
 import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 export type DashboardStatsCard = {
   title: string;
@@ -36,6 +37,7 @@ export type CoursePerformance = {
 const useDashboard = () => {
   const { t, language } = useTranslation();
   const store = useCurrentStore();
+  const { user } = useAuthUser();
   const [recentCourses, setRecentCourses] = useState<Course[]>([]);
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
@@ -49,10 +51,47 @@ const useDashboard = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
 
+  // Check if user is admin without a store
+  const isAdminWithoutStore = useMemo(() => {
+    if (!user || user.role !== 'ADMIN') return false;
+    const userStoreId =
+      user.storeId ?? user.profile?.storeId ?? user.profile?.store_id ?? null;
+    return userStoreId === null;
+  }, [user]);
+
+  // For admins without stores, don't use store context
+  // For managers/admins with stores, use the selected store
+  const effectiveStore = isAdminWithoutStore ? null : store;
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setIsLoading(true);
+
+        // For admins without stores, fetch platform-wide data (no store filter)
+        // For managers/admins with stores, fetch store-specific data
+        const coursesParams = isAdminWithoutStore
+          ? { page: 1, limit: 10, filter: 'none' as const } // Platform-wide for admins
+          : effectiveStore
+            ? { page: 1, limit: 10, store_id: effectiveStore.id } // Store-specific for managers
+            : { page: 1, limit: 10 }; // Default
+
+        const enrollmentsParams = isAdminWithoutStore
+          ? { status: 'ACTIVE' as const, page: 1, limit: 1 }
+          : effectiveStore
+            ? {
+                status: 'ACTIVE' as const,
+                page: 1,
+                limit: 1,
+                store_id: effectiveStore.id
+              }
+            : { status: 'ACTIVE' as const, page: 1, limit: 1 };
+
+        const studentsParams = isAdminWithoutStore
+          ? { page: 1, limit: 1, filter: 'none' as const }
+          : effectiveStore
+            ? { page: 1, limit: 1, store_id: effectiveStore.id }
+            : { page: 1, limit: 1 };
 
         const [
           coursesResult,
@@ -61,11 +100,11 @@ const useDashboard = () => {
           activeEnrollmentsResult,
           studentsResult
         ] = await Promise.allSettled([
-          apiClient.getCourses({ page: 1, limit: 10 }),
+          apiClient.getCourses(coursesParams),
           apiClient.getRecentEnrollments(),
           apiClient.getPayments(),
-          apiClient.getEnrollments({ status: 'ACTIVE', page: 1, limit: 1 }),
-          apiClient.getStudentUsers({ page: 1, limit: 1 })
+          apiClient.getEnrollments(enrollmentsParams),
+          apiClient.getStudentUsers(studentsParams)
         ]);
 
         // Courses list & total
@@ -184,8 +223,12 @@ const useDashboard = () => {
         setIsLoading(false);
       }
     };
-    fetchDashboardData();
-  }, []);
+
+    // Only fetch when user data is loaded
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [user, store, isAdminWithoutStore]);
 
   // Generate monthly chart data from real payments and enrollments
   const monthlyChartData: ChartDataPoint[] = useMemo(() => {
@@ -267,7 +310,9 @@ const useDashboard = () => {
         icon: require('lucide-react').BookOpen,
         change: t('dashboard.live'),
         changeType: 'increase',
-        description: t('dashboard.coursesAcrossStores')
+        description: isAdminWithoutStore
+          ? t('dashboard.allPlatformCourses')
+          : t('dashboard.coursesAcrossStores')
       },
       {
         title: t('dashboard.totalStudents'),
@@ -275,15 +320,22 @@ const useDashboard = () => {
         icon: require('lucide-react').Users,
         change: t('dashboard.live'),
         changeType: 'increase',
-        description: t('dashboard.studentsEnrolledAcrossStores')
+        description: isAdminWithoutStore
+          ? t('dashboard.allPlatformStudents')
+          : t('dashboard.studentsEnrolledAcrossStores')
       },
       {
         title: t('dashboard.totalRevenue'),
-        value: formatCurrencyWithStore(statsTotals.totalRevenue, store),
+        value: formatCurrencyWithStore(
+          statsTotals.totalRevenue,
+          effectiveStore
+        ),
         icon: require('lucide-react').DollarSign,
         change: t('dashboard.live'),
         changeType: 'increase',
-        description: t('dashboard.completedPaymentsToDate')
+        description: isAdminWithoutStore
+          ? t('dashboard.platformRevenue')
+          : t('dashboard.completedPaymentsToDate')
       },
       {
         title: t('dashboard.activeEnrollments'),
@@ -294,7 +346,7 @@ const useDashboard = () => {
         description: t('dashboard.studentsCurrentlyProgressing')
       }
     ],
-    [statsTotals, store, t]
+    [statsTotals, effectiveStore, isAdminWithoutStore, t]
   );
 
   const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];
@@ -359,7 +411,7 @@ const useDashboard = () => {
             payment.course?.title || t('dashboard.unknownCourse');
           const amount = formatCurrencyWithStore(
             payment.amount ?? 0,
-            store,
+            effectiveStore,
             undefined,
             language
           );
@@ -388,7 +440,7 @@ const useDashboard = () => {
     safeRecentCourses,
     safeRecentEnrollments,
     safeRecentPayments,
-    store,
+    effectiveStore,
     t,
     language
   ]);

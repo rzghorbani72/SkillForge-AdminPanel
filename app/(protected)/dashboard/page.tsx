@@ -32,12 +32,14 @@ import CoursePerformanceChart from '@/components/dashboard/CoursePerformanceChar
 import QuickActions from '@/components/dashboard/QuickActions';
 import { useAccessControl } from '@/hooks/useAccessControl';
 import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import Link from 'next/link';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
+  const { user } = useAuthUser();
   const store = useCurrentStore();
   const {
     isLoading,
@@ -52,6 +54,13 @@ export default function DashboardPage() {
   } = useDashboard();
 
   const { userState, isLoading: userLoading } = useAccessControl();
+
+  // Check if user is admin without a store
+  const isAdminWithoutStore =
+    user &&
+    user.role === 'ADMIN' &&
+    (user.storeId === null || user.storeId === undefined);
+  const effectiveStore = isAdminWithoutStore ? null : store;
 
   // Calculate monthly statistics
   const now = new Date();
@@ -328,7 +337,7 @@ export default function DashboardPage() {
                 <span>
                   {formatCurrencyWithStore(
                     currentRevenue,
-                    store,
+                    effectiveStore,
                     undefined,
                     language
                   )}
@@ -336,7 +345,7 @@ export default function DashboardPage() {
                 <span>
                   {formatCurrencyWithStore(
                     revenueTarget,
-                    store,
+                    effectiveStore,
                     undefined,
                     language
                   )}

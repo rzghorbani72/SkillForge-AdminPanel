@@ -193,6 +193,27 @@ class AuthService {
     }
   }
 
+  // Admin login with email + phone + password
+  async adminLogin(credentials: {
+    email: string;
+    phone_number: string;
+    password: string;
+  }): Promise<AuthUser> {
+    try {
+      const response = await apiClient.adminLogin(credentials);
+      if (response?.data) {
+        this.currentUser = response.data as AuthUser;
+        this.persistSession(this.currentUser);
+        return this.currentUser;
+      }
+
+      throw new Error('Admin login failed');
+    } catch (error) {
+      ErrorHandler.handleValidationErrors(error);
+      throw error;
+    }
+  }
+
   // Register new user
   async register(userData: RegisterData): Promise<AuthUser> {
     try {

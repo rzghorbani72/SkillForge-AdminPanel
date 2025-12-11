@@ -133,10 +133,38 @@ export function validateStoreSelection(stores: Store[]): boolean {
 
 /**
  * Auto-select a store if none is selected or current selection is invalid
+ * @param stores - List of available stores
+ * @param preferredStoreId - Preferred store ID from /me endpoint (optional)
  */
-export function autoSelectStore(stores: Store[]): Store | null {
+export function autoSelectStore(
+  stores: Store[],
+  preferredStoreId?: number | null
+): Store | null {
   if (stores.length === 0) return null;
 
+  // First priority: Use preferred store ID from /me endpoint if provided and valid
+  // This ensures the dashboard shows the store from the API response
+  if (preferredStoreId) {
+    const preferredStore = stores.find(
+      (store) => store.id === preferredStoreId
+    );
+    if (preferredStore) {
+      // If localStorage has a different store, update it to match /me response
+      const currentSelectedId = getSelectedStoreId();
+      if (currentSelectedId !== preferredStoreId) {
+        setSelectedStoreId(preferredStoreId);
+      }
+      return preferredStore;
+    }
+    // If preferred store is not in the list, clear invalid localStorage selection
+    const currentSelectedId = getSelectedStoreId();
+    if (currentSelectedId === preferredStoreId) {
+      // Clear invalid selection
+      localStorage.removeItem('skillforge_selected_store_id');
+    }
+  }
+
+  // Second priority: Use stored selection from localStorage (if it's valid)
   const selectedId = getSelectedStoreId();
   const selectedStore = stores.find((store) => store.id === selectedId);
 
@@ -144,7 +172,7 @@ export function autoSelectStore(stores: Store[]): Store | null {
     return selectedStore;
   }
 
-  // If no valid selection, select the first store
+  // Last resort: Select the first store
   const firstStore = stores[0];
   setSelectedStoreId(firstStore.id);
   return firstStore;

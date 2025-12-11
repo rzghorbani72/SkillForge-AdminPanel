@@ -226,7 +226,13 @@ export const fa = {
     requestTeacherRole: 'درخواست نقش معلم',
     whyWantToBeTeacher: 'چرا می‌خواهید معلم شوید؟',
     teacherRequestReasonPlaceholder:
-      'لطفاً تجربه تدریس، مدارک و دلیل تمایل به تدریس در این آکادمی را توضیح دهید...'
+      'لطفاً تجربه تدریس، مدارک و دلیل تمایل به تدریس در این آکادمی را توضیح دهید...',
+    adminLogin: 'ورود مدیر',
+    adminOnly: 'این پنل مخصوص',
+    adminsOnly: 'مدیران کل است.',
+    signInAsAdmin: 'به عنوان مدیر کل وارد شوید',
+    notAdmin: 'مدیر کل نیستید؟',
+    regularLogin: 'ورود عادی'
   },
   dashboard: {
     title: 'داشبورد',
