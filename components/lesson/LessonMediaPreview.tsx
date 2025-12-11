@@ -5,7 +5,7 @@ import { Lesson } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import {
   Video,
-  Audio,
+  AudioLines,
   FileText,
   Image as ImageIcon,
   Play,
@@ -147,7 +147,7 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
             className="h-8"
             onClick={() => openPreview('audio')}
           >
-            <Audio className="mr-1 h-3 w-3" />
+            <AudioLines className="mr-1 h-3 w-3" />
             <span className="text-xs">Audio</span>
           </Button>
         )}
