@@ -12,10 +12,15 @@ import { Building2, ChevronDown, Check } from 'lucide-react';
 import { Store } from '@/types/api';
 import { useStore } from '@/hooks/useStore';
 import { getSelectedStoreId, setSelectedStoreId } from '@/lib/store-utils';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 export function StoreSelector() {
   const { stores, selectedStore, selectStore, isLoading } = useStore();
+  const { user } = useAuthUser();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Check if user is a platform-level admin
+  const isPlatformAdmin = user?.isAdminProfile || user?.platformLevel || false;
 
   if (isLoading) {
     return (
@@ -40,6 +45,16 @@ export function StoreSelector() {
       <div className="flex items-center gap-2 px-3 py-2">
         <Building2 className="h-4 w-4" />
         <span className="text-sm font-medium">{stores[0].name}</span>
+      </div>
+    );
+  }
+
+  // For platform-level admins, show disabled state
+  if (isPlatformAdmin) {
+    return (
+      <div className="flex cursor-not-allowed items-center gap-2 px-3 py-2 opacity-50">
+        <Building2 className="h-4 w-4" />
+        <span className="text-sm text-muted-foreground">No Store Selected</span>
       </div>
     );
   }
