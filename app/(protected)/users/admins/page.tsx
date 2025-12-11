@@ -66,6 +66,10 @@ export default function AdminsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateAdminDialog, setShowCreateAdminDialog] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState<number | null>(null);
+  const [updatingConfirmation, setUpdatingConfirmation] = useState<{
+    id: number;
+    type: 'email' | 'phone';
+  } | null>(null);
   const [currentUserProfile, setCurrentUserProfile] = useState<{
     id: number;
     created_at: string;
@@ -156,6 +160,34 @@ export default function AdminsPage() {
       ErrorHandler.handleApiError(error);
     } finally {
       setUpdatingStatus(null);
+    }
+  };
+
+  const handleConfirmationToggle = async (
+    adminId: number,
+    type: 'email' | 'phone',
+    currentValue: boolean
+  ) => {
+    try {
+      setUpdatingConfirmation({ id: adminId, type });
+      const field = type === 'email' ? 'email_confirmed' : 'phone_confirmed';
+      await apiClient.updateUser(adminId, { [field]: !currentValue });
+      toast.success(
+        !currentValue
+          ? t(`admins.${type}Confirmed`)
+          : t(`admins.${type}Unconfirmed`)
+      );
+      await fetchAdmins();
+    } catch (error: any) {
+      console.error(`Error updating ${type} confirmation:`, error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        t('admins.failedToUpdateConfirmation');
+      toast.error(errorMessage);
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setUpdatingConfirmation(null);
     }
   };
 
@@ -476,6 +508,43 @@ export default function AdminsPage() {
                                   >
                                     <XCircle className="me-2 h-4 w-4" />
                                     {t('common.deactivate')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleConfirmationToggle(
+                                        admin.id,
+                                        'email',
+                                        admin.email_confirmed
+                                      )
+                                    }
+                                    disabled={
+                                      updatingConfirmation?.id === admin.id &&
+                                      updatingConfirmation?.type === 'email'
+                                    }
+                                  >
+                                    <Mail className="me-2 h-4 w-4" />
+                                    {admin.email_confirmed
+                                      ? t('admins.unconfirmEmail')
+                                      : t('admins.confirmEmail')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleConfirmationToggle(
+                                        admin.id,
+                                        'phone',
+                                        admin.phone_confirmed
+                                      )
+                                    }
+                                    disabled={
+                                      updatingConfirmation?.id === admin.id &&
+                                      updatingConfirmation?.type === 'phone'
+                                    }
+                                  >
+                                    <Phone className="me-2 h-4 w-4" />
+                                    {admin.phone_confirmed
+                                      ? t('admins.unconfirmPhone')
+                                      : t('admins.confirmPhone')}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>

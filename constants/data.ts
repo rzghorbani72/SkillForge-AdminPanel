@@ -140,6 +140,22 @@ export const navItems: NavItem[] = [
     label: 'dashboard'
   },
   {
+    title: 'Platform Overview',
+    href: '/platform',
+    icon: 'building2' as IconType,
+    label: 'platform-overview',
+    roles: ['ADMIN'], // Only platform-level admins see this
+    adminOnly: true // Only admins without stores see this
+  },
+  {
+    title: 'All Schools',
+    href: '/platform/schools',
+    icon: 'store' as IconType,
+    label: 'all-schools',
+    roles: ['ADMIN'], // Only platform-level admins see this
+    adminOnly: true // Only admins without stores see this
+  },
+  {
     title: 'My Stores',
     href: '/stores?filter=none',
     icon: 'store' as IconType,

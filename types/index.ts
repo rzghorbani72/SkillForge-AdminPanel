@@ -11,6 +11,7 @@ export interface NavItem {
   description?: string;
   children?: NavItem[];
   roles?: ('ADMIN' | 'MANAGER' | 'TEACHER')[]; // If not specified, all roles can access
+  adminOnly?: boolean; // If true, only show to admins without stores (platform-level admins)
 }
 
 export interface NavItemWithChildren extends NavItem {

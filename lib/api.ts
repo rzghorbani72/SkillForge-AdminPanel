@@ -1586,6 +1586,8 @@ class ApiClient {
     password: string;
     phone_otp: string;
     email_otp: string;
+    auto_confirm_email?: boolean;
+    auto_confirm_phone?: boolean;
     // Note: store_id is not included - new admins are always created without a store
   }) {
     const response = await this.request('/users/admin', {

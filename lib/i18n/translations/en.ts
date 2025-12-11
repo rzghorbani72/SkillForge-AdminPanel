@@ -1167,7 +1167,16 @@ export const en = {
     cannotModifyOlderAdmin: 'Cannot modify older admin',
     statusUpdatedToActive: 'Admin status updated to active',
     statusUpdatedToInactive: 'Admin status updated to inactive',
-    failedToUpdateStatus: 'Failed to update admin status'
+    failedToUpdateStatus: 'Failed to update admin status',
+    confirmEmail: 'Confirm Email',
+    unconfirmEmail: 'Unconfirm Email',
+    confirmPhone: 'Confirm Phone',
+    unconfirmPhone: 'Unconfirm Phone',
+    emailConfirmed: 'Email confirmed',
+    emailUnconfirmed: 'Email unconfirmed',
+    phoneConfirmed: 'Phone confirmed',
+    phoneUnconfirmed: 'Phone unconfirmed',
+    failedToUpdateConfirmation: 'Failed to update confirmation status'
   },
   createAdminUser: {
     title: 'Create Admin User',
@@ -1198,8 +1207,13 @@ export const en = {
     pleaseEnterPhoneOtp: 'Please enter phone OTP',
     pleaseEnterEmailOtp: 'Please enter email OTP',
     pleaseVerifyBothOtps: 'Please verify both phone and email OTPs',
+    pleaseVerifyPhoneOtp: 'Please verify phone OTP or enable auto-confirm',
+    pleaseVerifyEmailOtp: 'Please verify email OTP or enable auto-confirm',
     passwordsDoNotMatch: 'Passwords do not match',
-    adminUserCreatedSuccess: 'Admin user created successfully'
+    adminUserCreatedSuccess: 'Admin user created successfully',
+    autoConfirmEmail: 'Auto-confirm email',
+    autoConfirmPhone: 'Auto-confirm phone',
+    autoConfirmed: 'Auto-confirmed'
   },
   changeUserRole: {
     title: 'Change User Role',

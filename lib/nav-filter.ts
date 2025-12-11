@@ -48,6 +48,11 @@ export function filterNavItemsByRole(
 
   return items
     .filter((item) => {
+      // Check if item is admin-only (only show to admins without stores)
+      if ((item as any).adminOnly === true) {
+        return isAdminWithoutStore;
+      }
+
       // If item has no role restriction, check if it's store-specific
       if (!item.roles || item.roles.length === 0) {
         // For admins without store, hide store-specific items
