@@ -143,9 +143,9 @@ const ProductsGrid = ({
             >
               {/* Product Cover */}
               <div className="relative aspect-[4/3] overflow-hidden bg-muted/50">
-                {product.cover?.url ? (
+                {product.cover?.publicUrl ? (
                   <Image
-                    src={product.cover.url}
+                    src={product.cover.publicUrl}
                     alt={product.cover.alt || product.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"

@@ -143,7 +143,7 @@ const formatDate = (isoDate?: string) => {
 };
 
 const getAudioUrl = (audio: AudioItem) => {
-  const source = audio.streaming_url ?? audio.url ?? '';
+  const source = audio.streaming_url ?? audio.publicUrl ?? '';
   if (!source) return '';
   if (source.startsWith('http')) return source;
   const apiBase =

@@ -1,14 +1,25 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { useCategoriesStore } from '@/lib/store';
 import useLessonForm from '@/components/lesson/useLessonForm';
 import LessonFormPage from '@/components/lesson/LessonFormPage';
-import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function EditLessonPage() {
   const { selectedStore } = useStore();
-  const { categories } = useCategoriesStore();
+  const {
+    categories,
+    fetchCategories,
+    isLoading: categoriesLoading
+  } = useCategoriesStore();
+
+  // Ensure categories are loaded
+  useEffect(() => {
+    if (categories.length === 0 && !categoriesLoading) {
+      fetchCategories();
+    }
+  }, [categories.length, categoriesLoading, fetchCategories]);
   const {
     lesson,
     season,
@@ -63,26 +74,15 @@ export default function EditLessonPage() {
   }
 
   return (
-    <AccessControlGuard
-      resource={{
-        owner_id: course?.author_id,
-        store_id: course?.store_id ?? 0,
-        access_control: (lesson as any)?.access_control
-      }}
-      action="modify"
-      fallbackPath={`/courses/${course?.id}/seasons/${season?.id}/lessons`}
-      fallbackMessage="You can only edit your own lessons."
-    >
-      <LessonFormPage
-        initialValues={initialValues}
-        categories={categories}
-        isSubmitting={isSubmitting}
-        onSubmit={onSubmit}
-        onCancel={() => window.history.back()}
-        season={season}
-        course={course}
-        isEdit={isEdit}
-      />
-    </AccessControlGuard>
+    <LessonFormPage
+      initialValues={initialValues}
+      categories={categories}
+      isSubmitting={isSubmitting}
+      onSubmit={onSubmit}
+      onCancel={() => window.history.back()}
+      season={season}
+      course={course}
+      isEdit={isEdit}
+    />
   );
 }

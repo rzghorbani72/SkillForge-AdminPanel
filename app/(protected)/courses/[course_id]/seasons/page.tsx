@@ -79,15 +79,14 @@ export default function SeasonsPage() {
           apiClient.getSeasons(parseInt(courseId)),
           apiClient.getLessons({ course_id: parseInt(courseId) })
         ]);
-
       if (courseResponse) {
         setCourse(courseResponse);
       }
 
       const seasonsData = Array.isArray(seasonsResponse)
         ? seasonsResponse
-        : Array.isArray((seasonsResponse as any)?.data)
-          ? (seasonsResponse as any).data
+        : Array.isArray(seasonsResponse as any)
+          ? (seasonsResponse as any)
           : [];
 
       if (seasonsData.length > 0) {
@@ -96,8 +95,8 @@ export default function SeasonsPage() {
           ? lessonsResponse
           : Array.isArray((lessonsResponse as any)?.lessons)
             ? (lessonsResponse as any).lessons
-            : Array.isArray((lessonsResponse as any)?.data)
-              ? (lessonsResponse as any).data
+            : Array.isArray(lessonsResponse as any)
+              ? (lessonsResponse as any)
               : [];
 
         const allLessons = lessonsData as Lesson[];
@@ -126,9 +125,6 @@ export default function SeasonsPage() {
         // Handle lessons without season (orphaned lessons)
         const orphanedLessons = lessonsBySeason[0] || [];
         setOrphanedLessons(orphanedLessons);
-        if (orphanedLessons.length > 0) {
-          console.log('Found orphaned lessons:', orphanedLessons);
-        }
       }
     } catch (error) {
       console.error('Error fetching data:', error);

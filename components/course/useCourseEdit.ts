@@ -53,7 +53,7 @@ const useCourseEdit = (): UseCourseEditReturn => {
       if (response) {
         setCourse(response);
         // Set the existing cover image as preview
-        if (response.cover?.url) {
+        if (response.cover?.publicUrl) {
           imageUpload.reset();
           // We'll set the preview manually since we have an existing image
         }
@@ -172,7 +172,7 @@ const useCourseEdit = (): UseCourseEditReturn => {
     handleCoverImageChange: imageUpload.handleFileChange,
     removeCoverImage: imageUpload.removeFile,
     coverImage: imageUpload.selectedFile,
-    coverPreview: imageUpload.preview || course?.cover?.url || null
+    coverPreview: imageUpload.preview || course?.cover?.publicUrl || null
   };
 };
 

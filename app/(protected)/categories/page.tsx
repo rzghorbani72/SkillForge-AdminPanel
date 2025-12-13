@@ -26,10 +26,11 @@ export default function CategoriesPage() {
     categories,
     isLoading,
     error,
-    setCategories,
-    setLoading,
-    setError,
-    clearError
+    clearError,
+    addCategory,
+    updateCategory: updateCategoryInStore,
+    removeCategory: removeCategoryFromStore,
+    fetchCategories
   } = useCategoriesStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<FilterType>('all');
@@ -45,40 +46,13 @@ export default function CategoriesPage() {
 
   const hasFetched = useRef(false);
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      setLoading(true);
-      clearError();
-      const response = await apiClient.getCategories();
-
-      let categoriesData: Category[] = [];
-
-      if (
-        response &&
-        typeof response === 'object' &&
-        Array.isArray(response.data)
-      ) {
-        categoriesData = response.data as Category[];
-      } else {
-        categoriesData = [];
-      }
-
-      setCategories(categoriesData);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      setError('Failed to fetch categories');
-      setCategories([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    if (!hasFetched.current && categories.length === 0) {
+    // Only fetch if categories are not already loaded (from dashboard initialization)
+    if (!hasFetched.current && categories.length === 0 && !isLoading) {
       hasFetched.current = true;
       fetchCategories();
     }
-  }, [categories.length]);
+  }, [categories.length, isLoading, fetchCategories]);
 
   useEffect(() => {
     const typeParam = searchParams.get('type');
@@ -121,16 +95,35 @@ export default function CategoriesPage() {
         return;
       }
 
-      await apiClient.createCategory({
+      const response = await apiClient.createCategory({
         name: formData.name.trim(),
         description: formData.description.trim() || undefined,
         type: formData.type
       });
 
-      toast.success('Category created successfully');
+      // Extract the created category from response
+      let createdCategory: Category | null = null;
+      if (response?.data) {
+        if (Array.isArray(response.data)) {
+          createdCategory = response.data[0] as Category;
+        } else if (response.data && typeof response.data === 'object') {
+          createdCategory =
+            (response.data as any).data || (response.data as any);
+        }
+      }
+
+      if (createdCategory) {
+        // Update Zustand store with new category
+        addCategory(createdCategory);
+        toast.success('Category created successfully');
+      } else {
+        // Fallback: refetch if we can't extract the category
+        await fetchCategories();
+        toast.success('Category created successfully');
+      }
+
       setIsCreateDialogOpen(false);
       resetForm();
-      fetchCategories();
     } catch (error) {
       console.error('Error creating category:', error);
       toast.error('Failed to create category');
@@ -144,18 +137,22 @@ export default function CategoriesPage() {
         return;
       }
 
-      await apiClient.updateCategory(editingCategory.id, {
+      const updateData = {
         name: formData.name.trim(),
         description: formData.description.trim() || undefined,
         type: formData.type,
         is_active: formData.is_active
-      });
+      };
+
+      await apiClient.updateCategory(editingCategory.id, updateData);
+
+      // Update Zustand store with updated category
+      updateCategoryInStore(editingCategory.id, updateData);
 
       toast.success('Category updated successfully');
       setIsEditDialogOpen(false);
       setEditingCategory(null);
       resetForm();
-      fetchCategories();
     } catch (error) {
       console.error('Error updating category:', error);
       toast.error('Failed to update category');
@@ -182,8 +179,11 @@ export default function CategoriesPage() {
 
     try {
       await apiClient.deleteCategory(categoryId);
+
+      // Update Zustand store by removing the category
+      removeCategoryFromStore(categoryId);
+
       toast.success('Category deleted successfully');
-      fetchCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
       toast.error('Failed to delete category');

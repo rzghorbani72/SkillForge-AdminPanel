@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FormControl,
@@ -17,53 +17,25 @@ import {
 } from '@/components/ui/select';
 import { UseFormReturn } from 'react-hook-form';
 import { CourseCreateFormData } from './useCourseCreate';
-import { apiClient } from '@/lib/api';
-import { Category } from '@/types/api';
+import { useCategoriesStore } from '@/lib/store';
 
 type Props = {
   form: UseFormReturn<CourseCreateFormData>;
 };
 
 const CreateCourseAssociations = ({ form }: Props) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(false);
-  const [categoriesError, setCategoriesError] = useState<string | null>(null);
-  const hasFetchedCategories = useRef(false);
+  const {
+    categories,
+    fetchCategories,
+    isLoading: categoriesLoading
+  } = useCategoriesStore();
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      setCategoriesLoading(true);
-      setCategoriesError(null);
-      const response = await apiClient.getCategories();
-
-      let categoriesData: Category[] = [];
-
-      if (
-        response &&
-        typeof response === 'object' &&
-        Array.isArray(response.data)
-      ) {
-        categoriesData = response.data as Category[];
-      } else {
-        categoriesData = [];
-      }
-
-      setCategories(categoriesData);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      setCategoriesError('Failed to fetch categories');
-      setCategories([]);
-    } finally {
-      setCategoriesLoading(false);
-    }
-  }, []); // Empty dependency array - store functions are stable
-
+  // Ensure categories are loaded
   useEffect(() => {
-    if (!hasFetchedCategories.current && categories.length === 0) {
-      hasFetchedCategories.current = true;
+    if (categories.length === 0 && !categoriesLoading) {
       fetchCategories();
     }
-  }, [categories.length, fetchCategories]);
+  }, [categories.length, categoriesLoading, fetchCategories]);
 
   // Filter categories to only show COURSE type and active ones, format for dropdown
   const courseCategories = categories

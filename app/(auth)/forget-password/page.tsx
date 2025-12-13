@@ -160,7 +160,6 @@ export default function ForgetPasswordPage() {
           return;
         }
 
-        console.log('Sending OTP to phone:', phoneToSend);
         await apiClient.sendPhoneOtp(
           phoneToSend,
           OtpType.RESET_PASSWORD_BY_PHONE

@@ -1091,9 +1091,7 @@ class ApiClient {
           // Only update if progress has actually changed
           if (progress !== lastProgress) {
             lastProgress = progress;
-            console.log(
-              `Upload progress: ${event.loaded}/${event.total} bytes (${progress}%)`
-            );
+
             onProgress(progress);
           }
         }
@@ -1101,7 +1099,6 @@ class ApiClient {
 
       // Event handlers
       xhr.upload.addEventListener('loadstart', () => {
-        console.log('Upload started');
         if (onProgress) onProgress(0);
       });
 
@@ -1299,7 +1296,6 @@ class ApiClient {
 
   async getVideos() {
     const response = await this.request('/videos');
-    console.log('1.response getVideos', response);
     // Return the videos data directly
     if (response.data) {
       return response.data as any;

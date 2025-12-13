@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FormControl,
@@ -21,6 +21,7 @@ import { ProductCreateFormData } from './useProductCreate';
 import { apiClient } from '@/lib/api';
 import { Category, Course } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useCategoriesStore } from '@/lib/store';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
@@ -28,53 +29,28 @@ type Props = {
 
 const CreateProductAssociations = ({ form }: Props) => {
   const { t } = useTranslation();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const {
+    categories,
+    fetchCategories,
+    isLoading: categoriesLoading
+  } = useCategoriesStore();
   const [courses, setCourses] = useState<Course[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [coursesLoading, setCoursesLoading] = useState(false);
-  const [categoriesError, setCategoriesError] = useState<string | null>(null);
   const [coursesError, setCoursesError] = useState<string | null>(null);
-  const hasFetchedCategories = useRef(false);
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      setCategoriesLoading(true);
-      setCategoriesError(null);
-      const response = await apiClient.getCategories();
-
-      let categoriesData: Category[] = [];
-
-      // Handle different response structures
-      if (Array.isArray(response)) {
-        categoriesData = response as Category[];
-      } else if (
-        response &&
-        typeof response === 'object' &&
-        'data' in response &&
-        Array.isArray(response.data)
-      ) {
-        categoriesData = response.data as Category[];
-      } else if (
-        response &&
-        typeof response === 'object' &&
-        Array.isArray(response)
-      ) {
-        categoriesData = response as Category[];
-      } else {
-        categoriesData = [];
-      }
-
-      setCategories(categoriesData);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      setCategoriesError('Failed to fetch categories');
-      setCategories([]);
-    } finally {
-      setCategoriesLoading(false);
+  // Ensure categories are loaded
+  useEffect(() => {
+    if (categories.length === 0 && !categoriesLoading) {
+      fetchCategories();
     }
-  }, []);
+  }, [categories.length, categoriesLoading, fetchCategories]);
 
   const fetchCourses = useCallback(async (categoryId?: string) => {
+    if (!categoryId) {
+      setCourses([]);
+      return;
+    }
+
     try {
       setCoursesLoading(true);
       setCoursesError(null);
@@ -117,13 +93,6 @@ const CreateProductAssociations = ({ form }: Props) => {
       setCoursesLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    if (!hasFetchedCategories.current && categories.length === 0) {
-      hasFetchedCategories.current = true;
-      fetchCategories();
-    }
-  }, [categories.length, fetchCategories]);
 
   // Watch category_id to filter courses
   const selectedCategoryId = form.watch('category_id');
@@ -199,7 +168,7 @@ const CreateProductAssociations = ({ form }: Props) => {
                       </SelectItem>
                     ) : productCategories.length === 0 ? (
                       <SelectItem value="" disabled>
-                        {categoriesError || t('products.noCategoriesAvailable')}
+                        {t('products.noCategoriesAvailable')}
                       </SelectItem>
                     ) : (
                       <>

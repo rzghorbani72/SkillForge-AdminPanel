@@ -45,7 +45,6 @@ export default function ProfileSettingsPage() {
       setForm(DEFAULT_FORM);
       return;
     }
-    console.log('user', user);
 
     setForm({
       name: user.display_name ?? '',

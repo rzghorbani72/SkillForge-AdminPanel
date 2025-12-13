@@ -26,7 +26,6 @@ export function StoreCard({
   isManager = false,
   canDisconnect = false
 }: StoreCardProps) {
-  console.log('store', store);
   return (
     <Card key={store.id}>
       <CardHeader>

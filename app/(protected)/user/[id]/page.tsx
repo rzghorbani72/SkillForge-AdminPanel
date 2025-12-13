@@ -102,7 +102,7 @@ export default function UserDetailPage() {
 
   const profiles = user.profiles || [];
   const userStatus = user.status || (user.is_active ? 'ACTIVE' : 'INACTIVE');
-  const avatarUrl = profiles[0]?.avatar?.url;
+  const avatarUrl = profiles[0]?.avatar?.publicUrl;
 
   return (
     <div className="flex-1 space-y-6 p-6">

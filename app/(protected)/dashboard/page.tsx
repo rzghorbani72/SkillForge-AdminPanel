@@ -37,9 +37,14 @@ import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import Link from 'next/link';
 import { useMemo } from 'react';
+import { useInitializeStores } from '@/hooks/useInitializeStores';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
+
+  // Initialize stores on first render
+  useInitializeStores();
+
   const { user } = useAuthUser();
   const store = useCurrentStore();
   const {

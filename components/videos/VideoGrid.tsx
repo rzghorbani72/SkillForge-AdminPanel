@@ -144,9 +144,9 @@ function VideoCard({
     video.Owner?.avatar_url ??
     video.owner?.avatar_url ??
     video.uploader?.avatar_url ??
-    video.Owner?.avatar?.url ??
-    video.owner?.avatar?.url ??
-    video.uploader?.avatar?.url;
+    video.Owner?.avatar?.publicUrl ??
+    video.owner?.avatar?.publicUrl ??
+    video.uploader?.avatar?.publicUrl;
 
   const ownerInitials = ownerName
     .split(' ')
@@ -177,10 +177,10 @@ function VideoCard({
   const videoSource =
     video.streaming_url ||
     video.stream_url ||
-    video.url ||
+    video.publicUrl ||
     video.source_url ||
     video.media_url ||
-    video.media?.url ||
+    video.media?.publicUrl ||
     video.metadata?.streaming_url;
   const videoMimeType =
     video.mime_type ||

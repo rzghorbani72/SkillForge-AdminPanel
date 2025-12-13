@@ -4,11 +4,6 @@ import { useAccessControl } from '@/hooks/useAccessControl';
 
 export default function TestHookPage() {
   const { userState, isLoading, error } = useAccessControl();
-
-  console.log('Test Hook - User State:', userState);
-  console.log('Test Hook - Loading:', isLoading);
-  console.log('Test Hook - Error:', error);
-
   return (
     <div className="p-8">
       <h1 className="mb-4 text-2xl font-bold">Test Access Control Hook</h1>

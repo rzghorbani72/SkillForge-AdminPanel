@@ -38,7 +38,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 interface ImageItem {
   id: number;
   filename: string;
-  url: string;
+  publicUrl: string;
   size: number;
   mime_type: string;
   created_at: string;
@@ -310,9 +310,9 @@ export default function ImagesPage() {
                 <div className="relative aspect-video w-full overflow-hidden bg-muted">
                   <Image
                     src={
-                      image.url.startsWith('/')
-                        ? `${process.env.NEXT_PUBLIC_HOST}${image.url}`
-                        : image.url
+                      image.publicUrl.startsWith('/')
+                        ? `${process.env.NEXT_PUBLIC_HOST}${image.publicUrl}`
+                        : image.publicUrl
                     }
                     alt={image.alt || image.filename}
                     fill
@@ -426,7 +426,7 @@ export default function ImagesPage() {
         <ImageViewModal
           open={!!viewImage}
           onOpenChange={(open: boolean) => !open && setViewImage(null)}
-          imageUrl={viewImage.url}
+          imageUrl={viewImage.publicUrl}
           title={viewImage.alt || viewImage.filename}
           filename={viewImage.filename}
         />
@@ -439,7 +439,7 @@ export default function ImagesPage() {
           onOpenChange={(open: boolean) => !open && setEditImage(null)}
           image={{
             id: editImage.id,
-            url: editImage.url,
+            publicUrl: editImage.publicUrl,
             filename: editImage.filename,
             alt: editImage.alt
           }}

@@ -34,7 +34,7 @@ import Image from 'next/image';
 
 interface Image {
   id: number;
-  url: string;
+  publicUrl: string;
   alt?: string;
   title?: string;
   created_at: string;
@@ -48,7 +48,7 @@ interface ImageWithState extends Image {
 }
 
 interface ImageSelectionDialogProps {
-  onSelect: (image: { id: number; url: string }) => void;
+  onSelect: (image: { id: number; publicUrl: string }) => void;
   selectedImageId?: string | null;
   trigger?: React.ReactNode;
   open?: boolean;
@@ -80,7 +80,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
         // Transform the response to match our Image interface with loading states
         const transformedImages = response.data.map((img: any) => ({
           id: img.id,
-          url: process.env.NEXT_PUBLIC_HOST + img.url,
+          publicUrl: process.env.NEXT_PUBLIC_HOST + img.publicUrl,
           alt: img.alt || '',
           title: img.filename || `Image ${img.id}`,
           created_at: img.created_at || new Date().toISOString(),
@@ -125,7 +125,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
     // Extract only id and url for the callback
     const imageData = {
       id: image.id,
-      url: image.url
+      publicUrl: image.publicUrl
     };
     onSelect(imageData);
     onOpenChange?.(false);
@@ -280,9 +280,9 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
                     <div className="relative aspect-square overflow-hidden rounded-lg">
                       {/* Loading state */}
 
-                      {image.url && (
+                      {image.publicUrl && (
                         <Image
-                          src={image.url}
+                          src={image.publicUrl}
                           alt={image.alt || 'Image'}
                           width={100}
                           height={100}

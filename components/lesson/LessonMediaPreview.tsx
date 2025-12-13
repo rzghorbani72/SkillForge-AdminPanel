@@ -61,8 +61,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
   const getAudioUrl = () => {
     if (!lesson.audio_id) return '';
     // If audio relation is loaded, use its URL
-    if (lesson.audio?.url) {
-      const url = lesson.audio.url;
+    if (lesson.audio?.publicUrl) {
+      const url = lesson.audio.publicUrl;
       if (url.startsWith('http')) return url;
       const apiBase =
         process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
@@ -80,8 +80,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
   const getDocumentUrl = () => {
     if (!lesson.document_id) return '';
     // If document relation is loaded, use its URL
-    if (lesson.document?.url) {
-      const url = lesson.document.url;
+    if (lesson.document?.publicUrl) {
+      const url = lesson.document.publicUrl;
       if (url.startsWith('http')) return url;
       const apiBase =
         process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
@@ -99,8 +99,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
   const getImageUrl = () => {
     if (!lesson.image_id) return '';
     // If image relation is loaded, use its URL
-    if (lesson.image?.url) {
-      const url = lesson.image.url;
+    if (lesson.image?.publicUrl) {
+      const url = lesson.image.publicUrl;
       if (url.startsWith('http')) return url;
       const apiBase =
         process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||

@@ -16,7 +16,7 @@ import { apiClient } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 interface VideoSelectionDialogProps {
-  onSelect: (video: { id: number; url: string; title?: string }) => void;
+  onSelect: (video: { id: number; publicUrl: string; title?: string }) => void;
   selectedVideoId?: string | null;
   trigger?: React.ReactNode;
   open?: boolean;
@@ -26,7 +26,7 @@ interface VideoSelectionDialogProps {
 interface VideoItem {
   id: number;
   title: string;
-  url: string;
+  publicUrl: string;
   streaming_url?: string;
   poster_url?: string;
   size: number;
@@ -96,7 +96,7 @@ const VideoSelectionDialog: React.FC<VideoSelectionDialogProps> = ({
   const handleVideoSelect = (video: VideoItem) => {
     onSelect({
       id: video.id,
-      url: video.streaming_url || video.url,
+      publicUrl: video.streaming_url || video.publicUrl,
       title: video.title
     });
     onOpenChange?.(false);

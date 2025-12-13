@@ -137,7 +137,7 @@ export interface Media {
   description?: string;
   filename: string;
   original_name: string;
-  url: string;
+  publicUrl: string;
   mime_type: string;
   size: number;
   type: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT';
@@ -355,7 +355,7 @@ export interface Lesson {
 // Media Types
 export interface Video {
   id: number;
-  url: string;
+  publicUrl: string;
   title: string;
   duration?: number;
   created_at: string;
@@ -364,7 +364,7 @@ export interface Video {
 
 export interface Audio {
   id: number;
-  url: string;
+  publicUrl: string;
   title: string;
   duration?: number;
   created_at: string;
@@ -373,7 +373,7 @@ export interface Audio {
 
 export interface Document {
   id: number;
-  url: string;
+  publicUrl: string;
   title: string;
   file_size?: number;
   mime_type?: string;
@@ -383,7 +383,7 @@ export interface Document {
 
 export interface Image {
   id: number;
-  url: string;
+  publicUrl: string;
   alt?: string;
   title?: string;
   created_at: string;
@@ -685,7 +685,7 @@ export interface FileUploadResponse {
   id: number;
   title: string;
   filename: string;
-  url: string;
+  publicUrl: string;
   mime_type: string;
   size: number;
   type: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT';

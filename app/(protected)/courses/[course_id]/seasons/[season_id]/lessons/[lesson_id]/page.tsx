@@ -32,7 +32,6 @@ import { sanitizeRichText } from '@/lib/sanitize';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'sonner';
-import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function LessonViewPage() {
   const params = useParams();
@@ -361,8 +360,8 @@ export default function LessonViewPage() {
                 controls
                 className="h-full w-full"
                 poster={
-                  lesson.image?.url
-                    ? `${lesson.image.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${lesson.image.url}` : lesson.image.url}`
+                  lesson.image?.publicUrl
+                    ? `${lesson.image.publicUrl.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${lesson.image.publicUrl}` : lesson.image.publicUrl}`
                     : undefined
                 }
               >

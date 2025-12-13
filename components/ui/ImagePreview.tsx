@@ -6,7 +6,7 @@ import Image from 'next/image';
 interface ImagePreviewProps {
   preview?: string | null;
   uploadedImageId?: string | null;
-  selectedImage?: { id: number; url: string } | null;
+  selectedImage?: { id: number; publicUrl: string } | null;
   onRemove: () => void;
   existingImageUrl?: string | null;
   existingImageId?: string | number | null;
@@ -79,7 +79,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
           >
             <Image
-              src={`${selectedImage.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${selectedImage.url}` : selectedImage.url}`}
+              src={`${selectedImage.publicUrl.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${selectedImage.publicUrl}` : selectedImage.publicUrl}`}
               alt={alt}
               className="h-auto w-full object-contain"
               width={0}

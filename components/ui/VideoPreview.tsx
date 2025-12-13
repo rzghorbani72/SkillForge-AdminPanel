@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 interface VideoPreviewProps {
   preview?: string | null;
   uploadedVideoId?: string | null;
-  selectedVideo?: { id: number; url: string; title?: string } | null;
+  selectedVideo?: { id: number; publicUrl: string; title?: string } | null;
   onRemove?: () => void;
   existingVideoUrl?: string | null;
   existingVideoId?: string | number | null;
@@ -40,7 +40,7 @@ const VideoPreview: React.FC<VideoPreviewProps> = ({
   posterImageUrl
 }) => {
   // Determine which video to show
-  const videoToShow = preview || selectedVideo?.url || existingVideoUrl;
+  const videoToShow = preview || selectedVideo?.publicUrl || existingVideoUrl;
 
   if (!videoToShow && !showPlaceholder) {
     return null;

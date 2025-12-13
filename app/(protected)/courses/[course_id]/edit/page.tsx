@@ -7,7 +7,6 @@ import { useCategoriesStore } from '@/lib/store';
 import useCourseEdit from '@/components/course/useCourseEdit';
 import CourseForm from '@/components/course/CourseForm';
 import EditHeader from '@/components/course/EditHeader';
-import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function EditCoursePage() {
   const router = useRouter();

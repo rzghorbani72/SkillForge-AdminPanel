@@ -242,7 +242,6 @@ export default function RegisterPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    console.log('Form Data:', formData);
     // Basic user validation
     if (!formData.name.trim()) {
       newErrors.name = t('auth.fullNameRequired');
@@ -450,26 +449,6 @@ export default function RegisterPage() {
 
     try {
       // Register the user with auth service
-      // Debug: Log the OTP values
-      console.log(
-        'Phone OTP:',
-        formData.phoneOtp,
-        'Type:',
-        typeof formData.phoneOtp,
-        'Length:',
-        formData.phoneOtp?.length
-      );
-      console.log(
-        'Email OTP:',
-        formData.emailOtp,
-        'Type:',
-        typeof formData.emailOtp,
-        'Length:',
-        formData.emailOtp?.length
-      );
-      console.log('Phone OTP Verified:', phoneOtpVerified);
-      console.log('Email OTP Verified:', emailOtpVerified);
-      console.log('Form Data:', formData);
 
       // In step 2, we send the verified OTP data
       // Combine country code with phone number for backend
@@ -507,20 +486,11 @@ export default function RegisterPage() {
         userData.email_otp = formData.emailOtp.trim();
       }
 
-      console.log('Final userData being sent:', userData);
-      console.log(
-        'Phone OTP in userData:',
-        userData.phone_otp,
-        'Type:',
-        typeof userData.phone_otp
-      );
-
       const user = await apiClient.register(userData);
 
       if (user) {
         ErrorHandler.showSuccess('Registration successful!');
 
-        console.log('success registrationType', user, registrationType);
         // Handle store creation or joining
 
         const nextStep = (user as any)?.data?.next_step as string | undefined;

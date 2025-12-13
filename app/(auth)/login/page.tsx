@@ -257,8 +257,6 @@ export default function LoginPage() {
           const storeId =
             response.currentProfile?.store_id ||
             response.currentProfile?.store?.id;
-          console.log('currentStore', currentStore);
-          console.log('storeId', storeId);
           if (
             (userRole === 'ADMIN' ||
               userRole === 'MANAGER' ||

@@ -73,23 +73,25 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
       // Handle response structure: { message, status, data: { id, url, ... } }
       // or direct image object: { id, url, ... }
       const imageData = (uploadResponse as any)?.data || uploadResponse;
-      
+
       if (imageData && imageData.id) {
         const imageId = imageData.id.toString();
-        const imageUrl = imageData.url || '';
+        const imageUrl = imageData.publicUrl || '';
         // Construct full URL if it's a relative path
-        const fullUrl = imageUrl.startsWith('http') 
-          ? imageUrl 
+        const fullUrl = imageUrl.startsWith('http')
+          ? imageUrl
           : imageUrl.startsWith('/')
             ? `${process.env.NEXT_PUBLIC_HOST || ''}${imageUrl}`
             : imageUrl;
         setUploadedImageId(imageId);
         toast.success('Image uploaded successfully!');
-        options.onSuccess?.({ id: parseInt(imageId), url: fullUrl });
+        options.onSuccess?.({ id: parseInt(imageId), publicUrl: fullUrl });
       } else {
         console.error('Upload response structure:', uploadResponse);
         toast.error('Failed to upload image: Invalid response structure');
-        options.onError?.(new Error('Upload failed: Invalid response structure'));
+        options.onError?.(
+          new Error('Upload failed: Invalid response structure')
+        );
       }
     } catch (error: any) {
       if (error.name === 'AbortError') {

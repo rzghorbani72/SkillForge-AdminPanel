@@ -10,7 +10,6 @@ import { apiClient } from '@/lib/api';
 import { Season, Course } from '@/types/api';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
-import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function SeasonViewPage() {
   const params = useParams();

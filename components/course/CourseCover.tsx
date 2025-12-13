@@ -9,10 +9,10 @@ type Props = {
 
 const CourseCover = ({ course }: Props) => {
   return (
-    course.cover?.url && (
+    course.cover?.publicUrl && (
       <div className="relative h-48 w-full overflow-hidden">
         <Image
-          src={`${course.cover?.url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${course.cover?.url}` : course.cover?.url}`}
+          src={`${course.cover?.publicUrl.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${course.cover?.publicUrl}` : course.cover?.publicUrl}`}
           alt={course.title}
           className="h-full w-full rounded-xl object-contain"
           fill

@@ -57,7 +57,7 @@ export function UserCard({
   const profiles = user.profiles || [];
 
   // Get first profile avatar if available
-  const avatarUrl = profiles[0]?.avatar?.url;
+  const avatarUrl = profiles[0]?.avatar?.publicUrl;
 
   return (
     <Card className="relative transition-shadow hover:shadow-md">

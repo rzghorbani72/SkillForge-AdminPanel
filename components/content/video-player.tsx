@@ -199,7 +199,7 @@ export default function VideoPlayer({
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
           >
-            <source src={video.url} type={video.mime_type} />
+            <source src={video.publicUrl} type={video.mime_type} />
             Your browser does not support the video tag.
           </video>
 

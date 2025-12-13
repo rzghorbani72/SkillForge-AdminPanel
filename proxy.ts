@@ -130,8 +130,6 @@ export default async function proxy(request: NextRequest) {
   }
   const userRole = decoded?.roles?.[0] || decoded?.role || null;
 
-  console.log('userRole', userRole);
-
   // If user has USER or STUDENT role, redirect to login with error
   if (userRole && !ALLOWED_ADMIN_ROLES.includes(userRole)) {
     const loginUrl = new URL('/login', request.url);

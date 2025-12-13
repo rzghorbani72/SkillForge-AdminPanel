@@ -459,6 +459,12 @@ class AuthService {
         this.persistSession(null);
         if (typeof window !== 'undefined') {
           window.localStorage.removeItem('user_state');
+
+          // Clear Zustand stores
+          const storeModule = await import('@/lib/store');
+          storeModule.useUserStore.getState().reset();
+          storeModule.useCategoriesStore.getState().reset();
+
           // Redirect to appropriate login page
           if (isDevelopmentMode()) {
             logDevInfo('Development mode: Redirecting to localhost login');
@@ -479,6 +485,16 @@ class AuthService {
       this.persistSession(null);
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem('user_state');
+
+        // Clear Zustand stores even on error
+        try {
+          const storeModule = await import('@/lib/store');
+          storeModule.useUserStore.getState().reset();
+          storeModule.useCategoriesStore.getState().reset();
+        } catch (e) {
+          console.warn('Failed to clear Zustand stores:', e);
+        }
+
         if (isDevelopmentMode()) {
           window.location.href = '/login';
         } else {
