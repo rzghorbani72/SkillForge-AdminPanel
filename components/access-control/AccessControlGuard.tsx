@@ -88,13 +88,21 @@ export default function AccessControlGuard({
         (ownerIdFromResource !== null &&
           userState?.user_id === Number(ownerIdFromResource)) ||
         false;
+
+      // Normalize role to uppercase for comparison
+      const normalizedUserRole = resourceAccess?.userRole
+        ? String(resourceAccess.userRole).toUpperCase()
+        : userState?.role?.toUpperCase();
+
       const roleAllowsCourseManagement =
-        resourceAccess?.userRole === 'ADMIN' ||
-        resourceAccess?.userRole === 'MANAGER' ||
-        (resourceAccess?.userRole === 'TEACHER' &&
+        normalizedUserRole === 'ADMIN' ||
+        normalizedUserRole === 'MANAGER' ||
+        (normalizedUserRole === 'TEACHER' &&
           resourceAccess?.userPermissions?.includes('manage_courses')) ||
         resourceAccess?.userPermissions?.includes('manage_courses') ||
-        resourceAccess?.userPermissions?.includes('modify_own_data');
+        resourceAccess?.userPermissions?.includes('modify_own_data') ||
+        userState?.is_manager || // Fallback check from userState
+        userState?.is_admin; // Fallback check from userState
 
       const hasBackendAccess =
         !userState &&

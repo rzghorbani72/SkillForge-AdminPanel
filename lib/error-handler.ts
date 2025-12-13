@@ -157,23 +157,48 @@ export class ErrorHandler {
 
   /**
    * Handle general API errors
+   * Note: 401 and 403 are handled by the API client with redirects
+   * This method is for other error handling scenarios
    */
   static handleApiError(error: any): void {
     console.error('API Error:', error);
 
     const language = getCurrentLanguage();
 
+    // 401 and 403 are handled by API client with redirects
+    // Only show toast if it's not already handled (e.g., from non-API client calls)
     if (error?.response?.status === 401) {
-      try {
-        toast.error(t('error.authenticationFailed', language));
-      } catch (toastError) {
-        console.error('Authentication failed. Please log in again.');
+      // API client already handles redirect to login
+      // Only show toast if this is called from outside API client
+      if (typeof window !== 'undefined' && !error._handledByApiClient) {
+        try {
+          toast.error(t('error.authenticationFailed', language));
+          // Redirect to login if not already on auth pages
+          const currentPath = window.location.pathname;
+          if (
+            !currentPath.includes('/login') &&
+            !currentPath.includes('/register')
+          ) {
+            window.location.href = `/login?redirect=${encodeURIComponent(currentPath + window.location.search)}`;
+          }
+        } catch (toastError) {
+          console.error('Authentication failed. Please log in again.');
+        }
       }
     } else if (error?.response?.status === 403) {
-      try {
-        toast.error(t('error.noPermission', language));
-      } catch (toastError) {
-        console.error('You do not have permission to perform this action.');
+      // API client already handles redirect to dashboard
+      // Only show toast if this is called from outside API client
+      if (typeof window !== 'undefined' && !error._handledByApiClient) {
+        try {
+          toast.error(t('error.noPermission', language));
+          // Redirect to dashboard if not already there
+          const currentPath = window.location.pathname;
+          if (!currentPath.includes('/dashboard')) {
+            window.location.href = '/dashboard';
+          }
+        } catch (toastError) {
+          console.error('You do not have permission to perform this action.');
+        }
       }
     } else if (error?.response?.status === 404) {
       try {

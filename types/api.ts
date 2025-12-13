@@ -50,7 +50,7 @@ export interface Profile {
   updated_at: string;
   user?: User;
   store?: Store;
-  role?: Role;
+  Role?: Role;
   avatar?: Media;
   email?: string;
   phone_number?: string;

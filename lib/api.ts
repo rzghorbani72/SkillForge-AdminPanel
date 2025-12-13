@@ -88,6 +88,19 @@ class ApiClient {
     }
   }
 
+  /**
+   * Redirect to dashboard page (client-side only)
+   */
+  private redirectToDashboard(): void {
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname;
+      // Don't redirect if already on dashboard
+      if (!currentPath.includes('/dashboard')) {
+        window.location.href = '/dashboard';
+      }
+    }
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
@@ -191,7 +204,7 @@ class ApiClient {
         // Response has no JSON body or failed to parse; keep data as null
       }
 
-      // Handle unauthorized responses - attempt token refresh
+      // Handle unauthorized responses (401) - attempt token refresh, then redirect to login
       if (response.status === 401 && retryAfterRefresh) {
         // Skip refresh for auth endpoints (login, register, etc.)
         const isAuthEndpoint =
@@ -242,6 +255,45 @@ class ApiClient {
         if (typeof window !== 'undefined') {
           toast.error(errorMessage);
           this.redirectToLogin();
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      // Handle forbidden responses (403) - redirect to dashboard
+      if (response.status === 403) {
+        const getCurrentLanguage = (): LanguageCode => {
+          if (typeof window === 'undefined') return 'en';
+          const stored = localStorage.getItem('preferred_language');
+          const validLanguages: LanguageCode[] = [
+            'en',
+            'fa',
+            'ar',
+            'tr',
+            'de',
+            'fr',
+            'es',
+            'it',
+            'ru',
+            'zh',
+            'ja',
+            'ko',
+            'hi',
+            'ur',
+            'he'
+          ];
+          return stored && validLanguages.includes(stored as LanguageCode)
+            ? (stored as LanguageCode)
+            : 'en';
+        };
+
+        const errorMessage =
+          (data && (data.message || data.error)) ||
+          t('error.noPermission', getCurrentLanguage());
+
+        if (typeof window !== 'undefined') {
+          toast.error(errorMessage);
+          this.redirectToDashboard();
         }
 
         throw new Error(errorMessage);

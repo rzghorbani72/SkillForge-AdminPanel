@@ -149,7 +149,8 @@ export default function LoginPage() {
         // Single store or specific store - proceed with normal login
         ErrorHandler.showSuccess('success.loginSuccess', true);
         // Check user role and redirect accordingly
-        const userRole = response.currentProfile?.role?.name;
+        const userRole = response.currentProfile?.Role?.name;
+
         if (userRole === 'STUDENT' || userRole === 'USER') {
           // User is a student, redirect to their store
           if (isDevelopmentMode()) {
@@ -177,7 +178,7 @@ export default function LoginPage() {
           // Check if admin has no store - clear store selection
           const currentStore = response.currentStore;
           const storeId =
-            response.currentProfile?.storeId ||
+            response.currentProfile?.store_id ||
             response.currentProfile?.store_id;
           if (
             userRole === 'ADMIN' &&
@@ -244,7 +245,7 @@ export default function LoginPage() {
         ErrorHandler.showSuccess('Login successful!');
 
         // Check user role and redirect accordingly
-        const userRole = response.currentProfile?.role?.name;
+        const userRole = response.currentProfile?.Role?.name;
         if (
           userRole === 'ADMIN' ||
           userRole === 'MANAGER' ||
@@ -252,11 +253,16 @@ export default function LoginPage() {
         ) {
           // Check if admin has no store - clear store selection
           const currentStore = response.currentStore;
+
           const storeId =
-            response.currentProfile?.storeId ||
-            response.currentProfile?.store_id;
+            response.currentProfile?.store_id ||
+            response.currentProfile?.store?.id;
+          console.log('currentStore', currentStore);
+          console.log('storeId', storeId);
           if (
-            userRole === 'ADMIN' &&
+            (userRole === 'ADMIN' ||
+              userRole === 'MANAGER' ||
+              userRole === 'TEACHER') &&
             (!currentStore || storeId === null || storeId === undefined)
           ) {
             // Admin without store - clear any stored store selection

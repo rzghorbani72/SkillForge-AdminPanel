@@ -90,26 +90,19 @@ export default function EditCoursePage() {
   }
 
   return (
-    <AccessControlGuard
-      resource={course}
-      action="modify"
-      fallbackPath="/courses"
-      fallbackMessage="You can only edit your own courses."
-    >
-      <div className="flex-1 space-y-6 p-6">
-        <EditHeader course={course!} onBack={() => router.back()} />
+    <div className="flex-1 space-y-6 p-6">
+      <EditHeader course={course!} onBack={() => router.back()} />
 
-        <div className="max-w-4xl">
-          <CourseForm
-            initialValues={initialValues}
-            categories={categories}
-            isSubmitting={isSubmitting}
-            onSubmit={onSubmit}
-            onCancel={() => router.back()}
-            submitLabel="Update Course"
-          />
-        </div>
+      <div className="max-w-4xl">
+        <CourseForm
+          initialValues={initialValues}
+          categories={categories}
+          isSubmitting={isSubmitting}
+          onSubmit={onSubmit}
+          onCancel={() => router.back()}
+          submitLabel="Update Course"
+        />
       </div>
-    </AccessControlGuard>
+    </div>
   );
 }
