@@ -910,6 +910,33 @@ class ApiClient {
     });
   }
 
+  async upsertLiveSession(
+    lessonId: number,
+    body: {
+      meeting_url: string;
+      playback_url?: string | null;
+      starts_at: string;
+      ends_at?: string | null;
+      duration_minutes?: number | null;
+      timezone: string;
+      recurrence_rule?: string | null;
+      recurrence_until?: string | null;
+      provider_label?: string | null;
+      notes?: string | null;
+    }
+  ) {
+    return this.request(`/lessons/${lessonId}/live-session`, {
+      method: 'PUT',
+      body: JSON.stringify(body)
+    });
+  }
+
+  async deleteLiveSession(lessonId: number) {
+    return this.request(`/lessons/${lessonId}/live-session`, {
+      method: 'DELETE'
+    });
+  }
+
   // Seasons endpoints
   async getSeasons(courseId?: number) {
     const queryParams = courseId ? `?course_id=${courseId}` : '';
@@ -1408,6 +1435,25 @@ class ApiClient {
       return response.data as any;
     }
     return null as any;
+  }
+
+  async getDocument(documentId: number) {
+    const response = await this.request(`/files/${documentId}`);
+    const payload = response.data as any;
+
+    if (!payload) {
+      return null;
+    }
+
+    if (payload.status === 'ok' && payload.data) {
+      return payload.data;
+    }
+
+    if (payload.data) {
+      return payload.data;
+    }
+
+    return payload;
   }
 
   // Image fetching endpoint

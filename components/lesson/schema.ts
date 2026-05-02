@@ -17,7 +17,9 @@ export const lessonFormSchema = z.object({
   category_id: z.string().optional(),
   published: z.boolean().default(false),
   is_free: z.boolean().default(false),
-  lesson_type: z.enum(['VIDEO', 'AUDIO', 'TEXT', 'QUIZ']).default('VIDEO')
+  lesson_type: z
+    .enum(['VIDEO', 'AUDIO', 'TEXT', 'QUIZ', 'ASSIGNMENT', 'LIVE'])
+    .default('VIDEO')
 });
 
 export type LessonFormData = z.infer<typeof lessonFormSchema>;

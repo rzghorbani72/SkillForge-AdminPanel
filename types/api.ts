@@ -357,6 +357,23 @@ export interface Season {
   lessons?: Lesson[];
 }
 
+export interface LiveSession {
+  id: number;
+  lesson_id: number;
+  meeting_url: string | null;
+  playback_url?: string | null;
+  starts_at: string;
+  ends_at?: string | null;
+  duration_minutes?: number | null;
+  timezone: string;
+  recurrence_rule?: string | null;
+  recurrence_until?: string | null;
+  provider_label?: string | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Lesson {
   id: number;
   title: string;
@@ -371,9 +388,10 @@ export interface Lesson {
   image_id?: number;
   is_published: boolean;
   is_free: boolean;
-  lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ';
+  lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
   created_at: string;
   updated_at: string;
+  LiveSession?: LiveSession | null;
   season?: Season;
   video?: Video;
   audio?: Audio;

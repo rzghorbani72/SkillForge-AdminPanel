@@ -16,7 +16,7 @@ type LessonFormData = {
   document_id?: string;
   published: boolean;
   is_free: boolean;
-  lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ';
+  lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
 };
 import { toast } from 'sonner';
 
@@ -29,6 +29,7 @@ type UseLessonFormReturn = {
   initialValues: LessonFormData | null;
   onSubmit: (data: LessonFormData) => Promise<void>;
   isEdit: boolean;
+  refetch: () => Promise<void>;
 };
 
 const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
@@ -173,7 +174,8 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
     isSubmitting,
     initialValues,
     onSubmit,
-    isEdit
+    isEdit,
+    refetch: fetchData
   };
 };
 

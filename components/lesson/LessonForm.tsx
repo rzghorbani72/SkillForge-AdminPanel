@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { LessonFormData, lessonFormSchema } from './schema';
@@ -25,6 +26,10 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen } from 'lucide-react';
 import VideoUploadPreview from '@/components/ui/VideoUploadPreview';
+import AudioUploadPreview from '@/components/ui/AudioUploadPreview';
+import DocumentUploadPreview from '@/components/ui/DocumentUploadPreview';
+import LiveSessionEditor from './LiveSessionEditor';
+import type { LiveSession } from '@/types/api';
 
 type Props = {
   initialValues: Partial<LessonFormData> & { season_id: string };
@@ -33,6 +38,10 @@ type Props = {
   onSubmit: (data: LessonFormData) => void;
   onCancel: () => void;
   submitLabel?: string;
+  liveSessionLessonId?: number;
+  serverLessonType?: string;
+  liveSessionInitial?: LiveSession | null;
+  onLiveSessionSaved?: () => void;
 };
 
 const LessonForm = ({
@@ -41,7 +50,11 @@ const LessonForm = ({
   isSubmitting,
   onSubmit,
   onCancel,
-  submitLabel = 'Save'
+  submitLabel = 'Save',
+  liveSessionLessonId,
+  serverLessonType,
+  liveSessionInitial,
+  onLiveSessionSaved
 }: Props) => {
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonFormSchema),
@@ -57,10 +70,11 @@ const LessonForm = ({
       published: initialValues.published ?? false,
       is_free: initialValues.is_free ?? false,
       lesson_type:
-        (initialValues.lesson_type as 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ') ??
-        'VIDEO'
+        (initialValues.lesson_type as LessonFormData['lesson_type']) ?? 'VIDEO'
     }
   });
+
+  const lessonType = form.watch('lesson_type');
 
   return (
     <Card>
@@ -117,10 +131,7 @@ const LessonForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Lesson Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select lesson type" />
@@ -129,105 +140,297 @@ const LessonForm = ({
                     <SelectContent>
                       <SelectItem value="VIDEO">Video</SelectItem>
                       <SelectItem value="AUDIO">Audio</SelectItem>
-                      <SelectItem value="TEXT">Text</SelectItem>
-                      <SelectItem value="QUIZ">Quiz</SelectItem>
+                      <SelectItem value="TEXT">Text (document)</SelectItem>
+                      <SelectItem value="QUIZ">Quiz (document)</SelectItem>
+                      <SelectItem value="ASSIGNMENT">
+                        Assignment (document)
+                      </SelectItem>
+                      <SelectItem value="LIVE">Live session</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    The type of content for this lesson
+                    Content fields below follow this type
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Video Upload Section */}
-            <div className="col-span-2">
-              <FormField
-                control={form.control}
-                name="video_id"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Video</FormLabel>
-                    <FormControl>
-                      <VideoUploadPreview
-                        title={form.watch('title') || 'Lesson Video'}
-                        description={
-                          form.watch('description') || 'Lesson video content'
-                        }
-                        onSuccess={(video) => {
-                          form.setValue('video_id', video.id.toString());
-                        }}
-                        selectedVideoId={form.watch('video_id')}
-                        alt="Lesson video preview"
-                        placeholderText="No video selected"
-                        placeholderSubtext="Upload a video to preview it here"
-                        uploadButtonText="Upload Video"
-                        selectButtonText="Select a video first"
-                        allowPosterUpload={true}
-                        // Poster image props - use cover_id as poster
-                        posterImageId={form.watch('cover_id')}
-                        onPosterSuccess={(image) => {
-                          form.setValue('cover_id', image.id.toString());
-                        }}
-                        onPosterRemove={() => {
-                          form.setValue('cover_id', '');
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Upload or select a video for this lesson
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <div className="space-y-2 border-t pt-6">
+              <h3 className="text-sm font-semibold text-foreground">
+                Lesson content
+              </h3>
 
-            {/* Image Upload Section */}
+              {lessonType === 'VIDEO' ? (
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="video_id"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel>Video</FormLabel>
+                        <FormControl>
+                          <VideoUploadPreview
+                            title={form.watch('title') || 'Lesson Video'}
+                            description={
+                              form.watch('description') ||
+                              'Lesson video content'
+                            }
+                            onSuccess={(video) => {
+                              form.setValue('video_id', video.id.toString());
+                            }}
+                            selectedVideoId={form.watch('video_id')}
+                            alt="Lesson video preview"
+                            placeholderText="No video selected"
+                            placeholderSubtext="Upload a video to preview it here"
+                            uploadButtonText="Upload Video"
+                            selectButtonText="Select a video first"
+                            allowPosterUpload={true}
+                            posterImageId={form.watch('cover_id')}
+                            onPosterSuccess={(image) => {
+                              form.setValue('cover_id', image.id.toString());
+                            }}
+                            onPosterRemove={() => {
+                              form.setValue('cover_id', '');
+                            }}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Main video for this lesson (optional cover / poster
+                          via upload above)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="audio_id"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Extra: Audio</FormLabel>
+                          <FormControl>
+                            <AudioUploadPreview
+                              lessonTitle={form.watch('title')}
+                              descriptionFallback={
+                                form.watch('description') ||
+                                'Supplementary audio for this video lesson'
+                              }
+                              selectedAudioId={form.watch('audio_id')}
+                              onSuccess={(audio) =>
+                                form.setValue('audio_id', String(audio.id))
+                              }
+                              onClear={() => form.setValue('audio_id', '')}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Optional — upload or remove supplementary audio
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="document_id"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Extra: Document</FormLabel>
+                          <FormControl>
+                            <DocumentUploadPreview
+                              lessonTitle={form.watch('title')}
+                              descriptionFallback={
+                                form.watch('description') ||
+                                'Optional attachment for this video lesson'
+                              }
+                              selectedDocumentId={form.watch('document_id')}
+                              onSuccess={(doc) =>
+                                form.setValue('document_id', String(doc.id))
+                              }
+                              onClear={() => form.setValue('document_id', '')}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Optional — attach a document to this video lesson
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              ) : null}
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="audio_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Audio ID</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter audio ID"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      ID of the associated audio
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {lessonType === 'AUDIO' ? (
+                <FormField
+                  control={form.control}
+                  name="audio_id"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Audio</FormLabel>
+                      <FormControl>
+                        <AudioUploadPreview
+                          lessonTitle={form.watch('title')}
+                          descriptionFallback={
+                            form.watch('description') || 'Lesson audio'
+                          }
+                          selectedAudioId={form.watch('audio_id')}
+                          onSuccess={(audio) =>
+                            form.setValue('audio_id', String(audio.id))
+                          }
+                          onClear={() => form.setValue('audio_id', '')}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Upload a file to attach it automatically, or manage
+                        files in{' '}
+                        <Link
+                          href="/audios"
+                          className="font-medium text-primary underline"
+                        >
+                          Audios
+                        </Link>
+                        .
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
 
-              <FormField
-                control={form.control}
-                name="document_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Document ID</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter document ID"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      ID of the associated document
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {lessonType === 'TEXT' ? (
+                <FormField
+                  control={form.control}
+                  name="document_id"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Document</FormLabel>
+                      <FormControl>
+                        <DocumentUploadPreview
+                          lessonTitle={form.watch('title')}
+                          descriptionFallback={
+                            form.watch('description') || 'Text lesson document'
+                          }
+                          selectedDocumentId={form.watch('document_id')}
+                          onSuccess={(doc) =>
+                            form.setValue('document_id', String(doc.id))
+                          }
+                          onClear={() => form.setValue('document_id', '')}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Main file for this lesson. Manage all files in{' '}
+                        <Link
+                          href="/documents"
+                          className="font-medium text-primary underline"
+                        >
+                          Documents
+                        </Link>
+                        .
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
+
+              {lessonType === 'QUIZ' ? (
+                <FormField
+                  control={form.control}
+                  name="document_id"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Document</FormLabel>
+                      <FormControl>
+                        <DocumentUploadPreview
+                          lessonTitle={form.watch('title')}
+                          descriptionFallback={
+                            form.watch('description') ||
+                            'Quiz instructions or question sheet'
+                          }
+                          selectedDocumentId={form.watch('document_id')}
+                          onSuccess={(doc) =>
+                            form.setValue('document_id', String(doc.id))
+                          }
+                          onClear={() => form.setValue('document_id', '')}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Quiz handout or instructions as a document. Library:{' '}
+                        <Link
+                          href="/documents"
+                          className="font-medium text-primary underline"
+                        >
+                          Documents
+                        </Link>
+                        .
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
+
+              {lessonType === 'ASSIGNMENT' ? (
+                <FormField
+                  control={form.control}
+                  name="document_id"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Document</FormLabel>
+                      <FormControl>
+                        <DocumentUploadPreview
+                          lessonTitle={form.watch('title')}
+                          descriptionFallback={
+                            form.watch('description') ||
+                            'Assignment brief or worksheet'
+                          }
+                          selectedDocumentId={form.watch('document_id')}
+                          onSuccess={(doc) =>
+                            form.setValue('document_id', String(doc.id))
+                          }
+                          onClear={() => form.setValue('document_id', '')}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Assignment learners submit or follow. Library:{' '}
+                        <Link
+                          href="/documents"
+                          className="font-medium text-primary underline"
+                        >
+                          Documents
+                        </Link>
+                        .
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
+
+              {lessonType === 'LIVE' &&
+              serverLessonType === 'LIVE' &&
+              liveSessionLessonId != null &&
+              onLiveSessionSaved != null ? (
+                <LiveSessionEditor
+                  lessonId={liveSessionLessonId}
+                  initial={liveSessionInitial ?? null}
+                  onSaved={onLiveSessionSaved}
+                />
+              ) : lessonType === 'LIVE' && !liveSessionLessonId ? (
+                <p className="text-sm text-muted-foreground">
+                  Save this lesson once, then open edit again to add the meeting
+                  link and schedule (lesson needs an id).
+                </p>
+              ) : lessonType === 'LIVE' &&
+                liveSessionLessonId &&
+                serverLessonType !== 'LIVE' ? (
+                <p className="text-sm text-muted-foreground">
+                  Update the lesson (Save) with type &quot;Live session&quot;
+                  first, then you can add the meeting link here.
+                </p>
+              ) : null}
             </div>
 
             <FormField
@@ -236,10 +439,7 @@ const LessonForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a category" />

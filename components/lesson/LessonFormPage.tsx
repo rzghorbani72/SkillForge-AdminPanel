@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import LessonForm from './LessonForm';
 import { LessonFormData } from './schema';
+import type { Lesson } from '@/types/api';
 
 type Props = {
   initialValues: LessonFormData;
@@ -14,6 +15,8 @@ type Props = {
   season: any;
   course: any;
   isEdit: boolean;
+  lesson?: Lesson | null;
+  onLiveSessionSaved?: () => void;
 };
 
 const LessonFormPage = ({
@@ -24,7 +27,9 @@ const LessonFormPage = ({
   onCancel,
   season,
   course,
-  isEdit
+  isEdit,
+  lesson,
+  onLiveSessionSaved
 }: Props) => {
   return (
     <div className="container mx-auto space-y-6 py-6">
@@ -99,6 +104,10 @@ const LessonFormPage = ({
             onSubmit={onSubmit}
             onCancel={onCancel}
             submitLabel={isEdit ? 'Update Lesson' : 'Create Lesson'}
+            liveSessionLessonId={lesson?.id}
+            serverLessonType={lesson?.lesson_type}
+            liveSessionInitial={lesson?.LiveSession ?? null}
+            onLiveSessionSaved={onLiveSessionSaved}
           />
         </div>
 
@@ -136,6 +145,10 @@ const LessonFormPage = ({
                 • Add media IDs to associate videos, audio, images, or documents
               </p>
               <p>• Choose appropriate lesson types based on your content</p>
+              <p>
+                • Live lessons: choose &quot;Live session&quot;, save with that
+                type, then add link, label, start, and duration in the same form
+              </p>
               <p>
                 • Set lessons as free to make them accessible to all students
               </p>

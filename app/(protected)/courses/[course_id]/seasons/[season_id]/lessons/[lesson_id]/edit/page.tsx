@@ -28,7 +28,8 @@ export default function EditLessonPage() {
     isSubmitting,
     initialValues,
     onSubmit,
-    isEdit
+    isEdit,
+    refetch
   } = useLessonForm(true);
 
   if (!selectedAcademy) {
@@ -83,6 +84,8 @@ export default function EditLessonPage() {
       season={season}
       course={course}
       isEdit={isEdit}
+      lesson={lesson}
+      onLiveSessionSaved={refetch}
     />
   );
 }
