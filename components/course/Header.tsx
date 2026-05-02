@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 const Header = () => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
 
   return (
     <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -33,7 +33,7 @@ const Header = () => {
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground sm:text-base">
-            {t('courses.manageCoursesFor')} {selectedStore?.name}
+            {t('courses.manageCoursesFor')} {selectedAcademy?.name}
           </p>
         </div>
       </div>

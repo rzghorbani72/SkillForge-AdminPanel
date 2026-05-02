@@ -23,6 +23,15 @@ const translations = {
   tr
 } as const;
 
+type LoadedLanguage = keyof typeof translations;
+
+function translationPack(language: LanguageCode) {
+  if (language in translations) {
+    return translations[language as LoadedLanguage];
+  }
+  return translations.en;
+}
+
 export type TranslationKey = keyof typeof en;
 
 /**
@@ -52,7 +61,7 @@ export function t(
   params?: InterpolationParams
 ): string {
   const keys = key.split('.');
-  let value: any = translations[language] || translations.en;
+  let value: any = translationPack(language);
 
   for (const k of keys) {
     if (value && typeof value === 'object' && k in value) {
@@ -79,7 +88,7 @@ export function t(
  * Get all translations for a language
  */
 export function getTranslations(language: LanguageCode = 'en') {
-  return translations[language] || translations.en;
+  return translationPack(language);
 }
 
 /**

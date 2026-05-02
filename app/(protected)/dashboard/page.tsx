@@ -31,7 +31,7 @@ import EnrollmentsChart from '@/components/dashboard/EnrollmentsChart';
 import CoursePerformanceChart from '@/components/dashboard/CoursePerformanceChart';
 import QuickActions from '@/components/dashboard/QuickActions';
 import { useAccessControl } from '@/hooks/useAccessControl';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -46,7 +46,7 @@ export default function DashboardPage() {
   useInitializeStores();
 
   const { user } = useAuthUser();
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
   const {
     isLoading,
     recentCourses,
@@ -75,13 +75,16 @@ export default function DashboardPage() {
       return true; // Platform-level admin
     }
 
-    // Fallback: Check storeId
-    const storeId =
-      user.storeId ?? user.profile?.storeId ?? user.profile?.store_id ?? null;
-    return storeId === null || storeId === undefined || storeId === 0;
+    // Fallback: Check academyId
+    const academyId =
+      user.academyId ??
+      user.profile?.academyId ??
+      user.profile?.academy_id ??
+      null;
+    return academyId === null || academyId === undefined || academyId === 0;
   }, [user]);
 
-  const effectiveStore = isAdminWithoutStore ? null : store;
+  const effectiveAcademy = isAdminWithoutStore ? null : currentAcademy;
 
   // Calculate monthly statistics
   const now = new Date();
@@ -358,7 +361,7 @@ export default function DashboardPage() {
                 <span>
                   {formatCurrencyWithStore(
                     currentRevenue,
-                    effectiveStore,
+                    effectiveAcademy,
                     undefined,
                     language
                   )}
@@ -366,7 +369,7 @@ export default function DashboardPage() {
                 <span>
                   {formatCurrencyWithStore(
                     revenueTarget,
-                    effectiveStore,
+                    effectiveAcademy,
                     undefined,
                     language
                   )}

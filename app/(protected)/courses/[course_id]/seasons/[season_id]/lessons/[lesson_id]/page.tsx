@@ -36,7 +36,7 @@ import { toast } from 'sonner';
 export default function LessonViewPage() {
   const params = useParams();
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
   const lessonId = params.lesson_id as string;
@@ -47,13 +47,13 @@ export default function LessonViewPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (courseId && seasonId && lessonId && selectedStore) {
+    if (courseId && seasonId && lessonId && selectedAcademy) {
       fetchData();
     }
-  }, [courseId, seasonId, lessonId, selectedStore]);
+  }, [courseId, seasonId, lessonId, selectedAcademy]);
 
   const fetchData = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);

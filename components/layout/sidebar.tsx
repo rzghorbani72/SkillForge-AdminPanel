@@ -39,24 +39,21 @@ export default function Sidebar({ className }: SidebarProps) {
 
     // Fallback: Check if profile has store information
     const profile = (user as any)?.profile;
-    const storeId =
-      profile?.store_id ?? profile?.storeId ?? user.storeId ?? null;
-    const currentStore = profile?.store ?? null;
+    const academyId =
+      profile?.academy_id ?? profile?.academyId ?? user.academyId ?? null;
+    const currentAcademy = profile?.academy ?? profile?.store ?? null;
 
-    // If storeId is 0, null, or undefined, and no store object, admin has no store
-    if (storeId === null || storeId === undefined || storeId === 0) {
-      if (!currentStore) {
-        return false; // Admin has no store
+    if (academyId === null || academyId === undefined || academyId === 0) {
+      if (!currentAcademy) {
+        return false;
       }
     }
 
-    // If storeId exists and is not 0/null, admin has a store
-    if (storeId !== null && storeId !== undefined && storeId !== 0) {
+    if (academyId !== null && academyId !== undefined && academyId !== 0) {
       return true;
     }
 
-    // If store object exists, admin has a store
-    if (currentStore && currentStore.id) {
+    if (currentAcademy && currentAcademy.id) {
       return true;
     }
 

@@ -6,7 +6,7 @@ import { Profile } from '@/types/api';
 
 export interface UserState {
   user_id: number;
-  store_id: number;
+  academy_id: number;
   role: string;
   is_admin: boolean;
   is_manager: boolean;
@@ -66,7 +66,9 @@ const restoreUserFromStorage = (): AuthUser | null => {
   try {
     let storedUser = window.localStorage.getItem('user_data');
     let storedProfile = window.localStorage.getItem('current_profile');
-    let storedStore = window.localStorage.getItem('current_store');
+    let storedStore =
+      window.localStorage.getItem('current_academy') ||
+      window.localStorage.getItem('current_store');
     let storedPermissions = window.localStorage.getItem('user_permissions');
     let accessToken = window.localStorage.getItem('auth_token') || '';
     const storedAuthUser = window.localStorage.getItem('auth_user');
@@ -96,8 +98,8 @@ const restoreUserFromStorage = (): AuthUser | null => {
           if (isNullish(storedProfile) && parsedAuthUser.currentProfile) {
             storedProfile = JSON.stringify(parsedAuthUser.currentProfile);
           }
-          if (isNullish(storedStore) && parsedAuthUser.currentStore) {
-            storedStore = JSON.stringify(parsedAuthUser.currentStore);
+          if (isNullish(storedStore) && parsedAuthUser.currentAcademy) {
+            storedStore = JSON.stringify(parsedAuthUser.currentAcademy);
           }
           if (isNullish(storedPermissions)) {
             storedPermissions = JSON.stringify(
@@ -124,7 +126,7 @@ const restoreUserFromStorage = (): AuthUser | null => {
 
     const user = JSON.parse(storedUser);
     const currentProfile = JSON.parse(storedProfile) as Profile;
-    const currentStore = storedStore ? JSON.parse(storedStore) : undefined;
+    const currentAcademy = storedStore ? JSON.parse(storedStore) : undefined;
     const permissionSource = storedPermissions
       ? JSON.parse(storedPermissions)
       : (currentProfile as any)?.permissions ||
@@ -135,7 +137,7 @@ const restoreUserFromStorage = (): AuthUser | null => {
       user,
       access_token: accessToken,
       currentProfile,
-      currentStore,
+      currentAcademy,
       permissions: normalizePermissionArray(permissionSource)
     };
 
@@ -177,10 +179,10 @@ export function useAccessControl() {
                   []
               );
 
-        const currentProfileStoreId =
-          (currentUser.currentProfile as any)?.store_id ??
-          (currentUser.currentProfile as any)?.storeId ??
-          currentUser.currentStore?.id ??
+        const currentProfileAcademyId =
+          (currentUser.currentProfile as any)?.academy_id ??
+          (currentUser.currentProfile as any)?.academyId ??
+          currentUser.currentAcademy?.id ??
           0;
 
         const roleName =
@@ -196,7 +198,7 @@ export function useAccessControl() {
 
         const userState: UserState = {
           user_id: currentUser.user.id,
-          store_id: currentProfileStoreId,
+          academy_id: currentProfileAcademyId,
           role: normalizedRole,
           is_admin: normalizedRole === 'ADMIN',
           is_manager: normalizedRole === 'MANAGER',
@@ -317,7 +319,7 @@ export function useAccessControl() {
     if (isAdmin()) return true;
 
     // Manager can modify everything in their store
-    if (isManager() && resourceStoreId === userState.store_id) return true;
+    if (isManager() && resourceStoreId === userState.academy_id) return true;
 
     // Teacher can only modify their own resources
     if (isTeacher() && resourceOwnerId === userState.user_id) return true;
@@ -339,7 +341,10 @@ export function useAccessControl() {
     if (isAdmin()) return true;
 
     // Manager and Teacher can view everything in their store
-    if ((isManager() || isTeacher()) && resourceStoreId === userState.store_id)
+    if (
+      (isManager() || isTeacher()) &&
+      resourceStoreId === userState.academy_id
+    )
       return true;
 
     return false;
@@ -347,7 +352,7 @@ export function useAccessControl() {
 
   const checkResourceAccess = (resource: {
     owner_id?: number;
-    store_id?: number;
+    academy_id?: number;
     access_control?: AccessControl;
   }): ResourceAccessControl => {
     if (resource.access_control) {
@@ -364,12 +369,12 @@ export function useAccessControl() {
 
     // Fallback to frontend calculation
     const ownerId = resource.owner_id || 0;
-    const storeId = resource.store_id;
+    const academyId = resource.academy_id;
 
     return {
-      canModify: canModifyResource(ownerId, storeId),
-      canDelete: canDeleteResource(ownerId, storeId),
-      canView: canViewResource(storeId),
+      canModify: canModifyResource(ownerId, academyId),
+      canDelete: canDeleteResource(ownerId, academyId),
+      canView: canViewResource(academyId),
       isOwner: ownerId === userState?.user_id,
       userRole: userState?.role || '',
       userPermissions: userState?.permissions || []
@@ -398,7 +403,7 @@ export function useAccessControl() {
   const requireResourceAccess = (
     resource: {
       owner_id?: number;
-      store_id?: number;
+      academy_id?: number;
       access_control?: AccessControl;
     },
     action: 'view' | 'modify' | 'delete' = 'view',

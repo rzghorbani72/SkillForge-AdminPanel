@@ -27,7 +27,8 @@ const CreateCourseAssociations = ({ form }: Props) => {
   const {
     categories,
     fetchCategories,
-    isLoading: categoriesLoading
+    isLoading: categoriesLoading,
+    error: categoriesError
   } = useCategoriesStore();
 
   // Ensure categories are loaded

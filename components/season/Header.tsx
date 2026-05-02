@@ -4,13 +4,13 @@ import { Plus } from 'lucide-react';
 import { useStore } from '@/hooks/useStore';
 
 const Header = ({ onCreate }: { onCreate: () => void }) => {
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   return (
     <div className="flex items-center justify-between">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Seasons</h1>
         <p className="text-muted-foreground">
-          Manage seasons/modules for {selectedStore?.name}
+          Manage seasons/modules for {selectedAcademy?.name}
         </p>
       </div>
       <Button onClick={onCreate}>

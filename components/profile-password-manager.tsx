@@ -58,8 +58,9 @@ export function ProfilePasswordManager() {
     try {
       setLoading(true);
       const response = await apiClient.getUserProfiles();
-      if (response.data?.profiles) {
-        setProfiles(response.data.profiles);
+      const body = response.data as { profiles?: Profile[] } | undefined;
+      if (body?.profiles) {
+        setProfiles(body.profiles);
       }
     } catch (error) {
       ErrorHandler.handleValidationErrors(error);
@@ -107,7 +108,8 @@ export function ProfilePasswordManager() {
         confirm_new_password: formData.confirm_new_password
       });
 
-      if (response.data?.success) {
+      const changePayload = response.data as { success?: boolean } | undefined;
+      if (changePayload?.success) {
         setMessage({ type: 'success', text: 'Password changed successfully!' });
         setFormData({
           profile_id: 0,

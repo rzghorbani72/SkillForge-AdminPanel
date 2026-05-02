@@ -195,7 +195,7 @@ export default function CategoriesPage() {
     setFormData({
       name: category.name,
       description: category.description || '',
-      type: category.type,
+      type: category.type as CategoryType,
       is_active: category.is_active
     });
     setIsEditDialogOpen(true);

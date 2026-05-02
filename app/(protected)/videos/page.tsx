@@ -39,14 +39,14 @@ interface VideoWithMetadata extends Media {
 
 export default function VideosPage() {
   const { t, language } = useTranslation();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const [videos, setVideos] = useState<VideoWithMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
 
   const fetchData = useCallback(async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);
@@ -65,13 +65,13 @@ export default function VideosPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedStore]);
+  }, [selectedAcademy]);
 
   useEffect(() => {
-    if (selectedStore) {
+    if (selectedAcademy) {
       fetchData();
     }
-  }, [selectedStore, fetchData]);
+  }, [selectedAcademy, fetchData]);
 
   const filteredVideos = videos.filter((video) => {
     const matchesSearch =
@@ -130,7 +130,7 @@ export default function VideosPage() {
     return video.access_control?.is_owner || false;
   };
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return (
       <div className="page-wrapper flex-1 p-6">
         <EmptyState

@@ -28,7 +28,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Table,
@@ -47,7 +47,7 @@ export default function StoreRevenuePage() {
   const [payments, setPayments] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -56,10 +56,10 @@ export default function StoreRevenuePage() {
 
   useEffect(() => {
     loadData();
-  }, [selectedYear, selectedMonth, store?.id]);
+  }, [selectedYear, selectedMonth, currentAcademy?.id]);
 
   const loadData = async () => {
-    if (!store?.id) return;
+    if (!currentAcademy?.id) return;
 
     try {
       setLoading(true);
@@ -73,8 +73,8 @@ export default function StoreRevenuePage() {
           ? new Date(selectedYear, selectedMonth, 0, 23, 59, 59)
           : new Date(selectedYear, 11, 31, 23, 59, 59);
 
-      const data = await apiClient.getStoreRevenueFromPayments(
-        store.id,
+      const data = await apiClient.getAcademyRevenueFromPayments(
+        currentAcademy.id,
         startDate.toISOString(),
         endDate.toISOString()
       );
@@ -137,7 +137,7 @@ export default function StoreRevenuePage() {
     );
   }
 
-  if (!store) {
+  if (!currentAcademy) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
@@ -155,7 +155,7 @@ export default function StoreRevenuePage() {
             {t('financial.store.revenue.title')}
           </h1>
           <p className="mt-1 text-muted-foreground">
-            {store.name} - {t('financial.store.revenue.description')}
+            {currentAcademy.name} - {t('financial.store.revenue.description')}
           </p>
         </div>
       </div>

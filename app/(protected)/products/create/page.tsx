@@ -8,7 +8,7 @@ import CreateProductNoStoreState from '@/components/product/CreateProductNoStore
 export default function CreateProductPage() {
   const {
     form,
-    selectedStore,
+    selectedAcademy,
     isLoading,
     coverImage,
     coverPreview,
@@ -21,13 +21,16 @@ export default function CreateProductPage() {
     handleBack
   } = useProductCreate();
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return <CreateProductNoStoreState />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      <CreateProductHeader storeName={selectedStore.name} onBack={handleBack} />
+      <CreateProductHeader
+        storeName={selectedAcademy.name}
+        onBack={handleBack}
+      />
 
       <CreateProductForm
         form={form}

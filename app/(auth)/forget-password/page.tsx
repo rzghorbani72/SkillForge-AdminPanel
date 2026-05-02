@@ -64,7 +64,7 @@ export default function ForgetPasswordPage() {
     const fetchStores = async () => {
       setIsLoadingStores(true);
       try {
-        const response = await apiClient.getStoresPublic();
+        const response = await apiClient.getAcademiesPublic();
         setStores(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Failed to fetch stores:', error);
@@ -228,7 +228,7 @@ export default function ForgetPasswordPage() {
         password: formData.password,
         confirmed_password: formData.confirmed_password,
         otp: formData.otp,
-        store_id: selectedStore?.id
+        academy_id: selectedStore?.id
       });
 
       setStep('success');

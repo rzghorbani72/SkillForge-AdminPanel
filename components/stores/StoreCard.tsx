@@ -1,4 +1,4 @@
-import { Store } from '@/types/api';
+import type { Academy } from '@/types/api';
 import {
   Card,
   CardContent,
@@ -12,9 +12,9 @@ import { Building2, Edit, X } from 'lucide-react';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
 interface StoreCardProps {
-  store: Store;
-  onEdit: (store: Store) => void;
-  onDisconnect?: (store: Store) => void;
+  store: Academy;
+  onEdit: (store: Academy) => void;
+  onDisconnect?: (store: Academy) => void;
   isManager?: boolean;
   canDisconnect?: boolean;
 }

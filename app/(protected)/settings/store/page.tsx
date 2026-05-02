@@ -34,22 +34,22 @@ const DEFAULT_FORM: StoreFormState = {
 
 export default function StoreSettingsPage() {
   const { t } = useTranslation();
-  const { store, isLoading } = useSettingsData();
+  const { academy, isLoading } = useSettingsData();
   const [form, setForm] = useState<StoreFormState>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!store) {
+    if (!academy) {
       setForm(DEFAULT_FORM);
       return;
     }
 
     setForm({
-      name: store.name ?? '',
-      description: store.description ?? '',
-      domain: store.private_address ?? ''
+      name: academy.name ?? '',
+      description: academy.description ?? '',
+      domain: academy.private_address ?? ''
     });
-  }, [store]);
+  }, [academy]);
 
   const handleSave = async () => {
     try {
@@ -72,7 +72,7 @@ export default function StoreSettingsPage() {
         }
       }
 
-      await apiClient.updateStore(updateData);
+      await apiClient.updateAcademy(updateData);
       ErrorHandler.showSuccess(t('settings.storeSettingsUpdatedSuccess'));
     } catch (error) {
       console.error('Error updating store settings', error);
@@ -169,19 +169,19 @@ export default function StoreSettingsPage() {
               <div className="flex justify-between">
                 <span>{t('settings.students')}</span>
                 <span className="font-medium text-foreground">
-                  {store?.students_count ?? '—'}
+                  {academy?.students_count ?? '—'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>{t('settings.teachers')}</span>
                 <span className="font-medium text-foreground">
-                  {store?.teachers_count ?? '—'}
+                  {academy?.teachers_count ?? '—'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>{t('settings.managers')}</span>
                 <span className="font-medium text-foreground">
-                  {store?.managers_count ?? '—'}
+                  {academy?.managers_count ?? '—'}
                 </span>
               </div>
             </CardContent>

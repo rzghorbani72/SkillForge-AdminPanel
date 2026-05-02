@@ -12,7 +12,7 @@ import ImageUploadPreview from './ImageUploadPreview';
 interface VideoUploadPreviewProps {
   title?: string;
   description?: string;
-  onSuccess?: (video: { id: number; url: string }) => void;
+  onSuccess?: (video: { id: number; url: string; title?: string }) => void;
   onError?: (error: Error) => void;
   onCancel?: () => void;
   existingVideoUrl?: string | null;
@@ -61,7 +61,7 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
   const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<{
     id: number;
-    url: string;
+    publicUrl: string;
     title?: string;
   } | null>(null);
 
@@ -78,11 +78,15 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
 
   const handleVideoSelect = (video: {
     id: number;
-    url: string;
+    publicUrl: string;
     title?: string;
   }) => {
     setSelectedVideo(video);
-    onSuccess?.(video);
+    onSuccess?.({
+      id: video.id,
+      url: video.publicUrl,
+      title: video.title
+    });
   };
 
   return (

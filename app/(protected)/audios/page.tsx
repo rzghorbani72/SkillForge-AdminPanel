@@ -79,6 +79,7 @@ interface AudioItem {
   filename?: string | null;
   url?: string;
   streaming_url?: string;
+  publicUrl?: string;
   size?: number | null;
   mime_type?: string | null;
   metadata?: {
@@ -89,7 +90,7 @@ interface AudioItem {
   is_public?: boolean;
   created_at?: string;
   updated_at?: string;
-  store_id?: number | null;
+  academy_id?: number | null;
   access_control?: AccessControl;
 }
 
@@ -155,7 +156,7 @@ const getAudioUrl = (audio: AudioItem) => {
 
 export default function AudiosPage() {
   const { t, language } = useTranslation();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const [audios, setAudios] = useState<AudioItem[]>([]);
   const [filteredAudios, setFilteredAudios] = useState<AudioItem[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -176,7 +177,7 @@ export default function AudiosPage() {
   const audioRefs = useRef<Record<number, HTMLAudioElement | null>>({});
 
   const fetchAudios = useCallback(async () => {
-    if (!selectedStore) {
+    if (!selectedAcademy) {
       setAudios([]);
       setCourses([]);
       return;
@@ -188,7 +189,7 @@ export default function AudiosPage() {
 
       const [audiosResponse, coursesResponse] = await Promise.all([
         apiClient.getAudios(),
-        apiClient.getCourses({ store_id: selectedStore.id })
+        apiClient.getCourses({ academy_id: selectedAcademy.id })
       ]);
 
       const rawAudios: AudioItem[] = Array.isArray(audiosResponse)
@@ -198,7 +199,7 @@ export default function AudiosPage() {
           : [];
 
       const storeAudios = rawAudios.filter(
-        (audio) => !audio.store_id || audio.store_id === selectedStore.id
+        (audio) => !audio.academy_id || audio.academy_id === selectedAcademy.id
       );
 
       setPlayingId((current) => {
@@ -231,7 +232,7 @@ export default function AudiosPage() {
 
       const availableCourses = coursesResponse?.courses ?? [];
       const storeCourses = availableCourses.filter(
-        (course: Course) => course.store_id === selectedStore.id
+        (course: Course) => course.academy_id === selectedAcademy.id
       );
       setCourses(storeCourses);
     } catch (err) {
@@ -241,15 +242,15 @@ export default function AudiosPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedStore]);
+  }, [selectedAcademy]);
 
   useEffect(() => {
-    if (selectedStore) {
+    if (selectedAcademy) {
       fetchAudios();
     } else {
       setIsLoading(false);
     }
-  }, [selectedStore, fetchAudios]);
+  }, [selectedAcademy, fetchAudios]);
 
   useEffect(() => {
     if (!searchTerm.trim()) {
@@ -425,7 +426,7 @@ export default function AudiosPage() {
     0
   );
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return (
       <div className="page-wrapper flex-1 p-6">
         <EmptyState
@@ -466,7 +467,7 @@ export default function AudiosPage() {
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageAudio')} - {selectedStore.name}
+              {t('media.manageAudio')} - {selectedAcademy.name}
             </p>
           </div>
         </div>

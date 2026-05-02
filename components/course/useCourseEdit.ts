@@ -24,7 +24,7 @@ type UseCourseEditReturn = {
 const useCourseEdit = (): UseCourseEditReturn => {
   const router = useRouter();
   const params = useParams();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const courseId = params.course_id as string;
 
   const [course, setCourse] = useState<Course | null>(null);
@@ -41,10 +41,10 @@ const useCourseEdit = (): UseCourseEditReturn => {
   });
 
   useEffect(() => {
-    if (courseId && selectedStore) {
+    if (courseId && selectedAcademy) {
       fetchCourse();
     }
-  }, [courseId, selectedStore]);
+  }, [courseId, selectedAcademy]);
 
   const fetchCourse = async () => {
     try {
@@ -87,7 +87,7 @@ const useCourseEdit = (): UseCourseEditReturn => {
   };
 
   const onSubmitHandler = async (data: CourseFormData) => {
-    if (!selectedStore || !course) {
+    if (!selectedAcademy || !course) {
       toast.error('Course or store not found');
       return;
     }

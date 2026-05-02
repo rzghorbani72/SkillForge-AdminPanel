@@ -131,25 +131,25 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Employee',
-    href: '/stores/:storeId/employee',
+    href: '/stores/:academyId/employee',
     icon: 'user' as IconType,
     label: 'employee'
   },
   {
     title: 'Course',
-    href: '/stores/:storeId/course',
+    href: '/stores/:academyId/course',
     icon: 'course' as IconType,
     label: 'course'
   },
   {
     title: 'Article',
-    href: '/stores/:storeId/article',
+    href: '/stores/:academyId/article',
     icon: 'article' as IconType,
     label: 'article'
   },
   {
     title: 'Profile',
-    href: '/stores/:storeId/profile',
+    href: '/stores/:academyId/profile',
     icon: 'userPen' as IconType,
     label: 'profile'
   },

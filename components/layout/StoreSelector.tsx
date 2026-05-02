@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,13 +9,11 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Building2, ChevronDown, Check } from 'lucide-react';
-import { Store } from '@/types/api';
 import { useStore } from '@/hooks/useStore';
-import { getSelectedStoreId, setSelectedStoreId } from '@/lib/store-utils';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
 export function StoreSelector() {
-  const { stores, selectedStore, selectStore, isLoading } = useStore();
+  const { academies, selectedAcademy, selectAcademy, isLoading } = useStore();
   const { user } = useAuthUser();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,7 +29,7 @@ export function StoreSelector() {
     );
   }
 
-  if (stores.length === 0) {
+  if (academies.length === 0) {
     return (
       <div className="flex items-center gap-2 px-3 py-2">
         <Building2 className="h-4 w-4" />
@@ -40,11 +38,11 @@ export function StoreSelector() {
     );
   }
 
-  if (stores.length === 1) {
+  if (academies.length === 1) {
     return (
       <div className="flex items-center gap-2 px-3 py-2">
         <Building2 className="h-4 w-4" />
-        <span className="text-sm font-medium">{stores[0].name}</span>
+        <span className="text-sm font-medium">{academies[0].name}</span>
       </div>
     );
   }
@@ -68,17 +66,17 @@ export function StoreSelector() {
         >
           <Building2 className="h-4 w-4" />
           <span className="text-sm font-medium">
-            {selectedStore?.name || 'Select Store'}
+            {selectedAcademy?.name || 'Select Store'}
           </span>
           <ChevronDown className="h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64">
-        {stores.map((store) => (
+        {academies.map((academy) => (
           <DropdownMenuItem
-            key={store.id}
+            key={academy.id}
             onClick={() => {
-              selectStore(store.id);
+              selectAcademy(academy.id);
               setIsOpen(false);
             }}
             className="flex items-center justify-between"
@@ -86,13 +84,15 @@ export function StoreSelector() {
             <div className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />
               <div>
-                <div className="font-medium">{store.name}</div>
+                <div className="font-medium">{academy.name}</div>
                 <div className="text-xs text-muted-foreground">
-                  {store.domain?.private_address}
+                  {academy.domain?.private_address}
                 </div>
               </div>
             </div>
-            {selectedStore?.id === store.id && <Check className="h-4 w-4" />}
+            {selectedAcademy?.id === academy.id && (
+              <Check className="h-4 w-4" />
+            )}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

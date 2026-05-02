@@ -3,7 +3,19 @@ import { twMerge } from 'tailwind-merge';
 import { Active, DataRef, Over } from '@dnd-kit/core';
 import { ColumnDragData } from '@/sections/kanban/board-column';
 import { TaskDragData } from '@/sections/kanban/task-card';
-import { Store } from '@/types/api';
+import type { Academy } from '@/types/api';
+
+export type AcademyCurrencyFormatting =
+  | Academy
+  | null
+  | undefined
+  | {
+      id?: number;
+      name?: string;
+      currency?: string;
+      currency_symbol?: string;
+      currency_position?: 'before' | 'after';
+    };
 
 type DraggableData = ColumnDragData | TaskDragData;
 
@@ -122,7 +134,7 @@ export function formatCurrency(
  */
 export function formatCurrencyWithStore(
   amount: number,
-  store?: Store | null,
+  store?: AcademyCurrencyFormatting,
   divideBy?: number,
   language?: string
 ): string {
@@ -133,7 +145,7 @@ export function formatCurrencyWithStore(
 
   // Check if store has currency configuration
   // Use type assertion to access currency properties safely
-  const storeWithCurrency = store as Store & {
+  const storeWithCurrency = store as Academy & {
     currency?: string;
     currency_symbol?: string;
     currency_position?: 'before' | 'after';
@@ -146,8 +158,8 @@ export function formatCurrencyWithStore(
     // Fallback to default USD formatting if no currency config
     if (process.env.NODE_ENV === 'development') {
       console.warn('Store missing currency config:', {
-        storeId: store.id,
-        storeName: store.name,
+        academyId: 'id' in store ? store.id : undefined,
+        storeName: 'name' in store ? store.name : undefined,
         hasCurrency: !!storeWithCurrency.currency,
         hasCurrencySymbol: !!storeWithCurrency.currency_symbol
       });

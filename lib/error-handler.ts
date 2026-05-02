@@ -307,7 +307,7 @@ export class ErrorHandler {
       email: 'Email',
       name: 'Name',
       role: 'Role',
-      store_id: 'Store',
+      academy_id: 'Store',
       display_name: 'Display name'
     };
 
@@ -329,7 +329,7 @@ export class ErrorHandler {
       email: 'email',
       name: 'name',
       role: 'role',
-      store_id: 'existingStoreId',
+      academy_id: 'existingStoreId',
       display_name: 'name'
     };
 
@@ -370,6 +370,14 @@ export class ErrorHandler {
       toast.warning(message);
     } catch (error) {
       console.warn('Warning:', message);
+    }
+  }
+
+  static showError(message: string): void {
+    try {
+      toast.error(message);
+    } catch (error) {
+      console.error('Error:', message);
     }
   }
 }

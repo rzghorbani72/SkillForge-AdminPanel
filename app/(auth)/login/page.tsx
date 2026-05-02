@@ -47,10 +47,10 @@ export default function LoginPage() {
     phone: '',
     fullPhoneNumber: '',
     password: '',
-    store_id: ''
+    academy_id: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [availableStores, setAvailableStores] = useState<
+  const [availableAcademies, setAvailableAcademies] = useState<
     Array<{ id: number; name: string; slug: string }>
   >([]);
   const [showStoreSelection, setShowStoreSelection] = useState(false);
@@ -104,8 +104,8 @@ export default function LoginPage() {
       newErrors.password = t('auth.passwordTooShort');
     }
 
-    if (showStoreSelection && !formData.store_id) {
-      newErrors.store_id = t('auth.selectStore');
+    if (showStoreSelection && !formData.academy_id) {
+      newErrors.academy_id = t('auth.selectStore');
     }
 
     setErrors(newErrors);
@@ -128,19 +128,22 @@ export default function LoginPage() {
             ? formData.fullPhoneNumber || formData.phone
             : formData.email,
         password: formData.password,
-        store_id: formData.store_id ? parseInt(formData.store_id) : undefined
+        academy_id: formData.academy_id
+          ? parseInt(formData.academy_id)
+          : undefined
       };
 
       const response = await authService.login(credentials);
 
       if (response) {
         // Check if store selection is required
+        const academies =
+          response.availableAcademies || response.available_academies || [];
         if (
-          response.requires_store_selection ||
-          (response.availableStores && response.availableStores.length > 0)
+          response.requires_academy_selection ||
+          (Array.isArray(academies) && academies.length > 0)
         ) {
-          // Show store selection UI
-          setAvailableStores(response.availableStores || []);
+          setAvailableAcademies(academies);
           setShowStoreSelection(true);
           setIsLoading(false);
           return;
@@ -176,17 +179,14 @@ export default function LoginPage() {
           userRole === 'TEACHER'
         ) {
           // Check if admin has no store - clear store selection
-          const currentStore = response.currentStore;
-          const storeId =
-            response.currentProfile?.store_id ||
-            response.currentProfile?.store_id;
+          const currentAcademy = response.currentAcademy;
+          const academyId = response.currentProfile?.academy_id;
           if (
             userRole === 'ADMIN' &&
-            (!currentStore || storeId === null || storeId === undefined)
+            (!currentAcademy || academyId === null || academyId === undefined)
           ) {
-            // Admin without store - clear any stored store selection
             if (typeof window !== 'undefined') {
-              window.localStorage.removeItem('skillforge_selected_store_id');
+              window.localStorage.removeItem('skillforge_selected_academy_id');
             }
           }
 
@@ -224,11 +224,11 @@ export default function LoginPage() {
     }
   };
 
-  const handleStoreSelection = async (storeId: number) => {
-    setFormData((prev) => ({ ...prev, store_id: storeId.toString() }));
+  const handleStoreSelection = async (academyId: number) => {
+    setFormData((prev) => ({ ...prev, academy_id: academyId.toString() }));
     setShowStoreSelection(false);
 
-    // Retry login with store_id
+    // Retry login with academy_id
     try {
       const credentials = {
         identifier:
@@ -236,7 +236,7 @@ export default function LoginPage() {
             ? formData.fullPhoneNumber || formData.phone
             : formData.email,
         password: formData.password,
-        store_id: storeId
+        academy_id: academyId
       };
 
       const response = await authService.login(credentials);
@@ -252,20 +252,19 @@ export default function LoginPage() {
           userRole === 'TEACHER'
         ) {
           // Check if admin has no store - clear store selection
-          const currentStore = response.currentStore;
+          const currentAcademy = response.currentAcademy;
 
-          const storeId =
-            response.currentProfile?.store_id ||
-            response.currentProfile?.store?.id;
+          const academyId =
+            response.currentProfile?.academy_id ||
+            response.currentProfile?.academy?.id;
           if (
             (userRole === 'ADMIN' ||
               userRole === 'MANAGER' ||
               userRole === 'TEACHER') &&
-            (!currentStore || storeId === null || storeId === undefined)
+            (!currentAcademy || academyId === null || academyId === undefined)
           ) {
-            // Admin without store - clear any stored store selection
             if (typeof window !== 'undefined') {
-              window.localStorage.removeItem('skillforge_selected_store_id');
+              window.localStorage.removeItem('skillforge_selected_academy_id');
             }
           }
 
@@ -423,7 +422,7 @@ export default function LoginPage() {
                       <div className="space-y-2">
                         <Label htmlFor="store">{t('auth.selectStore')}</Label>
                         <div className="space-y-2">
-                          {availableStores.map((store) => (
+                          {availableAcademies.map((store) => (
                             <button
                               key={store.id}
                               type="button"
@@ -437,9 +436,9 @@ export default function LoginPage() {
                             </button>
                           ))}
                         </div>
-                        {errors.store_id && (
+                        {errors.academy_id && (
                           <p className="text-sm text-red-500">
-                            {errors.store_id}
+                            {errors.academy_id}
                           </p>
                         )}
                       </div>
@@ -556,7 +555,7 @@ export default function LoginPage() {
                           {t('auth.selectStore')}
                         </Label>
                         <div className="space-y-2">
-                          {availableStores.map((store) => (
+                          {availableAcademies.map((store) => (
                             <button
                               key={store.id}
                               type="button"
@@ -570,9 +569,9 @@ export default function LoginPage() {
                             </button>
                           ))}
                         </div>
-                        {errors.store_id && (
+                        {errors.academy_id && (
                           <p className="text-sm text-red-500">
-                            {errors.store_id}
+                            {errors.academy_id}
                           </p>
                         )}
                       </div>

@@ -7,7 +7,7 @@ import {
   formatCurrencyWithStore,
   formatRelativeTime
 } from '@/lib/utils';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
@@ -36,7 +36,7 @@ export type CoursePerformance = {
 
 const useDashboard = () => {
   const { t, language } = useTranslation();
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
   const { user } = useAuthUser();
   const [recentCourses, setRecentCourses] = useState<Course[]>([]);
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
@@ -65,9 +65,12 @@ const useDashboard = () => {
       return true; // Platform-level admin
     }
 
-    // Fallback: Check storeId
+    // Fallback: Check academyId
     const userStoreId =
-      user.storeId ?? user.profile?.storeId ?? user.profile?.store_id ?? null;
+      user.academyId ??
+      user.profile?.academyId ??
+      user.profile?.academy_id ??
+      null;
     return (
       userStoreId === null || userStoreId === undefined || userStoreId === 0
     );
@@ -75,7 +78,7 @@ const useDashboard = () => {
 
   // For admins without stores, don't use store context
   // For managers/admins with stores, use the selected store
-  const effectiveStore = isAdminWithoutStore ? null : store;
+  const effectiveAcademy = isAdminWithoutStore ? null : currentAcademy;
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -86,25 +89,25 @@ const useDashboard = () => {
         // For managers/admins with stores, fetch store-specific data
         const coursesParams = isAdminWithoutStore
           ? { page: 1, limit: 10, filter: 'none' as const } // Platform-wide for admins
-          : effectiveStore
-            ? { page: 1, limit: 10, store_id: effectiveStore.id } // Store-specific for managers
+          : effectiveAcademy
+            ? { page: 1, limit: 10, academy_id: effectiveAcademy.id } // Store-specific for managers
             : { page: 1, limit: 10 }; // Default
 
         const enrollmentsParams = isAdminWithoutStore
           ? { status: 'ACTIVE' as const, page: 1, limit: 1 }
-          : effectiveStore
+          : effectiveAcademy
             ? {
                 status: 'ACTIVE' as const,
                 page: 1,
                 limit: 1,
-                store_id: effectiveStore.id
+                academy_id: effectiveAcademy.id
               }
             : { status: 'ACTIVE' as const, page: 1, limit: 1 };
 
         const studentsParams = isAdminWithoutStore
           ? { page: 1, limit: 1, filter: 'none' as const }
-          : effectiveStore
-            ? { page: 1, limit: 1, store_id: effectiveStore.id }
+          : effectiveAcademy
+            ? { page: 1, limit: 1, academy_id: effectiveAcademy.id }
             : { page: 1, limit: 1 };
 
         const [
@@ -242,7 +245,7 @@ const useDashboard = () => {
     if (user) {
       fetchDashboardData();
     }
-  }, [user, store, isAdminWithoutStore]);
+  }, [user, currentAcademy, isAdminWithoutStore]);
 
   // Generate monthly chart data from real payments and enrollments
   const monthlyChartData: ChartDataPoint[] = useMemo(() => {
@@ -342,7 +345,7 @@ const useDashboard = () => {
         title: t('dashboard.totalRevenue'),
         value: formatCurrencyWithStore(
           statsTotals.totalRevenue,
-          effectiveStore
+          effectiveAcademy
         ),
         icon: require('lucide-react').DollarSign,
         change: t('dashboard.live'),
@@ -360,7 +363,7 @@ const useDashboard = () => {
         description: t('dashboard.studentsCurrentlyProgressing')
       }
     ],
-    [statsTotals, effectiveStore, isAdminWithoutStore, t]
+    [statsTotals, effectiveAcademy, isAdminWithoutStore, t]
   );
 
   const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];
@@ -425,7 +428,7 @@ const useDashboard = () => {
             payment.course?.title || t('dashboard.unknownCourse');
           const amount = formatCurrencyWithStore(
             payment.amount ?? 0,
-            effectiveStore,
+            effectiveAcademy,
             undefined,
             language
           );
@@ -454,7 +457,7 @@ const useDashboard = () => {
     safeRecentCourses,
     safeRecentEnrollments,
     safeRecentPayments,
-    effectiveStore,
+    effectiveAcademy,
     t,
     language
   ]);

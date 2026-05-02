@@ -13,7 +13,7 @@ interface StoreGuardProps {
 }
 
 export function StoreGuard({ children, fallback }: StoreGuardProps) {
-  const { stores, isLoading, error } = useStore();
+  const { academies, isLoading, error } = useStore();
   const [showError, setShowError] = useState(false);
   const router = useRouter();
 
@@ -21,12 +21,12 @@ export function StoreGuard({ children, fallback }: StoreGuardProps) {
     if (!isLoading) {
       if (error) {
         setShowError(true);
-      } else if (stores.length === 0) {
+      } else if (academies.length === 0) {
         // No stores found, redirect to stores page or show error
         setShowError(true);
       }
     }
-  }, [isLoading, error, stores.length]);
+  }, [isLoading, error, academies.length]);
 
   if (isLoading) {
     return (

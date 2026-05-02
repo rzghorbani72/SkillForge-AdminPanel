@@ -8,7 +8,7 @@ import CreateCourseNoStoreState from '@/components/course/CreateCourseNoStoreSta
 export default function CreateCoursePage() {
   const {
     form,
-    selectedStore,
+    selectedAcademy,
     isLoading,
     coverImage,
     coverPreview,
@@ -21,13 +21,16 @@ export default function CreateCoursePage() {
     handleBack
   } = useCourseCreate();
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return <CreateCourseNoStoreState />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      <CreateCourseHeader storeName={selectedStore.name} onBack={handleBack} />
+      <CreateCourseHeader
+        storeName={selectedAcademy.name}
+        onBack={handleBack}
+      />
 
       <CreateCourseForm
         form={form}

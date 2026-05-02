@@ -48,7 +48,6 @@ import {
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
 import { useAccessControl } from '@/hooks/useAccessControl';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -64,7 +63,6 @@ export default function FinancialDashboardPage() {
   const [costCategories, setCostCategories] = useState<CostCategory[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const store = useCurrentStore();
   const { userState, isLoading: isAccessControlLoading } = useAccessControl();
   const router = useRouter();
 
@@ -100,7 +98,7 @@ export default function FinancialDashboardPage() {
       const [summaryData, storeData, platformData, categoriesData] =
         await Promise.all([
           apiClient.getPlatformFinancialSummary(),
-          apiClient.getStoreFinancialRecords({
+          apiClient.getAcademyFinancialRecords({
             year: selectedYear,
             month: selectedMonth || undefined
           }),
@@ -578,7 +576,8 @@ export default function FinancialDashboardPage() {
                       return (
                         <TableRow key={record.id}>
                           <TableCell className="font-medium">
-                            {record.store?.name || `Store #${record.store_id}`}
+                            {record.store?.name ||
+                              `Store #${record.academy_id}`}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
@@ -646,7 +645,7 @@ export default function FinancialDashboardPage() {
                                     )
                                   ) {
                                     try {
-                                      await apiClient.deleteStoreFinancialRecord(
+                                      await apiClient.deleteAcademyFinancialRecord(
                                         record.id
                                       );
                                       toast.success(

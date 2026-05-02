@@ -23,7 +23,8 @@ interface ImageEditModalProps {
   /** Image data */
   image: {
     id: number;
-    url: string;
+    url?: string;
+    publicUrl?: string;
     filename?: string;
     alt?: string;
   };

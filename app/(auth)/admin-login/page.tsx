@@ -118,7 +118,7 @@ export default function AdminLoginPage() {
         ErrorHandler.showSuccess('success.loginSuccess', true);
 
         // Check user role - must be ADMIN
-        const userRole = response.currentProfile?.role?.name;
+        const userRole = response.currentProfile?.Role?.name;
         if (userRole === 'ADMIN') {
           // Admin login successful
           router.push('/dashboard');

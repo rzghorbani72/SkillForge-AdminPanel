@@ -6,6 +6,8 @@ export interface User {
   id: number;
   email?: string;
   display_name: string;
+  /** Legacy alias for display_name */
+  name?: string;
   phone_number: string;
   birthday?: string;
   email_confirmed: boolean;
@@ -24,12 +26,24 @@ export interface UserProfile {
   bio?: string;
   avatar_id?: number;
   is_active: boolean;
-  store: {
+  academy?: {
+    id: number;
+    name: string;
+    private_domain: string;
+  };
+  /** @deprecated Same shape as academy from older payloads */
+  store?: {
     id: number;
     name: string;
     private_domain: string;
   };
   role: {
+    id: number;
+    name: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+    description?: string;
+  };
+  /** Prisma-style casing variant */
+  Role?: {
     id: number;
     name: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
     description?: string;
@@ -40,7 +54,7 @@ export interface UserProfile {
 export interface Profile {
   id: number;
   user_id: number;
-  store_id: number | null; // Nullable: Admins can have no store
+  academy_id: number | null; // Nullable: Admins can have no store
   role_id: number;
   display_name: string;
   bio?: string;
@@ -49,8 +63,10 @@ export interface Profile {
   created_at: string;
   updated_at: string;
   user?: User;
-  store?: Store;
+  academy?: Academy;
   Role?: Role;
+  /** Some endpoints return lowercase relation name */
+  role?: Role;
   avatar?: Media;
   email?: string;
   phone_number?: string;
@@ -91,11 +107,16 @@ export interface CurrencyConfig {
   is_default: boolean;
 }
 
-export interface Store {
+export interface Academy {
   id: number;
   name: string;
   slug: string;
   domain_id: number;
+  /** Sometimes inlined instead of nested domain */
+  private_address?: string;
+  students_count?: number;
+  teachers_count?: number;
+  managers_count?: number;
   description?: string;
   logo_id?: number;
   cover_id?: number;
@@ -111,6 +132,9 @@ export interface Store {
   updated_at: string;
   deleted_at?: string;
   domain?: Domain;
+  /** Present when API returns Prisma relation casing */
+  Domain?: Pick<Domain, 'private_address' | 'public_address' | 'id'> &
+    Partial<Domain>;
   logo?: Media;
   cover?: Media;
   profiles?: Profile[];
@@ -127,7 +151,7 @@ export interface Domain {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  stores?: Store[];
+  academies?: Academy[];
 }
 
 // Media Types
@@ -135,6 +159,7 @@ export interface Media {
   id: number;
   title: string;
   description?: string;
+  alt?: string;
   filename: string;
   original_name: string;
   publicUrl: string;
@@ -144,12 +169,12 @@ export interface Media {
   metadata?: any;
   is_public: boolean;
   owner_id: number;
-  store_id?: number;
+  academy_id?: number;
   created_at: string;
   updated_at: string;
   deleted_at?: string;
   owner?: User;
-  store?: Store;
+  academy?: Academy;
 }
 
 // Course and Learning Types
@@ -168,12 +193,14 @@ export interface Course {
   is_certificate?: boolean;
   cover_id?: number;
   author_id: number;
-  store_id: number;
+  academy_id: number;
   category_id?: number;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   duration?: number;
   lessons_count: number;
   students_count: number;
+  /** Present on some analytics/list payloads */
+  enrollments_count?: number;
   rating: number;
   rating_count: number;
   language?: string;
@@ -193,7 +220,9 @@ export interface Course {
   updated_at: string;
   deleted_at?: string;
   author?: Profile;
-  store?: Store;
+  academy?: Academy;
+  /** @deprecated Use academy */
+  store?: Academy;
   category?: Category;
   cover?: Media;
   seasons?: Season[];
@@ -224,7 +253,7 @@ export interface Product {
   is_published: boolean;
   is_featured: boolean;
   author_id: number;
-  store_id: number;
+  academy_id: number;
   category_id?: number;
   sales_count: number;
   revenue: number;
@@ -237,7 +266,7 @@ export interface Product {
   updated_at: string;
   deleted_at?: string;
   author?: Profile;
-  store?: Store;
+  academy?: Academy;
   category?: Category;
   cover?: Media;
   images?: Media[];
@@ -502,10 +531,10 @@ export interface Theme {
   background_color: string;
   text_color: string;
   is_active: boolean;
-  store_id: number;
+  academy_id: number;
   created_at: string;
   updated_at: string;
-  store?: Store;
+  academy?: Academy;
 }
 
 // UI Template Types
@@ -526,13 +555,13 @@ export interface UIBlockConfig {
 
 export interface UITemplate {
   id: number;
-  store_id: number;
+  academy_id: number;
   blocks: UIBlockConfig[];
   template_preset?: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  store?: Store;
+  academy?: Academy;
 }
 
 export interface TemplatePreset {
@@ -652,7 +681,7 @@ export interface CourseFilters {
   limit?: number;
   search?: string;
   category_id?: number;
-  store_id?: number;
+  academy_id?: number;
   difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   is_free?: boolean;
   is_published?: boolean;
@@ -705,7 +734,7 @@ export interface CostCategory {
 
 export interface StoreFinancialRecord {
   id: number;
-  store_id: number;
+  academy_id: number;
   cost_category_id?: number;
   period_start: string;
   period_end: string;
@@ -786,7 +815,7 @@ export interface FinancialFormula {
 export interface FormulaApplication {
   id: number;
   formula_id: number;
-  store_id?: number;
+  academy_id?: number;
   period_start: string;
   period_end: string;
   adjustment_type: AdjustmentType;

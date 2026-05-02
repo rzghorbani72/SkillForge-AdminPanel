@@ -7,7 +7,7 @@ import useLessonForm from '@/components/lesson/useLessonForm';
 import LessonFormPage from '@/components/lesson/LessonFormPage';
 
 export default function CreateLessonPage() {
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const {
     categories,
     fetchCategories,
@@ -30,7 +30,7 @@ export default function CreateLessonPage() {
     isEdit
   } = useLessonForm(false);
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">

@@ -29,7 +29,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Table,
@@ -48,7 +48,7 @@ export default function StoreFinancialPage() {
   const [payments, setPayments] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -57,10 +57,10 @@ export default function StoreFinancialPage() {
 
   useEffect(() => {
     loadData();
-  }, [selectedYear, selectedMonth, store?.id]);
+  }, [selectedYear, selectedMonth, currentAcademy?.id]);
 
   const loadData = async () => {
-    if (!store?.id) return;
+    if (!currentAcademy?.id) return;
 
     try {
       setLoading(true);
@@ -75,13 +75,13 @@ export default function StoreFinancialPage() {
           : new Date(selectedYear, 11, 31, 23, 59, 59);
 
       const [overviewData, revenueData] = await Promise.all([
-        apiClient.getStoreFinancialOverview(
-          store.id,
+        apiClient.getAcademyFinancialOverview(
+          currentAcademy.id,
           startDate.toISOString(),
           endDate.toISOString()
         ),
-        apiClient.getStoreRevenueFromPayments(
-          store.id,
+        apiClient.getAcademyRevenueFromPayments(
+          currentAcademy.id,
           startDate.toISOString(),
           endDate.toISOString()
         )
@@ -118,7 +118,7 @@ export default function StoreFinancialPage() {
     );
   }
 
-  if (!store) {
+  if (!currentAcademy) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
@@ -136,7 +136,7 @@ export default function StoreFinancialPage() {
             {t('financial.store.overview.title')}
           </h1>
           <p className="mt-1 text-muted-foreground">
-            {store.name} - {t('financial.store.overview.description')}
+            {currentAcademy.name} - {t('financial.store.overview.description')}
           </p>
         </div>
       </div>

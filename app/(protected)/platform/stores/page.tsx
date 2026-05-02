@@ -10,7 +10,7 @@ import {
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
-  Store,
+  Store as StoreIcon,
   Search,
   Plus,
   ArrowLeft,
@@ -37,34 +37,20 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { formatCurrency, formatCurrencyWithStore } from '@/lib/utils';
-
-interface Store {
-  id: number;
-  name: string;
-  slug: string;
-  description?: string;
-  is_active: boolean;
-  created_at: string;
-  currency?: string;
-  currency_symbol?: string;
-  Domain?: {
-    private_address?: string;
-    public_address?: string;
-  };
-}
+import type { Academy } from '@/types/api';
 
 export default function PlatformStoresPage() {
   const { t, language } = useTranslation();
   const { user, isLoading: userLoading } = useAuthUser();
   const searchParams = useSearchParams();
-  const storeId = searchParams.get('storeId');
+  const academyId = searchParams.get('academyId');
   const action = searchParams.get('action');
-  const [stores, setStores] = useState<Store[]>([]);
+  const [stores, setStores] = useState<Academy[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Store detail data
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [selectedStore, setSelectedStore] = useState<Academy | null>(null);
   const [storeFinancial, setStoreFinancial] = useState<any>(null);
   const [storePayments, setStorePayments] = useState<any[]>([]);
   const [storeStats, setStoreStats] = useState({
@@ -80,7 +66,7 @@ export default function PlatformStoresPage() {
     const fetchStores = async () => {
       try {
         setIsLoading(true);
-        const response = await apiClient.getStoresPublic();
+        const response = await apiClient.getAcademiesPublic();
         const storesData = response?.data?.items || response?.data || [];
         setStores(Array.isArray(storesData) ? storesData : []);
       } catch (error) {
@@ -96,21 +82,21 @@ export default function PlatformStoresPage() {
     }
   }, [user, userLoading]);
 
-  // Fetch store detail and financial data when storeId is present
+  // Fetch store detail and financial data when academyId is present
   useEffect(() => {
     const fetchStoreDetail = async () => {
-      if (!storeId || !user?.isAdminProfile) return;
+      if (!academyId || !user?.isAdminProfile) return;
 
       try {
         setIsLoadingDetail(true);
-        const storeIdNum = parseInt(storeId, 10);
+        const storeIdNum = parseInt(academyId, 10);
 
         // Find store from list or fetch full store details
         let store = stores.find((s) => s.id === storeIdNum);
         if (!store) {
           // If not in list, try to fetch it
           try {
-            const storeResponse = await apiClient.getStoresPublic();
+            const storeResponse = await apiClient.getAcademiesPublic();
             const allStores =
               storeResponse?.data?.items || storeResponse?.data || [];
             store = Array.isArray(allStores)
@@ -137,16 +123,16 @@ export default function PlatformStoresPage() {
             enrollmentsResponse
           ] = await Promise.all([
             apiClient
-              .getStoreFinancialOverview?.(storeIdNum, startDate, endDate)
+              .getAcademyFinancialOverview?.(storeIdNum, startDate, endDate)
               .catch(() => null),
             apiClient
-              .getStoreRevenueFromPayments?.(storeIdNum, startDate, endDate)
+              .getAcademyRevenueFromPayments?.(storeIdNum, startDate, endDate)
               .catch(() => ({ payments: [] })),
             apiClient
-              .getCourses?.({ store_id: storeIdNum, limit: 1 })
+              .getCourses?.({ academy_id: storeIdNum, limit: 1 })
               .catch(() => ({ courses: [], pagination: undefined })),
             apiClient
-              .getEnrollments?.({ store_id: storeIdNum, limit: 1 })
+              .getEnrollments?.({ academy_id: storeIdNum, limit: 1 })
               .catch(() => ({ enrollments: [], pagination: undefined }))
           ]);
 
@@ -182,10 +168,10 @@ export default function PlatformStoresPage() {
       }
     };
 
-    if (storeId && stores.length > 0) {
+    if (academyId && stores.length > 0) {
       fetchStoreDetail();
     }
-  }, [storeId, stores, user]);
+  }, [academyId, stores, user]);
 
   // Redirect if not platform-level admin
   if (!userLoading && user && !user.isAdminProfile && !user.platformLevel) {
@@ -222,8 +208,8 @@ export default function PlatformStoresPage() {
     );
   }
 
-  // Show store detail view if storeId is present
-  if (storeId && selectedStore) {
+  // Show store detail view if academyId is present
+  if (academyId && selectedStore) {
     return (
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
         {/* Header with back button */}
@@ -596,7 +582,7 @@ export default function PlatformStoresPage() {
             <CardTitle className="text-sm font-medium">
               {t('platform.stores.totalStores')}
             </CardTitle>
-            <Store className="h-4 w-4 text-muted-foreground" />
+            <StoreIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stores.length}</div>
@@ -607,7 +593,7 @@ export default function PlatformStoresPage() {
             <CardTitle className="text-sm font-medium">
               {t('platform.stores.activeStores')}
             </CardTitle>
-            <Store className="h-4 w-4 text-muted-foreground" />
+            <StoreIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -620,7 +606,7 @@ export default function PlatformStoresPage() {
             <CardTitle className="text-sm font-medium">
               {t('platform.stores.inactiveStores')}
             </CardTitle>
-            <Store className="h-4 w-4 text-muted-foreground" />
+            <StoreIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -636,7 +622,7 @@ export default function PlatformStoresPage() {
           <Card className="col-span-full">
             <CardContent className="pt-6">
               <div className="py-8 text-center">
-                <Store className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                <StoreIcon className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                 <p className="text-lg font-medium">
                   {t('platform.stores.noStoresFound')}
                 </p>
@@ -655,7 +641,7 @@ export default function PlatformStoresPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="flex items-center gap-2">
-                      <Store className="h-5 w-5" />
+                      <StoreIcon className="h-5 w-5" />
                       {store.name}
                     </CardTitle>
                     <CardDescription className="mt-1">
@@ -698,7 +684,7 @@ export default function PlatformStoresPage() {
                     asChild
                     className="flex-1"
                   >
-                    <Link href={`/platform/stores?storeId=${store.id}`}>
+                    <Link href={`/platform/stores?academyId=${store.id}`}>
                       {t('platform.stores.viewDetails')}
                     </Link>
                   </Button>
@@ -709,7 +695,7 @@ export default function PlatformStoresPage() {
                     className="flex-1"
                   >
                     <Link
-                      href={`/platform/stores?storeId=${store.id}&action=edit`}
+                      href={`/platform/stores?academyId=${store.id}&action=edit`}
                     >
                       {t('platform.stores.edit')}
                     </Link>

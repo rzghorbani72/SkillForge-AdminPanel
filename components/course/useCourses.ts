@@ -20,7 +20,7 @@ type UseCoursesReturn = {
 
 const useCourses = (): UseCoursesReturn => {
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,13 +55,13 @@ const useCourses = (): UseCoursesReturn => {
   }, [courses, searchTerm]);
 
   useEffect(() => {
-    if (selectedStore) {
+    if (selectedAcademy) {
       fetchCourses();
     }
-  }, [selectedStore]);
+  }, [selectedAcademy]);
 
   const fetchCourses = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);
@@ -78,9 +78,11 @@ const useCourses = (): UseCoursesReturn => {
       }
 
       // Optionally filter by store if present on objects
-      if (selectedStore && nextCourses.length > 0) {
+      if (selectedAcademy && nextCourses.length > 0) {
         nextCourses = nextCourses.filter((c) =>
-          (c as any).store_id ? (c as any).store_id === selectedStore.id : true
+          (c as any).academy_id
+            ? (c as any).academy_id === selectedAcademy.id
+            : true
         );
       }
 

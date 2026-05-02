@@ -2,142 +2,121 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Store } from '@/types/api';
+import type { Academy } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import {
-  getSelectedStoreId,
-  setSelectedStoreId,
-  getCachedStores,
-  setCachedStores,
-  getSelectedStore,
-  clearStoreData,
-  validateStoreSelection,
-  autoSelectStore,
-  validateStoreCurrencyFields
+  getSelectedAcademyId,
+  setSelectedAcademyId,
+  getCachedAcademies,
+  setCachedAcademies,
+  clearAcademyData,
+  validateAcademyCurrencyFields,
+  autoSelectAcademy
 } from '@/lib/store-utils';
 import { useAuthUser } from './useAuthUser';
 
 interface UseStoreReturn {
-  stores: Store[];
-  selectedStore: Store | null;
+  academies: Academy[];
+  selectedAcademy: Academy | null;
   isLoading: boolean;
   error: string | null;
-  refreshStores: () => Promise<void>;
-  selectStore: (storeId: number) => void;
-  clearStores: () => void;
+  refreshAcademies: () => Promise<void>;
+  selectAcademy: (academyId: number) => void;
+  clearAcademies: () => void;
 }
 
 export function useStore(): UseStoreReturn {
   const router = useRouter();
   const { user } = useAuthUser();
-  const [stores, setStores] = useState<Store[]>([]);
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [academies, setAcademies] = useState<Academy[]>([]);
+  const [selectedAcademy, setSelectedAcademy] = useState<Academy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get preferred store ID from user's /me response
-  // Priority: top-level storeId > profile.storeId > profile.store_id > profile.store.id
-  const preferredStoreId = user
-    ? ((user as any)?.storeId ??
-      (user as any)?.profile?.storeId ??
-      (user as any)?.profile?.store_id ??
-      (user as any)?.profile?.store?.id ??
+  const preferredAcademyId = user
+    ? ((user as any)?.academyId ??
+      (user as any)?.profile?.academyId ??
+      (user as any)?.profile?.academy_id ??
+      (user as any)?.profile?.Academy?.id ??
       null)
     : null;
 
-  // Load stores on mount
   useEffect(() => {
-    loadStores();
+    loadAcademies();
   }, []);
 
-  // Update selected store when stores change or user changes
   useEffect(() => {
-    // If user is admin without a store, don't select any store
-    if (user && user.role === 'ADMIN' && preferredStoreId === null) {
-      setSelectedStore(null);
+    if (user && user.role === 'ADMIN' && preferredAcademyId === null) {
+      setSelectedAcademy(null);
       return;
     }
 
-    if (stores.length > 0) {
-      // Use preferred store ID from /me endpoint if available
-      // This ensures the dashboard shows the correct store from the API
-      const validStore = autoSelectStore(stores, preferredStoreId);
-      setSelectedStore(validStore);
+    if (academies.length > 0) {
+      const valid = autoSelectAcademy(academies, preferredAcademyId);
+      setSelectedAcademy(valid);
     } else {
-      setSelectedStore(null);
+      setSelectedAcademy(null);
     }
-  }, [stores, preferredStoreId, user]);
+  }, [academies, preferredAcademyId, user]);
 
-  const loadStores = useCallback(async () => {
+  const loadAcademies = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Try to load from cache first
-      const cachedStores = getCachedStores();
+      const cached = getCachedAcademies();
 
-      // If cached stores don't have currency fields, force refresh
-      if (
-        cachedStores.length > 0 &&
-        validateStoreCurrencyFields(cachedStores)
-      ) {
-        setStores(cachedStores);
+      if (cached.length > 0 && validateAcademyCurrencyFields(cached)) {
+        setAcademies(cached);
         setIsLoading(false);
         return;
       }
 
-      // No cache or missing currency fields, fetch from API
-      await fetchFreshStores();
-    } catch (error) {
-      console.error('Error loading stores:', error);
-      setError('Failed to load stores');
+      await fetchFreshAcademies();
+    } catch (err) {
+      console.error('Error loading academies:', err);
+      setError('Failed to load academies');
       setIsLoading(false);
     }
   }, []);
 
-  const fetchFreshStores = useCallback(async () => {
+  const fetchFreshAcademies = useCallback(async () => {
     try {
-      const response = await apiClient.getMyStores();
+      const response = await apiClient.getMyAcademies();
 
-      // Handle the API response format: { message, status: "ok", data: [...] }
-      let storesData: Store[] = [];
+      let list: Academy[] = [];
 
       if (
         response.data &&
         (response.data as any).status === 'ok' &&
         (response.data as any).data
       ) {
-        storesData = (response.data as any).data;
+        list = (response.data as any).data;
       } else if (Array.isArray(response.data)) {
-        // Fallback for direct array response
-        storesData = response.data;
+        list = response.data;
       } else {
         console.error('Unexpected response structure:', response.data);
         setError('Invalid response structure from server');
         return;
       }
 
-      // Validate that stores have currency fields, log warning if missing
       if (process.env.NODE_ENV === 'development') {
-        storesData.forEach((store) => {
-          if (!store.currency && !store.currency_symbol) {
-            console.warn(
-              `Store ${store.id} (${store.name}) missing currency fields`
-            );
+        list.forEach((a) => {
+          if (!a.currency && !a.currency_symbol) {
+            console.warn(`Academy ${a.id} (${a.name}) missing currency fields`);
           }
         });
       }
 
-      setStores(storesData);
-      setCachedStores(storesData);
-    } catch (error) {
-      console.error('Error fetching stores:', error);
-      setError('Failed to fetch stores');
+      setAcademies(list);
+      setCachedAcademies(list);
+    } catch (err) {
+      console.error('Error fetching academies:', err);
+      setError('Failed to fetch academies');
 
-      // If it's an authentication error, redirect to login
-      if (error instanceof Error && error.message.includes('401')) {
-        clearStoreData();
+      if (err instanceof Error && err.message.includes('401')) {
+        clearAcademyData();
         router.push('/login');
       }
     } finally {
@@ -145,64 +124,58 @@ export function useStore(): UseStoreReturn {
     }
   }, [router]);
 
-  const refreshStores = useCallback(async () => {
-    await fetchFreshStores();
-  }, [fetchFreshStores]);
+  const refreshAcademies = useCallback(async () => {
+    await fetchFreshAcademies();
+  }, [fetchFreshAcademies]);
 
-  const selectStore = useCallback(
-    (storeId: number) => {
-      const store = stores.find((s) => s.id === storeId);
-      if (store) {
-        setSelectedStoreId(storeId);
-        setSelectedStore(store);
+  const selectAcademy = useCallback(
+    (academyId: number) => {
+      const found = academies.find((a) => a.id === academyId);
+      if (found) {
+        setSelectedAcademyId(academyId);
+        setSelectedAcademy(found);
       }
     },
-    [stores]
+    [academies]
   );
 
-  const clearStores = useCallback(() => {
-    clearStoreData();
-    setStores([]);
-    setSelectedStore(null);
+  const clearAcademies = useCallback(() => {
+    clearAcademyData();
+    setAcademies([]);
+    setSelectedAcademy(null);
     setError(null);
   }, []);
 
   return {
-    stores,
-    selectedStore,
+    academies,
+    selectedAcademy,
     isLoading,
     error,
-    refreshStores,
-    selectStore,
-    clearStores
+    refreshAcademies,
+    selectAcademy,
+    clearAcademies
   };
 }
 
-/**
- * Hook to get the current selected store ID
- */
-export function useSelectedStoreId(): number | null {
-  const [storeId, setStoreId] = useState<number | null>(null);
+export function useSelectedAcademyId(): number | null {
+  const [academyId, setAcademyId] = useState<number | null>(null);
 
   useEffect(() => {
-    setStoreId(getSelectedStoreId());
+    setAcademyId(getSelectedAcademyId());
   }, []);
 
-  return storeId;
+  return academyId;
 }
 
-/**
- * Hook to check if user has store access
- */
 export function useStoreAccess(): {
   hasAccess: boolean;
   isLoading: boolean;
   error: string | null;
 } {
-  const { stores, isLoading, error } = useStore();
+  const { academies, isLoading, error } = useStore();
 
   return {
-    hasAccess: stores.length > 0,
+    hasAccess: academies.length > 0,
     isLoading,
     error
   };

@@ -99,7 +99,6 @@ export const ar = {
     documents: 'المستندات',
     payments: 'المدفوعات',
     vouchers: 'القسائم',
-    'all-users': 'جميع المستخدمين',
     'all-students': 'جميع الطلاب',
     enrollments: 'التسجيلات',
     progress: 'التقدم',

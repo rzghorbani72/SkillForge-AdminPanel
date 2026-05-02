@@ -14,7 +14,7 @@ import { Building2 } from 'lucide-react';
 export default function CoursesPage() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const {
     courses,
     totalCourses,
@@ -26,7 +26,7 @@ export default function CoursesPage() {
     handleDeleteCourse
   } = useCourses();
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return (
       <div className="page-wrapper flex-1 p-6">
         <EmptyState

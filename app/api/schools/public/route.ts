@@ -3,7 +3,7 @@ import { proxyApiRequest } from '@/lib/api-proxy';
 
 export async function GET(request: NextRequest) {
   // Use proxy utility which handles 401/403 redirects automatically
-  return proxyApiRequest(request, '/api/stores/public', {
+  return proxyApiRequest(request, '/api/academies/public', {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',

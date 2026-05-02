@@ -39,7 +39,7 @@ const CATEGORY_CONFIG: Record<
       limit: number;
       search?: string;
       status?: string;
-      store_id?: number | null;
+      academy_id?: number | null;
     }) => Promise<any>;
   }
 > = {
@@ -54,7 +54,7 @@ const CATEGORY_CONFIG: Record<
         limit: params.limit,
         search: params.search,
         status: params.status as any,
-        store_id: params.store_id ?? undefined
+        academy_id: params.academy_id ?? undefined
       })
   },
   students: {
@@ -68,7 +68,7 @@ const CATEGORY_CONFIG: Record<
         limit: params.limit,
         search: params.search,
         status: params.status as any,
-        store_id: params.store_id ?? undefined
+        academy_id: params.academy_id ?? undefined
       })
   },
   teachers: {
@@ -82,7 +82,7 @@ const CATEGORY_CONFIG: Record<
         limit: params.limit,
         search: params.search,
         status: params.status as any,
-        store_id: params.store_id ?? undefined
+        academy_id: params.academy_id ?? undefined
       })
   },
   managers: {
@@ -96,7 +96,7 @@ const CATEGORY_CONFIG: Record<
         limit: params.limit,
         search: params.search,
         status: params.status as any,
-        store_id: params.store_id ?? undefined
+        academy_id: params.academy_id ?? undefined
       })
   }
 };
@@ -150,11 +150,11 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
         limit: number;
         search?: string;
         status?: string;
-        store_id?: number | null;
+        academy_id?: number | null;
       } = {
         page: currentPage,
         limit: pageSize,
-        store_id: selectedStore
+        academy_id: selectedStore
       };
 
       if (searchTerm) params.search = searchTerm;
@@ -168,7 +168,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
           limit: params.limit,
           search: params.search,
           status: params.status as any,
-          store_id: params.store_id ?? undefined,
+          academy_id: params.academy_id ?? undefined,
           role: selectedRole
         });
       } else {
@@ -224,7 +224,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   useEffect(() => {
     const roleParam = searchParams.get('role');
     const statusParam = searchParams.get('status');
-    const storeParam = searchParams.get('store_id');
+    const storeParam = searchParams.get('academy_id');
 
     if (
       roleParam &&

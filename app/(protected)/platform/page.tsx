@@ -40,36 +40,48 @@ export default function PlatformOverviewPage() {
         // Fetch platform-level statistics
         // TODO: Create backend endpoint for platform stats
         // For now, using placeholder data
-        const [storesResponse, usersResponse, coursesResponse] =
-          await Promise.all([
-            apiClient
-              .request('/stores', { method: 'GET' })
-              .catch(() => ({ data: { items: [], total: 0 } })),
-            apiClient
-              .request('/users', { method: 'GET' })
-              .catch(() => ({ data: { items: [], total: 0 } })),
-            apiClient
-              .request('/courses', { method: 'GET' })
-              .catch(() => ({ data: { items: [], total: 0 } }))
-          ]);
+        const [storesRaw, usersRaw, coursesBundle] = await Promise.all([
+          apiClient.getAcademies().catch(() => null),
+          apiClient.getUsers({ limit: 1000 }).catch(() => null),
+          apiClient.getCourses({ limit: 1000 }).catch(() => ({
+            courses: [] as unknown[]
+          }))
+        ]);
+
+        const academyRows = Array.isArray(storesRaw)
+          ? storesRaw
+          : storesRaw &&
+              typeof storesRaw === 'object' &&
+              Array.isArray((storesRaw as { items?: unknown[] }).items)
+            ? (storesRaw as { items: unknown[] }).items
+            : storesRaw &&
+                typeof storesRaw === 'object' &&
+                Array.isArray((storesRaw as { data?: unknown[] }).data)
+              ? (storesRaw as { data: unknown[] }).data
+              : [];
+
+        const userRows = Array.isArray(usersRaw)
+          ? usersRaw
+          : usersRaw &&
+              typeof usersRaw === 'object' &&
+              Array.isArray((usersRaw as { users?: unknown[] }).users)
+            ? (usersRaw as { users: unknown[] }).users
+            : usersRaw &&
+                typeof usersRaw === 'object' &&
+                Array.isArray((usersRaw as { items?: unknown[] }).items)
+              ? (usersRaw as { items: unknown[] }).items
+              : [];
+
+        const courseRows = coursesBundle?.courses ?? [];
 
         setStats({
-          totalStores:
-            storesResponse?.data?.total ||
-            storesResponse?.data?.items?.length ||
-            0,
-          totalUsers:
-            usersResponse?.data?.total ||
-            usersResponse?.data?.items?.length ||
-            0,
-          totalCourses:
-            coursesResponse?.data?.total ||
-            coursesResponse?.data?.items?.length ||
-            0,
+          totalStores: academyRows.length,
+          totalUsers: userRows.length,
+          totalCourses: courseRows.length,
           totalRevenue: 0, // TODO: Calculate from all stores
-          activeStores:
-            storesResponse?.data?.items?.filter((s: any) => s.is_active)
-              ?.length || 0,
+          activeStores: academyRows.filter(
+            (s) => (s as { is_active?: boolean }).is_active
+          ).length,
           totalStudents: 0 // TODO: Calculate from all stores
         });
       } catch (error) {

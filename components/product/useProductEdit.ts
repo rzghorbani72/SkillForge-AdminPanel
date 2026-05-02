@@ -17,7 +17,7 @@ export type ProductEditFormData = ProductCreateFormData;
 export const useProductEdit = () => {
   const router = useRouter();
   const params = useParams();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const productId = params.id as string;
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -54,10 +54,10 @@ export const useProductEdit = () => {
   });
 
   useEffect(() => {
-    if (productId && selectedStore) {
+    if (productId && selectedAcademy) {
       fetchProduct();
     }
-  }, [productId, selectedStore]);
+  }, [productId, selectedAcademy]);
 
   const fetchProduct = async () => {
     try {
@@ -104,7 +104,7 @@ export const useProductEdit = () => {
   };
 
   const onSubmitHandler = async (data: ProductEditFormData) => {
-    if (!selectedStore || !product) {
+    if (!selectedAcademy || !product) {
       toast.error('Product or store not found');
       return;
     }
@@ -217,7 +217,7 @@ export const useProductEdit = () => {
   return {
     product,
     form,
-    selectedStore,
+    selectedAcademy,
     isLoading,
     isSubmitting,
     coverImage: imageUpload.selectedFile,

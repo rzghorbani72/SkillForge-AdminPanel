@@ -1,29 +1,16 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api';
-
-export interface Store {
-  id: number;
-  name: string;
-  slug?: string;
-  description?: string;
-  private_domain?: string;
-  public_address?: string;
-  private_address?: string;
-  images?: Array<{
-    id: number;
-    filename: string;
-  }>;
-}
+import type { Academy } from '@/types/api';
 
 interface UseStoresReturn {
-  stores: Store[];
+  stores: Academy[];
   isLoading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
 }
 
 export function useStores(): UseStoresReturn {
-  const [stores, setStores] = useState<Store[]>([]);
+  const [stores, setStores] = useState<Academy[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,10 +19,10 @@ export function useStores(): UseStoresReturn {
       setIsLoading(true);
       setError(null);
 
-      const response = await apiClient.getStoresPublic();
+      const response = await apiClient.getAcademiesPublic();
 
       if (response.status === 200 && response.data) {
-        let storesData: Store[] = [];
+        let storesData: Academy[] = [];
 
         // Handle response structure - data is now directly available
         if (Array.isArray(response.data)) {

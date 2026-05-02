@@ -173,7 +173,7 @@ export const COUNTRY_LANGUAGE_MAP: Record<string, CountryLanguageMapping> = {
   IQ: {
     countryCode: 'IQ',
     defaultLanguage: 'ar',
-    supportedLanguages: ['ar', 'en', 'ku']
+    supportedLanguages: ['ar', 'en']
   }, // Iraq - Arabic
   SY: {
     countryCode: 'SY',

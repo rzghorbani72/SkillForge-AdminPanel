@@ -52,7 +52,7 @@ import { toast } from 'sonner';
 export default function SeasonsPage() {
   const params = useParams();
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const courseId = params.course_id as string;
 
   const [course, setCourse] = useState<Course | null>(null);
@@ -63,13 +63,13 @@ export default function SeasonsPage() {
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
 
   useEffect(() => {
-    if (courseId && selectedStore) {
+    if (courseId && selectedAcademy) {
       fetchData();
     }
-  }, [courseId, selectedStore]);
+  }, [courseId, selectedAcademy]);
 
   const fetchData = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);

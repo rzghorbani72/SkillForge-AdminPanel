@@ -185,23 +185,23 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
 export interface AuthUser {
   id: number;
   role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
-  storeId?: number | null;
+  academyId?: number | null;
   isAdminProfile?: boolean;
   platformLevel?: boolean;
-  canManageAllStores?: boolean;
+  canManageAllAcademies?: boolean;
   canManagePlatform?: boolean;
   profile?: {
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
-    store_id?: number | null;
-    storeId?: number | null;
-    store?: {
+    academy_id?: number | null;
+    academyId?: number | null;
+    academy?: {
       id: number;
       name?: string;
       [key: string]: any;
     };
     [key: string]: any;
   };
-  currentStore?: {
+  currentAcademy?: {
     id: number;
     name: string;
     slug: string;
@@ -264,33 +264,40 @@ export const useUserStore = create<UserState & UserActions>()(
             return;
           }
 
-          const storeId = currentUser?.storeId ?? currentUser?.store_id ?? null;
-          const currentStore = currentUser?.currentStore ?? null;
+          const academyId =
+            currentUser?.academyId ?? currentUser?.academy_id ?? null;
+          const currentAcademy = currentUser?.currentAcademy ?? null;
 
           const isAdminProfile = currentUser?.isAdminProfile ?? false;
           const platformLevel = currentUser?.platformLevel ?? false;
-          const canManageAllStores = currentUser?.canManageAllStores ?? false;
+          const canManageAllAcademies =
+            currentUser?.canManageAllAcademies ??
+            currentUser?.canManageAllStores ??
+            false;
           const canManagePlatform = currentUser?.canManagePlatform ?? false;
 
           const user: AuthUser = {
             id: (currentUser as any)?.id || 0,
             role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
-            storeId: storeId,
+            academyId: academyId,
             isAdminProfile: isAdminProfile,
             platformLevel: platformLevel,
-            canManageAllStores: canManageAllStores,
+            canManageAllAcademies: canManageAllAcademies,
             canManagePlatform: canManagePlatform,
             profile: {
               ...((currentUser as any)?.profile || {}),
-              store_id: storeId,
-              storeId: storeId,
-              store:
-                currentStore || (currentUser as any)?.profile?.store || null,
+              academy_id: academyId,
+              academyId: academyId,
+              academy:
+                currentAcademy ||
+                (currentUser as any)?.profile?.academy ||
+                (currentUser as any)?.profile?.store ||
+                null,
               role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
               isAdminProfile: isAdminProfile,
               platformLevel: platformLevel
             },
-            currentStore: currentStore,
+            currentAcademy: currentAcademy,
             permissions: currentUser?.permissions || []
           };
 

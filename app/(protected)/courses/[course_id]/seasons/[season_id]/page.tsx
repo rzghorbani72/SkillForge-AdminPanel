@@ -14,7 +14,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 export default function SeasonViewPage() {
   const params = useParams();
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
 
@@ -23,13 +23,13 @@ export default function SeasonViewPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (courseId && seasonId && selectedStore) {
+    if (courseId && seasonId && selectedAcademy) {
       fetchData();
     }
-  }, [courseId, seasonId, selectedStore]);
+  }, [courseId, seasonId, selectedAcademy]);
 
   const fetchData = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);
@@ -93,7 +93,7 @@ export default function SeasonViewPage() {
     // <AccessControlGuard
     //   resource={{
     //     owner_id: course?.author_id,
-    //     store_id: course?.store_id ?? 0,
+    //     academy_id: course?.academy_id ?? 0,
     //     access_control: (season as any).access_control
     //   }}
     //   action="view"

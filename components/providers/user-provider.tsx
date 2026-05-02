@@ -14,15 +14,17 @@ import { apiClient } from '@/lib/api';
 interface AuthUser {
   id: number;
   role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
-  storeId?: number | null;
+  academyId?: number | null;
+  currentAcademy?: Record<string, unknown> | null;
   isAdminProfile?: boolean;
   platformLevel?: boolean;
   canManageAllStores?: boolean;
+  canManageAllAcademies?: boolean;
   canManagePlatform?: boolean;
   profile?: {
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
-    store_id?: number | null;
-    storeId?: number | null;
+    academy_id?: number | null;
+    academyId?: number | null;
     store?: {
       id: number;
       name?: string;
@@ -85,28 +87,36 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Extract store information
-      const storeId = currentUser?.storeId ?? currentUser?.store_id ?? null;
-      const currentStore = currentUser?.currentStore ?? null;
+      const academyId =
+        currentUser?.academyId ?? currentUser?.academy_id ?? null;
+      const currentAcademy = currentUser?.currentAcademy ?? null;
 
-      // Extract platform-level admin flags
       const isAdminProfile = currentUser?.isAdminProfile ?? false;
       const platformLevel = currentUser?.platformLevel ?? false;
-      const canManageAllStores = currentUser?.canManageAllStores ?? false;
+      const canManageAllAcademies =
+        currentUser?.canManageAllAcademies ??
+        currentUser?.canManageAllStores ??
+        false;
       const canManagePlatform = currentUser?.canManagePlatform ?? false;
 
       setUser({
         id: (currentUser as any)?.id || 0,
         role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
-        storeId: storeId,
+        academyId: academyId,
+        currentAcademy: currentAcademy,
         isAdminProfile: isAdminProfile,
         platformLevel: platformLevel,
-        canManageAllStores: canManageAllStores,
+        canManageAllAcademies: canManageAllAcademies,
         canManagePlatform: canManagePlatform,
         profile: {
           ...((currentUser as any)?.profile || {}),
-          store_id: storeId,
-          storeId: storeId,
-          store: currentStore || (currentUser as any)?.profile?.store || null,
+          academy_id: academyId,
+          academyId: academyId,
+          academy:
+            currentAcademy ||
+            (currentUser as any)?.profile?.academy ||
+            (currentUser as any)?.profile?.store ||
+            null,
           role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
           isAdminProfile: isAdminProfile,
           platformLevel: platformLevel

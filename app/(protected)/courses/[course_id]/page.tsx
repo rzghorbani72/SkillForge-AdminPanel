@@ -23,14 +23,14 @@ export default function CourseViewPage() {
     course,
     isLoading,
     isDeleting,
-    selectedStore,
+    selectedAcademy,
     handleEditCourse,
     handleManageSeasons,
     handleDeleteCourse,
     handleBack
   } = useCourseView(courseId);
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return <NoStoreState />;
   }
 

@@ -85,7 +85,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
             : imageUrl;
         setUploadedImageId(imageId);
         toast.success('Image uploaded successfully!');
-        options.onSuccess?.({ id: parseInt(imageId), publicUrl: fullUrl });
+        options.onSuccess?.({ id: parseInt(imageId), url: fullUrl });
       } else {
         console.error('Upload response structure:', uploadResponse);
         toast.error('Failed to upload image: Invalid response structure');

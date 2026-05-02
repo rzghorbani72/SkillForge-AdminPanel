@@ -1,17 +1,17 @@
 import { apiClient } from './api';
 import { ErrorHandler } from './error-handler';
-import { User, Profile, Store } from '@/types/api';
+import { User, Profile, Academy } from '@/types/api';
 import { isDevelopmentMode, getStoreUrl, logDevInfo } from './dev-utils';
 
 export interface AuthUser {
   user: User;
   access_token: string;
   currentProfile?: Profile;
-  currentStore?: Store;
-  requires_store_selection?: boolean;
-  available_stores?: Store[];
+  currentAcademy?: Academy;
+  requires_academy_selection?: boolean;
+  available_academies?: Academy[];
   availableProfiles?: Profile[];
-  availableStores?: Store[];
+  availableAcademies?: Academy[];
   permissions?: string[];
   expires_at?: Date;
   isStaff?: boolean;
@@ -20,7 +20,7 @@ export interface AuthUser {
 export interface UserProfile {
   id: number;
   userId: number;
-  storeId: number;
+  academyId: number;
   role: string;
   displayName: string;
   isActive: boolean;
@@ -35,7 +35,7 @@ export interface AuthType {
 export interface LoginCredentials {
   identifier: string;
   password: string;
-  store_id?: number;
+  academy_id?: number;
 }
 
 export interface RegisterData {
@@ -45,7 +45,7 @@ export interface RegisterData {
   password: string;
   confirmed_password: string;
   role: string;
-  store_id?: number;
+  academy_id?: number;
   display_name: string;
   bio?: string;
   website?: string;
@@ -104,6 +104,7 @@ class AuthService {
         // Clear all stored data on logout
         window.localStorage.removeItem('user_data');
         window.localStorage.removeItem('current_profile');
+        window.localStorage.removeItem('current_academy');
         window.localStorage.removeItem('current_store');
         window.localStorage.removeItem('user_permissions');
         window.localStorage.removeItem('auth_user');
@@ -131,11 +132,10 @@ class AuthService {
         // Store minimal user info (no sensitive data)
         const safeUserData = {
           id: user.user.id,
-          name: user.user.name,
+          name: user.user.display_name ?? user.user.name,
           email: user.user.email
             ? user.user.email.substring(0, 3) + '***'
-            : null, // Mask email
-          role: user.user.role
+            : null // Mask email
         };
         window.localStorage.setItem('user_data', JSON.stringify(safeUserData));
       } else {
@@ -151,12 +151,13 @@ class AuthService {
         window.localStorage.removeItem('current_profile');
       }
 
-      if (user.currentStore) {
+      if (user.currentAcademy) {
         window.localStorage.setItem(
-          'current_store',
-          JSON.stringify(user.currentStore)
+          'current_academy',
+          JSON.stringify(user.currentAcademy)
         );
       } else {
+        window.localStorage.removeItem('current_academy');
         window.localStorage.removeItem('current_store');
       }
 
@@ -236,7 +237,7 @@ class AuthService {
   async loginPhoneByOtp(credentials: {
     phone_number: string;
     otp: string;
-    store_id?: number;
+    academy_id?: number;
   }): Promise<AuthUser> {
     try {
       const response = await apiClient.loginPhoneByOtp(credentials);
@@ -258,7 +259,7 @@ class AuthService {
   async loginEmailByOtp(credentials: {
     email: string;
     otp: string;
-    store_id?: number;
+    academy_id?: number;
   }): Promise<AuthUser> {
     try {
       const response = await apiClient.loginEmailByOtp(credentials);
@@ -276,13 +277,12 @@ class AuthService {
     }
   }
 
-  // Select store after login
-  async selectStore(data: {
+  async selectAcademy(data: {
     temp_token: string;
-    store_id: number;
+    academy_id: number;
   }): Promise<AuthUser> {
     try {
-      const response = await apiClient.selectStore(data);
+      const response = await apiClient.selectAcademy(data);
 
       if (response?.data) {
         this.currentUser = response.data as AuthUser;
@@ -290,7 +290,7 @@ class AuthService {
         return this.currentUser;
       }
 
-      throw new Error('Store selection failed');
+      throw new Error('Academy selection failed');
     } catch (error) {
       ErrorHandler.handleValidationErrors(error);
       throw error;
@@ -359,15 +359,16 @@ class AuthService {
 
   // Get user's role in current store
   getCurrentRole(user: AuthUser): string {
-    return user.currentProfile?.role?.name || '';
+    return (
+      user.currentProfile?.Role?.name || user.currentProfile?.role?.name || ''
+    );
   }
 
-  // Get user's current store (overloaded method)
-  getCurrentStore(user?: AuthUser): Store | null {
+  getCurrentAcademy(user?: AuthUser): Academy | null {
     if (user) {
-      return user.currentStore || null;
+      return user.currentAcademy || null;
     }
-    return this.currentUser?.currentStore || null;
+    return this.currentUser?.currentAcademy || null;
   }
 
   // Get available profiles for user
@@ -375,74 +376,98 @@ class AuthService {
     return user.availableProfiles || [];
   }
 
-  // Get available stores for user
-  getAvailableStores(user: AuthUser): Store[] {
-    return user.availableStores || [];
+  getAvailableAcademies(user: AuthUser): Academy[] {
+    return user.availableAcademies || user.available_academies || [];
   }
 
-  // Get store dashboard URL
-  getStoreDashboardUrl(store: Store): string {
+  getAcademyDashboardUrl(academy: Academy): string {
     if (isDevelopmentMode()) {
-      // In development, use localhost with store slug as subdomain
-      const storeUrl = getStoreUrl(store.slug);
-      logDevInfo('Store URL for development:', storeUrl);
+      const storeUrl = getStoreUrl(academy.slug);
+      logDevInfo('Academy URL for development:', storeUrl);
       return storeUrl;
     }
 
-    // If store has a public domain, use it
-    if (store.domain?.public_address) {
-      return `https://${store.domain.public_address}`;
+    if (academy.domain?.public_address) {
+      return `https://${academy.domain.public_address}`;
     }
 
-    // Otherwise, use the private domain with the main domain
-    const privateDomain = store.slug;
+    const privateDomain = academy.slug;
     return `https://${privateDomain}.skillforge.com`;
   }
 
-  // Get store login URL
-  getStoreLoginUrl(store: Store): string {
-    const baseUrl = this.getStoreDashboardUrl(store);
+  getAcademyLoginUrl(academy: Academy): string {
+    const baseUrl = this.getAcademyDashboardUrl(academy);
     return `${baseUrl}/login`;
   }
 
   // Check if user is a teacher in any store
   async isTeacherInAnyStore(): Promise<boolean> {
     const response = await apiClient.getUserProfiles();
-    const profiles = response?.data || ([] as UserProfile[]);
+    const raw = response?.data as unknown;
+    const profiles = Array.isArray(raw)
+      ? raw
+      : raw &&
+          typeof raw === 'object' &&
+          Array.isArray((raw as { data?: unknown[] }).data)
+        ? (raw as { data: UserProfile[] }).data
+        : ([] as UserProfile[]);
     return profiles.some((profile: UserProfile) => profile.role === 'TEACHER');
   }
 
   // Check if user is a manager in any store
   async isManagerInAnyStore(): Promise<boolean> {
     const response = await apiClient.getUserProfiles();
-    const profiles = response?.data || ([] as UserProfile[]);
+    const raw = response?.data as unknown;
+    const profiles = Array.isArray(raw)
+      ? raw
+      : raw &&
+          typeof raw === 'object' &&
+          Array.isArray((raw as { data?: unknown[] }).data)
+        ? (raw as { data: UserProfile[] }).data
+        : ([] as UserProfile[]);
     return profiles.some((profile: UserProfile) => profile.role === 'MANAGER');
   }
 
   // Check if user is an admin
   async isAdmin(): Promise<boolean> {
     const response = await apiClient.getUserProfiles();
-    const profiles = response?.data || ([] as UserProfile[]);
+    const raw = response?.data as unknown;
+    const profiles = Array.isArray(raw)
+      ? raw
+      : raw &&
+          typeof raw === 'object' &&
+          Array.isArray((raw as { data?: unknown[] }).data)
+        ? (raw as { data: UserProfile[] }).data
+        : ([] as UserProfile[]);
     return profiles.some((profile: UserProfile) => profile.role === 'ADMIN');
   }
 
   // Get user's role in a specific store
-  async getUserRoleInStore(storeId: number): Promise<string | null> {
+  async getUserRoleInStore(academyId: number): Promise<string | null> {
     const response = await apiClient.getUserProfiles();
-    const profiles = response?.data || ([] as UserProfile[]);
-    const profile = profiles.find((p: UserProfile) => p.storeId === storeId);
+    const raw = response?.data as unknown;
+    const profiles = Array.isArray(raw)
+      ? raw
+      : raw &&
+          typeof raw === 'object' &&
+          Array.isArray((raw as { data?: unknown[] }).data)
+        ? (raw as { data: UserProfile[] }).data
+        : ([] as UserProfile[]);
+    const profile = profiles.find(
+      (p: UserProfile) => p.academyId === academyId
+    );
     return profile?.role || null;
   }
 
   // Check if user can manage a specific store
-  async canManageStoreById(storeId: number): Promise<boolean> {
-    const role = await this.getUserRoleInStore(storeId);
+  async canManageStoreById(academyId: number): Promise<boolean> {
+    const role = await this.getUserRoleInStore(academyId);
     return role === 'ADMIN' || role === 'MANAGER' || role === 'TEACHER';
   }
 
   // Check if user can access admin features in a store
-  async canAccessStoreAdmin(storeId: number): Promise<boolean> {
-    const role = await this.getUserRoleInStore(storeId);
+  async canAccessStoreAdmin(academyId: number): Promise<boolean> {
+    const role = await this.getUserRoleInStore(academyId);
     return role === 'ADMIN' || role === 'MANAGER';
   }
 
@@ -518,10 +543,12 @@ class AuthService {
   }
 
   // Get user's stores
-  async getUserStores(): Promise<Store[]> {
+  async getUserAcademies(): Promise<Academy[]> {
     try {
-      const response = await apiClient.getUserStores();
-      return (response as Store[]) || [];
+      const response = await apiClient.getUserAcademies();
+      const raw = response as { data?: Academy[] } | Academy[] | null;
+      const list = Array.isArray(raw) ? raw : raw?.data;
+      return Array.isArray(list) ? list : [];
     } catch (error) {
       console.error('Failed to fetch user stores:', error);
       return [];

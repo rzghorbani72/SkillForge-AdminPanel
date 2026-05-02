@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, Filter, Plus, Search } from 'lucide-react';
 import { usePaymentsData } from '../_hooks/use-payments-data';
 import { cn, formatCurrencyWithStore } from '@/lib/utils';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -32,7 +32,7 @@ function formatDate(value?: string | null): string {
 export default function InvoicesPage() {
   const { t, language } = useTranslation();
   const { payments, isLoading } = usePaymentsData();
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
   const [searchTerm, setSearchTerm] = useState('');
 
   const invoices = useMemo(() => {
@@ -40,7 +40,7 @@ export default function InvoicesPage() {
     const term = searchTerm.toLowerCase();
 
     return payments.filter((payment) => {
-      const student = payment.user?.name?.toLowerCase() ?? '';
+      const student = payment.user?.display_name?.toLowerCase() ?? '';
       const course = payment.course?.title?.toLowerCase() ?? '';
       const invoiceNumber = payment.id.toString();
       const status = payment.status?.toLowerCase() ?? '';
@@ -218,7 +218,7 @@ export default function InvoicesPage() {
                       Invoice #{payment.id.toString().padStart(6, '0')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {payment.user?.name ?? 'Unknown student'} ·{' '}
+                      {payment.user?.display_name ?? 'Unknown student'} ·{' '}
                       {payment.course?.title ?? 'Unknown course'}
                     </p>
                   </div>
@@ -226,7 +226,10 @@ export default function InvoicesPage() {
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="text-right text-sm">
                     <p className="font-semibold">
-                      {formatCurrencyWithStore(payment.amount ?? 0, store)}
+                      {formatCurrencyWithStore(
+                        payment.amount ?? 0,
+                        currentAcademy
+                      )}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(payment.payment_date)}

@@ -18,23 +18,32 @@ export async function proxyApiRequest(
     // Forward cookies from the request
     const cookies = request.cookies.toString();
 
-    // Forward headers
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      ...(cookies && { Cookie: cookies }),
-      ...options.headers
-    };
-
-    // Forward store ID header if present
-    const storeId = request.headers.get('X-Store-ID');
-    if (storeId) {
-      headers['X-Store-ID'] = storeId;
+    const headers = new Headers();
+    headers.set('Content-Type', 'application/json');
+    if (cookies) {
+      headers.set('Cookie', cookies);
+    }
+    const merged = options.headers;
+    if (merged) {
+      if (merged instanceof Headers) {
+        merged.forEach((value, key) => headers.set(key, value));
+      } else if (Array.isArray(merged)) {
+        merged.forEach(([key, value]) => headers.set(key, value));
+      } else {
+        Object.entries(merged).forEach(([key, value]) => {
+          if (value !== undefined) headers.set(key, String(value));
+        });
+      }
     }
 
-    // Forward CSRF token if present
+    const academyId = request.headers.get('X-Academy-ID');
+    if (academyId) {
+      headers.set('X-Academy-ID', academyId);
+    }
+
     const csrfToken = request.headers.get('X-CSRF-Token');
     if (csrfToken) {
-      headers['X-CSRF-Token'] = csrfToken;
+      headers.set('X-CSRF-Token', csrfToken);
     }
 
     // Make request to backend

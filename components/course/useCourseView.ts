@@ -8,16 +8,16 @@ import { toast } from 'sonner';
 
 export const useCourseView = (courseId: string) => {
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (courseId && selectedStore) {
+    if (courseId && selectedAcademy) {
       fetchCourse();
     }
-  }, [courseId, selectedStore]);
+  }, [courseId, selectedAcademy]);
 
   const fetchCourse = async () => {
     try {
@@ -65,7 +65,7 @@ export const useCourseView = (courseId: string) => {
     course,
     isLoading,
     isDeleting,
-    selectedStore,
+    selectedAcademy,
     handleEditCourse,
     handleManageSeasons,
     handleDeleteCourse,

@@ -14,7 +14,7 @@ type UseSeasonsReturn = {
 };
 
 const useSeasons = (): UseSeasonsReturn => {
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
 
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -22,13 +22,13 @@ const useSeasons = (): UseSeasonsReturn => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (selectedStore) {
+    if (selectedAcademy) {
       fetchData();
     }
-  }, [selectedStore]);
+  }, [selectedAcademy]);
 
   const fetchData = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
     try {
       setIsLoading(true);
       const [seasonsResponse, coursesResponse] = await Promise.all([
@@ -47,9 +47,11 @@ const useSeasons = (): UseSeasonsReturn => {
       )
         nextSeasons = (seasonsResponse as any).data;
 
-      if (selectedStore && nextSeasons.length > 0) {
+      if (selectedAcademy && nextSeasons.length > 0) {
         nextSeasons = nextSeasons.filter((s) =>
-          (s as any).store_id ? (s as any).store_id === selectedStore.id : true
+          (s as any).academy_id
+            ? (s as any).academy_id === selectedAcademy.id
+            : true
         );
       }
       setSeasons(nextSeasons);
@@ -61,9 +63,11 @@ const useSeasons = (): UseSeasonsReturn => {
       else if (cData && Array.isArray(cData.data)) nextCourses = cData.data;
       else if (cData && Array.isArray(cData.courses))
         nextCourses = cData.courses;
-      if (selectedStore && nextCourses.length > 0) {
+      if (selectedAcademy && nextCourses.length > 0) {
         nextCourses = nextCourses.filter((c) =>
-          (c as any).store_id ? (c as any).store_id === selectedStore.id : true
+          (c as any).academy_id
+            ? (c as any).academy_id === selectedAcademy.id
+            : true
         );
       }
       setCourses(nextCourses);

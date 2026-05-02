@@ -22,9 +22,9 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Search, Building2 } from 'lucide-react';
+import { Plus, Search, Building2, AlertCircle } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { Store } from '@/types/api';
+import type { Academy } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -40,15 +40,17 @@ import { toast } from 'react-toastify';
 
 export default function StoresPage() {
   const { t, language } = useTranslation();
-  const { stores, isLoading, error, refreshStores } = useStore();
+  const { academies, isLoading, error, refreshAcademies } = useStore();
   const { user } = useAuthUser();
   const role = user?.role;
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [editingAcademy, setEditingAcademy] = useState<Academy | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [disconnectStore, setDisconnectStore] = useState<Store | null>(null);
+  const [disconnectAcademy, setDisconnectAcademy] = useState<Academy | null>(
+    null
+  );
   const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
 
@@ -93,10 +95,10 @@ export default function StoresPage() {
 
   // Monitor formData changes for validation
   useEffect(() => {
-    if (formData.private_domain && selectedStore && isEditDialogOpen) {
+    if (formData.private_domain && editingAcademy && isEditDialogOpen) {
       validateDomain(formData.private_domain);
     }
-  }, [formData.private_domain, selectedStore, isEditDialogOpen]);
+  }, [formData.private_domain, editingAcademy, isEditDialogOpen]);
 
   // Validate domain format and length
   const validateDomain = (domain: string) => {
@@ -129,21 +131,21 @@ export default function StoresPage() {
     });
 
     setTimeout(() => {
-      const isTaken = stores.some((store) => {
+      const isTaken = academies.some((store) => {
         const storeDomainPart = extractDomainPart(
           store.domain?.private_address || ''
         );
         const inputDomainPart = extractDomainPart(domain);
         return (
           storeDomainPart === inputDomainPart &&
-          store.id !== (selectedStore?.id || 0)
+          store.id !== (editingAcademy?.id || 0)
         );
       });
 
       if (
-        selectedStore &&
+        editingAcademy &&
         extractDomainPart(domain) ===
-          extractDomainPart(selectedStore.domain?.private_address || '')
+          extractDomainPart(editingAcademy.domain?.private_address || '')
       ) {
         setDomainAvailability({
           isChecking: false,
@@ -180,7 +182,7 @@ export default function StoresPage() {
         return;
       }
 
-      const isDomainTaken = stores.some((store) => {
+      const isDomainTaken = academies.some((store) => {
         const storeDomainPart = extractDomainPart(
           store.domain?.private_address || ''
         );
@@ -203,7 +205,7 @@ export default function StoresPage() {
         description: formData.description
       };
 
-      const response = (await apiClient.createStore(storeData)) as any;
+      const response = (await apiClient.createAcademy(storeData)) as any;
       if (response.data.status === 'fail') {
         ErrorHandler.showWarning(response.message);
         return;
@@ -211,7 +213,7 @@ export default function StoresPage() {
       ErrorHandler.showSuccess('Store created successfully');
 
       // Refresh stores list
-      await refreshStores();
+      await refreshAcademies();
 
       setIsCreateDialogOpen(false);
       resetFormState();
@@ -225,7 +227,7 @@ export default function StoresPage() {
 
   const handleUpdateStore = async () => {
     try {
-      if (!selectedStore) {
+      if (!editingAcademy) {
         console.error('No store selected for update');
         return;
       }
@@ -249,14 +251,14 @@ export default function StoresPage() {
         return;
       }
 
-      const isDomainTaken = stores.some((store) => {
+      const isDomainTaken = academies.some((store) => {
         if (!store.domain) return false;
         const storeDomainPart = extractDomainPart(
           store.domain?.private_address || ''
         );
         const inputDomainPart = extractDomainPart(formData.private_domain);
         return (
-          storeDomainPart === inputDomainPart && store.id !== selectedStore.id
+          storeDomainPart === inputDomainPart && store.id !== editingAcademy.id
         );
       });
 
@@ -278,7 +280,7 @@ export default function StoresPage() {
       if (typeof formData.is_active === 'boolean')
         updateData.is_active = formData.is_active;
 
-      const response = (await apiClient.updateStore(updateData)) as any;
+      const response = (await apiClient.updateAcademy(updateData)) as any;
       if (response.data.status === 'fail') {
         ErrorHandler.showWarning(response.message);
         return;
@@ -286,11 +288,11 @@ export default function StoresPage() {
       ErrorHandler.showSuccess('Store updated successfully');
 
       // Refresh stores list
-      await refreshStores();
+      await refreshAcademies();
 
       setIsEditDialogOpen(false);
       resetFormState();
-      setSelectedStore(null);
+      setEditingAcademy(null);
     } catch (error) {
       console.error('Error updating store:', error);
       ErrorHandler.handleApiError(error);
@@ -301,7 +303,7 @@ export default function StoresPage() {
 
   // Check if user is manager in a store
   // Admins can have separate MANAGER profiles in stores (different from their main ADMIN profile)
-  const isManagerInStore = (store: Store): boolean => {
+  const isManagerInStore = (store: Academy): boolean => {
     if (!user || !store.profiles || store.profiles.length === 0) return false;
 
     // Get user's identifying information (email and phone are unique identifiers)
@@ -335,7 +337,7 @@ export default function StoresPage() {
   };
 
   // Check if store has other managers (for disconnect validation)
-  const hasOtherManagers = (store: Store): boolean => {
+  const hasOtherManagers = (store: Academy): boolean => {
     if (!store.profiles || store.profiles.length === 0) return false;
 
     // Get user's identifying information
@@ -368,24 +370,24 @@ export default function StoresPage() {
   };
 
   const handleDisconnect = async () => {
-    if (!disconnectStore || !user) return;
+    if (!disconnectAcademy || !user) return;
 
     try {
       setIsDisconnecting(true);
       // Use profile ID (user.id is the ADMIN profile ID from /me endpoint)
-      // Note: ADMIN profiles are platform-level (store_id = null)
+      // Note: ADMIN profiles are platform-level (academy_id = null)
       // This will remove the MANAGER profile from the store, not the ADMIN profile
       const adminId = user.id;
       const response = await apiClient.disconnectFromStore(
         adminId,
-        disconnectStore.id
+        disconnectAcademy.id
       );
 
       if ((response as any)?.data?.status === 'ok') {
         toast.success('Disconnected from store successfully');
-        await refreshStores();
+        await refreshAcademies();
         setIsDisconnectDialogOpen(false);
-        setDisconnectStore(null);
+        setDisconnectAcademy(null);
       } else {
         const errorMessage =
           (response as any)?.data?.data ||
@@ -408,7 +410,7 @@ export default function StoresPage() {
   };
 
   // Filter stores based on search term
-  const filteredStores = stores.filter(
+  const filteredStores = academies.filter(
     (store) =>
       store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       store.domain?.private_address
@@ -428,7 +430,7 @@ export default function StoresPage() {
             {t('common.error')}
           </h2>
           <p className="mb-4 text-muted-foreground">{error}</p>
-          <Button onClick={refreshStores} variant="outline">
+          <Button onClick={refreshAcademies} variant="outline">
             {t('common.tryAgain')}
           </Button>
         </div>
@@ -492,7 +494,7 @@ export default function StoresPage() {
         (user.role === 'MANAGER' || user.role === 'TEACHER') &&
         (() => {
           // Find stores where user has profiles but is not currently logged in
-          const otherStores = stores.filter((store) => {
+          const otherStores = academies.filter((store) => {
             if (!store.profiles || store.profiles.length === 0) return false;
 
             const userEmail =
@@ -500,8 +502,8 @@ export default function StoresPage() {
             const userPhone =
               (user as any)?.profile?.phone_number ||
               (user as any)?.phone_number;
-            const currentStoreId =
-              (user as any)?.storeId || (user as any)?.store_id;
+            const currentAcademyId =
+              (user as any)?.academyId || (user as any)?.academy_id;
 
             // Check if user has a profile in this store (by email/phone match)
             const hasProfile = store.profiles.some((profile: any) => {
@@ -513,14 +515,16 @@ export default function StoresPage() {
                 profile.phone_number === userPhone;
               const isMatch = emailMatch || phoneMatch;
               const isManagerOrTeacher =
-                (profile.role?.name === 'MANAGER' ||
+                (profile.Role?.name === 'MANAGER' ||
+                  profile.Role?.name === 'TEACHER' ||
+                  profile.role?.name === 'MANAGER' ||
                   profile.role?.name === 'TEACHER') &&
                 profile.is_active;
               return isMatch && isManagerOrTeacher;
             });
 
             // Show if user has profile but is not currently logged into this store
-            return hasProfile && store.id !== currentStoreId;
+            return hasProfile && store.id !== currentAcademyId;
           });
 
           if (otherStores.length > 0) {
@@ -572,12 +576,12 @@ export default function StoresPage() {
                   is_active: store?.is_active ?? false
                 };
 
-                setSelectedStore(store);
+                setEditingAcademy(store);
                 setFormData(newFormData);
                 setIsEditDialogOpen(true);
               }}
               onDisconnect={(store) => {
-                setDisconnectStore(store);
+                setDisconnectAcademy(store);
                 setIsDisconnectDialogOpen(true);
               }}
             />
@@ -633,7 +637,8 @@ export default function StoresPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Disconnect from Store</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to disconnect from "{disconnectStore?.name}
+              Are you sure you want to disconnect from "
+              {disconnectAcademy?.name}
               "?
               <br />
               <br />
@@ -645,7 +650,7 @@ export default function StoresPage() {
               <strong>Note:</strong> ADMIN roles are platform-level only and are
               never connected to stores. Only your MANAGER role in this store
               will be removed.
-              {!hasOtherManagers(disconnectStore || ({} as Store)) && (
+              {!hasOtherManagers(disconnectAcademy || ({} as Academy)) && (
                 <span className="mt-2 block text-destructive">
                   <strong>Warning:</strong> This store has no other managers.
                   Please assign a manager before disconnecting.
@@ -661,7 +666,7 @@ export default function StoresPage() {
               onClick={handleDisconnect}
               disabled={
                 isDisconnecting ||
-                !hasOtherManagers(disconnectStore || ({} as Store))
+                !hasOtherManagers(disconnectAcademy || ({} as Academy))
               }
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >

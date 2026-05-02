@@ -19,7 +19,7 @@ import { TrendingDown, Calendar, Tag, DollarSign } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Table,
@@ -37,7 +37,7 @@ export default function StoreCostsPage() {
   const [records, setRecords] = useState<StoreFinancialRecord[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -46,16 +46,16 @@ export default function StoreCostsPage() {
 
   useEffect(() => {
     loadData();
-  }, [selectedYear, selectedMonth, store?.id]);
+  }, [selectedYear, selectedMonth, currentAcademy?.id]);
 
   const loadData = async () => {
-    if (!store?.id) return;
+    if (!currentAcademy?.id) return;
 
     try {
       setLoading(true);
 
       const params: any = {
-        store_id: store.id,
+        academy_id: currentAcademy.id,
         year: selectedYear
       };
 
@@ -63,7 +63,7 @@ export default function StoreCostsPage() {
         params.month = selectedMonth;
       }
 
-      const data = await apiClient.getStoreFinancialRecords(params);
+      const data = await apiClient.getAcademyFinancialRecords(params);
       setRecords(data);
     } catch (error: any) {
       console.error('Error loading costs data:', error);
@@ -133,7 +133,7 @@ export default function StoreCostsPage() {
     );
   }
 
-  if (!store) {
+  if (!currentAcademy) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
@@ -151,7 +151,7 @@ export default function StoreCostsPage() {
             {t('financial.store.costs.title')}
           </h1>
           <p className="mt-1 text-muted-foreground">
-            {store.name} - {t('financial.store.costs.description')}
+            {currentAcademy.name} - {t('financial.store.costs.description')}
           </p>
         </div>
       </div>

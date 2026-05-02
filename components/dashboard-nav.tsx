@@ -296,7 +296,6 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
               side="right"
               sideOffset={8}
               avoidCollisions={true}
-              onOpenAutoFocus={(e: Event) => e.preventDefault()}
             >
               <DropdownMenuLabel className="px-2 text-xs font-semibold text-muted-foreground">
                 {translatedTitle}

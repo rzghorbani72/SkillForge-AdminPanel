@@ -8,7 +8,6 @@ const STORE_SPECIFIC_LABELS = [
   'stores',
   'categories',
   'courses',
-  'products',
   'videos',
   'images',
   'audios',
@@ -94,5 +93,5 @@ export function filterNavItemsByRole(
       }
       return item;
     })
-    .filter((item): item is NavItem => item !== null);
+    .filter((item) => item !== null) as NavItem[];
 }

@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { BookOpen, DollarSign, Users } from 'lucide-react';
 import { Course, Enrollment, Payment } from '@/types/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
@@ -25,7 +25,7 @@ type Props = {
 
 const RecentLists = ({ courses, enrollments, payments }: Props) => {
   const { t, language } = useTranslation();
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
 
   return (
     <Tabs
@@ -176,7 +176,10 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
                     </div>
                     <div className="shrink-0 text-end">
                       <p className="text-sm font-medium">
-                        {formatCurrencyWithStore(payment.amount ?? 0, store)}
+                        {formatCurrencyWithStore(
+                          payment.amount ?? 0,
+                          currentAcademy
+                        )}
                       </p>
                       <Badge
                         variant={

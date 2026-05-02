@@ -105,9 +105,9 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
+      //   await axios.delete(`/api/${params.academyId}/products/${params.productId}`);
       router.refresh();
-      router.push(`/${params.storeId}/products`);
+      router.push(`/${params.academyId}/products`);
     } catch (error: any) {
     } finally {
       setLoading(false);

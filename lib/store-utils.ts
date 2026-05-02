@@ -1,46 +1,36 @@
 'use client';
 
-import { Store } from '@/types/api';
+import type { Academy } from '@/types/api';
 
-// Store management utilities
-const STORE_STORAGE_KEYS = {
-  SELECTED_STORE_ID: 'skillforge_selected_store_id',
-  STORES_CACHE: 'skillforge_stores_cache',
-  LAST_FETCH: 'skillforge_stores_last_fetch'
+const ACADEMY_STORAGE_KEYS = {
+  SELECTED_ACADEMY_ID: 'skillforge_selected_academy_id',
+  ACADEMIES_CACHE: 'skillforge_academies_cache',
+  LAST_FETCH: 'skillforge_academies_last_fetch'
 };
 
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
-/**
- * Get the currently selected store ID from localStorage
- */
-export function getSelectedStoreId(): number | null {
+export function getSelectedAcademyId(): number | null {
   if (typeof window === 'undefined') return null;
 
-  const storeId = localStorage.getItem(STORE_STORAGE_KEYS.SELECTED_STORE_ID);
-  return storeId ? parseInt(storeId) : null;
-}
-
-/**
- * Set the selected store ID in localStorage
- */
-export function setSelectedStoreId(storeId: number): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(
-    STORE_STORAGE_KEYS.SELECTED_STORE_ID,
-    storeId.toString()
+  const academyId = localStorage.getItem(
+    ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID
   );
+  return academyId ? parseInt(academyId, 10) : null;
 }
 
-/**
- * Get cached stores from localStorage
- */
-export function getCachedStores(): Store[] {
+export function setSelectedAcademyId(academyId: number): void {
+  if (typeof window === 'undefined') return;
+  const id = academyId.toString();
+  localStorage.setItem(ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID, id);
+}
+
+export function getCachedAcademies(): Academy[] {
   if (typeof window === 'undefined') return [];
 
   try {
-    const cached = localStorage.getItem(STORE_STORAGE_KEYS.STORES_CACHE);
-    const lastFetch = localStorage.getItem(STORE_STORAGE_KEYS.LAST_FETCH);
+    const cached = localStorage.getItem(ACADEMY_STORAGE_KEYS.ACADEMIES_CACHE);
+    const lastFetch = localStorage.getItem(ACADEMY_STORAGE_KEYS.LAST_FETCH);
 
     if (cached && lastFetch) {
       const lastFetchTime = parseInt(lastFetch);
@@ -51,136 +41,106 @@ export function getCachedStores(): Store[] {
       }
     }
   } catch (error) {
-    console.error('Error reading cached stores:', error);
+    console.error('Error reading cached academies:', error);
   }
 
   return [];
 }
 
-/**
- * Cache stores in localStorage
- */
-export function setCachedStores(stores: Store[]): void {
+export function setCachedAcademies(academies: Academy[]): void {
   if (typeof window === 'undefined') return;
 
   try {
     localStorage.setItem(
-      STORE_STORAGE_KEYS.STORES_CACHE,
-      JSON.stringify(stores)
+      ACADEMY_STORAGE_KEYS.ACADEMIES_CACHE,
+      JSON.stringify(academies)
     );
-    localStorage.setItem(STORE_STORAGE_KEYS.LAST_FETCH, Date.now().toString());
+    localStorage.setItem(
+      ACADEMY_STORAGE_KEYS.LAST_FETCH,
+      Date.now().toString()
+    );
   } catch (error) {
-    console.error('Error caching stores:', error);
+    console.error('Error caching academies:', error);
   }
 }
 
-/**
- * Get the selected store from a list of stores
- */
-export function getSelectedStore(stores: Store[]): Store | null {
-  const selectedId = getSelectedStoreId();
-  if (!selectedId) return stores[0] || null;
+export function getSelectedAcademy(academies: Academy[]): Academy | null {
+  const selectedId = getSelectedAcademyId();
+  if (!selectedId) return academies[0] || null;
 
-  return stores.find((store) => store.id === selectedId) || stores[0] || null;
+  return academies.find((a) => a.id === selectedId) || academies[0] || null;
 }
 
-/**
- * Clear all store-related data from localStorage
- */
-export function clearStoreData(): void {
+export function clearAcademyData(): void {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.removeItem(STORE_STORAGE_KEYS.SELECTED_STORE_ID);
-    localStorage.removeItem(STORE_STORAGE_KEYS.STORES_CACHE);
-    localStorage.removeItem(STORE_STORAGE_KEYS.LAST_FETCH);
+    localStorage.removeItem(ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID);
+    localStorage.removeItem(ACADEMY_STORAGE_KEYS.ACADEMIES_CACHE);
+    localStorage.removeItem(ACADEMY_STORAGE_KEYS.LAST_FETCH);
   } catch (error) {
-    console.error('Error clearing store data:', error);
+    console.error('Error clearing academy data:', error);
   }
 }
 
-/**
- * Check if cached stores have currency fields
- * Returns true if all stores have currency config, false otherwise
- */
-export function validateStoreCurrencyFields(stores: Store[]): boolean {
-  return stores.every((store) => store.currency || store.currency_symbol);
+export function validateAcademyCurrencyFields(academies: Academy[]): boolean {
+  return academies.every((a) => a.currency || a.currency_symbol);
 }
 
-/**
- * Check if user has access to a specific store
- */
-export function hasStoreAccess(storeId: number, stores: Store[]): boolean {
-  return stores.some((store) => store.id === storeId);
+export function hasAcademyAccess(
+  academyId: number,
+  academies: Academy[]
+): boolean {
+  return academies.some((a) => a.id === academyId);
 }
 
-/**
- * Get store by ID from a list of stores
- */
-export function getStoreById(storeId: number, stores: Store[]): Store | null {
-  return stores.find((store) => store.id === storeId) || null;
+export function getAcademyById(
+  academyId: number,
+  academies: Academy[]
+): Academy | null {
+  return academies.find((a) => a.id === academyId) || null;
 }
 
-/**
- * Validate if the current store selection is still valid
- */
-export function validateStoreSelection(stores: Store[]): boolean {
-  const selectedId = getSelectedStoreId();
-  if (!selectedId) return stores.length > 0;
+export function validateAcademySelection(academies: Academy[]): boolean {
+  const selectedId = getSelectedAcademyId();
+  if (!selectedId) return academies.length > 0;
 
-  return stores.some((store) => store.id === selectedId);
+  return academies.some((a) => a.id === selectedId);
 }
 
-/**
- * Auto-select a store if none is selected or current selection is invalid
- * @param stores - List of available stores
- * @param preferredStoreId - Preferred store ID from /me endpoint (optional)
- */
-export function autoSelectStore(
-  stores: Store[],
-  preferredStoreId?: number | null
-): Store | null {
-  if (stores.length === 0) return null;
+export function autoSelectAcademy(
+  academies: Academy[],
+  preferredAcademyId?: number | null
+): Academy | null {
+  if (academies.length === 0) return null;
 
-  // First priority: Use preferred store ID from /me endpoint if provided and valid
-  // This ensures the dashboard shows the store from the API response
-  if (preferredStoreId) {
-    const preferredStore = stores.find(
-      (store) => store.id === preferredStoreId
-    );
-    if (preferredStore) {
-      // If localStorage has a different store, update it to match /me response
-      const currentSelectedId = getSelectedStoreId();
-      if (currentSelectedId !== preferredStoreId) {
-        setSelectedStoreId(preferredStoreId);
+  if (preferredAcademyId) {
+    const preferred = academies.find((a) => a.id === preferredAcademyId);
+    if (preferred) {
+      const currentSelectedId = getSelectedAcademyId();
+      if (currentSelectedId !== preferredAcademyId) {
+        setSelectedAcademyId(preferredAcademyId);
       }
-      return preferredStore;
+      return preferred;
     }
-    // If preferred store is not in the list, clear invalid localStorage selection
-    const currentSelectedId = getSelectedStoreId();
-    if (currentSelectedId === preferredStoreId) {
-      // Clear invalid selection
-      localStorage.removeItem('skillforge_selected_store_id');
+    const currentSelectedId = getSelectedAcademyId();
+    if (currentSelectedId === preferredAcademyId) {
+      localStorage.removeItem(ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID);
     }
   }
 
-  // Second priority: Use stored selection from localStorage (if it's valid)
-  const selectedId = getSelectedStoreId();
-  const selectedStore = stores.find((store) => store.id === selectedId);
+  const selectedId = getSelectedAcademyId();
+  const selected = academies.find((a) => a.id === selectedId);
 
-  if (selectedStore) {
-    return selectedStore;
+  if (selected) {
+    return selected;
   }
 
-  // Last resort: Select the first store
-  const firstStore = stores[0];
-  setSelectedStoreId(firstStore.id);
-  return firstStore;
+  const first = academies[0];
+  setSelectedAcademyId(first.id);
+  return first;
 }
 
-/**
- * Extract and format the first part of domain (before the dot)
- */
 export function extractDomainPart(domain: string): string {
   if (!domain) return '';
   const cleanDomain = domain
@@ -197,9 +157,6 @@ export function extractDomainPart(domain: string): string {
     .replace(/^-|-$/g, '');
 }
 
-/**
- * Convert domain to standard format (lowercase, kebab-case)
- */
 export function formatDomain(domain: string): string {
   if (!domain) return '';
   return domain

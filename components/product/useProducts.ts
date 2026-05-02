@@ -20,7 +20,7 @@ type UseProductsReturn = {
 
 const useProducts = (): UseProductsReturn => {
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,13 +59,13 @@ const useProducts = (): UseProductsReturn => {
   }, [products, searchTerm]);
 
   useEffect(() => {
-    if (selectedStore) {
+    if (selectedAcademy) {
       fetchProducts();
     }
-  }, [selectedStore]);
+  }, [selectedAcademy]);
 
   const fetchProducts = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);
@@ -77,9 +77,11 @@ const useProducts = (): UseProductsReturn => {
         nextProducts = response;
       }
 
-      if (selectedStore && nextProducts.length > 0) {
+      if (selectedAcademy && nextProducts.length > 0) {
         nextProducts = nextProducts.filter((p) =>
-          (p as any).store_id ? (p as any).store_id === selectedStore.id : true
+          (p as any).academy_id
+            ? (p as any).academy_id === selectedAcademy.id
+            : true
         );
       }
 

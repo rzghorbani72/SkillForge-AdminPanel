@@ -225,7 +225,7 @@ export default function StudentEngagementPage() {
                 startAngle={90}
                 endAngle={-270}
               >
-                <RadialBar minAngle={15} background clockWise dataKey="value" />
+                <RadialBar background dataKey="value" />
                 <Tooltip />
               </RadialBarChart>
             </ResponsiveContainer>

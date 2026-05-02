@@ -64,13 +64,21 @@ export default function SecuritySettingsPage() {
     const loadProfile = async () => {
       try {
         const response = await apiClient.getUserProfiles();
-        const payload = response?.data ?? response;
+        const payload = (response?.data ?? response) as
+          | Profile[]
+          | { status?: string; data?: Profile[] };
 
         let profiles: Profile[] = [];
-        if (payload?.status === 'ok' && Array.isArray(payload?.data)) {
-          profiles = payload.data as Profile[];
+        if (
+          payload &&
+          typeof payload === 'object' &&
+          !Array.isArray(payload) &&
+          payload.status === 'ok' &&
+          Array.isArray(payload.data)
+        ) {
+          profiles = payload.data;
         } else if (Array.isArray(payload)) {
-          profiles = payload as Profile[];
+          profiles = payload;
         }
 
         setActiveProfile(profiles.length > 0 ? profiles[0] : null);

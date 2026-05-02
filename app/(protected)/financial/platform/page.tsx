@@ -92,7 +92,7 @@ export default function PlatformFinancialPage() {
       const [summaryData, storeData, platformData, categoriesData] =
         await Promise.all([
           apiClient.getPlatformFinancialSummary(),
-          apiClient.getStoreFinancialRecords({
+          apiClient.getAcademyFinancialRecords({
             year: selectedYear,
             month: selectedMonth || undefined
           }),
@@ -563,7 +563,8 @@ export default function PlatformFinancialPage() {
                       return (
                         <TableRow key={record.id}>
                           <TableCell className="font-medium">
-                            {record.store?.name || `Store #${record.store_id}`}
+                            {record.store?.name ||
+                              `Store #${record.academy_id}`}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
@@ -613,7 +614,7 @@ export default function PlatformFinancialPage() {
                           <TableCell>
                             <div className="flex gap-2">
                               <Link
-                                href={`/financial/platform/stores/${record.store_id}`}
+                                href={`/financial/platform/stores/${record.academy_id}`}
                               >
                                 <Button variant="ghost" size="sm">
                                   {t('financial.platform.storeRecords.view')}

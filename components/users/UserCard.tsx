@@ -58,6 +58,7 @@ export function UserCard({
 
   // Get first profile avatar if available
   const avatarUrl = profiles[0]?.avatar?.publicUrl;
+  const displayName = user.display_name ?? user.name ?? 'User';
 
   return (
     <Card className="relative transition-shadow hover:shadow-md">
@@ -65,14 +66,14 @@ export function UserCard({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2 border-background shadow-sm">
-              <AvatarImage src={avatarUrl} alt={user.name} />
+              <AvatarImage src={avatarUrl} alt={displayName} />
               <AvatarFallback className="bg-primary/10 font-medium text-primary">
-                {getInitials(user.name)}
+                {getInitials(displayName)}
               </AvatarFallback>
             </Avatar>
             <div className="space-y-1">
               <CardTitle className="text-base font-semibold">
-                {user.name}
+                {displayName}
               </CardTitle>
               <div className="flex flex-wrap items-center gap-1.5">
                 {profiles.length > 0 ? (
@@ -80,9 +81,11 @@ export function UserCard({
                     <Badge
                       key={profile.id}
                       variant="secondary"
-                      className={`text-xs ${getRoleColor(profile.role.name)}`}
+                      className={`text-xs ${getRoleColor(
+                        profile.Role?.name ?? profile.role?.name ?? ''
+                      )}`}
                     >
-                      {profile.role.name}
+                      {profile.Role?.name ?? profile.role?.name}
                     </Badge>
                   ))
                 ) : (
@@ -146,7 +149,7 @@ export function UserCard({
                     key={profile.id}
                     className="rounded bg-muted px-2 py-0.5 text-xs"
                   >
-                    {profile.store.name}
+                    {profile.academy?.name ?? profile.store?.name ?? '—'}
                   </span>
                 ))}
               </div>

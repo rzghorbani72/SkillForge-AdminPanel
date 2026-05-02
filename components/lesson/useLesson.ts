@@ -9,7 +9,7 @@ import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 const useLesson = () => {
   const params = useParams();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
 
@@ -20,13 +20,13 @@ const useLesson = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (courseId && seasonId && selectedStore) {
+    if (courseId && seasonId && selectedAcademy) {
       fetchData();
     }
-  }, [courseId, seasonId, selectedStore]);
+  }, [courseId, seasonId, selectedAcademy]);
 
   const fetchData = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);

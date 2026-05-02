@@ -358,7 +358,7 @@ export default function RegisterPage() {
         password: formData.password,
         confirmed_password: formData.confirmPassword,
         role: role,
-        store_id:
+        academy_id:
           registrationType === 'existing-store'
             ? parseInt(formData.existingStoreId)
             : undefined,
@@ -464,7 +464,7 @@ export default function RegisterPage() {
         password: formData.password,
         confirmed_password: formData.confirmPassword,
         role: role,
-        store_id:
+        academy_id:
           registrationType === 'existing-store'
             ? parseInt(formData.existingStoreId)
             : undefined, // No store ID when creating new store

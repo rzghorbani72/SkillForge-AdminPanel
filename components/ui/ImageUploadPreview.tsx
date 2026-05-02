@@ -49,23 +49,23 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
   const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{
     id: number;
-    url: string;
+    publicUrl: string;
   } | null>(null);
 
   const imageUpload = useImageUpload({
     title,
     description,
     onSuccess: (image) => {
-      // Handle uploaded image with full image object
+      setSelectedImage({ id: image.id, publicUrl: image.url });
       onSuccess?.(image);
     },
     onError,
     onCancel
   });
 
-  const handleImageSelect = (image: { id: number; url: string }) => {
+  const handleImageSelect = (image: { id: number; publicUrl: string }) => {
     setSelectedImage(image);
-    onSuccess?.(image);
+    onSuccess?.({ id: image.id, url: image.publicUrl });
   };
 
   return (

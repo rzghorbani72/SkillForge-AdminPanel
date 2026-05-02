@@ -10,7 +10,7 @@ import EditHeader from '@/components/course/EditHeader';
 
 export default function EditCoursePage() {
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const { categories } = useCategoriesStore();
   const {
     course,
@@ -24,7 +24,7 @@ export default function EditCoursePage() {
     coverPreview
   } = useCourseEdit();
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">

@@ -24,7 +24,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function SettingsOverviewPage() {
   const { t } = useTranslation();
-  const { user, store, isLoading, refresh } = useSettingsData();
+  const { user, academy, isLoading, refresh } = useSettingsData();
 
   const SECTIONS = [
     {
@@ -101,7 +101,7 @@ export default function SettingsOverviewPage() {
             <div className="flex justify-between">
               <span>{t('settings.administrator')}</span>
               <span className="font-medium text-foreground">
-                {user?.name ?? '—'}
+                {user?.display_name ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
@@ -138,26 +138,26 @@ export default function SettingsOverviewPage() {
             <div className="flex justify-between">
               <span>{t('settings.name')}</span>
               <span className="font-medium text-foreground">
-                {store?.name ?? '—'}
+                {academy?.name ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
               <span>{t('settings.domain')}</span>
               <span className="font-medium text-foreground">
-                {store?.private_address ?? '—'}
+                {academy?.private_address ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
               <span>{t('settings.students')}</span>
               <span className="font-medium text-foreground">
-                {store?.students_count ?? '—'}
+                {academy?.students_count ?? '—'}
               </span>
             </div>
             <div className="flex justify-between">
               <span>{t('settings.created')}</span>
               <span className="font-medium text-foreground">
-                {store?.created_at
-                  ? format(new Date(store.created_at), 'dd MMM yyyy')
+                {academy?.created_at
+                  ? format(new Date(academy.created_at), 'dd MMM yyyy')
                   : '—'}
               </span>
             </div>

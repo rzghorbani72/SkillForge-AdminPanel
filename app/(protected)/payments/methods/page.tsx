@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { CreditCard, DollarSign, Globe, Lock, Plus } from 'lucide-react';
 import { usePaymentsData } from '../_hooks/use-payments-data';
 import { Progress } from '@/components/ui/progress';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -61,7 +61,7 @@ const TONE_STYLES: Record<Tone, string> = {
 export default function PaymentMethodsPage() {
   const { t, language } = useTranslation();
   const { payments } = usePaymentsData();
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
 
   const methodMetrics = useMemo(() => {
     const map = new Map<string, { count: number; total: number }>();
@@ -119,7 +119,10 @@ export default function PaymentMethodsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(methodMetrics.totalRevenue, store)}
+              {formatCurrencyWithStore(
+                methodMetrics.totalRevenue,
+                currentAcademy
+              )}
             </p>
           </CardContent>
         </Card>
@@ -190,7 +193,9 @@ export default function PaymentMethodsPage() {
                   <Badge variant="outline">{item.count} payments</Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span>{formatCurrencyWithStore(item.total, store)}</span>
+                  <span>
+                    {formatCurrencyWithStore(item.total, currentAcademy)}
+                  </span>
                   <span className="text-muted-foreground">
                     {item.share}% of revenue
                   </span>

@@ -22,7 +22,7 @@ import {
 } from 'recharts';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
 import { Progress } from '@/components/ui/progress';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -86,7 +86,7 @@ function groupPaymentsByMonth(payments: any[]): RevenuePoint[] {
 export default function RevenueAnalyticsPage() {
   const { t, language } = useTranslation();
   const { payments, enrollments, isLoading } = useAnalyticsData();
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
 
   const {
     monthlyRevenue,
@@ -224,7 +224,7 @@ export default function RevenueAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(total, store)}
+              {formatCurrencyWithStore(total, currentAcademy)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.acrossAllPayments')}
@@ -239,7 +239,7 @@ export default function RevenueAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(averageTicket, store)}
+              {formatCurrencyWithStore(averageTicket, currentAcademy)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.perSuccessfulPayment')}
@@ -254,7 +254,7 @@ export default function RevenueAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-red-500">
-              {formatCurrencyWithStore(totalRefunds, store)}
+              {formatCurrencyWithStore(totalRefunds, currentAcademy)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.processedRefunds')}
@@ -303,7 +303,7 @@ export default function RevenueAnalyticsPage() {
                 formatter={(value: number, name: string) =>
                   name === 'revenue'
                     ? [
-                        formatCurrencyWithStore(value, store),
+                        formatCurrencyWithStore(value, currentAcademy),
                         t('analytics.totalRevenue')
                       ]
                     : [value, t('students.enrollments')]
@@ -360,7 +360,7 @@ export default function RevenueAnalyticsPage() {
                       </div>
                     </div>
                     <Badge variant="outline">
-                      {formatCurrencyWithStore(course.amount, store)}
+                      {formatCurrencyWithStore(course.amount, currentAcademy)}
                     </Badge>
                   </div>
                   <Progress
@@ -394,7 +394,7 @@ export default function RevenueAnalyticsPage() {
                 <YAxis />
                 <Tooltip
                   formatter={(value: number) =>
-                    formatCurrencyWithStore(value, store)
+                    formatCurrencyWithStore(value, currentAcademy)
                   }
                 />
                 <Bar dataKey="value" fill="#8b5cf6" />
@@ -404,7 +404,9 @@ export default function RevenueAnalyticsPage() {
               {enrolmentRevenue.map((item) => (
                 <div key={item.name} className="flex justify-between">
                   <span>{item.name}</span>
-                  <span>{formatCurrencyWithStore(item.value, store)}</span>
+                  <span>
+                    {formatCurrencyWithStore(item.value, currentAcademy)}
+                  </span>
                 </div>
               ))}
             </div>

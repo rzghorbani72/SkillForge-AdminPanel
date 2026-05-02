@@ -12,7 +12,7 @@ export default function EditProductPage() {
   const {
     product,
     form,
-    selectedStore,
+    selectedAcademy,
     isLoading,
     isSubmitting,
     coverImage,
@@ -26,7 +26,7 @@ export default function EditProductPage() {
     handleBack
   } = useProductEdit();
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return <CreateProductNoStoreState />;
   }
 

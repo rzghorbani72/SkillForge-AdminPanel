@@ -22,7 +22,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -37,7 +37,7 @@ interface CoursePerformance {
 export default function CoursePerformancePage() {
   const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
 
   const courseMetrics = useMemo<CoursePerformance[]>(() => {
     if (courses.length === 0) return [];
@@ -292,7 +292,7 @@ export default function CoursePerformancePage() {
                   <div className="flex items-center justify-between">
                     <span className="truncate">{course.name}</span>
                     <Badge variant="secondary">
-                      {formatCurrencyWithStore(course.revenue, store)}
+                      {formatCurrencyWithStore(course.revenue, currentAcademy)}
                     </Badge>
                   </div>
                   <Progress value={course.completion} className="h-2" />

@@ -1,5 +1,7 @@
 import DOMPurify from 'dompurify';
 
+type DomPurifyConfig = NonNullable<Parameters<typeof DOMPurify.sanitize>[1]>;
+
 /**
  * Sanitize HTML content to prevent XSS attacks
  * Uses DOMPurify to remove malicious scripts while preserving safe HTML
@@ -8,9 +10,8 @@ import DOMPurify from 'dompurify';
  * @param config - Optional DOMPurify configuration
  * @returns Sanitized HTML string safe for rendering
  */
-export function sanitizeHtml(dirty: string, config?: DOMPurify.Config): string {
-  // Default configuration - allows common formatting tags
-  const defaultConfig: DOMPurify.Config = {
+export function sanitizeHtml(dirty: string, config?: DomPurifyConfig): string {
+  const defaultConfig: DomPurifyConfig = {
     ALLOWED_TAGS: [
       'p',
       'br',
@@ -65,7 +66,7 @@ export function sanitizeHtml(dirty: string, config?: DOMPurify.Config): string {
     ...config
   };
 
-  return DOMPurify.sanitize(dirty, defaultConfig);
+  return String(DOMPurify.sanitize(dirty, defaultConfig));
 }
 
 /**
@@ -138,8 +139,10 @@ export function sanitizeRichText(dirty: string): string {
  * Use for user-generated content that should not contain any HTML
  */
 export function sanitizePlainText(dirty: string): string {
-  return DOMPurify.sanitize(dirty, {
-    ALLOWED_TAGS: [],
-    ALLOWED_ATTR: []
-  });
+  return String(
+    DOMPurify.sanitize(dirty, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: []
+    })
+  );
 }

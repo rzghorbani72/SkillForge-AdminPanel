@@ -19,7 +19,8 @@ export function UserNav() {
   const phone = auth?.user?.phone_number ?? '';
   const userId = auth?.user?.id ?? '';
   const email = auth?.user?.email ?? '';
-  const role = auth?.currentProfile?.role?.name ?? '';
+  const role =
+    auth?.currentProfile?.Role?.name ?? auth?.currentProfile?.role?.name ?? '';
 
   return (
     <DropdownMenu>

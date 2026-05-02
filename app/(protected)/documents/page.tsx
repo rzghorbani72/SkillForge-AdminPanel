@@ -74,7 +74,7 @@ const buildDocumentUrl = (path?: string | null) => {
 
 export default function DocumentsPage() {
   const { t, language } = useTranslation();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,19 +86,19 @@ export default function DocumentsPage() {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   useEffect(() => {
-    if (selectedStore) {
+    if (selectedAcademy) {
       fetchData();
     }
-  }, [selectedStore]);
+  }, [selectedAcademy]);
 
   const fetchData = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);
       const [documentsResponse, coursesResponse] = await Promise.all([
         apiClient.getDocuments(),
-        apiClient.getCourses({ store_id: selectedStore.id })
+        apiClient.getCourses({ academy_id: selectedAcademy.id })
       ]);
 
       if (documentsResponse?.data && Array.isArray(documentsResponse.data)) {
@@ -190,7 +190,7 @@ export default function DocumentsPage() {
     }
   }, [previewDocument]);
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return (
       <div className="page-wrapper flex-1 p-6">
         <EmptyState
@@ -231,7 +231,7 @@ export default function DocumentsPage() {
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageDocuments')} - {selectedStore.name}
+              {t('media.manageDocuments')} - {selectedAcademy.name}
             </p>
           </div>
         </div>
@@ -290,7 +290,7 @@ export default function DocumentsPage() {
               </p>
               <p className="text-2xl font-bold">{documents.length}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                {t('media.documentsIn')} {selectedStore.name}
+                {t('media.documentsIn')} {selectedAcademy.name}
               </p>
             </div>
             <div className="icon-container-primary">

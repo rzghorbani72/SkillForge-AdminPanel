@@ -34,7 +34,7 @@ type UseLessonFormReturn = {
 const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
   const router = useRouter();
   const params = useParams();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const courseId = params.course_id as string;
   const seasonId = params.season_id as string;
   const lessonId = params.lesson_id as string;
@@ -49,13 +49,13 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
   );
 
   useEffect(() => {
-    if (courseId && seasonId && selectedStore) {
+    if (courseId && seasonId && selectedAcademy) {
       fetchData();
     }
-  }, [courseId, seasonId, selectedStore, isEdit, lessonId]);
+  }, [courseId, seasonId, selectedAcademy, isEdit, lessonId]);
 
   const fetchData = async () => {
-    if (!selectedStore) return;
+    if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);
@@ -118,7 +118,7 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
   };
 
   const onSubmitHandler = async (data: LessonFormData) => {
-    if (!selectedStore) {
+    if (!selectedAcademy) {
       toast.error('Please select a store first');
       return;
     }

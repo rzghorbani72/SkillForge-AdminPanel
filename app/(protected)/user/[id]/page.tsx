@@ -103,6 +103,7 @@ export default function UserDetailPage() {
   const profiles = user.profiles || [];
   const userStatus = user.status || (user.is_active ? 'ACTIVE' : 'INACTIVE');
   const avatarUrl = profiles[0]?.avatar?.publicUrl;
+  const displayName = user.display_name ?? user.name ?? 'User';
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -127,12 +128,12 @@ export default function UserDetailPage() {
         <Card className="md:col-span-1">
           <CardHeader className="text-center">
             <Avatar className="mx-auto h-24 w-24 border-4 border-background shadow-lg">
-              <AvatarImage src={avatarUrl} alt={user.name} />
+              <AvatarImage src={avatarUrl} alt={displayName} />
               <AvatarFallback className="bg-primary/10 text-2xl font-bold text-primary">
-                {getInitials(user.name)}
+                {getInitials(displayName)}
               </AvatarFallback>
             </Avatar>
-            <CardTitle className="mt-4">{user.name}</CardTitle>
+            <CardTitle className="mt-4">{displayName}</CardTitle>
             <CardDescription>
               <Badge
                 variant="outline"
@@ -257,14 +258,24 @@ export default function UserDetailPage() {
                                 </h4>
                                 <Badge
                                   variant="secondary"
-                                  className={getRoleColor(profile.role.name)}
+                                  className={getRoleColor(
+                                    profile.Role?.name ??
+                                      profile.role?.name ??
+                                      ''
+                                  )}
                                 >
-                                  {profile.role.name}
+                                  {profile.Role?.name ??
+                                    profile.role?.name ??
+                                    ''}
                                 </Badge>
                               </div>
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <Building2 className="h-4 w-4" />
-                                <span>{profile.store.name}</span>
+                                <span>
+                                  {profile.academy?.name ??
+                                    profile.store?.name ??
+                                    '—'}
+                                </span>
                               </div>
                               {profile.bio && (
                                 <p className="text-sm text-muted-foreground">

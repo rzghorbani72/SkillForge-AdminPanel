@@ -23,7 +23,7 @@ const publicRoutes = [
   '/forgot-password',
   '/reset-password',
   '/find-store',
-  '/select-store',
+  '/select-academy',
   '/unauthorized',
   '/support',
   '/terms',

@@ -20,6 +20,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { authService } from '@/lib/auth';
+import type { Academy } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 
@@ -44,7 +45,7 @@ export default function SelectStorePage() {
         setUser(currentUser);
 
         // Load user's stores for selection
-        const userStores = await authService.getUserStores();
+        const userStores = await authService.getUserAcademies();
 
         if (userStores.length === 0) {
           ErrorHandler.showWarning('No stores found for your account');
@@ -77,15 +78,15 @@ export default function SelectStorePage() {
     // Filter stores based on search term
     const filtered = stores.filter(
       (store) =>
-        store.store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        store.store.slug.toLowerCase().includes(searchTerm.toLowerCase())
+        store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        store.slug.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredStores(filtered);
   }, [searchTerm, stores]);
 
-  const handleStoreSelect = (userStore: any) => {
-    const storeUrl = authService.getStoreDashboardUrl(userStore.store);
-    ErrorHandler.showInfo(`Redirecting to ${userStore.store.name}...`);
+  const handleStoreSelect = (academy: Academy) => {
+    const storeUrl = authService.getAcademyDashboardUrl(academy);
+    ErrorHandler.showInfo(`Redirecting to ${academy.name}...`);
     window.location.href = storeUrl;
   };
 
@@ -151,11 +152,11 @@ export default function SelectStorePage() {
 
         {/* Stores Grid */}
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredStores.map((userStore) => (
+          {filteredStores.map((academy) => (
             <Card
-              key={userStore.store.id}
+              key={academy.id}
               className="cursor-pointer transition-shadow hover:shadow-lg"
-              onClick={() => handleStoreSelect(userStore)}
+              onClick={() => handleStoreSelect(academy)}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center space-x-3">
@@ -163,11 +164,9 @@ export default function SelectStorePage() {
                     <Building2 className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg">
-                      {userStore.store.name}
-                    </CardTitle>
+                    <CardTitle className="text-lg">{academy.name}</CardTitle>
                     <CardDescription>
-                      {userStore.store.slug}.skillforge.com
+                      {academy.slug}.skillforge.com
                     </CardDescription>
                   </div>
                 </div>
@@ -175,27 +174,25 @@ export default function SelectStorePage() {
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Your Role:</span>
-                    <span className="font-medium capitalize">
-                      {userStore.profile.role?.name || 'Student'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Status:</span>
                     <span className="font-medium text-green-600">Active</span>
                   </div>
-                  {userStore.store.domain?.public_address && (
+                  {(academy.domain?.public_address ||
+                    (academy as { Domain?: { public_address?: string } }).Domain
+                      ?.public_address) && (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Domain:</span>
                       <span className="font-medium text-blue-600">
-                        {userStore.store.domain.public_address}
+                        {academy.domain?.public_address ||
+                          (academy as { Domain?: { public_address?: string } })
+                            .Domain?.public_address}
                       </span>
                     </div>
                   )}
                 </div>
                 <Button className="mt-4 w-full" variant="outline">
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  Access Store
+                  Access academy
                 </Button>
               </CardContent>
             </Card>

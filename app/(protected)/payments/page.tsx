@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { usePaymentsData } from './_hooks/use-payments-data';
 import { cn, formatCurrencyWithStore } from '@/lib/utils';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const STATUS_BADGES: Record<string, string> = {
@@ -39,7 +39,7 @@ function formatDate(value?: string | null): string {
 export default function PaymentsPage() {
   const { t, language } = useTranslation();
   const { payments, transactions, isLoading, refresh } = usePaymentsData();
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredPayments = useMemo(() => {
@@ -47,7 +47,7 @@ export default function PaymentsPage() {
 
     const term = searchTerm.toLowerCase();
     return payments.filter((payment) => {
-      const student = payment.user?.name?.toLowerCase() ?? '';
+      const student = payment.user?.display_name?.toLowerCase() ?? '';
       const course = payment.course?.title?.toLowerCase() ?? '';
       const status = payment.status?.toLowerCase() ?? '';
       const method = payment.method?.toLowerCase() ?? '';
@@ -148,7 +148,7 @@ export default function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(totals.revenue, store)}
+              {formatCurrencyWithStore(totals.revenue, currentAcademy)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.acrossAllPayments')}
@@ -252,7 +252,8 @@ export default function PaymentsPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">
-                      {payment.user?.name ?? t('payments.unknownStudent')}
+                      {payment.user?.display_name ??
+                        t('payments.unknownStudent')}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {payment.course?.title ?? t('payments.unknownCourse')}
@@ -262,7 +263,10 @@ export default function PaymentsPage() {
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="text-right text-sm">
                     <p className="font-semibold">
-                      {formatCurrencyWithStore(payment.amount ?? 0, store)}
+                      {formatCurrencyWithStore(
+                        payment.amount ?? 0,
+                        currentAcademy
+                      )}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(payment.payment_date)}
@@ -311,7 +315,7 @@ export default function PaymentsPage() {
                   </p>
                 </div>
                 <p className="text-sm font-semibold">
-                  {formatCurrencyWithStore(item.total, store)}
+                  {formatCurrencyWithStore(item.total, currentAcademy)}
                 </p>
               </div>
             ))
@@ -347,7 +351,10 @@ export default function PaymentsPage() {
                 </div>
                 <div className="text-right text-sm">
                   <p className="font-semibold">
-                    {formatCurrencyWithStore(transaction.amount ?? 0, store)}
+                    {formatCurrencyWithStore(
+                      transaction.amount ?? 0,
+                      currentAcademy
+                    )}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {formatDate(transaction.created_at)}

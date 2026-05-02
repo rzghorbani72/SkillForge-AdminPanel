@@ -14,7 +14,7 @@ import { Building2 } from 'lucide-react';
 export default function ProductsPage() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const {
     products,
     totalProducts,
@@ -26,7 +26,7 @@ export default function ProductsPage() {
     handleDeleteProduct
   } = useProducts();
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return (
       <div className="page-wrapper flex-1 p-6">
         <EmptyState

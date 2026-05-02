@@ -27,7 +27,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { useCurrentStore } from '@/hooks/useCurrentStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Table,
@@ -47,7 +47,7 @@ export default function StoreReportsPage() {
   const [records, setRecords] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const store = useCurrentStore();
+  const currentAcademy = useCurrentAcademy();
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -56,10 +56,10 @@ export default function StoreReportsPage() {
 
   useEffect(() => {
     loadData();
-  }, [selectedYear, selectedMonth, store?.id]);
+  }, [selectedYear, selectedMonth, currentAcademy?.id]);
 
   const loadData = async () => {
-    if (!store?.id) return;
+    if (!currentAcademy?.id) return;
 
     try {
       setLoading(true);
@@ -74,14 +74,14 @@ export default function StoreReportsPage() {
           : new Date(selectedYear, 11, 31, 23, 59, 59);
 
       const [overviewData, summaryData, recordsData] = await Promise.all([
-        apiClient.getStoreFinancialOverview(
-          store.id,
+        apiClient.getAcademyFinancialOverview(
+          currentAcademy.id,
           startDate.toISOString(),
           endDate.toISOString()
         ),
-        apiClient.getStoreFinancialSummary(store.id),
-        apiClient.getStoreFinancialRecords({
-          store_id: store.id,
+        apiClient.getAcademyFinancialSummary(currentAcademy.id),
+        apiClient.getAcademyFinancialRecords({
+          academy_id: currentAcademy.id,
           year: selectedYear,
           month: selectedMonth || undefined
         })
@@ -152,7 +152,7 @@ export default function StoreReportsPage() {
     );
   }
 
-  if (!store) {
+  if (!currentAcademy) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">
@@ -170,7 +170,7 @@ export default function StoreReportsPage() {
             {t('financial.store.reports.title')}
           </h1>
           <p className="mt-1 text-muted-foreground">
-            {store.name} - {t('financial.store.reports.description')}
+            {currentAcademy.name} - {t('financial.store.reports.description')}
           </p>
         </div>
       </div>

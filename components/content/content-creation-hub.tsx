@@ -49,7 +49,7 @@ export default function ContentCreationHub({
 }: ContentCreationHubProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { selectedStore } = useStore();
+  const { selectedAcademy } = useStore();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -121,7 +121,7 @@ export default function ContentCreationHub({
   };
 
   const renderDialog = () => {
-    if (!selectedType || !selectedStore) return null;
+    if (!selectedType || !selectedAcademy) return null;
 
     const contentType = contentTypes.find((type) => type.id === selectedType);
     if (!contentType || !contentType.dialog) return null;
@@ -169,7 +169,7 @@ export default function ContentCreationHub({
     }
   };
 
-  if (!selectedStore) {
+  if (!selectedAcademy) {
     return (
       <Button disabled>
         <Plus className="mr-2 h-4 w-4" />
@@ -212,7 +212,7 @@ export default function ContentCreationHub({
                 </CardHeader>
                 <CardContent className="text-center">
                   <Badge variant="outline" className="text-xs">
-                    {selectedStore.name}
+                    {selectedAcademy.name}
                   </Badge>
                 </CardContent>
               </Card>
