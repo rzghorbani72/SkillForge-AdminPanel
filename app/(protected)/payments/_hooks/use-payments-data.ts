@@ -8,6 +8,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 export interface PaymentsSnapshot {
   payments: Payment[];
   transactions: Transaction[];
+  monetizationSummary: any | null;
   isLoading: boolean;
   refresh: () => void;
 }
@@ -16,6 +17,9 @@ export function usePaymentsData(): PaymentsSnapshot {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [monetizationSummary, setMonetizationSummary] = useState<any | null>(
+    null
+  );
   const [refreshToken, setRefreshToken] = useState<number>(0);
 
   const refresh = useCallback(() => {
@@ -29,10 +33,11 @@ export function usePaymentsData(): PaymentsSnapshot {
       try {
         setIsLoading(true);
 
-        const [paymentsResponse, transactionsResponse] =
+        const [paymentsResponse, transactionsResponse, monetizationResponse] =
           await Promise.allSettled([
             apiClient.getPayments(),
-            apiClient.getTransactions()
+            apiClient.getTransactions(),
+            apiClient.getMonetizationSummary()
           ]);
 
         if (!isMounted) return;
@@ -41,9 +46,13 @@ export function usePaymentsData(): PaymentsSnapshot {
           const payload = paymentsResponse.value as any;
           const list = Array.isArray(payload)
             ? (payload as Payment[])
-            : Array.isArray(payload?.data)
-              ? (payload.data as Payment[])
-              : [];
+            : Array.isArray(payload?.payments)
+              ? (payload.payments as Payment[])
+              : Array.isArray(payload?.data?.payments)
+                ? (payload.data.payments as Payment[])
+                : Array.isArray(payload?.data)
+                  ? (payload.data as Payment[])
+                  : [];
           setPayments(list);
         } else {
           console.error('Failed to fetch payments:', paymentsResponse.reason);
@@ -54,9 +63,13 @@ export function usePaymentsData(): PaymentsSnapshot {
           const payload = transactionsResponse.value as any;
           const list = Array.isArray(payload)
             ? (payload as Transaction[])
-            : Array.isArray(payload?.data)
-              ? (payload.data as Transaction[])
-              : [];
+            : Array.isArray(payload?.transactions)
+              ? (payload.transactions as Transaction[])
+              : Array.isArray(payload?.data?.transactions)
+                ? (payload.data.transactions as Transaction[])
+                : Array.isArray(payload?.data)
+                  ? (payload.data as Transaction[])
+                  : [];
           setTransactions(list);
         } else {
           console.error(
@@ -65,12 +78,19 @@ export function usePaymentsData(): PaymentsSnapshot {
           );
           setTransactions([]);
         }
+        if (monetizationResponse?.status === 'fulfilled') {
+          const payload = monetizationResponse.value as any;
+          setMonetizationSummary(payload?.data ?? payload ?? null);
+        } else {
+          setMonetizationSummary(null);
+        }
       } catch (error) {
         console.error('Error loading payments data:', error);
         ErrorHandler.handleApiError(error);
         if (isMounted) {
           setPayments([]);
           setTransactions([]);
+          setMonetizationSummary(null);
         }
       } finally {
         if (isMounted) {
@@ -90,9 +110,10 @@ export function usePaymentsData(): PaymentsSnapshot {
     () => ({
       payments,
       transactions,
+      monetizationSummary,
       isLoading,
       refresh
     }),
-    [payments, transactions, isLoading, refresh]
+    [payments, transactions, monetizationSummary, isLoading, refresh]
   );
 }

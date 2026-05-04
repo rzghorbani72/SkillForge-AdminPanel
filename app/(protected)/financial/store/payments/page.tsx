@@ -25,6 +25,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
+import { Button } from '@/components/ui/button';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
@@ -42,6 +43,8 @@ export default function StorePaymentsPage() {
   const [loading, setLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
+  const [statement, setStatement] = useState<any>(null);
+  const [reconciliation, setReconciliation] = useState<any>(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const currentAcademy = useCurrentAcademy();
@@ -75,9 +78,22 @@ export default function StorePaymentsPage() {
         startDate.toISOString(),
         endDate.toISOString()
       );
+      const settlement = await apiClient.getIranSettlementStatement({
+        academy_id: currentAcademy.id,
+        start_date: startDate.toISOString(),
+        end_date: endDate.toISOString()
+      });
+      const reconciliationData =
+        await apiClient.getIranSettlementReconciliation({
+          academy_id: currentAcademy.id,
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString()
+        });
 
       setRevenueData(data);
       setPayments(data.payments || []);
+      setStatement(settlement);
+      setReconciliation(reconciliationData);
     } catch (error: any) {
       console.error('Error loading payments data:', error);
       toast.error(error?.message || 'Failed to load payments data');
@@ -95,9 +111,7 @@ export default function StorePaymentsPage() {
   };
 
   const paymentStats = useMemo(() => {
-    const completed = payments.filter(
-      (p: any) => p.status === 'COMPLETED'
-    ).length;
+    const completed = payments.filter((p: any) => p.status === 'PAID').length;
     const pending = payments.filter((p: any) => p.status === 'PENDING').length;
     const failed = payments.filter((p: any) => p.status === 'FAILED').length;
     const totalAmount = payments.reduce(
@@ -165,6 +179,65 @@ export default function StorePaymentsPage() {
           <p className="mt-1 text-muted-foreground">
             {currentAcademy.name} - {t('financial.store.payments.description')}
           </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                const startDate =
+                  selectedMonth && selectedYear
+                    ? new Date(selectedYear, selectedMonth - 1, 1)
+                    : new Date(selectedYear, 0, 1);
+                const endDate =
+                  selectedMonth && selectedYear
+                    ? new Date(selectedYear, selectedMonth, 0, 23, 59, 59)
+                    : new Date(selectedYear, 11, 31, 23, 59, 59);
+
+                const blob = await apiClient.exportIranSettlementCsv({
+                  academy_id: currentAcademy.id,
+                  start_date: startDate.toISOString(),
+                  end_date: endDate.toISOString()
+                });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'iran-settlement-statement.csv';
+                a.click();
+                window.URL.revokeObjectURL(url);
+              } catch (error: any) {
+                toast.error(
+                  error?.message || 'Failed to export settlement CSV'
+                );
+              }
+            }}
+          >
+            Export CSV
+          </Button>
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                const lockUntil = new Date(
+                  selectedYear,
+                  selectedMonth ? selectedMonth : 11,
+                  28,
+                  23,
+                  59,
+                  59
+                );
+                await apiClient.lockIranFinancialPeriod({
+                  academy_id: currentAcademy.id,
+                  lock_until: lockUntil.toISOString()
+                });
+                toast.success('Financial period locked');
+              } catch (error: any) {
+                toast.error(error?.message || 'Failed to lock period');
+              }
+            }}
+          >
+            Lock Period
+          </Button>
         </div>
       </div>
 
@@ -304,6 +377,102 @@ export default function StorePaymentsPage() {
         </div>
       )}
 
+      {statement && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Iran Settlement Statement</CardTitle>
+            <CardDescription>
+              Gross, platform fee, VAT, payout and school net for selected
+              period
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div>
+              <p className="text-xs text-muted-foreground">Gross</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  statement.totals?.gross_amount || 0,
+                  statement.totals?.currency
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Platform Fee</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  statement.totals?.platform_fee || 0,
+                  statement.totals?.currency
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">VAT (Iran)</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  statement.totals?.tax_vat_amount || 0,
+                  statement.totals?.currency
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Teacher Payout</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  statement.totals?.teacher_payout || 0,
+                  statement.totals?.currency
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">School Net</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  statement.totals?.school_net_revenue || 0,
+                  statement.totals?.currency
+                )}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {reconciliation && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Reconciliation</CardTitle>
+            <CardDescription>
+              Callback and settlement consistency report for selected period
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <p className="text-xs text-muted-foreground">Paid Payments</p>
+              <p className="text-lg font-semibold">
+                {reconciliation.total_paid_payments || 0}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Matched Callbacks</p>
+              <p className="text-lg font-semibold">
+                {reconciliation.matched_successful_callbacks || 0}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Missing Callbacks</p>
+              <p className="text-lg font-semibold">
+                {reconciliation.missing_successful_callbacks || 0}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Orphan Callbacks</p>
+              <p className="text-lg font-semibold">
+                {reconciliation.orphan_successful_callbacks || 0}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Payments by Method */}
       {paymentsByMethod.length > 0 && (
         <Card>
@@ -369,6 +538,10 @@ export default function StorePaymentsPage() {
                 <TableHead>{t('financial.store.payments.course')}</TableHead>
                 <TableHead>{t('financial.store.payments.method')}</TableHead>
                 <TableHead>{t('financial.store.payments.status')}</TableHead>
+                <TableHead className="text-right">VAT</TableHead>
+                <TableHead className="text-right">Platform Fee</TableHead>
+                <TableHead className="text-right">Teacher Payout</TableHead>
+                <TableHead className="text-right">School Net</TableHead>
                 <TableHead className="text-right">
                   {t('financial.store.payments.amount')}
                 </TableHead>
@@ -378,7 +551,7 @@ export default function StorePaymentsPage() {
               {payments.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={10}
                     className="text-center text-muted-foreground"
                   >
                     {t('financial.store.payments.noPayments')}
@@ -407,7 +580,7 @@ export default function StorePaymentsPage() {
                     <TableCell>
                       <Badge
                         variant={
-                          payment.status === 'COMPLETED'
+                          payment.status === 'PAID'
                             ? 'default'
                             : payment.status === 'PENDING'
                               ? 'secondary'
@@ -416,6 +589,37 @@ export default function StorePaymentsPage() {
                       >
                         {payment.status || 'UNKNOWN'}
                       </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatCurrency(
+                        payment.tax_vat_amount || 0,
+                        payment.currency
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatCurrency(
+                        payment.platform_fee || 0,
+                        payment.currency
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatCurrency(
+                        payment.instructor_fee || 0,
+                        payment.currency
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatCurrency(
+                        payment.school_net_revenue ??
+                          Math.max(
+                            0,
+                            (payment.amount || 0) -
+                              (payment.platform_fee || 0) -
+                              (payment.instructor_fee || 0) -
+                              (payment.tax_vat_amount || 0)
+                          ),
+                        payment.currency
+                      )}
                     </TableCell>
                     <TableCell className="text-right font-medium">
                       {formatCurrency(payment.amount, payment.currency)}

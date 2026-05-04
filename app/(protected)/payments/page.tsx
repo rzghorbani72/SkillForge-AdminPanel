@@ -25,10 +25,11 @@ import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const STATUS_BADGES: Record<string, string> = {
-  COMPLETED: 'bg-green-100 text-green-800',
+  PAID: 'bg-green-100 text-green-800',
   PENDING: 'bg-yellow-100 text-yellow-800',
   FAILED: 'bg-red-100 text-red-800',
-  REFUNDED: 'bg-blue-100 text-blue-800'
+  REFUNDED: 'bg-blue-100 text-blue-800',
+  CANCELLED: 'bg-slate-200 text-slate-700'
 };
 
 function formatDate(value?: string | null): string {
@@ -38,7 +39,8 @@ function formatDate(value?: string | null): string {
 
 export default function PaymentsPage() {
   const { t, language } = useTranslation();
-  const { payments, transactions, isLoading, refresh } = usePaymentsData();
+  const { payments, transactions, monetizationSummary, isLoading, refresh } =
+    usePaymentsData();
   const currentAcademy = useCurrentAcademy();
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -68,7 +70,7 @@ export default function PaymentsPage() {
       0
     );
     const completed = payments.filter(
-      (payment) => payment.status === 'COMPLETED'
+      (payment) => payment.status === 'PAID'
     ).length;
     const pending = payments.filter(
       (payment) => payment.status === 'PENDING'
@@ -147,11 +149,17 @@ export default function PaymentsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(totals.revenue, currentAcademy)}
-            </p>
+            {monetizationSummary?.visibility?.can_view_store_revenue ? (
+              <p className="text-2xl font-bold">
+                {formatCurrencyWithStore(totals.revenue, currentAcademy)}
+              </p>
+            ) : (
+              <p className="text-2xl font-bold">Hidden</p>
+            )}
             <p className="text-xs text-muted-foreground">
-              {t('analytics.acrossAllPayments')}
+              {monetizationSummary?.visibility?.can_view_store_revenue
+                ? t('analytics.acrossAllPayments')
+                : 'Revenue visibility is limited by your role'}
             </p>
           </CardContent>
         </Card>

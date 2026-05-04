@@ -44,6 +44,7 @@ export default function StoreRevenuePage() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<any>(null);
+  const [monetizationSummary, setMonetizationSummary] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
@@ -78,9 +79,15 @@ export default function StoreRevenuePage() {
         startDate.toISOString(),
         endDate.toISOString()
       );
+      const summary = await apiClient.getMonetizationSummary({
+        academy_id: currentAcademy.id,
+        start_date: startDate.toISOString(),
+        end_date: endDate.toISOString()
+      });
 
       setRevenueData(data);
       setPayments(data.payments || []);
+      setMonetizationSummary(summary);
     } catch (error: any) {
       console.error('Error loading revenue data:', error);
       toast.error(error?.message || 'Failed to load revenue data');
@@ -98,6 +105,10 @@ export default function StoreRevenuePage() {
   };
 
   // Group payments by course
+  const canViewRevenue = Boolean(
+    monetizationSummary?.visibility?.can_view_store_revenue
+  );
+
   const paymentsByCourse = useMemo(() => {
     const grouped: Record<
       string,
@@ -219,7 +230,7 @@ export default function StoreRevenuePage() {
       </Card>
 
       {/* Summary Cards */}
-      {revenueData && (
+      {revenueData && canViewRevenue && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -301,6 +312,81 @@ export default function StoreRevenuePage() {
         </div>
       )}
 
+      {monetizationSummary && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Role Based Access</CardTitle>
+            <CardDescription>
+              Financial visibility is controlled by your role from the backend
+              API
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg border p-4">
+              <p className="text-xs text-muted-foreground">Role</p>
+              <p className="text-lg font-semibold">
+                {monetizationSummary.role}
+              </p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <p className="text-xs text-muted-foreground">Platform Revenue</p>
+              <p className="text-sm font-medium">
+                {monetizationSummary.visibility?.can_view_platform_revenue
+                  ? formatCurrency(
+                      monetizationSummary.metrics?.platform_revenue || 0,
+                      monetizationSummary.metrics?.currency || 'IRR'
+                    )
+                  : 'Hidden'}
+              </p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <p className="text-xs text-muted-foreground">School Revenue</p>
+              <p className="text-sm font-medium">
+                {monetizationSummary.visibility?.can_view_store_revenue
+                  ? formatCurrency(
+                      monetizationSummary.metrics?.school_net_revenue ||
+                        monetizationSummary.metrics?.teacher_gross_revenue ||
+                        0,
+                      monetizationSummary.metrics?.currency || 'IRR'
+                    )
+                  : 'Hidden'}
+              </p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <p className="text-xs text-muted-foreground">Teacher Revenue</p>
+              <p className="text-sm font-medium">
+                {monetizationSummary.visibility?.can_view_teacher_revenue
+                  ? formatCurrency(
+                      monetizationSummary.metrics?.teacher_payout_revenue ||
+                        monetizationSummary.metrics?.teacher_payout ||
+                        0,
+                      monetizationSummary.metrics?.currency || 'IRR'
+                    )
+                  : 'Hidden'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {!canViewRevenue ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue Hidden</CardTitle>
+            <CardDescription>
+              Your current role does not have revenue visibility. You can still
+              manage operations data.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              {monetizationSummary?.metrics?.message ||
+                'Revenue data is hidden by policy.'}
+            </p>
+          </CardContent>
+        </Card>
+      ) : null}
+
       {/* Detailed View */}
       <Tabs defaultValue="payments" className="space-y-4">
         <TabsList>
@@ -370,7 +456,9 @@ export default function StoreRevenuePage() {
                           {payment.course?.title || 'Unknown Course'}
                         </TableCell>
                         <TableCell className="text-right font-medium">
-                          {formatCurrency(payment.amount, payment.currency)}
+                          {canViewRevenue
+                            ? formatCurrency(payment.amount, payment.currency)
+                            : 'Hidden'}
                         </TableCell>
                       </TableRow>
                     ))
@@ -426,7 +514,9 @@ export default function StoreRevenuePage() {
                             <Badge variant="secondary">{course.count}</Badge>
                           </TableCell>
                           <TableCell className="text-right font-medium">
-                            {formatCurrency(course.total, course.currency)}
+                            {canViewRevenue
+                              ? formatCurrency(course.total, course.currency)
+                              : 'Hidden'}
                           </TableCell>
                         </TableRow>
                       ))

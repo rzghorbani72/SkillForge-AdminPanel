@@ -2296,6 +2296,98 @@ class ApiClient {
     return response.data as any;
   }
 
+  async getMonetizationSummary(params?: {
+    academy_id?: number;
+    start_date?: string;
+    end_date?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.academy_id) {
+      queryParams.append('academy_id', params.academy_id.toString());
+    }
+    if (params?.start_date) {
+      queryParams.append('start_date', params.start_date);
+    }
+    if (params?.end_date) {
+      queryParams.append('end_date', params.end_date);
+    }
+
+    const url = `/financial/monetization/summary${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any;
+  }
+
+  async getIranSettlementStatement(params?: {
+    academy_id?: number;
+    start_date?: string;
+    end_date?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.academy_id) {
+      queryParams.append('academy_id', params.academy_id.toString());
+    }
+    if (params?.start_date) {
+      queryParams.append('start_date', params.start_date);
+    }
+    if (params?.end_date) {
+      queryParams.append('end_date', params.end_date);
+    }
+    const url = `/financial/settlement${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any;
+  }
+
+  async getIranSettlementReconciliation(params?: {
+    academy_id?: number;
+    start_date?: string;
+    end_date?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.academy_id)
+      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.start_date) queryParams.append('start_date', params.start_date);
+    if (params?.end_date) queryParams.append('end_date', params.end_date);
+    const url = `/financial/settlement/reconciliation${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    return response.data as any;
+  }
+
+  async lockIranFinancialPeriod(data: {
+    academy_id: number;
+    lock_until: string;
+  }) {
+    const response = await this.request<any>('/financial/settlement/lock', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return response.data as any;
+  }
+
+  async exportIranSettlementCsv(params?: {
+    academy_id?: number;
+    start_date?: string;
+    end_date?: string;
+  }): Promise<Blob> {
+    const queryParams = new URLSearchParams();
+    if (params?.academy_id)
+      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.start_date) queryParams.append('start_date', params.start_date);
+    if (params?.end_date) queryParams.append('end_date', params.end_date);
+    const endpoint = `/financial/settlement/export${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `${this.baseURL}${endpoint}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to export CSV: ${response.status}`);
+    }
+
+    return response.blob();
+  }
+
   async getAcademyFinancialOverview(
     academyId?: number,
     startDate?: string,

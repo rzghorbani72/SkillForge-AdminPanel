@@ -18,10 +18,11 @@ import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const STATUS_COLORS: Record<string, string> = {
-  COMPLETED: 'bg-green-100 text-green-800',
+  PAID: 'bg-green-100 text-green-800',
   PENDING: 'bg-yellow-100 text-yellow-800',
   FAILED: 'bg-red-100 text-red-800',
-  REFUNDED: 'bg-blue-100 text-blue-800'
+  REFUNDED: 'bg-blue-100 text-blue-800',
+  CANCELLED: 'bg-slate-200 text-slate-700'
 };
 
 function formatDate(value?: string | null): string {
@@ -56,9 +57,7 @@ export default function InvoicesPage() {
 
   const totals = useMemo(() => {
     const issued = payments.length;
-    const paid = payments.filter(
-      (payment) => payment.status === 'COMPLETED'
-    ).length;
+    const paid = payments.filter((payment) => payment.status === 'PAID').length;
     const outstanding = payments.filter(
       (payment) => payment.status === 'PENDING'
     ).length;

@@ -31,13 +31,10 @@ import {
   TrendingUp,
   TrendingDown,
   Building2,
-  Calculator,
-  Settings,
   Plus,
   Edit,
   Trash2,
-  Calendar,
-  Workflow
+  Calendar
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import {
@@ -49,8 +46,7 @@ import {
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { useAccessControl } from '@/hooks/useAccessControl';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -63,16 +59,18 @@ export default function PlatformFinancialPage() {
     PlatformFinancialRecord[]
   >([]);
   const [costCategories, setCostCategories] = useState<CostCategory[]>([]);
+  const [iranSettlement, setIranSettlement] = useState<any>(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const { user } = useAuthUser();
+  const router = useRouter();
 
   // Ensure only admins can access
   useEffect(() => {
     if (user && user?.role !== 'ADMIN') {
-      redirect('/dashboard');
+      router.replace('/dashboard');
     }
-  }, [user]);
+  }, [user, router]);
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -89,24 +87,31 @@ export default function PlatformFinancialPage() {
     try {
       setLoading(true);
 
-      const [summaryData, storeData, platformData, categoriesData] =
-        await Promise.all([
-          apiClient.getPlatformFinancialSummary(),
-          apiClient.getAcademyFinancialRecords({
-            year: selectedYear,
-            month: selectedMonth || undefined
-          }),
-          apiClient.getPlatformFinancialRecords({
-            year: selectedYear,
-            month: selectedMonth || undefined
-          }),
-          apiClient.getCostCategories()
-        ]);
+      const [
+        summaryData,
+        storeData,
+        platformData,
+        categoriesData,
+        settlementData
+      ] = await Promise.all([
+        apiClient.getPlatformFinancialSummary(),
+        apiClient.getAcademyFinancialRecords({
+          year: selectedYear,
+          month: selectedMonth || undefined
+        }),
+        apiClient.getPlatformFinancialRecords({
+          year: selectedYear,
+          month: selectedMonth || undefined
+        }),
+        apiClient.getCostCategories(),
+        apiClient.getIranSettlementStatement()
+      ]);
 
       setSummary(summaryData);
       setStoreRecords(storeData);
       setPlatformRecords(platformData);
       setCostCategories(categoriesData);
+      setIranSettlement(settlementData);
     } catch (error: any) {
       console.error('Error loading financial data:', error);
       toast.error(error?.message || 'Failed to load financial data');
@@ -157,22 +162,10 @@ export default function PlatformFinancialPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/financial/platform/stores">
+          <Link href="/platform/stores">
             <Button variant="outline">
               <Building2 className="mr-2 h-4 w-4" />
               {t('financial.platform.allStores')}
-            </Button>
-          </Link>
-          <Link href="/financial/platform/formulas">
-            <Button variant="outline">
-              <Calculator className="mr-2 h-4 w-4" />
-              {t('financial.platform.formulas')}
-            </Button>
-          </Link>
-          <Link href="/financial/platform/business-flow">
-            <Button variant="outline">
-              <Workflow className="mr-2 h-4 w-4" />
-              {t('financial.platform.businessFlow')}
             </Button>
           </Link>
         </div>
@@ -328,6 +321,55 @@ export default function PlatformFinancialPage() {
         </div>
       )}
 
+      {iranSettlement?.totals && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Iran Settlement Snapshot</CardTitle>
+            <CardDescription>
+              PayPing-only settlement totals for selected filter period
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <p className="text-xs text-muted-foreground">Gross</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  iranSettlement?.totals?.gross_amount || 0,
+                  iranSettlement?.totals?.currency || 'IRR'
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Platform Fee</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  iranSettlement?.totals?.platform_fee || 0,
+                  iranSettlement?.totals?.currency || 'IRR'
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">VAT</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  iranSettlement?.totals?.tax_vat_amount || 0,
+                  iranSettlement?.totals?.currency || 'IRR'
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">School Net</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(
+                  iranSettlement?.totals?.school_net_revenue || 0,
+                  iranSettlement?.totals?.currency || 'IRR'
+                )}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Detailed View */}
       <Tabs defaultValue="platform" className="space-y-4">
         <TabsList>
@@ -351,12 +393,10 @@ export default function PlatformFinancialPage() {
                     {t('financial.platform.platformRecords.description')}
                   </CardDescription>
                 </div>
-                <Link href="/financial/platform/records/create">
-                  <Button size="sm">
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t('financial.platform.platformRecords.addRecord')}
-                  </Button>
-                </Link>
+                <Button size="sm" disabled>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('financial.platform.platformRecords.addRecord')}
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -450,13 +490,9 @@ export default function PlatformFinancialPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
-                              <Link
-                                href={`/financial/platform/records/${record.id}/edit`}
-                              >
-                                <Button variant="ghost" size="sm">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </Link>
+                              <Button variant="ghost" size="sm" disabled>
+                                <Edit className="h-4 w-4" />
+                              </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -613,13 +649,13 @@ export default function PlatformFinancialPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
-                              <Link
-                                href={`/financial/platform/stores/${record.academy_id}`}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => router.push('/platform/stores')}
                               >
-                                <Button variant="ghost" size="sm">
-                                  {t('financial.platform.storeRecords.view')}
-                                </Button>
-                              </Link>
+                                {t('financial.platform.storeRecords.view')}
+                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>

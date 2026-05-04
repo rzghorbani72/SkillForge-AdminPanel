@@ -19,32 +19,27 @@ import { useTranslation } from '@/lib/i18n/hooks';
 
 const METHOD_CONFIG = [
   {
-    key: 'CREDIT_CARD',
-    title: 'Credit & Debit Cards',
-    description: 'Accept payments from all major card networks via Stripe.',
-    icon: CreditCard,
-    badges: [
-      { label: 'Stripe', tone: 'active' },
-      { label: 'Apple Pay', tone: 'beta' }
-    ]
-  },
-  {
-    key: 'BANK_TRANSFER',
-    title: 'Bank Transfer',
+    key: 'PAYPING',
+    title: 'PayPing Gateway',
     description:
-      'Support direct ACH and wire payments for enterprise customers.',
-    icon: DollarSign,
-    badges: [{ label: 'Manual', tone: 'pending' }]
+      'Primary online gateway for Iran-first release and production checkout.',
+    icon: CreditCard,
+    badges: [{ label: 'Active', tone: 'active' }]
   },
   {
-    key: 'DIGITAL_WALLET',
-    title: 'Digital Wallets',
-    description: 'Let students pay with PayPal, Google Pay, or local wallets.',
+    key: 'SAMAN_SEP',
+    title: 'Saman SEP',
+    description:
+      'Bank acquirer adapter available for rollout after PayPing phase.',
+    icon: DollarSign,
+    badges: [{ label: 'Planned', tone: 'roadmap' }]
+  },
+  {
+    key: 'MELLAT_BP',
+    title: 'Mellat BP',
+    description: 'Bank acquirer adapter prepared for staged activation.',
     icon: Globe,
-    badges: [
-      { label: 'PayPal', tone: 'inactive' },
-      { label: 'Google Pay', tone: 'roadmap' }
-    ]
+    badges: [{ label: 'Planned', tone: 'roadmap' }]
   }
 ] as const;
 

@@ -387,37 +387,9 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'All Stores',
-        href: '/financial/platform/stores',
+        href: '/platform/stores',
         icon: 'building2' as IconType,
         label: 'platform-stores',
-        roles: ['ADMIN']
-      },
-      {
-        title: 'Platform Records',
-        href: '/financial/platform/records',
-        icon: 'trendingUp' as IconType,
-        label: 'platform-records',
-        roles: ['ADMIN']
-      },
-      {
-        title: 'Formulas',
-        href: '/financial/platform/formulas',
-        icon: 'calculator' as IconType,
-        label: 'platform-formulas',
-        roles: ['ADMIN']
-      },
-      {
-        title: 'Cost Categories',
-        href: '/financial/platform/categories',
-        icon: 'tag' as IconType,
-        label: 'platform-categories',
-        roles: ['ADMIN']
-      },
-      {
-        title: 'Business Flow',
-        href: '/financial/platform/business-flow',
-        icon: 'workflow' as IconType,
-        label: 'business-flow',
         roles: ['ADMIN']
       }
     ]

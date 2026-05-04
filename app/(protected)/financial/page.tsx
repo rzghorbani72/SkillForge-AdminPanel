@@ -31,8 +31,6 @@ import {
   TrendingUp,
   TrendingDown,
   Building2,
-  Calculator,
-  Settings,
   Plus,
   Edit,
   Trash2,
@@ -164,22 +162,10 @@ export default function FinancialDashboardPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/financial/platform/stores">
+          <Link href="/platform/stores">
             <Button variant="outline">
               <Building2 className="mr-2 h-4 w-4" />
               {t('financial.platform.allStores')}
-            </Button>
-          </Link>
-          <Link href="/financial/platform/formulas">
-            <Button variant="outline">
-              <Calculator className="mr-2 h-4 w-4" />
-              {t('financial.platform.formulas')}
-            </Button>
-          </Link>
-          <Link href="/financial/platform/categories">
-            <Button variant="outline">
-              <Settings className="mr-2 h-4 w-4" />
-              {t('financial.platform.costCategories')}
             </Button>
           </Link>
         </div>
@@ -358,12 +344,10 @@ export default function FinancialDashboardPage() {
                     {t('financial.platform.platformRecords.description')}
                   </CardDescription>
                 </div>
-                <Link href="/financial/platform-records/create">
-                  <Button size="sm">
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t('financial.platform.platformRecords.addRecord')}
-                  </Button>
-                </Link>
+                <Button size="sm" disabled>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('financial.platform.platformRecords.addRecord')}
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -457,13 +441,9 @@ export default function FinancialDashboardPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
-                              <Link
-                                href={`/financial/platform-records/${record.id}/edit`}
-                              >
-                                <Button variant="ghost" size="sm">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </Link>
+                              <Button variant="ghost" size="sm" disabled>
+                                <Edit className="h-4 w-4" />
+                              </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -522,12 +502,10 @@ export default function FinancialDashboardPage() {
                     {t('financial.platform.storeRecords.description')}
                   </CardDescription>
                 </div>
-                <Link href="/financial/store-records/create">
-                  <Button size="sm">
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t('financial.platform.storeRecords.addRecord')}
-                  </Button>
-                </Link>
+                <Button size="sm" disabled>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('financial.platform.storeRecords.addRecord')}
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -626,13 +604,9 @@ export default function FinancialDashboardPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
-                              <Link
-                                href={`/financial/store-records/${record.id}/edit`}
-                              >
-                                <Button variant="ghost" size="sm">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </Link>
+                              <Button variant="ghost" size="sm" disabled>
+                                <Edit className="h-4 w-4" />
+                              </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
