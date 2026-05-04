@@ -514,7 +514,13 @@ export interface Payment {
   course_id: number;
   amount: number;
   currency: string;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
+  status:
+    | 'PENDING'
+    | 'PAID'
+    | 'COMPLETED'
+    | 'FAILED'
+    | 'CANCELLED'
+    | 'REFUNDED';
   method: 'CREDIT_CARD' | 'DEBIT_CARD' | 'BANK_TRANSFER' | 'DIGITAL_WALLET';
   transaction_id?: string;
   payment_date: string;

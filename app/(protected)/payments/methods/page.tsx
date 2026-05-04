@@ -153,9 +153,7 @@ export default function PaymentMethodsPage() {
             <p className="text-2xl font-bold">
               {
                 METHOD_CONFIG.filter((item) =>
-                  item.badges.some(
-                    (badge) => badge.tone === 'roadmap' || badge.tone === 'beta'
-                  )
+                  item.badges.some((badge) => badge.tone === 'roadmap')
                 ).length
               }
             </p>
