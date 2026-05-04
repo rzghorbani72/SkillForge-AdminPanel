@@ -51,7 +51,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function FinancialDashboardPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<PlatformFinancialSummary | null>(null);
   const [storeRecords, setStoreRecords] = useState<StoreFinancialRecord[]>([]);
@@ -119,11 +119,21 @@ export default function FinancialDashboardPage() {
     }
   };
 
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
+
   const formatCurrency = (amount: number, currency = 'IRR') => {
     return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-      currency_position: 'after'
+      currency_position: 'after',
+      language
     });
   };
 
@@ -217,7 +227,7 @@ export default function FinancialDashboardPage() {
                   </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString('en-US', {
+                      {new Date(2000, month - 1).toLocaleString(locale, {
                         month: 'long'
                       })}
                     </SelectItem>
@@ -360,16 +370,16 @@ export default function FinancialDashboardPage() {
                     <TableHead>
                       {t('financial.platform.platformRecords.category')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.platform.platformRecords.revenue')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.platform.platformRecords.cost')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.platform.platformRecords.profit')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.platform.platformRecords.margin')}
                     </TableHead>
                     <TableHead>
@@ -417,14 +427,14 @@ export default function FinancialDashboardPage() {
                               <span className="text-muted-foreground">-</span>
                             )}
                           </TableCell>
-                          <TableCell className="text-right font-medium">
+                          <TableCell className="text-end font-medium">
                             {formatCurrency(record.revenue, record.currency)}
                           </TableCell>
-                          <TableCell className="text-right text-red-600">
+                          <TableCell className="text-end text-red-600">
                             {formatCurrency(record.cost, record.currency)}
                           </TableCell>
                           <TableCell
-                            className={`text-right font-bold ${
+                            className={`text-end font-bold ${
                               record.profit >= 0
                                 ? 'text-green-600'
                                 : 'text-red-600'
@@ -432,7 +442,7 @@ export default function FinancialDashboardPage() {
                           >
                             {formatCurrency(record.profit, record.currency)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-end">
                             <Badge
                               variant={margin >= 0 ? 'default' : 'destructive'}
                             >
@@ -521,16 +531,16 @@ export default function FinancialDashboardPage() {
                     <TableHead>
                       {t('financial.platform.storeRecords.category')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.platform.storeRecords.revenue')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.platform.storeRecords.cost')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.platform.storeRecords.profit')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.platform.storeRecords.margin')}
                     </TableHead>
                     <TableHead>
@@ -555,7 +565,7 @@ export default function FinancialDashboardPage() {
                         <TableRow key={record.id}>
                           <TableCell className="font-medium">
                             {record.store?.name ||
-                              `Store #${record.academy_id}`}
+                              `${t('common.store')} #${record.academy_id}`}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
@@ -580,14 +590,14 @@ export default function FinancialDashboardPage() {
                               <span className="text-muted-foreground">-</span>
                             )}
                           </TableCell>
-                          <TableCell className="text-right font-medium">
+                          <TableCell className="text-end font-medium">
                             {formatCurrency(record.revenue, record.currency)}
                           </TableCell>
-                          <TableCell className="text-right text-red-600">
+                          <TableCell className="text-end text-red-600">
                             {formatCurrency(record.cost, record.currency)}
                           </TableCell>
                           <TableCell
-                            className={`text-right font-bold ${
+                            className={`text-end font-bold ${
                               record.profit >= 0
                                 ? 'text-green-600'
                                 : 'text-red-600'
@@ -595,7 +605,7 @@ export default function FinancialDashboardPage() {
                           >
                             {formatCurrency(record.profit, record.currency)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-end">
                             <Badge
                               variant={margin >= 0 ? 'default' : 'destructive'}
                             >

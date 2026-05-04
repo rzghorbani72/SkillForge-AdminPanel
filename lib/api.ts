@@ -2363,6 +2363,21 @@ class ApiClient {
     return response.data as any;
   }
 
+  async setTeacherRevenueVisibility(data: {
+    academy_id: number;
+    teacher_id: number;
+    is_visible: boolean;
+  }) {
+    const response = await this.request<any>(
+      '/financial/teacher-revenue-visibility',
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
+    return response.data as any;
+  }
+
   async exportIranSettlementCsv(params?: {
     academy_id?: number;
     start_date?: string;

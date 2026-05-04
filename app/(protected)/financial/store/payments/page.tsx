@@ -39,7 +39,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 
 export default function StorePaymentsPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
@@ -102,11 +102,21 @@ export default function StorePaymentsPage() {
     }
   };
 
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
+
   const formatCurrency = (amount: number, currency = 'IRR') => {
     return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-      currency_position: 'after'
+      currency_position: 'after',
+      language
     });
   };
 
@@ -287,7 +297,7 @@ export default function StorePaymentsPage() {
                   </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString('en-US', {
+                      {new Date(2000, month - 1).toLocaleString(locale, {
                         month: 'long'
                       })}
                     </SelectItem>
@@ -491,10 +501,10 @@ export default function StorePaymentsPage() {
                   <TableHead>
                     {t('financial.store.payments.paymentMethod')}
                   </TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('financial.store.payments.count')}
                   </TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('financial.store.payments.totalAmount')}
                   </TableHead>
                 </TableRow>
@@ -507,10 +517,10 @@ export default function StorePaymentsPage() {
                       <TableCell className="font-medium">
                         {method.method}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-end">
                         <Badge variant="secondary">{method.count}</Badge>
                       </TableCell>
-                      <TableCell className="text-right font-medium">
+                      <TableCell className="text-end font-medium">
                         {formatCurrency(method.total, method.currency)}
                       </TableCell>
                     </TableRow>
@@ -538,11 +548,11 @@ export default function StorePaymentsPage() {
                 <TableHead>{t('financial.store.payments.course')}</TableHead>
                 <TableHead>{t('financial.store.payments.method')}</TableHead>
                 <TableHead>{t('financial.store.payments.status')}</TableHead>
-                <TableHead className="text-right">VAT</TableHead>
-                <TableHead className="text-right">Platform Fee</TableHead>
-                <TableHead className="text-right">Teacher Payout</TableHead>
-                <TableHead className="text-right">School Net</TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">VAT</TableHead>
+                <TableHead className="text-end">Platform Fee</TableHead>
+                <TableHead className="text-end">Teacher Payout</TableHead>
+                <TableHead className="text-end">School Net</TableHead>
+                <TableHead className="text-end">
                   {t('financial.store.payments.amount')}
                 </TableHead>
               </TableRow>
@@ -569,10 +579,12 @@ export default function StorePaymentsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">
-                      {payment.profile?.display_name || 'Unknown'}
+                      {payment.profile?.display_name ||
+                        t('financial.store.payments.student')}
                     </TableCell>
                     <TableCell>
-                      {payment.course?.title || 'Unknown Course'}
+                      {payment.course?.title ||
+                        t('financial.store.payments.course')}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{payment.method || 'N/A'}</Badge>
@@ -590,25 +602,25 @@ export default function StorePaymentsPage() {
                         {payment.status || 'UNKNOWN'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {formatCurrency(
                         payment.tax_vat_amount || 0,
                         payment.currency
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {formatCurrency(
                         payment.platform_fee || 0,
                         payment.currency
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {formatCurrency(
                         payment.instructor_fee || 0,
                         payment.currency
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {formatCurrency(
                         payment.school_net_revenue ??
                           Math.max(
@@ -621,7 +633,7 @@ export default function StorePaymentsPage() {
                         payment.currency
                       )}
                     </TableCell>
-                    <TableCell className="text-right font-medium">
+                    <TableCell className="text-end font-medium">
                       {formatCurrency(payment.amount, payment.currency)}
                     </TableCell>
                   </TableRow>

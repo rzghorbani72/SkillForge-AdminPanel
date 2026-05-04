@@ -32,7 +32,7 @@ import {
 import { StoreFinancialRecord } from '@/types/api';
 
 export default function StoreCostsPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [records, setRecords] = useState<StoreFinancialRecord[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -73,11 +73,21 @@ export default function StoreCostsPage() {
     }
   };
 
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
+
   const formatCurrency = (amount: number, currency = 'IRR') => {
     return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-      currency_position: 'after'
+      currency_position: 'after',
+      language
     });
   };
 
@@ -202,7 +212,7 @@ export default function StoreCostsPage() {
                   </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString('en-US', {
+                      {new Date(2000, month - 1).toLocaleString(locale, {
                         month: 'long'
                       })}
                     </SelectItem>
@@ -282,10 +292,10 @@ export default function StoreCostsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('financial.store.costs.category')}</TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('financial.store.costs.records')}
                   </TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('financial.store.costs.totalCostLabel')}
                   </TableHead>
                 </TableRow>
@@ -301,10 +311,10 @@ export default function StoreCostsPage() {
                           {category.category}
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-end">
                         {category.count}
                       </TableCell>
-                      <TableCell className="text-right font-medium">
+                      <TableCell className="text-end font-medium">
                         {formatCurrency(category.totalCost, category.currency)}
                       </TableCell>
                     </TableRow>
@@ -329,13 +339,13 @@ export default function StoreCostsPage() {
               <TableRow>
                 <TableHead>{t('financial.store.costs.period')}</TableHead>
                 <TableHead>{t('financial.store.costs.category')}</TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">
                   {t('financial.store.costs.revenue')}
                 </TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">
                   {t('financial.store.costs.cost')}
                 </TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">
                   {t('financial.store.costs.profit')}
                 </TableHead>
               </TableRow>
@@ -371,13 +381,13 @@ export default function StoreCostsPage() {
                       {record.costCategory?.name ||
                         t('financial.store.costs.uncategorized')}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {formatCurrency(record.revenue, record.currency)}
                     </TableCell>
-                    <TableCell className="text-right font-medium text-red-600">
+                    <TableCell className="text-end font-medium text-red-600">
                       {formatCurrency(record.cost, record.currency)}
                     </TableCell>
-                    <TableCell className="text-right font-medium text-green-600">
+                    <TableCell className="text-end font-medium text-green-600">
                       {formatCurrency(record.profit, record.currency)}
                     </TableCell>
                   </TableRow>

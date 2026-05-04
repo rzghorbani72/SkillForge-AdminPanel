@@ -42,7 +42,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function StoreFinancialPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
@@ -97,11 +97,21 @@ export default function StoreFinancialPage() {
     }
   };
 
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
+
   const formatCurrency = (amount: number, currency = 'IRR') => {
     return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-      currency_position: 'after'
+      currency_position: 'after',
+      language
     });
   };
 
@@ -187,7 +197,7 @@ export default function StoreFinancialPage() {
                   </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString('en-US', {
+                      {new Date(2000, month - 1).toLocaleString(locale, {
                         month: 'long'
                       })}
                     </SelectItem>
@@ -320,7 +330,7 @@ export default function StoreFinancialPage() {
                     <TableHead>
                       {t('financial.store.overview.course')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.store.overview.amount')}
                     </TableHead>
                   </TableRow>
@@ -354,7 +364,7 @@ export default function StoreFinancialPage() {
                         <TableCell>
                           {payment.course?.title || 'Unknown Course'}
                         </TableCell>
-                        <TableCell className="text-right font-medium">
+                        <TableCell className="text-end font-medium">
                           {formatCurrency(payment.amount, payment.currency)}
                         </TableCell>
                       </TableRow>

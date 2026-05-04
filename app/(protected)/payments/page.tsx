@@ -151,15 +151,22 @@ export default function PaymentsPage() {
           <CardContent>
             {monetizationSummary?.visibility?.can_view_store_revenue ? (
               <p className="text-2xl font-bold">
-                {formatCurrencyWithStore(totals.revenue, currentAcademy)}
+                {formatCurrencyWithStore(
+                  totals.revenue,
+                  currentAcademy,
+                  100,
+                  language
+                )}
               </p>
             ) : (
-              <p className="text-2xl font-bold">Hidden</p>
+              <p className="text-2xl font-bold">
+                {t('financial.store.revenue.hidden')}
+              </p>
             )}
             <p className="text-xs text-muted-foreground">
               {monetizationSummary?.visibility?.can_view_store_revenue
                 ? t('analytics.acrossAllPayments')
-                : 'Revenue visibility is limited by your role'}
+                : t('financial.store.revenue.revenueHiddenPolicy')}
             </p>
           </CardContent>
         </Card>
@@ -269,7 +276,7 @@ export default function PaymentsPage() {
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="text-right text-sm">
+                  <div className="text-end text-sm">
                     <p className="font-semibold">
                       {formatCurrencyWithStore(
                         payment.amount ?? 0,
@@ -319,11 +326,16 @@ export default function PaymentsPage() {
                     {item.method.replace('_', ' ').toLowerCase()}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {item.count} payments
+                    {item.count} {t('financial.store.payments.payments')}
                   </p>
                 </div>
                 <p className="text-sm font-semibold">
-                  {formatCurrencyWithStore(item.total, currentAcademy)}
+                  {formatCurrencyWithStore(
+                    item.total,
+                    currentAcademy,
+                    100,
+                    language
+                  )}
                 </p>
               </div>
             ))
@@ -351,17 +363,20 @@ export default function PaymentsPage() {
               >
                 <div>
                   <p className="text-sm font-medium">
-                    Transaction #{transaction.id.toString().padStart(6, '0')}
+                    {t('payments.transactions')} #
+                    {transaction.id.toString().padStart(6, '0')}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {transaction.type}
                   </p>
                 </div>
-                <div className="text-right text-sm">
+                <div className="text-end text-sm">
                   <p className="font-semibold">
                     {formatCurrencyWithStore(
                       transaction.amount ?? 0,
-                      currentAcademy
+                      currentAcademy,
+                      100,
+                      language
                     )}
                   </p>
                   <p className="text-xs text-muted-foreground">

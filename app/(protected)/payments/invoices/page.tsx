@@ -214,20 +214,24 @@ export default function InvoicesPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">
-                      Invoice #{payment.id.toString().padStart(6, '0')}
+                      {t('payments.invoices')} #
+                      {payment.id.toString().padStart(6, '0')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {payment.user?.display_name ?? 'Unknown student'} ·{' '}
-                      {payment.course?.title ?? 'Unknown course'}
+                      {payment.user?.display_name ??
+                        t('payments.unknownStudent')}{' '}
+                      · {payment.course?.title ?? t('payments.unknownCourse')}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="text-right text-sm">
+                  <div className="text-end text-sm">
                     <p className="font-semibold">
                       {formatCurrencyWithStore(
                         payment.amount ?? 0,
-                        currentAcademy
+                        currentAcademy,
+                        100,
+                        language
                       )}
                     </p>
                     <p className="text-xs text-muted-foreground">

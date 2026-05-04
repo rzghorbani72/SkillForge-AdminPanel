@@ -116,7 +116,9 @@ export default function PaymentMethodsPage() {
             <p className="text-2xl font-bold">
               {formatCurrencyWithStore(
                 methodMetrics.totalRevenue,
-                currentAcademy
+                currentAcademy,
+                100,
+                language
               )}
             </p>
           </CardContent>
@@ -183,14 +185,21 @@ export default function PaymentMethodsPage() {
                   <p className="text-sm font-semibold capitalize">
                     {item.method.replace('_', ' ').toLowerCase()}
                   </p>
-                  <Badge variant="outline">{item.count} payments</Badge>
+                  <Badge variant="outline">
+                    {item.count} {t('financial.store.payments.payments')}
+                  </Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span>
-                    {formatCurrencyWithStore(item.total, currentAcademy)}
+                    {formatCurrencyWithStore(
+                      item.total,
+                      currentAcademy,
+                      100,
+                      language
+                    )}
                   </span>
                   <span className="text-muted-foreground">
-                    {item.share}% of revenue
+                    {item.share}% {t('payments.ofRevenue')}
                   </span>
                 </div>
                 <Progress value={item.share} className="h-2" />

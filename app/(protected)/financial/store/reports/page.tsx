@@ -40,7 +40,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function StoreReportsPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<any>(null);
   const [summary, setSummary] = useState<any>(null);
@@ -98,11 +98,21 @@ export default function StoreReportsPage() {
     }
   };
 
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
+
   const formatCurrency = (amount: number, currency = 'IRR') => {
     return formatCurrencyWithStore(amount, {
       currency: currency as any,
       currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-      currency_position: 'after'
+      currency_position: 'after',
+      language
     });
   };
 
@@ -131,7 +141,7 @@ export default function StoreReportsPage() {
     return Object.entries(monthly)
       .map(([month, data]) => ({
         month: parseInt(month),
-        monthName: new Date(2000, parseInt(month) - 1).toLocaleString('en-US', {
+        monthName: new Date(2000, parseInt(month) - 1).toLocaleString(locale, {
           month: 'long'
         }),
         ...data
@@ -221,7 +231,7 @@ export default function StoreReportsPage() {
                   </SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString('en-US', {
+                      {new Date(2000, month - 1).toLocaleString(locale, {
                         month: 'long'
                       })}
                     </SelectItem>
@@ -415,13 +425,13 @@ export default function StoreReportsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('financial.store.reports.month')}</TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.store.reports.revenue')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.store.reports.cost')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.store.reports.profit')}
                     </TableHead>
                   </TableRow>
@@ -442,13 +452,13 @@ export default function StoreReportsPage() {
                         <TableCell className="font-medium">
                           {month.monthName}
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-end">
                           {formatCurrency(month.revenue, month.currency)}
                         </TableCell>
-                        <TableCell className="text-right text-red-600">
+                        <TableCell className="text-end text-red-600">
                           {formatCurrency(month.cost, month.currency)}
                         </TableCell>
-                        <TableCell className="text-right font-medium text-green-600">
+                        <TableCell className="text-end font-medium text-green-600">
                           {formatCurrency(month.profit, month.currency)}
                         </TableCell>
                       </TableRow>
@@ -478,16 +488,16 @@ export default function StoreReportsPage() {
                     <TableHead>
                       {t('financial.store.reports.category')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.store.reports.revenue')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.store.reports.cost')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.store.reports.profit')}
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-end">
                       {t('financial.store.reports.finalProfit')}
                     </TableHead>
                   </TableRow>
@@ -527,16 +537,16 @@ export default function StoreReportsPage() {
                           {record.costCategory?.name ||
                             t('financial.store.reports.uncategorized')}
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-end">
                           {formatCurrency(record.revenue, record.currency)}
                         </TableCell>
-                        <TableCell className="text-right text-red-600">
+                        <TableCell className="text-end text-red-600">
                           {formatCurrency(record.cost, record.currency)}
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-end">
                           {formatCurrency(record.profit, record.currency)}
                         </TableCell>
-                        <TableCell className="text-right font-medium text-green-600">
+                        <TableCell className="text-end font-medium text-green-600">
                           {formatCurrency(record.final_profit, record.currency)}
                         </TableCell>
                       </TableRow>
