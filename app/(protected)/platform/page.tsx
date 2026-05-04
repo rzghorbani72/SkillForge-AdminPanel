@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { formatCurrency } from '@/lib/utils';
 import {
   Building2,
   Store,
@@ -196,11 +197,11 @@ export default function PlatformOverviewPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
+              {formatCurrency(stats.totalRevenue, {
                 currency: 'USD',
-                minimumFractionDigits: 0
-              }).format(stats.totalRevenue)}
+                divideBy: 1,
+                language
+              })}
             </div>
             <p className="text-xs text-muted-foreground">
               {t('platform.overview.allTimeRevenue')}

@@ -41,25 +41,18 @@ interface EngagementSlice {
   color: string;
 }
 
-const MONTH_NAMES = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
-
 export default function AnalyticsPage() {
   const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
   const currentAcademy = useCurrentAcademy();
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
 
   if (process.env.NODE_ENV === 'development' && currentAcademy) {
     console.log('Academy currency config:', {
@@ -111,19 +104,19 @@ export default function AnalyticsPage() {
       const trend = Array.from(revenueMap.entries())
         .map(([key, value]) => {
           const [year, month] = key.split('-').map((item) => Number(item));
+          const date = new Date(year, month, 1);
           return {
-            month: `${MONTH_NAMES[month]} ${String(year).slice(-2)}`,
+            month: new Intl.DateTimeFormat(locale, {
+              month: 'short',
+              year: '2-digit'
+            }).format(date),
+            timestamp: date.getTime(),
             revenue: value.revenue,
             enrollments: value.enrollments
           };
         })
-        .sort((a, b) => {
-          const [aMonth, aYear] = a.month.split(' ');
-          const [bMonth, bYear] = b.month.split(' ');
-          const yearDiff = Number(aYear) - Number(bYear);
-          if (yearDiff !== 0) return yearDiff;
-          return MONTH_NAMES.indexOf(aMonth) - MONTH_NAMES.indexOf(bMonth);
-        });
+        .sort((a, b) => a.timestamp - b.timestamp)
+        .map(({ timestamp, ...item }) => item);
 
       const totalRevenueAccum = payments.reduce(
         (sum, payment) => sum + (payment.amount ?? 0),
@@ -244,7 +237,12 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrencyWithStore(totalRevenue, currentAcademy)}
+              {formatCurrencyWithStore(
+                totalRevenue,
+                currentAcademy,
+                100,
+                language
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               {t('analytics.combinedPayments')}
@@ -313,7 +311,12 @@ export default function AnalyticsPage() {
                   formatter={(value: number, name: string) =>
                     name === 'revenue'
                       ? [
-                          formatCurrencyWithStore(value, currentAcademy),
+                          formatCurrencyWithStore(
+                            value,
+                            currentAcademy,
+                            100,
+                            language
+                          ),
                           t('analytics.totalRevenue')
                         ]
                       : [value, t('students.enrollments')]
@@ -388,15 +391,20 @@ export default function AnalyticsPage() {
                   <div>
                     <p className="text-sm font-medium">{course.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {course.students} students
+                      {course.students} {t('users.students')}
                     </p>
                   </div>
                 </div>
                 <div className="flex w-full flex-col gap-2 md:w-64">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Revenue</span>
+                    <span>{t('analytics.revenue')}</span>
                     <Badge variant="outline">
-                      {formatCurrencyWithStore(course.revenue, currentAcademy)}
+                      {formatCurrencyWithStore(
+                        course.revenue,
+                        currentAcademy,
+                        100,
+                        language
+                      )}
                     </Badge>
                   </div>
                   <Progress

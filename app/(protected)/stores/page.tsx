@@ -35,6 +35,7 @@ import { StoreForm } from '@/components/stores/StoreForm';
 import { useStore } from '@/hooks/useStore';
 import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { toast } from 'react-toastify';
 
@@ -533,8 +534,9 @@ export default function StoresPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   <strong>You have access to other stores:</strong> You are
-                  logged in as {user.role} in the current store, but you also
-                  have {user.role} profiles in {otherStores.length} other store
+                  logged in as {getRoleLabel(user.role, t)} in the current
+                  store, but you also have {getRoleLabel(user.role, t)} profiles
+                  in {otherStores.length} other store
                   {otherStores.length > 1 ? 's' : ''}:{' '}
                   {otherStores.map((s, idx) => (
                     <span key={s.id}>

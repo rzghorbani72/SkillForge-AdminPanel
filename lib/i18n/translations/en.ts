@@ -82,7 +82,14 @@ export const en = {
     requested: 'Requested',
     addNotes: 'Add any notes about your decision...',
     validPhoneNumberFormat: '✓ Valid phone number',
-    invalidPhoneNumberFormat: '⚠ Invalid phone number format'
+    invalidPhoneNumberFormat: '⚠ Invalid phone number format',
+    roles: {
+      admin: 'Admin',
+      manager: 'Manager',
+      teacher: 'Teacher',
+      student: 'Student',
+      user: 'User'
+    }
   },
   navigation: {
     dashboard: 'Dashboard',
@@ -1557,6 +1564,7 @@ export const en = {
       payments: {
         title: 'Student Payments',
         description: 'Payment transactions and history',
+        loadFailed: 'Failed to load payments data',
         loading: 'Loading payments data...',
         noStore: 'No store selected',
         filters: 'Filters',
@@ -1578,6 +1586,27 @@ export const en = {
         totalAmount: 'Total Amount',
         allPayments: 'All Payments',
         allPaymentsDescription: 'Complete list of payment transactions',
+        exportCsv: 'Export CSV',
+        exportFailed: 'Failed to export settlement CSV',
+        lockPeriod: 'Lock Period',
+        lockedSuccess: 'Financial period locked',
+        lockFailed: 'Failed to lock period',
+        settlementTitle: 'Iran Settlement Statement',
+        settlementDescription:
+          'Gross, platform fee, VAT, payout and school net for selected period',
+        gross: 'Gross',
+        platformFee: 'Platform Fee',
+        vat: 'VAT',
+        vatIran: 'VAT (Iran)',
+        teacherPayout: 'Teacher Payout',
+        schoolNet: 'School Net',
+        reconciliationTitle: 'Reconciliation',
+        reconciliationDescription:
+          'Callback and settlement consistency report for selected period',
+        paidPayments: 'Paid Payments',
+        matchedCallbacks: 'Matched Callbacks',
+        missingCallbacks: 'Missing Callbacks',
+        orphanCallbacks: 'Orphan Callbacks',
         noPayments: 'No payments found',
         date: 'Date',
         student: 'Student',

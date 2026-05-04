@@ -38,6 +38,14 @@ export default function CoursePerformancePage() {
   const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
   const currentAcademy = useCurrentAcademy();
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
 
   const courseMetrics = useMemo<CoursePerformance[]>(() => {
     if (courses.length === 0) return [];
@@ -126,7 +134,7 @@ export default function CoursePerformancePage() {
     enrollments.forEach((enrollment) => {
       const date = new Date(enrollment.enrolled_at);
       const key = `${date.getFullYear()}-${date.getMonth()}`;
-      const label = `${date.toLocaleString('en-US', { month: 'short' })} ${String(
+      const label = `${date.toLocaleString(locale, { month: 'short' })} ${String(
         date.getFullYear()
       ).slice(-2)}`;
 
@@ -162,7 +170,7 @@ export default function CoursePerformancePage() {
       ];
       return months.indexOf(monthA) - months.indexOf(monthB);
     });
-  }, [enrollments]);
+  }, [enrollments, locale]);
 
   if (isLoading) {
     return (
@@ -277,10 +285,12 @@ export default function CoursePerformancePage() {
                 <YAxis />
                 <Tooltip
                   formatter={(value: number) =>
-                    new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD'
-                    }).format(value / 100)
+                    formatCurrencyWithStore(
+                      value,
+                      currentAcademy,
+                      100,
+                      language
+                    )
                   }
                 />
                 <Bar dataKey="revenue" fill="#34d399" />
@@ -292,7 +302,12 @@ export default function CoursePerformancePage() {
                   <div className="flex items-center justify-between">
                     <span className="truncate">{course.name}</span>
                     <Badge variant="secondary">
-                      {formatCurrencyWithStore(course.revenue, currentAcademy)}
+                      {formatCurrencyWithStore(
+                        course.revenue,
+                        currentAcademy,
+                        100,
+                        language
+                      )}
                     </Badge>
                   </div>
                   <Progress value={course.completion} className="h-2" />

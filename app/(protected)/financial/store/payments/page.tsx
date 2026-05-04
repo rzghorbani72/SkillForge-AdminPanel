@@ -96,7 +96,7 @@ export default function StorePaymentsPage() {
       setReconciliation(reconciliationData);
     } catch (error: any) {
       console.error('Error loading payments data:', error);
-      toast.error(error?.message || 'Failed to load payments data');
+      toast.error(error?.message || t('financial.store.payments.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -217,12 +217,12 @@ export default function StorePaymentsPage() {
                 window.URL.revokeObjectURL(url);
               } catch (error: any) {
                 toast.error(
-                  error?.message || 'Failed to export settlement CSV'
+                  error?.message || t('financial.store.payments.exportFailed')
                 );
               }
             }}
           >
-            Export CSV
+            {t('financial.store.payments.exportCsv')}
           </Button>
           <Button
             variant="outline"
@@ -240,13 +240,15 @@ export default function StorePaymentsPage() {
                   academy_id: currentAcademy.id,
                   lock_until: lockUntil.toISOString()
                 });
-                toast.success('Financial period locked');
+                toast.success(t('financial.store.payments.lockedSuccess'));
               } catch (error: any) {
-                toast.error(error?.message || 'Failed to lock period');
+                toast.error(
+                  error?.message || t('financial.store.payments.lockFailed')
+                );
               }
             }}
           >
-            Lock Period
+            {t('financial.store.payments.lockPeriod')}
           </Button>
         </div>
       </div>
@@ -380,7 +382,7 @@ export default function StorePaymentsPage() {
                 {paymentStats.failed}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.store.payments.failed')} transactions
+                {t('financial.store.payments.failedTransactions')}
               </p>
             </CardContent>
           </Card>
@@ -390,15 +392,18 @@ export default function StorePaymentsPage() {
       {statement && (
         <Card>
           <CardHeader>
-            <CardTitle>Iran Settlement Statement</CardTitle>
+            <CardTitle>
+              {t('financial.store.payments.settlementTitle')}
+            </CardTitle>
             <CardDescription>
-              Gross, platform fee, VAT, payout and school net for selected
-              period
+              {t('financial.store.payments.settlementDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div>
-              <p className="text-xs text-muted-foreground">Gross</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.gross')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   statement.totals?.gross_amount || 0,
@@ -407,7 +412,9 @@ export default function StorePaymentsPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Platform Fee</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.platformFee')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   statement.totals?.platform_fee || 0,
@@ -416,7 +423,9 @@ export default function StorePaymentsPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">VAT (Iran)</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.vatIran')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   statement.totals?.tax_vat_amount || 0,
@@ -425,7 +434,9 @@ export default function StorePaymentsPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Teacher Payout</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.teacherPayout')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   statement.totals?.teacher_payout || 0,
@@ -434,7 +445,9 @@ export default function StorePaymentsPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">School Net</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.schoolNet')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   statement.totals?.school_net_revenue || 0,
@@ -449,32 +462,42 @@ export default function StorePaymentsPage() {
       {reconciliation && (
         <Card>
           <CardHeader>
-            <CardTitle>Reconciliation</CardTitle>
+            <CardTitle>
+              {t('financial.store.payments.reconciliationTitle')}
+            </CardTitle>
             <CardDescription>
-              Callback and settlement consistency report for selected period
+              {t('financial.store.payments.reconciliationDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <p className="text-xs text-muted-foreground">Paid Payments</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.paidPayments')}
+              </p>
               <p className="text-lg font-semibold">
                 {reconciliation.total_paid_payments || 0}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Matched Callbacks</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.matchedCallbacks')}
+              </p>
               <p className="text-lg font-semibold">
                 {reconciliation.matched_successful_callbacks || 0}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Missing Callbacks</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.missingCallbacks')}
+              </p>
               <p className="text-lg font-semibold">
                 {reconciliation.missing_successful_callbacks || 0}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Orphan Callbacks</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.store.payments.orphanCallbacks')}
+              </p>
               <p className="text-lg font-semibold">
                 {reconciliation.orphan_successful_callbacks || 0}
               </p>
@@ -548,10 +571,18 @@ export default function StorePaymentsPage() {
                 <TableHead>{t('financial.store.payments.course')}</TableHead>
                 <TableHead>{t('financial.store.payments.method')}</TableHead>
                 <TableHead>{t('financial.store.payments.status')}</TableHead>
-                <TableHead className="text-end">VAT</TableHead>
-                <TableHead className="text-end">Platform Fee</TableHead>
-                <TableHead className="text-end">Teacher Payout</TableHead>
-                <TableHead className="text-end">School Net</TableHead>
+                <TableHead className="text-end">
+                  {t('financial.store.payments.vat')}
+                </TableHead>
+                <TableHead className="text-end">
+                  {t('financial.store.payments.platformFee')}
+                </TableHead>
+                <TableHead className="text-end">
+                  {t('financial.store.payments.teacherPayout')}
+                </TableHead>
+                <TableHead className="text-end">
+                  {t('financial.store.payments.schoolNet')}
+                </TableHead>
                 <TableHead className="text-end">
                   {t('financial.store.payments.amount')}
                 </TableHead>
@@ -587,7 +618,9 @@ export default function StorePaymentsPage() {
                         t('financial.store.payments.course')}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{payment.method || 'N/A'}</Badge>
+                      <Badge variant="outline">
+                        {payment.method || t('common.none')}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -599,7 +632,7 @@ export default function StorePaymentsPage() {
                               : 'destructive'
                         }
                       >
-                        {payment.status || 'UNKNOWN'}
+                        {payment.status || t('common.none')}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-end">

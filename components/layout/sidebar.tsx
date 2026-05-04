@@ -7,6 +7,8 @@ import { ChevronLeft, Sparkles } from 'lucide-react';
 import { Suspense, useMemo } from 'react';
 import { filterNavItemsByRole } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 
 type SidebarProps = {
   className?: string;
@@ -15,6 +17,7 @@ type SidebarProps = {
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
   const { user, isLoading } = useAuthUser();
+  const { t } = useTranslation();
 
   // Extract role from authenticated user (fetched from API using JWT cookie)
   const userRole = useMemo(() => {
@@ -117,9 +120,11 @@ export default function Sidebar({ className }: SidebarProps) {
           )}
         >
           <span className="text-lg font-bold tracking-tight">
-            {userRole ?? ''}
+            {getRoleLabel(userRole, t)}
           </span>
-          <span className="text-xs text-muted-foreground">Dashboard</span>
+          <span className="text-xs text-muted-foreground">
+            {t('navigation.dashboard')}
+          </span>
         </div>
       </div>
 

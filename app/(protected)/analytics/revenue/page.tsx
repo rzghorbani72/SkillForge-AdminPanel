@@ -32,22 +32,7 @@ interface RevenuePoint {
   enrollments: number;
 }
 
-const MONTH_NAMES = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
-
-function groupPaymentsByMonth(payments: any[]): RevenuePoint[] {
+function groupPaymentsByMonth(payments: any[], locale: string): RevenuePoint[] {
   if (payments.length === 0) return [];
 
   const map = new Map<string, RevenuePoint>();
@@ -57,10 +42,12 @@ function groupPaymentsByMonth(payments: any[]): RevenuePoint[] {
     const date = new Date(payment.payment_date);
     const key = `${date.getFullYear()}-${date.getMonth()}`;
     if (!map.has(key)) {
+      const labelDate = new Date(date.getFullYear(), date.getMonth(), 1);
       map.set(key, {
-        month: `${MONTH_NAMES[date.getMonth()]} ${String(
-          date.getFullYear()
-        ).slice(-2)}`,
+        month: new Intl.DateTimeFormat(locale, {
+          month: 'short',
+          year: '2-digit'
+        }).format(labelDate),
         revenue: 0,
         enrollments: 0
       });
@@ -70,23 +57,30 @@ function groupPaymentsByMonth(payments: any[]): RevenuePoint[] {
     bucket.enrollments += 1;
   });
 
-  return Array.from(map.values()).sort((a, b) => {
-    const aDate = new Date(
-      Number(`20${a.month.split(' ')[1]}`),
-      MONTH_NAMES.indexOf(a.month.split(' ')[0])
-    );
-    const bDate = new Date(
-      Number(`20${b.month.split(' ')[1]}`),
-      MONTH_NAMES.indexOf(b.month.split(' ')[0])
-    );
-    return aDate.getTime() - bDate.getTime();
-  });
+  return Array.from(map.entries())
+    .sort(([a], [b]) => {
+      const [aYear, aMonth] = a.split('-').map(Number);
+      const [bYear, bMonth] = b.split('-').map(Number);
+      return (
+        new Date(aYear, aMonth, 1).getTime() -
+        new Date(bYear, bMonth, 1).getTime()
+      );
+    })
+    .map(([, value]) => value);
 }
 
 export default function RevenueAnalyticsPage() {
   const { t, language } = useTranslation();
   const { payments, enrollments, isLoading } = useAnalyticsData();
   const currentAcademy = useCurrentAcademy();
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
 
   const {
     monthlyRevenue,
@@ -111,7 +105,7 @@ export default function RevenueAnalyticsPage() {
       };
     }
 
-    const monthly = groupPaymentsByMonth(payments);
+    const monthly = groupPaymentsByMonth(payments, locale);
     const totalAmount = payments.reduce(
       (sum, payment) => sum + (payment.amount ?? 0),
       0
@@ -130,7 +124,9 @@ export default function RevenueAnalyticsPage() {
       if (!payment.course_id) return;
       if (!revenueByCourse.has(payment.course_id)) {
         revenueByCourse.set(payment.course_id, {
-          name: payment.course?.title ?? `Course ${payment.course_id}`,
+          name:
+            payment.course?.title ??
+            `${t('courses.courseName')} ${payment.course_id}`,
           amount: 0,
           count: 0
         });
@@ -169,7 +165,8 @@ export default function RevenueAnalyticsPage() {
     const map = new Map<string, { name: string; value: number }>();
     enrollments.forEach((enrollment) => {
       const courseName =
-        enrollment.course?.title ?? `Course ${enrollment.course_id}`;
+        enrollment.course?.title ??
+        `${t('courses.courseName')} ${enrollment.course_id}`;
       if (!map.has(courseName)) {
         map.set(courseName, { name: courseName, value: 0 });
       }
@@ -184,7 +181,7 @@ export default function RevenueAnalyticsPage() {
     return Array.from(map.values())
       .sort((a, b) => b.value - a.value)
       .slice(0, 5);
-  }, [enrollments]);
+  }, [enrollments, t]);
 
   if (isLoading) {
     return (
@@ -224,7 +221,7 @@ export default function RevenueAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(total, currentAcademy)}
+              {formatCurrencyWithStore(total, currentAcademy, 100, language)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.acrossAllPayments')}
@@ -239,7 +236,12 @@ export default function RevenueAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(averageTicket, currentAcademy)}
+              {formatCurrencyWithStore(
+                averageTicket,
+                currentAcademy,
+                100,
+                language
+              )}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.perSuccessfulPayment')}
@@ -254,7 +256,12 @@ export default function RevenueAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-red-500">
-              {formatCurrencyWithStore(totalRefunds, currentAcademy)}
+              {formatCurrencyWithStore(
+                totalRefunds,
+                currentAcademy,
+                100,
+                language
+              )}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.processedRefunds')}
@@ -303,7 +310,12 @@ export default function RevenueAnalyticsPage() {
                 formatter={(value: number, name: string) =>
                   name === 'revenue'
                     ? [
-                        formatCurrencyWithStore(value, currentAcademy),
+                        formatCurrencyWithStore(
+                          value,
+                          currentAcademy,
+                          100,
+                          language
+                        ),
                         t('analytics.totalRevenue')
                       ]
                     : [value, t('students.enrollments')]
@@ -314,14 +326,14 @@ export default function RevenueAnalyticsPage() {
                 dataKey="revenue"
                 stroke="#6366f1"
                 strokeWidth={2}
-                name="Revenue"
+                name={t('analytics.revenue')}
               />
               <Line
                 type="monotone"
                 dataKey="enrollments"
                 stroke="#22c55e"
                 strokeWidth={2}
-                name="Transactions"
+                name={t('payments.transactions')}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -355,12 +367,18 @@ export default function RevenueAnalyticsPage() {
                       <div>
                         <p className="text-sm font-medium">{course.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {course.count} payments
+                          {course.count}{' '}
+                          {t('financial.store.payments.payments')}
                         </p>
                       </div>
                     </div>
                     <Badge variant="outline">
-                      {formatCurrencyWithStore(course.amount, currentAcademy)}
+                      {formatCurrencyWithStore(
+                        course.amount,
+                        currentAcademy,
+                        100,
+                        language
+                      )}
                     </Badge>
                   </div>
                   <Progress
@@ -394,7 +412,12 @@ export default function RevenueAnalyticsPage() {
                 <YAxis />
                 <Tooltip
                   formatter={(value: number) =>
-                    formatCurrencyWithStore(value, currentAcademy)
+                    formatCurrencyWithStore(
+                      value,
+                      currentAcademy,
+                      100,
+                      language
+                    )
                   }
                 />
                 <Bar dataKey="value" fill="#8b5cf6" />
@@ -405,7 +428,12 @@ export default function RevenueAnalyticsPage() {
                 <div key={item.name} className="flex justify-between">
                   <span>{item.name}</span>
                   <span>
-                    {formatCurrencyWithStore(item.value, currentAcademy)}
+                    {formatCurrencyWithStore(
+                      item.value,
+                      currentAcademy,
+                      100,
+                      language
+                    )}
                   </span>
                 </div>
               ))}

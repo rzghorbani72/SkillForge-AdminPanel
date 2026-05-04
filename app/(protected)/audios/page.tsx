@@ -132,11 +132,11 @@ const formatTimecode = (seconds?: number) => {
   return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
 };
 
-const formatDate = (isoDate?: string) => {
+const formatDate = (isoDate?: string, locale = 'en-US') => {
   if (!isoDate) return 'N/A';
   const date = new Date(isoDate);
   if (Number.isNaN(date.getTime())) return 'N/A';
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -156,6 +156,14 @@ const getAudioUrl = (audio: AudioItem) => {
 
 export default function AudiosPage() {
   const { t, language } = useTranslation();
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr-TR'
+          : 'en-US';
   const { selectedAcademy } = useStore();
   const [audios, setAudios] = useState<AudioItem[]>([]);
   const [filteredAudios, setFilteredAudios] = useState<AudioItem[]>([]);
@@ -709,7 +717,7 @@ export default function AudiosPage() {
                     </Badge>
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
-                      {formatDate(audio.created_at)}
+                      {formatDate(audio.created_at, locale)}
                     </span>
                   </div>
 
@@ -784,7 +792,9 @@ export default function AudiosPage() {
                   )}
                 </span>
                 <span>Type: {viewAudio.mime_type || 'AUDIO'}</span>
-                <span>Uploaded: {formatDate(viewAudio.created_at)}</span>
+                <span>
+                  Uploaded: {formatDate(viewAudio.created_at, locale)}
+                </span>
               </div>
             </div>
             <DialogFooter>

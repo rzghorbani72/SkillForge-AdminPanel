@@ -335,10 +335,10 @@ export default function SeasonsPage() {
                 <div className="mr-4 flex w-full items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div>
-                      <h3 className="text-left text-lg font-semibold">
+                      <h3 className="text-start text-lg font-semibold">
                         {season.title}
                       </h3>
-                      <p className="text-left text-sm text-muted-foreground">
+                      <p className="text-start text-sm text-muted-foreground">
                         {season.description || 'No description provided'}
                       </p>
                     </div>

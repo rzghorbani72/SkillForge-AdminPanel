@@ -164,9 +164,7 @@ export default function TeacherRequestsPage() {
         notes: reviewNotes || undefined
       });
 
-      ErrorHandler.showSuccess(
-        `Teacher request ${reviewStatus.toLowerCase()} successfully`
-      );
+      ErrorHandler.showSuccess(t('success.updated'));
       setReviewDialogOpen(false);
       setSelectedRequest(null);
       setReviewStatus('APPROVED');
@@ -205,7 +203,16 @@ export default function TeacherRequestsPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const locale =
+      language === 'fa'
+        ? 'fa-IR'
+        : language === 'ar'
+          ? 'ar'
+          : language === 'tr'
+            ? 'tr-TR'
+            : 'en-US';
+
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -274,7 +281,7 @@ export default function TeacherRequestsPage() {
                 {requests.map((request) => (
                   <TableRow key={request.id}>
                     <TableCell>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-muted-foreground" />
                         <div>
                           <div className="font-medium">
@@ -287,7 +294,7 @@ export default function TeacherRequestsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Building className="h-4 w-4 text-muted-foreground" />
                         <span>{request.store.name}</span>
                       </div>
@@ -304,7 +311,7 @@ export default function TeacherRequestsPage() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="sm"

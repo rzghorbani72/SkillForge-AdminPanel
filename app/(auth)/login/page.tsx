@@ -427,7 +427,7 @@ export default function LoginPage() {
                               key={store.id}
                               type="button"
                               onClick={() => handleStoreSelection(store.id)}
-                              className={`w-full rounded-lg border p-3 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isRTL ? 'text-right' : 'text-left'}`}
+                              className="w-full rounded-lg border p-3 text-start hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <div className="font-medium">{store.name}</div>
                               <div className="text-sm text-gray-500">
@@ -560,7 +560,7 @@ export default function LoginPage() {
                               key={store.id}
                               type="button"
                               onClick={() => handleStoreSelection(store.id)}
-                              className={`w-full rounded-lg border p-3 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isRTL ? 'text-right' : 'text-left'}`}
+                              className="w-full rounded-lg border p-3 text-start hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <div className="font-medium">{store.name}</div>
                               <div className="text-sm text-gray-500">

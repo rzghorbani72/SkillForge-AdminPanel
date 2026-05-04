@@ -30,6 +30,7 @@ import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import {
   Table,
   TableBody,
@@ -388,7 +389,7 @@ export default function StoreRevenuePage() {
                 {t('financial.store.revenue.role')}
               </p>
               <p className="text-lg font-semibold">
-                {monetizationSummary.role}
+                {getRoleLabel(monetizationSummary.role, t)}
               </p>
             </div>
             <div className="rounded-lg border p-4">
@@ -576,13 +577,15 @@ export default function StoreRevenuePage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('financial.store.revenue.date')}</TableHead>
+                    <TableHead>{t('financial.store.payments.date')}</TableHead>
                     <TableHead>
-                      {t('financial.store.revenue.student')}
+                      {t('financial.store.payments.student')}
                     </TableHead>
-                    <TableHead>{t('financial.store.revenue.course')}</TableHead>
+                    <TableHead>
+                      {t('financial.store.payments.course')}
+                    </TableHead>
                     <TableHead className="text-end">
-                      {t('financial.store.revenue.amount')}
+                      {t('financial.store.payments.amount')}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -593,7 +596,7 @@ export default function StoreRevenuePage() {
                         colSpan={4}
                         className="text-center text-muted-foreground"
                       >
-                        {t('financial.store.revenue.noPayments')}
+                        {t('financial.store.payments.noPayments')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -645,7 +648,9 @@ export default function StoreRevenuePage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('financial.store.revenue.course')}</TableHead>
+                    <TableHead>
+                      {t('financial.store.payments.course')}
+                    </TableHead>
                     <TableHead className="text-end">
                       {t('financial.store.revenue.payments')}
                     </TableHead>

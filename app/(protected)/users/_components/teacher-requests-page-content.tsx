@@ -27,6 +27,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 
 type TeacherRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -249,7 +250,7 @@ export function TeacherRequestsPageContent() {
                       <p className="text-xs uppercase text-muted-foreground">
                         {t('common.currentRole')}
                       </p>
-                      <p>{request.profile.role?.name}</p>
+                      <p>{getRoleLabel(request.profile.role?.name, t)}</p>
                     </div>
                     {request.reviewer && (
                       <div>

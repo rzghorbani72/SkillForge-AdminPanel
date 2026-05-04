@@ -158,7 +158,16 @@ export default function ImagesPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const locale =
+      language === 'fa'
+        ? 'fa-IR'
+        : language === 'ar'
+          ? 'ar'
+          : language === 'tr'
+            ? 'tr-TR'
+            : 'en-US';
+
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

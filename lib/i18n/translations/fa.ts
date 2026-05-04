@@ -83,7 +83,14 @@ export const fa = {
     requested: 'درخواست شده',
     addNotes: 'یادداشتی درباره تصمیم خود اضافه کنید...',
     validPhoneNumberFormat: '✓ شماره تلفن معتبر',
-    invalidPhoneNumberFormat: '⚠ فرمت شماره تلفن نامعتبر است'
+    invalidPhoneNumberFormat: '⚠ فرمت شماره تلفن نامعتبر است',
+    roles: {
+      admin: 'مدیر کل',
+      manager: 'مدیر',
+      teacher: 'معلم',
+      student: 'دانش‌آموز',
+      user: 'کاربر'
+    }
   },
   navigation: {
     dashboard: 'داشبورد',
@@ -1469,6 +1476,7 @@ export const fa = {
       payments: {
         title: 'پرداخت‌های دانش‌آموزان',
         description: 'تراکنش‌ها و تاریخچه پرداخت',
+        loadFailed: 'بارگذاری اطلاعات پرداخت ناموفق بود',
         loading: 'در حال بارگذاری اطلاعات پرداخت...',
         noStore: 'آکادمی‌ای انتخاب نشده است',
         filters: 'فیلترها',
@@ -1490,6 +1498,26 @@ export const fa = {
         totalAmount: 'مبلغ کل',
         allPayments: 'همه پرداخت‌ها',
         allPaymentsDescription: 'فهرست کامل تراکنش‌های پرداخت',
+        exportCsv: 'خروجی CSV',
+        exportFailed: 'خروجی گزارش تسویه ناموفق بود',
+        lockPeriod: 'قفل دوره',
+        lockedSuccess: 'دوره مالی با موفقیت قفل شد',
+        lockFailed: 'قفل دوره مالی ناموفق بود',
+        settlementTitle: 'گزارش تسویه ایران',
+        settlementDescription:
+          'خالص فروش، کارمزد پلتفرم، مالیات ارزش افزوده، سهم مدرس و سهم آکادمی در بازه انتخابی',
+        gross: 'خالص فروش',
+        platformFee: 'کارمزد پلتفرم',
+        vat: 'مالیات',
+        vatIran: 'مالیات (ایران)',
+        teacherPayout: 'سهم مدرس',
+        schoolNet: 'سهم آکادمی',
+        reconciliationTitle: 'تطبیق',
+        reconciliationDescription: 'گزارش تطبیق کالبک و تسویه در بازه انتخابی',
+        paidPayments: 'پرداخت‌های موفق',
+        matchedCallbacks: 'کالبک‌های منطبق',
+        missingCallbacks: 'کالبک‌های مفقود',
+        orphanCallbacks: 'کالبک‌های بدون مرجع',
         noPayments: 'پرداختی یافت نشد',
         date: 'تاریخ',
         student: 'دانش‌آموز',

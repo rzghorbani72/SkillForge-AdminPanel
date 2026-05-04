@@ -21,6 +21,7 @@ import { Label } from '@/components/ui/label';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import { Loader2 } from 'lucide-react';
 import { User } from '@/types/api';
 
@@ -85,7 +86,7 @@ export function ChangeUserRoleDialog({
           <div className="space-y-2">
             <Label>{t('changeUserRole.currentRole')}</Label>
             <div className="text-sm text-muted-foreground">
-              {userProfile?.role?.name || t('changeUserRole.noRole')}
+              {getRoleLabel(userProfile?.role?.name, t)}
             </div>
           </div>
 

@@ -608,15 +608,15 @@ export default function UITemplateSettingsPage() {
             >
               <DialogHeader
                 dir={direction}
-                className={isRTL ? 'text-right' : 'text-left'}
+                className={isRTL ? 'text-end' : 'text-start'}
               >
                 <DialogTitle
-                  className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}
+                  className={`text-2xl font-bold ${isRTL ? 'text-end' : 'text-start'}`}
                 >
                   {t('settings.chooseTemplateLayout')}
                 </DialogTitle>
                 <DialogDescription
-                  className={`mt-2 ${isRTL ? 'text-right' : 'text-left'}`}
+                  className={`mt-2 ${isRTL ? 'text-end' : 'text-start'}`}
                 >
                   {t('settings.chooseTemplateLayoutDescription')}
                 </DialogDescription>

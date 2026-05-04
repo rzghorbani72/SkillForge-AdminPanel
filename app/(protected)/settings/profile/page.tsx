@@ -166,7 +166,7 @@ export default function ProfileSettingsPage() {
                 id="phone"
                 value={form.phone}
                 dir="ltr"
-                className="text-right"
+                className="text-end"
                 onChange={(event) =>
                   setForm({ ...form, phone: event.target.value })
                 }

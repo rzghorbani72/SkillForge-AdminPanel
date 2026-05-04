@@ -60,28 +60,32 @@ export function t(
   language: LanguageCode = 'en',
   params?: InterpolationParams
 ): string {
-  const keys = key.split('.');
-  let value: any = translationPack(language);
+  const resolveFromPack = (pack: Record<string, any>): string | null => {
+    const keys = key.split('.');
+    let value: any = pack;
 
-  for (const k of keys) {
-    if (value && typeof value === 'object' && k in value) {
-      value = value[k as keyof typeof value];
-    } else {
-      // Fallback to English if key not found
-      value = translations.en;
-      for (const fallbackKey of keys) {
-        if (value && typeof value === 'object' && fallbackKey in value) {
-          value = value[fallbackKey as keyof typeof value];
-        } else {
-          return key; // Return key if translation not found
-        }
+    for (const k of keys) {
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k as keyof typeof value];
+      } else {
+        return null;
       }
-      return key;
     }
+
+    return typeof value === 'string' ? value : null;
+  };
+
+  const localizedValue = resolveFromPack(translationPack(language) as any);
+  if (localizedValue) {
+    return interpolate(localizedValue, params);
   }
 
-  const result = typeof value === 'string' ? value : key;
-  return interpolate(result, params);
+  const englishValue = resolveFromPack(translations.en as any);
+  if (englishValue) {
+    return interpolate(englishValue, params);
+  }
+
+  return key;
 }
 
 /**
