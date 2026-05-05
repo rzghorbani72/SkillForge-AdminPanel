@@ -412,16 +412,10 @@ export const navItems: NavItem[] = [
         label: 'store-settings'
       },
       {
-        title: 'Theme & Branding',
-        href: '/settings/theme',
-        icon: 'palette' as IconType,
-        label: 'theme-settings'
-      },
-      {
-        title: 'UI Template Builder',
-        href: '/settings/ui-template',
-        icon: 'layout' as IconType,
-        label: 'ui-template-settings'
+        title: 'Theme Generator',
+        href: '/settings/theme-generator',
+        icon: 'wand2' as IconType,
+        label: 'theme-generator'
       },
       {
         title: 'Security',

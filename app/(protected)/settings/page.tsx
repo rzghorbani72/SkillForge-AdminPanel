@@ -10,14 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  ArrowRight,
-  Palette,
-  Shield,
-  User,
-  Building,
-  Layout
-} from 'lucide-react';
+import { ArrowRight, Shield, User, Building, Layout } from 'lucide-react';
 import { useSettingsData } from './_hooks/use-settings-data';
 import { format } from 'date-fns';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -40,10 +33,10 @@ export default function SettingsOverviewPage() {
       icon: Building
     },
     {
-      title: t('settings.themeBranding'),
-      description: t('settings.themeBrandingDescription'),
-      href: '/settings/theme',
-      icon: Palette
+      title: t('settings.themeGeneratorTitle'),
+      description: t('settings.themeGeneratorSubtitle'),
+      href: '/settings/theme-generator',
+      icon: Layout
     },
     {
       title: t('settings.uiTemplateBuilder'),

@@ -98,6 +98,12 @@ export interface ThemeConfigPayload {
   background_color_light?: string;
   background_color_dark?: string;
   dark_mode: boolean | null;
+  background_animation_type?: string;
+  background_animation_speed?: string;
+  background_svg_pattern?: string;
+  element_animation_style?: string;
+  border_radius_style?: string;
+  shadow_style?: string;
 }
 
 export interface CurrencyConfig {

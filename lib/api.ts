@@ -1998,6 +1998,12 @@ class ApiClient {
     background_color_dark?: string;
     dark_mode?: boolean | null;
     name?: string;
+    background_animation_type?: string;
+    background_animation_speed?: string;
+    background_svg_pattern?: string;
+    element_animation_style?: string;
+    border_radius_style?: string;
+    shadow_style?: string;
   }) {
     const response = await this.request('/theme/current/config', {
       method: 'PATCH',

@@ -189,6 +189,13 @@ export function applyThemeVariables(config: ThemeConfigPayload) {
   root.style.setProperty('--muted-foreground', mutedFg);
   root.style.setProperty('--border', borderHsl);
   root.style.setProperty('--input', borderHsl);
+
+  // Apply directly to body so background color is immediately correct,
+  // not dependent on CSS variable cascade resolving through class-based selectors
+  document.body.style.backgroundColor = backgroundHex;
+  document.body.style.color = isDark
+    ? FALLBACK_DARK_FOREGROUND
+    : getContrastHex(backgroundHex);
 }
 
 function normaliseDarkHex(background: string | undefined) {

@@ -49,7 +49,8 @@ import {
   CirclePlus,
   X,
   Video,
-  Volume2
+  Volume2,
+  Wand2
 } from 'lucide-react';
 export type IconType =
   | 'dashboard'
@@ -104,7 +105,8 @@ export type IconType =
   | 'creditCard'
   | 'video'
   | 'volume2'
-  | 'tag';
+  | 'tag'
+  | 'wand2';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -160,5 +162,6 @@ export const Icons = {
   creditCard: CreditCard,
   video: Video,
   volume2: Volume2,
-  tag: Tag
+  tag: Tag,
+  wand2: Wand2
 };
