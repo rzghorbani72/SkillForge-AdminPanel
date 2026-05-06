@@ -85,7 +85,7 @@ export const fa = {
     validPhoneNumberFormat: '✓ شماره تلفن معتبر',
     invalidPhoneNumberFormat: '⚠ فرمت شماره تلفن نامعتبر است',
     roles: {
-      admin: 'مدیر کل',
+      admin: 'ادمین',
       manager: 'مدیر',
       teacher: 'معلم',
       student: 'دانش‌آموز',
@@ -132,6 +132,9 @@ export const fa = {
     'store-settings': 'تنظیمات آکادمی',
     'theme-settings': 'تنظیمات تم',
     'theme-generator': 'سازنده تم',
+    'academy-pricing': 'قیمت‌گذاری آکادمی',
+    'platform-pricing': 'قیمت‌گذاری پلتفرم',
+    'pricing-cms': 'مدیریت قیمت‌گذاری',
     'ui-template-settings': 'تنظیمات قالب UI',
     'security-settings': 'تنظیمات امنیت',
     'progress-tracking': 'ردیابی پیشرفت',
@@ -171,7 +174,7 @@ export const fa = {
     signInToAdmin: 'به حساب مدیریتی خود وارد شوید',
     adminPanel: 'پنل مدیریت',
     panelForStaff: 'این پنل مخصوص',
-    teachersManagersAdmins: 'معلمان، مدیران و مدیران کل',
+    teachersManagersAdmins: 'معلمان و مدیران ',
     staffOnly: 'است.',
     studentsLoginThroughStore:
       'دانش‌آموزان باید از طریق وب‌سایت آکادمی خود وارد شوند.',
@@ -245,11 +248,11 @@ export const fa = {
     whyWantToBeTeacher: 'چرا می‌خواهید معلم شوید؟',
     teacherRequestReasonPlaceholder:
       'لطفاً تجربه تدریس، مدارک و دلیل تمایل به تدریس در این آکادمی را توضیح دهید...',
-    adminLogin: 'ورود مدیر',
+    adminLogin: 'ورود ادمین',
     adminOnly: 'این پنل مخصوص',
-    adminsOnly: 'مدیران کل است.',
-    signInAsAdmin: 'به عنوان مدیر کل وارد شوید',
-    notAdmin: 'مدیر کل نیستید؟',
+    adminsOnly: 'ادمین‌ها هستند.',
+    signInAsAdmin: 'به عنوان ادمین وارد شوید',
+    notAdmin: 'ادمین نیستید؟',
     regularLogin: 'ورود عادی'
   },
   dashboard: {
@@ -577,7 +580,7 @@ export const fa = {
     refreshData: 'به‌روزرسانی داده‌ها',
     accountSummary: 'خلاصه حساب کاربری',
     accountSummaryDescription: 'اطلاعات کلیدی حساب مدیر شما.',
-    administrator: 'مدیر',
+    administrator: 'ادمین',
     email: 'ایمیل',
     phone: 'تلفن',
     joined: 'عضویت',
@@ -626,6 +629,21 @@ export const fa = {
     bio: 'بیوگرافی',
     bioPlaceholder: 'درباره خودتان بیشتر بنویسید',
     saveChanges: 'ذخیره تغییرات',
+    pricingCmsTitle: 'مدیریت محتوای قیمت‌گذاری',
+    pricingCmsSubtitle:
+      'محتوای صفحه قیمت‌گذاری عمومی را بدون تغییر کد ویرایش کنید.',
+    pricingCmsCardDescription: 'مدیریت متن عمومی صفحه قیمت‌گذاری',
+    publicPricingContentTitle: 'محتوای عمومی قیمت‌گذاری',
+    publicPricingContentDescription:
+      'این محتوا در صفحه قیمت‌گذاری سطح پلتفرم نمایش داده می‌شود.',
+    pricingPageTitleLabel: 'عنوان صفحه',
+    pricingPageTitlePlaceholder: 'پلن‌های قیمت‌گذاری',
+    pricingSubtitleLabel: 'زیرعنوان',
+    pricingSubtitlePlaceholder:
+      'قیمت‌گذاری شفاف برای تولیدکنندگان، منتورها و کسب‌وکارهای آموزشی...',
+    pricingCtaLabel: 'متن دکمه فراخوان',
+    pricingCtaPlaceholder: 'با پلن خود شروع کنید',
+    pricingUpdatedSuccess: 'محتوای قیمت‌گذاری با موفقیت به‌روزرسانی شد',
     storeSettingsTitle: 'تنظیمات آکادمی',
     storeSettingsSubtitle:
       'نحوه نمایش آکادمی شما در اکوسیستم SkillForge را مدیریت کنید.',
@@ -941,7 +959,7 @@ export const fa = {
   unauthorized: {
     title: 'دسترسی غیرمجاز',
     description:
-      'این پنل مدیریت فقط برای معلمان، مدیران و مدیران کل محدود شده است. دانش‌آموزان باید از طریق وب‌سایت آکادمی خود به داشبورد یادگیری خود دسترسی داشته باشند.',
+      'این پنل مدیریت فقط برای معلمان، مدیران و ادمین‌ها محدود شده است. دانش‌آموزان باید از طریق وب‌سایت آکادمی خود به داشبورد یادگیری خود دسترسی داشته باشند.',
     note: 'توجه:',
     contactAdmin:
       'اگر فکر می‌کنید باید به این پنل دسترسی داشته باشید، لطفاً با مدیر آکادمی خود تماس بگیرید.',
@@ -1139,10 +1157,10 @@ export const fa = {
   },
   admins: {
     title: 'کاربران ادمین',
-    description: 'مدیریت مدیران پلتفرم',
+    description: 'مدیریت ادمین‌های پلتفرم',
     addAdminUser: 'افزودن کاربر ادمین',
     searchAdminsPlaceholder: 'جستجوی ادمین‌ها بر اساس نام، ایمیل یا تلفن...',
-    administrators: 'مدیران',
+    administrators: 'ادمین‌ها',
     adminFound: '{{count}} ادمین یافت شد',
     adminsFound: '{{count}} ادمین یافت شد',
     noAdminsFound: 'ادمینی یافت نشد',
@@ -1688,14 +1706,14 @@ export const fa = {
       platformUsers: 'کاربران پلتفرم',
       platformUsersDescription: 'مدیریت تمام کاربران در سراسر پلتفرم',
       platformUsersAccess:
-        'مشاهده و مدیریت مدیران، مدیران اجرایی، معلمان و دانش‌آموزان',
+        'مشاهده و مدیریت ادمین‌ها، مدیران و معلمان و دانش‌آموزان',
       platformAnalytics: 'تحلیل‌های پلتفرم',
       platformAnalyticsDescription: 'مشاهده تحلیل‌ها و بینش‌های سراسر پلتفرم',
       platformAnalyticsAccess: 'نظارت بر عملکرد و معیارهای رشد پلتفرم',
       quickActions: 'اقدامات سریع',
       quickActionsDescription: 'وظایف رایج مدیریت پلتفرم',
       manageSchools: 'مدیریت آکادمی‌ها',
-      manageAdmins: 'مدیریت مدیران',
+      manageAdmins: 'مدیریت ادمین‌ها',
       allUsers: 'همه کاربران',
       platformAnalyticsLink: 'تحلیل‌های پلتفرم',
       accessDenied: 'دسترسی رد شد',

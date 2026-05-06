@@ -260,12 +260,30 @@ export const navItems: NavItem[] = [
         label: 'enrollments'
       },
       {
+        title: 'Manual Enroll',
+        href: '/students/manual-enroll',
+        icon: 'userPlus' as IconType,
+        label: 'manual-enroll'
+      },
+      {
         title: 'Progress Tracking',
         href: '/students/progress',
         icon: 'trendingUp' as IconType,
         label: 'progress-tracking'
+      },
+      {
+        title: 'Lesson Access',
+        href: '/students/lesson-access',
+        icon: 'lock' as IconType,
+        label: 'lesson-access'
       }
     ]
+  },
+  {
+    title: 'Assignments',
+    icon: 'fileText' as IconType,
+    label: 'assignments',
+    href: '/assignments'
   },
   {
     title: 'Analytics',
@@ -391,6 +409,13 @@ export const navItems: NavItem[] = [
         icon: 'building2' as IconType,
         label: 'platform-stores',
         roles: ['ADMIN']
+      },
+      {
+        title: 'Platform Pricing',
+        href: '/platform/pricing',
+        icon: 'dollarSign' as IconType,
+        label: 'platform-pricing',
+        roles: ['ADMIN']
       }
     ]
   },
@@ -416,6 +441,13 @@ export const navItems: NavItem[] = [
         href: '/settings/theme-generator',
         icon: 'wand2' as IconType,
         label: 'theme-generator'
+      },
+      {
+        title: 'Academy Pricing',
+        href: '/settings/pricing',
+        icon: 'store' as IconType,
+        label: 'academy-pricing',
+        roles: ['ADMIN', 'MANAGER']
       },
       {
         title: 'Security',

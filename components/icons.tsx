@@ -43,10 +43,12 @@ import {
   Users,
   UserCircle2Icon,
   UserPen,
+  UserPlus,
   TvMinimalPlay,
   UserX2Icon,
   Building2,
   CirclePlus,
+  Lock,
   X,
   Video,
   Volume2,
@@ -106,7 +108,10 @@ export type IconType =
   | 'video'
   | 'volume2'
   | 'tag'
-  | 'wand2';
+  | 'wand2'
+  | 'userPlus'
+  | 'lock'
+  | 'fileText';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -163,5 +168,8 @@ export const Icons = {
   video: Video,
   volume2: Volume2,
   tag: Tag,
-  wand2: Wand2
+  wand2: Wand2,
+  userPlus: UserPlus,
+  lock: Lock,
+  fileText: FileText
 };

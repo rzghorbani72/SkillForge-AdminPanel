@@ -16,7 +16,8 @@ const STORE_SPECIFIC_LABELS = [
   'analytics',
   'payments',
   'store-financial',
-  'store-settings'
+  'store-settings',
+  'academy-pricing'
 ];
 
 /**

@@ -14,10 +14,15 @@ import { ArrowRight, Shield, User, Building, Layout } from 'lucide-react';
 import { useSettingsData } from './_hooks/use-settings-data';
 import { format } from 'date-fns';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 export default function SettingsOverviewPage() {
   const { t } = useTranslation();
+  const { user: authUser } = useAuthUser();
   const { user, academy, isLoading, refresh } = useSettingsData();
+  const isPlatformAdmin =
+    authUser?.role === 'ADMIN' &&
+    (authUser?.isAdminProfile || authUser?.platformLevel);
 
   const SECTIONS = [
     {
@@ -32,6 +37,25 @@ export default function SettingsOverviewPage() {
       href: '/settings/store',
       icon: Building
     },
+    ...(!isPlatformAdmin
+      ? [
+          {
+            title: 'Academy Pricing',
+            description:
+              'Manage pricing content shown to students in your academy.',
+            href: '/settings/pricing',
+            icon: Building
+          }
+        ]
+      : [
+          {
+            title: 'Platform Pricing',
+            description:
+              'Manage platform monetization policy shown to academy managers.',
+            href: '/platform/pricing',
+            icon: Building
+          }
+        ]),
     {
       title: t('settings.themeGeneratorTitle'),
       description: t('settings.themeGeneratorSubtitle'),

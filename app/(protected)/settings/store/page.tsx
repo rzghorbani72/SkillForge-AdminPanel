@@ -26,6 +26,31 @@ interface StoreFormState {
   domain: string;
 }
 
+interface SubscriptionInvoice {
+  id: number;
+  plan_name: string;
+  amount: number;
+  currency: string;
+  status: string;
+  starts_at: string;
+  ends_at: string;
+  paid_at?: string;
+  note?: string;
+}
+
+interface SubscriptionState {
+  academy?: {
+    id: number;
+    name: string;
+    subscription_plan?: string | null;
+    subscription_expires?: string | null;
+  };
+  status?: 'ACTIVE' | 'GRACE' | 'EXPIRED' | 'INACTIVE';
+  days_remaining?: number | null;
+  grace_until?: string | null;
+  invoices?: SubscriptionInvoice[];
+}
+
 const DEFAULT_FORM: StoreFormState = {
   name: '',
   description: '',
@@ -37,6 +62,15 @@ export default function StoreSettingsPage() {
   const { academy, isLoading } = useSettingsData();
   const [form, setForm] = useState<StoreFormState>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [subscription, setSubscription] = useState<SubscriptionState | null>(
+    null
+  );
+  const [isLoadingSubscription, setIsLoadingSubscription] = useState(false);
+  const [isRenewing, setIsRenewing] = useState(false);
+  const [renewPlan, setRenewPlan] = useState('builder');
+  const [renewMonths, setRenewMonths] = useState('1');
+  const [renewAmount, setRenewAmount] = useState('');
+  const [renewNote, setRenewNote] = useState('');
 
   useEffect(() => {
     if (!academy) {
@@ -50,6 +84,22 @@ export default function StoreSettingsPage() {
       domain: academy.private_address ?? ''
     });
   }, [academy]);
+
+  const fetchSubscription = async () => {
+    try {
+      setIsLoadingSubscription(true);
+      const data = await apiClient.getCurrentAcademySubscription();
+      setSubscription(data || null);
+    } catch (error) {
+      console.error('Error fetching subscription', error);
+    } finally {
+      setIsLoadingSubscription(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubscription();
+  }, []);
 
   const handleSave = async () => {
     try {
@@ -79,6 +129,42 @@ export default function StoreSettingsPage() {
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleRenew = async () => {
+    try {
+      setIsRenewing(true);
+      await apiClient.renewCurrentAcademySubscription({
+        plan_name: renewPlan,
+        months: Number(renewMonths),
+        amount: Number(renewAmount || 0),
+        note: renewNote || undefined
+      });
+      ErrorHandler.showSuccess('Subscription renewed successfully');
+      setRenewNote('');
+      fetchSubscription();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsRenewing(false);
+    }
+  };
+
+  const handleDownloadInvoice = async (invoiceId: number) => {
+    try {
+      const blob =
+        await apiClient.downloadCurrentAcademySubscriptionInvoicePdf(invoiceId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `subscription-invoice-${invoiceId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
     }
   };
 
@@ -184,6 +270,113 @@ export default function StoreSettingsPage() {
                   {academy?.managers_count ?? '—'}
                 </span>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                Subscription
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+              {isLoadingSubscription ? (
+                <p>Loading subscription...</p>
+              ) : (
+                <>
+                  <div className="flex justify-between">
+                    <span>Plan</span>
+                    <span className="font-medium text-foreground">
+                      {subscription?.academy?.subscription_plan || 'none'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Status</span>
+                    <span className="font-medium text-foreground">
+                      {subscription?.status || 'INACTIVE'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Expires</span>
+                    <span className="font-medium text-foreground">
+                      {subscription?.academy?.subscription_expires
+                        ? new Date(
+                            subscription.academy.subscription_expires
+                          ).toLocaleDateString()
+                        : '—'}
+                    </span>
+                  </div>
+                  <div className="space-y-2 rounded-md border p-3">
+                    <Label>Renew Plan</Label>
+                    <Input
+                      value={renewPlan}
+                      onChange={(e) => setRenewPlan(e.target.value)}
+                      placeholder="starter | builder | growth"
+                    />
+                    <Label>Months</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={24}
+                      value={renewMonths}
+                      onChange={(e) => setRenewMonths(e.target.value)}
+                    />
+                    <Label>Amount (IRR)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={renewAmount}
+                      onChange={(e) => setRenewAmount(e.target.value)}
+                    />
+                    <Label>Note</Label>
+                    <Input
+                      value={renewNote}
+                      onChange={(e) => setRenewNote(e.target.value)}
+                      placeholder="transfer ref, invoice no, etc."
+                    />
+                    <Button
+                      onClick={handleRenew}
+                      disabled={isRenewing || !renewPlan || !renewMonths}
+                      className="w-full"
+                    >
+                      {isRenewing ? 'Renewing...' : 'Renew Subscription'}
+                    </Button>
+                  </div>
+
+                  {subscription?.invoices?.length ? (
+                    <div className="rounded-md border p-3">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Recent Invoices
+                      </p>
+                      <div className="space-y-2">
+                        {subscription.invoices.slice(0, 5).map((invoice) => (
+                          <div
+                            key={invoice.id}
+                            className="flex items-center justify-between rounded border px-2 py-1.5"
+                          >
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-medium text-foreground">
+                                #{invoice.id} - {invoice.plan_name}
+                              </p>
+                              <p className="text-xs">
+                                {invoice.amount.toLocaleString()}{' '}
+                                {invoice.currency}
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDownloadInvoice(invoice.id)}
+                            >
+                              PDF
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </>
+              )}
             </CardContent>
           </Card>
 

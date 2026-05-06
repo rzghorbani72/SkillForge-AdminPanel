@@ -131,6 +131,8 @@ export interface Academy {
   currency?: string;
   currency_symbol?: string;
   currency_position?: 'before' | 'after';
+  subscription_plan?: string;
+  subscription_expires?: string;
   primary_verification_method?: 'phone' | 'email';
   available_currencies?: CurrencyConfig[];
   default_currency?: CurrencyCode;
@@ -600,6 +602,12 @@ export interface TemplatePreset {
   description: string;
   preview?: string;
   blocks: UIBlockConfig[];
+}
+
+export interface PricingConfig {
+  title: string;
+  subtitle: string;
+  cta_label: string;
 }
 
 // Session and OTP Types

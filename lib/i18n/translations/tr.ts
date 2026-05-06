@@ -113,6 +113,9 @@ export const tr = {
     'store-settings': 'Mağaza Ayarları',
     'theme-settings': 'Tema Ayarları',
     'theme-generator': 'Tema Üretici',
+    'academy-pricing': 'Akademi Fiyatlandırması',
+    'platform-pricing': 'Platform Fiyatlandırması',
+    'pricing-cms': 'Fiyatlandırma Yönetimi',
     'ui-template-settings': 'UI Şablon Ayarları',
     'security-settings': 'Güvenlik Ayarları',
     'progress-tracking': 'İlerleme Takibi',
@@ -524,6 +527,21 @@ export const tr = {
     bioPlaceholder:
       'Meslektaşlarınıza kendiniz hakkında daha fazla bilgi verin',
     saveChanges: 'Değişiklikleri Kaydet',
+    pricingCmsTitle: 'Fiyatlandırma İçerik Yönetimi',
+    pricingCmsSubtitle:
+      'Genel fiyatlandırma sayfası içeriğini kod değişikliği yapmadan düzenleyin.',
+    pricingCmsCardDescription: 'Genel fiyatlandırma sayfası metnini yönetin',
+    publicPricingContentTitle: 'Genel Fiyatlandırma İçeriği',
+    publicPricingContentDescription:
+      'Bu içerik platform düzeyindeki fiyatlandırma sayfasında gösterilir.',
+    pricingPageTitleLabel: 'Sayfa başlığı',
+    pricingPageTitlePlaceholder: 'Fiyatlandırma Planları',
+    pricingSubtitleLabel: 'Alt başlık',
+    pricingSubtitlePlaceholder:
+      'Üreticiler, mentorlar ve eğitim işletmeleri için net fiyatlandırma...',
+    pricingCtaLabel: 'CTA metni',
+    pricingCtaPlaceholder: 'Planınızla Başlayın',
+    pricingUpdatedSuccess: 'Fiyatlandırma içeriği başarıyla güncellendi',
     storeSettingsTitle: 'Enstitü Ayarları',
     storeSettingsSubtitle:
       'Enstitünüzün SkillForge ekosisteminde nasıl göründüğünü yönetin.',

@@ -131,6 +131,9 @@ export const en = {
     'store-settings': 'Store Settings',
     'theme-settings': 'Theme Settings',
     'theme-generator': 'Theme Generator',
+    'academy-pricing': 'Academy Pricing',
+    'platform-pricing': 'Platform Pricing',
+    'pricing-cms': 'Pricing CMS',
     'ui-template-settings': 'UI Template Settings',
     'security-settings': 'Security Settings',
     'progress-tracking': 'Progress Tracking',
@@ -853,6 +856,21 @@ export const en = {
     bioPlaceholder: 'Tell colleagues more about you',
     saving: 'Saving…',
     saveChanges: 'Save changes',
+    pricingCmsTitle: 'Pricing CMS',
+    pricingCmsSubtitle:
+      'Edit public platform pricing page content without code changes.',
+    pricingCmsCardDescription: 'Manage public pricing page copy',
+    publicPricingContentTitle: 'Public Pricing Content',
+    publicPricingContentDescription:
+      'This content is shown on the platform-level pricing page.',
+    pricingPageTitleLabel: 'Page title',
+    pricingPageTitlePlaceholder: 'Pricing Plans',
+    pricingSubtitleLabel: 'Subtitle',
+    pricingSubtitlePlaceholder:
+      'Clear pricing for creators, mentors, and academy businesses...',
+    pricingCtaLabel: 'CTA label',
+    pricingCtaPlaceholder: 'Start With Your Plan',
+    pricingUpdatedSuccess: 'Pricing content updated successfully',
     profileUpdatedSuccess: 'Profile updated successfully',
     storeSettingsTitle: 'Store Settings',
     storeSettingsSubtitle:

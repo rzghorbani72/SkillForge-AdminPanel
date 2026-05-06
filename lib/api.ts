@@ -206,9 +206,16 @@ class ApiClient {
 
       // Handle unauthorized responses (401) - attempt token refresh, then redirect to login
       if (response.status === 401 && retryAfterRefresh) {
-        // Skip refresh for auth endpoints (login, register, etc.)
+        // Skip refresh for auth endpoints (login/register/otp/password reset flows)
         const isAuthEndpoint =
           endpoint.includes('/auth/login') ||
+          endpoint.includes('/auth/public/login') ||
+          endpoint.includes('/auth/staff/login') ||
+          endpoint.includes('/auth/admin/login') ||
+          endpoint.includes('/auth/forget-password') ||
+          endpoint.includes('/auth/admin/forget-password') ||
+          endpoint.includes('/auth/login-by-phone-otp') ||
+          endpoint.includes('/auth/login-by-email-otp') ||
           endpoint.includes('/auth/register') ||
           endpoint.includes('/auth/refresh');
 
@@ -222,7 +229,14 @@ class ApiClient {
           }
         }
 
-        // Refresh failed or was auth endpoint - redirect to login
+        // For auth endpoints, let the caller handle the message (avoid extra redirect/toast)
+        if (isAuthEndpoint) {
+          throw new Error(
+            (data && (data.message || data.error)) || 'Authentication failed'
+          );
+        }
+
+        // Refresh failed - redirect to login
         const getCurrentLanguage = (): LanguageCode => {
           if (typeof window === 'undefined') return 'en';
           const stored = localStorage.getItem('preferred_language');
@@ -296,6 +310,21 @@ class ApiClient {
           this.redirectToDashboard();
         }
 
+        throw new Error(errorMessage);
+      }
+
+      // Handle payment required (402) - subscription expired/inactive
+      if (response.status === 402) {
+        const errorMessage =
+          (data && (data.message || data.error)) ||
+          'Subscription is required to continue.';
+        if (typeof window !== 'undefined') {
+          toast.error(errorMessage);
+          // Keep user in subscription-manageable area
+          if (!window.location.pathname.includes('/settings/store')) {
+            window.location.href = '/settings/store';
+          }
+        }
         throw new Error(errorMessage);
       }
 
@@ -543,6 +572,44 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(storeData)
     });
+  }
+
+  async getCurrentAcademySubscription() {
+    const response = await this.request('/academies/current/subscription');
+    const payload = response.data as any;
+    return payload?.data ?? payload;
+  }
+
+  async renewCurrentAcademySubscription(data: {
+    plan_name: string;
+    months: number;
+    amount: number;
+    note?: string;
+  }) {
+    const response = await this.request(
+      '/academies/current/subscription/renew',
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
+    const payload = response.data as any;
+    return payload?.data ?? payload;
+  }
+
+  async downloadCurrentAcademySubscriptionInvoicePdf(
+    invoiceId: number
+  ): Promise<Blob> {
+    const endpoint = `/academies/current/subscription/invoices/${invoiceId}/pdf`;
+    const url = `${this.baseURL}${endpoint}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      credentials: 'include'
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to download invoice PDF: ${response.status}`);
+    }
+    return response.blob();
   }
 
   // Courses endpoints
@@ -2071,6 +2138,23 @@ class ApiClient {
     return response.data;
   }
 
+  async getCurrentPricingConfig() {
+    const response = await this.request('/academies/current/pricing-config');
+    return response.data;
+  }
+
+  async updateCurrentPricingConfig(payload: {
+    title?: string;
+    subtitle?: string;
+    cta_label?: string;
+  }) {
+    const response = await this.request('/academies/current/pricing-config', {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    return response.data;
+  }
+
   // Discounts endpoints
   async getDiscounts(params?: {
     page?: number;
@@ -2792,6 +2876,146 @@ class ApiClient {
       }
     );
     return response.data as any;
+  }
+
+  // ─── Assignments ───────────────────────────────────────────────────────────
+
+  async getAssignments(params?: {
+    page?: number;
+    limit?: number;
+    lesson_id?: number;
+    course_id?: number;
+  }) {
+    const qs = new URLSearchParams();
+    if (params)
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined) qs.append(k, String(v));
+      });
+    const url = qs.toString() ? `/assignments?${qs}` : '/assignments';
+    const res = await this.request(url);
+    const payload = res.data as any;
+    return payload?.data ?? payload;
+  }
+
+  async createAssignment(data: {
+    lesson_id: number;
+    title: string;
+    description?: string;
+    due_date?: string;
+    max_score?: number;
+    is_required?: boolean;
+  }) {
+    const res = await this.request('/assignments', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updateAssignment(
+    id: number,
+    data: Partial<{
+      title: string;
+      description: string;
+      due_date: string;
+      max_score: number;
+      is_required: boolean;
+    }>
+  ) {
+    const res = await this.request(`/assignments/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async getSubmissions(params?: {
+    page?: number;
+    limit?: number;
+    assignment_id?: number;
+    profile_id?: number;
+    enrollment_id?: number;
+    status?: string;
+  }) {
+    const qs = new URLSearchParams();
+    if (params)
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined) qs.append(k, String(v));
+      });
+    const url = qs.toString()
+      ? `/assignments/submissions?${qs}`
+      : '/assignments/submissions';
+    const res = await this.request(url);
+    const payload = res.data as any;
+    return payload?.data ?? payload;
+  }
+
+  async gradeSubmission(
+    submissionId: number,
+    data: { score: number; feedback?: string }
+  ) {
+    const res = await this.request(
+      `/assignments/submissions/${submissionId}/grade`,
+      { method: 'PATCH', body: JSON.stringify(data) }
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // ─── Manual Enrollment ─────────────────────────────────────────────────────
+
+  async manualEnroll(data: {
+    course_id: number;
+    profile_id: number;
+    payment_note?: string;
+    paid_amount?: number;
+  }) {
+    const res = await this.request('/enrollments/manual', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // ─── Student Lesson Access ─────────────────────────────────────────────────
+
+  async getStudentLessonAccess(params?: {
+    profile_id?: number;
+    lesson_id?: number;
+    course_id?: number;
+    page?: number;
+    limit?: number;
+  }) {
+    const qs = new URLSearchParams();
+    if (params)
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined) qs.append(k, String(v));
+      });
+    const url = qs.toString()
+      ? `/student-lesson-access?${qs}`
+      : '/student-lesson-access';
+    const res = await this.request(url);
+    const payload = res.data as any;
+    return payload?.data ?? payload;
+  }
+
+  async upsertStudentLessonAccess(data: {
+    profile_id: number;
+    lesson_id: number;
+    is_unlocked: boolean;
+    note?: string;
+  }) {
+    const res = await this.request('/student-lesson-access', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async deleteStudentLessonAccess(id: number) {
+    const res = await this.request(`/student-lesson-access/${id}`, {
+      method: 'DELETE'
+    });
+    return res.data;
   }
 }
 
