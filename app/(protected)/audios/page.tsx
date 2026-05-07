@@ -245,7 +245,7 @@ export default function AudiosPage() {
       setCourses(storeCourses);
     } catch (err) {
       console.error('Error fetching audios:', err);
-      setError('Failed to load audio files. Please try again.');
+      setError(t('media.failedToLoadAudioFiles'));
       ErrorHandler.handleApiError(err);
     } finally {
       setIsLoading(false);
@@ -323,7 +323,7 @@ export default function AudiosPage() {
         })
         .catch((err) => {
           console.error('Failed to play audio:', err);
-          toast.error('Unable to play audio file.');
+          toast.error(t('media.unableToPlayAudioFile'));
         });
     } else {
       node.pause();
@@ -389,7 +389,7 @@ export default function AudiosPage() {
 
     const trimmedTitle = editTitle.trim();
     if (trimmedTitle.length === 0) {
-      toast.error('Title is required');
+      toast.error(t('errors.required'));
       return;
     }
 
@@ -400,7 +400,7 @@ export default function AudiosPage() {
         description: editDescription.trim(),
         is_public: editIsPublic
       });
-      toast.success('Audio updated successfully');
+      toast.success(t('media.audioUpdated'));
       setEditAudio(null);
       fetchAudios();
     } catch (err) {
@@ -417,7 +417,7 @@ export default function AudiosPage() {
     try {
       setIsDeleting(true);
       await apiClient.deleteAudio(deleteAudio.id);
-      toast.success('Audio deleted successfully');
+      toast.success(t('media.deleteSuccess'));
       setDeleteAudio(null);
       fetchAudios();
     } catch (err) {
@@ -639,7 +639,7 @@ export default function AudiosPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="line-clamp-1 text-base transition-colors group-hover:text-primary">
-                        {audio.title || 'Untitled audio'}
+                        {audio.title || t('media.untitledAudio')}
                       </CardTitle>
                       {audio.description && (
                         <CardDescription className="mt-1 line-clamp-2 text-xs">
@@ -662,7 +662,7 @@ export default function AudiosPage() {
                     preload="metadata"
                     crossOrigin="use-credentials"
                   >
-                    Your browser does not support the audio element.
+                    {t('media.audioElementNotSupported')}
                   </audio>
 
                   {/* Audio Player */}
@@ -740,7 +740,7 @@ export default function AudiosPage() {
                           onClick={() => setViewAudio(audio)}
                         >
                           <Volume2 className="mr-1.5 h-3.5 w-3.5" />
-                          Details
+                          {t('media.details')}
                         </Button>
                         <Button
                           variant="outline"
@@ -781,25 +781,31 @@ export default function AudiosPage() {
             </DialogHeader>
             <div className="space-y-4">
               <audio controls className="w-full" src={getAudioUrl(viewAudio)}>
-                Your browser does not support the audio element.
+                {t('media.audioElementNotSupported')}
               </audio>
               <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
-                <span>File size: {formatFileSize(viewAudio.size)}</span>
                 <span>
-                  Duration:{' '}
+                  {t('media.fileSize')}: {formatFileSize(viewAudio.size)}
+                </span>
+                <span>
+                  {t('media.duration')}:{' '}
                   {formatDuration(
                     viewAudio.metadata?.duration ?? viewAudio.duration
                   )}
                 </span>
-                <span>Type: {viewAudio.mime_type || 'AUDIO'}</span>
                 <span>
-                  Uploaded: {formatDate(viewAudio.created_at, locale)}
+                  {t('media.type')}:{' '}
+                  {viewAudio.mime_type || t('media.audioType')}
+                </span>
+                <span>
+                  {t('media.uploaded')}:{' '}
+                  {formatDate(viewAudio.created_at, locale)}
                 </span>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setViewAudio(null)}>
-                Close
+                {t('media.close')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -814,14 +820,12 @@ export default function AudiosPage() {
         >
           <DialogContent className="sm:max-w-[540px]">
             <DialogHeader>
-              <DialogTitle>Edit Audio</DialogTitle>
-              <DialogDescription>
-                Update the metadata for this audio file.
-              </DialogDescription>
+              <DialogTitle>{t('media.editAudio')}</DialogTitle>
+              <DialogDescription>{t('media.updateMetadata')}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="audio-title">Title</Label>
+                <Label htmlFor="audio-title">{t('media.title')}</Label>
                 <Input
                   id="audio-title"
                   value={editTitle}
@@ -830,7 +834,9 @@ export default function AudiosPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="audio-description">Description</Label>
+                <Label htmlFor="audio-description">
+                  {t('media.description')}
+                </Label>
                 <Textarea
                   id="audio-description"
                   value={editDescription}
@@ -841,9 +847,11 @@ export default function AudiosPage() {
               </div>
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div>
-                  <p className="text-sm font-medium">Publicly accessible</p>
+                  <p className="text-sm font-medium">
+                    {t('media.publiclyAccessible')}
+                  </p>
                   <p className="text-xs text-muted-foreground">
-                    Allow members of the store to access this audio file.
+                    {t('media.allowMembersAccess')}
                   </p>
                 </div>
                 <Switch
@@ -858,10 +866,10 @@ export default function AudiosPage() {
                 onClick={() => setEditAudio(null)}
                 disabled={isUpdating}
               >
-                Cancel
+                {t('media.cancel')}
               </Button>
               <Button onClick={handleUpdateAudio} disabled={isUpdating}>
-                {isUpdating ? 'Saving...' : 'Save changes'}
+                {isUpdating ? t('media.saving') : t('media.saveChanges')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -873,8 +881,11 @@ export default function AudiosPage() {
         <ConfirmDeleteModal
           open={!!deleteAudio}
           onOpenChange={(open) => !open && setDeleteAudio(null)}
-          title={deleteAudio.title || `Audio #${deleteAudio.id}`}
-          itemType="audio file"
+          title={
+            deleteAudio.title ||
+            `${t('media.audioLabel')} #${String(deleteAudio.id)}`
+          }
+          itemType={t('media.audioFile')}
           onConfirm={handleDeleteAudio}
           isLoading={isDeleting}
         />

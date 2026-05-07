@@ -101,7 +101,10 @@ export default function AdminsPage() {
             role: 'ADMIN',
             filter: 'none'
           });
-          const profiles = (profileResponse as any)?.profiles || [];
+          const profiles =
+            (profileResponse as any)?.profiles ||
+            (profileResponse as any)?.data?.profiles ||
+            [];
           const currentProfile = profiles.find(
             (p: any) => p.id === (userData as any).data.id
           );
@@ -206,10 +209,12 @@ export default function AdminsPage() {
       });
 
       const payload = response as any;
+      const profiles = payload?.profiles || payload?.data?.profiles;
+      const paginationData = payload?.pagination || payload?.data?.pagination;
 
-      if (payload?.profiles) {
+      if (profiles) {
         // Transform profiles to user format
-        const transformedUsers = payload.profiles.map((profile: any) => ({
+        const transformedUsers = profiles.map((profile: any) => ({
           id: profile.id,
           display_name: profile.display_name,
           email: profile.email,
@@ -233,10 +238,10 @@ export default function AdminsPage() {
         setAdmins(transformedUsers);
         setPagination((prev) => ({
           ...prev,
-          total: payload.pagination?.total || 0,
-          totalPages: payload.pagination?.totalPages || 0,
-          hasNextPage: payload.pagination?.hasNextPage || false,
-          hasPreviousPage: payload.pagination?.hasPreviousPage || false
+          total: paginationData?.total || 0,
+          totalPages: paginationData?.totalPages || 0,
+          hasNextPage: paginationData?.hasNextPage || false,
+          hasPreviousPage: paginationData?.hasPreviousPage || false
         }));
       } else if (Array.isArray(payload)) {
         setAdmins(payload);

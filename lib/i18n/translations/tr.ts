@@ -101,6 +101,7 @@ export const tr = {
     vouchers: 'Kuponlar',
     'all-students': 'Tüm Öğrenciler',
     enrollments: 'Kayıtlar',
+    assignments: 'Ödevler',
     progress: 'İlerleme',
     'analytics-overview': 'Analitik Genel Bakış',
     'revenue-analytics': 'Gelir Analitiği',

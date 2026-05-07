@@ -81,7 +81,9 @@ export default function Sidebar({ className }: SidebarProps) {
         <div className="flex h-full items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t('common.loading')}
+            </p>
           </div>
         </div>
       </aside>
@@ -144,7 +146,7 @@ export default function Sidebar({ className }: SidebarProps) {
         <Suspense
           fallback={
             <div className="p-4 text-center text-muted-foreground">
-              Loading...
+              {t('common.loading')}
             </div>
           }
         >

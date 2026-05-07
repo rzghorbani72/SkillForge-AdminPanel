@@ -526,6 +526,19 @@ class ApiClient {
     });
   }
 
+  async adminForgetPassword(data: {
+    email: string;
+    phone_number: string;
+    password: string;
+    confirmed_password: string;
+    otp: string;
+  }) {
+    return this.request('/auth/admin/forget-password', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
   async getAcademies() {
     const response = await this.request('/academies');
     if (response.data) {
@@ -1605,8 +1618,20 @@ class ApiClient {
       return null;
     }
 
+    if (payload.status === 'fail') {
+      throw new Error(payload.message || 'Failed to retrieve users');
+    }
+
     if (payload.status === 'ok' && payload.data) {
       return payload.data;
+    }
+
+    if (payload.data?.profiles || payload.data?.pagination) {
+      return payload.data;
+    }
+
+    if (payload.profiles || payload.pagination) {
+      return payload;
     }
 
     return payload;
@@ -1708,7 +1733,43 @@ class ApiClient {
     const payload = response.data as any;
 
     if (payload?.status === 'ok' && payload?.data) {
-      return payload.data;
+      const normalizedRequests = Array.isArray(payload.data.requests)
+        ? payload.data.requests.map((request: any) => {
+            const profile =
+              request.profile ||
+              request.Profile_TeacherRequest_profile_idToProfile;
+            const store = request.store || request.Academy;
+            const reviewer =
+              request.reviewer ||
+              request.Profile_TeacherRequest_reviewed_byToProfile;
+
+            return {
+              ...request,
+              profile: profile
+                ? {
+                    id: profile.id,
+                    display_name: profile.display_name,
+                    role: profile.role || profile.Role || null,
+                    user: profile.user || profile.User || null
+                  }
+                : null,
+              store,
+              reviewer: reviewer
+                ? {
+                    ...reviewer,
+                    user: reviewer.user || {
+                      name: reviewer.display_name || null
+                    }
+                  }
+                : null
+            };
+          })
+        : [];
+
+      return {
+        ...payload.data,
+        requests: normalizedRequests
+      };
     }
 
     return payload;

@@ -101,6 +101,7 @@ export const ar = {
     vouchers: 'القسائم',
     'all-students': 'جميع الطلاب',
     enrollments: 'التسجيلات',
+    assignments: 'الواجبات',
     progress: 'التقدم',
     'analytics-overview': 'نظرة عامة على التحليلات',
     'revenue-analytics': 'تحليلات الإيرادات',

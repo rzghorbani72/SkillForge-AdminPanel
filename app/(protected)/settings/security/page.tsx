@@ -276,21 +276,29 @@ export default function SecuritySettingsPage() {
           ].map(({ key, title, description }) => (
             <div
               key={key}
-              className="flex items-center justify-between rounded-lg border p-4"
+              className="flex items-center justify-between rounded-xl border border-border/60 bg-card/60 p-4 transition-colors hover:bg-card"
             >
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">{title}</p>
                 <p className="text-xs text-muted-foreground">{description}</p>
               </div>
-              <Switch
-                checked={notifications[key as keyof NotificationSettings]}
-                onCheckedChange={(checked) =>
-                  setNotifications((prev) => ({
-                    ...prev,
-                    [key]: checked
-                  }))
-                }
-              />
+              <div className="flex items-center gap-3" dir="ltr">
+                <span className=" text-right text-xs font-medium text-muted-foreground">
+                  {notifications[key as keyof NotificationSettings]
+                    ? t('common.enabled')
+                    : t('common.disabled')}
+                </span>
+                <Switch
+                  checked={notifications[key as keyof NotificationSettings]}
+                  onCheckedChange={(checked) =>
+                    setNotifications((prev) => ({
+                      ...prev,
+                      [key]: checked
+                    }))
+                  }
+                  className="h-6 data-[state=checked]:bg-emerald-600 data-[state=unchecked]:bg-muted"
+                />
+              </div>
             </div>
           ))}
           <div className="flex justify-end">

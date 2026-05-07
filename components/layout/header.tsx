@@ -1,11 +1,18 @@
+'use client';
+
 import ThemeToggle from '@/components/layout/ThemeToggle/theme-toggle';
 import { cn } from '@/lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
 import { StoreSelector } from './StoreSelector';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 export default function Header() {
+  const { user } = useAuthUser();
+  const isPlatformAdmin =
+    user?.role === 'ADMIN' && (user?.isAdminProfile || user?.platformLevel);
+
   return (
     <header className="sticky inset-x-0 top-0 z-40 w-full">
       {/* Gradient line at top */}
@@ -22,9 +29,12 @@ export default function Header() {
 
         {/* Right side controls */}
         <div className="flex items-center gap-2">
-          <StoreSelector />
-
-          <div className="h-6 w-px bg-border/50" />
+          {!isPlatformAdmin && (
+            <>
+              <StoreSelector />
+              <div className="h-6 w-px bg-border/50" />
+            </>
+          )}
 
           <div className="flex items-center gap-1">
             <LanguageSwitcher />

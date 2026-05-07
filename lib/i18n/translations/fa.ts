@@ -93,7 +93,9 @@ export const fa = {
     }
   },
   navigation: {
+    Dashboard: 'داشبورد',
     dashboard: 'داشبورد',
+    'All Stores': 'همه فروشگاه‌ها',
     stores: 'آکادمی‌های من',
     courses: 'دوره‌ها',
     students: 'دانش‌آموزان',
@@ -120,6 +122,7 @@ export const fa = {
     'teacher-requests': 'درخواست‌های معلم',
     'all-students': 'همه دانش‌آموزان',
     enrollments: 'ثبت‌نام‌ها',
+    assignments: 'تکالیف',
     progress: 'پیشرفت',
     'analytics-overview': 'نمای کلی تحلیل',
     'revenue-analytics': 'تحلیل درآمد',
@@ -145,9 +148,11 @@ export const fa = {
     'store-payments': 'پرداخت‌ها',
     'store-reports': 'گزارش‌ها',
     'platform-financial': 'مالی پلتفرم',
+    'platform-financial-dashboard': 'داشبورد',
+    'platform-stores': 'همه فروشگاه‌ها',
     'platform-overview': 'نمای کلی پلتفرم',
     'all-schools': 'همه آکادمی‌ها',
-    'all-stores': 'همه آکادمی‌ها',
+    'all-stores': 'همه فروشگاه‌ها',
     'platform-records': 'سوابق پلتفرم',
     formulas: 'فرمول‌ها',
     'cost-categories': 'دسته‌بندی هزینه‌ها',
@@ -605,6 +610,45 @@ export const fa = {
     security: 'امنیت',
     securityDescription:
       'رمزهای عبور را تغییر دهید، احراز هویت دو مرحله‌ای را فعال کنید و اعلان‌ها را مدیریت کنید.',
+    securityTitle: 'امنیت',
+    securitySubtitle:
+      'امنیت حساب خود را با به‌روزرسانی رمز عبور و تنظیم اعلان‌ها تقویت کنید.',
+    changePassword: 'تغییر رمز عبور',
+    changePasswordDescription:
+      'از رمز عبور قوی استفاده کنید و آن را منظم تغییر دهید.',
+    currentPassword: 'رمز عبور فعلی',
+    currentPasswordPlaceholder: 'رمز عبور فعلی خود را وارد کنید',
+    newPassword: 'رمز عبور جدید',
+    newPasswordPlaceholder: 'رمز عبور جدید را وارد کنید',
+    confirmNewPassword: 'تکرار رمز عبور جدید',
+    confirmNewPasswordPlaceholder: 'رمز عبور جدید را دوباره وارد کنید',
+    updatePassword: 'به‌روزرسانی رمز عبور',
+    passwordUpdatedSuccess: 'رمز عبور با موفقیت به‌روزرسانی شد',
+    newPasswordsDoNotMatch: 'رمزهای عبور جدید با هم مطابقت ندارند',
+    unableToLoadProfile:
+      'بارگذاری پروفایل حساب ممکن نیست. لطفاً صفحه را تازه‌سازی کنید و دوباره تلاش کنید.',
+    twoFactorAuthentication: 'احراز هویت دو مرحله‌ای',
+    twoFactorAuthenticationDescription:
+      'برای افزایش امنیت حساب، یک لایه امنیتی اضافه کنید.',
+    twoFactorAuthenticationText:
+      'احراز هویت دو مرحله‌ای (2FA) را فعال کنید تا هنگام ورود، علاوه بر رمز عبور، کد یک‌بار مصرف نیز لازم باشد.',
+    configure2FA: 'پیکربندی 2FA',
+    notificationPreferences: 'تنظیمات اعلان‌ها',
+    notificationPreferencesDescription:
+      'مشخص کنید کدام اعلان‌های محصول و پرداخت را دریافت کنید.',
+    emailNotifications: 'اعلان‌های ایمیلی',
+    emailNotificationsDescription:
+      'به‌روزرسانی‌های مهم حساب و محصول را از طریق ایمیل دریافت کنید.',
+    smsAlerts: 'هشدارهای پیامکی',
+    smsAlertsDescription:
+      'برای رویدادهای مهم پرداخت و امنیت، پیامک دریافت کنید.',
+    courseUpdates: 'به‌روزرسانی دوره‌ها',
+    courseUpdatesDescription:
+      'وقتی دوره یا درس جدیدی اضافه یا به‌روزرسانی می‌شود مطلع شوید.',
+    paymentAlerts: 'هشدارهای پرداخت',
+    paymentAlertsDescription: 'رسیدها و اعلان‌های پرداخت را دریافت کنید.',
+    savePreferences: 'ذخیره تنظیمات',
+    notificationPreferencesSaved: 'تنظیمات اعلان‌ها با موفقیت ذخیره شد',
     openSettings: 'باز کردن تنظیمات',
     general: 'عمومی',
     language: 'زبان',

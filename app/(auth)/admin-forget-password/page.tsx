@@ -47,33 +47,12 @@ export default function AdminForgetPasswordPage() {
     fullPhoneNumber: '',
     password: '',
     confirmed_password: '',
-    otp: '',
-    store_slug: ''
+    otp: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState('');
-  const [stores, setStores] = useState<
-    Array<{ id: number; name: string; slug: string }>
-  >([]);
-  const [isLoadingStores, setIsLoadingStores] = useState(false);
 
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchStores = async () => {
-      setIsLoadingStores(true);
-      try {
-        const response = await apiClient.getAcademiesPublic();
-        setStores(Array.isArray(response.data) ? response.data : []);
-      } catch (error) {
-        console.error('Failed to fetch stores:', error);
-      } finally {
-        setIsLoadingStores(false);
-      }
-    };
-
-    fetchStores();
-  }, []);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -83,27 +62,31 @@ export default function AdminForgetPasswordPage() {
   };
 
   const validateIdentifier = () => {
-    if (authMethod === 'email') {
-      if (!formData.email.trim()) {
-        setErrors({ email: t('forgotPassword.emailOrPhoneRequired') });
-        return false;
-      }
-      if (!isValidEmail(formData.email)) {
-        setErrors({ email: t('forgotPassword.validEmailAddress') });
-        return false;
-      }
-    } else {
-      if (!formData.phoneNumber.trim()) {
-        setErrors({ phoneNumber: t('forgotPassword.emailOrPhoneRequired') });
-        return false;
-      }
-      if (!isValidPhone(formData.phoneNumber)) {
-        setErrors({ phoneNumber: t('forgotPassword.validPhoneNumber') });
-        return false;
-      }
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.email.trim()) {
+      newErrors.email = t('auth.emailRequired');
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = t('forgotPassword.validEmailAddress');
     }
 
-    return true;
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = t('auth.phoneRequired');
+    } else if (!isValidPhone(formData.phoneNumber)) {
+      newErrors.phoneNumber = t('forgotPassword.validPhoneNumber');
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return false;
+    }
+
+    // Keep OTP channel selection (email/phone) but require both admin identifiers.
+    if (authMethod === 'email') {
+      return true;
+    } else {
+      return true;
+    }
   };
 
   const validatePassword = () => {
@@ -215,19 +198,12 @@ export default function AdminForgetPasswordPage() {
     setErrors({});
 
     try {
-      const selectedStore = stores.find(
-        (store) => store.slug === formData.store_slug
-      );
-      await apiClient.forgetPassword({
-        identifier:
-          authMethod === 'phone'
-            ? formData.fullPhoneNumber || formData.phoneNumber
-            : formData.email,
+      await apiClient.adminForgetPassword({
+        email: formData.email.trim(),
+        phone_number: formData.fullPhoneNumber || formData.phoneNumber,
         password: formData.password,
         confirmed_password: formData.confirmed_password,
-        otp: formData.otp,
-        role: 'ADMIN',
-        academy_id: selectedStore?.id
+        otp: formData.otp
       });
 
       setStep('success');
@@ -252,8 +228,7 @@ export default function AdminForgetPasswordPage() {
       fullPhoneNumber: '',
       password: '',
       confirmed_password: '',
-      otp: '',
-      store_slug: ''
+      otp: ''
     });
     setErrors({});
     setMessage('');
@@ -359,35 +334,36 @@ export default function AdminForgetPasswordPage() {
                     </TabsContent>
                   </Tabs>
 
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="store_slug">
-                        {t('stores.title')} ({t('common.optional')})
-                      </Label>
-                      <select
-                        id="store_slug"
-                        value={formData.store_slug}
-                        onChange={(e) =>
-                          handleInputChange('store_slug', e.target.value)
-                        }
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        disabled={isLoadingStores}
-                        dir={isRTL ? 'rtl' : 'ltr'}
-                      >
-                        <option value="">{t('common.select')}</option>
-                        {stores.map((store) => (
-                          <option key={store.id} value={store.slug}>
-                            {store.name}
-                          </option>
-                        ))}
-                      </select>
-                      {isLoadingStores && (
-                        <p className="mt-1 text-sm text-gray-500">
-                          {t('common.loading')}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+                  {authMethod === 'email' && (
+                    <PhoneInputWithCountry
+                      id="phone-required"
+                      label={`${t('auth.phoneNumber')} (${t('common.required')})`}
+                      placeholder={t('auth.enterPhone')}
+                      value={formData.phoneNumber}
+                      onChange={(value) =>
+                        handleInputChange('phoneNumber', value)
+                      }
+                      onFullPhoneChange={(fullPhone) =>
+                        handleInputChange('fullPhoneNumber', fullPhone)
+                      }
+                      error={errors.phoneNumber}
+                      disabled={isLoading}
+                    />
+                  )}
+
+                  {authMethod === 'phone' && (
+                    <InputWithIcon
+                      id="email-required"
+                      label={`${t('auth.emailAddress')} (${t('common.required')})`}
+                      type="email"
+                      placeholder={t('auth.enterEmail')}
+                      value={formData.email}
+                      onChange={(value) => handleInputChange('email', value)}
+                      icon={Mail}
+                      error={errors.email}
+                      disabled={isLoading}
+                    />
+                  )}
 
                   <Button
                     onClick={handleSendOtp}

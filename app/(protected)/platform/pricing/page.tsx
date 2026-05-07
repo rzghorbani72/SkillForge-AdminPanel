@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Save } from 'lucide-react';
 import {
   Card,
@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface PlatformPricingForm {
   title: string;
@@ -26,22 +27,39 @@ interface PlatformPricingForm {
 
 const STORAGE_KEY = 'platform_pricing_policy_draft_v1';
 
-const DEFAULT_FORM: PlatformPricingForm = {
-  title: 'Platform Plans',
-  subtitle: 'Pricing and monetization policy for academy managers.',
-  managerCtaLabel: 'Start Platform Plan',
-  billingNotes:
-    'Billing cycle, overage terms, VAT/tax notes, and settlement policy.',
-  faq: 'Add platform-level FAQs for managers here.'
-};
-
 export default function PlatformPricingPage() {
+  const { t } = useTranslation();
   const { user, isLoading } = useAuthUser();
-  const [form, setForm] = useState<PlatformPricingForm>(DEFAULT_FORM);
+  const defaultForm = useMemo<PlatformPricingForm>(
+    () => ({
+      title: t('platform.pricing.defaultTitle'),
+      subtitle: t('platform.pricing.defaultSubtitle'),
+      managerCtaLabel: t('platform.pricing.defaultCtaLabel'),
+      billingNotes: t('platform.pricing.defaultBillingNotes'),
+      faq: t('platform.pricing.defaultFaq')
+    }),
+    [t]
+  );
+  const [form, setForm] = useState<PlatformPricingForm>(defaultForm);
   const [isSaving, setIsSaving] = useState(false);
 
   const isPlatformAdmin =
     user?.role === 'ADMIN' && (user?.isAdminProfile || user?.platformLevel);
+
+  useEffect(() => {
+    setForm((prev) => {
+      if (
+        prev.title !== defaultForm.title ||
+        prev.subtitle !== defaultForm.subtitle ||
+        prev.managerCtaLabel !== defaultForm.managerCtaLabel ||
+        prev.billingNotes !== defaultForm.billingNotes ||
+        prev.faq !== defaultForm.faq
+      ) {
+        return prev;
+      }
+      return defaultForm;
+    });
+  }, [defaultForm]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -60,7 +78,7 @@ export default function PlatformPricingPage() {
     try {
       setIsSaving(true);
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-      ErrorHandler.showSuccess('Platform pricing draft saved');
+      ErrorHandler.showSuccess(t('platform.pricing.saveSuccess'));
     } finally {
       setIsSaving(false);
     }
@@ -75,9 +93,9 @@ export default function PlatformPricingPage() {
       <div className="flex-1 space-y-6 p-6">
         <Card>
           <CardHeader>
-            <CardTitle>Access restricted</CardTitle>
+            <CardTitle>{t('platform.pricing.accessRestrictedTitle')}</CardTitle>
             <CardDescription>
-              Platform pricing policy can only be edited by platform admins.
+              {t('platform.pricing.accessRestrictedDescription')}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -89,25 +107,23 @@ export default function PlatformPricingPage() {
     <div className="flex-1 space-y-6 p-6">
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">
-          Platform Pricing Policy
+          {t('platform.pricing.title')}
         </h1>
         <p className="text-muted-foreground">
-          Manage platform monetization copy for academy managers (not student
-          pricing).
+          {t('platform.pricing.description')}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Manager-facing monetization content</CardTitle>
+          <CardTitle>{t('platform.pricing.managerContentTitle')}</CardTitle>
           <CardDescription>
-            Define Group plans, overage policy, billing notes, and platform
-            FAQs.
+            {t('platform.pricing.managerContentDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="title">Page title</Label>
+            <Label htmlFor="title">{t('platform.pricing.pageTitle')}</Label>
             <Input
               id="title"
               value={form.title}
@@ -118,7 +134,7 @@ export default function PlatformPricingPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="subtitle">Subtitle</Label>
+            <Label htmlFor="subtitle">{t('platform.pricing.subtitle')}</Label>
             <Textarea
               id="subtitle"
               rows={3}
@@ -130,7 +146,7 @@ export default function PlatformPricingPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cta">CTA label</Label>
+            <Label htmlFor="cta">{t('platform.pricing.ctaLabel')}</Label>
             <Input
               id="cta"
               value={form.managerCtaLabel}
@@ -141,7 +157,7 @@ export default function PlatformPricingPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Billing notes</Label>
+            <Label htmlFor="notes">{t('platform.pricing.billingNotes')}</Label>
             <Textarea
               id="notes"
               rows={4}
@@ -153,7 +169,7 @@ export default function PlatformPricingPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="faq">FAQ</Label>
+            <Label htmlFor="faq">{t('platform.pricing.faq')}</Label>
             <Textarea
               id="faq"
               rows={5}
@@ -167,7 +183,9 @@ export default function PlatformPricingPage() {
           <div className="flex justify-end">
             <Button onClick={handleSave} disabled={isSaving}>
               <Save className="mr-2 h-4 w-4" />
-              {isSaving ? 'Saving...' : 'Save draft'}
+              {isSaving
+                ? t('platform.pricing.saving')
+                : t('platform.pricing.saveDraft')}
             </Button>
           </div>
         </CardContent>

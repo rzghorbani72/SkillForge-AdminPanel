@@ -119,6 +119,7 @@ export const en = {
     'teacher-requests': 'Teacher Requests',
     'all-students': 'All Students',
     enrollments: 'Enrollments',
+    assignments: 'Assignments',
     progress: 'Progress',
     'analytics-overview': 'Analytics Overview',
     'revenue-analytics': 'Revenue Analytics',
@@ -144,6 +145,8 @@ export const en = {
     'store-payments': 'Payments',
     'store-reports': 'Reports',
     'platform-financial': 'Platform Financial',
+    'platform-financial-dashboard': 'Dashboard',
+    'platform-stores': 'All Stores',
     'platform-overview': 'Platform Overview',
     'all-schools': 'All Schools',
     'all-stores': 'All Stores',
@@ -1171,14 +1174,21 @@ export const en = {
     updateMetadata: 'Update the metadata for this audio file.',
     publiclyAccessible: 'Publicly accessible',
     allowMembersAccess: 'Allow members of the store to access this audio file.',
+    audioLabel: 'Audio',
+    audioFile: 'audio file',
     untitledAudio: 'Untitled audio',
     fileSize: 'File size',
     duration: 'Duration',
     type: 'Type',
     uploaded: 'Uploaded',
+    audioType: 'AUDIO',
     saveChanges: 'Save changes',
     error: 'Error',
     retry: 'Retry',
+    failedToLoadAudioFiles: 'Failed to load audio files. Please try again.',
+    unableToPlayAudioFile: 'Unable to play audio file.',
+    audioElementNotSupported:
+      'Your browser does not support the audio element.',
     // Categories
     categories: 'Categories',
     loadingCategories: 'Loading categories...',
@@ -1202,6 +1212,47 @@ export const en = {
     defaultCourseVideos: 'Default course videos',
     courseContentVideos: 'Course content videos',
     combinedVideoLength: 'Combined video length'
+  },
+  assignmentsPage: {
+    title: 'Assignments',
+    description: 'Manage course assignments and grade student submissions',
+    totalAssignments: 'Total Assignments',
+    pendingReview: 'Pending Review',
+    awaitingGrade: 'Awaiting grade',
+    graded: 'Graded',
+    assignmentsTab: 'Assignments',
+    submissionsTab: 'Submissions',
+    allAssignments: 'All Assignments',
+    allAssignmentsDescription:
+      'Assignments created for lessons across your courses',
+    searchAssignments: 'Search assignments...',
+    assignment: 'Assignment',
+    lesson: 'Lesson',
+    dueDate: 'Due Date',
+    maxScore: 'Max Score',
+    submissions: 'Submissions',
+    required: 'Required',
+    noAssignmentsFound: 'No assignments found',
+    notAvailable: '—',
+    studentSubmissions: 'Student Submissions',
+    studentSubmissionsDescription:
+      'Review and grade student assignment submissions',
+    student: 'Student',
+    status: 'Status',
+    score: 'Score',
+    submitted: 'Submitted',
+    action: 'Action',
+    noSubmissionsYet: 'No submissions yet',
+    grade: 'Grade',
+    editGrade: 'Edit Grade',
+    gradeSubmission: 'Grade Submission',
+    studentAnswer: 'Student Answer',
+    attachedFile: 'Attached File',
+    viewFile: 'View file',
+    feedbackOptional: 'Feedback (optional)',
+    feedbackPlaceholder: 'Provide feedback to the student...',
+    saveGrade: 'Save Grade',
+    scoreMax: 'Score (max: {{max}})'
   },
   users: {
     allUsers: 'All Users',
@@ -1726,6 +1777,7 @@ export const en = {
       description:
         'Platform-wide financial overview and business cash flow management',
       loading: 'Loading financial data...',
+      loadFailed: 'Failed to load financial data',
       filters: 'Filters',
       year: 'Year',
       month: 'Month (Optional)',
@@ -1742,6 +1794,13 @@ export const en = {
       formulas: 'Formulas',
       costCategories: 'Cost Categories',
       businessFlow: 'Business Flow',
+      iranSettlementTitle: 'Iran Settlement Snapshot',
+      iranSettlementDescription:
+        'PayPing-only settlement totals for selected filter period',
+      gross: 'Gross',
+      platformFee: 'Platform Fee',
+      vat: 'VAT',
+      schoolNet: 'School Net',
       tabs: {
         platformRecords: 'Platform Records',
         allStores: 'All Stores',
@@ -1784,6 +1843,31 @@ export const en = {
     }
   },
   platform: {
+    pricing: {
+      title: 'Platform Pricing Policy',
+      description:
+        'Manage platform monetization copy for academy managers (not student pricing).',
+      managerContentTitle: 'Manager-facing monetization content',
+      managerContentDescription:
+        'Define Group plans, overage policy, billing notes, and platform FAQs.',
+      pageTitle: 'Page title',
+      subtitle: 'Subtitle',
+      ctaLabel: 'CTA label',
+      billingNotes: 'Billing notes',
+      faq: 'FAQ',
+      saveDraft: 'Save draft',
+      saving: 'Saving...',
+      saveSuccess: 'Platform pricing draft saved',
+      defaultTitle: 'Platform Plans',
+      defaultSubtitle: 'Pricing and monetization policy for academy managers.',
+      defaultCtaLabel: 'Start Platform Plan',
+      defaultBillingNotes:
+        'Billing cycle, overage terms, VAT/tax notes, and settlement policy.',
+      defaultFaq: 'Add platform-level FAQs for managers here.',
+      accessRestrictedTitle: 'Access restricted',
+      accessRestrictedDescription:
+        'Platform pricing policy can only be edited by platform admins.'
+    },
     overview: {
       title: 'Platform Overview',
       description:
@@ -1844,11 +1928,17 @@ export const en = {
       storeInformation: 'Store Information',
       publicDomain: 'Public Domain',
       privateDomain: 'Private Domain',
+      slug: 'Slug',
       totalRevenue: 'Total Revenue',
       totalCosts: 'Total Costs',
       netProfit: 'Net Profit',
       noFinancialData: 'No financial data available',
-      noPayments: 'No payments found'
+      noPayments: 'No payments found',
+      subscription: 'Subscription',
+      expires: 'Expires',
+      noExpiry: '—',
+      pending: 'PENDING',
+      notAvailable: '-'
     }
   }
 };

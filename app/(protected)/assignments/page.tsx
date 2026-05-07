@@ -177,9 +177,11 @@ export default function AssignmentsPage() {
   return (
     <div className="flex-1 space-y-6 p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Assignments</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('assignmentsPage.title')}
+        </h1>
         <p className="text-muted-foreground">
-          Manage course assignments and grade student submissions
+          {t('assignmentsPage.description')}
         </p>
       </div>
 
@@ -188,7 +190,7 @@ export default function AssignmentsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Assignments
+              {t('assignmentsPage.totalAssignments')}
             </CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -201,7 +203,7 @@ export default function AssignmentsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Pending Review
+              {t('assignmentsPage.pendingReview')}
             </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -209,12 +211,16 @@ export default function AssignmentsPage() {
             <div className="text-2xl font-bold">
               {submissions.filter((s) => s.status === 'SUBMITTED').length}
             </div>
-            <p className="text-xs text-muted-foreground">Awaiting grade</p>
+            <p className="text-xs text-muted-foreground">
+              {t('assignmentsPage.awaitingGrade')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Graded</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('assignmentsPage.graded')}
+            </CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -231,29 +237,29 @@ export default function AssignmentsPage() {
           className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'assignments' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
           onClick={() => setActiveTab('assignments')}
         >
-          Assignments
+          {t('assignmentsPage.assignmentsTab')}
         </button>
         <button
           className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'submissions' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
           onClick={() => setActiveTab('submissions')}
         >
-          Submissions
+          {t('assignmentsPage.submissionsTab')}
         </button>
       </div>
 
       {activeTab === 'assignments' && (
         <Card>
           <CardHeader>
-            <CardTitle>All Assignments</CardTitle>
+            <CardTitle>{t('assignmentsPage.allAssignments')}</CardTitle>
             <CardDescription>
-              Assignments created for lessons across your courses
+              {t('assignmentsPage.allAssignmentsDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="relative max-w-sm">
               <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search assignments..."
+                placeholder={t('assignmentsPage.searchAssignments')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="ps-8"
@@ -263,12 +269,12 @@ export default function AssignmentsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Assignment</TableHead>
-                    <TableHead>Lesson</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Max Score</TableHead>
-                    <TableHead>Submissions</TableHead>
-                    <TableHead>Required</TableHead>
+                    <TableHead>{t('assignmentsPage.assignment')}</TableHead>
+                    <TableHead>{t('assignmentsPage.lesson')}</TableHead>
+                    <TableHead>{t('assignmentsPage.dueDate')}</TableHead>
+                    <TableHead>{t('assignmentsPage.maxScore')}</TableHead>
+                    <TableHead>{t('assignmentsPage.submissions')}</TableHead>
+                    <TableHead>{t('assignmentsPage.required')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -284,7 +290,7 @@ export default function AssignmentsPage() {
                         colSpan={6}
                         className="h-32 text-center text-muted-foreground"
                       >
-                        No assignments found
+                        {t('assignmentsPage.noAssignmentsFound')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -299,12 +305,12 @@ export default function AssignmentsPage() {
                           )}
                         </TableCell>
                         <TableCell className="text-sm">
-                          {a.Lesson?.title ?? '—'}
+                          {a.Lesson?.title ?? t('assignmentsPage.notAvailable')}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {a.due_date
                             ? new Date(a.due_date).toLocaleDateString()
-                            : '—'}
+                            : t('assignmentsPage.notAvailable')}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">
@@ -323,7 +329,9 @@ export default function AssignmentsPage() {
                                 : 'bg-gray-100 text-gray-800'
                             }
                           >
-                            {a.is_required ? 'Required' : 'Optional'}
+                            {a.is_required
+                              ? t('common.required')
+                              : t('common.optional')}
                           </Badge>
                         </TableCell>
                       </TableRow>
@@ -350,9 +358,9 @@ export default function AssignmentsPage() {
       {activeTab === 'submissions' && (
         <Card>
           <CardHeader>
-            <CardTitle>Student Submissions</CardTitle>
+            <CardTitle>{t('assignmentsPage.studentSubmissions')}</CardTitle>
             <CardDescription>
-              Review and grade student assignment submissions
+              {t('assignmentsPage.studentSubmissionsDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -360,12 +368,12 @@ export default function AssignmentsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Student</TableHead>
-                    <TableHead>Assignment</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Score</TableHead>
-                    <TableHead>Submitted</TableHead>
-                    <TableHead>Action</TableHead>
+                    <TableHead>{t('assignmentsPage.student')}</TableHead>
+                    <TableHead>{t('assignmentsPage.assignment')}</TableHead>
+                    <TableHead>{t('assignmentsPage.status')}</TableHead>
+                    <TableHead>{t('assignmentsPage.score')}</TableHead>
+                    <TableHead>{t('assignmentsPage.submitted')}</TableHead>
+                    <TableHead>{t('assignmentsPage.action')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -381,17 +389,19 @@ export default function AssignmentsPage() {
                         colSpan={6}
                         className="h-32 text-center text-muted-foreground"
                       >
-                        No submissions yet
+                        {t('assignmentsPage.noSubmissionsYet')}
                       </TableCell>
                     </TableRow>
                   ) : (
                     submissions.map((sub) => (
                       <TableRow key={sub.id}>
                         <TableCell className="font-medium">
-                          {sub.Profile?.display_name ?? '—'}
+                          {sub.Profile?.display_name ??
+                            t('assignmentsPage.notAvailable')}
                         </TableCell>
                         <TableCell className="text-sm">
-                          {sub.Assignment?.title ?? '—'}
+                          {sub.Assignment?.title ??
+                            t('assignmentsPage.notAvailable')}
                         </TableCell>
                         <TableCell>
                           <Badge className={statusColor(sub.status)}>
@@ -401,12 +411,12 @@ export default function AssignmentsPage() {
                         <TableCell className="text-sm">
                           {sub.score != null
                             ? `${sub.score} / ${sub.Assignment?.max_score}`
-                            : '—'}
+                            : t('assignmentsPage.notAvailable')}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {sub.submitted_at
                             ? new Date(sub.submitted_at).toLocaleDateString()
-                            : '—'}
+                            : t('assignmentsPage.notAvailable')}
                         </TableCell>
                         <TableCell>
                           {sub.status === 'SUBMITTED' && (
@@ -415,7 +425,8 @@ export default function AssignmentsPage() {
                               variant="outline"
                               onClick={() => openGradeDialog(sub)}
                             >
-                              <PenLine className="me-1 h-3 w-3" /> Grade
+                              <PenLine className="me-1 h-3 w-3" />{' '}
+                              {t('assignmentsPage.grade')}
                             </Button>
                           )}
                           {sub.status === 'GRADED' && (
@@ -424,7 +435,7 @@ export default function AssignmentsPage() {
                               variant="ghost"
                               onClick={() => openGradeDialog(sub)}
                             >
-                              Edit Grade
+                              {t('assignmentsPage.editGrade')}
                             </Button>
                           )}
                         </TableCell>
@@ -456,12 +467,12 @@ export default function AssignmentsPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Grade Submission</DialogTitle>
+            <DialogTitle>{t('assignmentsPage.gradeSubmission')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {gradeDialog.submission?.content && (
               <div>
-                <Label>Student Answer</Label>
+                <Label>{t('assignmentsPage.studentAnswer')}</Label>
                 <div className="mt-1 rounded border bg-muted/50 p-3 text-sm">
                   {gradeDialog.submission.content}
                 </div>
@@ -469,21 +480,22 @@ export default function AssignmentsPage() {
             )}
             {gradeDialog.submission?.file_url && (
               <div>
-                <Label>Attached File</Label>
+                <Label>{t('assignmentsPage.attachedFile')}</Label>
                 <a
                   href={gradeDialog.submission.file_url}
                   target="_blank"
                   rel="noreferrer"
                   className="mt-1 block text-sm text-blue-600 underline"
                 >
-                  View file
+                  {t('assignmentsPage.viewFile')}
                 </a>
               </div>
             )}
             <div>
               <Label htmlFor="score">
-                Score (max:{' '}
-                {gradeDialog.submission?.Assignment?.max_score ?? 100})
+                {t('assignmentsPage.scoreMax', {
+                  max: gradeDialog.submission?.Assignment?.max_score ?? 100
+                })}
               </Label>
               <Input
                 id="score"
@@ -496,12 +508,14 @@ export default function AssignmentsPage() {
               />
             </div>
             <div>
-              <Label htmlFor="feedback">Feedback (optional)</Label>
+              <Label htmlFor="feedback">
+                {t('assignmentsPage.feedbackOptional')}
+              </Label>
               <Textarea
                 id="feedback"
                 value={gradeFeedback}
                 onChange={(e) => setGradeFeedback(e.target.value)}
-                placeholder="Provide feedback to the student..."
+                placeholder={t('assignmentsPage.feedbackPlaceholder')}
                 className="mt-1"
                 rows={3}
               />
@@ -512,10 +526,10 @@ export default function AssignmentsPage() {
               variant="outline"
               onClick={() => setGradeDialog({ open: false, submission: null })}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleGrade} disabled={isGrading || !gradeScore}>
-              {isGrading ? 'Saving...' : 'Save Grade'}
+              {isGrading ? t('common.saving') : t('assignmentsPage.saveGrade')}
             </Button>
           </DialogFooter>
         </DialogContent>

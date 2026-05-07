@@ -114,7 +114,7 @@ export default function PlatformFinancialPage() {
       setIranSettlement(settlementData);
     } catch (error: any) {
       console.error('Error loading financial data:', error);
-      toast.error(error?.message || 'Failed to load financial data');
+      toast.error(error?.message || t('financial.platform.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -334,14 +334,16 @@ export default function PlatformFinancialPage() {
       {iranSettlement?.totals && (
         <Card>
           <CardHeader>
-            <CardTitle>Iran Settlement Snapshot</CardTitle>
+            <CardTitle>{t('financial.platform.iranSettlementTitle')}</CardTitle>
             <CardDescription>
-              PayPing-only settlement totals for selected filter period
+              {t('financial.platform.iranSettlementDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <p className="text-xs text-muted-foreground">Gross</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.platform.gross')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   iranSettlement?.totals?.gross_amount || 0,
@@ -350,7 +352,9 @@ export default function PlatformFinancialPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Platform Fee</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.platform.platformFee')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   iranSettlement?.totals?.platform_fee || 0,
@@ -359,7 +363,9 @@ export default function PlatformFinancialPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">VAT</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.platform.vat')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   iranSettlement?.totals?.tax_vat_amount || 0,
@@ -368,7 +374,9 @@ export default function PlatformFinancialPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">School Net</p>
+              <p className="text-xs text-muted-foreground">
+                {t('financial.platform.schoolNet')}
+              </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
                   iranSettlement?.totals?.school_net_revenue || 0,
@@ -473,7 +481,9 @@ export default function PlatformFinancialPage() {
                                 {record.costCategory.name}
                               </Badge>
                             ) : (
-                              <span className="text-muted-foreground">-</span>
+                              <span className="text-muted-foreground">
+                                {t('common.none')}
+                              </span>
                             )}
                           </TableCell>
                           <TableCell className="text-end font-medium">
@@ -632,7 +642,9 @@ export default function PlatformFinancialPage() {
                                 {record.costCategory.name}
                               </Badge>
                             ) : (
-                              <span className="text-muted-foreground">-</span>
+                              <span className="text-muted-foreground">
+                                {t('common.none')}
+                              </span>
                             )}
                           </TableCell>
                           <TableCell className="text-end font-medium">

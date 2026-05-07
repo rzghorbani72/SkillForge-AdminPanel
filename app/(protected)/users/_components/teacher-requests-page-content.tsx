@@ -121,7 +121,7 @@ export function TeacherRequestsPageContent() {
       }
     } catch (error) {
       console.error('Error fetching teacher requests:', error);
-      toast.error(t('common.errorLoading'));
+      ErrorHandler.handleApiError(error);
       setRequests([]);
       setPagination(null);
     } finally {
@@ -148,10 +148,6 @@ export function TeacherRequestsPageContent() {
   ) => {
     try {
       await apiClient.reviewTeacherRequest(requestId, { status });
-      const statusText =
-        status === 'APPROVED'
-          ? t('teacherRequests.approved').toLowerCase()
-          : t('teacherRequests.rejected').toLowerCase();
       toast.success(t('common.success'));
       fetchRequests();
     } catch (error) {
@@ -205,7 +201,9 @@ export function TeacherRequestsPageContent() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {requests.map((request) => {
-            const statusVariant = STATUS_BADGE_VARIANTS[request.status];
+            const statusVariant =
+              STATUS_BADGE_VARIANTS[request.status] ||
+              STATUS_BADGE_VARIANTS.PENDING;
             const submittedAt = formatDistanceToNow(
               new Date(request.created_at),
               {
@@ -218,12 +216,14 @@ export function TeacherRequestsPageContent() {
                 <CardHeader className="flex-row items-start justify-between space-y-0">
                   <div>
                     <CardTitle className="text-base">
-                      {request.profile.user.name ||
-                        request.profile.display_name}
+                      {request.profile?.user?.name ||
+                        request.profile?.display_name ||
+                        t('common.unknownUser')}
                     </CardTitle>
                     <CardDescription>
                       {t('common.requested')} {submittedAt} •{' '}
-                      {t('common.store')}: {request.store.name}
+                      {t('common.store')}:{' '}
+                      {request.store?.name || t('common.noData')}
                     </CardDescription>
                   </div>
                   <Badge variant={statusVariant.variant}>
@@ -240,9 +240,11 @@ export function TeacherRequestsPageContent() {
                       <p className="text-xs uppercase text-muted-foreground">
                         {t('common.contact')}
                       </p>
-                      <p>{request.profile.user.email || t('common.noData')}</p>
                       <p>
-                        {request.profile.user.phone_number ||
+                        {request.profile?.user?.email || t('common.noData')}
+                      </p>
+                      <p>
+                        {request.profile?.user?.phone_number ||
                           t('common.noData')}
                       </p>
                     </div>
@@ -250,7 +252,7 @@ export function TeacherRequestsPageContent() {
                       <p className="text-xs uppercase text-muted-foreground">
                         {t('common.currentRole')}
                       </p>
-                      <p>{getRoleLabel(request.profile.role?.name, t)}</p>
+                      <p>{getRoleLabel(request.profile?.role?.name, t)}</p>
                     </div>
                     {request.reviewer && (
                       <div>
