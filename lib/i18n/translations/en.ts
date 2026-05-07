@@ -143,6 +143,7 @@ export const en = {
     'store-revenue': 'Revenue & Benefits',
     'store-costs': 'Costs',
     'store-payments': 'Payments',
+    'store-financial-payments': 'Store Financial Payments',
     'store-reports': 'Reports',
     'platform-financial': 'Platform Financial',
     'platform-financial-dashboard': 'Dashboard',
@@ -1778,7 +1779,11 @@ export const en = {
         course: 'Course',
         method: 'Method',
         status: 'Status',
-        amount: 'Amount'
+        amount: 'Amount',
+        formula: 'Formula',
+        vatRate: 'VAT',
+        takeRate: 'Take',
+        shareRate: 'Share'
       },
       reports: {
         title: 'Financial Reports',

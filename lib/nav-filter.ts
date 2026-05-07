@@ -14,7 +14,6 @@ const STORE_SPECIFIC_LABELS = [
   'documents',
   'students',
   'analytics',
-  'payments',
   'store-financial',
   'store-settings',
   'academy-pricing'

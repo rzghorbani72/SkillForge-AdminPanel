@@ -146,6 +146,7 @@ export const fa = {
     'store-revenue': 'درآمد و مزایا',
     'store-costs': 'هزینه‌ها',
     'store-payments': 'پرداخت‌ها',
+    'store-financial-payments': 'پرداخت‌های مالی آکادمی',
     'store-reports': 'گزارش‌ها',
     'platform-financial': 'مالی پلتفرم',
     'platform-financial-dashboard': 'داشبورد',
@@ -1678,7 +1679,11 @@ export const fa = {
         course: 'دوره',
         method: 'روش',
         status: 'وضعیت',
-        amount: 'مبلغ'
+        amount: 'مبلغ',
+        formula: 'فرمول',
+        vatRate: 'مالیات',
+        takeRate: 'سهم پلتفرم',
+        shareRate: 'سهم مدرس'
       },
       reports: {
         title: 'گزارش‌های مالی',

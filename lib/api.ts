@@ -3085,6 +3085,95 @@ class ApiClient {
     });
     return res.data;
   }
+
+  // -------------------------------------------------------------------------
+  // Platform Settings
+  // -------------------------------------------------------------------------
+
+  async getPlatformSettings() {
+    const res = await this.request<PlatformSettingsData>('/platform-settings');
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updatePlatformSettings(data: Partial<PlatformSettingsData>) {
+    const res = await this.request<PlatformSettingsData>('/platform-settings', {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async getSubscriptionPlans() {
+    const res = await this.request<SubscriptionPlanData[]>(
+      '/platform-settings/plans'
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async createSubscriptionPlan(
+    data: Omit<SubscriptionPlanData, 'id' | 'created_at' | 'updated_at'>
+  ) {
+    const res = await this.request<SubscriptionPlanData>(
+      '/platform-settings/plans',
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updateSubscriptionPlan(
+    id: number,
+    data: Partial<SubscriptionPlanData>
+  ) {
+    const res = await this.request<SubscriptionPlanData>(
+      `/platform-settings/plans/${id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      }
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async deleteSubscriptionPlan(id: number) {
+    const res = await this.request(`/platform-settings/plans/${id}`, {
+      method: 'DELETE'
+    });
+    return res.data;
+  }
+}
+
+export interface PlatformSettingsData {
+  id: number;
+  vat_rate: number;
+  commission_rate: number;
+  teacher_share_rate: number;
+  storage_overage_fee_irr: number;
+  subscription_grace_days: number;
+  subscription_reminder_days: number;
+  payment_release_phase: string;
+  legal_entity_name: string | null;
+  vat_registration_no: string | null;
+  economic_code: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SubscriptionPlanData {
+  id: number;
+  name: string;
+  slug: string;
+  price_monthly: number;
+  price_yearly: number | null;
+  commission_rate: number | null;
+  storage_limit_gb: number;
+  features: string[] | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

@@ -154,8 +154,18 @@ export default function PlatformFinancialPage() {
     settlementTotals?.platform_total_fee ??
     settlementTotals?.fee ??
     0;
+  const settlementPlatformCommissionRate =
+    settlementTotals?.platform_commission_rate ??
+    iranSettlement?.platform_commission_rate ??
+    summary?.platform_commission_rate ??
+    0.05;
   const settlementVat =
     settlementTotals?.tax_vat_amount ?? settlementTotals?.vat_amount ?? 0;
+  const settlementVatRate =
+    settlementTotals?.vat_rate ??
+    iranSettlement?.vat_rate ??
+    summary?.vat_rate ??
+    0.09;
   const settlementSchoolNet =
     settlementTotals?.school_net_revenue ?? settlementTotals?.school_net ?? 0;
 
@@ -366,7 +376,8 @@ export default function PlatformFinancialPage() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">
-                {t('financial.platform.platformFee')}
+                {t('financial.platform.platformFee')} (
+                {(settlementPlatformCommissionRate * 100).toFixed(0)}%)
               </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(settlementPlatformFee, settlementCurrency)}
@@ -374,7 +385,8 @@ export default function PlatformFinancialPage() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">
-                {t('financial.platform.vat')}
+                {t('financial.platform.vat')} (
+                {(settlementVatRate * 100).toFixed(0)}%)
               </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(settlementVat, settlementCurrency)}

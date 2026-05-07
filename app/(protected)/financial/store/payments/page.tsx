@@ -132,6 +132,9 @@ export default function StorePaymentsPage() {
     return { completed, pending, failed, totalAmount };
   }, [payments]);
 
+  const settlementVatRate =
+    statement?.totals?.vat_rate ?? statement?.vat_rate ?? 0.09;
+
   const paymentsByMethod = useMemo(() => {
     const grouped: Record<
       string,
@@ -424,7 +427,8 @@ export default function StorePaymentsPage() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.vatIran')}
+                {t('financial.store.payments.vatIran')} (
+                {(settlementVatRate * 100).toFixed(0)}%)
               </p>
               <p className="text-lg font-semibold">
                 {formatCurrency(
@@ -571,6 +575,7 @@ export default function StorePaymentsPage() {
                 <TableHead>{t('financial.store.payments.course')}</TableHead>
                 <TableHead>{t('financial.store.payments.method')}</TableHead>
                 <TableHead>{t('financial.store.payments.status')}</TableHead>
+                <TableHead>{t('financial.store.payments.formula')}</TableHead>
                 <TableHead className="text-end">
                   {t('financial.store.payments.vat')}
                 </TableHead>
@@ -592,7 +597,7 @@ export default function StorePaymentsPage() {
               {payments.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={10}
+                    colSpan={11}
                     className="text-center text-muted-foreground"
                   >
                     {t('financial.store.payments.noPayments')}
@@ -634,6 +639,35 @@ export default function StorePaymentsPage() {
                       >
                         {payment.status || t('common.none')}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-xs text-muted-foreground">
+                        <div>
+                          {t('financial.store.payments.vatRate')}{' '}
+                          {(
+                            Number(payment.formula_factors?.vat_rate || 0.09) *
+                            100
+                          ).toFixed(0)}
+                          %
+                        </div>
+                        <div>
+                          {t('financial.store.payments.takeRate')}{' '}
+                          {(
+                            Number(payment.formula_factors?.take_rate || 0) *
+                            100
+                          ).toFixed(1)}
+                          %
+                        </div>
+                        <div>
+                          {t('financial.store.payments.shareRate')}{' '}
+                          {(
+                            Number(
+                              payment.formula_factors?.teacher_share_rate || 0
+                            ) * 100
+                          ).toFixed(0)}
+                          %
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell className="text-end">
                       {formatCurrency(

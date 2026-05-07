@@ -260,6 +260,13 @@ export const navItems: NavItem[] = [
         label: 'invoices'
       },
       {
+        title: 'Store Financial Payments',
+        href: '/financial/store/payments',
+        icon: 'dollarSign' as IconType,
+        label: 'store-financial-payments',
+        roles: ['ADMIN', 'MANAGER']
+      },
+      {
         title: 'Vouchers',
         href: '/vouchers',
         icon: 'tag' as IconType,

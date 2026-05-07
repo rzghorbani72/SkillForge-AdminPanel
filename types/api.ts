@@ -883,10 +883,14 @@ export interface FinancialSummary {
   total_profit: number;
   record_count: number;
   currency: string;
+  vat_rate?: number;
+  platform_commission_rate?: number;
 }
 
 export interface PlatformFinancialSummary {
   platform: FinancialSummary;
   stores: FinancialSummary;
   total: FinancialSummary;
+  vat_rate?: number;
+  platform_commission_rate?: number;
 }
