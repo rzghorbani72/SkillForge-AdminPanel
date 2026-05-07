@@ -20,11 +20,7 @@ export default async function UserLayout({
   }
   return (
     <div className="flex">
-      <Sidebar />
-      <main className="w-full flex-1 overflow-hidden">
-        <Header />
-        {children}
-      </main>
+      <main className="w-full flex-1 overflow-hidden">{children}</main>
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { UserFilters } from '@/components/users/UserFilters';
 import { User, UserStatus } from '@/types/api';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { ChangeUserRoleDialog } from './change-user-role-dialog';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type UserCategory = 'all' | 'students' | 'teachers' | 'managers';
 
@@ -27,11 +28,11 @@ interface PaginationInfo {
   hasPreviousPage: boolean;
 }
 
-const CATEGORY_CONFIG: Record<
+const CATEGORY_KEY_CONFIG: Record<
   UserCategory,
   {
-    title: string;
-    description: string;
+    titleKey: string;
+    descriptionKey: string;
     defaultRole: 'all' | 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
     roleLocked: boolean;
     fetcher: (params: {
@@ -44,8 +45,8 @@ const CATEGORY_CONFIG: Record<
   }
 > = {
   all: {
-    title: 'Users',
-    description: 'Manage users with role-based access control',
+    titleKey: 'users.allUsers',
+    descriptionKey: 'users.manageAllUsersDescription',
     defaultRole: 'all',
     roleLocked: false,
     fetcher: (params) =>
@@ -58,8 +59,8 @@ const CATEGORY_CONFIG: Record<
       })
   },
   students: {
-    title: 'Students',
-    description: 'Browse all student accounts across your stores',
+    titleKey: 'users.students',
+    descriptionKey: 'users.studentsDescription',
     defaultRole: 'STUDENT',
     roleLocked: true,
     fetcher: (params) =>
@@ -72,8 +73,8 @@ const CATEGORY_CONFIG: Record<
       })
   },
   teachers: {
-    title: 'Teachers',
-    description: 'Manage teachers and their profiles',
+    titleKey: 'users.teachers',
+    descriptionKey: 'users.teachersDescription',
     defaultRole: 'TEACHER',
     roleLocked: true,
     fetcher: (params) =>
@@ -86,8 +87,8 @@ const CATEGORY_CONFIG: Record<
       })
   },
   managers: {
-    title: 'Managers',
-    description: 'Review manager accounts and permissions',
+    titleKey: 'users.managers',
+    descriptionKey: 'users.managersDescription',
     defaultRole: 'MANAGER',
     roleLocked: true,
     fetcher: (params) =>
@@ -106,9 +107,10 @@ interface UsersPageContentProps {
 }
 
 export function UsersPageContent({ category }: UsersPageContentProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryConfig = CATEGORY_CONFIG[category];
+  const categoryConfig = CATEGORY_KEY_CONFIG[category];
   const { user: authUser } = useAuthUser();
   const [roleChangeDialog, setRoleChangeDialog] = useState<{
     open: boolean;
@@ -192,7 +194,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
       }
     } catch (error) {
       console.error('Error fetching users:', error);
-      toast.error('Failed to fetch users');
+      toast.error(t('error.failedToLoad'));
       setUsers([]);
       setPagination(null);
     } finally {
@@ -285,7 +287,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
 
   const handleRefresh = () => {
     fetchUsers();
-    toast.success('Users list refreshed');
+    toast.success(t('success.refreshed'));
   };
 
   const handleViewUser = (user: User) => {
@@ -305,11 +307,18 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   const handleExport = () => {
     // Export users data as CSV
     if (users.length === 0) {
-      toast.error('No users to export');
+      toast.error(t('error.noDataToExport'));
       return;
     }
 
-    const csvHeaders = ['ID', 'Name', 'Email', 'Phone', 'Status', 'Created At'];
+    const csvHeaders = [
+      t('users.id'),
+      t('common.name'),
+      t('common.email'),
+      t('common.phone'),
+      t('common.status'),
+      t('users.createdAt')
+    ];
     const csvRows = users.map((user) => [
       user.id,
       user.name,
@@ -336,31 +345,31 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success('Users exported successfully');
+    toast.success(t('success.exported'));
   };
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading users..." />;
+    return <LoadingSpinner message={t('users.loadingUsersData')} />;
   }
 
   return (
     <div className="flex-1 space-y-6 p-6">
       <PageHeader
-        title={categoryConfig.title}
-        description={categoryConfig.description}
+        title={t(categoryConfig.titleKey)}
+        description={t(categoryConfig.descriptionKey)}
       >
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleRefresh}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            {t('common.refresh')}
           </Button>
           <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" />
-            Export
+            {t('payments.exportCsv')}
           </Button>
           <Button size="sm">
             <Plus className="mr-2 h-4 w-4" />
-            Add User
+            {t('users.addUser')}
           </Button>
         </div>
       </PageHeader>
@@ -380,13 +389,13 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
           <div className="col-span-full">
             <EmptyState
               icon={<Users className="h-12 w-12" />}
-              title="No users found"
+              title={t('users.noUsersFound')}
               description={
                 searchTerm ||
                 selectedStatus !== 'all' ||
                 (!categoryConfig.roleLocked && selectedRole !== 'all')
-                  ? 'Try adjusting your filters.'
-                  : 'Get started by adding a new user.'
+                  ? t('common.tryAdjustingFilters')
+                  : t('users.getStartedByAddingUser')
               }
             />
           </div>

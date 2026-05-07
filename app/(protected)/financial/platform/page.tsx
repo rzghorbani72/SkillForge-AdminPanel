@@ -143,6 +143,22 @@ export default function PlatformFinancialPage() {
     return ((revenue - cost) / revenue) * 100;
   };
 
+  const settlementTotals =
+    iranSettlement?.totals || iranSettlement?.data?.totals || null;
+  const settlementCurrency =
+    settlementTotals?.currency || iranSettlement?.currency || 'IRR';
+  const settlementGross =
+    settlementTotals?.gross_amount ?? settlementTotals?.gross ?? 0;
+  const settlementPlatformFee =
+    settlementTotals?.platform_fee ??
+    settlementTotals?.platform_total_fee ??
+    settlementTotals?.fee ??
+    0;
+  const settlementVat =
+    settlementTotals?.tax_vat_amount ?? settlementTotals?.vat_amount ?? 0;
+  const settlementSchoolNet =
+    settlementTotals?.school_net_revenue ?? settlementTotals?.school_net ?? 0;
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -331,7 +347,7 @@ export default function PlatformFinancialPage() {
         </div>
       )}
 
-      {iranSettlement?.totals && (
+      {settlementTotals && (
         <Card>
           <CardHeader>
             <CardTitle>{t('financial.platform.iranSettlementTitle')}</CardTitle>
@@ -345,10 +361,7 @@ export default function PlatformFinancialPage() {
                 {t('financial.platform.gross')}
               </p>
               <p className="text-lg font-semibold">
-                {formatCurrency(
-                  iranSettlement?.totals?.gross_amount || 0,
-                  iranSettlement?.totals?.currency || 'IRR'
-                )}
+                {formatCurrency(settlementGross, settlementCurrency)}
               </p>
             </div>
             <div>
@@ -356,10 +369,7 @@ export default function PlatformFinancialPage() {
                 {t('financial.platform.platformFee')}
               </p>
               <p className="text-lg font-semibold">
-                {formatCurrency(
-                  iranSettlement?.totals?.platform_fee || 0,
-                  iranSettlement?.totals?.currency || 'IRR'
-                )}
+                {formatCurrency(settlementPlatformFee, settlementCurrency)}
               </p>
             </div>
             <div>
@@ -367,10 +377,7 @@ export default function PlatformFinancialPage() {
                 {t('financial.platform.vat')}
               </p>
               <p className="text-lg font-semibold">
-                {formatCurrency(
-                  iranSettlement?.totals?.tax_vat_amount || 0,
-                  iranSettlement?.totals?.currency || 'IRR'
-                )}
+                {formatCurrency(settlementVat, settlementCurrency)}
               </p>
             </div>
             <div>
@@ -378,10 +385,7 @@ export default function PlatformFinancialPage() {
                 {t('financial.platform.schoolNet')}
               </p>
               <p className="text-lg font-semibold">
-                {formatCurrency(
-                  iranSettlement?.totals?.school_net_revenue || 0,
-                  iranSettlement?.totals?.currency || 'IRR'
-                )}
+                {formatCurrency(settlementSchoolNet, settlementCurrency)}
               </p>
             </div>
           </CardContent>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { User } from '@/types/api';
@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getRoleColor, getStatusColor } from '@/components/shared/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   ArrowLeft,
   Edit,
@@ -36,14 +37,22 @@ import {
 } from 'lucide-react';
 
 export default function UserDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const userId = params.id as string;
 
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const lastFetchedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (!userId || lastFetchedUserIdRef.current === userId) {
+      return;
+    }
+
+    lastFetchedUserIdRef.current = userId;
+
     const fetchUser = async () => {
       try {
         setIsLoading(true);
@@ -54,22 +63,20 @@ export default function UserDetailPage() {
           const userData = (response as any)?.data || response;
           setUser(userData);
         } else {
-          toast.error('User not found');
+          toast.error(t('userDetails.userNotFound'));
           router.push('/users');
         }
       } catch (error) {
         console.error('Error fetching user:', error);
-        toast.error('Failed to load user details');
+        toast.error(t('userDetails.failedToLoadUserDetails'));
         router.push('/users');
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (userId) {
-      fetchUser();
-    }
-  }, [userId, router]);
+    fetchUser();
+  }, [userId, router, t]);
 
   const getInitials = (name: string) => {
     return name
@@ -81,19 +88,21 @@ export default function UserDetailPage() {
   };
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading user details..." />;
+    return <LoadingSpinner message={t('userDetails.loadingUserDetails')} />;
   }
 
   if (!user) {
     return (
       <div className="flex-1 p-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">User not found</h2>
+          <h2 className="text-2xl font-bold">
+            {t('userDetails.userNotFound')}
+          </h2>
           <p className="mt-2 text-muted-foreground">
-            The user you&apos;re looking for doesn&apos;t exist.
+            {t('userDetails.userNotFoundDescription')}
           </p>
           <Button className="mt-4" onClick={() => router.push('/users')}>
-            Back to Users
+            {t('userDetails.backToUsers')}
           </Button>
         </div>
       </div>
@@ -108,17 +117,17 @@ export default function UserDetailPage() {
   return (
     <div className="flex-1 space-y-6 p-6">
       <PageHeader
-        title="User Details"
-        description="View and manage user information"
+        title={t('userDetails.title')}
+        description={t('userDetails.description')}
       >
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
+            {t('common.back')}
           </Button>
           <Button onClick={() => router.push(`/user/${userId}/edit`)}>
             <Edit className="mr-2 h-4 w-4" />
-            Edit User
+            {t('userDetails.editUser')}
           </Button>
         </div>
       </PageHeader>
@@ -155,11 +164,13 @@ export default function UserDetailPage() {
                     <p className="text-sm">{user.email}</p>
                     {user.email_confirmed ? (
                       <span className="flex items-center gap-1 text-xs text-green-600">
-                        <CheckCircle2 className="h-3 w-3" /> Verified
+                        <CheckCircle2 className="h-3 w-3" />{' '}
+                        {t('userDetails.verified')}
                       </span>
                     ) : (
                       <span className="flex items-center gap-1 text-xs text-amber-600">
-                        <XCircle className="h-3 w-3" /> Not verified
+                        <XCircle className="h-3 w-3" />{' '}
+                        {t('userDetails.notVerified')}
                       </span>
                     )}
                   </div>
@@ -172,11 +183,13 @@ export default function UserDetailPage() {
                   <p className="text-sm">{user.phone_number}</p>
                   {user.phone_confirmed ? (
                     <span className="flex items-center gap-1 text-xs text-green-600">
-                      <CheckCircle2 className="h-3 w-3" /> Verified
+                      <CheckCircle2 className="h-3 w-3" />{' '}
+                      {t('userDetails.verified')}
                     </span>
                   ) : (
                     <span className="flex items-center gap-1 text-xs text-amber-600">
-                      <XCircle className="h-3 w-3" /> Not verified
+                      <XCircle className="h-3 w-3" />{' '}
+                      {t('userDetails.notVerified')}
                     </span>
                   )}
                 </div>
@@ -186,7 +199,8 @@ export default function UserDetailPage() {
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <div className="flex-1">
                   <p className="text-sm">
-                    Joined {new Date(user.created_at).toLocaleDateString()}
+                    {t('userDetails.joined')}{' '}
+                    {new Date(user.created_at).toLocaleDateString()}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(user.created_at).toLocaleTimeString()}
@@ -199,7 +213,8 @@ export default function UserDetailPage() {
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <div className="flex-1">
                     <p className="text-sm">
-                      Birthday: {new Date(user.birthday).toLocaleDateString()}
+                      {t('userDetails.birthday')}:{' '}
+                      {new Date(user.birthday).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -211,9 +226,9 @@ export default function UserDetailPage() {
         {/* User Details Tabs */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>User Information</CardTitle>
+            <CardTitle>{t('userDetails.userInformation')}</CardTitle>
             <CardDescription>
-              Detailed information about this user
+              {t('userDetails.userInformationDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -221,15 +236,15 @@ export default function UserDetailPage() {
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="profiles">
                   <Shield className="mr-2 h-4 w-4" />
-                  Profiles
+                  {t('userDetails.profiles')}
                 </TabsTrigger>
                 <TabsTrigger value="activity">
                   <Activity className="mr-2 h-4 w-4" />
-                  Activity
+                  {t('userDetails.activity')}
                 </TabsTrigger>
                 <TabsTrigger value="settings">
                   <UserIcon className="mr-2 h-4 w-4" />
-                  Settings
+                  {t('userDetails.settings')}
                 </TabsTrigger>
               </TabsList>
 
@@ -237,9 +252,11 @@ export default function UserDetailPage() {
                 {profiles.length === 0 ? (
                   <div className="py-8 text-center">
                     <Shield className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-medium">No profiles</h3>
+                    <h3 className="mt-4 text-lg font-medium">
+                      {t('userDetails.noProfiles')}
+                    </h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      This user doesn&apos;t have any profiles yet.
+                      {t('userDetails.noProfilesDescription')}
                     </p>
                   </div>
                 ) : (
@@ -288,7 +305,9 @@ export default function UserDetailPage() {
                                 profile.is_active ? 'default' : 'secondary'
                               }
                             >
-                              {profile.is_active ? 'Active' : 'Inactive'}
+                              {profile.is_active
+                                ? t('common.active')
+                                : t('common.inactive')}
                             </Badge>
                           </div>
                         </CardContent>
@@ -301,9 +320,11 @@ export default function UserDetailPage() {
               <TabsContent value="activity" className="mt-4">
                 <div className="py-8 text-center">
                   <Activity className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-4 text-lg font-medium">Activity Log</h3>
+                  <h3 className="mt-4 text-lg font-medium">
+                    {t('userDetails.activityLog')}
+                  </h3>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    User activity will be shown here.
+                    {t('userDetails.activityLogDescription')}
                   </p>
                 </div>
               </TabsContent>
@@ -311,36 +332,44 @@ export default function UserDetailPage() {
               <TabsContent value="settings" className="mt-4">
                 <div className="space-y-4">
                   <div className="rounded-lg border p-4">
-                    <h4 className="font-medium">Account Status</h4>
+                    <h4 className="font-medium">
+                      {t('userDetails.accountStatus')}
+                    </h4>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Current status: {userStatus}
+                      {t('userDetails.currentStatus')}: {userStatus}
                     </p>
                     <div className="mt-3 flex gap-2">
                       <Button variant="outline" size="sm">
-                        Suspend User
+                        {t('userDetails.suspendUser')}
                       </Button>
                       <Button variant="destructive" size="sm">
-                        Ban User
+                        {t('userDetails.banUser')}
                       </Button>
                     </div>
                   </div>
 
                   <div className="rounded-lg border p-4">
-                    <h4 className="font-medium">Account Information</h4>
+                    <h4 className="font-medium">
+                      {t('userDetails.accountInformation')}
+                    </h4>
                     <div className="mt-2 space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">User ID</span>
+                        <span className="text-muted-foreground">
+                          {t('userDetails.userId')}
+                        </span>
                         <span className="font-mono">{user.id}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Created</span>
+                        <span className="text-muted-foreground">
+                          {t('userDetails.created')}
+                        </span>
                         <span>
                           {new Date(user.created_at).toLocaleString()}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          Last Updated
+                          {t('userDetails.lastUpdated')}
                         </span>
                         <span>
                           {new Date(user.updated_at).toLocaleString()}

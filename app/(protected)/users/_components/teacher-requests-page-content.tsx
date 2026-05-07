@@ -127,7 +127,7 @@ export function TeacherRequestsPageContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, pageSize, selectedStatus, t]);
+  }, [currentPage, pageSize, selectedStatus]);
 
   useEffect(() => {
     fetchRequests();

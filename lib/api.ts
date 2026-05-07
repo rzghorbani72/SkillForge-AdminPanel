@@ -2485,6 +2485,13 @@ class ApiClient {
     }
     const url = `/financial/settlement${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return (response.data as any).data;
+    }
     return response.data as any;
   }
 

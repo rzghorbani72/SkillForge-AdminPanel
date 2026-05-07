@@ -138,21 +138,21 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Students',
-        href: '/users?role=STUDENT',
+        href: '/users/students',
         icon: 'user' as IconType,
         label: 'students',
         roles: ['MANAGER'] // Managers can see students
       },
       {
         title: 'Teachers',
-        href: '/users?role=TEACHER',
+        href: '/users/teachers',
         icon: 'graduationCap' as IconType,
         label: 'teachers',
         roles: ['MANAGER'] // Managers can see teachers
       },
       {
         title: 'Managers',
-        href: '/users?role=MANAGER',
+        href: '/users/managers',
         icon: 'shield' as IconType,
         label: 'managers',
         roles: ['ADMIN'] // Only admins can see managers list
