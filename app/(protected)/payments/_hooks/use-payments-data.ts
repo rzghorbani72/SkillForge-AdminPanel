@@ -35,8 +35,8 @@ export function usePaymentsData(): PaymentsSnapshot {
 
         const [paymentsResponse, transactionsResponse, monetizationResponse] =
           await Promise.allSettled([
-            apiClient.getPayments(),
-            apiClient.getTransactions(),
+            apiClient.getPayments({ page: 1, limit: 20 }),
+            apiClient.getTransactionTracking({ page: 1, limit: 20 }),
             apiClient.getMonetizationSummary()
           ]);
 
@@ -63,13 +63,17 @@ export function usePaymentsData(): PaymentsSnapshot {
           const payload = transactionsResponse.value as any;
           const list = Array.isArray(payload)
             ? (payload as Transaction[])
-            : Array.isArray(payload?.transactions)
-              ? (payload.transactions as Transaction[])
-              : Array.isArray(payload?.data?.transactions)
-                ? (payload.data.transactions as Transaction[])
-                : Array.isArray(payload?.data)
-                  ? (payload.data as Transaction[])
-                  : [];
+            : Array.isArray(payload?.records)
+              ? (payload.records as Transaction[])
+              : Array.isArray(payload?.data?.records)
+                ? (payload.data.records as Transaction[])
+                : Array.isArray(payload?.transactions)
+                  ? (payload.transactions as Transaction[])
+                  : Array.isArray(payload?.data?.transactions)
+                    ? (payload.data.transactions as Transaction[])
+                    : Array.isArray(payload?.data)
+                      ? (payload.data as Transaction[])
+                      : [];
           setTransactions(list);
         } else {
           console.error(

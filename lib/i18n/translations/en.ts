@@ -1805,7 +1805,8 @@ export const en = {
         formula: 'Formula',
         vatRate: 'VAT',
         takeRate: 'Take',
-        shareRate: 'Share'
+        shareRate: 'Share',
+        payments: 'payments'
       },
       reports: {
         title: 'Financial Reports',

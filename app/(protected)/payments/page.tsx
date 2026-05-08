@@ -23,6 +23,23 @@ import { usePaymentsData } from './_hooks/use-payments-data';
 import { cn, formatCurrencyWithStore } from '@/lib/utils';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { Pagination } from '@/components/shared/Pagination';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle
+} from '@/components/ui/sheet';
+import { apiClient } from '@/lib/api';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 
 const STATUS_BADGES: Record<string, string> = {
   PAID: 'bg-green-100 text-green-800',
@@ -37,22 +54,15 @@ function formatDate(value?: string | null): string {
   return new Date(value).toLocaleDateString();
 }
 
-function parseNotes(notes?: string | null): Record<string, unknown> | null {
-  if (!notes) return null;
-  try {
-    const parsed = JSON.parse(notes);
-    return typeof parsed === 'object' && parsed !== null ? parsed : null;
-  } catch {
-    return null;
-  }
-}
-
 export default function PaymentsPage() {
   const { t, language } = useTranslation();
   const { payments, transactions, monetizationSummary, isLoading, refresh } =
     usePaymentsData();
   const currentAcademy = useCurrentAcademy();
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+  const [selectedPayment, setSelectedPayment] = useState<any>(null);
 
   const filteredPayments = useMemo(() => {
     if (!searchTerm) return payments;
@@ -86,6 +96,16 @@ export default function PaymentsPage() {
       );
     });
   }, [payments, searchTerm]);
+
+  const paginatedPayments = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredPayments.slice(start, start + itemsPerPage);
+  }, [filteredPayments, currentPage]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredPayments.length / itemsPerPage)
+  );
 
   const totals = useMemo(() => {
     const revenue = payments.reduce(
@@ -246,7 +266,10 @@ export default function PaymentsPage() {
             <Search className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
+              onChange={(event) => {
+                setSearchTerm(event.target.value);
+                setCurrentPage(1);
+              }}
               placeholder={t('payments.searchPaymentsPlaceholder')}
               className="ps-9"
             />
@@ -279,87 +302,129 @@ export default function PaymentsPage() {
               </p>
             </div>
           ) : (
-            filteredPayments.slice(0, 20).map((payment) => (
-              <div
-                key={payment.id}
-                className="flex flex-col gap-3 rounded-lg border p-4 md:flex-row md:items-center md:justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                    <CreditCard className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>UUID</TableHead>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Course</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Gateway Ref</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedPayments.map((payment) => (
+                  <TableRow
+                    key={payment.id}
+                    className="cursor-pointer"
+                    onClick={async () => {
+                      try {
+                        const detail =
+                          await apiClient.getTransactionTrackingById(
+                            payment.id
+                          );
+                        setSelectedPayment(detail?.data || detail);
+                      } catch {
+                        setSelectedPayment(payment);
+                      }
+                    }}
+                  >
+                    <TableCell>{payment.id}</TableCell>
+                    <TableCell className="max-w-[180px] truncate">
+                      {(payment as any).uuid || '-'}
+                    </TableCell>
+                    <TableCell>
                       {payment.user?.display_name ??
                         payment.Profile?.display_name ??
                         t('payments.unknownStudent')}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
+                    </TableCell>
+                    <TableCell>
                       {payment.course?.title ??
                         payment.Course?.title ??
                         t('payments.unknownCourse')}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {payment.Course?.Academy?.name ??
-                        payment.course?.academy?.name ??
-                        '—'}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="text-end text-sm">
-                    <p className="font-semibold">
+                    </TableCell>
+                    <TableCell>
                       {formatCurrencyWithStore(
                         payment.amount ?? 0,
                         currentAcademy
                       )}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        className={cn(
+                          'capitalize',
+                          STATUS_BADGES[payment.status] ??
+                            'bg-slate-100 text-slate-700'
+                        )}
+                      >
+                        {payment.status?.toLowerCase() ?? 'unknown'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {(payment.gateway_id || payment.authority || '-') as any}
+                    </TableCell>
+                    <TableCell>
                       {formatDate(
                         payment.paid_at ??
                           payment.payment_date ??
                           payment.created_at
                       )}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {(payment.gateway ?? payment.provider ?? '—').toString()}{' '}
-                      /{' '}
-                      {(
-                        payment.payment_method ??
-                        payment.method ??
-                        '—'
-                      ).toString()}
-                    </p>
-                    {parseNotes(payment.notes) ? (
-                      <p className="text-xs text-muted-foreground">
-                        Fee:{' '}
-                        {formatCurrencyWithStore(
-                          payment.platform_fee ?? 0,
-                          currentAcademy
-                        )}{' '}
-                        | Instructor:{' '}
-                        {formatCurrencyWithStore(
-                          payment.instructor_fee ?? 0,
-                          currentAcademy
-                        )}
-                      </p>
-                    ) : null}
-                  </div>
-                  <Badge
-                    className={cn(
-                      'capitalize',
-                      STATUS_BADGES[payment.status] ??
-                        'bg-slate-100 text-slate-700'
-                    )}
-                  >
-                    {payment.status?.toLowerCase() ?? 'unknown'}
-                  </Badge>
-                </div>
-              </div>
-            ))
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
+
+      {filteredPayments.length > itemsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          hasNextPage={currentPage < totalPages}
+          hasPreviousPage={currentPage > 1}
+          totalItems={filteredPayments.length}
+          itemsPerPage={itemsPerPage}
+        />
+      )}
+
+      <Sheet
+        open={!!selectedPayment}
+        onOpenChange={(open) => {
+          if (!open) setSelectedPayment(null);
+        }}
+      >
+        <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+          <SheetHeader>
+            <SheetTitle>Transaction #{selectedPayment?.id}</SheetTitle>
+            <SheetDescription>
+              Payment and transaction tracking details
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-2 py-4 text-sm">
+            <div>UUID: {selectedPayment?.uuid || '-'}</div>
+            <div>Status: {selectedPayment?.status}</div>
+            <div>Gateway Ref: {selectedPayment?.gateway_id || '-'}</div>
+            <div>Authority: {selectedPayment?.authority || '-'}</div>
+            <div>
+              Platform Commission:{' '}
+              {selectedPayment?.financials?.platform_commission ??
+                selectedPayment?.platform_fee ??
+                0}
+            </div>
+            <div>VAT: {selectedPayment?.financials?.vat_amount ?? 0}</div>
+            <div>
+              Academy Revenue:{' '}
+              {selectedPayment?.financials?.academy_revenue ?? 0}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <Card>
         <CardHeader>

@@ -1595,6 +1595,8 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
+    id?: number;
+    uuid?: string;
     academy_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
@@ -1603,6 +1605,9 @@ class ApiClient {
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
+    if (params?.id !== undefined)
+      queryParams.append('id', params.id.toString());
+    if (params?.uuid) queryParams.append('uuid', params.uuid);
     if (params?.academy_id)
       queryParams.append('academy_id', params.academy_id.toString());
     if (params?.status) queryParams.append('status', params.status);
@@ -1641,6 +1646,8 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
+    id?: number;
+    uuid?: string;
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
     academy_id?: number;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
@@ -1653,6 +1660,9 @@ class ApiClient {
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
+    if (params?.id !== undefined)
+      queryParams.append('id', params.id.toString());
+    if (params?.uuid) queryParams.append('uuid', params.uuid);
     if (params?.role) queryParams.append('role', params.role);
     if (params?.academy_id)
       queryParams.append('academy_id', params.academy_id.toString());
@@ -1800,6 +1810,11 @@ class ApiClient {
     return response;
   }
 
+  async getUserDetails(id: number) {
+    const response = await this.request(`/users/${id}/details`);
+    return response.data as any;
+  }
+
   async updateUser(id: number, userData: unknown) {
     return this.request(`/users/${id}`, {
       method: 'PATCH',
@@ -1846,6 +1861,42 @@ class ApiClient {
     const response = await this.request(`/users/${id}/role`, {
       method: 'PATCH',
       body: JSON.stringify({ role })
+    });
+    return response.data as any;
+  }
+
+  async resetUserPassword(id: number, newPassword: string) {
+    const response = await this.request(`/users/${id}/reset-password`, {
+      method: 'POST',
+      body: JSON.stringify({ new_password: newPassword })
+    });
+    return response.data as any;
+  }
+
+  async grantCourseAccess(
+    id: number,
+    payload: { course_id: number; note?: string }
+  ) {
+    const response = await this.request(`/users/${id}/grant-course`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return response.data as any;
+  }
+
+  async assignVoucher(
+    id: number,
+    payload: {
+      code_prefix: string;
+      discount_type: 'PERCENT' | 'FIXED';
+      discount_value: number;
+      expires_at?: string;
+      max_discount_amount?: number;
+    }
+  ) {
+    const response = await this.request(`/users/${id}/assign-voucher`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
     });
     return response.data as any;
   }
@@ -1967,9 +2018,55 @@ class ApiClient {
     return null as any;
   }
 
-  async getPayments() {
-    const response = await this.request('/payments');
+  async getPayments(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    uuid?: string;
+    transaction_ref?: string;
+    status?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', String(params.page));
+    if (params?.limit) queryParams.append('limit', String(params.limit));
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.uuid) queryParams.append('uuid', params.uuid);
+    if (params?.transaction_ref) {
+      queryParams.append('transaction_ref', params.transaction_ref);
+    }
+    if (params?.status) queryParams.append('status', params.status);
+    const query = queryParams.toString();
+    const response = await this.request(`/payments${query ? `?${query}` : ''}`);
     return response.data || [];
+  }
+
+  async getTransactionTracking(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    uuid?: string;
+    transaction_ref?: string;
+    status?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', String(params.page));
+    if (params?.limit) queryParams.append('limit', String(params.limit));
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.uuid) queryParams.append('uuid', params.uuid);
+    if (params?.transaction_ref) {
+      queryParams.append('transaction_ref', params.transaction_ref);
+    }
+    if (params?.status) queryParams.append('status', params.status);
+    const query = queryParams.toString();
+    const response = await this.request(
+      `/payments/transactions${query ? `?${query}` : ''}`
+    );
+    return response.data || [];
+  }
+
+  async getTransactionTrackingById(id: number) {
+    const response = await this.request(`/payments/transactions/${id}`);
+    return response.data || null;
   }
   async getCurrentUser(): Promise<UserType | null> {
     const response = await this.request('/auth/me');
@@ -2492,6 +2589,51 @@ class ApiClient {
     ) {
       return (response.data as any).data;
     }
+    return response.data as any;
+  }
+
+  async getAcademySettlementTable(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    uuid?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', String(params.page));
+    if (params?.limit) queryParams.append('limit', String(params.limit));
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.uuid) queryParams.append('uuid', params.uuid);
+    const url = `/financial/academies/settlement-table${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.request<any>(url, { method: 'GET' });
+    if ((response.data as any)?.data) return (response.data as any).data;
+    return response.data as any;
+  }
+
+  async getAcademySettlementDetail(academyId: number) {
+    const response = await this.request<any>(
+      `/financial/academies/${academyId}/settlement`,
+      { method: 'GET' }
+    );
+    if ((response.data as any)?.data) return (response.data as any).data;
+    return response.data as any;
+  }
+
+  async settleAcademy(
+    academyId: number,
+    payload: {
+      bank_transaction_code: string;
+      amount?: number;
+      note?: string;
+    }
+  ) {
+    const response = await this.request<any>(
+      `/financial/academies/${academyId}/settle`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }
+    );
+    if ((response.data as any)?.data) return (response.data as any).data;
     return response.data as any;
   }
 

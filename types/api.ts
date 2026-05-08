@@ -4,6 +4,8 @@ export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 // User and Authentication Types
 export interface User {
   id: number;
+  uuid?: string;
+  user_uuid?: string;
   email?: string;
   display_name: string;
   /** Legacy alias for display_name */
@@ -115,6 +117,7 @@ export interface CurrencyConfig {
 
 export interface Academy {
   id: number;
+  uuid?: string;
   name: string;
   slug: string;
   domain_id: number;
@@ -519,6 +522,7 @@ export interface Progress {
 // Payment and Transaction Types
 export interface Payment {
   id: number;
+  uuid?: string;
   user_id: number;
   course_id: number;
   profile_id?: number;
@@ -572,6 +576,7 @@ export interface Payment {
 
 export interface Transaction {
   id: number;
+  uuid?: string;
   payment_id: number;
   amount: number;
   currency: string;

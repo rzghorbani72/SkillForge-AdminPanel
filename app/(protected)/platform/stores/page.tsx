@@ -38,6 +38,21 @@ import {
 } from '@/components/ui/table';
 import { formatCurrency, formatCurrencyWithStore } from '@/lib/utils';
 import type { Academy } from '@/types/api';
+import { Pagination } from '@/components/shared/Pagination';
+
+type AcademySettlementRow = {
+  academy_id: number;
+  academy_uuid: string;
+  academy_name: string;
+  academy_slug: string;
+  is_active: boolean;
+  platform_commission_total: number;
+  vat_total: number;
+  academy_revenue_total: number;
+  settled_total_amount: number;
+  payable_now: number;
+  latest_settlement_at?: string | null;
+};
 
 export default function PlatformStoresPage() {
   const { t, language } = useTranslation();
@@ -46,8 +61,13 @@ export default function PlatformStoresPage() {
   const academyId = searchParams.get('academyId');
   const action = searchParams.get('action');
   const [stores, setStores] = useState<Academy[]>([]);
+  const [settlementRows, setSettlementRows] = useState<AcademySettlementRow[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   // Store detail data
   const [selectedStore, setSelectedStore] = useState<Academy | null>(null);
@@ -66,9 +86,21 @@ export default function PlatformStoresPage() {
     const fetchStores = async () => {
       try {
         setIsLoading(true);
-        const response = await apiClient.getAcademiesPublic();
-        const storesData = response?.data?.items || response?.data || [];
-        setStores(Array.isArray(storesData) ? storesData : []);
+        const settlementData = await apiClient.getAcademySettlementTable({
+          page: 1,
+          limit: 200
+        });
+        const rows = settlementData?.rows || [];
+        setSettlementRows(rows);
+        setStores(
+          rows.map((row: AcademySettlementRow) => ({
+            id: row.academy_id,
+            uuid: row.academy_uuid,
+            name: row.academy_name,
+            slug: row.academy_slug,
+            is_active: row.is_active
+          })) as Academy[]
+        );
       } catch (error) {
         console.error('Error fetching stores:', error);
         setStores([]);
@@ -91,72 +123,24 @@ export default function PlatformStoresPage() {
         setIsLoadingDetail(true);
         const storeIdNum = parseInt(academyId, 10);
 
-        // Find store from list or fetch full store details
+        // Find store from list
         let store = stores.find((s) => s.id === storeIdNum);
-        if (!store) {
-          // If not in list, try to fetch it
-          try {
-            const storeResponse = await apiClient.getAcademiesPublic();
-            const allStores =
-              storeResponse?.data?.items || storeResponse?.data || [];
-            store = Array.isArray(allStores)
-              ? allStores.find((s: any) => s.id === storeIdNum)
-              : null;
-          } catch (error) {
-            console.error('Error fetching store details:', error);
-          }
-        }
         if (store) {
           setSelectedStore(store);
         }
 
         // Fetch financial data
-        const currentYear = new Date().getFullYear();
-        const startDate = new Date(currentYear, 0, 1).toISOString();
-        const endDate = new Date(currentYear, 11, 31, 23, 59, 59).toISOString();
-
         try {
-          const [
-            financialData,
-            revenueData,
-            coursesResponse,
-            enrollmentsResponse
-          ] = await Promise.all([
-            apiClient
-              .getAcademyFinancialOverview?.(storeIdNum, startDate, endDate)
-              .catch(() => null),
-            apiClient
-              .getAcademyRevenueFromPayments?.(storeIdNum, startDate, endDate)
-              .catch(() => ({ payments: [] })),
-            apiClient
-              .getCourses?.({ academy_id: storeIdNum, limit: 1 })
-              .catch(() => ({ courses: [], pagination: undefined })),
-            apiClient
-              .getEnrollments?.({ academy_id: storeIdNum, limit: 1 })
-              .catch(() => ({ enrollments: [], pagination: undefined }))
-          ]);
-
-          setStoreFinancial(financialData);
-          setStorePayments(revenueData?.payments || []);
-
-          const totalRevenue =
-            revenueData?.payments?.reduce(
-              (sum: number, p: any) =>
-                sum + (p.status === 'COMPLETED' ? p.amount || 0 : 0),
-              0
-            ) || 0;
+          const detail = await apiClient.getAcademySettlementDetail(storeIdNum);
+          setStoreFinancial(detail?.totals || null);
+          setStorePayments(detail?.lines || []);
+          const totalRevenue = detail?.totals?.academy_revenue_total || 0;
 
           setStoreStats({
-            totalCourses:
-              (coursesResponse as any)?.pagination?.total ||
-              (coursesResponse as any)?.courses?.length ||
-              0,
-            totalStudents:
-              (enrollmentsResponse as any)?.pagination?.total ||
-              (enrollmentsResponse as any)?.enrollments?.length ||
-              0,
+            totalCourses: 0,
+            totalStudents: 0,
             totalRevenue: totalRevenue,
-            totalPayments: revenueData?.payments?.length || 0
+            totalPayments: detail?.lines?.length || 0
           });
         } catch (error) {
           console.error('Error fetching store financial data:', error);
@@ -194,6 +178,17 @@ export default function PlatformStoresPage() {
       store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       store.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const paginatedStores = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredStores.slice(start, start + itemsPerPage);
+  }, [filteredStores, currentPage]);
+
+  const settlementByAcademy = useMemo(() => {
+    const map = new Map<number, AcademySettlementRow>();
+    settlementRows.forEach((row) => map.set(row.academy_id, row));
+    return map;
+  }, [settlementRows]);
 
   if (userLoading || isLoading) {
     return (
@@ -235,6 +230,31 @@ export default function PlatformStoresPage() {
               ? t('common.active')
               : t('common.inactive')}
           </Badge>
+        </div>
+        <div>
+          <Button
+            variant="default"
+            onClick={async () => {
+              const bankCode = window.prompt(
+                'Enter bank transaction code for settlement'
+              );
+              if (!bankCode) return;
+              try {
+                await apiClient.settleAcademy(selectedStore.id, {
+                  bank_transaction_code: bankCode
+                });
+                const detail = await apiClient.getAcademySettlementDetail(
+                  selectedStore.id
+                );
+                setStoreFinancial(detail?.totals || null);
+                setStorePayments(detail?.lines || []);
+              } catch (error) {
+                console.error('Settlement failed', error);
+              }
+            }}
+          >
+            Settled
+          </Button>
         </div>
 
         {/* Store Overview Stats */}
@@ -594,7 +614,10 @@ export default function PlatformStoresPage() {
             <Input
               placeholder={t('platform.stores.searchPlaceholder')}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               className="pl-10"
             />
           </div>
@@ -643,9 +666,9 @@ export default function PlatformStoresPage() {
       </div>
 
       {/* Stores List */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="rounded-md border">
         {filteredStores.length === 0 ? (
-          <Card className="col-span-full">
+          <Card>
             <CardContent className="pt-6">
               <div className="py-8 text-center">
                 <StoreIcon className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
@@ -661,81 +684,84 @@ export default function PlatformStoresPage() {
             </CardContent>
           </Card>
         ) : (
-          filteredStores.map((store) => (
-            <Card key={store.id} className="transition-colors hover:bg-accent">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="flex items-center gap-2">
-                      <StoreIcon className="h-5 w-5" />
-                      {store.name}
-                    </CardTitle>
-                    <CardDescription className="mt-1">
-                      {store.slug}
-                    </CardDescription>
-                  </div>
-                  <Badge variant={store.is_active ? 'default' : 'secondary'}>
-                    {store.is_active
-                      ? t('common.active')
-                      : t('common.inactive')}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {store.description && (
-                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
-                    {store.description}
-                  </p>
-                )}
-                {store.Domain && (
-                  <div className="space-y-1 text-sm">
-                    {store.Domain.public_address && (
-                      <p className="text-muted-foreground">
-                        <span className="font-medium">
-                          {t('platform.stores.public')}:
-                        </span>{' '}
-                        {store.Domain.public_address}
-                      </p>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>UUID</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Payable Now</TableHead>
+                <TableHead>Platform Commission</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedStores.map((store) => (
+                <TableRow key={store.id}>
+                  <TableCell>{store.id}</TableCell>
+                  <TableCell className="max-w-[180px] truncate">
+                    {(store as any).uuid || '-'}
+                  </TableCell>
+                  <TableCell>{store.name}</TableCell>
+                  <TableCell>{store.slug}</TableCell>
+                  <TableCell>
+                    <Badge variant={store.is_active ? 'default' : 'secondary'}>
+                      {store.is_active
+                        ? t('common.active')
+                        : t('common.inactive')}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {formatCurrencyWithStore(
+                      settlementByAcademy.get(store.id)?.payable_now || 0,
+                      store
                     )}
-                    {store.Domain.private_address && (
-                      <p className="text-muted-foreground">
-                        <span className="font-medium">
-                          {t('platform.stores.private')}:
-                        </span>{' '}
-                        {store.Domain.private_address}
-                      </p>
+                  </TableCell>
+                  <TableCell>
+                    {formatCurrencyWithStore(
+                      settlementByAcademy.get(store.id)
+                        ?.platform_commission_total || 0,
+                      store
                     )}
-                  </div>
-                )}
-                <div className="mt-4 flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="flex-1"
-                  >
-                    <Link href={`/platform/stores?academyId=${store.id}`}>
-                      {t('platform.stores.viewDetails')}
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="flex-1"
-                  >
-                    <Link
-                      href={`/platform/stores?academyId=${store.id}&action=edit`}
-                    >
-                      {t('platform.stores.edit')}
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/platform/stores?academyId=${store.id}`}>
+                          {t('platform.stores.viewDetails')}
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link
+                          href={`/platform/stores?academyId=${store.id}&action=edit`}
+                        >
+                          {t('platform.stores.edit')}
+                        </Link>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </div>
+
+      {filteredStores.length > itemsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredStores.length / itemsPerPage)}
+          onPageChange={setCurrentPage}
+          hasNextPage={
+            currentPage < Math.ceil(filteredStores.length / itemsPerPage)
+          }
+          hasPreviousPage={currentPage > 1}
+          totalItems={filteredStores.length}
+          itemsPerPage={itemsPerPage}
+        />
+      )}
     </div>
   );
 }

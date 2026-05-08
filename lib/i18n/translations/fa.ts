@@ -1705,7 +1705,8 @@ export const fa = {
         formula: 'فرمول',
         vatRate: 'مالیات',
         takeRate: 'سهم پلتفرم',
-        shareRate: 'سهم مدرس'
+        shareRate: 'سهم مدرس',
+        payments: 'پرداخت'
       },
       reports: {
         title: 'گزارش‌های مالی',
