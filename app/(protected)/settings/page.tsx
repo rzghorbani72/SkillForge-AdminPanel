@@ -10,7 +10,14 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowRight, Shield, User, Building, Layout } from 'lucide-react';
+import {
+  ArrowRight,
+  Shield,
+  User,
+  Building,
+  Layout,
+  CreditCard
+} from 'lucide-react';
 import { useSettingsData } from './_hooks/use-settings-data';
 import { format } from 'date-fns';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -73,7 +80,18 @@ export default function SettingsOverviewPage() {
       description: t('settings.securityDescription'),
       href: '/settings/security',
       icon: Shield
-    }
+    },
+    ...(isPlatformAdmin
+      ? [
+          {
+            title: 'Payment Gateway',
+            description:
+              'Configure PayPing and other payment gateway tokens and credentials.',
+            href: '/settings/payment-gateway',
+            icon: CreditCard
+          }
+        ]
+      : [])
   ] as const;
 
   if (isLoading) {

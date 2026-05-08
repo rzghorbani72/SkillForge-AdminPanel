@@ -1460,6 +1460,28 @@ export const fa = {
     manageAccess: 'مدیریت دسترسی',
     configure: 'پیکربندی',
     ofRevenue: '٪ از درآمد',
+    paymentsCountLabel: 'پرداخت',
+    unknownMethod: 'نامشخص',
+    gatewayBadge: {
+      active: 'فعال',
+      planned: 'برنامه‌ریزی‌شده'
+    },
+    gateways: {
+      payping: {
+        title: 'درگاه پی‌پینگ',
+        description:
+          'درگاه آنلاین اصلی برای فاز ایران و پرداخت واقعی در محیط عملیاتی.'
+      },
+      samanSep: {
+        title: 'سداد سامان (Saman SEP)',
+        description:
+          'اتصال پذیرنده بانکی که بعد از فاز پی‌پینگ برای انتشار آماده است.'
+      },
+      mellatBp: {
+        title: 'به‌پرداخت ملت (Mellat BP)',
+        description: 'اتصال پذیرنده بانکی آماده برای فعال‌سازی مرحله‌ای.'
+      }
+    },
     invoices: 'فاکتورها',
     invoicesDescription:
       'فاکتورهای مربوط به خرید دوره را ایجاد، نظارت و دانلود کنید.',

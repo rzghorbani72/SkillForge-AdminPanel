@@ -1555,6 +1555,28 @@ export const en = {
     manageAccess: 'Manage Access',
     configure: 'Configure',
     ofRevenue: '% of revenue',
+    paymentsCountLabel: 'payments',
+    unknownMethod: 'Unknown',
+    gatewayBadge: {
+      active: 'Active',
+      planned: 'Planned'
+    },
+    gateways: {
+      payping: {
+        title: 'PayPing Gateway',
+        description:
+          'Primary online gateway for Iran-first release and production checkout.'
+      },
+      samanSep: {
+        title: 'Saman SEP',
+        description:
+          'Bank acquirer adapter available for rollout after PayPing phase.'
+      },
+      mellatBp: {
+        title: 'Mellat BP',
+        description: 'Bank acquirer adapter prepared for staged activation.'
+      }
+    },
     // Invoices Page
     invoices: 'Invoices',
     invoicesDescription:

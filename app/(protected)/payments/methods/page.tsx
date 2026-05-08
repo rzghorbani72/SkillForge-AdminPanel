@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import Link from 'next/link';
 import {
   Card,
   CardContent,
@@ -20,26 +21,24 @@ import { useTranslation } from '@/lib/i18n/hooks';
 const METHOD_CONFIG = [
   {
     key: 'PAYPING',
-    title: 'PayPing Gateway',
-    description:
-      'Primary online gateway for Iran-first release and production checkout.',
+    titleKey: 'payments.gateways.payping.title',
+    descriptionKey: 'payments.gateways.payping.description',
     icon: CreditCard,
-    badges: [{ label: 'Active', tone: 'active' }]
+    badges: [{ labelKey: 'payments.gatewayBadge.active', tone: 'active' }]
   },
   {
     key: 'SAMAN_SEP',
-    title: 'Saman SEP',
-    description:
-      'Bank acquirer adapter available for rollout after PayPing phase.',
+    titleKey: 'payments.gateways.samanSep.title',
+    descriptionKey: 'payments.gateways.samanSep.description',
     icon: DollarSign,
-    badges: [{ label: 'Planned', tone: 'roadmap' }]
+    badges: [{ labelKey: 'payments.gatewayBadge.planned', tone: 'roadmap' }]
   },
   {
     key: 'MELLAT_BP',
-    title: 'Mellat BP',
-    description: 'Bank acquirer adapter prepared for staged activation.',
+    titleKey: 'payments.gateways.mellatBp.title',
+    descriptionKey: 'payments.gateways.mellatBp.description',
     icon: Globe,
-    badges: [{ label: 'Planned', tone: 'roadmap' }]
+    badges: [{ labelKey: 'payments.gatewayBadge.planned', tone: 'roadmap' }]
   }
 ] as const;
 
@@ -57,12 +56,19 @@ export default function PaymentMethodsPage() {
   const { t, language } = useTranslation();
   const { payments } = usePaymentsData();
   const currentAcademy = useCurrentAcademy();
+  const formatMethodLabel = (method: string) => {
+    if (method === 'UNKNOWN') return t('payments.unknownMethod');
+    if (method === 'PAYPING') return t('payments.gateways.payping.title');
+    if (method === 'SAMAN_SEP') return t('payments.gateways.samanSep.title');
+    if (method === 'MELLAT_BP') return t('payments.gateways.mellatBp.title');
+    return method.replaceAll('_', ' ');
+  };
 
   const methodMetrics = useMemo(() => {
     const map = new Map<string, { count: number; total: number }>();
 
     payments.forEach((payment) => {
-      const method = payment.method ?? 'UNKNOWN';
+      const method = payment.method ?? payment.payment_method ?? 'UNKNOWN';
       if (!map.has(method)) {
         map.set(method, { count: 0, total: 0 });
       }
@@ -182,11 +188,11 @@ export default function PaymentMethodsPage() {
                 className="space-y-3 rounded-lg border p-4"
               >
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold capitalize">
-                    {item.method.replace('_', ' ').toLowerCase()}
+                  <p className="text-sm font-semibold">
+                    {formatMethodLabel(item.method)}
                   </p>
                   <Badge variant="outline">
-                    {item.count} {t('financial.store.payments.payments')}
+                    {item.count} {t('payments.paymentsCountLabel')}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
@@ -217,28 +223,37 @@ export default function PaymentMethodsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Icon className="h-5 w-5" />
-                  {method.title}
+                  {t(method.titleKey)}
                 </CardTitle>
-                <CardDescription>{method.description}</CardDescription>
+                <CardDescription>{t(method.descriptionKey)}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-wrap gap-2">
                   {method.badges.map((badge) => (
                     <Badge
-                      key={badge.label}
+                      key={badge.labelKey}
                       className={TONE_STYLES[badge.tone]}
                     >
-                      {badge.label}
+                      {t(badge.labelKey)}
                     </Badge>
                   ))}
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm">
-                    <Lock className="me-2 h-4 w-4" />{' '}
-                    {t('payments.manageAccess')}
+                  <Button variant="outline" size="sm" asChild>
+                    <Link
+                      href={`/settings/payment-gateway?gateway=${method.key}&tab=access`}
+                    >
+                      <Lock className="me-2 h-4 w-4" />{' '}
+                      {t('payments.manageAccess')}
+                    </Link>
                   </Button>
-                  <Button variant="outline" size="sm">
-                    <Plus className="me-2 h-4 w-4" /> {t('payments.configure')}
+                  <Button variant="outline" size="sm" asChild>
+                    <Link
+                      href={`/settings/payment-gateway?gateway=${method.key}&tab=config`}
+                    >
+                      <Plus className="me-2 h-4 w-4" />{' '}
+                      {t('payments.configure')}
+                    </Link>
                   </Button>
                 </div>
               </CardContent>

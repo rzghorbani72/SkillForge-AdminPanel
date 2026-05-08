@@ -229,6 +229,7 @@ export interface Course {
   deleted_at?: string;
   author?: Profile;
   academy?: Academy;
+  Academy?: Academy;
   /** @deprecated Use academy */
   store?: Academy;
   category?: Category;
@@ -520,6 +521,8 @@ export interface Payment {
   id: number;
   user_id: number;
   course_id: number;
+  profile_id?: number;
+  order_id?: number | null;
   amount: number;
   currency: string;
   status:
@@ -529,12 +532,41 @@ export interface Payment {
     | 'FAILED'
     | 'CANCELLED'
     | 'REFUNDED';
-  method: 'CREDIT_CARD' | 'DEBIT_CARD' | 'BANK_TRANSFER' | 'DIGITAL_WALLET';
+  method?:
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'BANK_TRANSFER'
+    | 'DIGITAL_WALLET'
+    | 'ONLINE'
+    | 'OFFLINE'
+    | 'WALLET';
+  payment_method?: string;
+  provider?: string;
+  payment_gateway_id?: number | null;
+  gateway?: string | null;
+  gateway_id?: string | null;
+  authority?: string | null;
+  checkout_reference?: string | null;
   transaction_id?: string;
-  payment_date: string;
+  payment_date?: string;
+  paid_at?: string | null;
+  notes?: string | null;
+  failure_reason?: string | null;
+  refund_amount?: number | null;
+  refund_reason?: string | null;
+  platform_fee?: number | null;
+  instructor_fee?: number | null;
+  affiliate_fee?: number | null;
+  coupon_code?: string | null;
+  discount_amount?: number | null;
+  discount_code_id?: number | null;
+  created_at?: string;
+  updated_at?: string;
   refund_date?: string;
   user?: User;
+  Profile?: Profile;
   course?: Course;
+  Course?: Course;
   transactions?: Transaction[];
 }
 

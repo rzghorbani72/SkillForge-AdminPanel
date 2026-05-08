@@ -37,6 +37,16 @@ function formatDate(value?: string | null): string {
   return new Date(value).toLocaleDateString();
 }
 
+function parseNotes(notes?: string | null): Record<string, unknown> | null {
+  if (!notes) return null;
+  try {
+    const parsed = JSON.parse(notes);
+    return typeof parsed === 'object' && parsed !== null ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function PaymentsPage() {
   const { t, language } = useTranslation();
   const { payments, transactions, monetizationSummary, isLoading, refresh } =
@@ -49,16 +59,29 @@ export default function PaymentsPage() {
 
     const term = searchTerm.toLowerCase();
     return payments.filter((payment) => {
-      const student = payment.user?.display_name?.toLowerCase() ?? '';
-      const course = payment.course?.title?.toLowerCase() ?? '';
+      const student =
+        payment.user?.display_name?.toLowerCase() ??
+        payment.Profile?.display_name?.toLowerCase() ??
+        '';
+      const course =
+        payment.course?.title?.toLowerCase() ??
+        payment.Course?.title?.toLowerCase() ??
+        '';
       const status = payment.status?.toLowerCase() ?? '';
-      const method = payment.method?.toLowerCase() ?? '';
+      const method =
+        payment.method?.toLowerCase() ??
+        payment.payment_method?.toLowerCase() ??
+        '';
+      const gateway = payment.gateway?.toLowerCase() ?? '';
+      const provider = payment.provider?.toLowerCase() ?? '';
 
       return (
         student.includes(term) ||
         course.includes(term) ||
         status.includes(term) ||
         method.includes(term) ||
+        gateway.includes(term) ||
+        provider.includes(term) ||
         payment.id.toString().includes(term)
       );
     });
@@ -86,7 +109,7 @@ export default function PaymentsPage() {
     const counts = new Map<string, { count: number; total: number }>();
 
     payments.forEach((payment) => {
-      const method = payment.method ?? 'UNKNOWN';
+      const method = payment.method ?? payment.payment_method ?? 'UNKNOWN';
       if (!counts.has(method)) {
         counts.set(method, { count: 0, total: 0 });
       }
@@ -268,10 +291,18 @@ export default function PaymentsPage() {
                   <div>
                     <p className="text-sm font-medium">
                       {payment.user?.display_name ??
+                        payment.Profile?.display_name ??
                         t('payments.unknownStudent')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {payment.course?.title ?? t('payments.unknownCourse')}
+                      {payment.course?.title ??
+                        payment.Course?.title ??
+                        t('payments.unknownCourse')}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {payment.Course?.Academy?.name ??
+                        payment.course?.academy?.name ??
+                        '—'}
                     </p>
                   </div>
                 </div>
@@ -284,8 +315,35 @@ export default function PaymentsPage() {
                       )}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDate(payment.payment_date)}
+                      {formatDate(
+                        payment.paid_at ??
+                          payment.payment_date ??
+                          payment.created_at
+                      )}
                     </p>
+                    <p className="text-xs text-muted-foreground">
+                      {(payment.gateway ?? payment.provider ?? '—').toString()}{' '}
+                      /{' '}
+                      {(
+                        payment.payment_method ??
+                        payment.method ??
+                        '—'
+                      ).toString()}
+                    </p>
+                    {parseNotes(payment.notes) ? (
+                      <p className="text-xs text-muted-foreground">
+                        Fee:{' '}
+                        {formatCurrencyWithStore(
+                          payment.platform_fee ?? 0,
+                          currentAcademy
+                        )}{' '}
+                        | Instructor:{' '}
+                        {formatCurrencyWithStore(
+                          payment.instructor_fee ?? 0,
+                          currentAcademy
+                        )}
+                      </p>
+                    ) : null}
                   </div>
                   <Badge
                     className={cn(

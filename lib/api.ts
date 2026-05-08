@@ -3143,6 +3143,38 @@ class ApiClient {
     });
     return res.data;
   }
+
+  // -------------------------------------------------------------------------
+  // Payment Gateway Config (Admin)
+  // -------------------------------------------------------------------------
+
+  async listGatewayConfigs() {
+    const res = await this.request('/payments/gateways/configs');
+    const payload = res.data as any;
+    return payload?.data ?? payload;
+  }
+
+  async updateGatewayConfig(
+    id: number,
+    data: {
+      token?: string;
+      is_active?: boolean;
+      extra?: Record<string, unknown>;
+    }
+  ) {
+    const res = await this.request(`/payments/gateways/${id}/config`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async ensurePayPingGateway() {
+    const res = await this.request('/payments/gateways/payping/ensure', {
+      method: 'POST'
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
 }
 
 export interface PlatformSettingsData {
@@ -3174,6 +3206,32 @@ export interface SubscriptionPlanData {
   sort_order: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface GatewayConfigData {
+  id: number;
+  name: string;
+  display_name: string;
+  country_code: string;
+  region: string;
+  supported_currencies: string[];
+  is_active: boolean;
+  config_schema: {
+    token: string | null;
+    token_configured: boolean;
+    terminal_id?: string;
+    merchant_id?: string;
+    callback_url?: string;
+    [key: string]: unknown;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GatewayRegistryStatus {
+  provider: string;
+  configured: boolean;
+  implemented: boolean;
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);
