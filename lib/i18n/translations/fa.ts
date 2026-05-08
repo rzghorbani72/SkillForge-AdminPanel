@@ -110,6 +110,7 @@ export const fa = {
     products: 'محصولات',
     categories: 'دسته‌بندی‌ها',
     users: 'کاربران',
+    library: 'کتابخانه',
     videos: 'ویدیوها',
     images: 'تصاویر',
     audios: 'صداها',

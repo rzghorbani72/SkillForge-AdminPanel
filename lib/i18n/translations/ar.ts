@@ -93,6 +93,7 @@ export const ar = {
     admins: 'المسؤولون',
     managers: 'المديرون',
     'teacher-requests': 'طلبات المعلمين',
+    library: 'المكتبة',
     videos: 'الفيديوهات',
     images: 'الصور',
     audios: 'الصوتيات',

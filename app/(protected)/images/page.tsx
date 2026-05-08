@@ -38,7 +38,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 interface ImageItem {
   id: number;
   filename: string;
-  publicUrl: string;
+  publicUrl?: string;
   size: number;
   mime_type: string;
   created_at: string;
@@ -52,6 +52,14 @@ interface ImageItem {
     user_permissions: string[];
   };
 }
+
+const resolveImageSrc = (image: ImageItem): string => {
+  const raw = image.publicUrl ?? '';
+  if (!raw) return '';
+  return raw.startsWith('/')
+    ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${raw}`
+    : raw;
+};
 
 export default function ImagesPage() {
   const { t, language } = useTranslation();
@@ -317,29 +325,39 @@ export default function ImagesPage() {
             >
               <CardHeader className="p-0">
                 <div className="relative aspect-video w-full overflow-hidden bg-muted">
-                  <Image
-                    src={
-                      image.publicUrl.startsWith('/')
-                        ? `${process.env.NEXT_PUBLIC_HOST}${image.publicUrl}`
-                        : image.publicUrl
+                  {(() => {
+                    const src = resolveImageSrc(image);
+                    if (!src) {
+                      return (
+                        <div className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground">
+                          <ImageIcon className="h-8 w-8" />
+                        </div>
+                      );
                     }
-                    alt={image.alt || image.filename}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const placeholder =
-                        target.nextElementSibling as HTMLElement;
-                      if (placeholder) placeholder.style.display = 'flex';
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground"
-                    style={{ display: 'none' }}
-                  >
-                    <ImageIcon className="h-8 w-8" />
-                  </div>
+                    return (
+                      <>
+                        <Image
+                          src={src}
+                          alt={image.alt || image.filename}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const placeholder =
+                              target.nextElementSibling as HTMLElement;
+                            if (placeholder) placeholder.style.display = 'flex';
+                          }}
+                        />
+                        <div
+                          className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground"
+                          style={{ display: 'none' }}
+                        >
+                          <ImageIcon className="h-8 w-8" />
+                        </div>
+                      </>
+                    );
+                  })()}
                   {/* Hover overlay */}
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </div>
@@ -435,7 +453,7 @@ export default function ImagesPage() {
         <ImageViewModal
           open={!!viewImage}
           onOpenChange={(open: boolean) => !open && setViewImage(null)}
-          imageUrl={viewImage.publicUrl}
+          imageUrl={resolveImageSrc(viewImage)}
           title={viewImage.alt || viewImage.filename}
           filename={viewImage.filename}
         />
@@ -448,7 +466,7 @@ export default function ImagesPage() {
           onOpenChange={(open: boolean) => !open && setEditImage(null)}
           image={{
             id: editImage.id,
-            publicUrl: editImage.publicUrl,
+            publicUrl: resolveImageSrc(editImage),
             filename: editImage.filename,
             alt: editImage.alt
           }}

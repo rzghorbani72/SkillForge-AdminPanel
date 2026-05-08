@@ -93,6 +93,7 @@ export const tr = {
     admins: 'Yöneticiler',
     managers: 'Müdürler',
     'teacher-requests': 'Öğretmen İstekleri',
+    library: 'Kütüphane',
     videos: 'Videolar',
     images: 'Görseller',
     audios: 'Sesler',

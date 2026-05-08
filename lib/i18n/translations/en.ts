@@ -107,6 +107,7 @@ export const en = {
     products: 'Products',
     categories: 'Categories',
     users: 'Users',
+    library: 'Library',
     videos: 'Videos',
     images: 'Images',
     audios: 'Audios',

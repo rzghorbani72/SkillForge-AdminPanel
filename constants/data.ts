@@ -93,28 +93,35 @@ export const navItems: NavItem[] = [
     label: 'courses'
   },
   {
-    title: 'Videos',
-    href: '/videos?filter=none',
-    icon: 'video' as IconType,
-    label: 'videos'
-  },
-  {
-    title: 'Images',
-    href: '/images?filter=none',
-    icon: 'image' as IconType,
-    label: 'images'
-  },
-  {
-    title: 'Audios',
-    href: '/audios?filter=none',
-    icon: 'volume2' as IconType,
-    label: 'audios'
-  },
-  {
-    title: 'Documents',
-    href: '/documents?filter=none',
-    icon: 'fileText' as IconType,
-    label: 'documents'
+    title: 'Library',
+    icon: 'layers' as IconType,
+    label: 'library',
+    children: [
+      {
+        title: 'Videos',
+        href: '/videos?filter=none',
+        icon: 'video' as IconType,
+        label: 'videos'
+      },
+      {
+        title: 'Images',
+        href: '/images?filter=none',
+        icon: 'image' as IconType,
+        label: 'images'
+      },
+      {
+        title: 'Audios',
+        href: '/audios?filter=none',
+        icon: 'volume2' as IconType,
+        label: 'audios'
+      },
+      {
+        title: 'Documents',
+        href: '/documents?filter=none',
+        icon: 'fileText' as IconType,
+        label: 'documents'
+      }
+    ]
   },
   {
     title: 'Users',
