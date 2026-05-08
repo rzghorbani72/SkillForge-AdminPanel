@@ -54,6 +54,28 @@ function formatDate(value?: string | null): string {
   return new Date(value).toLocaleDateString();
 }
 
+type PaymentNotes = {
+  s?: string;
+  p?: string;
+  m?: string;
+  a?: number;
+  pf?: number;
+  tp?: number;
+  sn?: number;
+};
+
+function parsePaymentNotes(value?: string | null): PaymentNotes | null {
+  if (!value) return null;
+
+  try {
+    const parsed = JSON.parse(value) as PaymentNotes;
+    if (!parsed || typeof parsed !== 'object') return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
 export default function PaymentsPage() {
   const { t, language } = useTranslation();
   const { payments, transactions, monetizationSummary, isLoading, refresh } =
@@ -63,6 +85,10 @@ export default function PaymentsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
+  const selectedPaymentNotes = useMemo(
+    () => parsePaymentNotes(selectedPayment?.notes),
+    [selectedPayment]
+  );
 
   const filteredPayments = useMemo(() => {
     if (!searchTerm) return payments;
@@ -422,6 +448,41 @@ export default function PaymentsPage() {
               Academy Revenue:{' '}
               {selectedPayment?.financials?.academy_revenue ?? 0}
             </div>
+            {selectedPaymentNotes ? (
+              <>
+                <div>Flow: {selectedPaymentNotes.s || '-'}</div>
+                <div>Pricing Profile: {selectedPaymentNotes.p || '-'}</div>
+                <div>Market: {selectedPaymentNotes.m || '-'}</div>
+                <div>
+                  Affiliate Fee:{' '}
+                  {formatCurrencyWithStore(
+                    selectedPaymentNotes.a ?? 0,
+                    currentAcademy
+                  )}
+                </div>
+                <div>
+                  Platform Fee:{' '}
+                  {formatCurrencyWithStore(
+                    selectedPaymentNotes.pf ?? 0,
+                    currentAcademy
+                  )}
+                </div>
+                <div>
+                  Instructor Share:{' '}
+                  {formatCurrencyWithStore(
+                    selectedPaymentNotes.tp ?? 0,
+                    currentAcademy
+                  )}
+                </div>
+                <div>
+                  Net Settlement:{' '}
+                  {formatCurrencyWithStore(
+                    selectedPaymentNotes.sn ?? 0,
+                    currentAcademy
+                  )}
+                </div>
+              </>
+            ) : null}
           </div>
         </SheetContent>
       </Sheet>
