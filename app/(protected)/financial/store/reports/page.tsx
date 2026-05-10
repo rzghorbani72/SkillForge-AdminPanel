@@ -108,12 +108,16 @@ export default function StoreReportsPage() {
           : 'en-US';
 
   const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithStore(amount, {
-      currency: currency as any,
-      currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-      currency_position: 'after',
+    return formatCurrencyWithStore(
+      amount,
+      {
+        currency: currency as any,
+        currency_symbol: currency === 'IRR' ? 'Toman' : currency,
+        currency_position: 'after'
+      },
+      undefined,
       language
-    });
+    );
   };
 
   const monthlyBreakdown = useMemo(() => {
