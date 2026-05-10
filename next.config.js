@@ -39,6 +39,7 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig = {
+  output: 'standalone',
   images: {
     // Use custom loader to bypass Next.js optimization and serve images directly from backend
     // This prevents server-side fetch errors (500) and avoids disk usage
