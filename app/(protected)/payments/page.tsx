@@ -352,7 +352,7 @@ export default function PaymentsPage() {
                           await apiClient.getTransactionTrackingById(
                             payment.id
                           );
-                        setSelectedPayment(detail?.data || detail);
+                        setSelectedPayment(detail ?? payment);
                       } catch {
                         setSelectedPayment(payment);
                       }
