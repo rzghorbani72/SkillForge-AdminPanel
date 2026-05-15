@@ -38,8 +38,23 @@ const SECURITY_HEADERS = [
   // and is a security risk for authenticated requests
 ];
 
+const PRODUCTION_PUBLIC_DEFAULTS = {
+  API_URL: 'https://api-academy.darkub.ir/api',
+  PANEL_HOST: 'https://panel-academy.darkub.ir'
+};
+
 const nextConfig = {
   output: 'standalone',
+  env: {
+    NEXT_PUBLIC_API_URL:
+      process.env.NEXT_PUBLIC_API_URL || PRODUCTION_PUBLIC_DEFAULTS.API_URL,
+    NEXT_PUBLIC_HOST:
+      process.env.NEXT_PUBLIC_HOST || PRODUCTION_PUBLIC_DEFAULTS.PANEL_HOST,
+    NEXT_PUBLIC_BACKEND_API_URL:
+      process.env.NEXT_PUBLIC_BACKEND_API_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      PRODUCTION_PUBLIC_DEFAULTS.API_URL
+  },
   images: {
     // Use custom loader to bypass Next.js optimization and serve images directly from backend
     // This prevents server-side fetch errors (500) and avoids disk usage
