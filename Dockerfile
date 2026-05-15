@@ -1,3 +1,5 @@
+# Panel listens on PORT 4000 (match package.json / Hamravesh service port).
+# Same layout as edusphere: standalone, bookworm-slim, pnpm 9. Set build-args for public URLs.
 FROM node:22-bookworm-slim AS base
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN corepack enable && corepack prepare pnpm@9 --activate
@@ -5,15 +7,15 @@ WORKDIR /app
 
 FROM base AS deps
 ENV HUSKY=0
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ARG NEXT_PUBLIC_API_URL=http://localhost:3000/api
-ARG NEXT_PUBLIC_HOST=http://localhost:3000
-ARG NEXT_PUBLIC_BACKEND_API_URL=http://localhost:3000/api
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_HOST
+ARG NEXT_PUBLIC_BACKEND_API_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_HOST=${NEXT_PUBLIC_HOST}
 ENV NEXT_PUBLIC_BACKEND_API_URL=${NEXT_PUBLIC_BACKEND_API_URL}
