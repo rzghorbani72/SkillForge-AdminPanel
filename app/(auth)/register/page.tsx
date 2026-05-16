@@ -363,11 +363,6 @@ export default function RegisterPage() {
             ? parseInt(formData.existingStoreId)
             : undefined,
         display_name: formData.name,
-        ...(phoneOtpVerified &&
-          formData.phoneOtp?.trim() && { phone_otp: formData.phoneOtp.trim() }),
-        ...(formData.email &&
-          emailOtpVerified &&
-          formData.emailOtp?.trim() && { email_otp: formData.emailOtp.trim() }),
         // Teacher request data (only when requesting teacher role)
         ...(registrationType === 'existing-store' &&
           joinAsTeacher && {
@@ -476,15 +471,6 @@ export default function RegisterPage() {
           store_description: formData.storeDescription
         })
       };
-
-      // Only add OTP fields if they are verified and not empty
-      if (phoneOtpVerified && formData.phoneOtp?.trim()) {
-        userData.phone_otp = formData.phoneOtp.trim();
-      }
-
-      if (formData.email && emailOtpVerified && formData.emailOtp?.trim()) {
-        userData.email_otp = formData.emailOtp.trim();
-      }
 
       const user = await apiClient.register(userData);
 

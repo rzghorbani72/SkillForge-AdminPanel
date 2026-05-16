@@ -140,9 +140,22 @@ class ApiClient {
       }
     }
 
+    const isAuthFlowEndpoint =
+      endpoint.includes('/auth/login') ||
+      endpoint.includes('/auth/public/login') ||
+      endpoint.includes('/auth/staff/login') ||
+      endpoint.includes('/auth/admin/login') ||
+      endpoint.includes('/auth/forget-password') ||
+      endpoint.includes('/auth/admin/forget-password') ||
+      endpoint.includes('/auth/login-by-phone-otp') ||
+      endpoint.includes('/auth/login-by-email-otp') ||
+      endpoint.includes('/auth/register') ||
+      endpoint.includes('/auth/otp/') ||
+      endpoint.includes('/auth/refresh');
+
     // Add store ID header if available (from localStorage - non-sensitive context data)
-    // But don't add it for admins without stores
-    if (typeof window !== 'undefined') {
+    // But don't add it for admins without stores or auth flows (login/register use profile pick)
+    if (typeof window !== 'undefined' && !isAuthFlowEndpoint) {
       // Check if user is admin without store by checking cached user state
       let shouldAddStoreHeader = true;
       try {
