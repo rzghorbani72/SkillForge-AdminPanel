@@ -3,7 +3,7 @@
  * Provides translation functions and language management
  */
 
-import type { LanguageCode } from './config';
+import { DEFAULT_LANGUAGE, type LanguageCode } from './config';
 import {
   getLanguageConfig,
   getDefaultLanguageForCountry,
@@ -57,7 +57,7 @@ function interpolate(template: string, params?: InterpolationParams): string {
  */
 export function t(
   key: string,
-  language: LanguageCode = 'en',
+  language: LanguageCode = DEFAULT_LANGUAGE,
   params?: InterpolationParams
 ): string {
   const resolveFromPack = (pack: Record<string, any>): string | null => {
@@ -91,7 +91,7 @@ export function t(
 /**
  * Get all translations for a language
  */
-export function getTranslations(language: LanguageCode = 'en') {
+export function getTranslations(language: LanguageCode = DEFAULT_LANGUAGE) {
   return translationPack(language);
 }
 
@@ -101,7 +101,7 @@ export function getTranslations(language: LanguageCode = 'en') {
 export function getLanguageFromCountry(
   countryCode: string | null | undefined
 ): LanguageCode {
-  if (!countryCode) return 'en';
+  if (!countryCode) return DEFAULT_LANGUAGE;
   return getDefaultLanguageForCountry(countryCode);
 }
 
@@ -119,3 +119,4 @@ export {
  * Re-export types
  */
 export type { LanguageCode, TextDirection, LanguageConfig } from './config';
+export { DEFAULT_LANGUAGE } from './config';

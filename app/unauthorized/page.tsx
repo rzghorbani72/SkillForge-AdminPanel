@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, AlertTriangle, ArrowLeft, Building2 } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function UnauthorizedPage() {

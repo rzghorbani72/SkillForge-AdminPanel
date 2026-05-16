@@ -2,7 +2,7 @@ import { OtpType } from '@/constants/data';
 import { User as UserType } from '@/types/api';
 import { toast } from 'react-toastify';
 import { t } from './i18n';
-import type { LanguageCode } from './i18n/config';
+import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
@@ -238,7 +238,7 @@ class ApiClient {
 
         // Refresh failed - redirect to login
         const getCurrentLanguage = (): LanguageCode => {
-          if (typeof window === 'undefined') return 'en';
+          if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
           const stored = localStorage.getItem('preferred_language');
           const validLanguages: LanguageCode[] = [
             'en',
@@ -259,7 +259,7 @@ class ApiClient {
           ];
           return stored && validLanguages.includes(stored as LanguageCode)
             ? (stored as LanguageCode)
-            : 'en';
+            : DEFAULT_LANGUAGE;
         };
 
         const errorMessage =
@@ -277,7 +277,7 @@ class ApiClient {
       // Handle forbidden responses (403) - redirect to dashboard
       if (response.status === 403) {
         const getCurrentLanguage = (): LanguageCode => {
-          if (typeof window === 'undefined') return 'en';
+          if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
           const stored = localStorage.getItem('preferred_language');
           const validLanguages: LanguageCode[] = [
             'en',
@@ -298,7 +298,7 @@ class ApiClient {
           ];
           return stored && validLanguages.includes(stored as LanguageCode)
             ? (stored as LanguageCode)
-            : 'en';
+            : DEFAULT_LANGUAGE;
         };
 
         const errorMessage =

@@ -3,6 +3,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import type { LanguageCode, TextDirection, LanguageConfig } from './config';
 import {
+  DEFAULT_LANGUAGE,
   getLanguageConfig,
   getDefaultLanguageForCountry,
   isRTL,
@@ -62,7 +63,9 @@ export function I18nProvider({
   const defaultLanguage =
     storedLanguage ||
     initialLanguage ||
-    (countryCode ? getDefaultLanguageForCountry(countryCode) : 'en');
+    (countryCode
+      ? getDefaultLanguageForCountry(countryCode)
+      : DEFAULT_LANGUAGE);
 
   const config = getLanguageConfig(defaultLanguage);
   const direction = config.direction;

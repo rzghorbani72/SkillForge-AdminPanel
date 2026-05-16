@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function Page() {

@@ -9,7 +9,7 @@ import { fakeUsers } from '@/constants/mock-api';
 import { searchParamsCache } from '@/lib/searchparams';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },

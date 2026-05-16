@@ -22,7 +22,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 
 export default function FindStorePage() {
   const [searchTerm, setSearchTerm] = useState('');

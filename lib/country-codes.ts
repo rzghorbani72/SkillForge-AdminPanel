@@ -90,10 +90,10 @@ export const getDefaultCountryByLanguage = (language?: string): CountryCode => {
     }
   }
 
-  // Fallback to US if language not found or country not found
-  return COUNTRY_CODES[0]; // Default to US
+  return getDefaultCountry();
 };
 
-export const getDefaultCountry = (): CountryCode => {
-  return COUNTRY_CODES[0]; // Default to US
-};
+const IRAN_COUNTRY =
+  COUNTRY_CODES.find((country) => country.code === 'IR') ?? COUNTRY_CODES[0];
+
+export const getDefaultCountry = (): CountryCode => IRAN_COUNTRY;

@@ -1,12 +1,12 @@
 import { toast } from 'react-toastify';
 import { t } from './i18n';
-import type { LanguageCode } from './i18n/config';
+import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
 
 /**
- * Get current language from localStorage or default to 'en'
+ * Get current language from localStorage or default
  */
 function getCurrentLanguage(): LanguageCode {
-  if (typeof window === 'undefined') return 'en';
+  if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
   const stored = localStorage.getItem('preferred_language');
   const validLanguages: LanguageCode[] = [
     'en',
@@ -28,7 +28,7 @@ function getCurrentLanguage(): LanguageCode {
   if (stored && validLanguages.includes(stored as LanguageCode)) {
     return stored as LanguageCode;
   }
-  return 'en';
+  return DEFAULT_LANGUAGE;
 }
 
 export interface ValidationError {

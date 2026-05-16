@@ -6,6 +6,7 @@
 import 'server-only';
 
 import {
+  DEFAULT_LANGUAGE,
   getDefaultLanguageForCountry,
   getLanguageConfig,
   isRTL,
@@ -52,8 +53,7 @@ export function getAdminLanguage(
     return getDefaultLanguageForCountry(countryCode);
   }
 
-  // Default to English
-  return 'en';
+  return DEFAULT_LANGUAGE;
 }
 
 /**

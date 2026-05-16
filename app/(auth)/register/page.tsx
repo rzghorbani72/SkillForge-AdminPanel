@@ -16,7 +16,7 @@ import { OtpType } from '@/constants/data';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 import { useStores } from '@/hooks/useStores';
 import { StepIndicator } from '@/components/auth/register/StepIndicator';
 import { VerificationStep } from '@/components/auth/register/VerificationStep';

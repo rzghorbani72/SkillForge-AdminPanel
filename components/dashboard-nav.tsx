@@ -6,7 +6,7 @@ import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import { NavItem } from '@/types';
 import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';

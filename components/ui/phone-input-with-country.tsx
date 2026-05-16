@@ -41,6 +41,7 @@ interface PhoneInputWithCountryProps {
   className?: string;
   maxLength?: number;
   onValidationChange?: (isValid: boolean) => void;
+  lockCountryCode?: string;
 }
 
 export function PhoneInputWithCountry({
@@ -55,18 +56,37 @@ export function PhoneInputWithCountry({
   disabled = false,
   className,
   maxLength = 10,
-  onValidationChange
+  onValidationChange,
+  lockCountryCode
 }: PhoneInputWithCountryProps) {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslation();
+  const lockedCountry = useMemo(
+    () =>
+      lockCountryCode
+        ? (COUNTRY_CODES.find((c) => c.code === lockCountryCode) ?? null)
+        : null,
+    [lockCountryCode]
+  );
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
-    getDefaultCountryByLanguage(language)
+    lockedCountry ?? getDefaultCountryByLanguage(language)
   );
   const [isLoadingCountry, setIsLoadingCountry] = useState(true);
   const [isValid, setIsValid] = useState(false);
 
+  useEffect(() => {
+    if (lockedCountry) {
+      setSelectedCountry(lockedCountry);
+      onCountryChange?.(lockedCountry.code);
+      setIsLoadingCountry(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lockCountryCode]);
+
   // Detect user's country on component mount and when language changes
   useEffect(() => {
+    if (lockedCountry) return;
+
     const initializeCountry = async () => {
       setIsLoadingCountry(true);
 
@@ -111,7 +131,7 @@ export function PhoneInputWithCountry({
     };
 
     initializeCountry();
-  }, [language]);
+  }, [language, lockedCountry]);
 
   // Update full phone number whenever value or selectedCountry changes
   useEffect(() => {
@@ -126,6 +146,7 @@ export function PhoneInputWithCountry({
   }, [value, selectedCountry, isLoadingCountry]);
 
   const handleCountryChange = (countryCode: string) => {
+    if (lockedCountry) return;
     const country = COUNTRY_CODES.find((c) => c.code === countryCode);
     if (country) {
       setSelectedCountry(country);
@@ -190,7 +211,7 @@ export function PhoneInputWithCountry({
           <Select
             value={selectedCountry.code}
             onValueChange={handleCountryChange}
-            disabled={disabled || isLoadingCountry}
+            disabled={disabled || isLoadingCountry || !!lockedCountry}
           >
             <SelectTrigger
               className={`w-[140px] focus:ring-0 focus:ring-offset-0 ${isRTL ? 'rounded-l-none border-l-0' : 'rounded-r-none border-r-0'}`}

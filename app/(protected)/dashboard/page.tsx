@@ -35,7 +35,7 @@ import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 import { useMemo } from 'react';
 import { useInitializeStores } from '@/hooks/useInitializeStores';
 

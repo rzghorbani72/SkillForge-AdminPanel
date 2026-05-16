@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { useLogin } from '@/hooks/useLogin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 
 const formSchema = z.object({
   identifier: z

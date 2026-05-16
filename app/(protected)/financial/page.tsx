@@ -45,7 +45,7 @@ import {
 } from '@/types/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 import { useAccessControl } from '@/hooks/useAccessControl';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/hooks';

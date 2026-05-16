@@ -31,7 +31,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter, useSearchParams } from 'next/navigation';
 // Note: Avoid client-side auth redirect here to prevent loops; middleware and protected layout handle it.
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';

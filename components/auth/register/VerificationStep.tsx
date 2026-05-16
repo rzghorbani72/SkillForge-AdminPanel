@@ -83,6 +83,7 @@ export function VerificationStep(props: VerificationStepProps) {
             onCountryChange={(countryCode) =>
               onChange('countryCode', countryCode)
             }
+            lockCountryCode="IR"
             error={errors.phone}
             disabled={isLoading}
           />

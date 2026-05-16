@@ -28,7 +28,7 @@ import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from '@/components/ui/link';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
