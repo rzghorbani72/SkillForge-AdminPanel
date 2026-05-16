@@ -118,7 +118,7 @@ export default function CategoriesPage() {
         toast.success('Category created successfully');
       } else {
         // Fallback: refetch if we can't extract the category
-        await fetchCategories();
+        await fetchCategories({ force: true });
         toast.success('Category created successfully');
       }
 
@@ -217,7 +217,7 @@ export default function CategoriesPage() {
           error={error}
           onRetry={() => {
             clearError();
-            fetchCategories();
+            fetchCategories({ force: true });
           }}
         />
       )}

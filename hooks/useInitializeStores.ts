@@ -29,10 +29,7 @@ export function useInitializeStores() {
         await fetchUser();
       }
 
-      // Fetch categories if not already loaded
-      if (categories.length === 0 && !categoriesLoading) {
-        await fetchCategories();
-      }
+      await fetchCategories();
     };
 
     initialize();

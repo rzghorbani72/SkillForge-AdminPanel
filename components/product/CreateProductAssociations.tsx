@@ -29,21 +29,10 @@ type Props = {
 
 const CreateProductAssociations = ({ form }: Props) => {
   const { t } = useTranslation();
-  const {
-    categories,
-    fetchCategories,
-    isLoading: categoriesLoading
-  } = useCategoriesStore();
+  const { categories, isLoading: categoriesLoading } = useCategoriesStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [coursesLoading, setCoursesLoading] = useState(false);
   const [coursesError, setCoursesError] = useState<string | null>(null);
-
-  // Ensure categories are loaded
-  useEffect(() => {
-    if (categories.length === 0 && !categoriesLoading) {
-      fetchCategories();
-    }
-  }, [categories.length, categoriesLoading, fetchCategories]);
 
   const fetchCourses = useCallback(async (categoryId?: string) => {
     if (!categoryId) {
@@ -143,12 +132,11 @@ const CreateProductAssociations = ({ form }: Props) => {
                 <FormLabel>{t('products.category')}</FormLabel>
                 <Select
                   onValueChange={(value) => {
-                    field.onChange(value);
-                    // Clear selected courses when category changes
+                    field.onChange(value === 'none' ? '' : value);
                     form.setValue('course_ids', []);
                   }}
-                  value={field.value || undefined}
-                  disabled={categoriesLoading}
+                  value={field.value || 'none'}
+                  disabled={categoriesLoading || productCategories.length === 0}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -162,17 +150,9 @@ const CreateProductAssociations = ({ form }: Props) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categoriesLoading ? (
-                      <SelectItem value="" disabled>
-                        {t('common.loading')}
-                      </SelectItem>
-                    ) : productCategories.length === 0 ? (
-                      <SelectItem value="" disabled>
-                        {t('products.noCategoriesAvailable')}
-                      </SelectItem>
-                    ) : (
+                    {!categoriesLoading && productCategories.length > 0 && (
                       <>
-                        <SelectItem value="">{t('common.none')}</SelectItem>
+                        <SelectItem value="none">{t('common.none')}</SelectItem>
                         {productCategories.map((category) => (
                           <SelectItem
                             key={category.id}

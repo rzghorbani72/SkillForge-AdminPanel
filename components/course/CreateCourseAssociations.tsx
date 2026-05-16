@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FormControl,
@@ -26,17 +26,9 @@ type Props = {
 const CreateCourseAssociations = ({ form }: Props) => {
   const {
     categories,
-    fetchCategories,
     isLoading: categoriesLoading,
     error: categoriesError
   } = useCategoriesStore();
-
-  // Ensure categories are loaded
-  useEffect(() => {
-    if (categories.length === 0 && !categoriesLoading) {
-      fetchCategories();
-    }
-  }, [categories.length, categoriesLoading, fetchCategories]);
 
   // Filter categories to only show COURSE type and active ones, format for dropdown
   const courseCategories = categories
@@ -75,15 +67,7 @@ const CreateCourseAssociations = ({ form }: Props) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categoriesLoading ? (
-                      <SelectItem value="" disabled>
-                        Loading categories...
-                      </SelectItem>
-                    ) : courseCategories.length === 0 ? (
-                      <SelectItem value="" disabled>
-                        {categoriesError || 'No categories available'}
-                      </SelectItem>
-                    ) : (
+                    {!categoriesLoading &&
                       courseCategories.map((category) => (
                         <SelectItem
                           key={category.id}
@@ -91,8 +75,7 @@ const CreateCourseAssociations = ({ form }: Props) => {
                         >
                           {category.name}
                         </SelectItem>
-                      ))
-                    )}
+                      ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />

@@ -101,6 +101,7 @@ export type CategoriesState = {
   categories: Category[];
   isLoading: boolean;
   error: string | null;
+  lastFetchedAt: number | null;
 };
 
 export type CategoriesActions = {
@@ -111,9 +112,12 @@ export type CategoriesActions = {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
-  fetchCategories: () => Promise<void>;
+  fetchCategories: (options?: { force?: boolean }) => Promise<void>;
   reset: () => void;
 };
+
+let categoriesFetchPromise: Promise<void> | null = null;
+const CATEGORIES_FETCH_COOLDOWN_MS = 30_000;
 
 export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
   persist(
@@ -121,6 +125,7 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
       categories: [],
       isLoading: false,
       error: null,
+      lastFetchedAt: null,
       setCategories: (categories: Category[]) => set({ categories }),
       addCategory: (category: Category) =>
         set((state) => ({
@@ -139,43 +144,76 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
       setLoading: (loading: boolean) => set({ isLoading: loading }),
       setError: (error: string | null) => set({ error }),
       clearError: () => set({ error: null }),
-      fetchCategories: async () => {
-        const { isLoading } = get();
-        if (isLoading) return; // Prevent concurrent fetches
+      fetchCategories: async (options?: { force?: boolean }) => {
+        if (categoriesFetchPromise) return categoriesFetchPromise;
 
-        set({ isLoading: true, error: null });
-        try {
-          const response = await apiClient.getCategories();
-          let categoriesData: Category[] = [];
+        const { categories, error, lastFetchedAt } = get();
+        const now = Date.now();
 
-          if (response && typeof response === 'object') {
-            if (Array.isArray(response.data)) {
-              categoriesData = response.data;
-            } else if (
-              response.data &&
-              typeof response.data === 'object' &&
-              Array.isArray((response.data as any).data)
-            ) {
-              categoriesData = (response.data as any).data;
-            } else if (
-              response.data &&
-              typeof response.data === 'object' &&
-              Array.isArray((response.data as any).categories)
-            ) {
-              categoriesData = (response.data as any).categories;
-            }
+        if (!options?.force) {
+          if (categories.length > 0) return;
+          if (
+            error &&
+            lastFetchedAt &&
+            now - lastFetchedAt < CATEGORIES_FETCH_COOLDOWN_MS
+          ) {
+            return;
           }
-
-          set({ categories: categoriesData, isLoading: false });
-        } catch (error) {
-          console.error('Error fetching categories:', error);
-          set({
-            error: 'Failed to load categories',
-            isLoading: false
-          });
         }
+
+        categoriesFetchPromise = (async () => {
+          set({ isLoading: true, error: null });
+          try {
+            const response = await apiClient.getCategories();
+            let categoriesData: Category[] = [];
+
+            if (response && typeof response === 'object') {
+              if (Array.isArray(response.data)) {
+                categoriesData = response.data;
+              } else if (
+                response.data &&
+                typeof response.data === 'object' &&
+                Array.isArray((response.data as any).data)
+              ) {
+                categoriesData = (response.data as any).data;
+              } else if (
+                response.data &&
+                typeof response.data === 'object' &&
+                Array.isArray((response.data as any).categories)
+              ) {
+                categoriesData = (response.data as any).categories;
+              }
+            }
+
+            set({
+              categories: categoriesData,
+              isLoading: false,
+              error: null,
+              lastFetchedAt: Date.now()
+            });
+          } catch (fetchError) {
+            console.error('Error fetching categories:', fetchError);
+            set({
+              error: 'Failed to load categories',
+              isLoading: false,
+              lastFetchedAt: Date.now()
+            });
+          } finally {
+            categoriesFetchPromise = null;
+          }
+        })();
+
+        return categoriesFetchPromise;
       },
-      reset: () => set({ categories: [], isLoading: false, error: null })
+      reset: () => {
+        categoriesFetchPromise = null;
+        set({
+          categories: [],
+          isLoading: false,
+          error: null,
+          lastFetchedAt: null
+        });
+      }
     }),
     { name: 'categories-store', skipHydration: true }
   )

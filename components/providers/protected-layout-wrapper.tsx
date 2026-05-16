@@ -1,15 +1,26 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Sidebar from '@/components/layout/sidebar';
 import Header from '@/components/layout/header';
 import { ThemeInitializer } from '@/components/providers/ThemeInitializer';
 import { UserProvider } from '@/components/providers/user-provider';
+import { useCategoriesStore } from '@/lib/store';
 
 export function ProtectedLayoutWrapper({
   children
 }: {
   children: React.ReactNode;
 }) {
+  const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
+  const hasFetchedCategories = useRef(false);
+
+  useEffect(() => {
+    if (hasFetchedCategories.current) return;
+    hasFetchedCategories.current = true;
+    fetchCategories();
+  }, [fetchCategories]);
+
   return (
     <UserProvider>
       <ThemeInitializer />

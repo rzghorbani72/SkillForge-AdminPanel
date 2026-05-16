@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { useCategoriesStore } from '@/lib/store';
 import useLessonForm from '@/components/lesson/useLessonForm';
@@ -8,18 +7,7 @@ import LessonFormPage from '@/components/lesson/LessonFormPage';
 
 export default function EditLessonPage() {
   const { selectedAcademy } = useStore();
-  const {
-    categories,
-    fetchCategories,
-    isLoading: categoriesLoading
-  } = useCategoriesStore();
-
-  // Ensure categories are loaded
-  useEffect(() => {
-    if (categories.length === 0 && !categoriesLoading) {
-      fetchCategories();
-    }
-  }, [categories.length, categoriesLoading, fetchCategories]);
+  const { categories, isLoading: categoriesLoading } = useCategoriesStore();
   const {
     lesson,
     season,
