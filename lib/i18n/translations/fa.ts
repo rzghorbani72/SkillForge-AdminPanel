@@ -592,7 +592,7 @@ export const fa = {
     phone: 'تلفن',
     joined: 'عضویت',
     storeSnapshot: 'نمای کلی آکادمی',
-    storeSnapshotDescription: 'آکادمی اصلی شما در SkillForge.',
+    storeSnapshotDescription: 'آکادمی اصلی شما در آکادمی.',
     name: 'نام',
     domain: 'دامنه',
     students: 'دانش‌آموزان',
@@ -692,12 +692,12 @@ export const fa = {
     pricingUpdatedSuccess: 'محتوای قیمت‌گذاری با موفقیت به‌روزرسانی شد',
     storeSettingsTitle: 'تنظیمات آکادمی',
     storeSettingsSubtitle:
-      'نحوه نمایش آکادمی شما در اکوسیستم SkillForge را مدیریت کنید.',
+      'نحوه نمایش آکادمی شما در اکوسیستم آکادمی را مدیریت کنید.',
     generalInformation: 'اطلاعات عمومی',
     generalInformationDescription:
       'نام، توضیحات و دامنه آکادمی خود را به‌روزرسانی کنید.',
     storeName: 'نام آکادمی',
-    storeNamePlaceholder: 'آکادمی SkillForge',
+    storeNamePlaceholder: 'آکادمی آکادمی',
     customDomain: 'دامنه اختصاصی',
     customDomainPlaceholder: 'academy',
     descriptionPlaceholder: 'آکادمی خود را برای دانش‌آموزان آینده توصیف کنید',
@@ -708,7 +708,7 @@ export const fa = {
     domainTipsText1:
       'برای بهترین تجربه برندینگ از یک زیردامنه که کنترل آن را دارید استفاده کنید (مثلاً academy.yourstore.com).',
     domainTipsText2:
-      'می‌توانید با تماس با پشتیبانی SkillForge درخواست گواهی SSL و پشتیبانی DNS سفارشی کنید.',
+      'می‌توانید با تماس با پشتیبانی آکادمی درخواست گواهی SSL و پشتیبانی DNS سفارشی کنید.',
     needHelp: 'نیاز به کمک دارید؟',
     needHelpText:
       'برای یادگیری نحوه پیکربندی ورود یکپارچه، دامنه‌های سفارشی و موارد دیگر به مستندات مراجعه کنید.',
@@ -1023,6 +1023,13 @@ export const fa = {
     title: 'صفحه یافت نشد',
     description: 'صفحه‌ای که به دنبال آن هستید وجود ندارد.',
     backHome: 'بازگشت به خانه'
+  },
+  home: {
+    welcomeToSkillForge: 'به آکادمی خوش آمدید',
+    description:
+      'مسیر یادگیری خود را تقویت کنید. دوره‌های آنلاین خود را به‌راحتی بسازید، مدیریت کنید و بفروشید. آکادمی پلتفرم همه‌کاره شما برای راه‌اندازی یک کسب‌وکار آموزشی آنلاین پربار است.',
+    getStarted: 'شروع کنید / ورود',
+    allRightsReserved: 'تمامی حقوق محفوظ است.'
   },
   content: {
     course: 'دوره',

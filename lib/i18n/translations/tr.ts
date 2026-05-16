@@ -458,7 +458,7 @@ export const tr = {
     phone: 'Telefon',
     joined: 'Katıldı',
     storeSnapshot: 'Enstitü Özeti',
-    storeSnapshotDescription: "SkillForge'daki birincil enstitünüz.",
+    storeSnapshotDescription: "آکادمی'daki birincil enstitünüz.",
     name: 'İsim',
     domain: 'Alan Adı',
     students: 'Öğrenciler',
@@ -546,12 +546,12 @@ export const tr = {
     pricingUpdatedSuccess: 'Fiyatlandırma içeriği başarıyla güncellendi',
     storeSettingsTitle: 'Enstitü Ayarları',
     storeSettingsSubtitle:
-      'Enstitünüzün SkillForge ekosisteminde nasıl göründüğünü yönetin.',
+      'Enstitünüzün آکادمی ekosisteminde nasıl göründüğünü yönetin.',
     generalInformation: 'Genel Bilgiler',
     generalInformationDescription:
       'Enstitünüzün adını, açıklamasını ve alan adını güncelleyin.',
     storeName: 'Enstitü Adı',
-    storeNamePlaceholder: 'SkillForge Akademisi',
+    storeNamePlaceholder: 'آکادمی Akademisi',
     customDomain: 'Özel Alan Adı',
     customDomainPlaceholder: 'academy',
     descriptionPlaceholder: 'Enstitünüzü potansiyel öğrenciler için tanımlayın',
@@ -562,7 +562,7 @@ export const tr = {
     domainTipsText1:
       'En iyi marka deneyimi için kontrol ettiğiniz bir alt alan adı kullanın (örn. academy.yourstore.com).',
     domainTipsText2:
-      'SkillForge desteğiyle iletişime geçerek SSL sertifikaları ve özel DNS desteği talep edebilirsiniz.',
+      'آکادمی desteğiyle iletişime geçerek SSL sertifikaları ve özel DNS desteği talep edebilirsiniz.',
     needHelp: 'Yardıma mı ihtiyacınız var?',
     needHelpText:
       'Tek oturum açma, özel alan adları ve daha fazlasını nasıl yapılandıracağınızı öğrenmek için belgeleri ziyaret edin.',

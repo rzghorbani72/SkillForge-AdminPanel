@@ -10,9 +10,9 @@ import { ToastContainerWrapper } from '@/components/providers/toast-container-wr
 import { LanguageSync } from '@/components/providers/language-sync';
 
 export const metadata: Metadata = {
-  title: 'SkillForge Admin Panel',
+  title: 'آکادمی Admin Panel',
   description:
-    'Admin panel for SkillForge - Manage your stores, courses, and students'
+    'Admin panel for آکادمی - Manage your stores, courses, and students'
 };
 
 export default async function RootLayout({
@@ -20,13 +20,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Get language preference from cookies or default to English
   const cookieStore = await cookies();
   const languagePreference =
     cookieStore.get('preferred_language')?.value || null;
 
-  // Try to get country code from store data if available
-  // For now, we'll use language preference or default to English
   const language = getAdminLanguage(languagePreference, null);
   const direction = getAdminDirection(languagePreference, null);
 

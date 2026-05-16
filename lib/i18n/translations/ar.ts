@@ -452,7 +452,7 @@ export const ar = {
     phone: 'الهاتف',
     joined: 'انضم',
     storeSnapshot: 'نظرة عامة على المعهد',
-    storeSnapshotDescription: 'معهدك الأساسي على SkillForge.',
+    storeSnapshotDescription: 'معهدك الأساسي على آکادمی.',
     name: 'الاسم',
     domain: 'النطاق',
     students: 'الطلاب',
@@ -535,11 +535,11 @@ export const ar = {
     pricingCtaPlaceholder: 'ابدأ بخطتك',
     pricingUpdatedSuccess: 'تم تحديث محتوى التسعير بنجاح',
     storeSettingsTitle: 'إعدادات المعهد',
-    storeSettingsSubtitle: 'إدارة كيفية ظهور معهدك عبر نظام SkillForge.',
+    storeSettingsSubtitle: 'إدارة كيفية ظهور معهدك عبر نظام آکادمی.',
     generalInformation: 'المعلومات العامة',
     generalInformationDescription: 'تحديث الاسم والوصف والنطاق لمعهدك.',
     storeName: 'اسم المعهد',
-    storeNamePlaceholder: 'أكاديمية SkillForge',
+    storeNamePlaceholder: 'أكاديمية آکادمی',
     customDomain: 'النطاق المخصص',
     customDomainPlaceholder: 'academy',
     descriptionPlaceholder: 'صف معهدك للطلاب المحتملين',
@@ -550,7 +550,7 @@ export const ar = {
     domainTipsText1:
       'استخدم نطاقًا فرعيًا تتحكم فيه (مثل academy.yourstore.com) للحصول على أفضل تجربة للعلامة التجارية.',
     domainTipsText2:
-      'يمكنك طلب شهادات SSL ودعم DNS المخصص عن طريق الاتصال بدعم SkillForge.',
+      'يمكنك طلب شهادات SSL ودعم DNS المخصص عن طريق الاتصال بدعم آکادمی.',
     needHelp: 'تحتاج مساعدة؟',
     needHelpText:
       'قم بزيارة الوثائق لمعرفة كيفية تكوين تسجيل الدخول الموحد والنطاقات المخصصة والمزيد.',

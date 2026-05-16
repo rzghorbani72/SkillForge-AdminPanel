@@ -302,7 +302,7 @@ export default function LoginPage() {
             <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
               <Building2 className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">SkillForge</h1>
+            <h1 className="text-2xl font-bold text-gray-900">آکادمی</h1>
             <p className="text-gray-600">{t('auth.adminPanel')}</p>
           </div>
 

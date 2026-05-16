@@ -4,6 +4,7 @@ import { Active, DataRef, Over } from '@dnd-kit/core';
 import { ColumnDragData } from '@/sections/kanban/board-column';
 import { TaskDragData } from '@/sections/kanban/task-card';
 import type { Academy } from '@/types/api';
+import { DEFAULT_LANGUAGE, getLocaleForLanguage } from '@/lib/i18n/config';
 
 export type AcademyCurrencyFormatting =
   | Academy
@@ -170,7 +171,11 @@ export function formatCurrencyWithStore(
   // Try to get language from localStorage if not provided (client-side only)
   let currentLanguage = language;
   if (!currentLanguage && typeof window !== 'undefined') {
-    currentLanguage = localStorage.getItem('preferred_language') || undefined;
+    currentLanguage =
+      localStorage.getItem('preferred_language') || DEFAULT_LANGUAGE;
+  }
+  if (!currentLanguage) {
+    currentLanguage = DEFAULT_LANGUAGE;
   }
 
   return formatCurrency(amount, {
@@ -182,12 +187,14 @@ export function formatCurrencyWithStore(
   });
 }
 
+const defaultLocale = getLocaleForLanguage(DEFAULT_LANGUAGE);
+
 export function formatNumber(num: number): string {
-  return new Intl.NumberFormat('en-US').format(num);
+  return new Intl.NumberFormat(defaultLocale).format(num);
 }
 
 export function formatDate(date: string | Date): string {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(defaultLocale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -195,7 +202,7 @@ export function formatDate(date: string | Date): string {
 }
 
 export function formatDateTime(date: string | Date): string {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(defaultLocale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

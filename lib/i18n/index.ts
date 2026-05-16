@@ -119,4 +119,4 @@ export {
  * Re-export types
  */
 export type { LanguageCode, TextDirection, LanguageConfig } from './config';
-export { DEFAULT_LANGUAGE } from './config';
+export { DEFAULT_LANGUAGE, getLocaleForLanguage } from './config';

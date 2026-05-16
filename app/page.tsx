@@ -1,13 +1,19 @@
 'use client';
 
 import Link from '@/components/ui/link';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { DEFAULT_LANGUAGE, getLanguageConfig } from '@/lib/i18n/config';
+import { t as translate } from '@/lib/i18n';
+
+const language = DEFAULT_LANGUAGE;
+const { direction } = getLanguageConfig(language);
+const t = (key: string) => translate(key, language);
 
 export default function Page() {
-  const { t } = useTranslation();
-
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 px-4">
+    <main
+      dir={direction}
+      className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 px-4"
+    >
       <nav className="flex w-full justify-end px-8 py-6">
         <Link
           href="/login"
@@ -31,8 +37,7 @@ export default function Page() {
         </Link>
       </section>
       <footer className="mt-auto py-8 text-sm text-gray-500">
-        &copy; {new Date().getFullYear()} SkillForge.{' '}
-        {t('home.allRightsReserved')}
+        &copy; {new Date().getFullYear()} آکادمی. {t('home.allRightsReserved')}
       </footer>
     </main>
   );

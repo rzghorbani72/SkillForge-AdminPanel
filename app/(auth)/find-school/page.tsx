@@ -155,7 +155,7 @@ export default function FindStorePage() {
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3">
                   <p className="text-sm font-medium text-gray-900">
-                    SkillForge Subdomain
+                    آکادمی Subdomain
                   </p>
                   <p className="text-sm text-gray-600">
                     https://yourstore.skillforge.com
@@ -196,7 +196,7 @@ export default function FindStorePage() {
           <CardHeader>
             <CardTitle>Popular Stores</CardTitle>
             <CardDescription>
-              Quick access to some of the most popular stores on SkillForge
+              Quick access to some of the most popular stores on آکادمی
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -282,7 +282,7 @@ export default function FindStorePage() {
             <AlertDescription>
               <strong>Can&apos;t find your store?</strong> Contact your store
               administrator to get the correct domain or ask them to set up a
-              SkillForge account.
+              آکادمی account.
             </AlertDescription>
           </Alert>
 
@@ -296,7 +296,7 @@ export default function FindStorePage() {
               >
                 register here
               </Link>{' '}
-              to create your own store on SkillForge.
+              to create your own store on آکادمی.
             </AlertDescription>
           </Alert>
         </div>

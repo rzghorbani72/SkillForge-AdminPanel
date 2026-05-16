@@ -6,7 +6,7 @@
 
 import { useI18n } from './provider';
 import { t as translate, getTranslations } from './index';
-import type { LanguageCode } from './config';
+import { getLocaleForLanguage, type LanguageCode } from './config';
 import type { InterpolationParams } from './index';
 
 /**
@@ -33,6 +33,7 @@ export function useLanguage() {
     language,
     direction,
     isRTL,
-    config
+    config,
+    locale: getLocaleForLanguage(language)
   };
 }

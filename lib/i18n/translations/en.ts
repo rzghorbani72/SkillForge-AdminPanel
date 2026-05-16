@@ -745,9 +745,9 @@ export const en = {
     backHome: 'Back to Home'
   },
   home: {
-    welcomeToSkillForge: 'Welcome to SkillForge',
+    welcomeToSkillForge: 'Welcome to آکادمی',
     description:
-      'Empower your learning journey. Create, manage, and sell your online courses with ease. SkillForge is your all-in-one platform for building a thriving online education business.',
+      'Empower your learning journey. Create, manage, and sell your online courses with ease. آکادمی is your all-in-one platform for building a thriving online education business.',
     getStarted: 'Get Started / Login',
     allRightsReserved: 'All rights reserved.'
   },
@@ -824,7 +824,7 @@ export const en = {
     phone: 'Phone',
     joined: 'Joined',
     storeSnapshot: 'Store Snapshot',
-    storeSnapshotDescription: 'Your primary store on SkillForge.',
+    storeSnapshotDescription: 'Your primary store on آکادمی.',
     name: 'Name',
     domain: 'Domain',
     students: 'Students',
@@ -879,12 +879,12 @@ export const en = {
     profileUpdatedSuccess: 'Profile updated successfully',
     storeSettingsTitle: 'Store Settings',
     storeSettingsSubtitle:
-      'Manage how your store appears across the SkillForge ecosystem.',
+      'Manage how your store appears across the آکادمی ecosystem.',
     generalInformation: 'General Information',
     generalInformationDescription:
       'Update the name, description, and domain for your store.',
     storeName: 'Store name',
-    storeNamePlaceholder: 'SkillForge Academy',
+    storeNamePlaceholder: 'آکادمی',
     customDomain: 'Custom domain',
     customDomainPlaceholder: 'academy',
     descriptionPlaceholder: 'Describe your store for prospective students',
@@ -896,7 +896,7 @@ export const en = {
     domainTipsText1:
       'Use a subdomain you control (e.g. academy.yourstore.com) for the best branding experience.',
     domainTipsText2:
-      'You can request SSL certificates and custom DNS support by contacting SkillForge support.',
+      'You can request SSL certificates and custom DNS support by contacting آکادمی support.',
     needHelp: 'Need help?',
     needHelpText:
       'Visit the documentation to learn how to configure single sign-on, custom domains, and more.',
@@ -942,7 +942,7 @@ export const en = {
     notificationPreferencesSaved: 'Notification preferences saved',
     themeBrandingTitle: 'Theme & Branding',
     themeBrandingSubtitle:
-      'Customize the look and feel of your SkillForge stores for students.',
+      'Customize the look and feel of your آکادمی stores for students.',
     colours: 'Colours',
     coloursDescription:
       'Choose the palette students will see across the platform.',

@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useI18n } from '@/lib/i18n/provider';
-import { detectUserCountry } from '@/lib/geo-location';
-import { getDefaultLanguageForCountry } from '@/lib/i18n/config';
+import { DEFAULT_LANGUAGE } from '@/lib/i18n/config';
 import type { LanguageCode } from '@/lib/i18n/config';
 
 interface LanguageDetectorProps {
@@ -35,20 +34,11 @@ export function LanguageDetector({
         }
       }
 
-      try {
-        // Try to detect country from IP
-        const country = await detectUserCountry();
-        const detectedLanguage = getDefaultLanguageForCountry(country.code);
-
-        // Only set if different from current and no preference stored
-        const storedLanguage = localStorage.getItem('preferred_language');
-        if (!storedLanguage && detectedLanguage !== language) {
-          localStorage.setItem('preferred_language', detectedLanguage);
-          setLanguage(detectedLanguage);
-          onDetected?.(country.code, detectedLanguage);
-        }
-      } catch (error) {
-        console.warn('Failed to detect location:', error);
+      const storedLanguage = localStorage.getItem('preferred_language');
+      if (!storedLanguage && DEFAULT_LANGUAGE !== language) {
+        localStorage.setItem('preferred_language', DEFAULT_LANGUAGE);
+        setLanguage(DEFAULT_LANGUAGE);
+        onDetected?.('IR', DEFAULT_LANGUAGE);
       }
     };
 

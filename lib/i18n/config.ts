@@ -307,6 +307,10 @@ export function getTextDirection(languageCode: string): TextDirection {
   return config.direction;
 }
 
+export function getLocaleForLanguage(languageCode: string): string {
+  return getLanguageConfig(languageCode).locale;
+}
+
 /**
  * Get supported languages for a country
  */

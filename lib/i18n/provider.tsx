@@ -59,10 +59,10 @@ export function I18nProvider({
     }
   }
 
-  // Determine initial language
+  // Server/cookie default wins over stale localStorage so DEFAULT_LANGUAGE (fa) applies on first visit
   const defaultLanguage =
-    storedLanguage ||
     initialLanguage ||
+    storedLanguage ||
     (countryCode
       ? getDefaultLanguageForCountry(countryCode)
       : DEFAULT_LANGUAGE);
