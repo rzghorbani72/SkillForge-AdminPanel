@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Category } from '@/types/api';
-import { useCategoriesStore } from '@/lib/store';
+import { parseCategoryFromApi, useCategoriesStore } from '@/lib/store';
 import { toast } from 'sonner';
 import { CategoryHeader } from '@/components/category/CategoryHeader';
 import { SearchAndFilters } from '@/components/category/SearchAndFilters';
@@ -66,13 +66,15 @@ export default function CategoriesPage() {
     }
   }, [searchParams]);
 
-  const safeCategories = Array.isArray(categories) ? categories : [];
+  const safeCategories = (Array.isArray(categories) ? categories : []).filter(
+    (category) => category?.name
+  );
 
   const filteredCategories = safeCategories.filter((category) => {
+    const query = searchTerm.toLowerCase();
     const matchesSearch =
-      category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (category.description &&
-        category.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      category.name.toLowerCase().includes(query) ||
+      (category.description?.toLowerCase().includes(query) ?? false);
     const matchesType =
       selectedType === 'all' || category.type === selectedType;
 
@@ -101,16 +103,27 @@ export default function CategoriesPage() {
         type: formData.type
       });
 
-      // Extract the created category from response
-      let createdCategory: Category | null = null;
-      if (response?.data) {
-        if (Array.isArray(response.data)) {
-          createdCategory = response.data[0] as Category;
-        } else if (response.data && typeof response.data === 'object') {
-          createdCategory =
-            (response.data as any).data || (response.data as any);
-        }
+      const payload = response?.data as
+        | { status?: string; data?: unknown; message?: string }
+        | undefined;
+
+      if (payload?.status === 'fail') {
+        const message =
+          typeof payload.data === 'string'
+            ? payload.data
+            : payload.message || 'Failed to create category';
+        toast.error(message);
+        await fetchCategories({ force: true });
+        return;
       }
+
+      const createdCategory = payload
+        ? parseCategoryFromApi(
+            Array.isArray(payload.data)
+              ? payload.data[0]
+              : (payload.data ?? payload)
+          )
+        : null;
 
       if (createdCategory) {
         // Update Zustand store with new category

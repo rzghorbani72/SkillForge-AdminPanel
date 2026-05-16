@@ -97,6 +97,39 @@ export const useTaskStore = create<State & Actions>()(
 );
 
 // Categories Store
+function parseCategoriesPayload(payload: unknown): Category[] {
+  if (!payload) return [];
+  if (Array.isArray(payload)) {
+    return payload.filter(
+      (item): item is Category =>
+        !!item &&
+        typeof item === 'object' &&
+        typeof (item as Category).name === 'string'
+    );
+  }
+  if (typeof payload !== 'object') return [];
+
+  const obj = payload as Record<string, unknown>;
+  if (Array.isArray(obj.data)) return parseCategoriesPayload(obj.data);
+  if (Array.isArray(obj.categories))
+    return parseCategoriesPayload(obj.categories);
+  if (obj.data && typeof obj.data === 'object') {
+    return parseCategoriesPayload(obj.data);
+  }
+  return [];
+}
+
+export function parseCategoryFromApi(payload: unknown): Category | null {
+  if (!payload || typeof payload !== 'object') return null;
+  const obj = payload as Record<string, unknown>;
+  const candidate = (
+    obj.data && typeof obj.data === 'object' && !Array.isArray(obj.data)
+      ? obj.data
+      : obj
+  ) as Category;
+  return typeof candidate.name === 'string' ? candidate : null;
+}
+
 export type CategoriesState = {
   categories: Category[];
   isLoading: boolean;
@@ -128,9 +161,10 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
       lastFetchedAt: null,
       setCategories: (categories: Category[]) => set({ categories }),
       addCategory: (category: Category) =>
-        set((state) => ({
-          categories: [...state.categories, category]
-        })),
+        set((state) => {
+          if (!category?.name) return state;
+          return { categories: [...state.categories, category] };
+        }),
       updateCategory: (id: number, category: Partial<Category>) =>
         set((state) => ({
           categories: state.categories.map((cat) =>
@@ -165,25 +199,7 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
           set({ isLoading: true, error: null });
           try {
             const response = await apiClient.getCategories();
-            let categoriesData: Category[] = [];
-
-            if (response && typeof response === 'object') {
-              if (Array.isArray(response.data)) {
-                categoriesData = response.data;
-              } else if (
-                response.data &&
-                typeof response.data === 'object' &&
-                Array.isArray((response.data as any).data)
-              ) {
-                categoriesData = (response.data as any).data;
-              } else if (
-                response.data &&
-                typeof response.data === 'object' &&
-                Array.isArray((response.data as any).categories)
-              ) {
-                categoriesData = (response.data as any).categories;
-              }
-            }
+            const categoriesData = parseCategoriesPayload(response);
 
             set({
               categories: categoriesData,
