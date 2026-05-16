@@ -501,6 +501,7 @@ export default function LoginPage() {
                       onFullPhoneChange={(fullPhone) =>
                         handleInputChange('fullPhoneNumber', fullPhone)
                       }
+                      lockCountryCode="IR"
                       error={errors.phone}
                       disabled={isLoading}
                     />
