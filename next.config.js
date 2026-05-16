@@ -39,8 +39,8 @@ const SECURITY_HEADERS = [
 ];
 
 const PRODUCTION_PUBLIC_DEFAULTS = {
-  API_URL: 'https://api-academy.darkub.ir/api',
-  PANEL_HOST: 'https://panel-academy.darkub.ir'
+  API_URL: 'https://api-academy.darkube.ir/api',
+  PANEL_HOST: 'https://panel-academy.darkube.ir'
 };
 
 const nextConfig = {
