@@ -3,9 +3,9 @@ import { User as UserType } from '@/types/api';
 import { toast } from 'react-toastify';
 import { t } from './i18n';
 import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
+import { getBrowserApiBaseUrl } from './api-base-url';
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = getBrowserApiBaseUrl();
 
 export interface ApiResponse<T = unknown> {
   data: T;

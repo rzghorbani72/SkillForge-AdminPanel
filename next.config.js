@@ -39,7 +39,9 @@ const SECURITY_HEADERS = [
 ];
 
 const PRODUCTION_PUBLIC_DEFAULTS = {
-  API_URL: 'https://api-academy.darkube.ir/api',
+  /** Same-origin path — cookies must be set on the panel host, not api-academy.darkube.ir */
+  API_URL: '/api',
+  BACKEND_API_URL: 'https://api-academy.darkube.ir/api',
   PANEL_HOST: 'https://panel-academy.darkube.ir'
 };
 
@@ -52,8 +54,20 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_HOST || PRODUCTION_PUBLIC_DEFAULTS.PANEL_HOST,
     NEXT_PUBLIC_BACKEND_API_URL:
       process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-      process.env.NEXT_PUBLIC_API_URL ||
-      PRODUCTION_PUBLIC_DEFAULTS.API_URL
+      PRODUCTION_PUBLIC_DEFAULTS.BACKEND_API_URL
+  },
+  async rewrites() {
+    const backendTarget =
+      process.env.BACKEND_API_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_API_URL ||
+      PRODUCTION_PUBLIC_DEFAULTS.BACKEND_API_URL;
+    const destination = backendTarget.replace(/\/$/, '');
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${destination}/:path*`
+      }
+    ];
   },
   images: {
     // Use custom loader to bypass Next.js optimization and serve images directly from backend

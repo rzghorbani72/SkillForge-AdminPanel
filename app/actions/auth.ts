@@ -2,8 +2,9 @@
 
 import { cookies } from 'next/headers';
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+import { getServerApiBaseUrl } from '@/lib/api-base-url';
+
+const API_BASE_URL = getServerApiBaseUrl();
 
 export async function logout(): Promise<{ success: boolean; error?: string }> {
   try {

@@ -166,6 +166,18 @@ class AuthService {
         JSON.stringify(derivedPermissions)
       );
 
+      const academyId =
+        user.currentProfile?.academy_id ??
+        (user.currentProfile as { Academy?: { id?: number } })?.Academy?.id ??
+        user.currentAcademy?.id ??
+        null;
+      if (academyId) {
+        window.localStorage.setItem(
+          'skillforge_selected_academy_id',
+          String(academyId)
+        );
+      }
+
       // Store auth user data without access_token
       const safeAuthUser = {
         ...user,

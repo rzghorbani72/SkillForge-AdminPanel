@@ -4,8 +4,9 @@
  * the saved theme, eliminating the flash of default colors.
  */
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+import { getServerApiBaseUrl } from './api-base-url';
+
+const API_BASE_URL = getServerApiBaseUrl();
 
 const FALLBACK_DARK_BG = '#0f172a';
 const FALLBACK_LIGHT_BG = '#f8fafc';
@@ -165,8 +166,11 @@ export async function fetchAdminThemeConfigs(
 
   try {
     const res = await fetch(`${API_BASE_URL}/theme/current/config`, {
-      headers: { Authorization: `Bearer ${jwtToken}` },
-      next: { revalidate: 30 } // cache for 30s to avoid per-request overhead
+      headers: {
+        Cookie: `jwt=${jwtToken}`,
+        Authorization: `Bearer ${jwtToken}`
+      },
+      cache: 'no-store'
     });
     if (!res.ok) return null;
     const json = await res.json();

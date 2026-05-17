@@ -190,8 +190,8 @@ export default function LoginPage() {
             }
           }
 
-          // User is admin/manager/teacher, redirect to admin dashboard
-          router.push('/dashboard');
+          // Full navigation so server layout sees HttpOnly jwt on the panel host
+          window.location.assign('/dashboard');
           return;
         } else {
           // User doesn't have proper permissions
@@ -268,7 +268,7 @@ export default function LoginPage() {
             }
           }
 
-          router.push('/dashboard');
+          window.location.assign('/dashboard');
           return;
         } else {
           ErrorHandler.showWarning(
