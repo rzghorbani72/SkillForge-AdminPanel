@@ -1,14 +1,16 @@
-# Hamravesh mirrors (Iran): npm https://repo.hmirror.ir/npm
+# Hamravesh mirror (Iran): https://repo.hmirror.ir/npm — Corepack still hits npmjs unless bypassed
 FROM node:22-bookworm-slim AS base
 
-ENV NPM_REGISTRY=https://repo.hmirror.ir/npm/
+# No trailing slash (corepack/npm mirror URL joining)
+ENV NPM_REGISTRY=https://repo.hmirror.ir/npm
+ENV COREPACK_NPM_REGISTRY=${NPM_REGISTRY}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV npm_config_registry=${NPM_REGISTRY}
 ENV NPM_CONFIG_REGISTRY=${NPM_REGISTRY}
 
-RUN corepack enable \
-  && corepack prepare pnpm@9 --activate \
-  && npm config set registry "${NPM_REGISTRY}" \
+# Install pnpm via npm mirror (do not use `corepack prepare` — it fetches from registry.npmjs.org first)
+RUN npm config set registry "${NPM_REGISTRY}" \
+  && npm install -g pnpm@9.15.9 \
   && pnpm config set registry "${NPM_REGISTRY}" \
   && pnpm config set fetch-retries 5 \
   && pnpm config set fetch-retry-mintimeout 20000 \
