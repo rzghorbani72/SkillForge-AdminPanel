@@ -120,8 +120,8 @@ export default function AdminLoginPage() {
         // Check user role - must be ADMIN
         const userRole = response.currentProfile?.Role?.name;
         if (userRole === 'ADMIN') {
-          // Admin login successful
-          router.push('/dashboard');
+          // Full navigation so server layout sees HttpOnly jwt on the panel host
+          window.location.href = '/dashboard';
           return;
         } else {
           // User doesn't have ADMIN role

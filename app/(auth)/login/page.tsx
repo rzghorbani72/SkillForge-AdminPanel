@@ -165,7 +165,7 @@ export default function LoginPage() {
               'Development mode: Would redirect student to store dashboard'
             );
             // For development, redirect to dashboard instead
-            router.push('/dashboard');
+            window.location.href = '/dashboard';
             return;
           } else {
             // In production, redirect to store
@@ -191,7 +191,7 @@ export default function LoginPage() {
           }
 
           // Full navigation so server layout sees HttpOnly jwt on the panel host
-          window.location.assign('/dashboard');
+          window.location.href = '/dashboard';
           return;
         } else {
           // User doesn't have proper permissions
@@ -268,7 +268,7 @@ export default function LoginPage() {
             }
           }
 
-          window.location.assign('/dashboard');
+          window.location.href = '/dashboard';
           return;
         } else {
           ErrorHandler.showWarning(

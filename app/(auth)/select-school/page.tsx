@@ -54,8 +54,7 @@ export default function SelectStorePage() {
         }
 
         if (userStores.length === 1) {
-          // Only one store, redirect directly to dashboard
-          router.push('/dashboard');
+          window.location.href = '/dashboard';
           return;
         }
 
@@ -228,7 +227,9 @@ export default function SelectStorePage() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => router.push('/dashboard')}
+            onClick={() => {
+              window.location.href = '/dashboard';
+            }}
             className="w-full sm:w-auto"
           >
             Access Admin Panel
