@@ -502,15 +502,7 @@ class AuthService {
           storeModule.useUserStore.getState().reset();
           storeModule.useCategoriesStore.getState().reset();
 
-          // Redirect to appropriate login page
-          if (isDevelopmentMode()) {
-            logDevInfo('Development mode: Redirecting to localhost login');
-            window.location.href = '/login';
-          } else {
-            const loginPath =
-              this.authType === 'public' ? '/student/login' : '/admin/login';
-            window.location.href = loginPath;
-          }
+          window.location.href = '/login';
         }
       } else {
         throw new Error(result.error || 'Logout failed');
@@ -532,13 +524,7 @@ class AuthService {
           console.warn('Failed to clear Zustand stores:', e);
         }
 
-        if (isDevelopmentMode()) {
-          window.location.href = '/login';
-        } else {
-          const loginPath =
-            this.authType === 'public' ? '/student/login' : '/admin/login';
-          window.location.href = loginPath;
-        }
+        window.location.href = '/login';
       }
     }
   }
