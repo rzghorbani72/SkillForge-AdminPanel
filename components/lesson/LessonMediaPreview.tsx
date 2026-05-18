@@ -20,6 +20,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 
 interface LessonMediaPreviewProps {
   lesson: Lesson;
@@ -64,17 +65,10 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
     if (lesson.audio?.publicUrl) {
       const url = lesson.audio.publicUrl;
       if (url.startsWith('http')) return url;
-      const apiBase =
-        process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-        `${process.env.NEXT_PUBLIC_HOST || ''}/api`;
       const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
-      return `${apiBase}${normalizedUrl}`;
+      return `${getBrowserApiBaseUrl()}${normalizedUrl}`;
     }
-    // Otherwise, construct URL from ID
-    const apiBase =
-      process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-      `${process.env.NEXT_PUBLIC_HOST || ''}/api`;
-    return `${apiBase}/audios/stream/${lesson.audio_id}`;
+    return `${getBrowserApiBaseUrl()}/audios/stream/${lesson.audio_id}`;
   };
 
   const getDocumentUrl = () => {
@@ -83,17 +77,10 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
     if (lesson.document?.publicUrl) {
       const url = lesson.document.publicUrl;
       if (url.startsWith('http')) return url;
-      const apiBase =
-        process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-        `${process.env.NEXT_PUBLIC_HOST || ''}/api`;
       const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
-      return `${apiBase}${normalizedUrl}`;
+      return `${getBrowserApiBaseUrl()}${normalizedUrl}`;
     }
-    // Otherwise, construct URL from ID
-    const apiBase =
-      process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-      `${process.env.NEXT_PUBLIC_HOST || ''}/api`;
-    return `${apiBase}/documents/${lesson.document_id}`;
+    return `${getBrowserApiBaseUrl()}/documents/${lesson.document_id}`;
   };
 
   const getImageUrl = () => {
@@ -102,17 +89,10 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
     if (lesson.image?.publicUrl) {
       const url = lesson.image.publicUrl;
       if (url.startsWith('http')) return url;
-      const apiBase =
-        process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-        `${process.env.NEXT_PUBLIC_HOST || ''}/api`;
       const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
-      return `${apiBase}${normalizedUrl}`;
+      return `${getBrowserApiBaseUrl()}${normalizedUrl}`;
     }
-    // Otherwise, construct URL from ID
-    const apiBase =
-      process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-      `${process.env.NEXT_PUBLIC_HOST || ''}/api`;
-    return `${apiBase}/images/${lesson.image_id}`;
+    return `${getBrowserApiBaseUrl()}/images/${lesson.image_id}`;
   };
 
   const openPreview = (type: 'video' | 'audio' | 'document' | 'image') => {

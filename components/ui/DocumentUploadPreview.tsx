@@ -9,6 +9,7 @@ import { apiClient } from '@/lib/api';
 import { toast } from 'sonner';
 import { ErrorHandler } from '@/lib/error-handler';
 import { cn } from '@/lib/utils';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 
 type DocMeta = {
   id?: number;
@@ -20,10 +21,7 @@ const ACCEPT =
   '.pdf,.epub,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.zip,.rar,.tar,.gz,.7z';
 
 function previewUrlForDocumentId(id: number): string {
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-    `${typeof window !== 'undefined' ? window.location.origin : ''}/api`;
-  return `${apiBase}/files/preview/${id}`;
+  return `${getBrowserApiBaseUrl()}/files/preview/${id}`;
 }
 
 function parseDocumentFromUploadResponse(res: unknown): DocMeta | null {

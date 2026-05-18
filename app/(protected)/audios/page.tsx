@@ -51,6 +51,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 import { cn } from '@/lib/utils';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface AccessControl {
@@ -147,11 +148,8 @@ const getAudioUrl = (audio: AudioItem) => {
   const source = audio.streaming_url ?? audio.publicUrl ?? '';
   if (!source) return '';
   if (source.startsWith('http')) return source;
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-    `${process.env.NEXT_PUBLIC_HOST || ''}/api`;
   const normalizedSource = source.startsWith('/') ? source : `/${source}`;
-  return `${apiBase}${normalizedSource}`;
+  return `${getBrowserApiBaseUrl()}${normalizedSource}`;
 };
 
 export default function AudiosPage() {

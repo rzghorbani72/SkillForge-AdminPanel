@@ -5,6 +5,7 @@ import { Play, Video } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { cn } from '@/lib/utils';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 
 const DEFAULT_POSTER = '/images/video-placeholder.svg';
 
@@ -207,7 +208,7 @@ function VideoCard({
             onEnded={onDeactivate}
           >
             <source
-              src={process.env.NEXT_PUBLIC_API_URL + videoSource}
+              src={getBrowserApiBaseUrl() + videoSource}
               type={videoMimeType}
             />
             Your browser does not support the video tag.

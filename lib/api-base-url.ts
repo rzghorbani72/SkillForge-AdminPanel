@@ -8,8 +8,9 @@ const DEFAULT_SERVER_API = 'http://localhost:3000/api';
 export function getBrowserApiBaseUrl(): string {
   const raw =
     process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || DEFAULT_BROWSER_API;
+  // Absolute URLs break same-origin cookies; Next.js rewrites /api to the backend.
   if (raw.startsWith('http://') || raw.startsWith('https://')) {
-    return raw;
+    return DEFAULT_BROWSER_API;
   }
   return raw.startsWith('/') ? raw : `/${raw}`;
 }

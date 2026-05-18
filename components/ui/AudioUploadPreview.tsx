@@ -8,6 +8,7 @@ import { apiClient } from '@/lib/api';
 import { toast } from 'sonner';
 import { ErrorHandler } from '@/lib/error-handler';
 import { cn } from '@/lib/utils';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 
 type AudioLike = {
   id?: number;
@@ -21,11 +22,8 @@ function resolvePlayUrl(audio: AudioLike): string {
   const source = audio.streaming_url ?? audio.publicUrl ?? audio.url ?? '';
   if (!source) return '';
   if (source.startsWith('http')) return source;
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-    `${typeof window !== 'undefined' ? window.location.origin : ''}/api`;
   const normalized = source.startsWith('/') ? source : `/${source}`;
-  return `${apiBase}${normalized}`;
+  return `${getBrowserApiBaseUrl()}${normalized}`;
 }
 
 function parseAudioFromUploadResponse(res: unknown): AudioLike | null {

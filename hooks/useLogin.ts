@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 
 export function useLogin() {
   const [loading, setLoading] = useState(false);
@@ -12,7 +13,7 @@ export function useLogin() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/login-by-pass`,
+        `${getBrowserApiBaseUrl()}/auth/login-by-pass`,
         {
           method: 'POST',
           headers: {

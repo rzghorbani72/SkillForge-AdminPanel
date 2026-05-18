@@ -44,6 +44,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface DocumentItem extends Media {
@@ -65,11 +66,8 @@ const formatFileSize = (bytes?: number | null) => {
 const buildDocumentUrl = (path?: string | null) => {
   if (!path) return '';
   if (path.startsWith('http')) return path;
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-    `${process.env.NEXT_PUBLIC_HOST || ''}/api`;
   const normalized = path.startsWith('/') ? path : `/${path}`;
-  return `${apiBase}${normalized}`;
+  return `${getBrowserApiBaseUrl()}${normalized}`;
 };
 
 export default function DocumentsPage() {
