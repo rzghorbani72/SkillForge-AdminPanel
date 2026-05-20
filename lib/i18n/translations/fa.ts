@@ -158,7 +158,10 @@ export const fa = {
     'platform-records': 'سوابق پلتفرم',
     formulas: 'فرمول‌ها',
     'cost-categories': 'دسته‌بندی هزینه‌ها',
-    'business-flow': 'جریان کسب‌وکار'
+    'business-flow': 'جریان کسب‌وکار',
+    academies: 'آکادمی‌ها',
+    financial: 'مالی',
+    plans: 'پلن‌ها'
   },
   auth: {
     login: 'ورود',
@@ -462,7 +465,26 @@ export const fa = {
     coverIdPlaceholder: 'شناسه کاور (اختیاری)',
     courses: 'دوره‌ها',
     lessonsCount: '{{count}} درس',
-    studentsCount: '{{count}} دانش‌آموز'
+    studentsCount: '{{count}} دانش‌آموز',
+    seasonsAndLessons: 'فصل‌ها و درس‌ها',
+    addSeason: 'افزودن فصل',
+    addLesson: 'افزودن درس',
+    removeSeason: 'حذف فصل',
+    removeLesson: 'حذف درس',
+    dragSeason: 'بکشید برای مرتب‌سازی فصل',
+    dragLesson: 'بکشید برای مرتب‌سازی درس',
+    season: 'فصل',
+    seasonTitle: 'عنوان فصل',
+    seasonDescription: 'توضیحات فصل',
+    enterSeasonTitle: 'عنوان فصل را وارد کنید',
+    lessonTitle: 'درس',
+    lessonDescription: 'توضیحات درس',
+    enterLessonTitle: 'عنوان درس را وارد کنید',
+    freePreview: 'پیش‌نمایش رایگان',
+    optional: 'اختیاری',
+    saving: 'در حال ذخیره…',
+    saveChanges: 'ذخیره تغییرات',
+    backToCourses: 'بازگشت به دوره‌ها'
   },
   students: {
     title: 'دانش‌آموزان',
@@ -1627,7 +1649,12 @@ export const fa = {
         revenueByCourse: 'درآمد بر اساس دوره',
         revenueByCourseDescription: 'تفکیک کل درآمد بر اساس دوره',
         noCourseRevenue: 'اطلاعات درآمد دوره یافت نشد',
-        payments: 'پرداخت‌ها'
+        payments: 'پرداخت‌ها',
+        date: 'تاریخ',
+        student: 'دانش‌آموز',
+        course: 'دوره',
+        amount: 'مبلغ',
+        noPayments: 'پرداختی یافت نشد'
       },
       costs: {
         title: 'هزینه‌های آکادمی',

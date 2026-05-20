@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -9,28 +9,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import {
-  DollarSign,
-  TrendingUp,
-  Calendar,
-  CreditCard,
-  BookOpen,
-  Eye,
-  EyeOff
-} from 'lucide-react';
-import { apiClient } from '@/lib/api';
-import { formatCurrencyWithStore } from '@/lib/utils';
-import { toast } from 'react-toastify';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { useTranslation } from '@/lib/i18n/hooks';
-import { getRoleLabel } from '@/lib/i18n/role-label';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -40,187 +19,202 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
+import {
+  DollarSign,
+  TrendingUp,
+  CreditCard,
+  BookOpen,
+  Eye,
+  EyeOff
+} from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { ErrorHandler } from '@/lib/error-handler';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useFinancialFilters } from '@/hooks/useFinancialFilters';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
+import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { PageHeader } from '@/components/shared/PageHeader';
+import type { AcademyRevenueData, AcademyPayment } from '@/types/financial';
+
+interface RevenueVisibility {
+  can_view_store_revenue: boolean;
+  can_view_teacher_revenue: boolean;
+  can_view_platform_revenue: boolean;
+}
+
+interface TeacherRevenueRow {
+  teacher_id: number;
+  teacher_name?: string;
+  payment_count?: number;
+  payout_revenue?: number;
+  revenue_visible?: boolean;
+}
+
+interface RevenueMetrics {
+  currency: string;
+  school_net_revenue?: number;
+  teacher_gross_revenue?: number;
+  teacher_payout_revenue?: number;
+  teacher_payout?: number;
+  platform_revenue?: number;
+  message?: string;
+  teacher_revenue_breakdown?: TeacherRevenueRow[];
+}
+
+interface MonetizationSummary {
+  role: string;
+  visibility: RevenueVisibility;
+  metrics: RevenueMetrics;
+}
+
+interface CourseRevenueBucket {
+  course: string;
+  count: number;
+  total: number;
+  currency: string;
+}
 
 export default function StoreRevenuePage() {
-  const { t, language } = useTranslation();
-  const [loading, setLoading] = useState(true);
-  const [revenueData, setRevenueData] = useState<any>(null);
-  const [monetizationSummary, setMonetizationSummary] = useState<any>(null);
-  const [payments, setPayments] = useState<any[]>([]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const { t } = useTranslation();
   const currentAcademy = useCurrentAcademy();
+  const formatCurrency = useFormatCurrency();
+  const {
+    selectedYear,
+    selectedMonth,
+    setSelectedYear,
+    setSelectedMonth,
+    dateRange,
+    years,
+    formatDate
+  } = useFinancialFilters();
 
-  const years = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: 5 }, (_, i) => currentYear - i);
-  }, []);
+  const [loading, setLoading] = useState(true);
+  const [revenueData, setRevenueData] = useState<AcademyRevenueData | null>(
+    null
+  );
+  const [monetizationSummary, setMonetizationSummary] =
+    useState<MonetizationSummary | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, [selectedYear, selectedMonth, currentAcademy?.id]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!currentAcademy?.id) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
-
-      const startDate =
-        selectedMonth && selectedYear
-          ? new Date(selectedYear, selectedMonth - 1, 1)
-          : new Date(selectedYear, 0, 1);
-      const endDate =
-        selectedMonth && selectedYear
-          ? new Date(selectedYear, selectedMonth, 0, 23, 59, 59)
-          : new Date(selectedYear, 11, 31, 23, 59, 59);
-
-      const data = await apiClient.getAcademyRevenueFromPayments(
-        currentAcademy.id,
-        startDate.toISOString(),
-        endDate.toISOString()
-      );
-      const summary = await apiClient.getMonetizationSummary({
+      const params = {
         academy_id: currentAcademy.id,
-        start_date: startDate.toISOString(),
-        end_date: endDate.toISOString()
-      });
-
-      setRevenueData(data);
-      setPayments(data.payments || []);
-      setMonetizationSummary(summary);
-    } catch (error: any) {
-      console.error('Error loading revenue data:', error);
-      toast.error(error?.message || 'Failed to load revenue data');
+        start_date: dateRange.startIso,
+        end_date: dateRange.endIso
+      };
+      const [revenue, summary] = await Promise.all([
+        apiClient.getAcademyRevenueFromPayments(
+          currentAcademy.id,
+          dateRange.startIso,
+          dateRange.endIso
+        ),
+        apiClient.getMonetizationSummary(params)
+      ]);
+      setRevenueData(revenue as AcademyRevenueData);
+      setMonetizationSummary(summary as MonetizationSummary);
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentAcademy?.id, dateRange]);
 
-  const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithStore(
-      amount,
-      {
-        currency: currency as any,
-        currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-        currency_position: 'after'
-      },
-      undefined,
-      language
-    );
-  };
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-  // Group payments by course
-  const canViewRevenue = Boolean(
-    monetizationSummary?.visibility?.can_view_store_revenue
-  );
-  const canViewTeacherRevenue = Boolean(
-    monetizationSummary?.visibility?.can_view_teacher_revenue
-  );
-  const canViewPlatformRevenue = Boolean(
-    monetizationSummary?.visibility?.can_view_platform_revenue
-  );
+  const payments: AcademyPayment[] = revenueData?.payments ?? [];
+  const vis = monetizationSummary?.visibility;
+  const metrics = monetizationSummary?.metrics;
+  const canViewRevenue = Boolean(vis?.can_view_store_revenue);
+  const canViewTeacherRevenue = Boolean(vis?.can_view_teacher_revenue);
+  const canViewPlatformRevenue = Boolean(vis?.can_view_platform_revenue);
   const canSeeAnyRevenue =
     canViewRevenue || canViewTeacherRevenue || canViewPlatformRevenue;
-  const revenueCurrency =
-    monetizationSummary?.metrics?.currency || revenueData?.currency || 'IRR';
+  const revenueCurrency = metrics?.currency ?? revenueData?.currency ?? 'IRR';
 
   const primaryRevenue = useMemo(() => {
     if (canViewRevenue) {
       return {
         label: t('financial.store.revenue.schoolRevenue'),
-        amount: Number(monetizationSummary?.metrics?.school_net_revenue || 0)
+        amount: Number(
+          metrics?.school_net_revenue ?? metrics?.teacher_gross_revenue ?? 0
+        )
       };
     }
-
     if (canViewTeacherRevenue) {
       return {
         label: t('financial.store.revenue.teacherRevenue'),
         amount: Number(
-          monetizationSummary?.metrics?.teacher_payout_revenue ||
-            monetizationSummary?.metrics?.teacher_payout ||
-            0
+          metrics?.teacher_payout_revenue ?? metrics?.teacher_payout ?? 0
         )
       };
     }
-
     if (canViewPlatformRevenue) {
       return {
         label: t('financial.store.revenue.platformRevenue'),
-        amount: Number(monetizationSummary?.metrics?.platform_revenue || 0)
+        amount: Number(metrics?.platform_revenue ?? 0)
       };
     }
-
-    return {
-      label: t('financial.store.revenue.roleBasedRevenue'),
-      amount: 0
-    };
+    return { label: t('financial.store.revenue.roleBasedRevenue'), amount: 0 };
   }, [
     canViewRevenue,
     canViewTeacherRevenue,
     canViewPlatformRevenue,
-    monetizationSummary,
+    metrics,
     t
   ]);
 
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
-
-  const paymentsByCourse = useMemo(() => {
-    const grouped: Record<
-      string,
-      { course: string; count: number; total: number; currency: string }
-    > = {};
-
-    payments.forEach((payment: any) => {
-      const courseName =
-        payment.course?.title || t('financial.store.revenue.unknownCourse');
-      const courseId = payment.course?.id || 'unknown';
-
-      if (!grouped[courseId]) {
-        grouped[courseId] = {
-          course: courseName,
-          count: 0,
-          total: 0,
-          currency: payment.currency || 'IRR'
-        };
-      }
-
-      grouped[courseId].count += 1;
-      grouped[courseId].total += payment.amount || 0;
-    });
-
-    return Object.values(grouped);
+  const paymentsByCourse = useMemo((): CourseRevenueBucket[] => {
+    const grouped = new Map<string, CourseRevenueBucket>();
+    for (const p of payments) {
+      const key = String(p.course?.title ?? 'unknown');
+      const existing = grouped.get(key) ?? {
+        course: p.course?.title ?? t('financial.store.revenue.unknownCourse'),
+        count: 0,
+        total: 0,
+        currency: p.currency
+      };
+      grouped.set(key, {
+        ...existing,
+        count: existing.count + 1,
+        total: existing.total + (p.amount ?? 0)
+      });
+    }
+    return Array.from(grouped.values()).sort((a, b) => b.total - a.total);
   }, [payments, t]);
 
-  const teacherRevenueBreakdown = useMemo(() => {
-    const rows = monetizationSummary?.metrics?.teacher_revenue_breakdown;
-    return Array.isArray(rows) ? rows : [];
-  }, [monetizationSummary]);
+  const teacherRows: TeacherRevenueRow[] = useMemo(
+    () =>
+      Array.isArray(metrics?.teacher_revenue_breakdown)
+        ? metrics!.teacher_revenue_breakdown
+        : [],
+    [metrics]
+  );
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">
-            {t('financial.store.revenue.loading')}
-          </p>
-        </div>
-      </div>
-    );
+  async function toggleTeacherVisibility(row: TeacherRevenueRow) {
+    if (!currentAcademy?.id) return;
+    try {
+      await apiClient.setTeacherRevenueVisibility({
+        academy_id: currentAcademy.id,
+        teacher_id: row.teacher_id,
+        is_visible: row.revenue_visible === false
+      });
+      await loadData();
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+    }
   }
 
   if (!currentAcademy) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex flex-1 items-center justify-center p-6">
         <p className="text-muted-foreground">
           {t('financial.store.revenue.noStore')}
         </p>
@@ -228,80 +222,28 @@ export default function StoreRevenuePage() {
     );
   }
 
+  if (loading) {
+    return <LoadingSpinner message={t('financial.store.revenue.loading')} />;
+  }
+
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">
-            {t('financial.store.revenue.title')}
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            {currentAcademy.name} - {t('financial.store.revenue.description')}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={t('financial.store.revenue.title')}
+        description={`${currentAcademy.name} — ${t('financial.store.revenue.description')}`}
+      />
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('financial.store.revenue.filters')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">
-                {t('financial.store.revenue.year')}
-              </label>
-              <Select
-                value={selectedYear.toString()}
-                onValueChange={(value) => setSelectedYear(parseInt(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">
-                {t('financial.store.revenue.month')}
-              </label>
-              <Select
-                value={selectedMonth?.toString() || 'all'}
-                onValueChange={(value) =>
-                  setSelectedMonth(value === 'all' ? null : parseInt(value))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t('financial.store.revenue.allMonths')}
-                  </SelectItem>
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                    <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString(locale, {
-                        month: 'long'
-                      })}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <FinancialFilterBar
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        years={years}
+        onYearChange={setSelectedYear}
+        onMonthChange={setSelectedMonth}
+      />
 
       {/* Summary Cards */}
       {revenueData && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -310,11 +252,11 @@ export default function StoreRevenuePage() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <p className="text-2xl font-bold">
                 {canSeeAnyRevenue
                   ? formatCurrency(primaryRevenue.amount, revenueCurrency)
-                  : t('financial.store.revenue.hidden')}
-              </div>
+                  : '—'}
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.roleBasedDescription')}
               </p>
@@ -329,7 +271,7 @@ export default function StoreRevenuePage() {
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{payments.length}</div>
+              <p className="text-2xl font-bold">{payments.length}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.successfulTransactions')}
               </p>
@@ -344,14 +286,14 @@ export default function StoreRevenuePage() {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <p className="text-2xl font-bold">
                 {revenueData.payment_count > 0
                   ? formatCurrency(
                       revenueData.total_revenue / revenueData.payment_count,
                       revenueData.currency
                     )
                   : formatCurrency(0, revenueData.currency)}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.perTransaction')}
               </p>
@@ -366,9 +308,7 @@ export default function StoreRevenuePage() {
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {paymentsByCourse.length}
-              </div>
+              <p className="text-2xl font-bold">{paymentsByCourse.length}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.coursesWithPayments')}
               </p>
@@ -377,6 +317,7 @@ export default function StoreRevenuePage() {
         </div>
       )}
 
+      {/* Role-based access breakdown */}
       {monetizationSummary && (
         <Card>
           <CardHeader>
@@ -387,7 +328,7 @@ export default function StoreRevenuePage() {
               {t('financial.store.revenue.roleBasedAccessDescription')}
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-lg border p-4">
               <p className="text-xs text-muted-foreground">
                 {t('financial.store.revenue.role')}
@@ -396,71 +337,62 @@ export default function StoreRevenuePage() {
                 {getRoleLabel(monetizationSummary.role, t)}
               </p>
             </div>
-            <div className="rounded-lg border p-4">
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.revenue.platformRevenue')}
-              </p>
-              <p className="text-sm font-medium">
-                {monetizationSummary.visibility?.can_view_platform_revenue
-                  ? formatCurrency(
-                      monetizationSummary.metrics?.platform_revenue || 0,
-                      monetizationSummary.metrics?.currency || 'IRR'
-                    )
-                  : t('financial.store.revenue.hidden')}
-              </p>
-            </div>
-            <div className="rounded-lg border p-4">
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.revenue.schoolRevenue')}
-              </p>
-              <p className="text-sm font-medium">
-                {monetizationSummary.visibility?.can_view_store_revenue
-                  ? formatCurrency(
-                      monetizationSummary.metrics?.school_net_revenue ||
-                        monetizationSummary.metrics?.teacher_gross_revenue ||
-                        0,
-                      monetizationSummary.metrics?.currency || 'IRR'
-                    )
-                  : t('financial.store.revenue.hidden')}
-              </p>
-            </div>
-            <div className="rounded-lg border p-4">
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.revenue.teacherRevenue')}
-              </p>
-              <p className="text-sm font-medium">
-                {monetizationSummary.visibility?.can_view_teacher_revenue
-                  ? formatCurrency(
-                      monetizationSummary.metrics?.teacher_payout_revenue ||
-                        monetizationSummary.metrics?.teacher_payout ||
-                        0,
-                      monetizationSummary.metrics?.currency || 'IRR'
-                    )
-                  : t('financial.store.revenue.hidden')}
-              </p>
-            </div>
+            {[
+              {
+                key: 'platformRevenue',
+                visible: vis?.can_view_platform_revenue,
+                value: metrics?.platform_revenue
+              },
+              {
+                key: 'schoolRevenue',
+                visible: vis?.can_view_store_revenue,
+                value:
+                  metrics?.school_net_revenue ?? metrics?.teacher_gross_revenue
+              },
+              {
+                key: 'teacherRevenue',
+                visible: vis?.can_view_teacher_revenue,
+                value:
+                  metrics?.teacher_payout_revenue ?? metrics?.teacher_payout
+              }
+            ].map(({ key, visible, value }) => (
+              <div key={key} className="rounded-lg border p-4">
+                <p className="text-xs text-muted-foreground">
+                  {t(`financial.store.revenue.${key}`)}
+                </p>
+                <p className="mt-1 text-sm font-medium">
+                  {visible
+                    ? formatCurrency(Number(value ?? 0), revenueCurrency)
+                    : '—'}
+                </p>
+              </div>
+            ))}
           </CardContent>
         </Card>
       )}
 
-      {!canSeeAnyRevenue ? (
-        <Card>
+      {/* Revenue hidden notice */}
+      {!canSeeAnyRevenue && (
+        <Card className="border-amber-500/20 bg-amber-500/5">
           <CardHeader>
-            <CardTitle>{t('financial.store.revenue.revenueHidden')}</CardTitle>
+            <CardTitle className="text-amber-700 dark:text-amber-400">
+              {t('financial.store.revenue.revenueHidden')}
+            </CardTitle>
             <CardDescription>
               {t('financial.store.revenue.revenueHiddenDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              {monetizationSummary?.metrics?.message ||
+              {metrics?.message ??
                 t('financial.store.revenue.revenueHiddenPolicy')}
             </p>
           </CardContent>
         </Card>
-      ) : null}
+      )}
 
-      {canSeeAnyRevenue && teacherRevenueBreakdown.length > 0 && (
+      {/* Teacher revenue breakdown */}
+      {canSeeAnyRevenue && teacherRows.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>
@@ -487,22 +419,22 @@ export default function StoreRevenuePage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {teacherRevenueBreakdown.map((row: any) => (
+                {teacherRows.map((row) => (
                   <TableRow key={row.teacher_id}>
                     <TableCell className="font-medium">
-                      {row.teacher_name ||
+                      {row.teacher_name ??
                         `${t('financial.store.revenue.teacher')} #${row.teacher_id}`}
                     </TableCell>
                     <TableCell className="text-end">
                       <Badge variant="secondary">
-                        {row.payment_count || 0}
+                        {row.payment_count ?? 0}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-end font-medium">
                       {row.revenue_visible === false
-                        ? t('financial.store.revenue.hidden')
+                        ? '—'
                         : formatCurrency(
-                            Number(row.payout_revenue || 0),
+                            Number(row.payout_revenue ?? 0),
                             revenueCurrency
                           )}
                     </TableCell>
@@ -511,37 +443,19 @@ export default function StoreRevenuePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={async () => {
-                            try {
-                              await apiClient.setTeacherRevenueVisibility({
-                                academy_id: currentAcademy.id,
-                                teacher_id: Number(row.teacher_id),
-                                is_visible: !(row.revenue_visible === false)
-                              });
-                              await loadData();
-                            } catch (error: any) {
-                              toast.error(
-                                error?.message ||
-                                  t(
-                                    'financial.store.revenue.visibilityUpdateFailed'
-                                  )
-                              );
-                            }
-                          }}
+                          onClick={() => toggleTeacherVisibility(row)}
                         >
                           {row.revenue_visible === false ? (
-                            <Eye className="h-4 w-4" />
+                            <Eye className="mr-1.5 h-4 w-4" />
                           ) : (
-                            <EyeOff className="h-4 w-4" />
+                            <EyeOff className="mr-1.5 h-4 w-4" />
                           )}
-                          <span className="ml-2">
-                            {row.revenue_visible === false
-                              ? t('financial.store.revenue.showAmount')
-                              : t('financial.store.revenue.hideAmount')}
-                          </span>
+                          {row.revenue_visible === false
+                            ? t('financial.store.revenue.showAmount')
+                            : t('financial.store.revenue.hideAmount')}
                         </Button>
                       ) : (
-                        <span className="text-xs text-muted-foreground">-</span>
+                        <span className="text-xs text-muted-foreground">—</span>
                       )}
                     </TableCell>
                   </TableRow>
@@ -552,7 +466,7 @@ export default function StoreRevenuePage() {
         </Card>
       )}
 
-      {/* Detailed View */}
+      {/* Payments / By-course tabs */}
       <Tabs defaultValue="payments" className="space-y-4">
         <TabsList>
           <TabsTrigger value="payments">
@@ -563,19 +477,13 @@ export default function StoreRevenuePage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="payments" className="space-y-4">
+        <TabsContent value="payments">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>
-                    {t('financial.store.revenue.allPayments')}
-                  </CardTitle>
-                  <CardDescription>
-                    {t('financial.store.revenue.paymentsDescription')}
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle>{t('financial.store.revenue.allPayments')}</CardTitle>
+              <CardDescription>
+                {t('financial.store.revenue.paymentsDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -598,36 +506,25 @@ export default function StoreRevenuePage() {
                     <TableRow>
                       <TableCell
                         colSpan={4}
-                        className="text-center text-muted-foreground"
+                        className="py-6 text-center text-muted-foreground"
                       >
                         {t('financial.store.payments.noPayments')}
                       </TableCell>
                     </TableRow>
                   ) : (
-                    payments.map((payment: any) => (
-                      <TableRow key={payment.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <div>
-                              {new Date(
-                                payment.created_at
-                              ).toLocaleDateString()}
-                            </div>
-                          </div>
+                    payments.map((p) => (
+                      <TableRow key={p.id}>
+                        <TableCell className="whitespace-nowrap text-sm">
+                          {formatDate(p.created_at)}
                         </TableCell>
                         <TableCell className="font-medium">
-                          {payment.profile?.display_name ||
-                            t('financial.store.revenue.unknownStudent')}
+                          {p.profile?.display_name ?? '—'}
                         </TableCell>
-                        <TableCell>
-                          {payment.course?.title ||
-                            t('financial.store.revenue.unknownCourse')}
-                        </TableCell>
+                        <TableCell>{p.course?.title ?? '—'}</TableCell>
                         <TableCell className="text-end font-medium">
                           {canSeeAnyRevenue
-                            ? formatCurrency(payment.amount, payment.currency)
-                            : t('financial.store.revenue.hidden')}
+                            ? formatCurrency(p.amount, p.currency)
+                            : '—'}
                         </TableCell>
                       </TableRow>
                     ))
@@ -638,7 +535,7 @@ export default function StoreRevenuePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="courses" className="space-y-4">
+        <TabsContent value="courses">
           <Card>
             <CardHeader>
               <CardTitle>
@@ -668,29 +565,27 @@ export default function StoreRevenuePage() {
                     <TableRow>
                       <TableCell
                         colSpan={3}
-                        className="text-center text-muted-foreground"
+                        className="py-6 text-center text-muted-foreground"
                       >
                         {t('financial.store.revenue.noCourseRevenue')}
                       </TableCell>
                     </TableRow>
                   ) : (
-                    paymentsByCourse
-                      .sort((a, b) => b.total - a.total)
-                      .map((course, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">
-                            {course.course}
-                          </TableCell>
-                          <TableCell className="text-end">
-                            <Badge variant="secondary">{course.count}</Badge>
-                          </TableCell>
-                          <TableCell className="text-end font-medium">
-                            {canSeeAnyRevenue
-                              ? formatCurrency(course.total, course.currency)
-                              : t('financial.store.revenue.hidden')}
-                          </TableCell>
-                        </TableRow>
-                      ))
+                    paymentsByCourse.map((c, i) => (
+                      <TableRow key={i}>
+                        <TableCell className="font-medium">
+                          {c.course}
+                        </TableCell>
+                        <TableCell className="text-end">
+                          <Badge variant="secondary">{c.count}</Badge>
+                        </TableCell>
+                        <TableCell className="text-end font-medium">
+                          {canSeeAnyRevenue
+                            ? formatCurrency(c.total, c.currency)
+                            : '—'}
+                        </TableCell>
+                      </TableRow>
+                    ))
                   )}
                 </TableBody>
               </Table>

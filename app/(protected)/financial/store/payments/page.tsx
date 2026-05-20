@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -8,26 +8,8 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import {
-  DollarSign,
-  CreditCard,
-  Calendar,
-  TrendingUp,
-  Users
-} from 'lucide-react';
-import { apiClient } from '@/lib/api';
-import { formatCurrencyWithStore } from '@/lib/utils';
-import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -36,149 +18,172 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import {
+  DollarSign,
+  CreditCard,
+  TrendingUp,
+  Download,
+  Lock
+} from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { ErrorHandler } from '@/lib/error-handler';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useFinancialFilters } from '@/hooks/useFinancialFilters';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
+import { StatusBadge } from '@/components/shared/status-badge';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { PageHeader } from '@/components/shared/PageHeader';
+import type {
+  AcademyRevenueData,
+  SettlementStatement,
+  ReconciliationData,
+  AcademyPayment
+} from '@/types/financial';
+import { toast } from 'react-toastify';
 
 export default function StorePaymentsPage() {
-  const { t, language } = useTranslation();
-  const [loading, setLoading] = useState(true);
-  const [revenueData, setRevenueData] = useState<any>(null);
-  const [payments, setPayments] = useState<any[]>([]);
-  const [statement, setStatement] = useState<any>(null);
-  const [reconciliation, setReconciliation] = useState<any>(null);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const { t } = useTranslation();
   const currentAcademy = useCurrentAcademy();
+  const formatCurrency = useFormatCurrency();
+  const {
+    selectedYear,
+    selectedMonth,
+    setSelectedYear,
+    setSelectedMonth,
+    dateRange,
+    years,
+    formatDate
+  } = useFinancialFilters();
 
-  const years = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: 5 }, (_, i) => currentYear - i);
-  }, []);
+  const [loading, setLoading] = useState(true);
+  const [revenueData, setRevenueData] = useState<AcademyRevenueData | null>(
+    null
+  );
+  const [statement, setStatement] = useState<SettlementStatement | null>(null);
+  const [reconciliation, setReconciliation] =
+    useState<ReconciliationData | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [locking, setLocking] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, [selectedYear, selectedMonth, currentAcademy?.id]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!currentAcademy?.id) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
-
-      const startDate =
-        selectedMonth && selectedYear
-          ? new Date(selectedYear, selectedMonth - 1, 1)
-          : new Date(selectedYear, 0, 1);
-      const endDate =
-        selectedMonth && selectedYear
-          ? new Date(selectedYear, selectedMonth, 0, 23, 59, 59)
-          : new Date(selectedYear, 11, 31, 23, 59, 59);
-
-      const data = await apiClient.getAcademyRevenueFromPayments(
-        currentAcademy.id,
-        startDate.toISOString(),
-        endDate.toISOString()
-      );
-      const settlement = await apiClient.getIranSettlementStatement({
+      const params = {
         academy_id: currentAcademy.id,
-        start_date: startDate.toISOString(),
-        end_date: endDate.toISOString()
-      });
-      const reconciliationData =
-        await apiClient.getIranSettlementReconciliation({
-          academy_id: currentAcademy.id,
-          start_date: startDate.toISOString(),
-          end_date: endDate.toISOString()
-        });
+        start_date: dateRange.startIso,
+        end_date: dateRange.endIso
+      };
 
-      setRevenueData(data);
-      setPayments(data.payments || []);
-      setStatement(settlement);
-      setReconciliation(reconciliationData);
-    } catch (error: any) {
-      console.error('Error loading payments data:', error);
-      toast.error(error?.message || t('financial.store.payments.loadFailed'));
+      const [revenue, settlement, reconciliationData] = await Promise.all([
+        apiClient.getAcademyRevenueFromPayments(
+          currentAcademy.id,
+          dateRange.startIso,
+          dateRange.endIso
+        ),
+        apiClient.getIranSettlementStatement(params),
+        apiClient.getIranSettlementReconciliation(params)
+      ]);
+
+      setRevenueData(revenue as AcademyRevenueData);
+      setStatement(settlement as SettlementStatement);
+      setReconciliation(reconciliationData as ReconciliationData);
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentAcademy?.id, dateRange]);
 
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-  const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithStore(
-      amount,
-      {
-        currency: currency as any,
-        currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-        currency_position: 'after'
-      },
-      undefined,
-      language
-    );
-  };
+  const payments: AcademyPayment[] = revenueData?.payments ?? [];
 
   const paymentStats = useMemo(() => {
-    const completed = payments.filter((p: any) => p.status === 'PAID').length;
-    const pending = payments.filter((p: any) => p.status === 'PENDING').length;
-    const failed = payments.filter((p: any) => p.status === 'FAILED').length;
-    const totalAmount = payments.reduce(
-      (sum: number, p: any) => sum + (p.amount || 0),
-      0
-    );
-
-    return { completed, pending, failed, totalAmount };
+    const completed = payments.filter((p) => p.status === 'PAID').length;
+    const pending = payments.filter((p) => p.status === 'PENDING').length;
+    const failed = payments.filter((p) => p.status === 'FAILED').length;
+    return { completed, pending, failed };
   }, [payments]);
-
-  const settlementVatRate =
-    statement?.totals?.vat_rate ?? statement?.vat_rate ?? 0.09;
 
   const paymentsByMethod = useMemo(() => {
-    const grouped: Record<
+    const grouped = new Map<
       string,
       { method: string; count: number; total: number; currency: string }
-    > = {};
-
-    payments.forEach((payment: any) => {
-      const method = payment.method || 'UNKNOWN';
-      if (!grouped[method]) {
-        grouped[method] = {
-          method,
-          count: 0,
-          total: 0,
-          currency: payment.currency || 'IRR'
-        };
-      }
-
-      grouped[method].count += 1;
-      grouped[method].total += payment.amount || 0;
-    });
-
-    return Object.values(grouped);
+    >();
+    for (const p of payments) {
+      const key = p.method ?? 'UNKNOWN';
+      const existing = grouped.get(key) ?? {
+        method: key,
+        count: 0,
+        total: 0,
+        currency: p.currency
+      };
+      grouped.set(key, {
+        ...existing,
+        count: existing.count + 1,
+        total: existing.total + (p.amount ?? 0)
+      });
+    }
+    return Array.from(grouped.values()).sort((a, b) => b.total - a.total);
   }, [payments]);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">
-            {t('financial.store.payments.loading')}
-          </p>
-        </div>
-      </div>
-    );
+  const vatRate = statement?.totals?.vat_rate ?? 0.09;
+
+  async function handleExport() {
+    if (!currentAcademy?.id) return;
+    setExporting(true);
+    try {
+      const blob = await apiClient.exportIranSettlementCsv({
+        academy_id: currentAcademy.id,
+        start_date: dateRange.startIso,
+        end_date: dateRange.endIso
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'settlement-statement.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function handleLockPeriod() {
+    if (!currentAcademy?.id) return;
+    setLocking(true);
+    try {
+      const lockUntil = new Date(
+        selectedYear,
+        selectedMonth != null ? selectedMonth : 11,
+        28,
+        23,
+        59,
+        59
+      );
+      await apiClient.lockIranFinancialPeriod({
+        academy_id: currentAcademy.id,
+        lock_until: lockUntil.toISOString()
+      });
+      toast.success(t('financial.store.payments.lockedSuccess'));
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+    } finally {
+      setLocking(false);
+    }
   }
 
   if (!currentAcademy) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex flex-1 items-center justify-center p-6">
         <p className="text-muted-foreground">
           {t('financial.store.payments.noStore')}
         </p>
@@ -186,141 +191,42 @@ export default function StorePaymentsPage() {
     );
   }
 
+  if (loading) {
+    return <LoadingSpinner message={t('financial.store.payments.loading')} />;
+  }
+
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">
-            {t('financial.store.payments.title')}
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            {currentAcademy.name} - {t('financial.store.payments.description')}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={async () => {
-              try {
-                const startDate =
-                  selectedMonth && selectedYear
-                    ? new Date(selectedYear, selectedMonth - 1, 1)
-                    : new Date(selectedYear, 0, 1);
-                const endDate =
-                  selectedMonth && selectedYear
-                    ? new Date(selectedYear, selectedMonth, 0, 23, 59, 59)
-                    : new Date(selectedYear, 11, 31, 23, 59, 59);
+      <PageHeader
+        title={t('financial.store.payments.title')}
+        description={`${currentAcademy.name} — ${t('financial.store.payments.description')}`}
+      >
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleLockPeriod}
+          disabled={locking}
+        >
+          <Lock className="mr-2 h-4 w-4" />
+          {t('financial.store.payments.lockPeriod')}
+        </Button>
+        <Button size="sm" onClick={handleExport} disabled={exporting}>
+          <Download className="mr-2 h-4 w-4" />
+          {t('financial.store.payments.exportCsv')}
+        </Button>
+      </PageHeader>
 
-                const blob = await apiClient.exportIranSettlementCsv({
-                  academy_id: currentAcademy.id,
-                  start_date: startDate.toISOString(),
-                  end_date: endDate.toISOString()
-                });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'iran-settlement-statement.csv';
-                a.click();
-                window.URL.revokeObjectURL(url);
-              } catch (error: any) {
-                toast.error(
-                  error?.message || t('financial.store.payments.exportFailed')
-                );
-              }
-            }}
-          >
-            {t('financial.store.payments.exportCsv')}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={async () => {
-              try {
-                const lockUntil = new Date(
-                  selectedYear,
-                  selectedMonth ? selectedMonth : 11,
-                  28,
-                  23,
-                  59,
-                  59
-                );
-                await apiClient.lockIranFinancialPeriod({
-                  academy_id: currentAcademy.id,
-                  lock_until: lockUntil.toISOString()
-                });
-                toast.success(t('financial.store.payments.lockedSuccess'));
-              } catch (error: any) {
-                toast.error(
-                  error?.message || t('financial.store.payments.lockFailed')
-                );
-              }
-            }}
-          >
-            {t('financial.store.payments.lockPeriod')}
-          </Button>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('financial.store.payments.filters')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">
-                {t('financial.store.payments.year')}
-              </label>
-              <Select
-                value={selectedYear.toString()}
-                onValueChange={(value) => setSelectedYear(parseInt(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">
-                {t('financial.store.payments.month')}
-              </label>
-              <Select
-                value={selectedMonth?.toString() || 'all'}
-                onValueChange={(value) =>
-                  setSelectedMonth(value === 'all' ? null : parseInt(value))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t('financial.store.payments.allMonths')}
-                  </SelectItem>
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                    <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString(locale, {
-                        month: 'long'
-                      })}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <FinancialFilterBar
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        years={years}
+        onYearChange={setSelectedYear}
+        onMonthChange={setSelectedMonth}
+      />
 
       {/* Summary Cards */}
       {revenueData && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -329,12 +235,12 @@ export default function StorePaymentsPage() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <p className="text-2xl font-bold">
                 {formatCurrency(
                   revenueData.total_revenue,
                   revenueData.currency
                 )}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.payments.fromPayments', {
                   count: revenueData.payment_count
@@ -348,12 +254,12 @@ export default function StorePaymentsPage() {
               <CardTitle className="text-sm font-medium">
                 {t('financial.store.payments.completed')}
               </CardTitle>
-              <TrendingUp className="h-4 w-4 text-green-500" />
+              <TrendingUp className="h-4 w-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
+              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                 {paymentStats.completed}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.payments.successfulPayments')}
               </p>
@@ -365,12 +271,12 @@ export default function StorePaymentsPage() {
               <CardTitle className="text-sm font-medium">
                 {t('financial.store.payments.pending')}
               </CardTitle>
-              <CreditCard className="h-4 w-4 text-yellow-500" />
+              <CreditCard className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">
+              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                 {paymentStats.pending}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.payments.awaitingProcessing')}
               </p>
@@ -382,12 +288,12 @@ export default function StorePaymentsPage() {
               <CardTitle className="text-sm font-medium">
                 {t('financial.store.payments.failed')}
               </CardTitle>
-              <CreditCard className="h-4 w-4 text-red-500" />
+              <CreditCard className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">
+              <p className="text-2xl font-bold text-destructive">
                 {paymentStats.failed}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.payments.failedTransactions')}
               </p>
@@ -396,7 +302,8 @@ export default function StorePaymentsPage() {
         </div>
       )}
 
-      {statement && (
+      {/* Settlement Statement */}
+      {statement?.totals && (
         <Card>
           <CardHeader>
             <CardTitle>
@@ -406,67 +313,38 @@ export default function StorePaymentsPage() {
               {t('financial.store.payments.settlementDescription')}
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.gross')}
-              </p>
-              <p className="text-lg font-semibold">
-                {formatCurrency(
-                  statement.totals?.gross_amount || 0,
-                  statement.totals?.currency
-                )}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.platformFee')}
-              </p>
-              <p className="text-lg font-semibold">
-                {formatCurrency(
-                  statement.totals?.platform_fee || 0,
-                  statement.totals?.currency
-                )}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.vatIran')} (
-                {(settlementVatRate * 100).toFixed(0)}%)
-              </p>
-              <p className="text-lg font-semibold">
-                {formatCurrency(
-                  statement.totals?.tax_vat_amount || 0,
-                  statement.totals?.currency
-                )}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.teacherPayout')}
-              </p>
-              <p className="text-lg font-semibold">
-                {formatCurrency(
-                  statement.totals?.teacher_payout || 0,
-                  statement.totals?.currency
-                )}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.schoolNet')}
-              </p>
-              <p className="text-lg font-semibold">
-                {formatCurrency(
-                  statement.totals?.school_net_revenue || 0,
-                  statement.totals?.currency
-                )}
-              </p>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+              {[
+                { key: 'gross', value: statement.totals.gross_amount },
+                { key: 'platformFee', value: statement.totals.platform_fee },
+                {
+                  key: 'vatIran',
+                  value: statement.totals.tax_vat_amount,
+                  suffix: ` (${(vatRate * 100).toFixed(0)}%)`
+                },
+                {
+                  key: 'teacherPayout',
+                  value: statement.totals.teacher_payout
+                },
+                { key: 'schoolNet', value: statement.totals.school_net_revenue }
+              ].map(({ key, value, suffix = '' }) => (
+                <div key={key} className="rounded-lg bg-muted/50 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    {t(`financial.store.payments.${key}`)}
+                    {suffix}
+                  </p>
+                  <p className="mt-1 text-base font-semibold">
+                    {formatCurrency(value, statement.totals.currency)}
+                  </p>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
       )}
 
+      {/* Reconciliation */}
       {reconciliation && (
         <Card>
           <CardHeader>
@@ -477,38 +355,33 @@ export default function StorePaymentsPage() {
               {t('financial.store.payments.reconciliationDescription')}
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.paidPayments')}
-              </p>
-              <p className="text-lg font-semibold">
-                {reconciliation.total_paid_payments || 0}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.matchedCallbacks')}
-              </p>
-              <p className="text-lg font-semibold">
-                {reconciliation.matched_successful_callbacks || 0}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.missingCallbacks')}
-              </p>
-              <p className="text-lg font-semibold">
-                {reconciliation.missing_successful_callbacks || 0}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.payments.orphanCallbacks')}
-              </p>
-              <p className="text-lg font-semibold">
-                {reconciliation.orphan_successful_callbacks || 0}
-              </p>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                {
+                  key: 'paidPayments',
+                  value: reconciliation.total_paid_payments
+                },
+                {
+                  key: 'matchedCallbacks',
+                  value: reconciliation.matched_successful_callbacks
+                },
+                {
+                  key: 'missingCallbacks',
+                  value: reconciliation.missing_successful_callbacks
+                },
+                {
+                  key: 'orphanCallbacks',
+                  value: reconciliation.orphan_successful_callbacks
+                }
+              ].map(({ key, value }) => (
+                <div key={key} className="rounded-lg bg-muted/50 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    {t(`financial.store.payments.${key}`)}
+                  </p>
+                  <p className="mt-1 text-base font-semibold">{value ?? 0}</p>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -541,21 +414,17 @@ export default function StorePaymentsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paymentsByMethod
-                  .sort((a, b) => b.total - a.total)
-                  .map((method, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">
-                        {method.method}
-                      </TableCell>
-                      <TableCell className="text-end">
-                        <Badge variant="secondary">{method.count}</Badge>
-                      </TableCell>
-                      <TableCell className="text-end font-medium">
-                        {formatCurrency(method.total, method.currency)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {paymentsByMethod.map((m) => (
+                  <TableRow key={m.method}>
+                    <TableCell className="font-medium">{m.method}</TableCell>
+                    <TableCell className="text-end">
+                      <Badge variant="secondary">{m.count}</Badge>
+                    </TableCell>
+                    <TableCell className="text-end font-medium">
+                      {formatCurrency(m.total, m.currency)}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </CardContent>
@@ -570,7 +439,7 @@ export default function StorePaymentsPage() {
             {t('financial.store.payments.allPaymentsDescription')}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -579,7 +448,6 @@ export default function StorePaymentsPage() {
                 <TableHead>{t('financial.store.payments.course')}</TableHead>
                 <TableHead>{t('financial.store.payments.method')}</TableHead>
                 <TableHead>{t('financial.store.payments.status')}</TableHead>
-                <TableHead>{t('financial.store.payments.formula')}</TableHead>
                 <TableHead className="text-end">
                   {t('financial.store.payments.vat')}
                 </TableHead>
@@ -601,114 +469,68 @@ export default function StorePaymentsPage() {
               {payments.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={11}
-                    className="text-center text-muted-foreground"
+                    colSpan={10}
+                    className="py-8 text-center text-muted-foreground"
                   >
                     {t('financial.store.payments.noPayments')}
                   </TableCell>
                 </TableRow>
               ) : (
-                payments.map((payment: any) => (
-                  <TableRow key={payment.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          {new Date(payment.created_at).toLocaleDateString()}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {payment.profile?.display_name ||
-                        t('financial.store.payments.student')}
-                    </TableCell>
-                    <TableCell>
-                      {payment.course?.title ||
-                        t('financial.store.payments.course')}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {payment.method || t('common.none')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          payment.status === 'PAID'
-                            ? 'default'
-                            : payment.status === 'PENDING'
-                              ? 'secondary'
-                              : 'destructive'
-                        }
-                      >
-                        {payment.status || t('common.none')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-xs text-muted-foreground">
-                        <div>
-                          {t('financial.store.payments.vatRate')}{' '}
-                          {(
-                            Number(payment.formula_factors?.vat_rate || 0.09) *
-                            100
-                          ).toFixed(0)}
-                          %
-                        </div>
-                        <div>
-                          {t('financial.store.payments.takeRate')}{' '}
-                          {(
-                            Number(payment.formula_factors?.take_rate || 0) *
-                            100
-                          ).toFixed(1)}
-                          %
-                        </div>
-                        <div>
-                          {t('financial.store.payments.shareRate')}{' '}
-                          {(
-                            Number(
-                              payment.formula_factors?.teacher_share_rate || 0
-                            ) * 100
-                          ).toFixed(0)}
-                          %
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-end">
-                      {formatCurrency(
-                        payment.tax_vat_amount || 0,
-                        payment.currency
-                      )}
-                    </TableCell>
-                    <TableCell className="text-end">
-                      {formatCurrency(
-                        payment.platform_fee || 0,
-                        payment.currency
-                      )}
-                    </TableCell>
-                    <TableCell className="text-end">
-                      {formatCurrency(
-                        payment.instructor_fee || 0,
-                        payment.currency
-                      )}
-                    </TableCell>
-                    <TableCell className="text-end">
-                      {formatCurrency(
-                        payment.school_net_revenue ??
-                          Math.max(
-                            0,
-                            (payment.amount || 0) -
-                              (payment.platform_fee || 0) -
-                              (payment.instructor_fee || 0) -
-                              (payment.tax_vat_amount || 0)
-                          ),
-                        payment.currency
-                      )}
-                    </TableCell>
-                    <TableCell className="text-end font-medium">
-                      {formatCurrency(payment.amount, payment.currency)}
-                    </TableCell>
-                  </TableRow>
-                ))
+                payments.map((p) => {
+                  const schoolNet =
+                    p.school_net_revenue ??
+                    Math.max(
+                      0,
+                      (p.amount ?? 0) -
+                        (p.platform_fee ?? 0) -
+                        (p.instructor_fee ?? 0) -
+                        (p.tax_vat_amount ?? 0)
+                    );
+
+                  return (
+                    <TableRow key={p.id}>
+                      <TableCell className="whitespace-nowrap text-sm">
+                        {formatDate(p.created_at)}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {p.profile?.display_name ?? '—'}
+                      </TableCell>
+                      <TableCell className="max-w-[180px] truncate">
+                        {p.course?.title ?? '—'}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{p.method ?? '—'}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge
+                          status={
+                            p.status === 'PAID'
+                              ? 'success'
+                              : p.status === 'PENDING'
+                                ? 'pending'
+                                : 'failed'
+                          }
+                          label={p.status}
+                        />
+                      </TableCell>
+                      <TableCell className="text-end">
+                        {formatCurrency(p.tax_vat_amount ?? 0, p.currency)}
+                      </TableCell>
+                      <TableCell className="text-end">
+                        {formatCurrency(p.platform_fee ?? 0, p.currency)}
+                      </TableCell>
+                      <TableCell className="text-end">
+                        {formatCurrency(p.instructor_fee ?? 0, p.currency)}
+                      </TableCell>
+                      <TableCell className="text-end">
+                        {formatCurrency(schoolNet, p.currency)}
+                      </TableCell>
+                      <TableCell className="text-end font-semibold">
+                        {formatCurrency(p.amount, p.currency)}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -9,19 +9,6 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { TrendingDown, Calendar, Tag, DollarSign } from 'lucide-react';
-import { apiClient } from '@/lib/api';
-import { formatCurrencyWithStore } from '@/lib/utils';
-import { toast } from 'react-toastify';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { useTranslation } from '@/lib/i18n/hooks';
-import {
   Table,
   TableBody,
   TableCell,
@@ -29,127 +16,102 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { StoreFinancialRecord } from '@/types/api';
+import { TrendingDown, TrendingUp, DollarSign, Tag } from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { ErrorHandler } from '@/lib/error-handler';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useFinancialFilters } from '@/hooks/useFinancialFilters';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { PageHeader } from '@/components/shared/PageHeader';
+import type { StoreFinancialRecord } from '@/types/api';
+
+interface CategoryBucket {
+  category: string;
+  count: number;
+  totalCost: number;
+  currency: string;
+}
 
 export default function StoreCostsPage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
+  const currentAcademy = useCurrentAcademy();
+  const formatCurrency = useFormatCurrency();
+  const {
+    selectedYear,
+    selectedMonth,
+    setSelectedYear,
+    setSelectedMonth,
+    years,
+    formatDate
+  } = useFinancialFilters();
+
   const [loading, setLoading] = useState(true);
   const [records, setRecords] = useState<StoreFinancialRecord[]>([]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const currentAcademy = useCurrentAcademy();
 
-  const years = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: 5 }, (_, i) => currentYear - i);
-  }, []);
-
-  useEffect(() => {
-    loadData();
-  }, [selectedYear, selectedMonth, currentAcademy?.id]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!currentAcademy?.id) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
-
-      const params: any = {
+      const data = await apiClient.getAcademyFinancialRecords({
         academy_id: currentAcademy.id,
-        year: selectedYear
-      };
-
-      if (selectedMonth) {
-        params.month = selectedMonth;
-      }
-
-      const data = await apiClient.getAcademyFinancialRecords(params);
-      setRecords(data);
-    } catch (error: any) {
-      console.error('Error loading costs data:', error);
-      toast.error(error?.message || 'Failed to load costs data');
+        year: selectedYear,
+        ...(selectedMonth ? { month: selectedMonth } : {})
+      });
+      setRecords(Array.isArray(data) ? data : []);
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentAcademy?.id, selectedYear, selectedMonth]);
 
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-  const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithStore(
-      amount,
-      {
-        currency: currency as any,
-        currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-        currency_position: 'after'
-      },
-      undefined,
-      language
+  const totals = useMemo(
+    () =>
+      records.reduce(
+        (acc, r) => ({
+          cost: acc.cost + r.cost,
+          revenue: acc.revenue + r.revenue,
+          profit: acc.profit + r.profit,
+          currency: r.currency
+        }),
+        { cost: 0, revenue: 0, profit: 0, currency: 'IRR' }
+      ),
+    [records]
+  );
+
+  const recordsByCategory = useMemo((): CategoryBucket[] => {
+    const grouped = new Map<string, CategoryBucket>();
+    for (const r of records) {
+      const key = r.costCategory?.id?.toString() ?? 'uncategorized';
+      const existing = grouped.get(key) ?? {
+        category:
+          r.costCategory?.name ?? t('financial.store.costs.uncategorized'),
+        count: 0,
+        totalCost: 0,
+        currency: r.currency
+      };
+      grouped.set(key, {
+        ...existing,
+        count: existing.count + 1,
+        totalCost: existing.totalCost + r.cost
+      });
+    }
+    return Array.from(grouped.values()).sort(
+      (a, b) => b.totalCost - a.totalCost
     );
-  };
-
-  const totals = useMemo(() => {
-    return records.reduce(
-      (acc, record) => ({
-        cost: acc.cost + record.cost,
-        revenue: acc.revenue + record.revenue,
-        profit: acc.profit + record.profit,
-        currency: record.currency
-      }),
-      { cost: 0, revenue: 0, profit: 0, currency: 'IRR' }
-    );
-  }, [records]);
-
-  const recordsByCategory = useMemo(() => {
-    const grouped: Record<
-      string,
-      { category: string; count: number; totalCost: number; currency: string }
-    > = {};
-
-    records.forEach((record) => {
-      const categoryName =
-        record.costCategory?.name || t('financial.store.costs.uncategorized');
-      const categoryId = record.costCategory?.id?.toString() || 'uncategorized';
-
-      if (!grouped[categoryId]) {
-        grouped[categoryId] = {
-          category: categoryName,
-          count: 0,
-          totalCost: 0,
-          currency: record.currency
-        };
-      }
-
-      grouped[categoryId].count += 1;
-      grouped[categoryId].totalCost += record.cost;
-    });
-
-    return Object.values(grouped);
-  }, [records]);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">
-            {t('financial.store.costs.loading')}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  }, [records, t]);
 
   if (!currentAcademy) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex flex-1 items-center justify-center p-6">
         <p className="text-muted-foreground">
           {t('financial.store.costs.noStore')}
         </p>
@@ -157,90 +119,38 @@ export default function StoreCostsPage() {
     );
   }
 
+  if (loading) {
+    return <LoadingSpinner message={t('financial.store.costs.loading')} />;
+  }
+
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">
-            {t('financial.store.costs.title')}
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            {currentAcademy.name} - {t('financial.store.costs.description')}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={t('financial.store.costs.title')}
+        description={`${currentAcademy.name} — ${t('financial.store.costs.description')}`}
+      />
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('financial.store.costs.filters')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">
-                {t('financial.store.costs.year')}
-              </label>
-              <Select
-                value={selectedYear.toString()}
-                onValueChange={(value) => setSelectedYear(parseInt(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">
-                {t('financial.store.costs.month')}
-              </label>
-              <Select
-                value={selectedMonth?.toString() || 'all'}
-                onValueChange={(value) =>
-                  setSelectedMonth(value === 'all' ? null : parseInt(value))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t('financial.store.costs.allMonths')}
-                  </SelectItem>
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                    <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString(locale, {
-                        month: 'long'
-                      })}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <FinancialFilterBar
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        years={years}
+        onYearChange={setSelectedYear}
+        onMonthChange={setSelectedMonth}
+      />
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               {t('financial.store.costs.totalCost')}
             </CardTitle>
-            <TrendingDown className="h-4 w-4 text-red-500" />
+            <TrendingDown className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <p className="text-2xl font-bold text-destructive">
               {formatCurrency(totals.cost, totals.currency)}
-            </div>
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
               {t('financial.store.costs.totalExpenses')}
             </p>
@@ -255,9 +165,9 @@ export default function StoreCostsPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <p className="text-2xl font-bold">
               {formatCurrency(totals.revenue, totals.currency)}
-            </div>
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
               {t('financial.store.costs.totalIncome')}
             </p>
@@ -269,12 +179,12 @@ export default function StoreCostsPage() {
             <CardTitle className="text-sm font-medium">
               {t('financial.store.costs.netProfit')}
             </CardTitle>
-            <TrendingDown className="h-4 w-4 text-green-500" />
+            <TrendingUp className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
               {formatCurrency(totals.profit, totals.currency)}
-            </div>
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
               {t('financial.store.costs.revenueMinusCost')}
             </p>
@@ -305,24 +215,20 @@ export default function StoreCostsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recordsByCategory
-                  .sort((a, b) => b.totalCost - a.totalCost)
-                  .map((category, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                          <Tag className="h-4 w-4 text-muted-foreground" />
-                          {category.category}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-end">
-                        {category.count}
-                      </TableCell>
-                      <TableCell className="text-end font-medium">
-                        {formatCurrency(category.totalCost, category.currency)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {recordsByCategory.map((cat, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Tag className="h-4 w-4 text-muted-foreground" />
+                        {cat.category}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-end">{cat.count}</TableCell>
+                    <TableCell className="text-end font-medium">
+                      {formatCurrency(cat.totalCost, cat.currency)}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </CardContent>
@@ -359,40 +265,31 @@ export default function StoreCostsPage() {
                 <TableRow>
                   <TableCell
                     colSpan={5}
-                    className="text-center text-muted-foreground"
+                    className="py-6 text-center text-muted-foreground"
                   >
                     {t('financial.store.costs.noCostRecords')}
                   </TableCell>
                 </TableRow>
               ) : (
-                records.map((record) => (
-                  <TableRow key={record.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <div>
-                            {new Date(record.period_start).toLocaleDateString()}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            to{' '}
-                            {new Date(record.period_end).toLocaleDateString()}
-                          </div>
-                        </div>
-                      </div>
+                records.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell className="text-sm">
+                      <span>{formatDate(r.period_start)}</span>
+                      <span className="mx-1 text-muted-foreground">→</span>
+                      <span>{formatDate(r.period_end)}</span>
                     </TableCell>
                     <TableCell>
-                      {record.costCategory?.name ||
+                      {r.costCategory?.name ??
                         t('financial.store.costs.uncategorized')}
                     </TableCell>
                     <TableCell className="text-end">
-                      {formatCurrency(record.revenue, record.currency)}
+                      {formatCurrency(r.revenue, r.currency)}
                     </TableCell>
-                    <TableCell className="text-end font-medium text-red-600">
-                      {formatCurrency(record.cost, record.currency)}
+                    <TableCell className="text-end font-medium text-destructive">
+                      {formatCurrency(r.cost, r.currency)}
                     </TableCell>
-                    <TableCell className="text-end font-medium text-green-600">
-                      {formatCurrency(record.profit, record.currency)}
+                    <TableCell className="text-end font-medium text-emerald-600 dark:text-emerald-400">
+                      {formatCurrency(r.profit, r.currency)}
                     </TableCell>
                   </TableRow>
                 ))

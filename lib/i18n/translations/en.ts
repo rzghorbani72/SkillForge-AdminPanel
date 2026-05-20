@@ -155,7 +155,10 @@ export const en = {
     'platform-records': 'Platform Records',
     formulas: 'Formulas',
     'cost-categories': 'Cost Categories',
-    'business-flow': 'Business Flow'
+    'business-flow': 'Business Flow',
+    academies: 'Academies',
+    financial: 'Financial',
+    plans: 'Plans'
   },
   auth: {
     login: 'Login',
@@ -457,7 +460,26 @@ export const en = {
     coverIdPlaceholder: 'Cover ID (optional)',
     courses: 'courses',
     lessonsCount: '{{count}} lessons',
-    studentsCount: '{{count}} students'
+    studentsCount: '{{count}} students',
+    seasonsAndLessons: 'Seasons & Lessons',
+    addSeason: 'Add Season',
+    addLesson: 'Add Lesson',
+    removeSeason: 'Remove season',
+    removeLesson: 'Remove lesson',
+    dragSeason: 'Drag to reorder season',
+    dragLesson: 'Drag to reorder lesson',
+    season: 'Season',
+    seasonTitle: 'Season title',
+    seasonDescription: 'Season description',
+    enterSeasonTitle: 'Enter season title',
+    lessonTitle: 'Lesson',
+    lessonDescription: 'Lesson description',
+    enterLessonTitle: 'Enter lesson title',
+    freePreview: 'Free preview',
+    optional: 'Optional',
+    saving: 'Saving…',
+    saveChanges: 'Save changes',
+    backToCourses: 'Back to courses'
   },
   students: {
     title: 'Students',

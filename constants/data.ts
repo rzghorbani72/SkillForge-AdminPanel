@@ -87,10 +87,18 @@ export const navItems: NavItem[] = [
     roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
   },
   {
-    title: 'Payments',
-    href: '/payments',
-    icon: 'creditCard' as IconType,
-    label: 'payments'
+    title: 'Financial',
+    href: '/financial',
+    icon: 'dollarSign' as IconType,
+    label: 'financial',
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER']
+  },
+  {
+    title: 'Plans',
+    href: '/plans',
+    icon: 'layers' as IconType,
+    label: 'plans',
+    roles: ['ADMIN', 'MANAGER']
   },
   {
     title: 'Settings',

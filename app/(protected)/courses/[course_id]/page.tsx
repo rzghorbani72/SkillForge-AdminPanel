@@ -2,18 +2,10 @@
 
 import { useParams } from 'next/navigation';
 import { useCourseView } from '@/components/course/useCourseView';
-import CourseHeader from '@/components/course/CourseHeader';
-import CourseCover from '@/components/course/CourseCover';
-import CourseInfo from '@/components/course/CourseInfo';
-import CoursePricing from '@/components/course/CoursePricing';
-import CourseAssociations from '@/components/course/CourseAssociations';
-import CoursePublishSettings from '@/components/course/CoursePublishSettings';
-import CourseManagement from '@/components/course/CourseManagement';
-import CourseQnA from '@/components/course/CourseQnA';
+import CourseEditTabs from '@/components/course/CourseEditTabs';
 import LoadingState from '@/components/course/LoadingState';
 import ErrorState from '@/components/course/ErrorState';
 import NoStoreState from '@/components/course/NoStoreState';
-// import AccessControlGuard from '@/components/access-control/AccessControlGuard';
 
 export default function CourseViewPage() {
   const params = useParams();
@@ -22,11 +14,9 @@ export default function CourseViewPage() {
   const {
     course,
     isLoading,
-    isDeleting,
     selectedAcademy,
     handleEditCourse,
     handleManageSeasons,
-    handleDeleteCourse,
     handleBack
   } = useCourseView(courseId);
 
@@ -43,40 +33,11 @@ export default function CourseViewPage() {
   }
 
   return (
-    // <AccessControlGuard
-    //   resource={course}
-    //   action="view"
-    //   fallbackPath="/courses"
-    //   fallbackMessage="You do not have permission to view this course."
-    // >
-    <div className="flex-1 space-y-6 p-6">
-      <CourseHeader
-        course={course}
-        isDeleting={isDeleting}
-        onBack={handleBack}
-        onEdit={handleEditCourse}
-        onManageSeasons={handleManageSeasons}
-        onDelete={handleDeleteCourse}
-      />
-
-      <CourseCover course={course} />
-
-      <CourseInfo course={course} />
-
-      <CoursePricing course={course} />
-
-      <CourseAssociations course={course} />
-
-      <CoursePublishSettings course={course} />
-
-      <CourseQnA courseId={course.id} />
-
-      <CourseManagement
-        course={course}
-        onManageSeasons={handleManageSeasons}
-        onEdit={handleEditCourse}
-      />
-    </div>
-    // </AccessControlGuard>
+    <CourseEditTabs
+      course={course}
+      onManageSeasons={handleManageSeasons}
+      onEdit={handleEditCourse}
+      onBack={handleBack}
+    />
   );
 }

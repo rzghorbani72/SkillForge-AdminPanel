@@ -38,6 +38,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import Link from '@/components/ui/link';
 import { useMemo } from 'react';
 import { useInitializeStores } from '@/hooks/useInitializeStores';
+import MarketingBanners from '@/components/dashboard/MarketingBanners';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
@@ -207,6 +208,9 @@ export default function DashboardPage() {
           />
         </div>
       </div>
+
+      {/* Marketing Banners */}
+      <MarketingBanners />
 
       {/* Stats Cards */}
       <StatsCards cards={statsCards} />

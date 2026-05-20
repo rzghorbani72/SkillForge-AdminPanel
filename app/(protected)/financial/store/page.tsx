@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -8,29 +8,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  BookOpen,
-  Calendar,
-  CreditCard
-} from 'lucide-react';
-import { apiClient } from '@/lib/api';
-import { formatCurrencyWithStore } from '@/lib/utils';
-import { toast } from 'react-toastify';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { useTranslation } from '@/lib/i18n/hooks';
 import {
   Table,
   TableBody,
@@ -40,101 +17,74 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DollarSign, TrendingUp, TrendingDown, Users } from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { ErrorHandler } from '@/lib/error-handler';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useFinancialFilters } from '@/hooks/useFinancialFilters';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { PageHeader } from '@/components/shared/PageHeader';
+import type {
+  AcademyFinancialOverview,
+  AcademyPayment
+} from '@/types/financial';
 
 export default function StoreFinancialPage() {
-  const { t, language } = useTranslation();
-  const [loading, setLoading] = useState(true);
-  const [overview, setOverview] = useState<any>(null);
-  const [payments, setPayments] = useState<any[]>([]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const { t } = useTranslation();
   const currentAcademy = useCurrentAcademy();
+  const formatCurrency = useFormatCurrency();
+  const {
+    selectedYear,
+    selectedMonth,
+    setSelectedYear,
+    setSelectedMonth,
+    dateRange,
+    years,
+    formatDate
+  } = useFinancialFilters();
 
-  const years = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: 5 }, (_, i) => currentYear - i);
-  }, []);
+  const [loading, setLoading] = useState(true);
+  const [overview, setOverview] = useState<AcademyFinancialOverview | null>(
+    null
+  );
+  const [payments, setPayments] = useState<AcademyPayment[]>([]);
 
-  useEffect(() => {
-    loadData();
-  }, [selectedYear, selectedMonth, currentAcademy?.id]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!currentAcademy?.id) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
-
-      const startDate =
-        selectedMonth && selectedYear
-          ? new Date(selectedYear, selectedMonth - 1, 1)
-          : new Date(selectedYear, 0, 1);
-      const endDate =
-        selectedMonth && selectedYear
-          ? new Date(selectedYear, selectedMonth, 0, 23, 59, 59)
-          : new Date(selectedYear, 11, 31, 23, 59, 59);
-
       const [overviewData, revenueData] = await Promise.all([
         apiClient.getAcademyFinancialOverview(
           currentAcademy.id,
-          startDate.toISOString(),
-          endDate.toISOString()
+          dateRange.startIso,
+          dateRange.endIso
         ),
         apiClient.getAcademyRevenueFromPayments(
           currentAcademy.id,
-          startDate.toISOString(),
-          endDate.toISOString()
+          dateRange.startIso,
+          dateRange.endIso
         )
       ]);
-
-      setOverview(overviewData);
-      setPayments(revenueData.payments || []);
-    } catch (error: any) {
-      console.error('Error loading store financial data:', error);
-      toast.error(error?.message || 'Failed to load financial data');
+      setOverview(overviewData as AcademyFinancialOverview);
+      setPayments((revenueData?.payments ?? []) as AcademyPayment[]);
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentAcademy?.id, dateRange]);
 
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
-
-  const formatCurrency = (amount: number, currency = 'IRR') => {
-    return formatCurrencyWithStore(
-      amount,
-      {
-        currency: currency as any,
-        currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-        currency_position: 'after'
-      },
-      undefined,
-      language
-    );
-  };
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">
-            {t('financial.store.overview.loading')}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   if (!currentAcademy) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex flex-1 items-center justify-center p-6">
         <p className="text-muted-foreground">
           {t('financial.store.overview.noStore')}
         </p>
@@ -142,80 +92,28 @@ export default function StoreFinancialPage() {
     );
   }
 
+  if (loading) {
+    return <LoadingSpinner message={t('financial.store.overview.loading')} />;
+  }
+
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">
-            {t('financial.store.overview.title')}
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            {currentAcademy.name} - {t('financial.store.overview.description')}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={t('financial.store.overview.title')}
+        description={`${currentAcademy.name} — ${t('financial.store.overview.description')}`}
+      />
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('financial.store.overview.filters')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">
-                {t('financial.store.overview.year')}
-              </label>
-              <Select
-                value={selectedYear.toString()}
-                onValueChange={(value) => setSelectedYear(parseInt(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium">
-                {t('financial.store.overview.month')}
-              </label>
-              <Select
-                value={selectedMonth?.toString() || 'all'}
-                onValueChange={(value) =>
-                  setSelectedMonth(value === 'all' ? null : parseInt(value))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t('financial.store.overview.allMonths')}
-                  </SelectItem>
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                    <SelectItem key={month} value={month.toString()}>
-                      {new Date(2000, month - 1).toLocaleString(locale, {
-                        month: 'long'
-                      })}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <FinancialFilterBar
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        years={years}
+        onYearChange={setSelectedYear}
+        onMonthChange={setSelectedMonth}
+      />
 
       {/* Summary Cards */}
       {overview && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -224,12 +122,12 @@ export default function StoreFinancialPage() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <p className="text-2xl font-bold">
                 {formatCurrency(
                   overview.revenue.total,
                   overview.revenue.currency
                 )}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.overview.fromPayments', {
                   count: overview.revenue.from_payments
@@ -243,12 +141,12 @@ export default function StoreFinancialPage() {
               <CardTitle className="text-sm font-medium">
                 {t('financial.store.overview.totalCost')}
               </CardTitle>
-              <TrendingDown className="h-4 w-4 text-red-500" />
+              <TrendingDown className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">
+              <p className="text-2xl font-bold text-destructive">
                 {formatCurrency(overview.cost.total, overview.cost.currency)}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.overview.platformCosts')}
               </p>
@@ -260,15 +158,15 @@ export default function StoreFinancialPage() {
               <CardTitle className="text-sm font-medium">
                 {t('financial.store.overview.totalProfit')}
               </CardTitle>
-              <TrendingUp className="h-4 w-4 text-green-500" />
+              <TrendingUp className="h-4 w-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
+              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                 {formatCurrency(
                   overview.profit.total,
                   overview.revenue.currency
                 )}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.overview.profitMargin', {
                   margin: overview.profit.margin
@@ -285,9 +183,9 @@ export default function StoreFinancialPage() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <p className="text-2xl font-bold">
                 {overview.statistics.enrollments}
-              </div>
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.overview.courses', {
                   count: overview.statistics.courses
@@ -298,7 +196,6 @@ export default function StoreFinancialPage() {
         </div>
       )}
 
-      {/* Detailed View */}
       <Tabs defaultValue="payments" className="space-y-4">
         <TabsList>
           <TabsTrigger value="payments">
@@ -309,19 +206,15 @@ export default function StoreFinancialPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="payments" className="space-y-4">
+        <TabsContent value="payments">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>
-                    {t('financial.store.overview.studentPayments')}
-                  </CardTitle>
-                  <CardDescription>
-                    {t('financial.store.overview.paymentsDescription')}
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle>
+                {t('financial.store.overview.studentPayments')}
+              </CardTitle>
+              <CardDescription>
+                {t('financial.store.overview.paymentsDescription')}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -344,32 +237,23 @@ export default function StoreFinancialPage() {
                     <TableRow>
                       <TableCell
                         colSpan={4}
-                        className="text-center text-muted-foreground"
+                        className="py-6 text-center text-muted-foreground"
                       >
                         {t('financial.store.overview.noPayments')}
                       </TableCell>
                     </TableRow>
                   ) : (
-                    payments.map((payment: any) => (
-                      <TableRow key={payment.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <div>
-                              {new Date(
-                                payment.created_at
-                              ).toLocaleDateString()}
-                            </div>
-                          </div>
+                    payments.map((p) => (
+                      <TableRow key={p.id}>
+                        <TableCell className="whitespace-nowrap text-sm">
+                          {formatDate(p.created_at)}
                         </TableCell>
                         <TableCell className="font-medium">
-                          {payment.profile?.display_name || 'Unknown'}
+                          {p.profile?.display_name ?? '—'}
                         </TableCell>
-                        <TableCell>
-                          {payment.course?.title || 'Unknown Course'}
-                        </TableCell>
+                        <TableCell>{p.course?.title ?? '—'}</TableCell>
                         <TableCell className="text-end font-medium">
-                          {formatCurrency(payment.amount, payment.currency)}
+                          {formatCurrency(p.amount, p.currency)}
                         </TableCell>
                       </TableRow>
                     ))
@@ -380,7 +264,7 @@ export default function StoreFinancialPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="courses" className="space-y-4">
+        <TabsContent value="courses">
           <Card>
             <CardHeader>
               <CardTitle>
@@ -391,9 +275,9 @@ export default function StoreFinancialPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="py-8 text-center text-muted-foreground">
+              <p className="py-8 text-center text-muted-foreground">
                 {t('financial.store.overview.comingSoon')}
-              </div>
+              </p>
             </CardContent>
           </Card>
         </TabsContent>

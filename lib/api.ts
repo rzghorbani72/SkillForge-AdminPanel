@@ -3265,6 +3265,14 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
+  // No auth guard — safe for MANAGER / TEACHER
+  async getActivePlans() {
+    const res = await this.request<SubscriptionPlanData[]>(
+      '/platform-settings/plans/active'
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
   async createSubscriptionPlan(
     data: Omit<SubscriptionPlanData, 'id' | 'created_at' | 'updated_at'>
   ) {
