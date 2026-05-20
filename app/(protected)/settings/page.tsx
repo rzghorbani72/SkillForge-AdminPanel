@@ -22,6 +22,7 @@ import { useSettingsData } from './_hooks/use-settings-data';
 import { format } from 'date-fns';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { DefaultAcademyCard } from '@/components/settings/default-academy-card';
 
 export default function SettingsOverviewPage() {
   const { t } = useTranslation();
@@ -199,6 +200,8 @@ export default function SettingsOverviewPage() {
           </CardContent>
         </Card>
       </div>
+
+      <DefaultAcademyCard />
 
       <div className="grid gap-4 md:grid-cols-2">
         {SECTIONS.map(({ title, description, href, icon: Icon }) => (

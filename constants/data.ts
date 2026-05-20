@@ -51,6 +51,13 @@ export type Product = {
   updated_at: string;
 };
 
+// 6-item sidebar per product spec. Role gating is applied in filterNavItemsByRole.
+// - dashboard:  everyone
+// - academies:  ADMIN / SUPPORT (platform oversight); MANAGER edits own via Settings
+// - courses:    TEACHER and up
+// - users:      TEACHER and up (TEACHER is scoped to own courses; MANAGER+ wider)
+// - payments:   everyone (students see their own; staff see academy/platform)
+// - settings:   everyone
 export const navItems: NavItem[] = [
   {
     title: 'Dashboard',
@@ -59,337 +66,37 @@ export const navItems: NavItem[] = [
     label: 'dashboard'
   },
   {
-    title: 'Platform Overview',
-    href: '/platform',
-    icon: 'building2' as IconType,
-    label: 'platform-overview',
-    roles: ['ADMIN'], // Only platform-level admins see this
-    adminOnly: true // Only admins without stores see this
-  },
-  {
-    title: 'All Stores',
-    href: '/platform/stores',
+    title: 'Academies',
+    href: '/academies',
     icon: 'store' as IconType,
-    label: 'all-stores',
-    roles: ['ADMIN'], // Only platform-level admins see this
-    adminOnly: true // Only admins without stores see this
-  },
-  {
-    title: 'My Stores',
-    href: '/stores?filter=none',
-    icon: 'store' as IconType,
-    label: 'stores'
-  },
-  {
-    title: 'Categories',
-    href: '/categories',
-    icon: 'folder' as IconType,
-    label: 'categories'
+    label: 'academies',
+    roles: ['ADMIN', 'SUPPORT']
   },
   {
     title: 'Courses',
-    href: '/courses?filter=none',
-    icon: 'fileText' as IconType,
-    label: 'courses'
-  },
-  {
-    title: 'Library',
-    icon: 'layers' as IconType,
-    label: 'library',
-    children: [
-      {
-        title: 'Videos',
-        href: '/videos?filter=none',
-        icon: 'video' as IconType,
-        label: 'videos'
-      },
-      {
-        title: 'Images',
-        href: '/images?filter=none',
-        icon: 'image' as IconType,
-        label: 'images'
-      },
-      {
-        title: 'Audios',
-        href: '/audios?filter=none',
-        icon: 'volume2' as IconType,
-        label: 'audios'
-      },
-      {
-        title: 'Documents',
-        href: '/documents?filter=none',
-        icon: 'fileText' as IconType,
-        label: 'documents'
-      }
-    ]
+    href: '/courses',
+    icon: 'course' as IconType,
+    label: 'courses',
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
   },
   {
     title: 'Users',
+    href: '/users',
     icon: 'users' as IconType,
     label: 'users',
-    roles: ['ADMIN', 'MANAGER'], // Both admins and managers can see users
-    children: [
-      {
-        title: 'All Users',
-        href: '/users',
-        icon: 'list' as IconType,
-        label: 'all-users',
-        roles: ['MANAGER'] // Managers see this (their users page)
-      },
-      {
-        title: 'Admins',
-        href: '/users/admins',
-        icon: 'shield' as IconType,
-        label: 'admins',
-        roles: ['ADMIN'] // Only admins can see and manage admins
-      },
-      {
-        title: 'Students',
-        href: '/users/students',
-        icon: 'user' as IconType,
-        label: 'students',
-        roles: ['MANAGER'] // Managers can see students
-      },
-      {
-        title: 'Teachers',
-        href: '/users/teachers',
-        icon: 'graduationCap' as IconType,
-        label: 'teachers',
-        roles: ['MANAGER'] // Managers can see teachers
-      },
-      {
-        title: 'Managers',
-        href: '/users/managers',
-        icon: 'shield' as IconType,
-        label: 'managers',
-        roles: ['ADMIN'] // Only admins can see managers list
-      },
-      {
-        title: 'Teacher Requests',
-        href: '/users/teacher-requests',
-        icon: 'graduationCap' as IconType,
-        label: 'teacher-requests',
-        roles: ['ADMIN', 'MANAGER'] // Both can see teacher requests
-      }
-    ]
-  },
-
-  {
-    title: 'Students',
-    icon: 'users' as IconType,
-    label: 'students',
-    children: [
-      {
-        title: 'Enrollments',
-        href: '/students/enrollments',
-        icon: 'graduationCap' as IconType,
-        label: 'enrollments'
-      },
-      {
-        title: 'Manual Enroll',
-        href: '/students/manual-enroll',
-        icon: 'userPlus' as IconType,
-        label: 'manual-enroll'
-      },
-      {
-        title: 'Progress Tracking',
-        href: '/students/progress',
-        icon: 'trendingUp' as IconType,
-        label: 'progress-tracking'
-      },
-      {
-        title: 'Lesson Access',
-        href: '/students/lesson-access',
-        icon: 'lock' as IconType,
-        label: 'lesson-access'
-      }
-    ]
-  },
-  {
-    title: 'Assignments',
-    icon: 'fileText' as IconType,
-    label: 'assignments',
-    href: '/assignments',
-    roles: ['TEACHER', 'MANAGER']
-  },
-  {
-    title: 'Analytics',
-    icon: 'barChart' as IconType,
-    label: 'analytics',
-    children: [
-      {
-        title: 'Overview',
-        href: '/analytics',
-        icon: 'dashboard' as IconType,
-        label: 'analytics-overview'
-      },
-      {
-        title: 'Revenue',
-        href: '/analytics/revenue',
-        icon: 'dollarSign' as IconType,
-        label: 'revenue-analytics'
-      },
-      {
-        title: 'Course Performance',
-        href: '/analytics/courses',
-        icon: 'trendingUp' as IconType,
-        label: 'course-performance'
-      },
-      {
-        title: 'Student Engagement',
-        href: '/analytics/engagement',
-        icon: 'users' as IconType,
-        label: 'student-engagement'
-      }
-    ]
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
   },
   {
     title: 'Payments',
+    href: '/payments',
     icon: 'creditCard' as IconType,
-    label: 'payments',
-    children: [
-      {
-        title: 'Transactions',
-        href: '/payments',
-        icon: 'list' as IconType,
-        label: 'transactions'
-      },
-      {
-        title: 'Payment Methods',
-        href: '/payments/methods',
-        icon: 'creditCard' as IconType,
-        label: 'payment-methods'
-      },
-      {
-        title: 'Invoices',
-        href: '/payments/invoices',
-        icon: 'fileText' as IconType,
-        label: 'invoices'
-      },
-      {
-        title: 'Store Financial Payments',
-        href: '/financial/store/payments',
-        icon: 'dollarSign' as IconType,
-        label: 'store-financial-payments',
-        roles: ['ADMIN', 'MANAGER']
-      },
-      {
-        title: 'Vouchers',
-        href: '/vouchers',
-        icon: 'tag' as IconType,
-        label: 'vouchers'
-      }
-    ]
-  },
-  {
-    title: 'Store Financial',
-    icon: 'building2' as IconType,
-    label: 'store-financial',
-    roles: ['ADMIN', 'MANAGER'], // Managers and Admins can see store financial
-    children: [
-      {
-        title: 'Overview',
-        href: '/financial/store',
-        icon: 'dashboard' as IconType,
-        label: 'store-financial-overview',
-        roles: ['ADMIN', 'MANAGER']
-      },
-      {
-        title: 'Revenue & Benefits',
-        href: '/financial/store/revenue',
-        icon: 'trendingUp' as IconType,
-        label: 'store-revenue',
-        roles: ['ADMIN', 'MANAGER']
-      },
-      {
-        title: 'Costs',
-        href: '/financial/store/costs',
-        icon: 'trendingDown' as IconType,
-        label: 'store-costs',
-        roles: ['ADMIN', 'MANAGER']
-      },
-      {
-        title: 'Payments',
-        href: '/financial/store/payments',
-        icon: 'creditCard' as IconType,
-        label: 'store-payments',
-        roles: ['ADMIN', 'MANAGER']
-      },
-      {
-        title: 'Reports',
-        href: '/financial/store/reports',
-        icon: 'fileText' as IconType,
-        label: 'store-reports',
-        roles: ['ADMIN', 'MANAGER']
-      }
-    ]
-  },
-  {
-    title: 'Platform Financial',
-    icon: 'dollarSign' as IconType,
-    label: 'platform-financial',
-    roles: ['ADMIN'], // Only Admins can see platform financial
-    children: [
-      {
-        title: 'Dashboard',
-        href: '/financial/platform',
-        icon: 'dashboard' as IconType,
-        label: 'platform-financial-dashboard',
-        roles: ['ADMIN']
-      },
-      {
-        title: 'All Stores',
-        href: '/platform/stores',
-        icon: 'building2' as IconType,
-        label: 'platform-stores',
-        roles: ['ADMIN']
-      },
-      {
-        title: 'Platform Pricing',
-        href: '/platform/pricing',
-        icon: 'dollarSign' as IconType,
-        label: 'platform-pricing',
-        roles: ['ADMIN']
-      }
-    ]
+    label: 'payments'
   },
   {
     title: 'Settings',
+    href: '/settings',
     icon: 'settings' as IconType,
-    label: 'settings',
-    children: [
-      {
-        title: 'Profile',
-        href: '/settings/profile',
-        icon: 'user' as IconType,
-        label: 'profile-settings'
-      },
-      {
-        title: 'Store Settings',
-        href: '/settings/store',
-        icon: 'store' as IconType,
-        label: 'store-settings'
-      },
-      {
-        title: 'Theme Generator',
-        href: '/settings/theme-generator',
-        icon: 'wand2' as IconType,
-        label: 'theme-generator'
-      },
-      {
-        title: 'Academy Pricing',
-        href: '/settings/pricing',
-        icon: 'store' as IconType,
-        label: 'academy-pricing',
-        roles: ['ADMIN', 'MANAGER']
-      },
-      {
-        title: 'Security',
-        href: '/settings/security',
-        icon: 'shield' as IconType,
-        label: 'security-settings'
-      }
-    ]
+    label: 'settings'
   }
 ];
 

@@ -41,13 +41,13 @@ export interface UserProfile {
   };
   role: {
     id: number;
-    name: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+    name: 'ADMIN' | 'SUPPORT' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
     description?: string;
   };
   /** Prisma-style casing variant */
   Role?: {
     id: number;
-    name: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+    name: 'ADMIN' | 'SUPPORT' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
     description?: string;
   };
   avatar?: Media;
@@ -76,7 +76,7 @@ export interface Profile {
 
 export interface Role {
   id: number;
-  name: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+  name: 'ADMIN' | 'SUPPORT' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
   description?: string;
   created_at: string;
   updated_at: string;

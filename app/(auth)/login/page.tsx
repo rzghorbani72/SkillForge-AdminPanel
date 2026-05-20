@@ -173,28 +173,18 @@ export default function LoginPage() {
             window.location.href = '/student-dashboard';
             return;
           }
-        } else if (
-          userRole === 'ADMIN' ||
-          userRole === 'MANAGER' ||
-          userRole === 'TEACHER'
-        ) {
-          // Check if admin has no store - clear store selection
-          const currentAcademy = response.currentAcademy;
-          const academyId = response.currentProfile?.academy_id;
-          if (
-            userRole === 'ADMIN' &&
-            (!currentAcademy || academyId === null || academyId === undefined)
-          ) {
-            if (typeof window !== 'undefined') {
-              window.localStorage.removeItem('skillforge_selected_academy_id');
-            }
-          }
-
+        } else if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
+          // ADMIN and SUPPORT use the dedicated /admin-login route.
+          ErrorHandler.showWarning(
+            'Admins and Support staff must sign in via /admin-login'
+          );
+          window.location.href = '/admin-login';
+          return;
+        } else if (userRole === 'MANAGER' || userRole === 'TEACHER') {
           // Full navigation so server layout sees HttpOnly jwt on the panel host
           window.location.href = '/dashboard';
           return;
         } else {
-          // User doesn't have proper permissions
           ErrorHandler.showWarning(
             'You do not have permission to access this panel'
           );
@@ -246,33 +236,18 @@ export default function LoginPage() {
 
         // Check user role and redirect accordingly
         const userRole = response.currentProfile?.Role?.name;
-        if (
-          userRole === 'ADMIN' ||
-          userRole === 'MANAGER' ||
-          userRole === 'TEACHER'
-        ) {
-          // Check if admin has no store - clear store selection
-          const currentAcademy = response.currentAcademy;
-
-          const academyId =
-            response.currentProfile?.academy_id ||
-            response.currentProfile?.academy?.id;
-          if (
-            (userRole === 'ADMIN' ||
-              userRole === 'MANAGER' ||
-              userRole === 'TEACHER') &&
-            (!currentAcademy || academyId === null || academyId === undefined)
-          ) {
-            if (typeof window !== 'undefined') {
-              window.localStorage.removeItem('skillforge_selected_academy_id');
-            }
-          }
-
+        if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
+          ErrorHandler.showWarning(
+            'Admins and Support staff must sign in via /admin-login'
+          );
+          window.location.href = '/admin-login';
+          return;
+        } else if (userRole === 'MANAGER' || userRole === 'TEACHER') {
           window.location.href = '/dashboard';
           return;
         } else {
           ErrorHandler.showWarning(
-            'You do not have permission to access this panel. Only Teachers, Managers, and Admins can access this panel.'
+            'You do not have permission to access this panel. Only Teachers and Managers can sign in here.'
           );
           return;
         }

@@ -6,103 +6,90 @@
 @tailwind utilities;
 
 @layer base {
+  /* Light mode kept minimal — codewithmosh-style is dark-first.
+     Light is for users who explicitly toggle out. */
   :root {
-    /* Elegant warm palette with subtle violet accent */
-    --background: 30 25% 98%;
-    --foreground: 240 10% 10%;
+    --background: 0 0% 99%;
+    --foreground: 220 25% 12%;
     --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted-foreground: 220 8% 46%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --popover-foreground: 220 25% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
+    --card-foreground: 220 25% 12%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --primary: 262 83% 58%;
+    --primary: 354 84% 57%;
     --primary-foreground: 0 0% 100%;
     --secondary: 220 14% 96%;
     --secondary-foreground: 220 9% 26%;
-    --accent: 262 30% 96%;
-    --accent-foreground: 262 83% 48%;
+    --accent: 354 80% 96%;
+    --accent-foreground: 354 84% 47%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --ring: 262 83% 58%;
-    --radius: 0.75rem;
+    --ring: 354 84% 57%;
+    --radius: 0.5rem;
 
-    /* Extended palette for gradients */
-    --gradient-start: 262 83% 58%;
-    --gradient-mid: 280 70% 55%;
-    --gradient-end: 310 75% 60%;
-
-    /* Chart colors - vibrant and harmonious */
-    --chart-1: 262 83% 58%;
-    --chart-2: 173 58% 39%;
+    --chart-1: 354 84% 57%;
+    --chart-2: 200 70% 50%;
     --chart-3: 43 96% 56%;
-    --chart-4: 340 82% 52%;
-    --chart-5: 197 71% 52%;
+    --chart-4: 280 70% 55%;
+    --chart-5: 173 58% 39%;
 
-    /* Semantic colors */
-    --success: 142 76% 36%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 0%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    /* Sidebar specific */
-    --sidebar-bg: 262 30% 99%;
-    --sidebar-border: 262 20% 92%;
-    --sidebar-active: 262 83% 58%;
-    --sidebar-hover: 262 30% 96%;
+    --sidebar-bg: 0 0% 100%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-active: 354 84% 57%;
+    --sidebar-hover: 220 14% 96%;
   }
 
+  /* Dark — the primary theme. codewithmosh-style: very dark slate, crimson
+     accent, mid-low chroma surfaces, clear hierarchy of three layers
+     (background / card / popover) so cards lift off the page without borders. */
   .dark {
-    /* Deep, rich dark palette with violet glow */
-    --background: 240 10% 6%;
-    --foreground: 0 0% 98%;
-    --muted: 240 6% 12%;
-    --muted-foreground: 240 5% 65%;
-    --popover: 240 10% 8%;
-    --popover-foreground: 0 0% 98%;
-    --card: 240 10% 8%;
-    --card-foreground: 0 0% 98%;
-    --border: 240 6% 16%;
-    --input: 240 6% 16%;
-    --primary: 262 83% 62%;
+    --background: 222 18% 8%;
+    --foreground: 220 14% 95%;
+    --muted: 222 14% 14%;
+    --muted-foreground: 220 8% 60%;
+    --popover: 222 16% 12%;
+    --popover-foreground: 220 14% 95%;
+    --card: 222 16% 12%;
+    --card-foreground: 220 14% 95%;
+    --border: 222 12% 20%;
+    --input: 222 12% 18%;
+    --primary: 354 84% 57%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 6% 14%;
-    --secondary-foreground: 0 0% 85%;
-    --accent: 262 30% 18%;
-    --accent-foreground: 262 83% 72%;
+    --secondary: 222 12% 18%;
+    --secondary-foreground: 220 14% 90%;
+    --accent: 354 40% 18%;
+    --accent-foreground: 354 84% 70%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --ring: 262 83% 62%;
+    --ring: 354 84% 57%;
 
-    /* Extended palette for gradients */
-    --gradient-start: 262 83% 58%;
-    --gradient-mid: 280 70% 52%;
-    --gradient-end: 310 75% 55%;
+    --chart-1: 354 84% 60%;
+    --chart-2: 200 80% 60%;
+    --chart-3: 43 90% 60%;
+    --chart-4: 280 70% 65%;
+    --chart-5: 173 70% 50%;
 
-    /* Chart colors */
-    --chart-1: 262 83% 62%;
-    --chart-2: 173 58% 45%;
-    --chart-3: 43 96% 60%;
-    --chart-4: 340 82% 55%;
-    --chart-5: 197 71% 55%;
-
-    /* Semantic colors */
-    --success: 142 76% 40%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 55%;
     --warning-foreground: 0 0% 0%;
-    --info: 199 89% 52%;
+    --info: 199 89% 55%;
     --info-foreground: 0 0% 100%;
 
-    /* Sidebar specific */
-    --sidebar-bg: 240 10% 7%;
-    --sidebar-border: 240 6% 14%;
-    --sidebar-active: 262 83% 62%;
-    --sidebar-hover: 262 30% 14%;
+    --sidebar-bg: 222 20% 6%;
+    --sidebar-border: 222 12% 16%;
+    --sidebar-active: 354 84% 57%;
+    --sidebar-hover: 222 14% 12%;
   }
 }
 

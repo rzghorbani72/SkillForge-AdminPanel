@@ -106,7 +106,7 @@ class ApiClient {
     options: RequestInit = {},
     retryAfterRefresh: boolean = true
   ): Promise<ApiResponse<T>> {
-    const url = `${this.baseURL}${endpoint}`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL || this.baseURL}${endpoint}`;
 
     // SECURITY: JWT token is stored in HttpOnly cookie and sent automatically by browser
     // We no longer read tokens from localStorage to prevent XSS attacks

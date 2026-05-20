@@ -117,16 +117,16 @@ export default function AdminLoginPage() {
       if (response) {
         ErrorHandler.showSuccess('success.loginSuccess', true);
 
-        // Check user role - must be ADMIN
+        // /admin-login accepts only platform-staff roles (ADMIN, SUPPORT).
+        // Manager/Teacher must go through /login.
         const userRole = response.currentProfile?.Role?.name;
-        if (userRole === 'ADMIN') {
+        if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
           // Full navigation so server layout sees HttpOnly jwt on the panel host
           window.location.href = '/dashboard';
           return;
         } else {
-          // User doesn't have ADMIN role
           ErrorHandler.showWarning(
-            'You do not have ADMIN permission. Please use regular login.'
+            'This route is for Admin and Support staff. Please use /login.'
           );
           router.push('/login');
           return;
