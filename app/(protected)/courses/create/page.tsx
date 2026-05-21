@@ -1,50 +1,5 @@
-'use client';
-
-import { useCourseCreate } from '@/components/course/useCourseCreate';
-import CreateCourseHeader from '@/components/course/CreateCourseHeader';
-import CreateCourseForm from '@/components/course/CreateCourseForm';
-import CreateCourseNoStoreState from '@/components/course/CreateCourseNoStoreState';
+import CourseFormPage from '@/components/course/CourseFormPage';
 
 export default function CreateCoursePage() {
-  const {
-    form,
-    selectedAcademy,
-    isLoading,
-    coverImage,
-    coverPreview,
-    isUploading,
-    handleCoverImageChange,
-    removeCoverImage,
-    uploadCoverImage,
-    cancelUpload,
-    onSubmit,
-    handleBack
-  } = useCourseCreate();
-
-  if (!selectedAcademy) {
-    return <CreateCourseNoStoreState />;
-  }
-
-  return (
-    <div className="flex-1 space-y-6 p-6">
-      <CreateCourseHeader
-        storeName={selectedAcademy.name}
-        onBack={handleBack}
-      />
-
-      <CreateCourseForm
-        form={form}
-        isLoading={isLoading}
-        coverImage={coverImage}
-        coverPreview={coverPreview}
-        isUploading={isUploading}
-        onCoverImageChange={handleCoverImageChange}
-        onRemoveCoverImage={removeCoverImage}
-        onUploadCoverImage={uploadCoverImage}
-        onCancelUpload={cancelUpload}
-        onSubmit={onSubmit}
-        onBack={handleBack}
-      />
-    </div>
-  );
+  return <CourseFormPage />;
 }

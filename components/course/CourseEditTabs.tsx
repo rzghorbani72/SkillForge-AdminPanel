@@ -1,25 +1,13 @@
 'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import {
-  BookOpen,
-  Settings,
-  DollarSign,
-  Image as ImageIcon,
-  BarChart2,
-  ArrowLeft,
-  Globe,
-  EyeOff
-} from 'lucide-react';
+import { ArrowLeft, Edit, Globe, EyeOff } from 'lucide-react';
 import { Course } from '@/types/api';
 import CourseCover from './CourseCover';
 import CourseInfo from './CourseInfo';
 import CoursePricing from './CoursePricing';
-import CourseAssociations from './CourseAssociations';
+import CourseContent from './CourseContent';
 import CoursePublishSettings from './CoursePublishSettings';
-import CourseManagement from './CourseManagement';
-import CourseQnA from './CourseQnA';
 import { StatusBadge } from '@/components/shared/status-badge';
 
 interface CourseEditTabsProps {
@@ -31,7 +19,6 @@ interface CourseEditTabsProps {
 
 export default function CourseEditTabs({
   course,
-  onManageSeasons,
   onEdit,
   onBack
 }: CourseEditTabsProps) {
@@ -43,7 +30,7 @@ export default function CourseEditTabs({
           <Button
             variant="ghost"
             size="icon"
-            className="mt-0.5 h-8 w-8"
+            className="mt-0.5 h-8 w-8 shrink-0"
             onClick={onBack}
           >
             <ArrowLeft className="h-4 w-4" />
@@ -67,7 +54,8 @@ export default function CourseEditTabs({
 
         <div className="flex shrink-0 items-center gap-2">
           <Button variant="outline" size="sm" onClick={onEdit}>
-            Edit Details
+            <Edit className="mr-1.5 h-3.5 w-3.5" />
+            Edit
           </Button>
           <Button
             size="sm"
@@ -75,12 +63,12 @@ export default function CourseEditTabs({
           >
             {course.is_published ? (
               <>
-                <EyeOff className="mr-2 h-4 w-4" />
+                <EyeOff className="mr-1.5 h-3.5 w-3.5" />
                 Unpublish
               </>
             ) : (
               <>
-                <Globe className="mr-2 h-4 w-4" />
+                <Globe className="mr-1.5 h-3.5 w-3.5" />
                 Publish
               </>
             )}
@@ -88,53 +76,21 @@ export default function CourseEditTabs({
         </div>
       </div>
 
-      {/* Tabbed Content */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="h-10 w-full justify-start gap-0 rounded-none border-b bg-transparent p-0">
-          {[
-            { value: 'overview', label: 'Overview', icon: BookOpen },
-            { value: 'content', label: 'Content', icon: BarChart2 },
-            { value: 'media', label: 'Media', icon: ImageIcon },
-            { value: 'pricing', label: 'Pricing', icon: DollarSign },
-            { value: 'settings', label: 'Settings', icon: Settings }
-          ].map(({ value, label, icon: Icon }) => (
-            <TabsTrigger
-              key={value}
-              value={value}
-              className="relative h-10 rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-medium text-muted-foreground transition-none data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-            >
-              <Icon className="mr-2 h-4 w-4" />
-              {label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        <TabsContent value="overview" className="mt-0 space-y-6">
+      {/* Two-column layout */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Main column */}
+        <div className="space-y-6 lg:col-span-2">
           <CourseInfo course={course} />
-          <CourseAssociations course={course} />
-        </TabsContent>
-
-        <TabsContent value="content" className="mt-0 space-y-6">
-          <CourseManagement
-            course={course}
-            onManageSeasons={onManageSeasons}
-            onEdit={onEdit}
-          />
-          <CourseQnA courseId={course.id} />
-        </TabsContent>
-
-        <TabsContent value="media" className="mt-0 space-y-6">
+          <CourseContent course={course} readOnly />
           <CourseCover course={course} />
-        </TabsContent>
+        </div>
 
-        <TabsContent value="pricing" className="mt-0 space-y-6">
+        {/* Side column */}
+        <div className="space-y-6">
           <CoursePricing course={course} />
-        </TabsContent>
-
-        <TabsContent value="settings" className="mt-0 space-y-6">
           <CoursePublishSettings course={course} />
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 }

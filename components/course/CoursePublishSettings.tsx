@@ -1,32 +1,72 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Globe, EyeOff, Star, Award } from 'lucide-react';
 import { Course } from '@/types/api';
 
-type Props = {
-  course: Course;
-};
+type Props = { course: Course };
+
+function SettingRow({
+  icon: Icon,
+  label,
+  description,
+  active,
+  activeLabel,
+  inactiveLabel
+}: {
+  icon: React.ElementType;
+  label: string;
+  description: string;
+  active: boolean;
+  activeLabel: string;
+  inactiveLabel: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex items-start gap-3">
+        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+        <div>
+          <p className="text-sm font-medium">{label}</p>
+          <p className="text-xs text-muted-foreground">{description}</p>
+        </div>
+      </div>
+      <Badge variant={active ? 'default' : 'secondary'} className="shrink-0">
+        {active ? activeLabel : inactiveLabel}
+      </Badge>
+    </div>
+  );
+}
 
 const CoursePublishSettings = ({ course }: Props) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Publish Settings</CardTitle>
+        <CardTitle>Settings</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <div className="text-base font-medium">Publish Course</div>
-            <div className="text-sm text-gray-500">
-              Make this course visible to students immediately
-            </div>
-          </div>
-          <div className="flex items-center">
-            <Badge variant={course.is_published ? 'default' : 'secondary'}>
-              {course.is_published ? 'Published' : 'Draft'}
-            </Badge>
-          </div>
-        </div>
+      <CardContent className="space-y-4">
+        <SettingRow
+          icon={course.is_published ? Globe : EyeOff}
+          label="Visibility"
+          description="Whether students can find and enroll in this course"
+          active={course.is_published}
+          activeLabel="Published"
+          inactiveLabel="Draft"
+        />
+        <SettingRow
+          icon={Star}
+          label="Featured"
+          description="Highlighted on the store homepage"
+          active={course.is_featured}
+          activeLabel="Featured"
+          inactiveLabel="Not featured"
+        />
+        <SettingRow
+          icon={Award}
+          label="Certificate"
+          description="Students receive a certificate on completion"
+          active={!!course.is_certificate}
+          activeLabel="Enabled"
+          inactiveLabel="Disabled"
+        />
       </CardContent>
     </Card>
   );

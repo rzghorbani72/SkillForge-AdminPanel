@@ -490,6 +490,10 @@ export const en = {
     uploadVideo: 'Upload video',
     uploadImage: 'Upload image',
     noLessonsYet: 'No lessons yet. Click "Add Lesson" to start.',
+    addSeasonFirst: 'Add a season first, then add lessons inside it.',
+    lessonAudio: 'Audio / Voice',
+    uploadAudio: 'Upload audio',
+    removeAudio: 'Remove audio',
     confirmDeleteSeason: 'Delete this season and all its lessons?',
     deletingSeason: 'Deleting season…',
     deletingLesson: 'Deleting lesson…'

@@ -689,21 +689,28 @@ class ApiClient {
   async createCourse(courseData: {
     title: string;
     description: string;
-    short_description?: string;
     primary_price: number;
     secondary_price: number;
-    meta_tags: Array<{ title: string; content: string }>;
+    meta_tags?: Array<{ title: string; content: string }>;
     category_id?: number;
-    season_id?: number;
+    cover_id?: number;
     audio_id?: number;
     video_id?: number;
-    image_id?: number;
+    document_id?: number;
     published?: boolean;
-    difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-    language?: string;
-    requirements?: string;
-    learning_outcomes?: string;
-    duration?: number;
+    is_featured?: boolean;
+    seasons?: Array<{
+      title: string;
+      description?: string;
+      lessons?: Array<{
+        title: string;
+        description?: string;
+        is_free?: boolean;
+        published?: boolean;
+        video_id?: number;
+        cover_id?: number;
+      }>;
+    }>;
   }) {
     return this.request('/courses', {
       method: 'POST',

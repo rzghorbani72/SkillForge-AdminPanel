@@ -1,39 +1,41 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Image from 'next/image';
+import { ImageIcon } from 'lucide-react';
 import { Course } from '@/types/api';
 
-type Props = {
-  course: Course;
-};
+type Props = { course: Course };
 
 const CourseCover = ({ course }: Props) => {
+  const image = (course as any).Image || course.cover;
+  const url = image?.publicUrl;
+  const src = url
+    ? url.startsWith('/')
+      ? `${process.env.NEXT_PUBLIC_HOST}${url}`
+      : url
+    : null;
+
   return (
-    course.cover?.publicUrl && (
-      <div className="relative h-48 w-full overflow-hidden">
-        <Image
-          src={`${course.cover?.publicUrl.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${course.cover?.publicUrl}` : course.cover?.publicUrl}`}
-          alt={course.title}
-          className="h-full w-full rounded-xl object-contain"
-          fill
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            const placeholder = target.nextElementSibling as HTMLElement;
-            if (placeholder) placeholder.style.display = 'flex';
-          }}
-        />
-        <div
-          className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-500"
-          style={{ display: 'none' }}
-        >
-          <div className="text-center">
-            <div className="mb-2 text-4xl">📷</div>
-            <div className="text-sm">Image not available</div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Cover Image</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {src ? (
+          <div className="relative aspect-video w-full max-w-md overflow-hidden rounded-lg border">
+            <img
+              src={src}
+              alt={course.title}
+              className="h-full w-full object-cover"
+            />
           </div>
-        </div>
-      </div>
-    )
+        ) : (
+          <div className="flex aspect-video w-full max-w-md flex-col items-center justify-center rounded-lg border border-dashed bg-muted/30 text-muted-foreground">
+            <ImageIcon className="mb-2 h-8 w-8 opacity-40" />
+            <p className="text-sm">No cover image</p>
+            <p className="text-xs opacity-60">Edit the course to upload one</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

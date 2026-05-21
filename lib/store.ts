@@ -122,12 +122,11 @@ function parseCategoriesPayload(payload: unknown): Category[] {
 export function parseCategoryFromApi(payload: unknown): Category | null {
   if (!payload || typeof payload !== 'object') return null;
   const obj = payload as Record<string, unknown>;
-  const candidate = (
-    obj.data && typeof obj.data === 'object' && !Array.isArray(obj.data)
-      ? obj.data
-      : obj
-  ) as Category;
-  return typeof candidate.name === 'string' ? candidate : null;
+  if (typeof obj.name === 'string') return obj as unknown as Category;
+  if (obj.data && typeof obj.data === 'object' && !Array.isArray(obj.data)) {
+    return parseCategoryFromApi(obj.data);
+  }
+  return null;
 }
 
 export type CategoriesState = {

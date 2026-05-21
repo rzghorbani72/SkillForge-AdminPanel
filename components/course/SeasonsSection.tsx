@@ -22,6 +22,7 @@ import {
   GripVertical,
   ImageIcon,
   Loader2,
+  Mic,
   Plus,
   Trash2,
   Video,
@@ -67,6 +68,7 @@ interface LessonMediaProps {
 function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   const { t } = useTranslation();
   const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [uploadingAudio, setUploadingAudio] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
   const videoAbortRef = useRef<AbortController | null>(null);
@@ -102,6 +104,28 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     }
   }
 
+  async function handleAudioChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAudio(true);
+    try {
+      const result = await apiClient.uploadAudio(file, {
+        title: lesson.title || file.name
+      });
+      const data =
+        (result as unknown as Record<string, unknown>)?.data ?? result;
+      const id = (data as Record<string, unknown>)?.id as number | undefined;
+      const url =
+        ((data as Record<string, unknown>)?.publicUrl as string) ?? '';
+      if (id) onUpdate({ audio_id: id, audioPreviewUrl: url });
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+    } finally {
+      setUploadingAudio(false);
+      e.target.value = '';
+    }
+  }
+
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -124,7 +148,7 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-3">
       {/* Video */}
       <div className="space-y-2">
         <Label className="text-xs font-medium text-muted-foreground">
@@ -142,11 +166,11 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
             </div>
             <button
               type="button"
+              aria-label={t('courses.removeVideo')}
               onClick={() =>
                 onUpdate({ video_id: undefined, videoPreviewUrl: undefined })
               }
               className="absolute right-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
-              aria-label={t('courses.removeVideo')}
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -181,6 +205,45 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
         )}
       </div>
 
+      {/* Audio */}
+      <div className="space-y-2">
+        <Label className="text-xs font-medium text-muted-foreground">
+          {t('courses.lessonAudio')}
+        </Label>
+        {lesson.audioPreviewUrl ? (
+          <div className="relative rounded-md border px-3 py-2">
+            <audio src={lesson.audioPreviewUrl} controls className="w-full" />
+            <button
+              type="button"
+              aria-label={t('courses.removeAudio')}
+              onClick={() =>
+                onUpdate({ audio_id: undefined, audioPreviewUrl: undefined })
+              }
+              className="absolute right-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ) : uploadingAudio ? (
+          <div className="flex items-center justify-center rounded-md border border-dashed p-4">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          </div>
+        ) : (
+          <label className="flex cursor-pointer flex-col items-center gap-1.5 rounded-md border border-dashed p-4 transition-colors hover:bg-muted/40">
+            <Mic className="h-5 w-5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">
+              {t('courses.uploadAudio')}
+            </span>
+            <input
+              type="file"
+              accept="audio/*"
+              className="sr-only"
+              onChange={handleAudioChange}
+            />
+          </label>
+        )}
+      </div>
+
       {/* Cover image */}
       <div className="space-y-2">
         <Label className="text-xs font-medium text-muted-foreground">
@@ -195,11 +258,11 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
             />
             <button
               type="button"
+              aria-label={t('courses.removeCover')}
               onClick={() =>
                 onUpdate({ cover_id: undefined, coverPreviewUrl: undefined })
               }
               className="absolute right-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
-              aria-label={t('courses.removeCover')}
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -776,31 +839,9 @@ export function SeasonsSection({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Unassigned lessons section */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-muted-foreground">
-              Unassigned Lessons
-            </span>
-            {unassigned.length > 0 && (
-              <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
-                {unassigned.length}
-              </Badge>
-            )}
-          </div>
-          <LessonList
-            sectionKey={undefined}
-            lessons={unassigned}
-            seasons={seasons}
-            onAddLesson={() => onAddLesson(undefined)}
-            onRemoveLesson={onRemoveLesson}
-            onUpdateLesson={onUpdateLesson}
-            onAssignLesson={onAssignLesson}
-            onReorderLessons={(from, to) =>
-              onReorderLessons(undefined, from, to)
-            }
-          />
-        </div>
+        <p className="rounded-md border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
+          {t('courses.addSeasonFirst')}
+        </p>
 
         {/* Season accordions */}
         {seasons.length > 0 && (

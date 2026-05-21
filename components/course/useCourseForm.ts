@@ -20,8 +20,10 @@ export interface LessonDraft {
   is_free: boolean;
   published: boolean;
   video_id?: number;
+  audio_id?: number;
   cover_id?: number;
   videoPreviewUrl?: string;
+  audioPreviewUrl?: string;
   coverPreviewUrl?: string;
   clientKey: string;
   /** clientKey of the SeasonDraft this lesson belongs to (undefined = unassigned) */
@@ -288,7 +290,6 @@ export function useCourseForm(courseId?: number) {
           description: data.description.trim(),
           primary_price: Number(data.primary_price),
           secondary_price: Number(data.secondary_price),
-          meta_tags: [],
           category_id: data.category_id ? Number(data.category_id) : undefined,
           cover_id: data.cover_id ? Number(data.cover_id) : undefined,
           published: data.published,
@@ -300,70 +301,97 @@ export function useCourseForm(courseId?: number) {
           setSaveProgress('Updating course…');
           await apiClient.updateCourse(courseId, coursePayload);
           courseDbId = courseId;
+
+          // 3. Upsert seasons — build clientKey → dbId map
+          const seasonIdMap = new Map<string, number>();
+          for (let si = 0; si < seasons.length; si++) {
+            const s = seasons[si];
+            if (!s.title.trim()) continue;
+            setSaveProgress(`Saving season ${si + 1}…`);
+            let dbId = s.id;
+            if (dbId) {
+              await apiClient.updateSeason(dbId, {
+                title: s.title.trim(),
+                description: s.description.trim() || undefined
+              });
+            } else {
+              const resp = await apiClient.createSeason({
+                title: s.title.trim(),
+                description: s.description.trim() || undefined,
+                order: si + 1,
+                course_id: courseDbId
+              });
+              dbId = extractId(resp);
+            }
+            if (dbId) seasonIdMap.set(s.clientKey, dbId);
+          }
+
+          // 4. Upsert lessons
+          for (let li = 0; li < lessons.length; li++) {
+            const l = lessons[li];
+            if (!l.title.trim()) continue;
+            setSaveProgress(`Saving lesson ${li + 1}…`);
+
+            const season_id = l.seasonClientKey
+              ? (seasonIdMap.get(l.seasonClientKey) ?? null)
+              : null;
+            const media = {
+              video_id: l.video_id,
+              audio_id: l.audio_id,
+              cover_id: l.cover_id
+            };
+
+            if (l.id) {
+              await apiClient.updateLesson(l.id, {
+                title: l.title.trim(),
+                description: l.description.trim() || undefined,
+                is_free: l.is_free,
+                published: l.published,
+                season_id,
+                ...media
+              });
+            } else {
+              await apiClient.createLesson({
+                title: l.title.trim(),
+                description: l.description.trim() || undefined,
+                course_id: courseDbId,
+                season_id: season_id ?? undefined,
+                is_free: l.is_free,
+                published: l.published,
+                ...media
+              });
+            }
+          }
         } else {
+          // Create: send everything in one atomic request
           setSaveProgress('Creating course…');
-          const resp = await apiClient.createCourse(coursePayload);
+          const seasonsPayload = seasons
+            .filter((s) => s.title.trim())
+            .map((s) => ({
+              title: s.title.trim(),
+              description: s.description.trim() || undefined,
+              lessons: lessons
+                .filter(
+                  (l) => l.seasonClientKey === s.clientKey && l.title.trim()
+                )
+                .map((l) => ({
+                  title: l.title.trim(),
+                  description: l.description.trim() || undefined,
+                  is_free: l.is_free,
+                  published: l.published,
+                  video_id: l.video_id,
+                  audio_id: l.audio_id,
+                  cover_id: l.cover_id
+                }))
+            }));
+
+          const resp = await apiClient.createCourse({
+            ...coursePayload,
+            seasons: seasonsPayload.length > 0 ? seasonsPayload : undefined
+          });
           const id = extractId(resp);
           if (!id) throw new Error('Course creation returned no id');
           courseDbId = id;
-        }
-
-        // 3. Upsert seasons — build clientKey → dbId map
-        const seasonIdMap = new Map<string, number>();
-        for (let si = 0; si < seasons.length; si++) {
-          const s = seasons[si];
-          if (!s.title.trim()) continue;
-          setSaveProgress(`Saving season ${si + 1}…`);
-          let dbId = s.id;
-          if (dbId) {
-            await apiClient.updateSeason(dbId, {
-              title: s.title.trim(),
-              description: s.description.trim() || undefined
-            });
-          } else {
-            const resp = await apiClient.createSeason({
-              title: s.title.trim(),
-              description: s.description.trim() || undefined,
-              order: si + 1,
-              course_id: courseDbId
-            });
-            dbId = extractId(resp);
-          }
-          if (dbId) seasonIdMap.set(s.clientKey, dbId);
-        }
-
-        // 4. Upsert lessons (always include season_id so reassignment is persisted)
-        for (let li = 0; li < lessons.length; li++) {
-          const l = lessons[li];
-          if (!l.title.trim()) continue;
-          setSaveProgress(`Saving lesson ${li + 1}…`);
-
-          const season_id = l.seasonClientKey
-            ? (seasonIdMap.get(l.seasonClientKey) ?? null)
-            : null;
-
-          const media = { video_id: l.video_id, cover_id: l.cover_id };
-
-          if (l.id) {
-            await apiClient.updateLesson(l.id, {
-              title: l.title.trim(),
-              description: l.description.trim() || undefined,
-              is_free: l.is_free,
-              published: l.published,
-              season_id, // null unassigns, number assigns
-              ...media
-            });
-          } else {
-            await apiClient.createLesson({
-              title: l.title.trim(),
-              description: l.description.trim() || undefined,
-              course_id: courseDbId,
-              season_id: season_id ?? undefined,
-              is_free: l.is_free,
-              published: l.published,
-              ...media
-            });
-          }
         }
 
         toast.success(isEdit ? 'Course updated' : 'Course created');
