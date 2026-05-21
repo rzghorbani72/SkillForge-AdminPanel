@@ -393,7 +393,8 @@ export interface Lesson {
   content?: string;
   duration?: number;
   order: number;
-  season_id: number;
+  course_id: number;
+  season_id: number | null;
   video_id?: number;
   audio_id?: number;
   document_id?: number;

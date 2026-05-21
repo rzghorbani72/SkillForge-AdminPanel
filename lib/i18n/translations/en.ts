@@ -479,7 +479,20 @@ export const en = {
     optional: 'Optional',
     saving: 'Saving…',
     saveChanges: 'Save changes',
-    backToCourses: 'Back to courses'
+    backToCourses: 'Back to courses',
+    seasonsHint:
+      'Organize your course into seasons, then add lessons to each season',
+    lessonVideo: 'Video',
+    lessonCover: 'Cover Image',
+    removeVideo: 'Remove video',
+    removeCover: 'Remove cover image',
+    cancelUpload: 'Cancel',
+    uploadVideo: 'Upload video',
+    uploadImage: 'Upload image',
+    noLessonsYet: 'No lessons yet. Click "Add Lesson" to start.',
+    confirmDeleteSeason: 'Delete this season and all its lessons?',
+    deletingSeason: 'Deleting season…',
+    deletingLesson: 'Deleting lesson…'
   },
   students: {
     title: 'Students',

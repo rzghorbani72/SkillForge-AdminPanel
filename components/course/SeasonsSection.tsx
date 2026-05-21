@@ -16,9 +16,9 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
+  AlertTriangle,
   ChevronDown,
   ChevronRight,
-  ChevronUp,
   GripVertical,
   ImageIcon,
   Loader2,
@@ -32,6 +32,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -40,9 +47,8 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
 
-// ─── Lesson media uploader ────────────────────────────────────────────────────
+// ─── Video progress bar ───────────────────────────────────────────────────────
 
-// Applies width imperatively to avoid style prop in JSX (linter rule)
 function ProgressBar({ value }: { value: number }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -50,6 +56,8 @@ function ProgressBar({ value }: { value: number }) {
   }, [value]);
   return <div ref={ref} className="h-full bg-primary transition-all" />;
 }
+
+// ─── Lesson media upload (video + cover image) ────────────────────────────────
 
 interface LessonMediaProps {
   lesson: LessonDraft;
@@ -66,12 +74,10 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   async function handleVideoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const abort = new AbortController();
     videoAbortRef.current = abort;
     setUploadingVideo(true);
     setVideoProgress(0);
-
     try {
       const result = await apiClient.uploadVideoWithProgress(
         file,
@@ -80,14 +86,14 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
         (p) => setVideoProgress(p),
         abort
       );
-      const data = (result as any)?.data ?? result;
-      const id: number = data?.id ?? data?.data?.id;
-      const url: string = data?.publicUrl ?? data?.data?.publicUrl ?? '';
+      const data = (result as Record<string, unknown>)?.data ?? result;
+      const id = (data as Record<string, unknown>)?.id as number | undefined;
+      const url =
+        ((data as Record<string, unknown>)?.publicUrl as string) ?? '';
       if (id) onUpdate({ video_id: id, videoPreviewUrl: url });
     } catch (err) {
-      if ((err as Error).message !== 'Upload cancelled') {
+      if ((err as Error).message !== 'Upload cancelled')
         ErrorHandler.handleApiError(err);
-      }
     } finally {
       setUploadingVideo(false);
       setVideoProgress(0);
@@ -104,9 +110,10 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
       const result = await apiClient.uploadImage(file, {
         title: lesson.title || file.name
       });
-      const data = (result as any)?.data ?? result;
-      const id: number = data?.id ?? data?.data?.id;
-      const url: string = data?.publicUrl ?? data?.data?.publicUrl ?? '';
+      const data = (result as Record<string, unknown>)?.data ?? result;
+      const id = (data as Record<string, unknown>)?.id as number | undefined;
+      const url =
+        ((data as Record<string, unknown>)?.publicUrl as string) ?? '';
       if (id) onUpdate({ cover_id: id, coverPreviewUrl: url });
     } catch (err) {
       ErrorHandler.handleApiError(err);
@@ -123,7 +130,6 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
         <Label className="text-xs font-medium text-muted-foreground">
           {t('courses.lessonVideo')}
         </Label>
-
         {lesson.videoPreviewUrl ? (
           <div className="relative overflow-hidden rounded-md border bg-black/5">
             <video
@@ -180,7 +186,6 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
         <Label className="text-xs font-medium text-muted-foreground">
           {t('courses.lessonCover')}
         </Label>
-
         {lesson.coverPreviewUrl ? (
           <div className="relative overflow-hidden rounded-md border">
             <img
@@ -222,25 +227,28 @@ function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   );
 }
 
-// ─── Single lesson row (sortable + expandable) ────────────────────────────────
+// ─── Lesson row (sortable, expandable, with season dropdown in edit) ──────────
 
 interface LessonRowProps {
   lesson: LessonDraft;
   index: number;
-  canRemove: boolean;
+  seasons: SeasonDraft[];
   onUpdate: (patch: Partial<LessonDraft>) => void;
   onRemove: () => void;
+  onAssign: (seasonClientKey: string | undefined) => void;
 }
 
 function SortableLessonRow({
   lesson,
   index,
-  canRemove,
+  seasons,
   onUpdate,
-  onRemove
+  onRemove,
+  onAssign
 }: LessonRowProps) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const {
     attributes,
@@ -249,7 +257,9 @@ function SortableLessonRow({
     transform,
     transition,
     isDragging
-  } = useSortable({ id: lesson.clientKey });
+  } = useSortable({
+    id: lesson.clientKey
+  });
 
   const hasMedia = !!(lesson.video_id || lesson.cover_id);
 
@@ -275,7 +285,7 @@ function SortableLessonRow({
         isDragging && 'opacity-50 shadow-lg ring-1 ring-primary/30'
       )}
     >
-      {/* ── Collapsed header ─────────────────────────────────────────────── */}
+      {/* Collapsed header */}
       <div className="flex items-center gap-2 px-3 py-2.5">
         <button
           type="button"
@@ -287,11 +297,10 @@ function SortableLessonRow({
           <GripVertical className="h-4 w-4" />
         </button>
 
-        <span className="w-6 shrink-0 text-xs text-muted-foreground">
-          {index + 1}.
+        <span className="w-5 shrink-0 text-center text-xs text-muted-foreground">
+          {index + 1}
         </span>
 
-        {/* Title — editable inline when collapsed */}
         <Input
           value={lesson.title}
           onChange={(e) => onUpdate({ title: e.target.value })}
@@ -299,14 +308,12 @@ function SortableLessonRow({
           className="h-7 flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
         />
 
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1">
           {hasMedia && (
             <Badge variant="secondary" className="h-5 gap-1 px-1.5 text-[10px]">
               <Video className="h-2.5 w-2.5" />
             </Badge>
           )}
-
-          {/* Status badges */}
           {lesson.is_free && (
             <Badge
               variant="outline"
@@ -320,8 +327,6 @@ function SortableLessonRow({
               {t('courses.published')}
             </Badge>
           )}
-
-          {/* Expand toggle */}
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
@@ -329,17 +334,15 @@ function SortableLessonRow({
             aria-label={expanded ? t('common.close') : t('common.edit')}
           >
             {expanded ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
               <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
             )}
           </button>
-
           <button
             type="button"
-            onClick={onRemove}
-            disabled={!canRemove}
-            className="rounded p-0.5 text-muted-foreground hover:text-destructive disabled:opacity-30"
+            onClick={() => (lesson.id ? setConfirmDelete(true) : onRemove())}
+            className="rounded p-0.5 text-muted-foreground hover:text-destructive"
             aria-label={t('courses.removeLesson')}
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -347,7 +350,34 @@ function SortableLessonRow({
         </div>
       </div>
 
-      {/* ── Expanded editor ───────────────────────────────────────────────── */}
+      {/* Delete confirm strip */}
+      {confirmDelete && (
+        <div className="flex items-center justify-between border-t bg-destructive/5 px-3 py-2 text-sm">
+          <span className="text-destructive">Remove this lesson?</span>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="h-6 px-2 text-xs"
+              onClick={() => setConfirmDelete(false)}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              className="h-6 px-2 text-xs"
+              onClick={onRemove}
+            >
+              {t('common.delete')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Expanded editor */}
       {expanded && (
         <div className="space-y-4 border-t px-3 py-3">
           <div className="space-y-1">
@@ -360,6 +390,31 @@ function SortableLessonRow({
               className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
+
+          {/* Season assignment dropdown */}
+          {seasons.length > 0 && (
+            <div className="space-y-1">
+              <Label className="text-xs">Season</Label>
+              <Select
+                value={lesson.seasonClientKey ?? '__unassigned__'}
+                onValueChange={(v) =>
+                  onAssign(v === '__unassigned__' ? undefined : v)
+                }
+              >
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue placeholder="Unassigned" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__unassigned__">Unassigned</SelectItem>
+                  {seasons.map((s) => (
+                    <SelectItem key={s.clientKey} value={s.clientKey}>
+                      {s.title || `Season (untitled)`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="flex flex-wrap gap-4">
             <label className="flex cursor-pointer items-center gap-2">
@@ -385,12 +440,94 @@ function SortableLessonRow({
   );
 }
 
-// ─── Season card (sortable + collapsible) ─────────────────────────────────────
+// ─── Lessons list for a section (shared by Unassigned + each Season) ─────────
 
-interface SeasonCardProps {
+interface LessonListProps {
+  sectionKey: string | undefined;
+  lessons: LessonDraft[];
+  seasons: SeasonDraft[];
+  onAddLesson: () => void;
+  onRemoveLesson: (key: string) => void;
+  onUpdateLesson: (key: string, patch: Partial<LessonDraft>) => void;
+  onAssignLesson: (key: string, seasonClientKey: string | undefined) => void;
+  onReorderLessons: (from: number, to: number) => void;
+}
+
+function LessonList({
+  lessons,
+  seasons,
+  onAddLesson,
+  onRemoveLesson,
+  onUpdateLesson,
+  onAssignLesson,
+  onReorderLessons
+}: LessonListProps) {
+  const { t } = useTranslation();
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const from = lessons.findIndex((l) => l.clientKey === active.id);
+    const to = lessons.findIndex((l) => l.clientKey === over.id);
+    if (from !== -1 && to !== -1) onReorderLessons(from, to);
+  }
+
+  return (
+    <div className="space-y-2">
+      {lessons.length === 0 ? (
+        <p className="rounded-md border border-dashed px-4 py-5 text-center text-xs text-muted-foreground">
+          {t('courses.noLessonsYet')}
+        </p>
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToVerticalAxis]}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={lessons.map((l) => l.clientKey)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-2">
+              {lessons.map((lesson, li) => (
+                <SortableLessonRow
+                  key={lesson.clientKey}
+                  lesson={lesson}
+                  index={li}
+                  seasons={seasons}
+                  onUpdate={(patch) => onUpdateLesson(lesson.clientKey, patch)}
+                  onRemove={() => onRemoveLesson(lesson.clientKey)}
+                  onAssign={(sk) => onAssignLesson(lesson.clientKey, sk)}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      )}
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="h-7 text-xs"
+        onClick={onAddLesson}
+      >
+        <Plus className="mr-1 h-3.5 w-3.5" />
+        {t('courses.addLesson')}
+      </Button>
+    </div>
+  );
+}
+
+// ─── Season accordion (sortable + collapsible) ────────────────────────────────
+
+interface SeasonAccordionProps {
   season: SeasonDraft;
   index: number;
   canRemove: boolean;
+  lessons: LessonDraft[];
+  allSeasons: SeasonDraft[];
   onUpdate: (
     patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>
   ) => void;
@@ -398,22 +535,27 @@ interface SeasonCardProps {
   onAddLesson: () => void;
   onRemoveLesson: (key: string) => void;
   onUpdateLesson: (key: string, patch: Partial<LessonDraft>) => void;
+  onAssignLesson: (key: string, seasonClientKey: string | undefined) => void;
   onReorderLessons: (from: number, to: number) => void;
 }
 
-function SortableSeasonCard({
+function SortableSeasonAccordion({
   season,
   index,
   canRemove,
+  lessons,
+  allSeasons,
   onUpdate,
   onRemove,
   onAddLesson,
   onRemoveLesson,
   onUpdateLesson,
+  onAssignLesson,
   onReorderLessons
-}: SeasonCardProps) {
+}: SeasonAccordionProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(true);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const {
     attributes,
@@ -422,9 +564,9 @@ function SortableSeasonCard({
     transform,
     transition,
     isDragging
-  } = useSortable({ id: season.clientKey });
-
-  const lessonSensors = useSensors(useSensor(PointerSensor));
+  } = useSortable({
+    id: season.clientKey
+  });
 
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const combinedRef = useCallback(
@@ -439,14 +581,6 @@ function SortableSeasonCard({
     nodeRef.current.style.transform = CSS.Transform.toString(transform) ?? '';
     nodeRef.current.style.transition = transition ?? '';
   }, [transform, transition]);
-
-  function handleLessonDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const from = season.lessons.findIndex((l) => l.clientKey === active.id);
-    const to = season.lessons.findIndex((l) => l.clientKey === over.id);
-    if (from !== -1 && to !== -1) onReorderLessons(from, to);
-  }
 
   return (
     <div
@@ -483,13 +617,19 @@ function SortableSeasonCard({
             {season.title ? ` — ${season.title}` : ''}
           </span>
           <span className="ml-auto text-xs text-muted-foreground">
-            {season.lessons.length} {t('courses.lessons')}
+            {lessons.length} {t('courses.lessons')}
           </span>
         </button>
 
         <button
           type="button"
-          onClick={onRemove}
+          onClick={() =>
+            canRemove
+              ? season.id
+                ? setConfirmDelete(true)
+                : onRemove()
+              : undefined
+          }
           disabled={!canRemove}
           className="shrink-0 rounded p-1 text-muted-foreground hover:text-destructive disabled:opacity-30"
           aria-label={t('courses.removeSeason')}
@@ -498,9 +638,37 @@ function SortableSeasonCard({
         </button>
       </div>
 
+      {/* Delete confirm — lessons move to Unassigned automatically */}
+      {confirmDelete && (
+        <div className="flex items-center gap-3 border-t bg-destructive/5 px-4 py-2.5">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
+          <span className="flex-1 text-sm text-destructive">
+            {t('courses.confirmDeleteSeason')} Lessons will become unassigned.
+          </span>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            className="h-7 px-3 text-xs"
+            onClick={() => setConfirmDelete(false)}
+          >
+            {t('common.cancel')}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="destructive"
+            className="h-7 px-3 text-xs"
+            onClick={onRemove}
+          >
+            {t('common.delete')}
+          </Button>
+        </div>
+      )}
+
       {open && (
         <div className="space-y-4 border-t px-4 pb-4 pt-3">
-          {/* Season fields */}
+          {/* Season title + description */}
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
               <Label className="text-xs">{t('courses.seasonTitle')}</Label>
@@ -524,46 +692,16 @@ function SortableSeasonCard({
             </div>
           </div>
 
-          {/* Lessons */}
-          <div className="space-y-2">
-            <DndContext
-              sensors={lessonSensors}
-              collisionDetection={closestCenter}
-              modifiers={[restrictToVerticalAxis]}
-              onDragEnd={handleLessonDragEnd}
-            >
-              <SortableContext
-                items={season.lessons.map((l) => l.clientKey)}
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="space-y-2">
-                  {season.lessons.map((lesson, li) => (
-                    <SortableLessonRow
-                      key={lesson.clientKey}
-                      lesson={lesson}
-                      index={li}
-                      canRemove={season.lessons.length > 1}
-                      onUpdate={(patch) =>
-                        onUpdateLesson(lesson.clientKey, patch)
-                      }
-                      onRemove={() => onRemoveLesson(lesson.clientKey)}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs"
-              onClick={onAddLesson}
-            >
-              <Plus className="mr-1 h-3.5 w-3.5" />
-              {t('courses.addLesson')}
-            </Button>
-          </div>
+          <LessonList
+            sectionKey={season.clientKey}
+            lessons={lessons}
+            seasons={allSeasons}
+            onAddLesson={onAddLesson}
+            onRemoveLesson={onRemoveLesson}
+            onUpdateLesson={onUpdateLesson}
+            onAssignLesson={onAssignLesson}
+            onReorderLessons={onReorderLessons}
+          />
         </div>
       )}
     </div>
@@ -574,6 +712,7 @@ function SortableSeasonCard({
 
 interface SeasonsSectionProps {
   seasons: SeasonDraft[];
+  lessons: LessonDraft[];
   onAddSeason: () => void;
   onRemoveSeason: (key: string) => void;
   onUpdateSeason: (
@@ -581,18 +720,23 @@ interface SeasonsSectionProps {
     patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>
   ) => void;
   onReorderSeasons: (from: number, to: number) => void;
-  onAddLesson: (seasonKey: string) => void;
-  onRemoveLesson: (seasonKey: string, lessonKey: string) => void;
-  onUpdateLesson: (
-    seasonKey: string,
+  onAddLesson: (seasonClientKey?: string) => void;
+  onRemoveLesson: (lessonKey: string) => void;
+  onUpdateLesson: (lessonKey: string, patch: Partial<LessonDraft>) => void;
+  onAssignLesson: (
     lessonKey: string,
-    patch: Partial<LessonDraft>
+    seasonClientKey: string | undefined
   ) => void;
-  onReorderLessons: (seasonKey: string, from: number, to: number) => void;
+  onReorderLessons: (
+    sectionKey: string | undefined,
+    from: number,
+    to: number
+  ) => void;
 }
 
 export function SeasonsSection({
   seasons,
+  lessons,
   onAddSeason,
   onRemoveSeason,
   onUpdateSeason,
@@ -600,10 +744,13 @@ export function SeasonsSection({
   onAddLesson,
   onRemoveLesson,
   onUpdateLesson,
+  onAssignLesson,
   onReorderLessons
 }: SeasonsSectionProps) {
   const { t } = useTranslation();
-  const sensors = useSensors(useSensor(PointerSensor));
+  const seasonSensors = useSensors(useSensor(PointerSensor));
+
+  const unassigned = lessons.filter((l) => !l.seasonClientKey);
 
   function handleSeasonDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -628,39 +775,76 @@ export function SeasonsSection({
         </Button>
       </CardHeader>
 
-      <CardContent>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis]}
-          onDragEnd={handleSeasonDragEnd}
-        >
-          <SortableContext
-            items={seasons.map((s) => s.clientKey)}
-            strategy={verticalListSortingStrategy}
+      <CardContent className="space-y-4">
+        {/* Unassigned lessons section */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              Unassigned Lessons
+            </span>
+            {unassigned.length > 0 && (
+              <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+                {unassigned.length}
+              </Badge>
+            )}
+          </div>
+          <LessonList
+            sectionKey={undefined}
+            lessons={unassigned}
+            seasons={seasons}
+            onAddLesson={() => onAddLesson(undefined)}
+            onRemoveLesson={onRemoveLesson}
+            onUpdateLesson={onUpdateLesson}
+            onAssignLesson={onAssignLesson}
+            onReorderLessons={(from, to) =>
+              onReorderLessons(undefined, from, to)
+            }
+          />
+        </div>
+
+        {/* Season accordions */}
+        {seasons.length > 0 && (
+          <DndContext
+            sensors={seasonSensors}
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={handleSeasonDragEnd}
           >
-            <div className="space-y-3">
-              {seasons.map((season, si) => (
-                <SortableSeasonCard
-                  key={season.clientKey}
-                  season={season}
-                  index={si}
-                  canRemove={seasons.length > 1}
-                  onUpdate={(patch) => onUpdateSeason(season.clientKey, patch)}
-                  onRemove={() => onRemoveSeason(season.clientKey)}
-                  onAddLesson={() => onAddLesson(season.clientKey)}
-                  onRemoveLesson={(lk) => onRemoveLesson(season.clientKey, lk)}
-                  onUpdateLesson={(lk, patch) =>
-                    onUpdateLesson(season.clientKey, lk, patch)
-                  }
-                  onReorderLessons={(f, t2) =>
-                    onReorderLessons(season.clientKey, f, t2)
-                  }
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+            <SortableContext
+              items={seasons.map((s) => s.clientKey)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-3">
+                {seasons.map((season, si) => {
+                  const seasonLessons = lessons.filter(
+                    (l) => l.seasonClientKey === season.clientKey
+                  );
+                  return (
+                    <SortableSeasonAccordion
+                      key={season.clientKey}
+                      season={season}
+                      index={si}
+                      canRemove={seasons.length > 1}
+                      lessons={seasonLessons}
+                      allSeasons={seasons}
+                      onUpdate={(patch) =>
+                        onUpdateSeason(season.clientKey, patch)
+                      }
+                      onRemove={() => onRemoveSeason(season.clientKey)}
+                      onAddLesson={() => onAddLesson(season.clientKey)}
+                      onRemoveLesson={onRemoveLesson}
+                      onUpdateLesson={onUpdateLesson}
+                      onAssignLesson={onAssignLesson}
+                      onReorderLessons={(from, to) =>
+                        onReorderLessons(season.clientKey, from, to)
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
       </CardContent>
     </Card>
   );

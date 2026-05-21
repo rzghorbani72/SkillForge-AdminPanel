@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Form } from '@/components/ui/form';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useRouter } from 'next/navigation';
 import { useCourseForm } from './useCourseForm';
 import CreateCourseBasicInfo from './CreateCourseBasicInfo';
 import CreateCoursePricing from './CreateCoursePricing';
 import CreateCourseAssociations from './CreateCourseAssociations';
-import CreateCourseCoverImage from './CreateCourseCoverImage';
+import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -34,8 +35,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     isSaving,
     saveProgress,
     seasons,
+    lessons,
     selectedAcademy,
-    coverUpload,
     existingCoverUrl,
     addSeason,
     removeSeason,
@@ -44,6 +45,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     addLesson,
     removeLesson,
     updateLesson,
+    assignLesson,
     reorderLessons,
     save
   } = useCourseForm(courseId);
@@ -152,29 +154,45 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
           noValidate
         >
           {/* Basic info: title + description */}
-          <CreateCourseBasicInfo form={form as any} />
+          <CreateCourseBasicInfo form={form} />
 
           {/* Cover image */}
-          <CreateCourseCoverImage
-            form={form as any}
-            coverImage={coverUpload.selectedFile}
-            coverPreview={coverUpload.preview ?? existingCoverUrl}
-            isUploading={coverUpload.isUploading}
-            onCoverImageChange={coverUpload.handleFileChange}
-            onRemoveCoverImage={coverUpload.removeFile}
-            onUploadCoverImage={coverUpload.uploadImage}
-            onCancelUpload={coverUpload.cancelUpload}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('courses.coverImage')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ImageUploadPreview
+                title={form.watch('title') || 'Course Cover'}
+                description={form.watch('description') || ''}
+                existingImageUrl={existingCoverUrl}
+                onSuccess={(img) =>
+                  form.setValue('cover_id', img.id.toString())
+                }
+                selectedImageId={form.watch('cover_id')}
+                alt="Course cover"
+                className="aspect-video w-full max-w-md"
+                placeholderText={t('courses.noCoverImageSelected')}
+                placeholderSubtext={t('courses.uploadImageToPreview')}
+                uploadButtonText={t('courses.uploadCoverImage')}
+              />
+            </CardContent>
+          </Card>
 
           {/* Category */}
-          <CreateCourseAssociations form={form as any} />
+          <CreateCourseAssociations
+            categoryId={form.watch('category_id')}
+            onCategoryChange={(id) => form.setValue('category_id', id)}
+            error={form.formState.errors.category_id?.message}
+          />
 
           {/* Pricing */}
-          <CreateCoursePricing form={form as any} />
+          <CreateCoursePricing form={form} />
 
           {/* Seasons & Lessons */}
           <SeasonsSection
             seasons={seasons}
+            lessons={lessons}
             onAddSeason={addSeason}
             onRemoveSeason={removeSeason}
             onUpdateSeason={updateSeason}
@@ -182,6 +200,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
             onAddLesson={addLesson}
             onRemoveLesson={removeLesson}
             onUpdateLesson={updateLesson}
+            onAssignLesson={assignLesson}
             onReorderLessons={reorderLessons}
           />
 

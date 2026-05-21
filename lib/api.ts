@@ -974,12 +974,12 @@ class ApiClient {
   async createLesson(lessonData: {
     title: string;
     description?: string;
-    season_id: number;
+    course_id: number;
+    season_id?: number;
     audio_id?: number;
     video_id?: number;
-    image_id?: number;
+    cover_id?: number;
     document_id?: number;
-    category_id?: number;
     published?: boolean;
     is_free?: boolean;
     lesson_type?: string;

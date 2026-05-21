@@ -40,7 +40,7 @@ const CreateCourseForm = ({
     <div className="max-w-4xl">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <CreateCourseBasicInfo form={form} />
+          <CreateCourseBasicInfo form={form as any} />
 
           <CreateCourseCoverImage
             form={form}
@@ -53,9 +53,12 @@ const CreateCourseForm = ({
             onCancelUpload={onCancelUpload}
           />
 
-          <CreateCoursePricing form={form} />
+          <CreateCoursePricing form={form as any} />
 
-          <CreateCourseAssociations form={form} />
+          <CreateCourseAssociations
+            categoryId={form.watch('category_id')}
+            onCategoryChange={(id) => form.setValue('category_id', id)}
+          />
 
           <CreateCoursePublishSettings form={form} />
 

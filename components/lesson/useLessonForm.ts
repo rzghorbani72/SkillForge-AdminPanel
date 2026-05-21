@@ -134,7 +134,8 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
       const lessonData = {
         title: data.title,
         description: data.description || '',
-        season_id: parseInt(data.season_id),
+        course_id: parseInt(courseId),
+        season_id: data.season_id ? parseInt(data.season_id) : undefined,
         audio_id: data.audio_id ? parseInt(data.audio_id) : undefined,
         video_id: data.video_id ? parseInt(data.video_id) : undefined,
         cover_id: data.cover_id ? parseInt(data.cover_id) : undefined,

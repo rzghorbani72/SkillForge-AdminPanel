@@ -10,11 +10,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
-import { CourseCreateFormData } from './useCourseCreate';
+import { CourseFormData } from './schema';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
-  form: UseFormReturn<CourseCreateFormData>;
+  form: UseFormReturn<CourseFormData>;
 };
 
 const CreateCourseBasicInfo = ({ form }: Props) => {
