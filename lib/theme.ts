@@ -13,7 +13,7 @@ export const DEFAULT_THEME_CONFIG: ThemeConfigPayload = {
   background_color: '#f8fafc',
   background_color_light: '#f8fafc',
   background_color_dark: '#0f172a',
-  dark_mode: null
+  dark_mode: false
 };
 
 const FALLBACK_DARK_BACKGROUND = '#0f172a';
