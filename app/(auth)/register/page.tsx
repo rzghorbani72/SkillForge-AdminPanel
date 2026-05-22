@@ -92,7 +92,7 @@ export default function RegisterPage() {
       setPhoneVerified(false);
       setOtpCode('');
 
-      // Show OTP code in toast (development feature)
+      // TODO: Remove when real SMS/email provider is integrated
       if (response?.data?.otp) {
         toast.info(
           `${t('auth.sendVerificationCode')}\n\n🔐 Code: ${response.data.otp}`,
@@ -168,7 +168,7 @@ export default function RegisterPage() {
         OtpType.REGISTER_PHONE_VERIFICATION
       );
 
-      // Show OTP code in toast (development feature)
+      // TODO: Remove when real SMS/email provider is integrated
       if (response?.data?.otp) {
         toast.info(`${t('auth.resendCode')}\n\n🔐 Code: ${response.data.otp}`, {
           autoClose: 8000,

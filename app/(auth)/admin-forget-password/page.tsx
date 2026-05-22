@@ -128,7 +128,7 @@ export default function AdminForgetPasswordPage() {
         );
         setMessage(t('forgotPassword.otpSentToEmail'));
 
-        // Show OTP code in toast (development feature)
+        // TODO: Remove when real SMS/email provider is integrated
         if (response?.data?.otp) {
           toast.info(
             `${t('forgotPassword.otpSentToEmail')}\n\n🔐 Code: ${response.data.otp}`,
@@ -159,7 +159,7 @@ export default function AdminForgetPasswordPage() {
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
 
-        // Show OTP code in toast (development feature)
+        // TODO: Remove when real SMS/email provider is integrated
         if (response?.otp) {
           toast.info(
             `${t('forgotPassword.otpSentToPhone')}\n\n🔐 Code: ${response.otp}`,

@@ -77,7 +77,7 @@ export function CreateAdminUserDialog({
         OtpType.REGISTER_PHONE_VERIFICATION
       );
       setOtpSent((prev) => ({ ...prev, phone: true }));
-      // Show OTP code in toast (development feature)
+      // TODO: Remove when real SMS/email provider is integrated
       if (response?.data?.otp) {
         // Use toast directly for multiline support
         toast.success(
@@ -110,7 +110,7 @@ export function CreateAdminUserDialog({
         OtpType.REGISTER_EMAIL_VERIFICATION
       );
       setOtpSent((prev) => ({ ...prev, email: true }));
-      // Show OTP code in toast (development feature)
+      // TODO: Remove when real SMS/email provider is integrated
       if (response?.data?.otp) {
         // Use toast directly for multiline support
         toast.success(
