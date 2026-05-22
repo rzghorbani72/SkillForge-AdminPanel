@@ -70,7 +70,7 @@ export const navItems: NavItem[] = [
     href: '/academies',
     icon: 'store' as IconType,
     label: 'academies',
-    roles: ['ADMIN', 'SUPPORT']
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
   },
   {
     title: 'Courses',

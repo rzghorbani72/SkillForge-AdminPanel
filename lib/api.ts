@@ -466,6 +466,13 @@ class ApiClient {
     });
   }
 
+  async switchAcademy(academy_id: number) {
+    return this.request('/auth/switch-academy', {
+      method: 'POST',
+      body: JSON.stringify({ academy_id })
+    });
+  }
+
   // Note: These enhanced auth endpoints have been removed
   // Use the standard auth endpoints instead
   async switchProfile() {
@@ -567,7 +574,7 @@ class ApiClient {
   }
 
   async getMyAcademies() {
-    const response = await this.request('/academies/managed');
+    const response = await this.request('/academies');
     return response;
   }
 

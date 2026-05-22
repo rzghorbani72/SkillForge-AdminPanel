@@ -1,12 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, ChevronsUpDown, Building2, Search, Plus } from 'lucide-react';
+import {
+  Check,
+  ChevronsUpDown,
+  Building2,
+  Search,
+  Loader2
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useRouter } from 'next/navigation';
+import { apiClient } from '@/lib/api';
+import { clearAcademyData } from '@/lib/store-utils';
 import {
   Popover,
   PopoverContent,
@@ -59,15 +67,37 @@ export function StoreSelector() {
   const { user } = useAuthUser();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [switching, setSwitching] = useState(false);
+
+  const handleSelectAcademy = async (academyId: number) => {
+    if (academyId === selectedAcademy?.id) {
+      setOpen(false);
+      return;
+    }
+    setSwitching(true);
+    setQuery('');
+    setOpen(false);
+    try {
+      await apiClient.switchAcademy(academyId);
+      clearAcademyData();
+      window.location.reload();
+    } catch {
+      // Fallback: store selection in localStorage only (platform admins use X-Academy-ID)
+      selectAcademy(academyId);
+      setSwitching(false);
+    }
+  };
 
   const isPlatformAdmin = user?.isAdminProfile || user?.platformLevel || false;
-  const isAdmin = user?.role === 'ADMIN';
 
-  if (isLoading) {
+  if (isLoading || switching) {
     return (
       <div className="flex h-9 w-44 animate-pulse items-center gap-2 rounded-md bg-muted px-3">
         <div className="h-4 w-4 rounded bg-muted-foreground/20" />
         <div className="h-3 w-24 rounded bg-muted-foreground/20" />
+        {switching && (
+          <Loader2 className="ml-auto h-3.5 w-3.5 animate-spin text-muted-foreground" />
+        )}
       </div>
     );
   }
@@ -75,13 +105,17 @@ export function StoreSelector() {
   // Platform-level admin has no academy context
   if (isPlatformAdmin) return null;
 
-  // No academies available
+  // No academies available — prompt to create one
   if (academies.length === 0) {
     return (
-      <div className="flex items-center gap-2 rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
+      <button
+        type="button"
+        onClick={() => router.push('/onboarding/create-academy')}
+        className="flex items-center gap-2 rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+      >
         <Building2 className="h-4 w-4" />
-        <span>{t('common.noStoreSelected')}</span>
-      </div>
+        <span>{t('stores.createStore')}</span>
+      </button>
     );
   }
 
@@ -175,11 +209,7 @@ export function StoreSelector() {
                     'flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-accent',
                     isActive && 'bg-primary/5'
                   )}
-                  onClick={() => {
-                    selectAcademy(academy.id);
-                    setQuery('');
-                    setOpen(false);
-                  }}
+                  onClick={() => handleSelectAcademy(academy.id)}
                 >
                   <AcademyAvatar name={academy.name} id={academy.id} />
                   <div className="min-w-0 flex-1">
@@ -207,21 +237,30 @@ export function StoreSelector() {
         </div>
 
         {/* Footer actions */}
-        {isAdmin && (
-          <div className="border-t p-1.5">
-            <button
-              type="button"
-              className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              onClick={() => {
-                setOpen(false);
-                router.push('/academies');
-              }}
-            >
-              <Building2 className="h-4 w-4" />
-              {t('stores.storesManagement')}
-            </button>
-          </div>
-        )}
+        <div className="border-t p-1.5">
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            onClick={() => {
+              setOpen(false);
+              router.push('/onboarding/create-academy');
+            }}
+          >
+            <Building2 className="h-4 w-4" />
+            {t('stores.createStore')}
+          </button>
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            onClick={() => {
+              setOpen(false);
+              router.push('/academies');
+            }}
+          >
+            <Building2 className="h-4 w-4" />
+            {t('stores.storesManagement')}
+          </button>
+        </div>
       </PopoverContent>
     </Popover>
   );
