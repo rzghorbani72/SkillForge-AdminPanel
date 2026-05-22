@@ -2045,16 +2045,25 @@ class ApiClient {
     uuid?: string;
     transaction_ref?: string;
     status?: string;
+    academy_id?: number;
+    course_id?: number;
+    start_date?: string;
+    end_date?: string;
   }) {
     const queryParams = new URLSearchParams();
     if (params?.page) queryParams.append('page', String(params.page));
     if (params?.limit) queryParams.append('limit', String(params.limit));
     if (params?.search) queryParams.append('search', params.search);
     if (params?.uuid) queryParams.append('uuid', params.uuid);
-    if (params?.transaction_ref) {
+    if (params?.transaction_ref)
       queryParams.append('transaction_ref', params.transaction_ref);
-    }
     if (params?.status) queryParams.append('status', params.status);
+    if (params?.academy_id)
+      queryParams.append('academy_id', String(params.academy_id));
+    if (params?.course_id)
+      queryParams.append('course_id', String(params.course_id));
+    if (params?.start_date) queryParams.append('start_date', params.start_date);
+    if (params?.end_date) queryParams.append('end_date', params.end_date);
     const query = queryParams.toString();
     const response = await this.request(`/payments${query ? `?${query}` : ''}`);
     return response.data || [];
@@ -3341,6 +3350,356 @@ class ApiClient {
 
   async ensurePayPingGateway() {
     const res = await this.request('/payments/gateways/payping/ensure', {
+      method: 'POST'
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Stores (platform-level academy management)
+  // -------------------------------------------------------------------------
+
+  async getStores(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    is_active?: boolean;
+  }) {
+    const qs = new URLSearchParams();
+    if (params)
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined) qs.append(k, String(v));
+      });
+    const res = await this.request<any>(
+      `/stores${qs.toString() ? `?${qs}` : ''}`
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async getStore(id: number) {
+    const res = await this.request<any>(`/stores/${id}`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async createStore(data: {
+    name: string;
+    slug: string;
+    country?: string;
+    is_active?: boolean;
+  }) {
+    const res = await this.request<any>('/stores', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updateStore(
+    id: number,
+    data: Partial<{
+      name: string;
+      slug: string;
+      country: string;
+      is_active: boolean;
+    }>
+  ) {
+    const res = await this.request<any>(`/stores/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updateAcademyCommissionRate(id: number, commission_rate: number) {
+    const res = await this.request<any>(
+      `/financial/academies/${id}/commission-rate`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ commission_rate })
+      }
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async getAcademyWallet(academyId: number) {
+    const res = await this.request<any>(
+      `/financial/academies/${academyId}/wallet`
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Store Settings (webhooks)
+  // -------------------------------------------------------------------------
+
+  async getStoreSettings(academyId: number) {
+    const res = await this.request<any>(`/stores/${academyId}/settings`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async setStoreSetting(academyId: number, key: string, value: string) {
+    const res = await this.request<any>(`/stores/${academyId}/settings`, {
+      method: 'POST',
+      body: JSON.stringify({ key, value })
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Payment Plans
+  // -------------------------------------------------------------------------
+
+  async getPaymentPlans(courseId: number) {
+    const res = await this.request<any>(`/payment-plans/courses/${courseId}`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async createPaymentPlan(
+    courseId: number,
+    data: {
+      installment_count: number;
+      amount_per_installment: number;
+      interval_days: number;
+    }
+  ) {
+    const res = await this.request<any>(`/payment-plans/courses/${courseId}`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updatePaymentPlan(
+    id: number,
+    data: Partial<{
+      is_active: boolean;
+      amount_per_installment: number;
+      interval_days: number;
+    }>
+  ) {
+    const res = await this.request<any>(`/payment-plans/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Bundles
+  // -------------------------------------------------------------------------
+
+  async getBundles(params?: {
+    academy_id?: number;
+    page?: number;
+    limit?: number;
+  }) {
+    const qs = new URLSearchParams();
+    if (params)
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined) qs.append(k, String(v));
+      });
+    const res = await this.request<any>(
+      `/bundles${qs.toString() ? `?${qs}` : ''}`
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async getBundle(id: number) {
+    const res = await this.request<any>(`/bundles/${id}`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async createBundle(data: {
+    academy_id: number;
+    title: string;
+    slug: string;
+    price: number;
+    course_ids: number[];
+    description?: string;
+  }) {
+    const res = await this.request<any>('/bundles', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updateBundle(
+    id: number,
+    data: Partial<{
+      title: string;
+      slug: string;
+      price: number;
+      course_ids: number[];
+      description: string;
+      is_active: boolean;
+    }>
+  ) {
+    const res = await this.request<any>(`/bundles/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Refunds
+  // -------------------------------------------------------------------------
+
+  async getRefundEligibility(paymentId: number) {
+    const res = await this.request<any>(`/refunds/payments/${paymentId}`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async issueRefund(
+    paymentId: number,
+    data: {
+      refund_amount?: number;
+      reason: string;
+      revoke_enrollment?: boolean;
+    }
+  ) {
+    const res = await this.request<any>(`/refunds/payments/${paymentId}`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Withdrawals
+  // -------------------------------------------------------------------------
+
+  async getWithdrawals(params?: {
+    academy_id?: number;
+    status?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const qs = new URLSearchParams();
+    if (params)
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined) qs.append(k, String(v));
+      });
+    const res = await this.request<any>(
+      `/financial/withdrawals${qs.toString() ? `?${qs}` : ''}`
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async approveWithdrawal(
+    id: number,
+    data: { bank_transaction_code: string; notes?: string }
+  ) {
+    const res = await this.request<any>(
+      `/financial/withdrawals/${id}/approve`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async rejectWithdrawal(id: number, data: { notes?: string }) {
+    const res = await this.request<any>(`/financial/withdrawals/${id}/reject`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Teacher Payouts
+  // -------------------------------------------------------------------------
+
+  async getTeacherPayouts(params?: {
+    profile_id?: number;
+    status?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const qs = new URLSearchParams();
+    if (params)
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined) qs.append(k, String(v));
+      });
+    const res = await this.request<any>(
+      `/teacher-wallet/payout-requests${qs.toString() ? `?${qs}` : ''}`
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async approveTeacherPayout(id: number) {
+    const res = await this.request<any>(
+      `/teacher-wallet/payout-requests/${id}/approve`,
+      { method: 'POST' }
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async rejectTeacherPayout(id: number, notes?: string) {
+    const res = await this.request<any>(
+      `/teacher-wallet/payout-requests/${id}/reject`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ notes })
+      }
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Affiliates
+  // -------------------------------------------------------------------------
+
+  async getAffiliates() {
+    const res = await this.request<any>('/affiliates');
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async createAffiliate(data: {
+    code?: string;
+    profile_id: number;
+    course_id?: number;
+    academy_id: number;
+    commission_rate: number;
+  }) {
+    const res = await this.request<any>('/affiliates', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updateAffiliate(
+    id: number,
+    data: Partial<{ is_active: boolean; commission_rate: number }>
+  ) {
+    const res = await this.request<any>(`/affiliates/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async getAffiliateStats(code: string) {
+    const res = await this.request<any>(`/affiliates/${code}/stats`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  // -------------------------------------------------------------------------
+  // Academy Plans & Subscriptions
+  // -------------------------------------------------------------------------
+
+  async getAcademyPlans(academy_id?: number) {
+    const qs = academy_id ? `?academy_id=${academy_id}` : '';
+    const res = await this.request<any>(`/academy-plans${qs}`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async triggerSubscriptionLifecycle() {
+    const res = await this.request<any>('/subscriptions/lifecycle/tick', {
       method: 'POST'
     });
     return (res.data as any)?.data ?? res.data;

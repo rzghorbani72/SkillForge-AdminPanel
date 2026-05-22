@@ -52,7 +52,15 @@ import {
   X,
   Video,
   Volume2,
-  Wand2
+  Wand2,
+  Package,
+  RotateCcw,
+  Banknote,
+  Wallet2,
+  Network,
+  Percent,
+  CalendarClock,
+  Webhook
 } from 'lucide-react';
 export type IconType =
   | 'dashboard'
@@ -111,7 +119,15 @@ export type IconType =
   | 'wand2'
   | 'userPlus'
   | 'lock'
-  | 'fileText';
+  | 'fileText'
+  | 'package'
+  | 'rotateCcw'
+  | 'banknote'
+  | 'wallet2'
+  | 'network'
+  | 'percent'
+  | 'calendarClock'
+  | 'webhook';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -171,5 +187,13 @@ export const Icons = {
   wand2: Wand2,
   userPlus: UserPlus,
   lock: Lock,
-  fileText: FileText
+  fileText: FileText,
+  package: Package,
+  rotateCcw: RotateCcw,
+  banknote: Banknote,
+  wallet2: Wallet2,
+  network: Network,
+  percent: Percent,
+  calendarClock: CalendarClock,
+  webhook: Webhook
 };

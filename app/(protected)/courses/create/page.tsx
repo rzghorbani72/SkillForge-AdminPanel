@@ -1,5 +1,5 @@
-import CourseFormPage from '@/components/course/CourseFormPage';
+import CourseWizard from '@/components/course/wizard/CourseWizard';
 
 export default function CreateCoursePage() {
-  return <CourseFormPage />;
+  return <CourseWizard />;
 }

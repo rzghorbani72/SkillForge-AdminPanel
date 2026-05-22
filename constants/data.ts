@@ -87,6 +87,27 @@ export const navItems: NavItem[] = [
     roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
   },
   {
+    title: 'Bundles',
+    href: '/bundles',
+    icon: 'package' as IconType,
+    label: 'bundles',
+    roles: ['ADMIN', 'MANAGER']
+  },
+  {
+    title: 'Payments',
+    href: '/payments',
+    icon: 'creditCard' as IconType,
+    label: 'payments',
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER']
+  },
+  {
+    title: 'Refunds',
+    href: '/refunds',
+    icon: 'rotateCcw' as IconType,
+    label: 'refunds',
+    roles: ['ADMIN', 'MANAGER']
+  },
+  {
     title: 'Financial',
     href: '/financial',
     icon: 'dollarSign' as IconType,
@@ -94,11 +115,57 @@ export const navItems: NavItem[] = [
     roles: ['ADMIN', 'SUPPORT', 'MANAGER']
   },
   {
+    title: 'Withdrawals',
+    href: '/withdrawals',
+    icon: 'banknote' as IconType,
+    label: 'withdrawals',
+    roles: ['ADMIN'],
+    adminOnly: true
+  },
+  {
+    title: 'Teacher Payouts',
+    href: '/teacher-payouts',
+    icon: 'wallet2' as IconType,
+    label: 'teacherPayouts',
+    roles: ['ADMIN'],
+    adminOnly: true
+  },
+  {
+    title: 'Affiliates',
+    href: '/affiliates',
+    icon: 'network' as IconType,
+    label: 'affiliates',
+    roles: ['ADMIN', 'MANAGER']
+  },
+  {
+    title: 'Coupons',
+    href: '/coupons',
+    icon: 'percent' as IconType,
+    label: 'coupons',
+    roles: ['ADMIN', 'MANAGER']
+  },
+  {
+    title: 'Subscriptions',
+    href: '/subscriptions',
+    icon: 'calendarClock' as IconType,
+    label: 'subscriptions',
+    roles: ['ADMIN'],
+    adminOnly: true
+  },
+  {
     title: 'Plans',
     href: '/plans',
     icon: 'layers' as IconType,
     label: 'plans',
     roles: ['ADMIN', 'MANAGER']
+  },
+  {
+    title: 'Platform Settings',
+    href: '/platform-settings',
+    icon: 'settings' as IconType,
+    label: 'platformSettings',
+    roles: ['ADMIN'],
+    adminOnly: true
   },
   {
     title: 'Settings',

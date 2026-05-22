@@ -19,13 +19,13 @@ import {
   Megaphone,
   Plus,
   Pencil,
-  Trash2,
-  ExternalLink,
+  X,
   ChevronLeft,
   ChevronRight,
-  X
+  ExternalLink
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface Banner {
   id: string;
@@ -36,38 +36,6 @@ interface Banner {
   color: string;
   isActive: boolean;
 }
-
-const DEFAULT_BANNERS: Banner[] = [
-  {
-    id: '1',
-    title: 'Launch Your Next Course',
-    description:
-      'Create and publish a new course in minutes. Reach thousands of students.',
-    ctaLabel: 'Create Course',
-    ctaUrl: '/courses/new',
-    color: 'from-violet-500/20 via-purple-500/10 to-transparent',
-    isActive: true
-  },
-  {
-    id: '2',
-    title: 'Upgrade Your Plan',
-    description:
-      'Get more storage, more students, and priority support with Pro.',
-    ctaLabel: 'View Plans',
-    ctaUrl: '/plans',
-    color: 'from-amber-500/20 via-orange-500/10 to-transparent',
-    isActive: true
-  },
-  {
-    id: '3',
-    title: 'Invite Your Team',
-    description: 'Add teachers and managers to collaborate on your academy.',
-    ctaLabel: 'Invite Users',
-    ctaUrl: '/users',
-    color: 'from-emerald-500/20 via-teal-500/10 to-transparent',
-    isActive: true
-  }
-];
 
 const ACCENT_COLORS = [
   {
@@ -97,15 +65,6 @@ const ACCENT_COLORS = [
   }
 ];
 
-const DEFAULT_FORM: Omit<Banner, 'id'> = {
-  title: '',
-  description: '',
-  ctaLabel: 'Learn More',
-  ctaUrl: '',
-  color: ACCENT_COLORS[0].value,
-  isActive: true
-};
-
 interface MarketingBannersProps {
   editable?: boolean;
 }
@@ -113,6 +72,47 @@ interface MarketingBannersProps {
 export default function MarketingBanners({
   editable = true
 }: MarketingBannersProps) {
+  const { t } = useTranslation();
+
+  const DEFAULT_BANNERS: Banner[] = [
+    {
+      id: '1',
+      title: t('dashboard.launchCourseTitle'),
+      description: t('dashboard.launchCourseDesc'),
+      ctaLabel: t('dashboard.launchCourseCta'),
+      ctaUrl: '/courses/new',
+      color: 'from-violet-500/20 via-purple-500/10 to-transparent',
+      isActive: true
+    },
+    {
+      id: '2',
+      title: t('dashboard.upgradePlanTitle'),
+      description: t('dashboard.upgradePlanDesc'),
+      ctaLabel: t('dashboard.upgradePlanCta'),
+      ctaUrl: '/plans',
+      color: 'from-amber-500/20 via-orange-500/10 to-transparent',
+      isActive: true
+    },
+    {
+      id: '3',
+      title: t('dashboard.inviteTeamTitle'),
+      description: t('dashboard.inviteTeamDesc'),
+      ctaLabel: t('dashboard.inviteTeamCta'),
+      ctaUrl: '/users',
+      color: 'from-emerald-500/20 via-teal-500/10 to-transparent',
+      isActive: true
+    }
+  ];
+
+  const DEFAULT_FORM: Omit<Banner, 'id'> = {
+    title: '',
+    description: '',
+    ctaLabel: '',
+    ctaUrl: '',
+    color: ACCENT_COLORS[0].value,
+    isActive: true
+  };
+
   const [banners, setBanners] = useState<Banner[]>(DEFAULT_BANNERS);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -124,7 +124,6 @@ export default function MarketingBanners({
   function prev() {
     setCurrentIndex((i) => (i === 0 ? activeBanners.length - 1 : i - 1));
   }
-
   function next() {
     setCurrentIndex((i) => (i === activeBanners.length - 1 ? 0 : i + 1));
   }
@@ -174,7 +173,9 @@ export default function MarketingBanners({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Megaphone className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-semibold">Announcements</span>
+          <span className="text-sm font-semibold">
+            {t('dashboard.announcements')}
+          </span>
           {activeBanners.length > 0 && (
             <Badge variant="secondary" className="text-xs">
               {activeBanners.length}
@@ -184,7 +185,7 @@ export default function MarketingBanners({
         {editable && (
           <Button variant="ghost" size="sm" onClick={openCreate}>
             <Plus className="mr-1.5 h-3.5 w-3.5" />
-            Add Banner
+            {t('dashboard.addBanner')}
           </Button>
         )}
       </div>
@@ -193,18 +194,19 @@ export default function MarketingBanners({
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center gap-2 py-8">
             <Megaphone className="h-8 w-8 text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">No active banners</p>
+            <p className="text-sm text-muted-foreground">
+              {t('common.noData')}
+            </p>
             {editable && (
               <Button variant="outline" size="sm" onClick={openCreate}>
                 <Plus className="mr-2 h-4 w-4" />
-                Create Banner
+                {t('dashboard.addBanner')}
               </Button>
             )}
           </CardContent>
         </Card>
       ) : (
         <div className="relative overflow-hidden rounded-xl border">
-          {/* Banner Slide */}
           <div
             className={cn(
               'bg-gradient-to-r p-6 transition-all duration-500',
@@ -227,13 +229,13 @@ export default function MarketingBanners({
                   </a>
                 )}
               </div>
-
               {editable && (
                 <div className="flex items-center gap-1">
                   <Button
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7"
+                    aria-label={t('common.edit')}
                     onClick={() => openEdit(current)}
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -242,6 +244,7 @@ export default function MarketingBanners({
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-destructive hover:text-destructive"
+                    aria-label={t('common.delete')}
                     onClick={() => deleteBanner(current.id)}
                   >
                     <X className="h-3.5 w-3.5" />
@@ -251,13 +254,13 @@ export default function MarketingBanners({
             </div>
           </div>
 
-          {/* Navigation */}
           {activeBanners.length > 1 && (
             <div className="flex items-center justify-between border-t bg-muted/30 px-4 py-2">
               <div className="flex gap-1">
                 {activeBanners.map((_, i) => (
                   <button
                     key={i}
+                    aria-label={`${t('common.view')} ${i + 1}`}
                     onClick={() => setCurrentIndex(i)}
                     className={cn(
                       'h-1.5 rounded-full transition-all',
@@ -273,6 +276,7 @@ export default function MarketingBanners({
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7"
+                  aria-label={t('common.previous')}
                   onClick={prev}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -285,6 +289,7 @@ export default function MarketingBanners({
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7"
+                  aria-label={t('common.next')}
                   onClick={next}
                 >
                   <ChevronRight className="h-4 w-4" />
@@ -300,48 +305,49 @@ export default function MarketingBanners({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {editingBanner ? 'Edit Banner' : 'Create Banner'}
+              {editingBanner
+                ? t('dashboard.editBanner')
+                : t('dashboard.addBanner')}
             </DialogTitle>
             <DialogDescription>
-              Banners are shown on the dashboard to guide users to key actions.
+              {t('dashboard.announcements')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
-              <Label>Title</Label>
+              <Label>{t('dashboard.bannerTitle')}</Label>
               <Input
                 value={form.title}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, title: e.target.value }))
                 }
-                placeholder="Launch Your Next Course"
+                placeholder={t('dashboard.launchCourseTitle')}
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Description</Label>
+              <Label>{t('dashboard.bannerDesc')}</Label>
               <textarea
                 className="min-h-[70px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 value={form.description}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
                 }
-                placeholder="Short description shown below the title."
+                aria-label={t('dashboard.bannerDesc')}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label>CTA Label</Label>
+                <Label>{t('dashboard.bannerCtaLabel')}</Label>
                 <Input
                   value={form.ctaLabel}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, ctaLabel: e.target.value }))
                   }
-                  placeholder="Learn More"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label>CTA URL</Label>
+                <Label>{t('dashboard.bannerCtaUrl')}</Label>
                 <Input
                   value={form.ctaUrl}
                   onChange={(e) =>
@@ -352,7 +358,7 @@ export default function MarketingBanners({
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label>Color Theme</Label>
+              <Label>{t('dashboard.bannerColor')}</Label>
               <div className="flex gap-2">
                 {ACCENT_COLORS.map((c) => (
                   <button
@@ -374,22 +380,20 @@ export default function MarketingBanners({
               <Switch
                 checked={form.isActive}
                 onCheckedChange={(v) => setForm((f) => ({ ...f, isActive: v }))}
+                aria-label={t('dashboard.bannerActive')}
               />
-              <div>
-                <p className="text-sm font-medium">Active</p>
-                <p className="text-xs text-muted-foreground">
-                  Show on dashboard
-                </p>
-              </div>
+              <p className="text-sm font-medium">
+                {t('dashboard.bannerActive')}
+              </p>
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditing(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button onClick={saveBanner} disabled={!form.title}>
-              {editingBanner ? 'Save Changes' : 'Create Banner'}
+              {editingBanner ? t('common.save') : t('dashboard.addBanner')}
             </Button>
           </DialogFooter>
         </DialogContent>

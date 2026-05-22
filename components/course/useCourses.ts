@@ -1,139 +1,143 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
-import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { Course } from '@/types/api';
 import { toast } from 'sonner';
-import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
-type UseCoursesReturn = {
-  courses: Course[];
-  totalCourses: number;
-  isLoading: boolean;
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  handleViewCourse: (course: Course) => void;
-  handleEditCourse: (course: Course) => void;
-  handleDeleteCourse: (course: Course) => void;
+export type CourseWithRevenue = Course & {
+  revenue: number;
+  enrollments_count: number;
 };
 
-const useCourses = (): UseCoursesReturn => {
+const useCourses = () => {
   const router = useRouter();
   const { selectedAcademy } = useStore();
 
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [rawCourses, setRawCourses] = useState<Course[]>([]);
+  const [revenueMap, setRevenueMap] = useState<Record<number, number>>({});
+  const [enrollmentMap, setEnrollmentMap] = useState<Record<number, number>>(
+    {}
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const totalCourses = courses.length;
+  const [pricingFilter, setPricingFilter] = useState('ALL');
 
-  const filteredCourses = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) {
-      return courses;
+  const fetchRevenue = useCallback(async () => {
+    try {
+      const data = (await apiClient.getPayments({
+        status: 'PAID',
+        limit: 500,
+        academy_id: selectedAcademy?.id
+      })) as any;
+      const payments: any[] = Array.isArray(data)
+        ? data
+        : (data?.payments ?? data?.data ?? []);
+      const rMap: Record<number, number> = {};
+      const eMap: Record<number, number> = {};
+      for (const p of payments) {
+        const cid = p.course_id ?? p.course?.id ?? p.Course?.id;
+        if (cid) {
+          rMap[cid] = (rMap[cid] ?? 0) + (p.amount ?? 0);
+          eMap[cid] = (eMap[cid] ?? 0) + 1;
+        }
+      }
+      setRevenueMap(rMap);
+      setEnrollmentMap(eMap);
+    } catch {
+      // Revenue optional — don't block list
     }
+  }, [selectedAcademy]);
 
-    return courses.filter((course) => {
-      const titleMatch = course.title?.toLowerCase().includes(term);
-      const slugMatch = course.slug?.toLowerCase().includes(term);
-      const descriptionMatch = course.description?.toLowerCase().includes(term);
-      const shortDescriptionMatch = course.short_description
-        ?.toLowerCase()
-        .includes(term);
-      const categoryMatch = (course as any)?.category?.name
-        ?.toLowerCase()
-        .includes(term);
-
-      return (
-        titleMatch ||
-        slugMatch ||
-        descriptionMatch ||
-        shortDescriptionMatch ||
-        categoryMatch
+  const fetchCourses = useCallback(async () => {
+    if (!selectedAcademy) return;
+    try {
+      setIsLoading(true);
+      const response = await apiClient.getCourses({
+        page: 1,
+        limit: 100,
+        academy_id: selectedAcademy.id
+      });
+      let list: Course[] = [];
+      if (Array.isArray(response)) list = response;
+      else if (Array.isArray(response?.courses)) list = response.courses;
+      // filter to current academy
+      list = list.filter((c) =>
+        (c as any).academy_id
+          ? (c as any).academy_id === selectedAcademy.id
+          : true
       );
-    });
-  }, [courses, searchTerm]);
+      setRawCourses(list);
+    } catch (err: any) {
+      toast.error('Failed to load courses');
+      setRawCourses([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedAcademy]);
 
   useEffect(() => {
     if (selectedAcademy) {
       fetchCourses();
+      fetchRevenue();
     }
-  }, [selectedAcademy]);
+  }, [selectedAcademy, fetchCourses, fetchRevenue]);
 
-  const fetchCourses = async () => {
-    if (!selectedAcademy) return;
+  const totalCourses = rawCourses.length;
 
-    try {
-      setIsLoading(true);
-      const response = await apiClient.getCourses();
-      // Handle new response structure with access control
-      let nextCourses: Course[] = [];
-      if (response && response && Array.isArray(response)) {
-        nextCourses = response;
-      } else if (Array.isArray(response)) {
-        // Fallback for old response format
-        nextCourses = response;
-      } else if (response && Array.isArray(response.courses)) {
-        nextCourses = response.courses;
-      }
+  const courses: CourseWithRevenue[] = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return rawCourses
+      .filter((c) => {
+        const matchesSearch =
+          !term ||
+          c.title?.toLowerCase().includes(term) ||
+          c.description?.toLowerCase().includes(term) ||
+          (c as any).slug?.toLowerCase().includes(term) ||
+          (c as any).category?.name?.toLowerCase().includes(term);
+        const matchesPricing =
+          pricingFilter === 'ALL' || (c as any).pricing_type === pricingFilter;
+        return matchesSearch && matchesPricing;
+      })
+      .map((c) => ({
+        ...c,
+        revenue: revenueMap[c.id] ?? 0,
+        enrollments_count: enrollmentMap[c.id] ?? (c as any).students_count ?? 0
+      }));
+  }, [rawCourses, revenueMap, enrollmentMap, searchTerm, pricingFilter]);
 
-      // Optionally filter by store if present on objects
-      if (selectedAcademy && nextCourses.length > 0) {
-        nextCourses = nextCourses.filter((c) =>
-          (c as any).academy_id
-            ? (c as any).academy_id === selectedAcademy.id
-            : true
-        );
-      }
-
-      setCourses(nextCourses);
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-      ErrorHandler.handleApiError(error);
-      setCourses([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleViewCourse = (course: Course) => {
+  const handleViewCourse = (course: CourseWithRevenue) =>
     router.push(`/courses/${course.id}`);
-  };
-
-  const handleEditCourse = (course: Course) => {
+  const handleEditCourse = (course: CourseWithRevenue) =>
     router.push(`/courses/${course.id}/edit`);
-  };
 
-  const handleDeleteCourseHandler = async (course: Course) => {
+  const handleDeleteCourse = async (course: CourseWithRevenue) => {
     try {
-      const response = await apiClient.deleteCourse(course.id);
-      if (response && response.status === 200) {
-        toast.success((response.data as any).message);
-        fetchCourses();
-      } else {
-        toast.error('Failed to delete course');
-      }
-    } catch (error) {
-      console.error('Error deleting course:', error);
-      ErrorHandler.handleApiError(error);
+      await apiClient.deleteCourse(course.id);
+      toast.success('Course deleted');
+      fetchCourses();
+    } catch (err: any) {
+      toast.error(err?.message ?? 'Failed to delete course');
     }
   };
 
-  // Debounce the delete handler to prevent multiple rapid deletions
-  const handleDeleteCourse = useDebouncedCallback(
-    handleDeleteCourseHandler,
-    500
-  );
+  const refresh = () => {
+    fetchCourses();
+    fetchRevenue();
+  };
 
   return {
-    courses: filteredCourses,
+    courses,
     totalCourses,
     isLoading,
     searchTerm,
     setSearchTerm,
+    pricingFilter,
+    setPricingFilter,
     handleViewCourse,
     handleEditCourse,
-    handleDeleteCourse
+    handleDeleteCourse,
+    refresh
   };
 };
 
