@@ -182,3 +182,20 @@ export const getFullPhoneNumber = (
   if (!phoneNumber) return '';
   return `${countryCode.dialCode}${phoneNumber}`;
 };
+
+/**
+ * Normalises any common Iranian phone format to E.164 (+98...).
+ * 09xxxxxxxxx  → +989xxxxxxxxx
+ * 9xxxxxxxxx   → +989xxxxxxxxx
+ * 00989...     → +989...
+ * +98...       → unchanged
+ * other        → unchanged (pass through)
+ */
+export function toE164Iran(raw: string): string {
+  const digits = raw.replace(/\D/g, '');
+  if (digits.startsWith('0098')) return '+' + digits.slice(2);
+  if (digits.startsWith('98')) return '+' + digits;
+  if (digits.startsWith('09')) return '+98' + digits.slice(1);
+  if (digits.startsWith('9')) return '+98' + digits;
+  return raw;
+}

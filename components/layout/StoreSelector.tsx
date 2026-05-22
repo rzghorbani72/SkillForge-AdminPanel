@@ -1,101 +1,228 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Building2, ChevronDown, Check } from 'lucide-react';
+import { Check, ChevronsUpDown, Building2, Search, Plus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { useRouter } from 'next/navigation';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover';
+
+// Deterministic color per academy ID
+const AVATAR_COLORS = [
+  'bg-violet-500',
+  'bg-blue-500',
+  'bg-emerald-500',
+  'bg-amber-500',
+  'bg-rose-500',
+  'bg-cyan-500',
+  'bg-indigo-500',
+  'bg-teal-500'
+];
+
+function academyColor(id: number) {
+  return AVATAR_COLORS[id % AVATAR_COLORS.length];
+}
+
+function AcademyAvatar({
+  name,
+  id,
+  size = 'md'
+}: {
+  name: string;
+  id: number;
+  size?: 'sm' | 'md';
+}) {
+  const initial = name ? name[0].toUpperCase() : '?';
+  return (
+    <div
+      className={cn(
+        'flex shrink-0 items-center justify-center rounded-lg font-bold text-white',
+        academyColor(id),
+        size === 'sm' ? 'h-6 w-6 text-xs' : 'h-8 w-8 text-sm'
+      )}
+    >
+      {initial}
+    </div>
+  );
+}
 
 export function StoreSelector() {
+  const { t } = useTranslation();
+  const router = useRouter();
   const { academies, selectedAcademy, selectAcademy, isLoading } = useStore();
   const { user } = useAuthUser();
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
 
-  // Check if user is a platform-level admin
   const isPlatformAdmin = user?.isAdminProfile || user?.platformLevel || false;
+  const isAdmin = user?.role === 'ADMIN';
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2">
-        <Building2 className="h-4 w-4" />
-        <span className="text-sm text-muted-foreground">Loading...</span>
+      <div className="flex h-9 w-44 animate-pulse items-center gap-2 rounded-md bg-muted px-3">
+        <div className="h-4 w-4 rounded bg-muted-foreground/20" />
+        <div className="h-3 w-24 rounded bg-muted-foreground/20" />
       </div>
     );
   }
 
+  // Platform-level admin has no academy context
+  if (isPlatformAdmin) return null;
+
+  // No academies available
   if (academies.length === 0) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2">
+      <div className="flex items-center gap-2 rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
         <Building2 className="h-4 w-4" />
-        <span className="text-sm text-muted-foreground">No stores</span>
+        <span>{t('common.noStoreSelected')}</span>
       </div>
     );
   }
 
+  // Single academy — show static (no switcher needed)
   if (academies.length === 1) {
+    const a = academies[0];
     return (
-      <div className="flex items-center gap-2 px-3 py-2">
-        <Building2 className="h-4 w-4" />
-        <span className="text-sm font-medium">{academies[0].name}</span>
+      <div className="flex items-center gap-2 rounded-md px-2 py-1.5">
+        <AcademyAvatar name={a.name} id={a.id} size="sm" />
+        <span className="max-w-[140px] truncate text-sm font-medium">
+          {a.name}
+        </span>
       </div>
     );
   }
 
-  // For platform-level admins, show disabled state
-  if (isPlatformAdmin) {
-    return (
-      <div className="flex cursor-not-allowed items-center gap-2 px-3 py-2 opacity-50">
-        <Building2 className="h-4 w-4" />
-        <span className="text-sm text-muted-foreground">No Store Selected</span>
-      </div>
-    );
-  }
+  const filtered = query
+    ? academies.filter(
+        (a) =>
+          a.name.toLowerCase().includes(query.toLowerCase()) ||
+          (a as any).slug?.toLowerCase().includes(query.toLowerCase())
+      )
+    : academies;
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="flex h-auto items-center gap-2 px-3 py-2"
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={t('stores.selectStore')}
+          className={cn(
+            'flex h-9 items-center gap-2 rounded-md border bg-background px-2.5 py-1.5 text-sm font-medium shadow-sm transition-colors hover:bg-accent',
+            open && 'ring-1 ring-primary'
+          )}
         >
-          <Building2 className="h-4 w-4" />
-          <span className="text-sm font-medium">
-            {selectedAcademy?.name || 'Select Store'}
-          </span>
-          <ChevronDown className="h-3 w-3" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-64">
-        {academies.map((academy) => (
-          <DropdownMenuItem
-            key={academy.id}
-            onClick={() => {
-              selectAcademy(academy.id);
-              setIsOpen(false);
-            }}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2">
+          {selectedAcademy ? (
+            <>
+              <AcademyAvatar
+                name={selectedAcademy.name}
+                id={selectedAcademy.id}
+                size="sm"
+              />
+              <span className="max-w-[130px] truncate">
+                {selectedAcademy.name}
+              </span>
+            </>
+          ) : (
+            <>
+              <Building2 className="h-4 w-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
+                {t('stores.selectStore')}
+              </span>
+            </>
+          )}
+          <ChevronsUpDown className="ml-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        </button>
+      </PopoverTrigger>
+
+      <PopoverContent
+        align="start"
+        className="w-72 p-0 shadow-xl"
+        sideOffset={6}
+      >
+        {/* Search */}
+        <div className="flex items-center gap-2 border-b px-3 py-2">
+          <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <input
+            autoFocus
+            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            placeholder={t('stores.searchStores')}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            aria-label={t('stores.searchStores')}
+          />
+        </div>
+
+        {/* Academy list */}
+        <div className="max-h-72 overflow-y-auto py-1.5">
+          {filtered.length === 0 ? (
+            <p className="px-4 py-3 text-sm text-muted-foreground">
+              {t('stores.noStoresFound')}
+            </p>
+          ) : (
+            filtered.map((academy) => {
+              const isActive = selectedAcademy?.id === academy.id;
+              return (
+                <button
+                  key={academy.id}
+                  type="button"
+                  className={cn(
+                    'flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-accent',
+                    isActive && 'bg-primary/5'
+                  )}
+                  onClick={() => {
+                    selectAcademy(academy.id);
+                    setQuery('');
+                    setOpen(false);
+                  }}
+                >
+                  <AcademyAvatar name={academy.name} id={academy.id} />
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className={cn(
+                        'truncate text-sm font-medium',
+                        isActive && 'text-primary'
+                      )}
+                    >
+                      {academy.name}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {(academy as any).slug ??
+                        (academy.domain as any)?.private_address ??
+                        ''}
+                    </p>
+                  </div>
+                  {isActive && (
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
+                  )}
+                </button>
+              );
+            })
+          )}
+        </div>
+
+        {/* Footer actions */}
+        {isAdmin && (
+          <div className="border-t p-1.5">
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              onClick={() => {
+                setOpen(false);
+                router.push('/academies');
+              }}
+            >
               <Building2 className="h-4 w-4" />
-              <div>
-                <div className="font-medium">{academy.name}</div>
-                <div className="text-xs text-muted-foreground">
-                  {academy.domain?.private_address}
-                </div>
-              </div>
-            </div>
-            {selectedAcademy?.id === academy.id && (
-              <Check className="h-4 w-4" />
-            )}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+              {t('stores.storesManagement')}
+            </button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }

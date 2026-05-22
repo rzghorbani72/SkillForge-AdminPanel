@@ -275,8 +275,9 @@ class ApiClient {
             : DEFAULT_LANGUAGE;
         };
 
+        const rawMsg = data && (data.message || data.error);
         const errorMessage =
-          (data && (data.message || data.error)) ||
+          (Array.isArray(rawMsg) ? rawMsg.join(', ') : rawMsg) ||
           t('error.sessionExpired', getCurrentLanguage());
 
         if (typeof window !== 'undefined') {
@@ -314,8 +315,9 @@ class ApiClient {
             : DEFAULT_LANGUAGE;
         };
 
+        const rawMsg403 = data && (data.message || data.error);
         const errorMessage =
-          (data && (data.message || data.error)) ||
+          (Array.isArray(rawMsg403) ? rawMsg403.join(', ') : rawMsg403) ||
           t('error.noPermission', getCurrentLanguage());
 
         if (typeof window !== 'undefined') {
@@ -328,8 +330,9 @@ class ApiClient {
 
       // Handle payment required (402) - subscription expired/inactive
       if (response.status === 402) {
+        const rawMsg402 = data && (data.message || data.error);
         const errorMessage =
-          (data && (data.message || data.error)) ||
+          (Array.isArray(rawMsg402) ? rawMsg402.join(', ') : rawMsg402) ||
           'Subscription is required to continue.';
         if (typeof window !== 'undefined') {
           toast.error(errorMessage);
@@ -342,9 +345,11 @@ class ApiClient {
       }
 
       if (!response.ok) {
+        const msg = data && (data.message || data.error);
         throw new Error(
-          (data && (data.message || data.error)) ||
-            `HTTP error! status: ${response.status}`
+          Array.isArray(msg)
+            ? msg.join(', ')
+            : msg || `HTTP error! status: ${response.status}`
         );
       }
 
@@ -419,13 +424,6 @@ class ApiClient {
     bio?: string;
     website?: string;
     location?: string;
-    // Store creation data (for MANAGER role)
-    store_name?: string;
-    store_slug?: string;
-    store_description?: string;
-    // Teacher request data
-    teacher_request?: boolean;
-    teacher_request_reason?: string;
   }) {
     return this.request('/auth/register', {
       method: 'POST',

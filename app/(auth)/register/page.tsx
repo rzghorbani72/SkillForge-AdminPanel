@@ -1,667 +1,536 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Building2, Loader2, AlertCircle } from 'lucide-react';
+  Eye,
+  EyeOff,
+  Loader2,
+  CheckCircle2,
+  Sparkles,
+  User,
+  Lock,
+  Phone
+} from 'lucide-react';
+import Link from '@/components/ui/link';
+import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
-import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { ErrorHandler } from '@/lib/error-handler';
-import { useRouter } from 'next/navigation';
-import Link from '@/components/ui/link';
-import { useStores } from '@/hooks/useStores';
-import { StepIndicator } from '@/components/auth/register/StepIndicator';
-import { VerificationStep } from '@/components/auth/register/VerificationStep';
-import { BaseDataForm } from '@/components/auth/register/BaseDataForm';
-import { COUNTRY_CODES } from '@/lib/country-codes';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { toE164Iran } from '@/lib/phone-utils';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
-import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
+import { toast } from 'react-toastify';
+
+// ─── Validation ───────────────────────────────────────────────────────────
+
+const useRegisterSchema = (t: (k: string) => string) =>
+  z
+    .object({
+      name: z.string().min(2, t('auth.fullNameRequired')),
+      phone: z.string().min(7, t('auth.validPhoneNumber')),
+      password: z.string().min(6, t('auth.passwordTooShort')),
+      confirmPassword: z.string().min(1, t('auth.confirmPasswordRequired'))
+    })
+    .refine((d) => d.password === d.confirmPassword, {
+      message: t('auth.passwordsDoNotMatch'),
+      path: ['confirmPassword']
+    });
+
+type RegisterValues = {
+  name: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+};
+
+// ─── Page ─────────────────────────────────────────────────────────────────
 
 export default function RegisterPage() {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
-  const [isLoading, setIsLoading] = useState(false);
-  const [registrationType, setRegistrationType] = useState<
-    'new-store' | 'existing-store'
-  >('new-store');
-  const [joinAsTeacher, setJoinAsTeacher] = useState(false);
-
-  // Fetch stores for the dropdown
-  const { stores, isLoading: storesLoading, error: storesError } = useStores();
-
-  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
-  const [emailOtpSent, setEmailOtpSent] = useState(false);
-  const [phoneOtpVerified, setPhoneOtpVerified] = useState(false);
-  const [emailOtpVerified, setEmailOtpVerified] = useState(false);
-  const [otpLoading, setOtpLoading] = useState(false);
-  const [step, setStep] = useState<'verification' | 'form'>('verification');
-  const [primaryVerificationMethod, setPrimaryVerificationMethod] = useState<
-    'phone' | 'email'
-  >('phone');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    countryCode: 'IR', // Default to Iran
-    password: '',
-    confirmPassword: '',
-    phoneOtp: '',
-    emailOtp: '',
-    storeName: '',
-    storeDescription: '',
-    storeSlug: '',
-    existingStoreId: '',
-    teacherRequestReason: ''
-  });
-
-  // Update primary verification method when store is selected
-  useEffect(() => {
-    if (registrationType === 'existing-store' && formData.existingStoreId) {
-      const selectedStore = stores.find(
-        (s) => s.id === parseInt(formData.existingStoreId)
-      );
-      if (selectedStore?.primary_verification_method) {
-        setPrimaryVerificationMethod(selectedStore.primary_verification_method);
-      } else {
-        setPrimaryVerificationMethod('phone'); // Default
-      }
-    } else if (registrationType === 'new-store') {
-      setPrimaryVerificationMethod('phone'); // Default for new stores
-    }
-  }, [formData.existingStoreId, registrationType, stores]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const isSubmittingRef = useRef(false);
-
   const router = useRouter();
 
-  // Helper function to get full phone number with country code
-  const getFullPhoneNumber = (phone: string, countryCode?: string): string => {
-    if (!phone) return phone;
-    if (!countryCode) return phone;
+  const [showPw, setShowPw] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [step, setStep] = useState<'details' | 'verify'>('details');
+  const [otpCode, setOtpCode] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
 
-    const country = COUNTRY_CODES.find((c) => c.code === countryCode);
-    if (country) {
-      return `${country.dialCode}${phone}`;
-    }
-    return phone;
-  };
+  const form = useForm<RegisterValues>({
+    resolver: zodResolver(useRegisterSchema(t)),
+    defaultValues: { name: '', phone: '', password: '', confirmPassword: '' }
+  });
 
-  // Send phone OTP
-  const handleSendPhoneOtp = async () => {
-    if (!formData.phone) {
-      ErrorHandler.showWarning('Please enter your phone number first');
-      return;
-    }
-
-    if (formData.phone.length < 7 || formData.phone.length > 15) {
-      ErrorHandler.showWarning(
-        'Please enter a valid phone number (7-15 digits)'
-      );
-      return;
-    }
-
+  // Step 1 → send phone OTP
+  async function onDetailsSubmit(values: RegisterValues) {
     setOtpLoading(true);
     try {
-      // Combine country code with phone number
-      const fullPhoneNumber = getFullPhoneNumber(
-        formData.phone,
-        formData.countryCode
-      );
-
-      const result = await apiClient.sendPhoneOtp(
-        fullPhoneNumber,
+      await apiClient.sendPhoneOtp(
+        toE164Iran(values.phone),
         OtpType.REGISTER_PHONE_VERIFICATION
       );
-      const responseData = result.data as any;
-
-      if (responseData?.otp) {
-        setPhoneOtpSent(true);
-        ErrorHandler.showInfo(
-          `SMS OTP sent successfully! Your phone OTP is: ${responseData.otp}`
-        );
-      }
-    } catch (error) {
-      console.error('Failed to send phone OTP:', error);
-      // Error handling is done in the service
+      setStep('verify');
+      setPhoneVerified(false);
+      setOtpCode('');
+      toast.info(t('auth.sendVerificationCode'));
+    } catch (err: any) {
+      toast.error(err?.message ?? t('common.error'));
     } finally {
       setOtpLoading(false);
     }
-  };
+  }
 
-  // Send email OTP
-  const handleSendEmailOtp = async () => {
-    if (!formData.email) {
-      ErrorHandler.showWarning('Please enter your email first');
-      return;
-    }
-
-    if (!isValidEmail(formData.email)) {
-      ErrorHandler.showWarning('Please enter a valid email');
-      return;
-    }
-
-    setOtpLoading(true);
+  // Step 2a → verify the OTP code only
+  async function verifyCode() {
+    const e164Phone = toE164Iran(form.getValues('phone'));
+    setVerifying(true);
     try {
-      const result = await apiClient.sendEmailOtp(
-        formData.email,
-        OtpType.REGISTER_EMAIL_VERIFICATION
-      );
-      const responseData = result.data as any;
-
-      if (responseData?.otp) {
-        setEmailOtpSent(true);
-        ErrorHandler.showInfo(
-          `Email OTP sent successfully! Your email OTP is: ${responseData.otp}`
-        );
-      }
-    } catch (error) {
-      console.error('Failed to send email OTP:', error);
-      // Error handling is done in the service
-    } finally {
-      setOtpLoading(false);
-    }
-  };
-
-  // Verify phone OTP
-  const handleVerifyPhoneOtp = async () => {
-    if (!formData.phoneOtp) {
-      ErrorHandler.showWarning('Please enter the phone OTP');
-      return;
-    }
-
-    setOtpLoading(true);
-    try {
-      // Combine country code with phone number
-      const fullPhoneNumber = getFullPhoneNumber(
-        formData.phone,
-        formData.countryCode
-      );
-
-      const result = await apiClient.verifyPhoneOtp(
-        fullPhoneNumber,
-        formData.phoneOtp,
+      const result = (await apiClient.verifyPhoneOtp(
+        e164Phone,
+        otpCode,
         OtpType.REGISTER_PHONE_VERIFICATION
-      );
-      const responseData = result.data as any;
-      const isValid = responseData?.success;
-
-      if (isValid) {
-        setPhoneOtpVerified(true);
-        ErrorHandler.showSuccess('Phone OTP verified successfully!');
-      } else {
-        ErrorHandler.showWarning('Invalid phone OTP. Please try again.');
+      )) as any;
+      if (!result?.data?.success && !result?.success) {
+        toast.error(t('auth.enterVerificationCode'));
+        return;
       }
-    } catch (error) {
-      console.error('Failed to verify phone OTP:', error);
-      // Error handling is done in the service
+      setPhoneVerified(true);
+    } catch (err: any) {
+      toast.error(err?.message ?? t('common.error'));
     } finally {
-      setOtpLoading(false);
+      setVerifying(false);
     }
-  };
+  }
 
-  // Verify email OTP
-  const handleVerifyEmailOtp = async () => {
-    if (!formData.emailOtp) {
-      ErrorHandler.showWarning('Please enter the email OTP');
-      return;
+  // Step 2b → register only (phone already verified above)
+  async function createAccount() {
+    const values = form.getValues();
+    const e164Phone = toE164Iran(values.phone);
+    setSubmitting(true);
+    try {
+      await apiClient.register({
+        name: values.name,
+        phone_number: e164Phone,
+        password: values.password,
+        confirmed_password: values.confirmPassword,
+        role: 'MANAGER',
+        display_name: values.name
+      });
+      setDone(true);
+      toast.success(t('auth.accountCreatedTitle'));
+      setTimeout(() => router.push('/login'), 1800);
+    } catch (err: any) {
+      toast.error(err?.message ?? t('common.error'));
+    } finally {
+      setSubmitting(false);
     }
+  }
 
+  async function resendOtp() {
+    const phone = toE164Iran(form.getValues('phone'));
     setOtpLoading(true);
+    setPhoneVerified(false);
+    setOtpCode('');
     try {
-      const result = await apiClient.verifyEmailOtp(
-        formData.email,
-        formData.emailOtp,
-        OtpType.REGISTER_EMAIL_VERIFICATION
-      );
-      const responseData = result.data as any;
-      const isValid = responseData?.success;
-
-      if (isValid) {
-        setEmailOtpVerified(true);
-        ErrorHandler.showSuccess('Email OTP verified successfully!');
-      } else {
-        ErrorHandler.showWarning('Invalid email OTP. Please try again.');
-      }
-    } catch (error) {
-      console.error('Failed to verify email OTP:', error);
-      // Error handling is done in the service
+      await apiClient.sendPhoneOtp(phone, OtpType.REGISTER_PHONE_VERIFICATION);
+      toast.info(t('auth.resendCode'));
+    } catch {
+      toast.error(t('common.error'));
     } finally {
       setOtpLoading(false);
     }
-  };
+  }
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+  // ─── Done screen ─────────────────────────────────────────────────────────
 
-    // Basic user validation
-    if (!formData.name.trim()) {
-      newErrors.name = t('auth.fullNameRequired');
-    }
+  if (done) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="space-y-3 text-center">
+          <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-500" />
+          <h2 className="text-xl font-bold">{t('auth.accountCreatedTitle')}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t('auth.redirectingToSignIn')}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-    // Validate based on primary verification method
-    if (primaryVerificationMethod === 'phone') {
-      // Phone is required, email is optional
-      if (!formData.phone) {
-        newErrors.phone = t('auth.phoneNumberRequired');
-      } else if (formData.phone.length < 7 || formData.phone.length > 15) {
-        newErrors.phone = t('auth.validPhoneNumber');
-      }
-      // Email is optional but must be valid if provided
-      if (formData.email && !isValidEmail(formData.email)) {
-        newErrors.email = t('auth.validEmailAddress');
-      }
-    } else {
-      // Email is required, phone is optional
-      if (!formData.email) {
-        newErrors.email = t('auth.emailAddressRequired');
-      } else if (!isValidEmail(formData.email)) {
-        newErrors.email = t('auth.validEmailAddress');
-      }
-      // Phone is optional but must be valid if provided
-      if (
-        formData.phone &&
-        (formData.phone.length < 7 || formData.phone.length > 15)
-      ) {
-        newErrors.phone = t('auth.validPhoneNumber');
-      }
-    }
-
-    if (!formData.password) {
-      newErrors.password = t('auth.passwordRequired');
-    } else if (formData.password.length < 6) {
-      newErrors.password = t('auth.passwordTooShort');
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = t('auth.confirmPasswordRequired');
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = t('auth.passwordsDoNotMatch');
-    }
-
-    // Note: OTP verification is handled separately after form submission
-    // Users can enter and verify OTPs after clicking "Create Account"
-
-    // Store validation based on registration type
-    if (registrationType === 'new-store') {
-      if (!formData.storeName.trim()) {
-        newErrors.storeName = t('auth.storeNameRequired');
-      }
-      if (!formData.storeSlug.trim()) {
-        newErrors.storeSlug = t('auth.storeSlugRequired');
-        // Note: When creating a new store, the user automatically becomes the manager
-        // regardless of their selected user type. They can also be students/teachers in other stores.
-      } else if (!/^[a-z0-9-]+$/.test(formData.storeSlug)) {
-        newErrors.storeSlug = t('auth.storeSlugInvalid');
-      }
-    } else {
-      if (!formData.existingStoreId) {
-        newErrors.existingStoreId = t('auth.selectStoreRequired');
-      }
-
-      // Validate teacher request reason if requesting teacher role
-      if (joinAsTeacher && !formData.teacherRequestReason.trim()) {
-        newErrors.teacherRequestReason = t('auth.teacherRequestReasonRequired');
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Final Step: Submit base data after verification
-  const handleFormSubmission = async () => {
-    setIsLoading(true);
-    isSubmittingRef.current = true;
-
-    try {
-      // Ensure primary method OTP is verified
-      const primaryVerified =
-        primaryVerificationMethod === 'phone'
-          ? phoneOtpVerified
-          : emailOtpVerified;
-      if (!primaryVerified) {
-        const methodName =
-          primaryVerificationMethod === 'phone' ? 'phone' : 'email';
-        ErrorHandler.showWarning(`Please verify your ${methodName} OTP first`);
-        return;
-      }
-
-      // Validate form data
-      if (!validateForm()) {
-        return;
-      }
-
-      // Determine role based on registration type
-      let role: string;
-      if (registrationType === 'new-store') {
-        role = 'MANAGER';
-      } else {
-        // When joining existing store, register as teacher
-        // Only teachers, managers, and admins can access this panel
-        role = 'TEACHER';
-      }
-
-      // Create user with verified contact info
-      const userData: any = {
-        name: formData.name,
-        phone_number: formData.phone,
-        email: formData.email || undefined,
-        password: formData.password,
-        confirmed_password: formData.confirmPassword,
-        role: role,
-        academy_id:
-          registrationType === 'existing-store'
-            ? parseInt(formData.existingStoreId)
-            : undefined,
-        display_name: formData.name,
-        // Teacher request data (only when requesting teacher role)
-        ...(registrationType === 'existing-store' &&
-          joinAsTeacher && {
-            teacher_request: true,
-            teacher_request_reason: formData.teacherRequestReason
-          }),
-        // Store creation data (only when creating new store)
-        ...(registrationType === 'new-store' && {
-          store_name: formData.storeName,
-          store_slug: formData.storeSlug,
-          store_description: formData.storeDescription
-        })
-      };
-
-      // Register user with verified OTPs
-      const user = await apiClient.register(userData);
-
-      if (user) {
-        ErrorHandler.showSuccess('Registration completed successfully!');
-      }
-    } catch (error: unknown) {
-      console.error('User registration error:', error);
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setIsLoading(false);
-      isSubmittingRef.current = false;
-    }
-  };
-
-  // removed unused handleFinalRegistration
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Prevent double submission
-    if (isLoading || isSubmittingRef.current) {
-      return;
-    }
-
-    if (step === 'verification') {
-      // Only verify primary method during registration
-      if (primaryVerificationMethod === 'phone') {
-        if (!phoneOtpSent) {
-          await handleSendPhoneOtp();
-          return;
-        }
-        if (!phoneOtpVerified) {
-          ErrorHandler.showWarning('Please verify your phone OTP first');
-          return;
-        }
-      } else {
-        // Email is primary
-        if (!emailOtpSent) {
-          await handleSendEmailOtp();
-          return;
-        }
-        if (!emailOtpVerified) {
-          ErrorHandler.showWarning('Please verify your email OTP first');
-          return;
-        }
-      }
-      setStep('form');
-      return;
-    }
-
-    // Determine role based on registration type
-    let role: string;
-    if (registrationType === 'new-store') {
-      // When creating a new store, the user automatically becomes the manager
-      role = 'MANAGER';
-    } else {
-      // Anyone joining an existing store becomes a teacher by default
-      // Only teachers, managers, and admins can access this panel
-      role = 'TEACHER';
-    }
-
-    setIsLoading(true);
-    isSubmittingRef.current = true;
-
-    try {
-      // Register the user with auth service
-
-      // In step 2, we send the verified OTP data
-      // Combine country code with phone number for backend
-      const fullPhoneNumber = getFullPhoneNumber(
-        formData.phone,
-        formData.countryCode
-      );
-
-      const userData: any = {
-        name: formData.name,
-        phone_number: fullPhoneNumber, // Send full phone with country code
-        email: formData.email || undefined,
-        password: formData.password,
-        confirmed_password: formData.confirmPassword,
-        role: role,
-        academy_id:
-          registrationType === 'existing-store'
-            ? parseInt(formData.existingStoreId)
-            : undefined, // No store ID when creating new store
-        display_name: formData.name,
-        // Store creation data (only when creating new store)
-        ...(registrationType === 'new-store' && {
-          store_name: formData.storeName,
-          store_slug: formData.storeSlug,
-          store_description: formData.storeDescription
-        })
-      };
-
-      const user = await apiClient.register(userData);
-
-      if (user) {
-        ErrorHandler.showSuccess('Registration successful!');
-
-        // Handle store creation or joining
-
-        const nextStep = (user as any)?.data?.next_step as string | undefined;
-        if (registrationType === 'new-store') {
-          // Create new store - user becomes manager automatically
-          ErrorHandler.showInfo(
-            'Registration completed! Your store has been created and you are the manager. You can now login.'
-          );
-          // Redirect to login
-          router.push('/login');
-        } else {
-          // Join existing store - becomes teacher
-          ErrorHandler.showInfo(
-            'Registration completed! You have been registered as a teacher. You can now login.'
-          );
-          // Redirect to login
-          router.push('/login');
-        }
-      }
-    } catch (error: unknown) {
-      console.error('Registration error:', error);
-
-      // Parse backend validation errors and map to form fields
-      const fieldErrors = ErrorHandler.handleFormError(error);
-
-      // Update form errors
-      if (Object.keys(fieldErrors).length > 0) {
-        setErrors(fieldErrors);
-      }
-    } finally {
-      setIsLoading(false);
-      isSubmittingRef.current = false;
-    }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  const generateStoreSlug = (storeName: string) => {
-    const slug = storeName
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-    handleInputChange('storeSlug', slug);
-  };
+  // ─── Shared layout wrapper ────────────────────────────────────────────────
 
   return (
     <>
       <LanguageDetector />
-      <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        {/* Language Switcher - Top Right/Left based on RTL */}
-        <div
-          className={`absolute top-4 z-[100] ${isRTL ? 'left-4' : 'right-4'}`}
-        >
+      <div
+        className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
+        {/* Language switcher */}
+        <div className={cn('fixed top-4 z-50', isRTL ? 'left-4' : 'right-4')}>
           <LanguageSwitcher />
         </div>
 
-        <div className="w-full max-w-2xl">
-          {/* Logo/Brand */}
+        <div className="w-full max-w-sm">
+          {/* Brand */}
           <div className="mb-8 text-center">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-              <Building2 className="h-8 w-8 text-white" />
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/25">
+              <Sparkles className="h-6 w-6 text-primary-foreground" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">آکادمی</h1>
-            <p className="text-gray-600">{t('auth.register')}</p>
-          </div>
-
-          {/* Access Notice */}
-          <Alert className="mb-6" dir={isRTL ? 'rtl' : 'ltr'}>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              {t('auth.panelForStaff')}{' '}
-              <strong>{t('auth.teachersManagersAdmins')}</strong>.{' '}
-              {t('auth.studentsLoginThroughStore')}
-            </AlertDescription>
-          </Alert>
-
-          <Card className="shadow-xl" dir={isRTL ? 'rtl' : 'ltr'}>
-            <StepIndicator current={step} />
-
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-center text-2xl">
-                {step === 'verification'
-                  ? t('auth.verifyYourContact')
-                  : t('auth.createStoreAccount')}
-              </CardTitle>
-              <CardDescription className="text-center">
-                {step === 'verification'
-                  ? t('auth.verifyContactDescription')
-                  : t('auth.registerDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {step === 'verification' && (
-                  <VerificationStep
-                    formData={formData}
-                    errors={errors}
-                    otpLoading={otpLoading}
-                    isLoading={isLoading}
-                    emailOtpSent={emailOtpSent}
-                    phoneOtpSent={phoneOtpSent}
-                    emailOtpVerified={emailOtpVerified}
-                    phoneOtpVerified={phoneOtpVerified}
-                    primaryMethod={primaryVerificationMethod}
-                    onChange={handleInputChange}
-                    onSendPhone={handleSendPhoneOtp}
-                    onVerifyPhone={handleVerifyPhoneOtp}
-                    onSendEmail={handleSendEmailOtp}
-                    onVerifyEmail={handleVerifyEmailOtp}
-                  />
-                )}
-
-                {step === 'form' && (
-                  <BaseDataForm
-                    registrationType={registrationType}
-                    setRegistrationType={setRegistrationType}
-                    formData={formData}
-                    errors={errors}
-                    isLoading={isLoading}
-                    stores={stores}
-                    storesLoading={storesLoading}
-                    storesError={storesError as any}
-                    joinAsTeacher={joinAsTeacher}
-                    setJoinAsTeacher={setJoinAsTeacher}
-                    onChange={handleInputChange}
-                    onGenerateSlug={generateStoreSlug}
-                  />
-                )}
-
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2
-                        className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
-                      />
-                      {step === 'verification'
-                        ? t('common.loading')
-                        : t('auth.registering')}
-                    </>
-                  ) : step === 'verification' ? (
-                    t('auth.continueToBaseData')
-                  ) : (
-                    t('auth.registerUser')
-                  )}
-                </Button>
-              </form>
-
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-600">
-                  {t('auth.alreadyHaveAccount')}{' '}
-                  <Link
-                    href="/login"
-                    className="font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    {t('auth.signIn')}
-                  </Link>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-xs text-gray-500">
-              By creating an account, you agree to our{' '}
-              <Link href="/terms" className="text-blue-600 hover:text-blue-500">
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link
-                href="/privacy"
-                className="text-blue-600 hover:text-blue-500"
-              >
-                Privacy Policy
-              </Link>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {t('auth.registerTitle')}
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t('auth.registerSubtitle')}
             </p>
           </div>
+
+          {/* Step indicator */}
+          <div className="mb-6 flex items-center justify-center gap-2">
+            {(['details', 'verify'] as const).map((s, idx) => {
+              const isActive = step === s;
+              const isDone = step === 'verify' && s === 'details';
+              return (
+                <div key={s} className="flex items-center gap-2">
+                  <div
+                    className={cn(
+                      'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-colors',
+                      isDone
+                        ? 'bg-primary text-primary-foreground'
+                        : isActive
+                          ? 'border-2 border-primary text-primary'
+                          : 'border-2 border-muted-foreground/30 text-muted-foreground/40'
+                    )}
+                  >
+                    {isDone ? '✓' : idx + 1}
+                  </div>
+                  {idx === 0 && (
+                    <div
+                      className={cn(
+                        'h-px w-10',
+                        step === 'verify' ? 'bg-primary' : 'bg-border'
+                      )}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Card */}
+          <div className="rounded-2xl border bg-card p-8 shadow-sm">
+            {/* ── Step 1: Details ── */}
+            {step === 'details' && (
+              <>
+                <p className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('auth.yourDetails')}
+                </p>
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onDetailsSubmit)}
+                    className="space-y-4"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.fullName')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <User
+                                className={cn(
+                                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
+                                  isRTL ? 'right-3' : 'left-3'
+                                )}
+                              />
+                              <Input
+                                className={isRTL ? 'pr-9' : 'pl-9'}
+                                placeholder={t('auth.fullNamePlaceholder')}
+                                {...field}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.phoneNumber')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Phone
+                                className={cn(
+                                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
+                                  isRTL ? 'right-3' : 'left-3'
+                                )}
+                              />
+                              <Input
+                                type="tel"
+                                dir="ltr"
+                                className={isRTL ? 'pr-9' : 'pl-9'}
+                                placeholder={t('auth.phonePlaceholder')}
+                                {...field}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.password')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Lock
+                                className={cn(
+                                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
+                                  isRTL ? 'right-3' : 'left-3'
+                                )}
+                              />
+                              <Input
+                                type={showPw ? 'text' : 'password'}
+                                className={cn(
+                                  isRTL ? 'pl-9 pr-9' : 'pl-9 pr-9'
+                                )}
+                                placeholder={t('auth.passwordPlaceholder')}
+                                {...field}
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                aria-label="toggle"
+                                className={cn(
+                                  'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
+                                  isRTL ? 'left-0' : 'right-0'
+                                )}
+                                onClick={() => setShowPw((v) => !v)}
+                              >
+                                {showPw ? (
+                                  <EyeOff className="h-4 w-4" />
+                                ) : (
+                                  <Eye className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.confirmPassword')}</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Lock
+                                className={cn(
+                                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
+                                  isRTL ? 'right-3' : 'left-3'
+                                )}
+                              />
+                              <Input
+                                type={showConfirm ? 'text' : 'password'}
+                                className={cn(
+                                  isRTL ? 'pl-9 pr-9' : 'pl-9 pr-9'
+                                )}
+                                placeholder={t(
+                                  'auth.repeatPasswordPlaceholder'
+                                )}
+                                {...field}
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                aria-label="toggle confirm"
+                                className={cn(
+                                  'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
+                                  isRTL ? 'left-0' : 'right-0'
+                                )}
+                                onClick={() => setShowConfirm((v) => !v)}
+                              >
+                                {showConfirm ? (
+                                  <EyeOff className="h-4 w-4" />
+                                ) : (
+                                  <Eye className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      className="mt-2 w-full"
+                      disabled={otpLoading}
+                    >
+                      {otpLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {t('auth.sending')}
+                        </>
+                      ) : (
+                        t('auth.continueBtn')
+                      )}
+                    </Button>
+                  </form>
+                </Form>
+              </>
+            )}
+
+            {/* ── Step 2: Verify email ── */}
+            {step === 'verify' && (
+              <div className="space-y-5">
+                <div className="space-y-1 rounded-xl bg-primary/5 p-4 text-center">
+                  <Phone className="mx-auto h-8 w-8 text-primary" />
+                  <p className="text-sm font-semibold">
+                    {t('auth.verifyPhoneTitle')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('auth.verifyPhoneDesc').replace(
+                      '{phone}',
+                      form.getValues('phone')
+                    )}
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="otp-code">
+                    {t('auth.enterVerificationCode')}
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="otp-code"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value)}
+                      placeholder={t('auth.verificationCodePlaceholder')}
+                      maxLength={8}
+                      dir="ltr"
+                      disabled={phoneVerified}
+                      className="text-center font-mono text-lg tracking-[0.3em]"
+                    />
+                    {!phoneVerified && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={verifying || otpCode.length < 4}
+                        onClick={verifyCode}
+                        className="shrink-0"
+                      >
+                        {verifying ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          t('auth.verifyEmailOtp')
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                  {phoneVerified && (
+                    <p className="flex items-center gap-1.5 text-sm text-emerald-600">
+                      <CheckCircle2 className="h-4 w-4" />
+                      {t('auth.verified')}
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  type="button"
+                  className="w-full"
+                  disabled={submitting || !phoneVerified}
+                  onClick={createAccount}
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t('auth.creatingAccount')}
+                    </>
+                  ) : (
+                    t('auth.createAccount')
+                  )}
+                </Button>
+
+                <div className="flex items-center justify-between text-sm">
+                  <button
+                    type="button"
+                    className="text-muted-foreground transition-colors hover:text-foreground"
+                    onClick={() => setStep('details')}
+                  >
+                    ← {t('auth.backToLogin')}
+                  </button>
+                  <button
+                    type="button"
+                    className="text-primary hover:underline disabled:opacity-50"
+                    disabled={otpLoading}
+                    onClick={resendOtp}
+                  >
+                    {otpLoading ? t('auth.resending') : t('auth.resendCode')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Terms */}
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            {t('auth.byCreatingAccount')}{' '}
+            <Link href="/terms" className="underline hover:text-foreground">
+              {t('auth.termsOfService')}
+            </Link>{' '}
+            {t('auth.and')}{' '}
+            <Link href="/privacy" className="underline hover:text-foreground">
+              {t('auth.privacyPolicy')}
+            </Link>
+            {t('auth.agree')}
+          </p>
+
+          {/* Footer */}
+          <p className="mt-3 text-center text-sm text-muted-foreground">
+            {t('auth.alreadyHaveAccount')}{' '}
+            <Link
+              href="/login"
+              className="font-semibold text-primary hover:underline"
+            >
+              {t('auth.signIn')}
+            </Link>
+          </p>
         </div>
       </div>
     </>

@@ -1,643 +1,401 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { InputWithIcon } from '@/components/ui/input-with-icon';
-import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Eye,
   EyeOff,
-  Mail,
   Phone,
   Lock,
-  Building2,
   Loader2,
-  AlertCircle
+  Sparkles,
+  Check
 } from 'lucide-react';
-import { authService } from '@/lib/auth';
-import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { ErrorHandler } from '@/lib/error-handler';
-import { useRouter, useSearchParams } from 'next/navigation';
-// Note: Avoid client-side auth redirect here to prevent loops; middleware and protected layout handle it.
-import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
+import { toE164Iran } from '@/lib/phone-utils';
 import Link from '@/components/ui/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { authService } from '@/lib/auth';
+import { ErrorHandler } from '@/lib/error-handler';
+import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
-import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
+
+// Deterministic avatar colour per academy id
+const AVATAR_COLORS = [
+  'bg-violet-500',
+  'bg-blue-500',
+  'bg-emerald-500',
+  'bg-amber-500',
+  'bg-rose-500',
+  'bg-cyan-500'
+];
+const avatarColor = (id: number) => AVATAR_COLORS[id % AVATAR_COLORS.length];
 
 export default function LoginPage() {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
-  const [formData, setFormData] = useState({
-    email: '',
-    phone: '',
-    fullPhoneNumber: '',
-    password: '',
-    academy_id: ''
-  });
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [availableAcademies, setAvailableAcademies] = useState<
-    Array<{ id: number; name: string; slug: string }>
-  >([]);
-  const [showStoreSelection, setShowStoreSelection] = useState(false);
   const [unauthorizedError, setUnauthorizedError] = useState<string | null>(
     null
   );
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  // Multi-academy picker state
+  const [academyPickerOpen, setAcademyPickerOpen] = useState(false);
+  const [availableAcademies, setAvailableAcademies] = useState<
+    Array<{ id: number; name: string; slug: string }>
+  >([]);
+  const [pickingAcademy, setPickingAcademy] = useState(false);
 
-  // Check for unauthorized role error from URL parameters
+  // Unauthorized role message from URL
   useEffect(() => {
     const error = searchParams.get('error');
     const message = searchParams.get('message');
-
     if (error === 'unauthorized_role') {
-      const errorMessage =
-        message ||
-        'You do not have permission to access the admin dashboard. Only ADMIN, MANAGER, and TEACHER roles are allowed.';
-      setUnauthorizedError(errorMessage);
-      ErrorHandler.handleValidationErrors({ message: errorMessage });
-
-      // Clean up URL parameters
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, '', newUrl);
+      const msg = message || t('auth.loginTitle');
+      setUnauthorizedError(msg);
+      window.history.replaceState({}, '', window.location.pathname);
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
-  // Removed client-side redirect check to avoid infinite navigation loops on auth routes.
+  function validate() {
+    const e: Record<string, string> = {};
+    if (!phone) e.phone = t('auth.phoneRequired');
+    else if (phone.replace(/\D/g, '').length < 7)
+      e.phone = t('auth.validPhoneNumber');
+    if (!password) e.password = t('auth.passwordRequired');
+    else if (password.length < 6) e.password = t('auth.passwordTooShort');
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  }
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+  function afterLogin(response: any) {
+    const userRole = response.currentProfile?.Role?.name;
+    const hasNoAcademy =
+      !response.currentAcademy &&
+      !response.currentProfile?.academy_id &&
+      !(response.currentProfile as any)?.Academy;
 
-    if (authMethod === 'email') {
-      if (!formData.email) {
-        newErrors.email = t('auth.emailRequired');
-      } else if (!isValidEmail(formData.email)) {
-        newErrors.email = t('auth.invalidEmail');
-      }
-    } else {
-      if (!formData.phone) {
-        newErrors.phone = t('auth.phoneRequired');
-      } else if (!isValidPhone(formData.phone)) {
-        newErrors.phone = t('auth.invalidPhone');
-      }
-    }
-
-    if (!formData.password) {
-      newErrors.password = t('auth.passwordRequired');
-    } else if (formData.password.length < 6) {
-      newErrors.password = t('auth.passwordTooShort');
-    }
-
-    if (showStoreSelection && !formData.academy_id) {
-      newErrors.academy_id = t('auth.selectStore');
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
+    if (userRole === 'STUDENT') {
+      if (isDevelopmentMode()) {
+        logDevInfo('Student → dashboard (dev)');
+        window.location.href = '/dashboard';
+      } else window.location.href = '/student-dashboard';
       return;
     }
+    if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
+      window.location.href = '/admin-login';
+      return;
+    }
+    // USER with no academy → create one first; USER with academy → dashboard
+    if (
+      userRole === 'USER' ||
+      userRole === 'MANAGER' ||
+      userRole === 'TEACHER'
+    ) {
+      window.location.href = hasNoAcademy
+        ? '/onboarding/create-academy'
+        : '/dashboard';
+      return;
+    }
+    ErrorHandler.showWarning(
+      t('auth.panelForStaff') + ' ' + t('auth.teachersManagersAdmins')
+    );
+  }
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!validate()) return;
     setIsLoading(true);
-
     try {
-      const credentials = {
-        identifier:
-          authMethod === 'phone'
-            ? formData.fullPhoneNumber || formData.phone
-            : formData.email,
-        password: formData.password,
-        academy_id: formData.academy_id
-          ? parseInt(formData.academy_id)
-          : undefined
-      };
-
-      const response = await authService.login(credentials);
-
+      const response = await authService.login({
+        identifier: toE164Iran(phone),
+        password
+      });
       if (response) {
-        // Check if store selection is required
         const academies =
-          response.availableAcademies || response.available_academies || [];
+          (response as any).availableAcademies ||
+          (response as any).available_academies ||
+          [];
         if (
-          response.requires_academy_selection ||
+          (response as any).requires_academy_selection ||
           (Array.isArray(academies) && academies.length > 0)
         ) {
           setAvailableAcademies(academies);
-          setShowStoreSelection(true);
+          setAcademyPickerOpen(true);
           setIsLoading(false);
           return;
         }
-
-        // Single store or specific store - proceed with normal login
         ErrorHandler.showSuccess('success.loginSuccess', true);
-        // Check user role and redirect accordingly
-        const userRole = response.currentProfile?.Role?.name;
-
-        if (userRole === 'STUDENT' || userRole === 'USER') {
-          // User is a student, redirect to their store
-          if (isDevelopmentMode()) {
-            // In development, show info instead of redirecting
-            ErrorHandler.showInfo(
-              'Development mode: Student would be redirected to store dashboard'
-            );
-            logDevInfo(
-              'Development mode: Would redirect student to store dashboard'
-            );
-            // For development, redirect to dashboard instead
-            window.location.href = '/dashboard';
-            return;
-          } else {
-            // In production, redirect to store
-            ErrorHandler.showInfo('Redirecting to your store dashboard...');
-            window.location.href = '/student-dashboard';
-            return;
-          }
-        } else if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
-          // ADMIN and SUPPORT use the dedicated /admin-login route.
-          ErrorHandler.showWarning(
-            'Admins and Support staff must sign in via /admin-login'
-          );
-          window.location.href = '/admin-login';
-          return;
-        } else if (userRole === 'MANAGER' || userRole === 'TEACHER') {
-          // Full navigation so server layout sees HttpOnly jwt on the panel host
-          window.location.href = '/dashboard';
-          return;
-        } else {
-          ErrorHandler.showWarning(
-            'You do not have permission to access this panel'
-          );
-          return;
-        }
+        afterLogin(response);
       }
-    } catch (error: unknown) {
-      console.error('Login error:', error);
-
-      // Parse backend validation errors and map to form fields
+    } catch (error: any) {
       const fieldErrors = ErrorHandler.handleFormError(error);
-
-      // Update form errors
-      if (Object.keys(fieldErrors).length > 0) {
-        setErrors(fieldErrors);
-      }
+      if (Object.keys(fieldErrors).length > 0) setErrors(fieldErrors);
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  const handleStoreSelection = async (academyId: number) => {
-    setFormData((prev) => ({ ...prev, academy_id: academyId.toString() }));
-    setShowStoreSelection(false);
-
-    // Retry login with academy_id
+  async function handleAcademySelect(academyId: number) {
+    setPickingAcademy(true);
     try {
-      const credentials = {
-        identifier:
-          authMethod === 'phone'
-            ? formData.fullPhoneNumber || formData.phone
-            : formData.email,
-        password: formData.password,
+      const response = await authService.login({
+        identifier: toE164Iran(phone),
+        password,
         academy_id: academyId
-      };
-
-      const response = await authService.login(credentials);
-
+      });
       if (response) {
-        ErrorHandler.showSuccess('Login successful!');
-
-        // Check user role and redirect accordingly
-        const userRole = response.currentProfile?.Role?.name;
-        if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
-          ErrorHandler.showWarning(
-            'Admins and Support staff must sign in via /admin-login'
-          );
-          window.location.href = '/admin-login';
-          return;
-        } else if (userRole === 'MANAGER' || userRole === 'TEACHER') {
-          window.location.href = '/dashboard';
-          return;
-        } else {
-          ErrorHandler.showWarning(
-            'You do not have permission to access this panel. Only Teachers and Managers can sign in here.'
-          );
-          return;
-        }
+        ErrorHandler.showSuccess('success.loginSuccess', true);
+        afterLogin(response);
       }
-    } catch (error: unknown) {
-      console.error('Login error:', error);
+    } catch (error: any) {
       ErrorHandler.handleFormError(error);
+    } finally {
+      setPickingAcademy(false);
     }
-  };
+  }
 
-  // Middleware handles redirect for already-authenticated users.
+  // ─── Academy picker screen ───────────────────────────────────────────────
+
+  if (academyPickerOpen) {
+    return (
+      <>
+        <LanguageDetector />
+        <div
+          className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
+          dir={isRTL ? 'rtl' : 'ltr'}
+        >
+          <div className="w-full max-w-md">
+            {/* Brand */}
+            <div className="mb-8 text-center">
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/25">
+                <Sparkles className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <h1 className="text-xl font-bold">{t('auth.chooseAcademy')}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t('auth.chooseAcademyDesc')}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              {availableAcademies.map((academy) => (
+                <button
+                  key={academy.id}
+                  type="button"
+                  disabled={pickingAcademy}
+                  onClick={() => handleAcademySelect(academy.id)}
+                  className={cn(
+                    'group flex w-full items-center gap-4 rounded-xl border bg-card p-4 text-start transition-all',
+                    'hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm',
+                    'disabled:cursor-not-allowed disabled:opacity-60'
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white',
+                      avatarColor(academy.id)
+                    )}
+                  >
+                    {academy.name[0].toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold group-hover:text-primary">
+                      {academy.name}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {academy.slug}
+                    </p>
+                  </div>
+                  {pickingAcademy ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  ) : (
+                    <Check className="h-4 w-4 text-primary opacity-0 transition-opacity group-hover:opacity-100" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="mt-6 w-full text-center text-sm text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => setAcademyPickerOpen(false)}
+            >
+              ← {t('auth.backToLogin')}
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // ─── Login form ──────────────────────────────────────────────────────────
 
   return (
     <>
       <LanguageDetector />
-      <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        {/* Language Switcher - Top Right/Left based on RTL */}
-        <div
-          className={`absolute top-4 z-[100] ${isRTL ? 'left-4' : 'right-4'}`}
-        >
+      <div
+        className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
+        {/* Language switcher */}
+        <div className={cn('fixed top-4 z-50', isRTL ? 'left-4' : 'right-4')}>
           <LanguageSwitcher />
         </div>
 
-        <div className="w-full max-w-md">
-          {/* Logo/Brand */}
+        <div className="w-full max-w-sm">
+          {/* Brand */}
           <div className="mb-8 text-center">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-              <Building2 className="h-8 w-8 text-white" />
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/25">
+              <Sparkles className="h-6 w-6 text-primary-foreground" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">آکادمی</h1>
-            <p className="text-gray-600">{t('auth.adminPanel')}</p>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {t('auth.loginTitle')}
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t('auth.loginSubtitle')}
+            </p>
           </div>
 
-          {/* Unauthorized Role Error */}
+          {/* Unauthorized error */}
           {unauthorizedError && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertCircle className="h-4 w-4" />
+            <Alert variant="destructive" className="mb-4">
               <AlertDescription>{unauthorizedError}</AlertDescription>
             </Alert>
           )}
 
-          {/* Access Notice */}
-          <Alert className="mb-6" dir={isRTL ? 'rtl' : 'ltr'}>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              {t('auth.panelForStaff')}{' '}
-              <strong>{t('auth.teachersManagersAdmins')}</strong>{' '}
-              {t('auth.staffOnly')} {t('auth.studentsLoginThroughStore')}
-            </AlertDescription>
-          </Alert>
-
-          <Card className="shadow-xl" dir={isRTL ? 'rtl' : 'ltr'}>
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-center text-2xl">
-                {t('auth.welcomeBack')}
-              </CardTitle>
-              <CardDescription className="text-center">
-                {t('auth.signInToAdmin')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs
-                value={authMethod}
-                onValueChange={(value: string) =>
-                  setAuthMethod(value as 'email' | 'phone')
-                }
-                className="w-full"
-              >
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger
-                    value="email"
-                    className="flex items-center gap-2"
-                  >
-                    <Mail className="h-4 w-4" />
-                    <span>{t('auth.email')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="phone"
-                    className="flex items-center gap-2"
-                  >
-                    <Phone className="h-4 w-4" />
-                    <span>{t('auth.phone')}</span>
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent
-                  value="email"
-                  className="space-y-4"
-                  dir={isRTL ? 'rtl' : 'ltr'}
-                >
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <InputWithIcon
-                      id="email"
-                      label={t('auth.emailAddress')}
-                      type="email"
-                      placeholder={t('auth.enterEmail')}
-                      value={formData.email}
-                      onChange={(value) => handleInputChange('email', value)}
-                      icon={Mail}
-                      error={errors.email}
-                      disabled={isLoading}
-                    />
-
-                    <div className="space-y-2">
-                      <Label htmlFor="password">{t('auth.password')}</Label>
-                      <div className="relative">
-                        <Lock
-                          className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
-                        />
-                        <Input
-                          id="password"
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder={t('auth.enterPassword')}
-                          value={formData.password}
-                          onChange={(e) =>
-                            handleInputChange('password', e.target.value)
-                          }
-                          className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
-                            errors.password ? 'border-red-500' : ''
-                          }`}
-                          disabled={isLoading}
-                          dir="ltr"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
-                          onClick={() => setShowPassword(!showPassword)}
-                          disabled={isLoading}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-gray-400" />
-                          )}
-                        </Button>
-                      </div>
-                      {errors.password && (
-                        <p className="text-sm text-red-500">
-                          {errors.password}
-                        </p>
-                      )}
-                    </div>
-
-                    {showStoreSelection && (
-                      <div className="space-y-2">
-                        <Label htmlFor="store">{t('auth.selectStore')}</Label>
-                        <div className="space-y-2">
-                          {availableAcademies.map((store) => (
-                            <button
-                              key={store.id}
-                              type="button"
-                              onClick={() => handleStoreSelection(store.id)}
-                              className="w-full rounded-lg border p-3 text-start hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                              <div className="font-medium">{store.name}</div>
-                              <div className="text-sm text-gray-500">
-                                {store.slug}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                        {errors.academy_id && (
-                          <p className="text-sm text-red-500">
-                            {errors.academy_id}
-                          </p>
-                        )}
-                      </div>
+          {/* Card */}
+          <div className="rounded-2xl border bg-card p-8 shadow-sm">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              {/* Phone */}
+              <div className="space-y-1.5">
+                <Label htmlFor="phone">{t('auth.phoneNumber')}</Label>
+                <div className="relative">
+                  <Phone
+                    className={cn(
+                      'absolute top-2.5 h-4 w-4 text-muted-foreground',
+                      isRTL ? 'right-3' : 'left-3'
                     )}
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          id="remember"
-                          aria-label="Remember me"
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <Label
-                          htmlFor="remember"
-                          className="text-sm text-gray-600"
-                        >
-                          {t('auth.rememberMe')}
-                        </Label>
-                      </div>
-                      <Link
-                        href="/forget-password"
-                        className="text-sm text-blue-600 hover:text-blue-500"
-                      >
-                        {t('auth.forgotPassword')}
-                      </Link>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2
-                            className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
-                          />
-                          {t('auth.signingIn')}
-                        </>
-                      ) : (
-                        t('auth.signIn')
-                      )}
-                    </Button>
-                  </form>
-                </TabsContent>
-
-                <TabsContent
-                  value="phone"
-                  className="space-y-4"
-                  dir={isRTL ? 'rtl' : 'ltr'}
-                >
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <PhoneInputWithCountry
-                      id="phone"
-                      label={t('auth.phoneNumber')}
-                      placeholder={t('auth.enterPhone')}
-                      value={formData.phone}
-                      onChange={(value) => handleInputChange('phone', value)}
-                      onFullPhoneChange={(fullPhone) =>
-                        handleInputChange('fullPhoneNumber', fullPhone)
-                      }
-                      lockCountryCode="IR"
-                      error={errors.phone}
-                      disabled={isLoading}
-                    />
-
-                    <div className="space-y-2" dir={isRTL ? 'rtl' : 'ltr'}>
-                      <Label htmlFor="password-phone">
-                        {t('auth.password')}
-                      </Label>
-                      <div className="relative">
-                        <Lock
-                          className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
-                        />
-                        <Input
-                          id="password-phone"
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder={t('auth.enterPassword')}
-                          value={formData.password}
-                          onChange={(e) =>
-                            handleInputChange('password', e.target.value)
-                          }
-                          className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
-                            errors.password ? 'border-red-500' : ''
-                          }`}
-                          disabled={isLoading}
-                          dir="ltr"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
-                          onClick={() => setShowPassword(!showPassword)}
-                          disabled={isLoading}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-gray-400" />
-                          )}
-                        </Button>
-                      </div>
-                      {errors.password && (
-                        <p className="text-sm text-red-500">
-                          {errors.password}
-                        </p>
-                      )}
-                    </div>
-
-                    {showStoreSelection && (
-                      <div className="space-y-2">
-                        <Label htmlFor="store-phone">
-                          {t('auth.selectStore')}
-                        </Label>
-                        <div className="space-y-2">
-                          {availableAcademies.map((store) => (
-                            <button
-                              key={store.id}
-                              type="button"
-                              onClick={() => handleStoreSelection(store.id)}
-                              className="w-full rounded-lg border p-3 text-start hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                              <div className="font-medium">{store.name}</div>
-                              <div className="text-sm text-gray-500">
-                                {store.slug}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                        {errors.academy_id && (
-                          <p className="text-sm text-red-500">
-                            {errors.academy_id}
-                          </p>
-                        )}
-                      </div>
+                  />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    placeholder={t('auth.phonePlaceholder')}
+                    value={phone}
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                      if (errors.phone) setErrors((p) => ({ ...p, phone: '' }));
+                    }}
+                    className={cn(
+                      isRTL ? 'pr-9' : 'pl-9',
+                      errors.phone && 'border-destructive'
                     )}
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          id="remember-phone"
-                          aria-label="Remember me"
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <Label
-                          htmlFor="remember-phone"
-                          className="text-sm text-gray-600"
-                        >
-                          {t('auth.rememberMe')}
-                        </Label>
-                      </div>
-                      <Link
-                        href="/forget-password"
-                        className="text-sm text-blue-600 hover:text-blue-500"
-                      >
-                        {t('auth.forgotPassword')}
-                      </Link>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2
-                            className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
-                          />
-                          {t('auth.signingIn')}
-                        </>
-                      ) : (
-                        t('auth.signIn')
-                      )}
-                    </Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
-
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-600">
-                  {t('auth.dontHaveAccount')}{' '}
-                  <Link
-                    href="/register"
-                    className="font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    {t('auth.registerStore')}
-                  </Link>
-                </p>
+                    disabled={isLoading}
+                    dir="ltr"
+                  />
+                </div>
+                {errors.phone && (
+                  <p className="text-xs text-destructive">{errors.phone}</p>
+                )}
               </div>
 
-              <div className="mt-4 text-center">
-                <p className="text-xs text-gray-500">
-                  {t('auth.areYouStudent')}{' '}
+              {/* Password */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">{t('auth.password')}</Label>
                   <Link
-                    href="/find-store"
-                    className="text-blue-600 hover:text-blue-500"
+                    href="/forget-password"
+                    className="text-xs text-primary hover:underline"
                   >
-                    {t('auth.findStore')}
+                    {t('auth.forgotPassword')}
                   </Link>
-                </p>
+                </div>
+                <div className="relative">
+                  <Lock
+                    className={cn(
+                      'absolute top-2.5 h-4 w-4 text-muted-foreground',
+                      isRTL ? 'right-3' : 'left-3'
+                    )}
+                  />
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    placeholder={t('auth.enterPassword')}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (errors.password)
+                        setErrors((p) => ({ ...p, password: '' }));
+                    }}
+                    className={cn(
+                      isRTL ? 'pl-9 pr-9' : 'pl-9 pr-9',
+                      errors.password && 'border-destructive'
+                    )}
+                    disabled={isLoading}
+                    dir="ltr"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={
+                      showPassword ? t('common.inactive') : t('common.active')
+                    }
+                    className={cn(
+                      'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
+                      isRTL ? 'left-0' : 'right-0'
+                    )}
+                    onClick={() => setShowPassword((v) => !v)}
+                    disabled={isLoading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                {errors.password && (
+                  <p className="text-xs text-destructive">{errors.password}</p>
+                )}
               </div>
-            </CardContent>
-          </Card>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t('auth.signingIn')}
+                  </>
+                ) : (
+                  t('auth.signIn')
+                )}
+              </Button>
+            </form>
+          </div>
 
           {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-xs text-gray-500">
-              By signing in, you agree to our{' '}
-              <Link href="/terms" className="text-blue-600 hover:text-blue-500">
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link
-                href="/privacy"
-                className="text-blue-600 hover:text-blue-500"
-              >
-                Privacy Policy
-              </Link>
-            </p>
-          </div>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            {t('auth.dontHaveAccountYet')}{' '}
+            <Link
+              href="/register"
+              className="font-semibold text-primary hover:underline"
+            >
+              {t('auth.signUp')}
+            </Link>
+          </p>
         </div>
       </div>
     </>

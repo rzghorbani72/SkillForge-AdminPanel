@@ -50,13 +50,6 @@ export interface RegisterData {
   bio?: string;
   website?: string;
   location?: string;
-  // Store creation data (for MANAGER role)
-  store_name?: string;
-  store_slug?: string;
-  store_description?: string;
-  // Teacher request data
-  teacher_request?: boolean;
-  teacher_request_reason?: string;
 }
 
 const normalizePermissionArray = (permissions: unknown): string[] => {
