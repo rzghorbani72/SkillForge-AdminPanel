@@ -139,11 +139,22 @@ export default function ForgetPasswordPage() {
 
     try {
       if (authMethod === 'email') {
-        await apiClient.sendEmailOtp(
+        const response = await apiClient.sendEmailOtp(
           formData.email,
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
         setMessage(t('forgotPassword.otpSentToEmail'));
+
+        // Show OTP code in toast (development feature)
+        if (response?.data?.otp) {
+          toast.info(
+            `${t('forgotPassword.otpSentToEmail')}\n\n🔐 Code: ${response.data.otp}`,
+            {
+              autoClose: 8000,
+              style: { whiteSpace: 'pre-wrap' }
+            }
+          );
+        }
       } else {
         // Ensure we have the full phone number with country code
         const phoneToSend = formData.fullPhoneNumber;
@@ -160,11 +171,22 @@ export default function ForgetPasswordPage() {
           return;
         }
 
-        await apiClient.sendPhoneOtp(
+        const response = await apiClient.sendPhoneOtp(
           phoneToSend,
           OtpType.RESET_PASSWORD_BY_PHONE
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
+
+        // Show OTP code in toast (development feature)
+        if (response?.otp) {
+          toast.info(
+            `${t('forgotPassword.otpSentToPhone')}\n\n🔐 Code: ${response.otp}`,
+            {
+              autoClose: 8000,
+              style: { whiteSpace: 'pre-wrap' }
+            }
+          );
+        }
       }
       setStep('otp');
     } catch (error: unknown) {

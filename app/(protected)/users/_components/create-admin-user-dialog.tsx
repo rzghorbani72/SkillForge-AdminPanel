@@ -19,6 +19,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { Loader2, Mail, Phone } from 'lucide-react';
 import { OtpType } from '@/constants/data';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'react-toastify';
 
 interface CreateAdminUserDialogProps {
   open: boolean;
@@ -71,12 +72,24 @@ export function CreateAdminUserDialog({
     try {
       setIsSendingOtp(true);
       const fullPhone = `${formData.countryCode}${formData.phone.replace(/^\+/, '')}`;
-      await apiClient.sendPhoneOtp(
+      const response = await apiClient.sendPhoneOtp(
         fullPhone,
         OtpType.REGISTER_PHONE_VERIFICATION
       );
       setOtpSent((prev) => ({ ...prev, phone: true }));
-      ErrorHandler.showSuccess(t('createAdminUser.phoneOtpSent'));
+      // Show OTP code in toast (development feature)
+      if (response?.data?.otp) {
+        // Use toast directly for multiline support
+        toast.success(
+          `${t('createAdminUser.phoneOtpSent')}\n\n🔐 Code: ${response.data.otp}`,
+          {
+            autoClose: 8000,
+            style: { whiteSpace: 'pre-wrap' }
+          }
+        );
+      } else {
+        ErrorHandler.showSuccess(t('createAdminUser.phoneOtpSent'));
+      }
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -92,12 +105,24 @@ export function CreateAdminUserDialog({
 
     try {
       setIsSendingOtp(true);
-      await apiClient.sendEmailOtp(
+      const response = await apiClient.sendEmailOtp(
         formData.email,
         OtpType.REGISTER_EMAIL_VERIFICATION
       );
       setOtpSent((prev) => ({ ...prev, email: true }));
-      ErrorHandler.showSuccess(t('createAdminUser.emailOtpSent'));
+      // Show OTP code in toast (development feature)
+      if (response?.data?.otp) {
+        // Use toast directly for multiline support
+        toast.success(
+          `${t('createAdminUser.emailOtpSent')}\n\n🔐 Code: ${response.data.otp}`,
+          {
+            autoClose: 8000,
+            style: { whiteSpace: 'pre-wrap' }
+          }
+        );
+      } else {
+        ErrorHandler.showSuccess(t('createAdminUser.emailOtpSent'));
+      }
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {

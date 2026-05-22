@@ -84,14 +84,26 @@ export default function RegisterPage() {
   async function onDetailsSubmit(values: RegisterValues) {
     setOtpLoading(true);
     try {
-      await apiClient.sendPhoneOtp(
+      const response = await apiClient.sendPhoneOtp(
         toE164Iran(values.phone),
         OtpType.REGISTER_PHONE_VERIFICATION
       );
       setStep('verify');
       setPhoneVerified(false);
       setOtpCode('');
-      toast.info(t('auth.sendVerificationCode'));
+
+      // Show OTP code in toast (development feature)
+      if (response?.data?.otp) {
+        toast.info(
+          `${t('auth.sendVerificationCode')}\n\n🔐 Code: ${response.data.otp}`,
+          {
+            autoClose: 8000,
+            style: { whiteSpace: 'pre-wrap' }
+          }
+        );
+      } else {
+        toast.info(t('auth.sendVerificationCode'));
+      }
     } catch (err: any) {
       toast.error(err?.message ?? t('common.error'));
     } finally {
@@ -151,8 +163,20 @@ export default function RegisterPage() {
     setPhoneVerified(false);
     setOtpCode('');
     try {
-      await apiClient.sendPhoneOtp(phone, OtpType.REGISTER_PHONE_VERIFICATION);
-      toast.info(t('auth.resendCode'));
+      const response = await apiClient.sendPhoneOtp(
+        phone,
+        OtpType.REGISTER_PHONE_VERIFICATION
+      );
+
+      // Show OTP code in toast (development feature)
+      if (response?.data?.otp) {
+        toast.info(`${t('auth.resendCode')}\n\n🔐 Code: ${response.data.otp}`, {
+          autoClose: 8000,
+          style: { whiteSpace: 'pre-wrap' }
+        });
+      } else {
+        toast.info(t('auth.resendCode'));
+      }
     } catch {
       toast.error(t('common.error'));
     } finally {

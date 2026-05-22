@@ -32,6 +32,7 @@ import Link from '@/components/ui/link';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { toast } from 'react-toastify';
 
 export default function AdminForgetPasswordPage() {
   const { t } = useTranslation();
@@ -121,11 +122,22 @@ export default function AdminForgetPasswordPage() {
 
     try {
       if (authMethod === 'email') {
-        await apiClient.sendEmailOtp(
+        const response = await apiClient.sendEmailOtp(
           formData.email,
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
         setMessage(t('forgotPassword.otpSentToEmail'));
+
+        // Show OTP code in toast (development feature)
+        if (response?.data?.otp) {
+          toast.info(
+            `${t('forgotPassword.otpSentToEmail')}\n\n🔐 Code: ${response.data.otp}`,
+            {
+              autoClose: 8000,
+              style: { whiteSpace: 'pre-wrap' }
+            }
+          );
+        }
       } else {
         const phoneToSend = formData.fullPhoneNumber;
 
@@ -141,11 +153,22 @@ export default function AdminForgetPasswordPage() {
           return;
         }
 
-        await apiClient.sendPhoneOtp(
+        const response = await apiClient.sendPhoneOtp(
           phoneToSend,
           OtpType.RESET_PASSWORD_BY_PHONE
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
+
+        // Show OTP code in toast (development feature)
+        if (response?.otp) {
+          toast.info(
+            `${t('forgotPassword.otpSentToPhone')}\n\n🔐 Code: ${response.otp}`,
+            {
+              autoClose: 8000,
+              style: { whiteSpace: 'pre-wrap' }
+            }
+          );
+        }
       }
       setStep('otp');
     } catch (error: unknown) {
