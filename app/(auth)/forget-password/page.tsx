@@ -32,6 +32,7 @@ import Link from '@/components/ui/link';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { toast } from 'react-toastify';
 
 export default function ForgetPasswordPage() {
   const { t } = useTranslation();
