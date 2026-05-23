@@ -378,10 +378,10 @@ export default function BundlesPage() {
     if (!academyId) return;
     setLoadingCourses(true);
     try {
-      const data = await apiClient.getCourses({ limit: 200 });
+      const data: any = await apiClient.getCourses({ limit: 200 });
       const list = Array.isArray(data)
         ? data
-        : (data?.data?.courses ?? data?.courses ?? data?.data ?? []);
+        : (data?.courses ?? data?.data ?? []);
       setCourses(list);
     } catch {
       // non-fatal

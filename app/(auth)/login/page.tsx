@@ -58,6 +58,14 @@ export default function LoginPage() {
   >([]);
   const [pickingAcademy, setPickingAcademy] = useState(false);
 
+  // Phone OTP verification state (for admin-created affiliate accounts)
+  const [otpRequired, setOtpRequired] = useState(false);
+  const [otpTempToken, setOtpTempToken] = useState('');
+  const [otpPhone, setOtpPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState('');
+
   // Unauthorized role message from URL
   useEffect(() => {
     const error = searchParams.get('error');
@@ -80,6 +88,28 @@ export default function LoginPage() {
     return Object.keys(e).length === 0;
   }
 
+  async function handleOtpSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!otp.trim()) {
+      setOtpError('Enter the OTP code');
+      return;
+    }
+    setOtpLoading(true);
+    setOtpError('');
+    try {
+      const { apiClient } = await import('@/lib/api');
+      const result = await apiClient.confirmPhoneOtp(otpTempToken, otp.trim());
+      ErrorHandler.showSuccess('Phone verified!');
+      // Backend sets cookie; redirect to affiliate panel
+      const redirectTo = (result as any)?.redirect_to ?? '/my-affiliate';
+      window.location.href = redirectTo;
+    } catch (err: any) {
+      setOtpError(err?.message ?? 'Invalid OTP. Please try again.');
+    } finally {
+      setOtpLoading(false);
+    }
+  }
+
   function afterLogin(response: any) {
     const userRole = response.currentProfile?.Role?.name;
     const hasNoAcademy =
@@ -87,6 +117,10 @@ export default function LoginPage() {
       !response.currentProfile?.academy_id &&
       !(response.currentProfile as any)?.Academy;
 
+    if (userRole === 'AFFILIATE') {
+      window.location.href = '/my-affiliate';
+      return;
+    }
     if (userRole === 'STUDENT') {
       if (isDevelopmentMode()) {
         logDevInfo('Student → dashboard (dev)');
@@ -124,6 +158,15 @@ export default function LoginPage() {
         password
       });
       if (response) {
+        // Phone OTP required (admin-created affiliate account, first login)
+        if ((response as any).phone_verification_required) {
+          setOtpTempToken((response as any).temp_token ?? '');
+          setOtpPhone((response as any).phone ?? '');
+          setOtpRequired(true);
+          setIsLoading(false);
+          return;
+        }
+
         const academies =
           (response as any).availableAcademies ||
           (response as any).available_academies ||
@@ -165,6 +208,75 @@ export default function LoginPage() {
     } finally {
       setPickingAcademy(false);
     }
+  }
+
+  // ─── Phone OTP verification screen ──────────────────────────────────────
+
+  if (otpRequired) {
+    return (
+      <>
+        <LanguageDetector />
+        <div
+          className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
+          dir={isRTL ? 'rtl' : 'ltr'}
+        >
+          <div className="w-full max-w-sm">
+            <div className="mb-8 text-center">
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/25">
+                <Phone className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <h1 className="text-xl font-bold">Verify your phone</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                An OTP was sent to <strong>{otpPhone}</strong>. Enter it below
+                to activate your account.
+              </p>
+            </div>
+
+            <form onSubmit={handleOtpSubmit} className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">
+                  OTP Code
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                  placeholder="______"
+                  className="w-full rounded-md border bg-background px-4 py-3 text-center font-mono text-2xl tracking-widest outline-none focus:ring-2 focus:ring-primary"
+                  autoFocus
+                />
+                {otpError && (
+                  <p className="mt-1 text-xs text-destructive">{otpError}</p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full" disabled={otpLoading}>
+                {otpLoading ? (
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Check className="me-2 h-4 w-4" />
+                )}
+                Confirm & Enter Panel
+              </Button>
+
+              <button
+                type="button"
+                className="w-full text-center text-sm text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  setOtpRequired(false);
+                  setOtp('');
+                  setOtpError('');
+                }}
+              >
+                ← Back to login
+              </button>
+            </form>
+          </div>
+        </div>
+      </>
+    );
   }
 
   // ─── Academy picker screen ───────────────────────────────────────────────

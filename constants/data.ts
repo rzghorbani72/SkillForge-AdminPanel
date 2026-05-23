@@ -138,6 +138,13 @@ export const navItems: NavItem[] = [
     roles: ['ADMIN', 'MANAGER']
   },
   {
+    title: 'My Affiliate',
+    href: '/my-affiliate',
+    icon: 'network' as IconType,
+    label: 'my-affiliate',
+    roles: ['STUDENT', 'TEACHER', 'AFFILIATE']
+  },
+  {
     title: 'Coupons',
     href: '/coupons',
     icon: 'percent' as IconType,

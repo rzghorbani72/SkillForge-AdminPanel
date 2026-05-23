@@ -3658,17 +3658,92 @@ class ApiClient {
   // Affiliates
   // -------------------------------------------------------------------------
 
+  async checkAffiliatePhone(
+    phone: string
+  ): Promise<{ exists: boolean; name?: string }> {
+    const res = await this.request<any>(
+      `/affiliates/check-phone?phone=${encodeURIComponent(phone)}`
+    );
+    return res.data ?? res;
+  }
+
+  async createAffiliateAccount(data: {
+    affiliate_name: string;
+    phone: string;
+    password?: string;
+    commission_rate: number;
+  }) {
+    const res = await this.request<any>('/affiliates/accounts', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async confirmPhoneOtp(temp_token: string, otp: string) {
+    const res = await this.request<any>('/auth/confirm-phone', {
+      method: 'POST',
+      body: JSON.stringify({ temp_token, otp })
+    });
+    return res.data;
+  }
+
+  async deactivateAffiliate(id: number) {
+    const res = await this.request<any>(`/affiliates/${id}/deactivate`, {
+      method: 'PATCH',
+      body: '{}'
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
   async getAffiliates() {
     const res = await this.request<any>('/affiliates');
     return (res.data as any)?.data ?? res.data;
   }
 
+  async getMyAffiliateLinks() {
+    const res = await this.request<any>('/affiliates/my');
+    return (res.data as any)?.data ?? res.data ?? [];
+  }
+
+  async requestAffiliateWithdrawal(linkId: number, amount: number) {
+    const res = await this.request<any>(`/affiliates/my/${linkId}/withdraw`, {
+      method: 'POST',
+      body: JSON.stringify({ amount })
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async getAffiliateWithdrawals(status?: string) {
+    const qs = status ? `?status=${status}` : '';
+    const res = await this.request<any>(`/affiliates/withdrawals${qs}`);
+    return (res.data as any)?.data ?? res.data ?? [];
+  }
+
+  async processAffiliateWithdrawal(id: number, status: string, notes?: string) {
+    const res = await this.request<any>(`/affiliates/withdrawals/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, notes })
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async searchAffiliateCandidates(search: string) {
+    const res = await this.request<any>(
+      `/affiliates/candidates?search=${encodeURIComponent(search)}`
+    );
+    return (res.data as any)?.data ?? res.data ?? [];
+  }
+
   async createAffiliate(data: {
+    affiliate_name: string;
+    affiliate_email?: string;
+    affiliate_phone?: string;
     code?: string;
-    profile_id: number;
     course_id?: number;
     academy_id: number;
     commission_rate: number;
+    profile_id?: number;
   }) {
     const res = await this.request<any>('/affiliates', {
       method: 'POST',
@@ -3679,7 +3754,13 @@ class ApiClient {
 
   async updateAffiliate(
     id: number,
-    data: Partial<{ is_active: boolean; commission_rate: number }>
+    data: Partial<{
+      affiliate_name: string;
+      affiliate_email: string;
+      affiliate_phone: string;
+      is_active: boolean;
+      commission_rate: number;
+    }>
   ) {
     const res = await this.request<any>(`/affiliates/${id}`, {
       method: 'PATCH',

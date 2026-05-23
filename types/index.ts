@@ -10,7 +10,14 @@ export interface NavItem {
   label?: string;
   description?: string;
   children?: NavItem[];
-  roles?: ('ADMIN' | 'SUPPORT' | 'MANAGER' | 'TEACHER' | 'STUDENT')[]; // If not specified, all roles can access
+  roles?: (
+    | 'ADMIN'
+    | 'SUPPORT'
+    | 'MANAGER'
+    | 'TEACHER'
+    | 'STUDENT'
+    | 'AFFILIATE'
+  )[]; // If not specified, all roles can access
   adminOnly?: boolean; // If true, only show to admins without stores (platform-level admins)
 }
 
