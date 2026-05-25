@@ -29,6 +29,10 @@ export default async function RootLayout({
 
   return (
     <html lang={language} dir={direction} suppressHydrationWarning>
+      <head>
+        {/* Paint warm off-white before any stylesheet loads — prevents blue flash */}
+        <style>{`html,body{background:#f9f7f6;color-scheme:light}`}</style>
+      </head>
       <body suppressHydrationWarning>
         <ThemeProviderWrapper>
           <I18nProvider initialLanguage={language}>
