@@ -20,12 +20,10 @@ const EditProductHeader = ({ product, onBack }: Props) => {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-bold text-foreground dark:text-foreground">
             Edit Product
           </h1>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            {product.title}
-          </p>
+          <p className="text-sm text-muted-foreground">{product.title}</p>
         </div>
       </div>
     </div>

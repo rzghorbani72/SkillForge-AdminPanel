@@ -13,25 +13,24 @@ module.exports = {
     container: {
       center: true,
       padding: '2rem',
-      screens: {
-        '2xl': '1400px'
-      }
+      screens: { '2xl': '1400px' }
     },
     extend: {
       fontFamily: {
         sans: [
+          'Vazirmatn',
+          'Plus Jakarta Sans',
           '-apple-system',
           'BlinkMacSystemFont',
           '"Segoe UI"',
-          'Roboto',
-          'Oxygen',
-          'Ubuntu',
-          'Cantarell',
-          '"Fira Sans"',
-          '"Droid Sans"',
-          '"Helvetica Neue"',
           'sans-serif'
-        ]
+        ],
+        vazir: ['Vazirmatn', 'sans-serif'],
+        jakarta: ['"Plus Jakarta Sans"', 'sans-serif']
+      },
+      fontSize: {
+        /* Mentoryar density: cozy = 14px base */
+        base: ['14px', { lineHeight: '1.6' }]
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -66,12 +65,34 @@ module.exports = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))'
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))'
+        },
+        info: {
+          DEFAULT: 'hsl(var(--info))',
+          foreground: 'hsl(var(--info-foreground))'
         }
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
+        /* Mentoryar scale: sm=6px, md=10px, lg=14px, xl=20px */
+        sm: '6px',
+        DEFAULT: '10px',
+        md: '10px',
+        lg: '14px',
+        xl: '20px',
+        '2xl': '24px',
+        full: '9999px'
+      },
+      boxShadow: {
+        card: '0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)',
+        'card-md': '0 4px 12px 0 rgb(0 0 0 / 0.06)',
+        'card-lg': '0 8px 24px 0 rgb(0 0 0 / 0.08)'
       },
       keyframes: {
         'accordion-down': {

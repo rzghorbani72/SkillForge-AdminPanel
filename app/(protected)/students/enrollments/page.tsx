@@ -132,9 +132,9 @@ export default function StudentEnrollmentsPage() {
       case 'CANCELLED':
         return 'bg-red-100 text-red-800';
       case 'EXPIRED':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -215,7 +215,7 @@ export default function StudentEnrollmentsPage() {
                   <TableRow>
                     <TableCell colSpan={5} className="h-32 text-center">
                       <div className="flex flex-col items-center gap-2">
-                        <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
+                        <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-primary" />
                         <span className="text-sm text-muted-foreground">
                           {t('students.loadingEnrollments')}
                         </span>

@@ -37,7 +37,7 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
               </FormControl>
               <FormMessage />
               <p
-                className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-gray-600'}`}
+                className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
                 {t('courses.titleLength')} ({field.value?.length || 0}/80)
               </p>
@@ -60,7 +60,7 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
               </FormControl>
               <FormMessage />
               <p
-                className={`text-sm ${(field.value?.length || 0) >= 350 ? 'text-orange-600' : 'text-gray-600'}`}
+                className={`text-sm ${(field.value?.length || 0) >= 350 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
                 {t('courses.descriptionLength')} ({field.value?.length || 0}
                 /400)

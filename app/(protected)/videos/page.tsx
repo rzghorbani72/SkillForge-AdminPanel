@@ -101,7 +101,7 @@ export default function VideosPage() {
       case 'CONCLUSION':
         return <Clock className="h-4 w-4 text-green-500" />;
       default:
-        return <Video className="h-4 w-4 text-gray-500" />;
+        return <Video className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -114,7 +114,7 @@ export default function VideosPage() {
       case 'CONCLUSION':
         return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+        return 'bg-muted text-muted-foreground ';
     }
   };
 

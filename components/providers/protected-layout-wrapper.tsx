@@ -26,10 +26,7 @@ export function ProtectedLayoutWrapper({
       <ThemeInitializer />
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
-        <main className="relative flex flex-1 flex-col overflow-hidden">
-          {/* Subtle background pattern */}
-          <div className="gradient-mesh pointer-events-none absolute inset-0 -z-10 opacity-50" />
-
+        <main className="flex flex-1 flex-col overflow-hidden">
           <Header />
           <div className="beautiful-scrollbar flex-1 overflow-auto">
             {children}

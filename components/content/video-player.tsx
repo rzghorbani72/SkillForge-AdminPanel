@@ -214,7 +214,7 @@ export default function VideoPlayer({
                   max={duration || 0}
                   value={currentTime}
                   onChange={handleSeek}
-                  className="slider h-1 w-full cursor-pointer appearance-none rounded-lg bg-gray-600"
+                  className="slider h-1 w-full cursor-pointer appearance-none rounded-lg bg-muted-foreground/40"
                   style={{
                     background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(currentTime / (duration || 1)) * 100}%, #6b7280 ${(currentTime / (duration || 1)) * 100}%, #6b7280 100%)`
                   }}
@@ -296,7 +296,7 @@ export default function VideoPlayer({
                           step="0.1"
                           value={volume}
                           onChange={handleVolumeChange}
-                          className="h-1 w-20 cursor-pointer appearance-none rounded-lg bg-gray-600"
+                          className="h-1 w-20 cursor-pointer appearance-none rounded-lg bg-muted-foreground/40"
                           style={{
                             background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${volume * 100}%, #6b7280 ${volume * 100}%, #6b7280 100%)`
                           }}

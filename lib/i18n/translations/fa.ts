@@ -169,7 +169,12 @@ export const fa = {
     affiliates: 'بازاریابی',
     coupons: 'کوپن‌ها',
     subscriptions: 'اشتراک‌ها',
-    platformSettings: 'تنظیمات پلتفرم'
+    platformSettings: 'تنظیمات پلتفرم',
+    section: {
+      manage: 'مدیریت',
+      finance: 'مالی',
+      platform: 'پلتفرم'
+    }
   },
   auth: {
     login: 'ورود',

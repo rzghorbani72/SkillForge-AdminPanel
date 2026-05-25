@@ -288,11 +288,11 @@ const CATEGORY_BADGE_STYLE: Record<string, string> = {
   Tech: 'bg-blue-100 text-blue-700',
   Luxury: 'bg-amber-100 text-amber-700',
   Natural: 'bg-green-100 text-green-700',
-  Dark: 'bg-slate-100 text-slate-600',
+  Dark: 'bg-muted text-muted-foreground',
   Playful: 'bg-pink-100 text-pink-700',
   Trust: 'bg-sky-100 text-sky-700',
   Beauty: 'bg-rose-100 text-rose-700',
-  Business: 'bg-gray-100 text-gray-700'
+  Business: 'bg-muted text-muted-foreground'
 };
 
 const ANIMATION_TYPE_OPTIONS = [
@@ -540,7 +540,8 @@ function PresetCard({
         <span
           className={cn(
             'ml-auto rounded-full px-2 py-0.5 text-[10px] font-medium',
-            CATEGORY_BADGE_STYLE[preset.category] ?? 'bg-gray-100 text-gray-700'
+            CATEGORY_BADGE_STYLE[preset.category] ??
+              'bg-muted text-muted-foreground'
           )}
         >
           {preset.category}

@@ -82,7 +82,7 @@ const CreateProductTypeSettings = ({ form }: Props) => {
                     />
                   </FormControl>
                   <FormMessage />
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {t('products.leaveEmptyForUnlimited')}
                   </p>
                 </FormItem>

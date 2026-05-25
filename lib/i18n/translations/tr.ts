@@ -134,7 +134,12 @@ export const tr = {
     'platform-records': 'Platform Kayıtları',
     formulas: 'Formüller',
     'cost-categories': 'Maliyet Kategorileri',
-    'business-flow': 'İş Akışı'
+    'business-flow': 'İş Akışı',
+    section: {
+      manage: 'Yönetim',
+      finance: 'Finans',
+      platform: 'Platform'
+    }
   },
   auth: {
     login: 'Giriş Yap',

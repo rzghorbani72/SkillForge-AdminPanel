@@ -298,8 +298,8 @@ export default function VouchersPage() {
       {isLoading ? (
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-            <p className="mt-2 text-sm text-gray-600">
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+            <p className="mt-2 text-sm text-muted-foreground">
               {t('vouchers.loadingVouchers')}
             </p>
           </div>
@@ -421,7 +421,7 @@ export default function VouchersPage() {
                 }
                 placeholder="SUMMER2024"
                 required
-                className="uppercase placeholder:text-gray-400"
+                className="uppercase placeholder:text-muted-foreground"
               />
             </div>
             <div>
@@ -432,7 +432,7 @@ export default function VouchersPage() {
                   setFormData({ ...formData, description: e.target.value })
                 }
                 placeholder="Summer sale discount"
-                className="placeholder:text-gray-400"
+                className="placeholder:text-muted-foreground"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -470,7 +470,7 @@ export default function VouchersPage() {
                   required
                   min={formData.discount_type === 'PERCENT' ? 0 : 0}
                   max={formData.discount_type === 'PERCENT' ? 100 : undefined}
-                  className="placeholder:text-gray-400"
+                  className="placeholder:text-muted-foreground"
                 />
               </div>
             </div>
@@ -513,7 +513,7 @@ export default function VouchersPage() {
                   placeholder="100"
                   required
                   min={1}
-                  className="placeholder:text-gray-400"
+                  className="placeholder:text-muted-foreground"
                 />
               </div>
             )}
@@ -549,7 +549,7 @@ export default function VouchersPage() {
                   }}
                   required
                   max={formData.end_date || undefined}
-                  className={`placeholder:text-gray-400 ${errors.start_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  className={`placeholder:text-muted-foreground ${errors.start_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                 />
                 {errors.start_date && (
                   <p className="mt-1 text-sm text-red-500">
@@ -582,7 +582,7 @@ export default function VouchersPage() {
                     }
                   }}
                   required
-                  className={`placeholder:text-gray-400 ${errors.end_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  className={`placeholder:text-muted-foreground ${errors.end_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                 />
                 {errors.end_date && (
                   <p className="mt-1 text-sm text-red-500">{errors.end_date}</p>
@@ -605,7 +605,7 @@ export default function VouchersPage() {
                   }
                   placeholder="0"
                   min={0}
-                  className="placeholder:text-gray-400"
+                  className="placeholder:text-muted-foreground"
                 />
               </div>
               {formData.discount_type === 'PERCENT' && (
@@ -624,7 +624,7 @@ export default function VouchersPage() {
                     }
                     placeholder="0"
                     min={0}
-                    className="placeholder:text-gray-400"
+                    className="placeholder:text-muted-foreground"
                   />
                 </div>
               )}
@@ -678,7 +678,7 @@ export default function VouchersPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                className="placeholder:text-gray-400"
+                className="placeholder:text-muted-foreground"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -713,7 +713,7 @@ export default function VouchersPage() {
                   required
                   min={formData.discount_type === 'PERCENT' ? 0 : 0}
                   max={formData.discount_type === 'PERCENT' ? 100 : undefined}
-                  className="placeholder:text-gray-400"
+                  className="placeholder:text-muted-foreground"
                 />
               </div>
             </div>
@@ -755,7 +755,7 @@ export default function VouchersPage() {
                   }
                   required
                   min={1}
-                  className="placeholder:text-gray-400"
+                  className="placeholder:text-muted-foreground"
                 />
               </div>
             )}
@@ -791,7 +791,7 @@ export default function VouchersPage() {
                   }}
                   required
                   max={formData.end_date || undefined}
-                  className={`placeholder:text-gray-400 ${errors.start_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  className={`placeholder:text-muted-foreground ${errors.start_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                 />
                 {errors.start_date && (
                   <p className="mt-1 text-sm text-red-500">
@@ -824,7 +824,7 @@ export default function VouchersPage() {
                     }
                   }}
                   required
-                  className={`placeholder:text-gray-400 ${errors.end_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  className={`placeholder:text-muted-foreground ${errors.end_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                 />
                 {errors.end_date && (
                   <p className="mt-1 text-sm text-red-500">{errors.end_date}</p>
@@ -847,7 +847,7 @@ export default function VouchersPage() {
                   }
                   placeholder="0"
                   min={0}
-                  className="placeholder:text-gray-400"
+                  className="placeholder:text-muted-foreground"
                 />
               </div>
               {formData.discount_type === 'PERCENT' && (
@@ -866,7 +866,7 @@ export default function VouchersPage() {
                     }
                     placeholder="0"
                     min={0}
-                    className="placeholder:text-gray-400"
+                    className="placeholder:text-muted-foreground"
                   />
                 </div>
               )}

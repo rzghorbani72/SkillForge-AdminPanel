@@ -36,7 +36,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
       <div className="space-y-3">
         <div className="relative">
           <div
-            className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
+            className={`w-full max-w-md overflow-hidden rounded-lg border border-border ${className}`}
           >
             <Image
               src={
@@ -76,7 +76,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
       <div className="space-y-3">
         <div className="relative">
           <div
-            className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
+            className={`w-full max-w-md overflow-hidden rounded-lg border border-border ${className}`}
           >
             <Image
               src={`${selectedImage.publicUrl.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${selectedImage.publicUrl}` : selectedImage.publicUrl}`}
@@ -110,7 +110,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
       <div className="space-y-3">
         <div className="relative">
           <div
-            className={`w-full max-w-md overflow-hidden rounded-lg border border-gray-200 ${className}`}
+            className={`w-full max-w-md overflow-hidden rounded-lg border border-border ${className}`}
           >
             <Image
               src={`${process.env.NEXT_PUBLIC_HOST}/api/images/fetch-image-by-id/${uploadedImageId}`}
@@ -156,10 +156,12 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   // Show placeholder if enabled and no image
   if (showPlaceholder) {
     return (
-      <div className="flex aspect-[5/4] w-full max-w-md flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300">
-        <ImageIcon className="mb-2 h-8 w-8 text-gray-400" />
-        <p className="text-sm text-gray-600">{placeholderText}</p>
-        <p className="mt-1 text-xs text-gray-500">{placeholderSubtext}</p>
+      <div className="flex aspect-[5/4] w-full max-w-md flex-col items-center justify-center rounded-lg border-2 border-dashed border-border">
+        <ImageIcon className="mb-2 h-8 w-8 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground">{placeholderText}</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {placeholderSubtext}
+        </p>
       </div>
     );
   }

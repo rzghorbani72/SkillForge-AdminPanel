@@ -288,8 +288,10 @@ export default function AdminsPage() {
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
-            <p className="mt-2 text-sm text-gray-600">{t('common.loading')}</p>
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t('common.loading')}
+            </p>
           </div>
         </div>
       </div>

@@ -264,9 +264,9 @@ export default function StudentsPage() {
       case 'CANCELLED':
         return 'bg-red-100 text-red-800';
       case 'EXPIRED':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -402,8 +402,8 @@ export default function StudentsPage() {
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
-            <p className="mt-2 text-sm text-gray-600">
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+            <p className="mt-2 text-sm text-muted-foreground">
               {t('students.loadingUsersData')}
             </p>
           </div>
@@ -651,7 +651,7 @@ export default function StudentsPage() {
 
               {enrollmentsLoading && enrollments.length === 0 ? (
                 <div className="py-8 text-center">
-                  <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
+                  <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
                   <p className="mt-2 text-sm text-muted-foreground">
                     {t('students.loadingEnrollments')}
                   </p>
@@ -741,7 +741,7 @@ export default function StudentsPage() {
             <CardContent className="space-y-4">
               {enrollmentsLoading && enrollments.length === 0 ? (
                 <div className="py-8 text-center">
-                  <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
+                  <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
                   <p className="mt-2 text-sm text-muted-foreground">
                     {t('students.loadingProgressData')}
                   </p>

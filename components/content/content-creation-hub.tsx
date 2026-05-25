@@ -92,7 +92,7 @@ export default function ContentCreationHub({
       description: t('content.uploadDocumentDescription'),
       icon: FileText,
       dialog: UploadDocumentDialog,
-      color: 'bg-gray-500'
+      color: 'bg-muted-foreground'
     },
     {
       id: 'video',

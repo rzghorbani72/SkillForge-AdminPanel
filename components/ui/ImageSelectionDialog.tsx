@@ -217,7 +217,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
         <div className="space-y-4">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
             <Input
               placeholder="Search images by title, alt text, or ID..."
               value={searchTerm}
@@ -246,7 +246,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
                 </Button>
               </div>
             ) : filteredImages.length === 0 ? (
-              <div className="flex h-32 flex-col items-center justify-center text-gray-500">
+              <div className="flex h-32 flex-col items-center justify-center text-muted-foreground">
                 <ImageIcon className="mb-2 h-8 w-8" />
                 <span>No images found</span>
                 {searchTerm && (
@@ -261,7 +261,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
                     className={`group relative cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
                       selectedImageId === image.id.toString()
                         ? 'border-blue-500 ring-4 ring-blue-200'
-                        : 'border-gray-200 hover:border-gray-300'
+                        : 'border-border hover:border-border'
                     }`}
                     onClick={(e) => {
                       // Don't select if clicking on delete button or its children
@@ -290,7 +290,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
                         />
                       )}
                       {image.hasError && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 text-gray-500">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted text-muted-foreground">
                           <AlertCircle className="mb-2 h-8 w-8" />
                           <span className="px-2 text-center text-xs">
                             Corrupted Image
@@ -355,7 +355,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
 
           {/* Footer */}
           <div className="flex items-center justify-between border-t pt-4">
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted-foreground">
               {filteredImages.length} of {images.length} images
               {searchTerm && ` matching "${searchTerm}"`}
             </div>

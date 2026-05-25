@@ -175,22 +175,24 @@ const CreateProductAssociations = ({ form }: Props) => {
           <FormLabel>
             {t('products.relatedCourses')}
             {selectedCategoryId && (
-              <span className="ml-2 text-xs font-normal text-slate-500">
+              <span className="ml-2 text-xs font-normal text-muted-foreground">
                 ({t('products.filteredByCategory')})
               </span>
             )}
           </FormLabel>
-          <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+          <div className="rounded-lg border border-border p-4">
             {!selectedCategoryId ? (
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 {t('products.selectCategoryFirst')}
               </p>
             ) : coursesLoading ? (
-              <p className="text-sm text-slate-500">{t('common.loading')}</p>
+              <p className="text-sm text-muted-foreground">
+                {t('common.loading')}
+              </p>
             ) : coursesError ? (
               <p className="text-sm text-red-500">{coursesError}</p>
             ) : courses.length === 0 ? (
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 {t('products.noCoursesInCategory')}
               </p>
             ) : (
@@ -200,7 +202,7 @@ const CreateProductAssociations = ({ form }: Props) => {
                   return (
                     <label
                       key={course.id}
-                      className="flex cursor-pointer items-center space-x-2 rounded-md p-2 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      className="flex cursor-pointer items-center space-x-2 rounded-md p-2 hover:bg-muted/50"
                     >
                       <input
                         type="checkbox"
@@ -208,9 +210,9 @@ const CreateProductAssociations = ({ form }: Props) => {
                         onChange={() =>
                           handleCourseToggle(course.id.toString())
                         }
-                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-border text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm text-slate-700 dark:text-slate-300">
+                      <span className="text-sm text-foreground">
                         {course.title}
                       </span>
                     </label>
@@ -220,7 +222,7 @@ const CreateProductAssociations = ({ form }: Props) => {
             )}
           </div>
           {courseIds.length > 0 && (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               {courseIds.length}{' '}
               {courseIds.length === 1
                 ? t('courses.course')

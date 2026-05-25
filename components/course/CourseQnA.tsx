@@ -118,7 +118,7 @@ export default function CourseQnA({ courseId }: CourseQnAProps) {
         <CardContent>
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
+              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
             </div>
           ) : (
             <div className="space-y-6">
@@ -140,13 +140,15 @@ export default function CourseQnA({ courseId }: CourseQnAProps) {
                                       qna.user?.name ||
                                       'Anonymous'}
                                   </span>
-                                  <span className="text-xs text-gray-500">
+                                  <span className="text-xs text-muted-foreground">
                                     {new Date(
                                       qna.created_at
                                     ).toLocaleDateString()}
                                   </span>
                                 </div>
-                                <p className="text-gray-700">{qna.question}</p>
+                                <p className="text-foreground">
+                                  {qna.question}
+                                </p>
                               </div>
                               <div className="flex gap-2">
                                 <Button
@@ -229,7 +231,7 @@ export default function CourseQnA({ courseId }: CourseQnAProps) {
                                       qna.user?.name ||
                                       'Anonymous'}
                                   </span>
-                                  <span className="text-xs text-gray-500">
+                                  <span className="text-xs text-muted-foreground">
                                     {new Date(
                                       qna.created_at
                                     ).toLocaleDateString()}
@@ -241,7 +243,7 @@ export default function CourseQnA({ courseId }: CourseQnAProps) {
                                     Approved
                                   </Badge>
                                 </div>
-                                <p className="mb-3 text-gray-700">
+                                <p className="mb-3 text-foreground">
                                   {qna.question}
                                 </p>
                                 {qna.answer ? (
@@ -252,19 +254,19 @@ export default function CourseQnA({ courseId }: CourseQnAProps) {
                                           'Instructor'}
                                       </span>
                                       {qna.answered_at && (
-                                        <span className="text-xs text-gray-500">
+                                        <span className="text-xs text-muted-foreground">
                                           {new Date(
                                             qna.answered_at
                                           ).toLocaleDateString()}
                                         </span>
                                       )}
                                     </div>
-                                    <p className="text-gray-600">
+                                    <p className="text-muted-foreground">
                                       {qna.answer}
                                     </p>
                                   </div>
                                 ) : (
-                                  <div className="text-sm italic text-gray-500">
+                                  <div className="text-sm italic text-muted-foreground">
                                     No answer yet
                                   </div>
                                 )}
@@ -334,7 +336,7 @@ export default function CourseQnA({ courseId }: CourseQnAProps) {
               )}
 
               {qnas.length === 0 && (
-                <div className="py-8 text-center text-gray-500">
+                <div className="py-8 text-center text-muted-foreground">
                   <p>No questions yet.</p>
                 </div>
               )}

@@ -154,7 +154,7 @@ export function ProfilePasswordManager() {
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-gray-600">Loading profiles...</p>
+          <p className="mt-2 text-muted-foreground">Loading profiles...</p>
         </div>
       </div>
     );
@@ -164,7 +164,7 @@ export function ProfilePasswordManager() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Profile Password Management</h2>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Manage passwords for your different store profiles. Each profile can
           have its own password.
         </p>
@@ -328,7 +328,7 @@ export function ProfilePasswordManager() {
       {profiles.length === 0 && (
         <Card>
           <CardContent className="py-8 text-center">
-            <p className="text-gray-500">No profiles found.</p>
+            <p className="text-muted-foreground">No profiles found.</p>
           </CardContent>
         </Card>
       )}

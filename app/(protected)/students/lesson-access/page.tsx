@@ -176,7 +176,7 @@ export default function StudentLessonAccessPage() {
                 {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={7} className="h-32 text-center">
-                      <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
+                      <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-primary" />
                     </TableCell>
                   </TableRow>
                 ) : list.length === 0 ? (

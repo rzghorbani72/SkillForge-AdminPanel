@@ -112,7 +112,7 @@ function CourseCard({
               'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold',
               course.is_published
                 ? 'bg-emerald-500 text-white'
-                : 'bg-slate-700/80 text-white'
+                : 'bg-foreground/70 text-background'
             )}
           >
             {course.is_published ? t('courses.published') : t('courses.draft')}

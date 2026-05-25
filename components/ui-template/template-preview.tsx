@@ -56,16 +56,16 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
 
     return (
       <div
-        className="w-full overflow-hidden rounded-lg border-2 border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
+        className="w-full overflow-hidden rounded-lg border-2 border-border bg-white shadow-lg"
         style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
       >
         <div
           className={`flex ${isLeftSidebar ? 'flex-row' : 'flex-row-reverse'}`}
         >
           {/* Sidebar */}
-          <div className="w-1/4 border-r border-slate-200 dark:border-slate-700">
+          <div className="w-1/4 border-r border-border">
             <div
-              className={`h-full ${getBlockColor('sidebar')} p-2 text-center text-xs font-medium text-slate-700 dark:text-slate-200`}
+              className={`h-full ${getBlockColor('sidebar')} p-2 text-center text-xs font-medium text-foreground`}
             >
               {getBlockLabel('sidebar')}
             </div>
@@ -89,7 +89,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
                 return (
                   <div
                     key={block.id}
-                    className={`${height} border-b border-slate-200 dark:border-slate-700`}
+                    className={`${height} border-b border-border`}
                   >
                     <div
                       className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-semibold text-white shadow-sm`}
@@ -109,7 +109,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
                 return (
                   <div
                     key={block.id}
-                    className={`${height} border-b border-slate-200 dark:border-slate-700`}
+                    className={`${height} border-b border-border`}
                   >
                     <div
                       className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-semibold text-white shadow-sm`}
@@ -126,7 +126,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
               return (
                 <div
                   key={block.id}
-                  className={`${height} border-b border-slate-200 dark:border-slate-700`}
+                  className={`${height} border-b border-border`}
                 >
                   <div
                     className={`${getBlockColor(block.type)} flex h-full items-center justify-center p-2 text-center text-xs font-semibold text-white shadow-sm`}
@@ -145,7 +145,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
   // Standard layout without sidebar
   return (
     <div
-      className="w-full overflow-hidden rounded-lg border-2 border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
+      className="w-full overflow-hidden rounded-lg border-2 border-border bg-white shadow-lg"
       style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
     >
       {blocks.map((block, index) => {
@@ -175,10 +175,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
         if (isFeatures && block.config?.gridColumns) {
           const cols = block.config.gridColumns;
           return (
-            <div
-              key={block.id}
-              className={`${height} relative border-b dark:border-slate-700`}
-            >
+            <div key={block.id} className={`${height} relative border-b`}>
               <div
                 className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-semibold text-white shadow-sm`}
               >
@@ -203,10 +200,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
           const cols = block.config.gridColumns;
           const rows = Math.ceil((block.config?.limit || 6) / cols);
           return (
-            <div
-              key={block.id}
-              className={`${height} relative border-b dark:border-slate-700`}
-            >
+            <div key={block.id} className={`${height} relative border-b`}>
               <div
                 className={`${getBlockColor(block.type)} flex h-full items-center justify-center gap-1 p-2 text-center text-xs font-semibold text-white shadow-sm`}
               >
@@ -229,10 +223,7 @@ export function TemplatePreview({ preset, scale = 1 }: TemplatePreviewProps) {
         }
 
         return (
-          <div
-            key={block.id}
-            className={`${height} border-b dark:border-slate-700`}
-          >
+          <div key={block.id} className={`${height} border-b`}>
             <div
               className={`${getBlockColor(block.type)} flex h-full items-center justify-center p-2 text-center text-xs font-semibold text-white shadow-sm`}
             >

@@ -69,14 +69,14 @@ const CreateProductPricing = ({ form }: Props) => {
                 />
               </FormControl>
               <FormMessage />
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {t('products.originalPriceDescription')}
               </p>
             </FormItem>
           )}
         />
 
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           {t('products.enterWholeNumbers')}
         </p>
       </CardContent>

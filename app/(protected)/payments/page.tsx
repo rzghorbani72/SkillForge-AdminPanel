@@ -46,7 +46,7 @@ const STATUS_BADGES: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800',
   FAILED: 'bg-red-100 text-red-800',
   REFUNDED: 'bg-blue-100 text-blue-800',
-  CANCELLED: 'bg-slate-200 text-slate-700'
+  CANCELLED: 'bg-muted text-foreground'
 };
 
 function formatDate(value?: string | null): string {
@@ -176,7 +176,7 @@ export default function PaymentsPage() {
       <div className="flex-1 space-y-6 p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
             <p className="mt-2 text-sm text-muted-foreground">
               {t('common.loading')}
             </p>
@@ -383,7 +383,7 @@ export default function PaymentsPage() {
                         className={cn(
                           'capitalize',
                           STATUS_BADGES[payment.status] ??
-                            'bg-slate-100 text-slate-700'
+                            'bg-muted text-muted-foreground'
                         )}
                       >
                         {payment.status?.toLowerCase() ?? 'unknown'}

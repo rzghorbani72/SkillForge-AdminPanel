@@ -59,17 +59,20 @@ export type Product = {
 // - payments:   everyone (students see their own; staff see academy/platform)
 // - settings:   everyone
 export const navItems: NavItem[] = [
+  // ── Main ────────────────────────────────────────────────────────
   {
     title: 'Dashboard',
     href: '/dashboard',
     icon: 'dashboard' as IconType,
     label: 'dashboard'
   },
+  // ── Manage ──────────────────────────────────────────────────────
   {
     title: 'Academies',
     href: '/academies',
     icon: 'store' as IconType,
     label: 'academies',
+    section: 'manage',
     roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
   },
   {
@@ -93,19 +96,14 @@ export const navItems: NavItem[] = [
     label: 'bundles',
     roles: ['ADMIN', 'MANAGER']
   },
+  // ── Finance ─────────────────────────────────────────────────────
   {
     title: 'Payments',
     href: '/payments',
     icon: 'creditCard' as IconType,
     label: 'payments',
+    section: 'finance',
     roles: ['ADMIN', 'SUPPORT', 'MANAGER']
-  },
-  {
-    title: 'Refunds',
-    href: '/refunds',
-    icon: 'rotateCcw' as IconType,
-    label: 'refunds',
-    roles: ['ADMIN', 'MANAGER']
   },
   {
     title: 'Financial',
@@ -159,11 +157,13 @@ export const navItems: NavItem[] = [
     roles: ['ADMIN'],
     adminOnly: true
   },
+  // ── Platform ────────────────────────────────────────────────────
   {
     title: 'Plans',
     href: '/plans',
     icon: 'layers' as IconType,
     label: 'plans',
+    section: 'platform',
     roles: ['ADMIN', 'MANAGER']
   },
   {

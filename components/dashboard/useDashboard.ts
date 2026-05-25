@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { BookOpen, Users, DollarSign, TrendingUp } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course, Enrollment, Payment } from '@/types/api';
 import {
-  formatCurrency,
   formatNumber,
   formatCurrencyWithStore,
   formatRelativeTime
@@ -14,7 +14,7 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 export type DashboardStatsCard = {
   title: string;
   value: string | number;
-  icon: any;
+  icon: React.ElementType;
   change: string;
   changeType: 'increase' | 'decrease';
   description: string;
@@ -324,7 +324,7 @@ const useDashboard = () => {
       {
         title: t('dashboard.totalCourses'),
         value: formatNumber(statsTotals.totalCourses),
-        icon: require('lucide-react').BookOpen,
+        icon: BookOpen,
         change: t('dashboard.live'),
         changeType: 'increase',
         description: isAdminWithoutStore
@@ -334,7 +334,7 @@ const useDashboard = () => {
       {
         title: t('dashboard.totalStudents'),
         value: formatNumber(statsTotals.totalStudents),
-        icon: require('lucide-react').Users,
+        icon: Users,
         change: t('dashboard.live'),
         changeType: 'increase',
         description: isAdminWithoutStore
@@ -347,7 +347,7 @@ const useDashboard = () => {
           statsTotals.totalRevenue,
           effectiveAcademy
         ),
-        icon: require('lucide-react').DollarSign,
+        icon: DollarSign,
         change: t('dashboard.live'),
         changeType: 'increase',
         description: isAdminWithoutStore
@@ -357,7 +357,7 @@ const useDashboard = () => {
       {
         title: t('dashboard.activeEnrollments'),
         value: formatNumber(statsTotals.activeEnrollments),
-        icon: require('lucide-react').TrendingUp,
+        icon: TrendingUp,
         change: t('dashboard.live'),
         changeType: 'increase',
         description: t('dashboard.studentsCurrentlyProgressing')

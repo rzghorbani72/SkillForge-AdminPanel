@@ -95,7 +95,7 @@ export default function VideoManagement({
       case 'CONCLUSION':
         return <Clock className="h-4 w-4 text-green-500" />;
       default:
-        return <Video className="h-4 w-4 text-gray-500" />;
+        return <Video className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -108,7 +108,7 @@ export default function VideoManagement({
       case 'CONCLUSION':
         return 'bg-green-100 text-green-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -130,7 +130,9 @@ export default function VideoManagement({
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-sm text-gray-600">Loading videos...</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Loading videos...
+          </p>
         </div>
       </div>
     );
@@ -165,7 +167,7 @@ export default function VideoManagement({
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="rounded-md border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">All Videos</option>
           <option value="welcome">Welcome Videos</option>

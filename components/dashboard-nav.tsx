@@ -59,24 +59,23 @@ const NavItemContent = React.memo(
           item.disabled && 'cursor-not-allowed opacity-60'
         )}
       >
-        <div
+        {/* Plain icon — no box, matches Mentoryar design */}
+        <Icon
           className={cn(
-            'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-200',
+            'h-[18px] w-[18px] shrink-0 transition-colors duration-150',
             isActive
-              ? 'bg-primary/10 text-primary'
-              : 'text-muted-foreground group-hover:bg-primary/5 group-hover:text-primary'
+              ? 'text-primary'
+              : 'text-muted-foreground group-hover:text-foreground'
           )}
-        >
-          <Icon className="h-[18px] w-[18px]" />
-        </div>
+        />
         {!isMinimized && (
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <span
               className={cn(
-                'truncate font-medium transition-colors',
+                'truncate text-sm transition-colors duration-150',
                 isActive
-                  ? 'text-primary'
-                  : 'text-foreground/80 group-hover:text-foreground'
+                  ? 'font-semibold text-primary'
+                  : 'font-medium text-foreground/75 group-hover:text-foreground'
               )}
             >
               {translatedTitle}
@@ -94,7 +93,7 @@ const NavItemContent = React.memo(
         {hasChildren && !isMinimized && (
           <ChevronRight
             className={cn(
-              'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
+              'h-3.5 w-3.5 shrink-0 text-muted-foreground/60 transition-transform duration-150',
               isExpanded && 'rotate-90 text-primary'
             )}
           />
@@ -402,25 +401,44 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
     return null;
   }
 
+  // Track which section labels have been rendered to avoid duplicates
+  const renderedSections = new Set<string>();
+
   return (
-    <nav className="grid items-start gap-1">
+    <nav className="flex flex-col gap-0.5">
       <TooltipProvider delayDuration={0}>
-        {memoizedItems.map((item) => (
-          <Tooltip key={item.title}>
-            <TooltipTrigger asChild>{renderNavItem(item)}</TooltipTrigger>
-            <TooltipContent
-              align="center"
-              side="right"
-              sideOffset={12}
-              className={cn(
-                'rounded-lg border-border/50 bg-popover/95 px-3 py-1.5 text-sm font-medium shadow-lg backdrop-blur-xl',
-                !isMinimized && 'hidden'
+        {memoizedItems.map((item) => {
+          const showSection =
+            item.section && !renderedSections.has(item.section);
+          if (item.section) renderedSections.add(item.section);
+
+          return (
+            <React.Fragment key={item.title}>
+              {showSection && !isMinimized && (
+                <div className="nav-section-label">
+                  {t(`navigation.section.${item.section}`) || item.section}
+                </div>
               )}
-            >
-              {translateNavTitle(item.label || '', item.title)}
-            </TooltipContent>
-          </Tooltip>
-        ))}
+              {showSection && isMinimized && (
+                <div className="mx-2 my-2 h-px bg-border/50" />
+              )}
+              <Tooltip>
+                <TooltipTrigger asChild>{renderNavItem(item)}</TooltipTrigger>
+                <TooltipContent
+                  align="center"
+                  side="right"
+                  sideOffset={12}
+                  className={cn(
+                    'rounded-md border-border/50 bg-popover/95 px-3 py-1.5 text-sm font-medium shadow-lg backdrop-blur-xl',
+                    !isMinimized && 'hidden'
+                  )}
+                >
+                  {translateNavTitle(item.label || '', item.title)}
+                </TooltipContent>
+              </Tooltip>
+            </React.Fragment>
+          );
+        })}
       </TooltipProvider>
     </nav>
   );

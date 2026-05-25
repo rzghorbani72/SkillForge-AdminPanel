@@ -278,7 +278,7 @@ export default function StudentProgressPage() {
           <div className="space-y-4">
             {isLoading ? (
               <div className="flex h-56 flex-col items-center justify-center gap-2">
-                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
                 <span className="text-sm text-muted-foreground">
                   {t('students.fetchingProgressData')}
                 </span>

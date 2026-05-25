@@ -134,7 +134,12 @@ export const ar = {
     'platform-records': 'سجلات المنصة',
     formulas: 'الصيغ',
     'cost-categories': 'فئات التكلفة',
-    'business-flow': 'تدفق الأعمال'
+    'business-flow': 'تدفق الأعمال',
+    section: {
+      manage: 'الإدارة',
+      finance: 'المالية',
+      platform: 'المنصة'
+    }
   },
   auth: {
     login: 'تسجيل الدخول',

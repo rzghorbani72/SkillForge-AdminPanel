@@ -233,7 +233,7 @@ export default function ManualEnrollPage() {
                   {isLoading ? (
                     <TableRow>
                       <TableCell colSpan={5} className="h-32 text-center">
-                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
+                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-primary" />
                       </TableCell>
                     </TableRow>
                   ) : enrollments.length === 0 ? (
@@ -280,7 +280,7 @@ export default function ManualEnrollPage() {
                                 ? 'bg-green-100 text-green-800'
                                 : e.status === 'COMPLETED'
                                   ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-gray-100 text-gray-800'
+                                  : 'bg-muted text-muted-foreground'
                             }
                           >
                             {e.status}

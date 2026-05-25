@@ -295,7 +295,7 @@ export default function CourseDetailPage() {
                   'rounded-full text-xs font-semibold',
                   course.is_published
                     ? 'bg-emerald-100 text-emerald-700'
-                    : 'bg-slate-100 text-slate-600'
+                    : 'bg-muted text-muted-foreground'
                 )}
                 variant="outline"
               >

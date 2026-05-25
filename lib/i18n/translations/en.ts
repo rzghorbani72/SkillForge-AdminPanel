@@ -166,7 +166,12 @@ export const en = {
     affiliates: 'Affiliates',
     coupons: 'Coupons',
     subscriptions: 'Subscriptions',
-    platformSettings: 'Platform Settings'
+    platformSettings: 'Platform Settings',
+    section: {
+      manage: 'Manage',
+      finance: 'Finance',
+      platform: 'Platform'
+    }
   },
   auth: {
     login: 'Login',

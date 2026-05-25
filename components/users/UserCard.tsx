@@ -107,7 +107,7 @@ export function UserCard({
                   ) : userStatus === 'BANNED' ? (
                     <XCircle className="h-4 w-4 text-red-500" />
                   ) : (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
               </TooltipTrigger>

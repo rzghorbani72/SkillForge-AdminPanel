@@ -164,7 +164,7 @@ export default function AssignmentsPage() {
       case 'REJECTED':
         return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -281,7 +281,7 @@ export default function AssignmentsPage() {
                   {isLoading ? (
                     <TableRow>
                       <TableCell colSpan={6} className="h-32 text-center">
-                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
+                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-primary" />
                       </TableCell>
                     </TableRow>
                   ) : filteredAssignments.length === 0 ? (
@@ -326,7 +326,7 @@ export default function AssignmentsPage() {
                             className={
                               a.is_required
                                 ? 'bg-orange-100 text-orange-800'
-                                : 'bg-gray-100 text-gray-800'
+                                : 'bg-muted text-muted-foreground'
                             }
                           >
                             {a.is_required
@@ -380,7 +380,7 @@ export default function AssignmentsPage() {
                   {isSubLoading ? (
                     <TableRow>
                       <TableCell colSpan={6} className="h-32 text-center">
-                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
+                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-primary" />
                       </TableCell>
                     </TableRow>
                   ) : submissions.length === 0 ? (

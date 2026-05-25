@@ -3,12 +3,14 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, Sparkles } from 'lucide-react';
+import { ChevronLeft, Zap, GraduationCap, ArrowUpRight } from 'lucide-react';
 import { Suspense, useMemo } from 'react';
 import { filterNavItemsByRole } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
+import Link from '@/components/ui/link';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 
 type SidebarProps = {
   className?: string;
@@ -18,49 +20,35 @@ export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
   const { user, isLoading } = useAuthUser();
   const { t } = useTranslation();
+  const currentAcademy = useCurrentAcademy();
 
-  // Extract role from authenticated user (fetched from API using JWT cookie)
   const userRole = useMemo(() => {
     if (!user) return null;
     return user.role;
   }, [user]);
 
-  // Check if admin is platform-level (AdminProfile) or has a store
   const hasStore = useMemo(() => {
     if (!user || userRole !== 'ADMIN') return undefined;
 
-    // Use explicit flags from API response (preferred method)
     const isAdminProfile =
       user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
     const platformLevel =
       user.platformLevel ?? user.profile?.platformLevel ?? false;
 
-    // If explicitly marked as platform-level admin, they have no store
-    if (isAdminProfile || platformLevel) {
-      return false; // Platform-level admin has no store
-    }
+    if (isAdminProfile || platformLevel) return false;
 
-    // Fallback: Check if profile has store information
     const profile = (user as any)?.profile;
     const academyId =
       profile?.academy_id ?? profile?.academyId ?? user.academyId ?? null;
-    const currentAcademy = profile?.academy ?? profile?.store ?? null;
+    const currentAcademyData = profile?.academy ?? profile?.store ?? null;
 
     if (academyId === null || academyId === undefined || academyId === 0) {
-      if (!currentAcademy) {
-        return false;
-      }
+      if (!currentAcademyData) return false;
     }
-
-    if (academyId !== null && academyId !== undefined && academyId !== 0) {
+    if (academyId !== null && academyId !== undefined && academyId !== 0)
       return true;
-    }
+    if (currentAcademyData && currentAcademyData.id) return true;
 
-    if (currentAcademy && currentAcademy.id) {
-      return true;
-    }
-
-    // Default to false if we can't determine
     return false;
   }, [user, userRole]);
 
@@ -68,84 +56,73 @@ export default function Sidebar({ className }: SidebarProps) {
     return filterNavItemsByRole(navItems, userRole, hasStore);
   }, [userRole, hasStore]);
 
-  // Show loading state while fetching user
   if (isLoading) {
     return (
       <aside
         className={cn(
-          'relative hidden h-screen flex-none border-r border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:block',
-          !isMinimized ? 'w-72' : 'w-[72px]',
+          'relative hidden h-screen flex-none border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:block',
+          !isMinimized ? 'w-[248px]' : 'w-[72px]',
           className
         )}
       >
         <div className="flex h-full items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t('common.loading')}
-            </p>
-          </div>
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       </aside>
     );
   }
 
-  const handleToggle = () => {
-    toggle();
-  };
+  const academyName = currentAcademy?.name || getRoleLabel(userRole, t);
+  const academyInitial = academyName?.charAt(0)?.toUpperCase() || 'A';
 
   return (
     <aside
       className={cn(
-        'relative hidden h-screen flex-none border-r border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:block',
-        !isMinimized ? 'w-72' : 'w-[72px]',
+        'relative hidden h-screen flex-none flex-col border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:flex',
+        !isMinimized ? 'w-[248px]' : 'w-[72px]',
         className
       )}
     >
-      {/* Subtle gradient overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/[0.02] via-transparent to-primary/[0.02]" />
-
-      {/* Logo section */}
+      {/* Brand / Academy header */}
       <div
         className={cn(
-          'relative flex items-center gap-3 border-b border-[hsl(var(--sidebar-border))] px-4 py-5 transition-all duration-300',
+          'flex items-center gap-3 border-b border-[hsl(var(--sidebar-border))] px-4 py-4 transition-all duration-300',
           isMinimized && 'justify-center px-2'
         )}
       >
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/25">
-          <Sparkles className="h-5 w-5 text-white" />
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md shadow-primary/25 transition-all duration-200">
+          <GraduationCap className="h-5 w-5 text-white" />
         </div>
-        <div
-          className={cn(
-            'flex flex-col transition-all duration-300',
-            isMinimized && 'hidden'
-          )}
-        >
-          <span className="text-lg font-bold tracking-tight">
-            {getRoleLabel(userRole, t)}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            {t('navigation.dashboard')}
-          </span>
-        </div>
+        {!isMinimized && (
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold leading-tight">
+              {academyName}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {t('navigation.dashboard')}
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Toggle button */}
+      {/* Collapse toggle */}
       <button
-        onClick={handleToggle}
+        type="button"
+        onClick={toggle}
         className={cn(
-          'absolute -right-3 top-[5.5rem] z-50 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-md transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-lg',
+          'absolute -end-3 top-[4.5rem] z-50 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-md transition-all duration-300 hover:bg-primary hover:text-white',
           isMinimized && 'rotate-180'
         )}
+        aria-label="Toggle sidebar"
       >
         <ChevronLeft className="h-3.5 w-3.5" />
       </button>
 
-      {/* Navigation */}
-      <div className="beautiful-scrollbar h-[calc(100vh-88px)] overflow-y-auto px-3 py-4">
+      {/* Navigation — ps-4 gives room for the 3px active bar on the start edge */}
+      <div className="beautiful-scrollbar flex-1 overflow-y-auto py-3 pe-3 ps-4">
         <Suspense
           fallback={
-            <div className="p-4 text-center text-muted-foreground">
+            <div className="p-4 text-center text-xs text-muted-foreground">
               {t('common.loading')}
             </div>
           }
@@ -153,6 +130,46 @@ export default function Sidebar({ className }: SidebarProps) {
           <DashboardNav items={filteredNavItems} />
         </Suspense>
       </div>
+
+      {/* Upgrade banner */}
+      {!isMinimized && (
+        <div className="p-3">
+          <div className="upgrade-banner">
+            <div className="mb-2 flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/15">
+                <Zap className="h-3.5 w-3.5 text-primary" />
+              </div>
+              <span className="text-xs font-semibold text-foreground">
+                {t('sidebar.upgradePlan') || 'Upgrade Plan'}
+              </span>
+            </div>
+            <p className="mb-3 text-[11px] leading-relaxed text-muted-foreground">
+              {t('sidebar.upgradeDescription') ||
+                'Unlock unlimited courses & advanced analytics'}
+            </p>
+            <Link
+              href="/plans"
+              className="flex items-center justify-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              {t('sidebar.upgradeButton') || 'Upgrade'}
+              <ArrowUpRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Minimized upgrade icon */}
+      {isMinimized && (
+        <div className="flex justify-center p-3">
+          <Link
+            href="/plans"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors hover:bg-primary hover:text-white"
+            title={t('sidebar.upgradePlan') || 'Upgrade'}
+          >
+            <Zap className="h-4 w-4" />
+          </Link>
+        </div>
+      )}
     </aside>
   );
 }

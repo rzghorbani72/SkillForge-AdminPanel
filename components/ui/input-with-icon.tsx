@@ -40,7 +40,7 @@ export function InputWithIcon({
       <Label htmlFor={id}>{label}</Label>
       <div className="relative">
         <Icon
-          className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+          className={`absolute top-3 h-4 w-4 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`}
         />
         <Input
           id={id}

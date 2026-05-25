@@ -35,7 +35,7 @@ const CreateProductPublishSettings = ({ form }: Props) => {
                 <FormLabel className="text-base">
                   {t('products.publishProduct')}
                 </FormLabel>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                   {t('products.publishProductDescription')}
                 </div>
               </div>
@@ -58,7 +58,7 @@ const CreateProductPublishSettings = ({ form }: Props) => {
                 <FormLabel className="text-base">
                   {t('products.featuredProduct')}
                 </FormLabel>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                   {t('products.featuredProductDescription')}
                 </div>
               </div>

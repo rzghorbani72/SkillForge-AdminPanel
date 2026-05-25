@@ -1,95 +1,87 @@
-/* Import elegant fonts - must come before @tailwind directives */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Vazirmatn (Persian-first) + IBM Plex Mono (numbers/code) */
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design Tokens ──────────────────────────────────────────────────────────
+   Mentoryar design system — Editorial & Calm, Persian-first.
+   Directly derived from styles.css oklch values (light mode only).
+
+   oklch → HSL conversions:
+     --bg:        oklch(0.985 0.004 80)  → warm off-white  → hsl(34 20% 97%)
+     --surface:   oklch(1 0 0)           → pure white       → hsl(0 0% 100%)
+     --surface-2: oklch(0.975 0.005 80)  → warm light       → hsl(34 16% 96%)
+     --surface-3: oklch(0.955 0.006 80)  → warm mid-light   → hsl(34 18% 94%)
+     --border:    oklch(0.92 0.005 80)   → warm border      → hsl(34 12% 91%)
+     --hairline:  oklch(0.94 0.004 80)   → very subtle      → hsl(34 10% 93%)
+     --border-strong: oklch(0.86 0.006 80) → stronger      → hsl(34 14% 85%)
+     --ink:       oklch(0.22 0.012 255)  → dark blue-ink    → hsl(228 25% 16%)
+     --ink-2:     oklch(0.38 0.012 255)  → mid ink          → hsl(228 18% 35%)
+     --ink-3:     oklch(0.55 0.012 255)  → muted ink        → hsl(228 12% 48%)
+     --ink-4:     oklch(0.70 0.010 255)  → dim ink          → hsl(228 10% 62%)
+     --accent:    oklch(0.58 0.18 22)    → cherry red       → hsl(4 72% 52%)
+     --accent-2:  oklch(0.50 0.18 22)    → cherry dark      → hsl(4 72% 44%)
+     --accent-tint: oklch(0.96 0.03 22)  → cherry tint      → hsl(4 72% 96%)
+   ──────────────────────────────────────────────────────────────────────────── */
 @layer base {
-  /* Light mode kept minimal — codewithmosh-style is dark-first.
-     Light is for users who explicitly toggle out. */
   :root {
-    --background: 0 0% 99%;
-    --foreground: 220 25% 12%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 8% 46%;
+    /* ── Surfaces (warm, not cool blue-gray) ─── */
+    --background: 34 20% 97%; /* --bg: warm off-white */
+    --foreground: 228 25% 16%; /* --ink: dark blue-ink */
+
+    --card: 0 0% 100%; /* --surface: pure white */
+    --card-foreground: 228 25% 16%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 12%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --primary: 354 84% 57%;
+    --popover-foreground: 228 25% 16%;
+
+    /* ── Muted (surface-2 — warm, not cool) ─── */
+    --muted: 34 16% 96%; /* --surface-2 */
+    --muted-foreground: 228 10% 62%; /* --ink-4 */
+
+    /* ── Primary — cherry red ─── */
+    --primary: 4 72% 52%; /* --accent: oklch(0.58 0.18 22) */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 9% 26%;
-    --accent: 354 80% 96%;
-    --accent-foreground: 354 84% 47%;
-    --destructive: 0 84% 60%;
+
+    /* ── Secondary ─── */
+    --secondary: 34 16% 96%; /* --surface-2 */
+    --secondary-foreground: 228 18% 35%; /* --ink-2 */
+
+    /* ── Accent tint ─── */
+    --accent: 4 72% 96%; /* --accent-tint */
+    --accent-foreground: 4 72% 42%;
+
+    /* ── Semantic ─── */
+    --destructive: 8 67% 49%; /* --negative: oklch(0.55 0.17 25) */
     --destructive-foreground: 0 0% 100%;
-    --ring: 354 84% 57%;
-    --radius: 0.5rem;
-
-    --chart-1: 354 84% 57%;
-    --chart-2: 200 70% 50%;
-    --chart-3: 43 96% 56%;
-    --chart-4: 280 70% 55%;
-    --chart-5: 173 58% 39%;
-
-    --success: 142 71% 45%;
+    --success: 142 43% 40%; /* --positive: oklch(0.58 0.13 155) */
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 38 85% 58%; /* --warning: oklch(0.74 0.14 75) */
     --warning-foreground: 0 0% 0%;
-    --info: 199 89% 48%;
+    --info: 215 50% 45%; /* --info: oklch(0.55 0.13 240) */
     --info-foreground: 0 0% 100%;
 
-    --sidebar-bg: 0 0% 100%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-active: 354 84% 57%;
-    --sidebar-hover: 220 14% 96%;
-  }
+    /* ── Borders (warm, not cool) ─── */
+    --border: 34 12% 91%; /* --border: oklch(0.92 0.005 80) */
+    --input: 34 12% 91%;
+    --ring: 4 72% 52%;
 
-  /* Dark — the primary theme. codewithmosh-style: very dark slate, crimson
-     accent, mid-low chroma surfaces, clear hierarchy of three layers
-     (background / card / popover) so cards lift off the page without borders. */
-  .dark {
-    --background: 222 18% 8%;
-    --foreground: 220 14% 95%;
-    --muted: 222 14% 14%;
-    --muted-foreground: 220 8% 60%;
-    --popover: 222 16% 12%;
-    --popover-foreground: 220 14% 95%;
-    --card: 222 16% 12%;
-    --card-foreground: 220 14% 95%;
-    --border: 222 12% 20%;
-    --input: 222 12% 18%;
-    --primary: 354 84% 57%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 222 12% 18%;
-    --secondary-foreground: 220 14% 90%;
-    --accent: 354 40% 18%;
-    --accent-foreground: 354 84% 70%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    --ring: 354 84% 57%;
+    /* ── Border radius (10px base, matching design --r-md) ─── */
+    --radius: 0.625rem;
 
-    --chart-1: 354 84% 60%;
-    --chart-2: 200 80% 60%;
-    --chart-3: 43 90% 60%;
-    --chart-4: 280 70% 65%;
-    --chart-5: 173 70% 50%;
+    /* ── Charts ─── */
+    --chart-1: 4 72% 52%;
+    --chart-2: 215 50% 45%;
+    --chart-3: 38 85% 58%;
+    --chart-4: 280 55% 55%;
+    --chart-5: 142 43% 40%;
 
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 55%;
-    --warning-foreground: 0 0% 0%;
-    --info: 199 89% 55%;
-    --info-foreground: 0 0% 100%;
-
-    --sidebar-bg: 222 20% 6%;
-    --sidebar-border: 222 12% 16%;
-    --sidebar-active: 354 84% 57%;
-    --sidebar-hover: 222 14% 12%;
+    /* ── Sidebar (warm surface-2 background, like design) ─── */
+    --sidebar-bg: 34 16% 96%; /* --surface-2: slightly warm off-white */
+    --sidebar-border: 34 10% 93%; /* --hairline */
+    --sidebar-hover: 34 18% 94%; /* --surface-3 */
   }
 }
 
@@ -100,19 +92,41 @@
 
   html {
     scroll-behavior: smooth;
+    color-scheme: light;
   }
 
   body {
-    @apply box-border bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family:
+      'Vazirmatn',
+      'Plus Jakarta Sans',
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  [dir='rtl'] body {
+    font-family:
+      'Vazirmatn',
+      -apple-system,
+      sans-serif;
+  }
+
+  [dir='ltr'] body {
     font-family:
       'Plus Jakarta Sans',
       -apple-system,
       BlinkMacSystemFont,
       'Segoe UI',
       sans-serif;
+    letter-spacing: -0.01em;
   }
 
-  /* Elegant headings */
   h1,
   h2,
   h3,
@@ -122,10 +136,17 @@
     @apply font-semibold tracking-tight;
   }
 
-  /* Code blocks */
+  /* IBM Plex Mono for numbers/codes (matching design spec) */
   code,
-  pre {
-    font-family: 'JetBrains Mono', monospace;
+  pre,
+  .tabular-nums,
+  .font-mono {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  ::selection {
+    background: hsl(var(--accent));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -134,7 +155,6 @@
     min-height: 100vh;
     min-height: 100dvh;
   }
-
   .h-screen {
     height: 100vh;
     height: 100dvh;
@@ -142,113 +162,92 @@
 }
 
 @layer components {
-  /* Glass morphism effect */
-  .glass {
-    @apply bg-white/70 backdrop-blur-xl dark:bg-black/40;
+  /* ─── Sidebar ─────────────────────────────────────────────────── */
+  .sidebar-item {
+    @apply relative flex cursor-pointer items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm
+           font-medium text-muted-foreground transition-all duration-150;
   }
 
-  .glass-card {
-    @apply border border-white/20 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-white/5;
+  .sidebar-item:hover {
+    background: hsl(var(--sidebar-hover));
+    @apply text-foreground;
   }
 
-  /* Gradient backgrounds */
-  .gradient-primary {
-    background: linear-gradient(
-      135deg,
-      hsl(var(--gradient-start)),
-      hsl(var(--gradient-mid)),
-      hsl(var(--gradient-end))
-    );
+  .sidebar-item.active {
+    background: hsl(var(--card));
+    @apply text-foreground;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
-  .gradient-primary-subtle {
-    background: linear-gradient(
-      135deg,
-      hsl(var(--gradient-start) / 0.1),
-      hsl(var(--gradient-end) / 0.1)
-    );
-  }
-
-  .gradient-mesh {
-    background:
-      radial-gradient(
-        at 40% 20%,
-        hsl(var(--gradient-start) / 0.15) 0px,
-        transparent 50%
-      ),
-      radial-gradient(
-        at 80% 0%,
-        hsl(var(--gradient-mid) / 0.1) 0px,
-        transparent 50%
-      ),
-      radial-gradient(
-        at 0% 50%,
-        hsl(var(--gradient-end) / 0.12) 0px,
-        transparent 50%
-      ),
-      radial-gradient(
-        at 80% 50%,
-        hsl(var(--chart-5) / 0.08) 0px,
-        transparent 50%
-      ),
-      radial-gradient(
-        at 0% 100%,
-        hsl(var(--chart-2) / 0.1) 0px,
-        transparent 50%
-      );
-  }
-
-  /* Animated gradient border */
-  .gradient-border {
-    position: relative;
-    background: hsl(var(--background));
-    border-radius: var(--radius);
-  }
-
-  .gradient-border::before {
+  /* 3px cherry accent bar flush with sidebar start edge */
+  .sidebar-item.active::before {
     content: '';
     position: absolute;
-    inset: -2px;
-    border-radius: calc(var(--radius) + 2px);
+    inset-inline-start: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    background: hsl(var(--primary));
+    border-radius: 0 2px 2px 0;
+  }
+
+  [dir='rtl'] .sidebar-item.active::before {
+    border-radius: 2px 0 0 2px;
+  }
+
+  /* Nav section label */
+  .nav-section-label {
+    @apply mb-1 mt-5 px-3 text-[10px] font-semibold uppercase tracking-widest;
+    color: hsl(var(--muted-foreground) / 0.6);
+  }
+
+  /* ─── Upgrade banner ──────────────────────────────────────────── */
+  .upgrade-banner {
+    @apply rounded-[14px] border border-primary/15 p-4;
     background: linear-gradient(
       135deg,
-      hsl(var(--gradient-start)),
-      hsl(var(--gradient-mid)),
-      hsl(var(--gradient-end))
+      hsl(var(--primary) / 0.08) 0%,
+      hsl(var(--primary) / 0.03) 100%
     );
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
   }
 
-  .gradient-border:hover::before {
-    opacity: 1;
+  /* ─── Stat cards ──────────────────────────────────────────────── */
+  .stat-card {
+    @apply relative overflow-hidden rounded-[14px] border bg-card p-5 transition-all duration-200;
   }
 
-  /* Modern card hover effects */
-  .card-hover {
-    @apply transition-all duration-300 ease-out;
+  .stat-card:hover {
+    @apply -translate-y-0.5 shadow-lg shadow-primary/5;
   }
 
-  .card-hover:hover {
-    @apply -translate-y-1 shadow-xl shadow-primary/5;
+  /* ─── Scrollbar (matches design) ────────────────────────────── */
+  .beautiful-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
   }
 
-  /* Glow effects */
-  .glow {
-    box-shadow: 0 0 40px -10px hsl(var(--primary));
+  .beautiful-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .beautiful-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .beautiful-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  .beautiful-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(34 14% 85%); /* --border-strong */
   }
 
-  .glow-sm {
-    box-shadow: 0 0 20px -5px hsl(var(--primary) / 0.5);
-  }
-
-  /* Shimmer animation for loading */
+  /* ─── Shimmer skeleton ────────────────────────────────────────── */
   .shimmer {
     background: linear-gradient(
       90deg,
       hsl(var(--muted)) 0%,
-      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--border)) 50%,
       hsl(var(--muted)) 100%
     );
     background-size: 200% 100%;
@@ -264,26 +263,11 @@
     }
   }
 
-  /* Pulse glow animation */
-  .pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-glow {
-    0%,
-    100% {
-      box-shadow: 0 0 20px -5px hsl(var(--primary) / 0.4);
-    }
-    50% {
-      box-shadow: 0 0 30px -5px hsl(var(--primary) / 0.7);
-    }
-  }
-
-  /* Fade in up animation */
+  /* ─── Fade animations (matching design) ─────────────────────── */
   .fade-in-up {
-    animation: fadeInUp 0.5s ease-out forwards;
+    animation: fadeInUp 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(6px);
   }
 
   @keyframes fadeInUp {
@@ -293,171 +277,49 @@
     }
   }
 
-  /* Staggered children animation */
   .stagger-children > * {
-    animation: fadeInUp 0.5s ease-out forwards;
+    animation: fadeInUp 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(6px);
   }
-
   .stagger-children > *:nth-child(1) {
-    animation-delay: 0.05s;
+    animation-delay: 20ms;
   }
   .stagger-children > *:nth-child(2) {
-    animation-delay: 0.1s;
+    animation-delay: 50ms;
   }
   .stagger-children > *:nth-child(3) {
-    animation-delay: 0.15s;
+    animation-delay: 80ms;
   }
   .stagger-children > *:nth-child(4) {
-    animation-delay: 0.2s;
+    animation-delay: 110ms;
   }
   .stagger-children > *:nth-child(5) {
-    animation-delay: 0.25s;
+    animation-delay: 140ms;
   }
   .stagger-children > *:nth-child(6) {
-    animation-delay: 0.3s;
-  }
-  .stagger-children > *:nth-child(7) {
-    animation-delay: 0.35s;
-  }
-  .stagger-children > *:nth-child(8) {
-    animation-delay: 0.4s;
+    animation-delay: 170ms;
   }
 
-  /* Beautiful scrollbar */
-  .beautiful-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--primary) / 0.3) transparent;
+  /* ─── Utilities ───────────────────────────────────────────────── */
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl;
   }
 
-  .beautiful-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  .beautiful-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 3px;
-  }
-
-  .beautiful-scrollbar::-webkit-scrollbar-thumb {
-    background: hsl(var(--primary) / 0.3);
-    border-radius: 3px;
-  }
-
-  .beautiful-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary) / 0.5);
-  }
-
-  /* Icon container */
-  .icon-container {
-    @apply flex items-center justify-center rounded-xl p-2.5 transition-all duration-200;
-  }
-
-  .icon-container-primary {
-    @apply icon-container bg-primary/10 text-primary;
-  }
-
-  .icon-container-success {
-    @apply icon-container bg-emerald-500/10 text-emerald-600 dark:text-emerald-400;
-  }
-
-  .icon-container-warning {
-    @apply icon-container bg-amber-500/10 text-amber-600 dark:text-amber-400;
-  }
-
-  .icon-container-info {
-    @apply icon-container bg-blue-500/10 text-blue-600 dark:text-blue-400;
-  }
-
-  .icon-container-destructive {
-    @apply icon-container bg-red-500/10 text-red-600 dark:text-red-400;
-  }
-
-  /* Stat card variants */
-  .stat-card {
-    @apply relative overflow-hidden rounded-2xl border bg-card p-6 transition-all duration-300;
-  }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(
-      circle,
-      hsl(var(--primary) / 0.08) 0%,
-      transparent 70%
-    );
-    border-radius: 50%;
-    transform: translate(30%, -30%);
-  }
-
-  .stat-card:hover {
-    @apply -translate-y-0.5 shadow-lg shadow-primary/5;
-  }
-
-  /* Page wrapper with subtle pattern */
-  .page-wrapper {
-    @apply relative min-h-full;
-  }
-
-  .page-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      circle at 1px 1px,
-      hsl(var(--primary) / 0.03) 1px,
-      transparent 0
-    );
-    background-size: 40px 40px;
-    pointer-events: none;
-  }
-
-  /* Sidebar styles */
-  .sidebar-item {
-    @apply relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200;
-  }
-
-  .sidebar-item:hover {
-    @apply bg-[hsl(var(--sidebar-hover))];
-  }
-
-  .sidebar-item.active {
-    @apply bg-primary/10 text-primary;
-  }
-
-  .sidebar-item.active::before {
-    content: '';
-    position: absolute;
-    left: -4px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 24px;
-    background: hsl(var(--primary));
-    border-radius: 0 4px 4px 0;
+  .glass-card {
+    @apply border border-white/20 bg-white/80 backdrop-blur-xl;
   }
 }
 
-/* Custom focus styles */
+/* ─── Focus & Selection ───────────────────────────────────────────────────── */
 *:focus-visible {
-  @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
+  @apply outline-none ring-2 ring-primary/40 ring-offset-2 ring-offset-background;
 }
 
-/* Selection color */
-::selection {
-  @apply bg-primary/20 text-foreground;
-}
-
-/* Smooth transitions for theme changes */
+/* Theme transition */
 html.transitioning,
 html.transitioning *,
 html.transitioning *::before,
 html.transitioning *::after {
-  transition-duration: 300ms !important;
+  transition-duration: 250ms !important;
 }

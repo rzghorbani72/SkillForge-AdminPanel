@@ -40,7 +40,7 @@ const CreateProductBasicInfo = ({ form }: Props) => {
               </FormControl>
               <FormMessage />
               <p
-                className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-gray-600'}`}
+                className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
                 {t('courses.titleLength')} ({field.value?.length || 0}/80)
               </p>
@@ -62,7 +62,7 @@ const CreateProductBasicInfo = ({ form }: Props) => {
                 />
               </FormControl>
               <FormMessage />
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {t('products.shortDescriptionLength')} -{' '}
                 {field.value?.length || 0}/400
               </p>
@@ -85,7 +85,7 @@ const CreateProductBasicInfo = ({ form }: Props) => {
               </FormControl>
               <FormMessage />
               <p
-                className={`text-sm ${(field.value?.length || 0) >= 1800 ? 'text-orange-600' : 'text-gray-600'}`}
+                className={`text-sm ${(field.value?.length || 0) >= 1800 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
                 Description must be less than 2000 characters (
                 {field.value?.length || 0}/2000)

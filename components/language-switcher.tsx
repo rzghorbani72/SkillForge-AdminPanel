@@ -42,10 +42,10 @@ export function LanguageSwitcher() {
       <Button
         variant="outline"
         size="sm"
-        className="gap-2 border-gray-300 bg-white text-gray-900 shadow-sm hover:bg-gray-50 dark:text-gray-100"
+        className="gap-2 border-border bg-white text-foreground shadow-sm hover:bg-muted/50"
         disabled
       >
-        <Globe className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+        <Globe className="h-4 w-4 text-foreground" />
         <span className="font-medium">...</span>
       </Button>
     );
@@ -62,11 +62,11 @@ export function LanguageSwitcher() {
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 border-gray-300 bg-white text-gray-900 shadow-sm hover:bg-gray-50 dark:bg-gray-500 dark:text-gray-100"
+          className="gap-2 border-border bg-white text-foreground shadow-sm hover:bg-muted/50"
           disabled={isChanging}
         >
-          <Globe className="h-4 w-4 text-gray-700 dark:text-gray-300" />
-          <span className="font-medium text-gray-900 dark:text-gray-100">
+          <Globe className="h-4 w-4 text-foreground" />
+          <span className="font-medium text-foreground">
             {currentLanguage.nativeName}
           </span>
         </Button>

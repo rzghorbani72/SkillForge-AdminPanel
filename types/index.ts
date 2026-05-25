@@ -10,6 +10,8 @@ export interface NavItem {
   label?: string;
   description?: string;
   children?: NavItem[];
+  /** Section label rendered above this item as a group header */
+  section?: string;
   roles?: (
     | 'ADMIN'
     | 'SUPPORT'

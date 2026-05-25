@@ -53,9 +53,9 @@ export const getCategoryTypeColor = (type: string) => {
     case 'IMAGE':
       return 'bg-pink-100 text-pink-800';
     case 'ROOT':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-muted text-muted-foreground';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-muted text-muted-foreground';
   }
 };
 

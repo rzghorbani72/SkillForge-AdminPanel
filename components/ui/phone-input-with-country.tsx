@@ -221,7 +221,7 @@ export function PhoneInputWithCountry({
                 <span className="text-sm font-medium">
                   {selectedCountry.dialCode}
                 </span>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </div>
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
@@ -230,7 +230,7 @@ export function PhoneInputWithCountry({
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{country.flag}</span>
                     <span className="text-sm">{country.name}</span>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-muted-foreground">
                       {country.dialCode}
                     </span>
                   </div>
@@ -242,7 +242,7 @@ export function PhoneInputWithCountry({
           {/* Phone Number Input */}
           <div className="relative flex-1">
             <Phone
-              className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+              className={`absolute top-3 h-4 w-4 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`}
             />
             <Input
               id={id}

@@ -73,7 +73,7 @@ const CourseForm = ({
                   </FormControl>
                   <FormMessage />
                   <p
-                    className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-gray-600'}`}
+                    className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-muted-foreground'}`}
                   >
                     {t('courses.titleLength')} ({field.value?.length || 0}/80)
                   </p>
@@ -96,7 +96,7 @@ const CourseForm = ({
                   </FormControl>
                   <FormMessage />
                   <p
-                    className={`text-sm ${(field.value?.length || 0) >= 350 ? 'text-orange-600' : 'text-gray-600'}`}
+                    className={`text-sm ${(field.value?.length || 0) >= 350 ? 'text-orange-600' : 'text-muted-foreground'}`}
                   >
                     {t('courses.descriptionLength')} ({field.value?.length || 0}
                     /400)
@@ -182,7 +182,7 @@ const CourseForm = ({
                 )}
               />
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               {t('courses.enterWholeNumbers')}
             </p>
           </CardContent>
@@ -318,7 +318,7 @@ const CourseForm = ({
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Publish Course</FormLabel>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Make this course visible to students immediately
                     </div>
                   </div>
@@ -347,7 +347,7 @@ const CourseForm = ({
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Featured Course</FormLabel>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Highlight this course in featured sections
                     </div>
                   </div>

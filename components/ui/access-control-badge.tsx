@@ -60,7 +60,7 @@ export function AccessControlBadge({
 
     return {
       variant: 'outline' as const,
-      className: 'bg-gray-100 text-gray-600 border-gray-200',
+      className: 'bg-muted text-muted-foreground border-border',
       icon: <Eye className="h-3 w-3" />,
       text: 'View Only',
       tooltip: 'You can only view this resource'
@@ -100,7 +100,7 @@ export function AccessControlBadge({
           {!can_modify && !can_delete && (
             <Badge
               variant="outline"
-              className="bg-gray-50 text-xs text-gray-500"
+              className="bg-muted/50 text-xs text-muted-foreground"
             >
               <Lock className="mr-1 h-2 w-2" />
               Read Only
