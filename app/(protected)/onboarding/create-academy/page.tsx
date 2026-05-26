@@ -166,7 +166,7 @@ export default function CreateAcademyPage() {
   return (
     <div
       className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12"
-      dir={isRTL ? 'rtl' : 'ltr'}
+      dir={'rtl'}
     >
       <div className="w-full max-w-[480px]">
         {/* Top bar */}
@@ -226,7 +226,7 @@ export default function CreateAcademyPage() {
                         <input
                           className="flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground"
                           placeholder="your-academy"
-                          dir="ltr"
+                          dir="rtl"
                           autoFocus
                           {...field}
                           onChange={(e) =>

@@ -36,7 +36,7 @@ export function InputWithIcon({
   const { isRTL } = useLanguage();
 
   return (
-    <div className="space-y-2" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="space-y-2" dir={'rtl'}>
       <Label htmlFor={id}>{label}</Label>
       <div className="relative">
         <Icon
@@ -55,7 +55,7 @@ export function InputWithIcon({
           )}
           disabled={disabled}
           maxLength={maxLength}
-          dir="ltr"
+          dir="rtl"
         />
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}

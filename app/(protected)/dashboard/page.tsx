@@ -1,6 +1,7 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Sparkles, Download } from 'lucide-react';
 import useDashboard from '@/components/dashboard/useDashboard';
 import StatsCards from '@/components/dashboard/StatsCards';
 import RevenueEnrollmentChart from '@/components/dashboard/RevenueEnrollmentChart';
@@ -12,9 +13,23 @@ import CompletionDonut from '@/components/dashboard/CompletionDonut';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useInitializeStores } from '@/hooks/useInitializeStores';
 import CampaignBanner from '@/components/dashboard/CampaignBanner';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { cn } from '@/lib/utils';
+
+type Period = '7d' | '30d' | '3m' | '1y';
+
+const PERIODS: { key: Period; fa: string; en: string }[] = [
+  { key: '7d', fa: '۷ روز', en: '7 days' },
+  { key: '30d', fa: '۳۰ روز', en: '30 days' },
+  { key: '3m', fa: '۳ ماه', en: '3 months' },
+  { key: '1y', fa: 'امسال', en: 'This year' }
+];
 
 export default function DashboardPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const isFa = language === 'fa';
+  const { user } = useAuthUser();
+  const [period, setPeriod] = useState<Period>('30d');
 
   useInitializeStores();
 
@@ -25,6 +40,11 @@ export default function DashboardPage() {
     statsCards,
     monthlyChartData
   } = useDashboard();
+
+  const firstName =
+    (user as any)?.profile?.display_name?.split(' ')?.[0] ??
+    (user as any)?.profile?.name?.split(' ')?.[0] ??
+    '';
 
   if (isLoading) {
     return (
@@ -44,14 +64,54 @@ export default function DashboardPage() {
     );
   }
 
+  const activePeriod = PERIODS.find((p) => p.key === period)!;
+
   return (
     <div className="flex-1 space-y-5 p-6">
-      {/* Page title */}
-      <div>
-        <h1 className="text-xl font-semibold">{t('dashboard.title')}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t('dashboard.welcomeBack')}
-        </p>
+      {/* Page header */}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            {isFa ? 'مرور کلی' : 'Overview'}
+          </p>
+          <h1 className="mt-1 text-2xl font-bold">
+            {isFa
+              ? `خوش آمدید${firstName ? `، ${firstName}` : ''} 👋`
+              : `Welcome back${firstName ? `, ${firstName}` : ''} 👋`}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {isFa
+              ? `یک نگاه سریع به وضعیت آکادمی‌هایتان در ${activePeriod.fa} گذشته`
+              : `A quick look at your academies over the last ${activePeriod.en}`}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-lg border bg-muted/30 p-0.5">
+            {PERIODS.map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                onClick={() => setPeriod(p.key)}
+                className={cn(
+                  'rounded-md px-3 py-1.5 text-sm font-medium transition-all',
+                  period === p.key
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {isFa ? p.fa : p.en}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className="flex items-center gap-1.5 rounded-lg border bg-background px-3 py-1.5 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:bg-muted"
+          >
+            <Download className="h-4 w-4" />
+            {isFa ? 'خروجی گزارش' : 'Export'}
+          </button>
+        </div>
       </div>
 
       {/* Campaign banner */}

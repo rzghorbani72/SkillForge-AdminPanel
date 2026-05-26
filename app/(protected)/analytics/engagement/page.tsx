@@ -138,10 +138,7 @@ export default function StudentEngagementPage() {
   }
 
   return (
-    <div
-      className="flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('analytics.studentEngagement')}

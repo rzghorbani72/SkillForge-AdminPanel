@@ -45,14 +45,7 @@ export default function AnalyticsPage() {
   const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
   const currentAcademy = useCurrentAcademy();
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
+  const locale = 'fa-IR';
 
   if (process.env.NODE_ENV === 'development' && currentAcademy) {
     console.log('Academy currency config:', {
@@ -204,10 +197,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div
-      className="flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">

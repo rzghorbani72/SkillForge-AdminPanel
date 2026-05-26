@@ -299,10 +299,7 @@ export default function AdminsPage() {
   }
 
   return (
-    <div
-      className="flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
@@ -442,7 +439,7 @@ export default function AdminsPage() {
                         <TableCell className="text-center">
                           <div className="flex items-center justify-center gap-2">
                             <Phone className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm" dir="ltr">
+                            <span className="text-sm" dir="rtl">
                               {admin.phone_number}
                             </span>
                             {admin.phone_confirmed ? (

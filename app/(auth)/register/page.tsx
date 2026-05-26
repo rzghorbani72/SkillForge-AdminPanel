@@ -207,7 +207,7 @@ export default function RegisterPage() {
       <LanguageDetector />
       <div
         className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
-        dir={isRTL ? 'rtl' : 'ltr'}
+        dir={'rtl'}
       >
         {/* Language switcher */}
         <div className={cn('fixed top-4 z-50', isRTL ? 'left-4' : 'right-4')}>
@@ -315,7 +315,7 @@ export default function RegisterPage() {
                               />
                               <Input
                                 type="tel"
-                                dir="ltr"
+                                dir="rtl"
                                 className={isRTL ? 'pr-9' : 'pl-9'}
                                 placeholder={t('auth.phonePlaceholder')}
                                 {...field}
@@ -467,7 +467,7 @@ export default function RegisterPage() {
                       onChange={(e) => setOtpCode(e.target.value)}
                       placeholder={t('auth.verificationCodePlaceholder')}
                       maxLength={8}
-                      dir="ltr"
+                      dir="rtl"
                       disabled={phoneVerified}
                       className="text-center font-mono text-lg tracking-[0.3em]"
                     />

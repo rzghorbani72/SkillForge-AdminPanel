@@ -282,7 +282,7 @@ export default function SecuritySettingsPage() {
                 <p className="text-sm font-medium text-foreground">{title}</p>
                 <p className="text-xs text-muted-foreground">{description}</p>
               </div>
-              <div className="flex items-center gap-3" dir="ltr">
+              <div className="flex items-center gap-3" dir="rtl">
                 <span className=" text-right text-xs font-medium text-muted-foreground">
                   {notifications[key as keyof NotificationSettings]
                     ? t('common.enabled')

@@ -51,28 +51,18 @@ export type Product = {
   updated_at: string;
 };
 
-// 6-item sidebar per product spec. Role gating is applied in filterNavItemsByRole.
-// - dashboard:  everyone
-// - academies:  ADMIN / SUPPORT (platform oversight); MANAGER edits own via Settings
-// - courses:    TEACHER and up
-// - users:      TEACHER and up (TEACHER is scoped to own courses; MANAGER+ wider)
-// - payments:   everyone (students see their own; staff see academy/platform)
-// - settings:   everyone
 export const navItems: NavItem[] = [
-  // ── Main ────────────────────────────────────────────────────────
   {
     title: 'Dashboard',
     href: '/dashboard',
     icon: 'dashboard' as IconType,
     label: 'dashboard'
   },
-  // ── Manage ──────────────────────────────────────────────────────
   {
-    title: 'Academies',
+    title: 'My Academies',
     href: '/academies',
     icon: 'store' as IconType,
     label: 'academies',
-    section: 'manage',
     roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
   },
   {
@@ -87,23 +77,34 @@ export const navItems: NavItem[] = [
     href: '/users',
     icon: 'users' as IconType,
     label: 'users',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    children: [
+      {
+        title: 'Users',
+        href: '/users',
+        label: 'users-list'
+      },
+      {
+        title: 'Groups',
+        href: '/users/groups',
+        label: 'groups',
+        disabled: true
+      }
+    ]
   },
   {
-    title: 'Bundles',
-    href: '/bundles',
-    icon: 'package' as IconType,
-    label: 'bundles',
+    title: 'Marketing',
+    href: '/affiliates',
+    icon: 'network' as IconType,
+    label: 'affiliates',
     roles: ['ADMIN', 'MANAGER']
   },
-  // ── Finance ─────────────────────────────────────────────────────
   {
-    title: 'Payments',
-    href: '/payments',
-    icon: 'creditCard' as IconType,
-    label: 'payments',
-    section: 'finance',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER']
+    title: 'My Affiliate',
+    href: '/my-affiliate',
+    icon: 'network' as IconType,
+    label: 'my-affiliate',
+    roles: ['STUDENT', 'TEACHER', 'AFFILIATE']
   },
   {
     title: 'Financial',
@@ -112,6 +113,21 @@ export const navItems: NavItem[] = [
     label: 'financial',
     roles: ['ADMIN', 'SUPPORT', 'MANAGER']
   },
+  {
+    title: 'Plans',
+    href: '/plans',
+    icon: 'layers' as IconType,
+    label: 'plans',
+    roles: ['ADMIN', 'MANAGER']
+  },
+  {
+    title: 'Site Template',
+    href: '/settings/ui-template',
+    icon: 'layout' as IconType,
+    label: 'siteTemplate',
+    roles: ['ADMIN', 'MANAGER']
+  },
+  // Platform-admin-only items
   {
     title: 'Withdrawals',
     href: '/withdrawals',
@@ -129,42 +145,12 @@ export const navItems: NavItem[] = [
     adminOnly: true
   },
   {
-    title: 'Affiliates',
-    href: '/affiliates',
-    icon: 'network' as IconType,
-    label: 'affiliates',
-    roles: ['ADMIN', 'MANAGER']
-  },
-  {
-    title: 'My Affiliate',
-    href: '/my-affiliate',
-    icon: 'network' as IconType,
-    label: 'my-affiliate',
-    roles: ['STUDENT', 'TEACHER', 'AFFILIATE']
-  },
-  {
-    title: 'Coupons',
-    href: '/coupons',
-    icon: 'percent' as IconType,
-    label: 'coupons',
-    roles: ['ADMIN', 'MANAGER']
-  },
-  {
     title: 'Subscriptions',
     href: '/subscriptions',
     icon: 'calendarClock' as IconType,
     label: 'subscriptions',
     roles: ['ADMIN'],
     adminOnly: true
-  },
-  // ── Platform ────────────────────────────────────────────────────
-  {
-    title: 'Plans',
-    href: '/plans',
-    icon: 'layers' as IconType,
-    label: 'plans',
-    section: 'platform',
-    roles: ['ADMIN', 'MANAGER']
   },
   {
     title: 'Platform Settings',
@@ -173,12 +159,6 @@ export const navItems: NavItem[] = [
     label: 'platformSettings',
     roles: ['ADMIN'],
     adminOnly: true
-  },
-  {
-    title: 'Settings',
-    href: '/settings',
-    icon: 'settings' as IconType,
-    label: 'settings'
   }
 ];
 

@@ -27,14 +27,7 @@ export function FinancialFilterBar({
 }: FinancialFilterBarProps) {
   const { t, language } = useTranslation();
 
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
+  const locale = 'fa-IR';
 
   return (
     <div className="flex flex-wrap gap-4">

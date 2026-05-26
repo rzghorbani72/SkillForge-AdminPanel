@@ -147,10 +147,7 @@ export default function VideosPage() {
   }
 
   return (
-    <div
-      className="page-wrapper flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="page-wrapper flex-1 space-y-6 p-6" dir={'rtl'}>
       {/* Header */}
       <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -221,7 +218,7 @@ export default function VideosPage() {
         defaultValue="all"
         className="fade-in-up space-y-6"
         style={{ animationDelay: '0.2s' }}
-        dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+        dir={'rtl'}
       >
         <TabsList className="grid w-full grid-cols-5 rounded-xl bg-muted/50 p-1">
           <TabsTrigger

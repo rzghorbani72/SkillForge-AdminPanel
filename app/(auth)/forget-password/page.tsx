@@ -304,7 +304,7 @@ export default function ForgetPasswordPage() {
             </p>
           </div>
 
-          <Card dir={isRTL ? 'rtl' : 'ltr'}>
+          <Card dir={'rtl'}>
             <CardHeader>
               <CardTitle className="text-center">
                 {t('forgotPassword.title')}
@@ -347,7 +347,7 @@ export default function ForgetPasswordPage() {
                     <TabsContent
                       value="email"
                       className="space-y-4"
-                      dir={isRTL ? 'rtl' : 'ltr'}
+                      dir={'rtl'}
                     >
                       <InputWithIcon
                         id="email"
@@ -365,7 +365,7 @@ export default function ForgetPasswordPage() {
                     <TabsContent
                       value="phone"
                       className="space-y-4"
-                      dir={isRTL ? 'rtl' : 'ltr'}
+                      dir={'rtl'}
                     >
                       <PhoneInputWithCountry
                         id="phone"
@@ -397,7 +397,7 @@ export default function ForgetPasswordPage() {
                         }
                         className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         disabled={isLoadingStores}
-                        dir={isRTL ? 'rtl' : 'ltr'}
+                        dir={'rtl'}
                       >
                         <option value="">{t('common.select')}</option>
                         {stores.map((store) => (
@@ -442,7 +442,7 @@ export default function ForgetPasswordPage() {
                       value={formData.otp}
                       onChange={(e) => handleInputChange('otp', e.target.value)}
                       maxLength={6}
-                      dir="ltr"
+                      dir="rtl"
                     />
                     {errors.otp && (
                       <p className="mt-1 text-sm text-red-600">{errors.otp}</p>

@@ -185,14 +185,14 @@ export default function AdminLoginPage() {
           )}
 
           {/* Admin Access Notice */}
-          <Alert className="mb-6" dir={isRTL ? 'rtl' : 'ltr'}>
+          <Alert className="mb-6" dir={'rtl'}>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               {t('auth.adminOnly')} <strong>{t('auth.adminsOnly')}</strong>
             </AlertDescription>
           </Alert>
 
-          <Card className="shadow-xl" dir={isRTL ? 'rtl' : 'ltr'}>
+          <Card className="shadow-xl" dir={'rtl'}>
             <CardHeader className="space-y-1">
               <CardTitle className="text-center text-2xl">
                 {t('auth.adminLogin')}
@@ -247,7 +247,7 @@ export default function AdminLoginPage() {
                         errors.password ? 'border-red-500' : ''
                       }`}
                       disabled={isLoading}
-                      dir="ltr"
+                      dir="rtl"
                     />
                     <Button
                       type="button"

@@ -28,11 +28,7 @@ const RecentLists = ({ courses, enrollments, payments }: Props) => {
   const currentAcademy = useCurrentAcademy();
 
   return (
-    <Tabs
-      defaultValue="courses"
-      className="space-y-4"
-      dir={language === 'fa' ? 'rtl' : 'ltr'}
-    >
+    <Tabs defaultValue="courses" className="space-y-4" dir={'rtl'}>
       <TabsList>
         <TabsTrigger value="courses">
           {t('dashboard.recentCourses')}

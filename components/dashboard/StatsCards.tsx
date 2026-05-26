@@ -4,12 +4,32 @@ import { Card, CardContent } from '@/components/ui/card';
 import { DashboardStatsCard } from './useDashboard';
 import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
+
+const SPARKLINES = [
+  [30, 38, 34, 44, 42, 55, 50, 62, 60, 75],
+  [25, 30, 27, 38, 35, 46, 42, 54, 52, 64],
+  [45, 40, 52, 58, 50, 68, 62, 78, 74, 92],
+  [72, 68, 74, 62, 70, 60, 64, 56, 60, 54]
+];
 
 const STYLES = [
-  { icon: 'bg-primary/10 text-primary' },
-  { icon: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
-  { icon: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
-  { icon: 'bg-sky-500/10 text-sky-600 dark:text-sky-400' }
+  {
+    icon: 'bg-primary/10 text-primary',
+    line: 'hsl(var(--chart-1))'
+  },
+  {
+    icon: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+    line: 'hsl(var(--chart-2))'
+  },
+  {
+    icon: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+    line: 'hsl(var(--chart-3))'
+  },
+  {
+    icon: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
+    line: 'hsl(var(--chart-4))'
+  }
 ];
 
 export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
@@ -18,6 +38,7 @@ export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
       {cards.map((card, i) => {
         const style = STYLES[i % STYLES.length];
         const isIncrease = card.changeType === 'increase';
+        const sparkData = SPARKLINES[i % SPARKLINES.length].map((v) => ({ v }));
 
         return (
           <Card key={i} className="stat-card">
@@ -55,6 +76,21 @@ export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
                 <p className="truncate text-xs text-muted-foreground">
                   {card.description}
                 </p>
+              </div>
+
+              <div className="-mx-1 mt-3 h-10">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={sparkData}>
+                    <Line
+                      type="monotone"
+                      dataKey="v"
+                      stroke={style.line}
+                      strokeWidth={1.5}
+                      dot={false}
+                      isAnimationActive={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>

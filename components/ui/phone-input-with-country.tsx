@@ -203,7 +203,7 @@ export function PhoneInputWithCountry({
   }, []);
 
   return (
-    <div className="space-y-2" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="space-y-2" dir={'rtl'}>
       <Label htmlFor={id}>{label}</Label>
       <div className="relative">
         <div className={`flex ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -259,7 +259,7 @@ export function PhoneInputWithCountry({
               )}
               disabled={disabled}
               autoComplete="tel"
-              dir="ltr"
+              dir="rtl"
             />
           </div>
         </div>

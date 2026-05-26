@@ -49,9 +49,6 @@ interface AccessRecord {
 }
 
 export default function StudentLessonAccessPage() {
-  const { language } = useTranslation();
-  const isRtl = language === 'fa' || language === 'ar';
-
   const [list, setList] = useState<AccessRecord[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -119,7 +116,7 @@ export default function StudentLessonAccessPage() {
   };
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">

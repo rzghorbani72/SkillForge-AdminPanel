@@ -73,14 +73,7 @@ export default function RevenueAnalyticsPage() {
   const { t, language } = useTranslation();
   const { payments, enrollments, isLoading } = useAnalyticsData();
   const currentAcademy = useCurrentAcademy();
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
+  const locale = 'fa-IR';
 
   const {
     monthlyRevenue,
@@ -199,10 +192,7 @@ export default function RevenueAnalyticsPage() {
   }
 
   return (
-    <div
-      className="flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('analytics.revenueAnalytics')}

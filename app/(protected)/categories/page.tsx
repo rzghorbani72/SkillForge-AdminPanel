@@ -219,10 +219,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div
-      className="page-wrapper flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="page-wrapper flex-1 space-y-6 p-6" dir={'rtl'}>
       <CategoryHeader onCreateClick={() => setIsCreateDialogOpen(true)} />
 
       {error && (

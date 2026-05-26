@@ -277,7 +277,7 @@ export default function AdminForgetPasswordPage() {
             </p>
           </div>
 
-          <Card dir={isRTL ? 'rtl' : 'ltr'}>
+          <Card dir={'rtl'}>
             <CardHeader>
               <CardTitle className="text-center">
                 {t('forgotPassword.title')}
@@ -320,7 +320,7 @@ export default function AdminForgetPasswordPage() {
                     <TabsContent
                       value="email"
                       className="space-y-4"
-                      dir={isRTL ? 'rtl' : 'ltr'}
+                      dir={'rtl'}
                     >
                       <InputWithIcon
                         id="email"
@@ -338,7 +338,7 @@ export default function AdminForgetPasswordPage() {
                     <TabsContent
                       value="phone"
                       className="space-y-4"
-                      dir={isRTL ? 'rtl' : 'ltr'}
+                      dir={'rtl'}
                     >
                       <PhoneInputWithCountry
                         id="phone"
@@ -416,7 +416,7 @@ export default function AdminForgetPasswordPage() {
                       value={formData.otp}
                       onChange={(e) => handleInputChange('otp', e.target.value)}
                       maxLength={6}
-                      dir="ltr"
+                      dir="rtl"
                     />
                     {errors.otp && (
                       <p className="mt-1 text-sm text-red-600">{errors.otp}</p>

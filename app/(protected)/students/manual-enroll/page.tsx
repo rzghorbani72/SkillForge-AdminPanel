@@ -42,9 +42,6 @@ interface Enrollment {
 }
 
 export default function ManualEnrollPage() {
-  const { language } = useTranslation();
-  const isRtl = language === 'fa' || language === 'ar';
-
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -119,7 +116,7 @@ export default function ManualEnrollPage() {
   };
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Manual Enrollment</h1>
         <p className="text-muted-foreground">

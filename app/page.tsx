@@ -11,7 +11,7 @@ const t = (key: string) => translate(key, language);
 export default function Page() {
   return (
     <main
-      dir={direction}
+      dir={'rtl'}
       className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 px-4"
     >
       <nav className="flex w-full justify-end px-8 py-6">

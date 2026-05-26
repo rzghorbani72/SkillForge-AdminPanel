@@ -38,14 +38,7 @@ export default function CoursePerformancePage() {
   const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
   const currentAcademy = useCurrentAcademy();
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
+  const locale = 'fa-IR';
 
   const courseMetrics = useMemo<CoursePerformance[]>(() => {
     if (courses.length === 0) return [];
@@ -188,10 +181,7 @@ export default function CoursePerformancePage() {
   }
 
   return (
-    <div
-      className="flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('analytics.coursePerformance')}

@@ -120,14 +120,7 @@ export default function PlatformFinancialPage() {
     }
   };
 
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
+  const locale = 'fa-IR';
 
   const formatCurrency = (amount: number, currency = 'IRR') => {
     return formatCurrencyWithStore(amount, {

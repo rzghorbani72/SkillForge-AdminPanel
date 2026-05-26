@@ -166,7 +166,7 @@ function AcademyCard({
         'group relative flex flex-col rounded-2xl border bg-card p-5 shadow-sm transition-shadow hover:shadow-md',
         isCurrent && 'ring-2 ring-primary'
       )}
-      dir={isRTL ? 'rtl' : 'ltr'}
+      dir={'rtl'}
     >
       {/* Current badge */}
       {isCurrent && (
@@ -372,7 +372,7 @@ export default function AcademiesPage() {
   }
 
   return (
-    <div className="flex-1 space-y-8 p-6" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="flex-1 space-y-8 p-6" dir={'rtl'}>
       {/* Page header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>

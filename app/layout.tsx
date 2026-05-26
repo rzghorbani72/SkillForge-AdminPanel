@@ -28,7 +28,7 @@ export default async function RootLayout({
   const direction = getAdminDirection(languagePreference, null);
 
   return (
-    <html lang={language} dir={direction} suppressHydrationWarning>
+    <html lang={language} dir={'rtl'} suppressHydrationWarning>
       <head>
         {/* Paint warm off-white before any stylesheet loads — prevents blue flash */}
         <style>{`html,body{background:#f9f7f6;color-scheme:light}`}</style>

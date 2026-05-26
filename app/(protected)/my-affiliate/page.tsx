@@ -358,7 +358,7 @@ export default function MyAffiliatePage() {
   );
 
   return (
-    <div className="flex-1 space-y-8 p-6" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="flex-1 space-y-8 p-6" dir={'rtl'}>
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
@@ -460,7 +460,7 @@ export default function MyAffiliatePage() {
           setAmount('');
         }}
       >
-        <DialogContent className="max-w-sm" dir={isRTL ? 'rtl' : 'ltr'}>
+        <DialogContent className="max-w-sm" dir={'rtl'}>
           <DialogHeader>
             <DialogTitle>Request Payout</DialogTitle>
             <DialogDescription>
@@ -481,7 +481,7 @@ export default function MyAffiliatePage() {
                   max={dialogLink?.available_balance}
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  dir="ltr"
+                  dir="rtl"
                 />
                 <Button
                   type="button"

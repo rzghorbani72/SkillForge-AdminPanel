@@ -472,7 +472,7 @@ export default function BundlesPage() {
   const savings = originalTotal - bundlePrice;
 
   return (
-    <div className="flex-1 space-y-8 p-6" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="flex-1 space-y-8 p-6" dir={'rtl'}>
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -543,7 +543,7 @@ export default function BundlesPage() {
 
       {/* Create / Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg" dir={isRTL ? 'rtl' : 'ltr'}>
+        <DialogContent className="max-w-lg" dir={'rtl'}>
           <DialogHeader>
             <DialogTitle>
               {editTarget ? t('bundles.editBundle') : t('bundles.createBundle')}
@@ -585,7 +585,7 @@ export default function BundlesPage() {
                     <FormLabel>{t('bundles.slug')}</FormLabel>
                     <FormControl>
                       <Input
-                        dir="ltr"
+                        dir="rtl"
                         className="font-mono text-sm"
                         {...field}
                       />

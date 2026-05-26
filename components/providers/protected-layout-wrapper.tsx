@@ -6,6 +6,7 @@ import Header from '@/components/layout/header';
 import { ThemeInitializer } from '@/components/providers/ThemeInitializer';
 import { UserProvider } from '@/components/providers/user-provider';
 import { useCategoriesStore } from '@/lib/store';
+import { useI18n } from '@/lib/i18n/provider';
 
 export function ProtectedLayoutWrapper({
   children
@@ -14,6 +15,7 @@ export function ProtectedLayoutWrapper({
 }) {
   const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
   const hasFetchedCategories = useRef(false);
+  const { direction } = useI18n();
 
   useEffect(() => {
     if (hasFetchedCategories.current) return;
@@ -24,7 +26,7 @@ export function ProtectedLayoutWrapper({
   return (
     <UserProvider>
       <ThemeInitializer />
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden" dir={direction}>
         <Sidebar />
         <main className="flex flex-1 flex-col overflow-hidden">
           <Header />

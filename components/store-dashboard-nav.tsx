@@ -182,7 +182,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
             </NavItemButton>
           )}
           {hasChildren && !isMinimized && isExpanded && (
-            <div className="ml-4 mt-1 space-y-1">
+            <div className="ms-4 mt-1 space-y-1">
               {item.children &&
                 item.children.map((child) => renderNavItem(child, depth + 1))}
             </div>

@@ -366,7 +366,7 @@ export default function StudentsPage() {
                 <TableCell className="text-center">
                   <div className="flex items-center justify-center gap-2">
                     <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm" dir="ltr">
+                    <span className="text-sm" dir="rtl">
                       {user.phone_number}
                     </span>
                     {user.phone_confirmed ? (
@@ -413,10 +413,7 @@ export default function StudentsPage() {
   }
 
   return (
-    <div
-      className="flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -531,7 +528,7 @@ export default function StudentsPage() {
         value={activeTab}
         onValueChange={setActiveTab}
         className="space-y-4"
-        dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
+        dir={'rtl'}
       >
         <TabsList>
           <TabsTrigger value="managers">

@@ -32,7 +32,7 @@ export function useLanguage() {
   return {
     language,
     direction,
-    isRTL,
+    isRTL: true,
     config,
     locale: getLocaleForLanguage(language)
   };

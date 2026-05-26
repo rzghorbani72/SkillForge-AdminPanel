@@ -154,14 +154,7 @@ const getAudioUrl = (audio: AudioItem) => {
 
 export default function AudiosPage() {
   const { t, language } = useTranslation();
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr-TR'
-          : 'en-US';
+  const locale = 'fa-IR';
   const { selectedAcademy } = useStore();
   const [audios, setAudios] = useState<AudioItem[]>([]);
   const [filteredAudios, setFilteredAudios] = useState<AudioItem[]>([]);
@@ -449,10 +442,7 @@ export default function AudiosPage() {
   }
 
   return (
-    <div
-      className="page-wrapper flex-1 space-y-6 p-6"
-      dir={language === 'fa' || language === 'ar' ? 'rtl' : 'ltr'}
-    >
+    <div className="page-wrapper flex-1 space-y-6 p-6" dir={'rtl'}>
       {/* Header */}
       <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">

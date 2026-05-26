@@ -218,7 +218,7 @@ export default function LoginPage() {
         <LanguageDetector />
         <div
           className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
-          dir={isRTL ? 'rtl' : 'ltr'}
+          dir={'rtl'}
         >
           <div className="w-full max-w-sm">
             <div className="mb-8 text-center">
@@ -287,7 +287,7 @@ export default function LoginPage() {
         <LanguageDetector />
         <div
           className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
-          dir={isRTL ? 'rtl' : 'ltr'}
+          dir={'rtl'}
         >
           <div className="w-full max-w-md">
             {/* Brand */}
@@ -359,7 +359,7 @@ export default function LoginPage() {
       <LanguageDetector />
       <div
         className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
-        dir={isRTL ? 'rtl' : 'ltr'}
+        dir={'rtl'}
       >
         {/* Language switcher */}
         <div className={cn('fixed top-4 z-50', isRTL ? 'left-4' : 'right-4')}>
@@ -415,7 +415,7 @@ export default function LoginPage() {
                       errors.phone && 'border-destructive'
                     )}
                     disabled={isLoading}
-                    dir="ltr"
+                    dir="rtl"
                   />
                 </div>
                 {errors.phone && (
@@ -457,7 +457,7 @@ export default function LoginPage() {
                       errors.password && 'border-destructive'
                     )}
                     disabled={isLoading}
-                    dir="ltr"
+                    dir="rtl"
                   />
                   <Button
                     type="button"
