@@ -118,7 +118,7 @@ export const navItems: NavItem[] = [
     href: '/plans',
     icon: 'layers' as IconType,
     label: 'plans',
-    roles: ['ADMIN', 'MANAGER']
+    roles: ['ADMIN', 'MANAGER', 'TEACHER']
   },
   {
     title: 'Site Template',
