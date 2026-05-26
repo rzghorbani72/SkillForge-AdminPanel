@@ -605,6 +605,21 @@ class ApiClient {
     });
   }
 
+  async updateAcademyById(
+    id: number,
+    data: {
+      name?: string;
+      slug?: string;
+      public_address?: string | null;
+      description?: string;
+    }
+  ) {
+    return this.request(`/academies/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+  }
+
   async getCurrentAcademySubscription() {
     const response = await this.request('/academies/current/subscription');
     const payload = response.data as any;
@@ -2280,7 +2295,7 @@ class ApiClient {
   // UI Template endpoints
   async getCurrentUITemplate() {
     const response = await this.request('/ui-template/current');
-    return response.data;
+    return (response.data as any)?.data ?? null;
   }
 
   async createUITemplate(payload: {
@@ -2297,7 +2312,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(payload)
     });
-    return response.data;
+    return (response.data as any)?.data ?? null;
   }
 
   async updateUITemplate(payload: {
@@ -2315,19 +2330,20 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(payload)
     });
-    return response.data;
+    return (response.data as any)?.data ?? null;
   }
 
   async getAvailableTemplatePresets() {
     const response = await this.request('/ui-template/presets');
-    return response.data;
+    const data = (response.data as any)?.data;
+    return Array.isArray(data) ? data : [];
   }
 
   async applyTemplatePreset(presetId: string) {
     const response = await this.request(`/ui-template/presets/${presetId}`, {
       method: 'POST'
     });
-    return response.data;
+    return (response.data as any)?.data ?? null;
   }
 
   async getCurrentPricingConfig() {
@@ -3765,6 +3781,13 @@ class ApiClient {
     const res = await this.request<any>(`/affiliates/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async deleteAffiliate(id: number) {
+    const res = await this.request<any>(`/affiliates/${id}`, {
+      method: 'DELETE'
     });
     return (res.data as any)?.data ?? res.data;
   }
