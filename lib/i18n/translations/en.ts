@@ -1871,7 +1871,24 @@ export const en = {
         noPayments: 'No payments found',
         courseRevenue: 'Course Revenue Breakdown',
         courseRevenueDescription: 'Revenue by course',
-        comingSoon: 'Course revenue breakdown coming soon'
+        comingSoon: 'Course revenue breakdown coming soon',
+        eyebrow: 'Financial Reports',
+        paymentsTitle: 'Payments',
+        paymentsDescription2: 'All transactions & payment reports',
+        dateRange: 'Date Range',
+        export: 'Export Excel',
+        allStatuses: 'All',
+        statusPaid: 'Paid',
+        statusPending: 'Pending',
+        statusFailed: 'Failed',
+        statusRefunded: 'Refunded',
+        allGateways: 'All Gateways',
+        id: 'ID',
+        user: 'User',
+        gateway: 'Gateway',
+        paymentCount: '{{count}} transactions',
+        successfulPayments: 'Successful payments',
+        netProfit: 'Net Profit'
       },
       revenue: {
         title: 'Revenue & Benefits',
@@ -2124,7 +2141,12 @@ export const en = {
         actions: 'Actions',
         view: 'View',
         noRecords: 'No store financial records found'
-      }
+      },
+      eyebrow: 'Platform Financial Reports',
+      dateRange: 'Date Range',
+      export: 'Export Excel',
+      netProfit: 'Net Profit',
+      platformRevenueCount: '{{count}} records'
     }
   },
   platform: {

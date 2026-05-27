@@ -5,6 +5,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Anti-flash: paint warm off-white before any dynamic styles load */
+html,
+body {
+  background: #f9f7f6;
+  color-scheme: light;
+}
+
 /* ─── Design Tokens ──────────────────────────────────────────────────────────
    Mentoryar design system — Editorial & Calm, Persian-first.
    Directly derived from styles.css oklch values (light mode only).

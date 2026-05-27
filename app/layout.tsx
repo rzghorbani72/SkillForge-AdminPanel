@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProviderWrapper } from '@/components/providers/theme-provider-wrapper';
 import { Toaster } from '@/components/ui/toaster';
 import { I18nProvider } from '@/lib/i18n/provider';
@@ -29,10 +28,7 @@ export default async function RootLayout({
 
   return (
     <html lang={language} dir={'rtl'} suppressHydrationWarning>
-      <head>
-        {/* Paint warm off-white before any stylesheet loads — prevents blue flash */}
-        <style>{`html,body{background:#f9f7f6;color-scheme:light}`}</style>
-      </head>
+      <head />
       <body suppressHydrationWarning>
         <ThemeProviderWrapper>
           <I18nProvider initialLanguage={language}>

@@ -1776,7 +1776,24 @@ export const fa = {
         noPayments: 'پرداختی یافت نشد',
         courseRevenue: 'تفکیک درآمد دوره',
         courseRevenueDescription: 'درآمد بر اساس دوره',
-        comingSoon: 'تفکیک درآمد دوره به زودی'
+        comingSoon: 'تفکیک درآمد دوره به زودی',
+        eyebrow: 'گزارش‌های مالی',
+        paymentsTitle: 'پرداخت‌ها',
+        paymentsDescription2: 'همه‌ی تراکنش‌ها و گزارش‌های پرداخت',
+        dateRange: 'بازه زمانی',
+        export: 'خروجی اکسل',
+        allStatuses: 'همه',
+        statusPaid: 'پرداخت شده',
+        statusPending: 'در انتظار',
+        statusFailed: 'ناموفق',
+        statusRefunded: 'مسترد',
+        allGateways: 'همه درگاه‌ها',
+        id: 'شناسه',
+        user: 'کاربر',
+        gateway: 'درگاه',
+        paymentCount: '{{count}} تراکنش',
+        successfulPayments: 'پرداخت‌های موفق',
+        netProfit: 'سود خالص'
       },
       revenue: {
         title: 'درآمد و مزایا',
@@ -2025,7 +2042,12 @@ export const fa = {
         actions: 'عملیات',
         view: 'مشاهده',
         noRecords: 'سابقه مالی آکادمی یافت نشد'
-      }
+      },
+      eyebrow: 'گزارش‌های مالی پلتفرم',
+      dateRange: 'بازه زمانی',
+      export: 'خروجی اکسل',
+      netProfit: 'سود خالص',
+      platformRevenueCount: '{{count}} سابقه'
     }
   },
   platform: {
