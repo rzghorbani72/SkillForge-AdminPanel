@@ -2817,5 +2817,19 @@ export const en = {
     blockFooter: 'Footer',
     blockSidebar: 'Sidebar',
     defaultSiteUrl: 'https://your-academy.com'
+  },
+  userNav: {
+    profile: 'Profile',
+    settings: 'Settings',
+    logout: 'Sign out',
+    loggingOut: 'Signing out...',
+    roles: {
+      ADMIN: 'System Admin',
+      SUPPORT: 'Support',
+      MANAGER: 'Academy Manager',
+      TEACHER: 'Instructor',
+      STUDENT: 'Student',
+      USER: 'User'
+    }
   }
 };

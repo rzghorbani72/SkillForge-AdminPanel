@@ -1660,5 +1660,19 @@ export const tr = {
     previewStatBalance: 'Bakiye',
     previewStatClicks: 'Tıklamalar',
     previewStatSales: 'Satışlar'
+  },
+  userNav: {
+    profile: 'Profil',
+    settings: 'Ayarlar',
+    logout: 'Çıkış yap',
+    loggingOut: 'Çıkış yapılıyor...',
+    roles: {
+      ADMIN: 'Sistem Yöneticisi',
+      SUPPORT: 'Destek',
+      MANAGER: 'Akademi Yöneticisi',
+      TEACHER: 'Eğitmen',
+      STUDENT: 'Öğrenci',
+      USER: 'Kullanıcı'
+    }
   }
 };

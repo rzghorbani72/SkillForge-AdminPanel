@@ -1617,5 +1617,19 @@ export const ar = {
     previewStatBalance: 'الرصيد',
     previewStatClicks: 'النقرات',
     previewStatSales: 'المبيعات'
+  },
+  userNav: {
+    profile: 'الملف الشخصي',
+    settings: 'الإعدادات',
+    logout: 'تسجيل الخروج',
+    loggingOut: 'جارٍ الخروج...',
+    roles: {
+      ADMIN: 'المدير العام',
+      SUPPORT: 'الدعم',
+      MANAGER: 'مدير الأكاديمية',
+      TEACHER: 'مدرس',
+      STUDENT: 'طالب',
+      USER: 'مستخدم'
+    }
   }
 };

@@ -2685,5 +2685,19 @@ export const fa = {
     blockFooter: 'پاصفحه',
     blockSidebar: 'نوار کناری',
     defaultSiteUrl: 'https://آکادمی-شما.ir'
+  },
+  userNav: {
+    profile: 'پروفایل',
+    settings: 'تنظیمات',
+    logout: 'خروج از حساب',
+    loggingOut: 'در حال خروج...',
+    roles: {
+      ADMIN: 'مدیر کل',
+      SUPPORT: 'پشتیبانی',
+      MANAGER: 'مدیر آکادمی',
+      TEACHER: 'مدرس',
+      STUDENT: 'دانشجو',
+      USER: 'کاربر'
+    }
   }
 };

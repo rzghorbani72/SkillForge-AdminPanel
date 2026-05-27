@@ -14,17 +14,16 @@ export async function logout(): Promise<{ success: boolean; error?: string }> {
     // Call backend logout endpoint if token exists
     if (token) {
       try {
+        const signal = AbortSignal.timeout(3000);
         await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          cache: 'no-store'
+          cache: 'no-store',
+          signal
         });
-      } catch (error) {
-        // Continue with cookie deletion even if backend call fails
-        console.warn('Backend logout call failed:', error);
+      } catch {
+        // Cookie deletion below is the source of truth — backend call is best-effort
       }
     }
 
