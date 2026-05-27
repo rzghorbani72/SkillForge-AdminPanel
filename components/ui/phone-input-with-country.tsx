@@ -259,7 +259,7 @@ export function PhoneInputWithCountry({
               )}
               disabled={disabled}
               autoComplete="tel"
-              dir="rtl"
+              dir="ltr"
             />
           </div>
         </div>

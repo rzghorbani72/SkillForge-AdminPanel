@@ -15,6 +15,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import {
   Zap,
   Pencil,
@@ -28,7 +36,9 @@ import {
   HardDrive,
   Users,
   AlertTriangle,
-  Eye
+  Eye,
+  BookOpen,
+  Clock
 } from 'lucide-react';
 import { apiClient, SubscriptionPlanData } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -46,6 +56,20 @@ interface AcademySubscription {
   students_count?: number;
 }
 
+interface AcademyPlanData {
+  id: number;
+  academy_id: number;
+  kind: 'SUBSCRIPTION' | 'PACKAGE';
+  name: string;
+  description: string | null;
+  price: number;
+  currency: string;
+  duration_days: number | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 interface PlanFormData {
   name: string;
   slug: string;
@@ -57,6 +81,15 @@ interface PlanFormData {
   sort_order: string;
 }
 
+interface AcademyPlanFormData {
+  kind: 'SUBSCRIPTION' | 'PACKAGE';
+  name: string;
+  description: string;
+  price: string;
+  duration_days: string;
+  is_active: boolean;
+}
+
 const DEFAULT_FORM: PlanFormData = {
   name: '',
   slug: '',
@@ -66,6 +99,15 @@ const DEFAULT_FORM: PlanFormData = {
   features: '',
   is_active: true,
   sort_order: '0'
+};
+
+const DEFAULT_ACADEMY_PLAN_FORM: AcademyPlanFormData = {
+  kind: 'SUBSCRIPTION',
+  name: '',
+  description: '',
+  price: '0',
+  duration_days: '',
+  is_active: true
 };
 
 const PERIOD_OPTIONS = [
@@ -92,7 +134,9 @@ export default function PlansPage() {
   const canManagePlan =
     !isPlatformAdmin && (user?.role === 'ADMIN' || user?.role === 'MANAGER');
   const isTeacher = user?.role === 'TEACHER';
+  const canManageAcademyPlans = isPlatformAdmin || canManagePlan;
 
+  // ── Platform subscription plans state ─────────────────────────────────────
   const [period, setPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
   const [currentSub, setCurrentSub] = useState<AcademySubscription | null>(
@@ -100,7 +144,6 @@ export default function PlansPage() {
   );
   const [isLoading, setIsLoading] = useState(true);
 
-  // Platform admin: plan form dialog
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlanData | null>(
     null
   );
@@ -108,19 +151,33 @@ export default function PlansPage() {
   const [form, setForm] = useState<PlanFormData>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Platform admin: delete confirm dialog
   const [deletingPlan, setDeletingPlan] = useState<SubscriptionPlanData | null>(
     null
   );
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Academy admin/manager: choose plan dialog
   const [selectingPlan, setSelectingPlan] =
     useState<SubscriptionPlanData | null>(null);
   const [selectedMonths, setSelectedMonths] = useState<number>(1);
   const [isChanging, setIsChanging] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  // ── Academy plans state ────────────────────────────────────────────────────
+  const [academyPlans, setAcademyPlans] = useState<AcademyPlanData[]>([]);
+  const [isAcademyPlansLoading, setIsAcademyPlansLoading] = useState(false);
+  const [editingAcademyPlan, setEditingAcademyPlan] =
+    useState<AcademyPlanData | null>(null);
+  const [isAcademyPlanFormOpen, setIsAcademyPlanFormOpen] = useState(false);
+  const [academyPlanForm, setAcademyPlanForm] = useState<AcademyPlanFormData>(
+    DEFAULT_ACADEMY_PLAN_FORM
+  );
+  const [isSavingAcademyPlan, setIsSavingAcademyPlan] = useState(false);
+  const [deletingAcademyPlan, setDeletingAcademyPlan] =
+    useState<AcademyPlanData | null>(null);
+  const [isDeletingAcademyPlan, setIsDeletingAcademyPlan] = useState(false);
+
+  // ── Data fetching ──────────────────────────────────────────────────────────
+
+  const fetchSubscriptionPlans = useCallback(async () => {
     try {
       setIsLoading(true);
       const plansPromise = isPlatformAdmin
@@ -144,11 +201,23 @@ export default function PlansPage() {
     }
   }, [isPlatformAdmin]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const fetchAcademyPlans = useCallback(async () => {
+    try {
+      setIsAcademyPlansLoading(true);
+      const data = await apiClient.getAcademyPlans().catch(() => []);
+      setAcademyPlans(Array.isArray(data) ? data : []);
+    } catch (e) {
+      ErrorHandler.handleApiError(e);
+    } finally {
+      setIsAcademyPlansLoading(false);
+    }
+  }, []);
 
-  // ── Platform admin: form handlers ──────────────────────────────────────────
+  useEffect(() => {
+    fetchSubscriptionPlans();
+  }, [fetchSubscriptionPlans]);
+
+  // ── Platform subscription plan handlers ────────────────────────────────────
 
   function openCreate() {
     setEditingPlan(null);
@@ -194,7 +263,7 @@ export default function PlansPage() {
         await apiClient.createSubscriptionPlan(payload);
       }
       setIsFormOpen(false);
-      await fetchData();
+      await fetchSubscriptionPlans();
     } catch (e) {
       ErrorHandler.handleApiError(e);
     } finally {
@@ -208,7 +277,7 @@ export default function PlansPage() {
       setIsDeleting(true);
       await apiClient.deleteSubscriptionPlan(deletingPlan.id);
       setDeletingPlan(null);
-      await fetchData();
+      await fetchSubscriptionPlans();
     } catch (e) {
       ErrorHandler.handleApiError(e);
     } finally {
@@ -221,13 +290,11 @@ export default function PlansPage() {
       await apiClient.updateSubscriptionPlan(plan.id, {
         is_active: !plan.is_active
       });
-      await fetchData();
+      await fetchSubscriptionPlans();
     } catch (e) {
       ErrorHandler.handleApiError(e);
     }
   }
-
-  // ── Academy admin/manager: plan selection ─────────────────────────────────
 
   function openSelectPlan(plan: SubscriptionPlanData) {
     setSelectingPlan(plan);
@@ -238,18 +305,95 @@ export default function PlansPage() {
     if (!selectingPlan) return;
     try {
       setIsChanging(true);
-      const pricePerMonth = selectingPlan.price_monthly;
       await apiClient.renewCurrentAcademySubscription({
         plan_name: selectingPlan.slug,
         months: selectedMonths,
-        amount: pricePerMonth * selectedMonths
+        amount: selectingPlan.price_monthly * selectedMonths
       });
       setSelectingPlan(null);
-      await fetchData();
+      await fetchSubscriptionPlans();
     } catch (e) {
       ErrorHandler.handleApiError(e);
     } finally {
       setIsChanging(false);
+    }
+  }
+
+  // ── Academy plan handlers ──────────────────────────────────────────────────
+
+  function openCreateAcademyPlan() {
+    setEditingAcademyPlan(null);
+    setAcademyPlanForm(DEFAULT_ACADEMY_PLAN_FORM);
+    setIsAcademyPlanFormOpen(true);
+  }
+
+  function openEditAcademyPlan(plan: AcademyPlanData) {
+    setEditingAcademyPlan(plan);
+    setAcademyPlanForm({
+      kind: plan.kind,
+      name: plan.name,
+      description: plan.description ?? '',
+      price: String(plan.price),
+      duration_days:
+        plan.duration_days != null ? String(plan.duration_days) : '',
+      is_active: plan.is_active
+    });
+    setIsAcademyPlanFormOpen(true);
+  }
+
+  async function handleSaveAcademyPlan() {
+    try {
+      setIsSavingAcademyPlan(true);
+      const dto = {
+        kind: academyPlanForm.kind,
+        name: academyPlanForm.name.trim(),
+        description: academyPlanForm.description.trim() || undefined,
+        price: Number(academyPlanForm.price),
+        duration_days:
+          academyPlanForm.kind === 'SUBSCRIPTION' &&
+          academyPlanForm.duration_days
+            ? Number(academyPlanForm.duration_days)
+            : undefined
+      };
+      if (editingAcademyPlan) {
+        await apiClient.updateAcademyPlan(editingAcademyPlan.id, {
+          ...dto,
+          is_active: academyPlanForm.is_active
+        });
+      } else {
+        await apiClient.createAcademyPlan(dto);
+      }
+      setIsAcademyPlanFormOpen(false);
+      await fetchAcademyPlans();
+    } catch (e) {
+      ErrorHandler.handleApiError(e);
+    } finally {
+      setIsSavingAcademyPlan(false);
+    }
+  }
+
+  async function handleDeleteAcademyPlan() {
+    if (!deletingAcademyPlan) return;
+    try {
+      setIsDeletingAcademyPlan(true);
+      await apiClient.deleteAcademyPlan(deletingAcademyPlan.id);
+      setDeletingAcademyPlan(null);
+      await fetchAcademyPlans();
+    } catch (e) {
+      ErrorHandler.handleApiError(e);
+    } finally {
+      setIsDeletingAcademyPlan(false);
+    }
+  }
+
+  async function handleToggleAcademyPlanActive(plan: AcademyPlanData) {
+    try {
+      await apiClient.updateAcademyPlan(plan.id, {
+        is_active: !plan.is_active
+      });
+      await fetchAcademyPlans();
+    } catch (e) {
+      ErrorHandler.handleApiError(e);
     }
   }
 
@@ -278,12 +422,11 @@ export default function PlansPage() {
     );
   }
 
-  // ── Platform Admin View ────────────────────────────────────────────────────
+  // ── Teacher View ──────────────────────────────────────────────────────────
 
-  if (isPlatformAdmin) {
+  if (isTeacher) {
     return (
       <div className="fade-in-up flex-1 space-y-8 p-6">
-        {/* Header */}
         <div className="flex items-start justify-between">
           <div>
             <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
@@ -292,252 +435,414 @@ export default function PlansPage() {
             <h1 className="text-2xl font-bold tracking-tight">
               {t('plans.title')}
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {t('plans.subtitle')}
-            </p>
           </div>
-          <Button onClick={openCreate} size="sm">
+          <Badge
+            variant="secondary"
+            className="flex items-center gap-1.5 px-3 py-1.5"
+          >
+            <Eye className="h-3.5 w-3.5" />
+            {t('plans.viewOnly')}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-2.5 rounded-xl border border-info/20 bg-info/5 px-4 py-3 text-sm text-info">
+          <Eye className="h-4 w-4 shrink-0" />
+          {t('plans.teacherNote')}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Academy Plans Tab Content ──────────────────────────────────────────────
+
+  const academyPlansContent = (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">{t('plans.subtitle')}</p>
+        {canManageAcademyPlans && (
+          <Button onClick={openCreateAcademyPlan} size="sm">
             <Plus className="me-2 h-4 w-4" />
-            {t('plans.addPlan')}
+            {t('plans.createAcademyPlan')}
           </Button>
-        </div>
+        )}
+      </div>
 
-        {/* Billing toggle (for price display reference) */}
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground">
-            {t('plans.allPlans')}
-          </span>
-          <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
-            <button
-              type="button"
-              onClick={() => setPeriod('monthly')}
-              className={cn(
-                'rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-150',
-                period === 'monthly'
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              {t('plans.monthly')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setPeriod('yearly')}
-              className={cn(
-                'rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-150',
-                period === 'yearly'
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              {t('plans.yearly')}
-            </button>
+      {isAcademyPlansLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-16 animate-pulse rounded-xl bg-muted" />
+          ))}
+        </div>
+      ) : academyPlans.length === 0 ? (
+        <div className="rounded-2xl border bg-card py-16 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+            <BookOpen className="h-5 w-5 text-muted-foreground" />
           </div>
-        </div>
-
-        {/* Plan cards — management layout */}
-        {plans.length === 0 ? (
-          <div className="rounded-2xl border bg-card py-16 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-              <Zap className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {t('plans.noPlanConfigured')}
-            </p>
+          <p className="text-sm text-muted-foreground">
+            {t('plans.noAcademyPlans')}
+          </p>
+          {canManageAcademyPlans && (
             <Button
-              onClick={openCreate}
+              onClick={openCreateAcademyPlan}
               variant="outline"
               size="sm"
               className="mt-4"
             >
               <Plus className="me-2 h-4 w-4" />
-              {t('plans.createFirstPlan')}
+              {t('plans.createFirstAcademyPlan')}
             </Button>
-          </div>
-        ) : (
-          <div className="stagger-children grid gap-5 sm:grid-cols-3">
-            {plans.map((plan, i) => {
-              const isPopular = i === popularIndex && plans.length >= 2;
-              const features = plan.features ?? [];
-              const price =
-                period === 'yearly' && plan.price_yearly
-                  ? plan.price_yearly
-                  : plan.price_monthly;
-
-              return (
-                <div
-                  key={plan.id}
-                  className={cn(
-                    'relative rounded-2xl border p-7 transition-all duration-200',
-                    isPopular
-                      ? '-translate-y-1 border-foreground bg-foreground text-background shadow-xl'
-                      : 'border-border bg-card hover:shadow-md',
-                    !plan.is_active && 'opacity-60'
+          )}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {academyPlans.map((plan) => (
+            <div
+              key={plan.id}
+              className={cn(
+                'flex items-center justify-between rounded-xl border bg-card px-5 py-4 transition-all',
+                !plan.is_active && 'opacity-60'
+              )}
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  {plan.kind === 'SUBSCRIPTION' ? (
+                    <Clock className="h-5 w-5 text-primary" />
+                  ) : (
+                    <BookOpen className="h-5 w-5 text-primary" />
                   )}
-                >
-                  {/* Status badge */}
-                  <div className="absolute start-3.5 top-3.5 flex items-center gap-1.5">
-                    {isPopular && (
-                      <span className="rounded-full bg-primary px-2.5 py-1 text-[10.5px] font-semibold text-primary-foreground">
-                        {t('plans.popular')}
-                      </span>
-                    )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">{plan.name}</span>
+                    <Badge variant="secondary" className="text-[10px]">
+                      {plan.kind === 'SUBSCRIPTION'
+                        ? t('plans.kindSubscription')
+                        : t('plans.kindPackage')}
+                    </Badge>
                     {!plan.is_active && (
-                      <span
-                        className={cn(
-                          'rounded-full border px-2.5 py-1 text-[10.5px] font-medium',
-                          isPopular
-                            ? 'border-background/20 bg-background/10 text-background/70'
-                            : 'border-border bg-muted text-muted-foreground'
-                        )}
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] text-muted-foreground"
                       >
                         {t('plans.inactive')}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="mt-0.5 flex items-center gap-3 text-xs text-muted-foreground">
+                    <span>
+                      {formatPrice(plan.price)} {plan.currency}
+                    </span>
+                    {plan.kind === 'SUBSCRIPTION' && plan.duration_days && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {plan.duration_days}d
+                      </span>
+                    )}
+                    {plan.description && (
+                      <span className="max-w-[200px] truncate">
+                        {plan.description}
                       </span>
                     )}
                   </div>
+                </div>
+              </div>
 
-                  {/* Admin controls */}
-                  <div className="absolute end-3 top-3 flex items-center gap-1">
-                    <button
-                      type="button"
-                      aria-label={`Edit ${plan.name}`}
-                      onClick={() => openEdit(plan)}
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={plan.is_active}
+                  onCheckedChange={() => handleToggleAcademyPlanActive(plan)}
+                />
+                <button
+                  type="button"
+                  aria-label={`Edit ${plan.name}`}
+                  onClick={() => openEditAcademyPlan(plan)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Delete ${plan.name}`}
+                  onClick={() => setDeletingAcademyPlan(plan)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // ── Platform Admin View ────────────────────────────────────────────────────
+
+  if (isPlatformAdmin) {
+    return (
+      <div className="fade-in-up flex-1 space-y-6 p-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+              {t('plans.badge')}
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {t('plans.title')}
+            </h1>
+          </div>
+        </div>
+
+        <Tabs
+          defaultValue="platform"
+          onValueChange={(v) => {
+            if (v === 'academy') fetchAcademyPlans();
+          }}
+        >
+          <TabsList>
+            <TabsTrigger value="platform">
+              {t('plans.platformPlansTab')}
+            </TabsTrigger>
+            <TabsTrigger value="academy">
+              {t('plans.academyPlansTab')}
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Platform Plans tab */}
+          <TabsContent value="platform" className="space-y-6 pt-4">
+            <div className="flex items-center justify-between">
+              <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
+                <button
+                  type="button"
+                  onClick={() => setPeriod('monthly')}
+                  className={cn(
+                    'rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-150',
+                    period === 'monthly'
+                      ? 'bg-card text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {t('plans.monthly')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPeriod('yearly')}
+                  className={cn(
+                    'rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-150',
+                    period === 'yearly'
+                      ? 'bg-card text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {t('plans.yearly')}
+                </button>
+              </div>
+              <Button onClick={openCreate} size="sm">
+                <Plus className="me-2 h-4 w-4" />
+                {t('plans.addPlan')}
+              </Button>
+            </div>
+
+            {plans.length === 0 ? (
+              <div className="rounded-2xl border bg-card py-16 text-center">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                  <Zap className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {t('plans.noPlanConfigured')}
+                </p>
+                <Button
+                  onClick={openCreate}
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                >
+                  <Plus className="me-2 h-4 w-4" />
+                  {t('plans.createFirstPlan')}
+                </Button>
+              </div>
+            ) : (
+              <div className="stagger-children grid gap-5 sm:grid-cols-3">
+                {plans.map((plan, i) => {
+                  const isPopular = i === popularIndex && plans.length >= 2;
+                  const features = plan.features ?? [];
+                  const price =
+                    period === 'yearly' && plan.price_yearly
+                      ? plan.price_yearly
+                      : plan.price_monthly;
+
+                  return (
+                    <div
+                      key={plan.id}
                       className={cn(
-                        'flex h-7 w-7 items-center justify-center rounded-lg transition-colors',
+                        'relative rounded-2xl border p-7 transition-all duration-200',
                         isPopular
-                          ? 'text-background/60 hover:bg-white/10 hover:text-background'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          ? '-translate-y-1 border-foreground bg-foreground text-background shadow-xl'
+                          : 'border-border bg-card hover:shadow-md',
+                        !plan.is_active && 'opacity-60'
                       )}
                     >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Delete ${plan.name}`}
-                      onClick={() => setDeletingPlan(plan)}
-                      className={cn(
-                        'flex h-7 w-7 items-center justify-center rounded-lg transition-colors',
-                        isPopular
-                          ? 'text-background/60 hover:bg-red-500/20 hover:text-red-300'
-                          : 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
-                      )}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-
-                  {/* Plan name */}
-                  <div
-                    className={cn(
-                      'mb-1 mt-6 text-[11px] font-semibold uppercase tracking-widest',
-                      isPopular
-                        ? 'text-background/40'
-                        : 'text-muted-foreground/50'
-                    )}
-                  >
-                    {t('plans.sortOrder')} {plan.sort_order}
-                  </div>
-                  <h2
-                    className={cn(
-                      'text-[24px] font-bold tracking-tight',
-                      isPopular ? 'text-background' : 'text-foreground'
-                    )}
-                  >
-                    {plan.name}
-                  </h2>
-
-                  {/* Price */}
-                  <div className="mb-5 mt-4 flex items-baseline gap-1.5">
-                    <span
-                      className={cn(
-                        'font-mono text-[32px] font-extrabold tracking-tight',
-                        isPopular ? 'text-background' : 'text-foreground'
-                      )}
-                    >
-                      {formatPrice(price)}
-                    </span>
-                    <span
-                      className={cn(
-                        'text-[13px]',
-                        isPopular
-                          ? 'text-background/50'
-                          : 'text-muted-foreground'
-                      )}
-                    >
-                      {period === 'yearly'
-                        ? t('plans.pricePerYear')
-                        : t('plans.pricePerMonth')}
-                    </span>
-                  </div>
-
-                  {/* Storage */}
-                  <div
-                    className={cn(
-                      'mb-4 flex items-center gap-2 text-sm',
-                      isPopular ? 'text-background/70' : 'text-muted-foreground'
-                    )}
-                  >
-                    <HardDrive className="h-4 w-4 shrink-0" />
-                    {formatStorage(plan.storage_limit_gb)} {t('plans.storage')}
-                  </div>
-
-                  {/* Features */}
-                  {features.length > 0 && (
-                    <ul className="space-y-2.5">
-                      {features.map((feature, fi) => (
-                        <li
-                          key={fi}
-                          className="flex items-start gap-2.5 text-sm"
-                        >
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                      <div className="absolute start-3.5 top-3.5 flex items-center gap-1.5">
+                        {isPopular && (
+                          <span className="rounded-full bg-primary px-2.5 py-1 text-[10.5px] font-semibold text-primary-foreground">
+                            {t('plans.popular')}
+                          </span>
+                        )}
+                        {!plan.is_active && (
                           <span
                             className={cn(
+                              'rounded-full border px-2.5 py-1 text-[10.5px] font-medium',
                               isPopular
-                                ? 'text-background/90'
-                                : 'text-foreground/75'
+                                ? 'border-background/20 bg-background/10 text-background/70'
+                                : 'border-border bg-muted text-muted-foreground'
                             )}
                           >
-                            {feature}
+                            {t('plans.inactive')}
                           </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                        )}
+                      </div>
 
-                  {/* Active toggle */}
-                  <div
-                    className={cn(
-                      'mt-5 flex items-center justify-between border-t pt-4',
-                      isPopular ? 'border-background/10' : 'border-border/50'
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'text-xs font-medium',
-                        isPopular
-                          ? 'text-background/60'
-                          : 'text-muted-foreground'
+                      <div className="absolute end-3 top-3 flex items-center gap-1">
+                        <button
+                          type="button"
+                          aria-label={`Edit ${plan.name}`}
+                          onClick={() => openEdit(plan)}
+                          className={cn(
+                            'flex h-7 w-7 items-center justify-center rounded-lg transition-colors',
+                            isPopular
+                              ? 'text-background/60 hover:bg-white/10 hover:text-background'
+                              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          )}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Delete ${plan.name}`}
+                          onClick={() => setDeletingPlan(plan)}
+                          className={cn(
+                            'flex h-7 w-7 items-center justify-center rounded-lg transition-colors',
+                            isPopular
+                              ? 'text-background/60 hover:bg-red-500/20 hover:text-red-300'
+                              : 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
+                          )}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+
+                      <div
+                        className={cn(
+                          'mb-1 mt-6 text-[11px] font-semibold uppercase tracking-widest',
+                          isPopular
+                            ? 'text-background/40'
+                            : 'text-muted-foreground/50'
+                        )}
+                      >
+                        {t('plans.sortOrder')} {plan.sort_order}
+                      </div>
+                      <h2
+                        className={cn(
+                          'text-[24px] font-bold tracking-tight',
+                          isPopular ? 'text-background' : 'text-foreground'
+                        )}
+                      >
+                        {plan.name}
+                      </h2>
+
+                      <div className="mb-5 mt-4 flex items-baseline gap-1.5">
+                        <span
+                          className={cn(
+                            'font-mono text-[32px] font-extrabold tracking-tight',
+                            isPopular ? 'text-background' : 'text-foreground'
+                          )}
+                        >
+                          {formatPrice(price)}
+                        </span>
+                        <span
+                          className={cn(
+                            'text-[13px]',
+                            isPopular
+                              ? 'text-background/50'
+                              : 'text-muted-foreground'
+                          )}
+                        >
+                          {period === 'yearly'
+                            ? t('plans.pricePerYear')
+                            : t('plans.pricePerMonth')}
+                        </span>
+                      </div>
+
+                      <div
+                        className={cn(
+                          'mb-4 flex items-center gap-2 text-sm',
+                          isPopular
+                            ? 'text-background/70'
+                            : 'text-muted-foreground'
+                        )}
+                      >
+                        <HardDrive className="h-4 w-4 shrink-0" />
+                        {formatStorage(plan.storage_limit_gb)}{' '}
+                        {t('plans.storage')}
+                      </div>
+
+                      {features.length > 0 && (
+                        <ul className="space-y-2.5">
+                          {features.map((feature, fi) => (
+                            <li
+                              key={fi}
+                              className="flex items-start gap-2.5 text-sm"
+                            >
+                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                              <span
+                                className={cn(
+                                  isPopular
+                                    ? 'text-background/90'
+                                    : 'text-foreground/75'
+                                )}
+                              >
+                                {feature}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
                       )}
-                    >
-                      {t('plans.toggleActive')}
-                    </span>
-                    <Switch
-                      checked={plan.is_active}
-                      onCheckedChange={() => handleToggleActive(plan)}
-                      className={
-                        isPopular
-                          ? 'data-[state=checked]:bg-primary'
-                          : undefined
-                      }
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
 
-        {/* Platform admin plan form dialog */}
+                      <div
+                        className={cn(
+                          'mt-5 flex items-center justify-between border-t pt-4',
+                          isPopular
+                            ? 'border-background/10'
+                            : 'border-border/50'
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            'text-xs font-medium',
+                            isPopular
+                              ? 'text-background/60'
+                              : 'text-muted-foreground'
+                          )}
+                        >
+                          {t('plans.toggleActive')}
+                        </span>
+                        <Switch
+                          checked={plan.is_active}
+                          onCheckedChange={() => handleToggleActive(plan)}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Academy Plans tab */}
+          <TabsContent value="academy" className="pt-4">
+            {academyPlansContent}
+          </TabsContent>
+        </Tabs>
+
+        {/* Platform plan form dialog */}
         <PlanFormDialog
           open={isFormOpen}
           editingPlan={editingPlan}
@@ -551,7 +856,7 @@ export default function PlansPage() {
           t={t}
         />
 
-        {/* Delete confirm dialog */}
+        {/* Platform plan delete dialog */}
         <Dialog
           open={!!deletingPlan}
           onOpenChange={(o) => !o && setDeletingPlan(null)}
@@ -581,15 +886,62 @@ export default function PlansPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Academy plan form dialog */}
+        <AcademyPlanFormDialog
+          open={isAcademyPlanFormOpen}
+          editingPlan={editingAcademyPlan}
+          form={academyPlanForm}
+          isSaving={isSavingAcademyPlan}
+          onClose={() => setIsAcademyPlanFormOpen(false)}
+          onChange={(field, value) =>
+            setAcademyPlanForm((f) => ({ ...f, [field]: value }))
+          }
+          onSave={handleSaveAcademyPlan}
+          t={t}
+        />
+
+        {/* Academy plan delete dialog */}
+        <Dialog
+          open={!!deletingAcademyPlan}
+          onOpenChange={(o) => !o && setDeletingAcademyPlan(null)}
+        >
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+                {t('plans.deletePlan')}
+              </DialogTitle>
+              <DialogDescription>{t('plans.deleteWarning')}</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDeletingAcademyPlan(null)}
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteAcademyPlan}
+                disabled={isDeletingAcademyPlan}
+              >
+                {isDeletingAcademyPlan && (
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                )}
+                {t('common.delete')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
 
-  // ── Academy Admin / Manager / Teacher View ─────────────────────────────────
+  // ── Manager / Academy Admin View ───────────────────────────────────────────
 
   return (
-    <div className="fade-in-up flex-1 space-y-8 p-6">
-      {/* Header */}
+    <div className="fade-in-up flex-1 space-y-6 p-6">
       <div className="flex items-start justify-between">
         <div>
           <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
@@ -598,309 +950,302 @@ export default function PlansPage() {
           <h1 className="text-2xl font-bold tracking-tight">
             {t('plans.title')}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t('plans.subtitle')}
-          </p>
         </div>
-        {isTeacher && (
-          <Badge
-            variant="secondary"
-            className="flex items-center gap-1.5 px-3 py-1.5"
-          >
-            <Eye className="h-3.5 w-3.5" />
-            {t('plans.viewOnly')}
-          </Badge>
-        )}
       </div>
 
-      {/* Current subscription banner */}
-      {currentSub && (
-        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15">
-                <Crown className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-semibold">{currentSub.plan_name}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                  <span
-                    className={cn(
-                      'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium',
-                      currentSub.status === 'ACTIVE'
-                        ? 'bg-success/10 text-success'
-                        : 'bg-destructive/10 text-destructive'
-                    )}
-                  >
-                    {currentSub.status === 'ACTIVE'
-                      ? t('plans.subscriptionActive')
-                      : t('plans.subscriptionExpired')}
-                  </span>
-                  {currentSub.expires_at && (
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {t('plans.expiresAt')}{' '}
-                      {new Date(currentSub.expires_at).toLocaleDateString(
-                        'fa-IR'
+      <Tabs
+        defaultValue="subscription"
+        onValueChange={(v) => {
+          if (v === 'academy') fetchAcademyPlans();
+        }}
+      >
+        <TabsList>
+          <TabsTrigger value="subscription">
+            {t('plans.mySubscriptionTab')}
+          </TabsTrigger>
+          <TabsTrigger value="academy">
+            {t('plans.academyPlansTab')}
+          </TabsTrigger>
+        </TabsList>
+
+        {/* My Subscription tab */}
+        <TabsContent value="subscription" className="space-y-6 pt-4">
+          {/* Current subscription banner */}
+          {currentSub && (
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15">
+                    <Crown className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">{currentSub.plan_name}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                      <span
+                        className={cn(
+                          'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium',
+                          currentSub.status === 'ACTIVE'
+                            ? 'bg-success/10 text-success'
+                            : 'bg-destructive/10 text-destructive'
+                        )}
+                      >
+                        {currentSub.status === 'ACTIVE'
+                          ? t('plans.subscriptionActive')
+                          : t('plans.subscriptionExpired')}
+                      </span>
+                      {currentSub.expires_at && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {t('plans.expiresAt')}{' '}
+                          {new Date(currentSub.expires_at).toLocaleDateString(
+                            'fa-IR'
+                          )}
+                        </span>
                       )}
-                    </span>
-                  )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            {currentPlan && (
-              <div className="flex gap-5 text-sm">
-                {currentSub.students_count !== undefined && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    <span className="font-mono font-semibold text-foreground">
-                      {currentSub.students_count.toLocaleString('fa-IR')}
-                    </span>
-                    <span className="text-xs">{t('plans.studentsUsed')}</span>
+                {currentPlan && (
+                  <div className="flex gap-5 text-sm">
+                    {currentSub.students_count !== undefined && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Users className="h-4 w-4" />
+                        <span className="font-mono font-semibold text-foreground">
+                          {currentSub.students_count.toLocaleString('fa-IR')}
+                        </span>
+                        <span className="text-xs">
+                          {t('plans.studentsUsed')}
+                        </span>
+                      </div>
+                    )}
+                    {currentSub.storage_used_gb !== undefined && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <HardDrive className="h-4 w-4" />
+                        <span className="font-mono font-semibold text-foreground">
+                          {formatStorage(currentSub.storage_used_gb)}
+                        </span>
+                        <span className="text-xs">
+                          / {formatStorage(currentPlan.storage_limit_gb)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
-                {currentSub.storage_used_gb !== undefined && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <HardDrive className="h-4 w-4" />
-                    <span className="font-mono font-semibold text-foreground">
-                      {formatStorage(currentSub.storage_used_gb)}
-                    </span>
-                    <span className="text-xs">
-                      / {formatStorage(currentPlan.storage_limit_gb)}
+              </div>
+
+              {currentPlan && currentSub.storage_used_gb !== undefined && (
+                <div className="mt-3 space-y-1.5">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{t('plans.storageUsed')}</span>
+                    <span>
+                      {formatStorage(currentSub.storage_used_gb)} /{' '}
+                      {formatStorage(currentPlan.storage_limit_gb)}
                     </span>
                   </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {currentPlan && currentSub.storage_used_gb !== undefined && (
-            <div className="mt-3 space-y-1.5">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{t('plans.storageUsed')}</span>
-                <span>
-                  {formatStorage(currentSub.storage_used_gb)} /{' '}
-                  {formatStorage(currentPlan.storage_limit_gb)}
-                </span>
-              </div>
-              <Progress
-                value={Math.min(
-                  (currentSub.storage_used_gb / currentPlan.storage_limit_gb) *
-                    100,
-                  100
-                )}
-                className="h-1.5"
-              />
+                  <Progress
+                    value={Math.min(
+                      (currentSub.storage_used_gb /
+                        currentPlan.storage_limit_gb) *
+                        100,
+                      100
+                    )}
+                    className="h-1.5"
+                  />
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
 
-      {/* Billing toggle */}
-      <div className="flex justify-center">
-        <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
-          <button
-            type="button"
-            onClick={() => setPeriod('monthly')}
-            className={cn(
-              'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
-              period === 'monthly'
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            {t('plans.monthly')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setPeriod('yearly')}
-            className={cn(
-              'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
-              period === 'yearly'
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            {t('plans.yearly')}
-          </button>
-        </div>
-      </div>
-
-      {/* Teacher note */}
-      {isTeacher && (
-        <div className="flex items-center gap-2.5 rounded-xl border border-info/20 bg-info/5 px-4 py-3 text-sm text-info">
-          <Eye className="h-4 w-4 shrink-0" />
-          {t('plans.teacherNote')}
-        </div>
-      )}
-
-      {/* Plan cards */}
-      {plans.length === 0 ? (
-        <div className="rounded-2xl border bg-card py-16 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <Zap className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {t('plans.noPlanConfigured')}
-          </p>
-        </div>
-      ) : (
-        <div className="stagger-children grid gap-5 sm:grid-cols-3">
-          {plans.map((plan, i) => {
-            const isPopular = i === popularIndex && plans.length >= 2;
-            const isCurrent = currentPlan?.id === plan.id;
-            const features = plan.features ?? [];
-            const price =
-              period === 'yearly' && plan.price_yearly
-                ? plan.price_yearly
-                : plan.price_monthly;
-
-            return (
-              <div
-                key={plan.id}
+          {/* Billing toggle */}
+          <div className="flex justify-center">
+            <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
+              <button
+                type="button"
+                onClick={() => setPeriod('monthly')}
                 className={cn(
-                  'relative rounded-2xl border p-7 transition-all duration-200',
-                  isPopular
-                    ? '-translate-y-1 border-foreground bg-foreground text-background shadow-xl'
-                    : 'border-border bg-card hover:shadow-md'
+                  'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
+                  period === 'monthly'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
               >
-                {isPopular && (
-                  <span className="absolute end-3.5 top-3.5 rounded-full bg-primary px-2.5 py-1 text-[10.5px] font-semibold text-primary-foreground">
-                    {t('plans.popular')}
-                  </span>
+                {t('plans.monthly')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPeriod('yearly')}
+                className={cn(
+                  'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
+                  period === 'yearly'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
+              >
+                {t('plans.yearly')}
+              </button>
+            </div>
+          </div>
 
-                <div
-                  className={cn(
-                    'mb-2 text-xs font-semibold uppercase tracking-widest',
-                    isPopular
-                      ? 'text-background/40'
-                      : 'text-muted-foreground/50'
-                  )}
-                >
-                  {plan.slug}
-                </div>
-
-                <h2
-                  className={cn(
-                    'text-[26px] font-bold tracking-tight',
-                    isPopular ? 'text-background' : 'text-foreground'
-                  )}
-                >
-                  {plan.name}
-                </h2>
-
-                <div className="mb-5 mt-4 flex items-baseline gap-1.5">
-                  <span
-                    className={cn(
-                      'font-mono text-[34px] font-extrabold tracking-tight',
-                      isPopular ? 'text-background' : 'text-foreground'
-                    )}
-                  >
-                    {formatPrice(price)}
-                  </span>
-                  <span
-                    className={cn(
-                      'text-[13px]',
-                      isPopular ? 'text-background/50' : 'text-muted-foreground'
-                    )}
-                  >
-                    {period === 'yearly'
-                      ? t('plans.pricePerYear')
-                      : t('plans.pricePerMonth')}
-                  </span>
-                </div>
-
-                {/* CTA button */}
-                {canManagePlan && (
-                  <button
-                    type="button"
-                    disabled={isCurrent}
-                    onClick={() => !isCurrent && openSelectPlan(plan)}
-                    className={cn(
-                      'mb-5 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150',
-                      isCurrent
-                        ? 'cursor-default opacity-60'
-                        : 'active:scale-[0.99]',
-                      isPopular
-                        ? 'bg-primary text-white hover:opacity-90'
-                        : 'bg-foreground text-background hover:opacity-85'
-                    )}
-                  >
-                    {isCurrent ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <Check className="h-4 w-4" />
-                        {t('plans.currentPlan')}
-                      </span>
-                    ) : (
-                      t('plans.choosePlan')
-                    )}
-                  </button>
-                )}
-
-                {/* Teacher: current indicator only */}
-                {isTeacher && isCurrent && (
-                  <div
-                    className={cn(
-                      'mb-5 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold',
-                      isPopular
-                        ? 'bg-white/10 text-background'
-                        : 'bg-primary/10 text-primary'
-                    )}
-                  >
-                    <Check className="h-4 w-4" />
-                    {t('plans.currentPlan')}
-                  </div>
-                )}
-
-                {/* Features */}
-                {features.length > 0 && (
-                  <ul className="space-y-2.5">
-                    {features.map((feature, fi) => (
-                      <li key={fi} className="flex items-start gap-2.5 text-sm">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span
-                          className={cn(
-                            isPopular
-                              ? 'text-background/90'
-                              : 'text-foreground/75'
-                          )}
-                        >
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+          {/* Plan cards */}
+          {plans.length === 0 ? (
+            <div className="rounded-2xl border bg-card py-16 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                <Zap className="h-5 w-5 text-muted-foreground" />
               </div>
-            );
-          })}
-        </div>
-      )}
+              <p className="text-sm text-muted-foreground">
+                {t('plans.noPlanConfigured')}
+              </p>
+            </div>
+          ) : (
+            <div className="stagger-children grid gap-5 sm:grid-cols-3">
+              {plans.map((plan, i) => {
+                const isPopular = i === popularIndex && plans.length >= 2;
+                const isCurrent = currentPlan?.id === plan.id;
+                const features = plan.features ?? [];
+                const price =
+                  period === 'yearly' && plan.price_yearly
+                    ? plan.price_yearly
+                    : plan.price_monthly;
 
-      {/* Need something else */}
-      <div className="rounded-2xl border bg-muted/40 p-7">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-            <Zap className="h-5 w-5 text-primary" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold">{t('plans.needMoreTitle')}</h3>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {t('plans.needMoreDesc')}
-            </p>
-          </div>
-          {!isTeacher && (
-            <Button variant="outline" className="shrink-0">
-              {t('plans.contactSales')}
-            </Button>
+                return (
+                  <div
+                    key={plan.id}
+                    className={cn(
+                      'relative rounded-2xl border p-7 transition-all duration-200',
+                      isPopular
+                        ? '-translate-y-1 border-foreground bg-foreground text-background shadow-xl'
+                        : 'border-border bg-card hover:shadow-md'
+                    )}
+                  >
+                    {isPopular && (
+                      <span className="absolute end-3.5 top-3.5 rounded-full bg-primary px-2.5 py-1 text-[10.5px] font-semibold text-primary-foreground">
+                        {t('plans.popular')}
+                      </span>
+                    )}
+
+                    <div
+                      className={cn(
+                        'mb-2 text-xs font-semibold uppercase tracking-widest',
+                        isPopular
+                          ? 'text-background/40'
+                          : 'text-muted-foreground/50'
+                      )}
+                    >
+                      {plan.slug}
+                    </div>
+
+                    <h2
+                      className={cn(
+                        'text-[26px] font-bold tracking-tight',
+                        isPopular ? 'text-background' : 'text-foreground'
+                      )}
+                    >
+                      {plan.name}
+                    </h2>
+
+                    <div className="mb-5 mt-4 flex items-baseline gap-1.5">
+                      <span
+                        className={cn(
+                          'font-mono text-[34px] font-extrabold tracking-tight',
+                          isPopular ? 'text-background' : 'text-foreground'
+                        )}
+                      >
+                        {formatPrice(price)}
+                      </span>
+                      <span
+                        className={cn(
+                          'text-[13px]',
+                          isPopular
+                            ? 'text-background/50'
+                            : 'text-muted-foreground'
+                        )}
+                      >
+                        {period === 'yearly'
+                          ? t('plans.pricePerYear')
+                          : t('plans.pricePerMonth')}
+                      </span>
+                    </div>
+
+                    {canManagePlan && (
+                      <button
+                        type="button"
+                        disabled={isCurrent}
+                        onClick={() => !isCurrent && openSelectPlan(plan)}
+                        className={cn(
+                          'mb-5 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150',
+                          isCurrent
+                            ? 'cursor-default opacity-60'
+                            : 'active:scale-[0.99]',
+                          isPopular
+                            ? 'bg-primary text-white hover:opacity-90'
+                            : 'bg-foreground text-background hover:opacity-85'
+                        )}
+                      >
+                        {isCurrent ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <Check className="h-4 w-4" />
+                            {t('plans.currentPlan')}
+                          </span>
+                        ) : (
+                          t('plans.choosePlan')
+                        )}
+                      </button>
+                    )}
+
+                    {features.length > 0 && (
+                      <ul className="space-y-2.5">
+                        {features.map((feature, fi) => (
+                          <li
+                            key={fi}
+                            className="flex items-start gap-2.5 text-sm"
+                          >
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                            <span
+                              className={cn(
+                                isPopular
+                                  ? 'text-background/90'
+                                  : 'text-foreground/75'
+                              )}
+                            >
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           )}
-        </div>
-      </div>
 
-      {/* Choose plan dialog (academy admin / manager) */}
+          {/* Contact sales */}
+          <div className="rounded-2xl border bg-muted/40 p-7">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <Zap className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold">{t('plans.needMoreTitle')}</h3>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {t('plans.needMoreDesc')}
+                </p>
+              </div>
+              <Button variant="outline" className="shrink-0">
+                {t('plans.contactSales')}
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Academy Plans tab */}
+        <TabsContent value="academy" className="pt-4">
+          {academyPlansContent}
+        </TabsContent>
+      </Tabs>
+
+      {/* Choose subscription plan dialog */}
       {selectingPlan && (
         <Dialog open onOpenChange={(o) => !o && setSelectingPlan(null)}>
           <DialogContent className="sm:max-w-md">
@@ -912,7 +1257,6 @@ export default function PlansPage() {
             </DialogHeader>
 
             <div className="space-y-5 py-2">
-              {/* Selected plan summary */}
               <div className="rounded-xl border bg-muted/40 p-4">
                 <p className="text-xs text-muted-foreground">
                   {t('plans.choosePlan')}
@@ -924,7 +1268,6 @@ export default function PlansPage() {
                 </p>
               </div>
 
-              {/* Period selector */}
               <div className="space-y-2">
                 <Label>{t('plans.subscriptionPeriod')}</Label>
                 <div className="grid grid-cols-4 gap-2">
@@ -946,7 +1289,6 @@ export default function PlansPage() {
                 </div>
               </div>
 
-              {/* Total */}
               <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3">
                 <span className="text-sm font-medium">
                   {t('plans.totalPrice')}
@@ -974,11 +1316,59 @@ export default function PlansPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Academy plan form dialog */}
+      <AcademyPlanFormDialog
+        open={isAcademyPlanFormOpen}
+        editingPlan={editingAcademyPlan}
+        form={academyPlanForm}
+        isSaving={isSavingAcademyPlan}
+        onClose={() => setIsAcademyPlanFormOpen(false)}
+        onChange={(field, value) =>
+          setAcademyPlanForm((f) => ({ ...f, [field]: value }))
+        }
+        onSave={handleSaveAcademyPlan}
+        t={t}
+      />
+
+      {/* Academy plan delete dialog */}
+      <Dialog
+        open={!!deletingAcademyPlan}
+        onOpenChange={(o) => !o && setDeletingAcademyPlan(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              {t('plans.deletePlan')}
+            </DialogTitle>
+            <DialogDescription>{t('plans.deleteWarning')}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeletingAcademyPlan(null)}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAcademyPlan}
+              disabled={isDeletingAcademyPlan}
+            >
+              {isDeletingAcademyPlan && (
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              )}
+              {t('common.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-// ── Shared plan form dialog (platform admin only) ─────────────────────────────
+// ── Platform subscription plan form dialog ────────────────────────────────────
 
 function PlanFormDialog({
   open,
@@ -1104,6 +1494,131 @@ function PlanFormDialog({
           <Button onClick={onSave} disabled={isSaving || !form.name}>
             {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {editingPlan ? 'Save Changes' : 'Create Plan'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ── Academy plan form dialog ──────────────────────────────────────────────────
+
+function AcademyPlanFormDialog({
+  open,
+  editingPlan,
+  form,
+  isSaving,
+  onClose,
+  onChange,
+  onSave,
+  t
+}: {
+  open: boolean;
+  editingPlan: AcademyPlanData | null;
+  form: AcademyPlanFormData;
+  isSaving: boolean;
+  onClose: () => void;
+  onChange: (field: keyof AcademyPlanFormData, value: string | boolean) => void;
+  onSave: () => void;
+  t: (key: string) => string;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>
+            {editingPlan
+              ? t('plans.editAcademyPlan')
+              : t('plans.createAcademyPlan')}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4 py-2">
+          <div className="space-y-1.5">
+            <Label>{t('plans.kindLabel')}</Label>
+            <Select
+              value={form.kind}
+              onValueChange={(v) =>
+                onChange('kind', v as 'SUBSCRIPTION' | 'PACKAGE')
+              }
+              disabled={!!editingPlan}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SUBSCRIPTION">
+                  {t('plans.kindSubscription')}
+                </SelectItem>
+                <SelectItem value="PACKAGE">
+                  {t('plans.kindPackage')}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Name</Label>
+            <Input
+              value={form.name}
+              onChange={(e) => onChange('name', e.target.value)}
+              placeholder="e.g. Monthly Access"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>{t('plans.descriptionLabel')}</Label>
+            <Input
+              value={form.description}
+              onChange={(e) => onChange('description', e.target.value)}
+              placeholder="Optional"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>{t('plans.priceLabel')}</Label>
+              <Input
+                type="number"
+                min="0"
+                value={form.price}
+                onChange={(e) => onChange('price', e.target.value)}
+              />
+            </div>
+            {form.kind === 'SUBSCRIPTION' && (
+              <div className="space-y-1.5">
+                <Label>{t('plans.durationDays')}</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={form.duration_days}
+                  onChange={(e) => onChange('duration_days', e.target.value)}
+                  placeholder="e.g. 30"
+                />
+              </div>
+            )}
+          </div>
+
+          {editingPlan && (
+            <div className="flex items-center gap-3 rounded-lg border p-3">
+              <Switch
+                checked={form.is_active}
+                onCheckedChange={(v) => onChange('is_active', v)}
+              />
+              <p className="text-sm font-medium">{t('plans.toggleActive')}</p>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.cancel')}
+          </Button>
+          <Button onClick={onSave} disabled={isSaving || !form.name}>
+            {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {editingPlan
+              ? t('plans.editAcademyPlan')
+              : t('plans.createAcademyPlan')}
           </Button>
         </DialogFooter>
       </DialogContent>

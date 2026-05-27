@@ -153,6 +153,7 @@ export default function ProfileSettingsPage() {
               <Input
                 id="email"
                 type="email"
+                dir="ltr"
                 value={form.email}
                 onChange={(event) =>
                   setForm({ ...form, email: event.target.value })

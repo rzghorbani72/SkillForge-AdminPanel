@@ -3801,9 +3801,47 @@ class ApiClient {
   // Academy Plans & Subscriptions
   // -------------------------------------------------------------------------
 
-  async getAcademyPlans(academy_id?: number) {
-    const qs = academy_id ? `?academy_id=${academy_id}` : '';
+  async getAcademyPlans(kind?: string) {
+    const qs = kind ? `?kind=${kind}` : '';
     const res = await this.request<any>(`/academy-plans${qs}`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async createAcademyPlan(dto: {
+    kind: 'SUBSCRIPTION' | 'PACKAGE';
+    name: string;
+    description?: string;
+    price: number;
+    duration_days?: number;
+  }) {
+    const res = await this.request<any>('/academy-plans', {
+      method: 'POST',
+      body: JSON.stringify(dto)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async updateAcademyPlan(
+    id: number,
+    dto: {
+      name?: string;
+      description?: string;
+      price?: number;
+      duration_days?: number;
+      is_active?: boolean;
+    }
+  ) {
+    const res = await this.request<any>(`/academy-plans/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(dto)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async deleteAcademyPlan(id: number) {
+    const res = await this.request<any>(`/academy-plans/${id}`, {
+      method: 'DELETE'
+    });
     return (res.data as any)?.data ?? res.data;
   }
 

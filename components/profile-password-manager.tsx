@@ -235,6 +235,7 @@ export function ProfilePasswordManager() {
                     <Input
                       id={`current_password_${profile.id}`}
                       type="password"
+                      dir="ltr"
                       value={formData.current_password}
                       onChange={(e) =>
                         setFormData({
@@ -260,6 +261,7 @@ export function ProfilePasswordManager() {
                     <Input
                       id={`new_password_${profile.id}`}
                       type="password"
+                      dir="ltr"
                       value={formData.new_password}
                       onChange={(e) =>
                         setFormData({
@@ -283,6 +285,7 @@ export function ProfilePasswordManager() {
                     <Input
                       id={`confirm_password_${profile.id}`}
                       type="password"
+                      dir="ltr"
                       value={formData.confirm_new_password}
                       onChange={(e) =>
                         setFormData({

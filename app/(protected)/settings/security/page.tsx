@@ -173,6 +173,7 @@ export default function SecuritySettingsPage() {
               <Input
                 id="currentPassword"
                 type="password"
+                dir="ltr"
                 value={passwordForm.currentPassword}
                 onChange={(event) =>
                   setPasswordForm({
@@ -188,6 +189,7 @@ export default function SecuritySettingsPage() {
               <Input
                 id="newPassword"
                 type="password"
+                dir="ltr"
                 value={passwordForm.newPassword}
                 onChange={(event) =>
                   setPasswordForm({
@@ -205,6 +207,7 @@ export default function SecuritySettingsPage() {
               <Input
                 id="confirmPassword"
                 type="password"
+                dir="ltr"
                 value={passwordForm.confirmPassword}
                 onChange={(event) =>
                   setPasswordForm({

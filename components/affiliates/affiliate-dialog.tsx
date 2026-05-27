@@ -328,6 +328,7 @@ export function AffiliateDialog({
                       <FormControl>
                         <Input
                           type="password"
+                          dir="ltr"
                           placeholder="حداقل ۶ کاراکتر"
                           {...field}
                         />

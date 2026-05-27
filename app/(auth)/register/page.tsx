@@ -315,7 +315,7 @@ export default function RegisterPage() {
                               />
                               <Input
                                 type="tel"
-                                dir="rtl"
+                                dir="ltr"
                                 className={isRTL ? 'pr-9' : 'pl-9'}
                                 placeholder={t('auth.phonePlaceholder')}
                                 {...field}

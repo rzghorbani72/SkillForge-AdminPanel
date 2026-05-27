@@ -118,6 +118,7 @@ export default function EmployeeForm() {
                     <FormControl>
                       <Input
                         type="email"
+                        dir="ltr"
                         placeholder="Enter your email"
                         {...field}
                       />

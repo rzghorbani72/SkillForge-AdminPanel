@@ -2672,6 +2672,21 @@ export const en = {
     allPlans: 'All Plans',
     activePlans: 'Active Plans',
     saving: 'Saving...',
-    teacherNote: 'Contact your academy manager to change the plan.'
+    teacherNote: 'Contact your academy manager to change the plan.',
+    platformPlansTab: 'Platform Plans',
+    academyPlansTab: 'Academy Plans',
+    mySubscriptionTab: 'My Subscription',
+    kindLabel: 'Type',
+    kindSubscription: 'Subscription',
+    kindPackage: 'Package',
+    durationDays: 'Duration (days)',
+    descriptionLabel: 'Description',
+    priceLabel: 'Price',
+    createAcademyPlan: 'Create Plan',
+    editAcademyPlan: 'Edit Plan',
+    noAcademyPlans: 'No plans created yet.',
+    createFirstAcademyPlan: 'Create your first plan',
+    selectAcademyFirst: 'Select an academy context to manage its plans.',
+    subscriptionOnlyDuration: 'Only required for Subscription plans'
   }
 };

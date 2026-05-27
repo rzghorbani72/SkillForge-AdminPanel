@@ -274,6 +274,7 @@ export default function UserEditPage() {
                 <Input
                   id="email"
                   type="email"
+                  dir="ltr"
                   value={form.email}
                   onChange={(e) =>
                     setForm((prev) =>

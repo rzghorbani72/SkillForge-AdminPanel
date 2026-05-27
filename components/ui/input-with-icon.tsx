@@ -55,7 +55,7 @@ export function InputWithIcon({
           )}
           disabled={disabled}
           maxLength={maxLength}
-          dir="rtl"
+          dir={['email', 'tel', 'password'].includes(type) ? 'ltr' : undefined}
         />
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}

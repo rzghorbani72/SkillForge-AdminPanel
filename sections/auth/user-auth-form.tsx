@@ -35,6 +35,7 @@ export default function UserAuthForm() {
         <label>Email or Phone</label>
         <Input
           type="text"
+          dir="ltr"
           placeholder="Enter your email or phone..."
           disabled={loading}
           {...form.register('identifier')}
@@ -44,6 +45,7 @@ export default function UserAuthForm() {
         <label>Password</label>
         <Input
           type="password"
+          dir="ltr"
           placeholder="Enter your password..."
           disabled={loading}
           {...form.register('password')}

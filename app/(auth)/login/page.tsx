@@ -415,7 +415,7 @@ export default function LoginPage() {
                       errors.phone && 'border-destructive'
                     )}
                     disabled={isLoading}
-                    dir="rtl"
+                    dir="ltr"
                   />
                 </div>
                 {errors.phone && (

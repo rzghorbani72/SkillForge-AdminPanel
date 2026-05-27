@@ -2531,6 +2531,21 @@ export const fa = {
     allPlans: 'همه پلن‌ها',
     activePlans: 'پلن‌های فعال',
     saving: 'در حال ذخیره...',
-    teacherNote: 'برای تغییر پلن با مدیر آکادمی تماس بگیرید.'
+    teacherNote: 'برای تغییر پلن با مدیر آکادمی تماس بگیرید.',
+    platformPlansTab: 'پلن‌های پلتفرم',
+    academyPlansTab: 'پلن‌های آکادمی',
+    mySubscriptionTab: 'اشتراک من',
+    kindLabel: 'نوع',
+    kindSubscription: 'اشتراکی',
+    kindPackage: 'بسته',
+    durationDays: 'مدت (روز)',
+    descriptionLabel: 'توضیحات',
+    priceLabel: 'قیمت',
+    createAcademyPlan: 'ایجاد پلن',
+    editAcademyPlan: 'ویرایش پلن',
+    noAcademyPlans: 'هنوز پلنی ایجاد نشده است.',
+    createFirstAcademyPlan: 'اولین پلن را بسازید',
+    selectAcademyFirst: 'برای مدیریت پلن‌ها ابتدا یک آکادمی انتخاب کنید.',
+    subscriptionOnlyDuration: 'فقط برای پلن‌های اشتراکی لازم است'
   }
 };

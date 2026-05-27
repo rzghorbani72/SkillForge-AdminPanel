@@ -398,6 +398,7 @@ export function CreateAdminUserDialog({
             <Input
               id="email"
               type="email"
+              dir="ltr"
               value={formData.email}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, email: e.target.value }))
@@ -474,6 +475,7 @@ export function CreateAdminUserDialog({
             <Input
               id="password"
               type="password"
+              dir="ltr"
               value={formData.password}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, password: e.target.value }))
@@ -492,6 +494,7 @@ export function CreateAdminUserDialog({
             <Input
               id="confirmPassword"
               type="password"
+              dir="ltr"
               value={formData.confirmPassword}
               onChange={(e) =>
                 setFormData((prev) => ({
