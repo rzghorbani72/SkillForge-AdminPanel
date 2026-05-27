@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -10,16 +10,27 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Save, Upload, LogOut } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import {
+  Save,
+  Camera,
+  LogOut,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Mail,
+  Phone
+} from 'lucide-react';
 import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import { authService } from '@/lib/auth';
+import { OtpType } from '@/constants/data';
 
 interface ProfileFormState {
   name: string;
@@ -27,44 +38,160 @@ interface ProfileFormState {
   phone: string;
 }
 
-const DEFAULT_FORM: ProfileFormState = {
-  name: '',
-  email: '',
-  phone: ''
-};
+const DEFAULT_FORM: ProfileFormState = { name: '', email: '', phone: '' };
 
+type OtpStep = 'idle' | 'sending' | 'input' | 'verifying';
+
+interface OtpState {
+  step: OtpStep;
+  code: string;
+}
+
+const DEFAULT_OTP: OtpState = { step: 'idle', code: '' };
+
+// ── inline OTP panel ──────────────────────────────────────────────────────────
+interface OtpPanelProps {
+  state: OtpState;
+  sentTo: string;
+  onCodeChange: (code: string) => void;
+  onVerify: () => void;
+  onResend: () => void;
+  t: (key: string) => string;
+}
+
+function OtpPanel({
+  state,
+  sentTo,
+  onCodeChange,
+  onVerify,
+  onResend,
+  t
+}: OtpPanelProps) {
+  if (state.step === 'idle') return null;
+
+  return (
+    <div className="mt-2 space-y-2 rounded-lg border bg-muted/40 p-3">
+      {state.step === 'sending' ? (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          {t('settings.sendingCode')}
+        </div>
+      ) : (
+        <>
+          <p className="text-sm text-muted-foreground">
+            {t('settings.codeSentTo').replace('{{value}}', sentTo)}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Input
+              dir="ltr"
+              value={state.code}
+              onChange={(e) =>
+                onCodeChange(e.target.value.replace(/\D/g, '').slice(0, 6))
+              }
+              placeholder={t('settings.otpPlaceholder')}
+              className="w-36 text-center font-mono text-base tracking-[0.4em]"
+              maxLength={6}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && state.code.length >= 4) onVerify();
+              }}
+            />
+            <Button
+              size="sm"
+              onClick={onVerify}
+              disabled={state.code.length < 4 || state.step === 'verifying'}
+            >
+              {state.step === 'verifying' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                t('settings.verifyCode')
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onResend}
+              disabled={state.step === 'verifying'}
+            >
+              {t('settings.resendCode')}
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ── page ──────────────────────────────────────────────────────────────────────
 export default function ProfileSettingsPage() {
   const { t } = useTranslation();
-  const { user, isLoading } = useSettingsData();
+  const { user, isLoading, refresh } = useSettingsData();
+
   const [form, setForm] = useState<ProfileFormState>(DEFAULT_FORM);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [emailOtp, setEmailOtp] = useState<OtpState>(DEFAULT_OTP);
+  const [phoneOtp, setPhoneOtp] = useState<OtpState>(DEFAULT_OTP);
 
   useEffect(() => {
     if (!user) {
       setForm(DEFAULT_FORM);
       return;
     }
-
+    // user_display_name is the real personal name from the base profile;
+    // display_name may be the academy name for store-specific profiles.
+    const realName = (user as any).user_display_name ?? user.display_name ?? '';
     setForm({
-      name: user.display_name ?? '',
+      name: realName,
       email: user.email ?? '',
       phone: user.phone_number ?? ''
     });
+    const avatar = user.profiles?.[0]?.avatar?.publicUrl;
+    if (avatar) setAvatarUrl(avatar);
   }, [user]);
 
+  const displayName =
+    (user as any)?.user_display_name ?? user?.display_name ?? '';
+
   const initials = useMemo(() => {
-    if (!user?.display_name) return 'U';
-    return user.display_name
+    if (!displayName) return 'U';
+    return displayName
       .split(' ')
       .filter(Boolean)
-      .map((part) => part[0]?.toUpperCase())
-      .join('');
-  }, [user?.display_name]);
+      .map((p: string) => p[0]?.toUpperCase())
+      .join('')
+      .slice(0, 2);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayName]);
 
+  // ── avatar ─────────────────────────────────────────────────────────────────
+  const handleAvatarUpload = async (file: File) => {
+    try {
+      setIsUploadingAvatar(true);
+      setAvatarUrl(URL.createObjectURL(file));
+      const uploaded = await apiClient.uploadImage(file, { title: 'Avatar' });
+      if (uploaded?.publicUrl) setAvatarUrl(uploaded.publicUrl);
+      if (uploaded?.id)
+        await apiClient
+          .updateProfile({ avatar_id: uploaded.id })
+          .catch(() => {});
+      ErrorHandler.showSuccess(t('settings.photoUpdatedSuccess'));
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+      setAvatarUrl(user?.profiles?.[0]?.avatar?.publicUrl ?? null);
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  // ── save name ──────────────────────────────────────────────────────────────
   const handleSave = async () => {
     if (!user) return;
-
     try {
       setIsSaving(true);
       await apiClient.updateUser(user.id, {
@@ -73,9 +200,9 @@ export default function ProfileSettingsPage() {
         phone_number: form.phone
       });
       ErrorHandler.showSuccess(t('settings.profileUpdatedSuccess'));
-    } catch (error) {
-      console.error('Error updating profile', error);
-      ErrorHandler.handleApiError(error);
+      refresh();
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
     } finally {
       setIsSaving(false);
     }
@@ -85,13 +212,81 @@ export default function ProfileSettingsPage() {
     try {
       setIsLoggingOut(true);
       await authService.logout();
-    } catch (error) {
-      console.error('Error logging out', error);
-      ErrorHandler.handleApiError(error);
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
       setIsLoggingOut(false);
     }
   };
 
+  // ── email OTP ──────────────────────────────────────────────────────────────
+  const sendEmailOtp = async () => {
+    if (!form.email) return;
+    try {
+      setEmailOtp({ step: 'sending', code: '' });
+      await apiClient.sendEmailOtp(
+        form.email,
+        OtpType.REGISTER_EMAIL_VERIFICATION
+      );
+      setEmailOtp((s) => ({ ...s, step: 'input' }));
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+      setEmailOtp(DEFAULT_OTP);
+    }
+  };
+
+  const verifyEmailOtp = async () => {
+    if (!form.email || !emailOtp.code) return;
+    try {
+      setEmailOtp((s) => ({ ...s, step: 'verifying' }));
+      await apiClient.verifyEmailOtp(
+        form.email,
+        emailOtp.code,
+        OtpType.REGISTER_EMAIL_VERIFICATION
+      );
+      ErrorHandler.showSuccess(t('settings.emailVerifiedSuccess'));
+      setEmailOtp(DEFAULT_OTP);
+      refresh();
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+      setEmailOtp((s) => ({ ...s, step: 'input' }));
+    }
+  };
+
+  // ── phone OTP ──────────────────────────────────────────────────────────────
+  const sendPhoneOtp = async () => {
+    if (!form.phone) return;
+    try {
+      setPhoneOtp({ step: 'sending', code: '' });
+      await apiClient.sendPhoneOtp(
+        form.phone,
+        OtpType.REGISTER_PHONE_VERIFICATION
+      );
+      setPhoneOtp((s) => ({ ...s, step: 'input' }));
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+      setPhoneOtp(DEFAULT_OTP);
+    }
+  };
+
+  const verifyPhoneOtp = async () => {
+    if (!form.phone || !phoneOtp.code) return;
+    try {
+      setPhoneOtp((s) => ({ ...s, step: 'verifying' }));
+      await apiClient.verifyPhoneOtp(
+        form.phone,
+        phoneOtp.code,
+        OtpType.REGISTER_PHONE_VERIFICATION
+      );
+      ErrorHandler.showSuccess(t('settings.phoneVerifiedSuccess'));
+      setPhoneOtp(DEFAULT_OTP);
+      refresh();
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+      setPhoneOtp((s) => ({ ...s, step: 'input' }));
+    }
+  };
+
+  // ── loading ────────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="flex-1 space-y-6 p-6">
@@ -101,6 +296,11 @@ export default function ProfileSettingsPage() {
       </div>
     );
   }
+
+  const isEmailConfirmed = user?.email_confirmed === true;
+  const isPhoneConfirmed = user?.phone_confirmed === true;
+  const isEmailDirty = form.email !== (user?.email ?? '');
+  const isPhoneDirty = form.phone !== (user?.phone_number ?? '');
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -121,62 +321,212 @@ export default function ProfileSettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src="" alt={user?.display_name ?? ''} />
-              <AvatarFallback className="text-lg">{initials}</AvatarFallback>
-            </Avatar>
-            <div className="space-y-2">
-              <Button variant="outline" size="sm">
-                <Upload className="mr-2 h-4 w-4" /> {t('settings.uploadPhoto')}
-              </Button>
-              <p className="text-sm text-muted-foreground">
-                {t('settings.photoFormatHint')}
+          {/* Avatar + display name */}
+          <div className="flex items-center gap-5">
+            <div className="group relative shrink-0">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={avatarUrl ?? ''} alt={displayName} />
+                <AvatarFallback className="text-xl">{initials}</AvatarFallback>
+              </Avatar>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingAvatar}
+                className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity disabled:cursor-not-allowed group-hover:opacity-100"
+                aria-label={t('settings.uploadPhoto')}
+              >
+                {isUploadingAvatar ? (
+                  <Loader2 className="h-5 w-5 animate-spin text-white" />
+                ) : (
+                  <Camera className="h-5 w-5 text-white" />
+                )}
+              </button>
+            </div>
+
+            <div className="min-w-0 space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="truncate text-xl font-semibold leading-none">
+                  {displayName || t('settings.fullNamePlaceholder')}
+                </p>
+                {(user as any)?.role && (
+                  <Badge variant="secondary" className="shrink-0 text-xs">
+                    {getRoleLabel((user as any).role, t)}
+                  </Badge>
+                )}
+              </div>
+              <p className="truncate text-sm text-muted-foreground">
+                {user?.email}
               </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingAvatar}
+              >
+                {isUploadingAvatar ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t('settings.uploadingPhoto')}
+                  </>
+                ) : (
+                  <>
+                    <Camera className="mr-2 h-4 w-4" />
+                    {avatarUrl
+                      ? t('settings.changePhoto')
+                      : t('settings.uploadPhoto')}
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              title={t('settings.uploadPhoto')}
+              aria-label={t('settings.uploadPhoto')}
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleAvatarUpload(file);
+                e.target.value = '';
+              }}
+            />
+          </div>
+
+          {/* Full name (edit) */}
+          <div className="space-y-2">
+            <Label htmlFor="name">{t('settings.fullName')}</Label>
+            <Input
+              id="name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder={t('settings.fullNamePlaceholder')}
+              className="max-w-sm"
+            />
+          </div>
+
+          {/* Phone + Email — one row */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Phone */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="phone">{t('settings.phoneNumber')}</Label>
+                {!isPhoneDirty &&
+                  (isPhoneConfirmed ? (
+                    <Badge className="gap-1 bg-green-500 px-2 py-0.5 text-xs text-white hover:bg-green-500">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {t('settings.phoneVerified')}
+                    </Badge>
+                  ) : (
+                    <Badge
+                      variant="outline"
+                      className="gap-1 border-amber-400 px-2 py-0.5 text-xs text-amber-600"
+                    >
+                      <AlertCircle className="h-3 w-3" />
+                      {t('settings.phoneNotVerified')}
+                    </Badge>
+                  ))}
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  id="phone"
+                  dir="ltr"
+                  value={form.phone}
+                  onChange={(e) => {
+                    setForm({ ...form, phone: e.target.value });
+                    if (phoneOtp.step !== 'idle') setPhoneOtp(DEFAULT_OTP);
+                  }}
+                  placeholder={t('settings.phoneNumberPlaceholder')}
+                  className="flex-1"
+                />
+                {!isPhoneConfirmed &&
+                  !isPhoneDirty &&
+                  form.phone &&
+                  phoneOtp.step === 'idle' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={sendPhoneOtp}
+                      className="shrink-0"
+                    >
+                      <Phone className="mr-2 h-4 w-4" />
+                      {t('settings.verifyPhone')}
+                    </Button>
+                  )}
+              </div>
+              <OtpPanel
+                state={phoneOtp}
+                sentTo={form.phone}
+                onCodeChange={(code) => setPhoneOtp((s) => ({ ...s, code }))}
+                onVerify={verifyPhoneOtp}
+                onResend={sendPhoneOtp}
+                t={t}
+              />
+            </div>
+
+            {/* Email */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="email">{t('settings.email')}</Label>
+                {!isEmailDirty &&
+                  (isEmailConfirmed ? (
+                    <Badge className="gap-1 bg-green-500 px-2 py-0.5 text-xs text-white hover:bg-green-500">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {t('settings.emailVerified')}
+                    </Badge>
+                  ) : (
+                    <Badge
+                      variant="outline"
+                      className="gap-1 border-amber-400 px-2 py-0.5 text-xs text-amber-600"
+                    >
+                      <AlertCircle className="h-3 w-3" />
+                      {t('settings.emailNotVerified')}
+                    </Badge>
+                  ))}
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  id="email"
+                  type="email"
+                  dir="ltr"
+                  value={form.email}
+                  onChange={(e) => {
+                    setForm({ ...form, email: e.target.value });
+                    if (emailOtp.step !== 'idle') setEmailOtp(DEFAULT_OTP);
+                  }}
+                  placeholder={t('settings.emailPlaceholder')}
+                  className="flex-1"
+                />
+                {!isEmailConfirmed &&
+                  !isEmailDirty &&
+                  form.email &&
+                  emailOtp.step === 'idle' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={sendEmailOtp}
+                      className="shrink-0"
+                    >
+                      <Mail className="mr-2 h-4 w-4" />
+                      {t('settings.verifyEmail')}
+                    </Button>
+                  )}
+              </div>
+              <OtpPanel
+                state={emailOtp}
+                sentTo={form.email}
+                onCodeChange={(code) => setEmailOtp((s) => ({ ...s, code }))}
+                onVerify={verifyEmailOtp}
+                onResend={sendEmailOtp}
+                t={t}
+              />
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">{t('settings.fullName')}</Label>
-              <Input
-                id="name"
-                value={form.name}
-                onChange={(event) =>
-                  setForm({ ...form, name: event.target.value })
-                }
-                placeholder={t('settings.fullNamePlaceholder')}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('settings.email')}</Label>
-              <Input
-                id="email"
-                type="email"
-                dir="ltr"
-                value={form.email}
-                onChange={(event) =>
-                  setForm({ ...form, email: event.target.value })
-                }
-                placeholder={t('settings.emailPlaceholder')}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">{t('settings.phoneNumber')}</Label>
-              <Input
-                id="phone"
-                value={form.phone}
-                dir="rtl"
-                className="text-end"
-                onChange={(event) =>
-                  setForm({ ...form, phone: event.target.value })
-                }
-                placeholder={t('settings.phoneNumberPlaceholder')}
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-between">
+          {/* Actions */}
+          <div className="flex justify-between pt-2">
             <Button
               variant="destructive"
               onClick={handleLogout}
