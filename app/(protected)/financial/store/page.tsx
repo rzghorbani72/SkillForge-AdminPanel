@@ -39,6 +39,7 @@ import { useFinancialFilters } from '@/hooks/useFinancialFilters';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
+import { FinancialCharts } from '@/components/financial/FinancialCharts';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import type {
   AcademyFinancialOverview,
@@ -313,6 +314,9 @@ export default function StoreFinancialPage() {
           <StatCard key={card.label} {...card} />
         ))}
       </div>
+
+      {/* Charts */}
+      <FinancialCharts payments={payments} selectedMonth={selectedMonth} />
 
       {/* Payments Table */}
       <div className="space-y-3">
