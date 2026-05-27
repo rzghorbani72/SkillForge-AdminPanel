@@ -1,5 +1,15 @@
 import { CountryCode } from './country-codes';
 
+export function toEnglishDigits(str: string): string {
+  return str
+    .replace(/[۰-۹]/g, (d) =>
+      String.fromCharCode(d.charCodeAt(0) - 0x06f0 + 48)
+    )
+    .replace(/[٠-٩]/g, (d) =>
+      String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48)
+    );
+}
+
 /**
  * Cleans a phone number by removing country codes, leading zeros, and invalid characters
  * @param phoneNumber - The raw phone number input
@@ -192,7 +202,7 @@ export const getFullPhoneNumber = (
  * other        → unchanged (pass through)
  */
 export function toE164Iran(raw: string): string {
-  const digits = raw.replace(/\D/g, '');
+  const digits = toEnglishDigits(raw).replace(/\D/g, '');
   if (digits.startsWith('0098')) return '+' + digits.slice(2);
   if (digits.startsWith('98')) return '+' + digits;
   if (digits.startsWith('09')) return '+98' + digits.slice(1);

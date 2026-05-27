@@ -25,6 +25,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { authService } from '@/lib/auth';
+import { toEnglishDigits } from '@/lib/phone-utils';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -148,8 +149,7 @@ export default function AdminLoginPage() {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [field]: toEnglishDigits(value) }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
     }
@@ -218,7 +218,7 @@ export default function AdminLoginPage() {
                 <PhoneInputWithCountry
                   id="phone"
                   label={t('auth.phoneNumber')}
-                  placeholder={t('auth.enterPhone')}
+                  placeholder="09121234567"
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value)}
                   onFullPhoneChange={(fullPhone) =>

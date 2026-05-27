@@ -291,7 +291,7 @@ export const fa = {
     passwordPlaceholder: 'حداقل ۶ کاراکتر',
     repeatPasswordPlaceholder: 'تکرار رمز عبور',
     phoneOptional: 'شماره تلفن (برای تأیید)',
-    phonePlaceholder: '+98 912 000 0000',
+    phonePlaceholder: '09121234567',
     continueBtn: 'ادامه',
     sendVerificationCode: 'ارسال کد تأیید',
     verifyEmailTitle: 'ایمیل خود را تأیید کنید',

@@ -288,7 +288,7 @@ export const en = {
     passwordPlaceholder: 'At least 6 characters',
     repeatPasswordPlaceholder: 'Repeat your password',
     phoneOptional: 'Phone number (for verification)',
-    phonePlaceholder: '+1 555 000 0000',
+    phonePlaceholder: '09121234567',
     continueBtn: 'Continue',
     sendVerificationCode: 'Send verification code',
     verifyEmailTitle: 'Verify your email',

@@ -25,6 +25,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { toEnglishDigits } from '@/lib/phone-utils';
 import { OtpType } from '@/constants/data';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
@@ -78,7 +79,7 @@ export default function ForgetPasswordPage() {
   }, []);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: toEnglishDigits(value) }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
     }
@@ -370,7 +371,7 @@ export default function ForgetPasswordPage() {
                       <PhoneInputWithCountry
                         id="phone"
                         label={t('auth.phoneNumber')}
-                        placeholder={t('auth.enterPhone')}
+                        placeholder="09121234567"
                         value={formData.phoneNumber}
                         onChange={(value) =>
                           handleInputChange('phoneNumber', value)

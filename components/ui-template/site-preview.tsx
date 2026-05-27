@@ -31,14 +31,14 @@ function PreviewHeader({
     >
       <div className="flex items-center gap-2">
         <div className="h-7 w-7 rounded-lg bg-gray-900" />
-        <span className="text-base font-bold text-gray-900">Your Academy</span>
+        <span className="text-base font-bold text-gray-900">آکادمی شما</span>
       </div>
       <nav className="flex items-center gap-6 text-sm text-gray-600">
-        <span className="cursor-pointer hover:text-gray-900">Courses</span>
-        <span className="cursor-pointer hover:text-gray-900">About</span>
-        <span className="cursor-pointer hover:text-gray-900">Blog</span>
+        <span className="cursor-pointer hover:text-gray-900">دوره‌ها</span>
+        <span className="cursor-pointer hover:text-gray-900">درباره ما</span>
+        <span className="cursor-pointer hover:text-gray-900">وبلاگ</span>
         <span className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white">
-          Get Started
+          شروع کنید
         </span>
       </nav>
     </div>
@@ -53,11 +53,11 @@ function PreviewHero({
   active: boolean;
 }) {
   const style = config?.style as string | undefined;
-  const title = (config?.title as string) || 'Transform Your Skills';
+  const title = (config?.title as string) || 'مهارت‌های خود را تقویت کنید';
   const subtitle =
     (config?.subtitle as string) ||
-    'Join thousands of students learning with us.';
-  const ctaText = (config?.ctaText as string) || 'Get Started';
+    'به هزاران دانشجو که با ما یاد می‌گیرند بپیوندید.';
+  const ctaText = (config?.ctaText as string) || 'شروع کنید';
   const alignment = (config?.alignment as string) || 'center';
   const height = config?.height as string;
   const minH = height === 'large' ? 420 : height === 'small' ? 220 : 320;
@@ -140,7 +140,7 @@ function PreviewHero({
   };
   const alignCls =
     alignment === 'left'
-      ? 'items-start text-left'
+      ? 'items-start text-right'
       : 'items-center text-center mx-auto';
   const heightCls =
     height === 'large'
@@ -181,7 +181,7 @@ function PreviewHero({
           className={`mt-3 flex items-center gap-3 text-xs ${t.sub} opacity-70`}
         >
           <span>★★★★★</span>
-          <span>Trusted by 50,000+ learners</span>
+          <span>مورد اعتماد بیش از ۵۰٬۰۰۰ یادگیرنده</span>
         </div>
       </div>
     </div>
@@ -196,26 +196,34 @@ function PreviewFeatures({
   active: boolean;
 }) {
   const style = config?.style as string | undefined;
-  const title = (config?.title as string) || 'Why Choose Us';
+  const title = (config?.title as string) || 'چرا ما را انتخاب کنید';
   const cols = Math.min((config?.gridColumns as number) || 3, 4);
   const features = [
     {
       icon: '🎓',
-      title: 'Expert Instructors',
-      desc: 'Learn from industry professionals'
+      title: 'مدرسان متخصص',
+      desc: 'از متخصصان صنعت بیاموزید'
     },
-    { icon: '📚', title: 'Flexible Learning', desc: 'Study at your own pace' },
-    { icon: '🏆', title: 'Certificates', desc: 'Earn recognized certificates' },
+    {
+      icon: '📚',
+      title: 'یادگیری انعطاف‌پذیر',
+      desc: 'در زمان دلخواه مطالعه کنید'
+    },
+    {
+      icon: '🏆',
+      title: 'گواهینامه معتبر',
+      desc: 'گواهینامه‌های شناخته‌شده دریافت کنید'
+    },
     {
       icon: '💡',
-      title: 'Interactive Content',
-      desc: 'Hands-on projects and applications'
+      title: 'محتوای تعاملی',
+      desc: 'پروژه‌ها و کاربردهای عملی'
     },
-    { icon: '🚀', title: 'Career Support', desc: 'Job placement assistance' },
+    { icon: '🚀', title: 'پشتیبانی شغلی', desc: 'کمک در یافتن شغل مناسب' },
     {
       icon: '⭐',
-      title: 'Community Access',
-      desc: 'Vibrant community of learners'
+      title: 'دسترسی به جامعه',
+      desc: 'جامعه پویای یادگیرندگان'
     }
   ].slice(0, cols * 2);
 
@@ -224,9 +232,9 @@ function PreviewFeatures({
       value: string;
       label: string;
     }>) || [
-      { value: '100K+', label: 'Active students' },
-      { value: '$10B+', label: 'Earned by creators' },
-      { value: '75M+', label: 'Customers served' }
+      { value: '۱۰۰ هزار+', label: 'دانشجوی فعال' },
+      { value: '۱۰۰ میلیارد+', label: 'درآمد سازندگان' },
+      { value: '۷۵ میلیون+', label: 'مشتری خدمت‌رسانی شده' }
     ];
     return (
       <div
@@ -361,31 +369,31 @@ function PreviewCourses({
   config: Record<string, unknown>;
   active: boolean;
 }) {
-  const title = (config?.title as string) || 'Featured Courses';
+  const title = (config?.title as string) || 'دوره‌های ویژه';
   const cols = Math.min((config?.gridColumns as number) || 3, 4);
   const courses = [
     {
-      title: 'Web Development Bootcamp',
-      tag: 'Development',
-      price: '$49',
+      title: 'بوت‌کمپ توسعه وب',
+      tag: 'توسعه',
+      price: '۴۹۰,۰۰۰ تومان',
       color: 'from-blue-400 to-indigo-500'
     },
     {
-      title: 'Data Science & Analytics',
-      tag: 'Data',
-      price: '$69',
+      title: 'علم داده و تحلیل',
+      tag: 'داده',
+      price: '۶۹۰,۰۰۰ تومان',
       color: 'from-purple-400 to-pink-500'
     },
     {
-      title: 'UX Design Fundamentals',
-      tag: 'Design',
-      price: '$39',
+      title: 'اصول طراحی UX',
+      tag: 'طراحی',
+      price: '۳۹۰,۰۰۰ تومان',
       color: 'from-orange-400 to-red-400'
     },
     {
-      title: 'Digital Marketing Pro',
-      tag: 'Marketing',
-      price: '$55',
+      title: 'بازاریابی دیجیتال حرفه‌ای',
+      tag: 'بازاریابی',
+      price: '۵۵۰,۰۰۰ تومان',
       color: 'from-green-400 to-teal-500'
     }
   ].slice(0, cols);
@@ -422,7 +430,9 @@ function PreviewCourses({
               </h3>
               <div className="mt-3 flex items-center justify-between">
                 <div className="flex text-xs text-amber-400">★★★★★</div>
-                <span className="font-bold text-gray-900">{c.price}</span>
+                <span className="text-sm font-bold text-gray-900">
+                  {c.price}
+                </span>
               </div>
             </div>
           </div>
@@ -440,28 +450,28 @@ function PreviewTestimonials({
   active: boolean;
 }) {
   const style = config?.style as string | undefined;
-  const title = (config?.title as string) || 'What Students Say';
+  const title = (config?.title as string) || 'نظر دانشجویان';
 
   const reviews = [
     {
-      name: 'Sarah J.',
-      role: 'Software Engineer',
-      text: 'This platform transformed my career completely. The courses are world-class!',
-      revenue: '$12K/mo',
+      name: 'سارا م.',
+      role: 'مهندس نرم‌افزار',
+      text: 'این پلتفرم کارم را به طور کامل متحول کرد. دوره‌ها بی‌نظیرند!',
+      revenue: '۱۲ میلیون/ماه',
       emoji: '👩‍💻'
     },
     {
-      name: 'Michael C.',
-      role: 'Product Manager',
-      text: 'Best investment in my professional development. I highly recommend it!',
-      revenue: '$8K/mo',
+      name: 'محمد ک.',
+      role: 'مدیر محصول',
+      text: 'بهترین سرمایه‌گذاری برای پیشرفت حرفه‌ای‌ام. بسیار توصیه می‌کنم!',
+      revenue: '۸ میلیون/ماه',
       emoji: '👨‍💼'
     },
     {
-      name: 'Emily R.',
-      role: 'Data Scientist',
-      text: 'The hands-on projects make all the difference. I landed my dream job!',
-      revenue: '$15K/mo',
+      name: 'الینا ر.',
+      role: 'دانشمند داده',
+      text: 'پروژه‌های عملی خیلی تفاوت ایجاد می‌کنند. شغل رویاهایم را پیدا کردم!',
+      revenue: '۱۵ میلیون/ماه',
       emoji: '👩‍🔬'
     }
   ];
@@ -475,22 +485,22 @@ function PreviewTestimonials({
           {title}
         </h2>
         <div className="mx-auto max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 p-10 text-center">
-          <p className="text-5xl font-bold text-white">$20K/mo</p>
+          <p className="text-5xl font-bold text-white">۲۰ میلیون/ماه</p>
           <p className="mb-6 mt-1 text-sm uppercase tracking-wide text-slate-400">
-            earned on this platform
+            درآمد از این پلتفرم
           </p>
           <blockquote className="mb-6 text-lg italic text-slate-300">
-            "Flexible learning schedule fits perfectly with my busy work life.
-            Worth every minute."
+            «برنامه یادگیری انعطاف‌پذیر با زندگی شلوغم کاملاً هماهنگ است. ارزش
+            هر دقیقه‌ای را دارد.»
           </blockquote>
           <div className="flex items-center justify-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-700 text-2xl">
               👩‍💼
             </div>
-            <div className="text-left">
-              <p className="font-semibold text-white">Lisa Anderson</p>
+            <div className="text-right">
+              <p className="font-semibold text-white">لیلا احمدی</p>
               <p className="text-sm text-slate-400">
-                Marketing Director, Brand Agency
+                مدیر بازاریابی، آژانس برند
               </p>
             </div>
           </div>
@@ -502,7 +512,7 @@ function PreviewTestimonials({
               className="rounded-xl border border-slate-800 bg-slate-900/50 p-5"
             >
               <div className="mb-2 flex text-sm text-amber-400">★★★★★</div>
-              <p className="mb-3 text-sm text-slate-300">"{r.text}"</p>
+              <p className="mb-3 text-sm text-slate-300">«{r.text}»</p>
               <div className="flex items-center gap-2">
                 <span className="text-xl">{r.emoji}</span>
                 <div>
@@ -526,16 +536,16 @@ function PreviewTestimonials({
           {title} <span className="text-violet-500">👉</span>
         </h2>
         <p className="mb-8 text-center text-sm text-gray-400">
-          Real screenshots. Real results.
+          نتایج واقعی. اسکرین‌شات‌های واقعی.
         </p>
         <div className="grid grid-cols-4 gap-4">
           {[
             ...reviews,
             {
-              name: 'David K.',
-              role: 'UX Designer',
-              text: 'Community support is incredible!',
-              revenue: '$9K/mo',
+              name: 'داوید ک.',
+              role: 'طراح UX',
+              text: 'پشتیبانی جامعه فوق‌العاده است!',
+              revenue: '۹ میلیون/ماه',
               emoji: '👨‍🎨'
             }
           ].map((r, i) => (
@@ -557,7 +567,7 @@ function PreviewTestimonials({
                 </div>
               </div>
               <div className="mb-2 flex text-xs text-yellow-400">★★★★★</div>
-              <p className="text-xs text-gray-600">"{r.text}"</p>
+              <p className="text-xs text-gray-600">«{r.text}»</p>
             </div>
           ))}
         </div>
@@ -590,22 +600,22 @@ function PreviewTestimonials({
                   <p className="font-bold text-gray-900">{r.name}</p>
                   <p className="text-sm text-gray-500">{r.role}</p>
                   <p className="text-sm font-semibold text-teal-600">
-                    {r.revenue}/month
+                    {r.revenue}
                   </p>
                 </div>
               </div>
               <div className="mb-2 flex text-sm text-amber-400">★★★★★</div>
-              <p className="text-sm text-gray-600">"{r.text}"</p>
+              <p className="text-sm text-gray-600">«{r.text}»</p>
             </div>
           ))}
         </div>
         <div className="grid grid-cols-4 gap-3">
-          {['$12K', '$8K', '$15K', '$9K'].map((v, i) => (
+          {['۱۲ میلیون', '۸ میلیون', '۱۵ میلیون', '۹ میلیون'].map((v, i) => (
             <div
               key={i}
               className="rounded-xl border border-gray-100 bg-white p-3 text-center"
             >
-              <p className="text-lg font-bold text-teal-600">{v}/mo</p>
+              <p className="text-lg font-bold text-teal-600">{v}/ماه</p>
               <p className="text-xs text-gray-500">{reviews[i % 3]?.name}</p>
             </div>
           ))}
@@ -633,7 +643,7 @@ function PreviewTestimonials({
           >
             <div className="mb-3 flex text-sm text-amber-400">★★★★★</div>
             <p className="mb-5 text-sm leading-relaxed text-gray-700">
-              "{r.text}"
+              «{r.text}»
             </p>
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-2xl">
@@ -670,8 +680,8 @@ function PreviewFooter({
         className={`${base} px-8 py-5 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
       >
         <div className="flex items-center justify-between">
-          <span className="font-bold text-white">Your Academy</span>
-          <span className="text-sm">© 2025 · Privacy · Terms</span>
+          <span className="font-bold text-white">آکادمی شما</span>
+          <span className="text-sm">© ۱۴۰۴ · حریم خصوصی · شرایط استفاده</span>
         </div>
       </div>
     );
@@ -682,10 +692,10 @@ function PreviewFooter({
       className={`${base} px-8 py-10 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
     >
       <div className="mb-8 grid grid-cols-4 gap-8">
-        {['Academy', 'Courses', 'Support', 'Company'].map((col, i) => (
+        {['آکادمی', 'دوره‌ها', 'پشتیبانی', 'شرکت'].map((col, i) => (
           <div key={i}>
             <p className="mb-3 font-semibold text-white">{col}</p>
-            {['About', 'Contact', 'Blog'].map((link) => (
+            {['درباره ما', 'تماس', 'وبلاگ'].map((link) => (
               <p
                 key={link}
                 className="cursor-pointer py-0.5 text-sm hover:text-gray-200"
@@ -698,10 +708,10 @@ function PreviewFooter({
       </div>
       <div className="flex items-center justify-between border-t border-gray-700 pt-6">
         <span className="text-sm">
-          © 2025 Your Academy. All rights reserved.
+          © ۱۴۰۴ آکادمی شما. تمام حقوق محفوظ است.
         </span>
         <div className="flex gap-3">
-          {['Twitter', 'LinkedIn', 'YouTube'].map((s) => (
+          {['توییتر', 'لینکدین', 'یوتیوب'].map((s) => (
             <span
               key={s}
               className="cursor-pointer text-sm hover:text-gray-200"
@@ -721,15 +731,15 @@ function PreviewSidebar({ active }: { active: boolean }) {
       className={`h-full border-r border-gray-200 bg-gray-50 px-4 py-6 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
     >
       <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">
-        Navigation
+        ناوبری
       </p>
       {[
-        'Dashboard',
-        'My Courses',
-        'Progress',
-        'Certificates',
-        'Profile',
-        'Settings'
+        'داشبورد',
+        'دوره‌های من',
+        'پیشرفت',
+        'گواهینامه‌ها',
+        'پروفایل',
+        'تنظیمات'
       ].map((item) => (
         <div
           key={item}
@@ -895,7 +905,7 @@ export function SitePreview({
 
       {/* Zoomed page content — fills remaining height */}
       <div ref={containerRef} className="flex-1 overflow-y-auto bg-white">
-        <div ref={virtualRef} className="w-[960px]">
+        <div ref={virtualRef} dir="rtl" className="w-[960px]">
           {renderPageContent()}
         </div>
       </div>

@@ -30,7 +30,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
-import { toE164Iran } from '@/lib/phone-utils';
+import { toE164Iran, toEnglishDigits } from '@/lib/phone-utils';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { cn } from '@/lib/utils';
@@ -319,6 +319,11 @@ export default function RegisterPage() {
                                 className={isRTL ? 'pr-9' : 'pl-9'}
                                 placeholder={t('auth.phonePlaceholder')}
                                 {...field}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    toEnglishDigits(e.target.value)
+                                  )
+                                }
                               />
                             </div>
                           </FormControl>
@@ -348,6 +353,11 @@ export default function RegisterPage() {
                                 )}
                                 placeholder={t('auth.passwordPlaceholder')}
                                 {...field}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    toEnglishDigits(e.target.value)
+                                  )
+                                }
                               />
                               <Button
                                 type="button"
@@ -396,6 +406,11 @@ export default function RegisterPage() {
                                   'auth.repeatPasswordPlaceholder'
                                 )}
                                 {...field}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    toEnglishDigits(e.target.value)
+                                  )
+                                }
                               />
                               <Button
                                 type="button"
@@ -464,7 +479,9 @@ export default function RegisterPage() {
                     <Input
                       id="otp-code"
                       value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value)}
+                      onChange={(e) =>
+                        setOtpCode(toEnglishDigits(e.target.value))
+                      }
                       placeholder={t('auth.verificationCodePlaceholder')}
                       maxLength={8}
                       dir="rtl"

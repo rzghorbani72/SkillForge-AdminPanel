@@ -186,7 +186,7 @@ export function PhoneInputWithCountry({
 
   const getDisplayValue = () => {
     if (!value) return '';
-    // Format the phone number for display
+    if (selectedCountry.code === 'IR') return `0${value}`;
     return formatPhoneNumber(value, selectedCountry);
   };
 

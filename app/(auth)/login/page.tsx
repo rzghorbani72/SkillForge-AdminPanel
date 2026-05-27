@@ -11,7 +11,7 @@ import {
   Sparkles,
   Check
 } from 'lucide-react';
-import { toE164Iran } from '@/lib/phone-utils';
+import { toE164Iran, toEnglishDigits } from '@/lib/phone-utils';
 import Link from '@/components/ui/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -242,7 +242,9 @@ export default function LoginPage() {
                   inputMode="numeric"
                   maxLength={6}
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                  onChange={(e) =>
+                    setOtp(toEnglishDigits(e.target.value).replace(/\D/g, ''))
+                  }
                   placeholder="______"
                   className="w-full rounded-md border bg-background px-4 py-3 text-center font-mono text-2xl tracking-widest outline-none focus:ring-2 focus:ring-primary"
                   autoFocus
@@ -407,7 +409,7 @@ export default function LoginPage() {
                     placeholder={t('auth.phonePlaceholder')}
                     value={phone}
                     onChange={(e) => {
-                      setPhone(e.target.value);
+                      setPhone(toEnglishDigits(e.target.value));
                       if (errors.phone) setErrors((p) => ({ ...p, phone: '' }));
                     }}
                     className={cn(
@@ -448,7 +450,7 @@ export default function LoginPage() {
                     placeholder={t('auth.enterPassword')}
                     value={password}
                     onChange={(e) => {
-                      setPassword(e.target.value);
+                      setPassword(toEnglishDigits(e.target.value));
                       if (errors.password)
                         setErrors((p) => ({ ...p, password: '' }));
                     }}

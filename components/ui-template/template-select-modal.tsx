@@ -59,18 +59,18 @@ const PRESET_CATEGORY: Record<
 };
 
 const CATEGORIES: PresetCategory[] = [
-  { id: 'all', label: 'All', icon: Layout },
-  { id: 'featured', label: 'Featured', icon: Sparkles },
-  { id: 'creator', label: 'Creator', icon: Users },
-  { id: 'academy', label: 'Academy', icon: BookOpen },
-  { id: 'community', label: 'Community', icon: Users },
-  { id: 'classic', label: 'Classic', icon: Minimize2 }
+  { id: 'all', label: 'همه', icon: Layout },
+  { id: 'featured', label: 'ویژه', icon: Sparkles },
+  { id: 'creator', label: 'سازنده', icon: Users },
+  { id: 'academy', label: 'آکادمی', icon: BookOpen },
+  { id: 'community', label: 'جامعه', icon: Users },
+  { id: 'classic', label: 'کلاسیک', icon: Minimize2 }
 ];
 
 const RADIUS_LABEL: Record<string, string> = {
-  sharp: 'Sharp',
-  soft: 'Soft',
-  rounded: 'Rounded'
+  sharp: 'تیز',
+  soft: 'نرم',
+  rounded: 'گرد'
 };
 
 export function TemplateSelectModal({
@@ -175,10 +175,10 @@ export function TemplateSelectModal({
               <div className="mb-4 flex items-center gap-2">
                 <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                 <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                  Featured Templates
+                  قالب‌های ویژه
                 </h3>
                 <span className="text-xs text-muted-foreground/60">
-                  — styled after top creator platforms
+                  — الهام گرفته از بهترین پلتفرم‌های آموزشی
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -203,10 +203,10 @@ export function TemplateSelectModal({
                 <div className="mb-4 flex items-center gap-2">
                   <Layout className="h-3.5 w-3.5 text-muted-foreground/60" />
                   <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                    Simple Layouts
+                    چیدمان‌های ساده
                   </h3>
                   <span className="text-xs text-muted-foreground/60">
-                    — clean, versatile starting points
+                    — نقطه شروع‌های تمیز و همه‌کاره
                   </span>
                 </div>
               )}
@@ -228,7 +228,7 @@ export function TemplateSelectModal({
           {filtered.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
               <Layout className="mb-3 h-10 w-10 opacity-20" />
-              <p className="text-sm">No templates in this category</p>
+              <p className="text-sm">هیچ قالبی در این دسته‌بندی وجود ندارد</p>
             </div>
           )}
         </div>
@@ -238,16 +238,16 @@ export function TemplateSelectModal({
           <div className="flex flex-shrink-0 items-center gap-6 border-t bg-muted/30 px-6 py-3">
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Design System
+                سیستم طراحی
               </span>
             </div>
             {/* Color tokens */}
             <div className="flex items-center gap-3">
               {[
-                { label: 'Primary', color: selectedDs.colors.primary },
-                { label: 'Secondary', color: selectedDs.colors.secondary },
-                { label: 'Accent', color: selectedDs.colors.accent },
-                { label: 'Background', color: selectedDs.colors.background }
+                { label: 'اصلی', color: selectedDs.colors.primary },
+                { label: 'ثانوی', color: selectedDs.colors.secondary },
+                { label: 'تأکیدی', color: selectedDs.colors.accent },
+                { label: 'پس‌زمینه', color: selectedDs.colors.background }
               ].map(({ label, color }) => (
                 <div key={label} className="flex items-center gap-1.5">
                   <span
@@ -275,8 +275,8 @@ export function TemplateSelectModal({
               </span>
               <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium capitalize">
                 {selectedDs.shape.shadow === 'none'
-                  ? 'No shadow'
-                  : `${selectedDs.shape.shadow} shadow`}
+                  ? 'بدون سایه'
+                  : `سایه ${selectedDs.shape.shadow}`}
               </span>
             </div>
           </div>
@@ -286,8 +286,8 @@ export function TemplateSelectModal({
         <div className="flex flex-shrink-0 items-center justify-between border-t bg-background px-6 py-4">
           <p className="text-xs text-muted-foreground">
             {selectedId === activePresetId
-              ? 'Select a different template to apply changes'
-              : `Apply "${selectedPreset?.name}" — includes layout blocks and design system tokens`}
+              ? 'یک قالب دیگر انتخاب کنید تا تغییرات اعمال شود'
+              : `اعمال "${selectedPreset?.name}" — شامل بلوک‌های چیدمان و توکن‌های طراحی`}
           </p>
           <div className="flex gap-2">
             <Button type="button" variant="outline" size="sm" onClick={onClose}>
@@ -350,7 +350,7 @@ function TemplateCard({
       <div className="absolute right-3 top-3 z-10 flex flex-col items-end gap-1.5">
         {isActive && (
           <span className="inline-flex items-center rounded-full bg-emerald-600 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-white">
-            Active
+            فعال
           </span>
         )}
         {/* Radio circle */}

@@ -26,6 +26,7 @@ const NavBar = ({
   ctaBg?: string;
 }) => (
   <div
+    dir="rtl"
     className={`flex items-center justify-between border-b px-3 py-1.5 ${bg} ${border}`}
   >
     <div className="flex items-center gap-1.5">
@@ -40,7 +41,7 @@ const NavBar = ({
     <div
       className={`h-4 w-10 rounded ${ctaBg} flex items-center justify-center text-[6px] font-medium text-white`}
     >
-      Start
+      شروع
     </div>
   </div>
 );
@@ -59,7 +60,7 @@ const CourseCard = ({ from, to }: { from: string; to: string }) => (
 
 export function KajabiThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white text-[0]">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white text-[0]">
       <NavBar logoColor="bg-rose-600" ctaBg="bg-rose-500" />
       {/* Hero */}
       <div className="relative overflow-hidden bg-gradient-to-br from-rose-50 to-orange-50 px-4 pb-3 pt-5">
@@ -124,7 +125,7 @@ export function KajabiThumbnail() {
 
 export function PodiaThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar
         logoColor="bg-teal-500"
         dotColor="bg-gray-600"
@@ -143,9 +144,9 @@ export function PodiaThumbnail() {
         </div>
         <div className="flex w-24 flex-col gap-1.5">
           {[
-            ['bg-orange-400', 'Online store'],
-            ['bg-pink-400', 'Website'],
-            ['bg-purple-400', 'Email']
+            ['bg-orange-400', 'فروشگاه آنلاین'],
+            ['bg-pink-400', 'وب‌سایت'],
+            ['bg-purple-400', 'ایمیل']
           ].map(([bg, label]) => (
             <div
               key={label}
@@ -200,7 +201,7 @@ export function PodiaThumbnail() {
 
 export function StanThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg">
+    <div dir="rtl" className="overflow-hidden rounded-lg">
       <div className="flex items-center justify-between border-b border-gray-100 bg-white px-3 py-1.5">
         <div className="flex items-center gap-1.5">
           <div className="h-3 w-3 rounded-full bg-violet-500" />
@@ -212,7 +213,7 @@ export function StanThumbnail() {
           ))}
         </div>
         <div className="flex h-4 w-12 items-center justify-center rounded border border-gray-200 text-[6px] text-gray-500">
-          Sign In
+          ورود
         </div>
       </div>
       {/* Violet gradient hero */}
@@ -224,7 +225,7 @@ export function StanThumbnail() {
           <FakeText w="w-48 mx-auto" h="h-1.5" color="bg-purple-300/70" />
           <div className="flex justify-center pt-2">
             <div className="flex h-5 w-20 items-center justify-center rounded-full bg-orange-400 text-[6px] font-semibold text-white">
-              Start Trial →
+              شروع رایگان
             </div>
           </div>
         </div>
@@ -269,7 +270,7 @@ export function StanThumbnail() {
 
 export function CircleThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-slate-900">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-slate-900">
       <div className="flex items-center justify-between border-b border-slate-700 bg-slate-900 px-3 py-1.5">
         <div className="flex items-center gap-1.5">
           <div className="h-3 w-3 rounded-full bg-indigo-400" />
@@ -281,7 +282,7 @@ export function CircleThumbnail() {
           ))}
         </div>
         <div className="flex h-4 w-12 items-center justify-center rounded border border-slate-600 text-[6px] text-slate-400">
-          Sign In
+          ورود
         </div>
       </div>
       {/* Dark hero */}
@@ -293,10 +294,10 @@ export function CircleThumbnail() {
           <FakeText w="w-48 mx-auto" h="h-1.5" color="bg-slate-500" />
           <div className="flex justify-center gap-2 pt-2">
             <div className="flex h-5 w-14 items-center justify-center rounded bg-indigo-500 text-[6px] text-white">
-              Start Free
+              شروع رایگان
             </div>
             <div className="flex h-5 w-14 items-center justify-center rounded border border-slate-500 text-[6px] text-slate-300">
-              Watch
+              تماشا
             </div>
           </div>
           <div className="flex justify-center -space-x-1 pt-1">
@@ -343,7 +344,7 @@ export function CircleThumbnail() {
 
 export function ModernThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar
         logoColor="bg-indigo-600"
         dotColor="bg-gray-600"
@@ -390,7 +391,7 @@ export function ModernThumbnail() {
 
 export function ClassicThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <div className="flex items-center justify-between bg-blue-700 px-3 py-1.5">
         <div className="flex items-center gap-1.5">
           <div className="h-3 w-3 rounded bg-white/70" />
@@ -402,7 +403,7 @@ export function ClassicThumbnail() {
           ))}
         </div>
         <div className="flex h-4 w-10 items-center justify-center rounded bg-white text-[6px] font-medium text-blue-700">
-          Start
+          شروع
         </div>
       </div>
       <div className="flex gap-3 bg-gray-50 px-4 pb-3 pt-4">
@@ -449,11 +450,11 @@ export function ClassicThumbnail() {
 
 export function MinimalThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <div className="flex items-center justify-between border-b border-gray-100 px-4 py-2">
         <FakeText w="w-16" h="h-2" color="bg-gray-900" />
         <div className="flex h-4 w-10 items-center justify-center rounded border border-gray-200 text-[6px] text-gray-500">
-          Menu
+          منو
         </div>
       </div>
       <div className="space-y-1 px-6 pb-4 pt-8 text-center">
@@ -484,7 +485,7 @@ export function MinimalThumbnail() {
 
 export function AcademyThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar
         bg="bg-blue-800"
         border="border-blue-900"
@@ -531,14 +532,14 @@ export function AcademyThumbnail() {
 
 export function StudentFocusedThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar logoColor="bg-fuchsia-600" ctaBg="bg-fuchsia-600" />
       <div className="space-y-1 bg-gradient-to-br from-fuchsia-50 to-pink-50 px-4 pb-3 pt-5 text-center">
         <FakeText w="w-40 mx-auto" h="h-2" color="bg-gray-800" />
         <FakeText w="w-48 mx-auto" h="h-1.5" color="bg-gray-400" />
         <div className="flex justify-center pt-2">
           <div className="flex h-5 w-20 items-center justify-center rounded-full bg-fuchsia-500 text-[6px] text-white">
-            Browse Courses
+            مشاهده دوره‌ها
           </div>
         </div>
       </div>
@@ -568,7 +569,7 @@ export function StudentFocusedThumbnail() {
 
 export function CoursesFirstThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar logoColor="bg-amber-500" ctaBg="bg-amber-500" />
       <div className="border-b border-amber-100 bg-amber-50 px-3 py-3">
         <FakeText w="w-32 mx-auto" h="h-2" color="bg-gray-700" />
@@ -583,7 +584,7 @@ export function CoursesFirstThumbnail() {
               key={i}
               className={`flex h-4 w-12 items-center justify-center rounded-full text-[6px] ${cls}`}
             >
-              Filter
+              فیلتر
             </div>
           ))}
         </div>
@@ -617,13 +618,13 @@ export function CoursesFirstThumbnail() {
 
 export function CompactThumbnail() {
   return (
-    <div className="overflow-hidden rounded-lg bg-white">
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar logoColor="bg-gray-700" ctaBg="bg-gray-700" />
       <div className="flex items-center gap-2 border-b border-gray-100 bg-gray-50 px-3 py-2">
         <FakeText w="w-24" h="h-2" color="bg-gray-800" />
         <div className="flex-1" />
         <div className="flex h-5 w-14 items-center justify-center rounded bg-gray-800 text-[6px] text-white">
-          Explore →
+          کاوش ←
         </div>
       </div>
       <div className="px-3 py-2">
@@ -636,7 +637,7 @@ export function CompactThumbnail() {
                 key={i}
                 className={`flex h-4 w-10 items-center justify-center rounded-full text-[6px] ${i === 0 ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}
               >
-                All
+                همه
               </div>
             ))}
           </div>
