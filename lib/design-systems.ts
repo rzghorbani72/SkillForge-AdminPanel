@@ -26,8 +26,8 @@ export interface DesignSystem {
 // Colors are raw hex — no Tailwind class strings.
 export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
   kajabi: {
-    name: 'Expert Academy',
-    tagline: 'Authority · Professional · Trust',
+    name: 'آکادمی حرفه‌ای',
+    tagline: 'اقتدار · حرفه‌ای · اعتماد',
     colors: {
       primary: '#e11d48',
       secondary: '#1f2937',
@@ -41,8 +41,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   podia: {
-    name: 'Studio Creator',
-    tagline: 'Fresh · Warm · Accessible',
+    name: 'سازنده استودیو',
+    tagline: 'تازه · گرم · در دسترس',
     colors: {
       primary: '#0d9488',
       secondary: '#134e4a',
@@ -56,8 +56,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   stan: {
-    name: 'Bold Creator',
-    tagline: 'Bold · Vibrant · Gen-Z Energy',
+    name: 'سازنده جسور',
+    tagline: 'جسور · پرانرژی · نسل جدید',
     colors: {
       primary: '#7c3aed',
       secondary: '#fb923c',
@@ -71,8 +71,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   circle: {
-    name: 'Community Dark',
-    tagline: 'Deep · Focused · Premium',
+    name: 'جامعه تاریک',
+    tagline: 'عمیق · متمرکز · ممتاز',
     colors: {
       primary: '#6366f1',
       secondary: '#e2e8f0',
@@ -86,8 +86,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: true
   },
   modern: {
-    name: 'Clean Modern',
-    tagline: 'Minimal · Crisp · Product-Grade',
+    name: 'مدرن و تمیز',
+    tagline: 'مینیمال · خلوص · سطح محصول',
     colors: {
       primary: '#4f46e5',
       secondary: '#64748b',
@@ -101,8 +101,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   classic: {
-    name: 'Traditional',
-    tagline: 'Reliable · Clear · Institutional',
+    name: 'سنتی',
+    tagline: 'قابل اعتماد · شفاف · سازمانی',
     colors: {
       primary: '#2563eb',
       secondary: '#374151',
@@ -116,8 +116,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   minimal: {
-    name: 'Content First',
-    tagline: 'Pure · Typographic · Focused',
+    name: 'محتوا اول',
+    tagline: 'خالص · تایپوگرافیک · متمرکز',
     colors: {
       primary: '#18181b',
       secondary: '#71717a',
@@ -131,8 +131,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   academy: {
-    name: 'Academic Institution',
-    tagline: 'Structured · Credible · Scholarly',
+    name: 'موسسه آموزشی',
+    tagline: 'ساختارمند · معتبر · علمی',
     colors: {
       primary: '#1d4ed8',
       secondary: '#1e3a8a',
@@ -146,8 +146,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   'student-focused': {
-    name: 'Motivational',
-    tagline: 'Energetic · Fun · Inclusive',
+    name: 'انگیزشی',
+    tagline: 'پرانرژی · لذت‌بخش · فراگیر',
     colors: {
       primary: '#c026d3',
       secondary: '#7e22ce',
@@ -161,8 +161,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   'courses-first': {
-    name: 'Marketplace',
-    tagline: 'Commerce · Discovery · Bold',
+    name: 'بازارچه آموزشی',
+    tagline: 'تجارت · کشف · جسورانه',
     colors: {
       primary: '#d97706',
       secondary: '#1f2937',
@@ -176,8 +176,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   featured: {
-    name: 'Showcase',
-    tagline: 'Growth · Highlight · Trust',
+    name: 'ویترین',
+    tagline: 'رشد · برجسته · اعتماد',
     colors: {
       primary: '#16a34a',
       secondary: '#134e4a',
@@ -191,8 +191,8 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   compact: {
-    name: 'Efficient',
-    tagline: 'Dense · Neutral · Professional',
+    name: 'کارآمد',
+    tagline: 'فشرده · خنثی · حرفه‌ای',
     colors: {
       primary: '#475569',
       secondary: '#1e293b',
@@ -207,12 +207,9 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
   }
 };
 
-export function buildThemePayload(
-  ds: DesignSystem,
-  presetName: string
-): ThemeConfigPayload {
+export function buildThemePayload(ds: DesignSystem): ThemeConfigPayload {
   return {
-    name: presetName,
+    name: ds.name,
     primary_color: ds.colors.primary,
     primary_color_light: ds.colors.primary,
     primary_color_dark: ds.colors.primary,

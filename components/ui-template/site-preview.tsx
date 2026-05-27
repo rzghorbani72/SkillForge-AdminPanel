@@ -24,6 +24,7 @@ function PreviewHeader({
   config: Record<string, unknown>;
   active: boolean;
 }) {
+  const { t } = useTranslation();
   const transparent = config?.transparent as boolean;
   return (
     <div
@@ -31,14 +32,22 @@ function PreviewHeader({
     >
       <div className="flex items-center gap-2">
         <div className="h-7 w-7 rounded-lg bg-gray-900" />
-        <span className="text-base font-bold text-gray-900">آکادمی شما</span>
+        <span className="text-base font-bold text-gray-900">
+          {t('sitePreview.academyName')}
+        </span>
       </div>
       <nav className="flex items-center gap-6 text-sm text-gray-600">
-        <span className="cursor-pointer hover:text-gray-900">دوره‌ها</span>
-        <span className="cursor-pointer hover:text-gray-900">درباره ما</span>
-        <span className="cursor-pointer hover:text-gray-900">وبلاگ</span>
+        <span className="cursor-pointer hover:text-gray-900">
+          {t('sitePreview.navCourses')}
+        </span>
+        <span className="cursor-pointer hover:text-gray-900">
+          {t('sitePreview.navAbout')}
+        </span>
+        <span className="cursor-pointer hover:text-gray-900">
+          {t('sitePreview.navBlog')}
+        </span>
         <span className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white">
-          شروع کنید
+          {t('sitePreview.navCta')}
         </span>
       </nav>
     </div>
@@ -52,15 +61,14 @@ function PreviewHero({
   config: Record<string, unknown>;
   active: boolean;
 }) {
+  const { t } = useTranslation();
   const style = config?.style as string | undefined;
-  const title = (config?.title as string) || 'مهارت‌های خود را تقویت کنید';
+  const title = (config?.title as string) || t('sitePreview.heroTitle');
   const subtitle =
-    (config?.subtitle as string) ||
-    'به هزاران دانشجو که با ما یاد می‌گیرند بپیوندید.';
-  const ctaText = (config?.ctaText as string) || 'شروع کنید';
+    (config?.subtitle as string) || t('sitePreview.heroSubtitle');
+  const ctaText = (config?.ctaText as string) || t('sitePreview.heroCta');
   const alignment = (config?.alignment as string) || 'center';
   const height = config?.height as string;
-  const minH = height === 'large' ? 420 : height === 'small' ? 220 : 320;
 
   const themes: Record<
     string,
@@ -130,7 +138,7 @@ function PreviewHero({
       btnBorder: 'border-violet-400'
     }
   };
-  const t = themes[style ?? ''] ?? {
+  const th = themes[style ?? ''] ?? {
     bg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
     title: 'text-gray-900',
     sub: 'text-gray-500',
@@ -151,37 +159,36 @@ function PreviewHero({
 
   return (
     <div
-      className={`flex flex-col justify-center px-12 py-10 ${t.bg} ${heightCls} ${active ? 'outline outline-2 outline-blue-500' : ''}`}
+      className={`flex flex-col justify-center px-12 py-10 ${th.bg} ${heightCls} ${active ? 'outline outline-2 outline-blue-500' : ''}`}
     >
       <div className={`flex max-w-2xl flex-col gap-4 ${alignCls}`}>
         <h1
-          className={`text-4xl font-bold leading-tight tracking-tight ${t.title}`}
+          className={`text-4xl font-bold leading-tight tracking-tight ${th.title}`}
         >
           {title}
         </h1>
-        <p className={`text-lg leading-relaxed ${t.sub}`}>{subtitle}</p>
+        <p className={`text-lg leading-relaxed ${th.sub}`}>{subtitle}</p>
         {config?.showCTA !== false && (
           <div className="mt-2 flex flex-wrap gap-3">
             <span
-              className={`rounded-xl px-6 py-3 text-sm font-semibold shadow-sm ${t.btn} ${t.btnText}`}
+              className={`rounded-xl px-6 py-3 text-sm font-semibold shadow-sm ${th.btn} ${th.btnText}`}
             >
               {ctaText}
             </span>
             {!!config?.ctaSecondary && (
               <span
-                className={`rounded-xl border px-6 py-3 text-sm font-semibold ${t.title} ${t.btnBorder} bg-transparent`}
+                className={`rounded-xl border px-6 py-3 text-sm font-semibold ${th.title} ${th.btnBorder} bg-transparent`}
               >
                 {config.ctaSecondary as string}
               </span>
             )}
           </div>
         )}
-        {/* Trust strip */}
         <div
-          className={`mt-3 flex items-center gap-3 text-xs ${t.sub} opacity-70`}
+          className={`mt-3 flex items-center gap-3 text-xs ${th.sub} opacity-70`}
         >
           <span>★★★★★</span>
-          <span>مورد اعتماد بیش از ۵۰٬۰۰۰ یادگیرنده</span>
+          <span>{t('sitePreview.heroTrust')}</span>
         </div>
       </div>
     </div>
@@ -195,35 +202,41 @@ function PreviewFeatures({
   config: Record<string, unknown>;
   active: boolean;
 }) {
+  const { t } = useTranslation();
   const style = config?.style as string | undefined;
-  const title = (config?.title as string) || 'چرا ما را انتخاب کنید';
+  const title = (config?.title as string) || t('sitePreview.featuresTitle');
   const cols = Math.min((config?.gridColumns as number) || 3, 4);
+
   const features = [
     {
       icon: '🎓',
-      title: 'مدرسان متخصص',
-      desc: 'از متخصصان صنعت بیاموزید'
+      title: t('sitePreview.feature1Title'),
+      desc: t('sitePreview.feature1Desc')
     },
     {
       icon: '📚',
-      title: 'یادگیری انعطاف‌پذیر',
-      desc: 'در زمان دلخواه مطالعه کنید'
+      title: t('sitePreview.feature2Title'),
+      desc: t('sitePreview.feature2Desc')
     },
     {
       icon: '🏆',
-      title: 'گواهینامه معتبر',
-      desc: 'گواهینامه‌های شناخته‌شده دریافت کنید'
+      title: t('sitePreview.feature3Title'),
+      desc: t('sitePreview.feature3Desc')
     },
     {
       icon: '💡',
-      title: 'محتوای تعاملی',
-      desc: 'پروژه‌ها و کاربردهای عملی'
+      title: t('sitePreview.feature4Title'),
+      desc: t('sitePreview.feature4Desc')
     },
-    { icon: '🚀', title: 'پشتیبانی شغلی', desc: 'کمک در یافتن شغل مناسب' },
+    {
+      icon: '🚀',
+      title: t('sitePreview.feature5Title'),
+      desc: t('sitePreview.feature5Desc')
+    },
     {
       icon: '⭐',
-      title: 'دسترسی به جامعه',
-      desc: 'جامعه پویای یادگیرندگان'
+      title: t('sitePreview.feature6Title'),
+      desc: t('sitePreview.feature6Desc')
     }
   ].slice(0, cols * 2);
 
@@ -232,9 +245,15 @@ function PreviewFeatures({
       value: string;
       label: string;
     }>) || [
-      { value: '۱۰۰ هزار+', label: 'دانشجوی فعال' },
-      { value: '۱۰۰ میلیارد+', label: 'درآمد سازندگان' },
-      { value: '۷۵ میلیون+', label: 'مشتری خدمت‌رسانی شده' }
+      {
+        value: t('sitePreview.stat1Value'),
+        label: t('sitePreview.stat1Label')
+      },
+      {
+        value: t('sitePreview.stat2Value'),
+        label: t('sitePreview.stat2Label')
+      },
+      { value: t('sitePreview.stat3Value'), label: t('sitePreview.stat3Label') }
     ];
     return (
       <div
@@ -333,7 +352,6 @@ function PreviewFeatures({
     );
   }
 
-  // default cards
   return (
     <div
       className={`bg-gray-50 px-8 py-14 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
@@ -369,31 +387,32 @@ function PreviewCourses({
   config: Record<string, unknown>;
   active: boolean;
 }) {
-  const title = (config?.title as string) || 'دوره‌های ویژه';
+  const { t } = useTranslation();
+  const title = (config?.title as string) || t('sitePreview.coursesTitle');
   const cols = Math.min((config?.gridColumns as number) || 3, 4);
   const courses = [
     {
-      title: 'بوت‌کمپ توسعه وب',
-      tag: 'توسعه',
-      price: '۴۹۰,۰۰۰ تومان',
+      title: t('sitePreview.course1Title'),
+      tag: t('sitePreview.course1Tag'),
+      price: t('sitePreview.course1Price'),
       color: 'from-blue-400 to-indigo-500'
     },
     {
-      title: 'علم داده و تحلیل',
-      tag: 'داده',
-      price: '۶۹۰,۰۰۰ تومان',
+      title: t('sitePreview.course2Title'),
+      tag: t('sitePreview.course2Tag'),
+      price: t('sitePreview.course2Price'),
       color: 'from-purple-400 to-pink-500'
     },
     {
-      title: 'اصول طراحی UX',
-      tag: 'طراحی',
-      price: '۳۹۰,۰۰۰ تومان',
+      title: t('sitePreview.course3Title'),
+      tag: t('sitePreview.course3Tag'),
+      price: t('sitePreview.course3Price'),
       color: 'from-orange-400 to-red-400'
     },
     {
-      title: 'بازاریابی دیجیتال حرفه‌ای',
-      tag: 'بازاریابی',
-      price: '۵۵۰,۰۰۰ تومان',
+      title: t('sitePreview.course4Title'),
+      tag: t('sitePreview.course4Tag'),
+      price: t('sitePreview.course4Price'),
       color: 'from-green-400 to-teal-500'
     }
   ].slice(0, cols);
@@ -449,29 +468,30 @@ function PreviewTestimonials({
   config: Record<string, unknown>;
   active: boolean;
 }) {
+  const { t } = useTranslation();
   const style = config?.style as string | undefined;
-  const title = (config?.title as string) || 'نظر دانشجویان';
+  const title = (config?.title as string) || t('sitePreview.testimonialsTitle');
 
   const reviews = [
     {
-      name: 'سارا م.',
-      role: 'مهندس نرم‌افزار',
-      text: 'این پلتفرم کارم را به طور کامل متحول کرد. دوره‌ها بی‌نظیرند!',
-      revenue: '۱۲ میلیون/ماه',
+      name: t('sitePreview.review1Name'),
+      role: t('sitePreview.review1Role'),
+      text: t('sitePreview.review1Text'),
+      revenue: t('sitePreview.review1Revenue'),
       emoji: '👩‍💻'
     },
     {
-      name: 'محمد ک.',
-      role: 'مدیر محصول',
-      text: 'بهترین سرمایه‌گذاری برای پیشرفت حرفه‌ای‌ام. بسیار توصیه می‌کنم!',
-      revenue: '۸ میلیون/ماه',
+      name: t('sitePreview.review2Name'),
+      role: t('sitePreview.review2Role'),
+      text: t('sitePreview.review2Text'),
+      revenue: t('sitePreview.review2Revenue'),
       emoji: '👨‍💼'
     },
     {
-      name: 'الینا ر.',
-      role: 'دانشمند داده',
-      text: 'پروژه‌های عملی خیلی تفاوت ایجاد می‌کنند. شغل رویاهایم را پیدا کردم!',
-      revenue: '۱۵ میلیون/ماه',
+      name: t('sitePreview.review3Name'),
+      role: t('sitePreview.review3Role'),
+      text: t('sitePreview.review3Text'),
+      revenue: t('sitePreview.review3Revenue'),
       emoji: '👩‍🔬'
     }
   ];
@@ -485,22 +505,25 @@ function PreviewTestimonials({
           {title}
         </h2>
         <div className="mx-auto max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 p-10 text-center">
-          <p className="text-5xl font-bold text-white">۲۰ میلیون/ماه</p>
+          <p className="text-5xl font-bold text-white">
+            {t('sitePreview.darkQuoteRevenue')}
+          </p>
           <p className="mb-6 mt-1 text-sm uppercase tracking-wide text-slate-400">
-            درآمد از این پلتفرم
+            {t('sitePreview.darkQuoteRevenueLabel')}
           </p>
           <blockquote className="mb-6 text-lg italic text-slate-300">
-            «برنامه یادگیری انعطاف‌پذیر با زندگی شلوغم کاملاً هماهنگ است. ارزش
-            هر دقیقه‌ای را دارد.»
+            {t('sitePreview.darkQuoteText')}
           </blockquote>
           <div className="flex items-center justify-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-700 text-2xl">
               👩‍💼
             </div>
             <div className="text-right">
-              <p className="font-semibold text-white">لیلا احمدی</p>
+              <p className="font-semibold text-white">
+                {t('sitePreview.darkQuoteAuthor')}
+              </p>
               <p className="text-sm text-slate-400">
-                مدیر بازاریابی، آژانس برند
+                {t('sitePreview.darkQuoteAuthorRole')}
               </p>
             </div>
           </div>
@@ -528,6 +551,13 @@ function PreviewTestimonials({
   }
 
   if (style === 'social-proof') {
+    const review4 = {
+      name: t('sitePreview.review4Name'),
+      role: t('sitePreview.review4Role'),
+      text: t('sitePreview.review4Text'),
+      revenue: t('sitePreview.review4Revenue'),
+      emoji: '👨‍🎨'
+    };
     return (
       <div
         className={`bg-white px-8 py-14 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
@@ -536,19 +566,10 @@ function PreviewTestimonials({
           {title} <span className="text-violet-500">👉</span>
         </h2>
         <p className="mb-8 text-center text-sm text-gray-400">
-          نتایج واقعی. اسکرین‌شات‌های واقعی.
+          {t('sitePreview.socialProofSubtitle')}
         </p>
         <div className="grid grid-cols-4 gap-4">
-          {[
-            ...reviews,
-            {
-              name: 'داوید ک.',
-              role: 'طراح UX',
-              text: 'پشتیبانی جامعه فوق‌العاده است!',
-              revenue: '۹ میلیون/ماه',
-              emoji: '👨‍🎨'
-            }
-          ].map((r, i) => (
+          {[...reviews, review4].map((r, i) => (
             <div
               key={i}
               className="rounded-2xl border border-gray-100 bg-white p-4 shadow-md"
@@ -576,6 +597,12 @@ function PreviewTestimonials({
   }
 
   if (style === 'creator-stories') {
+    const revenueSpots = [
+      t('sitePreview.review1Revenue'),
+      t('sitePreview.review2Revenue'),
+      t('sitePreview.review3Revenue'),
+      t('sitePreview.review4Revenue')
+    ];
     return (
       <div
         className={`bg-white px-8 py-14 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
@@ -610,12 +637,12 @@ function PreviewTestimonials({
           ))}
         </div>
         <div className="grid grid-cols-4 gap-3">
-          {['۱۲ میلیون', '۸ میلیون', '۱۵ میلیون', '۹ میلیون'].map((v, i) => (
+          {revenueSpots.map((v, i) => (
             <div
               key={i}
               className="rounded-xl border border-gray-100 bg-white p-3 text-center"
             >
-              <p className="text-lg font-bold text-teal-600">{v}/ماه</p>
+              <p className="text-lg font-bold text-teal-600">{v}</p>
               <p className="text-xs text-gray-500">{reviews[i % 3]?.name}</p>
             </div>
           ))}
@@ -624,7 +651,6 @@ function PreviewTestimonials({
     );
   }
 
-  // default grid
   return (
     <div
       className={`bg-gray-50 px-8 py-14 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
@@ -668,11 +694,29 @@ function PreviewFooter({
   config: Record<string, unknown>;
   active: boolean;
 }) {
+  const { t } = useTranslation();
   const dark = config?.dark as boolean;
   const minimal = config?.minimal as boolean;
   const base = dark
     ? 'bg-slate-900 text-slate-400'
     : 'bg-gray-900 text-gray-400';
+
+  const cols = [
+    t('sitePreview.footerCol1'),
+    t('sitePreview.footerCol2'),
+    t('sitePreview.footerCol3'),
+    t('sitePreview.footerCol4')
+  ];
+  const links = [
+    t('sitePreview.footerLink1'),
+    t('sitePreview.footerLink2'),
+    t('sitePreview.footerLink3')
+  ];
+  const socials = [
+    t('sitePreview.footerSocial1'),
+    t('sitePreview.footerSocial2'),
+    t('sitePreview.footerSocial3')
+  ];
 
   if (minimal) {
     return (
@@ -680,8 +724,12 @@ function PreviewFooter({
         className={`${base} px-8 py-5 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
       >
         <div className="flex items-center justify-between">
-          <span className="font-bold text-white">آکادمی شما</span>
-          <span className="text-sm">© ۱۴۰۴ · حریم خصوصی · شرایط استفاده</span>
+          <span className="font-bold text-white">
+            {t('sitePreview.academyName')}
+          </span>
+          <span className="text-sm">
+            {t('sitePreview.footerMinimalCopyright')}
+          </span>
         </div>
       </div>
     );
@@ -692,10 +740,10 @@ function PreviewFooter({
       className={`${base} px-8 py-10 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
     >
       <div className="mb-8 grid grid-cols-4 gap-8">
-        {['آکادمی', 'دوره‌ها', 'پشتیبانی', 'شرکت'].map((col, i) => (
+        {cols.map((col, i) => (
           <div key={i}>
             <p className="mb-3 font-semibold text-white">{col}</p>
-            {['درباره ما', 'تماس', 'وبلاگ'].map((link) => (
+            {links.map((link) => (
               <p
                 key={link}
                 className="cursor-pointer py-0.5 text-sm hover:text-gray-200"
@@ -707,11 +755,9 @@ function PreviewFooter({
         ))}
       </div>
       <div className="flex items-center justify-between border-t border-gray-700 pt-6">
-        <span className="text-sm">
-          © ۱۴۰۴ آکادمی شما. تمام حقوق محفوظ است.
-        </span>
+        <span className="text-sm">{t('sitePreview.footerCopyright')}</span>
         <div className="flex gap-3">
-          {['توییتر', 'لینکدین', 'یوتیوب'].map((s) => (
+          {socials.map((s) => (
             <span
               key={s}
               className="cursor-pointer text-sm hover:text-gray-200"
@@ -726,21 +772,23 @@ function PreviewFooter({
 }
 
 function PreviewSidebar({ active }: { active: boolean }) {
+  const { t } = useTranslation();
+  const items = [
+    t('sitePreview.sidebarItem1'),
+    t('sitePreview.sidebarItem2'),
+    t('sitePreview.sidebarItem3'),
+    t('sitePreview.sidebarItem4'),
+    t('sitePreview.sidebarItem5'),
+    t('sitePreview.sidebarItem6')
+  ];
   return (
     <div
-      className={`h-full border-r border-gray-200 bg-gray-50 px-4 py-6 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
+      className={`h-full border-l border-gray-200 bg-gray-50 px-4 py-6 ${active ? 'outline outline-2 outline-blue-500' : ''}`}
     >
       <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">
-        ناوبری
+        {t('sitePreview.sidebarNavLabel')}
       </p>
-      {[
-        'داشبورد',
-        'دوره‌های من',
-        'پیشرفت',
-        'گواهینامه‌ها',
-        'پروفایل',
-        'تنظیمات'
-      ].map((item) => (
+      {items.map((item) => (
         <div
           key={item}
           className="mb-1 flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-200"
@@ -806,7 +854,6 @@ export function SitePreview({
     return () => ro.disconnect();
   }, []);
 
-  // Apply zoom imperatively to avoid inline style warning
   useEffect(() => {
     if (virtualRef.current) {
       (virtualRef.current.style as unknown as Record<string, string>).zoom =
@@ -899,7 +946,7 @@ export function SitePreview({
           <Circle className="h-2.5 w-2.5 fill-green-400 text-green-400" />
         </div>
         <div className="flex-1 truncate rounded border bg-background px-3 py-0.5 text-xs text-muted-foreground">
-          {siteUrl ?? 'https://your-academy.com'}
+          {siteUrl ?? t('sitePreview.defaultSiteUrl')}
         </div>
       </div>
 

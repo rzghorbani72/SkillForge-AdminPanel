@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18n/hooks';
+
 // ── Shared primitives ─────────────────────────────────────────────────────────
 
 const FakeText = ({
@@ -24,27 +26,30 @@ const NavBar = ({
   logoColor?: string;
   dotColor?: string;
   ctaBg?: string;
-}) => (
-  <div
-    dir="rtl"
-    className={`flex items-center justify-between border-b px-3 py-1.5 ${bg} ${border}`}
-  >
-    <div className="flex items-center gap-1.5">
-      <div className={`h-3 w-3 rounded-md ${logoColor}`} />
-      <div className={`h-1.5 w-10 rounded ${dotColor}`} />
-    </div>
-    <div className="flex gap-2">
-      <FakeText w="w-5" h="h-1" color={`${dotColor} opacity-50`} />
-      <FakeText w="w-5" h="h-1" color={`${dotColor} opacity-50`} />
-      <FakeText w="w-5" h="h-1" color={`${dotColor} opacity-50`} />
-    </div>
+}) => {
+  const { t } = useTranslation();
+  return (
     <div
-      className={`h-4 w-10 rounded ${ctaBg} flex items-center justify-center text-[6px] font-medium text-white`}
+      dir="rtl"
+      className={`flex items-center justify-between border-b px-3 py-1.5 ${bg} ${border}`}
     >
-      شروع
+      <div className="flex items-center gap-1.5">
+        <div className={`h-3 w-3 rounded-md ${logoColor}`} />
+        <div className={`h-1.5 w-10 rounded ${dotColor}`} />
+      </div>
+      <div className="flex gap-2">
+        <FakeText w="w-5" h="h-1" color={`${dotColor} opacity-50`} />
+        <FakeText w="w-5" h="h-1" color={`${dotColor} opacity-50`} />
+        <FakeText w="w-5" h="h-1" color={`${dotColor} opacity-50`} />
+      </div>
+      <div
+        className={`h-4 w-10 rounded ${ctaBg} flex items-center justify-center text-[6px] font-medium text-white`}
+      >
+        {t('sitePreview.thumbnailCta')}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const CourseCard = ({ from, to }: { from: string; to: string }) => (
   <div className="overflow-hidden rounded border border-gray-100">
@@ -143,13 +148,9 @@ export function PodiaThumbnail() {
           </div>
         </div>
         <div className="flex w-24 flex-col gap-1.5">
-          {[
-            ['bg-orange-400', 'فروشگاه آنلاین'],
-            ['bg-pink-400', 'وب‌سایت'],
-            ['bg-purple-400', 'ایمیل']
-          ].map(([bg, label]) => (
+          {['bg-orange-400', 'bg-pink-400', 'bg-purple-400'].map((bg, i) => (
             <div
-              key={label}
+              key={i}
               className={`flex items-center gap-1.5 rounded-lg p-1.5 ${bg}`}
             >
               <div className="h-3 w-3 rounded bg-white/30" />
@@ -200,6 +201,7 @@ export function PodiaThumbnail() {
 // ── Stan (Creator) ────────────────────────────────────────────────────────────
 
 export function StanThumbnail() {
+  const { t } = useTranslation();
   return (
     <div dir="rtl" className="overflow-hidden rounded-lg">
       <div className="flex items-center justify-between border-b border-gray-100 bg-white px-3 py-1.5">
@@ -213,7 +215,7 @@ export function StanThumbnail() {
           ))}
         </div>
         <div className="flex h-4 w-12 items-center justify-center rounded border border-gray-200 text-[6px] text-gray-500">
-          ورود
+          {t('sitePreview.thumbnailLogin')}
         </div>
       </div>
       {/* Violet gradient hero */}
@@ -225,7 +227,7 @@ export function StanThumbnail() {
           <FakeText w="w-48 mx-auto" h="h-1.5" color="bg-purple-300/70" />
           <div className="flex justify-center pt-2">
             <div className="flex h-5 w-20 items-center justify-center rounded-full bg-orange-400 text-[6px] font-semibold text-white">
-              شروع رایگان
+              {t('sitePreview.thumbnailFreeTrial')}
             </div>
           </div>
         </div>
@@ -269,6 +271,7 @@ export function StanThumbnail() {
 // ── Circle (Community) ────────────────────────────────────────────────────────
 
 export function CircleThumbnail() {
+  const { t } = useTranslation();
   return (
     <div dir="rtl" className="overflow-hidden rounded-lg bg-slate-900">
       <div className="flex items-center justify-between border-b border-slate-700 bg-slate-900 px-3 py-1.5">
@@ -282,7 +285,7 @@ export function CircleThumbnail() {
           ))}
         </div>
         <div className="flex h-4 w-12 items-center justify-center rounded border border-slate-600 text-[6px] text-slate-400">
-          ورود
+          {t('sitePreview.thumbnailLogin')}
         </div>
       </div>
       {/* Dark hero */}
@@ -294,10 +297,10 @@ export function CircleThumbnail() {
           <FakeText w="w-48 mx-auto" h="h-1.5" color="bg-slate-500" />
           <div className="flex justify-center gap-2 pt-2">
             <div className="flex h-5 w-14 items-center justify-center rounded bg-indigo-500 text-[6px] text-white">
-              شروع رایگان
+              {t('sitePreview.thumbnailFreeTrial')}
             </div>
             <div className="flex h-5 w-14 items-center justify-center rounded border border-slate-500 text-[6px] text-slate-300">
-              تماشا
+              {t('sitePreview.thumbnailWatch')}
             </div>
           </div>
           <div className="flex justify-center -space-x-1 pt-1">
@@ -390,6 +393,7 @@ export function ModernThumbnail() {
 // ── Classic ───────────────────────────────────────────────────────────────────
 
 export function ClassicThumbnail() {
+  const { t } = useTranslation();
   return (
     <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <div className="flex items-center justify-between bg-blue-700 px-3 py-1.5">
@@ -403,7 +407,7 @@ export function ClassicThumbnail() {
           ))}
         </div>
         <div className="flex h-4 w-10 items-center justify-center rounded bg-white text-[6px] font-medium text-blue-700">
-          شروع
+          {t('sitePreview.thumbnailCta')}
         </div>
       </div>
       <div className="flex gap-3 bg-gray-50 px-4 pb-3 pt-4">
@@ -449,12 +453,13 @@ export function ClassicThumbnail() {
 // ── Minimal ───────────────────────────────────────────────────────────────────
 
 export function MinimalThumbnail() {
+  const { t } = useTranslation();
   return (
     <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <div className="flex items-center justify-between border-b border-gray-100 px-4 py-2">
         <FakeText w="w-16" h="h-2" color="bg-gray-900" />
         <div className="flex h-4 w-10 items-center justify-center rounded border border-gray-200 text-[6px] text-gray-500">
-          منو
+          {t('sitePreview.thumbnailMenu')}
         </div>
       </div>
       <div className="space-y-1 px-6 pb-4 pt-8 text-center">
@@ -531,6 +536,7 @@ export function AcademyThumbnail() {
 // ── Student Focused ───────────────────────────────────────────────────────────
 
 export function StudentFocusedThumbnail() {
+  const { t } = useTranslation();
   return (
     <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar logoColor="bg-fuchsia-600" ctaBg="bg-fuchsia-600" />
@@ -539,7 +545,7 @@ export function StudentFocusedThumbnail() {
         <FakeText w="w-48 mx-auto" h="h-1.5" color="bg-gray-400" />
         <div className="flex justify-center pt-2">
           <div className="flex h-5 w-20 items-center justify-center rounded-full bg-fuchsia-500 text-[6px] text-white">
-            مشاهده دوره‌ها
+            {t('sitePreview.thumbnailViewCourses')}
           </div>
         </div>
       </div>
@@ -568,6 +574,7 @@ export function StudentFocusedThumbnail() {
 // ── Courses First ─────────────────────────────────────────────────────────────
 
 export function CoursesFirstThumbnail() {
+  const { t } = useTranslation();
   return (
     <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar logoColor="bg-amber-500" ctaBg="bg-amber-500" />
@@ -584,7 +591,7 @@ export function CoursesFirstThumbnail() {
               key={i}
               className={`flex h-4 w-12 items-center justify-center rounded-full text-[6px] ${cls}`}
             >
-              فیلتر
+              {t('sitePreview.thumbnailFilter')}
             </div>
           ))}
         </div>
@@ -617,6 +624,7 @@ export function CoursesFirstThumbnail() {
 // ── Compact ───────────────────────────────────────────────────────────────────
 
 export function CompactThumbnail() {
+  const { t } = useTranslation();
   return (
     <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar logoColor="bg-gray-700" ctaBg="bg-gray-700" />
@@ -624,7 +632,7 @@ export function CompactThumbnail() {
         <FakeText w="w-24" h="h-2" color="bg-gray-800" />
         <div className="flex-1" />
         <div className="flex h-5 w-14 items-center justify-center rounded bg-gray-800 text-[6px] text-white">
-          کاوش ←
+          {t('sitePreview.thumbnailExplore')}
         </div>
       </div>
       <div className="px-3 py-2">
@@ -637,7 +645,7 @@ export function CompactThumbnail() {
                 key={i}
                 className={`flex h-4 w-10 items-center justify-center rounded-full text-[6px] ${i === 0 ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}
               >
-                همه
+                {t('sitePreview.thumbnailAll')}
               </div>
             ))}
           </div>

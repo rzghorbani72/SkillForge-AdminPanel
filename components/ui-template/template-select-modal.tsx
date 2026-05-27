@@ -73,6 +73,22 @@ const RADIUS_LABEL: Record<string, string> = {
   rounded: 'گرد'
 };
 
+const SHADOW_LABEL: Record<string, string> = {
+  none: 'بدون سایه',
+  subtle: 'سایه ظریف',
+  medium: 'سایه متوسط',
+  strong: 'سایه قوی'
+};
+
+const CATEGORY_LABEL: Record<string, string> = {
+  all: 'همه',
+  featured: 'ویژه',
+  creator: 'سازنده',
+  academy: 'آکادمی',
+  community: 'جامعه',
+  classic: 'کلاسیک'
+};
+
 export function TemplateSelectModal({
   open,
   onClose,
@@ -273,10 +289,9 @@ export function TemplateSelectModal({
               <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium">
                 {RADIUS_LABEL[selectedDs.shape.borderRadius]}
               </span>
-              <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium capitalize">
-                {selectedDs.shape.shadow === 'none'
-                  ? 'بدون سایه'
-                  : `سایه ${selectedDs.shape.shadow}`}
+              <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium">
+                {SHADOW_LABEL[selectedDs.shape.shadow] ??
+                  selectedDs.shape.shadow}
               </span>
             </div>
           </div>
@@ -389,7 +404,7 @@ function TemplateCard({
                 color: ds?.colors.primary ?? '#6b7280'
               }}
             >
-              {category}
+              {CATEGORY_LABEL[category] ?? category}
             </span>
           </div>
         </div>

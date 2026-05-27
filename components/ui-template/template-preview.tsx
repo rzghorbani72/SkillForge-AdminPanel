@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { TemplatePreset } from '@/types/api';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   KajabiThumbnail,
   PodiaThumbnail,
@@ -49,7 +50,18 @@ export function TemplatePreview({ preset }: TemplatePreviewProps) {
 // ── Fallback wireframe for any unlisted preset ────────────────────────────────
 
 function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
+  const { t } = useTranslation();
   const blocks = preset.blocks.filter((b) => b.isVisible);
+
+  const blockLabels: Record<string, string> = {
+    header: t('sitePreview.blockHeader'),
+    hero: t('sitePreview.blockHero'),
+    features: t('sitePreview.blockFeatures'),
+    courses: t('sitePreview.blockCourses'),
+    testimonials: t('sitePreview.blockTestimonials'),
+    footer: t('sitePreview.blockFooter'),
+    sidebar: t('sitePreview.blockSidebar')
+  };
 
   const BLOCK_STYLE: Record<string, { bar: string; h: string }> = {
     header: { bar: 'bg-gray-700', h: 'h-6' },
@@ -72,8 +84,8 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
         key={block.id}
         className={`${s.h} flex items-center justify-center border-b border-white/20 ${s.bar}`}
       >
-        <span className="text-[8px] font-semibold uppercase tracking-wider text-white/80">
-          {block.type}
+        <span className="text-[8px] font-semibold tracking-wider text-white/80">
+          {blockLabels[block.type] ?? block.type}
         </span>
       </div>
     );
@@ -82,13 +94,16 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
   if (hasSidebar && sidebarBlock) {
     const ss = BLOCK_STYLE['sidebar'];
     return (
-      <div className="w-full overflow-hidden rounded-lg border border-border">
+      <div
+        dir="rtl"
+        className="w-full overflow-hidden rounded-lg border border-border"
+      >
         <div className="flex">
           <div
             className={`w-1/4 ${ss.bar} flex items-center justify-center p-2`}
           >
-            <span className="text-[7px] font-semibold uppercase text-white/70 [writing-mode:vertical-rl]">
-              Sidebar
+            <span className="text-[7px] font-semibold text-white/70 [writing-mode:vertical-rl]">
+              {t('sitePreview.blockSidebar')}
             </span>
           </div>
           <div className="flex flex-1 flex-col">{rest.map(renderBlock)}</div>
@@ -98,7 +113,10 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
   }
 
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-border">
+    <div
+      dir="rtl"
+      className="w-full overflow-hidden rounded-lg border border-border"
+    >
       {blocks.map(renderBlock)}
     </div>
   );

@@ -164,9 +164,7 @@ export default function UITemplateSettingsPage() {
       // client-side immediately so the admin preview updates without a reload.
       const ds = DESIGN_SYSTEMS[presetId];
       if (ds) {
-        const presetName =
-          presets.find((p) => p.id === presetId)?.name ?? presetId;
-        const themePayload = buildThemePayload(ds, presetName);
+        const themePayload = buildThemePayload(ds);
         await apiClient.updateCurrentThemeConfig(themePayload);
         applyThemeVariables(themePayload);
         dispatchThemeUpdate(themePayload);
