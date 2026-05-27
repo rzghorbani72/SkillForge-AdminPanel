@@ -2,15 +2,14 @@
  * Server-safe theme utilities (no 'use client').
  *
  * generateAdminThemeCSS injects a <style> tag on every SSR render so the
- * first paint already has the correct primary color from the backend config.
+ * first paint already has the correct colors from the backend config —
+ * eliminating the flash from globals.css defaults to the saved theme.
  *
- * IMPORTANT: This function deliberately does NOT set any surface/border/muted
- * variables (--background, --card, --muted, --border, --sidebar-*, etc.).
- * Those are permanently owned by globals.css (warm off-white Mentoryar design).
- * Overriding them here caused the blue-flash on first render.
+ * Dynamically overrides: --primary, --primary-foreground, --ring,
+ * --accent, --accent-foreground, --secondary, --secondary-foreground,
+ * --background, --muted.
  *
- * Only --primary, --primary-foreground, --ring, --accent, --accent-foreground
- * are dynamic — the rest are constant warm surfaces.
+ * The formulas here MUST stay in sync with applyThemeVariables in theme.ts.
  */
 
 import { getServerApiBaseUrl } from './api-base-url';
@@ -85,6 +84,8 @@ function contrast(hex: string): string {
 
 interface ServerThemeConfig {
   primary_color?: string;
+  secondary_color?: string;
+  accent_color?: string;
   background_color?: string;
   dark_mode?: boolean | null;
 }
@@ -97,17 +98,48 @@ export function generateAdminThemeCSS(
   if (!configs) return '';
 
   const primaryHex = configs.primary_color || DEFAULT_PRIMARY;
-  const { h } = hexToHsl(primaryHex);
-  const accentHsl = `${Math.round(h)} 72% 96%`;
+  const lines = [
+    `  --primary:            ${hsl(primaryHex)};`,
+    `  --primary-foreground: ${contrast(primaryHex)};`,
+    `  --ring:               ${hsl(primaryHex)};`
+  ];
 
-  // Only override accent/primary — surfaces are owned by globals.css
-  return `:root {
-  --primary:            ${hsl(primaryHex)};
-  --primary-foreground: ${contrast(primaryHex)};
-  --ring:               ${hsl(primaryHex)};
-  --accent:             ${accentHsl};
-  --accent-foreground:  ${Math.round(h)} 72% 42%;
-}`;
+  // Accent — same formula as applyThemeVariables in theme.ts
+  if (configs.accent_color) {
+    const { h: ah, s: as_, l: al } = hexToHsl(configs.accent_color);
+    lines.push(
+      `  --accent:             ${Math.round(ah)} ${Math.round(as_ * 0.6)}% 95%;`
+    );
+    lines.push(
+      `  --accent-foreground:  ${Math.round(ah)} ${Math.round(as_)}% ${Math.round(Math.min(al, 42))}%;`
+    );
+  } else {
+    const { h } = hexToHsl(primaryHex);
+    lines.push(`  --accent:             ${Math.round(h)} 72% 96%;`);
+    lines.push(`  --accent-foreground:  ${Math.round(h)} 72% 42%;`);
+  }
+
+  // Secondary surface — same formula as applyThemeVariables
+  if (configs.secondary_color) {
+    const { h: sh, s: ss } = hexToHsl(configs.secondary_color);
+    lines.push(
+      `  --secondary:          ${Math.round(sh)} ${Math.round(ss * 0.25)}% 96%;`
+    );
+    lines.push(
+      `  --secondary-foreground: ${Math.round(sh)} ${Math.round(Math.min(ss, 60))}% 25%;`
+    );
+  }
+
+  // Background + muted — same formula as applyThemeVariables
+  if (configs.background_color) {
+    const { h: bh, s: bs } = hexToHsl(configs.background_color);
+    lines.push(`  --background:         ${hsl(configs.background_color)};`);
+    lines.push(
+      `  --muted:              ${Math.round(bh)} ${Math.round(bs * 0.2)}% 96%;`
+    );
+  }
+
+  return `:root {\n${lines.join('\n')}\n}`;
 }
 
 // ── Server-side theme fetcher ─────────────────────────────────────────────────

@@ -1,18 +1,23 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Eye,
   LayoutTemplate,
   Monitor,
   Smartphone,
   Tablet,
-  Save
+  Save,
+  Palette,
+  Settings2,
+  RotateCcw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useUserStore } from '@/lib/store';
@@ -23,9 +28,22 @@ import { SitePreview } from '@/components/ui-template/site-preview';
 import { BlocksList } from '@/components/ui-template/blocks-list';
 import { TemplateSelectModal } from '@/components/ui-template/template-select-modal';
 import { DESIGN_SYSTEMS, buildThemePayload } from '@/lib/design-systems';
-import { applyThemeVariables, dispatchThemeUpdate } from '@/lib/theme';
+import {
+  applyThemeVariables,
+  dispatchThemeUpdate,
+  parseThemeResponse,
+  DEFAULT_THEME_CONFIG
+} from '@/lib/theme';
 
 type DeviceMode = 'desktop' | 'tablet' | 'mobile';
+type LeftTab = 'colors' | 'block';
+
+interface ThemeColors {
+  primary: string;
+  secondary: string;
+  accent: string;
+  background: string;
+}
 
 export default function UITemplateSettingsPage() {
   const { t } = useTranslation();
@@ -42,6 +60,13 @@ export default function UITemplateSettingsPage() {
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [deviceMode, setDeviceMode] = useState<DeviceMode>('desktop');
+  const [leftTab, setLeftTab] = useState<LeftTab>('colors');
+  const [themeColors, setThemeColors] = useState<ThemeColors>({
+    primary: DEFAULT_THEME_CONFIG.primary_color,
+    secondary: DEFAULT_THEME_CONFIG.secondary_color,
+    accent: DEFAULT_THEME_CONFIG.accent_color,
+    background: DEFAULT_THEME_CONFIG.background_color
+  });
 
   const hasTemplate = !!template?.id;
 
@@ -66,15 +91,28 @@ export default function UITemplateSettingsPage() {
   const loadData = async () => {
     try {
       setIsLoading(true);
-      const [templateData, presetsData] = await Promise.all([
+      const [templateData, presetsData, themeData] = await Promise.all([
         apiClient.getCurrentUITemplate().catch(() => null),
-        apiClient.getAvailableTemplatePresets().catch(() => [])
+        apiClient.getAvailableTemplatePresets().catch(() => []),
+        apiClient.getCurrentThemeConfig().catch(() => null)
       ]);
 
       setTemplate(templateData as UITemplate | null);
       setPresets(presetsData as TemplatePreset[]);
       setBlocks((templateData as UITemplate | null)?.blocks ?? []);
       setIsActive((templateData as UITemplate | null)?.is_active ?? true);
+
+      if (themeData) {
+        const parsed = parseThemeResponse(themeData);
+        setThemeColors({
+          primary: parsed.primary_color,
+          secondary:
+            parsed.secondary_color ?? DEFAULT_THEME_CONFIG.secondary_color,
+          accent: parsed.accent_color ?? DEFAULT_THEME_CONFIG.accent_color,
+          background:
+            parsed.background_color ?? DEFAULT_THEME_CONFIG.background_color
+        });
+      }
 
       // Auto-open template selector on first visit (no preset applied)
       if (!(templateData as UITemplate | null)?.template_preset) {
@@ -133,18 +171,28 @@ export default function UITemplateSettingsPage() {
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      const payload = {
+      const templatePayload = {
         blocks,
         template_preset: activePresetId || undefined,
         is_active: isActive
       };
+      const colorPayload = {
+        primary_color: themeColors.primary,
+        secondary_color: themeColors.secondary,
+        accent_color: themeColors.accent,
+        background_color: themeColors.background,
+        dark_mode: null
+      };
 
-      if (hasTemplate) {
-        await apiClient.updateUITemplate(payload);
-      } else {
-        await apiClient.createUITemplate({ blocks, is_active: isActive });
-      }
+      await Promise.all([
+        hasTemplate
+          ? apiClient.updateUITemplate(templatePayload)
+          : apiClient.createUITemplate({ blocks, is_active: isActive }),
+        apiClient.updateCurrentThemeConfig(colorPayload)
+      ]);
 
+      applyThemeVariables(colorPayload);
+      dispatchThemeUpdate(colorPayload);
       ErrorHandler.showSuccess(t('settings.uiTemplateSavedSuccess'));
       await loadData();
     } catch (error) {
@@ -159,15 +207,19 @@ export default function UITemplateSettingsPage() {
       setIsApplyingPreset(true);
       await apiClient.applyTemplatePreset(presetId);
 
-      // Apply the design system (colors, radius, shadow) paired with this template.
-      // Persisted to backend so the storefront picks it up on SSR, and applied
-      // client-side immediately so the admin preview updates without a reload.
       const ds = DESIGN_SYSTEMS[presetId];
       if (ds) {
         const themePayload = buildThemePayload(ds);
         await apiClient.updateCurrentThemeConfig(themePayload);
         applyThemeVariables(themePayload);
         dispatchThemeUpdate(themePayload);
+        // Sync local color state to the preset's design system
+        setThemeColors({
+          primary: ds.colors.primary,
+          secondary: ds.colors.secondary,
+          accent: ds.colors.accent,
+          background: ds.colors.background
+        });
       }
 
       ErrorHandler.showSuccess(t('settings.uiTemplateSavedSuccess'));
@@ -178,6 +230,51 @@ export default function UITemplateSettingsPage() {
       setIsApplyingPreset(false);
     }
   };
+
+  const handleColorChange = useCallback(
+    (key: keyof ThemeColors, value: string) => {
+      setThemeColors((prev) => {
+        const updated = { ...prev, [key]: value };
+        const payload = {
+          primary_color: updated.primary,
+          secondary_color: updated.secondary,
+          accent_color: updated.accent,
+          background_color: updated.background,
+          dark_mode: null
+        };
+        applyThemeVariables(payload);
+        dispatchThemeUpdate(payload);
+        return updated;
+      });
+    },
+    []
+  );
+
+  const handleResetColors = useCallback(() => {
+    const ds = DESIGN_SYSTEMS[activePresetId];
+    if (!ds) return;
+    const reset: ThemeColors = {
+      primary: ds.colors.primary,
+      secondary: ds.colors.secondary,
+      accent: ds.colors.accent,
+      background: ds.colors.background
+    };
+    setThemeColors(reset);
+    const payload = {
+      primary_color: reset.primary,
+      secondary_color: reset.secondary,
+      accent_color: reset.accent,
+      background_color: reset.background,
+      dark_mode: null
+    };
+    applyThemeVariables(payload);
+    dispatchThemeUpdate(payload);
+  }, [activePresetId]);
+
+  const handleSelectBlock = useCallback((id: string | null) => {
+    setActiveBlockId(id);
+    if (id) setLeftTab('block');
+  }, []);
 
   if (isLoading) {
     return (
@@ -274,7 +371,7 @@ export default function UITemplateSettingsPage() {
 
       {/* 3-panel body */}
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        {/* Left panel — Block editor */}
+        {/* Left panel — Colors & Block editor */}
         <aside className="flex w-64 flex-shrink-0 flex-col overflow-hidden border-r bg-background">
           {/* Active preset badge */}
           {activePresetId && (
@@ -301,11 +398,88 @@ export default function UITemplateSettingsPage() {
             <Switch checked={isActive} onCheckedChange={setIsActive} />
           </div>
 
+          {/* Tab strip */}
+          <div className="flex flex-shrink-0 border-b">
+            {(
+              [
+                { id: 'colors', label: 'رنگ‌ها', Icon: Palette },
+                { id: 'block', label: 'بلوک', Icon: Settings2 }
+              ] as const
+            ).map(({ id, label, Icon }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setLeftTab(id)}
+                className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 py-2 text-xs font-medium transition-colors ${
+                  leftTab === id
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+              </button>
+            ))}
+          </div>
+
           <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-            <BlockEditor
-              block={activeBlock}
-              onUpdate={handleUpdateBlockConfig}
-            />
+            {leftTab === 'colors' ? (
+              <div className="space-y-4 p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  رنگ‌های قالب
+                </p>
+
+                {(
+                  [
+                    { key: 'primary', label: 'رنگ اصلی' },
+                    { key: 'secondary', label: 'رنگ ثانوی' },
+                    { key: 'accent', label: 'رنگ تأکیدی' },
+                    { key: 'background', label: 'پس‌زمینه' }
+                  ] as const
+                ).map(({ key, label }) => (
+                  <div key={key} className="space-y-1.5">
+                    <Label className="text-[11px] text-muted-foreground">
+                      {label}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md border shadow-sm">
+                        <input
+                          type="color"
+                          title={label}
+                          value={themeColors[key]}
+                          onChange={(e) =>
+                            handleColorChange(key, e.target.value)
+                          }
+                          className="absolute -inset-1 h-11 w-11 cursor-pointer border-0 p-0"
+                        />
+                      </div>
+                      <Input
+                        value={themeColors[key]}
+                        onChange={(e) => handleColorChange(key, e.target.value)}
+                        className="h-7 font-mono text-xs"
+                        placeholder="#000000"
+                      />
+                    </div>
+                  </div>
+                ))}
+
+                {activePresetId && DESIGN_SYSTEMS[activePresetId] && (
+                  <button
+                    type="button"
+                    onClick={handleResetColors}
+                    className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+                  >
+                    <RotateCcw className="h-3 w-3" />
+                    بازنشانی به رنگ‌های قالب
+                  </button>
+                )}
+              </div>
+            ) : (
+              <BlockEditor
+                block={activeBlock}
+                onUpdate={handleUpdateBlockConfig}
+              />
+            )}
           </div>
         </aside>
 
@@ -318,7 +492,7 @@ export default function UITemplateSettingsPage() {
               blocks={sortedBlocks}
               siteUrl={storefrontUrl}
               activeBlockId={activeBlockId}
-              onSelectBlock={setActiveBlockId}
+              onSelectBlock={handleSelectBlock}
             />
           </div>
         </main>
@@ -328,7 +502,7 @@ export default function UITemplateSettingsPage() {
           <BlocksList
             blocks={sortedBlocks}
             activeBlockId={activeBlockId}
-            onSelectBlock={setActiveBlockId}
+            onSelectBlock={handleSelectBlock}
             onToggleVisibility={handleToggleVisibility}
             onMoveUp={handleMoveUp}
             onMoveDown={handleMoveDown}

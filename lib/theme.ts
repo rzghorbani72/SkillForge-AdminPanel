@@ -45,31 +45,66 @@ export function parseThemeResponse(payload: unknown): ThemeConfigPayload {
       c?.primary_color as string,
       DEFAULT_THEME_CONFIG.primary_color
     ),
-    secondary_color: DEFAULT_THEME_CONFIG.secondary_color,
-    accent_color: DEFAULT_THEME_CONFIG.accent_color,
-    background_color: DEFAULT_THEME_CONFIG.background_color,
+    secondary_color: normaliseHex(
+      c?.secondary_color as string,
+      DEFAULT_THEME_CONFIG.secondary_color
+    ),
+    accent_color: normaliseHex(
+      c?.accent_color as string,
+      DEFAULT_THEME_CONFIG.accent_color
+    ),
+    background_color: normaliseHex(
+      c?.background_color as string,
+      DEFAULT_THEME_CONFIG.background_color
+    ),
     dark_mode: false
   };
 }
 
-// Only sets --primary and --ring as inline styles.
-// All surfaces (--background, --muted, --border, --sidebar-*, --card, etc.)
-// are permanently owned by globals.css so they can never be overridden by the
-// backend theme config — eliminating the blue-flash on first render.
 export function applyThemeVariables(config: ThemeConfigPayload) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
 
+  // Primary
   const primaryHex = config.primary_color ?? DEFAULT_THEME_CONFIG.primary_color;
-  const primaryHsl = hexToHslString(primaryHex);
-  const { h } = hexToHsl(primaryHex);
-  const accentHsl = `${Math.round(h)} 72% 96%`;
-
-  root.style.setProperty('--primary', primaryHsl);
+  root.style.setProperty('--primary', hexToHslString(primaryHex));
   root.style.setProperty('--primary-foreground', '0 0% 100%');
-  root.style.setProperty('--ring', primaryHsl);
-  root.style.setProperty('--accent', accentHsl);
-  root.style.setProperty('--accent-foreground', `${Math.round(h)} 72% 42%`);
+  root.style.setProperty('--ring', hexToHslString(primaryHex));
+
+  // Accent — use accent_color directly rather than deriving from primary hue
+  const accentHex = config.accent_color ?? DEFAULT_THEME_CONFIG.accent_color;
+  const { h: ah, s: as_, l: al } = hexToHsl(accentHex);
+  root.style.setProperty(
+    '--accent',
+    `${Math.round(ah)} ${Math.round(as_ * 0.6)}% 95%`
+  );
+  root.style.setProperty(
+    '--accent-foreground',
+    `${Math.round(ah)} ${Math.round(as_)}% ${Math.round(Math.min(al, 42))}%`
+  );
+
+  // Secondary surface — derive a light tint so shadcn surface tokens stay readable
+  const secondaryHex =
+    config.secondary_color ?? DEFAULT_THEME_CONFIG.secondary_color;
+  const { h: sh, s: ss } = hexToHsl(secondaryHex);
+  root.style.setProperty(
+    '--secondary',
+    `${Math.round(sh)} ${Math.round(ss * 0.25)}% 96%`
+  );
+  root.style.setProperty(
+    '--secondary-foreground',
+    `${Math.round(sh)} ${Math.round(Math.min(ss, 60))}% 25%`
+  );
+
+  // Background + muted — derive muted from background hue to keep surfaces coherent
+  const bgHex =
+    config.background_color ?? DEFAULT_THEME_CONFIG.background_color;
+  const { h: bh, s: bs } = hexToHsl(bgHex);
+  root.style.setProperty('--background', hexToHslString(bgHex));
+  root.style.setProperty(
+    '--muted',
+    `${Math.round(bh)} ${Math.round(bs * 0.2)}% 96%`
+  );
 }
 
 // ── Hex helpers ──────────────────────────────────────────────────────────────
