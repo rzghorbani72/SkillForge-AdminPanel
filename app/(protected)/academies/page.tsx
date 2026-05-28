@@ -1,8 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { Filter, GraduationCap, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState, useMemo } from 'react';
+import { Filter, GraduationCap, Loader2, Search, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -21,6 +28,10 @@ export default function AcademiesPage() {
   const [switching, setSwitching] = useState<number | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [editAcademy, setEditAcademy] = useState<Academy | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'active' | 'inactive'
+  >('all');
 
   const currentAcademyId =
     user?.academyId ?? (user as any)?.profile?.academy_id ?? null;
@@ -78,6 +89,21 @@ export default function AcademiesPage() {
     await refreshAcademies();
   }
 
+  const filteredAcademies = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return academies.filter((a: Academy) => {
+      const matchesSearch =
+        !q ||
+        a.name.toLowerCase().includes(q) ||
+        a.slug.toLowerCase().includes(q);
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'active' && a.is_active) ||
+        (statusFilter === 'inactive' && !a.is_active);
+      return matchesSearch && matchesStatus;
+    });
+  }, [academies, searchQuery, statusFilter]);
+
   const totalCount = academies.length;
 
   return (
@@ -92,27 +118,48 @@ export default function AcademiesPage() {
             {t('navigation.stores')}
           </h1>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            {totalCount} {t('stores.title')}
+            {filteredAcademies.length}
+            {totalCount !== filteredAcademies.length && ` / ${totalCount}`}{' '}
+            {t('stores.title')}
             {'. '}
             {t('stores.manageStoresDescription')}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5 rounded-xl">
-            <Filter className="h-3.5 w-3.5" />
-            {t('stores.filterAcademies')}
-          </Button>
-
-          {canCreate && (
-            <Button
-              size="sm"
-              className="gap-1.5 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => setCreateOpen(true)}
-            >
-              + {t('stores.addAcademy')}
-            </Button>
-          )}
+          <div className="relative">
+            <Search className="absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('stores.searchStores')}
+              className="h-8 w-48 rounded-xl ps-8 text-sm"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onClick={() => setSearchQuery('')}
+                className="absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+          </div>
+          <Select
+            value={statusFilter}
+            onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}
+          >
+            <SelectTrigger className="h-8 w-32 gap-1.5 rounded-xl text-sm">
+              <Filter className="h-3.5 w-3.5" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t('common.all')}</SelectItem>
+              <SelectItem value="active">{t('stores.active')}</SelectItem>
+              <SelectItem value="inactive">{t('stores.inactive')}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -122,7 +169,7 @@ export default function AcademiesPage() {
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       ) : academies.length === 0 ? (
-        /* Empty state */
+        /* No academies at all */
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed py-20 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
             <GraduationCap className="h-8 w-8 text-muted-foreground" />
@@ -131,16 +178,19 @@ export default function AcademiesPage() {
           <p className="mt-1 max-w-xs text-sm text-muted-foreground">
             {t('stores.emptyDesc')}
           </p>
-          {canCreate && (
-            <Button className="mt-6" onClick={() => setCreateOpen(true)}>
-              + {t('stores.addAcademy')}
-            </Button>
-          )}
+        </div>
+      ) : filteredAcademies.length === 0 ? (
+        /* No results after filtering */
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed py-20 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
+            <Filter className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h2 className="text-lg font-semibold">{t('stores.noStoresFound')}</h2>
         </div>
       ) : (
         /* Grid */
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {academies.map((academy: Academy) => (
+          {filteredAcademies.map((academy: Academy) => (
             <AcademyCard
               key={academy.id}
               academy={academy as any}
