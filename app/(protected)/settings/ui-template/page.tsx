@@ -10,7 +10,8 @@ import {
   Save,
   Palette,
   Settings2,
-  RotateCcw
+  RotateCcw,
+  Layers
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,7 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useUserStore } from '@/lib/store';
@@ -36,13 +38,87 @@ import {
 } from '@/lib/theme';
 
 type DeviceMode = 'desktop' | 'tablet' | 'mobile';
-type LeftTab = 'colors' | 'block';
+type LeftTab = 'colors' | 'style' | 'block';
 
 interface ThemeColors {
   primary: string;
   secondary: string;
   accent: string;
   background: string;
+}
+
+interface ThemeStyle {
+  borderRadius: 'rounded' | 'soft' | 'sharp';
+  shadow: 'none' | 'subtle' | 'medium' | 'strong';
+  animationType: string;
+  animationSpeed: 'slow' | 'medium' | 'fast';
+}
+
+const DEFAULT_THEME_STYLE: ThemeStyle = {
+  borderRadius: 'rounded',
+  shadow: 'medium',
+  animationType: 'none',
+  animationSpeed: 'medium'
+};
+
+const BORDER_RADIUS_OPTIONS = [
+  { value: 'rounded' as const, label: 'Rounded', px: '16px' },
+  { value: 'soft' as const, label: 'Soft', px: '24px' },
+  { value: 'sharp' as const, label: 'Sharp', px: '4px' }
+];
+
+const SHADOW_OPTIONS = [
+  { value: 'none' as const, label: 'None', css: 'none' },
+  {
+    value: 'subtle' as const,
+    label: 'Subtle',
+    css: '0 1px 4px rgba(0,0,0,0.08)'
+  },
+  {
+    value: 'medium' as const,
+    label: 'Medium',
+    css: '0 4px 12px rgba(0,0,0,0.12)'
+  },
+  {
+    value: 'strong' as const,
+    label: 'Strong',
+    css: '0 10px 24px rgba(0,0,0,0.18)'
+  }
+];
+
+const ANIMATION_OPTIONS = [
+  { value: 'none', label: 'None', icon: '○' },
+  { value: 'gradient', label: 'Gradient', icon: '◑' },
+  { value: 'particles', label: 'Particles', icon: '✦' },
+  { value: 'waves', label: 'Waves', icon: '〜' },
+  { value: 'mesh', label: 'Mesh', icon: '⊞' }
+];
+
+function parseThemeStyle(raw: unknown): ThemeStyle {
+  const data = (raw as Record<string, unknown>)?.data ?? raw ?? {};
+  const configs = ((data as Record<string, unknown>)?.configs ??
+    data) as Record<string, unknown>;
+  return {
+    borderRadius: (['rounded', 'soft', 'sharp'] as const).includes(
+      configs?.border_radius_style as 'rounded' | 'soft' | 'sharp'
+    )
+      ? (configs.border_radius_style as ThemeStyle['borderRadius'])
+      : DEFAULT_THEME_STYLE.borderRadius,
+    shadow: (['none', 'subtle', 'medium', 'strong'] as const).includes(
+      configs?.shadow_style as 'none' | 'subtle' | 'medium' | 'strong'
+    )
+      ? (configs.shadow_style as ThemeStyle['shadow'])
+      : DEFAULT_THEME_STYLE.shadow,
+    animationType:
+      typeof configs?.background_animation_type === 'string'
+        ? configs.background_animation_type
+        : DEFAULT_THEME_STYLE.animationType,
+    animationSpeed: (['slow', 'medium', 'fast'] as const).includes(
+      configs?.background_animation_speed as 'slow' | 'medium' | 'fast'
+    )
+      ? (configs.background_animation_speed as ThemeStyle['animationSpeed'])
+      : DEFAULT_THEME_STYLE.animationSpeed
+  };
 }
 
 export default function UITemplateSettingsPage() {
@@ -67,6 +143,7 @@ export default function UITemplateSettingsPage() {
     accent: DEFAULT_THEME_CONFIG.accent_color,
     background: DEFAULT_THEME_CONFIG.background_color
   });
+  const [themeStyle, setThemeStyle] = useState<ThemeStyle>(DEFAULT_THEME_STYLE);
 
   const hasTemplate = !!template?.id;
 
@@ -112,9 +189,9 @@ export default function UITemplateSettingsPage() {
           background:
             parsed.background_color ?? DEFAULT_THEME_CONFIG.background_color
         });
+        setThemeStyle(parseThemeStyle(themeData));
       }
 
-      // Auto-open template selector on first visit (no preset applied)
       if (!(templateData as UITemplate | null)?.template_preset) {
         setShowTemplateModal(true);
       }
@@ -168,6 +245,18 @@ export default function UITemplateSettingsPage() {
     setBlocks(updated);
   };
 
+  const buildThemePayloadFromState = () => ({
+    primary_color: themeColors.primary,
+    secondary_color: themeColors.secondary,
+    accent_color: themeColors.accent,
+    background_color: themeColors.background,
+    dark_mode: null,
+    border_radius_style: themeStyle.borderRadius,
+    shadow_style: themeStyle.shadow,
+    background_animation_type: themeStyle.animationType,
+    background_animation_speed: themeStyle.animationSpeed
+  });
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -176,13 +265,7 @@ export default function UITemplateSettingsPage() {
         template_preset: activePresetId || undefined,
         is_active: isActive
       };
-      const colorPayload = {
-        primary_color: themeColors.primary,
-        secondary_color: themeColors.secondary,
-        accent_color: themeColors.accent,
-        background_color: themeColors.background,
-        dark_mode: null
-      };
+      const colorPayload = buildThemePayloadFromState();
 
       await Promise.all([
         hasTemplate
@@ -213,13 +296,17 @@ export default function UITemplateSettingsPage() {
         await apiClient.updateCurrentThemeConfig(themePayload);
         applyThemeVariables(themePayload);
         dispatchThemeUpdate(themePayload);
-        // Sync local color state to the preset's design system
         setThemeColors({
           primary: ds.colors.primary,
           secondary: ds.colors.secondary,
           accent: ds.colors.accent,
           background: ds.colors.background
         });
+        setThemeStyle((prev) => ({
+          ...prev,
+          borderRadius: ds.shape.borderRadius,
+          shadow: ds.shape.shadow
+        }));
       }
 
       ErrorHandler.showSuccess(t('settings.uiTemplateSavedSuccess'));
@@ -260,6 +347,11 @@ export default function UITemplateSettingsPage() {
       background: ds.colors.background
     };
     setThemeColors(reset);
+    setThemeStyle((prev) => ({
+      ...prev,
+      borderRadius: ds.shape.borderRadius,
+      shadow: ds.shape.shadow
+    }));
     const payload = {
       primary_color: reset.primary,
       secondary_color: reset.secondary,
@@ -371,7 +463,7 @@ export default function UITemplateSettingsPage() {
 
       {/* 3-panel body */}
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        {/* Left panel — Colors & Block editor */}
+        {/* Left panel */}
         <aside className="flex w-64 flex-shrink-0 flex-col overflow-hidden border-r bg-background">
           {/* Active preset badge */}
           {activePresetId && (
@@ -398,11 +490,12 @@ export default function UITemplateSettingsPage() {
             <Switch checked={isActive} onCheckedChange={setIsActive} />
           </div>
 
-          {/* Tab strip */}
+          {/* Tab strip — 3 tabs */}
           <div className="flex flex-shrink-0 border-b">
             {(
               [
                 { id: 'colors', label: 'رنگ‌ها', Icon: Palette },
+                { id: 'style', label: 'استایل', Icon: Layers },
                 { id: 'block', label: 'بلوک', Icon: Settings2 }
               ] as const
             ).map(({ id, label, Icon }) => (
@@ -410,20 +503,21 @@ export default function UITemplateSettingsPage() {
                 key={id}
                 type="button"
                 onClick={() => setLeftTab(id)}
-                className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 py-2 text-xs font-medium transition-colors ${
+                className={`flex flex-1 items-center justify-center gap-1 border-b-2 py-2 text-[10px] font-medium transition-colors ${
                   leftTab === id
                     ? 'border-primary text-primary'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <Icon className="h-3.5 w-3.5" />
+                <Icon className="h-3 w-3" />
                 {label}
               </button>
             ))}
           </div>
 
           <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-            {leftTab === 'colors' ? (
+            {/* ── Colors tab ─────────────────────────────── */}
+            {leftTab === 'colors' && (
               <div className="space-y-4 p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                   رنگ‌های قالب
@@ -474,7 +568,135 @@ export default function UITemplateSettingsPage() {
                   </button>
                 )}
               </div>
-            ) : (
+            )}
+
+            {/* ── Style tab ──────────────────────────────── */}
+            {leftTab === 'style' && (
+              <div className="space-y-5 p-4">
+                {/* Border radius */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    گوشه‌ها
+                  </p>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {BORDER_RADIUS_OPTIONS.map(({ value, label, px }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() =>
+                          setThemeStyle((s) => ({ ...s, borderRadius: value }))
+                        }
+                        className={`flex flex-col items-center gap-1.5 rounded border py-2 text-[10px] font-medium transition-colors ${
+                          themeStyle.borderRadius === value
+                            ? 'border-primary bg-primary/5 text-primary'
+                            : 'border-border hover:bg-accent'
+                        }`}
+                      >
+                        <div
+                          className="h-6 w-8 border-2 border-current opacity-60"
+                          style={{ borderRadius: px }}
+                        />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Shadow */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    سایه
+                  </p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {SHADOW_OPTIONS.map(({ value, label, css }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() =>
+                          setThemeStyle((s) => ({ ...s, shadow: value }))
+                        }
+                        className={`flex flex-col items-center gap-2 rounded border py-2 text-[10px] font-medium transition-colors ${
+                          themeStyle.shadow === value
+                            ? 'border-primary bg-primary/5 text-primary'
+                            : 'border-border hover:bg-accent'
+                        }`}
+                      >
+                        <div
+                          className="h-6 w-10 rounded-md bg-background"
+                          style={{ boxShadow: css }}
+                        />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Hero animation type */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    انیمیشن پس‌زمینه
+                  </p>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {ANIMATION_OPTIONS.map(({ value, label, icon }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() =>
+                          setThemeStyle((s) => ({ ...s, animationType: value }))
+                        }
+                        className={`flex flex-col items-center gap-1 rounded border py-2 text-[10px] font-medium transition-colors ${
+                          themeStyle.animationType === value
+                            ? 'border-primary bg-primary/5 text-primary'
+                            : 'border-border hover:bg-accent'
+                        }`}
+                      >
+                        <span className="text-base leading-none">{icon}</span>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Animation speed — only when animation is active */}
+                {themeStyle.animationType !== 'none' && (
+                  <>
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                        سرعت انیمیشن
+                      </p>
+                      <div className="flex gap-1.5">
+                        {(['slow', 'medium', 'fast'] as const).map((speed) => (
+                          <button
+                            key={speed}
+                            type="button"
+                            onClick={() =>
+                              setThemeStyle((s) => ({
+                                ...s,
+                                animationSpeed: speed
+                              }))
+                            }
+                            className={`flex flex-1 items-center justify-center rounded border py-1.5 text-[10px] font-medium capitalize transition-colors ${
+                              themeStyle.animationSpeed === speed
+                                ? 'border-primary bg-primary/5 text-primary'
+                                : 'border-border hover:bg-accent'
+                            }`}
+                          >
+                            {speed}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* ── Block tab ──────────────────────────────── */}
+            {leftTab === 'block' && (
               <BlockEditor
                 block={activeBlock}
                 onUpdate={handleUpdateBlockConfig}

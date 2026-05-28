@@ -69,6 +69,10 @@ function PreviewHero({
   const ctaText = (config?.ctaText as string) || t('sitePreview.heroCta');
   const alignment = (config?.alignment as string) || 'center';
   const height = config?.height as string;
+  const bgType = (config?.bgType as string) ?? 'gradient';
+  const bgImage = config?.bgImage as string | undefined;
+  const bgColor = (config?.bgColor as string) ?? '#3b82f6';
+  const overlayOpacity = (config?.overlayOpacity as number) ?? 40;
 
   const themes: Record<
     string,
@@ -146,6 +150,10 @@ function PreviewHero({
     btnText: 'text-white',
     btnBorder: 'border-indigo-200'
   };
+
+  const usesImage = bgType === 'image' && !!bgImage;
+  const textOnDark = usesImage || bgType === 'solid';
+
   const alignCls =
     alignment === 'left'
       ? 'items-start text-right'
@@ -157,27 +165,51 @@ function PreviewHero({
         ? 'min-h-[220px]'
         : 'min-h-[320px]';
 
+  const wrapperStyle: React.CSSProperties =
+    bgType === 'image' && bgImage
+      ? {
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }
+      : bgType === 'solid'
+        ? { backgroundColor: bgColor }
+        : {};
+
+  const titleCls = usesImage ? 'text-white' : th.title;
+  const subCls = usesImage ? 'text-white/80' : th.sub;
+  const btnBorderCls = usesImage ? 'border-white/40' : th.btnBorder;
+
   return (
     <div
-      className={`flex flex-col justify-center px-12 py-10 ${th.bg} ${heightCls} ${active ? 'outline outline-2 outline-blue-500' : ''}`}
+      className={`relative flex flex-col justify-center px-12 py-10 ${bgType === 'gradient' ? th.bg : ''} ${heightCls} ${active ? 'outline outline-2 outline-blue-500' : ''}`}
+      style={wrapperStyle}
     >
-      <div className={`flex max-w-2xl flex-col gap-4 ${alignCls}`}>
+      {/* Dark overlay for image backgrounds */}
+      {usesImage && (
+        <div
+          className="absolute inset-0"
+          style={{ background: `rgba(0,0,0,${overlayOpacity / 100})` }}
+        />
+      )}
+
+      <div className={`relative flex max-w-2xl flex-col gap-4 ${alignCls}`}>
         <h1
-          className={`text-4xl font-bold leading-tight tracking-tight ${th.title}`}
+          className={`text-4xl font-bold leading-tight tracking-tight ${titleCls}`}
         >
           {title}
         </h1>
-        <p className={`text-lg leading-relaxed ${th.sub}`}>{subtitle}</p>
+        <p className={`text-lg leading-relaxed ${subCls}`}>{subtitle}</p>
         {config?.showCTA !== false && (
           <div className="mt-2 flex flex-wrap gap-3">
             <span
-              className={`rounded-xl px-6 py-3 text-sm font-semibold shadow-sm ${th.btn} ${th.btnText}`}
+              className={`rounded-xl px-6 py-3 text-sm font-semibold shadow-sm ${th.btn} ${textOnDark && bgType !== 'solid' ? 'text-white' : th.btnText}`}
             >
               {ctaText}
             </span>
             {!!config?.ctaSecondary && (
               <span
-                className={`rounded-xl border px-6 py-3 text-sm font-semibold ${th.title} ${th.btnBorder} bg-transparent`}
+                className={`rounded-xl border bg-transparent px-6 py-3 text-sm font-semibold ${titleCls} ${btnBorderCls}`}
               >
                 {config.ctaSecondary as string}
               </span>
@@ -185,7 +217,7 @@ function PreviewHero({
           </div>
         )}
         <div
-          className={`mt-3 flex items-center gap-3 text-xs ${th.sub} opacity-70`}
+          className={`mt-3 flex items-center gap-3 text-xs ${subCls} opacity-70`}
         >
           <span>★★★★★</span>
           <span>{t('sitePreview.heroTrust')}</span>
