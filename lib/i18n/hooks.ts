@@ -4,6 +4,7 @@
 
 'use client';
 
+import { useCallback } from 'react';
 import { useI18n } from './provider';
 import { t as translate, getTranslations } from './index';
 import { getLocaleForLanguage, type LanguageCode } from './config';
@@ -15,12 +16,13 @@ import type { InterpolationParams } from './index';
 export function useTranslation() {
   const { language } = useI18n();
 
-  return {
-    t: (key: string, params?: InterpolationParams) =>
+  const t = useCallback(
+    (key: string, params?: InterpolationParams) =>
       translate(key, language, params),
-    language,
-    translations: getTranslations(language)
-  };
+    [language]
+  );
+
+  return { t, language, translations: getTranslations(language) };
 }
 
 /**

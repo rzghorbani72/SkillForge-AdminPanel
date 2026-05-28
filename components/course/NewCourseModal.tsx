@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
@@ -27,6 +27,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 /* ── Types ──────────────────────────────────────────────────── */
 type PricingType = 'ONE_TIME' | 'SUBSCRIPTION' | 'FREE' | 'PAYMENT_PLAN';
@@ -42,24 +43,40 @@ interface Props {
   editCourseId?: number;
 }
 
-const PRICING_OPTIONS: { type: PricingType; label: string; sub: string }[] = [
-  { type: 'ONE_TIME', label: 'پولی', sub: 'یک پرداخت یکجا' },
-  { type: 'SUBSCRIPTION', label: 'اشتراکی', sub: 'ماهانه/سالانه' },
-  { type: 'FREE', label: 'رایگان', sub: 'بدون پرداخت' },
-  { type: 'PAYMENT_PLAN', label: 'اقساطی', sub: '۳ تا ۶ قسط' }
+const PRICING_OPTION_KEYS: {
+  type: PricingType;
+  labelKey: string;
+  subKey: string;
+}[] = [
+  {
+    type: 'ONE_TIME',
+    labelKey: 'courses.paidType',
+    subKey: 'courses.oneTimePayment'
+  },
+  {
+    type: 'SUBSCRIPTION',
+    labelKey: 'courses.subscriptionPlan',
+    subKey: 'courses.monthlyYearly'
+  },
+  { type: 'FREE', labelKey: 'courses.free', subKey: 'courses.noPayment' },
+  {
+    type: 'PAYMENT_PLAN',
+    labelKey: 'courses.installmentPlan',
+    subKey: 'courses.installments3to6'
+  }
 ];
 
-const LEVELS = [
-  { value: 'BEGINNER', label: 'مقدماتی' },
-  { value: 'INTERMEDIATE', label: 'متوسط' },
-  { value: 'ADVANCED', label: 'پیشرفته' }
+const LEVEL_KEYS = [
+  { value: 'BEGINNER', labelKey: 'courses.beginner' },
+  { value: 'INTERMEDIATE', labelKey: 'courses.intermediate' },
+  { value: 'ADVANCED', labelKey: 'courses.advanced' }
 ];
 
-const STEPS = [
-  { n: 1, label: 'مشخصات' },
-  { n: 2, label: 'محتوا' },
-  { n: 3, label: 'قیمت' },
-  { n: 4, label: 'انتشار' }
+const STEP_KEYS = [
+  { n: 1, labelKey: 'courses.stepDetails' },
+  { n: 2, labelKey: 'courses.content' },
+  { n: 3, labelKey: 'courses.price' },
+  { n: 4, labelKey: 'courses.stepPublish' }
 ];
 
 function uid() {
@@ -71,7 +88,6 @@ function extractList(raw: unknown): unknown[] {
   if (!raw) return [];
   if (Array.isArray(raw)) return raw;
   const r = raw as Record<string, unknown>;
-  // Try common envelope shapes
   for (const key of ['categories', 'profiles', 'users', 'data', 'items']) {
     if (Array.isArray(r[key])) return r[key] as unknown[];
   }
@@ -80,9 +96,10 @@ function extractList(raw: unknown): unknown[] {
 
 /* ── Step indicator ─────────────────────────────────────────── */
 function StepIndicator({ step }: { step: number }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-center gap-0 border-b border-border px-6 py-4">
-      {STEPS.map((s, idx) => {
+      {STEP_KEYS.map((s, idx) => {
         const done = step > s.n;
         const current = step === s.n;
         return (
@@ -106,10 +123,10 @@ function StepIndicator({ step }: { step: number }) {
                   current ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                {s.label}
+                {t(s.labelKey)}
               </span>
             </div>
-            {idx < STEPS.length - 1 && (
+            {idx < STEP_KEYS.length - 1 && (
               <div
                 key={`sep-${s.n}`}
                 className={cn(
@@ -125,7 +142,7 @@ function StepIndicator({ step }: { step: number }) {
   );
 }
 
-/* ── Step 1: مشخصات ─────────────────────────────────────────── */
+/* ── Step 1: Details ────────────────────────────────────────── */
 function Step1({
   title,
   setTitle,
@@ -179,14 +196,17 @@ function Step1({
   onCancelCategory: () => void;
   creatingCategory: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-5">
       {/* Title */}
       <div className="space-y-1.5">
-        <label className="text-[13px] font-semibold">عنوان دوره</label>
+        <label className="text-[13px] font-semibold">
+          {t('courses.courseTitle')}
+        </label>
         <input
           className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
-          placeholder="مثلاً: ری‌اکت پیشرفته و Next.js"
+          placeholder={t('courses.titlePlaceholder')}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={80}
@@ -195,15 +215,17 @@ function Step1({
 
       {/* Category */}
       <div className="space-y-1.5">
-        <label className="text-[13px] font-semibold">دسته‌بندی</label>
+        <label className="text-[13px] font-semibold">
+          {t('courses.category')}
+        </label>
         <div className="flex items-center gap-1.5">
           <select
-            aria-label="دسته‌بندی"
+            aria-label={t('courses.category')}
             className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
           >
-            <option value="">انتخاب...</option>
+            <option value="">{t('courses.selectOption')}</option>
             {categories.map((c) => (
               <option key={c.id} value={String(c.id)}>
                 {c.name}
@@ -213,7 +235,7 @@ function Step1({
           <button
             type="button"
             onClick={onToggleNewCategory}
-            title="ایجاد دسته‌بندی جدید"
+            title={t('courses.createNewCategory')}
             className={cn(
               'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors',
               showNewCategory
@@ -230,7 +252,7 @@ function Step1({
             <input
               autoFocus
               className="flex-1 rounded-lg border border-primary/50 bg-background px-3 py-1.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/10"
-              placeholder="نام دسته‌بندی جدید"
+              placeholder={t('courses.newCategoryName')}
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
               onKeyDown={(e) => {
@@ -247,12 +269,12 @@ function Step1({
               {creatingCategory ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                'ایجاد'
+                t('common.create')
               )}
             </button>
             <button
               type="button"
-              aria-label="لغو"
+              aria-label={t('common.cancel')}
               onClick={onCancelCategory}
               className="rounded-lg p-1.5 text-muted-foreground hover:text-foreground"
             >
@@ -265,35 +287,39 @@ function Step1({
       {/* Level + Teacher row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <label className="text-[13px] font-semibold">سطح</label>
+          <label className="text-[13px] font-semibold">
+            {t('courses.level')}
+          </label>
           <select
-            aria-label="سطح"
+            aria-label={t('courses.level')}
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
             value={level}
             onChange={(e) => setLevel(e.target.value)}
           >
-            {LEVELS.map((l) => (
+            {LEVEL_KEYS.map((l) => (
               <option key={l.value} value={l.value}>
-                {l.label}
+                {t(l.labelKey)}
               </option>
             ))}
           </select>
         </div>
         <div className="space-y-1.5">
           <label className="text-[13px] font-semibold">
-            مدرس{' '}
-            <span className="font-normal text-muted-foreground">(اختیاری)</span>
+            {t('courses.instructor')}{' '}
+            <span className="font-normal text-muted-foreground">
+              ({t('common.optional')})
+            </span>
           </label>
           <select
-            aria-label="مدرس"
+            aria-label={t('courses.instructor')}
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
             value={teacherId}
             onChange={(e) => setTeacherId(e.target.value)}
           >
-            <option value="">انتخاب...</option>
-            {teachers.map((t) => (
-              <option key={t.id} value={String(t.id)}>
-                {t.display_name}
+            <option value="">{t('courses.selectOption')}</option>
+            {teachers.map((teacher) => (
+              <option key={teacher.id} value={String(teacher.id)}>
+                {teacher.display_name}
               </option>
             ))}
           </select>
@@ -302,10 +328,12 @@ function Step1({
 
       {/* Short description */}
       <div className="space-y-1.5">
-        <label className="text-[13px] font-semibold">توضیحات کوتاه</label>
+        <label className="text-[13px] font-semibold">
+          {t('courses.shortDescription')}
+        </label>
         <textarea
           className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
-          placeholder="در ۲ تا ۳ جمله توضیح دهید دانشجو در پایان چه یاد می‌گیرد"
+          placeholder={t('courses.descriptionPlaceholder')}
           rows={4}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -314,7 +342,9 @@ function Step1({
 
       {/* Cover image */}
       <div className="space-y-1.5">
-        <label className="text-[13px] font-semibold">تصویر کاور</label>
+        <label className="text-[13px] font-semibold">
+          {t('courses.coverImage')}
+        </label>
         {coverPreview ? (
           <div className="relative overflow-hidden rounded-lg border border-border">
             <img
@@ -324,7 +354,7 @@ function Step1({
             />
             <button
               type="button"
-              aria-label="حذف تصویر"
+              aria-label={t('courses.removeImage')}
               onClick={onRemoveCover}
               className="absolute start-2 top-2 rounded-full bg-background/90 p-1.5 shadow hover:bg-background"
             >
@@ -340,10 +370,12 @@ function Step1({
           >
             <Upload className="h-6 w-6 opacity-60" />
             <span className="text-[13px]">
-              {uploading ? 'در حال آپلود...' : 'برای آپلود کلیک کنید یا بکشید'}
+              {uploading
+                ? t('courses.uploading')
+                : t('courses.uploadClickOrDrag')}
             </span>
             <span className="text-[11px] text-muted-foreground/60">
-              PNG یا JPG · حداکثر ۲ مگابایت
+              {t('courses.uploadFileTypes')}
             </span>
           </button>
         )}
@@ -351,7 +383,7 @@ function Step1({
           ref={fileRef}
           type="file"
           accept="image/*"
-          aria-label="آپلود تصویر کاور"
+          aria-label={t('courses.uploadCoverImage')}
           className="hidden"
           onChange={handleFileChange}
         />
@@ -360,7 +392,7 @@ function Step1({
   );
 }
 
-/* ── Step 2: محتوا ──────────────────────────────────────────── */
+/* ── Step 2: Content ────────────────────────────────────────── */
 function Step2({
   sections,
   setSections
@@ -368,10 +400,16 @@ function Step2({
   sections: Section[];
   setSections: (s: Section[]) => void;
 }) {
+  const { t } = useTranslation();
+
   function addSection() {
     setSections([
       ...sections,
-      { id: uid(), title: `فصل ${sections.length + 1}: عنوان فصل`, lessons: [] }
+      {
+        id: uid(),
+        title: t('courses.defaultSeasonTitle', { n: sections.length + 1 }),
+        lessons: []
+      }
     ]);
   }
 
@@ -391,7 +429,7 @@ function Step2({
               ...s,
               lessons: [
                 ...s.lessons,
-                { id: uid(), title: 'درس جدید', duration: '۱۲:۳۰' }
+                { id: uid(), title: t('courses.newLesson'), duration: '۱۲:۳۰' }
               ]
             }
           : s
@@ -433,12 +471,12 @@ function Step2({
     <div className="space-y-3">
       <div className="flex items-center gap-2 rounded-lg bg-primary/5 px-3 py-2.5 text-[12.5px] text-primary">
         <Zap className="h-3.5 w-3.5 shrink-0" />
-        محتوای دوره را به فصل و درس تقسیم کنید. می‌توانید بعداً ویرایش کنید.
+        {t('courses.contentHint')}
       </div>
 
       {sections.length === 0 && (
         <div className="rounded-lg border border-dashed border-border/60 py-10 text-center text-[13px] text-muted-foreground">
-          هنوز فصلی اضافه نشده
+          {t('courses.noSeasonsAdded')}
         </div>
       )}
 
@@ -450,14 +488,14 @@ function Step2({
           <div className="flex items-center gap-2 px-4 py-3">
             <GripVertical className="h-4 w-4 shrink-0 cursor-grab text-muted-foreground/50" />
             <input
-              aria-label="عنوان فصل"
+              aria-label={t('courses.seasonTitle')}
               className="flex-1 bg-transparent text-[13.5px] font-semibold outline-none"
               value={section.title}
               onChange={(e) => updateSectionTitle(section.id, e.target.value)}
             />
             <button
               type="button"
-              aria-label="حذف فصل"
+              aria-label={t('courses.removeSeason')}
               onClick={() => removeSection(section.id)}
               className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
             >
@@ -474,7 +512,7 @@ function Step2({
                 <GripVertical className="h-3.5 w-3.5 shrink-0 cursor-grab text-muted-foreground/40" />
                 <Play className="h-3 w-3 shrink-0 text-muted-foreground/50" />
                 <input
-                  aria-label="عنوان درس"
+                  aria-label={t('courses.lessonTitle')}
                   className="flex-1 bg-transparent text-[12.5px] outline-none"
                   value={lesson.title}
                   onChange={(e) =>
@@ -482,7 +520,7 @@ function Step2({
                   }
                 />
                 <input
-                  aria-label="مدت درس"
+                  aria-label={t('courses.lesson')}
                   className="w-16 rounded border border-border/60 bg-background px-2 py-0.5 text-center text-[11.5px] outline-none"
                   value={lesson.duration}
                   onChange={(e) =>
@@ -496,7 +534,7 @@ function Step2({
                 />
                 <button
                   type="button"
-                  aria-label="حذف درس"
+                  aria-label={t('courses.removeLesson')}
                   onClick={() => removeLesson(section.id, lesson.id)}
                   className="rounded p-0.5 text-muted-foreground/50 hover:text-destructive"
                 >
@@ -510,7 +548,7 @@ function Step2({
               className="flex w-full items-center gap-1.5 px-4 py-2.5 text-[12.5px] text-primary/70 hover:text-primary"
             >
               <Plus className="h-3.5 w-3.5" />
-              افزودن درس
+              {t('courses.addLesson')}
             </button>
           </div>
         </div>
@@ -522,13 +560,13 @@ function Step2({
         className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border/60 py-3 text-[13px] font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
       >
         <Plus className="h-4 w-4" />
-        افزودن فصل
+        {t('courses.addSeason')}
       </button>
     </div>
   );
 }
 
-/* ── Step 3: قیمت ───────────────────────────────────────────── */
+/* ── Step 3: Pricing ────────────────────────────────────────── */
 function Step3({
   pricingType,
   setPricingType,
@@ -556,10 +594,11 @@ function Step3({
   cookieDays: string;
   setCookieDays: (v: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-        {PRICING_OPTIONS.map((opt) => {
+        {PRICING_OPTION_KEYS.map((opt) => {
           const selected = pricingType === opt.type;
           return (
             <button
@@ -574,7 +613,9 @@ function Step3({
               )}
             >
               <div className="flex w-full items-center justify-between">
-                <span className="text-[13px] font-semibold">{opt.label}</span>
+                <span className="text-[13px] font-semibold">
+                  {t(opt.labelKey)}
+                </span>
                 <div
                   className={cn(
                     'h-3.5 w-3.5 rounded-full border-2',
@@ -585,7 +626,7 @@ function Step3({
                 />
               </div>
               <span className="w-full text-start text-[10.5px] text-muted-foreground">
-                {opt.sub}
+                {t(opt.subKey)}
               </span>
             </button>
           );
@@ -595,23 +636,27 @@ function Step3({
       {pricingType !== 'FREE' && (
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label className="text-[13px] font-semibold">قیمت (تومان)</label>
+            <label className="text-[13px] font-semibold">
+              {t('courses.priceInToman')}
+            </label>
             <input
               type="number"
               min="0"
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
-              placeholder="مثلاً ۱,۴۸۰,۰۰۰"
+              placeholder={t('courses.pricePlaceholderExample')}
               value={price}
               onChange={(e) => setPrice(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[13px] font-semibold">تخفیف %</label>
+            <label className="text-[13px] font-semibold">
+              {t('courses.discountPercent')}
+            </label>
             <input
               type="number"
               min="0"
               max="100"
-              aria-label="درصد تخفیف"
+              aria-label={t('courses.discountPercent')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
               value={discount}
               onChange={(e) => setDiscount(e.target.value)}
@@ -623,14 +668,16 @@ function Step3({
       <div className="rounded-xl border border-border p-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[13.5px] font-semibold">فعال‌سازی پنل افیلیت</p>
+            <p className="text-[13.5px] font-semibold">
+              {t('courses.enableAffiliate')}
+            </p>
             <p className="mt-0.5 text-[11.5px] text-muted-foreground">
-              به بازاریاب‌ها اجازه دهید این دوره را تبلیغ کنند
+              {t('courses.affiliateDesc')}
             </p>
           </div>
           <button
             type="button"
-            aria-label="فعال‌سازی افیلیت"
+            aria-label={t('courses.enableAffiliate')}
             onClick={() => setAffiliateEnabled(!affiliateEnabled)}
             className={cn(
               'relative h-6 w-11 rounded-full transition-colors',
@@ -651,12 +698,14 @@ function Step3({
         {affiliateEnabled && (
           <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border/60 pt-4">
             <div className="space-y-1.5">
-              <label className="text-[12.5px] font-medium">درصد کمیسیون</label>
+              <label className="text-[12.5px] font-medium">
+                {t('courses.commissionPercent')}
+              </label>
               <input
                 type="number"
                 min="0"
                 max="100"
-                aria-label="درصد کمیسیون"
+                aria-label={t('courses.commissionPercent')}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
                 value={commission}
                 onChange={(e) => setCommission(e.target.value)}
@@ -664,12 +713,12 @@ function Step3({
             </div>
             <div className="space-y-1.5">
               <label className="text-[12.5px] font-medium">
-                مدت کوکی (روز)
+                {t('courses.cookieDays')}
               </label>
               <input
                 type="number"
                 min="1"
-                aria-label="مدت کوکی"
+                aria-label={t('courses.cookieDays')}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
                 value={cookieDays}
                 onChange={(e) => setCookieDays(e.target.value)}
@@ -682,7 +731,7 @@ function Step3({
   );
 }
 
-/* ── Step 4: انتشار ─────────────────────────────────────────── */
+/* ── Step 4: Publish ────────────────────────────────────────── */
 function Step4({
   title,
   hasCover,
@@ -697,21 +746,41 @@ function Step4({
   publishStatus: PublishStatus;
   setPublishStatus: (s: PublishStatus) => void;
 }) {
+  const { t } = useTranslation();
   const totalLessons = sections.reduce((s, sec) => s + sec.lessons.length, 0);
+
   const checks = [
-    { label: 'مشخصات اصلی', ok: title.length >= 5 },
-    { label: 'تصویر کاور', ok: hasCover },
-    { label: 'حداقل ۱ فصل', ok: sections.length >= 1 },
-    { label: 'حداقل ۳ درس', ok: totalLessons >= 3 },
-    { label: 'قیمت‌گذاری', ok: true }
+    { label: t('courses.basicDetails'), ok: title.length >= 5 },
+    { label: t('courses.coverImage'), ok: hasCover },
+    { label: t('courses.minOneSeason'), ok: sections.length >= 1 },
+    { label: t('courses.minThreeLessons'), ok: totalLessons >= 3 },
+    { label: t('courses.pricing'), ok: true }
   ];
-  const optional = [{ label: 'پیش‌نمایش یک درس', optional: true }];
+  const optional = [{ label: t('courses.previewOneLesson'), optional: true }];
+
+  const publishOptions: {
+    value: PublishStatus;
+    labelKey: string;
+    subKey: string;
+  }[] = [
+    { value: 'DRAFT', labelKey: 'courses.draft', subKey: 'courses.draftDesc' },
+    {
+      value: 'PUBLISHED',
+      labelKey: 'courses.published',
+      subKey: 'courses.publishedDesc'
+    },
+    {
+      value: 'SCHEDULED',
+      labelKey: 'courses.scheduled',
+      subKey: 'courses.scheduledDesc'
+    }
+  ];
 
   return (
     <div className="grid grid-cols-2 gap-5">
       <div className="space-y-2">
         <p className="mb-3 text-[12px] font-semibold uppercase tracking-wider text-muted-foreground">
-          مرور نهایی
+          {t('courses.finalReview')}
         </p>
         {[...checks, ...optional].map((item) => {
           const isOptional = 'optional' in item;
@@ -721,16 +790,16 @@ function Step4({
               <span className="text-[13px]">{item.label}</span>
               {isOptional ? (
                 <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-600">
-                  اختیاری
+                  {t('common.optional')}
                 </span>
               ) : ok ? (
                 <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-600">
-                  آماده
+                  {t('courses.ready')}
                 </span>
               ) : (
                 <span className="flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
                   <AlertTriangle className="h-3 w-3" />
-                  ناقص
+                  {t('courses.incomplete')}
                 </span>
               )}
             </div>
@@ -740,23 +809,9 @@ function Step4({
 
       <div className="space-y-2">
         <p className="mb-3 text-[12px] font-semibold uppercase tracking-wider text-muted-foreground">
-          وضعیت انتشار
+          {t('courses.publishStatus')}
         </p>
-        {(
-          [
-            { value: 'DRAFT', label: 'پیش‌نویس', sub: 'فقط شما می‌بینید' },
-            {
-              value: 'PUBLISHED',
-              label: 'منتشر شده',
-              sub: 'برای همه قابل خرید'
-            },
-            {
-              value: 'SCHEDULED',
-              label: 'زمان‌بندی شده',
-              sub: 'در زمان مشخص منتشر می‌شود'
-            }
-          ] as { value: PublishStatus; label: string; sub: string }[]
-        ).map((opt) => {
+        {publishOptions.map((opt) => {
           const selected = publishStatus === opt.value;
           return (
             <button
@@ -771,8 +826,10 @@ function Step4({
               )}
             >
               <div>
-                <p className="text-[13px] font-semibold">{opt.label}</p>
-                <p className="text-[11px] text-muted-foreground">{opt.sub}</p>
+                <p className="text-[13px] font-semibold">{t(opt.labelKey)}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {t(opt.subKey)}
+                </p>
               </div>
               <div
                 className={cn(
@@ -800,6 +857,7 @@ export default function NewCourseModal({
   const router = useRouter();
   const { selectedAcademy } = useStore();
   const { user } = useAuthUser();
+  const { t } = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isEditMode = !!editCourseId;
@@ -815,12 +873,10 @@ export default function NewCourseModal({
     { id: number; display_name: string }[]
   >([]);
 
-  // Inline category creation
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [creatingCategory, setCreatingCategory] = useState(false);
 
-  // Step 1 state
   const [title, setTitle] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [level, setLevel] = useState('BEGINNER');
@@ -830,10 +886,8 @@ export default function NewCourseModal({
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Step 2 state
   const [sections, setSections] = useState<Section[]>([]);
 
-  // Step 3 state
   const [pricingType, setPricingType] = useState<PricingType>('ONE_TIME');
   const [price, setPrice] = useState('');
   const [discount, setDiscount] = useState('0');
@@ -841,10 +895,8 @@ export default function NewCourseModal({
   const [commission, setCommission] = useState('15');
   const [cookieDays, setCookieDays] = useState('30');
 
-  // Step 4 state
   const [publishStatus, setPublishStatus] = useState<PublishStatus>('DRAFT');
 
-  // Load categories and teachers when modal opens
   useEffect(() => {
     if (!open) return;
     async function load() {
@@ -860,21 +912,25 @@ export default function NewCourseModal({
         }));
         setCategories(catList);
 
-        const teacherList = extractList(teachersRaw).map((t) => ({
-          id: (t as Record<string, unknown>).id as number,
+        const teacherList = extractList(teachersRaw).map((teacher) => ({
+          id: (teacher as Record<string, unknown>).id as number,
           display_name:
-            ((t as Record<string, unknown>).display_name as string) ??
-            ((t as Record<string, unknown>).name as string) ??
-            `کاربر ${(t as Record<string, unknown>).id}`
+            ((teacher as Record<string, unknown>).display_name as string) ??
+            ((teacher as Record<string, unknown>).name as string) ??
+            t('courses.userWithId', {
+              id: String((teacher as Record<string, unknown>).id)
+            })
         }));
 
-        // In create mode: if user is MANAGER, inject them as default teacher
         if (!isEditMode && user?.role === 'MANAGER') {
           const managerEntry = {
             id: user.id,
-            display_name: user.profile?.display_name ?? 'مدیر'
+            display_name:
+              user.profile?.display_name ?? t('courses.managerDefault')
           };
-          const alreadyIn = teacherList.some((t) => t.id === user.id);
+          const alreadyIn = teacherList.some(
+            (teacher) => teacher.id === user.id
+          );
           setTeachers(alreadyIn ? teacherList : [managerEntry, ...teacherList]);
           setTeacherId(String(user.id));
         } else {
@@ -885,9 +941,8 @@ export default function NewCourseModal({
       }
     }
     load();
-  }, [open, isEditMode, user]);
+  }, [open, isEditMode, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Load course data when in edit mode
   useEffect(() => {
     if (!open || !editCourseId) return;
     async function loadCourse() {
@@ -913,13 +968,13 @@ export default function NewCourseModal({
         setPrice(c.primary_price ? String(c.primary_price) : '');
         setPublishStatus(c.published ? 'PUBLISHED' : 'DRAFT');
       } catch {
-        toast.error('خطا در بارگذاری دوره');
+        toast.error(t('courses.errorLoadingCourse'));
       } finally {
         setLoadingEdit(false);
       }
     }
     loadCourse();
-  }, [open, editCourseId]);
+  }, [open, editCourseId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function reset() {
     setStep(1);
@@ -947,6 +1002,20 @@ export default function NewCourseModal({
     onClose();
   }
 
+  const handleCoverClick = useCallback(() => fileRef.current?.click(), []);
+  const handleRemoveCover = useCallback(() => {
+    setCoverId(undefined);
+    setCoverPreview(null);
+  }, []);
+  const handleToggleNewCategory = useCallback(
+    () => setShowNewCategory((v) => !v),
+    []
+  );
+  const handleCancelCategory = useCallback(() => {
+    setShowNewCategory(false);
+    setNewCategoryName('');
+  }, []);
+
   async function handleCreateCategory() {
     if (!newCategoryName.trim()) return;
     setCreatingCategory(true);
@@ -962,9 +1031,9 @@ export default function NewCourseModal({
       setCategoryId(String(newCat.id));
       setNewCategoryName('');
       setShowNewCategory(false);
-      toast.success('دسته‌بندی ایجاد شد');
+      toast.success(t('courses.categoryCreated'));
     } catch {
-      toast.error('خطا در ایجاد دسته‌بندی');
+      toast.error(t('courses.errorCreatingCategory'));
     } finally {
       setCreatingCategory(false);
     }
@@ -988,7 +1057,7 @@ export default function NewCourseModal({
         reader.readAsDataURL(file);
       }
     } catch {
-      toast.error('خطا در آپلود تصویر');
+      toast.error(t('courses.errorUploadingImage'));
     } finally {
       setUploading(false);
     }
@@ -996,7 +1065,7 @@ export default function NewCourseModal({
 
   function validateStep(): boolean {
     if (step === 1 && title.trim().length < 5) {
-      toast.error('عنوان دوره باید حداقل ۵ کاراکتر باشد');
+      toast.error(t('courses.titleMinLength'));
       return false;
     }
     return true;
@@ -1025,7 +1094,7 @@ export default function NewCourseModal({
   async function handleSaveDraft() {
     if (!selectedAcademy) return;
     if (!title.trim()) {
-      toast.error('عنوان دوره را وارد کنید');
+      toast.error(t('courses.enterCourseTitle'));
       return;
     }
     setSaving(true);
@@ -1035,7 +1104,7 @@ export default function NewCourseModal({
           editCourseId!,
           buildPayload(false) as Parameters<typeof apiClient.updateCourse>[1]
         );
-        toast.success('دوره به‌روزرسانی شد');
+        toast.success(t('courses.courseUpdated'));
       } else {
         const res = await apiClient.createCourse(
           buildPayload(false) as Parameters<typeof apiClient.createCourse>[0]
@@ -1044,7 +1113,7 @@ export default function NewCourseModal({
         const id = rawRes?.data
           ? (rawRes.data as Record<string, unknown>).id
           : rawRes?.id;
-        toast.success('پیش‌نویس ذخیره شد');
+        toast.success(t('courses.draftSaved'));
         handleClose();
         onCreated?.();
         if (id) router.push(`/courses/${id}`);
@@ -1053,7 +1122,7 @@ export default function NewCourseModal({
       handleClose();
       onCreated?.();
     } catch {
-      toast.error('خطا در ذخیره');
+      toast.error(t('courses.errorSaving'));
     } finally {
       setSaving(false);
     }
@@ -1062,7 +1131,7 @@ export default function NewCourseModal({
   async function handlePublish() {
     if (!selectedAcademy) return;
     if (!title.trim()) {
-      toast.error('عنوان دوره را وارد کنید');
+      toast.error(t('courses.enterCourseTitle'));
       return;
     }
     setSaving(true);
@@ -1075,7 +1144,7 @@ export default function NewCourseModal({
             typeof apiClient.updateCourse
           >[1]
         );
-        toast.success('دوره به‌روزرسانی شد');
+        toast.success(t('courses.courseUpdated'));
       } else {
         const res = await apiClient.createCourse(
           buildPayload(published) as Parameters<
@@ -1086,7 +1155,9 @@ export default function NewCourseModal({
         const id = rawRes?.data
           ? (rawRes.data as Record<string, unknown>).id
           : rawRes?.id;
-        toast.success(published ? 'دوره منتشر شد' : 'دوره ذخیره شد');
+        toast.success(
+          published ? t('courses.coursePublished') : t('courses.courseSaved')
+        );
         handleClose();
         onCreated?.();
         if (id) router.push(`/courses/${id}`);
@@ -1095,7 +1166,7 @@ export default function NewCourseModal({
       handleClose();
       onCreated?.();
     } catch {
-      toast.error('خطا در ذخیره دوره');
+      toast.error(t('courses.errorSavingCourse'));
     } finally {
       setSaving(false);
     }
@@ -1106,25 +1177,15 @@ export default function NewCourseModal({
   return (
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
       <DialogContent className="flex max-h-[92vh] max-w-[680px] flex-col gap-0 overflow-hidden p-0">
-        <DialogHeader className="shrink-0 px-6 pb-0 pt-5">
-          <div className="flex items-center justify-between">
-            <div className="text-start">
-              <p className="text-[11px] text-muted-foreground">
-                {isEditMode ? 'ویرایش دوره' : 'دوره جدید'}
-              </p>
-              <DialogTitle className="text-[17px] font-bold">
-                {isEditMode ? 'ویرایش اطلاعات دوره' : 'یک دوره جدید بسازید'}
-              </DialogTitle>
-            </div>
-            <button
-              type="button"
-              aria-label="بستن"
-              onClick={handleClose}
-              className="rounded-md p-1 text-muted-foreground hover:bg-muted/60"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
+        <DialogHeader className="shrink-0 px-6 pb-0 pe-12 pt-5 text-start">
+          <p className="text-[11px] text-muted-foreground">
+            {isEditMode ? t('courses.editCourse') : t('courses.newCourse')}
+          </p>
+          <DialogTitle className="text-[17px] font-bold">
+            {isEditMode
+              ? t('courses.editCourseDetails')
+              : t('courses.createCourseTitle')}
+          </DialogTitle>
         </DialogHeader>
 
         <StepIndicator step={step} />
@@ -1151,11 +1212,8 @@ export default function NewCourseModal({
                   setDescription={setDescription}
                   coverPreview={coverPreview}
                   uploading={uploading}
-                  onCoverClick={() => fileRef.current?.click()}
-                  onRemoveCover={() => {
-                    setCoverId(undefined);
-                    setCoverPreview(null);
-                  }}
+                  onCoverClick={handleCoverClick}
+                  onRemoveCover={handleRemoveCover}
                   fileRef={fileRef}
                   handleFileChange={handleCoverChange}
                   categories={categories}
@@ -1163,12 +1221,9 @@ export default function NewCourseModal({
                   showNewCategory={showNewCategory}
                   newCategoryName={newCategoryName}
                   setNewCategoryName={setNewCategoryName}
-                  onToggleNewCategory={() => setShowNewCategory((v) => !v)}
+                  onToggleNewCategory={handleToggleNewCategory}
                   onCreateCategory={handleCreateCategory}
-                  onCancelCategory={() => {
-                    setShowNewCategory(false);
-                    setNewCategoryName('');
-                  }}
+                  onCancelCategory={handleCancelCategory}
                   creatingCategory={creatingCategory}
                 />
               )}
@@ -1215,7 +1270,7 @@ export default function NewCourseModal({
                 className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted/40"
               >
                 <ChevronRight className="h-3.5 w-3.5" />
-                مرحله قبل
+                {t('courses.prevStep')}
               </button>
             )}
             {step === 1 && (
@@ -1224,7 +1279,7 @@ export default function NewCourseModal({
                 onClick={handleClose}
                 className="rounded-lg px-3 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
               >
-                انصراف
+                {t('common.cancel')}
               </button>
             )}
           </div>
@@ -1236,7 +1291,7 @@ export default function NewCourseModal({
               disabled={saving}
               className="rounded-lg border border-border px-4 py-1.5 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/40 disabled:opacity-50"
             >
-              {isEditMode ? 'ذخیره' : 'ذخیره پیش‌نویس'}
+              {isEditMode ? t('common.save') : t('courses.saveDraft')}
             </button>
             {isLastStep ? (
               <button
@@ -1246,10 +1301,10 @@ export default function NewCourseModal({
                 className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-1.5 text-[13px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
               >
                 {saving
-                  ? 'در حال ارسال...'
+                  ? t('courses.submitting')
                   : isEditMode
-                    ? 'به‌روزرسانی'
-                    : 'انتشار دوره'}
+                    ? t('common.update')
+                    : t('courses.publishCourse')}
               </button>
             ) : (
               <button
@@ -1259,7 +1314,7 @@ export default function NewCourseModal({
                 }}
                 className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-1.5 text-[13px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
               >
-                مرحله بعد
+                {t('courses.nextStep')}
                 <ChevronLeft className="h-3.5 w-3.5" />
               </button>
             )}
