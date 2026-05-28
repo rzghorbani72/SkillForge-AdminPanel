@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import { MESSAGES } from '@/constants/messages';
 
 const DEFAULT_POSTER = '/images/video-placeholder.svg';
 
@@ -38,8 +39,8 @@ export function VideoGrid({
     return (
       <EmptyState
         icon={<Video className="h-12 w-12" />}
-        title="No videos found"
-        description="Upload your first video to get started."
+        title={MESSAGES.video.noVideosFound}
+        description={MESSAGES.video.uploadFirstVideo}
       />
     );
   }
@@ -139,7 +140,7 @@ function VideoCard({
     video.Owner?.name ??
     video.owner?.name ??
     video.uploader?.name ??
-    'Unknown creator';
+    MESSAGES.video.unknownCreator;
 
   const ownerAvatar =
     video.Owner?.avatar_url ??
@@ -250,7 +251,7 @@ function VideoCard({
                 </span>
               ) : (
                 <span className="rounded-full bg-black/70 px-4 py-2 text-sm font-semibold uppercase tracking-wide">
-                  Unavailable
+                  {MESSAGES.common.unavailable}
                 </span>
               )}
             </button>
@@ -273,7 +274,7 @@ function VideoCard({
           </span>
           {isOwner && (
             <span className="rounded-full bg-primary/90 px-2 py-1 text-xs font-medium text-primary-foreground shadow-sm ring-1 ring-white/10">
-              Your upload
+              {MESSAGES.video.yourUpload}
             </span>
           )}
         </div>
@@ -282,7 +283,9 @@ function VideoCard({
           <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center justify-between text-xs font-medium text-white">
             <span className="inline-flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1">
               <Play className="h-3 w-3" />
-              <span className="uppercase tracking-wide">Watch</span>
+              <span className="uppercase tracking-wide">
+                {MESSAGES.common.watch}
+              </span>
             </span>
             <div className="flex items-center gap-2">
               {duration && <span>{duration}</span>}
@@ -306,7 +309,7 @@ function VideoCard({
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h3 className="line-clamp-2 text-base font-semibold text-foreground transition group-hover:text-primary">
-            {video.title ?? 'Untitled video'}
+            {video.title ?? MESSAGES.video.untitledVideo}
           </h3>
           <p className="text-sm font-medium text-muted-foreground">
             {ownerName}

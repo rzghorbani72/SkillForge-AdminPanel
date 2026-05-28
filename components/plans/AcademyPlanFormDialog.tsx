@@ -1,0 +1,148 @@
+'use client';
+
+import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { AcademyPlanData, AcademyPlanFormData } from './plan-types';
+import { MESSAGES } from '@/constants/messages';
+
+interface Props {
+  open: boolean;
+  editingPlan: AcademyPlanData | null;
+  form: AcademyPlanFormData;
+  isSaving: boolean;
+  onClose: () => void;
+  onChange: (field: keyof AcademyPlanFormData, value: string | boolean) => void;
+  onSave: () => void;
+  t: (key: string) => string;
+}
+
+export function AcademyPlanFormDialog({
+  open,
+  editingPlan,
+  form,
+  isSaving,
+  onClose,
+  onChange,
+  onSave,
+  t
+}: Props) {
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>
+            {editingPlan
+              ? t('plans.editAcademyPlan')
+              : t('plans.createAcademyPlan')}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4 py-2">
+          <div className="space-y-1.5">
+            <Label>{t('plans.kindLabel')}</Label>
+            <Select
+              value={form.kind}
+              onValueChange={(v) =>
+                onChange('kind', v as 'SUBSCRIPTION' | 'PACKAGE')
+              }
+              disabled={!!editingPlan}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SUBSCRIPTION">
+                  {t('plans.kindSubscription')}
+                </SelectItem>
+                <SelectItem value="PACKAGE">
+                  {t('plans.kindPackage')}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>{MESSAGES.planForm.name}</Label>
+            <Input
+              value={form.name}
+              onChange={(e) => onChange('name', e.target.value)}
+              placeholder="e.g. Monthly Access"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>{t('plans.descriptionLabel')}</Label>
+            <Input
+              value={form.description}
+              onChange={(e) => onChange('description', e.target.value)}
+              placeholder={t('common.optional')}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>{t('plans.priceLabel')}</Label>
+              <Input
+                type="number"
+                min="0"
+                value={form.price}
+                onChange={(e) => onChange('price', e.target.value)}
+              />
+            </div>
+            {form.kind === 'SUBSCRIPTION' && (
+              <div className="space-y-1.5">
+                <Label>{t('plans.durationDays')}</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={form.duration_days}
+                  onChange={(e) => onChange('duration_days', e.target.value)}
+                  placeholder="e.g. 30"
+                />
+              </div>
+            )}
+          </div>
+
+          {editingPlan && (
+            <div className="flex items-center gap-3 rounded-lg border p-3">
+              <Switch
+                checked={form.is_active}
+                onCheckedChange={(v) => onChange('is_active', v)}
+              />
+              <p className="text-sm font-medium">{t('plans.toggleActive')}</p>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.cancel')}
+          </Button>
+          <Button onClick={onSave} disabled={isSaving || !form.name}>
+            {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {editingPlan
+              ? t('plans.editAcademyPlan')
+              : t('plans.createAcademyPlan')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

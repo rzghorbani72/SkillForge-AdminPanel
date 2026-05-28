@@ -1,19 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -26,72 +17,37 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTranslation } from '@/lib/i18n/hooks';
-
-interface DiscountCode {
-  id: number;
-  code: string;
-  description?: string;
-  discount_type: 'PERCENT' | 'FIXED';
-  discount_value: number;
-  academy_id?: number;
-  usage_limit?: number;
-  used_count: number;
-  usage_type: 'ONE_TIME' | 'LIMITED' | 'UNLIMITED' | 'USER_SPECIFIC';
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-  min_purchase_amount?: number;
-  max_discount_amount?: number;
-  created_at: string;
-  updated_at: string;
-}
+import { VoucherFormDialog } from '@/components/vouchers/VoucherFormDialog';
+import {
+  DiscountCode,
+  VoucherFormData,
+  DEFAULT_VOUCHER_FORM
+} from '@/components/vouchers/voucher-types';
 
 export default function VouchersPage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const [vouchers, setVouchers] = useState<DiscountCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingVoucher, setEditingVoucher] = useState<DiscountCode | null>(
     null
   );
-  const [formData, setFormData] = useState({
-    code: '',
-    description: '',
-    discount_type: 'PERCENT' as 'PERCENT' | 'FIXED',
-    discount_value: 0,
-    usage_limit: undefined as number | undefined,
-    usage_type: 'UNLIMITED' as
-      | 'ONE_TIME'
-      | 'LIMITED'
-      | 'UNLIMITED'
-      | 'USER_SPECIFIC',
-    start_date: '',
-    end_date: '',
-    is_active: true,
-    min_purchase_amount: undefined as number | undefined,
-    max_discount_amount: undefined as number | undefined
-  });
+  const [formData, setFormData] =
+    useState<VoucherFormData>(DEFAULT_VOUCHER_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const fetchVouchers = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await apiClient.getDiscounts({ search: searchTerm });
-
-      // Handle different response structures
       if (response?.data?.discounts) {
-        // Response from backend: { message, status, data: { discounts, pagination } }
         setVouchers(response.data.discounts);
       } else if (response?.discounts) {
-        // Direct discounts array in response
         setVouchers(response.discounts);
       } else if (Array.isArray(response?.data)) {
-        // Array directly in data
         setVouchers(response.data);
       } else if (Array.isArray(response)) {
-        // Response is directly an array
         setVouchers(response);
       } else {
         setVouchers([]);
@@ -109,12 +65,41 @@ export default function VouchersPage() {
     fetchVouchers();
   }, [fetchVouchers]);
 
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.code.trim()) newErrors.code = 'Code is required';
+    if (!formData.discount_value || formData.discount_value <= 0)
+      newErrors.discount_value =
+        'Discount value is required and must be greater than 0';
+    if (formData.discount_type === 'PERCENT' && formData.discount_value > 100)
+      newErrors.discount_value = 'Percent discount cannot exceed 100';
+    if (
+      formData.usage_type === 'LIMITED' &&
+      (!formData.usage_limit || formData.usage_limit < 1)
+    )
+      newErrors.usage_limit = 'Usage limit is required and must be at least 1';
+    if (!formData.start_date) newErrors.start_date = 'Start date is required';
+    if (!formData.end_date) newErrors.end_date = 'End date is required';
+    if (
+      formData.start_date &&
+      formData.end_date &&
+      new Date(formData.end_date) <= new Date(formData.start_date)
+    )
+      newErrors.end_date = 'End date must be after start date';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const resetForm = () => {
+    setFormData(DEFAULT_VOUCHER_FORM);
+    setErrors({});
+  };
+
   const handleCreate = async () => {
     if (!validateForm()) {
       toast.error('Please fill in all required fields');
       return;
     }
-
     try {
       const response = await apiClient.createDiscount({
         ...formData,
@@ -122,32 +107,28 @@ export default function VouchersPage() {
         end_date: new Date(formData.end_date).toISOString()
       });
       toast.success(response?.message || 'Voucher created successfully');
-      setIsCreateDialogOpen(false);
+      setIsCreateOpen(false);
       resetForm();
       fetchVouchers();
-    } catch (error: any) {
-      toast.error(error?.message || 'Failed to create voucher');
+    } catch (error: unknown) {
+      toast.error((error as Error)?.message || 'Failed to create voucher');
     }
   };
 
   const handleUpdate = async () => {
     if (!editingVoucher) return;
-
     const updateErrors: Record<string, string> = {};
-    if (formData.start_date && formData.end_date) {
-      const startDate = new Date(formData.start_date);
-      const endDate = new Date(formData.end_date);
-      if (endDate <= startDate) {
-        updateErrors.end_date = 'End date must be after start date';
-      }
-    }
-
+    if (
+      formData.start_date &&
+      formData.end_date &&
+      new Date(formData.end_date) <= new Date(formData.start_date)
+    )
+      updateErrors.end_date = 'End date must be after start date';
     if (Object.keys(updateErrors).length > 0) {
       setErrors(updateErrors);
       toast.error('Please fix the validation errors');
       return;
     }
-
     try {
       const response = await apiClient.updateDiscount(editingVoucher.id, {
         ...formData,
@@ -159,12 +140,11 @@ export default function VouchersPage() {
           : undefined
       });
       toast.success(response?.message || 'Voucher updated successfully');
-      setIsEditDialogOpen(false);
       setEditingVoucher(null);
       resetForm();
       fetchVouchers();
-    } catch (error: any) {
-      toast.error(error?.message || 'Failed to update voucher');
+    } catch (error: unknown) {
+      toast.error((error as Error)?.message || 'Failed to update voucher');
     }
   };
 
@@ -174,8 +154,8 @@ export default function VouchersPage() {
       const response = await apiClient.deleteDiscount(id);
       toast.success(response?.message || 'Voucher deleted successfully');
       fetchVouchers();
-    } catch (error: any) {
-      toast.error(error?.message || 'Failed to delete voucher');
+    } catch (error: unknown) {
+      toast.error((error as Error)?.message || 'Failed to delete voucher');
     }
   };
 
@@ -194,73 +174,17 @@ export default function VouchersPage() {
       min_purchase_amount: voucher.min_purchase_amount,
       max_discount_amount: voucher.max_discount_amount
     });
-    setIsEditDialogOpen(true);
   };
 
-  const resetForm = () => {
-    setFormData({
-      code: '',
-      description: '',
-      discount_type: 'PERCENT',
-      discount_value: 0,
-      usage_limit: undefined,
-      usage_type: 'UNLIMITED',
-      start_date: '',
-      end_date: '',
-      is_active: true,
-      min_purchase_amount: undefined,
-      max_discount_amount: undefined
-    });
-    setErrors({});
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.code.trim()) {
-      newErrors.code = 'Code is required';
-    }
-
-    if (!formData.discount_value || formData.discount_value <= 0) {
-      newErrors.discount_value =
-        'Discount value is required and must be greater than 0';
-    }
-
-    if (formData.discount_type === 'PERCENT' && formData.discount_value > 100) {
-      newErrors.discount_value = 'Percent discount cannot exceed 100';
-    }
-
-    if (
-      formData.usage_type === 'LIMITED' &&
-      (!formData.usage_limit || formData.usage_limit < 1)
-    ) {
-      newErrors.usage_limit = 'Usage limit is required and must be at least 1';
-    }
-
-    if (!formData.start_date) {
-      newErrors.start_date = 'Start date is required';
-    }
-
-    if (!formData.end_date) {
-      newErrors.end_date = 'End date is required';
-    }
-
-    if (formData.start_date && formData.end_date) {
-      const startDate = new Date(formData.start_date);
-      const endDate = new Date(formData.end_date);
-      if (endDate <= startDate) {
-        newErrors.end_date = 'End date must be after start date';
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const handleFormChange = (patch: Partial<VoucherFormData>) =>
+    setFormData((prev) => ({ ...prev, ...patch }));
+  const handleErrorChange = (patch: Record<string, string>) =>
+    setErrors((prev) => ({ ...prev, ...patch }));
 
   const filteredVouchers = vouchers.filter(
-    (voucher) =>
-      voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      voucher.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    (v) =>
+      v.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const isExpired = (endDate: string) => new Date(endDate) < new Date();
@@ -268,13 +192,13 @@ export default function VouchersPage() {
     voucher.is_active && !isExpired(voucher.end_date);
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-6 p-6" dir="rtl">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{t('vouchers.title')}</h1>
           <p className="text-muted-foreground">{t('vouchers.description')}</p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
+        <Button onClick={() => setIsCreateOpen(true)}>
           <Plus className="me-2 h-4 w-4" />
           {t('vouchers.createVoucher')}
         </Button>
@@ -295,7 +219,7 @@ export default function VouchersPage() {
       {isLoading ? (
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
             <p className="mt-2 text-sm text-muted-foreground">
               {t('vouchers.loadingVouchers')}
             </p>
@@ -396,506 +320,35 @@ export default function VouchersPage() {
         </div>
       )}
 
-      {/* Create Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{t('vouchers.createDialogTitle')}</DialogTitle>
-            <DialogDescription>
-              {t('vouchers.createDialogDescription')}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Code *</Label>
-              <Input
-                value={formData.code}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    code: e.target.value.toUpperCase()
-                  })
-                }
-                placeholder="SUMMER2024"
-                required
-                className="uppercase placeholder:text-muted-foreground"
-              />
-            </div>
-            <div>
-              <Label>Description</Label>
-              <Input
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Summer sale discount"
-                className="placeholder:text-muted-foreground"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Discount Type *</Label>
-                <select
-                  value={formData.discount_type}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      discount_type: e.target.value as 'PERCENT' | 'FIXED'
-                    })
-                  }
-                  required
-                  className="w-full rounded-md border border-input bg-background px-3 py-2"
-                >
-                  <option value="PERCENT">Percent</option>
-                  <option value="FIXED">Fixed Amount</option>
-                </select>
-              </div>
-              <div>
-                <Label>Discount Value *</Label>
-                <Input
-                  type="number"
-                  value={formData.discount_value || ''}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      discount_value: Number(e.target.value) || 0
-                    })
-                  }
-                  placeholder={
-                    formData.discount_type === 'PERCENT' ? '20' : '1000'
-                  }
-                  required
-                  min={formData.discount_type === 'PERCENT' ? 0 : 0}
-                  max={formData.discount_type === 'PERCENT' ? 100 : undefined}
-                  className="placeholder:text-muted-foreground"
-                />
-              </div>
-            </div>
-            <div>
-              <Label>Usage Type *</Label>
-              <select
-                value={formData.usage_type}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    usage_type: e.target.value as
-                      | 'ONE_TIME'
-                      | 'LIMITED'
-                      | 'UNLIMITED'
-                      | 'USER_SPECIFIC'
-                  })
-                }
-                required
-                className="w-full rounded-md border border-input bg-background px-3 py-2"
-              >
-                <option value="UNLIMITED">Unlimited</option>
-                <option value="ONE_TIME">One Time Per User</option>
-                <option value="LIMITED">Limited Times</option>
-              </select>
-            </div>
-            {formData.usage_type === 'LIMITED' && (
-              <div>
-                <Label>Usage Limit *</Label>
-                <Input
-                  type="number"
-                  value={formData.usage_limit ?? ''}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      usage_limit: e.target.value
-                        ? Number(e.target.value)
-                        : undefined
-                    })
-                  }
-                  placeholder="100"
-                  required
-                  min={1}
-                  className="placeholder:text-muted-foreground"
-                />
-              </div>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Start Date *</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.start_date}
-                  onChange={(e) => {
-                    const newStartDate = e.target.value;
-                    setFormData({ ...formData, start_date: newStartDate });
-                    if (errors.start_date) {
-                      setErrors({ ...errors, start_date: '' });
-                    }
-                    // If end date is before new start date, show error
-                    if (
-                      formData.end_date &&
-                      newStartDate &&
-                      new Date(formData.end_date) <= new Date(newStartDate)
-                    ) {
-                      setErrors({
-                        ...errors,
-                        end_date: 'End date must be after start date'
-                      });
-                    } else if (
-                      errors.end_date &&
-                      formData.end_date &&
-                      new Date(formData.end_date) > new Date(newStartDate)
-                    ) {
-                      setErrors({ ...errors, end_date: '' });
-                    }
-                  }}
-                  required
-                  max={formData.end_date || undefined}
-                  className={`placeholder:text-muted-foreground ${errors.start_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                />
-                {errors.start_date && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.start_date}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label>End Date *</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.end_date}
-                  min={formData.start_date || undefined}
-                  onChange={(e) => {
-                    const newEndDate = e.target.value;
-                    setFormData({ ...formData, end_date: newEndDate });
-                    if (errors.end_date) {
-                      setErrors({ ...errors, end_date: '' });
-                    }
-                    // Validate end date is after start date
-                    if (
-                      formData.start_date &&
-                      newEndDate &&
-                      new Date(newEndDate) <= new Date(formData.start_date)
-                    ) {
-                      setErrors({
-                        ...errors,
-                        end_date: 'End date must be after start date'
-                      });
-                    }
-                  }}
-                  required
-                  className={`placeholder:text-muted-foreground ${errors.end_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                />
-                {errors.end_date && (
-                  <p className="mt-1 text-sm text-red-500">{errors.end_date}</p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Min Purchase Amount (optional)</Label>
-                <Input
-                  type="number"
-                  value={formData.min_purchase_amount ?? ''}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      min_purchase_amount: e.target.value
-                        ? Number(e.target.value)
-                        : undefined
-                    })
-                  }
-                  placeholder="0"
-                  min={0}
-                  className="placeholder:text-muted-foreground"
-                />
-              </div>
-              {formData.discount_type === 'PERCENT' && (
-                <div>
-                  <Label>Max Discount Amount (optional)</Label>
-                  <Input
-                    type="number"
-                    value={formData.max_discount_amount ?? ''}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        max_discount_amount: e.target.value
-                          ? Number(e.target.value)
-                          : undefined
-                      })
-                    }
-                    placeholder="0"
-                    min={0}
-                    className="placeholder:text-muted-foreground"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="is_active"
-                checked={formData.is_active}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_active: e.target.checked })
-                }
-                className="h-4 w-4"
-              />
-              <Label htmlFor="is_active">Active</Label>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsCreateDialogOpen(false);
-                resetForm();
-              }}
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button onClick={handleCreate}>{t('common.create')}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <VoucherFormDialog
+        open={isCreateOpen}
+        isEditing={false}
+        form={formData}
+        errors={errors}
+        onClose={() => {
+          setIsCreateOpen(false);
+          resetForm();
+        }}
+        onChange={handleFormChange}
+        onErrorChange={handleErrorChange}
+        onSave={handleCreate}
+        t={t}
+      />
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{t('vouchers.editDialogTitle')}</DialogTitle>
-            <DialogDescription>
-              {t('vouchers.editDialogDescription')}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Code</Label>
-              <Input value={formData.code} disabled className="font-mono" />
-            </div>
-            <div>
-              <Label>Description</Label>
-              <Input
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                className="placeholder:text-muted-foreground"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Discount Type *</Label>
-                <select
-                  value={formData.discount_type}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      discount_type: e.target.value as 'PERCENT' | 'FIXED'
-                    })
-                  }
-                  required
-                  className="w-full rounded-md border border-input bg-background px-3 py-2"
-                >
-                  <option value="PERCENT">Percent</option>
-                  <option value="FIXED">Fixed Amount</option>
-                </select>
-              </div>
-              <div>
-                <Label>Discount Value *</Label>
-                <Input
-                  type="number"
-                  value={formData.discount_value || ''}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      discount_value: Number(e.target.value) || 0
-                    })
-                  }
-                  required
-                  min={formData.discount_type === 'PERCENT' ? 0 : 0}
-                  max={formData.discount_type === 'PERCENT' ? 100 : undefined}
-                  className="placeholder:text-muted-foreground"
-                />
-              </div>
-            </div>
-            <div>
-              <Label>Usage Type *</Label>
-              <select
-                value={formData.usage_type}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    usage_type: e.target.value as
-                      | 'ONE_TIME'
-                      | 'LIMITED'
-                      | 'UNLIMITED'
-                      | 'USER_SPECIFIC'
-                  })
-                }
-                required
-                className="w-full rounded-md border border-input bg-background px-3 py-2"
-              >
-                <option value="UNLIMITED">Unlimited</option>
-                <option value="ONE_TIME">One Time Per User</option>
-                <option value="LIMITED">Limited Times</option>
-              </select>
-            </div>
-            {formData.usage_type === 'LIMITED' && (
-              <div>
-                <Label>Usage Limit *</Label>
-                <Input
-                  type="number"
-                  value={formData.usage_limit ?? ''}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      usage_limit: e.target.value
-                        ? Number(e.target.value)
-                        : undefined
-                    })
-                  }
-                  required
-                  min={1}
-                  className="placeholder:text-muted-foreground"
-                />
-              </div>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Start Date *</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.start_date}
-                  onChange={(e) => {
-                    const newStartDate = e.target.value;
-                    setFormData({ ...formData, start_date: newStartDate });
-                    if (errors.start_date) {
-                      setErrors({ ...errors, start_date: '' });
-                    }
-                    // If end date is before new start date, show error
-                    if (
-                      formData.end_date &&
-                      newStartDate &&
-                      new Date(formData.end_date) <= new Date(newStartDate)
-                    ) {
-                      setErrors({
-                        ...errors,
-                        end_date: 'End date must be after start date'
-                      });
-                    } else if (
-                      errors.end_date &&
-                      formData.end_date &&
-                      new Date(formData.end_date) > new Date(newStartDate)
-                    ) {
-                      setErrors({ ...errors, end_date: '' });
-                    }
-                  }}
-                  required
-                  max={formData.end_date || undefined}
-                  className={`placeholder:text-muted-foreground ${errors.start_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                />
-                {errors.start_date && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.start_date}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label>End Date *</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.end_date}
-                  min={formData.start_date || undefined}
-                  onChange={(e) => {
-                    const newEndDate = e.target.value;
-                    setFormData({ ...formData, end_date: newEndDate });
-                    if (errors.end_date) {
-                      setErrors({ ...errors, end_date: '' });
-                    }
-                    // Validate end date is after start date
-                    if (
-                      formData.start_date &&
-                      newEndDate &&
-                      new Date(newEndDate) <= new Date(formData.start_date)
-                    ) {
-                      setErrors({
-                        ...errors,
-                        end_date: 'End date must be after start date'
-                      });
-                    }
-                  }}
-                  required
-                  className={`placeholder:text-muted-foreground ${errors.end_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                />
-                {errors.end_date && (
-                  <p className="mt-1 text-sm text-red-500">{errors.end_date}</p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Min Purchase Amount (optional)</Label>
-                <Input
-                  type="number"
-                  value={formData.min_purchase_amount ?? ''}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      min_purchase_amount: e.target.value
-                        ? Number(e.target.value)
-                        : undefined
-                    })
-                  }
-                  placeholder="0"
-                  min={0}
-                  className="placeholder:text-muted-foreground"
-                />
-              </div>
-              {formData.discount_type === 'PERCENT' && (
-                <div>
-                  <Label>Max Discount Amount (optional)</Label>
-                  <Input
-                    type="number"
-                    value={formData.max_discount_amount ?? ''}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        max_discount_amount: e.target.value
-                          ? Number(e.target.value)
-                          : undefined
-                      })
-                    }
-                    placeholder="0"
-                    min={0}
-                    className="placeholder:text-muted-foreground"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="is_active_edit"
-                checked={formData.is_active}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_active: e.target.checked })
-                }
-                className="h-4 w-4"
-              />
-              <Label htmlFor="is_active_edit">Active</Label>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsEditDialogOpen(false);
-                setEditingVoucher(null);
-                resetForm();
-              }}
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button onClick={handleUpdate}>{t('common.update')}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <VoucherFormDialog
+        open={!!editingVoucher}
+        isEditing={true}
+        form={formData}
+        errors={errors}
+        onClose={() => {
+          setEditingVoucher(null);
+          resetForm();
+        }}
+        onChange={handleFormChange}
+        onErrorChange={handleErrorChange}
+        onSave={handleUpdate}
+        t={t}
+      />
     </div>
   );
 }

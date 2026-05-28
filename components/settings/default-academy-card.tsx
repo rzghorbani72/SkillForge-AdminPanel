@@ -14,6 +14,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { apiClient } from '@/lib/api';
 import { userPrefsApi } from '@/lib/api-extra';
 import { Loader2, Save } from 'lucide-react';
+import { MESSAGES } from '@/constants/messages';
 
 // Lets a multi-academy user pin their default academy. Backend uses this to
 // decide which academy to load first on next sign-in (Mig 1).
@@ -47,7 +48,7 @@ export function DefaultAcademyCard() {
     setSaving(true);
     try {
       await userPrefsApi.setDefaultAcademy(selected === '' ? null : selected);
-      ErrorHandler.showSuccess('Default academy saved');
+      ErrorHandler.showSuccess(MESSAGES.academy.defaultSaved);
     } catch (e) {
       ErrorHandler.handleApiError(e);
     } finally {
@@ -58,25 +59,23 @@ export function DefaultAcademyCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Default academy</CardTitle>
-        <CardDescription>
-          When you have a profile in multiple academies, sign-in lands on this
-          one by default.
-        </CardDescription>
+        <CardTitle>{MESSAGES.academy.defaultAcademy}</CardTitle>
+        <CardDescription>{MESSAGES.academy.defaultAcademyDesc}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {loading ? (
           <div className="flex h-10 items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" /> Loading academies…
+            <Loader2 className="h-4 w-4 animate-spin" />{' '}
+            {MESSAGES.academy.loadingAcademies}
           </div>
         ) : options.length <= 1 ? (
           <p className="text-sm text-muted-foreground">
-            You only have one academy — no need to pick a default.
+            {MESSAGES.academy.singleAcademy}
           </p>
         ) : (
           <>
             <Label className="text-xs uppercase tracking-wide text-muted-foreground">
-              Pick one
+              {MESSAGES.common.pickOne}
             </Label>
             <div className="flex gap-2">
               <select
@@ -86,7 +85,7 @@ export function DefaultAcademyCard() {
                   setSelected(e.target.value ? Number(e.target.value) : '')
                 }
               >
-                <option value="">— no default —</option>
+                <option value="">{MESSAGES.common.noDefault}</option>
                 {options.map((o) => (
                   <option key={o.id} value={o.id}>
                     {o.name}
@@ -99,7 +98,7 @@ export function DefaultAcademyCard() {
                 ) : (
                   <Save className="mr-1 h-4 w-4" />
                 )}
-                Save
+                {MESSAGES.common.save}
               </Button>
             </div>
           </>

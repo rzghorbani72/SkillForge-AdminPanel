@@ -1,4 +1,5 @@
 import { Folder } from 'lucide-react';
+import { MESSAGES } from '@/constants/messages';
 
 interface EmptyStateProps {
   searchTerm: string;
@@ -6,14 +7,18 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ searchTerm, selectedType }: EmptyStateProps) {
+  const isFiltered = searchTerm || selectedType !== 'all';
+
   return (
     <div className="col-span-full py-12 text-center">
       <Folder className="mx-auto h-12 w-12 text-muted-foreground" />
-      <h3 className="mt-4 text-lg font-semibold">No categories found</h3>
+      <h3 className="mt-4 text-lg font-semibold">
+        {MESSAGES.category.noCategoriesFound}
+      </h3>
       <p className="mt-2 text-muted-foreground">
-        {searchTerm || selectedType !== 'all'
-          ? 'Try adjusting your search or filter criteria.'
-          : 'Get started by creating your first category.'}
+        {isFiltered
+          ? MESSAGES.category.adjustSearch
+          : MESSAGES.category.createFirstCategory}
       </p>
     </div>
   );

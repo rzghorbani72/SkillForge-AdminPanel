@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { MESSAGES } from '@/constants/messages';
 
 type Props = {
   storeName: string;
@@ -13,9 +14,11 @@ const CreateProductHeader = ({ storeName, onBack }: Props) => {
         <ArrowLeft className="h-4 w-4" />
       </Button>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Create Product</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {MESSAGES.product.createProduct}
+        </h1>
         <p className="text-muted-foreground">
-          Add a new product to {storeName}
+          {MESSAGES.product.addNewProductTo(storeName)}
         </p>
       </div>
     </div>
