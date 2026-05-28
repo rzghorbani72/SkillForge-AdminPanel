@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Check, ChevronDown, Loader2, Plus, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/hooks/useStore';
-import { useAuthUser } from '@/hooks/useAuthUser';
+import { useAuthUser } from '@/components/providers/user-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
@@ -25,6 +25,8 @@ const AVATAR_COLORS = [
   'bg-indigo-500',
   'bg-teal-500'
 ];
+
+const HIDDEN_ROLES = ['STUDENT', 'USER'];
 
 function academyColor(id: number) {
   return AVATAR_COLORS[id % AVATAR_COLORS.length];
@@ -52,6 +54,16 @@ function getAcademyDomain(academy: any): string {
   );
 }
 
+function resolveAcademyRole(
+  academy: { id: number; userRole?: string },
+  currentAcademyId: number | null | undefined,
+  currentRole: string
+): string {
+  if (academy.userRole) return academy.userRole;
+  if (academy.id === currentAcademyId) return currentRole;
+  return '';
+}
+
 export function StoreSelector() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -63,6 +75,8 @@ export function StoreSelector() {
 
   const isPlatformAdmin = user?.isAdminProfile || user?.platformLevel || false;
   if (isPlatformAdmin) return null;
+
+  if (HIDDEN_ROLES.includes(user?.role ?? '')) return null;
 
   const handleSelectAcademy = async (academyId: number) => {
     if (academyId === selectedAcademy?.id) {
@@ -107,6 +121,14 @@ export function StoreSelector() {
 
   const hasMultiple = academies.length > 1;
   const current = selectedAcademy ?? academies[0];
+  const currentRole = resolveAcademyRole(
+    current ?? { id: 0 },
+    user?.academyId,
+    user?.role ?? ''
+  );
+  const currentRoleLabel = currentRole
+    ? t(`userNav.roles.${currentRole}`) || currentRole
+    : '';
 
   const selectorContent = current ? (
     <div className="flex items-center gap-2.5">
@@ -116,7 +138,7 @@ export function StoreSelector() {
           {current.name}
         </p>
         <p className="max-w-[130px] truncate text-xs text-muted-foreground">
-          {getAcademyDomain(current)}
+          {currentRoleLabel || getAcademyDomain(current)}
         </p>
       </div>
       {hasMultiple && (
@@ -170,6 +192,14 @@ export function StoreSelector() {
               ) : (
                 filtered.map((academy) => {
                   const isActive = selectedAcademy?.id === academy.id;
+                  const role = resolveAcademyRole(
+                    academy,
+                    user?.academyId,
+                    user?.role ?? ''
+                  );
+                  const roleLabel = role
+                    ? t(`userNav.roles.${role}`) || role
+                    : '';
                   return (
                     <button
                       key={academy.id}
@@ -190,9 +220,16 @@ export function StoreSelector() {
                         >
                           {academy.name}
                         </p>
-                        <p className="truncate text-xs text-muted-foreground">
-                          {getAcademyDomain(academy)}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="truncate text-xs text-muted-foreground">
+                            {getAcademyDomain(academy)}
+                          </p>
+                          {roleLabel && (
+                            <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                              {roleLabel}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       {isActive && (
                         <Check className="h-4 w-4 shrink-0 text-primary" />

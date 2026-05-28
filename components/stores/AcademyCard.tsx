@@ -44,6 +44,7 @@ type AcademyCardProps = {
     mentor_count?: number;
   };
   isCurrent: boolean;
+  userRole?: string;
   onSwitch: (id: number) => void;
   onEdit: (academy: Academy) => void;
   switching: number | null;
@@ -53,6 +54,7 @@ type AcademyCardProps = {
 export function AcademyCard({
   academy,
   isCurrent,
+  userRole,
   onSwitch,
   onEdit,
   switching,
@@ -98,9 +100,16 @@ export function AcademyCard({
 
       {/* Card body */}
       <div className="px-4 pb-4 pt-8">
-        <h3 className="truncate text-base font-bold leading-tight">
-          {academy.name}
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="truncate text-base font-bold leading-tight">
+            {academy.name}
+          </h3>
+          {userRole && (
+            <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+              {userRole}
+            </span>
+          )}
+        </div>
         <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
           {domain}
         </p>

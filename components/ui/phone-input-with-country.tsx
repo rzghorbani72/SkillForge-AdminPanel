@@ -41,6 +41,7 @@ interface PhoneInputWithCountryProps {
   className?: string;
   maxLength?: number;
   onValidationChange?: (isValid: boolean) => void;
+  onBlur?: () => void;
   lockCountryCode?: string;
 }
 
@@ -57,6 +58,7 @@ export function PhoneInputWithCountry({
   className,
   maxLength = 10,
   onValidationChange,
+  onBlur,
   lockCountryCode
 }: PhoneInputWithCountryProps) {
   const { isRTL, language } = useLanguage();
@@ -207,37 +209,52 @@ export function PhoneInputWithCountry({
       <Label htmlFor={id}>{label}</Label>
       <div className="relative">
         <div className={`flex ${isRTL ? 'flex-row-reverse' : ''}`}>
-          {/* Country Code Selector */}
-          <Select
-            value={selectedCountry.code}
-            onValueChange={handleCountryChange}
-            disabled={disabled || isLoadingCountry || !!lockedCountry}
-          >
-            <SelectTrigger
-              className={`w-[140px] focus:ring-0 focus:ring-offset-0 ${isRTL ? 'rounded-l-none border-l-0' : 'rounded-r-none border-r-0'}`}
+          {/* Country Code — selector when unlocked, static badge when locked */}
+          {lockedCountry ? (
+            <div
+              className={`flex items-center gap-2 border border-border bg-muted/50 px-3 ${
+                isRTL
+                  ? 'rounded-l-none border-l-0'
+                  : 'rounded-r-none border-r-0'
+              } rounded-md`}
             >
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{selectedCountry.flag}</span>
-                <span className="text-sm font-medium">
-                  {selectedCountry.dialCode}
-                </span>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {uniqueCountryCodes.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{country.flag}</span>
-                    <span className="text-sm">{country.name}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {country.dialCode}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <span className="text-lg">{selectedCountry.flag}</span>
+              <span className="text-sm font-medium text-muted-foreground">
+                {selectedCountry.dialCode}
+              </span>
+            </div>
+          ) : (
+            <Select
+              value={selectedCountry.code}
+              onValueChange={handleCountryChange}
+              disabled={disabled || isLoadingCountry}
+            >
+              <SelectTrigger
+                className={`w-[140px] focus:ring-0 focus:ring-offset-0 ${isRTL ? 'rounded-l-none border-l-0' : 'rounded-r-none border-r-0'}`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{selectedCountry.flag}</span>
+                  <span className="text-sm font-medium">
+                    {selectedCountry.dialCode}
+                  </span>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                {uniqueCountryCodes.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{country.flag}</span>
+                      <span className="text-sm">{country.name}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {country.dialCode}
+                      </span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
 
           {/* Phone Number Input */}
           <div className="relative flex-1">
@@ -250,6 +267,7 @@ export function PhoneInputWithCountry({
               placeholder={placeholder}
               value={getDisplayValue()}
               onChange={(e) => handlePhoneChange(e.target.value)}
+              onBlur={onBlur}
               className={cn(
                 isRTL
                   ? 'rounded-r-none border-r-0 pe-10 pr-10'

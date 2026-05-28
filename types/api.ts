@@ -126,6 +126,7 @@ export interface Academy {
   students_count?: number;
   teachers_count?: number;
   managers_count?: number;
+  userRole?: string;
   description?: string;
   logo_id?: number;
   cover_id?: number;

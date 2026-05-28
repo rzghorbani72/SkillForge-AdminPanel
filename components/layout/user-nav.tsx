@@ -11,8 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { useAuth } from '../providers/auth-provider';
-import type { AuthUser } from '@/lib/auth';
+import { useAuthUser } from '@/components/providers/user-provider';
 import { logout } from '@/app/actions/auth';
 import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -29,22 +28,19 @@ function getInitials(name: string): string {
 }
 
 export function UserNav() {
-  const auth = useAuth() as unknown as AuthUser;
+  const { user } = useAuthUser();
   const router = useRouter();
   const { t } = useTranslation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const displayName = auth?.user?.display_name ?? auth?.user?.name ?? '';
-  const email = auth?.user?.email ?? '';
-  const phone = auth?.user?.phone_number ?? '';
-  const roleName =
-    auth?.currentProfile?.Role?.name ?? auth?.currentProfile?.role?.name ?? '';
+  const displayName = user?.displayName ?? '';
+  const email = user?.email ?? '';
+  const phone = user?.phone ?? '';
+  const roleName = user?.role ?? '';
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
   const initials = displayName
     ? getInitials(displayName)
     : (roleName?.[0]?.toUpperCase() ?? 'U');
-  const avatarUrl: string =
-    ((auth?.currentProfile as any)?.avatar as any)?.publicUrl ?? '';
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -64,7 +60,6 @@ export function UserNav() {
           )}
         >
           <Avatar className="h-8 w-8 ring-2 ring-primary/20">
-            {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
             <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
               {initials}
             </AvatarFallback>
@@ -96,7 +91,6 @@ export function UserNav() {
         <DropdownMenuLabel className="p-3 font-normal">
           <div className="flex items-center gap-3">
             <Avatar className="h-11 w-11 shrink-0 ring-2 ring-primary/20">
-              {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
               <AvatarFallback className="bg-primary text-sm font-bold text-primary-foreground">
                 {initials}
               </AvatarFallback>
@@ -124,6 +118,11 @@ export function UserNav() {
           onClick={() => router.push('/settings/profile')}
         >
           <User className="h-4 w-4 shrink-0 text-muted-foreground" />
+          {roleLabel && (
+            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+              {roleLabel}
+            </span>
+          )}
           <span>{t('userNav.profile')}</span>
         </DropdownMenuItem>
 

@@ -431,6 +431,20 @@ class ApiClient {
     });
   }
 
+  async createUser(data: {
+    name: string;
+    phone_number: string;
+    password: string;
+    role: string;
+    academy_id: number;
+    display_name?: string;
+  }) {
+    return this.request('/auth/create-user', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
   async logout() {
     return this.request('/auth/logout', {
       method: 'POST'

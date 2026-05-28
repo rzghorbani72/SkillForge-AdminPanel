@@ -55,10 +55,10 @@ export default function Header() {
             </>
           )}
 
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <LanguageSwitcher />
             <ThemeToggle />
-          </div>
+          </div> */}
 
           {/* Notification bell */}
           <button

@@ -11,8 +11,16 @@ import React, {
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 
+export interface AcademyProfile {
+  academy_id: number | null;
+  role: string;
+}
+
 interface AuthUser {
   id: number;
+  displayName: string;
+  email: string;
+  phone: string;
   role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
   academyId?: number | null;
   currentAcademy?: Record<string, unknown> | null;
@@ -21,6 +29,7 @@ interface AuthUser {
   canManageAllStores?: boolean;
   canManageAllAcademies?: boolean;
   canManagePlatform?: boolean;
+  profiles: AcademyProfile[];
   profile?: {
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
     academy_id?: number | null;
@@ -28,9 +37,9 @@ interface AuthUser {
     store?: {
       id: number;
       name?: string;
-      [key: string]: any;
+      [key: string]: unknown;
     };
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -99,8 +108,20 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         false;
       const canManagePlatform = currentUser?.canManagePlatform ?? false;
 
+      const rawProfiles: AcademyProfile[] = (
+        currentUser?.availableProfiles ??
+        currentUser?.profiles ??
+        []
+      ).map((p: any) => ({
+        academy_id: p.academy_id ?? null,
+        role: (p.Role?.name ?? p.role?.name ?? p.role ?? '') as string
+      }));
+
       setUser({
         id: (currentUser as any)?.id || 0,
+        displayName: currentUser?.display_name ?? currentUser?.name ?? '',
+        email: currentUser?.email ?? '',
+        phone: currentUser?.phone_number ?? '',
         role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
         academyId: academyId,
         currentAcademy: currentAcademy,
@@ -108,6 +129,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         platformLevel: platformLevel,
         canManageAllAcademies: canManageAllAcademies,
         canManagePlatform: canManagePlatform,
+        profiles: rawProfiles,
         profile: {
           ...((currentUser as any)?.profile || {}),
           academy_id: academyId,

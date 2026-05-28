@@ -13,6 +13,7 @@ import {
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import { apiClient } from '@/lib/api';
 import { clearAcademyData } from '@/lib/store-utils';
 import { toast } from 'react-toastify';
@@ -39,6 +40,12 @@ export default function AcademiesPage() {
     user?.role === 'ADMIN' ||
     (user as any)?.isAdminProfile ||
     user?.role === 'MANAGER';
+
+  function resolveUserRole(academy: { id: number; userRole?: string }): string {
+    const raw =
+      academy.userRole ?? (academy.id === currentAcademyId ? user?.role : '');
+    return raw ? getRoleLabel(raw, t) : '';
+  }
 
   async function handleSwitch(academyId: number) {
     if (academyId === currentAcademyId) {
@@ -195,6 +202,7 @@ export default function AcademiesPage() {
               key={academy.id}
               academy={academy as any}
               isCurrent={academy.id === currentAcademyId}
+              userRole={resolveUserRole(academy)}
               onSwitch={handleSwitch}
               onEdit={setEditAcademy}
               switching={switching}
