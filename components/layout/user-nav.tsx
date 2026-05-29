@@ -43,7 +43,6 @@ export function UserNav() {
   const { t } = useTranslation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  console.log('UserNav render', { user });
   const userDisplayName = user?.userDisplayName ?? '';
   const email = user?.email ?? '';
   const phone = user?.phone ?? '';
