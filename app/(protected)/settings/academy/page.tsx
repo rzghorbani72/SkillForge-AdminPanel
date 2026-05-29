@@ -20,7 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-interface StoreFormState {
+interface AcademyFormState {
   name: string;
   description: string;
   domain: string;
@@ -51,16 +51,16 @@ interface SubscriptionState {
   invoices?: SubscriptionInvoice[];
 }
 
-const DEFAULT_FORM: StoreFormState = {
+const DEFAULT_FORM: AcademyFormState = {
   name: '',
   description: '',
   domain: ''
 };
 
-export default function StoreSettingsPage() {
+export default function AcademySettingsPage() {
   const { t } = useTranslation();
   const { academy, isLoading } = useSettingsData();
-  const [form, setForm] = useState<StoreFormState>(DEFAULT_FORM);
+  const [form, setForm] = useState<AcademyFormState>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [subscription, setSubscription] = useState<SubscriptionState | null>(
     null

@@ -42,7 +42,7 @@ export default function SettingsOverviewPage() {
     {
       title: t('settings.storeSettings'),
       description: t('settings.storeSettingsDescription'),
-      href: '/settings/store',
+      href: '/settings/academy',
       icon: Building
     },
     ...(!isPlatformAdmin

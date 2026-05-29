@@ -64,7 +64,7 @@ function resolveAcademyRole(
   return '';
 }
 
-export function StoreSelector() {
+export function AcademySelector() {
   const { t } = useTranslation();
   const router = useRouter();
   const { academies, selectedAcademy, selectAcademy, isLoading } = useStore();

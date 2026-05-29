@@ -4,7 +4,7 @@ import ThemeToggle from '@/components/layout/ThemeToggle/theme-toggle';
 import { cn } from '@/lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
-import { StoreSelector } from './StoreSelector';
+import { AcademySelector } from './AcademySelector';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { Bell, Search } from 'lucide-react';
@@ -50,7 +50,7 @@ export default function Header() {
         <div className="flex items-center gap-2">
           {!isPlatformAdmin && (
             <>
-              <StoreSelector />
+              <AcademySelector />
               <div className="h-6 w-px bg-border/50" />
             </>
           )}

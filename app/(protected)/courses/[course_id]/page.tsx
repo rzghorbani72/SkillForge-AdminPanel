@@ -56,7 +56,7 @@ import { StatusBadge } from '@/components/shared/status-badge';
 import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
-import NoStoreState from '@/components/course/NoStoreState';
+import NoAcademyState from '@/components/course/NoAcademyState';
 
 // ─── Date range helpers ────────────────────────────────────────────────────
 
@@ -217,7 +217,7 @@ export default function CourseDetailPage() {
     fetchRevenue();
   }, [fetchRevenue]);
 
-  if (!selectedAcademy) return <NoStoreState />;
+  if (!selectedAcademy) return <NoAcademyState />;
 
   if (courseLoading) {
     return (

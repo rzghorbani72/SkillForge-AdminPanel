@@ -1,6 +1,6 @@
 import React from 'react';
 
-const NoStoreState = () => {
+const NoAcademyState = () => {
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="flex h-64 items-center justify-center">
@@ -17,4 +17,4 @@ const NoStoreState = () => {
   );
 };
 
-export default NoStoreState;
+export default NoAcademyState;

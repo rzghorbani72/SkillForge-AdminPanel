@@ -112,7 +112,7 @@ export const ar = {
     'payment-methods': 'طرق الدفع',
     invoices: 'الفواتير',
     'profile-settings': 'إعدادات الملف الشخصي',
-    'store-settings': 'إعدادات المتجر',
+    'store-settings': 'إعدادات الأكاديمية',
     'theme-settings': 'إعدادات المظهر',
     'theme-generator': 'مولد المظهر',
     'academy-pricing': 'تسعير الأكاديمية',
@@ -121,7 +121,7 @@ export const ar = {
     'ui-template-settings': 'إعدادات قالب واجهة المستخدم',
     'security-settings': 'إعدادات الأمان',
     'progress-tracking': 'تتبع التقدم',
-    'store-financial': 'المالية للمتجر',
+    'store-financial': 'المالية للأكاديمية',
     'store-financial-overview': 'نظرة عامة',
     'store-revenue': 'الإيرادات والفوائد',
     'store-costs': 'التكاليف',
@@ -130,7 +130,7 @@ export const ar = {
     'platform-financial': 'المالية للمنصة',
     'platform-overview': 'نظرة عامة على المنصة',
     'all-schools': 'جميع المدارس',
-    'all-stores': 'جميع المتاجر',
+    'all-stores': 'جميع الأكاديميات',
     'platform-records': 'سجلات المنصة',
     formulas: 'الصيغ',
     'cost-categories': 'فئات التكلفة',
@@ -1236,10 +1236,10 @@ export const ar = {
   },
   financial: {
     store: {
-      title: 'إدارة الشؤون المالية للمتجر',
+      title: 'إدارة الشؤون المالية للأكاديمية',
       description: 'نظرة عامة على الإيرادات والتكاليف والفوائد',
       overview: {
-        title: 'إدارة الشؤون المالية للمتجر',
+        title: 'إدارة الشؤون المالية للأكاديمية',
         description: 'نظرة عامة على الإيرادات والتكاليف والفوائد',
         loading: 'جاري تحميل البيانات المالية...',
         noStore: 'لم يتم اختيار متجر',
@@ -1439,13 +1439,13 @@ export const ar = {
       profitMargin: 'هامش الربح: {{margin}}%',
       platformRevenue: 'إيرادات المنصة',
       records: '{{count}} سجلات',
-      allStores: 'جميع المتاجر',
+      allStores: 'جميع الأكاديميات',
       formulas: 'الصيغ',
       costCategories: 'فئات التكلفة',
       businessFlow: 'تدفق الأعمال',
       tabs: {
         platformRecords: 'سجلات المنصة',
-        allStores: 'جميع المتاجر',
+        allStores: 'جميع الأكاديميات',
         storeRecords: 'سجلات المتجر'
       },
       platformRecords: {
@@ -1465,11 +1465,11 @@ export const ar = {
         deleteError: 'فشل في حذف السجل'
       },
       storeRecords: {
-        title: 'السجلات المالية للمتجر',
+        title: 'السجلات المالية للأكاديمية',
         description: 'سجلات التكاليف والإيرادات لكل متجر',
-        allStoresTitle: 'السجلات المالية لجميع المتاجر',
+        allStoresTitle: 'السجلات المالية لجميع الأكاديميات',
         allStoresDescription:
-          'سجلات التكاليف والإيرادات لكل متجر عبر جميع المتاجر',
+          'سجلات التكاليف والإيرادات لكل متجر عبر جميع الأكاديميات',
         addRecord: 'إضافة سجل',
         store: 'المتجر',
         period: 'الفترة',
@@ -1517,7 +1517,7 @@ export const ar = {
       accessDeniedDescription: 'هذه الصفحة متاحة فقط لمديري مستوى المنصة.'
     },
     stores: {
-      title: 'جميع المتاجر',
+      title: 'جميع الأكاديميات',
       description: 'عرض وإدارة جميع متاجر المنصة',
       loading: 'جاري تحميل المتاجر...',
       searchPlaceholder: 'البحث عن المتاجر بالاسم أو slug...',

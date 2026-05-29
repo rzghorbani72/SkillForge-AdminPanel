@@ -25,7 +25,7 @@ export function useLogin() {
       );
 
       if (response.ok) {
-        router.push('/user/stores');
+        router.push('/user/academies');
       } else {
         setError('Invalid credentials');
       }

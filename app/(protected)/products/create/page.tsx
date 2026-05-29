@@ -3,7 +3,7 @@
 import { useProductCreate } from '@/components/product/useProductCreate';
 import CreateProductHeader from '@/components/product/CreateProductHeader';
 import CreateProductForm from '@/components/product/CreateProductForm';
-import CreateProductNoStoreState from '@/components/product/CreateProductNoStoreState';
+import CreateProductNoAcademyState from '@/components/product/CreateProductNoAcademyState';
 
 export default function CreateProductPage() {
   const {
@@ -22,7 +22,7 @@ export default function CreateProductPage() {
   } = useProductCreate();
 
   if (!selectedAcademy) {
-    return <CreateProductNoStoreState />;
+    return <CreateProductNoAcademyState />;
   }
 
   return (

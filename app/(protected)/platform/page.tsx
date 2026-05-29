@@ -275,7 +275,7 @@ export default function PlatformOverviewPage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <a
-              href="/platform/stores"
+              href="/platform/academies"
               className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
             >
               <Store className="mb-2 h-8 w-8 text-primary" />

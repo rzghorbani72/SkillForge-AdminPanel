@@ -140,7 +140,7 @@ function StatCard({ label, value, sub, delta, accent }: StatCardProps) {
   );
 }
 
-export default function StoreFinancialPage() {
+export default function AcademyFinancialPage() {
   const { t } = useTranslation();
   const currentAcademy = useCurrentAcademy();
   const formatCurrency = useFormatCurrency();

@@ -54,7 +54,7 @@ type AcademySettlementRow = {
   latest_settlement_at?: string | null;
 };
 
-export default function PlatformStoresPage() {
+export default function PlatformAcademiesPage() {
   const { t, language } = useTranslation();
   const { user, isLoading: userLoading } = useAuthUser();
   const searchParams = useSearchParams();
@@ -211,7 +211,7 @@ export default function PlatformStoresPage() {
         <div className="flex items-center justify-between space-y-2">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/platform/stores">
+              <Link href="/platform/academies">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t('common.back')}
               </Link>
@@ -599,7 +599,7 @@ export default function PlatformStoresPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/platform/stores/create">
+          <Link href="/platform/academies/create">
             <Plus className="mr-2 h-4 w-4" />
             {t('platform.stores.createStore')}
           </Link>
@@ -729,13 +729,15 @@ export default function PlatformStoresPage() {
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Button variant="outline" size="sm" asChild>
-                        <Link href={`/platform/stores?academyId=${store.id}`}>
+                        <Link
+                          href={`/platform/academies?academyId=${store.id}`}
+                        >
                           {t('platform.stores.viewDetails')}
                         </Link>
                       </Button>
                       <Button variant="outline" size="sm" asChild>
                         <Link
-                          href={`/platform/stores?academyId=${store.id}&action=edit`}
+                          href={`/platform/academies?academyId=${store.id}&action=edit`}
                         >
                           {t('platform.stores.edit')}
                         </Link>

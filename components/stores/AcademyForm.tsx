@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-interface StoreFormData {
+interface AcademyFormData {
   name: string;
   private_domain: string;
   public_domain: string;
@@ -15,9 +15,9 @@ interface StoreFormData {
   is_active: boolean;
 }
 
-interface StoreFormProps {
-  formData: StoreFormData;
-  onFormDataChange: (data: StoreFormData) => void;
+interface AcademyFormProps {
+  formData: AcademyFormData;
+  onFormDataChange: (data: AcademyFormData) => void;
   domainValidation: {
     isValid: boolean;
     message: string;
@@ -30,15 +30,15 @@ interface StoreFormProps {
   isEdit?: boolean;
 }
 
-export function StoreForm({
+export function AcademyForm({
   formData,
   onFormDataChange,
   domainValidation,
   domainAvailability,
   isEdit = false
-}: StoreFormProps) {
+}: AcademyFormProps) {
   const { t } = useTranslation();
-  const updateFormData = (field: keyof StoreFormData, value: any) => {
+  const updateFormData = (field: keyof AcademyFormData, value: any) => {
     onFormDataChange({ ...formData, [field]: value });
   };
 

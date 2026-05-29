@@ -597,7 +597,9 @@ export default function PlatformFinancialPage() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                onClick={() => router.push('/platform/stores')}
+                                onClick={() =>
+                                  router.push('/platform/academies')
+                                }
                               >
                                 {t('financial.platform.storeRecords.view')}
                               </DropdownMenuItem>

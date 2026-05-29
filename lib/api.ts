@@ -337,8 +337,8 @@ class ApiClient {
         if (typeof window !== 'undefined') {
           toast.error(errorMessage);
           // Keep user in subscription-manageable area
-          if (!window.location.pathname.includes('/settings/store')) {
-            window.location.href = '/settings/store';
+          if (!window.location.pathname.includes('/settings/academy')) {
+            window.location.href = '/settings/academy';
           }
         }
         throw new Error(errorMessage);
@@ -2582,13 +2582,13 @@ class ApiClient {
     if (params?.year) queryParams.append('year', params.year.toString());
     if (params?.month) queryParams.append('month', params.month.toString());
 
-    const url = `/financial/store-records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `/financial/academy-records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any[];
   }
 
   async getAcademyFinancialSummary(academyId?: number) {
-    const url = `/financial/store-records/summary${academyId ? `?academy_id=${academyId}` : ''}`;
+    const url = `/financial/academy-records/summary${academyId ? `?academy_id=${academyId}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any;
   }
@@ -2603,7 +2603,7 @@ class ApiClient {
     if (startDate) queryParams.append('start_date', startDate);
     if (endDate) queryParams.append('end_date', endDate);
 
-    const url = `/financial/store/revenue${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `/financial/academy/revenue${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any;
   }
@@ -2777,7 +2777,7 @@ class ApiClient {
     if (startDate) queryParams.append('start_date', startDate);
     if (endDate) queryParams.append('end_date', endDate);
 
-    const url = `/financial/store/overview${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `/financial/academy/overview${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any;
   }
@@ -2792,7 +2792,7 @@ class ApiClient {
     currency?: string;
     notes?: string;
   }) {
-    const response = await this.request<any>('/financial/store-records', {
+    const response = await this.request<any>('/financial/academy-records', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -2812,17 +2812,23 @@ class ApiClient {
       notes?: string;
     }>
   ) {
-    const response = await this.request<any>(`/financial/store-records/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
+    const response = await this.request<any>(
+      `/financial/academy-records/${id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      }
+    );
     return response.data as any;
   }
 
   async deleteAcademyFinancialRecord(id: number) {
-    const response = await this.request<any>(`/financial/store-records/${id}`, {
-      method: 'DELETE'
-    });
+    const response = await this.request<any>(
+      `/financial/academy-records/${id}`,
+      {
+        method: 'DELETE'
+      }
+    );
     return response.data as any;
   }
 

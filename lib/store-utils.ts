@@ -21,6 +21,7 @@ export function getSelectedAcademyId(): number | null {
 
 export function setSelectedAcademyId(academyId: number): void {
   if (typeof window === 'undefined') return;
+  if (academyId == null) return;
   const id = academyId.toString();
   localStorage.setItem(ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID, id);
 }
@@ -37,7 +38,14 @@ export function getCachedAcademies(): Academy[] {
       const now = Date.now();
 
       if (now - lastFetchTime < CACHE_DURATION) {
-        return JSON.parse(cached);
+        const parsed: Academy[] = JSON.parse(cached);
+        // Discard cache entries that are missing id (stale data from old stripIds interceptor)
+        if (parsed.some((a) => a.id == null)) {
+          localStorage.removeItem(ACADEMY_STORAGE_KEYS.ACADEMIES_CACHE);
+          localStorage.removeItem(ACADEMY_STORAGE_KEYS.LAST_FETCH);
+          return [];
+        }
+        return parsed;
       }
     }
   } catch (error) {

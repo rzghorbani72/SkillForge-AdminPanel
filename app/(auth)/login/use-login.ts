@@ -112,6 +112,12 @@ export function useLogin() {
         (response as any).availableAcademies ||
         (response as any).available_academies ||
         [];
+
+      if (academies.length === 1) {
+        await handleAcademySelect(academies[0].id);
+        return;
+      }
+
       if (
         (response as any).requires_academy_selection ||
         academies.length > 0

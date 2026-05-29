@@ -112,7 +112,7 @@ export const tr = {
     'payment-methods': 'Ödeme Yöntemleri',
     invoices: 'Faturalar',
     'profile-settings': 'Profil Ayarları',
-    'store-settings': 'Mağaza Ayarları',
+    'store-settings': 'Akademi Ayarları',
     'theme-settings': 'Tema Ayarları',
     'theme-generator': 'Tema Üretici',
     'academy-pricing': 'Akademi Fiyatlandırması',
@@ -121,7 +121,7 @@ export const tr = {
     'ui-template-settings': 'UI Şablon Ayarları',
     'security-settings': 'Güvenlik Ayarları',
     'progress-tracking': 'İlerleme Takibi',
-    'store-financial': 'Mağaza Finansal',
+    'store-financial': 'Akademi Finansal',
     'store-financial-overview': 'Genel Bakış',
     'store-revenue': 'Gelir ve Faydalar',
     'store-costs': 'Maliyetler',
@@ -130,7 +130,7 @@ export const tr = {
     'platform-financial': 'Platform Finansal',
     'platform-overview': 'Platform Genel Bakış',
     'all-schools': 'Tüm Okullar',
-    'all-stores': 'Tüm Mağazalar',
+    'all-stores': 'Tüm Akademiler',
     'platform-records': 'Platform Kayıtları',
     formulas: 'Formüller',
     'cost-categories': 'Maliyet Kategorileri',
@@ -1473,13 +1473,13 @@ export const tr = {
       profitMargin: 'Kar marjı: {{margin}}%',
       platformRevenue: 'Platform Geliri',
       records: '{{count}} kayıt',
-      allStores: 'Tüm Mağazalar',
+      allStores: 'Tüm Akademiler',
       formulas: 'Formüller',
       costCategories: 'Maliyet Kategorileri',
       businessFlow: 'İş Akışı',
       tabs: {
         platformRecords: 'Platform Kayıtları',
-        allStores: 'Tüm Mağazalar',
+        allStores: 'Tüm Akademiler',
         storeRecords: 'Mağaza Kayıtları'
       },
       platformRecords: {
@@ -1501,7 +1501,7 @@ export const tr = {
       storeRecords: {
         title: 'Mağaza Mali Kayıtları',
         description: 'Mağaza başına maliyet ve gelir kayıtları',
-        allStoresTitle: 'Tüm Mağazaların Mali Kayıtları',
+        allStoresTitle: 'Tüm Akademilerın Mali Kayıtları',
         allStoresDescription:
           'Tüm mağazalarda mağaza başına maliyet ve gelir kayıtları',
         addRecord: 'Kayıt Ekle',
@@ -1557,7 +1557,7 @@ export const tr = {
         'Bu sayfa yalnızca platform seviyesindeki yöneticiler tarafından erişilebilir.'
     },
     stores: {
-      title: 'Tüm Mağazalar',
+      title: 'Tüm Akademiler',
       description: 'Platformdaki tüm mağazaları görüntüleyin ve yönetin',
       loading: 'Mağazalar yükleniyor...',
       searchPlaceholder: "Mağazaları ada veya slug'a göre ara...",
