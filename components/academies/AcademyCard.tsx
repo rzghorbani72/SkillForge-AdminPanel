@@ -23,8 +23,30 @@ const CARD_COLORS = [
   { bg: 'bg-teal-100', icon: 'bg-teal-200 text-teal-700' }
 ];
 
-function AcademyIcon({ name, id }: { name: string; id: number }) {
+function AcademyIcon({
+  name,
+  id,
+  logo
+}: {
+  name: string;
+  id: number;
+  logo?: { id: number; publicUrl: string } | null;
+}) {
   const color = CARD_COLORS[id % CARD_COLORS.length];
+  const logoUrl = logo?.publicUrl
+    ? logo.publicUrl.startsWith('/')
+      ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${logo.publicUrl}`
+      : logo.publicUrl
+    : null;
+  if (logoUrl) {
+    return (
+      <img
+        src={logoUrl}
+        alt={name}
+        className="h-10 w-10 rounded-xl object-cover shadow-sm"
+      />
+    );
+  }
   return (
     <div
       className={cn(
@@ -64,7 +86,9 @@ export function AcademyCard({
   const isSwitch = switching === academy.id;
   const canEnter =
     !isCurrent &&
-    ['affiliate', 'teacher', 'manager'].includes(academy.userRole ?? '');
+    ['AFFILIATE', 'TEACHER', 'MANAGER', 'ADMIN'].includes(
+      (academy.userRole ?? '').toUpperCase()
+    );
   const domain =
     academy.domain?.private_address ??
     academy.Domain?.private_address ??
@@ -97,7 +121,11 @@ export function AcademyCard({
 
         {/* Icon floats at bottom-right of header */}
         <div className="absolute bottom-[-20px] left-4">
-          <AcademyIcon name={academy.name} id={academy.id} />
+          <AcademyIcon
+            name={academy.name}
+            id={academy.id}
+            logo={academy.logo}
+          />
         </div>
       </div>
 

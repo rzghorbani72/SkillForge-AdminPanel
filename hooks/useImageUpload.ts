@@ -99,6 +99,12 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
         options.onCancel?.();
       } else {
         toast.error('Failed to upload image. Please try again.');
+        setSelectedFile(null);
+        setPreview((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return null;
+        });
+        setUploadedImageId(null);
         options.onError?.(error);
       }
     } finally {

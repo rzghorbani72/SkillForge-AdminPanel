@@ -10,10 +10,12 @@ import {
 } from '@/lib/theme';
 import { useTheme } from 'next-themes';
 import { ThemeConfigPayload } from '@/types/api';
+import { useBrandingStore } from '@/lib/store';
 
 export function ThemeInitializer() {
   const themeContext = useTheme();
   const setTheme = themeContext?.setTheme;
+  const setLogoUrl = useBrandingStore((s) => s.setLogoUrl);
 
   useEffect(() => {
     if (!setTheme) return;
@@ -24,6 +26,9 @@ export function ThemeInitializer() {
       try {
         const response = await apiClient.getCurrentThemeConfig();
         if (!isMounted) return;
+        const rawData = response as Record<string, unknown>;
+        const dataLevel = (rawData?.data as Record<string, unknown>) ?? rawData;
+        setLogoUrl((dataLevel?.logoUrl as string) ?? null);
         const config = parseThemeResponse(response);
         applyThemeVariables(config);
         setTheme('light');

@@ -32,7 +32,29 @@ function academyColor(id: number) {
   return AVATAR_COLORS[id % AVATAR_COLORS.length];
 }
 
-function AcademyAvatar({ name, id }: { name: string; id: number }) {
+function AcademyAvatar({
+  name,
+  id,
+  logo
+}: {
+  name: string;
+  id: number;
+  logo?: { id: number; publicUrl: string } | null;
+}) {
+  const logoUrl = logo?.publicUrl
+    ? logo.publicUrl.startsWith('/')
+      ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${logo.publicUrl}`
+      : logo.publicUrl
+    : null;
+  if (logoUrl) {
+    return (
+      <img
+        src={logoUrl}
+        alt={name}
+        className="h-8 w-8 shrink-0 rounded-lg object-cover"
+      />
+    );
+  }
   return (
     <div
       className={cn(
@@ -132,7 +154,7 @@ export function AcademySelector() {
 
   const selectorContent = current ? (
     <div className="flex items-center gap-2.5">
-      <AcademyAvatar name={current.name} id={current.id} />
+      <AcademyAvatar name={current.name} id={current.id} logo={current.logo} />
       <div className="min-w-0 text-start">
         <p className="max-w-[130px] truncate text-sm font-semibold leading-tight">
           {current.name}
@@ -210,7 +232,11 @@ export function AcademySelector() {
                       )}
                       onClick={() => handleSelectAcademy(academy.id)}
                     >
-                      <AcademyAvatar name={academy.name} id={academy.id} />
+                      <AcademyAvatar
+                        name={academy.name}
+                        id={academy.id}
+                        logo={academy.logo}
+                      />
                       <div className="min-w-0 flex-1 text-start">
                         <p
                           className={cn(

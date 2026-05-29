@@ -382,3 +382,12 @@ export const useUserStore = create<UserState & UserActions>()(
     }
   )
 );
+
+// Branding store — holds logo URL resolved from the theme config API
+export const useBrandingStore = create<{
+  logoUrl: string | null;
+  setLogoUrl: (url: string | null) => void;
+}>()((set) => ({
+  logoUrl: null,
+  setLogoUrl: (url) => set({ logoUrl: url })
+}));

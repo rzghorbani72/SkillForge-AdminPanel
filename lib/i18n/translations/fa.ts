@@ -561,7 +561,11 @@ export const fa = {
     categoryBusiness: 'کسب‌وکار',
     categoryEntrance: 'کنکور',
     categoryArt: 'هنر',
-    categoryFinance: 'مالی'
+    categoryFinance: 'مالی',
+    brandingLogo: 'لوگوی آکادمی',
+    brandingLogoHint: 'کلیک کنید · PNG یا JPG، حداکثر ۲ مگابایت',
+    brandingColor: 'رنگ برند',
+    planStepHint: 'می‌توانید بعداً پلن خود را تغییر دهید یا نادیده بگیرید'
   },
   courses: {
     title: 'دوره‌ها',

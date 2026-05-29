@@ -17,9 +17,12 @@ import { getRoleLabel } from '@/lib/i18n/role-label';
 import { apiClient } from '@/lib/api';
 import { clearAcademyData } from '@/lib/store-utils';
 import { toast } from 'react-toastify';
-import { AcademyCard, AddAcademyCard } from '@/components/stores/AcademyCard';
-import { AcademyCreateModal } from '@/components/stores/AcademyCreateModal';
-import { AcademyEditModal } from '@/components/stores/AcademyEditModal';
+import {
+  AcademyCard,
+  AddAcademyCard
+} from '@/components/academies/AcademyCard';
+import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
+import { AcademyEditModal } from '@/components/academies/AcademyEditModal';
 import type { Academy } from '@/types/api';
 
 export default function AcademiesPage() {
@@ -63,16 +66,54 @@ export default function AcademiesPage() {
     }
   }
 
+  function buildTheme(hex: string) {
+    const ch = (h: string, amt: number) =>
+      Math.min(255, Math.max(0, parseInt(h, 16) + amt))
+        .toString(16)
+        .padStart(2, '0');
+    const r = hex.slice(1, 3),
+      g = hex.slice(3, 5),
+      b = hex.slice(5, 7);
+    return {
+      primary_color: hex,
+      primary_color_light: `#${ch(r, 60)}${ch(g, 60)}${ch(b, 60)}`,
+      primary_color_dark: `#${ch(r, -40)}${ch(g, -40)}${ch(b, -40)}`
+    };
+  }
+
   async function handleCreate(data: {
     name: string;
     slug: string;
     description?: string;
+    category?: string;
+    logoId?: number;
+    primaryColor?: string;
+    selectedPlan?: { slug: string; price_monthly: number };
   }) {
     await apiClient.createAcademy({
       name: data.name,
       private_domain: data.slug,
-      description: data.description || undefined
+      description: data.description || undefined,
+      logo_id: data.logoId
     });
+
+    await Promise.all([
+      data.selectedPlan
+        ? apiClient
+            .renewCurrentAcademySubscription({
+              plan_name: data.selectedPlan.slug,
+              months: 1,
+              amount: data.selectedPlan.price_monthly
+            })
+            .catch(() => {})
+        : Promise.resolve(),
+      data.primaryColor
+        ? apiClient
+            .updateCurrentThemeConfig(buildTheme(data.primaryColor))
+            .catch(() => {})
+        : Promise.resolve()
+    ]);
+
     toast.success(t('stores.storeCreated'));
     await refreshAcademies();
   }
@@ -84,14 +125,36 @@ export default function AcademiesPage() {
       slug: string;
       publicAddress: string;
       description: string;
+      logoId?: number;
+      primaryColor?: string;
+      selectedPlan?: { slug: string; price_monthly: number };
     }
   ) {
     await apiClient.updateAcademyById(id, {
       name: data.name,
-      slug: data.slug,
+      private_domain: data.slug,
       public_address: data.publicAddress || null,
-      description: data.description || undefined
+      description: data.description || undefined,
+      logo_id: data.logoId
     });
+
+    await Promise.all([
+      data.selectedPlan
+        ? apiClient
+            .renewCurrentAcademySubscription({
+              plan_name: data.selectedPlan.slug,
+              months: 1,
+              amount: data.selectedPlan.price_monthly
+            })
+            .catch(() => {})
+        : Promise.resolve(),
+      data.primaryColor
+        ? apiClient
+            .updateCurrentThemeConfig(buildTheme(data.primaryColor))
+            .catch(() => {})
+        : Promise.resolve()
+    ]);
+
     toast.success(t('stores.storeUpdated'));
     await refreshAcademies();
   }

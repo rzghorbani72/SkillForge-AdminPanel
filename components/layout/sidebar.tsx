@@ -11,6 +11,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import Link from '@/components/ui/link';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useBrandingStore } from '@/lib/store';
 
 type SidebarProps = {
   className?: string;
@@ -21,6 +22,7 @@ export default function Sidebar({ className }: SidebarProps) {
   const { user, isLoading } = useAuthUser();
   const { t } = useTranslation();
   const currentAcademy = useCurrentAcademy();
+  const configLogoUrl = useBrandingStore((s) => s.logoUrl);
 
   const userRole = useMemo(() => {
     if (!user) return null;
@@ -90,9 +92,23 @@ export default function Sidebar({ className }: SidebarProps) {
           isMinimized && 'justify-center px-2'
         )}
       >
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md shadow-primary/25 transition-all duration-200">
-          <GraduationCap className="h-5 w-5 text-white" />
-        </div>
+        {(() => {
+          const raw = configLogoUrl ?? currentAcademy?.logo?.publicUrl;
+          const src = raw?.startsWith('/')
+            ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${raw}`
+            : raw;
+          return src ? (
+            <img
+              src={src}
+              alt={academyName}
+              className="h-9 w-9 shrink-0 rounded-xl object-cover"
+            />
+          ) : (
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md shadow-primary/25 transition-all duration-200">
+              <GraduationCap className="h-5 w-5 text-white" />
+            </div>
+          );
+        })()}
         {!isMinimized && (
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold leading-tight">

@@ -601,6 +601,7 @@ class ApiClient {
     name: string;
     private_domain: string;
     description?: string;
+    logo_id?: number;
   }) {
     return this.request('/academies', {
       method: 'POST',
@@ -611,7 +612,9 @@ class ApiClient {
   async updateAcademy(storeData: {
     name?: string;
     private_domain?: string;
+    public_address?: string | null;
     description?: string;
+    logo_id?: number;
   }) {
     return this.request('/academies/current', {
       method: 'PATCH',
@@ -620,18 +623,16 @@ class ApiClient {
   }
 
   async updateAcademyById(
-    id: number,
+    _id: number,
     data: {
       name?: string;
-      slug?: string;
+      private_domain?: string;
       public_address?: string | null;
       description?: string;
+      logo_id?: number;
     }
   ) {
-    return this.request(`/academies/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
+    return this.updateAcademy(data);
   }
 
   async getCurrentAcademySubscription() {
@@ -3418,7 +3419,7 @@ class ApiClient {
   }
 
   async getStore(id: number) {
-    const res = await this.request<any>(`/stores/${id}`);
+    const res = await this.request<any>(`/academies/${id}`);
     return (res.data as any)?.data ?? res.data;
   }
 
@@ -3428,7 +3429,7 @@ class ApiClient {
     country?: string;
     is_active?: boolean;
   }) {
-    const res = await this.request<any>('/stores', {
+    const res = await this.request<any>('/academies', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -3444,7 +3445,7 @@ class ApiClient {
       is_active: boolean;
     }>
   ) {
-    const res = await this.request<any>(`/stores/${id}`, {
+    const res = await this.request<any>(`/academies/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data)
     });
@@ -3474,12 +3475,12 @@ class ApiClient {
   // -------------------------------------------------------------------------
 
   async getStoreSettings(academyId: number) {
-    const res = await this.request<any>(`/stores/${academyId}/settings`);
+    const res = await this.request<any>(`/academies/${academyId}/settings`);
     return (res.data as any)?.data ?? res.data;
   }
 
   async setStoreSetting(academyId: number, key: string, value: string) {
-    const res = await this.request<any>(`/stores/${academyId}/settings`, {
+    const res = await this.request<any>(`/academies/${academyId}/settings`, {
       method: 'POST',
       body: JSON.stringify({ key, value })
     });

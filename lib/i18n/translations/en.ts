@@ -555,7 +555,11 @@ export const en = {
     categoryBusiness: 'Business',
     categoryEntrance: 'Entrance Exam',
     categoryArt: 'Art',
-    categoryFinance: 'Finance'
+    categoryFinance: 'Finance',
+    brandingLogo: 'Academy Logo',
+    brandingLogoHint: 'Click to upload · PNG or JPG, max 2 MB',
+    brandingColor: 'Brand Color',
+    planStepHint: 'You can always change or skip your plan later'
   },
   courses: {
     title: 'Courses',

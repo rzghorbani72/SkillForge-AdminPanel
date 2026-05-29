@@ -82,12 +82,13 @@ function contrast(hex: string): string {
 
 // ── Theme config shape ────────────────────────────────────────────────────────
 
-interface ServerThemeConfig {
+export interface ServerThemeConfig {
   primary_color?: string;
   secondary_color?: string;
   accent_color?: string;
   background_color?: string;
   dark_mode?: boolean | null;
+  logoUrl?: string | null;
 }
 
 // ── CSS generation ────────────────────────────────────────────────────────────
@@ -160,7 +161,9 @@ export async function fetchAdminThemeConfigs(
     if (!res.ok) return null;
     const json = await res.json();
     const data = json?.data ?? json;
-    return data?.configs ?? data ?? null;
+    const configs = data?.configs ?? data ?? null;
+    if (!configs) return null;
+    return { ...configs, logoUrl: data?.logoUrl ?? null };
   } catch {
     return null;
   }

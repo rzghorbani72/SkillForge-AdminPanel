@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Upload, Loader2, X, Library } from 'lucide-react';
@@ -51,6 +51,15 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
     id: number;
     publicUrl: string;
   } | null>(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
+
+  const handleError = useCallback(
+    (error: any) => {
+      setFileInputKey((k) => k + 1);
+      onError?.(error);
+    },
+    [onError]
+  );
 
   const imageUpload = useImageUpload({
     title,
@@ -59,7 +68,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
       setSelectedImage({ id: image.id, publicUrl: image.url });
       onSuccess?.(image);
     },
-    onError,
+    onError: handleError,
     onCancel
   });
 
@@ -72,6 +81,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
     <div className="space-y-4">
       {/* File Input */}
       <Input
+        key={fileInputKey}
         type="file"
         accept="image/*"
         onChange={imageUpload.handleFileChange}

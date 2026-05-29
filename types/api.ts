@@ -147,7 +147,7 @@ export interface Academy {
   /** Present when API returns Prisma relation casing */
   Domain?: Pick<Domain, 'private_address' | 'public_address' | 'id'> &
     Partial<Domain>;
-  logo?: Media;
+  logo?: { id: number; publicUrl: string } | null;
   cover?: Media;
   profiles?: Profile[];
   courses?: Course[];
