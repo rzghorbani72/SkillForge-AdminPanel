@@ -4,39 +4,23 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  CheckCircle2,
-  Sparkles,
-  User,
-  Lock,
-  Phone
-} from 'lucide-react';
+import { CheckCircle2, Sparkles } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
-import { toE164Iran, toEnglishDigits } from '@/lib/phone-utils';
+import { toE164Iran } from '@/lib/phone-utils';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
-
-// ─── Validation ───────────────────────────────────────────────────────────
+import { StepIndicator } from './_components/step-indicator';
+import {
+  RegisterDetailsForm,
+  type RegisterValues
+} from './_components/register-details-form';
+import { RegisterOtpStep } from './_components/register-otp-step';
 
 const useRegisterSchema = (t: (k: string) => string) =>
   z
@@ -51,22 +35,11 @@ const useRegisterSchema = (t: (k: string) => string) =>
       path: ['confirmPassword']
     });
 
-type RegisterValues = {
-  name: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-};
-
-// ─── Page ─────────────────────────────────────────────────────────────────
-
 export default function RegisterPage() {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const router = useRouter();
 
-  const [showPw, setShowPw] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [step, setStep] = useState<'details' | 'verify'>('details');
   const [otpCode, setOtpCode] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
@@ -80,7 +53,6 @@ export default function RegisterPage() {
     defaultValues: { name: '', phone: '', password: '', confirmPassword: '' }
   });
 
-  // Step 1 → send phone OTP
   async function onDetailsSubmit(values: RegisterValues) {
     setOtpLoading(true);
     try {
@@ -92,26 +64,23 @@ export default function RegisterPage() {
       setPhoneVerified(false);
       setOtpCode('');
 
-      // TODO: Remove when real SMS/email provider is integrated
+      // TODO: Remove debug OTP display when real SMS provider is integrated
+      const sentMsg = response?.data?.message ?? t('auth.sendVerificationCode');
       if (response?.data?.otp) {
-        toast.info(
-          `${t('auth.sendVerificationCode')}\n\n🔐 Code: ${response.data.otp}`,
-          {
-            autoClose: 8000,
-            style: { whiteSpace: 'pre-wrap' }
-          }
-        );
+        toast.info(`${sentMsg}\n\n🔐 Code: ${response.data.otp}`, {
+          autoClose: 8000,
+          style: { whiteSpace: 'pre-wrap' }
+        });
       } else {
-        toast.info(t('auth.sendVerificationCode'));
+        toast.info(sentMsg);
       }
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err: unknown) {
+      toast.error((err as { message?: string })?.message ?? t('common.error'));
     } finally {
       setOtpLoading(false);
     }
   }
 
-  // Step 2a → verify the OTP code only
   async function verifyCode() {
     const e164Phone = toE164Iran(form.getValues('phone'));
     setVerifying(true);
@@ -120,20 +89,24 @@ export default function RegisterPage() {
         e164Phone,
         otpCode,
         OtpType.REGISTER_PHONE_VERIFICATION
-      )) as any;
+      )) as {
+        data?: { success?: boolean; message?: string };
+        success?: boolean;
+        message?: string;
+      };
       if (!result?.data?.success && !result?.success) {
-        toast.error(t('auth.enterVerificationCode'));
+        toast.error(result?.data?.message ?? t('common.error'));
         return;
       }
+      toast.success(result?.data?.message ?? t('auth.verified'));
       setPhoneVerified(true);
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err: unknown) {
+      toast.error((err as { message?: string })?.message ?? t('common.error'));
     } finally {
       setVerifying(false);
     }
   }
 
-  // Step 2b → register only (phone already verified above)
   async function createAccount() {
     const values = form.getValues();
     const e164Phone = toE164Iran(values.phone);
@@ -150,8 +123,8 @@ export default function RegisterPage() {
       setDone(true);
       toast.success(t('auth.accountCreatedTitle'));
       setTimeout(() => router.push('/login'), 1800);
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err: unknown) {
+      toast.error((err as { message?: string })?.message ?? t('common.error'));
     } finally {
       setSubmitting(false);
     }
@@ -168,7 +141,7 @@ export default function RegisterPage() {
         OtpType.REGISTER_PHONE_VERIFICATION
       );
 
-      // TODO: Remove when real SMS/email provider is integrated
+      // TODO: Remove when real SMS provider is integrated
       if (response?.data?.otp) {
         toast.info(`${t('auth.resendCode')}\n\n🔐 Code: ${response.data.otp}`, {
           autoClose: 8000,
@@ -184,8 +157,6 @@ export default function RegisterPage() {
     }
   }
 
-  // ─── Done screen ─────────────────────────────────────────────────────────
-
   if (done) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -200,22 +171,18 @@ export default function RegisterPage() {
     );
   }
 
-  // ─── Shared layout wrapper ────────────────────────────────────────────────
-
   return (
     <>
       <LanguageDetector />
       <div
         className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
-        dir={'rtl'}
+        dir="rtl"
       >
-        {/* Language switcher */}
         <div className={cn('fixed top-4 z-50', isRTL ? 'left-4' : 'right-4')}>
           <LanguageSwitcher />
         </div>
 
         <div className="w-full max-w-sm">
-          {/* Brand */}
           <div className="mb-8 text-center">
             <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/25">
               <Sparkles className="h-6 w-6 text-primary-foreground" />
@@ -228,328 +195,34 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {/* Step indicator */}
-          <div className="mb-6 flex items-center justify-center gap-2">
-            {(['details', 'verify'] as const).map((s, idx) => {
-              const isActive = step === s;
-              const isDone = step === 'verify' && s === 'details';
-              return (
-                <div key={s} className="flex items-center gap-2">
-                  <div
-                    className={cn(
-                      'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-colors',
-                      isDone
-                        ? 'bg-primary text-primary-foreground'
-                        : isActive
-                          ? 'border-2 border-primary text-primary'
-                          : 'border-2 border-muted-foreground/30 text-muted-foreground/40'
-                    )}
-                  >
-                    {isDone ? '✓' : idx + 1}
-                  </div>
-                  {idx === 0 && (
-                    <div
-                      className={cn(
-                        'h-px w-10',
-                        step === 'verify' ? 'bg-primary' : 'bg-border'
-                      )}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          <StepIndicator totalSteps={2} current={step === 'details' ? 0 : 1} />
 
-          {/* Card */}
           <div className="rounded-2xl border bg-card p-8 shadow-sm">
-            {/* ── Step 1: Details ── */}
             {step === 'details' && (
-              <>
-                <p className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('auth.yourDetails')}
-                </p>
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onDetailsSubmit)}
-                    className="space-y-4"
-                  >
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('auth.fullName')}</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <User
-                                className={cn(
-                                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                                  isRTL ? 'right-3' : 'left-3'
-                                )}
-                              />
-                              <Input
-                                className={isRTL ? 'pr-9' : 'pl-9'}
-                                placeholder={t('auth.fullNamePlaceholder')}
-                                {...field}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('auth.phoneNumber')}</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Phone
-                                className={cn(
-                                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                                  isRTL ? 'right-3' : 'left-3'
-                                )}
-                              />
-                              <Input
-                                type="tel"
-                                dir="ltr"
-                                className={isRTL ? 'pr-9' : 'pl-9'}
-                                placeholder={t('auth.phonePlaceholder')}
-                                {...field}
-                                onChange={(e) =>
-                                  field.onChange(
-                                    toEnglishDigits(e.target.value)
-                                  )
-                                }
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('auth.password')}</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Lock
-                                className={cn(
-                                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                                  isRTL ? 'right-3' : 'left-3'
-                                )}
-                              />
-                              <Input
-                                type={showPw ? 'text' : 'password'}
-                                className={cn(
-                                  isRTL ? 'pl-9 pr-9' : 'pl-9 pr-9'
-                                )}
-                                placeholder={t('auth.passwordPlaceholder')}
-                                {...field}
-                                onChange={(e) =>
-                                  field.onChange(
-                                    toEnglishDigits(e.target.value)
-                                  )
-                                }
-                              />
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                aria-label="toggle"
-                                className={cn(
-                                  'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
-                                  isRTL ? 'left-0' : 'right-0'
-                                )}
-                                onClick={() => setShowPw((v) => !v)}
-                              >
-                                {showPw ? (
-                                  <EyeOff className="h-4 w-4" />
-                                ) : (
-                                  <Eye className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('auth.confirmPassword')}</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Lock
-                                className={cn(
-                                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                                  isRTL ? 'right-3' : 'left-3'
-                                )}
-                              />
-                              <Input
-                                type={showConfirm ? 'text' : 'password'}
-                                className={cn(
-                                  isRTL ? 'pl-9 pr-9' : 'pl-9 pr-9'
-                                )}
-                                placeholder={t(
-                                  'auth.repeatPasswordPlaceholder'
-                                )}
-                                {...field}
-                                onChange={(e) =>
-                                  field.onChange(
-                                    toEnglishDigits(e.target.value)
-                                  )
-                                }
-                              />
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                aria-label="toggle confirm"
-                                className={cn(
-                                  'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
-                                  isRTL ? 'left-0' : 'right-0'
-                                )}
-                                onClick={() => setShowConfirm((v) => !v)}
-                              >
-                                {showConfirm ? (
-                                  <EyeOff className="h-4 w-4" />
-                                ) : (
-                                  <Eye className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button
-                      type="submit"
-                      className="mt-2 w-full"
-                      disabled={otpLoading}
-                    >
-                      {otpLoading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('auth.sending')}
-                        </>
-                      ) : (
-                        t('auth.continueBtn')
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-              </>
+              <RegisterDetailsForm
+                form={form}
+                loading={otpLoading}
+                onSubmit={onDetailsSubmit}
+              />
             )}
 
-            {/* ── Step 2: Verify email ── */}
             {step === 'verify' && (
-              <div className="space-y-5">
-                <div className="space-y-1 rounded-xl bg-primary/5 p-4 text-center">
-                  <Phone className="mx-auto h-8 w-8 text-primary" />
-                  <p className="text-sm font-semibold">
-                    {t('auth.verifyPhoneTitle')}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t('auth.verifyPhoneDesc').replace(
-                      '{phone}',
-                      form.getValues('phone')
-                    )}
-                  </p>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="otp-code">
-                    {t('auth.enterVerificationCode')}
-                  </Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="otp-code"
-                      value={otpCode}
-                      onChange={(e) =>
-                        setOtpCode(toEnglishDigits(e.target.value))
-                      }
-                      placeholder={t('auth.verificationCodePlaceholder')}
-                      maxLength={8}
-                      dir="rtl"
-                      disabled={phoneVerified}
-                      className="text-center font-mono text-lg tracking-[0.3em]"
-                    />
-                    {!phoneVerified && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={verifying || otpCode.length < 4}
-                        onClick={verifyCode}
-                        className="shrink-0"
-                      >
-                        {verifying ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          t('auth.verifyEmailOtp')
-                        )}
-                      </Button>
-                    )}
-                  </div>
-                  {phoneVerified && (
-                    <p className="flex items-center gap-1.5 text-sm text-emerald-600">
-                      <CheckCircle2 className="h-4 w-4" />
-                      {t('auth.verified')}
-                    </p>
-                  )}
-                </div>
-
-                <Button
-                  type="button"
-                  className="w-full"
-                  disabled={submitting || !phoneVerified}
-                  onClick={createAccount}
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {t('auth.creatingAccount')}
-                    </>
-                  ) : (
-                    t('auth.createAccount')
-                  )}
-                </Button>
-
-                <div className="flex items-center justify-between text-sm">
-                  <button
-                    type="button"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                    onClick={() => setStep('details')}
-                  >
-                    ← {t('auth.backToLogin')}
-                  </button>
-                  <button
-                    type="button"
-                    className="text-primary hover:underline disabled:opacity-50"
-                    disabled={otpLoading}
-                    onClick={resendOtp}
-                  >
-                    {otpLoading ? t('auth.resending') : t('auth.resendCode')}
-                  </button>
-                </div>
-              </div>
+              <RegisterOtpStep
+                phone={form.getValues('phone')}
+                otpCode={otpCode}
+                setOtpCode={setOtpCode}
+                otpLoading={otpLoading}
+                verifying={verifying}
+                phoneVerified={phoneVerified}
+                submitting={submitting}
+                onVerify={verifyCode}
+                onCreateAccount={createAccount}
+                onResend={resendOtp}
+                onBack={() => setStep('details')}
+              />
             )}
           </div>
 
-          {/* Terms */}
           <p className="mt-4 text-center text-xs text-muted-foreground">
             {t('auth.byCreatingAccount')}{' '}
             <Link href="/terms" className="underline hover:text-foreground">
@@ -562,7 +235,6 @@ export default function RegisterPage() {
             {t('auth.agree')}
           </p>
 
-          {/* Footer */}
           <p className="mt-3 text-center text-sm text-muted-foreground">
             {t('auth.alreadyHaveAccount')}{' '}
             <Link

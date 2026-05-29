@@ -194,7 +194,6 @@ class AuthService {
 
       throw new Error('Login failed');
     } catch (error) {
-      ErrorHandler.handleValidationErrors(error);
       throw error;
     }
   }
