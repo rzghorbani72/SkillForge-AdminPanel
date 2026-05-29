@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { t } from './i18n';
 import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
 import { getBrowserApiBaseUrl } from './api-base-url';
+import { ApiResponseError } from './api-toast';
 
 const API_BASE_URL = getBrowserApiBaseUrl();
 
@@ -345,11 +346,14 @@ class ApiClient {
       }
 
       if (!response.ok) {
-        const msg = data && (data.message || data.error);
-        throw new Error(
-          Array.isArray(msg)
-            ? msg.join(', ')
-            : msg || `HTTP error! status: ${response.status}`
+        const fa =
+          data?.message ||
+          data?.error ||
+          `HTTP error! status: ${response.status}`;
+        const en = data?.message_en || (Array.isArray(fa) ? fa.join(', ') : fa);
+        throw new ApiResponseError(
+          Array.isArray(fa) ? fa.join(', ') : String(fa),
+          Array.isArray(en) ? en.join(', ') : String(en)
         );
       }
 
@@ -601,7 +605,7 @@ class ApiClient {
     name: string;
     private_domain: string;
     description?: string;
-    logo_id?: number;
+    logo_id?: string;
   }) {
     return this.request('/academies', {
       method: 'POST',
@@ -614,7 +618,7 @@ class ApiClient {
     private_domain?: string;
     public_address?: string | null;
     description?: string;
-    logo_id?: number;
+    logo_id?: string;
   }) {
     return this.request('/academies/current', {
       method: 'PATCH',
@@ -629,7 +633,7 @@ class ApiClient {
       private_domain?: string;
       public_address?: string | null;
       description?: string;
-      logo_id?: number;
+      logo_id?: string;
     }
   ) {
     return this.updateAcademy(data);

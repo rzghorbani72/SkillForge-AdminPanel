@@ -22,6 +22,7 @@ import { apiClient } from '@/lib/api';
 import { Category, Course } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useCategoriesStore } from '@/lib/store';
+import { useAutoSelect } from '@/hooks/useAutoSelect';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
@@ -91,8 +92,6 @@ const CreateProductAssociations = ({ form }: Props) => {
     fetchCourses(selectedCategoryId);
   }, [selectedCategoryId, fetchCourses]);
 
-  // Filter categories - show all active categories (products can use any category type)
-  // or filter by a specific type if needed. For now, show all active categories.
   const productCategories = categories
     .filter((category) => category.is_active)
     .map((category) => ({
@@ -100,6 +99,15 @@ const CreateProductAssociations = ({ form }: Props) => {
       name: category.name,
       type: category.type
     }));
+
+  const categoryOptions = productCategories.map((c) => ({
+    value: c.id.toString()
+  }));
+  useAutoSelect(
+    categoryOptions,
+    (value) => form.setValue('category_id', value),
+    form.watch('category_id')
+  );
 
   const courseIds = form.watch('course_ids') || [];
 

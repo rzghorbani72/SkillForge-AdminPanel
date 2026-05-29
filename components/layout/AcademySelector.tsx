@@ -1,7 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, ChevronDown, Loader2, Plus, Search } from 'lucide-react';
+import {
+  Check,
+  ChevronDown,
+  GraduationCap,
+  Loader2,
+  Plus,
+  Search
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/components/providers/user-provider';
@@ -58,11 +65,11 @@ function AcademyAvatar({
   return (
     <div
       className={cn(
-        'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white',
+        'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
         academyColor(id)
       )}
     >
-      {name ? name[0].toUpperCase() : '?'}
+      <GraduationCap className="h-4 w-4 text-white" />
     </div>
   );
 }
@@ -158,9 +165,6 @@ export function AcademySelector() {
       <div className="min-w-0 text-start">
         <p className="max-w-[130px] truncate text-sm font-semibold leading-tight">
           {current.name}
-        </p>
-        <p className="max-w-[130px] truncate text-xs text-muted-foreground">
-          {currentRoleLabel || getAcademyDomain(current)}
         </p>
       </div>
       {hasMultiple && (

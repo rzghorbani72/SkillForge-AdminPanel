@@ -227,6 +227,18 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
         options.onCancel?.();
       } else {
         toast.error('Failed to upload video. Please try again.');
+        setSelectedFile(null);
+        setSelectedPosterFile(null);
+        setPreview((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return null;
+        });
+        setPosterPreview((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return null;
+        });
+        setUploadedVideoId(null);
+        setUploadProgress(0);
         options.onError?.(error);
       }
       setIsUploading(false);

@@ -111,7 +111,7 @@ export function RegisterDetailsForm({
               <FormItem>
                 <FormLabel>{t('auth.password')}</FormLabel>
                 <FormControl>
-                  <div className="relative">
+                  <div className="relative" dir="ltr">
                     <Lock
                       className={cn(
                         'absolute top-2.5 h-4 w-4 text-muted-foreground',
@@ -158,7 +158,7 @@ export function RegisterDetailsForm({
               <FormItem>
                 <FormLabel>{t('auth.confirmPassword')}</FormLabel>
                 <FormControl>
-                  <div className="relative">
+                  <div className="relative" dir="ltr">
                     <Lock
                       className={cn(
                         'absolute top-2.5 h-4 w-4 text-muted-foreground',

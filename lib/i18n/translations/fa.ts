@@ -2853,7 +2853,7 @@ export const fa = {
     blockTestimonials: 'نظرات',
     blockFooter: 'پاصفحه',
     blockSidebar: 'نوار کناری',
-    defaultSiteUrl: 'https://آکادمی-شما.ir'
+    defaultSiteUrl: 'https://my-academy.ir'
   },
   userNav: {
     profile: 'پروفایل',
@@ -2863,7 +2863,7 @@ export const fa = {
     roles: {
       ADMIN: 'مدیر کل',
       SUPPORT: 'پشتیبانی',
-      MANAGER: 'مدیر آکادمی',
+      MANAGER: 'مدیر',
       TEACHER: 'مدرس',
       STUDENT: 'دانشجو',
       USER: 'کاربر'

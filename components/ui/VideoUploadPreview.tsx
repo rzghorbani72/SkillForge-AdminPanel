@@ -64,15 +64,18 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
     publicUrl: string;
     title?: string;
   } | null>(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
 
   const videoUpload = useVideoUpload({
     title,
     description,
     onSuccess: (videoId) => {
-      // Handle uploaded video
       onSuccess?.({ id: parseInt(videoId), url: '' });
     },
-    onError,
+    onError: (error) => {
+      setFileInputKey((k) => k + 1);
+      onError?.(error);
+    },
     onCancel
   });
 
@@ -94,6 +97,7 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
       {/* Video File Input */}
       <div className="space-y-2">
         <Input
+          key={fileInputKey}
           id="video-upload"
           type="file"
           accept="video/mp4,video/webm,video/ogg"

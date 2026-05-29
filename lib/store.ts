@@ -257,10 +257,7 @@ export interface AuthUser {
   currentAcademy?: {
     id: number;
     name: string;
-    slug: string;
     domain?: string | null;
-    currency?: string;
-    currency_symbol?: string;
   } | null;
   permissions?: string[];
   [key: string]: any;
@@ -324,9 +321,7 @@ export const useUserStore = create<UserState & UserActions>()(
           const isAdminProfile = currentUser?.isAdminProfile ?? false;
           const platformLevel = currentUser?.platformLevel ?? false;
           const canManageAllAcademies =
-            currentUser?.canManageAllAcademies ??
-            currentUser?.canManageAllStores ??
-            false;
+            currentUser?.canManageAllAcademies ?? false;
           const canManagePlatform = currentUser?.canManagePlatform ?? false;
 
           const user: AuthUser = {

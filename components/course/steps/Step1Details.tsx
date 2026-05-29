@@ -22,7 +22,7 @@ interface Step1Props {
   onRemoveCover: () => void;
   fileRef: React.RefObject<HTMLInputElement | null>;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  categories: { id: number; name: string }[];
+  categories: { id: string; name: string }[];
   teachers: { id: number; display_name: string }[];
   showNewCategory: boolean;
   newCategoryName: string;

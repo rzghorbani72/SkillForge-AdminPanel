@@ -23,6 +23,14 @@ const CARD_COLORS = [
   { bg: 'bg-teal-100', icon: 'bg-teal-200 text-teal-700' }
 ];
 
+function colorIndex(id: string | number): number {
+  if (typeof id === 'number') return id % CARD_COLORS.length;
+  let hash = 0;
+  for (let i = 0; i < id.length; i++)
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return hash % CARD_COLORS.length;
+}
+
 function AcademyIcon({
   name,
   id,
@@ -32,7 +40,7 @@ function AcademyIcon({
   id: number;
   logo?: { id: number; publicUrl: string } | null;
 }) {
-  const color = CARD_COLORS[id % CARD_COLORS.length];
+  const color = CARD_COLORS[colorIndex(id)];
   const logoUrl = logo?.publicUrl
     ? logo.publicUrl.startsWith('/')
       ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${logo.publicUrl}`
@@ -82,13 +90,16 @@ export function AcademyCard({
   switching,
   t
 }: AcademyCardProps) {
-  const color = CARD_COLORS[academy.id % CARD_COLORS.length];
+  const color = CARD_COLORS[colorIndex(academy.id)];
   const isSwitch = switching === academy.id;
   const canEnter =
     !isCurrent &&
     ['AFFILIATE', 'TEACHER', 'MANAGER', 'ADMIN'].includes(
       (academy.userRole ?? '').toUpperCase()
     );
+  const canEdit = ['MANAGER', 'ADMIN'].includes(
+    (academy.userRole ?? '').toUpperCase()
+  );
   const domain =
     academy.domain?.private_address ??
     academy.Domain?.private_address ??
@@ -140,14 +151,16 @@ export function AcademyCard({
               {userRole}
             </span>
           )}
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-8 w-8 rounded-xl p-0"
-            onClick={() => onEdit(academy)}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </Button>
+          {canEdit && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-8 w-8 rounded-xl p-0"
+              onClick={() => onEdit(academy)}
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </Button>
+          )}
         </div>
         <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
           {domain}

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { logout } from '@/app/actions/auth';
-import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
+import { Building2, ChevronDown, LogOut, Settings, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -27,19 +27,33 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
+function formatLastLogin(date: string): string {
+  return new Intl.DateTimeFormat(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(date));
+}
+
 export function UserNav() {
   const { user } = useAuthUser();
   const router = useRouter();
   const { t } = useTranslation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const displayName = user?.displayName ?? '';
+  console.log('UserNav render', { user });
+  const userDisplayName = user?.userDisplayName ?? '';
   const email = user?.email ?? '';
   const phone = user?.phone ?? '';
   const roleName = user?.role ?? '';
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
-  const initials = displayName
-    ? getInitials(displayName)
+  const lastLogin = user?.lastLogin ?? null;
+  const currentAcademy = user?.currentAcademy ?? null;
+  const headingName = userDisplayName;
+  const initials = headingName
+    ? getInitials(headingName)
     : (roleName?.[0]?.toUpperCase() ?? 'U');
 
   async function handleLogout() {
@@ -68,13 +82,8 @@ export function UserNav() {
           {/* Name + role — hidden on mobile */}
           <div className="hidden flex-col items-start sm:flex">
             <span className="font-medium leading-tight text-foreground">
-              {displayName || roleLabel}
+              {headingName}
             </span>
-            {displayName && roleLabel && (
-              <span className="text-xs leading-tight text-muted-foreground">
-                {roleLabel}
-              </span>
-            )}
           </div>
 
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
@@ -82,7 +91,7 @@ export function UserNav() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="w-48 bg-popover p-2"
+        className="w-64 bg-popover p-2"
         align="end"
         sideOffset={8}
         forceMount
@@ -95,11 +104,14 @@ export function UserNav() {
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
               <p className="truncate text-sm font-semibold leading-none text-foreground">
-                {displayName || roleLabel}
+                {headingName || roleLabel}
               </p>
-              <p className="truncate text-xs leading-none text-muted-foreground">
+              <p
+                dir="ltr"
+                className="truncate text-right text-xs leading-none text-muted-foreground"
+              >
                 {email || phone}
               </p>
               {roleLabel && (
@@ -118,11 +130,6 @@ export function UserNav() {
           onClick={() => router.push('/settings/profile')}
         >
           <User className="h-4 w-4 shrink-0 text-muted-foreground" />
-          {roleLabel && (
-            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-              {roleLabel}
-            </span>
-          )}
           <span>{t('userNav.profile')}</span>
         </DropdownMenuItem>
 

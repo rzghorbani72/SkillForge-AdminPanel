@@ -19,14 +19,15 @@ export interface AcademyProfile {
 interface AuthUser {
   id: number;
   displayName: string;
+  userDisplayName?: string | null;
   email: string;
   phone: string;
   role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+  lastLogin?: string | null;
   academyId?: number | null;
-  currentAcademy?: Record<string, unknown> | null;
+  currentAcademy?: { id?: number; name: string; domain?: string | null } | null;
   isAdminProfile?: boolean;
   platformLevel?: boolean;
-  canManageAllStores?: boolean;
   canManageAllAcademies?: boolean;
   canManagePlatform?: boolean;
   profiles: AcademyProfile[];
@@ -34,11 +35,6 @@ interface AuthUser {
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
     academy_id?: number | null;
     academyId?: number | null;
-    store?: {
-      id: number;
-      name?: string;
-      [key: string]: unknown;
-    };
     [key: string]: unknown;
   };
 }
@@ -120,9 +116,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       setUser({
         id: (currentUser as any)?.id || 0,
         displayName: currentUser?.display_name ?? currentUser?.name ?? '',
+        userDisplayName: currentUser?.user_display_name ?? null,
         email: currentUser?.email ?? '',
         phone: currentUser?.phone_number ?? '',
         role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
+        lastLogin: currentUser?.last_login ?? null,
         academyId: academyId,
         currentAcademy: currentAcademy,
         isAdminProfile: isAdminProfile,
@@ -131,14 +129,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         canManagePlatform: canManagePlatform,
         profiles: rawProfiles,
         profile: {
-          ...((currentUser as any)?.profile || {}),
           academy_id: academyId,
           academyId: academyId,
-          academy:
-            currentAcademy ||
-            (currentUser as any)?.profile?.academy ||
-            (currentUser as any)?.profile?.store ||
-            null,
+          academy: currentAcademy || null,
           role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
           isAdminProfile: isAdminProfile,
           platformLevel: platformLevel

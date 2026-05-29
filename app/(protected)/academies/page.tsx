@@ -27,7 +27,8 @@ import type { Academy } from '@/types/api';
 
 export default function AcademiesPage() {
   const { t } = useTranslation();
-  const { academies, isLoading, refreshAcademies } = useStore();
+  const { academies, isLoading, refreshAcademies, selectedAcademy } =
+    useStore();
   const { user } = useAuthUser();
   const [switching, setSwitching] = useState<number | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -37,8 +38,7 @@ export default function AcademiesPage() {
     'all' | 'active' | 'inactive'
   >('all');
 
-  const currentAcademyId =
-    user?.academyId ?? (user as any)?.profile?.academy_id ?? null;
+  const currentAcademyId = selectedAcademy?.id ?? null;
   const canCreate =
     user?.role === 'ADMIN' ||
     (user as any)?.isAdminProfile ||
@@ -86,11 +86,11 @@ export default function AcademiesPage() {
     slug: string;
     description?: string;
     category?: string;
-    logoId?: number;
+    logoId?: string;
     primaryColor?: string;
     selectedPlan?: { slug: string; price_monthly: number };
   }) {
-    await apiClient.createAcademy({
+    const response = await apiClient.createAcademy({
       name: data.name,
       private_domain: data.slug,
       description: data.description || undefined,
@@ -114,8 +114,18 @@ export default function AcademiesPage() {
         : Promise.resolve()
     ]);
 
+    const newId =
+      (response as any)?.data?.id ??
+      (response as any)?.data?.data?.id ??
+      (response as any)?.id;
+
     toast.success(t('stores.storeCreated'));
-    await refreshAcademies();
+
+    if (newId) {
+      await handleSwitch(newId);
+    } else {
+      await refreshAcademies();
+    }
   }
 
   async function handleUpdate(
@@ -125,7 +135,7 @@ export default function AcademiesPage() {
       slug: string;
       publicAddress: string;
       description: string;
-      logoId?: number;
+      logoId?: string;
       primaryColor?: string;
       selectedPlan?: { slug: string; price_monthly: number };
     }

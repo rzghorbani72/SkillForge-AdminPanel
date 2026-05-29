@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Category } from '@/types/api';
-import { parseCategoryFromApi, useCategoriesStore } from '@/lib/store';
+import { useCategoriesStore } from '@/lib/store';
 import { toast } from 'sonner';
 import { CategoryHeader } from '@/components/category/CategoryHeader';
 import { SearchAndFilters } from '@/components/category/SearchAndFilters';
@@ -22,16 +22,8 @@ import { useTranslation } from '@/lib/i18n/hooks';
 export default function CategoriesPage() {
   const { t, language } = useTranslation();
   const searchParams = useSearchParams();
-  const {
-    categories,
-    isLoading,
-    error,
-    clearError,
-    addCategory,
-    updateCategory: updateCategoryInStore,
-    removeCategory: removeCategoryFromStore,
-    fetchCategories
-  } = useCategoriesStore();
+  const { categories, isLoading, error, clearError, fetchCategories } =
+    useCategoriesStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<FilterType>('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -113,28 +105,11 @@ export default function CategoriesPage() {
             ? payload.data
             : payload.message || 'Failed to create category';
         toast.error(message);
-        await fetchCategories({ force: true });
         return;
       }
 
-      const createdCategory = payload
-        ? parseCategoryFromApi(
-            Array.isArray(payload.data)
-              ? payload.data[0]
-              : (payload.data ?? payload)
-          )
-        : null;
-
-      if (createdCategory) {
-        // Update Zustand store with new category
-        addCategory(createdCategory);
-        toast.success('Category created successfully');
-      } else {
-        // Fallback: refetch if we can't extract the category
-        await fetchCategories({ force: true });
-        toast.success('Category created successfully');
-      }
-
+      await fetchCategories({ force: true });
+      toast.success('Category created successfully');
       setIsCreateDialogOpen(false);
       resetForm();
     } catch (error) {
@@ -158,10 +133,7 @@ export default function CategoriesPage() {
       };
 
       await apiClient.updateCategory(editingCategory.id, updateData);
-
-      // Update Zustand store with updated category
-      updateCategoryInStore(editingCategory.id, updateData);
-
+      await fetchCategories({ force: true });
       toast.success('Category updated successfully');
       setIsEditDialogOpen(false);
       setEditingCategory(null);
@@ -192,10 +164,7 @@ export default function CategoriesPage() {
 
     try {
       await apiClient.deleteCategory(categoryId);
-
-      // Update Zustand store by removing the category
-      removeCategoryFromStore(categoryId);
-
+      await fetchCategories({ force: true });
       toast.success('Category deleted successfully');
     } catch (error) {
       console.error('Error deleting category:', error);

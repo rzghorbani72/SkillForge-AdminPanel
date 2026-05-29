@@ -42,7 +42,7 @@ type AcademyCreateModalProps = {
     slug: string;
     description?: string;
     category?: string;
-    logoId?: number;
+    logoId?: string;
     primaryColor?: string;
     selectedPlan?: SubscriptionPlanData;
   }) => Promise<void>;
@@ -75,7 +75,7 @@ export function AcademyCreateModal({
   const [category, setCategory] = useState('');
 
   // Step 1 — Branding
-  const [logoId, setLogoId] = useState<number | null>(null);
+  const [logoId, setLogoId] = useState<string | null>(null);
   const [logoPreview, setLogoPreview] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [primaryColor, setPrimaryColor] = useState(BRAND_COLORS[0].hex);
@@ -122,7 +122,7 @@ export function AcademyCreateModal({
     try {
       const uploaded = await apiClient.uploadImage(file);
       const imageData = (uploaded as any)?.data ?? uploaded;
-      if (imageData?.id) setLogoId(imageData.id);
+      if (imageData?.id) setLogoId(String(imageData.id));
     } catch {
       setLogoPreview('');
       setLogoId(null);

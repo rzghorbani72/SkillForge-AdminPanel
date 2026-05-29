@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCategoriesStore, parseCategoryFromApi } from '@/lib/store';
 import { apiClient } from '@/lib/api';
-import { ErrorHandler } from '@/lib/error-handler';
+import { apiToast } from '@/lib/api-toast';
 
 interface Props {
   categoryId: string | undefined;
@@ -75,13 +75,14 @@ export default function CreateCourseAssociations({
       if (created) {
         addCategory(created);
         onCategoryChange(created.id.toString());
+        apiToast.success(result);
         setOpen(false);
         setSearch('');
         setIsCreating(false);
         setNewName('');
       }
     } catch (err) {
-      ErrorHandler.handleApiError(err);
+      apiToast.error(err);
     } finally {
       setIsSaving(false);
     }

@@ -20,6 +20,7 @@ import {
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { toast } from 'react-toastify';
 import { useStore } from '@/hooks/useStore';
+import { clearAcademyData } from '@/lib/store-utils';
 import { cn } from '@/lib/utils';
 
 // ─── Schema ───────────────────────────────────────────────────────────────
@@ -110,11 +111,19 @@ export default function CreateAcademyPage() {
     const values = form.getValues();
     setSaving(true);
     try {
-      await apiClient.createAcademy({
+      const response = await apiClient.createAcademy({
         name: values.name,
         private_domain: values.slug,
         description: values.description || undefined
       });
+      const newId =
+        (response as any)?.data?.id ??
+        (response as any)?.data?.data?.id ??
+        (response as any)?.id;
+      if (newId) {
+        await apiClient.switchAcademy(newId);
+        clearAcademyData();
+      }
       await refreshAcademies();
       setCreated(true);
       toast.success(t('auth.academyCreatedTitle'));
@@ -221,12 +230,11 @@ export default function CreateAcademyPage() {
                       <div className="flex h-14 items-center overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-primary">
                         <div className="flex h-full select-none items-center gap-1.5 whitespace-nowrap border-r bg-muted/50 px-3 text-sm text-muted-foreground">
                           <Globe className="h-3.5 w-3.5 shrink-0" />
-                          <span>skillforge.com/</span>
+                          <span>platform.com.</span>
                         </div>
                         <input
-                          className="flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground"
+                          className="flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus-within:ring-0"
                           placeholder="your-academy"
-                          dir="rtl"
                           autoFocus
                           {...field}
                           onChange={(e) =>
@@ -237,11 +245,8 @@ export default function CreateAcademyPage() {
                       </div>
                     </FormControl>
                     {slug && (
-                      <p className="text-xs text-muted-foreground">
-                        {t('auth.academyUrlDesc').replace(
-                          '{url}',
-                          `skillforge.com/${slug}`
-                        )}
+                      <p className="text-xs text-muted-foreground" dir="ltr">
+                        {`platform.com/${slug}`}
                       </p>
                     )}
                     <FormMessage />

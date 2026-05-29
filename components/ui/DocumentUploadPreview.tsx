@@ -56,6 +56,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [meta, setMeta] = useState<DocMeta | null>(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
 
   const loadExisting = useCallback(async (id: string) => {
     const n = parseInt(id, 10);
@@ -113,6 +114,8 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
       toast.success('Document uploaded and linked to this lesson');
     } catch (err) {
       ErrorHandler.handleApiError(err);
+      setFile(null);
+      setFileInputKey((k) => k + 1);
     } finally {
       setIsUploading(false);
     }
@@ -134,6 +137,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
     <div className={cn('space-y-4', className)}>
       <div className="space-y-2">
         <Input
+          key={fileInputKey}
           type="file"
           accept={ACCEPT}
           onChange={handleFileChange}

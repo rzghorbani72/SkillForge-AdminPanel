@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { apiToast } from '@/lib/api-toast';
 import {
   Dialog,
   DialogContent,
@@ -50,7 +51,7 @@ export default function NewCourseModal({
   const [saving, setSaving] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
 
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
     []
   );
   const [teachers, setTeachers] = useState<
@@ -78,6 +79,19 @@ export default function NewCourseModal({
   const [cookieDays, setCookieDays] = useState('30');
   const [publishStatus, setPublishStatus] = useState<PublishStatus>('DRAFT');
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const catsRaw = await apiClient.getCategories();
+      const catList = extractList(catsRaw).map((c) => ({
+        id: String((c as Record<string, unknown>).id),
+        name: (c as Record<string, unknown>).name as string
+      }));
+      setCategories(catList);
+    } catch {
+      /* non-critical */
+    }
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     async function loadDropdowns() {
@@ -88,7 +102,7 @@ export default function NewCourseModal({
         ]);
 
         const catList = extractList(catsRaw).map((c) => ({
-          id: (c as Record<string, unknown>).id as number,
+          id: String((c as Record<string, unknown>).id),
           name: (c as Record<string, unknown>).name as string
         }));
         setCategories(catList);
@@ -205,16 +219,21 @@ export default function NewCourseModal({
         name: newCategoryName.trim(),
         type: 'COURSE'
       });
-      const raw = res as unknown as Record<string, unknown>;
-      const cat = (raw?.data as Record<string, unknown>) ?? raw;
-      const newCat = { id: cat.id as number, name: cat.name as string };
-      setCategories((prev) => [...prev, newCat]);
-      setCategoryId(String(newCat.id));
+      // request() returns { data: <backend body> }
+      // backend body is { message, status, data: newCategory }
+      const body = (res as unknown as Record<string, unknown>)?.data as Record<
+        string,
+        unknown
+      >;
+      const cat = (body?.data as Record<string, unknown>) ?? body;
+      const newId = String(cat.id);
+      await fetchCategories();
+      setCategoryId(newId);
       setNewCategoryName('');
       setShowNewCategory(false);
-      toast.success(t('courses.categoryCreated'));
-    } catch {
-      toast.error(t('courses.errorCreatingCategory'));
+      apiToast.success(res, t('courses.categoryCreated'));
+    } catch (err) {
+      apiToast.error(err, t('courses.errorCreatingCategory'));
     } finally {
       setCreatingCategory(false);
     }
@@ -239,6 +258,7 @@ export default function NewCourseModal({
       }
     } catch {
       toast.error(t('courses.errorUploadingImage'));
+      if (fileRef.current) fileRef.current.value = '';
     } finally {
       setUploading(false);
     }

@@ -58,6 +58,7 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [playUrl, setPlayUrl] = useState<string | null>(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
 
   const loadExisting = useCallback(async (id: string) => {
     const n = parseInt(id, 10);
@@ -122,6 +123,8 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
       toast.success('Audio uploaded and linked to this lesson');
     } catch (err) {
       ErrorHandler.handleApiError(err);
+      setFile(null);
+      setFileInputKey((k) => k + 1);
     } finally {
       setIsUploading(false);
     }
@@ -141,6 +144,7 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
     <div className={cn('space-y-4', className)}>
       <div className="space-y-2">
         <Input
+          key={fileInputKey}
           type="file"
           accept="audio/*,.mp3,.wav,.aac,.ogg,.m4a,.flac"
           onChange={handleFileChange}
