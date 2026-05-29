@@ -62,6 +62,9 @@ export function AcademyCard({
 }: AcademyCardProps) {
   const color = CARD_COLORS[academy.id % CARD_COLORS.length];
   const isSwitch = switching === academy.id;
+  const canEnter =
+    !isCurrent &&
+    ['affiliate', 'teacher', 'manager'].includes(academy.userRole ?? '');
   const domain =
     academy.domain?.private_address ??
     academy.Domain?.private_address ??
@@ -109,6 +112,14 @@ export function AcademyCard({
               {userRole}
             </span>
           )}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 rounded-xl p-0"
+            onClick={() => onEdit(academy)}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
         </div>
         <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
           {domain}
@@ -144,44 +155,25 @@ export function AcademyCard({
 
         {/* Actions */}
         <div className="mt-4 flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="flex-1 rounded-xl text-sm font-medium"
-            onClick={() => onSwitch(academy.id)}
-            disabled={isSwitch}
-          >
-            {isSwitch ? (
-              <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />
-            ) : null}
-            {t('stores.enter')}
-          </Button>
-
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-8 w-8 rounded-xl p-0"
-            onClick={() => onEdit(academy)}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-8 w-8 rounded-xl p-0"
-              >
-                <MoreHorizontal className="h-3.5 w-3.5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(academy)}>
-                {t('common.edit')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {isCurrent ? (
+            <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+              {t('stores.currentAcademy')}
+            </span>
+          ) : canEnter ? (
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 rounded-xl text-sm font-medium"
+              onClick={() => onSwitch(academy.id)}
+              disabled={isSwitch}
+            >
+              {isSwitch ? (
+                <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />
+              ) : null}
+              {t('stores.enter')}
+            </Button>
+          ) : null}
         </div>
       </div>
     </div>
