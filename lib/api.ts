@@ -703,7 +703,7 @@ class ApiClient {
     return { courses: [], pagination: undefined };
   }
 
-  async getCourse(id: number) {
+  async getCourse(id: string) {
     const response = await this.request(`/courses/${id}`);
     const payload = response.data as any;
 
@@ -731,11 +731,11 @@ class ApiClient {
     primary_price: number;
     secondary_price: number;
     meta_tags?: Array<{ title: string; content: string }>;
-    category_id?: number;
-    cover_id?: number;
-    audio_id?: number;
-    video_id?: number;
-    document_id?: number;
+    category_id?: string;
+    cover_id?: string;
+    audio_id?: string;
+    video_id?: string;
+    document_id?: string;
     published?: boolean;
     is_featured?: boolean;
     seasons?: Array<{
@@ -746,8 +746,9 @@ class ApiClient {
         description?: string;
         is_free?: boolean;
         published?: boolean;
-        video_id?: number;
-        cover_id?: number;
+        video_id?: string;
+        audio_id?: string;
+        cover_id?: string;
       }>;
     }>;
   }) {
@@ -757,7 +758,7 @@ class ApiClient {
     });
   }
 
-  async updateCourse(id: number, courseData: unknown) {
+  async updateCourse(id: string, courseData: unknown) {
     return this.request(`/courses/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(courseData)
@@ -794,7 +795,7 @@ class ApiClient {
     });
   }
 
-  async deleteCourse(id: number) {
+  async deleteCourse(id: string) {
     return this.request(`/courses/${id}`, {
       method: 'DELETE'
     });
@@ -962,8 +963,8 @@ class ApiClient {
 
   // Lessons endpoints
   async getLessons(params?: {
-    course_id?: number;
-    season_id?: number;
+    course_id?: string;
+    season_id?: string;
     page?: number;
     limit?: number;
   }) {
@@ -998,7 +999,7 @@ class ApiClient {
     return [];
   }
 
-  async getLesson(id: number) {
+  async getLesson(id: string) {
     const response = await this.request(`/lessons/${id}`);
     const payload = response.data as any;
 
@@ -1020,12 +1021,12 @@ class ApiClient {
   async createLesson(lessonData: {
     title: string;
     description?: string;
-    course_id: number;
-    season_id?: number;
-    audio_id?: number;
-    video_id?: number;
-    cover_id?: number;
-    document_id?: number;
+    course_id: string;
+    season_id?: string;
+    audio_id?: string;
+    video_id?: string;
+    cover_id?: string;
+    document_id?: string;
     published?: boolean;
     is_free?: boolean;
     lesson_type?: string;
@@ -1036,21 +1037,21 @@ class ApiClient {
     });
   }
 
-  async updateLesson(id: number, lessonData: unknown) {
+  async updateLesson(id: string, lessonData: unknown) {
     return this.request(`/lessons/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(lessonData)
     });
   }
 
-  async deleteLesson(id: number) {
+  async deleteLesson(id: string) {
     return this.request(`/lessons/${id}`, {
       method: 'DELETE'
     });
   }
 
   async upsertLiveSession(
-    lessonId: number,
+    lessonId: string,
     body: {
       meeting_url: string;
       playback_url?: string | null;
@@ -1070,14 +1071,14 @@ class ApiClient {
     });
   }
 
-  async deleteLiveSession(lessonId: number) {
+  async deleteLiveSession(lessonId: string) {
     return this.request(`/lessons/${lessonId}/live-session`, {
       method: 'DELETE'
     });
   }
 
   // Seasons endpoints
-  async getSeasons(courseId?: number) {
+  async getSeasons(courseId?: string) {
     const queryParams = courseId ? `?course_id=${courseId}` : '';
     const response = await this.request(`/seasons${queryParams}`);
     const payload = response.data as any;
@@ -1101,7 +1102,7 @@ class ApiClient {
     return [];
   }
 
-  async getSeason(id: number) {
+  async getSeason(id: string) {
     const response = await this.request(`/seasons/${id}`);
     const payload = response.data as any;
 
@@ -1124,7 +1125,7 @@ class ApiClient {
     title: string;
     description?: string;
     order: number;
-    course_id: number;
+    course_id: string;
   }) {
     return this.request('/seasons', {
       method: 'POST',
@@ -1132,14 +1133,14 @@ class ApiClient {
     });
   }
 
-  async updateSeason(id: number, seasonData: unknown) {
+  async updateSeason(id: string, seasonData: unknown) {
     return this.request(`/seasons/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(seasonData)
     });
   }
 
-  async deleteSeason(id: number) {
+  async deleteSeason(id: string) {
     return this.request(`/seasons/${id}`, {
       method: 'DELETE'
     });
@@ -1489,7 +1490,7 @@ class ApiClient {
     return null as any;
   }
 
-  getVideoStreamUrl(videoId: number): string {
+  getVideoStreamUrl(videoId: string): string {
     return `${this.baseURL}/videos/stream/${videoId}`;
   }
 
@@ -1611,7 +1612,7 @@ class ApiClient {
   }
 
   // Image update endpoint
-  async updateImage(imageId: number, data: { alt?: string }) {
+  async updateImage(imageId: string, data: { alt?: string }) {
     const response = await this.request(`/images/${imageId}`, {
       method: 'PATCH',
       body: JSON.stringify(data)
@@ -1623,7 +1624,7 @@ class ApiClient {
   }
 
   // Image deletion endpoint
-  async deleteImage(imageId: number) {
+  async deleteImage(imageId: string) {
     return this.request(`/images/${imageId}`, {
       method: 'DELETE'
     });
@@ -2085,7 +2086,7 @@ class ApiClient {
     transaction_ref?: string;
     status?: string;
     academy_id?: number;
-    course_id?: number;
+    course_id?: string;
     start_date?: string;
     end_date?: string;
   }) {
@@ -2132,7 +2133,7 @@ class ApiClient {
     return response.data || [];
   }
 
-  async getTransactionTrackingById(id: number) {
+  async getTransactionTrackingById(id: string) {
     const response = await this.request(`/payments/transactions/${id}`);
     return response.data || null;
   }
@@ -2147,8 +2148,8 @@ class ApiClient {
     limit?: number;
     search?: string;
     status?: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
-    course_id?: number;
-    user_id?: number;
+    course_id?: string;
+    user_id?: string;
     academy_id?: number;
   }) {
     const queryParams = new URLSearchParams();

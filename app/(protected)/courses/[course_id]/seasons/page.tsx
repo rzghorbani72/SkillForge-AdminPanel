@@ -60,7 +60,7 @@ export default function SeasonsPage() {
   const [orphanedLessons, setOrphanedLessons] = useState<Lesson[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     if (courseId && selectedAcademy) {
@@ -75,9 +75,9 @@ export default function SeasonsPage() {
       setIsLoading(true);
       const [courseResponse, seasonsResponse, lessonsResponse] =
         await Promise.all([
-          apiClient.getCourse(parseInt(courseId)),
-          apiClient.getSeasons(parseInt(courseId)),
-          apiClient.getLessons({ course_id: parseInt(courseId) })
+          apiClient.getCourse(courseId),
+          apiClient.getSeasons(courseId),
+          apiClient.getLessons({ course_id: courseId })
         ]);
       if (courseResponse) {
         setCourse(courseResponse);
@@ -103,8 +103,8 @@ export default function SeasonsPage() {
 
         // Group lessons by season_id
         const lessonsBySeason = allLessons.reduce(
-          (acc: Record<number, Lesson[]>, lesson: Lesson) => {
-            const seasonId = lesson.season_id || 0; // Use 0 for lessons without season
+          (acc: Record<string, Lesson[]>, lesson: Lesson) => {
+            const seasonId = lesson.season_id || 'unassigned';
             if (!acc[seasonId]) {
               acc[seasonId] = [];
             }
@@ -134,7 +134,7 @@ export default function SeasonsPage() {
     }
   };
 
-  const handleDeleteSeason = async (seasonId: number) => {
+  const handleDeleteSeason = async (seasonId: string) => {
     try {
       setIsDeleting(seasonId);
       await apiClient.deleteSeason(seasonId);
@@ -148,7 +148,7 @@ export default function SeasonsPage() {
     }
   };
 
-  const handleDeleteLesson = async (lessonId: number) => {
+  const handleDeleteLesson = async (lessonId: string) => {
     try {
       await apiClient.deleteLesson(lessonId);
       toast.success('Lesson deleted successfully');
@@ -258,10 +258,7 @@ export default function SeasonsPage() {
             </p>
           </div>
         </div>
-        <CreateSeasonDialog
-          courseId={parseInt(courseId)}
-          onSeasonCreated={fetchData}
-        />
+        <CreateSeasonDialog courseId={courseId} onSeasonCreated={fetchData} />
       </div>
 
       {/* Search and Stats */}
@@ -315,7 +312,7 @@ export default function SeasonsPage() {
             </p>
             {!searchTerm && (
               <CreateSeasonDialog
-                courseId={parseInt(courseId)}
+                courseId={courseId}
                 onSeasonCreated={fetchData}
               />
             )}

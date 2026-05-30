@@ -15,8 +15,8 @@ const useCourses = () => {
   const { selectedAcademy } = useStore();
 
   const [rawCourses, setRawCourses] = useState<Course[]>([]);
-  const [revenueMap, setRevenueMap] = useState<Record<number, number>>({});
-  const [enrollmentMap, setEnrollmentMap] = useState<Record<number, number>>(
+  const [revenueMap, setRevenueMap] = useState<Record<string, number>>({});
+  const [enrollmentMap, setEnrollmentMap] = useState<Record<string, number>>(
     {}
   );
   const [isLoading, setIsLoading] = useState(true);
@@ -33,8 +33,8 @@ const useCourses = () => {
       const payments: any[] = Array.isArray(data)
         ? data
         : (data?.payments ?? data?.data ?? []);
-      const rMap: Record<number, number> = {};
-      const eMap: Record<number, number> = {};
+      const rMap: Record<string, number> = {};
+      const eMap: Record<string, number> = {};
       for (const p of payments) {
         const cid = p.course_id ?? p.course?.id ?? p.Course?.id;
         if (cid) {
@@ -137,7 +137,8 @@ const useCourses = () => {
     handleViewCourse,
     handleEditCourse,
     handleDeleteCourse,
-    refresh
+    refresh,
+    fetchCourses
   };
 };
 

@@ -191,7 +191,7 @@ export interface Media {
 
 // Course and Learning Types
 export interface Course {
-  id: number;
+  id: string;
   title: string;
   slug: string;
   description: string;
@@ -358,10 +358,10 @@ export interface ShippingAddress {
 }
 
 export interface Season {
-  id: number;
+  id: string;
   title: string;
   description?: string;
-  course_id: number;
+  course_id: string;
   order: number;
   is_active: boolean;
   created_at: string;
@@ -388,18 +388,18 @@ export interface LiveSession {
 }
 
 export interface Lesson {
-  id: number;
+  id: string;
   title: string;
   description: string;
   content?: string;
   duration?: number;
   order: number;
-  course_id: number;
-  season_id: number | null;
-  video_id?: number;
-  audio_id?: number;
-  document_id?: number;
-  image_id?: number;
+  course_id: string;
+  season_id: string | null;
+  video_id?: string;
+  audio_id?: string;
+  document_id?: string;
+  image_id?: string;
   is_published: boolean;
   is_free: boolean;
   lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
@@ -443,7 +443,7 @@ export interface Document {
 }
 
 export interface Image {
-  id: number;
+  id: string;
   publicUrl: string;
   alt?: string;
   title?: string;
@@ -495,9 +495,9 @@ export interface CourseTag {
 
 // Enrollment and Progress Types
 export interface Enrollment {
-  id: number;
-  user_id: number;
-  course_id: number;
+  id: string;
+  user_id: string;
+  course_id: string;
   status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
   enrolled_at: string;
   completed_at?: string;
@@ -523,10 +523,10 @@ export interface Progress {
 
 // Payment and Transaction Types
 export interface Payment {
-  id: number;
+  id: string;
   uuid?: string;
-  user_id: number;
-  course_id: number;
+  user_id: string;
+  course_id: string;
   profile_id?: number;
   order_id?: number | null;
   amount: number;

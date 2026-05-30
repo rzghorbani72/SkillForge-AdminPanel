@@ -19,7 +19,7 @@ import { SeasonsSection } from './SeasonsSection';
 
 interface CourseFormPageProps {
   /** Present when editing an existing course */
-  courseId?: number;
+  courseId?: string;
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────

@@ -20,7 +20,7 @@ interface ImageUploadModalProps {
   /** Callback when modal open state changes */
   onOpenChange?: (open: boolean) => void;
   /** Callback when image is successfully uploaded or selected */
-  onSuccess?: (image: { id: number; url: string }) => void;
+  onSuccess?: (image: { id: string; url: string }) => void;
   /** Callback when upload/selection fails */
   onError?: (error: any) => void;
   /** Title for the uploaded image */
@@ -63,7 +63,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
     onOpenChange?.(newOpen);
   };
 
-  const handleSuccess = (image: { id: number; url: string }) => {
+  const handleSuccess = (image: { id: string; url: string }) => {
     onSuccess?.(image);
     // Close modal after successful upload/selection with a small delay
     // to ensure toast notifications are visible
@@ -76,11 +76,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
 
   return (
     <Dialog open={currentOpen} onOpenChange={handleOpenChange}>
-      {trigger ? (
-        <DialogTrigger asChild>
-          {trigger}
-        </DialogTrigger>
-      ) : null}
+      {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>{modalTitle}</DialogTitle>

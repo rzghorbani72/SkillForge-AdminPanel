@@ -6,7 +6,7 @@ import Image from 'next/image';
 interface ImagePreviewProps {
   preview?: string | null;
   uploadedImageId?: string | null;
-  selectedImage?: { id: number; publicUrl: string } | null;
+  selectedImage?: { id: string; publicUrl: string } | null;
   onRemove: () => void;
   existingImageUrl?: string | null;
   existingImageId?: string | number | null;

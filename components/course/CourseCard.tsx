@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Clock, Star } from 'lucide-react';
+import { BookOpen, Clock, Star, Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { StatusPill } from './StatusPill';
 import { courseHue, formatNumber, pricingTypeLabel } from './courseUtils';
@@ -8,29 +8,43 @@ import type { CourseWithRevenue } from './useCourses';
 
 export function CourseCard({
   course,
-  onOpen
+  onEdit,
+  onDelete
 }: {
   course: CourseWithRevenue;
-  onOpen: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }) {
   const { t } = useTranslation();
   const hue = courseHue(course.id);
-  const priceVal = (course as any).primary_price ?? 0;
-  const pricingType = (course as any).pricing_type ?? 'ONE_TIME';
-  const studentsCount = course.enrollments_count ?? 0;
+  const priceVal = course.price ?? (course as any).primary_price ?? 0;
+  const isFree = course.is_free ?? (course as any).pricing_type === 'FREE';
+  const pricingType = isFree
+    ? 'FREE'
+    : ((course as any).pricing_type ?? 'ONE_TIME');
+  const studentsCount =
+    (course as any).students_count ??
+    course.enrollments_count ??
+    (course as any)._count?.Enrollment ??
+    0;
+  const imageObj = (course as any).Image ?? (course as any).cover;
   const coverUrl =
-    (course as any).cover?.url || (course as any).cover?.file_path || null;
+    imageObj?.publicUrl ||
+    (imageObj?.id ? `/api/images/fetch-image-by-id/${imageObj.id}` : null);
   const teacher =
+    (course as any).Profile?.display_name ??
     (course as any).teacher_name ??
     (course as any).Teacher?.display_name ??
     '—';
-  const rating = (course as any).rating ?? 0;
+  const categoryName =
+    (course as any).Category?.name ?? (course as any).category ?? null;
+  const rating = course.rating ?? 0;
+  const status = course.is_published
+    ? 'PUBLISHED'
+    : ((course as any).status ?? 'DRAFT');
 
   return (
-    <div
-      onClick={onOpen}
-      className="cursor-pointer overflow-hidden rounded-xl border border-border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:border-border/80"
-    >
+    <div className="overflow-hidden rounded-xl border border-border bg-card transition-all duration-200 hover:border-border/80">
       <div
         className="relative aspect-video overflow-hidden"
         style={{
@@ -61,11 +75,11 @@ export function CourseCard({
               color: 'hsl(var(--foreground))'
             }}
           >
-            {(course as any).category ?? pricingTypeLabel(pricingType, t)}
+            {categoryName ?? pricingTypeLabel(pricingType, t)}
           </span>
         </div>
         <div className="absolute start-3 top-3">
-          <StatusPill status={(course as any).status ?? 'DRAFT'} />
+          <StatusPill status={status} />
         </div>
         <div
           className="absolute bottom-3 end-3 flex items-center gap-1 rounded-md px-2 py-0.5 font-mono text-[11px] text-white backdrop-blur-sm"
@@ -120,6 +134,34 @@ export function CourseCard({
             </div>
           </div>
         </div>
+
+        {(onEdit || onDelete) && (
+          <div
+            className="mt-3 flex gap-2 border-t border-border/50 pt-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {onEdit && (
+              <button
+                type="button"
+                onClick={onEdit}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-[12px] font-medium text-foreground transition-colors hover:bg-muted/50"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                {t('common.edit')}
+              </button>
+            )}
+            {onDelete && (
+              <button
+                type="button"
+                onClick={onDelete}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-destructive/40 px-3 py-1.5 text-[12px] font-medium text-destructive transition-colors hover:bg-destructive/10"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                {t('common.delete')}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

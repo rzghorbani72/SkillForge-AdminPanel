@@ -33,7 +33,7 @@ import { toast } from 'sonner';
 import Image from 'next/image';
 
 interface Image {
-  id: number;
+  id: string;
   publicUrl: string;
   alt?: string;
   title?: string;
@@ -48,7 +48,7 @@ interface ImageWithState extends Image {
 }
 
 interface ImageSelectionDialogProps {
-  onSelect: (image: { id: number; publicUrl: string }) => void;
+  onSelect: (image: { id: string; publicUrl: string }) => void;
   selectedImageId?: string | null;
   trigger?: React.ReactNode;
   open?: boolean;
@@ -67,7 +67,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageToDelete, setImageToDelete] = useState<number | null>(null);
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const fetchImages = async () => {
@@ -131,7 +131,7 @@ const ImageSelectionDialog: React.FC<ImageSelectionDialogProps> = ({
     onOpenChange?.(false);
   };
 
-  const handleDeleteClick = (imageId: number) => {
+  const handleDeleteClick = (imageId: string) => {
     setImageToDelete(imageId);
     setShowDeleteDialog(true);
   };

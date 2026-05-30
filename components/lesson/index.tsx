@@ -40,7 +40,7 @@ const index = ({
   router: any;
   courseId: string;
   seasonId: string;
-  handleDeleteLesson: (id: number) => void;
+  handleDeleteLesson: (id: string) => void;
 }) => {
   return (
     <Card key={lesson.id} className="transition-shadow hover:shadow-md">

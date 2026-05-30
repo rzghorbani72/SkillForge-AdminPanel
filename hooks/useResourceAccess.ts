@@ -5,7 +5,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 
 interface ResourceAccessOptions {
-  resourceId: number;
+  resourceId: string;
   resourceType: 'course' | 'season' | 'lesson';
   action?: 'view' | 'modify' | 'delete';
   redirectOnDeny?: boolean;

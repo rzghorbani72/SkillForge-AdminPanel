@@ -14,14 +14,14 @@ import { courseFormSchema, type CourseFormData } from './schema';
 // ─── Draft types ──────────────────────────────────────────────────────────────
 
 export interface LessonDraft {
-  id?: number;
+  id?: string;
   title: string;
   description: string;
   is_free: boolean;
   published: boolean;
-  video_id?: number;
-  audio_id?: number;
-  cover_id?: number;
+  video_id?: string;
+  audio_id?: string;
+  cover_id?: string;
   videoPreviewUrl?: string;
   audioPreviewUrl?: string;
   coverPreviewUrl?: string;
@@ -31,7 +31,7 @@ export interface LessonDraft {
 }
 
 export interface SeasonDraft {
-  id?: number;
+  id?: string;
   title: string;
   description: string;
   clientKey: string;
@@ -57,14 +57,14 @@ export const emptySeason = (): SeasonDraft => ({
   clientKey: newKey()
 });
 
-function extractId(resp: unknown): number | undefined {
+function extractId(resp: unknown): string | undefined {
   const r = resp as Record<string, unknown>;
   return (r?.data as any)?.data?.id ?? (r?.data as any)?.id ?? (r as any)?.id;
 }
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
-export function useCourseForm(courseId?: number) {
+export function useCourseForm(courseId?: string) {
   const router = useRouter();
   const { selectedAcademy } = useStore();
   const isEdit = courseId !== undefined;
@@ -74,8 +74,8 @@ export function useCourseForm(courseId?: number) {
   const [saveProgress, setSaveProgress] = useState('');
   const [seasons, setSeasons] = useState<SeasonDraft[]>([]);
   const [lessons, setLessons] = useState<LessonDraft[]>([emptyLesson()]);
-  const [deletedSeasonIds, setDeletedSeasonIds] = useState<number[]>([]);
-  const [deletedLessonIds, setDeletedLessonIds] = useState<number[]>([]);
+  const [deletedSeasonIds, setDeletedSeasonIds] = useState<string[]>([]);
+  const [deletedLessonIds, setDeletedLessonIds] = useState<string[]>([]);
   const existingCoverUrl = useRef<string | null>(null);
 
   const form = useForm<CourseFormData>({
@@ -105,15 +105,18 @@ export function useCourseForm(courseId?: number) {
           apiClient.getLessons({ course_id: courseId })
         ]);
 
-        existingCoverUrl.current = course.cover?.publicUrl ?? null;
+        const cover = (course as any).Image ?? course.cover;
+        const categoryId =
+          (course as any).Category?.id ?? course.category?.id ?? '';
+        existingCoverUrl.current = cover?.publicUrl ?? null;
 
         form.reset({
           title: course.title ?? '',
           description: course.description ?? '',
           primary_price: Math.trunc(course.price ?? 0).toString(),
           secondary_price: Math.trunc(course.original_price ?? 0).toString(),
-          category_id: course.category_id?.toString() ?? '',
-          cover_id: course.cover?.id?.toString() ?? '',
+          category_id: categoryId,
+          cover_id: cover?.id ?? '',
           published: course.is_published ?? false,
           is_featured: course.is_featured ?? false
         });
@@ -128,7 +131,7 @@ export function useCourseForm(courseId?: number) {
         );
 
         // Map season DB id → clientKey so lessons can reference their season
-        const seasonDbIdToClientKey = new Map<number, string>(
+        const seasonDbIdToClientKey = new Map<string, string>(
           loadedSeasons.map((s) => [s.id!, s.clientKey])
         );
 
@@ -290,20 +293,20 @@ export function useCourseForm(courseId?: number) {
           description: data.description.trim(),
           primary_price: Number(data.primary_price),
           secondary_price: Number(data.secondary_price),
-          category_id: data.category_id ? Number(data.category_id) : undefined,
-          cover_id: data.cover_id ? Number(data.cover_id) : undefined,
+          category_id: data.category_id || undefined,
+          cover_id: data.cover_id || undefined,
           published: data.published,
           is_featured: data.is_featured
         };
 
-        let courseDbId: number;
+        let courseDbId: string;
         if (isEdit) {
           setSaveProgress('Updating course…');
-          await apiClient.updateCourse(courseId, coursePayload);
-          courseDbId = courseId;
+          await apiClient.updateCourse(courseId!, coursePayload);
+          courseDbId = courseId!;
 
           // 3. Upsert seasons — build clientKey → dbId map
-          const seasonIdMap = new Map<string, number>();
+          const seasonIdMap = new Map<string, string>();
           for (let si = 0; si < seasons.length; si++) {
             const s = seasons[si];
             if (!s.title.trim()) continue;

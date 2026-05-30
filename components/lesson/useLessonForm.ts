@@ -61,12 +61,12 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
     try {
       setIsLoading(true);
       const promises = [
-        apiClient.getSeason(parseInt(seasonId)),
-        apiClient.getCourse(parseInt(courseId))
+        apiClient.getSeason(seasonId),
+        apiClient.getCourse(courseId)
       ];
 
       if (isEdit && lessonId) {
-        promises.push(apiClient.getLesson(parseInt(lessonId)));
+        promises.push(apiClient.getLesson(lessonId));
       }
 
       const [seasonResponse, courseResponse, lessonResponse] =
@@ -134,19 +134,19 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
       const lessonData = {
         title: data.title,
         description: data.description || '',
-        course_id: parseInt(courseId),
-        season_id: data.season_id ? parseInt(data.season_id) : undefined,
-        audio_id: data.audio_id ? parseInt(data.audio_id) : undefined,
-        video_id: data.video_id ? parseInt(data.video_id) : undefined,
-        cover_id: data.cover_id ? parseInt(data.cover_id) : undefined,
-        document_id: data.document_id ? parseInt(data.document_id) : undefined,
+        course_id: courseId,
+        season_id: data.season_id || undefined,
+        audio_id: data.audio_id || undefined,
+        video_id: data.video_id || undefined,
+        cover_id: data.cover_id || undefined,
+        document_id: data.document_id || undefined,
         published: data.published,
         is_free: data.is_free,
         lesson_type: data.lesson_type
       };
 
       if (isEdit && lessonId) {
-        await apiClient.updateLesson(parseInt(lessonId), lessonData);
+        await apiClient.updateLesson(lessonId, lessonData);
         toast.success('Lesson updated successfully!');
         router.push(
           `/courses/${courseId}/seasons/${seasonId}/lessons/${lessonId}`

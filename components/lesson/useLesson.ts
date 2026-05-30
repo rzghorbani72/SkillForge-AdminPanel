@@ -32,9 +32,9 @@ const useLesson = () => {
       setIsLoading(true);
       const [lessonsResponse, seasonResponse, courseResponse] =
         await Promise.all([
-          apiClient.getLessons({ season_id: parseInt(seasonId) }),
-          apiClient.getSeason(parseInt(seasonId)),
-          apiClient.getCourse(parseInt(courseId))
+          apiClient.getLessons({ season_id: seasonId }),
+          apiClient.getSeason(seasonId),
+          apiClient.getCourse(courseId)
         ]);
 
       setLessons(Array.isArray(lessonsResponse) ? lessonsResponse : []);
@@ -54,7 +54,7 @@ const useLesson = () => {
     }
   };
 
-  const handleDeleteLessonHandler = async (lessonId: number) => {
+  const handleDeleteLessonHandler = async (lessonId: string) => {
     try {
       await apiClient.deleteLesson(lessonId);
       toast.success('Lesson deleted successfully');

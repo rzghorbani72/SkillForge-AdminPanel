@@ -43,9 +43,9 @@ export default function CoursePerformancePage() {
   const courseMetrics = useMemo<CoursePerformance[]>(() => {
     if (courses.length === 0) return [];
 
-    const enrollmentsByCourse = new Map<number, number>();
-    const completionByCourse = new Map<number, number>();
-    const revenueByCourse = new Map<number, number>();
+    const enrollmentsByCourse = new Map<string, number>();
+    const completionByCourse = new Map<string, number>();
+    const revenueByCourse = new Map<string, number>();
 
     enrollments.forEach((enrollment) => {
       const courseId = enrollment.course_id;

@@ -1,5 +1,6 @@
 'use client';
 
+import { Fragment } from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -13,11 +14,11 @@ export function StepIndicator({ step }: { step: number }) {
         const done = step > s.n;
         const current = step === s.n;
         return (
-          <>
-            <div key={s.n} className="flex flex-col items-center gap-1">
+          <Fragment key={s.n}>
+            <div className="flex flex-col items-center gap-1">
               <div
                 className={cn(
-                  'flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold transition-all',
+                  'flex h-7 w-7 items-center justify-center rounded-full pt-1 text-[11px] font-bold transition-all',
                   done
                     ? 'bg-emerald-500 text-white'
                     : current
@@ -45,7 +46,7 @@ export function StepIndicator({ step }: { step: number }) {
                 )}
               />
             )}
-          </>
+          </Fragment>
         );
       })}
     </div>

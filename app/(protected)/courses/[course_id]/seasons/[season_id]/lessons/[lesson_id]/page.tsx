@@ -59,9 +59,9 @@ export default function LessonViewPage() {
       setIsLoading(true);
       const [lessonResponse, seasonResponse, courseResponse] =
         await Promise.all([
-          apiClient.getLesson(parseInt(lessonId)),
-          apiClient.getSeason(parseInt(seasonId)),
-          apiClient.getCourse(parseInt(courseId))
+          apiClient.getLesson(lessonId),
+          apiClient.getSeason(seasonId),
+          apiClient.getCourse(courseId)
         ]);
 
       if (lessonResponse) {
@@ -85,7 +85,7 @@ export default function LessonViewPage() {
 
   const handleDeleteLesson = async () => {
     try {
-      await apiClient.deleteLesson(parseInt(lessonId));
+      await apiClient.deleteLesson(lessonId);
       toast.success('Lesson deleted successfully');
       router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`);
     } catch (error) {
@@ -366,9 +366,7 @@ export default function LessonViewPage() {
                 }
               >
                 <source
-                  src={apiClient.getVideoStreamUrl(
-                    parseInt(lesson.video_id.toString())
-                  )}
+                  src={apiClient.getVideoStreamUrl(lesson.video_id!)}
                   type="video/mp4"
                 />
                 Your browser does not support the video tag.

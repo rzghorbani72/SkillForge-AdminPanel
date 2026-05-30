@@ -18,7 +18,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { Video } from 'lucide-react';
 
 type Props = {
-  lessonId: number;
+  lessonId: string;
   initial?: LiveSession | null;
   onSaved?: () => void;
 };

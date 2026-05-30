@@ -38,7 +38,7 @@ type Props = {
   onSubmit: (data: LessonFormData) => void;
   onCancel: () => void;
   submitLabel?: string;
-  liveSessionLessonId?: number;
+  liveSessionLessonId?: string;
   serverLessonType?: string;
   liveSessionInitial?: LiveSession | null;
   onLiveSessionSaved?: () => void;

@@ -13,8 +13,8 @@ import useCourses, { CourseWithRevenue } from '@/components/course/useCourses';
 import { CourseCard } from '@/components/course/CourseCard';
 import { CourseRow } from '@/components/course/CourseRow';
 import { GridSkeleton } from '@/components/course/GridSkeleton';
-import { CourseDrawer } from '@/components/course/CourseDrawer';
 import { CourseFilterBar } from '@/components/course/CourseFilterBar';
+import { ConfirmDeleteDialog } from '@/components/shared/ConfirmDeleteDialog';
 
 export default function CoursesPage() {
   const { selectedAcademy } = useStore();
@@ -22,9 +22,10 @@ export default function CoursesPage() {
 
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [category, setCategory] = useState<string>('all');
-  const [selected, setSelected] = useState<CourseWithRevenue | null>(null);
   const [showWizard, setShowWizard] = useState(false);
-  const [editCourseId, setEditCourseId] = useState<number | undefined>();
+  const [editCourseId, setEditCourseId] = useState<string | undefined>();
+  const [courseToDelete, setCourseToDelete] =
+    useState<CourseWithRevenue | null>(null);
 
   const {
     courses,
@@ -32,20 +33,27 @@ export default function CoursesPage() {
     searchTerm,
     setSearchTerm,
     pricingFilter,
-    refresh
+    refresh,
+    handleDeleteCourse
   } = useCourses();
+
+  function handleEditCard(course: CourseWithRevenue) {
+    setEditCourseId(course.id);
+    setShowWizard(true);
+  }
 
   const categories = (() => {
     const raw: string[] = [];
     courses.forEach((c) => {
-      const cat = (c as any).category ?? '';
+      const cat = (c as any).Category?.name ?? (c as any).category ?? '';
       if (cat && !raw.includes(cat)) raw.push(cat);
     });
     return raw;
   })();
 
   const filteredCourses = courses.filter((c) => {
-    const catOk = category === 'all' || (c as any).category === category;
+    const catName = (c as any).Category?.name ?? (c as any).category ?? '';
+    const catOk = category === 'all' || catName === category;
     const pricingOk =
       pricingFilter === 'ALL' || (c as any).pricing_type === pricingFilter;
     return catOk && pricingOk;
@@ -65,7 +73,6 @@ export default function CoursesPage() {
 
   return (
     <PageContainer>
-      {/* Section header */}
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="mb-1.5 text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
@@ -90,7 +97,6 @@ export default function CoursesPage() {
         onViewChange={setView}
       />
 
-      {/* Content */}
       {isLoading ? (
         <GridSkeleton />
       ) : filteredCourses.length === 0 ? (
@@ -113,7 +119,12 @@ export default function CoursesPage() {
           }}
         >
           {filteredCourses.map((c) => (
-            <CourseCard key={c.id} course={c} onOpen={() => setSelected(c)} />
+            <CourseCard
+              key={c.id}
+              course={c}
+              onEdit={() => handleEditCard(c)}
+              onDelete={() => setCourseToDelete(c)}
+            />
           ))}
           <button
             onClick={() => setShowWizard(true)}
@@ -158,24 +169,13 @@ export default function CoursesPage() {
                 <CourseRow
                   key={c.id}
                   course={c}
-                  onOpen={() => setSelected(c)}
+                  onEdit={() => handleEditCard(c)}
+                  onDelete={() => setCourseToDelete(c)}
                 />
               ))}
             </tbody>
           </table>
         </div>
-      )}
-
-      {selected && (
-        <CourseDrawer
-          course={selected}
-          onClose={() => setSelected(null)}
-          onEdit={() => {
-            setEditCourseId(selected.id);
-            setShowWizard(true);
-            setSelected(null);
-          }}
-        />
       )}
 
       <NewCourseModal
@@ -186,6 +186,19 @@ export default function CoursesPage() {
         }}
         onCreated={refresh}
         editCourseId={editCourseId}
+      />
+
+      <ConfirmDeleteDialog
+        open={!!courseToDelete}
+        title={t('courses.deleteCourse')}
+        description={t('courses.deleteCourseConfirm', {
+          title: courseToDelete?.title ?? ''
+        })}
+        onConfirm={() => {
+          if (courseToDelete) handleDeleteCourse(courseToDelete);
+          setCourseToDelete(null);
+        }}
+        onCancel={() => setCourseToDelete(null)}
       />
     </PageContainer>
   );

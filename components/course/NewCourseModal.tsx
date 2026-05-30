@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { apiToast } from '@/lib/api-toast';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import {
   Dialog,
   DialogContent,
@@ -31,7 +32,7 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onCreated?: () => void;
-  editCourseId?: number;
+  editCourseId?: string;
 }
 
 export default function NewCourseModal({
@@ -54,9 +55,6 @@ export default function NewCourseModal({
   const [categories, setCategories] = useState<{ id: string; name: string }[]>(
     []
   );
-  const [teachers, setTeachers] = useState<
-    { id: number; display_name: string }[]
-  >([]);
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [creatingCategory, setCreatingCategory] = useState(false);
@@ -64,7 +62,6 @@ export default function NewCourseModal({
   const [title, setTitle] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [level, setLevel] = useState('BEGINNER');
-  const [teacherId, setTeacherId] = useState('');
   const [description, setDescription] = useState('');
   const [coverId, setCoverId] = useState<string | undefined>();
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
@@ -96,48 +93,18 @@ export default function NewCourseModal({
     if (!open) return;
     async function loadDropdowns() {
       try {
-        const [catsRaw, teachersRaw] = await Promise.all([
-          apiClient.getCategories(),
-          apiClient.getTeacherUsers({ limit: 100 })
-        ]);
-
+        const catsRaw = await apiClient.getCategories();
         const catList = extractList(catsRaw).map((c) => ({
           id: String((c as Record<string, unknown>).id),
           name: (c as Record<string, unknown>).name as string
         }));
         setCategories(catList);
-
-        const teacherList = extractList(teachersRaw).map((teacher) => ({
-          id: (teacher as Record<string, unknown>).id as number,
-          display_name:
-            ((teacher as Record<string, unknown>).display_name as string) ??
-            ((teacher as Record<string, unknown>).name as string) ??
-            t('courses.userWithId', {
-              id: String((teacher as Record<string, unknown>).id)
-            })
-        }));
-
-        if (!isEditMode && user?.role === 'MANAGER') {
-          const managerEntry = {
-            id: user.id,
-            display_name:
-              (user.profile?.display_name as string | undefined) ??
-              t('courses.managerDefault')
-          };
-          const alreadyIn = teacherList.some(
-            (teacher) => teacher.id === user.id
-          );
-          setTeachers(alreadyIn ? teacherList : [managerEntry, ...teacherList]);
-          setTeacherId(String(user.id));
-        } else {
-          setTeachers(teacherList);
-        }
       } catch {
-        /* non-critical — dropdowns stay empty */
+        /* non-critical */
       }
     }
     loadDropdowns();
-  }, [open, isEditMode, user]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!open || !editCourseId) return;
@@ -149,20 +116,36 @@ export default function NewCourseModal({
           ? ((raw as Record<string, unknown>).data as Record<string, unknown>)
           : (raw as Record<string, unknown>);
 
+        const image = (c.Image ?? c.cover) as
+          | Record<string, unknown>
+          | undefined;
+        const category = (c.Category ?? c.category) as
+          | Record<string, unknown>
+          | undefined;
+        const apiBase = getBrowserApiBaseUrl();
+
         setTitle((c.title as string) ?? '');
-        setCategoryId(c.category_id ? String(c.category_id) : '');
+        setCategoryId(category?.id ? String(category.id) : '');
         setLevel((c.level as string) ?? 'BEGINNER');
-        setTeacherId(c.teacher_id ? String(c.teacher_id) : '');
         setDescription((c.description as string) ?? '');
-        const coverUrl =
-          ((c.cover as Record<string, unknown>)?.url as string) ??
-          ((c.cover as Record<string, unknown>)?.file_path as string) ??
-          null;
-        if (c.cover_id) setCoverId(String(c.cover_id));
-        if (coverUrl) setCoverPreview(coverUrl);
-        setPricingType((c.pricing_type as PricingType) ?? 'ONE_TIME');
-        setPrice(c.primary_price ? String(c.primary_price) : '');
-        setPublishStatus(c.published ? 'PUBLISHED' : 'DRAFT');
+        if (image?.id) {
+          setCoverId(String(image.id));
+          const imgUrl =
+            (image.publicUrl as string | null) ||
+            `${apiBase}/images/fetch-image-by-id/${image.id}`;
+          setCoverPreview(imgUrl);
+        }
+        setPricingType(
+          (c.pricing_type as PricingType) ?? (c.is_free ? 'FREE' : 'ONE_TIME')
+        );
+        setPrice(
+          c.price
+            ? String(c.price)
+            : c.primary_price
+              ? String(c.primary_price)
+              : ''
+        );
+        setPublishStatus(c.is_published || c.published ? 'PUBLISHED' : 'DRAFT');
       } catch {
         toast.error(t('courses.errorLoadingCourse'));
       } finally {
@@ -177,7 +160,6 @@ export default function NewCourseModal({
     setTitle('');
     setCategoryId('');
     setLevel('BEGINNER');
-    setTeacherId('');
     setDescription('');
     setCoverId(undefined);
     setCoverPreview(null);
@@ -282,9 +264,9 @@ export default function NewCourseModal({
       secondary_price: 0,
       pricing_type: pricingType,
       published,
-      category_id: categoryId ? Number(categoryId) : undefined,
-      cover_id: coverId ? Number(coverId) : undefined,
-      teacher_id: teacherId ? Number(teacherId) : undefined,
+      category_id: categoryId || undefined,
+      cover_id: coverId || undefined,
+      teacher_id: user?.id ? String(user.id) : undefined,
       seasons:
         sections.length > 0
           ? sections.map((sec) => ({
@@ -409,8 +391,6 @@ export default function NewCourseModal({
                   setCategoryId={setCategoryId}
                   level={level}
                   setLevel={setLevel}
-                  teacherId={teacherId}
-                  setTeacherId={setTeacherId}
                   description={description}
                   setDescription={setDescription}
                   coverPreview={coverPreview}
@@ -420,7 +400,6 @@ export default function NewCourseModal({
                   fileRef={fileRef}
                   handleFileChange={handleCoverChange}
                   categories={categories}
-                  teachers={teachers}
                   showNewCategory={showNewCategory}
                   newCategoryName={newCategoryName}
                   setNewCategoryName={setNewCategoryName}

@@ -5,6 +5,6 @@ import CourseFormPage from '@/components/course/CourseFormPage';
 
 export default function EditCoursePage() {
   const params = useParams();
-  const courseId = Number(params.course_id);
+  const courseId = params.course_id as string;
   return <CourseFormPage courseId={courseId} />;
 }

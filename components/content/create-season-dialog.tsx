@@ -57,7 +57,7 @@ type SeasonFormData = z.infer<typeof seasonFormSchema>;
 interface CreateSeasonDialogProps {
   onSeasonCreated?: () => void;
   courses?: Course[];
-  courseId?: number; // Pre-select a specific course
+  courseId?: string;
 }
 
 export default function CreateSeasonDialog({
@@ -74,7 +74,7 @@ export default function CreateSeasonDialog({
       title: '',
       description: '',
       order: '1',
-      course_id: courseId ? courseId.toString() : ''
+      course_id: courseId ?? ''
     }
   });
 
@@ -92,7 +92,7 @@ export default function CreateSeasonDialog({
         title: data.title,
         description: data.description || '',
         order: parseInt(data.order),
-        course_id: parseInt(data.course_id)
+        course_id: data.course_id
       });
 
       form.reset();

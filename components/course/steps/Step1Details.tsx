@@ -12,8 +12,6 @@ interface Step1Props {
   setCategoryId: (v: string) => void;
   level: string;
   setLevel: (v: string) => void;
-  teacherId: string;
-  setTeacherId: (v: string) => void;
   description: string;
   setDescription: (v: string) => void;
   coverPreview: string | null;
@@ -23,7 +21,6 @@ interface Step1Props {
   fileRef: React.RefObject<HTMLInputElement | null>;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   categories: { id: string; name: string }[];
-  teachers: { id: number; display_name: string }[];
   showNewCategory: boolean;
   newCategoryName: string;
   setNewCategoryName: (v: string) => void;
@@ -40,8 +37,6 @@ export function Step1Details({
   setCategoryId,
   level,
   setLevel,
-  teacherId,
-  setTeacherId,
   description,
   setDescription,
   coverPreview,
@@ -51,7 +46,6 @@ export function Step1Details({
   fileRef,
   handleFileChange,
   categories,
-  teachers,
   showNewCategory,
   newCategoryName,
   setNewCategoryName,
@@ -147,45 +141,22 @@ export function Step1Details({
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1.5">
-          <label className="text-[13px] font-semibold">
-            {t('courses.level')}
-          </label>
-          <select
-            aria-label={t('courses.level')}
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
-            value={level}
-            onChange={(e) => setLevel(e.target.value)}
-          >
-            {LEVEL_KEYS.map((l) => (
-              <option key={l.value} value={l.value}>
-                {t(l.labelKey)}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="space-y-1.5">
-          <label className="text-[13px] font-semibold">
-            {t('courses.instructor')}{' '}
-            <span className="font-normal text-muted-foreground">
-              ({t('common.optional')})
-            </span>
-          </label>
-          <select
-            aria-label={t('courses.instructor')}
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
-            value={teacherId}
-            onChange={(e) => setTeacherId(e.target.value)}
-          >
-            <option value="">{t('courses.selectOption')}</option>
-            {teachers.map((teacher) => (
-              <option key={teacher.id} value={String(teacher.id)}>
-                {teacher.display_name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="space-y-1.5">
+        <label className="text-[13px] font-semibold">
+          {t('courses.level')}
+        </label>
+        <select
+          aria-label={t('courses.level')}
+          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
+          value={level}
+          onChange={(e) => setLevel(e.target.value)}
+        >
+          {LEVEL_KEYS.map((l) => (
+            <option key={l.value} value={l.value}>
+              {t(l.labelKey)}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="space-y-1.5">

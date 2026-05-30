@@ -739,7 +739,10 @@ export const fa = {
     defaultSeasonTitle: 'فصل {{n}}: عنوان فصل',
     selectOption: 'انتخاب...',
     managerDefault: 'مدیر',
-    userWithId: 'کاربر {{id}}'
+    userWithId: 'کاربر {{id}}',
+    deleteCourse: 'حذف دوره',
+    deleteCourseConfirm:
+      'آیا مطمئن هستید که می‌خواهید "{{title}}" را حذف کنید؟ این عمل قابل بازگشت نیست.'
   },
   students: {
     title: 'دانش‌آموزان',

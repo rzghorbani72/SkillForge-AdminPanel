@@ -1,6 +1,6 @@
 'use client';
 
-import { MoreHorizontal } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { StatusPill } from './StatusPill';
 import { courseHue, formatNumber } from './courseUtils';
@@ -8,26 +8,40 @@ import type { CourseWithRevenue } from './useCourses';
 
 export function CourseRow({
   course,
-  onOpen
+  onEdit,
+  onDelete
 }: {
   course: CourseWithRevenue;
-  onOpen: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }) {
   const { t } = useTranslation();
   const hue = courseHue(course.id);
-  const priceVal = (course as any).primary_price ?? 0;
-  const pricingType = (course as any).pricing_type ?? 'ONE_TIME';
-  const studentsCount = course.enrollments_count ?? 0;
+  const priceVal = course.price ?? (course as any).primary_price ?? 0;
+  const isFree = course.is_free ?? (course as any).pricing_type === 'FREE';
+  const pricingType = isFree
+    ? 'FREE'
+    : ((course as any).pricing_type ?? 'ONE_TIME');
+  const studentsCount =
+    (course as any).students_count ??
+    course.enrollments_count ??
+    (course as any)._count?.Enrollment ??
+    0;
   const teacher =
+    (course as any).Profile?.display_name ??
     (course as any).teacher_name ??
     (course as any).Teacher?.display_name ??
     '—';
+  const status = course.is_published
+    ? 'PUBLISHED'
+    : ((course as any).status ?? 'DRAFT');
+  const seasonsCount =
+    (course as any).Season?.length ?? (course as any).seasons_count ?? 0;
+  const lessonsCount =
+    course.lessons_count ?? (course as any)._count?.Lesson ?? 0;
 
   return (
-    <tr
-      className="cursor-pointer border-b border-border/50 transition-colors hover:bg-muted/30"
-      onClick={onOpen}
-    >
+    <tr className="border-b border-border/50 transition-colors hover:bg-muted/30">
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
           <div
@@ -39,8 +53,8 @@ export function CourseRow({
           <div>
             <div className="text-[13.5px] font-semibold">{course.title}</div>
             <div className="text-[11.5px] text-muted-foreground">
-              {(course as any).seasons_count ?? 0} {t('courses.season')} ·{' '}
-              {(course as any).lessons_count ?? 0} {t('courses.lesson')}
+              {seasonsCount} {t('courses.season')} · {lessonsCount}{' '}
+              {t('courses.lesson')}
             </div>
           </div>
         </div>
@@ -75,12 +89,31 @@ export function CourseRow({
           : '—'}
       </td>
       <td className="px-4 py-3">
-        <StatusPill status={(course as any).status ?? 'DRAFT'} />
+        <StatusPill status={status} />
       </td>
       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-        <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted/60">
-          <MoreHorizontal className="h-4 w-4" />
-        </button>
+        <div className="flex items-center gap-1">
+          {onEdit && (
+            <button
+              type="button"
+              onClick={onEdit}
+              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+              title={t('common.edit')}
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+              title={t('common.delete')}
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </td>
     </tr>
   );

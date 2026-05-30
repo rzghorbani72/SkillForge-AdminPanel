@@ -31,7 +31,7 @@ interface VideoUploadPreviewProps {
   // Poster/cover image props
   posterImageId?: string | number | null;
   posterImageUrl?: string | null;
-  onPosterSuccess?: (image: { id: number; url: string }) => void;
+  onPosterSuccess?: (image: { id: string; url: string }) => void;
   onPosterRemove?: () => void;
 }
 

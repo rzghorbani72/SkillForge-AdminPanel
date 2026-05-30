@@ -155,7 +155,7 @@ function StatCard({
 
 export default function CourseDetailPage() {
   const params = useParams<{ course_id: string }>();
-  const courseId = parseInt(params.course_id, 10);
+  const courseId = params.course_id;
   const router = useRouter();
   const { selectedAcademy } = useStore();
   const { t } = useTranslation();
@@ -170,7 +170,7 @@ export default function CourseDetailPage() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!isNaN(courseId)) {
+    if (courseId) {
       apiClient
         .getCourse(courseId)
         .then((data) => setCourse(data))

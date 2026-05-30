@@ -110,7 +110,7 @@ export default function RevenueAnalyticsPage() {
       payments.length > 0 ? Math.round(totalAmount / payments.length) : 0;
 
     const revenueByCourse = new Map<
-      number,
+      string,
       { name: string; amount: number; count: number }
     >();
     payments.forEach((payment) => {

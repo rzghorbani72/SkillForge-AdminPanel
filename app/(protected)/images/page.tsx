@@ -36,7 +36,7 @@ import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface ImageItem {
-  id: number;
+  id: string;
   filename: string;
   publicUrl?: string;
   size: number;
@@ -138,7 +138,7 @@ export default function ImagesPage() {
     }
   };
 
-  const handleDeleteImage = async (imageId: number) => {
+  const handleDeleteImage = async (imageId: string) => {
     try {
       setIsDeleting(true);
       await apiClient.deleteImage(imageId);

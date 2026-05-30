@@ -9,7 +9,7 @@ import ImageSelectionDialog from './ImageSelectionDialog';
 interface ImageUploadPreviewProps {
   title?: string;
   description?: string;
-  onSuccess?: (image: { id: number; url: string }) => void;
+  onSuccess?: (image: { id: string; url: string }) => void;
   onError?: (error: any) => void;
   onCancel?: () => void;
   existingImageUrl?: string | null;
@@ -48,7 +48,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
   } = props;
   const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{
-    id: number;
+    id: string;
     publicUrl: string;
   } | null>(null);
   const [fileInputKey, setFileInputKey] = useState(0);
@@ -72,7 +72,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
     onCancel
   });
 
-  const handleImageSelect = (image: { id: number; publicUrl: string }) => {
+  const handleImageSelect = (image: { id: string; publicUrl: string }) => {
     setSelectedImage(image);
     onSuccess?.({ id: image.id, url: image.publicUrl });
   };
@@ -156,7 +156,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
           imageUpload.removeFile();
           setSelectedImage(null);
           if (selectedImageId) {
-            onSuccess?.({ id: 0, url: '' });
+            onSuccess?.({ id: '', url: '' });
           }
         }}
         existingImageUrl={existingImageUrl}

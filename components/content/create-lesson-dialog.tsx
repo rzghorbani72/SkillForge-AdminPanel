@@ -87,11 +87,11 @@ export default function CreateLessonDialog({
   useEffect(() => {
     if (watchedCourseId && watchedCourseId !== selectedCourseId) {
       setSelectedCourseId(watchedCourseId);
-      fetchSeasons(parseInt(watchedCourseId));
+      fetchSeasons(watchedCourseId);
     }
   }, [watchedCourseId, selectedCourseId]);
 
-  const fetchSeasons = async (courseId: number) => {
+  const fetchSeasons = async (courseId: string) => {
     try {
       const response = await apiClient.getSeasons(courseId);
       setSeasons(Array.isArray(response) ? response : []);
@@ -145,7 +145,7 @@ export default function CreateLessonDialog({
       const lessonData: any = {
         title: data.title,
         description: data.description,
-        season_id: parseInt(data.season_id || '0')
+        season_id: data.season_id || undefined
       };
 
       if (mediaId && mediaType) {

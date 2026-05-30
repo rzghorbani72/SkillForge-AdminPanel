@@ -22,7 +22,7 @@ interface ImageEditModalProps {
   onOpenChange: (open: boolean) => void;
   /** Image data */
   image: {
-    id: number;
+    id: string;
     url?: string;
     publicUrl?: string;
     filename?: string;

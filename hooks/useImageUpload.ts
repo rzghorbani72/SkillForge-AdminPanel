@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 export interface ImageUploadOptions {
   title?: string;
   description?: string;
-  onSuccess?: (image: { id: number; url: string }) => void;
+  onSuccess?: (image: { id: string; url: string }) => void;
   onError?: (error: Error) => void;
   onCancel?: () => void;
 }
@@ -85,7 +85,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
             : imageUrl;
         setUploadedImageId(imageId);
         toast.success('Image uploaded successfully!');
-        options.onSuccess?.({ id: parseInt(imageId), url: fullUrl });
+        options.onSuccess?.({ id: imageId, url: fullUrl });
       } else {
         console.error('Upload response structure:', uploadResponse);
         toast.error('Failed to upload image: Invalid response structure');

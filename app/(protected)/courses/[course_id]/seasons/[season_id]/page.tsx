@@ -34,8 +34,8 @@ export default function SeasonViewPage() {
     try {
       setIsLoading(true);
       const [seasonResponse, courseResponse] = await Promise.all([
-        apiClient.getSeason(parseInt(seasonId)),
-        apiClient.getCourse(parseInt(courseId))
+        apiClient.getSeason(seasonId),
+        apiClient.getCourse(courseId)
       ]);
 
       if (seasonResponse) {

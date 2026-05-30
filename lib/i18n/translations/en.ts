@@ -750,7 +750,10 @@ export const en = {
     defaultSeasonTitle: 'Season {{n}}: Season Title',
     selectOption: 'Select...',
     managerDefault: 'Manager',
-    userWithId: 'User {{id}}'
+    userWithId: 'User {{id}}',
+    deleteCourse: 'Delete Course',
+    deleteCourseConfirm:
+      'Are you sure you want to delete "{{title}}"? This action cannot be undone.'
   },
   students: {
     title: 'Students',

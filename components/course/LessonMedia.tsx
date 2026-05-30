@@ -45,7 +45,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
         abort
       );
       const data = (result as Record<string, unknown>)?.data ?? result;
-      const id = (data as Record<string, unknown>)?.id as number | undefined;
+      const id = (data as Record<string, unknown>)?.id as string | undefined;
       const url =
         ((data as Record<string, unknown>)?.publicUrl as string) ?? '';
       if (id) onUpdate({ video_id: id, videoPreviewUrl: url });
@@ -70,7 +70,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
       });
       const data =
         (result as unknown as Record<string, unknown>)?.data ?? result;
-      const id = (data as Record<string, unknown>)?.id as number | undefined;
+      const id = (data as Record<string, unknown>)?.id as string | undefined;
       const url =
         ((data as Record<string, unknown>)?.publicUrl as string) ?? '';
       if (id) onUpdate({ audio_id: id, audioPreviewUrl: url });
@@ -91,7 +91,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
         title: lesson.title || file.name
       });
       const data = (result as Record<string, unknown>)?.data ?? result;
-      const id = (data as Record<string, unknown>)?.id as number | undefined;
+      const id = (data as Record<string, unknown>)?.id as string | undefined;
       const url =
         ((data as Record<string, unknown>)?.publicUrl as string) ?? '';
       if (id) onUpdate({ cover_id: id, coverPreviewUrl: url });
