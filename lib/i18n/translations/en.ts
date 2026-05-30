@@ -323,6 +323,9 @@ export const en = {
     step2Subtitle: 'Students will use this URL to find your academy.',
     step3Heading: 'Tell us about your academy',
     step3Subtitle: "Help students understand what they'll learn here.",
+    step4Heading: 'Choose your brand color',
+    step4Subtitle:
+      'Pick a primary color for your academy. You can change it anytime.',
     backBtn: 'Back',
     skipForNow: 'Skip for now',
     academyName: 'Academy name',

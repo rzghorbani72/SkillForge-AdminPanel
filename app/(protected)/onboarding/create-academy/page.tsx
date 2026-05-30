@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Globe, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Loader2, Globe, ArrowLeft, CheckCircle2, Check } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +19,7 @@ import {
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { toast } from 'react-toastify';
 import { useStore } from '@/hooks/useStore';
-import { clearAcademyData } from '@/lib/store-utils';
+import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import { cn } from '@/lib/utils';
 
 // ─── Schema ───────────────────────────────────────────────────────────────
@@ -38,7 +37,18 @@ const useAcademySchema = (t: (k: string) => string) =>
 
 type AcademyValues = { name: string; slug: string; description?: string };
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
+
+const PRESET_COLORS = [
+  { hex: '#3B82F6', label: 'Blue' },
+  { hex: '#6366F1', label: 'Indigo' },
+  { hex: '#8B5CF6', label: 'Violet' },
+  { hex: '#EC4899', label: 'Pink' },
+  { hex: '#F97316', label: 'Orange' },
+  { hex: '#22C55E', label: 'Green' },
+  { hex: '#14B8A6', label: 'Teal' },
+  { hex: '#EF4444', label: 'Red' }
+];
 
 function toSlug(name: string): string {
   return name
@@ -77,11 +87,11 @@ function ProgressDots({ current, total }: { current: number; total: number }) {
 export default function CreateAcademyPage() {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
-  const router = useRouter();
   const { refreshAcademies } = useStore();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
   const [created, setCreated] = useState(false);
+  const [primaryColor, setPrimaryColor] = useState(PRESET_COLORS[0].hex);
 
   const form = useForm<AcademyValues>({
     resolver: zodResolver(useAcademySchema(t)),
@@ -102,9 +112,15 @@ export default function CreateAcademyPage() {
   }
 
   async function goNext() {
-    const field = step === 1 ? 'name' : 'slug';
-    const valid = await form.trigger(field as keyof AcademyValues);
-    if (valid) setStep((s) => s + 1);
+    if (step === 1) {
+      const valid = await form.trigger('name');
+      if (valid) setStep((s) => s + 1);
+    } else if (step === 2) {
+      const valid = await form.trigger('slug');
+      if (valid) setStep((s) => s + 1);
+    } else {
+      setStep((s) => s + 1);
+    }
   }
 
   async function submit() {
@@ -123,11 +139,17 @@ export default function CreateAcademyPage() {
       if (newId) {
         await apiClient.switchAcademy(newId);
         clearAcademyData();
+        setSelectedAcademyId(newId);
+        await apiClient.updateCurrentThemeConfig({
+          primary_color: primaryColor
+        });
       }
       await refreshAcademies();
       setCreated(true);
       toast.success(t('auth.academyCreatedTitle'));
-      setTimeout(() => router.push('/dashboard'), 1500);
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1500);
     } catch (err: unknown) {
       toast.error((err as { message?: string })?.message ?? t('common.error'));
     } finally {
@@ -156,18 +178,10 @@ export default function CreateAcademyPage() {
   // ─── Step config ──────────────────────────────────────────────────────────
 
   const steps = [
-    {
-      heading: t('auth.step1Heading'),
-      subtitle: t('auth.step1Subtitle')
-    },
-    {
-      heading: t('auth.step2Heading'),
-      subtitle: t('auth.step2Subtitle')
-    },
-    {
-      heading: t('auth.step3Heading'),
-      subtitle: t('auth.step3Subtitle')
-    }
+    { heading: t('auth.step1Heading'), subtitle: t('auth.step1Subtitle') },
+    { heading: t('auth.step2Heading'), subtitle: t('auth.step2Subtitle') },
+    { heading: t('auth.step3Heading'), subtitle: t('auth.step3Subtitle') },
+    { heading: t('auth.step4Heading'), subtitle: t('auth.step4Subtitle') }
   ];
 
   // ─── Wizard ───────────────────────────────────────────────────────────────
@@ -275,6 +289,37 @@ export default function CreateAcademyPage() {
                   </FormItem>
                 )}
               />
+            )}
+
+            {/* Step 4 — Primary color */}
+            {step === 4 && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-3">
+                  {PRESET_COLORS.map(({ hex, label }) => (
+                    <button
+                      key={hex}
+                      type="button"
+                      aria-label={label}
+                      onClick={() => setPrimaryColor(hex)}
+                      style={{ '--swatch': hex } as React.CSSProperties}
+                      className="relative h-12 w-12 rounded-full bg-[--swatch] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[--swatch] focus:ring-offset-2"
+                    >
+                      {primaryColor === hex && (
+                        <Check className="absolute inset-0 m-auto h-5 w-5 text-white drop-shadow" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-3 rounded-lg border p-3">
+                  <div
+                    style={{ '--swatch': primaryColor } as React.CSSProperties}
+                    className="h-8 w-8 shrink-0 rounded-full border bg-[--swatch]"
+                  />
+                  <span className="text-sm text-muted-foreground" dir="ltr">
+                    {primaryColor}
+                  </span>
+                </div>
+              </div>
             )}
 
             {/* CTA row */}
