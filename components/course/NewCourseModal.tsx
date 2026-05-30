@@ -121,7 +121,8 @@ export default function NewCourseModal({
           const managerEntry = {
             id: user.id,
             display_name:
-              user.profile?.display_name ?? t('courses.managerDefault')
+              (user.profile?.display_name as string | undefined) ??
+              t('courses.managerDefault')
           };
           const alreadyIn = teacherList.some(
             (teacher) => teacher.id === user.id

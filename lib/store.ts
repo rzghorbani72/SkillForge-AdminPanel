@@ -257,6 +257,7 @@ export interface AuthUser {
   currentAcademy?: {
     id: number;
     name: string;
+    slug?: string;
     domain?: string | null;
   } | null;
   permissions?: string[];

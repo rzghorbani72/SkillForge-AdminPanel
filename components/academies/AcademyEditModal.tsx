@@ -123,7 +123,8 @@ export function AcademyEditModal({
     apiClient
       .getCurrentThemeConfig()
       .then((themeConfig) => {
-        const saved = themeConfig?.primary_color;
+        const saved = (themeConfig as { primary_color?: string })
+          ?.primary_color;
         if (saved) {
           const match = BRAND_COLORS.find((c) => c.hex === saved);
           setPrimaryColor(match ? match.hex : saved);
