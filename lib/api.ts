@@ -2343,7 +2343,7 @@ class ApiClient {
       isVisible: boolean;
       config?: Record<string, any>;
     }>;
-    template_preset?: string;
+    template_preset?: string | null;
     is_active?: boolean;
   }) {
     const response = await this.request('/ui-template/current', {

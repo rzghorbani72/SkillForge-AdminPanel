@@ -11,7 +11,9 @@ import {
   Palette,
   Settings2,
   RotateCcw,
-  Layers
+  Layers,
+  Copy,
+  Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +28,10 @@ import { useUserStore } from '@/lib/store';
 import type { TemplatePreset, UIBlockConfig, UITemplate } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { BlockEditor } from '@/components/ui-template/block-editor';
-import { SitePreview } from '@/components/ui-template/site-preview';
+import {
+  SitePreview,
+  type PreviewTheme
+} from '@/components/ui-template/site-preview';
 import { BlocksList } from '@/components/ui-template/blocks-list';
 import { TemplateSelectModal } from '@/components/ui-template/template-select-modal';
 import { DESIGN_SYSTEMS, buildThemePayload } from '@/lib/design-systems';
@@ -41,24 +46,35 @@ type DeviceMode = 'desktop' | 'tablet' | 'mobile';
 type LeftTab = 'colors' | 'style' | 'block';
 
 interface ThemeColors {
-  primary: string;
-  secondary: string;
+  primaryLight: string;
+  primaryDark: string;
+  secondaryLight: string;
+  secondaryDark: string;
   accent: string;
-  background: string;
+  backgroundLight: string;
+  backgroundDark: string;
 }
 
 interface ThemeStyle {
   borderRadius: 'rounded' | 'soft' | 'sharp';
   shadow: 'none' | 'subtle' | 'medium' | 'strong';
-  animationType: string;
-  animationSpeed: 'slow' | 'medium' | 'fast';
+  backgroundSvgPattern: string;
 }
+
+const DEFAULT_COLORS: ThemeColors = {
+  primaryLight: DEFAULT_THEME_CONFIG.primary_color,
+  primaryDark: DEFAULT_THEME_CONFIG.primary_color,
+  secondaryLight: DEFAULT_THEME_CONFIG.secondary_color,
+  secondaryDark: DEFAULT_THEME_CONFIG.secondary_color,
+  accent: DEFAULT_THEME_CONFIG.accent_color,
+  backgroundLight: DEFAULT_THEME_CONFIG.background_color,
+  backgroundDark: '#0f172a'
+};
 
 const DEFAULT_THEME_STYLE: ThemeStyle = {
   borderRadius: 'rounded',
   shadow: 'medium',
-  animationType: 'none',
-  animationSpeed: 'medium'
+  backgroundSvgPattern: ''
 };
 
 const BORDER_RADIUS_OPTIONS = [
@@ -86,12 +102,113 @@ const SHADOW_OPTIONS = [
   }
 ];
 
-const ANIMATION_OPTIONS = [
-  { value: 'none', label: 'None', icon: '○' },
-  { value: 'gradient', label: 'Gradient', icon: '◑' },
-  { value: 'particles', label: 'Particles', icon: '✦' },
-  { value: 'waves', label: 'Waves', icon: '〜' },
-  { value: 'mesh', label: 'Mesh', icon: '⊞' }
+const QUICK_PALETTES = [
+  {
+    name: 'Cool Blue',
+    colors: ['#3b82f6', '#6366f1', '#0ea5e9', '#f0f9ff', '#0f172a']
+  },
+  {
+    name: 'Warm Sunset',
+    colors: ['#f97316', '#f43f5e', '#fbbf24', '#fff7ed', '#1c0710']
+  },
+  {
+    name: 'Forest',
+    colors: ['#16a34a', '#65a30d', '#f59e0b', '#f0fdf4', '#052e16']
+  },
+  {
+    name: 'Purple Haze',
+    colors: ['#8b5cf6', '#a855f7', '#ec4899', '#faf5ff', '#1e1b4b']
+  },
+  {
+    name: 'Ocean Deep',
+    colors: ['#0891b2', '#0284c7', '#06b6d4', '#ecfeff', '#0c1a2e']
+  },
+  {
+    name: 'Minimal Dark',
+    colors: ['#0f172a', '#1e293b', '#94a3b8', '#f8fafc', '#0f172a']
+  }
+];
+
+// Built-in color presets (independent of template layout presets)
+const THEME_COLOR_PRESETS = [
+  {
+    id: 'ocean-breeze',
+    name: 'Ocean Breeze',
+    primaryLight: '#0ea5e9',
+    primaryDark: '#38bdf8',
+    secondaryLight: '#6366f1',
+    secondaryDark: '#818cf8',
+    accent: '#06b6d4',
+    backgroundLight: '#f0f9ff',
+    backgroundDark: '#0c1a2e',
+    borderRadius: 'rounded' as const,
+    shadow: 'medium' as const
+  },
+  {
+    id: 'sunset-luxe',
+    name: 'Sunset Luxe',
+    primaryLight: '#f97316',
+    primaryDark: '#fb923c',
+    secondaryLight: '#a855f7',
+    secondaryDark: '#c084fc',
+    accent: '#fbbf24',
+    backgroundLight: '#fffbf7',
+    backgroundDark: '#1a0a2e',
+    borderRadius: 'sharp' as const,
+    shadow: 'strong' as const
+  },
+  {
+    id: 'forest-natural',
+    name: 'Forest',
+    primaryLight: '#16a34a',
+    primaryDark: '#4ade80',
+    secondaryLight: '#65a30d',
+    secondaryDark: '#a3e635',
+    accent: '#f59e0b',
+    backgroundLight: '#f0fdf4',
+    backgroundDark: '#052e16',
+    borderRadius: 'soft' as const,
+    shadow: 'subtle' as const
+  },
+  {
+    id: 'midnight-pro',
+    name: 'Midnight Pro',
+    primaryLight: '#8b5cf6',
+    primaryDark: '#a78bfa',
+    secondaryLight: '#6366f1',
+    secondaryDark: '#818cf8',
+    accent: '#ec4899',
+    backgroundLight: '#1e1b4b',
+    backgroundDark: '#0a0a1a',
+    borderRadius: 'rounded' as const,
+    shadow: 'strong' as const
+  },
+  {
+    id: 'coral-pop',
+    name: 'Coral Pop',
+    primaryLight: '#f43f5e',
+    primaryDark: '#fb7185',
+    secondaryLight: '#f97316',
+    secondaryDark: '#fb923c',
+    accent: '#fbbf24',
+    backgroundLight: '#fff1f2',
+    backgroundDark: '#1c0710',
+    borderRadius: 'soft' as const,
+    shadow: 'medium' as const
+  },
+  {
+    id: 'arctic-white',
+    name: 'Arctic',
+    primaryLight: '#3b82f6',
+    primaryDark: '#60a5fa',
+    secondaryLight: '#64748b',
+    secondaryDark: '#94a3b8',
+    accent: '#0ea5e9',
+    backgroundLight: '#f8fafc',
+    backgroundDark: '#0f172a',
+    borderRadius: 'rounded' as const,
+    shadow: 'medium' as const
+  }
 ];
 
 function parseThemeStyle(raw: unknown): ThemeStyle {
@@ -109,15 +226,39 @@ function parseThemeStyle(raw: unknown): ThemeStyle {
     )
       ? (configs.shadow_style as ThemeStyle['shadow'])
       : DEFAULT_THEME_STYLE.shadow,
-    animationType:
-      typeof configs?.background_animation_type === 'string'
-        ? configs.background_animation_type
-        : DEFAULT_THEME_STYLE.animationType,
-    animationSpeed: (['slow', 'medium', 'fast'] as const).includes(
-      configs?.background_animation_speed as 'slow' | 'medium' | 'fast'
-    )
-      ? (configs.background_animation_speed as ThemeStyle['animationSpeed'])
-      : DEFAULT_THEME_STYLE.animationSpeed
+    backgroundSvgPattern:
+      typeof configs?.background_svg_pattern === 'string'
+        ? configs.background_svg_pattern
+        : DEFAULT_THEME_STYLE.backgroundSvgPattern
+  };
+}
+
+function parseThemeColors(raw: unknown): ThemeColors {
+  const data = (raw as Record<string, unknown>)?.data ?? raw ?? {};
+  const configs = ((data as Record<string, unknown>)?.configs ??
+    data) as Record<string, unknown>;
+  const parsed = parseThemeResponse(raw);
+  return {
+    primaryLight:
+      (configs?.primary_color_light as string) || parsed.primary_color,
+    primaryDark:
+      (configs?.primary_color_dark as string) || parsed.primary_color,
+    secondaryLight:
+      (configs?.secondary_color_light as string) ||
+      parsed.secondary_color ||
+      DEFAULT_COLORS.secondaryLight,
+    secondaryDark:
+      (configs?.secondary_color_dark as string) ||
+      parsed.secondary_color ||
+      DEFAULT_COLORS.secondaryDark,
+    accent: parsed.accent_color || DEFAULT_COLORS.accent,
+    backgroundLight:
+      (configs?.background_color_light as string) ||
+      parsed.background_color ||
+      DEFAULT_COLORS.backgroundLight,
+    backgroundDark:
+      (configs?.background_color_dark as string) ||
+      DEFAULT_COLORS.backgroundDark
   };
 }
 
@@ -137,13 +278,9 @@ export default function UITemplateSettingsPage() {
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [deviceMode, setDeviceMode] = useState<DeviceMode>('desktop');
   const [leftTab, setLeftTab] = useState<LeftTab>('colors');
-  const [themeColors, setThemeColors] = useState<ThemeColors>({
-    primary: DEFAULT_THEME_CONFIG.primary_color,
-    secondary: DEFAULT_THEME_CONFIG.secondary_color,
-    accent: DEFAULT_THEME_CONFIG.accent_color,
-    background: DEFAULT_THEME_CONFIG.background_color
-  });
+  const [themeColors, setThemeColors] = useState<ThemeColors>(DEFAULT_COLORS);
   const [themeStyle, setThemeStyle] = useState<ThemeStyle>(DEFAULT_THEME_STYLE);
+  const [copied, setCopied] = useState(false);
 
   const hasTemplate = !!template?.id;
 
@@ -180,19 +317,13 @@ export default function UITemplateSettingsPage() {
       setIsActive((templateData as UITemplate | null)?.is_active ?? true);
 
       if (themeData) {
-        const parsed = parseThemeResponse(themeData);
-        setThemeColors({
-          primary: parsed.primary_color,
-          secondary:
-            parsed.secondary_color ?? DEFAULT_THEME_CONFIG.secondary_color,
-          accent: parsed.accent_color ?? DEFAULT_THEME_CONFIG.accent_color,
-          background:
-            parsed.background_color ?? DEFAULT_THEME_CONFIG.background_color
-        });
+        setThemeColors(parseThemeColors(themeData));
         setThemeStyle(parseThemeStyle(themeData));
       }
 
-      if (!(templateData as UITemplate | null)?.template_preset) {
+      const td = templateData as UITemplate | null;
+      const hasNoContent = !td?.id || (td.blocks ?? []).length === 0;
+      if (hasNoContent) {
         setShowTemplateModal(true);
       }
     } catch (error) {
@@ -246,23 +377,30 @@ export default function UITemplateSettingsPage() {
   };
 
   const buildThemePayloadFromState = () => ({
-    primary_color: themeColors.primary,
-    secondary_color: themeColors.secondary,
+    primary_color: themeColors.primaryLight,
+    primary_color_light: themeColors.primaryLight,
+    primary_color_dark: themeColors.primaryDark,
+    secondary_color: themeColors.secondaryLight,
+    secondary_color_light: themeColors.secondaryLight,
+    secondary_color_dark: themeColors.secondaryDark,
     accent_color: themeColors.accent,
-    background_color: themeColors.background,
+    background_color: themeColors.backgroundLight,
+    background_color_light: themeColors.backgroundLight,
+    background_color_dark: themeColors.backgroundDark,
     dark_mode: null,
     border_radius_style: themeStyle.borderRadius,
     shadow_style: themeStyle.shadow,
-    background_animation_type: themeStyle.animationType,
-    background_animation_speed: themeStyle.animationSpeed
+    background_svg_pattern: themeStyle.backgroundSvgPattern
   });
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
+      // Sending null explicitly breaks the link to the base template preset.
+      // After save, the stored blocks + theme are the academy's own design system.
       const templatePayload = {
         blocks,
-        template_preset: activePresetId || undefined,
+        template_preset: null,
         is_active: isActive
       };
       const colorPayload = buildThemePayloadFromState();
@@ -296,12 +434,16 @@ export default function UITemplateSettingsPage() {
         await apiClient.updateCurrentThemeConfig(themePayload);
         applyThemeVariables(themePayload);
         dispatchThemeUpdate(themePayload);
-        setThemeColors({
-          primary: ds.colors.primary,
-          secondary: ds.colors.secondary,
+        setThemeColors((prev) => ({
+          ...prev,
+          primaryLight: ds.colors.primary,
+          primaryDark: ds.colors.primary,
+          secondaryLight: ds.colors.secondary,
+          secondaryDark: ds.colors.secondary,
           accent: ds.colors.accent,
-          background: ds.colors.background
-        });
+          backgroundLight: ds.colors.background,
+          backgroundDark: ds.colors.backgroundDark
+        }));
         setThemeStyle((prev) => ({
           ...prev,
           borderRadius: ds.shape.borderRadius,
@@ -318,15 +460,45 @@ export default function UITemplateSettingsPage() {
     }
   };
 
+  const handleApplyColorPreset = useCallback(
+    (preset: (typeof THEME_COLOR_PRESETS)[number]) => {
+      const colors: ThemeColors = {
+        primaryLight: preset.primaryLight,
+        primaryDark: preset.primaryDark,
+        secondaryLight: preset.secondaryLight,
+        secondaryDark: preset.secondaryDark,
+        accent: preset.accent,
+        backgroundLight: preset.backgroundLight,
+        backgroundDark: preset.backgroundDark
+      };
+      setThemeColors(colors);
+      setThemeStyle((prev) => ({
+        ...prev,
+        borderRadius: preset.borderRadius,
+        shadow: preset.shadow
+      }));
+      const payload = {
+        primary_color: colors.primaryLight,
+        secondary_color: colors.secondaryLight,
+        accent_color: colors.accent,
+        background_color: colors.backgroundLight,
+        dark_mode: null
+      };
+      applyThemeVariables(payload);
+      dispatchThemeUpdate(payload);
+    },
+    []
+  );
+
   const handleColorChange = useCallback(
     (key: keyof ThemeColors, value: string) => {
       setThemeColors((prev) => {
         const updated = { ...prev, [key]: value };
         const payload = {
-          primary_color: updated.primary,
-          secondary_color: updated.secondary,
+          primary_color: updated.primaryLight,
+          secondary_color: updated.secondaryLight,
           accent_color: updated.accent,
-          background_color: updated.background,
+          background_color: updated.backgroundLight,
           dark_mode: null
         };
         applyThemeVariables(payload);
@@ -341,10 +513,13 @@ export default function UITemplateSettingsPage() {
     const ds = DESIGN_SYSTEMS[activePresetId];
     if (!ds) return;
     const reset: ThemeColors = {
-      primary: ds.colors.primary,
-      secondary: ds.colors.secondary,
+      primaryLight: ds.colors.primary,
+      primaryDark: ds.colors.primary,
+      secondaryLight: ds.colors.secondary,
+      secondaryDark: ds.colors.secondary,
       accent: ds.colors.accent,
-      background: ds.colors.background
+      backgroundLight: ds.colors.background,
+      backgroundDark: ds.colors.backgroundDark
     };
     setThemeColors(reset);
     setThemeStyle((prev) => ({
@@ -353,15 +528,23 @@ export default function UITemplateSettingsPage() {
       shadow: ds.shape.shadow
     }));
     const payload = {
-      primary_color: reset.primary,
-      secondary_color: reset.secondary,
+      primary_color: reset.primaryLight,
+      secondary_color: reset.secondaryLight,
       accent_color: reset.accent,
-      background_color: reset.background,
+      background_color: reset.backgroundLight,
       dark_mode: null
     };
     applyThemeVariables(payload);
     dispatchThemeUpdate(payload);
   }, [activePresetId]);
+
+  const handleCopyConfig = useCallback(() => {
+    navigator.clipboard.writeText(
+      JSON.stringify(buildThemePayloadFromState(), null, 2)
+    );
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [themeColors, themeStyle]);
 
   const handleSelectBlock = useCallback((id: string | null) => {
     setActiveBlockId(id);
@@ -377,12 +560,17 @@ export default function UITemplateSettingsPage() {
     );
   }
 
-  const previewWidthClass =
-    deviceMode === 'mobile'
-      ? 'max-w-sm mx-auto'
-      : deviceMode === 'tablet'
-        ? 'max-w-2xl mx-auto'
-        : 'w-full';
+  const previewTheme: PreviewTheme = {
+    primaryLight: themeColors.primaryLight,
+    primaryDark: themeColors.primaryDark,
+    secondaryLight: themeColors.secondaryLight,
+    secondaryDark: themeColors.secondaryDark,
+    accent: themeColors.accent,
+    backgroundLight: themeColors.backgroundLight,
+    backgroundDark: themeColors.backgroundDark,
+    borderRadius: themeStyle.borderRadius,
+    shadow: themeStyle.shadow
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -430,6 +618,20 @@ export default function UITemplateSettingsPage() {
             type="button"
             variant="outline"
             size="sm"
+            onClick={handleCopyConfig}
+          >
+            {copied ? (
+              <Check className="mr-1.5 h-4 w-4 text-green-500" />
+            ) : (
+              <Copy className="mr-1.5 h-4 w-4" />
+            )}
+            {t('settings.copyConfig')}
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={() => setShowTemplateModal(true)}
           >
             <LayoutTemplate className="mr-1.5 h-4 w-4" />
@@ -466,16 +668,25 @@ export default function UITemplateSettingsPage() {
         {/* Left panel */}
         <aside className="flex w-64 flex-shrink-0 flex-col overflow-hidden border-r bg-background">
           {/* Active preset badge */}
-          {activePresetId && (
-            <div className="flex items-center gap-2 border-b bg-muted/30 px-4 py-2.5">
-              <span className="text-xs text-muted-foreground">
-                {t('settings.basedOn')}
-              </span>
-              <Badge variant="secondary" className="text-xs">
-                {activePresetId}
+          <div className="flex items-center gap-2 border-b bg-muted/30 px-4 py-2.5">
+            {activePresetId ? (
+              <>
+                <span className="text-xs text-muted-foreground">
+                  {t('settings.basedOn')}
+                </span>
+                <Badge variant="secondary" className="text-xs">
+                  {activePresetId}
+                </Badge>
+              </>
+            ) : template?.id ? (
+              <Badge
+                variant="outline"
+                className="border-green-300 text-xs text-green-600"
+              >
+                Custom Design System
               </Badge>
-            </div>
-          )}
+            ) : null}
+          </div>
 
           {/* Template active toggle */}
           <div className="flex items-center justify-between border-b px-4 py-3">
@@ -490,7 +701,7 @@ export default function UITemplateSettingsPage() {
             <Switch checked={isActive} onCheckedChange={setIsActive} />
           </div>
 
-          {/* Tab strip — 3 tabs */}
+          {/* Tab strip */}
           <div className="flex flex-shrink-0 border-b">
             {(
               [
@@ -519,43 +730,173 @@ export default function UITemplateSettingsPage() {
             {/* ── Colors tab ─────────────────────────────── */}
             {leftTab === 'colors' && (
               <div className="space-y-4 p-4">
+                {/* Built-in color presets */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    پیش‌نمایش رنگ‌ها
+                  </p>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {THEME_COLOR_PRESETS.map((preset) => (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        title={preset.name}
+                        onClick={() => handleApplyColorPreset(preset)}
+                        className="group flex flex-col overflow-hidden rounded-md border transition-all hover:border-primary hover:shadow-sm"
+                      >
+                        <div
+                          className="h-5 w-full"
+                          style={{
+                            background: `linear-gradient(135deg, ${preset.primaryLight}, ${preset.secondaryLight})`
+                          }}
+                        />
+                        <span className="truncate px-1 py-0.5 text-[8px] text-muted-foreground group-hover:text-foreground">
+                          {preset.name}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Color pairs */}
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  رنگ‌های قالب
+                  رنگ‌های سفارشی
                 </p>
 
-                {(
-                  [
-                    { key: 'primary', label: 'رنگ اصلی' },
-                    { key: 'secondary', label: 'رنگ ثانوی' },
-                    { key: 'accent', label: 'رنگ تأکیدی' },
-                    { key: 'background', label: 'پس‌زمینه' }
-                  ] as const
-                ).map(({ key, label }) => (
-                  <div key={key} className="space-y-1.5">
+                {[
+                  {
+                    lightKey: 'primaryLight' as const,
+                    darkKey: 'primaryDark' as const,
+                    label: 'رنگ اصلی'
+                  },
+                  {
+                    lightKey: 'secondaryLight' as const,
+                    darkKey: 'secondaryDark' as const,
+                    label: 'رنگ ثانوی'
+                  },
+                  {
+                    lightKey: 'backgroundLight' as const,
+                    darkKey: 'backgroundDark' as const,
+                    label: 'پس‌زمینه'
+                  }
+                ].map(({ lightKey, darkKey, label }) => (
+                  <div key={lightKey} className="space-y-1.5">
                     <Label className="text-[11px] text-muted-foreground">
                       {label}
                     </Label>
-                    <div className="flex items-center gap-2">
-                      <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md border shadow-sm">
-                        <input
-                          type="color"
-                          title={label}
+                    {[
+                      { key: lightKey, mode: 'روز' },
+                      { key: darkKey, mode: 'شب' }
+                    ].map(({ key, mode }) => (
+                      <div key={key} className="flex items-center gap-1.5">
+                        <span className="w-6 text-[9px] text-muted-foreground">
+                          {mode}
+                        </span>
+                        <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded border shadow-sm">
+                          <input
+                            type="color"
+                            title={`${label} ${mode}`}
+                            value={themeColors[key]}
+                            onChange={(e) =>
+                              handleColorChange(key, e.target.value)
+                            }
+                            className="absolute -inset-1 h-9 w-9 cursor-pointer border-0 p-0"
+                          />
+                        </div>
+                        <Input
                           value={themeColors[key]}
                           onChange={(e) =>
                             handleColorChange(key, e.target.value)
                           }
-                          className="absolute -inset-1 h-11 w-11 cursor-pointer border-0 p-0"
+                          className="h-6 font-mono text-[10px]"
+                          placeholder="#000000"
                         />
                       </div>
-                      <Input
-                        value={themeColors[key]}
-                        onChange={(e) => handleColorChange(key, e.target.value)}
-                        className="h-7 font-mono text-xs"
-                        placeholder="#000000"
-                      />
-                    </div>
+                    ))}
                   </div>
                 ))}
+
+                {/* Accent (single) */}
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] text-muted-foreground">
+                    رنگ تأکیدی
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md border shadow-sm">
+                      <input
+                        type="color"
+                        title="رنگ تأکیدی"
+                        value={themeColors.accent}
+                        onChange={(e) =>
+                          handleColorChange('accent', e.target.value)
+                        }
+                        className="absolute -inset-1 h-11 w-11 cursor-pointer border-0 p-0"
+                      />
+                    </div>
+                    <Input
+                      value={themeColors.accent}
+                      onChange={(e) =>
+                        handleColorChange('accent', e.target.value)
+                      }
+                      className="h-7 font-mono text-xs"
+                      placeholder="#000000"
+                    />
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Quick palettes */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    پالت‌های سریع
+                  </p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {QUICK_PALETTES.map((palette) => (
+                      <button
+                        key={palette.name}
+                        type="button"
+                        onClick={() => {
+                          const colors: ThemeColors = {
+                            primaryLight: palette.colors[0],
+                            primaryDark: palette.colors[0],
+                            secondaryLight: palette.colors[1],
+                            secondaryDark: palette.colors[1],
+                            accent: palette.colors[2],
+                            backgroundLight: palette.colors[3],
+                            backgroundDark: palette.colors[4]
+                          };
+                          setThemeColors(colors);
+                          const payload = {
+                            primary_color: colors.primaryLight,
+                            secondary_color: colors.secondaryLight,
+                            accent_color: colors.accent,
+                            background_color: colors.backgroundLight,
+                            dark_mode: null
+                          };
+                          applyThemeVariables(payload);
+                          dispatchThemeUpdate(payload);
+                        }}
+                        className="flex flex-col gap-1 rounded border p-1.5 text-left transition-all hover:border-primary hover:shadow-sm"
+                      >
+                        <div className="flex gap-0.5">
+                          {palette.colors.slice(0, 4).map((color, i) => (
+                            <div
+                              key={i}
+                              className="h-3.5 w-3.5 rounded-full border border-white/50 shadow-sm"
+                              style={{ background: color }}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-[9px] font-medium text-muted-foreground">
+                          {palette.name}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
                 {activePresetId && DESIGN_SYSTEMS[activePresetId] && (
                   <button
@@ -635,63 +976,26 @@ export default function UITemplateSettingsPage() {
 
                 <Separator />
 
-                {/* Hero animation type */}
+                {/* SVG pattern */}
                 <div className="space-y-2">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    انیمیشن پس‌زمینه
+                    الگوی SVG
                   </p>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {ANIMATION_OPTIONS.map(({ value, label, icon }) => (
-                      <button
-                        key={value}
-                        type="button"
-                        onClick={() =>
-                          setThemeStyle((s) => ({ ...s, animationType: value }))
-                        }
-                        className={`flex flex-col items-center gap-1 rounded border py-2 text-[10px] font-medium transition-colors ${
-                          themeStyle.animationType === value
-                            ? 'border-primary bg-primary/5 text-primary'
-                            : 'border-border hover:bg-accent'
-                        }`}
-                      >
-                        <span className="text-base leading-none">{icon}</span>
-                        {label}
-                      </button>
-                    ))}
-                  </div>
+                  <Input
+                    value={themeStyle.backgroundSvgPattern}
+                    onChange={(e) =>
+                      setThemeStyle((s) => ({
+                        ...s,
+                        backgroundSvgPattern: e.target.value
+                      }))
+                    }
+                    placeholder="dots, grid, waves..."
+                    className="h-7 font-mono text-[10px]"
+                  />
+                  <p className="text-[9px] text-muted-foreground">
+                    {t('settings.svgPatternHelper')}
+                  </p>
                 </div>
-
-                {/* Animation speed — only when animation is active */}
-                {themeStyle.animationType !== 'none' && (
-                  <>
-                    <div className="space-y-2">
-                      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                        سرعت انیمیشن
-                      </p>
-                      <div className="flex gap-1.5">
-                        {(['slow', 'medium', 'fast'] as const).map((speed) => (
-                          <button
-                            key={speed}
-                            type="button"
-                            onClick={() =>
-                              setThemeStyle((s) => ({
-                                ...s,
-                                animationSpeed: speed
-                              }))
-                            }
-                            className={`flex flex-1 items-center justify-center rounded border py-1.5 text-[10px] font-medium capitalize transition-colors ${
-                              themeStyle.animationSpeed === speed
-                                ? 'border-primary bg-primary/5 text-primary'
-                                : 'border-border hover:bg-accent'
-                            }`}
-                          >
-                            {speed}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
               </div>
             )}
 
@@ -707,16 +1011,14 @@ export default function UITemplateSettingsPage() {
 
         {/* Center panel — Site preview */}
         <main className="flex min-w-0 flex-1 flex-col overflow-hidden bg-muted/20 p-4">
-          <div
-            className={`flex min-h-0 flex-1 flex-col transition-all duration-300 ${previewWidthClass}`}
-          >
-            <SitePreview
-              blocks={sortedBlocks}
-              siteUrl={storefrontUrl}
-              activeBlockId={activeBlockId}
-              onSelectBlock={handleSelectBlock}
-            />
-          </div>
+          <SitePreview
+            blocks={sortedBlocks}
+            siteUrl={storefrontUrl}
+            activeBlockId={activeBlockId}
+            onSelectBlock={handleSelectBlock}
+            theme={previewTheme}
+            deviceMode={deviceMode}
+          />
         </main>
 
         {/* Right panel — Blocks list */}

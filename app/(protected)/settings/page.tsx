@@ -65,12 +65,6 @@ export default function SettingsOverviewPage() {
           }
         ]),
     {
-      title: t('settings.themeGeneratorTitle'),
-      description: t('settings.themeGeneratorSubtitle'),
-      href: '/settings/theme-generator',
-      icon: Layout
-    },
-    {
       title: t('settings.uiTemplateBuilder'),
       description: t('settings.uiTemplateBuilderDescription'),
       href: '/settings/ui-template',
