@@ -3877,6 +3877,23 @@ class ApiClient {
     });
     return (res.data as any)?.data ?? res.data;
   }
+
+  /**
+   * Initiate gateway checkout for an AcademyPlan (SUBSCRIPTION or PACKAGE).
+   * Returns { payment_id, redirect_url } — caller should window.location.href = redirect_url.
+   */
+  async initiateAcademyPlanPayment(data: {
+    academy_plan_id: string;
+    amount: number;
+    coupon_code?: string;
+    callback_url: string;
+  }) {
+    const res = await this.request<any>('/payments/checkout', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
 }
 
 export interface PlatformSettingsData {
