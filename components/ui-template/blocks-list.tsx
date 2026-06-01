@@ -22,8 +22,8 @@ const BLOCK_ACCENT: Record<string, string> = {
   features: 'bg-purple-100 text-purple-700',
   courses: 'bg-indigo-100 text-indigo-700',
   testimonials: 'bg-amber-100 text-amber-700',
-  footer: 'bg-slate-200 text-slate-700',
-  sidebar: 'bg-orange-100 text-orange-700'
+  slideshow: 'bg-cyan-100 text-cyan-700',
+  footer: 'bg-slate-200 text-slate-700'
 };
 
 export function BlocksList({
@@ -45,8 +45,8 @@ export function BlocksList({
       features: t('settings.featuresSection'),
       courses: t('settings.coursesSection'),
       testimonials: t('settings.testimonials'),
-      footer: t('settings.footer'),
-      sidebar: t('settings.sidebar')
+      slideshow: 'اسلایدشو / بنر',
+      footer: t('settings.footer')
     };
     return map[type] ?? type;
   };

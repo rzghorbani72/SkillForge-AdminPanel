@@ -61,6 +61,171 @@ const CourseCard = ({ from, to }: { from: string; to: string }) => (
   </div>
 );
 
+// ── Inline SVG Illustrations ──────────────────────────────────────────────────
+
+const IllustLaptop = () => (
+  <svg viewBox="0 0 40 34" fill="none" className="h-10 w-10">
+    <rect x="1" y="1" width="28" height="20" rx="2" fill="#4338ca" />
+    <rect x="2" y="2" width="26" height="18" rx="1" fill="#818cf8" />
+    <rect x="4" y="5" width="13" height="1.5" rx="0.5" fill="#e0e7ff" />
+    <rect x="4" y="8" width="9" height="1.5" rx="0.5" fill="#c7d2fe" />
+    <rect x="4" y="11" width="11" height="1.5" rx="0.5" fill="#e0e7ff" />
+    <rect x="19" y="5" width="6" height="9" rx="1" fill="#6366f1" />
+    <rect x="0" y="21" width="30" height="4" rx="1" fill="#3730a3" />
+    <circle cx="36" cy="4" r="3" fill="#fbbf24" />
+    <circle cx="37" cy="14" r="2" fill="#34d399" />
+    <path d="M34 24 L36 28 L38 24 L36 20 Z" fill="#f472b6" opacity="0.8" />
+    <path
+      d="M32 1 L33 4 L36 4 L34 6 L35 9 L32 7 L29 9 L30 6 L28 4 L31 4 Z"
+      fill="#fbbf24"
+      opacity="0.7"
+    />
+  </svg>
+);
+
+const IllustBook = () => (
+  <svg viewBox="0 0 44 44" fill="none" className="h-11 w-11">
+    <polygon points="22,2 38,9 22,16 6,9" fill="#1e40af" />
+    <polygon points="22,5 38,9 22,13 6,9" fill="#3b82f6" opacity="0.6" />
+    <circle cx="22" cy="9" r="3" fill="#fbbf24" />
+    <rect x="4" y="13" width="18" height="24" rx="2" fill="#2563eb" />
+    <rect x="5" y="14" width="16" height="22" rx="1" fill="#93c5fd" />
+    <rect x="7" y="18" width="12" height="1.5" rx="0.5" fill="#eff6ff" />
+    <rect x="7" y="21" width="10" height="1.5" rx="0.5" fill="#dbeafe" />
+    <rect x="7" y="24" width="11" height="1.5" rx="0.5" fill="#eff6ff" />
+    <rect x="7" y="27" width="8" height="1.5" rx="0.5" fill="#dbeafe" />
+    <rect x="21" y="13" width="3" height="24" rx="1" fill="#1d4ed8" />
+    <rect x="23" y="13" width="17" height="24" rx="2" fill="#1e40af" />
+    <rect x="24" y="14" width="15" height="22" rx="1" fill="#bfdbfe" />
+    <rect x="26" y="18" width="11" height="1.5" rx="0.5" fill="#eff6ff" />
+    <rect x="26" y="21" width="9" height="1.5" rx="0.5" fill="#dbeafe" />
+    <rect x="26" y="24" width="10" height="1.5" rx="0.5" fill="#eff6ff" />
+    <rect x="26" y="27" width="7" height="1.5" rx="0.5" fill="#dbeafe" />
+  </svg>
+);
+
+const IllustCap = () => (
+  <svg viewBox="0 0 44 36" fill="none" className="h-9 w-11">
+    <polygon points="22,2 40,12 22,22 4,12" fill="#ffffff" />
+    <polygon points="22,6 40,12 22,18 4,12" fill="#e0e7ff" opacity="0.6" />
+    <path
+      d="M32 12 L32 24 Q32 30 22 30 Q12 30 12 24 L12 12"
+      fill="none"
+      stroke="#6366f1"
+      strokeWidth="1.5"
+    />
+    <line
+      x1="40"
+      y1="12"
+      x2="40"
+      y2="28"
+      stroke="#fbbf24"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <circle cx="40" cy="30" r="3" fill="#fbbf24" />
+    <circle cx="22" cy="12" r="4" fill="#fbbf24" opacity="0.9" />
+  </svg>
+);
+
+const IllustStudent = () => (
+  <svg viewBox="0 0 48 48" fill="none" className="h-12 w-12">
+    <rect x="6" y="36" width="36" height="3" rx="1" fill="#7c3aed" />
+    <rect x="10" y="26" width="28" height="10" rx="2" fill="#4c1d95" />
+    <rect x="11" y="27" width="26" height="8" rx="1" fill="#a78bfa" />
+    <rect x="8" y="36" width="32" height="2" rx="1" fill="#3730a3" />
+    <rect x="14" y="29" width="12" height="1.5" rx="0.5" fill="#ede9fe" />
+    <rect x="14" y="32" width="8" height="1" rx="0.5" fill="#ddd6fe" />
+    <circle cx="24" cy="14" r="7" fill="#c4b5fd" />
+    <path d="M12 26 Q24 16 36 26" fill="#7c3aed" />
+    <circle cx="38" cy="6" r="5" fill="#fbbf24" opacity="0.95" />
+    <rect x="36" y="11" width="4" height="3" rx="1" fill="#d97706" />
+    <path d="M36 6 Q38 3 40 6" stroke="#fff" strokeWidth="1.2" fill="none" />
+  </svg>
+);
+
+const IllustStar = () => (
+  <svg viewBox="0 0 48 48" fill="none" className="h-12 w-12">
+    <rect x="16" y="30" width="16" height="14" rx="2" fill="#f59e0b" />
+    <rect x="2" y="36" width="14" height="8" rx="2" fill="#fbbf24" />
+    <rect x="32" y="36" width="14" height="8" rx="2" fill="#fbbf24" />
+    <path
+      d="M24,4 L27,14 L38,14 L29.5,20.5 L32.5,31 L24,24 L15.5,31 L18.5,20.5 L10,14 L21,14 Z"
+      fill="#fbbf24"
+    />
+    <line
+      x1="42"
+      y1="8"
+      x2="45"
+      y2="5"
+      stroke="#fcd34d"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <line
+      x1="44"
+      y1="18"
+      x2="47"
+      y2="18"
+      stroke="#fcd34d"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <line
+      x1="4"
+      y1="8"
+      x2="1"
+      y2="5"
+      stroke="#fcd34d"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const IllustChart = () => (
+  <svg viewBox="0 0 40 36" fill="none" className="h-9 w-10">
+    <line x1="4" y1="2" x2="4" y2="32" stroke="#9ca3af" strokeWidth="1" />
+    <line x1="4" y1="32" x2="38" y2="32" stroke="#9ca3af" strokeWidth="1" />
+    <line x1="4" y1="24" x2="38" y2="24" stroke="#e5e7eb" strokeWidth="0.5" />
+    <line x1="4" y1="16" x2="38" y2="16" stroke="#e5e7eb" strokeWidth="0.5" />
+    <line x1="4" y1="8" x2="38" y2="8" stroke="#e5e7eb" strokeWidth="0.5" />
+    <rect x="7" y="20" width="5" height="12" rx="1" fill="#9ca3af" />
+    <rect x="15" y="14" width="5" height="18" rx="1" fill="#6b7280" />
+    <rect x="23" y="8" width="5" height="24" rx="1" fill="#374151" />
+    <rect x="31" y="2" width="5" height="30" rx="1" fill="#1f2937" />
+    <path d="M28 0 L32 4 L30 4 L30 10 L26 10 L26 4 L24 4 Z" fill="#10b981" />
+  </svg>
+);
+
+const IllustSpotlight = () => (
+  <svg viewBox="0 0 48 48" fill="none" className="h-12 w-12">
+    <path
+      d="M24 4 L34 22 L44 44 L4 44 L14 22 Z"
+      fill="#f59e0b"
+      opacity="0.15"
+    />
+    <path d="M24 4 L32 20 L40 40 L8 40 L16 20 Z" fill="#fbbf24" opacity="0.2" />
+    <circle cx="24" cy="4" r="4" fill="#fbbf24" />
+    <rect
+      x="12"
+      y="30"
+      width="24"
+      height="14"
+      rx="2"
+      fill="#fbbf24"
+      opacity="0.9"
+    />
+    <rect x="14" y="32" width="20" height="10" rx="1" fill="#fffbeb" />
+    <rect x="16" y="34" width="12" height="1.5" rx="0.5" fill="#d97706" />
+    <rect x="16" y="37" width="9" height="1" rx="0.5" fill="#fbbf24" />
+    <path
+      d="M22,22 L24,16 L26,22 L32,22 L27.5,26 L29.5,32 L24,28 L18.5,32 L20.5,26 L16,22 Z"
+      fill="#f59e0b"
+    />
+  </svg>
+);
+
 // ── Kajabi (Expert Academy) ───────────────────────────────────────────────────
 
 export function KajabiThumbnail() {
@@ -343,6 +508,89 @@ export function CircleThumbnail() {
   );
 }
 
+// ── Roocket (Dark Programmer) ─────────────────────────────────────────────────
+
+export function RocketThumbnail() {
+  return (
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-[#0a0f1e]">
+      {/* Dark navbar */}
+      <div className="flex items-center justify-between border-b border-gray-700/60 bg-[#0f1629] px-3 py-1.5">
+        <div className="flex items-center gap-1.5">
+          <div className="h-3 w-3 rounded-full bg-green-400" />
+          <FakeText w="w-10" h="h-1.5" color="bg-gray-400" />
+        </div>
+        <div className="flex gap-2">
+          {[...Array(4)].map((_, i) => (
+            <FakeText key={i} w="w-5" h="h-1" color="bg-gray-600" />
+          ))}
+        </div>
+        <div className="flex h-4 w-10 items-center justify-center rounded bg-green-500 text-[6px] font-semibold text-white">
+          ورود
+        </div>
+      </div>
+      {/* Dark hero with character */}
+      <div className="relative overflow-hidden bg-gradient-to-bl from-[#0f1a30] to-[#0a0f1e] px-4 pb-3 pt-4">
+        <div className="absolute -left-4 top-2 h-16 w-16 rounded-full bg-green-900/20 blur-xl" />
+        <div className="flex items-center gap-3">
+          <div className="flex-1 space-y-1">
+            <FakeText w="w-full" h="h-2" color="bg-white" />
+            <FakeText w="w-5/6" h="h-2" color="bg-white/80" />
+            <FakeText w="w-11/12" h="h-1.5" color="bg-gray-400" />
+            <FakeText w="w-4/5" h="h-1.5" color="bg-gray-500" />
+            <div className="flex gap-1.5 pt-1.5">
+              <div className="h-4 w-16 rounded-full bg-green-500" />
+              <div className="h-4 w-12 rounded-full border border-gray-600" />
+            </div>
+            {/* Feature badges */}
+            <div className="flex flex-wrap gap-1 pt-1">
+              {['✓ ۵۰۰+ دوره', '✓ ضمانت', '✓ پشتیبانی'].map((f, i) => (
+                <span
+                  key={i}
+                  className="rounded-full bg-green-900/40 px-1.5 py-0.5 text-[6px] text-green-400"
+                >
+                  {f}
+                </span>
+              ))}
+            </div>
+          </div>
+          {/* Character placeholder */}
+          <div className="flex h-20 w-14 shrink-0 items-center justify-center rounded-lg bg-gradient-to-b from-indigo-900/40 to-green-900/20">
+            <span className="text-2xl">👨‍💻</span>
+          </div>
+        </div>
+      </div>
+      {/* Courses row */}
+      <div className="px-3 py-2">
+        <div className="mb-1.5 flex items-center justify-between">
+          <FakeText w="w-20" h="h-1.5" color="bg-gray-300" />
+          <FakeText w="w-10" h="h-1" color="bg-green-500" />
+        </div>
+        <div className="grid grid-cols-4 gap-1">
+          {[
+            ['from-red-800', 'to-orange-700'],
+            ['from-blue-800', 'to-cyan-700'],
+            ['from-purple-800', 'to-pink-700'],
+            ['from-green-800', 'to-teal-700']
+          ].map(([f, t], i) => (
+            <div
+              key={i}
+              className="overflow-hidden rounded border border-gray-700/50"
+            >
+              <div className={`h-6 bg-gradient-to-br ${f} ${t}`} />
+              <div className="space-y-0.5 bg-gray-800/80 p-1">
+                <FakeText w="w-full" h="h-1" color="bg-gray-500" />
+                <FakeText w="w-3/4" h="h-0.5" color="bg-gray-600" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Dark footer */}
+      <div className="h-4 border-t border-gray-700/50 bg-[#060a14]" />
+    </div>
+  );
+}
+
 // ── Modern ────────────────────────────────────────────────────────────────────
 
 export function ModernThumbnail() {
@@ -353,12 +601,18 @@ export function ModernThumbnail() {
         dotColor="bg-gray-600"
         ctaBg="bg-indigo-600"
       />
-      <div className="space-y-1 bg-gradient-to-br from-blue-50 to-indigo-50 px-4 pb-3 pt-4 text-center">
-        <FakeText w="w-44 mx-auto" h="h-2" color="bg-gray-800" />
-        <FakeText w="w-52 mx-auto" h="h-1.5" color="bg-gray-400" />
-        <div className="flex justify-center gap-2 pt-2">
-          <div className="h-5 w-16 rounded bg-indigo-600" />
-          <div className="h-5 w-16 rounded border border-indigo-300" />
+      {/* Hero – split: text + laptop illustration */}
+      <div className="flex items-center gap-2 bg-gradient-to-br from-blue-50 to-indigo-50 px-3 pb-3 pt-4">
+        <div className="flex-1 space-y-1">
+          <FakeText w="w-full" h="h-2" color="bg-gray-800" />
+          <FakeText w="w-4/5" h="h-1.5" color="bg-gray-400" />
+          <div className="flex gap-1.5 pt-1.5">
+            <div className="h-4 w-12 rounded bg-indigo-600" />
+            <div className="h-4 w-12 rounded border border-indigo-300" />
+          </div>
+        </div>
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-indigo-100">
+          <IllustLaptop />
         </div>
       </div>
       <div className="border-t border-gray-100 bg-gray-50 px-3 py-2">
@@ -419,8 +673,8 @@ export function ClassicThumbnail() {
             <div className="h-4 w-16 rounded bg-blue-600" />
           </div>
         </div>
-        <div className="flex h-16 w-20 items-center justify-center rounded-lg bg-blue-100 text-lg">
-          📚
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-blue-50 ring-1 ring-blue-100">
+          <IllustBook />
         </div>
       </div>
       <div className="border-t border-gray-100 px-3 py-2">
@@ -462,11 +716,55 @@ export function MinimalThumbnail() {
           {t('sitePreview.thumbnailMenu')}
         </div>
       </div>
-      <div className="space-y-1 px-6 pb-4 pt-8 text-center">
+      <div className="space-y-1 px-6 pb-3 pt-5 text-center">
         <FakeText w="w-40 mx-auto" h="h-2.5" color="bg-gray-900" />
         <FakeText w="w-48 mx-auto" h="h-1.5" color="bg-gray-400" />
-        <div className="flex justify-center pt-3">
+        <div className="flex justify-center pt-2">
           <div className="h-5 w-20 rounded bg-gray-900" />
+        </div>
+        {/* Minimal abstract illustration */}
+        <div className="flex justify-center pt-2">
+          <svg viewBox="0 0 60 28" fill="none" className="h-7 w-16 opacity-70">
+            <circle cx="14" cy="14" r="12" stroke="#d1d5db" strokeWidth="1.5" />
+            <circle cx="14" cy="14" r="7" fill="#f3f4f6" />
+            <circle cx="14" cy="14" r="3" fill="#9ca3af" />
+            <line
+              x1="28"
+              y1="14"
+              x2="38"
+              y2="14"
+              stroke="#d1d5db"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            <circle
+              cx="46"
+              cy="14"
+              r="12"
+              stroke="#e5e7eb"
+              strokeWidth="1.5"
+              fill="none"
+            />
+            <rect
+              x="40"
+              y="10"
+              width="12"
+              height="8"
+              rx="2"
+              fill="#f9fafb"
+              stroke="#e5e7eb"
+              strokeWidth="1"
+            />
+            <rect x="42" y="12" width="8" height="1" rx="0.5" fill="#d1d5db" />
+            <rect
+              x="42"
+              y="14.5"
+              width="5"
+              height="1"
+              rx="0.5"
+              fill="#e5e7eb"
+            />
+          </svg>
         </div>
       </div>
       <div className="border-t border-gray-100 px-4 py-3">
@@ -498,12 +796,18 @@ export function AcademyThumbnail() {
         dotColor="bg-blue-200"
         ctaBg="bg-white"
       />
-      <div className="space-y-1.5 bg-gradient-to-br from-blue-900 to-indigo-900 px-4 pb-4 pt-5 text-center">
-        <FakeText w="w-44 mx-auto" h="h-2" color="bg-white" />
-        <FakeText w="w-52 mx-auto" h="h-1.5" color="bg-blue-300" />
-        <div className="flex justify-center gap-2 pt-2">
-          <div className="h-4 w-16 rounded bg-white" />
-          <div className="h-4 w-16 rounded border border-blue-400" />
+      {/* Hero – split: text + graduation cap illustration */}
+      <div className="flex items-center gap-2 bg-gradient-to-br from-blue-900 to-indigo-900 px-3 pb-4 pt-5">
+        <div className="flex-1 space-y-1.5">
+          <FakeText w="w-full" h="h-2" color="bg-white" />
+          <FakeText w="w-5/6" h="h-1.5" color="bg-blue-300" />
+          <div className="flex gap-2 pt-1.5">
+            <div className="h-4 w-14 rounded bg-white" />
+            <div className="h-4 w-14 rounded border border-blue-400" />
+          </div>
+        </div>
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
+          <IllustCap />
         </div>
       </div>
       <div className="border-t border-gray-100 bg-gray-50 px-3 py-2">
@@ -540,13 +844,19 @@ export function StudentFocusedThumbnail() {
   return (
     <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar logoColor="bg-fuchsia-600" ctaBg="bg-fuchsia-600" />
-      <div className="space-y-1 bg-gradient-to-br from-fuchsia-50 to-pink-50 px-4 pb-3 pt-5 text-center">
-        <FakeText w="w-40 mx-auto" h="h-2" color="bg-gray-800" />
-        <FakeText w="w-48 mx-auto" h="h-1.5" color="bg-gray-400" />
-        <div className="flex justify-center pt-2">
-          <div className="flex h-5 w-20 items-center justify-center rounded-full bg-fuchsia-500 text-[6px] text-white">
-            {t('sitePreview.thumbnailViewCourses')}
+      {/* Hero – split: text + student illustration */}
+      <div className="flex items-center gap-2 bg-gradient-to-br from-fuchsia-50 to-pink-50 px-3 pb-3 pt-5">
+        <div className="flex-1 space-y-1">
+          <FakeText w="w-full" h="h-2" color="bg-gray-800" />
+          <FakeText w="w-4/5" h="h-1.5" color="bg-gray-400" />
+          <div className="pt-1.5">
+            <div className="flex h-5 w-20 items-center justify-center rounded-full bg-fuchsia-500 text-[6px] text-white">
+              {t('sitePreview.thumbnailViewCourses')}
+            </div>
           </div>
+        </div>
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-fuchsia-50 ring-1 ring-fuchsia-100">
+          <IllustStudent />
         </div>
       </div>
       <div className="grid grid-cols-3 gap-1.5 px-3 py-2">
@@ -629,8 +939,14 @@ export function CompactThumbnail() {
     <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
       <NavBar logoColor="bg-gray-700" ctaBg="bg-gray-700" />
       <div className="flex items-center gap-2 border-b border-gray-100 bg-gray-50 px-3 py-2">
-        <FakeText w="w-24" h="h-2" color="bg-gray-800" />
+        <div className="space-y-0.5">
+          <FakeText w="w-24" h="h-2" color="bg-gray-800" />
+          <FakeText w="w-16" h="h-1" color="bg-gray-400" />
+        </div>
         <div className="flex-1" />
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white ring-1 ring-gray-200">
+          <IllustChart />
+        </div>
         <div className="flex h-5 w-14 items-center justify-center rounded bg-gray-800 text-[6px] text-white">
           {t('sitePreview.thumbnailExplore')}
         </div>
@@ -664,6 +980,74 @@ export function CompactThumbnail() {
         </div>
       </div>
       <div className="h-4 border-t border-gray-200 bg-gray-100" />
+    </div>
+  );
+}
+
+// ── Featured (Spotlight) ──────────────────────────────────────────────────────
+
+export function FeaturedThumbnail() {
+  const { t } = useTranslation();
+  return (
+    <div dir="rtl" className="overflow-hidden rounded-lg bg-white">
+      <div className="flex items-center justify-between border-b border-amber-100 bg-amber-50 px-3 py-1.5">
+        <div className="flex items-center gap-1.5">
+          <div className="h-3 w-3 rounded-md bg-amber-500" />
+          <FakeText w="w-10" h="h-1.5" color="bg-amber-700" />
+        </div>
+        <div className="flex gap-2">
+          {[...Array(3)].map((_, i) => (
+            <FakeText key={i} w="w-5" h="h-1" color="bg-amber-300" />
+          ))}
+        </div>
+        <div className="flex h-4 w-12 items-center justify-center rounded bg-amber-500 text-[6px] font-medium text-white">
+          {t('sitePreview.thumbnailCta')}
+        </div>
+      </div>
+      {/* Hero – spotlight illustration + text */}
+      <div className="flex items-center gap-2 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 px-3 pb-3 pt-4">
+        <div className="flex-1 space-y-1">
+          <FakeText w="w-full" h="h-2" color="bg-gray-800" />
+          <FakeText w="w-4/5" h="h-2" color="bg-gray-700" />
+          <FakeText w="w-full" h="h-1.5" color="bg-gray-300" />
+          <div className="flex gap-1.5 pt-1.5">
+            <div className="h-4 w-14 rounded bg-amber-500" />
+            <div className="h-4 w-14 rounded border border-amber-300" />
+          </div>
+        </div>
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-amber-50 ring-1 ring-amber-200">
+          <IllustStar />
+        </div>
+      </div>
+      {/* Featured courses */}
+      <div className="border-t border-amber-100 px-3 py-2">
+        <div className="mb-1.5 flex items-center gap-1.5">
+          <span className="text-[7px] font-bold text-amber-600">★</span>
+          <FakeText w="w-20" h="h-1.5" color="bg-gray-700" />
+        </div>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            ['from-amber-200', 'to-orange-100'],
+            ['from-orange-200', 'to-red-100'],
+            ['from-yellow-200', 'to-amber-100']
+          ].map(([f, t], i) => (
+            <CourseCard key={i} from={f} to={t} />
+          ))}
+        </div>
+      </div>
+      {/* Testimonials carousel bar */}
+      <div className="flex gap-1.5 border-t border-amber-50 bg-amber-50 px-3 py-1.5">
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            className={`flex h-8 flex-1 flex-col justify-end space-y-0.5 rounded-lg p-1.5 ${i === 0 ? 'bg-amber-100 ring-1 ring-amber-200' : 'bg-white'}`}
+          >
+            <FakeText w="w-full" h="h-1" color="bg-amber-300" />
+            <FakeText w="w-2/3" h="h-0.5" color="bg-amber-200" />
+          </div>
+        ))}
+      </div>
+      <div className="h-4 border-t border-gray-800 bg-gray-900" />
     </div>
   );
 }

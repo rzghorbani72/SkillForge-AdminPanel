@@ -8,13 +8,15 @@ import {
   PodiaThumbnail,
   StanThumbnail,
   CircleThumbnail,
+  RocketThumbnail,
   ModernThumbnail,
   ClassicThumbnail,
   MinimalThumbnail,
   AcademyThumbnail,
   StudentFocusedThumbnail,
   CoursesFirstThumbnail,
-  CompactThumbnail
+  CompactThumbnail,
+  FeaturedThumbnail
 } from './template-thumbnails';
 
 interface TemplatePreviewProps {
@@ -26,13 +28,15 @@ const THUMBNAILS: Record<string, () => React.ReactElement> = {
   podia: PodiaThumbnail,
   stan: StanThumbnail,
   circle: CircleThumbnail,
+  rocket: RocketThumbnail,
   modern: ModernThumbnail,
   classic: ClassicThumbnail,
   minimal: MinimalThumbnail,
   academy: AcademyThumbnail,
   'student-focused': StudentFocusedThumbnail,
   'courses-first': CoursesFirstThumbnail,
-  compact: CompactThumbnail
+  compact: CompactThumbnail,
+  featured: FeaturedThumbnail
 };
 
 export function TemplatePreview({ preset }: TemplatePreviewProps) {
@@ -59,8 +63,7 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
     features: t('sitePreview.blockFeatures'),
     courses: t('sitePreview.blockCourses'),
     testimonials: t('sitePreview.blockTestimonials'),
-    footer: t('sitePreview.blockFooter'),
-    sidebar: t('sitePreview.blockSidebar')
+    footer: t('sitePreview.blockFooter')
   };
 
   const BLOCK_STYLE: Record<string, { bar: string; h: string }> = {
@@ -69,13 +72,8 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
     features: { bar: 'bg-emerald-400', h: 'h-12' },
     courses: { bar: 'bg-purple-400', h: 'h-14' },
     testimonials: { bar: 'bg-amber-400', h: 'h-10' },
-    footer: { bar: 'bg-gray-600', h: 'h-6' },
-    sidebar: { bar: 'bg-orange-400', h: 'h-full' }
+    footer: { bar: 'bg-gray-600', h: 'h-6' }
   };
-
-  const hasSidebar = blocks.some((b) => b.type === 'sidebar');
-  const sidebarBlock = blocks.find((b) => b.type === 'sidebar');
-  const rest = blocks.filter((b) => b.type !== 'sidebar');
 
   const renderBlock = (block: (typeof blocks)[number]) => {
     const s = BLOCK_STYLE[block.type] ?? { bar: 'bg-gray-400', h: 'h-10' };
@@ -90,27 +88,6 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
       </div>
     );
   };
-
-  if (hasSidebar && sidebarBlock) {
-    const ss = BLOCK_STYLE['sidebar'];
-    return (
-      <div
-        dir="rtl"
-        className="w-full overflow-hidden rounded-lg border border-border"
-      >
-        <div className="flex">
-          <div
-            className={`w-1/4 ${ss.bar} flex items-center justify-center p-2`}
-          >
-            <span className="text-[7px] font-semibold text-white/70 [writing-mode:vertical-rl]">
-              {t('sitePreview.blockSidebar')}
-            </span>
-          </div>
-          <div className="flex flex-1 flex-col">{rest.map(renderBlock)}</div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div

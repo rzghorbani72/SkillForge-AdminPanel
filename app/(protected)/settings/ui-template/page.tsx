@@ -352,6 +352,15 @@ export default function UITemplateSettingsPage() {
     );
   };
 
+  const handleUpdateBlockType = (
+    blockId: string,
+    type: UIBlockConfig['type']
+  ) => {
+    setBlocks((prev) =>
+      prev.map((b) => (b.id === blockId ? { ...b, type } : b))
+    );
+  };
+
   const handleMoveUp = (blockId: string) => {
     const sorted = [...blocks].sort((a, b) => a.order - b.order);
     const idx = sorted.findIndex((b) => b.id === blockId);
@@ -494,15 +503,17 @@ export default function UITemplateSettingsPage() {
     (key: keyof ThemeColors, value: string) => {
       setThemeColors((prev) => {
         const updated = { ...prev, [key]: value };
-        const payload = {
-          primary_color: updated.primaryLight,
-          secondary_color: updated.secondaryLight,
-          accent_color: updated.accent,
-          background_color: updated.backgroundLight,
-          dark_mode: null
-        };
-        applyThemeVariables(payload);
-        dispatchThemeUpdate(payload);
+        if (key === 'primaryLight') {
+          const payload = {
+            primary_color: updated.primaryLight,
+            secondary_color: updated.secondaryLight,
+            accent_color: updated.accent,
+            background_color: updated.backgroundLight,
+            dark_mode: null
+          };
+          applyThemeVariables(payload);
+          dispatchThemeUpdate(payload);
+        }
         return updated;
       });
     },
@@ -683,7 +694,7 @@ export default function UITemplateSettingsPage() {
                 variant="outline"
                 className="border-green-300 text-xs text-green-600"
               >
-                Custom Design System
+                {t('settings.customDesignSystem')}
               </Badge>
             ) : null}
           </div>
@@ -705,11 +716,11 @@ export default function UITemplateSettingsPage() {
           <div className="flex flex-shrink-0 border-b">
             {(
               [
-                { id: 'colors', label: 'رنگ‌ها', Icon: Palette },
-                { id: 'style', label: 'استایل', Icon: Layers },
-                { id: 'block', label: 'بلوک', Icon: Settings2 }
+                { id: 'colors', labelKey: 'settings.tabColors', Icon: Palette },
+                { id: 'style', labelKey: 'settings.tabStyle', Icon: Layers },
+                { id: 'block', labelKey: 'settings.tabBlock', Icon: Settings2 }
               ] as const
-            ).map(({ id, label, Icon }) => (
+            ).map(({ id, labelKey, Icon }) => (
               <button
                 key={id}
                 type="button"
@@ -721,7 +732,7 @@ export default function UITemplateSettingsPage() {
                 }`}
               >
                 <Icon className="h-3 w-3" />
-                {label}
+                {t(labelKey as Parameters<typeof t>[0])}
               </button>
             ))}
           </div>
@@ -733,7 +744,7 @@ export default function UITemplateSettingsPage() {
                 {/* Built-in color presets */}
                 <div className="space-y-2">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    پیش‌نمایش رنگ‌ها
+                    {t('settings.colorPresetsLabel')}
                   </p>
                   <div className="grid grid-cols-3 gap-1.5">
                     {THEME_COLOR_PRESETS.map((preset) => (
@@ -762,42 +773,42 @@ export default function UITemplateSettingsPage() {
 
                 {/* Color pairs */}
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  رنگ‌های سفارشی
+                  {t('settings.customColorsLabel')}
                 </p>
 
                 {[
                   {
                     lightKey: 'primaryLight' as const,
                     darkKey: 'primaryDark' as const,
-                    label: 'رنگ اصلی'
+                    labelKey: 'settings.colorPrimaryLabel'
                   },
                   {
                     lightKey: 'secondaryLight' as const,
                     darkKey: 'secondaryDark' as const,
-                    label: 'رنگ ثانوی'
+                    labelKey: 'settings.colorSecondaryLabel'
                   },
                   {
                     lightKey: 'backgroundLight' as const,
                     darkKey: 'backgroundDark' as const,
-                    label: 'پس‌زمینه'
+                    labelKey: 'settings.colorBackgroundLabel'
                   }
-                ].map(({ lightKey, darkKey, label }) => (
+                ].map(({ lightKey, darkKey, labelKey }) => (
                   <div key={lightKey} className="space-y-1.5">
                     <Label className="text-[11px] text-muted-foreground">
-                      {label}
+                      {t(labelKey as Parameters<typeof t>[0])}
                     </Label>
                     {[
-                      { key: lightKey, mode: 'روز' },
-                      { key: darkKey, mode: 'شب' }
-                    ].map(({ key, mode }) => (
+                      { key: lightKey, modeKey: 'settings.dayMode' },
+                      { key: darkKey, modeKey: 'settings.nightMode' }
+                    ].map(({ key, modeKey }) => (
                       <div key={key} className="flex items-center gap-1.5">
                         <span className="w-6 text-[9px] text-muted-foreground">
-                          {mode}
+                          {t(modeKey as Parameters<typeof t>[0])}
                         </span>
                         <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded border shadow-sm">
                           <input
                             type="color"
-                            title={`${label} ${mode}`}
+                            title={`${t(labelKey as Parameters<typeof t>[0])} ${t(modeKey as Parameters<typeof t>[0])}`}
                             value={themeColors[key]}
                             onChange={(e) =>
                               handleColorChange(key, e.target.value)
@@ -821,13 +832,13 @@ export default function UITemplateSettingsPage() {
                 {/* Accent (single) */}
                 <div className="space-y-1.5">
                   <Label className="text-[11px] text-muted-foreground">
-                    رنگ تأکیدی
+                    {t('settings.accentColorLabel')}
                   </Label>
                   <div className="flex items-center gap-2">
                     <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md border shadow-sm">
                       <input
                         type="color"
-                        title="رنگ تأکیدی"
+                        title={t('settings.accentColorLabel')}
                         value={themeColors.accent}
                         onChange={(e) =>
                           handleColorChange('accent', e.target.value)
@@ -851,7 +862,7 @@ export default function UITemplateSettingsPage() {
                 {/* Quick palettes */}
                 <div className="space-y-2">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    پالت‌های سریع
+                    {t('settings.quickPalettesLabel')}
                   </p>
                   <div className="grid grid-cols-2 gap-1.5">
                     {QUICK_PALETTES.map((palette) => (
@@ -905,7 +916,7 @@ export default function UITemplateSettingsPage() {
                     className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
                   >
                     <RotateCcw className="h-3 w-3" />
-                    بازنشانی به رنگ‌های قالب
+                    {t('settings.resetToTemplateColors')}
                   </button>
                 )}
               </div>
@@ -917,7 +928,7 @@ export default function UITemplateSettingsPage() {
                 {/* Border radius */}
                 <div className="space-y-2">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    گوشه‌ها
+                    {t('settings.borderRadiusLabel')}
                   </p>
                   <div className="grid grid-cols-3 gap-1.5">
                     {BORDER_RADIUS_OPTIONS.map(({ value, label, px }) => (
@@ -948,7 +959,7 @@ export default function UITemplateSettingsPage() {
                 {/* Shadow */}
                 <div className="space-y-2">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    سایه
+                    {t('settings.shadowLabel')}
                   </p>
                   <div className="grid grid-cols-2 gap-1.5">
                     {SHADOW_OPTIONS.map(({ value, label, css }) => (
@@ -979,7 +990,7 @@ export default function UITemplateSettingsPage() {
                 {/* SVG pattern */}
                 <div className="space-y-2">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    الگوی SVG
+                    {t('settings.svgPattern')}
                   </p>
                   <Input
                     value={themeStyle.backgroundSvgPattern}
@@ -1004,6 +1015,7 @@ export default function UITemplateSettingsPage() {
               <BlockEditor
                 block={activeBlock}
                 onUpdate={handleUpdateBlockConfig}
+                onTypeChange={handleUpdateBlockType}
               />
             )}
           </div>

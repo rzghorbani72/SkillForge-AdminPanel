@@ -48,6 +48,7 @@ const PRESET_CATEGORY: Record<
   podia: { category: 'creator', featured: true },
   stan: { category: 'creator', featured: true },
   circle: { category: 'community', featured: true },
+  rocket: { category: 'academy', featured: true },
   modern: { category: 'classic', featured: false },
   classic: { category: 'classic', featured: false },
   minimal: { category: 'classic', featured: false },

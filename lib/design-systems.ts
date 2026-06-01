@@ -204,6 +204,21 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     typography: { fontFamily: 'Inter', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'none' },
     darkMode: null
+  },
+  rocket: {
+    name: 'راکت دیجیتال',
+    tagline: 'تاریک · برنامه‌نویسی · انگیزشی',
+    colors: {
+      primary: '#22c55e',
+      secondary: '#f97316',
+      accent: '#4ade80',
+      background: '#f0fdf4',
+      backgroundDark: '#0a0f1e',
+      surface: '#111827'
+    },
+    typography: { fontFamily: 'Plus Jakarta Sans', displayWeight: '800' },
+    shape: { borderRadius: 'soft', shadow: 'medium' },
+    darkMode: true
   }
 };
 

@@ -618,7 +618,8 @@ export interface UIBlockConfig {
     | 'courses'
     | 'testimonials'
     | 'footer'
-    | 'sidebar';
+    | 'sidebar'
+    | 'slideshow';
   order: number;
   isVisible: boolean;
   config?: Record<string, any>;

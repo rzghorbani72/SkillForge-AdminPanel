@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Upload, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Upload, X, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -13,15 +13,350 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
+type HeroMode = 'illustration' | 'slideshow';
+
+const ILLUSTRATION_PRESETS = [
+  {
+    id: 'person-learning',
+    label: 'Learning',
+    emoji: '📖',
+    hint: 'Reading & studying'
+  },
+  { id: 'person-laptop', label: 'Online', emoji: '💻', hint: 'Digital & tech' },
+  {
+    id: 'person-teaching',
+    label: 'Teaching',
+    emoji: '🎓',
+    hint: 'Expert & mentor'
+  },
+  {
+    id: 'person-thinking',
+    label: 'Thinking',
+    emoji: '💡',
+    hint: 'Questions & ideas'
+  },
+  {
+    id: 'person-achievement',
+    label: 'Success',
+    emoji: '🏆',
+    hint: 'Goals & results'
+  },
+  { id: 'person-team', label: 'Team', emoji: '🤝', hint: 'Community & collab' }
+] as const;
+
+const SLIDE_GRADIENTS = [
+  { label: 'Ocean', value: 'from-indigo-600 via-blue-600 to-cyan-500' },
+  { label: 'Violet', value: 'from-violet-600 via-purple-600 to-pink-500' },
+  { label: 'Sunset', value: 'from-rose-600 via-pink-500 to-orange-400' },
+  { label: 'Forest', value: 'from-emerald-600 via-teal-500 to-cyan-500' },
+  { label: 'Dark', value: 'from-gray-900 via-slate-800 to-gray-700' },
+  { label: 'Gold', value: 'from-amber-500 via-orange-500 to-rose-500' }
+];
+
+interface SlideItem {
+  id: string;
+  image?: string | null;
+  gradient: string;
+  title?: string;
+  subtitle?: string;
+}
+
+interface SlideshowEditorProps {
+  blockId: string;
+  cfg: Record<string, unknown>;
+  onUpdate: (blockId: string, config: Record<string, unknown>) => void;
+}
+
+function SlideshowEditor({ blockId, cfg, onUpdate }: SlideshowEditorProps) {
+  const { t } = useTranslation();
+  const [expandedSlide, setExpandedSlide] = useState<number>(0);
+  const [isUploadingSlide, setIsUploadingSlide] = useState<number | null>(null);
+
+  const defaultSlides = useMemo(
+    (): SlideItem[] =>
+      SLIDE_GRADIENTS.slice(0, 4).map((g, i) => ({
+        id: String(i + 1),
+        gradient: g.value,
+        title: t('settings.slideDefaultTitle', { n: i + 1 }),
+        subtitle: t('settings.slideDefaultSubtitle')
+      })),
+    [t]
+  );
+
+  const slides: SlideItem[] = (cfg.slides as SlideItem[]) ?? defaultSlides;
+  const isBanner = slides.length === 1;
+
+  const setSlides = (next: SlideItem[]) =>
+    onUpdate(blockId, { ...cfg, slides: next });
+
+  const updateSlide = (idx: number, patch: Partial<SlideItem>) => {
+    setSlides(slides.map((s, i) => (i === idx ? { ...s, ...patch } : s)));
+  };
+
+  const removeSlide = (idx: number) => {
+    const next = slides.filter((_, i) => i !== idx);
+    if (next.length === 0) return;
+    setSlides(next);
+    setExpandedSlide(Math.min(expandedSlide, next.length - 1));
+  };
+
+  const addSlide = () => {
+    const gradient =
+      SLIDE_GRADIENTS[slides.length % SLIDE_GRADIENTS.length].value;
+    const next = [
+      ...slides,
+      {
+        id: Date.now().toString(),
+        gradient,
+        title: t('settings.slideDefaultTitle', { n: slides.length + 1 })
+      }
+    ];
+    setSlides(next);
+    setExpandedSlide(next.length - 1);
+  };
+
+  const handleSlideImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    idx: number
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setIsUploadingSlide(idx);
+      const result = await apiClient.uploadImage(file, {
+        title: `Slide ${idx + 1}`
+      });
+      const raw = result as unknown as Record<string, unknown>;
+      const id =
+        (raw?.id as number | undefined) ??
+        ((raw?.data as Record<string, unknown>)?.id as number | undefined);
+      if (id) {
+        const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
+        updateSlide(idx, { image: url });
+      }
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsUploadingSlide(null);
+      e.target.value = '';
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      {/* Mode indicator */}
+      <div className="flex items-center justify-between">
+        <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          {isBanner
+            ? `📌 ${t('settings.slideshowBanner')}`
+            : `🎞 ${t('settings.slideshowMode', { count: slides.length })}`}
+        </Label>
+        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-medium text-primary">
+          {isBanner ? 'Banner' : 'Slideshow'}
+        </span>
+      </div>
+      <p className="text-[9px] text-muted-foreground/70">
+        {t('settings.slideshowHint')}
+      </p>
+
+      <Separator />
+
+      {/* Slide list */}
+      <div className="space-y-1.5">
+        {slides.map((slide, idx) => (
+          <div key={slide.id} className="overflow-hidden rounded-md border">
+            {/* Slide header (clickable to expand) */}
+            <button
+              type="button"
+              onClick={() => setExpandedSlide(expandedSlide === idx ? -1 : idx)}
+              className="flex w-full items-center gap-2 px-2.5 py-2 hover:bg-accent/50"
+            >
+              <div
+                className={`h-5 w-8 shrink-0 rounded bg-gradient-to-r ${slide.gradient}`}
+              />
+              <span className="flex-1 truncate text-left text-xs font-medium">
+                {slide.title || t('settings.slideDefaultTitle', { n: idx + 1 })}
+              </span>
+              {slides.length > 1 && (
+                <button
+                  type="button"
+                  aria-label="Remove slide"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeSlide(idx);
+                  }}
+                  className="rounded p-0.5 text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              )}
+              {expandedSlide === idx ? (
+                <ChevronUp className="h-3 w-3 shrink-0" />
+              ) : (
+                <ChevronDown className="h-3 w-3 shrink-0" />
+              )}
+            </button>
+
+            {/* Expanded editor */}
+            {expandedSlide === idx && (
+              <div className="space-y-2 border-t bg-muted/20 p-2.5">
+                {/* Image upload / preview */}
+                {slide.image ? (
+                  <div className="relative overflow-hidden rounded border">
+                    <img
+                      src={slide.image}
+                      alt={`Slide ${idx + 1}`}
+                      className="h-20 w-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      aria-label="Remove slide image"
+                      onClick={() => updateSlide(idx, { image: null })}
+                      className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : null}
+                <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed py-2 text-xs text-muted-foreground hover:border-primary hover:text-primary">
+                  <Upload className="h-3.5 w-3.5" />
+                  <span>
+                    {isUploadingSlide === idx
+                      ? t('settings.heroUploading')
+                      : t('settings.heroUploadImage')}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleSlideImageUpload(e, idx)}
+                    disabled={isUploadingSlide !== null}
+                  />
+                </label>
+
+                {/* Gradient picker (used when no image) */}
+                {!slide.image && (
+                  <div className="space-y-1">
+                    <Label className="text-[9px] text-muted-foreground">
+                      {t('settings.slideGradient')}
+                    </Label>
+                    <div className="grid grid-cols-3 gap-1">
+                      {SLIDE_GRADIENTS.map((g) => (
+                        <button
+                          key={g.value}
+                          type="button"
+                          title={g.label}
+                          onClick={() =>
+                            updateSlide(idx, { gradient: g.value })
+                          }
+                          className={`h-7 rounded bg-gradient-to-r ${g.value} ${slide.gradient === g.value ? 'ring-2 ring-primary ring-offset-1' : ''}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Title & subtitle */}
+                <Input
+                  value={slide.title ?? ''}
+                  onChange={(e) => updateSlide(idx, { title: e.target.value })}
+                  placeholder={t('settings.slideTitlePlaceholder')}
+                  className="h-7 text-xs"
+                />
+                <Input
+                  value={slide.subtitle ?? ''}
+                  onChange={(e) =>
+                    updateSlide(idx, { subtitle: e.target.value })
+                  }
+                  placeholder={t('settings.slideSubtitlePlaceholder')}
+                  className="h-7 text-xs"
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {slides.length < 8 && (
+        <button
+          type="button"
+          onClick={addSlide}
+          className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed py-2 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          {t('settings.addSlide')}
+        </button>
+      )}
+
+      <Separator />
+
+      {/* Height */}
+      <div className="space-y-1.5">
+        <Label className="text-xs">{t('settings.heroHeight')}</Label>
+        <div className="flex gap-1.5">
+          {(['small', 'medium', 'large'] as const).map((h) => (
+            <button
+              key={h}
+              type="button"
+              onClick={() => onUpdate(blockId, { ...cfg, height: h })}
+              className={`flex-1 rounded border py-1.5 text-xs font-medium transition-colors ${
+                ((cfg.height as string) ?? 'medium') === h
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border hover:bg-accent'
+              }`}
+            >
+              {h === 'small'
+                ? t('settings.heightSmall')
+                : h === 'medium'
+                  ? t('settings.heightMedium')
+                  : t('settings.heightLarge')}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Speed */}
+      <div className="space-y-1.5">
+        <Label className="text-xs">{t('settings.slideshowSpeed')}</Label>
+        <div className="flex gap-1.5">
+          {(['slow', 'normal', 'fast'] as const).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => onUpdate(blockId, { ...cfg, speed: s })}
+              className={`flex-1 rounded border py-1.5 text-xs font-medium transition-colors ${
+                ((cfg.speed as string) ?? 'normal') === s
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border hover:bg-accent'
+              }`}
+            >
+              {s === 'slow'
+                ? t('settings.speedSlow')
+                : s === 'normal'
+                  ? t('settings.speedNormal')
+                  : t('settings.speedFast')}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface BlockEditorProps {
   block: UIBlockConfig | null;
   onUpdate: (blockId: string, config: Record<string, unknown>) => void;
+  onTypeChange: (blockId: string, type: UIBlockConfig['type']) => void;
 }
 
-export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
+export function BlockEditor({
+  block,
+  onUpdate,
+  onTypeChange
+}: BlockEditorProps) {
   const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingIllustration, setIsUploadingIllustration] = useState(false);
 
   if (!block) {
     return (
@@ -77,6 +412,32 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
     }
   };
 
+  const handleIllustrationUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setIsUploadingIllustration(true);
+      const result = await apiClient.uploadImage(file, {
+        title: 'Hero Illustration'
+      });
+      const raw = result as unknown as Record<string, unknown>;
+      const id =
+        (raw?.id as number | undefined) ??
+        ((raw?.data as Record<string, unknown>)?.id as number | undefined);
+      if (id) {
+        const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
+        onUpdate(block.id, { ...cfg, illustration: url });
+      }
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsUploadingIllustration(false);
+      e.target.value = '';
+    }
+  };
+
   return (
     <div className="space-y-4 p-4">
       <div>
@@ -90,26 +451,60 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
 
       <Separator />
 
+      {(block.type === 'hero' || block.type === 'slideshow') && (
+        <div className="grid grid-cols-2 gap-1.5">
+          {(['hero', 'slideshow'] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => onTypeChange(block.id, mode)}
+              className={`rounded border py-1.5 text-xs font-medium transition-colors ${
+                block.type === mode
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border hover:bg-accent'
+              }`}
+            >
+              {mode === 'hero'
+                ? t('settings.heroModeLabel')
+                : t('settings.slideshowModeLabel')}
+            </button>
+          ))}
+        </div>
+      )}
+
       {block.type === 'hero' && (
         <div className="space-y-3">
           {/* Background type */}
           <div className="space-y-1.5">
             <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-              Background
+              {t('settings.heroBgType')}
             </Label>
             <div className="grid grid-cols-3 gap-1.5">
-              {(['gradient', 'solid', 'image'] as HeroBgType[]).map((type) => (
+              {[
+                {
+                  type: 'gradient' as HeroBgType,
+                  label: t('settings.bgTypeGradient')
+                },
+                {
+                  type: 'solid' as HeroBgType,
+                  label: t('settings.bgTypeSolid')
+                },
+                {
+                  type: 'image' as HeroBgType,
+                  label: t('settings.bgTypeImage')
+                }
+              ].map(({ type, label }) => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => set('bgType', type)}
-                  className={`rounded border py-1.5 text-xs font-medium capitalize transition-colors ${
+                  className={`rounded border py-1.5 text-xs font-medium transition-colors ${
                     heroBgType === type
                       ? 'border-primary bg-primary text-primary-foreground'
                       : 'border-border hover:bg-accent'
                   }`}
                 >
-                  {type}
+                  {label}
                 </button>
               ))}
             </div>
@@ -118,7 +513,7 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
           {/* Solid color picker */}
           {heroBgType === 'solid' && (
             <div className="space-y-1.5">
-              <Label className="text-xs">Color</Label>
+              <Label className="text-xs">{t('settings.heroColor')}</Label>
               <div className="flex items-center gap-2">
                 <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md border shadow-sm">
                   <input
@@ -162,7 +557,11 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
               ) : null}
               <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-md border border-dashed py-4 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary">
                 <Upload className="h-4 w-4" />
-                <span>{isUploading ? 'Uploading…' : 'Upload Image'}</span>
+                <span>
+                  {isUploading
+                    ? t('settings.heroUploading')
+                    : t('settings.heroUploadImage')}
+                </span>
                 <input
                   type="file"
                   accept="image/*"
@@ -173,7 +572,7 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
               </label>
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs">Overlay</Label>
+                  <Label className="text-xs">{t('settings.heroOverlay')}</Label>
                   <span className="text-xs text-muted-foreground">
                     {(cfg.overlayOpacity as number) ?? 40}%
                   </span>
@@ -225,11 +624,11 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Secondary Button</Label>
+            <Label className="text-xs">{t('settings.heroSecondaryBtn')}</Label>
             <Input
               value={(cfg.ctaSecondary as string) ?? ''}
               onChange={(e) => set('ctaSecondary', e.target.value)}
-              placeholder="Optional secondary button"
+              placeholder={t('settings.heroSecondaryBtnPlaceholder')}
               className="h-8 text-sm"
             />
           </div>
@@ -238,7 +637,7 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
 
           {/* Layout */}
           <div className="space-y-1.5">
-            <Label className="text-xs">Height</Label>
+            <Label className="text-xs">{t('settings.heroHeight')}</Label>
             <div className="flex gap-1.5">
               {(['small', 'medium', 'large'] as const).map((h) => (
                 <button
@@ -251,14 +650,18 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
                       : 'border-border hover:bg-accent'
                   }`}
                 >
-                  {h}
+                  {h === 'small'
+                    ? t('settings.heightSmall')
+                    : h === 'medium'
+                      ? t('settings.heightMedium')
+                      : t('settings.heightLarge')}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Alignment</Label>
+            <Label className="text-xs">{t('settings.heroAlignment')}</Label>
             <div className="flex gap-1">
               {(['center', 'left'] as const).map((align) => (
                 <button
@@ -271,7 +674,9 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
                       : 'bg-muted hover:bg-accent'
                   }`}
                 >
-                  {align}
+                  {align === 'center'
+                    ? t('settings.alignCenter')
+                    : t('settings.alignLeft')}
                 </button>
               ))}
             </div>
@@ -283,6 +688,107 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
               checked={(cfg.showCTA as boolean) ?? true}
               onCheckedChange={(v) => set('showCTA', v)}
             />
+          </div>
+
+          <Separator />
+
+          {/* Illustration */}
+          <div className="space-y-2">
+            <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              {t('settings.heroIllustration')}
+            </Label>
+
+            {/* Preset picker */}
+            <div className="grid grid-cols-3 gap-1">
+              {ILLUSTRATION_PRESETS.map((preset) => {
+                const isActive =
+                  cfg.illustrationPreset === preset.id && !cfg.illustration;
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    title={preset.hint}
+                    onClick={() =>
+                      onUpdate(block.id, {
+                        ...cfg,
+                        illustrationPreset: preset.id,
+                        illustration: null
+                      })
+                    }
+                    className={`flex flex-col items-center gap-0.5 rounded-md border py-1.5 text-[9px] transition-colors ${
+                      isActive
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-border hover:border-primary/50 hover:bg-accent'
+                    }`}
+                  >
+                    <span className="text-base">{preset.emoji}</span>
+                    <span className="font-medium">{preset.label}</span>
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                title={t('settings.heroNoIllustration')}
+                onClick={() =>
+                  onUpdate(block.id, {
+                    ...cfg,
+                    illustrationPreset: null,
+                    illustration: null
+                  })
+                }
+                className={`flex flex-col items-center gap-0.5 rounded-md border py-1.5 text-[9px] transition-colors ${
+                  !cfg.illustrationPreset && !cfg.illustration
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-border hover:border-primary/50 hover:bg-accent'
+                }`}
+              >
+                <span className="text-base opacity-40">✕</span>
+                <span className="font-medium">
+                  {t('settings.heroNoIllustrationLabel')}
+                </span>
+              </button>
+            </div>
+
+            {/* Custom upload preview */}
+            {cfg.illustration ? (
+              <div className="relative overflow-hidden rounded-md border">
+                <img
+                  src={cfg.illustration as string}
+                  alt="Hero illustration"
+                  className="h-24 w-full bg-muted/30 object-contain"
+                />
+                <button
+                  type="button"
+                  title="Remove illustration"
+                  aria-label="Remove illustration"
+                  onClick={() =>
+                    onUpdate(block.id, { ...cfg, illustration: null })
+                  }
+                  className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ) : null}
+
+            <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-md border border-dashed py-2.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+              <Upload className="h-3.5 w-3.5" />
+              <span>
+                {isUploadingIllustration
+                  ? t('settings.heroUploading')
+                  : t('settings.heroUploadCustom')}
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleIllustrationUpload}
+                disabled={isUploadingIllustration}
+              />
+            </label>
+            <p className="text-[9px] text-muted-foreground/70">
+              {t('settings.heroIllustrationHint')}
+            </p>
           </div>
         </div>
       )}
@@ -379,6 +885,10 @@ export function BlockEditor({ block, onUpdate }: BlockEditorProps) {
             />
           </div>
         </div>
+      )}
+
+      {block.type === 'slideshow' && (
+        <SlideshowEditor blockId={block.id} cfg={cfg} onUpdate={onUpdate} />
       )}
 
       {(block.type === 'footer' || block.type === 'sidebar') && (
