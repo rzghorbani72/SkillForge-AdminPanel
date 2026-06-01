@@ -7,6 +7,7 @@ import {
   Monitor,
   Smartphone,
   Tablet,
+  Tv2,
   Save,
   Palette,
   Settings2,
@@ -42,7 +43,7 @@ import {
   DEFAULT_THEME_CONFIG
 } from '@/lib/theme';
 
-type DeviceMode = 'desktop' | 'tablet' | 'mobile';
+type DeviceMode = 'widescreen' | 'desktop' | 'tablet' | 'mobile';
 type LeftTab = 'colors' | 'style' | 'block';
 
 interface ThemeColors {
@@ -599,6 +600,14 @@ export default function UITemplateSettingsPage() {
         <div className="flex items-center gap-2">
           {/* Device switcher */}
           <div className="flex items-center gap-0.5 rounded-lg border bg-muted/40 p-1">
+            <button
+              type="button"
+              title="Widescreen"
+              onClick={() => setDeviceMode('widescreen')}
+              className={`rounded p-1.5 transition-colors ${deviceMode === 'widescreen' ? 'bg-background shadow-sm' : 'hover:bg-accent'}`}
+            >
+              <Tv2 className="h-4 w-4" />
+            </button>
             <button
               type="button"
               title="Desktop"

@@ -18,7 +18,7 @@ export interface PreviewTheme {
   shadow: 'none' | 'subtle' | 'medium' | 'strong';
 }
 
-type DeviceMode = 'desktop' | 'tablet' | 'mobile';
+type DeviceMode = 'widescreen' | 'desktop' | 'tablet' | 'mobile';
 
 interface SitePreviewProps {
   blocks: UIBlockConfig[];
@@ -31,12 +31,14 @@ interface SitePreviewProps {
 
 // Virtual viewport width per device — the 960px block components scale inside this.
 const DEVICE_VIRTUAL_W: Record<DeviceMode, number> = {
+  widescreen: 1920,
   desktop: 1280,
   tablet: 768,
   mobile: 375
 };
 
 const DEVICE_W_CLASS: Record<DeviceMode, string> = {
+  widescreen: 'w-[1920px]',
   desktop: 'w-[1280px]',
   tablet: 'w-[768px]',
   mobile: 'w-[375px]'
@@ -66,7 +68,9 @@ function rPx(d: DeviceMode) {
   return d === 'mobile' ? 'px-4' : d === 'tablet' ? 'px-6' : 'px-8';
 }
 function rInner(d: DeviceMode) {
-  return d === 'desktop' ? 'mx-auto w-full max-w-5xl' : '';
+  return d === 'desktop' || d === 'widescreen'
+    ? 'mx-auto w-full max-w-5xl'
+    : '';
 }
 function rPy(d: DeviceMode, lg = false) {
   if (lg) return d === 'mobile' ? 'py-8' : d === 'tablet' ? 'py-10' : 'py-14';
