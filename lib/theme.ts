@@ -95,16 +95,6 @@ export function applyThemeVariables(config: ThemeConfigPayload) {
     '--secondary-foreground',
     `${Math.round(sh)} ${Math.round(Math.min(ss, 60))}% 25%`
   );
-
-  // Background + muted — derive muted from background hue to keep surfaces coherent
-  const bgHex =
-    config.background_color ?? DEFAULT_THEME_CONFIG.background_color;
-  const { h: bh, s: bs } = hexToHsl(bgHex);
-  root.style.setProperty('--background', hexToHslString(bgHex));
-  root.style.setProperty(
-    '--muted',
-    `${Math.round(bh)} ${Math.round(bs * 0.2)}% 96%`
-  );
 }
 
 // ── Hex helpers ──────────────────────────────────────────────────────────────
