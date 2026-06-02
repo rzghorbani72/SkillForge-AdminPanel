@@ -79,53 +79,57 @@ const DEFAULT_THEME_STYLE: ThemeStyle = {
 };
 
 const BORDER_RADIUS_OPTIONS = [
-  { value: 'rounded' as const, label: 'Rounded', px: '16px' },
-  { value: 'soft' as const, label: 'Soft', px: '24px' },
-  { value: 'sharp' as const, label: 'Sharp', px: '4px' }
+  {
+    value: 'rounded' as const,
+    labelKey: 'settings.borderRadiusRounded',
+    px: '16px'
+  },
+  { value: 'soft' as const, labelKey: 'settings.borderRadiusSoft', px: '24px' },
+  { value: 'sharp' as const, labelKey: 'settings.borderRadiusSharp', px: '4px' }
 ];
 
 const SHADOW_OPTIONS = [
-  { value: 'none' as const, label: 'None', css: 'none' },
+  { value: 'none' as const, labelKey: 'settings.shadowNone', css: 'none' },
   {
     value: 'subtle' as const,
-    label: 'Subtle',
+    labelKey: 'settings.shadowSubtle',
     css: '0 1px 4px rgba(0,0,0,0.08)'
   },
   {
     value: 'medium' as const,
-    label: 'Medium',
+    labelKey: 'settings.shadowMedium',
     css: '0 4px 12px rgba(0,0,0,0.12)'
   },
   {
     value: 'strong' as const,
-    label: 'Strong',
+    labelKey: 'settings.shadowStrong',
     css: '0 10px 24px rgba(0,0,0,0.18)'
   }
 ];
 
 const QUICK_PALETTES = [
   {
-    name: 'Cool Blue',
+    key: 'settings.paletteCoolBlue',
     colors: ['#3b82f6', '#6366f1', '#0ea5e9', '#f0f9ff', '#0f172a']
   },
   {
-    name: 'Warm Sunset',
+    key: 'settings.paletteWarmSunset',
     colors: ['#f97316', '#f43f5e', '#fbbf24', '#fff7ed', '#1c0710']
   },
   {
-    name: 'Forest',
+    key: 'settings.paletteForest',
     colors: ['#16a34a', '#65a30d', '#f59e0b', '#f0fdf4', '#052e16']
   },
   {
-    name: 'Purple Haze',
+    key: 'settings.palettePurpleHaze',
     colors: ['#8b5cf6', '#a855f7', '#ec4899', '#faf5ff', '#1e1b4b']
   },
   {
-    name: 'Ocean Deep',
+    key: 'settings.paletteOceanDeep',
     colors: ['#0891b2', '#0284c7', '#06b6d4', '#ecfeff', '#0c1a2e']
   },
   {
-    name: 'Minimal Dark',
+    key: 'settings.paletteMinimalDark',
     colors: ['#0f172a', '#1e293b', '#94a3b8', '#f8fafc', '#0f172a']
   }
 ];
@@ -876,7 +880,7 @@ export default function UITemplateSettingsPage() {
                   <div className="grid grid-cols-2 gap-1.5">
                     {QUICK_PALETTES.map((palette) => (
                       <button
-                        key={palette.name}
+                        key={palette.key}
                         type="button"
                         onClick={() => {
                           const colors: ThemeColors = {
@@ -911,7 +915,7 @@ export default function UITemplateSettingsPage() {
                           ))}
                         </div>
                         <span className="text-[9px] font-medium text-muted-foreground">
-                          {palette.name}
+                          {t(palette.key as Parameters<typeof t>[0])}
                         </span>
                       </button>
                     ))}
@@ -940,7 +944,7 @@ export default function UITemplateSettingsPage() {
                     {t('settings.borderRadiusLabel')}
                   </p>
                   <div className="grid grid-cols-3 gap-1.5">
-                    {BORDER_RADIUS_OPTIONS.map(({ value, label, px }) => (
+                    {BORDER_RADIUS_OPTIONS.map(({ value, labelKey, px }) => (
                       <button
                         key={value}
                         type="button"
@@ -957,7 +961,7 @@ export default function UITemplateSettingsPage() {
                           className="h-6 w-8 border-2 border-current opacity-60"
                           style={{ borderRadius: px }}
                         />
-                        {label}
+                        {t(labelKey as Parameters<typeof t>[0])}
                       </button>
                     ))}
                   </div>
@@ -971,7 +975,7 @@ export default function UITemplateSettingsPage() {
                     {t('settings.shadowLabel')}
                   </p>
                   <div className="grid grid-cols-2 gap-1.5">
-                    {SHADOW_OPTIONS.map(({ value, label, css }) => (
+                    {SHADOW_OPTIONS.map(({ value, labelKey, css }) => (
                       <button
                         key={value}
                         type="button"
@@ -988,7 +992,7 @@ export default function UITemplateSettingsPage() {
                           className="h-6 w-10 rounded-md bg-background"
                           style={{ boxShadow: css }}
                         />
-                        {label}
+                        {t(labelKey as Parameters<typeof t>[0])}
                       </button>
                     ))}
                   </div>

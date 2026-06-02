@@ -1325,6 +1325,7 @@ export const en = {
     borderRadiusSoft: 'Soft',
     borderRadiusSharp: 'Sharp',
     shadowStyle: 'Shadow Style',
+    shadowNone: 'None',
     shadowSubtle: 'Subtle',
     shadowMedium: 'Medium',
     shadowStrong: 'Strong',
@@ -1409,6 +1410,13 @@ export const en = {
     colorAccentHelper:
       'Discount labels, sale badges, call-to-action highlights',
     quickPalettes: 'Quick Palettes',
+    quickPalettesLabel: 'Quick Palettes',
+    paletteCoolBlue: 'Cool Blue',
+    paletteWarmSunset: 'Warm Sunset',
+    paletteForest: 'Forest',
+    palettePurpleHaze: 'Purple Haze',
+    paletteOceanDeep: 'Ocean Deep',
+    paletteMinimalDark: 'Minimal Dark',
     effectsTitle: 'Background Effects',
     effectsDescription:
       'Choose how the background animates on your academyfront',

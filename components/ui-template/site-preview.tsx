@@ -723,9 +723,10 @@ function PreviewHero({
         {config?.showCTA !== false && (
           <div className="mt-2 flex flex-wrap gap-2">
             <span
-              className="font-semibold text-white"
+              className="font-semibold"
               style={{
-                backgroundColor: 'rgba(255,255,255,0.25)',
+                backgroundColor: 'white',
+                color: theme.primaryLight,
                 borderRadius: r,
                 padding: isMobile ? '6px 14px' : '10px 24px',
                 fontSize: isMobile ? '12px' : '14px',
@@ -1616,7 +1617,7 @@ function PreviewSlideshow({
           </p>
         )}
         {isBanner && (
-          <span className="mt-2 rounded-full bg-white/20 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+          <span className="mt-2 rounded-full bg-white/90 px-4 py-1.5 text-xs font-semibold text-gray-900 backdrop-blur-sm">
             بنر
           </span>
         )}
