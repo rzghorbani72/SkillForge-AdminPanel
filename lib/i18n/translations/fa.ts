@@ -1078,7 +1078,7 @@ export const fa = {
     backgroundAnimationGrid: 'شبکه متحرک',
     animationSpeed: 'سرعت انیمیشن',
     speedSlow: 'کند',
-    speedMedium: 'متوسط',
+    speedNormal: 'متوسط',
     speedFast: 'سریع',
     elementAnimationModerate: 'متوسط',
     elementAnimationDynamic: 'پویا',
@@ -1228,10 +1228,7 @@ export const fa = {
     bgTypeImage: 'تصویر',
     heroModeLabel: 'بنر اصلی',
     slideshowModeLabel: 'اسلایدشو',
-    slideshowSpeed: 'سرعت اسلاید',
-    speedSlow: 'کند',
-    speedNormal: 'متوسط',
-    speedFast: 'سریع'
+    slideshowSpeed: 'سرعت اسلاید'
   },
   products: {
     title: 'محصولات',

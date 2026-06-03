@@ -1309,7 +1309,7 @@ export const en = {
     backgroundAnimationGrid: 'Animated Grid',
     animationSpeed: 'Animation Speed',
     speedSlow: 'Slow',
-    speedMedium: 'Medium',
+    speedNormal: 'Normal',
     speedFast: 'Fast',
     svgPatternOptional: 'SVG Pattern (Optional)',
     svgPatternPlaceholder: 'pattern-dots, pattern-grid, pattern-waves, etc.',
@@ -1476,10 +1476,7 @@ export const en = {
     bgTypeImage: 'Image',
     heroModeLabel: 'Hero Banner',
     slideshowModeLabel: 'Slideshow',
-    slideshowSpeed: 'Slide Speed',
-    speedSlow: 'Slow',
-    speedNormal: 'Normal',
-    speedFast: 'Fast'
+    slideshowSpeed: 'Slide Speed'
   },
   media: {
     // Common
