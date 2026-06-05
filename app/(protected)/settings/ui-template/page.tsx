@@ -29,10 +29,9 @@ import { useUserStore } from '@/lib/store';
 import type { TemplatePreset, UIBlockConfig, UITemplate } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { BlockEditor } from '@/components/ui-template/block-editor';
-import {
-  SitePreview,
-  type PreviewTheme
-} from '@/components/ui-template/site-preview';
+import { EduspherePreviewFrame } from '@/components/ui-template/edusphere-preview-frame';
+import { useUiTemplatePreview } from '@/hooks/use-ui-template-preview';
+import { buildThemeDraftPayload } from '@/lib/ui-template/theme-draft-payload';
 import { BlocksList } from '@/components/ui-template/blocks-list';
 import { TemplateSelectModal } from '@/components/ui-template/template-select-modal';
 import { DESIGN_SYSTEMS, buildThemePayload } from '@/lib/design-systems';
@@ -286,8 +285,33 @@ export default function UITemplateSettingsPage() {
   const [themeColors, setThemeColors] = useState<ThemeColors>(DEFAULT_COLORS);
   const [themeStyle, setThemeStyle] = useState<ThemeStyle>(DEFAULT_THEME_STYLE);
   const [copied, setCopied] = useState(false);
-
+  const [hasUnpublishedChanges, setHasUnpublishedChanges] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const hasTemplate = !!template?.id;
+
+  const buildThemePayloadFromState = useCallback(
+    () => buildThemeDraftPayload(themeColors, themeStyle),
+    [themeColors, themeStyle]
+  );
+
+  const {
+    iframeSrc,
+    isPreviewSyncing,
+    isPreviewReady,
+    persistDraft,
+    bumpPreview,
+    openFullPreview
+  } = useUiTemplatePreview({
+    storeSlug,
+    blocks,
+    hasTemplate,
+    isActive,
+    isDirty,
+    setIsDirty,
+    buildThemePayload: buildThemePayloadFromState,
+    onDraftSaved: () => setHasUnpublishedChanges(true)
+  });
 
   const sortedBlocks = useMemo(
     () => [...blocks].sort((a, b) => a.order - b.order),
@@ -320,6 +344,13 @@ export default function UITemplateSettingsPage() {
       setPresets(presetsData as TemplatePreset[]);
       setBlocks((templateData as UITemplate | null)?.blocks ?? []);
       setIsActive((templateData as UITemplate | null)?.is_active ?? true);
+      setHasUnpublishedChanges(
+        Boolean((templateData as UITemplate | null)?.has_unpublished_changes) ||
+          Boolean(
+            (themeData as { has_unpublished_changes?: boolean } | null)
+              ?.has_unpublished_changes
+          )
+      );
 
       if (themeData) {
         setThemeColors(parseThemeColors(themeData));
@@ -338,11 +369,14 @@ export default function UITemplateSettingsPage() {
     }
   };
 
+  const markDirty = useCallback(() => setIsDirty(true), []);
+
   useEffect(() => {
     loadData();
   }, []);
 
   const handleToggleVisibility = (blockId: string, checked: boolean) => {
+    markDirty();
     setBlocks((prev) =>
       prev.map((b) => (b.id === blockId ? { ...b, isVisible: checked } : b))
     );
@@ -352,6 +386,7 @@ export default function UITemplateSettingsPage() {
     blockId: string,
     config: Record<string, unknown>
   ) => {
+    markDirty();
     setBlocks((prev) =>
       prev.map((b) => (b.id === blockId ? { ...b, config } : b))
     );
@@ -361,12 +396,14 @@ export default function UITemplateSettingsPage() {
     blockId: string,
     type: UIBlockConfig['type']
   ) => {
+    markDirty();
     setBlocks((prev) =>
       prev.map((b) => (b.id === blockId ? { ...b, type } : b))
     );
   };
 
   const handleMoveUp = (blockId: string) => {
+    markDirty();
     const sorted = [...blocks].sort((a, b) => a.order - b.order);
     const idx = sorted.findIndex((b) => b.id === blockId);
     if (idx <= 0) return;
@@ -379,6 +416,7 @@ export default function UITemplateSettingsPage() {
   };
 
   const handleMoveDown = (blockId: string) => {
+    markDirty();
     const sorted = [...blocks].sort((a, b) => a.order - b.order);
     const idx = sorted.findIndex((b) => b.id === blockId);
     if (idx >= sorted.length - 1) return;
@@ -390,50 +428,43 @@ export default function UITemplateSettingsPage() {
     setBlocks(updated);
   };
 
-  const buildThemePayloadFromState = () => ({
-    primary_color: themeColors.primaryLight,
-    primary_color_light: themeColors.primaryLight,
-    primary_color_dark: themeColors.primaryDark,
-    secondary_color: themeColors.secondaryLight,
-    secondary_color_light: themeColors.secondaryLight,
-    secondary_color_dark: themeColors.secondaryDark,
-    accent_color: themeColors.accent,
-    background_color: themeColors.backgroundLight,
-    background_color_light: themeColors.backgroundLight,
-    background_color_dark: themeColors.backgroundDark,
-    dark_mode: null,
-    border_radius_style: themeStyle.borderRadius,
-    shadow_style: themeStyle.shadow,
-    background_svg_pattern: themeStyle.backgroundSvgPattern
-  });
-
-  const handleSave = async () => {
+  const handleSaveDraft = async () => {
     try {
       setIsSaving(true);
-      // Sending null explicitly breaks the link to the base template preset.
-      // After save, the stored blocks + theme are the academy's own design system.
-      const templatePayload = {
-        blocks,
-        template_preset: null,
-        is_active: isActive
-      };
-      const colorPayload = buildThemePayloadFromState();
-
-      await Promise.all([
-        hasTemplate
-          ? apiClient.updateUITemplate(templatePayload)
-          : apiClient.createUITemplate({ blocks, is_active: isActive }),
-        apiClient.updateCurrentThemeConfig(colorPayload)
-      ]);
-
-      applyThemeVariables(colorPayload);
-      dispatchThemeUpdate(colorPayload);
-      ErrorHandler.showSuccess(t('settings.uiTemplateSavedSuccess'));
+      await persistDraft(false);
+      bumpPreview();
+      setIsDirty(false);
+      ErrorHandler.showSuccess(t('settings.uiTemplateDraftSavedSuccess'));
       await loadData();
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    try {
+      setIsPublishing(true);
+      await persistDraft(true);
+      await apiClient.publishSite();
+      setHasUnpublishedChanges(false);
+      bumpPreview();
+      setIsDirty(false);
+      ErrorHandler.showSuccess(t('settings.uiTemplatePublishedSuccess'));
+      await loadData();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const handleOpenPreview = async () => {
+    try {
+      await openFullPreview();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
     }
   };
 
@@ -445,7 +476,7 @@ export default function UITemplateSettingsPage() {
       const ds = DESIGN_SYSTEMS[presetId];
       if (ds) {
         const themePayload = buildThemePayload(ds);
-        await apiClient.updateCurrentThemeConfig(themePayload);
+        await apiClient.saveThemeDraft(themePayload);
         applyThemeVariables(themePayload);
         dispatchThemeUpdate(themePayload);
         setThemeColors((prev) => ({
@@ -465,6 +496,9 @@ export default function UITemplateSettingsPage() {
         }));
       }
 
+      setHasUnpublishedChanges(true);
+      bumpPreview();
+      setIsDirty(false);
       ErrorHandler.showSuccess(t('settings.uiTemplateSavedSuccess'));
       await loadData();
     } catch (error) {
@@ -476,6 +510,7 @@ export default function UITemplateSettingsPage() {
 
   const handleApplyColorPreset = useCallback(
     (preset: (typeof THEME_COLOR_PRESETS)[number]) => {
+      markDirty();
       const colors: ThemeColors = {
         primaryLight: preset.primaryLight,
         primaryDark: preset.primaryDark,
@@ -501,11 +536,12 @@ export default function UITemplateSettingsPage() {
       applyThemeVariables(payload);
       dispatchThemeUpdate(payload);
     },
-    []
+    [markDirty]
   );
 
   const handleColorChange = useCallback(
     (key: keyof ThemeColors, value: string) => {
+      markDirty();
       setThemeColors((prev) => {
         const updated = { ...prev, [key]: value };
         if (key === 'primaryLight') {
@@ -522,10 +558,11 @@ export default function UITemplateSettingsPage() {
         return updated;
       });
     },
-    []
+    [markDirty]
   );
 
   const handleResetColors = useCallback(() => {
+    markDirty();
     const ds = DESIGN_SYSTEMS[activePresetId];
     if (!ds) return;
     const reset: ThemeColors = {
@@ -552,7 +589,7 @@ export default function UITemplateSettingsPage() {
     };
     applyThemeVariables(payload);
     dispatchThemeUpdate(payload);
-  }, [activePresetId]);
+  }, [activePresetId, markDirty]);
 
   const handleCopyConfig = useCallback(() => {
     navigator.clipboard.writeText(
@@ -575,18 +612,6 @@ export default function UITemplateSettingsPage() {
       </div>
     );
   }
-
-  const previewTheme: PreviewTheme = {
-    primaryLight: themeColors.primaryLight,
-    primaryDark: themeColors.primaryDark,
-    secondaryLight: themeColors.secondaryLight,
-    secondaryDark: themeColors.secondaryDark,
-    accent: themeColors.accent,
-    backgroundLight: themeColors.backgroundLight,
-    backgroundDark: themeColors.backgroundDark,
-    borderRadius: themeStyle.borderRadius,
-    shadow: themeStyle.shadow
-  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -662,14 +687,18 @@ export default function UITemplateSettingsPage() {
             {t('settings.changeTemplate')}
           </Button>
 
+          {hasUnpublishedChanges && (
+            <Badge variant="outline" className="text-xs text-amber-600">
+              {t('settings.unpublishedChanges')}
+            </Badge>
+          )}
+
           <Button
             type="button"
             variant="outline"
             size="sm"
-            disabled={!storefrontUrl}
-            onClick={() =>
-              storefrontUrl && window.open(storefrontUrl, '_blank')
-            }
+            disabled={!isPreviewReady}
+            onClick={handleOpenPreview}
           >
             <Eye className="mr-1.5 h-4 w-4" />
             {t('settings.previewSite')}
@@ -677,12 +706,25 @@ export default function UITemplateSettingsPage() {
 
           <Button
             type="button"
+            variant="outline"
             size="sm"
-            onClick={handleSave}
+            onClick={handleSaveDraft}
             disabled={isSaving}
           >
             <Save className="mr-1.5 h-4 w-4" />
-            {isSaving ? t('settings.saving') : t('settings.publishSite')}
+            {isSaving ? t('settings.saving') : t('settings.saveDraft')}
+          </Button>
+
+          <Button
+            type="button"
+            size="sm"
+            onClick={handlePublish}
+            disabled={isPublishing}
+          >
+            <Save className="mr-1.5 h-4 w-4" />
+            {isPublishing
+              ? t('settings.publishing')
+              : t('settings.publishSite')}
           </Button>
         </div>
       </div>
@@ -722,7 +764,13 @@ export default function UITemplateSettingsPage() {
                 {t('settings.templateStatusDescription')}
               </p>
             </div>
-            <Switch checked={isActive} onCheckedChange={setIsActive} />
+            <Switch
+              checked={isActive}
+              onCheckedChange={(checked) => {
+                markDirty();
+                setIsActive(checked);
+              }}
+            />
           </div>
 
           {/* Tab strip */}
@@ -883,6 +931,7 @@ export default function UITemplateSettingsPage() {
                         key={palette.key}
                         type="button"
                         onClick={() => {
+                          markDirty();
                           const colors: ThemeColors = {
                             primaryLight: palette.colors[0],
                             primaryDark: palette.colors[0],
@@ -948,9 +997,10 @@ export default function UITemplateSettingsPage() {
                       <button
                         key={value}
                         type="button"
-                        onClick={() =>
-                          setThemeStyle((s) => ({ ...s, borderRadius: value }))
-                        }
+                        onClick={() => {
+                          markDirty();
+                          setThemeStyle((s) => ({ ...s, borderRadius: value }));
+                        }}
                         className={`flex flex-col items-center gap-1.5 rounded border py-2 text-[10px] font-medium transition-colors ${
                           themeStyle.borderRadius === value
                             ? 'border-primary bg-primary/5 text-primary'
@@ -979,9 +1029,10 @@ export default function UITemplateSettingsPage() {
                       <button
                         key={value}
                         type="button"
-                        onClick={() =>
-                          setThemeStyle((s) => ({ ...s, shadow: value }))
-                        }
+                        onClick={() => {
+                          markDirty();
+                          setThemeStyle((s) => ({ ...s, shadow: value }));
+                        }}
                         className={`flex flex-col items-center gap-2 rounded border py-2 text-[10px] font-medium transition-colors ${
                           themeStyle.shadow === value
                             ? 'border-primary bg-primary/5 text-primary'
@@ -1007,12 +1058,13 @@ export default function UITemplateSettingsPage() {
                   </p>
                   <Input
                     value={themeStyle.backgroundSvgPattern}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      markDirty();
                       setThemeStyle((s) => ({
                         ...s,
                         backgroundSvgPattern: e.target.value
-                      }))
-                    }
+                      }));
+                    }}
                     placeholder="dots, grid, waves..."
                     className="h-7 font-mono text-[10px]"
                   />
@@ -1034,15 +1086,16 @@ export default function UITemplateSettingsPage() {
           </div>
         </aside>
 
-        {/* Center panel — Site preview */}
+        {/* Center panel — Live Edusphere preview via API draft data */}
         <main className="flex min-w-0 flex-1 flex-col overflow-hidden bg-muted/20 p-4">
-          <SitePreview
-            blocks={sortedBlocks}
+          <EduspherePreviewFrame
+            iframeSrc={iframeSrc}
             siteUrl={storefrontUrl}
-            activeBlockId={activeBlockId}
-            onSelectBlock={handleSelectBlock}
-            theme={previewTheme}
             deviceMode={deviceMode}
+            isLoading={isPreviewSyncing}
+            isReady={isPreviewReady}
+            emptyMessage={t('settings.noBlocksMessage')}
+            missingConfigMessage={t('settings.previewConfigMissing')}
           />
         </main>
 

@@ -629,8 +629,12 @@ export interface UITemplate {
   id: number;
   academy_id: number;
   blocks: UIBlockConfig[];
+  draft_blocks?: UIBlockConfig[];
   template_preset?: string;
+  draft_template_preset?: string | null;
   is_active: boolean;
+  has_unpublished_changes?: boolean;
+  published_at?: string;
   created_at: string;
   updated_at: string;
   academy?: Academy;

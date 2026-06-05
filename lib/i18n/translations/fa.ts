@@ -1120,6 +1120,14 @@ export const fa = {
     currentlyActive: 'در حال حاضر فعال',
     applyTemplate: 'اعمال قالب',
     uiTemplateSavedSuccess: 'قالب رابط کاربری با موفقیت ذخیره شد',
+    uiTemplateDraftSavedSuccess: 'پیش‌نویس با موفقیت ذخیره شد',
+    uiTemplatePublishedSuccess: 'سایت با موفقیت منتشر شد',
+    unpublishedChanges: 'تغییرات منتشر نشده',
+    saveDraft: 'ذخیره پیش‌نویس',
+    publishing: 'در حال انتشار...',
+    previewUpdating: 'در حال به‌روزرسانی پیش‌نمایش...',
+    previewConfigMissing:
+      'برای فعال‌سازی پیش‌نمایش زنده، NEXT_PUBLIC_STOREFRONT_URL را تنظیم کنید.',
     templateAppliedSuccess: 'قالب «{presetId}» با موفقیت اعمال شد',
     selectBlockToEdit:
       'یک بلوک را از لیست انتخاب کنید تا تنظیمات آن را ویرایش کنید.',

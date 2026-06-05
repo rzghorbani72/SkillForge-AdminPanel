@@ -2306,6 +2306,40 @@ class ApiClient {
     return response.data;
   }
 
+  async saveThemeDraft(payload: {
+    primary_color?: string;
+    primary_color_light?: string;
+    primary_color_dark?: string;
+    secondary_color?: string;
+    secondary_color_light?: string;
+    secondary_color_dark?: string;
+    accent_color?: string;
+    background_color?: string;
+    background_color_light?: string;
+    background_color_dark?: string;
+    dark_mode?: boolean | null;
+    name?: string;
+    background_animation_type?: string;
+    background_animation_speed?: string;
+    background_svg_pattern?: string;
+    element_animation_style?: string;
+    border_radius_style?: string;
+    shadow_style?: string;
+  }) {
+    const response = await this.request('/theme/current/config/draft', {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    return response.data;
+  }
+
+  async publishThemeConfig() {
+    const response = await this.request('/theme/current/config/publish', {
+      method: 'POST'
+    });
+    return response.data;
+  }
+
   async getUserProfiles() {
     return this.request('/auth/profiles', {
       method: 'POST'
@@ -2351,6 +2385,55 @@ class ApiClient {
       body: JSON.stringify(payload)
     });
     return (response.data as any)?.data ?? null;
+  }
+
+  async saveUITemplateDraft(payload: {
+    blocks?: Array<{
+      id: string;
+      type: string;
+      order: number;
+      isVisible: boolean;
+      config?: Record<string, unknown>;
+    }>;
+    template_preset?: string | null;
+    is_active?: boolean;
+  }) {
+    const response = await this.request('/ui-template/current/draft', {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    return (response.data as any)?.data ?? null;
+  }
+
+  async publishUITemplate() {
+    const response = await this.request('/ui-template/current/publish', {
+      method: 'POST'
+    });
+    return (response.data as any)?.data ?? null;
+  }
+
+  async publishSite() {
+    const response = await this.request('/ui-template/current/publish-site', {
+      method: 'POST'
+    });
+    return response.data;
+  }
+
+  async createTemplatePreviewToken() {
+    const response = await this.request('/ui-template/preview-token', {
+      method: 'POST'
+    });
+    return response.data as { token: string; expiresIn: string };
+  }
+
+  async getTemplatePreviewSession() {
+    const response = await this.request<{
+      token: string;
+      expiresIn: string;
+      academySlug: string;
+      previewPath: string;
+    }>('/ui-template/preview-session');
+    return response.data;
   }
 
   async getAvailableTemplatePresets() {
