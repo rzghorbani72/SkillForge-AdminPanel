@@ -5,12 +5,19 @@ export interface TemplatePreviewSession {
   previewPath: string;
 }
 
+const DEV_STOREFRONT_URL = 'http://localhost:5000';
+
 export function resolveStorefrontBaseUrl(
   storefrontBaseUrl?: string | null
 ): string | undefined {
-  const fromApi = storefrontBaseUrl?.replace(/\/$/, '');
   const fromEnv = process.env.NEXT_PUBLIC_STOREFRONT_URL?.replace(/\/$/, '');
-  return fromApi || fromEnv || undefined;
+  if (fromEnv) return fromEnv;
+
+  if (process.env.NODE_ENV === 'development') {
+    return DEV_STOREFRONT_URL;
+  }
+
+  return storefrontBaseUrl?.replace(/\/$/, '') || undefined;
 }
 
 export function buildEmbedPreviewUrl(

@@ -6,7 +6,8 @@ import { ErrorHandler } from '@/lib/error-handler';
 import {
   appendPreviewCacheBuster,
   buildEmbedPreviewUrl,
-  buildFullPreviewUrl
+  buildFullPreviewUrl,
+  resolveStorefrontBaseUrl
 } from '@/lib/ui-template/preview-url';
 import type { ThemeDraftPayload } from '@/lib/ui-template/theme-draft-payload';
 import type { UIBlockConfig } from '@/types/api';
@@ -91,7 +92,7 @@ export function useUiTemplatePreview({
       try {
         const session = await apiClient.getTemplatePreviewSession();
         if (!cancelled) {
-          const base = session.storefrontBaseUrl?.replace(/\/$/, '');
+          const base = resolveStorefrontBaseUrl(session.storefrontBaseUrl);
           setPreviewUrl(
             buildEmbedPreviewUrl(
               session.token,
