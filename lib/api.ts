@@ -2432,6 +2432,7 @@ class ApiClient {
       expiresIn: string;
       academySlug: string;
       previewPath: string;
+      storefrontBaseUrl: string | null;
     }>('/ui-template/preview-session');
     return response.data;
   }

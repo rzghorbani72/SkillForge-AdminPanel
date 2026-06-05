@@ -36,8 +36,10 @@ export function useUiTemplatePreview({
   debounceMs = 900
 }: UseUiTemplatePreviewOptions) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [siteUrl, setSiteUrl] = useState<string | undefined>(undefined);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
   const [isPreviewSyncing, setIsPreviewSyncing] = useState(false);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isPreviewReady, setIsPreviewReady] = useState(false);
 
   const persistDraft = useCallback(
@@ -74,17 +76,31 @@ export function useUiTemplatePreview({
   useEffect(() => {
     if (!storeSlug) {
       setPreviewUrl(null);
+      setSiteUrl(undefined);
       setIsPreviewReady(false);
+      setIsPreviewLoading(false);
       return;
     }
 
     let cancelled = false;
+    setIsPreviewLoading(true);
+    setIsPreviewReady(false);
+    setPreviewUrl(null);
+
     (async () => {
       try {
         const session = await apiClient.getTemplatePreviewSession();
         if (!cancelled) {
+          const base = session.storefrontBaseUrl?.replace(/\/$/, '');
           setPreviewUrl(
-            buildEmbedPreviewUrl(session.token, session.previewPath)
+            buildEmbedPreviewUrl(
+              session.token,
+              session.previewPath,
+              session.storefrontBaseUrl
+            )
+          );
+          setSiteUrl(
+            base ? `${base}${session.previewPath}` : session.previewPath
           );
           setIsPreviewReady(true);
         }
@@ -92,6 +108,10 @@ export function useUiTemplatePreview({
         if (!cancelled) {
           setIsPreviewReady(false);
           ErrorHandler.handleApiError(error);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsPreviewLoading(false);
         }
       }
     })();
@@ -138,7 +158,9 @@ export function useUiTemplatePreview({
   return {
     previewUrl,
     iframeSrc,
+    siteUrl,
     isPreviewSyncing,
+    isPreviewLoading,
     isPreviewReady,
     persistDraft,
     bumpPreview,

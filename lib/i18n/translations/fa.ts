@@ -1126,8 +1126,9 @@ export const fa = {
     saveDraft: 'ذخیره پیش‌نویس',
     publishing: 'در حال انتشار...',
     previewUpdating: 'در حال به‌روزرسانی پیش‌نمایش...',
-    previewConfigMissing:
-      'برای فعال‌سازی پیش‌نمایش زنده، NEXT_PUBLIC_STOREFRONT_URL را تنظیم کنید.',
+    previewLoading: 'در حال بارگذاری پیش‌نمایش...',
+    previewUnavailable:
+      'پیش‌نمایش زنده در حال حاضر در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.',
     templateAppliedSuccess: 'قالب «{presetId}» با موفقیت اعمال شد',
     selectBlockToEdit:
       'یک بلوک را از لیست انتخاب کنید تا تنظیمات آن را ویرایش کنید.',

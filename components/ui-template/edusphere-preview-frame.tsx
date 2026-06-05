@@ -18,9 +18,10 @@ interface EduspherePreviewFrameProps {
   siteUrl?: string;
   deviceMode?: DeviceMode;
   isLoading?: boolean;
+  isInitializing?: boolean;
   isReady?: boolean;
   emptyMessage?: string;
-  missingConfigMessage?: string;
+  unavailableMessage?: string;
 }
 
 export function EduspherePreviewFrame({
@@ -28,9 +29,10 @@ export function EduspherePreviewFrame({
   siteUrl,
   deviceMode = 'desktop',
   isLoading = false,
+  isInitializing = false,
   isReady = true,
   emptyMessage,
-  missingConfigMessage
+  unavailableMessage
 }: EduspherePreviewFrameProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,8 +58,9 @@ export function EduspherePreviewFrame({
 
   const showIframe = Boolean(iframeSrc && isReady);
   const statusMessage = emptyMessage ?? t('settings.noBlocksMessage');
-  const configMessage =
-    missingConfigMessage ?? t('settings.previewConfigMissing');
+  const placeholderMessage = isInitializing
+    ? t('settings.previewLoading')
+    : (unavailableMessage ?? t('settings.previewUnavailable'));
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-lg border shadow-md">
@@ -78,7 +81,7 @@ export function EduspherePreviewFrame({
       >
         {!showIframe ? (
           <div className="flex h-full items-center justify-center p-8 text-center text-sm text-muted-foreground">
-            {!isReady ? configMessage : statusMessage}
+            {!isReady ? placeholderMessage : statusMessage}
           </div>
         ) : (
           <div

@@ -10,7 +10,12 @@ import {
   Minimize2,
   Type
 } from 'lucide-react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { TemplatePreview } from './template-preview';
 import type { TemplatePreset } from '@/types/api';
@@ -129,12 +134,12 @@ export function TemplateSelectModal({
         {/* ── Header ── */}
         <div className="flex flex-shrink-0 items-center justify-between border-b bg-background px-6 py-4">
           <div>
-            <h2 className="text-base font-bold tracking-tight">
+            <DialogTitle className="text-base font-bold tracking-tight">
               {t('settings.chooseTemplateLayout')}
-            </h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            </DialogTitle>
+            <DialogDescription className="mt-0.5 text-xs">
               {t('settings.uiTemplateBuilder')}
-            </p>
+            </DialogDescription>
           </div>
           {selectedDs && (
             <div className="flex items-center gap-2">

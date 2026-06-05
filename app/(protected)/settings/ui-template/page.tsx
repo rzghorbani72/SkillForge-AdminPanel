@@ -297,7 +297,9 @@ export default function UITemplateSettingsPage() {
 
   const {
     iframeSrc,
+    siteUrl: previewSiteUrl,
     isPreviewSyncing,
+    isPreviewLoading,
     isPreviewReady,
     persistDraft,
     bumpPreview,
@@ -324,12 +326,6 @@ export default function UITemplateSettingsPage() {
   );
 
   const activePresetId = template?.template_preset ?? '';
-
-  const storefrontUrl = process.env.NEXT_PUBLIC_STOREFRONT_URL
-    ? `${process.env.NEXT_PUBLIC_STOREFRONT_URL}/s/${storeSlug}`
-    : storeSlug
-      ? `/s/${storeSlug}`
-      : undefined;
 
   const loadData = async () => {
     try {
@@ -1090,12 +1086,12 @@ export default function UITemplateSettingsPage() {
         <main className="flex min-w-0 flex-1 flex-col overflow-hidden bg-muted/20 p-4">
           <EduspherePreviewFrame
             iframeSrc={iframeSrc}
-            siteUrl={storefrontUrl}
+            siteUrl={previewSiteUrl}
             deviceMode={deviceMode}
             isLoading={isPreviewSyncing}
+            isInitializing={isPreviewLoading}
             isReady={isPreviewReady}
             emptyMessage={t('settings.noBlocksMessage')}
-            missingConfigMessage={t('settings.previewConfigMissing')}
           />
         </main>
 

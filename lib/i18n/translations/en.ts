@@ -1368,8 +1368,9 @@ export const en = {
     saveDraft: 'Save Draft',
     publishing: 'Publishing...',
     previewUpdating: 'Updating preview...',
-    previewConfigMissing:
-      'Set NEXT_PUBLIC_STOREFRONT_URL to enable live preview.',
+    previewLoading: 'Loading preview...',
+    previewUnavailable:
+      'Live preview is temporarily unavailable. Please try again later.',
     templateAppliedSuccess: 'Template "{presetId}" applied successfully',
     selectBlockToEdit: 'Select a block from the list to edit its settings.',
     editBlock: 'Block Settings',

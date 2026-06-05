@@ -5,11 +5,20 @@ export interface TemplatePreviewSession {
   previewPath: string;
 }
 
+export function resolveStorefrontBaseUrl(
+  storefrontBaseUrl?: string | null
+): string | undefined {
+  const fromApi = storefrontBaseUrl?.replace(/\/$/, '');
+  const fromEnv = process.env.NEXT_PUBLIC_STOREFRONT_URL?.replace(/\/$/, '');
+  return fromApi || fromEnv || undefined;
+}
+
 export function buildEmbedPreviewUrl(
   token: string,
-  previewPath: string
+  previewPath: string,
+  storefrontBaseUrl?: string | null
 ): string {
-  const base = process.env.NEXT_PUBLIC_STOREFRONT_URL?.replace(/\/$/, '');
+  const base = resolveStorefrontBaseUrl(storefrontBaseUrl);
   const query = `preview=${encodeURIComponent(token)}&embed=1`;
   return base ? `${base}${previewPath}?${query}` : `${previewPath}?${query}`;
 }
