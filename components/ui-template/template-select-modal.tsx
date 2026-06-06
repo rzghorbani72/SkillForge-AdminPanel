@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { TemplatePreview } from './template-preview';
 import type { TemplatePreset } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { DESIGN_SYSTEMS } from '@/lib/design-systems';
+import { getDesignSystem } from '@/lib/design-systems';
 
 interface TemplateSelectModalProps {
   open: boolean;
@@ -48,21 +48,7 @@ interface PresetCategory {
 const PRESET_CATEGORY: Record<
   string,
   { category: Category; featured: boolean }
-> = {
-  kajabi: { category: 'academy', featured: true },
-  podia: { category: 'creator', featured: true },
-  stan: { category: 'creator', featured: true },
-  circle: { category: 'community', featured: true },
-  rocket: { category: 'academy', featured: true },
-  modern: { category: 'classic', featured: false },
-  classic: { category: 'classic', featured: false },
-  minimal: { category: 'classic', featured: false },
-  academy: { category: 'academy', featured: false },
-  'student-focused': { category: 'academy', featured: false },
-  'courses-first': { category: 'classic', featured: false },
-  featured: { category: 'classic', featured: false },
-  compact: { category: 'classic', featured: false }
-};
+> = {};
 
 const CATEGORIES: PresetCategory[] = [
   { id: 'all', label: 'همه', icon: Layout },
@@ -120,7 +106,7 @@ export function TemplateSelectModal({
     (p) => !PRESET_CATEGORY[p.id]?.featured
   );
 
-  const selectedDs = selectedId ? DESIGN_SYSTEMS[selectedId] : null;
+  const selectedDs = selectedId ? getDesignSystem(selectedId) : null;
   const selectedPreset = presets.find((p) => p.id === selectedId);
 
   const handleApply = async () => {
@@ -348,7 +334,7 @@ function TemplateCard({
   onSelect,
   large
 }: TemplateCardProps) {
-  const ds = DESIGN_SYSTEMS[preset.id];
+  const ds = getDesignSystem(preset.id);
   const category = PRESET_CATEGORY[preset.id]?.category ?? 'classic';
 
   return (

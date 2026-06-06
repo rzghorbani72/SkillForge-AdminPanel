@@ -22,205 +22,27 @@ export interface DesignSystem {
   darkMode: boolean | null;
 }
 
-// One design system per template preset ID.
-// Colors are raw hex — no Tailwind class strings.
-export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
-  kajabi: {
-    name: 'آکادمی حرفه‌ای',
-    tagline: 'اقتدار · حرفه‌ای · اعتماد',
-    colors: {
-      primary: '#e11d48',
-      secondary: '#1f2937',
-      accent: '#f97316',
-      background: '#fff9fa',
-      backgroundDark: '#09090b',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Plus Jakarta Sans', displayWeight: '800' },
-    shape: { borderRadius: 'soft', shadow: 'medium' },
-    darkMode: null
+export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
+  name: 'پیش‌فرض',
+  tagline: 'ساده · تمیز · قابل تنظیم',
+  colors: {
+    primary: '#3b82f6',
+    secondary: '#64748b',
+    accent: '#6366f1',
+    background: '#ffffff',
+    backgroundDark: '#0f172a',
+    surface: '#f8fafc'
   },
-  podia: {
-    name: 'سازنده استودیو',
-    tagline: 'تازه · گرم · در دسترس',
-    colors: {
-      primary: '#0d9488',
-      secondary: '#134e4a',
-      accent: '#14b8a6',
-      background: '#f0fdfa',
-      backgroundDark: '#042f2e',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Plus Jakarta Sans', displayWeight: '700' },
-    shape: { borderRadius: 'rounded', shadow: 'subtle' },
-    darkMode: null
-  },
-  stan: {
-    name: 'سازنده جسور',
-    tagline: 'جسور · پرانرژی · نسل جدید',
-    colors: {
-      primary: '#7c3aed',
-      secondary: '#fb923c',
-      accent: '#a78bfa',
-      background: '#f5f3ff',
-      backgroundDark: '#1e1b4b',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Space Grotesk', displayWeight: '800' },
-    shape: { borderRadius: 'rounded', shadow: 'strong' },
-    darkMode: null
-  },
-  circle: {
-    name: 'جامعه تاریک',
-    tagline: 'عمیق · متمرکز · ممتاز',
-    colors: {
-      primary: '#6366f1',
-      secondary: '#e2e8f0',
-      accent: '#818cf8',
-      background: '#f8fafc',
-      backgroundDark: '#0f172a',
-      surface: '#1e293b'
-    },
-    typography: { fontFamily: 'Inter', displayWeight: '700' },
-    shape: { borderRadius: 'soft', shadow: 'strong' },
-    darkMode: true
-  },
-  modern: {
-    name: 'مدرن و تمیز',
-    tagline: 'مینیمال · خلوص · سطح محصول',
-    colors: {
-      primary: '#4f46e5',
-      secondary: '#64748b',
-      accent: '#6366f1',
-      background: '#ffffff',
-      backgroundDark: '#1e1b4b',
-      surface: '#f8fafc'
-    },
-    typography: { fontFamily: 'Inter', displayWeight: '700' },
-    shape: { borderRadius: 'rounded', shadow: 'medium' },
-    darkMode: null
-  },
-  classic: {
-    name: 'سنتی',
-    tagline: 'قابل اعتماد · شفاف · سازمانی',
-    colors: {
-      primary: '#2563eb',
-      secondary: '#374151',
-      accent: '#3b82f6',
-      background: '#f8fafc',
-      backgroundDark: '#0f172a',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Plus Jakarta Sans', displayWeight: '700' },
-    shape: { borderRadius: 'soft', shadow: 'subtle' },
-    darkMode: null
-  },
-  minimal: {
-    name: 'محتوا اول',
-    tagline: 'خالص · تایپوگرافیک · متمرکز',
-    colors: {
-      primary: '#18181b',
-      secondary: '#71717a',
-      accent: '#3f3f46',
-      background: '#ffffff',
-      backgroundDark: '#09090b',
-      surface: '#fafafa'
-    },
-    typography: { fontFamily: 'Inter', displayWeight: '700' },
-    shape: { borderRadius: 'sharp', shadow: 'none' },
-    darkMode: null
-  },
-  academy: {
-    name: 'موسسه آموزشی',
-    tagline: 'ساختارمند · معتبر · علمی',
-    colors: {
-      primary: '#1d4ed8',
-      secondary: '#1e3a8a',
-      accent: '#3b82f6',
-      background: '#eff6ff',
-      backgroundDark: '#1e3a8a',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Plus Jakarta Sans', displayWeight: '800' },
-    shape: { borderRadius: 'soft', shadow: 'subtle' },
-    darkMode: null
-  },
-  'student-focused': {
-    name: 'انگیزشی',
-    tagline: 'پرانرژی · لذت‌بخش · فراگیر',
-    colors: {
-      primary: '#c026d3',
-      secondary: '#7e22ce',
-      accent: '#e879f9',
-      background: '#fdf4ff',
-      backgroundDark: '#2e1065',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Plus Jakarta Sans', displayWeight: '800' },
-    shape: { borderRadius: 'rounded', shadow: 'medium' },
-    darkMode: null
-  },
-  'courses-first': {
-    name: 'بازارچه آموزشی',
-    tagline: 'تجارت · کشف · جسورانه',
-    colors: {
-      primary: '#d97706',
-      secondary: '#1f2937',
-      accent: '#f59e0b',
-      background: '#fffbeb',
-      backgroundDark: '#1c1007',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Plus Jakarta Sans', displayWeight: '800' },
-    shape: { borderRadius: 'soft', shadow: 'medium' },
-    darkMode: null
-  },
-  featured: {
-    name: 'ویترین',
-    tagline: 'رشد · برجسته · اعتماد',
-    colors: {
-      primary: '#16a34a',
-      secondary: '#134e4a',
-      accent: '#22c55e',
-      background: '#f0fdf4',
-      backgroundDark: '#052e16',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Inter', displayWeight: '700' },
-    shape: { borderRadius: 'rounded', shadow: 'subtle' },
-    darkMode: null
-  },
-  compact: {
-    name: 'کارآمد',
-    tagline: 'فشرده · خنثی · حرفه‌ای',
-    colors: {
-      primary: '#475569',
-      secondary: '#1e293b',
-      accent: '#64748b',
-      background: '#f1f5f9',
-      backgroundDark: '#0f172a',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'Inter', displayWeight: '700' },
-    shape: { borderRadius: 'sharp', shadow: 'none' },
-    darkMode: null
-  },
-  rocket: {
-    name: 'راکت دیجیتال',
-    tagline: 'تاریک · برنامه‌نویسی · انگیزشی',
-    colors: {
-      primary: '#22c55e',
-      secondary: '#f97316',
-      accent: '#4ade80',
-      background: '#f0fdf4',
-      backgroundDark: '#0a0f1e',
-      surface: '#111827'
-    },
-    typography: { fontFamily: 'Plus Jakarta Sans', displayWeight: '800' },
-    shape: { borderRadius: 'soft', shadow: 'medium' },
-    darkMode: true
-  }
+  typography: { fontFamily: 'Inter', displayWeight: '700' },
+  shape: { borderRadius: 'soft', shadow: 'medium' },
+  darkMode: null
 };
+
+export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {};
+
+export function getDesignSystem(presetId: string): DesignSystem {
+  return DESIGN_SYSTEMS[presetId] ?? DEFAULT_DESIGN_SYSTEM;
+}
 
 export function buildThemePayload(ds: DesignSystem): ThemeConfigPayload {
   return {

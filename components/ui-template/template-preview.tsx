@@ -1,57 +1,15 @@
 'use client';
 
-import React from 'react';
 import { TemplatePreset } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  KajabiThumbnail,
-  PodiaThumbnail,
-  StanThumbnail,
-  CircleThumbnail,
-  RocketThumbnail,
-  ModernThumbnail,
-  ClassicThumbnail,
-  MinimalThumbnail,
-  AcademyThumbnail,
-  StudentFocusedThumbnail,
-  CoursesFirstThumbnail,
-  CompactThumbnail,
-  FeaturedThumbnail
-} from './template-thumbnails';
 
 interface TemplatePreviewProps {
   preset: TemplatePreset;
 }
 
-const THUMBNAILS: Record<string, () => React.ReactElement> = {
-  kajabi: KajabiThumbnail,
-  podia: PodiaThumbnail,
-  stan: StanThumbnail,
-  circle: CircleThumbnail,
-  rocket: RocketThumbnail,
-  modern: ModernThumbnail,
-  classic: ClassicThumbnail,
-  minimal: MinimalThumbnail,
-  academy: AcademyThumbnail,
-  'student-focused': StudentFocusedThumbnail,
-  'courses-first': CoursesFirstThumbnail,
-  compact: CompactThumbnail,
-  featured: FeaturedThumbnail
-};
-
 export function TemplatePreview({ preset }: TemplatePreviewProps) {
-  const Thumb = THUMBNAILS[preset.id];
-  if (Thumb) {
-    return (
-      <div className="w-full overflow-hidden">
-        <Thumb />
-      </div>
-    );
-  }
   return <SimpleBlockPreview preset={preset} />;
 }
-
-// ── Fallback wireframe for any unlisted preset ────────────────────────────────
 
 function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
   const { t } = useTranslation();
@@ -78,23 +36,31 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
   const renderBlock = (block: (typeof blocks)[number]) => {
     const s = BLOCK_STYLE[block.type] ?? { bar: 'bg-gray-400', h: 'h-10' };
     return (
-      <div
-        key={block.id}
-        className={`${s.h} flex items-center justify-center border-b border-white/20 ${s.bar}`}
-      >
-        <span className="text-[8px] font-semibold tracking-wider text-white/80">
+      <div key={block.id} className="px-2 py-1">
+        <div className={`${s.bar} ${s.h} w-full rounded-sm opacity-80`} />
+        <p className="mt-0.5 text-[8px] text-gray-500">
           {blockLabels[block.type] ?? block.type}
-        </span>
+        </p>
       </div>
     );
   };
 
   return (
-    <div
-      dir="rtl"
-      className="w-full overflow-hidden rounded-lg border border-border"
-    >
-      {blocks.map(renderBlock)}
+    <div className="w-full bg-white">
+      <div className="border-b border-gray-100 px-2 py-1.5">
+        <p className="truncate text-[9px] font-semibold text-gray-800">
+          {preset.name}
+        </p>
+      </div>
+      <div className="divide-y divide-gray-50">
+        {blocks.length > 0 ? (
+          blocks.map(renderBlock)
+        ) : (
+          <p className="px-2 py-4 text-center text-[8px] text-gray-400">
+            بدون بلوک
+          </p>
+        )}
+      </div>
     </div>
   );
 }

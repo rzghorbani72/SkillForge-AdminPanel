@@ -8,7 +8,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useUserStore } from '@/lib/store';
 import type { TemplatePreset, UIBlockConfig } from '@/types/api';
-import { DESIGN_SYSTEMS } from '@/lib/design-systems';
+import { getDesignSystem } from '@/lib/design-systems';
 import { TemplatePreview } from '@/components/ui-template/template-preview';
 import {
   buildEmbedPreviewUrl,
@@ -21,24 +21,6 @@ import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 type BorderRadius = 'sharp' | 'soft' | 'rounded';
 type Shadow = 'none' | 'subtle' | 'medium' | 'strong';
-
-const PRESET_TAGS: Record<string, string> = {
-  kajabi: 'ادیتوریال گرم',
-  podia: 'استودیویی خلاق',
-  stan: 'سینماتیک لوکس',
-  circle: 'کاربردی',
-  rocket: 'برنامه‌نویسی حرفه‌ای',
-  modern: 'مدرن تمبر',
-  classic: 'کلاسیک',
-  minimal: 'مینیمال',
-  academy: 'آکادمیک',
-  'student-focused': 'دانشجو‌محور',
-  'courses-first': 'دوره‌محور',
-  compact: 'فشرده',
-  featured: 'ویژه'
-};
-
-const NEW_PRESETS = new Set(['stan', 'rocket', 'modern']);
 
 export default function UITemplateSettingsPage() {
   const user = useUserStore((s) => s.user);
@@ -97,7 +79,7 @@ export default function UITemplateSettingsPage() {
     setIsPreviewLoading(true);
 
     // Seed customizer defaults from design system
-    const ds = DESIGN_SYSTEMS[preset.id];
+    const ds = getDesignSystem(preset.id);
     if (ds) {
       setPrimaryColor(ds.colors.primary);
       setBorderRadius(ds.shape.borderRadius);
@@ -226,7 +208,7 @@ export default function UITemplateSettingsPage() {
 
   const handleReset = async () => {
     if (!selectedPreset) return;
-    const ds = DESIGN_SYSTEMS[selectedPreset.id];
+    const ds = getDesignSystem(selectedPreset.id);
     if (ds) {
       setPrimaryColor(ds.colors.primary);
       setBorderRadius(ds.shape.borderRadius);
@@ -267,8 +249,7 @@ export default function UITemplateSettingsPage() {
   // ── Preview mode ──────────────────────────────────────────────────────────
 
   if (selectedPreset) {
-    const ds = DESIGN_SYSTEMS[selectedPreset.id];
-    const tag = PRESET_TAGS[selectedPreset.id];
+    const ds = getDesignSystem(selectedPreset.id);
 
     return (
       <div className="flex h-full flex-col overflow-hidden">
@@ -318,12 +299,12 @@ export default function UITemplateSettingsPage() {
           )}
 
           <div className="ml-auto flex items-center gap-4">
-            {tag && (
+            {ds.tagline && (
               <span
                 className="rounded-full px-2.5 py-1 text-[10px] font-semibold text-white"
-                style={{ background: ds?.colors.primary ?? '#6b7280' }}
+                style={{ background: ds.colors.primary }}
               >
-                {tag}
+                {ds.tagline}
               </span>
             )}
 
@@ -425,17 +406,29 @@ export default function UITemplateSettingsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {presets.map((preset) => (
-          <GalleryCard
-            key={preset.id}
-            preset={preset}
-            isActive={preset.id === activePresetId}
-            isNew={NEW_PRESETS.has(preset.id)}
-            onClick={() => handleCardClick(preset)}
-          />
-        ))}
-      </div>
+      {presets.length === 0 ? (
+        <div className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/70 bg-background/60 px-6 text-center">
+          <LayoutTemplate className="mb-4 h-10 w-10 text-muted-foreground/60" />
+          <h2 className="text-lg font-semibold text-foreground">
+            هنوز قالبی تعریف نشده
+          </h2>
+          <p className="mt-2 max-w-md text-sm text-muted-foreground">
+            کاتالوگ قالب‌های آماده خالی است. پس از افزودن قالب‌های جدید، اینجا
+            نمایش داده می‌شوند.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {presets.map((preset) => (
+            <GalleryCard
+              key={preset.id}
+              preset={preset}
+              isActive={preset.id === activePresetId}
+              onClick={() => handleCardClick(preset)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -445,13 +438,11 @@ export default function UITemplateSettingsPage() {
 interface GalleryCardProps {
   preset: TemplatePreset;
   isActive: boolean;
-  isNew: boolean;
   onClick: () => void;
 }
 
-function GalleryCard({ preset, isActive, isNew, onClick }: GalleryCardProps) {
-  const ds = DESIGN_SYSTEMS[preset.id];
-  const tag = PRESET_TAGS[preset.id];
+function GalleryCard({ preset, isActive, onClick }: GalleryCardProps) {
+  const ds = getDesignSystem(preset.id);
 
   return (
     <button
@@ -474,11 +465,6 @@ function GalleryCard({ preset, isActive, isNew, onClick }: GalleryCardProps) {
         </div>
         <div className="absolute inset-0 bg-black/0 transition-colors duration-200 group-hover:bg-black/10" />
         <div className="absolute left-2 top-2 flex gap-1.5">
-          {isNew && (
-            <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[9px] font-bold text-white shadow-sm">
-              جدید
-            </span>
-          )}
           {isActive && (
             <span className="rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-white shadow-sm">
               فعال
@@ -502,15 +488,15 @@ function GalleryCard({ preset, isActive, isNew, onClick }: GalleryCardProps) {
               )}
             </div>
           )}
-          {tag && (
+          {ds.tagline && (
             <span
               className="rounded-full px-2 py-0.5 text-[9px] font-semibold"
               style={{
-                background: ds ? `${ds.colors.primary}1a` : '#f3f4f6',
-                color: ds?.colors.primary ?? '#6b7280'
+                background: `${ds.colors.primary}1a`,
+                color: ds.colors.primary
               }}
             >
-              {tag}
+              {ds.tagline}
             </span>
           )}
         </div>
