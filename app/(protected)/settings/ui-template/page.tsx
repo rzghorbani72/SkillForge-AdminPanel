@@ -1,19 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { X, Pencil, LayoutTemplate, Check, Loader2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { X, Check, Loader2, Wand2, LayoutTemplate, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useUserStore } from '@/lib/store';
-import type { TemplatePreset } from '@/types/api';
+import type { TemplatePreset, UIBlockConfig } from '@/types/api';
 import { DESIGN_SYSTEMS } from '@/lib/design-systems';
 import { TemplatePreview } from '@/components/ui-template/template-preview';
 import {
   buildEmbedPreviewUrl,
+  appendPreviewCacheBuster,
   resolveStorefrontBaseUrl
 } from '@/lib/ui-template/preview-url';
+import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
+import { TemplateCustomizationSidebar } from '@/components/ui-template/template-customization-sidebar';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
+
+type BorderRadius = 'sharp' | 'soft' | 'rounded';
+type Shadow = 'none' | 'subtle' | 'medium' | 'strong';
 
 const PRESET_TAGS: Record<string, string> = {
   kajabi: 'ادیتوریال گرم',
@@ -42,9 +49,23 @@ export default function UITemplateSettingsPage() {
   const [selectedPreset, setSelectedPreset] = useState<TemplatePreset | null>(
     null
   );
-  const [iframeSrc, setIframeSrc] = useState<string | null>(null);
+  const [baseIframeSrc, setBaseIframeSrc] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
+
+  // Customizer state
+  const [showCustomizer, setShowCustomizer] = useState(false);
+  const [primaryColor, setPrimaryColor] = useState('#3b82f6');
+  const [borderRadius, setBorderRadius] = useState<BorderRadius>('soft');
+  const [shadow, setShadow] = useState<Shadow>('medium');
+  const [darkMode, setDarkMode] = useState<boolean | null>(null);
+  const [draftBlocks, setDraftBlocks] = useState<UIBlockConfig[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const iframeSrc = baseIframeSrc
+    ? appendPreviewCacheBuster(baseIframeSrc, refreshKey)
+    : null;
 
   useEffect(() => {
     (async () => {
@@ -69,14 +90,42 @@ export default function UITemplateSettingsPage() {
 
   const handleCardClick = async (preset: TemplatePreset) => {
     setSelectedPreset(preset);
-    setIframeSrc(null);
+    setBaseIframeSrc(null);
+    setRefreshKey(0);
     setIsApplied(false);
+    setShowCustomizer(false);
     setIsPreviewLoading(true);
+
+    // Seed customizer defaults from design system
+    const ds = DESIGN_SYSTEMS[preset.id];
+    if (ds) {
+      setPrimaryColor(ds.colors.primary);
+      setBorderRadius(ds.shape.borderRadius);
+      setShadow(ds.shape.shadow);
+      setDarkMode(ds.darkMode);
+    }
+    setDraftBlocks(preset.blocks);
 
     try {
       await apiClient.applyTemplatePreset(preset.id);
-      const session = await apiClient.getTemplatePreviewSession();
-      setIframeSrc(
+
+      const [session, themeRaw] = await Promise.all([
+        apiClient.getTemplatePreviewSession(),
+        apiClient.getCurrentThemeConfig().catch(() => null)
+      ]);
+
+      // Override with actual saved theme values if available
+      const theme = themeRaw as Record<string, unknown> | null;
+      if (theme) {
+        if (theme.primary_color) setPrimaryColor(theme.primary_color as string);
+        if (theme.border_radius_style)
+          setBorderRadius(theme.border_radius_style as BorderRadius);
+        if (theme.shadow_style) setShadow(theme.shadow_style as Shadow);
+        if ('dark_mode' in theme)
+          setDarkMode(theme.dark_mode as boolean | null);
+      }
+
+      setBaseIframeSrc(
         buildEmbedPreviewUrl(
           session.token,
           session.previewPath,
@@ -99,10 +148,103 @@ export default function UITemplateSettingsPage() {
 
   const handleClosePreview = () => {
     setSelectedPreset(null);
-    setIframeSrc(null);
+    setBaseIframeSrc(null);
+    setShowCustomizer(false);
   };
 
-  // ── Loading skeleton ─────────────────────────────────────────────────────────
+  // ── Draft save helpers ──────────────────────────────────────────────────────
+
+  const saveThemeDraft = useCallback(
+    async (color: string, br: BorderRadius, sh: Shadow, dm: boolean | null) => {
+      setIsSaving(true);
+      try {
+        const payload = buildThemeDraftFromPrimary(color, {
+          borderRadius: br,
+          shadow: sh,
+          backgroundSvgPattern: ''
+        });
+        await apiClient.saveThemeDraft({ ...payload, dark_mode: dm });
+        setRefreshKey((k) => k + 1);
+      } catch (error) {
+        ErrorHandler.handleApiError(error);
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    []
+  );
+
+  const saveBlocksDraft = useCallback(async (blocks: UIBlockConfig[]) => {
+    setIsSaving(true);
+    try {
+      await apiClient.saveUITemplateDraft({ blocks });
+      setRefreshKey((k) => k + 1);
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsSaving(false);
+    }
+  }, []);
+
+  const debouncedSaveTheme = useDebouncedCallback(saveThemeDraft, 800);
+  const debouncedSaveBlocks = useDebouncedCallback(saveBlocksDraft, 800);
+
+  // ── Customizer handlers ─────────────────────────────────────────────────────
+
+  const handleColorChange = (color: string) => {
+    setPrimaryColor(color);
+    debouncedSaveTheme(color, borderRadius, shadow, darkMode);
+  };
+
+  const handleBorderRadiusChange = (br: BorderRadius) => {
+    setBorderRadius(br);
+    debouncedSaveTheme(primaryColor, br, shadow, darkMode);
+  };
+
+  const handleDarkModeChange = (dm: boolean | null) => {
+    setDarkMode(dm);
+    debouncedSaveTheme(primaryColor, borderRadius, shadow, dm);
+  };
+
+  const handleBlocksChange = (blocks: UIBlockConfig[]) => {
+    setDraftBlocks(blocks);
+    debouncedSaveBlocks(blocks);
+  };
+
+  const handleBannerImageChange = (url: string) => {
+    const updated = draftBlocks.map((b) =>
+      b.type === 'hero' || b.type === 'slideshow'
+        ? {
+            ...b,
+            config: { ...(b.config ?? {}), bgImage: url, bgType: 'image' }
+          }
+        : b
+    );
+    setDraftBlocks(updated);
+    debouncedSaveBlocks(updated);
+  };
+
+  const handleReset = async () => {
+    if (!selectedPreset) return;
+    const ds = DESIGN_SYSTEMS[selectedPreset.id];
+    if (ds) {
+      setPrimaryColor(ds.colors.primary);
+      setBorderRadius(ds.shape.borderRadius);
+      setShadow(ds.shape.shadow);
+      setDarkMode(ds.darkMode);
+      await saveThemeDraft(
+        ds.colors.primary,
+        ds.shape.borderRadius,
+        ds.shape.shadow,
+        ds.darkMode
+      );
+    }
+    setDraftBlocks(selectedPreset.blocks);
+    await saveBlocksDraft(selectedPreset.blocks);
+  };
+
+  // ── Loading skeleton ──────────────────────────────────────────────────────
+
   if (isLoading) {
     return (
       <div className="min-h-full bg-stone-50 p-8" dir="rtl">
@@ -122,7 +264,8 @@ export default function UITemplateSettingsPage() {
     );
   }
 
-  // ── Preview mode ─────────────────────────────────────────────────────────────
+  // ── Preview mode ──────────────────────────────────────────────────────────
+
   if (selectedPreset) {
     const ds = DESIGN_SYSTEMS[selectedPreset.id];
     const tag = PRESET_TAGS[selectedPreset.id];
@@ -130,7 +273,7 @@ export default function UITemplateSettingsPage() {
     return (
       <div className="flex h-full flex-col overflow-hidden">
         {/* Action bar */}
-        <div className="flex flex-shrink-0 items-center gap-3 bg-zinc-900 px-4 py-2.5">
+        <div className="flex flex-shrink-0 items-center gap-2 bg-zinc-900 px-4 py-2.5">
           <Button
             size="sm"
             onClick={handleConfirmSelect}
@@ -147,6 +290,19 @@ export default function UITemplateSettingsPage() {
             )}
           </Button>
 
+          <Button
+            size="sm"
+            onClick={() => setShowCustomizer((v) => !v)}
+            className={`h-8 gap-1.5 px-3 text-xs font-semibold ${
+              showCustomizer
+                ? 'bg-amber-500 text-white hover:bg-amber-600'
+                : 'bg-zinc-700 text-zinc-200 hover:bg-zinc-600'
+            }`}
+          >
+            <Wand2 className="h-3.5 w-3.5" />
+            سفارشی‌سازی
+          </Button>
+
           {ds && (
             <div className="flex items-center gap-1.5">
               {[ds.colors.primary, ds.colors.secondary, ds.colors.accent].map(
@@ -158,10 +314,6 @@ export default function UITemplateSettingsPage() {
                   />
                 )
               )}
-              <span className="mx-1 h-3 w-px bg-zinc-700" />
-              <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-zinc-700 text-[8px] leading-none text-zinc-400">
-                Aa
-              </span>
             </div>
           )}
 
@@ -195,34 +347,55 @@ export default function UITemplateSettingsPage() {
           </div>
         </div>
 
-        {/* Iframe area */}
-        <div className="relative flex-1 bg-zinc-950">
-          {isPreviewLoading && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-950">
-              <div className="flex flex-col items-center gap-3">
-                <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
-                <p className="text-sm text-zinc-500">
-                  در حال بارگذاری پیش‌نمایش...
-                </p>
-              </div>
-            </div>
-          )}
-          {iframeSrc && (
-            <iframe
-              src={iframeSrc}
-              className="h-full w-full border-0"
-              title={`Preview: ${selectedPreset.name}`}
+        {/* Content: sidebar + iframe */}
+        <div className="flex min-h-0 flex-1 overflow-hidden">
+          {showCustomizer && (
+            <TemplateCustomizationSidebar
+              primaryColor={primaryColor}
+              borderRadius={borderRadius}
+              shadow={shadow}
+              darkMode={darkMode}
+              blocks={draftBlocks}
+              isSaving={isSaving}
+              onColorChange={handleColorChange}
+              onBorderRadiusChange={handleBorderRadiusChange}
+              onDarkModeChange={handleDarkModeChange}
+              onBlocksChange={handleBlocksChange}
+              onBannerImageChange={handleBannerImageChange}
+              onReset={handleReset}
+              onClose={() => setShowCustomizer(false)}
             />
           )}
+
+          <div className="relative flex-1 bg-zinc-950">
+            {isPreviewLoading && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-950">
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+                  <p className="text-sm text-zinc-500">
+                    در حال بارگذاری پیش‌نمایش...
+                  </p>
+                </div>
+              </div>
+            )}
+            {iframeSrc && (
+              <iframe
+                key={iframeSrc}
+                src={iframeSrc}
+                className="h-full w-full border-0"
+                title={`Preview: ${selectedPreset.name}`}
+              />
+            )}
+          </div>
         </div>
       </div>
     );
   }
 
-  // ── Gallery mode ─────────────────────────────────────────────────────────────
+  // ── Gallery mode ──────────────────────────────────────────────────────────
+
   return (
     <div className="min-h-full bg-[#f2ece4] p-8" dir="rtl">
-      {/* Header */}
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -234,7 +407,6 @@ export default function UITemplateSettingsPage() {
           </p>
         </div>
 
-        {/* Tab switcher */}
         <div className="flex items-center gap-1 rounded-xl border border-border/60 bg-background p-1 shadow-sm">
           <button
             type="button"
@@ -253,7 +425,6 @@ export default function UITemplateSettingsPage() {
         </div>
       </div>
 
-      {/* Template grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {presets.map((preset) => (
           <GalleryCard
@@ -288,7 +459,6 @@ function GalleryCard({ preset, isActive, isNew, onClick }: GalleryCardProps) {
       onClick={onClick}
       className="group relative overflow-hidden rounded-2xl border border-border/50 bg-background text-right shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
     >
-      {/* Thumbnail — clips the SVG mockup to show a zoomed-out page view */}
       <div className="relative h-44 overflow-hidden bg-gray-50">
         <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">
           <div
@@ -302,11 +472,7 @@ function GalleryCard({ preset, isActive, isNew, onClick }: GalleryCardProps) {
             <TemplatePreview preset={preset} />
           </div>
         </div>
-
-        {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/0 transition-colors duration-200 group-hover:bg-black/10" />
-
-        {/* Badges */}
         <div className="absolute left-2 top-2 flex gap-1.5">
           {isNew && (
             <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[9px] font-bold text-white shadow-sm">
@@ -321,9 +487,7 @@ function GalleryCard({ preset, isActive, isNew, onClick }: GalleryCardProps) {
         </div>
       </div>
 
-      {/* Card info */}
       <div className="px-3 pb-3 pt-2.5">
-        {/* Color dots + category tag */}
         <div className="mb-2 flex items-center gap-1.5">
           {ds && (
             <div className="flex items-center gap-1">
@@ -350,11 +514,7 @@ function GalleryCard({ preset, isActive, isNew, onClick }: GalleryCardProps) {
             </span>
           )}
         </div>
-
-        {/* Template name */}
         <p className="text-sm font-bold text-foreground">{preset.name}</p>
-
-        {/* Description */}
         {preset.description && (
           <p className="mt-1 line-clamp-2 text-[10px] leading-relaxed text-muted-foreground">
             {preset.description}
