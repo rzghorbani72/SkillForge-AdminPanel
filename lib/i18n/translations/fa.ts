@@ -1209,6 +1209,22 @@ export const fa = {
     heroIllustrationHint:
       'PNG با پس‌زمینه شفاف توصیه می‌شود — آپلود جایگزین پیش‌تنظیم می‌شود',
     slideshowBanner: 'بنر (تک تصویر)',
+    brandColorLabel: 'رنگ برند',
+    brandColorHelper:
+      'رنگ‌های ثانوی، تأکیدی و پس‌زمینه به‌صورت خودکار از رنگ برند شما ساخته می‌شوند.',
+    derivedPaletteLabel: 'پالت خودکار',
+    sectionLibraryTitle: 'کتابخانه بخش‌ها',
+    sectionLibraryDescription:
+      'هر بخش از هر قالب را اضافه کنید. در نمایش، سیستم طراحی پیش‌نویس شما اعمال می‌شود.',
+    sectionLibrarySearch: 'جستجوی بخش یا قالب…',
+    sectionLibraryEmpty: 'بخشی با این جستجو یافت نشد.',
+    sectionFilterAll: 'همه',
+    sectionHasImage: 'جای تصویر',
+    sectionAddToDraft: 'افزودن به پیش‌نویس',
+    sectionImporting: 'در حال افزودن…',
+    sectionImportedSuccess: 'بخش به پیش‌نویس اضافه شد',
+    addSectionFromLibrary: 'افزودن بخش',
+    removeBlock: 'حذف بلوک',
     slideshowMode: 'اسلایدشو ({{count}} اسلاید)',
     slideshowHint: 'یک اسلاید → بنر ثابت · چند اسلاید → چرخش خودکار',
     slideDefaultTitle: 'اسلاید {{n}}',

@@ -1,8 +1,14 @@
 'use client';
 
-import { ChevronUp, ChevronDown, GripVertical, Plus } from 'lucide-react';
+import {
+  ChevronUp,
+  ChevronDown,
+  GripVertical,
+  Plus,
+  Trash2
+} from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import type { UIBlockConfig } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -14,6 +20,8 @@ interface BlocksListProps {
   onToggleVisibility: (blockId: string, visible: boolean) => void;
   onMoveUp: (blockId: string) => void;
   onMoveDown: (blockId: string) => void;
+  onAddSection: () => void;
+  onRemoveBlock: (blockId: string) => void;
 }
 
 const BLOCK_ACCENT: Record<string, string> = {
@@ -32,7 +40,9 @@ export function BlocksList({
   onSelectBlock,
   onToggleVisibility,
   onMoveUp,
-  onMoveDown
+  onMoveDown,
+  onAddSection,
+  onRemoveBlock
 }: BlocksListProps) {
   const { t } = useTranslation();
 
@@ -122,6 +132,17 @@ export function BlocksList({
                   onClick={(e) => e.stopPropagation()}
                   className="scale-75"
                 />
+                <button
+                  type="button"
+                  title={t('settings.removeBlock')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveBlock(block.id);
+                  }}
+                  className="rounded p-0.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
               </div>
             </div>
           );
@@ -136,7 +157,17 @@ export function BlocksList({
       </div>
 
       <Separator />
-      <div className="px-4 py-3">
+      <div className="space-y-2 px-4 py-3">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={onAddSection}
+        >
+          <Plus className="mr-1.5 h-4 w-4" />
+          {t('settings.addSectionFromLibrary')}
+        </Button>
         <p className="text-xs text-muted-foreground">
           {t('settings.pageBlocksDescription')}
         </p>

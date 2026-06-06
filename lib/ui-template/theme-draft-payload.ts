@@ -1,3 +1,8 @@
+import {
+  derivePaletteFromPrimary,
+  paletteToThemeColors
+} from '@/lib/design-system-palette';
+
 export interface ThemeColorsState {
   primaryLight: string;
   primaryDark: string;
@@ -51,4 +56,12 @@ export function buildThemeDraftPayload(
     shadow_style: style.shadow,
     background_svg_pattern: style.backgroundSvgPattern
   };
+}
+
+export function buildThemeDraftFromPrimary(
+  primaryHex: string,
+  style: ThemeStyleState
+): ThemeDraftPayload {
+  const palette = derivePaletteFromPrimary(primaryHex);
+  return buildThemeDraftPayload(paletteToThemeColors(palette), style);
 }

@@ -2450,6 +2450,20 @@ class ApiClient {
     return (response.data as any)?.data ?? null;
   }
 
+  async getSectionCatalog() {
+    const response = await this.request('/ui-template/sections');
+    const data = (response.data as { data?: unknown })?.data;
+    return Array.isArray(data) ? data : [];
+  }
+
+  async importSectionToDraft(payload: { presetId: string; blockId: string }) {
+    const response = await this.request('/ui-template/current/draft/sections', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return (response.data as { data?: unknown })?.data ?? null;
+  }
+
   async getCurrentPricingConfig() {
     const response = await this.request('/academies/current/pricing-config');
     return response.data;

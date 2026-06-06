@@ -1457,6 +1457,22 @@ export const en = {
     heroIllustrationHint:
       'PNG with transparent background recommended — upload overrides preset',
     slideshowBanner: 'Banner (single image)',
+    brandColorLabel: 'Brand Color',
+    brandColorHelper:
+      'Secondary, accent, and background colors are generated automatically from your brand color.',
+    derivedPaletteLabel: 'Auto-generated palette',
+    sectionLibraryTitle: 'Section Library',
+    sectionLibraryDescription:
+      'Add any section from any template. It will adopt your draft design system at render time.',
+    sectionLibrarySearch: 'Search sections or templates…',
+    sectionLibraryEmpty: 'No sections match your search.',
+    sectionFilterAll: 'All',
+    sectionHasImage: 'Image slot',
+    sectionAddToDraft: 'Add to draft',
+    sectionImporting: 'Adding…',
+    sectionImportedSuccess: 'Section added to draft',
+    addSectionFromLibrary: 'Add section',
+    removeBlock: 'Remove block',
     slideshowMode: 'Slideshow ({{count}} slides)',
     slideshowHint: 'One slide → static banner · Multiple slides → auto-rotate',
     slideDefaultTitle: 'Slide {{n}}',

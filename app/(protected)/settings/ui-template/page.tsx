@@ -21,7 +21,6 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -31,10 +30,18 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { BlockEditor } from '@/components/ui-template/block-editor';
 import { EduspherePreviewFrame } from '@/components/ui-template/edusphere-preview-frame';
 import { useUiTemplatePreview } from '@/hooks/use-ui-template-preview';
-import { buildThemeDraftPayload } from '@/lib/ui-template/theme-draft-payload';
+import {
+  buildThemeDraftPayload,
+  buildThemeDraftFromPrimary
+} from '@/lib/ui-template/theme-draft-payload';
 import { BlocksList } from '@/components/ui-template/blocks-list';
 import { TemplateSelectModal } from '@/components/ui-template/template-select-modal';
-import { DESIGN_SYSTEMS, buildThemePayload } from '@/lib/design-systems';
+import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
+import { DESIGN_SYSTEMS } from '@/lib/design-systems';
+import {
+  derivePaletteFromPrimary,
+  paletteToThemeColors
+} from '@/lib/design-system-palette';
 import {
   applyThemeVariables,
   dispatchThemeUpdate,
@@ -280,6 +287,7 @@ export default function UITemplateSettingsPage() {
   const [isApplyingPreset, setIsApplyingPreset] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [showSectionLibrary, setShowSectionLibrary] = useState(false);
   const [deviceMode, setDeviceMode] = useState<DeviceMode>('desktop');
   const [leftTab, setLeftTab] = useState<LeftTab>('colors');
   const [themeColors, setThemeColors] = useState<ThemeColors>(DEFAULT_COLORS);
@@ -424,6 +432,34 @@ export default function UITemplateSettingsPage() {
     setBlocks(updated);
   };
 
+  const handleRemoveBlock = (blockId: string) => {
+    markDirty();
+    setBlocks((prev) => prev.filter((b) => b.id !== blockId));
+    if (activeBlockId === blockId) {
+      setActiveBlockId(null);
+    }
+  };
+
+  const handleSectionImported = async () => {
+    setHasUnpublishedChanges(true);
+    bumpPreview();
+    await loadData();
+  };
+
+  const applyDerivedPrimary = useCallback(
+    (primaryHex: string, styleOverride?: Partial<ThemeStyle>) => {
+      const style = { ...themeStyle, ...styleOverride };
+      const derived = paletteToThemeColors(
+        derivePaletteFromPrimary(primaryHex)
+      );
+      setThemeColors(derived);
+      const payload = buildThemeDraftFromPrimary(primaryHex, style);
+      applyThemeVariables(payload);
+      dispatchThemeUpdate(payload);
+    },
+    [themeStyle]
+  );
+
   const handleSaveDraft = async () => {
     try {
       setIsSaving(true);
@@ -471,25 +507,22 @@ export default function UITemplateSettingsPage() {
 
       const ds = DESIGN_SYSTEMS[presetId];
       if (ds) {
-        const themePayload = buildThemePayload(ds);
-        await apiClient.saveThemeDraft(themePayload);
-        applyThemeVariables(themePayload);
-        dispatchThemeUpdate(themePayload);
-        setThemeColors((prev) => ({
-          ...prev,
-          primaryLight: ds.colors.primary,
-          primaryDark: ds.colors.primary,
-          secondaryLight: ds.colors.secondary,
-          secondaryDark: ds.colors.secondary,
-          accent: ds.colors.accent,
-          backgroundLight: ds.colors.background,
-          backgroundDark: ds.colors.backgroundDark
-        }));
         setThemeStyle((prev) => ({
           ...prev,
           borderRadius: ds.shape.borderRadius,
           shadow: ds.shape.shadow
         }));
+        applyDerivedPrimary(ds.colors.primary, {
+          borderRadius: ds.shape.borderRadius,
+          shadow: ds.shape.shadow
+        });
+        await apiClient.saveThemeDraft(
+          buildThemeDraftFromPrimary(ds.colors.primary, {
+            borderRadius: ds.shape.borderRadius,
+            shadow: ds.shape.shadow,
+            backgroundSvgPattern: themeStyle.backgroundSvgPattern
+          })
+        );
       }
 
       setHasUnpublishedChanges(true);
@@ -507,85 +540,41 @@ export default function UITemplateSettingsPage() {
   const handleApplyColorPreset = useCallback(
     (preset: (typeof THEME_COLOR_PRESETS)[number]) => {
       markDirty();
-      const colors: ThemeColors = {
-        primaryLight: preset.primaryLight,
-        primaryDark: preset.primaryDark,
-        secondaryLight: preset.secondaryLight,
-        secondaryDark: preset.secondaryDark,
-        accent: preset.accent,
-        backgroundLight: preset.backgroundLight,
-        backgroundDark: preset.backgroundDark
-      };
-      setThemeColors(colors);
       setThemeStyle((prev) => ({
         ...prev,
         borderRadius: preset.borderRadius,
         shadow: preset.shadow
       }));
-      const payload = {
-        primary_color: colors.primaryLight,
-        secondary_color: colors.secondaryLight,
-        accent_color: colors.accent,
-        background_color: colors.backgroundLight,
-        dark_mode: null
-      };
-      applyThemeVariables(payload);
-      dispatchThemeUpdate(payload);
-    },
-    [markDirty]
-  );
-
-  const handleColorChange = useCallback(
-    (key: keyof ThemeColors, value: string) => {
-      markDirty();
-      setThemeColors((prev) => {
-        const updated = { ...prev, [key]: value };
-        if (key === 'primaryLight') {
-          const payload = {
-            primary_color: updated.primaryLight,
-            secondary_color: updated.secondaryLight,
-            accent_color: updated.accent,
-            background_color: updated.backgroundLight,
-            dark_mode: null
-          };
-          applyThemeVariables(payload);
-          dispatchThemeUpdate(payload);
-        }
-        return updated;
+      applyDerivedPrimary(preset.primaryLight, {
+        borderRadius: preset.borderRadius,
+        shadow: preset.shadow
       });
     },
-    [markDirty]
+    [markDirty, applyDerivedPrimary]
+  );
+
+  const handlePrimaryColorChange = useCallback(
+    (value: string) => {
+      markDirty();
+      applyDerivedPrimary(value);
+    },
+    [markDirty, applyDerivedPrimary]
   );
 
   const handleResetColors = useCallback(() => {
     markDirty();
     const ds = DESIGN_SYSTEMS[activePresetId];
     if (!ds) return;
-    const reset: ThemeColors = {
-      primaryLight: ds.colors.primary,
-      primaryDark: ds.colors.primary,
-      secondaryLight: ds.colors.secondary,
-      secondaryDark: ds.colors.secondary,
-      accent: ds.colors.accent,
-      backgroundLight: ds.colors.background,
-      backgroundDark: ds.colors.backgroundDark
-    };
-    setThemeColors(reset);
     setThemeStyle((prev) => ({
       ...prev,
       borderRadius: ds.shape.borderRadius,
       shadow: ds.shape.shadow
     }));
-    const payload = {
-      primary_color: reset.primaryLight,
-      secondary_color: reset.secondaryLight,
-      accent_color: reset.accent,
-      background_color: reset.backgroundLight,
-      dark_mode: null
-    };
-    applyThemeVariables(payload);
-    dispatchThemeUpdate(payload);
-  }, [activePresetId, markDirty]);
+    applyDerivedPrimary(ds.colors.primary, {
+      borderRadius: ds.shape.borderRadius,
+      shadow: ds.shape.shadow
+    });
+  }, [activePresetId, markDirty, applyDerivedPrimary]);
 
   const handleCopyConfig = useCallback(() => {
     navigator.clipboard.writeText(
@@ -828,89 +817,74 @@ export default function UITemplateSettingsPage() {
 
                 <Separator />
 
-                {/* Color pairs */}
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  {t('settings.customColorsLabel')}
-                </p>
+                <Separator />
 
-                {[
-                  {
-                    lightKey: 'primaryLight' as const,
-                    darkKey: 'primaryDark' as const,
-                    labelKey: 'settings.colorPrimaryLabel'
-                  },
-                  {
-                    lightKey: 'secondaryLight' as const,
-                    darkKey: 'secondaryDark' as const,
-                    labelKey: 'settings.colorSecondaryLabel'
-                  },
-                  {
-                    lightKey: 'backgroundLight' as const,
-                    darkKey: 'backgroundDark' as const,
-                    labelKey: 'settings.colorBackgroundLabel'
-                  }
-                ].map(({ lightKey, darkKey, labelKey }) => (
-                  <div key={lightKey} className="space-y-1.5">
-                    <Label className="text-[11px] text-muted-foreground">
-                      {t(labelKey as Parameters<typeof t>[0])}
-                    </Label>
-                    {[
-                      { key: lightKey, modeKey: 'settings.dayMode' },
-                      { key: darkKey, modeKey: 'settings.nightMode' }
-                    ].map(({ key, modeKey }) => (
-                      <div key={key} className="flex items-center gap-1.5">
-                        <span className="w-6 text-[9px] text-muted-foreground">
-                          {t(modeKey as Parameters<typeof t>[0])}
-                        </span>
-                        <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded border shadow-sm">
-                          <input
-                            type="color"
-                            title={`${t(labelKey as Parameters<typeof t>[0])} ${t(modeKey as Parameters<typeof t>[0])}`}
-                            value={themeColors[key]}
-                            onChange={(e) =>
-                              handleColorChange(key, e.target.value)
-                            }
-                            className="absolute -inset-1 h-9 w-9 cursor-pointer border-0 p-0"
-                          />
-                        </div>
-                        <Input
-                          value={themeColors[key]}
-                          onChange={(e) =>
-                            handleColorChange(key, e.target.value)
-                          }
-                          className="h-6 font-mono text-[10px]"
-                          placeholder="#000000"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ))}
-
-                {/* Accent (single) */}
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] text-muted-foreground">
-                    {t('settings.accentColorLabel')}
-                  </Label>
+                <div className="space-y-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    {t('settings.brandColorLabel')}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {t('settings.brandColorHelper')}
+                  </p>
                   <div className="flex items-center gap-2">
-                    <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md border shadow-sm">
+                    <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border shadow-sm">
                       <input
                         type="color"
-                        title={t('settings.accentColorLabel')}
-                        value={themeColors.accent}
+                        title={t('settings.colorPrimaryLabel')}
+                        value={themeColors.primaryLight}
                         onChange={(e) =>
-                          handleColorChange('accent', e.target.value)
+                          handlePrimaryColorChange(e.target.value)
                         }
-                        className="absolute -inset-1 h-11 w-11 cursor-pointer border-0 p-0"
+                        className="absolute -inset-1 h-14 w-14 cursor-pointer border-0 p-0"
                       />
                     </div>
                     <Input
-                      value={themeColors.accent}
-                      onChange={(e) =>
-                        handleColorChange('accent', e.target.value)
-                      }
-                      className="h-7 font-mono text-xs"
+                      value={themeColors.primaryLight}
+                      onChange={(e) => handlePrimaryColorChange(e.target.value)}
+                      className="h-8 font-mono text-xs"
                       placeholder="#000000"
                     />
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    {t('settings.derivedPaletteLabel')}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      {
+                        labelKey: 'settings.colorSecondaryLabel',
+                        color: themeColors.secondaryLight
+                      },
+                      {
+                        labelKey: 'settings.accentColorLabel',
+                        color: themeColors.accent
+                      },
+                      {
+                        labelKey: 'settings.colorBackgroundLabel',
+                        color: themeColors.backgroundLight
+                      },
+                      {
+                        labelKey: 'settings.nightMode',
+                        color: themeColors.backgroundDark
+                      }
+                    ].map(({ labelKey, color }) => (
+                      <div
+                        key={labelKey}
+                        className="flex items-center gap-2 rounded-md border px-2 py-1.5"
+                      >
+                        <div
+                          className="h-5 w-5 shrink-0 rounded border shadow-sm"
+                          style={{ background: color }}
+                        />
+                        <span className="truncate text-[10px] text-muted-foreground">
+                          {t(labelKey as Parameters<typeof t>[0])}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -928,36 +902,21 @@ export default function UITemplateSettingsPage() {
                         type="button"
                         onClick={() => {
                           markDirty();
-                          const colors: ThemeColors = {
-                            primaryLight: palette.colors[0],
-                            primaryDark: palette.colors[0],
-                            secondaryLight: palette.colors[1],
-                            secondaryDark: palette.colors[1],
-                            accent: palette.colors[2],
-                            backgroundLight: palette.colors[3],
-                            backgroundDark: palette.colors[4]
-                          };
-                          setThemeColors(colors);
-                          const payload = {
-                            primary_color: colors.primaryLight,
-                            secondary_color: colors.secondaryLight,
-                            accent_color: colors.accent,
-                            background_color: colors.backgroundLight,
-                            dark_mode: null
-                          };
-                          applyThemeVariables(payload);
-                          dispatchThemeUpdate(payload);
+                          applyDerivedPrimary(palette.colors[0]);
                         }}
                         className="flex flex-col gap-1 rounded border p-1.5 text-left transition-all hover:border-primary hover:shadow-sm"
                       >
                         <div className="flex gap-0.5">
-                          {palette.colors.slice(0, 4).map((color, i) => (
-                            <div
-                              key={i}
-                              className="h-3.5 w-3.5 rounded-full border border-white/50 shadow-sm"
-                              style={{ background: color }}
-                            />
-                          ))}
+                          <div
+                            className="h-3.5 w-3.5 rounded-full border border-white/50 shadow-sm"
+                            style={{ background: palette.colors[0] }}
+                          />
+                          <div
+                            className="h-3.5 flex-1 rounded-full border border-white/50 shadow-sm"
+                            style={{
+                              background: `linear-gradient(90deg, ${derivePaletteFromPrimary(palette.colors[0]).secondaryLight}, ${derivePaletteFromPrimary(palette.colors[0]).accent})`
+                            }}
+                          />
                         </div>
                         <span className="text-[9px] font-medium text-muted-foreground">
                           {t(palette.key as Parameters<typeof t>[0])}
@@ -1104,6 +1063,8 @@ export default function UITemplateSettingsPage() {
             onToggleVisibility={handleToggleVisibility}
             onMoveUp={handleMoveUp}
             onMoveDown={handleMoveDown}
+            onAddSection={() => setShowSectionLibrary(true)}
+            onRemoveBlock={handleRemoveBlock}
           />
         </aside>
       </div>
@@ -1115,6 +1076,12 @@ export default function UITemplateSettingsPage() {
         activePresetId={activePresetId}
         onApply={handleApplyPreset}
         isApplying={isApplyingPreset}
+      />
+
+      <SectionLibraryModal
+        open={showSectionLibrary}
+        onClose={() => setShowSectionLibrary(false)}
+        onImported={handleSectionImported}
       />
     </div>
   );
