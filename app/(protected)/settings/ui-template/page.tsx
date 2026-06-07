@@ -252,7 +252,7 @@ export default function UITemplateSettingsPage() {
     const ds = getDesignSystem(selectedPreset.id);
 
     return (
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-zinc-950">
         {/* Action bar */}
         <div className="flex flex-shrink-0 items-center gap-2 bg-zinc-900 px-4 py-2.5">
           <Button

@@ -48,6 +48,15 @@ const BLOCK_LABELS: Record<string, string> = {
   sidebar: 'سایدبار'
 };
 
+const SAMPLE_BANNER_IMAGES = [
+  'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400&q=70',
+  'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400&q=70',
+  'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&q=70',
+  'https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=400&q=70',
+  'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&q=70',
+  'https://images.unsplash.com/photo-1544256718-3bcf237f3974?w=400&q=70'
+];
+
 const BLOCK_TAG: Record<string, string> = {
   header: 'nav',
   hero: 'section',
@@ -408,6 +417,27 @@ function BannerImageSection({
             اعمال
           </button>
         </div>
+
+        <div className="space-y-1.5">
+          <p className="text-[10px] text-zinc-500">تصاویر نمونه</p>
+          <div className="grid grid-cols-3 gap-1.5">
+            {SAMPLE_BANNER_IMAGES.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                title={`تصویر نمونه ${i + 1}`}
+                onClick={() => onBannerImageChange(src)}
+                className="overflow-hidden rounded-lg border border-zinc-700 transition-all hover:scale-[1.03] hover:border-blue-500"
+              >
+                <img
+                  src={src}
+                  alt="sample banner"
+                  className="h-12 w-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </AccordionSection>
   );
@@ -443,6 +473,7 @@ function SectionOrderSection({
             <div className="flex flex-col">
               <button
                 type="button"
+                title="انتقال به بالا"
                 disabled={idx === 0}
                 onClick={() => swap(idx, idx - 1)}
                 className="text-zinc-500 transition-colors hover:text-zinc-200 disabled:opacity-30"
@@ -451,6 +482,7 @@ function SectionOrderSection({
               </button>
               <button
                 type="button"
+                title="انتقال به پایین"
                 disabled={idx === sorted.length - 1}
                 onClick={() => swap(idx, idx + 1)}
                 className="text-zinc-500 transition-colors hover:text-zinc-200 disabled:opacity-30"

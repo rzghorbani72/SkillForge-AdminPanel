@@ -38,7 +38,23 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
   darkMode: null
 };
 
-export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {};
+export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
+  kodiyar: {
+    name: 'کدیار',
+    tagline: 'آموزش · حرفه‌ای · فارسی',
+    colors: {
+      primary: '#3B82F6',
+      secondary: '#334155',
+      accent: '#10B981',
+      background: '#ffffff',
+      backgroundDark: '#0F1117',
+      surface: '#F8FAFC'
+    },
+    typography: { fontFamily: 'IRANYekan', displayWeight: '700' },
+    shape: { borderRadius: 'soft', shadow: 'medium' },
+    darkMode: null
+  }
+};
 
 export function getDesignSystem(presetId: string): DesignSystem {
   return DESIGN_SYSTEMS[presetId] ?? DEFAULT_DESIGN_SYSTEM;
