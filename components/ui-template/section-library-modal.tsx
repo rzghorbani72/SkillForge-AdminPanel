@@ -9,6 +9,12 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 
+export interface ImageSlot {
+  key: string;
+  aspect: '16:9' | '4:3' | '1:1' | 'auto';
+  sizeOptions: ('sm' | 'md' | 'lg' | 'full')[];
+}
+
 export interface SectionCatalogEntry {
   id: string;
   presetId: string;
@@ -18,6 +24,26 @@ export interface SectionCatalogEntry {
   sectionVariant: string | null;
   label: string;
   hasImagePlaceholder: boolean;
+  imageSlots: ImageSlot[];
+}
+
+const SLOT_LABELS: Record<string, string> = {
+  backgroundImage: 'background image',
+  illustration: 'illustration',
+  avatar: 'avatar',
+  logo: 'logo',
+  image: 'image',
+  slides: 'slide image'
+};
+
+function summarizeImageSlots(slots: ImageSlot[]): string {
+  const counts = slots.reduce<Record<string, number>>((acc, slot) => {
+    acc[slot.key] = (acc[slot.key] ?? 0) + 1;
+    return acc;
+  }, {});
+  return Object.entries(counts)
+    .map(([key, n]) => `${n} ${SLOT_LABELS[key] ?? key}${n > 1 ? 's' : ''}`)
+    .join(', ');
 }
 
 interface SectionLibraryModalProps {
@@ -209,17 +235,24 @@ export function SectionLibraryModal({
                       <Badge variant="secondary" className="text-[9px]">
                         {section.blockType}
                       </Badge>
-                      {section.hasImagePlaceholder && (
+                      {section.imageSlots.length > 0 && (
                         <Badge
                           variant="outline"
                           className="gap-0.5 text-[9px] text-muted-foreground"
                         >
                           <ImageIcon className="h-2.5 w-2.5" />
-                          {t('settings.sectionHasImage')}
+                          {section.imageSlots.length}
                         </Badge>
                       )}
                     </div>
                   </div>
+                  {section.imageSlots.length > 0 && (
+                    <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <ImageIcon className="h-2.5 w-2.5 shrink-0" />
+                      {t('settings.sectionNeedsImages')}:{' '}
+                      {summarizeImageSlots(section.imageSlots)}
+                    </p>
+                  )}
                   <Button
                     type="button"
                     size="sm"

@@ -1220,6 +1220,8 @@ export const fa = {
     sectionLibraryEmpty: 'بخشی با این جستجو یافت نشد.',
     sectionFilterAll: 'همه',
     sectionHasImage: 'جای تصویر',
+    sectionNeedsImages: 'نیازمند',
+    sectionImageSizing: 'اندازه تصویر',
     sectionAddToDraft: 'افزودن به پیش‌نویس',
     sectionImporting: 'در حال افزودن…',
     sectionImportedSuccess: 'بخش به پیش‌نویس اضافه شد',

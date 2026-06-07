@@ -2325,6 +2325,9 @@ class ApiClient {
     element_animation_style?: string;
     border_radius_style?: string;
     shadow_style?: string;
+    section_spacing?: 'compact' | 'comfortable' | 'spacious';
+    container_width?: 'narrow' | 'standard' | 'wide' | 'full';
+    heading_scale?: 'compact' | 'standard' | 'large';
   }) {
     const response = await this.request('/theme/current/config/draft', {
       method: 'PATCH',

@@ -15,6 +15,86 @@ import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 type HeroBgType = 'gradient' | 'solid' | 'image';
 type HeroMode = 'illustration' | 'slideshow';
 
+type MediaSize = 'sm' | 'md' | 'lg' | 'full';
+type MediaAspect = '16:9' | '4:3' | '1:1' | 'auto';
+
+const MEDIA_ASPECTS: MediaAspect[] = ['16:9', '4:3', '1:1', 'auto'];
+
+// Allowed media sizes per block type — mirrors the backend section-catalog image
+// slots. Bounded enums only; never a freeform px input.
+const BLOCK_SLOT_SIZES: Record<string, MediaSize[]> = {
+  hero: ['sm', 'md', 'lg', 'full'],
+  testimonials: ['sm', 'md'],
+  features: ['sm', 'md'],
+  header: ['sm', 'md'],
+  footer: ['sm', 'md']
+};
+
+function MediaControls({
+  blockType,
+  cfg,
+  set,
+  label
+}: {
+  blockType: string;
+  cfg: Record<string, unknown>;
+  set: (key: string, value: unknown) => void;
+  label: string;
+}) {
+  const sizes = BLOCK_SLOT_SIZES[blockType];
+  if (!sizes) return null;
+  const size = (cfg.mediaSize as MediaSize) ?? sizes[sizes.length - 1];
+  const aspect = (cfg.mediaAspect as MediaAspect) ?? '4:3';
+
+  return (
+    <div className="space-y-2 rounded-md border border-dashed p-2.5">
+      <Label className="text-xs font-medium">{label}</Label>
+      <div className="space-y-1.5">
+        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          Size
+        </span>
+        <div className="flex gap-1.5">
+          {sizes.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => set('mediaSize', s)}
+              className={`flex-1 rounded border py-1 text-[11px] font-medium uppercase transition-colors ${
+                size === s
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border hover:bg-accent'
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          Aspect
+        </span>
+        <div className="flex gap-1.5">
+          {MEDIA_ASPECTS.map((a) => (
+            <button
+              key={a}
+              type="button"
+              onClick={() => set('mediaAspect', a)}
+              className={`flex-1 rounded border py-1 text-[11px] font-medium transition-colors ${
+                aspect === a
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border hover:bg-accent'
+              }`}
+            >
+              {a}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const ILLUSTRATION_PRESETS = [
   {
     id: 'person-learning',
@@ -901,6 +981,15 @@ export function BlockEditor({
             />
           </div>
         </div>
+      )}
+
+      {BLOCK_SLOT_SIZES[block.type] && (
+        <MediaControls
+          blockType={block.type}
+          cfg={cfg}
+          set={set}
+          label={t('settings.sectionImageSizing')}
+        />
       )}
     </div>
   );

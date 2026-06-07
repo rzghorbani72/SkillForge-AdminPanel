@@ -73,11 +73,19 @@ export interface TemplateCustomizationSidebarProps {
   borderRadius: BorderRadius;
   shadow: Shadow;
   darkMode: boolean | null;
+  sectionSpacing: SectionSpacing;
+  containerWidth: ContainerWidth;
+  headingScale: HeadingScale;
   blocks: UIBlockConfig[];
   isSaving: boolean;
   onColorChange: (color: string) => void;
   onBorderRadiusChange: (r: BorderRadius) => void;
   onDarkModeChange: (mode: boolean | null) => void;
+  onDesignSizeChange: (patch: {
+    section_spacing?: SectionSpacing;
+    container_width?: ContainerWidth;
+    heading_scale?: HeadingScale;
+  }) => void;
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
   onBannerImageChange: (url: string) => void;
   onReset: () => void;
@@ -319,6 +327,104 @@ function ThemeModeSection({
   );
 }
 
+// ── Design System Sizes ───────────────────────────────────────────────────────
+
+type SectionSpacing = 'compact' | 'comfortable' | 'spacious';
+type ContainerWidth = 'narrow' | 'standard' | 'wide' | 'full';
+type HeadingScale = 'compact' | 'standard' | 'large';
+
+const SPACING_OPTIONS: { label: string; value: SectionSpacing }[] = [
+  { label: 'فشرده', value: 'compact' },
+  { label: 'معمول', value: 'comfortable' },
+  { label: 'باز', value: 'spacious' }
+];
+const WIDTH_OPTIONS: { label: string; value: ContainerWidth }[] = [
+  { label: 'باریک', value: 'narrow' },
+  { label: 'معمول', value: 'standard' },
+  { label: 'عریض', value: 'wide' },
+  { label: 'تمام', value: 'full' }
+];
+const HEADING_OPTIONS: { label: string; value: HeadingScale }[] = [
+  { label: 'کوچک', value: 'compact' },
+  { label: 'معمول', value: 'standard' },
+  { label: 'بزرگ', value: 'large' }
+];
+
+function SizeRow<T extends string>({
+  title,
+  options,
+  value,
+  onChange
+}: {
+  title: string;
+  options: { label: string; value: T }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <span className="text-xs text-zinc-400">{title}</span>
+      <div className="flex gap-1">
+        {options.map((o) => (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onChange(o.value)}
+            className={`flex-1 rounded py-1.5 text-[11px] font-medium transition-colors ${
+              value === o.value
+                ? 'bg-blue-600 text-white'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DesignSizeSection({
+  sectionSpacing,
+  containerWidth,
+  headingScale,
+  onChange
+}: {
+  sectionSpacing: SectionSpacing;
+  containerWidth: ContainerWidth;
+  headingScale: HeadingScale;
+  onChange: (patch: {
+    section_spacing?: SectionSpacing;
+    container_width?: ContainerWidth;
+    heading_scale?: HeadingScale;
+  }) => void;
+}) {
+  return (
+    <AccordionSection title="اندازه‌های طراحی">
+      <div className="space-y-4">
+        <SizeRow
+          title="فاصله بخش‌ها"
+          options={SPACING_OPTIONS}
+          value={sectionSpacing}
+          onChange={(v) => onChange({ section_spacing: v })}
+        />
+        <SizeRow
+          title="عرض محتوا"
+          options={WIDTH_OPTIONS}
+          value={containerWidth}
+          onChange={(v) => onChange({ container_width: v })}
+        />
+        <SizeRow
+          title="اندازه عناوین"
+          options={HEADING_OPTIONS}
+          value={headingScale}
+          onChange={(v) => onChange({ heading_scale: v })}
+        />
+      </div>
+    </AccordionSection>
+  );
+}
+
 // ── Banner Image ──────────────────────────────────────────────────────────────
 
 function BannerImageSection({
@@ -510,11 +616,15 @@ export function TemplateCustomizationSidebar({
   borderRadius,
   shadow: _shadow,
   darkMode,
+  sectionSpacing,
+  containerWidth,
+  headingScale,
   blocks,
   isSaving,
   onColorChange,
   onBorderRadiusChange,
   onDarkModeChange,
+  onDesignSizeChange,
   onBlocksChange,
   onBannerImageChange,
   onReset,
@@ -559,6 +669,12 @@ export function TemplateCustomizationSidebar({
         <RoundedCornersSection
           borderRadius={borderRadius}
           onBorderRadiusChange={onBorderRadiusChange}
+        />
+        <DesignSizeSection
+          sectionSpacing={sectionSpacing}
+          containerWidth={containerWidth}
+          headingScale={headingScale}
+          onChange={onDesignSizeChange}
         />
         <ThemeModeSection
           darkMode={darkMode}

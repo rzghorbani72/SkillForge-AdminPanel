@@ -21,6 +21,9 @@ import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 type BorderRadius = 'sharp' | 'soft' | 'rounded';
 type Shadow = 'none' | 'subtle' | 'medium' | 'strong';
+type SectionSpacing = 'compact' | 'comfortable' | 'spacious';
+type ContainerWidth = 'narrow' | 'standard' | 'wide' | 'full';
+type HeadingScale = 'compact' | 'standard' | 'large';
 
 export default function UITemplateSettingsPage() {
   const user = useUserStore((s) => s.user);
@@ -42,6 +45,11 @@ export default function UITemplateSettingsPage() {
   const [borderRadius, setBorderRadius] = useState<BorderRadius>('soft');
   const [shadow, setShadow] = useState<Shadow>('medium');
   const [darkMode, setDarkMode] = useState<boolean | null>(null);
+  const [sectionSpacing, setSectionSpacing] =
+    useState<SectionSpacing>('comfortable');
+  const [containerWidth, setContainerWidth] =
+    useState<ContainerWidth>('standard');
+  const [headingScale, setHeadingScale] = useState<HeadingScale>('standard');
   const [draftBlocks, setDraftBlocks] = useState<UIBlockConfig[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -105,6 +113,12 @@ export default function UITemplateSettingsPage() {
         if (theme.shadow_style) setShadow(theme.shadow_style as Shadow);
         if ('dark_mode' in theme)
           setDarkMode(theme.dark_mode as boolean | null);
+        if (theme.section_spacing)
+          setSectionSpacing(theme.section_spacing as SectionSpacing);
+        if (theme.container_width)
+          setContainerWidth(theme.container_width as ContainerWidth);
+        if (theme.heading_scale)
+          setHeadingScale(theme.heading_scale as HeadingScale);
       }
 
       setBaseIframeSrc(
@@ -186,6 +200,22 @@ export default function UITemplateSettingsPage() {
   const handleDarkModeChange = (dm: boolean | null) => {
     setDarkMode(dm);
     debouncedSaveTheme(primaryColor, borderRadius, shadow, dm);
+  };
+
+  const handleDesignSizeChange = (patch: {
+    section_spacing?: SectionSpacing;
+    container_width?: ContainerWidth;
+    heading_scale?: HeadingScale;
+  }) => {
+    if (patch.section_spacing) setSectionSpacing(patch.section_spacing);
+    if (patch.container_width) setContainerWidth(patch.container_width);
+    if (patch.heading_scale) setHeadingScale(patch.heading_scale);
+    setIsSaving(true);
+    apiClient
+      .saveThemeDraft(patch)
+      .then(() => setRefreshKey((k) => k + 1))
+      .catch((error) => ErrorHandler.handleApiError(error))
+      .finally(() => setIsSaving(false));
   };
 
   const handleBlocksChange = (blocks: UIBlockConfig[]) => {
@@ -336,11 +366,15 @@ export default function UITemplateSettingsPage() {
               borderRadius={borderRadius}
               shadow={shadow}
               darkMode={darkMode}
+              sectionSpacing={sectionSpacing}
+              containerWidth={containerWidth}
+              headingScale={headingScale}
               blocks={draftBlocks}
               isSaving={isSaving}
               onColorChange={handleColorChange}
               onBorderRadiusChange={handleBorderRadiusChange}
               onDarkModeChange={handleDarkModeChange}
+              onDesignSizeChange={handleDesignSizeChange}
               onBlocksChange={handleBlocksChange}
               onBannerImageChange={handleBannerImageChange}
               onReset={handleReset}

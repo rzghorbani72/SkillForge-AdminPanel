@@ -1468,6 +1468,8 @@ export const en = {
     sectionLibraryEmpty: 'No sections match your search.',
     sectionFilterAll: 'All',
     sectionHasImage: 'Image slot',
+    sectionNeedsImages: 'Needs',
+    sectionImageSizing: 'Image sizing',
     sectionAddToDraft: 'Add to draft',
     sectionImporting: 'Adding…',
     sectionImportedSuccess: 'Section added to draft',
