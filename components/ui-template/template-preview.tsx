@@ -34,6 +34,8 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
     marquee: { bar: 'bg-slate-300', h: 'h-3' },
     pricing: { bar: 'bg-teal-400', h: 'h-14' },
     cta: { bar: 'bg-rose-400', h: 'h-10' },
+    categories: { bar: 'bg-green-400', h: 'h-4' },
+    projects: { bar: 'bg-lime-400', h: 'h-16' },
     footer: { bar: 'bg-gray-600', h: 'h-6' }
   };
 

@@ -76,6 +76,25 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     typography: { fontFamily: 'IRANYekan', displayWeight: '700' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     darkMode: null
+  },
+  creative: {
+    name: 'استودیوی خلاق',
+    tagline: 'تصویرسازی · طراحی · جامعه خلاق',
+    colors: {
+      primary: '#00aa4d',
+      primaryDark: '#00aa4d',
+      // Navy stays dark in both modes so always-dark panels (hero, teachers,
+      // cta button, footer) keep their navy background when the theme flips.
+      secondary: '#002333',
+      secondaryDark: '#002333',
+      accent: '#d97706',
+      background: '#faf9f7',
+      backgroundDark: '#0f172a',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'IRANYekan', displayWeight: '900' },
+    shape: { borderRadius: 'rounded', shadow: 'medium' },
+    darkMode: null
   }
 };
 
