@@ -5,7 +5,11 @@ export interface DesignSystem {
   tagline: string;
   colors: {
     primary: string;
+    /** Explicit dark-mode primary. Falls back to `primary` when omitted. */
+    primaryDark?: string;
     secondary: string;
+    /** Explicit dark-mode secondary. Falls back to `secondary` when omitted. */
+    secondaryDark?: string;
     accent: string;
     background: string;
     backgroundDark: string;
@@ -39,6 +43,23 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
 };
 
 export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
+  flow: {
+    name: 'منتوریار فلو',
+    tagline: 'یادگیری · مسیرمحور · مینیمال',
+    colors: {
+      primary: '#00b388',
+      primaryDark: '#00b388',
+      secondary: '#0b1c2c',
+      secondaryDark: '#e2e8f0',
+      accent: '#f59e0b',
+      background: '#fafbfc',
+      backgroundDark: '#0f172a',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'IRANYekan', displayWeight: '900' },
+    shape: { borderRadius: 'rounded', shadow: 'medium' },
+    darkMode: null
+  },
   kodiyar: {
     name: 'کدیار',
     tagline: 'آموزش · حرفه‌ای · فارسی',
@@ -65,8 +86,10 @@ export function buildThemePayload(ds: DesignSystem): ThemeConfigPayload {
     name: ds.name,
     primary_color: ds.colors.primary,
     primary_color_light: ds.colors.primary,
-    primary_color_dark: ds.colors.primary,
+    primary_color_dark: ds.colors.primaryDark ?? ds.colors.primary,
     secondary_color: ds.colors.secondary,
+    secondary_color_light: ds.colors.secondary,
+    secondary_color_dark: ds.colors.secondaryDark ?? ds.colors.secondary,
     accent_color: ds.colors.accent,
     background_color: ds.colors.background,
     background_color_light: ds.colors.background,

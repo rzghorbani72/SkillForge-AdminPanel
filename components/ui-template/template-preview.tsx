@@ -29,7 +29,11 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
     hero: { bar: 'bg-indigo-400', h: 'h-16' },
     features: { bar: 'bg-emerald-400', h: 'h-12' },
     courses: { bar: 'bg-purple-400', h: 'h-14' },
+    'course-grid': { bar: 'bg-purple-400', h: 'h-14' },
     testimonials: { bar: 'bg-amber-400', h: 'h-10' },
+    marquee: { bar: 'bg-slate-300', h: 'h-3' },
+    pricing: { bar: 'bg-teal-400', h: 'h-14' },
+    cta: { bar: 'bg-rose-400', h: 'h-10' },
     footer: { bar: 'bg-gray-600', h: 'h-6' }
   };
 

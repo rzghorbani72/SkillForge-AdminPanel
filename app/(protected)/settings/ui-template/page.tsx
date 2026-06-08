@@ -8,7 +8,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useUserStore } from '@/lib/store';
 import type { TemplatePreset, UIBlockConfig } from '@/types/api';
-import { getDesignSystem } from '@/lib/design-systems';
+import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import { TemplatePreview } from '@/components/ui-template/template-preview';
 import {
   buildEmbedPreviewUrl,
@@ -99,20 +99,20 @@ export default function UITemplateSettingsPage() {
     try {
       await apiClient.applyTemplatePreset(preset.id);
 
+      // Seed the draft theme from the preset's design system so the live
+      // preview renders in the template's own palette (name is left untouched).
+      const { name: _omitName, ...themeSeed } = buildThemePayload(ds);
+      await apiClient.saveThemeDraft(themeSeed);
+
       const [session, themeRaw] = await Promise.all([
         apiClient.getTemplatePreviewSession(),
         apiClient.getCurrentThemeConfig().catch(() => null)
       ]);
 
-      // Override with actual saved theme values if available
+      // Keep design-size tokens from the saved theme — they are not part of
+      // the preset palette and should survive a template switch.
       const theme = themeRaw as Record<string, unknown> | null;
       if (theme) {
-        if (theme.primary_color) setPrimaryColor(theme.primary_color as string);
-        if (theme.border_radius_style)
-          setBorderRadius(theme.border_radius_style as BorderRadius);
-        if (theme.shadow_style) setShadow(theme.shadow_style as Shadow);
-        if ('dark_mode' in theme)
-          setDarkMode(theme.dark_mode as boolean | null);
         if (theme.section_spacing)
           setSectionSpacing(theme.section_spacing as SectionSpacing);
         if (theme.container_width)
@@ -228,7 +228,12 @@ export default function UITemplateSettingsPage() {
       b.type === 'hero' || b.type === 'slideshow'
         ? {
             ...b,
-            config: { ...(b.config ?? {}), bgImage: url, bgType: 'image' }
+            config: {
+              ...(b.config ?? {}),
+              backgroundImage: url,
+              bgImage: url,
+              bgType: 'image'
+            }
           }
         : b
     );

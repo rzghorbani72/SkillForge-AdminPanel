@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { X, RotateCcw, Upload, ChevronDown, ChevronUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { hexToHsl, hslToHex } from '@/lib/design-system-palette';
 import type { UIBlockConfig } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -133,6 +134,7 @@ function BrandColorSection({
   onColorChange: (c: string) => void;
 }) {
   const [hexInput, setHexInput] = useState(primaryColor);
+  const [showPicker, setShowPicker] = useState(false);
 
   const applyHex = () => {
     const val = hexInput.trim();
@@ -140,6 +142,13 @@ function BrandColorSection({
     if (/^#[0-9a-fA-F]{6}$/.test(normalized)) {
       onColorChange(normalized);
     }
+  };
+
+  const hsl = hexToHsl(primaryColor);
+  const emitHsl = (h: number, s: number, l: number) => {
+    const hex = hslToHex(h, s, l);
+    setHexInput(hex);
+    onColorChange(hex);
   };
 
   return (
@@ -168,8 +177,12 @@ function BrandColorSection({
         </div>
 
         <div className="flex items-center gap-2">
-          <div
-            className="h-8 w-8 flex-shrink-0 rounded-lg border border-zinc-600"
+          <button
+            type="button"
+            aria-label="انتخاب رنگ سفارشی"
+            title="انتخاب رنگ سفارشی"
+            onClick={() => setShowPicker((v) => !v)}
+            className="h-8 w-9 flex-shrink-0 cursor-pointer rounded-lg border border-zinc-600"
             style={{ backgroundColor: primaryColor }}
           />
           <Input
@@ -185,8 +198,73 @@ function BrandColorSection({
             <span className="h-3.5 w-3.5 rounded-full bg-zinc-900 shadow-sm" />
           </div>
         </div>
+
+        {showPicker && (
+          <div className="space-y-2.5 rounded-lg border border-zinc-700 bg-zinc-800/40 p-3">
+            <ColorSlider
+              label="رنگ"
+              min={0}
+              max={360}
+              value={Math.round(hsl.h)}
+              track="linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)"
+              onChange={(h) => emitHsl(h, hsl.s, hsl.l)}
+            />
+            <ColorSlider
+              label="اشباع"
+              min={0}
+              max={100}
+              value={Math.round(hsl.s)}
+              track={`linear-gradient(to right, ${hslToHex(hsl.h, 0, hsl.l)}, ${hslToHex(hsl.h, 100, hsl.l)})`}
+              onChange={(s) => emitHsl(hsl.h, s, hsl.l)}
+            />
+            <ColorSlider
+              label="روشنایی"
+              min={0}
+              max={100}
+              value={Math.round(hsl.l)}
+              track={`linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}
+              onChange={(l) => emitHsl(hsl.h, hsl.s, l)}
+            />
+          </div>
+        )}
       </div>
     </AccordionSection>
+  );
+}
+
+function ColorSlider({
+  label,
+  min,
+  max,
+  value,
+  track,
+  onChange
+}: {
+  label: string;
+  min: number;
+  max: number;
+  value: number;
+  track: string;
+  onChange: (n: number) => void;
+}) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-zinc-400">{label}</span>
+        <span className="font-mono text-xs text-zinc-300">{value}</span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        aria-label={label}
+        title={label}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="h-2 w-full cursor-pointer appearance-none rounded-full border border-zinc-600"
+        style={{ background: track }}
+      />
+    </div>
   );
 }
 

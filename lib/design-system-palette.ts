@@ -10,7 +10,7 @@ export interface DerivedPalette {
   backgroundDark: string;
 }
 
-interface Hsl {
+export interface Hsl {
   h: number;
   s: number;
   l: number;
@@ -35,7 +35,7 @@ function normalizeHex(hex: string): string {
   return '#3b82f6';
 }
 
-function hexToHsl(hex: string): Hsl {
+export function hexToHsl(hex: string): Hsl {
   const full = normalizeHex(hex).slice(1);
   const n = parseInt(full, 16);
   const r = ((n >> 16) & 255) / 255;
@@ -68,7 +68,7 @@ function hexToHsl(hex: string): Hsl {
   return { h: h * 360, s: s * 100, l: l * 100 };
 }
 
-function hslToHex(h: number, s: number, l: number): string {
+export function hslToHex(h: number, s: number, l: number): string {
   const hh = ((h % 360) + 360) % 360;
   const ss = clamp(s, 0, 100) / 100;
   const ll = clamp(l, 0, 100) / 100;
