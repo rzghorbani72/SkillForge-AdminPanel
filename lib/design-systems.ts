@@ -60,19 +60,21 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     darkMode: null
   },
-  kodiyar: {
+  code: {
     name: 'کدیار',
     tagline: 'آموزش · حرفه‌ای · فارسی',
     colors: {
-      primary: '#3B82F6',
-      secondary: '#334155',
-      accent: '#10B981',
+      primary: '#3b82f6',
+      primaryDark: '#3b82f6',
+      secondary: '#0f172a',
+      secondaryDark: '#e2e8f0',
+      accent: '#f59e0b',
       background: '#ffffff',
-      backgroundDark: '#0F1117',
-      surface: '#F8FAFC'
+      backgroundDark: '#0f1117',
+      surface: '#ffffff'
     },
     typography: { fontFamily: 'IRANYekan', displayWeight: '700' },
-    shape: { borderRadius: 'soft', shadow: 'medium' },
+    shape: { borderRadius: 'rounded', shadow: 'medium' },
     darkMode: null
   }
 };
