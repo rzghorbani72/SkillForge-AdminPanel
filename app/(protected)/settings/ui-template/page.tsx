@@ -1,7 +1,15 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { X, Check, Loader2, Wand2, LayoutTemplate, Pencil } from 'lucide-react';
+import {
+  X,
+  Check,
+  Loader2,
+  Wand2,
+  LayoutTemplate,
+  Pencil,
+  Eye
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiClient } from '@/lib/api';
@@ -51,6 +59,7 @@ export default function UITemplateSettingsPage() {
   const [headingScale, setHeadingScale] = useState<HeadingScale>('standard');
   const [draftBlocks, setDraftBlocks] = useState<UIBlockConfig[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const iframeSrc = baseIframeSrc
     ? appendPreviewCacheBuster(baseIframeSrc, refreshKey)
@@ -136,9 +145,20 @@ export default function UITemplateSettingsPage() {
     }
   };
 
-  const handleConfirmSelect = () => {
-    setIsApplied(true);
-    ErrorHandler.showSuccess('قالب با موفقیت انتخاب شد');
+  const handleConfirmSelect = async () => {
+    setIsPublishing(true);
+    try {
+      // Publishing copies the draft (template + theme) to the live site —
+      // without this, the public academy page keeps showing the previously
+      // published design while the preview shows the new draft.
+      await apiClient.publishSite();
+      setIsApplied(true);
+      ErrorHandler.showSuccess('قالب با موفقیت روی سایت منتشر شد');
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   const handleClosePreview = () => {
@@ -271,8 +291,8 @@ export default function UITemplateSettingsPage() {
           </div>
           <Skeleton className="h-10 w-52 rounded-xl" />
         </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {Array.from({ length: 7 }).map((_, i) => (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} className="h-72 rounded-2xl" />
           ))}
         </div>
@@ -292,16 +312,21 @@ export default function UITemplateSettingsPage() {
           <Button
             size="sm"
             onClick={handleConfirmSelect}
-            disabled={isApplied}
+            disabled={isApplied || isPublishing}
             className="h-8 gap-1.5 bg-red-500 px-3 text-xs font-semibold text-white hover:bg-red-600 disabled:opacity-70"
           >
             {isApplied ? (
               <>
                 <Check className="h-3.5 w-3.5" />
-                انتخاب شد
+                منتشر شد
+              </>
+            ) : isPublishing ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                در حال انتشار...
               </>
             ) : (
-              'انتخاب این قالب'
+              'انتشار این قالب در سایت'
             )}
           </Button>
 
@@ -456,12 +481,13 @@ export default function UITemplateSettingsPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {presets.map((preset) => (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {presets.map((preset, idx) => (
             <GalleryCard
               key={preset.id}
               preset={preset}
               isActive={preset.id === activePresetId}
+              index={idx}
               onClick={() => handleCardClick(preset)}
             />
           ))}
@@ -476,71 +502,83 @@ export default function UITemplateSettingsPage() {
 interface GalleryCardProps {
   preset: TemplatePreset;
   isActive: boolean;
+  index: number;
   onClick: () => void;
 }
 
-function GalleryCard({ preset, isActive, onClick }: GalleryCardProps) {
+function GalleryCard({ preset, isActive, index, onClick }: GalleryCardProps) {
   const ds = getDesignSystem(preset.id);
+  const swatches = [
+    ds.colors.background,
+    ds.colors.primary,
+    ds.colors.secondary,
+    ds.colors.accent
+  ];
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group relative overflow-hidden rounded-2xl border border-border/50 bg-background text-right shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
+      style={{ animationDelay: `${index * 55}ms` }}
+      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-border/50 bg-background text-right shadow-sm duration-300 animate-in fade-in slide-in-from-bottom-3 hover:-translate-y-1 hover:border-border hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]"
     >
-      <div className="relative h-44 overflow-hidden bg-gray-50">
+      {/* Thumbnail */}
+      <div className="relative h-48 overflow-hidden bg-muted/40">
         <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">
           <div
-            className="w-[200%] origin-top-left transition-transform duration-300 group-hover:scale-[1.03]"
-            style={{
-              transform: 'scale(0.5)',
-              transformOrigin: 'top left',
-              width: '200%'
-            }}
+            className="origin-top-left"
+            style={{ transform: 'scale(0.5)', width: '200%' }}
           >
             <TemplatePreview preset={preset} />
           </div>
         </div>
-        <div className="absolute inset-0 bg-black/0 transition-colors duration-200 group-hover:bg-black/10" />
-        <div className="absolute left-2 top-2 flex gap-1.5">
-          {isActive && (
-            <span className="rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-white shadow-sm">
-              فعال
-            </span>
-          )}
+
+        {/* Hover overlay */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/[0.52] opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-xs font-bold text-zinc-900 shadow-sm">
+            <Eye className="h-3.5 w-3.5" />
+            پیش‌نمایش کامل
+          </span>
         </div>
+
+        {isActive && (
+          <span className="absolute right-2.5 top-2.5 z-10 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+            فعال
+          </span>
+        )}
       </div>
 
-      <div className="px-3 pb-3 pt-2.5">
-        <div className="mb-2 flex items-center gap-1.5">
-          {ds && (
-            <div className="flex items-center gap-1">
-              {[ds.colors.primary, ds.colors.secondary, ds.colors.accent].map(
-                (c, i) => (
-                  <span
-                    key={i}
-                    className="ring-black/8 h-3.5 w-3.5 flex-shrink-0 rounded-full border border-white/30 shadow-sm ring-1"
-                    style={{ background: c }}
-                  />
-                )
-              )}
-            </div>
-          )}
-          {ds.tagline && (
-            <span
-              className="rounded-full px-2 py-0.5 text-[9px] font-semibold"
-              style={{
-                background: `${ds.colors.primary}1a`,
-                color: ds.colors.primary
-              }}
-            >
-              {ds.tagline}
+      {/* Footer */}
+      <div className="px-4 pb-4 pt-3.5">
+        <div className="mb-1.5 flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[15px] font-bold text-foreground">
+              {preset.name}
             </span>
-          )}
+            {ds.tagline && (
+              <span
+                className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                style={{
+                  background: `${ds.colors.primary}1a`,
+                  color: ds.colors.primary
+                }}
+              >
+                {ds.tagline}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-shrink-0 gap-1">
+            {swatches.map((c, i) => (
+              <span
+                key={i}
+                className="h-3 w-3 flex-shrink-0 rounded-[3px] border border-black/[0.09]"
+                style={{ background: c }}
+              />
+            ))}
+          </div>
         </div>
-        <p className="text-sm font-bold text-foreground">{preset.name}</p>
         {preset.description && (
-          <p className="mt-1 line-clamp-2 text-[10px] leading-relaxed text-muted-foreground">
+          <p className="m-0 line-clamp-2 text-[12.5px] leading-relaxed text-muted-foreground">
             {preset.description}
           </p>
         )}
