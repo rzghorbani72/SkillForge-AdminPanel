@@ -12,8 +12,7 @@ import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import { TemplatePreview } from '@/components/ui-template/template-preview';
 import {
   buildEmbedPreviewUrl,
-  appendPreviewCacheBuster,
-  resolveStorefrontBaseUrl
+  appendPreviewCacheBuster
 } from '@/lib/ui-template/preview-url';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
 import { TemplateCustomizationSidebar } from '@/components/ui-template/template-customization-sidebar';
