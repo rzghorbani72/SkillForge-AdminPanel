@@ -1225,6 +1225,13 @@ export const fa = {
     sectionAddToDraft: 'افزودن به پیش‌نویس',
     sectionImporting: 'در حال افزودن…',
     sectionImportedSuccess: 'بخش به پیش‌نویس اضافه شد',
+    sectionReplaceTitle: 'جایگزینی بخش',
+    sectionReplaceDescription:
+      'بخش معادل را از قالبی دیگر انتخاب کنید. متن‌های سفارشی هم‌نام حفظ می‌شوند.',
+    sectionReplace: 'جایگزینی',
+    sectionReplacing: 'در حال جایگزینی…',
+    sectionSwappedSuccess: 'بخش جایگزین شد',
+    sectionFromTemplate: 'از {{name}}',
     addSectionFromLibrary: 'افزودن بخش',
     removeBlock: 'حذف بلوک',
     slideshowMode: 'اسلایدشو ({{count}} اسلاید)',

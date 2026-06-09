@@ -24,6 +24,7 @@ import {
 } from '@/lib/ui-template/preview-url';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
 import { TemplateCustomizationSidebar } from '@/components/ui-template/template-customization-sidebar';
+import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 type BorderRadius = 'sharp' | 'soft' | 'rounded';
@@ -60,6 +61,11 @@ export default function UITemplateSettingsPage() {
   const [draftBlocks, setDraftBlocks] = useState<UIBlockConfig[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerTarget, setPickerTarget] = useState<{
+    blockId: string;
+    type: string;
+  } | null>(null);
 
   const iframeSrc = baseIframeSrc
     ? appendPreviewCacheBuster(baseIframeSrc, refreshKey)
@@ -242,6 +248,29 @@ export default function UITemplateSettingsPage() {
     debouncedSaveBlocks(blocks);
   };
 
+  const handleOpenPicker = (target?: { blockId: string; type: string }) => {
+    setPickerTarget(target ?? null);
+    setPickerOpen(true);
+  };
+
+  // Import/swap mutate the draft server-side, so pull the canonical block list
+  // back and refresh the live preview.
+  const handleSectionPicked = async () => {
+    try {
+      const data = (await apiClient.getCurrentUITemplate()) as Record<
+        string,
+        unknown
+      > | null;
+      const blocks = (data?.draft_blocks ?? data?.blocks) as
+        | UIBlockConfig[]
+        | undefined;
+      if (blocks) setDraftBlocks(blocks);
+      setRefreshKey((k) => k + 1);
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    }
+  };
+
   const handleBannerImageChange = (url: string) => {
     const updated = draftBlocks.map((b) =>
       b.type === 'hero' || b.type === 'slideshow'
@@ -406,10 +435,18 @@ export default function UITemplateSettingsPage() {
               onDesignSizeChange={handleDesignSizeChange}
               onBlocksChange={handleBlocksChange}
               onBannerImageChange={handleBannerImageChange}
+              onOpenPicker={handleOpenPicker}
               onReset={handleReset}
               onClose={() => setShowCustomizer(false)}
             />
           )}
+
+          <SectionLibraryModal
+            open={pickerOpen}
+            swapTarget={pickerTarget}
+            onClose={() => setPickerOpen(false)}
+            onImported={handleSectionPicked}
+          />
 
           <div className="relative flex-1 bg-zinc-950">
             {isPreviewLoading && (

@@ -1,7 +1,32 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { X, RotateCcw, Upload, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  X,
+  RotateCcw,
+  Upload,
+  ChevronDown,
+  ChevronUp,
+  GripVertical,
+  ArrowLeftRight,
+  Lock,
+  Plus
+} from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Input } from '@/components/ui/input';
 import { hexToHsl, hslToHex } from '@/lib/design-system-palette';
 import type { UIBlockConfig } from '@/types/api';
@@ -89,6 +114,7 @@ export interface TemplateCustomizationSidebarProps {
   }) => void;
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
   onBannerImageChange: (url: string) => void;
+  onOpenPicker: (target?: { blockId: string; type: string }) => void;
   onReset: () => void;
   onClose: () => void;
 }
@@ -629,59 +655,159 @@ function BannerImageSection({
 
 // ── Section Order ─────────────────────────────────────────────────────────────
 
+// Header is always pinned first, footer always pinned last — neither can be
+// dragged or removed. Everything in between is drag-reorderable.
+function PinnedRow({
+  block,
+  onReplace
+}: {
+  block: UIBlockConfig;
+  onReplace: () => void;
+}) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-zinc-700/60 bg-zinc-800/30 px-2 py-1.5">
+      <Lock className="h-3 w-3 flex-shrink-0 text-zinc-600" />
+      <span className="flex-1 text-xs text-zinc-300">
+        {BLOCK_LABELS[block.type] ?? block.type}
+      </span>
+      <button
+        type="button"
+        title="جایگزینی بخش"
+        onClick={onReplace}
+        className="text-zinc-500 transition-colors hover:text-zinc-200"
+      >
+        <ArrowLeftRight className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
+function SortableRow({
+  block,
+  onReplace
+}: {
+  block: UIBlockConfig;
+  onReplace: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: block.id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      className={`flex items-center gap-2 rounded-lg bg-zinc-800/60 px-2 py-1.5 ${
+        isDragging ? 'opacity-60' : ''
+      }`}
+    >
+      <button
+        type="button"
+        title="جابه‌جایی"
+        className="cursor-grab text-zinc-500 transition-colors hover:text-zinc-200 active:cursor-grabbing"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3.5 w-3.5" />
+      </button>
+      <span className="flex-1 text-xs text-zinc-300">
+        {BLOCK_LABELS[block.type] ?? block.type}
+      </span>
+      <span className="rounded bg-zinc-700 px-1.5 py-0.5 font-mono text-[9px] text-zinc-400">
+        {BLOCK_TAG[block.type] ?? 'div'}
+      </span>
+      <button
+        type="button"
+        title="جایگزینی بخش"
+        onClick={onReplace}
+        className="text-zinc-500 transition-colors hover:text-zinc-200"
+      >
+        <ArrowLeftRight className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
 function SectionOrderSection({
   blocks,
-  onBlocksChange
+  onBlocksChange,
+  onOpenPicker
 }: {
   blocks: UIBlockConfig[];
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
+  onOpenPicker: (target?: { blockId: string; type: string }) => void;
 }) {
+  const sensors = useSensors(useSensor(PointerSensor));
   const sorted = [...blocks].sort((a, b) => a.order - b.order);
 
-  const swap = (idxA: number, idxB: number) => {
-    const next = [...sorted];
-    const orderA = next[idxA].order;
-    next[idxA] = { ...next[idxA], order: next[idxB].order };
-    next[idxB] = { ...next[idxB], order: orderA };
-    onBlocksChange(next);
+  const header = sorted.find((b) => b.type === 'header') ?? null;
+  const footer = sorted.find((b) => b.type === 'footer') ?? null;
+  const middle = sorted.filter(
+    (b) => b.type !== 'header' && b.type !== 'footer'
+  );
+
+  const reorder = (next: UIBlockConfig[]) => {
+    const ordered = [
+      ...(header ? [header] : []),
+      ...next,
+      ...(footer ? [footer] : [])
+    ].map((block, index) => ({ ...block, order: index + 1 }));
+    onBlocksChange(ordered);
   };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const from = middle.findIndex((b) => b.id === active.id);
+    const to = middle.findIndex((b) => b.id === over.id);
+    if (from === -1 || to === -1) return;
+    reorder(arrayMove(middle, from, to));
+  };
+
+  const replace = (block: UIBlockConfig) => () =>
+    onOpenPicker({ blockId: block.id, type: block.type });
 
   return (
     <AccordionSection title="ترتیب بخش‌ها">
       <div className="space-y-1">
-        {sorted.map((block, idx) => (
-          <div
-            key={block.id}
-            className="flex items-center gap-2 rounded-lg bg-zinc-800/60 px-2 py-1.5"
+        {header && <PinnedRow block={header} onReplace={replace(header)} />}
+
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={middle.map((b) => b.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col">
-              <button
-                type="button"
-                title="انتقال به بالا"
-                disabled={idx === 0}
-                onClick={() => swap(idx, idx - 1)}
-                className="text-zinc-500 transition-colors hover:text-zinc-200 disabled:opacity-30"
-              >
-                <ChevronUp className="h-3 w-3" />
-              </button>
-              <button
-                type="button"
-                title="انتقال به پایین"
-                disabled={idx === sorted.length - 1}
-                onClick={() => swap(idx, idx + 1)}
-                className="text-zinc-500 transition-colors hover:text-zinc-200 disabled:opacity-30"
-              >
-                <ChevronDown className="h-3 w-3" />
-              </button>
+            <div className="space-y-1">
+              {middle.map((block) => (
+                <SortableRow
+                  key={block.id}
+                  block={block}
+                  onReplace={replace(block)}
+                />
+              ))}
             </div>
-            <span className="flex-1 text-xs text-zinc-300">
-              {BLOCK_LABELS[block.type] ?? block.type}
-            </span>
-            <span className="rounded bg-zinc-700 px-1.5 py-0.5 font-mono text-[9px] text-zinc-400">
-              {BLOCK_TAG[block.type] ?? 'div'}
-            </span>
-          </div>
-        ))}
+          </SortableContext>
+        </DndContext>
+
+        {footer && <PinnedRow block={footer} onReplace={replace(footer)} />}
+
+        <button
+          type="button"
+          onClick={() => onOpenPicker()}
+          className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-zinc-600 py-2 text-xs text-zinc-400 transition-colors hover:border-blue-500 hover:text-blue-400"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          افزودن بخش
+        </button>
       </div>
     </AccordionSection>
   );
@@ -705,6 +831,7 @@ export function TemplateCustomizationSidebar({
   onDesignSizeChange,
   onBlocksChange,
   onBannerImageChange,
+  onOpenPicker,
   onReset,
   onClose
 }: TemplateCustomizationSidebarProps) {
@@ -762,7 +889,11 @@ export function TemplateCustomizationSidebar({
           blocks={blocks}
           onBannerImageChange={onBannerImageChange}
         />
-        <SectionOrderSection blocks={blocks} onBlocksChange={onBlocksChange} />
+        <SectionOrderSection
+          blocks={blocks}
+          onBlocksChange={onBlocksChange}
+          onOpenPicker={onOpenPicker}
+        />
       </div>
 
       {/* Footer – reset */}

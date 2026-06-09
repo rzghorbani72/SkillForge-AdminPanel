@@ -19,6 +19,7 @@ export interface SectionCatalogEntry {
   id: string;
   presetId: string;
   presetName: string;
+  presetPreview: string | null;
   blockId: string;
   blockType: string;
   sectionVariant: string | null;
@@ -50,6 +51,9 @@ interface SectionLibraryModalProps {
   open: boolean;
   onClose: () => void;
   onImported: () => void;
+  // When set, the picker runs in swap mode: it offers only same-type sections
+  // and replaces the given slot instead of appending a new one.
+  swapTarget?: { blockId: string; type: string } | null;
 }
 
 const BLOCK_TYPE_LABEL_KEYS: Record<string, string> = {
@@ -64,7 +68,8 @@ const BLOCK_TYPE_LABEL_KEYS: Record<string, string> = {
 export function SectionLibraryModal({
   open,
   onClose,
-  onImported
+  onImported,
+  swapTarget
 }: SectionLibraryModalProps) {
   const { t } = useTranslation();
   const [sections, setSections] = useState<SectionCatalogEntry[]>([]);
@@ -110,7 +115,15 @@ export function SectionLibraryModal({
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return sections.filter((section) => {
-      if (typeFilter !== 'all' && section.blockType !== typeFilter) {
+      // Swap mode offers only the equivalent section type from other templates.
+      if (swapTarget && section.blockType !== swapTarget.type) {
+        return false;
+      }
+      if (
+        !swapTarget &&
+        typeFilter !== 'all' &&
+        section.blockType !== typeFilter
+      ) {
         return false;
       }
       if (!query) return true;
@@ -121,16 +134,40 @@ export function SectionLibraryModal({
         (section.sectionVariant?.toLowerCase().includes(query) ?? false)
       );
     });
-  }, [sections, search, typeFilter]);
+  }, [sections, search, typeFilter, swapTarget]);
 
-  const handleImport = async (section: SectionCatalogEntry) => {
+  // Group by source template so each section is labelled with its origin.
+  const groups = useMemo(() => {
+    const byPreset = new Map<string, SectionCatalogEntry[]>();
+    for (const section of filtered) {
+      const list = byPreset.get(section.presetId) ?? [];
+      list.push(section);
+      byPreset.set(section.presetId, list);
+    }
+    return Array.from(byPreset.values()).map((items) => ({
+      presetId: items[0].presetId,
+      presetName: items[0].presetName,
+      presetPreview: items[0].presetPreview,
+      items
+    }));
+  }, [filtered]);
+
+  const handleSelect = async (section: SectionCatalogEntry) => {
     try {
       setIsImporting(section.id);
-      await apiClient.importSectionToDraft({
-        presetId: section.presetId,
-        blockId: section.blockId
-      });
-      ErrorHandler.showSuccess(t('settings.sectionImportedSuccess'));
+      if (swapTarget) {
+        await apiClient.swapSectionInDraft(swapTarget.blockId, {
+          presetId: section.presetId,
+          blockId: section.blockId
+        });
+        ErrorHandler.showSuccess(t('settings.sectionSwappedSuccess'));
+      } else {
+        await apiClient.importSectionToDraft({
+          presetId: section.presetId,
+          blockId: section.blockId
+        });
+        ErrorHandler.showSuccess(t('settings.sectionImportedSuccess'));
+      }
       onImported();
       onClose();
     } catch (error) {
@@ -148,10 +185,14 @@ export function SectionLibraryModal({
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div>
             <h2 className="text-lg font-semibold">
-              {t('settings.sectionLibraryTitle')}
+              {swapTarget
+                ? t('settings.sectionReplaceTitle')
+                : t('settings.sectionLibraryTitle')}
             </h2>
             <p className="text-xs text-muted-foreground">
-              {t('settings.sectionLibraryDescription')}
+              {swapTarget
+                ? t('settings.sectionReplaceDescription')
+                : t('settings.sectionLibraryDescription')}
             </p>
           </div>
           <button
@@ -174,35 +215,37 @@ export function SectionLibraryModal({
               className="h-8 pl-8 text-sm"
             />
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              type="button"
-              onClick={() => setTypeFilter('all')}
-              className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium transition-colors ${
-                typeFilter === 'all'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-accent'
-              }`}
-            >
-              {t('settings.sectionFilterAll')}
-            </button>
-            {blockTypes.map((type) => (
+          {!swapTarget && (
+            <div className="flex flex-wrap gap-1.5">
               <button
-                key={type}
                 type="button"
-                onClick={() => setTypeFilter(type)}
+                onClick={() => setTypeFilter('all')}
                 className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium transition-colors ${
-                  typeFilter === type
+                  typeFilter === 'all'
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground hover:bg-accent'
                 }`}
               >
-                {BLOCK_TYPE_LABEL_KEYS[type]
-                  ? t(BLOCK_TYPE_LABEL_KEYS[type] as Parameters<typeof t>[0])
-                  : type}
+                {t('settings.sectionFilterAll')}
               </button>
-            ))}
-          </div>
+              {blockTypes.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setTypeFilter(type)}
+                  className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium transition-colors ${
+                    typeFilter === type
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground hover:bg-accent'
+                  }`}
+                >
+                  {BLOCK_TYPE_LABEL_KEYS[type]
+                    ? t(BLOCK_TYPE_LABEL_KEYS[type] as Parameters<typeof t>[0])
+                    : type}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto p-3">
@@ -215,56 +258,82 @@ export function SectionLibraryModal({
               {t('settings.sectionLibraryEmpty')}
             </p>
           ) : (
-            <div className="grid gap-2 sm:grid-cols-2">
-              {filtered.map((section) => (
-                <div
-                  key={section.id}
-                  className="flex flex-col gap-2 rounded-lg border p-3 transition-colors hover:border-primary/40"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">
-                        {section.label}
-                      </p>
-                      <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                        <LayoutTemplate className="h-3 w-3 shrink-0" />
-                        {section.presetName}
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 flex-col items-end gap-1">
-                      <Badge variant="secondary" className="text-[9px]">
-                        {section.blockType}
-                      </Badge>
-                      {section.imageSlots.length > 0 && (
-                        <Badge
-                          variant="outline"
-                          className="gap-0.5 text-[9px] text-muted-foreground"
-                        >
-                          <ImageIcon className="h-2.5 w-2.5" />
-                          {section.imageSlots.length}
-                        </Badge>
-                      )}
-                    </div>
+            <div className="space-y-4">
+              {groups.map((group) => (
+                <div key={group.presetId} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    {group.presetPreview ? (
+                      <img
+                        src={group.presetPreview}
+                        alt={group.presetName}
+                        className="h-7 w-12 shrink-0 rounded border object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-7 w-12 shrink-0 items-center justify-center rounded border bg-muted">
+                        <LayoutTemplate className="h-3.5 w-3.5 text-muted-foreground" />
+                      </span>
+                    )}
+                    <p className="text-xs font-semibold">{group.presetName}</p>
                   </div>
-                  {section.imageSlots.length > 0 && (
-                    <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                      <ImageIcon className="h-2.5 w-2.5 shrink-0" />
-                      {t('settings.sectionNeedsImages')}:{' '}
-                      {summarizeImageSlots(section.imageSlots)}
-                    </p>
-                  )}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    className="h-7 text-xs"
-                    disabled={isImporting === section.id}
-                    onClick={() => handleImport(section)}
-                  >
-                    {isImporting === section.id
-                      ? t('settings.sectionImporting')
-                      : t('settings.sectionAddToDraft')}
-                  </Button>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {group.items.map((section) => (
+                      <div
+                        key={section.id}
+                        className="flex flex-col gap-2 rounded-lg border p-3 transition-colors hover:border-primary/40"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium">
+                              {section.label}
+                            </p>
+                            <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <LayoutTemplate className="h-3 w-3 shrink-0" />
+                              {t('settings.sectionFromTemplate', {
+                                name: section.presetName
+                              })}
+                            </p>
+                          </div>
+                          <div className="flex shrink-0 flex-col items-end gap-1">
+                            <Badge variant="secondary" className="text-[9px]">
+                              {section.blockType}
+                            </Badge>
+                            {section.imageSlots.length > 0 && (
+                              <Badge
+                                variant="outline"
+                                className="gap-0.5 text-[9px] text-muted-foreground"
+                              >
+                                <ImageIcon className="h-2.5 w-2.5" />
+                                {section.imageSlots.length}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        {section.imageSlots.length > 0 && (
+                          <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                            <ImageIcon className="h-2.5 w-2.5 shrink-0" />
+                            {t('settings.sectionNeedsImages')}:{' '}
+                            {summarizeImageSlots(section.imageSlots)}
+                          </p>
+                        )}
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs"
+                          disabled={isImporting === section.id}
+                          onClick={() => handleSelect(section)}
+                        >
+                          {isImporting === section.id
+                            ? swapTarget
+                              ? t('settings.sectionReplacing')
+                              : t('settings.sectionImporting')
+                            : swapTarget
+                              ? t('settings.sectionReplace')
+                              : t('settings.sectionAddToDraft')}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>

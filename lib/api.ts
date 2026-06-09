@@ -2467,6 +2467,20 @@ class ApiClient {
     return (response.data as { data?: unknown })?.data ?? null;
   }
 
+  async swapSectionInDraft(
+    blockId: string,
+    payload: { presetId: string; blockId: string }
+  ) {
+    const response = await this.request(
+      `/ui-template/current/draft/sections/${blockId}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(payload)
+      }
+    );
+    return (response.data as { data?: unknown })?.data ?? null;
+  }
+
   async getCurrentPricingConfig() {
     const response = await this.request('/academies/current/pricing-config');
     return response.data;

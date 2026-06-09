@@ -1473,6 +1473,13 @@ export const en = {
     sectionAddToDraft: 'Add to draft',
     sectionImporting: 'Adding…',
     sectionImportedSuccess: 'Section added to draft',
+    sectionReplaceTitle: 'Replace section',
+    sectionReplaceDescription:
+      'Pick the equivalent section from another template. Matching text overrides are kept.',
+    sectionReplace: 'Replace',
+    sectionReplacing: 'Replacing…',
+    sectionSwappedSuccess: 'Section replaced',
+    sectionFromTemplate: 'From {{name}}',
     addSectionFromLibrary: 'Add section',
     removeBlock: 'Remove block',
     slideshowMode: 'Slideshow ({{count}} slides)',
