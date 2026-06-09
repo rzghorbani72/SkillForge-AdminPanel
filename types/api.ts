@@ -619,7 +619,14 @@ export interface UIBlockConfig {
     | 'testimonials'
     | 'footer'
     | 'sidebar'
-    | 'slideshow';
+    | 'slideshow'
+    | 'membership'
+    | 'marquee'
+    | 'course-grid'
+    | 'pricing'
+    | 'cta'
+    | 'categories'
+    | 'projects';
   order: number;
   isVisible: boolean;
   config?: Record<string, any>;

@@ -11,6 +11,9 @@ import type { UIBlockConfig } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import { SectionSlotEditor } from './section-slot-editor';
+import { TextOverridesEditor } from './text-overrides-editor';
+import { isGridSection } from './slot-constants';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
 type HeroMode = 'illustration' | 'slideshow';
@@ -990,6 +993,12 @@ export function BlockEditor({
           set={set}
           label={t('settings.sectionImageSizing')}
         />
+      )}
+
+      <TextOverridesEditor blockType={block.type} cfg={cfg} set={set} />
+
+      {isGridSection(block.type) && (
+        <SectionSlotEditor blockType={block.type} cfg={cfg} set={set} />
       )}
     </div>
   );
