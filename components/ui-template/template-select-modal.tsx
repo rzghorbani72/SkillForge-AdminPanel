@@ -8,7 +8,9 @@ import {
   BookOpen,
   Layout,
   Minimize2,
-  Type
+  Type,
+  Lock,
+  Trash2
 } from 'lucide-react';
 import {
   Dialog,
@@ -28,12 +30,14 @@ interface TemplateSelectModalProps {
   presets: TemplatePreset[];
   activePresetId: string;
   onApply: (presetId: string) => Promise<void>;
+  onDelete?: (preset: TemplatePreset) => Promise<void>;
   isApplying: boolean;
 }
 
 type Category =
   | 'all'
   | 'featured'
+  | 'dedicated'
   | 'creator'
   | 'academy'
   | 'community'
@@ -53,6 +57,7 @@ const PRESET_CATEGORY: Record<
 const CATEGORIES: PresetCategory[] = [
   { id: 'all', label: 'همه', icon: Layout },
   { id: 'featured', label: 'ویژه', icon: Sparkles },
+  { id: 'dedicated', label: 'اختصاصی', icon: Lock },
   { id: 'creator', label: 'سازنده', icon: Users },
   { id: 'academy', label: 'آکادمی', icon: BookOpen },
   { id: 'community', label: 'جامعه', icon: Users },
@@ -75,6 +80,7 @@ const SHADOW_LABEL: Record<string, string> = {
 const CATEGORY_LABEL: Record<string, string> = {
   all: 'همه',
   featured: 'ویژه',
+  dedicated: 'اختصاصی',
   creator: 'سازنده',
   academy: 'آکادمی',
   community: 'جامعه',
@@ -87,6 +93,7 @@ export function TemplateSelectModal({
   presets,
   activePresetId,
   onApply,
+  onDelete,
   isApplying
 }: TemplateSelectModalProps) {
   const { t } = useTranslation();
@@ -95,6 +102,7 @@ export function TemplateSelectModal({
 
   const filtered = presets.filter((p) => {
     if (category === 'all') return true;
+    if (category === 'dedicated') return p.visibility === 'DEDICATED';
     if (category === 'featured') return PRESET_CATEGORY[p.id]?.featured;
     return PRESET_CATEGORY[p.id]?.category === category;
   });
@@ -197,6 +205,7 @@ export function TemplateSelectModal({
                     isActive={preset.id === activePresetId}
                     isSelected={preset.id === selectedId}
                     onSelect={() => setSelectedId(preset.id)}
+                    onDelete={onDelete}
                     large
                   />
                 ))}
@@ -226,6 +235,7 @@ export function TemplateSelectModal({
                     isActive={preset.id === activePresetId}
                     isSelected={preset.id === selectedId}
                     onSelect={() => setSelectedId(preset.id)}
+                    onDelete={onDelete}
                     large={false}
                   />
                 ))}
@@ -324,6 +334,7 @@ interface TemplateCardProps {
   isActive: boolean;
   isSelected: boolean;
   onSelect: () => void;
+  onDelete?: (preset: TemplatePreset) => Promise<void>;
   large: boolean;
 }
 
@@ -332,10 +343,19 @@ function TemplateCard({
   isActive,
   isSelected,
   onSelect,
+  onDelete,
   large
 }: TemplateCardProps) {
   const ds = getDesignSystem(preset.id);
-  const category = PRESET_CATEGORY[preset.id]?.category ?? 'classic';
+  const isDedicated = preset.visibility === 'DEDICATED';
+  const category = isDedicated
+    ? 'dedicated'
+    : (PRESET_CATEGORY[preset.id]?.category ?? 'classic');
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDelete) await onDelete(preset);
+  };
 
   return (
     <button
@@ -359,6 +379,22 @@ function TemplateCard({
           <span className="inline-flex items-center rounded-full bg-emerald-600 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-white">
             فعال
           </span>
+        )}
+        {isDedicated && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-white">
+            <Lock className="h-2.5 w-2.5" />
+            اختصاصی
+          </span>
+        )}
+        {isDedicated && preset.isOwned && onDelete && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="inline-flex items-center justify-center rounded-full bg-red-50 p-1 text-red-600 transition-colors hover:bg-red-100"
+            aria-label="حذف قالب اختصاصی"
+          >
+            <Trash2 className="h-3 w-3" />
+          </button>
         )}
         {/* Radio circle */}
         <div

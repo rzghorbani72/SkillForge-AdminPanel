@@ -647,12 +647,16 @@ export interface UITemplate {
   academy?: Academy;
 }
 
+export type TemplateVisibility = 'PUBLIC' | 'DEDICATED';
+
 export interface TemplatePreset {
   id: string;
   name: string;
   description: string;
   preview?: string;
   blocks: UIBlockConfig[];
+  visibility?: TemplateVisibility;
+  isOwned?: boolean;
 }
 
 export interface PricingConfig {

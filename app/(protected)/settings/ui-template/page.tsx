@@ -8,7 +8,9 @@ import {
   Wand2,
   LayoutTemplate,
   Pencil,
-  Eye
+  Eye,
+  Lock,
+  Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -171,6 +173,34 @@ export default function UITemplateSettingsPage() {
     setSelectedPreset(null);
     setBaseIframeSrc(null);
     setShowCustomizer(false);
+  };
+
+  const refreshPresets = useCallback(async () => {
+    const data = await apiClient.getAvailableTemplatePresets().catch(() => []);
+    setPresets(data as TemplatePreset[]);
+  }, []);
+
+  const handleDeleteTemplate = async (preset: TemplatePreset) => {
+    if (!window.confirm(`حذف قالب اختصاصی "${preset.name}"؟`)) return;
+    try {
+      await apiClient.deleteDedicatedTemplate(preset.id);
+      await refreshPresets();
+      ErrorHandler.showSuccess('قالب اختصاصی حذف شد');
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    }
+  };
+
+  const handleSaveAsTemplate = async () => {
+    const name = window.prompt('نام قالب اختصاصی را وارد کنید')?.trim();
+    if (!name) return;
+    try {
+      await apiClient.createDedicatedTemplate({ name, blocks: draftBlocks });
+      await refreshPresets();
+      ErrorHandler.showSuccess(`قالب اختصاصی "${name}" ذخیره شد`);
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    }
   };
 
   // ── Draft save helpers ──────────────────────────────────────────────────────
@@ -437,6 +467,7 @@ export default function UITemplateSettingsPage() {
               onBannerImageChange={handleBannerImageChange}
               onOpenPicker={handleOpenPicker}
               onReset={handleReset}
+              onSaveAsTemplate={handleSaveAsTemplate}
               onClose={() => setShowCustomizer(false)}
             />
           )}
@@ -526,6 +557,9 @@ export default function UITemplateSettingsPage() {
               isActive={preset.id === activePresetId}
               index={idx}
               onClick={() => handleCardClick(preset)}
+              onDelete={
+                preset.isOwned ? () => handleDeleteTemplate(preset) : undefined
+              }
             />
           ))}
         </div>
@@ -541,10 +575,18 @@ interface GalleryCardProps {
   isActive: boolean;
   index: number;
   onClick: () => void;
+  onDelete?: () => void;
 }
 
-function GalleryCard({ preset, isActive, index, onClick }: GalleryCardProps) {
+function GalleryCard({
+  preset,
+  isActive,
+  index,
+  onClick,
+  onDelete
+}: GalleryCardProps) {
   const ds = getDesignSystem(preset.id);
+  const isDedicated = preset.visibility === 'DEDICATED';
   const swatches = [
     ds.colors.background,
     ds.colors.primary,
@@ -559,6 +601,30 @@ function GalleryCard({ preset, isActive, index, onClick }: GalleryCardProps) {
       style={{ animationDelay: `${index * 55}ms` }}
       className="group relative cursor-pointer overflow-hidden rounded-2xl border border-border/50 bg-background text-right shadow-sm duration-300 animate-in fade-in slide-in-from-bottom-3 hover:-translate-y-1 hover:border-border hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]"
     >
+      {/* Dedicated badge + owner delete */}
+      <div className="absolute left-2.5 top-2.5 z-20 flex items-center gap-1.5">
+        {isDedicated && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+            <Lock className="h-2.5 w-2.5" />
+            اختصاصی
+          </span>
+        )}
+        {onDelete && (
+          <span
+            role="button"
+            tabIndex={0}
+            title="حذف قالب اختصاصی"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="inline-flex items-center justify-center rounded-full bg-white/90 p-1 text-red-600 shadow-sm transition-colors hover:bg-red-50"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </span>
+        )}
+      </div>
+
       {/* Thumbnail */}
       <div className="relative h-48 overflow-hidden bg-muted/40">
         <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">

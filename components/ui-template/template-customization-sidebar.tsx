@@ -10,7 +10,8 @@ import {
   GripVertical,
   ArrowLeftRight,
   Lock,
-  Plus
+  Plus,
+  Save
 } from 'lucide-react';
 import {
   DndContext,
@@ -116,6 +117,7 @@ export interface TemplateCustomizationSidebarProps {
   onBannerImageChange: (url: string) => void;
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
   onReset: () => void;
+  onSaveAsTemplate?: () => void;
   onClose: () => void;
 }
 
@@ -833,6 +835,7 @@ export function TemplateCustomizationSidebar({
   onBannerImageChange,
   onOpenPicker,
   onReset,
+  onSaveAsTemplate,
   onClose
 }: TemplateCustomizationSidebarProps) {
   return (
@@ -896,8 +899,18 @@ export function TemplateCustomizationSidebar({
         />
       </div>
 
-      {/* Footer – reset */}
-      <div className="flex-shrink-0 border-t border-zinc-700 p-4">
+      {/* Footer – save as dedicated template + reset */}
+      <div className="flex-shrink-0 space-y-2 border-t border-zinc-700 p-4">
+        {onSaveAsTemplate && (
+          <button
+            type="button"
+            onClick={onSaveAsTemplate}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-600/10 py-2.5 text-sm font-medium text-indigo-300 transition-colors hover:bg-indigo-600/20"
+          >
+            <Save className="h-4 w-4" />
+            ذخیره به‌عنوان قالب اختصاصی
+          </button>
+        )}
         <button
           type="button"
           onClick={onReset}

@@ -2453,6 +2453,26 @@ class ApiClient {
     return (response.data as any)?.data ?? null;
   }
 
+  async createDedicatedTemplate(payload: {
+    name: string;
+    description?: string;
+    preview?: string;
+    blocks: unknown[];
+  }) {
+    const response = await this.request('/ui-template/templates', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return (response.data as any)?.data ?? null;
+  }
+
+  async deleteDedicatedTemplate(key: string) {
+    const response = await this.request(`/ui-template/templates/${key}`, {
+      method: 'DELETE'
+    });
+    return (response.data as any) ?? null;
+  }
+
   async getSectionCatalog() {
     const response = await this.request('/ui-template/sections');
     const data = (response.data as { data?: unknown })?.data;
