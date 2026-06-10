@@ -1,6 +1,6 @@
 'use client';
 
-import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { Input } from '@/components/ui/input';
 import {
   GRID_SLOT_COUNTS,
@@ -11,18 +11,31 @@ import {
   type SlotVisibility
 } from './slot-constants';
 
+const SLIDER_LABEL_KEYS: Record<string, string> = {
+  'Card width': 'sitePreview.panelCardWidth',
+  'Card height': 'sitePreview.panelCardHeight',
+  'Card padding': 'sitePreview.panelCardPadding',
+  'Grid gap': 'sitePreview.panelGridGap'
+};
+
+const SLOT_VISIBILITY_KEYS: Record<string, string> = {
+  live: 'sitePreview.panelSlotLive',
+  placeholder: 'sitePreview.panelSlotPlaceholder',
+  hidden: 'sitePreview.panelSlotHidden'
+};
+
 interface SectionSlotEditorProps {
   blockType: string;
   cfg: Record<string, unknown>;
   set: (key: string, value: unknown) => void;
 }
 
-// Section-wide card sizing + per-slot three-way visibility for fixed-count grids.
 export function SectionSlotEditor({
   blockType,
   cfg,
   set
 }: SectionSlotEditorProps) {
+  const { t } = useTranslation();
   const count = GRID_SLOT_COUNTS[blockType];
   if (!count) return null;
 
@@ -42,33 +55,38 @@ export function SectionSlotEditor({
   };
 
   return (
-    <div className="space-y-3 rounded-md border border-dashed p-2.5">
-      <Label className="text-xs font-medium">Slots & sizing</Label>
+    <div className="space-y-3 rounded-md border border-dashed border-zinc-700 p-2.5">
+      <span className="text-xs font-medium text-zinc-200">
+        {t('sitePreview.panelSlotsAndSizing')}
+      </span>
 
-      {/* Section-wide size sliders (clamped) */}
+      {/* Section-wide size sliders */}
       <div className="space-y-2">
         {SLOT_STYLE_SLIDERS.map(({ key, label, min, max, step }) => {
+          const sliderLabel = SLIDER_LABEL_KEYS[label]
+            ? t(SLIDER_LABEL_KEYS[label])
+            : label;
           const value =
             typeof style[key] === 'number' ? (style[key] as number) : undefined;
           return (
             <div key={key} className="space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {label}
+                <span className="text-[10px] uppercase tracking-wide text-zinc-400">
+                  {sliderLabel}
                 </span>
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-[10px] text-zinc-400">
                   {value != null ? `${value}px` : 'auto'}
                 </span>
               </div>
               <input
                 type="range"
-                aria-label={label}
+                aria-label={sliderLabel}
                 min={min}
                 max={max}
                 step={step}
                 value={value ?? min}
                 onChange={(e) => setStyle(key, Number(e.target.value))}
-                className="w-full accent-primary"
+                className="w-full accent-blue-500"
               />
             </div>
           );
@@ -77,15 +95,18 @@ export function SectionSlotEditor({
 
       {/* Per-slot visibility */}
       <div className="space-y-1.5">
-        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-          Slot visibility
+        <span className="text-[10px] uppercase tracking-wide text-zinc-400">
+          {t('sitePreview.panelSlotVisibility')}
         </span>
         {Array.from({ length: count }, (_, i) => {
           const slot = slots[i] ?? { visibility: 'live' as SlotVisibility };
           return (
-            <div key={i} className="space-y-1 rounded border p-1.5">
+            <div
+              key={i}
+              className="space-y-1 rounded border border-zinc-700 p-1.5"
+            >
               <div className="flex items-center gap-1.5">
-                <span className="w-5 shrink-0 text-[10px] font-medium text-muted-foreground">
+                <span className="w-5 shrink-0 text-[10px] font-medium text-zinc-400">
                   #{i + 1}
                 </span>
                 <div className="flex flex-1 gap-1">
@@ -94,13 +115,13 @@ export function SectionSlotEditor({
                       key={v}
                       type="button"
                       onClick={() => setSlot(i, { visibility: v })}
-                      className={`flex-1 rounded border py-0.5 text-[10px] font-medium capitalize transition-colors ${
+                      className={`flex-1 rounded border py-0.5 text-[10px] font-medium transition-colors ${
                         slot.visibility === v
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border hover:bg-accent'
+                          ? 'border-blue-500 bg-blue-600 text-white'
+                          : 'border-zinc-600 text-zinc-300 hover:bg-zinc-800'
                       }`}
                     >
-                      {v}
+                      {SLOT_VISIBILITY_KEYS[v] ? t(SLOT_VISIBILITY_KEYS[v]) : v}
                     </button>
                   ))}
                 </div>
@@ -111,8 +132,8 @@ export function SectionSlotEditor({
                   onChange={(e) =>
                     setSlot(i, { placeholderText: e.target.value })
                   }
-                  placeholder="Placeholder text"
-                  className="h-7 text-xs"
+                  placeholder={t('sitePreview.panelPlaceholderTextHint')}
+                  className="h-7 border-zinc-600 bg-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
                 />
               )}
             </div>
