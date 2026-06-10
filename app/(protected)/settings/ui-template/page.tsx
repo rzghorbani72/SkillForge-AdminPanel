@@ -153,18 +153,18 @@ export default function UITemplateSettingsPage() {
 
       const cfg = ((themeRaw as Record<string, any> | null)?.data?.configs ??
         (themeRaw as Record<string, any> | null)?.configs ??
-        {}) as Record<string, string>;
+        {}) as Record<string, string | boolean | null>;
 
       // Hydrate the sidebar from a dedicated template's restored palette.
       if (isDedicated) {
-        if (cfg.primary_color) setPrimaryColor(cfg.primary_color);
+        if (cfg.primary_color) setPrimaryColor(cfg.primary_color as string);
         if (cfg.border_radius_style)
           setBorderRadius(cfg.border_radius_style as BorderRadius);
         if (cfg.shadow_style) setShadow(cfg.shadow_style as Shadow);
         setDarkMode(
-          cfg.dark_mode === 'true'
+          cfg.dark_mode === 'true' || cfg.dark_mode === true
             ? true
-            : cfg.dark_mode === 'false'
+            : cfg.dark_mode === 'false' || cfg.dark_mode === false
               ? false
               : null
         );
@@ -240,11 +240,18 @@ export default function UITemplateSettingsPage() {
       ? selectedPreset!.name
       : window.prompt('نام قالب اختصاصی را وارد کنید')?.trim();
     if (!name) return;
+    setIsSaving(true);
     try {
-      // Flush pending debounced edits so the snapshot captures the live look,
-      // not the last value the 800ms debounce happened to persist.
-      await saveThemeDraft(primaryColor, borderRadius, shadow, darkMode);
-      await saveBlocksDraft(draftBlocks);
+      // Flush pending style changes with a targeted save — do NOT rebuild the
+      // full palette from primary here. buildThemeDraftFromPrimary would
+      // overwrite the template's curated design-system colors with
+      // algorithm-derived ones, causing unintentional color drift on every save.
+      await apiClient.saveThemeDraft({
+        border_radius_style: borderRadius,
+        shadow_style: shadow,
+        dark_mode: darkMode
+      });
+      await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
       const saved = (await apiClient.saveDraftAsTemplate({
         name,
         preview: coverImage ?? undefined
@@ -260,8 +267,11 @@ export default function UITemplateSettingsPage() {
           ? `قالب "${name}" به‌روزرسانی شد`
           : `قالب اختصاصی "${name}" ذخیره شد`
       );
+      handleClosePreview();
     } catch (error) {
       ErrorHandler.handleApiError(error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
