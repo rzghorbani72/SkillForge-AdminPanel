@@ -8,8 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
-import { SectionPreviewFrame } from './section-preview-frame';
 
 export interface ImageSlot {
   key: string;
@@ -26,6 +24,7 @@ export interface SectionCatalogEntry {
   blockType: string;
   sectionVariant: string | null;
   label: string;
+  coverImage: string | null;
   hasImagePlaceholder: boolean;
   imageSlots: ImageSlot[];
 }
@@ -79,29 +78,6 @@ export function SectionLibraryModal({
   const [isImporting, setIsImporting] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [preview, setPreview] = useState<{
-    baseUrl: string;
-    token: string;
-  } | null>(null);
-
-  // Preview session powers the live section thumbnails (storefront origin +
-  // academy-scoped token). Fetched once per open; failure degrades to no thumbs.
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    apiClient
-      .getTemplatePreviewSession()
-      .then((session) => {
-        const baseUrl = session.storefrontBaseUrl ?? resolveStorefrontBaseUrl();
-        if (!cancelled && baseUrl) {
-          setPreview({ baseUrl, token: session.token });
-        }
-      })
-      .catch(() => undefined);
-    return () => {
-      cancelled = true;
-    };
-  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -304,19 +280,22 @@ export function SectionLibraryModal({
                         key={section.id}
                         className="group/card overflow-hidden rounded-lg border transition-colors hover:border-primary/40"
                       >
-                        {/* Live storefront render of this section */}
-                        <div className="relative h-28 w-full border-b bg-muted/30">
-                          {preview ? (
-                            <SectionPreviewFrame
-                              baseUrl={preview.baseUrl}
-                              templateKey={section.presetId}
-                              blockId={section.blockId}
-                              token={preview.token}
-                              className="h-full w-full"
+                        {/* Static cover at the locked 16/9 cover ratio */}
+                        <div className="relative aspect-[16/9] w-full border-b bg-muted/30">
+                          {section.coverImage ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={section.coverImage}
+                              alt={blockLabel(section.blockType)}
+                              loading="lazy"
+                              className="h-full w-full object-cover object-top"
                             />
                           ) : (
-                            <div className="flex h-full items-center justify-center">
-                              <LayoutTemplate className="h-5 w-5 text-muted-foreground/40" />
+                            <div className="flex h-full flex-col items-center justify-center gap-1 text-muted-foreground/50">
+                              <LayoutTemplate className="h-6 w-6" />
+                              <span className="text-[10px]">
+                                {blockLabel(section.blockType)}
+                              </span>
                             </div>
                           )}
                           <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover/card:opacity-100">

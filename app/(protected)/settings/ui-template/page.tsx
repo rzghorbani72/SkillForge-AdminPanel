@@ -85,6 +85,9 @@ export default function UITemplateSettingsPage() {
     type: string;
   } | null>(null);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  // Cover image for a dedicated template; seeded from the source template so it
+  // inherits a meaningful image until the manager replaces it.
+  const [coverImage, setCoverImage] = useState<string | null>(null);
 
   const iframeSrc = baseIframeSrc
     ? appendPreviewCacheBuster(baseIframeSrc, refreshKey)
@@ -118,6 +121,7 @@ export default function UITemplateSettingsPage() {
     setIsApplied(false);
     setShowCustomizer(false);
     setSelectedBlockId(null);
+    setCoverImage(preset.preview ?? null);
     setIsPreviewLoading(true);
 
     // Base presets seed their palette from the design system; dedicated
@@ -242,10 +246,14 @@ export default function UITemplateSettingsPage() {
       await saveThemeDraft(primaryColor, borderRadius, shadow, darkMode);
       await saveBlocksDraft(draftBlocks);
       const saved = (await apiClient.saveDraftAsTemplate({
-        name
+        name,
+        preview: coverImage ?? undefined
       })) as TemplatePreset | null;
       // Sync the active template so subsequent saves update it instead of forking.
-      if (saved) setSelectedPreset(saved);
+      if (saved) {
+        setSelectedPreset(saved);
+        setCoverImage(saved.preview ?? null);
+      }
       await refreshPresets();
       ErrorHandler.showSuccess(
         editingOwn
@@ -575,6 +583,8 @@ export default function UITemplateSettingsPage() {
               onClose={() => setShowCustomizer(false)}
               selectedBlockId={selectedBlockId}
               onSelectBlock={setSelectedBlockId}
+              coverImage={coverImage}
+              onCoverImageChange={setCoverImage}
             />
           )}
 
@@ -748,16 +758,26 @@ function GalleryCard({
         )}
       </div>
 
-      {/* Thumbnail */}
-      <div className="relative h-48 overflow-hidden bg-muted/40">
-        <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">
-          <div
-            className="origin-top-left"
-            style={{ transform: 'scale(0.5)', width: '200%' }}
-          >
-            <TemplatePreview preset={preset} />
+      {/* Thumbnail — static cover image at the locked 16/9 cover ratio */}
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted/40">
+        {preset.preview ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={preset.preview}
+            alt={preset.name}
+            loading="lazy"
+            className="h-full w-full object-cover object-top"
+          />
+        ) : (
+          <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">
+            <div
+              className="origin-top-left"
+              style={{ transform: 'scale(0.5)', width: '200%' }}
+            >
+              <TemplatePreview preset={preset} />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Hover overlay */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/[0.52] opacity-0 transition-opacity duration-200 group-hover:opacity-100">

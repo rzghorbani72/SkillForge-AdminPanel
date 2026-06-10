@@ -17,6 +17,7 @@ import type { UIBlockConfig } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   getSectionSchema,
   isSectionIncomplete,
@@ -28,12 +29,6 @@ import { isGridSection } from './slot-constants';
 
 type Tab = 'content' | 'style' | 'layout';
 type HeroBgType = 'gradient' | 'solid' | 'image';
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'content', label: 'محتوا' },
-  { id: 'style', label: 'استایل' },
-  { id: 'layout', label: 'چیدمان' }
-];
 
 export interface SectionCustomizationPanelProps {
   block: UIBlockConfig | null;
@@ -56,6 +51,7 @@ export function SectionCustomizationPanel({
   onDelete,
   onClose
 }: SectionCustomizationPanelProps) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('content');
 
   if (!block) return null;
@@ -66,6 +62,12 @@ export function SectionCustomizationPanel({
     onUpdate(block.id, { ...cfg, [key]: value });
 
   const incomplete = isSectionIncomplete(block.type, cfg);
+
+  const TABS: { id: Tab; label: string }[] = [
+    { id: 'content', label: t('sitePreview.panelTabContent') },
+    { id: 'style', label: t('sitePreview.panelTabStyle') },
+    { id: 'layout', label: t('sitePreview.panelTabLayout') }
+  ];
 
   return (
     <div
@@ -80,7 +82,7 @@ export function SectionCustomizationPanel({
           </span>
           {incomplete && (
             <span
-              title="این بخش محتوای لازم را ندارد"
+              title={t('sitePreview.panelIncomplete')}
               className="h-2 w-2 rounded-full bg-amber-400"
             />
           )}
@@ -88,7 +90,7 @@ export function SectionCustomizationPanel({
         <button
           type="button"
           onClick={onClose}
-          aria-label="بستن"
+          aria-label={t('common.close')}
           className="rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
         >
           <X className="h-4 w-4" />
@@ -158,6 +160,7 @@ function ContentTab({
   set: (key: string, value: unknown) => void;
   schema: ReturnType<typeof getSectionSchema>;
 }) {
+  const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const primary = schema.content.filter((f) => !f.advanced);
   const advanced = schema.content.filter((f) => f.advanced);
@@ -180,7 +183,7 @@ function ContentTab({
             onClick={() => setShowAdvanced((v) => !v)}
             className="flex w-full items-center justify-between text-xs font-medium text-zinc-400 hover:text-zinc-200"
           >
-            <span>تنظیمات پیشرفته</span>
+            <span>{t('sitePreview.panelAdvanced')}</span>
             {showAdvanced ? (
               <ChevronUp className="h-3.5 w-3.5" />
             ) : (
@@ -197,7 +200,6 @@ function ContentTab({
         </div>
       )}
 
-      {/* List-like content (eyebrows, slot cards) for grid sections */}
       {isGridSection(block.type) && (
         <div className="space-y-3">
           <TextOverridesEditor blockType={block.type} cfg={cfg} set={set} />
@@ -207,7 +209,7 @@ function ContentTab({
 
       {!hasAnyContent && (
         <p className="text-xs text-zinc-500">
-          این بخش محتوای قابل ویرایش ندارد.
+          {t('sitePreview.panelNoContent')}
         </p>
       )}
     </div>
@@ -223,6 +225,8 @@ function Field({
   cfg: Record<string, unknown>;
   set: (key: string, value: unknown) => void;
 }) {
+  const { t } = useTranslation();
+
   if (field.kind === 'toggle') {
     return (
       <div className="flex items-center justify-between">
@@ -260,7 +264,7 @@ function Field({
       {empty && (
         <p className="flex items-center gap-1 text-[11px] text-amber-400">
           <AlertTriangle className="h-3 w-3 shrink-0" />
-          یک {field.label} اضافه کنید تا این بخش برای بازدیدکننده معنا پیدا کند.
+          {t('sitePreview.panelRequiredHint', { field: field.label })}
         </p>
       )}
     </div>
@@ -282,10 +286,12 @@ function StyleTab({
   onUpdate: (blockId: string, config: Record<string, unknown>) => void;
   hasBackground: boolean;
 }) {
+  const { t } = useTranslation();
+
   if (!hasBackground) {
     return (
       <p className="text-xs text-zinc-500">
-        استایل این بخش از تم سراسری قالب پیروی می‌کند.
+        {t('sitePreview.panelStyleFromTheme')}
       </p>
     );
   }
@@ -305,6 +311,7 @@ function HeroBackground({
   set: (key: string, value: unknown) => void;
   onUpdate: (blockId: string, config: Record<string, unknown>) => void;
 }) {
+  const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
   const bgType: HeroBgType = (cfg.bgType as HeroBgType) ?? 'gradient';
 
@@ -332,20 +339,20 @@ function HeroBackground({
     }
   };
 
+  const bgOptions: { type: HeroBgType; label: string }[] = [
+    { type: 'gradient', label: t('sitePreview.panelBgGradient') },
+    { type: 'solid', label: t('sitePreview.panelBgSolid') },
+    { type: 'image', label: t('sitePreview.panelBgImage') }
+  ];
+
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
-          پس‌زمینه
+          {t('sitePreview.panelBackground')}
         </span>
         <div className="grid grid-cols-3 gap-1.5">
-          {(
-            [
-              { type: 'gradient', label: 'گرادیان' },
-              { type: 'solid', label: 'تک‌رنگ' },
-              { type: 'image', label: 'تصویر' }
-            ] as { type: HeroBgType; label: string }[]
-          ).map(({ type, label }) => (
+          {bgOptions.map(({ type, label }) => (
             <button
               key={type}
               type="button"
@@ -366,7 +373,7 @@ function HeroBackground({
         <div className="flex items-center gap-2">
           <input
             type="color"
-            title="رنگ پس‌زمینه"
+            title={t('sitePreview.panelBackground')}
             value={(cfg.bgColor as string) ?? '#3b82f6'}
             onChange={(e) => set('bgColor', e.target.value)}
             className="h-8 w-9 shrink-0 cursor-pointer rounded border border-zinc-600 bg-transparent"
@@ -391,7 +398,7 @@ function HeroBackground({
               />
               <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
                 <Upload className="ml-1 h-3.5 w-3.5" />
-                جایگزینی تصویر
+                {t('sitePreview.panelReplaceImage')}
                 <input
                   type="file"
                   accept="image/*"
@@ -404,7 +411,9 @@ function HeroBackground({
           ) : (
             <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-zinc-600 py-4 text-xs text-zinc-400 transition-colors hover:border-blue-500 hover:text-blue-400">
               <Upload className="h-4 w-4" />
-              {isUploading ? 'در حال آپلود...' : 'آپلود تصویر'}
+              {isUploading
+                ? t('sitePreview.panelUploading')
+                : t('sitePreview.panelUploadImage')}
               <input
                 type="file"
                 accept="image/*"
@@ -416,14 +425,16 @@ function HeroBackground({
           )}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-400">تیرگی پوشش</span>
+              <span className="text-xs text-zinc-400">
+                {t('sitePreview.panelOverlayOpacity')}
+              </span>
               <span className="text-xs text-zinc-300">
                 {(cfg.overlayOpacity as number) ?? 40}%
               </span>
             </div>
             <input
               type="range"
-              title="تیرگی پوشش"
+              title={t('sitePreview.panelOverlayOpacity')}
               min={0}
               max={80}
               value={(cfg.overlayOpacity as number) ?? 40}
@@ -494,15 +505,17 @@ function LayoutTab({
   onMove: (blockId: string, dir: 'up' | 'down') => void;
   onDelete: (blockId: string) => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       {schema.hasAlignment && (
         <ChipRow
-          title="چینش متن"
+          title={t('sitePreview.panelTextAlignment')}
           value={(cfg.alignment as string) ?? 'center'}
           options={[
-            { label: 'وسط', value: 'center' },
-            { label: 'راست', value: 'left' }
+            { label: t('sitePreview.panelAlignCenter'), value: 'center' },
+            { label: t('sitePreview.panelAlignRight'), value: 'left' }
           ]}
           onChange={(v) => set('alignment', v)}
         />
@@ -510,12 +523,12 @@ function LayoutTab({
 
       {schema.hasHeight && (
         <ChipRow
-          title="ارتفاع"
+          title={t('sitePreview.panelSectionHeight')}
           value={(cfg.height as string) ?? 'medium'}
           options={[
-            { label: 'کوتاه', value: 'small' },
-            { label: 'معمول', value: 'medium' },
-            { label: 'بلند', value: 'large' }
+            { label: t('sitePreview.panelHeightShort'), value: 'small' },
+            { label: t('sitePreview.panelHeightMedium'), value: 'medium' },
+            { label: t('sitePreview.panelHeightTall'), value: 'large' }
           ]}
           onChange={(v) => set('height', v)}
         />
@@ -523,7 +536,7 @@ function LayoutTab({
 
       {schema.hasColumns && (
         <ChipRow
-          title="ستون‌ها"
+          title={t('sitePreview.panelColumns')}
           value={(cfg.gridColumns as number) ?? 3}
           options={[
             { label: '۲', value: 2 },
@@ -534,9 +547,10 @@ function LayoutTab({
         />
       )}
 
-      {/* Section position in the page stack */}
       <div className="space-y-1.5 border-t border-zinc-700/60 pt-3">
-        <span className="text-xs text-zinc-400">جایگاه در صفحه</span>
+        <span className="text-xs text-zinc-400">
+          {t('sitePreview.panelPositionInPage')}
+        </span>
         <div className="flex gap-1.5">
           <button
             type="button"
@@ -545,7 +559,7 @@ function LayoutTab({
             className="flex flex-1 items-center justify-center gap-1 rounded border border-zinc-600 py-1.5 text-xs text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-40"
           >
             <ArrowUp className="h-3.5 w-3.5" />
-            بالا
+            {t('settings.moveUp')}
           </button>
           <button
             type="button"
@@ -554,7 +568,7 @@ function LayoutTab({
             className="flex flex-1 items-center justify-center gap-1 rounded border border-zinc-600 py-1.5 text-xs text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-40"
           >
             <ArrowDown className="h-3.5 w-3.5" />
-            پایین
+            {t('settings.moveDown')}
           </button>
         </div>
         {canDelete && (
@@ -564,7 +578,7 @@ function LayoutTab({
             className="flex w-full items-center justify-center gap-1.5 rounded border border-red-500/30 bg-red-600/10 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-600/20"
           >
             <Trash2 className="h-3.5 w-3.5" />
-            حذف بخش
+            {t('sitePreview.panelDeleteSection')}
           </button>
         )}
       </div>

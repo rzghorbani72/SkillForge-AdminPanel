@@ -2494,6 +2494,25 @@ class ApiClient {
     return Array.isArray(data) ? data : [];
   }
 
+  async setTemplateCover(key: string, image: string) {
+    const response = await this.request(`/ui-template/templates/${key}/cover`, {
+      method: 'PATCH',
+      body: JSON.stringify({ image })
+    });
+    return (response.data as any) ?? null;
+  }
+
+  async setSectionCover(key: string, blockId: string, image: string) {
+    const response = await this.request(
+      `/ui-template/templates/${key}/sections/${blockId}/cover`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ image })
+      }
+    );
+    return (response.data as any) ?? null;
+  }
+
   async importSectionToDraft(payload: { presetId: string; blockId: string }) {
     const response = await this.request('/ui-template/current/draft/sections', {
       method: 'POST',

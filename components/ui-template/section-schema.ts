@@ -53,7 +53,7 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     ]
   },
   hero: {
-    name: 'هیرو',
+    name: 'بخش بنر اصلی',
     content: [
       {
         key: 'title',
@@ -106,7 +106,7 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     content: [{ ...TITLE }]
   },
   cta: {
-    name: 'فراخوان',
+    name: 'فراخوان به عمل',
     content: [
       {
         key: 'title',
@@ -135,7 +135,9 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     hasColumns: true
   },
   footer: { name: 'فوتر', content: [] },
-  slideshow: { name: 'اسلایدشو', content: [] }
+  slideshow: { name: 'اسلایدشو / بنر', content: [] },
+  marquee: { name: 'عناوین متحرک', content: [] },
+  membership: { name: 'اشتراک', content: [] }
 };
 
 export function getSectionSchema(type: string): SectionSchema {

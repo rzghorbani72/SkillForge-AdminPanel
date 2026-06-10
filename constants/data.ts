@@ -127,6 +127,14 @@ export const navItems: NavItem[] = [
     label: 'siteTemplate',
     roles: ['ADMIN', 'MANAGER']
   },
+  {
+    title: 'Template Covers',
+    href: '/settings/template-covers',
+    icon: 'media' as IconType,
+    label: 'templateCovers',
+    roles: ['ADMIN'],
+    adminOnly: true
+  },
   // Platform-admin-only items
   {
     title: 'Withdrawals',
