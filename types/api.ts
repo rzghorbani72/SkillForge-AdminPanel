@@ -655,6 +655,7 @@ export interface TemplatePreset {
   description: string;
   preview?: string;
   blocks: UIBlockConfig[];
+  theme?: Record<string, string> | null;
   visibility?: TemplateVisibility;
   isOwned?: boolean;
 }

@@ -29,6 +29,21 @@ import { TemplateCustomizationSidebar } from '@/components/ui-template/template-
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
+// Card/preview swatches follow the template's saved theme when present, so a
+// dedicated template shows its real palette instead of the design-system default.
+function resolveTemplateColors(preset: TemplatePreset) {
+  const ds = getDesignSystem(preset.id);
+  const t = preset.theme ?? null;
+  const pick = (key: string, fallback: string) =>
+    t && typeof t[key] === 'string' && t[key] ? t[key] : fallback;
+  return {
+    background: pick('background_color', ds.colors.background),
+    primary: pick('primary_color', ds.colors.primary),
+    secondary: pick('secondary_color', ds.colors.secondary),
+    accent: pick('accent_color', ds.colors.accent)
+  };
+}
+
 type BorderRadius = 'sharp' | 'soft' | 'rounded';
 type Shadow = 'none' | 'subtle' | 'medium' | 'strong';
 type SectionSpacing = 'compact' | 'comfortable' | 'spacious';
@@ -102,9 +117,11 @@ export default function UITemplateSettingsPage() {
     setShowCustomizer(false);
     setIsPreviewLoading(true);
 
-    // Seed customizer defaults from design system
+    // Base presets seed their palette from the design system; dedicated
+    // templates carry their own saved theme, restored server-side on apply.
+    const isDedicated = preset.visibility === 'DEDICATED';
     const ds = getDesignSystem(preset.id);
-    if (ds) {
+    if (!isDedicated) {
       setPrimaryColor(ds.colors.primary);
       setBorderRadius(ds.shape.borderRadius);
       setShadow(ds.shape.shadow);
@@ -115,27 +132,43 @@ export default function UITemplateSettingsPage() {
     try {
       await apiClient.applyTemplatePreset(preset.id);
 
-      // Seed the draft theme from the preset's design system so the live
-      // preview renders in the template's own palette (name is left untouched).
-      const { name: _omitName, ...themeSeed } = buildThemePayload(ds);
-      await apiClient.saveThemeDraft(themeSeed);
+      // Seeding the draft theme only applies to base presets — doing it for a
+      // dedicated template would overwrite its restored palette with defaults.
+      if (!isDedicated) {
+        const { name: _omitName, ...themeSeed } = buildThemePayload(ds);
+        await apiClient.saveThemeDraft(themeSeed);
+      }
 
       const [session, themeRaw] = await Promise.all([
         apiClient.getTemplatePreviewSession(),
         apiClient.getCurrentThemeConfig().catch(() => null)
       ]);
 
-      // Keep design-size tokens from the saved theme — they are not part of
-      // the preset palette and should survive a template switch.
-      const theme = themeRaw as Record<string, unknown> | null;
-      if (theme) {
-        if (theme.section_spacing)
-          setSectionSpacing(theme.section_spacing as SectionSpacing);
-        if (theme.container_width)
-          setContainerWidth(theme.container_width as ContainerWidth);
-        if (theme.heading_scale)
-          setHeadingScale(theme.heading_scale as HeadingScale);
+      const cfg = ((themeRaw as Record<string, any> | null)?.data?.configs ??
+        (themeRaw as Record<string, any> | null)?.configs ??
+        {}) as Record<string, string>;
+
+      // Hydrate the sidebar from a dedicated template's restored palette.
+      if (isDedicated) {
+        if (cfg.primary_color) setPrimaryColor(cfg.primary_color);
+        if (cfg.border_radius_style)
+          setBorderRadius(cfg.border_radius_style as BorderRadius);
+        if (cfg.shadow_style) setShadow(cfg.shadow_style as Shadow);
+        setDarkMode(
+          cfg.dark_mode === 'true'
+            ? true
+            : cfg.dark_mode === 'false'
+              ? false
+              : null
+        );
       }
+
+      // Design-size tokens are not part of a preset palette and survive a switch.
+      if (cfg.section_spacing)
+        setSectionSpacing(cfg.section_spacing as SectionSpacing);
+      if (cfg.container_width)
+        setContainerWidth(cfg.container_width as ContainerWidth);
+      if (cfg.heading_scale) setHeadingScale(cfg.heading_scale as HeadingScale);
 
       setBaseIframeSrc(
         buildEmbedPreviewUrl(
@@ -192,12 +225,29 @@ export default function UITemplateSettingsPage() {
   };
 
   const handleSaveAsTemplate = async () => {
-    const name = window.prompt('نام قالب اختصاصی را وارد کنید')?.trim();
+    // Updating your own template keeps its name; only a brand-new one asks for it.
+    const editingOwn =
+      selectedPreset?.isOwned && selectedPreset?.visibility === 'DEDICATED';
+    const name = editingOwn
+      ? selectedPreset!.name
+      : window.prompt('نام قالب اختصاصی را وارد کنید')?.trim();
     if (!name) return;
     try {
-      await apiClient.createDedicatedTemplate({ name, blocks: draftBlocks });
+      // Flush pending debounced edits so the snapshot captures the live look,
+      // not the last value the 800ms debounce happened to persist.
+      await saveThemeDraft(primaryColor, borderRadius, shadow, darkMode);
+      await saveBlocksDraft(draftBlocks);
+      const saved = (await apiClient.saveDraftAsTemplate({
+        name
+      })) as TemplatePreset | null;
+      // Sync the active template so subsequent saves update it instead of forking.
+      if (saved) setSelectedPreset(saved);
       await refreshPresets();
-      ErrorHandler.showSuccess(`قالب اختصاصی "${name}" ذخیره شد`);
+      ErrorHandler.showSuccess(
+        editingOwn
+          ? `قالب "${name}" به‌روزرسانی شد`
+          : `قالب اختصاصی "${name}" ذخیره شد`
+      );
     } catch (error) {
       ErrorHandler.handleApiError(error);
     }
@@ -363,6 +413,7 @@ export default function UITemplateSettingsPage() {
 
   if (selectedPreset) {
     const ds = getDesignSystem(selectedPreset.id);
+    const colors = resolveTemplateColors(selectedPreset);
 
     return (
       <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-zinc-950">
@@ -402,25 +453,21 @@ export default function UITemplateSettingsPage() {
             سفارشی‌سازی
           </Button>
 
-          {ds && (
-            <div className="flex items-center gap-1.5">
-              {[ds.colors.primary, ds.colors.secondary, ds.colors.accent].map(
-                (c, i) => (
-                  <span
-                    key={i}
-                    className="h-4 w-4 rounded-full border-2 border-zinc-700 shadow-sm"
-                    style={{ background: c }}
-                  />
-                )
-              )}
-            </div>
-          )}
+          <div className="flex items-center gap-1.5">
+            {[colors.primary, colors.secondary, colors.accent].map((c, i) => (
+              <span
+                key={i}
+                className="h-4 w-4 rounded-full border-2 border-zinc-700 shadow-sm"
+                style={{ background: c }}
+              />
+            ))}
+          </div>
 
           <div className="ml-auto flex items-center gap-4">
             {ds.tagline && (
               <span
                 className="rounded-full px-2.5 py-1 text-[10px] font-semibold text-white"
-                style={{ background: ds.colors.primary }}
+                style={{ background: colors.primary }}
               >
                 {ds.tagline}
               </span>
@@ -587,11 +634,12 @@ function GalleryCard({
 }: GalleryCardProps) {
   const ds = getDesignSystem(preset.id);
   const isDedicated = preset.visibility === 'DEDICATED';
+  const colors = resolveTemplateColors(preset);
   const swatches = [
-    ds.colors.background,
-    ds.colors.primary,
-    ds.colors.secondary,
-    ds.colors.accent
+    colors.background,
+    colors.primary,
+    colors.secondary,
+    colors.accent
   ];
 
   return (
@@ -658,12 +706,12 @@ function GalleryCard({
             <span className="text-[15px] font-bold text-foreground">
               {preset.name}
             </span>
-            {ds.tagline && (
+            {!isDedicated && ds.tagline && (
               <span
                 className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold"
                 style={{
-                  background: `${ds.colors.primary}1a`,
-                  color: ds.colors.primary
+                  background: `${colors.primary}1a`,
+                  color: colors.primary
                 }}
               >
                 {ds.tagline}

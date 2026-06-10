@@ -775,7 +775,7 @@ function SectionOrderSection({
     onOpenPicker({ blockId: block.id, type: block.type });
 
   return (
-    <AccordionSection title="ترتیب بخش‌ها">
+    <AccordionSection title="ترتیب و ترکیب بخش‌ها" defaultOpen>
       <div className="space-y-1">
         {header && <PinnedRow block={header} onReplace={replace(header)} />}
 

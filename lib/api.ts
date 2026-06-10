@@ -2466,6 +2466,21 @@ class ApiClient {
     return (response.data as any)?.data ?? null;
   }
 
+  async saveDraftAsTemplate(payload: {
+    name: string;
+    description?: string;
+    preview?: string;
+  }) {
+    const response = await this.request(
+      '/ui-template/current/save-as-template',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }
+    );
+    return (response.data as { data?: unknown })?.data ?? null;
+  }
+
   async deleteDedicatedTemplate(key: string) {
     const response = await this.request(`/ui-template/templates/${key}`, {
       method: 'DELETE'
