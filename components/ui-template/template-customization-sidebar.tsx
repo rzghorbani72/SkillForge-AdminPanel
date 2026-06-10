@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   X,
   RotateCcw,
@@ -62,17 +63,6 @@ const RADIUS_PX: Record<BorderRadius, number> = {
   sharp: 2,
   soft: 8,
   rounded: 16
-};
-
-const BLOCK_LABELS: Record<string, string> = {
-  header: 'ناوبری',
-  hero: 'هیرو',
-  features: 'دسته‌بندی‌ها',
-  courses: 'دوره‌ها',
-  testimonials: 'نظرات',
-  slideshow: 'اسلایدشو',
-  footer: 'فوتر',
-  sidebar: 'سایدبار'
 };
 
 const SAMPLE_BANNER_IMAGES = [
@@ -672,6 +662,16 @@ function PinnedRow({
   onSelect?: () => void;
   onReplace: () => void;
 }) {
+  const { t } = useTranslation();
+  const blockLabel = (type: string) => {
+    const key =
+      'sitePreview.block' +
+      type
+        .split('-')
+        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+        .join('');
+    return t(key) || type;
+  };
   return (
     <div
       className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${
@@ -686,7 +686,7 @@ function PinnedRow({
         onClick={onSelect}
         className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
       >
-        {BLOCK_LABELS[block.type] ?? block.type}
+        {blockLabel(block.type)}
       </button>
       <button
         type="button"
@@ -711,6 +711,16 @@ function SortableRow({
   onSelect?: () => void;
   onReplace: () => void;
 }) {
+  const { t } = useTranslation();
+  const blockLabel = (type: string) => {
+    const key =
+      'sitePreview.block' +
+      type
+        .split('-')
+        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+        .join('');
+    return t(key) || type;
+  };
   const {
     attributes,
     listeners,
@@ -744,7 +754,7 @@ function SortableRow({
         onClick={onSelect}
         className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
       >
-        {BLOCK_LABELS[block.type] ?? block.type}
+        {blockLabel(block.type)}
       </button>
       <span className="rounded bg-zinc-700 px-1.5 py-0.5 font-mono text-[9px] text-zinc-400">
         {BLOCK_TAG[block.type] ?? 'div'}
@@ -887,6 +897,16 @@ export function TemplateCustomizationSidebar({
   selectedBlockId,
   onSelectBlock
 }: TemplateCustomizationSidebarProps) {
+  const { t } = useTranslation();
+  const blockLabel = (type: string) => {
+    const key =
+      'sitePreview.block' +
+      type
+        .split('-')
+        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+        .join('');
+    return t(key) || type;
+  };
   return (
     <div
       className="flex h-full w-60 flex-shrink-0 flex-col border-l border-zinc-700 bg-zinc-900"

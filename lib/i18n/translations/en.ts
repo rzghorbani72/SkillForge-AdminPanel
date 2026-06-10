@@ -859,7 +859,67 @@ export const en = {
     courseInstructorsAndEducators: 'Course instructors and educators',
     noTeachersFound: 'No teachers found in the system',
     generalUsersNoRoles: 'General users without specific roles',
-    noGeneralUsersFound: 'No general users found in the system'
+    noGeneralUsersFound: 'No general users found in the system',
+    lessonAccess: {
+      title: 'Student Lesson Access',
+      description:
+        'Lock or unlock specific lessons for individual students, independent of course publish state',
+      addOverride: 'Add Override',
+      accessOverrides: 'Access Overrides',
+      accessOverridesDescription:
+        "These rules override the lesson's default published/unpublished state for specific students",
+      filterByProfileId: 'Filter by profile ID...',
+      noOverridesYet:
+        'No access overrides yet. All students follow default lesson publish state.',
+      student: 'Student',
+      lesson: 'Lesson',
+      access: 'Access',
+      note: 'Note',
+      setBy: 'Set By',
+      updated: 'Updated',
+      unlocked: 'Unlocked',
+      locked: 'Locked',
+      addOverrideTitle: 'Add Lesson Access Override',
+      studentProfileId: 'Student Profile ID',
+      lessonId: 'Lesson ID',
+      unlockLesson: 'Unlock this lesson',
+      lockLesson: 'Lock this lesson',
+      unlockHelp: 'Student can access even if lesson is unpublished',
+      lockHelp: 'Student cannot access even if lesson is published',
+      internalNote: 'Internal Note (optional)',
+      saveOverride: 'Save Override',
+      saving: 'Saving...',
+      removeConfirm: 'Remove this access override?'
+    },
+    manualEnroll: {
+      title: 'Manual Enrollment',
+      description:
+        'Enroll students who paid outside the platform (cash, bank transfer, or other offline methods)',
+      enrollStudent: 'Enroll a Student',
+      enrollStudentDescription:
+        'Creates an active enrollment and records a manual payment',
+      courseId: 'Course ID *',
+      studentProfileId: 'Student Profile ID *',
+      amountPaid: 'Amount Paid (IRR)',
+      paymentNote: 'Payment Note',
+      leaveEmptyIfFree: 'Leave empty if free',
+      manualPaymentNote:
+        'This creates a MANUAL/BANK_TRANSFER payment record for your records',
+      recentEnrollments: 'Recent Enrollments',
+      recentEnrollmentsDescription:
+        'All enrollments in your academy (including manual)',
+      noEnrollmentsFound: 'No enrollments found',
+      enrolling: 'Enrolling...',
+      enrollStudentBtn: 'Enroll Student',
+      paymentMethodBankTransfer: 'Bank Transfer',
+      paymentMethodOnline: 'Online',
+      paymentMethodWallet: 'Wallet',
+      free: 'Free',
+      student: 'Student',
+      course: 'Course',
+      payment: 'Payment',
+      enrolled: 'Enrolled'
+    }
   },
   teachers: {
     title: 'Teachers',
@@ -3077,13 +3137,21 @@ export const en = {
     thumbnailExplore: 'Explore →',
     thumbnailAll: 'All',
     thumbnailMenu: 'Menu',
-    blockHeader: 'Header',
-    blockHero: 'Hero',
+    blockHeader: 'Navigation',
+    blockHero: 'Hero Banner',
     blockFeatures: 'Features',
     blockCourses: 'Courses',
     blockTestimonials: 'Testimonials',
     blockFooter: 'Footer',
     blockSidebar: 'Sidebar',
+    blockMarquee: 'Scrolling Ticker',
+    blockPricing: 'Pricing',
+    blockCta: 'Call to Action',
+    blockCategories: 'Categories',
+    blockProjects: 'Projects',
+    blockMembership: 'Membership',
+    blockSlideshow: 'Slideshow / Banner',
+    blockCourseGrid: 'Course Grid',
     defaultSiteUrl: 'https://your-academy.com'
   },
   userNav: {

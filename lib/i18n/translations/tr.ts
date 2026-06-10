@@ -439,7 +439,67 @@ export const tr = {
     courseInstructorsAndEducators: 'Kurs eğitmenleri ve öğretmenler',
     noTeachersFound: 'Sistemde öğretmen bulunamadı',
     generalUsersNoRoles: 'Belirli rolü olmayan genel kullanıcılar',
-    noGeneralUsersFound: 'Sistemde genel kullanıcı bulunamadı'
+    noGeneralUsersFound: 'Sistemde genel kullanıcı bulunamadı',
+    lessonAccess: {
+      title: 'Öğrenci Ders Erişimi',
+      description:
+        'Belirli öğrenciler için dersleri kilitleyin veya açın, kurs yayın durumundan bağımsız olarak',
+      addOverride: 'İstisna Ekle',
+      accessOverrides: 'Erişim İstisnaları',
+      accessOverridesDescription:
+        'Bu kurallar, belirli öğrenciler için dersin varsayılan yayınlanmış/yayınlanmamış durumunu geçersiz kılar',
+      filterByProfileId: "Profil ID'ye göre filtrele...",
+      noOverridesYet:
+        'Henüz erişim istisnası yok. Tüm öğrenciler varsayılan ders yayın durumunu takip eder.',
+      student: 'Öğrenci',
+      lesson: 'Ders',
+      access: 'Erişim',
+      note: 'Not',
+      setBy: 'Ayarlayan',
+      updated: 'Güncellendi',
+      unlocked: 'Açık',
+      locked: 'Kilitli',
+      addOverrideTitle: 'Ders Erişim İstisnası Ekle',
+      studentProfileId: 'Öğrenci Profil ID',
+      lessonId: 'Ders ID',
+      unlockLesson: 'Bu dersi aç',
+      lockLesson: 'Bu dersi kilitle',
+      unlockHelp: 'Öğrenci ders yayınlanmamış olsa bile erişebilir',
+      lockHelp: 'Öğrenci ders yayınlanmış olsa bile erişemez',
+      internalNote: 'Dahili Not (isteğe bağlı)',
+      saveOverride: 'İstisnayı Kaydet',
+      saving: 'Kaydediliyor...',
+      removeConfirm: 'Bu erişim istisnasını kaldır?'
+    },
+    manualEnroll: {
+      title: 'Manuel Kayıt',
+      description:
+        'Platform dışında ödeme yapan öğrencileri kaydedin (nakit, banka transferi veya diğer çevrimdışı yöntemler)',
+      enrollStudent: 'Öğrenci Kaydet',
+      enrollStudentDescription:
+        'Aktif bir kayıt oluşturur ve manuel ödeme kaydeder',
+      courseId: 'Kurs ID *',
+      studentProfileId: 'Öğrenci Profil ID *',
+      amountPaid: 'Ödenen Tutar (IRR)',
+      paymentNote: 'Ödeme Notu',
+      leaveEmptyIfFree: 'Ücretsizse boş bırakın',
+      manualPaymentNote:
+        'Bu, kayıtlarınız için MANÜEl/BANKA_TRANSFERİ ödeme kaydı oluşturur',
+      recentEnrollments: 'Son Kayıtlar',
+      recentEnrollmentsDescription:
+        'Akademinizdeki tüm kayıtlar (manuel dahil)',
+      noEnrollmentsFound: 'Kayıt bulunamadı',
+      enrolling: 'Kaydediliyor...',
+      enrollStudentBtn: 'Öğrenciyi Kaydet',
+      paymentMethodBankTransfer: 'Banka Transferi',
+      paymentMethodOnline: 'Online',
+      paymentMethodWallet: 'Cüzdan',
+      free: 'Ücretsiz',
+      student: 'Öğrenci',
+      course: 'Kurs',
+      payment: 'Ödeme',
+      enrolled: 'Kayıtlı'
+    }
   },
   teachers: {
     title: 'Öğretmenler',
@@ -1685,6 +1745,23 @@ export const tr = {
     previewStatBalance: 'Bakiye',
     previewStatClicks: 'Tıklamalar',
     previewStatSales: 'Satışlar'
+  },
+  sitePreview: {
+    blockHeader: 'Navigasyon',
+    blockHero: 'Ana Banner Bölümü',
+    blockFeatures: 'Özellikler',
+    blockCourses: 'Kurslar',
+    blockTestimonials: 'Referanslar',
+    blockFooter: 'Alt Bilgi',
+    blockSidebar: 'Yan Çubuk',
+    blockMarquee: 'Kayan Başlıklar',
+    blockPricing: 'Fiyatlandırma',
+    blockCta: 'Harekete Geçirici Mesaj',
+    blockCategories: 'Kategoriler',
+    blockProjects: 'Projeler',
+    blockMembership: 'Üyelik',
+    blockSlideshow: 'Slayt Gösterisi',
+    blockCourseGrid: 'Kurs Izgarası'
   },
   userNav: {
     profile: 'Profil',

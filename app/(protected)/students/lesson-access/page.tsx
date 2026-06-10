@@ -49,13 +49,13 @@ interface AccessRecord {
 }
 
 export default function StudentLessonAccessPage() {
+  const { t } = useTranslation();
   const [list, setList] = useState<AccessRecord[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [profileIdFilter, setProfileIdFilter] = useState('');
 
-  // Dialog state
   const [dialog, setDialog] = useState(false);
   const [profileId, setProfileId] = useState('');
   const [lessonId, setLessonId] = useState('');
@@ -106,7 +106,7 @@ export default function StudentLessonAccessPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Remove this access override?')) return;
+    if (!confirm(t('students.lessonAccess.removeConfirm'))) return;
     try {
       await apiClient.deleteStudentLessonAccess(id);
       fetchList();
@@ -120,24 +120,23 @@ export default function StudentLessonAccessPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Student Lesson Access
+            {t('students.lessonAccess.title')}
           </h1>
           <p className="text-muted-foreground">
-            Lock or unlock specific lessons for individual students, independent
-            of course publish state
+            {t('students.lessonAccess.description')}
           </p>
         </div>
         <Button onClick={() => setDialog(true)}>
-          <Plus className="me-2 h-4 w-4" /> Add Override
+          <Plus className="me-2 h-4 w-4" />{' '}
+          {t('students.lessonAccess.addOverride')}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Access Overrides</CardTitle>
+          <CardTitle>{t('students.lessonAccess.accessOverrides')}</CardTitle>
           <CardDescription>
-            These rules override the lesson's default published/unpublished
-            state for specific students
+            {t('students.lessonAccess.accessOverridesDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -145,7 +144,7 @@ export default function StudentLessonAccessPage() {
             <div className="relative max-w-xs flex-1">
               <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Filter by profile ID..."
+                placeholder={t('students.lessonAccess.filterByProfileId')}
                 value={profileIdFilter}
                 onChange={(e) => {
                   setProfileIdFilter(e.target.value);
@@ -160,12 +159,12 @@ export default function StudentLessonAccessPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Lesson</TableHead>
-                  <TableHead>Access</TableHead>
-                  <TableHead>Note</TableHead>
-                  <TableHead>Set By</TableHead>
-                  <TableHead>Updated</TableHead>
+                  <TableHead>{t('students.lessonAccess.student')}</TableHead>
+                  <TableHead>{t('students.lessonAccess.lesson')}</TableHead>
+                  <TableHead>{t('students.lessonAccess.access')}</TableHead>
+                  <TableHead>{t('students.lessonAccess.note')}</TableHead>
+                  <TableHead>{t('students.lessonAccess.setBy')}</TableHead>
+                  <TableHead>{t('students.lessonAccess.updated')}</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -182,8 +181,7 @@ export default function StudentLessonAccessPage() {
                       colSpan={7}
                       className="h-32 text-center text-muted-foreground"
                     >
-                      No access overrides yet. All students follow default
-                      lesson publish state.
+                      {t('students.lessonAccess.noOverridesYet')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -198,11 +196,13 @@ export default function StudentLessonAccessPage() {
                       <TableCell>
                         {item.is_unlocked ? (
                           <Badge className="bg-green-100 text-green-800">
-                            <LockOpen className="me-1 h-3 w-3" /> Unlocked
+                            <LockOpen className="me-1 h-3 w-3" />{' '}
+                            {t('students.lessonAccess.unlocked')}
                           </Badge>
                         ) : (
                           <Badge className="bg-red-100 text-red-800">
-                            <Lock className="me-1 h-3 w-3" /> Locked
+                            <Lock className="me-1 h-3 w-3" />{' '}
+                            {t('students.lessonAccess.locked')}
                           </Badge>
                         )}
                       </TableCell>
@@ -246,15 +246,18 @@ export default function StudentLessonAccessPage() {
         </CardContent>
       </Card>
 
-      {/* Add Override Dialog */}
       <Dialog open={dialog} onOpenChange={setDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Lesson Access Override</DialogTitle>
+            <DialogTitle>
+              {t('students.lessonAccess.addOverrideTitle')}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="pid">Student Profile ID</Label>
+              <Label htmlFor="pid">
+                {t('students.lessonAccess.studentProfileId')}
+              </Label>
               <Input
                 id="pid"
                 type="number"
@@ -265,7 +268,7 @@ export default function StudentLessonAccessPage() {
               />
             </div>
             <div>
-              <Label htmlFor="lid">Lesson ID</Label>
+              <Label htmlFor="lid">{t('students.lessonAccess.lessonId')}</Label>
               <Input
                 id="lid"
                 type="number"
@@ -278,18 +281,22 @@ export default function StudentLessonAccessPage() {
             <div className="flex items-center justify-between rounded border p-3">
               <div>
                 <p className="text-sm font-medium">
-                  {isUnlocked ? 'Unlock this lesson' : 'Lock this lesson'}
+                  {isUnlocked
+                    ? t('students.lessonAccess.unlockLesson')
+                    : t('students.lessonAccess.lockLesson')}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {isUnlocked
-                    ? 'Student can access even if lesson is unpublished'
-                    : 'Student cannot access even if lesson is published'}
+                    ? t('students.lessonAccess.unlockHelp')
+                    : t('students.lessonAccess.lockHelp')}
                 </p>
               </div>
               <Switch checked={isUnlocked} onCheckedChange={setIsUnlocked} />
             </div>
             <div>
-              <Label htmlFor="note">Internal Note (optional)</Label>
+              <Label htmlFor="note">
+                {t('students.lessonAccess.internalNote')}
+              </Label>
               <Input
                 id="note"
                 value={note}
@@ -301,13 +308,15 @@ export default function StudentLessonAccessPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialog(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSave}
               disabled={isSaving || !profileId || !lessonId}
             >
-              {isSaving ? 'Saving...' : 'Save Override'}
+              {isSaving
+                ? t('students.lessonAccess.saving')
+                : t('students.lessonAccess.saveOverride')}
             </Button>
           </DialogFooter>
         </DialogContent>

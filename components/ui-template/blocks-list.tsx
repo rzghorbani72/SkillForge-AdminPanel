@@ -49,16 +49,13 @@ export function BlocksList({
   const sorted = [...blocks].sort((a, b) => a.order - b.order);
 
   const getLabel = (type: string) => {
-    const map: Record<string, string> = {
-      header: t('settings.header'),
-      hero: t('settings.heroSection'),
-      features: t('settings.featuresSection'),
-      courses: t('settings.coursesSection'),
-      testimonials: t('settings.testimonials'),
-      slideshow: 'اسلایدشو / بنر',
-      footer: t('settings.footer')
-    };
-    return map[type] ?? type;
+    const key =
+      'sitePreview.block' +
+      type
+        .split('-')
+        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+        .join('');
+    return t(key) || type;
   };
 
   return (

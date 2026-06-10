@@ -433,7 +433,65 @@ export const ar = {
     courseInstructorsAndEducators: 'مدربو الدورات والمعلمون',
     noTeachersFound: 'لم يتم العثور على معلمين في النظام',
     generalUsersNoRoles: 'مستخدمون عامون بدون أدوار محددة',
-    noGeneralUsersFound: 'لم يتم العثور على مستخدمين عامين في النظام'
+    noGeneralUsersFound: 'لم يتم العثور على مستخدمين عامين في النظام',
+    lessonAccess: {
+      title: 'وصول الطالب للدرس',
+      description:
+        'قفل أو فتح دروس محددة للطلاب الأفراد، بشكل مستقل عن حالة نشر الدورة',
+      addOverride: 'إضافة استثناء',
+      accessOverrides: 'استثناءات الوصول',
+      accessOverridesDescription:
+        'هذه القواعد تتجاوز الحالة الافتراضية المنشورة/غير المنشورة للدرس لطلاب محددين',
+      filterByProfileId: 'تصفية بمعرف الملف الشخصي...',
+      noOverridesYet:
+        'لا توجد استثناءات وصول بعد. جميع الطلاب يتبعون حالة نشر الدرس الافتراضية.',
+      student: 'الطالب',
+      lesson: 'الدرس',
+      access: 'الوصول',
+      note: 'ملاحظة',
+      setBy: 'حدده',
+      updated: 'محدث',
+      unlocked: 'مفتوح',
+      locked: 'مقفل',
+      addOverrideTitle: 'إضافة استثناء وصول الدرس',
+      studentProfileId: 'معرف ملف الطالب',
+      lessonId: 'معرف الدرس',
+      unlockLesson: 'فتح هذا الدرس',
+      lockLesson: 'قفل هذا الدرس',
+      unlockHelp: 'يمكن للطالب الوصول حتى لو كان الدرس غير منشور',
+      lockHelp: 'لا يمكن للطالب الوصول حتى لو كان الدرس منشوراً',
+      internalNote: 'ملاحظة داخلية (اختيارية)',
+      saveOverride: 'حفظ الاستثناء',
+      saving: 'جاري الحفظ...',
+      removeConfirm: 'إزالة هذا الاستثناء؟'
+    },
+    manualEnroll: {
+      title: 'التسجيل اليدوي',
+      description:
+        'تسجيل الطلاب الذين دفعوا خارج المنصة (نقداً أو بتحويل بنكي أو طرق أخرى)',
+      enrollStudent: 'تسجيل طالب',
+      enrollStudentDescription: 'ينشئ تسجيلاً نشطاً ويسجل دفعة يدوية',
+      courseId: 'معرف الدورة *',
+      studentProfileId: 'معرف ملف الطالب *',
+      amountPaid: 'المبلغ المدفوع (ريال)',
+      paymentNote: 'ملاحظة الدفع',
+      leaveEmptyIfFree: 'اتركه فارغاً إذا كان مجانياً',
+      manualPaymentNote: 'هذا ينشئ سجل دفع يدوي/تحويل بنكي لسجلاتك',
+      recentEnrollments: 'التسجيلات الأخيرة',
+      recentEnrollmentsDescription:
+        'جميع التسجيلات في أكاديميتك (بما فيها اليدوية)',
+      noEnrollmentsFound: 'لم يتم العثور على تسجيلات',
+      enrolling: 'جاري التسجيل...',
+      enrollStudentBtn: 'تسجيل الطالب',
+      paymentMethodBankTransfer: 'تحويل بنكي',
+      paymentMethodOnline: 'أونلاين',
+      paymentMethodWallet: 'المحفظة',
+      free: 'مجاني',
+      student: 'الطالب',
+      course: 'الدورة',
+      payment: 'الدفع',
+      enrolled: 'مسجل'
+    }
   },
   teachers: {
     title: 'المعلمون',
@@ -1642,6 +1700,23 @@ export const ar = {
     previewStatBalance: 'الرصيد',
     previewStatClicks: 'النقرات',
     previewStatSales: 'المبيعات'
+  },
+  sitePreview: {
+    blockHeader: 'التنقل',
+    blockHero: 'قسم البانر الرئيسي',
+    blockFeatures: 'الميزات',
+    blockCourses: 'الدورات',
+    blockTestimonials: 'التقييمات',
+    blockFooter: 'تذييل الصفحة',
+    blockSidebar: 'الشريط الجانبي',
+    blockMarquee: 'عناوين متحركة',
+    blockPricing: 'الأسعار',
+    blockCta: 'الدعوة للعمل',
+    blockCategories: 'الفئات',
+    blockProjects: 'المشاريع',
+    blockMembership: 'العضوية',
+    blockSlideshow: 'عرض الشرائح',
+    blockCourseGrid: 'شبكة الدورات'
   },
   userNav: {
     profile: 'الملف الشخصي',

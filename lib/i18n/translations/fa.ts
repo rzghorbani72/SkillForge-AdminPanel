@@ -848,7 +848,68 @@ export const fa = {
     courseInstructorsAndEducators: 'مدرسان و آموزگاران دوره',
     noTeachersFound: 'معلمی در سیستم یافت نشد',
     generalUsersNoRoles: 'کاربران عمومی بدون نقش خاص',
-    noGeneralUsersFound: 'کاربر عمومی در سیستم یافت نشد'
+    noGeneralUsersFound: 'کاربر عمومی در سیستم یافت نشد',
+    lessonAccess: {
+      title: 'دسترسی درس دانش‌آموز',
+      description:
+        'قفل یا باز کردن درس‌های خاص برای دانش‌آموزان، مستقل از وضعیت انتشار دوره',
+      addOverride: 'افزودن استثنا',
+      accessOverrides: 'استثناهای دسترسی',
+      accessOverridesDescription:
+        'این قوانین وضعیت پیش‌فرض منتشرشده/منتشرنشده درس را برای دانش‌آموزان خاص لغو می‌کند',
+      filterByProfileId: 'فیلتر بر اساس شناسه پروفایل...',
+      noOverridesYet:
+        'هنوز استثنایی تعریف نشده. همه دانش‌آموزان از وضعیت پیش‌فرض انتشار درس پیروی می‌کنند.',
+      student: 'دانش‌آموز',
+      lesson: 'درس',
+      access: 'دسترسی',
+      note: 'یادداشت',
+      setBy: 'تعیین شده توسط',
+      updated: 'به‌روزرسانی',
+      unlocked: 'باز شده',
+      locked: 'قفل شده',
+      addOverrideTitle: 'افزودن استثنای دسترسی درس',
+      studentProfileId: 'شناسه پروفایل دانش‌آموز',
+      lessonId: 'شناسه درس',
+      unlockLesson: 'باز کردن این درس',
+      lockLesson: 'قفل کردن این درس',
+      unlockHelp:
+        'دانش‌آموز می‌تواند حتی اگر درس منتشر نشده باشد دسترسی داشته باشد',
+      lockHelp:
+        'دانش‌آموز نمی‌تواند حتی اگر درس منتشر شده باشد دسترسی داشته باشد',
+      internalNote: 'یادداشت داخلی (اختیاری)',
+      saveOverride: 'ذخیره استثنا',
+      saving: 'در حال ذخیره...',
+      removeConfirm: 'حذف این استثنای دسترسی؟'
+    },
+    manualEnroll: {
+      title: 'ثبت‌نام دستی',
+      description:
+        'ثبت‌نام دانش‌آموزانی که خارج از پلتفرم پرداخت کرده‌اند (نقد، انتقال بانکی یا سایر روش‌های آفلاین)',
+      enrollStudent: 'ثبت‌نام دانش‌آموز',
+      enrollStudentDescription:
+        'یک ثبت‌نام فعال ایجاد می‌کند و یک پرداخت دستی ثبت می‌نماید',
+      courseId: 'شناسه دوره *',
+      studentProfileId: 'شناسه پروفایل دانش‌آموز *',
+      amountPaid: 'مبلغ پرداختی (ریال)',
+      paymentNote: 'یادداشت پرداخت',
+      leaveEmptyIfFree: 'در صورت رایگان بودن خالی بگذارید',
+      manualPaymentNote:
+        'این یک رکورد پرداخت دستی/انتقال بانکی برای سوابق شما ایجاد می‌کند',
+      recentEnrollments: 'ثبت‌نام‌های اخیر',
+      recentEnrollmentsDescription: 'همه ثبت‌نام‌های آکادمی شما (شامل دستی)',
+      noEnrollmentsFound: 'ثبت‌نامی یافت نشد',
+      enrolling: 'در حال ثبت‌نام...',
+      enrollStudentBtn: 'ثبت‌نام دانش‌آموز',
+      paymentMethodBankTransfer: 'انتقال بانکی',
+      paymentMethodOnline: 'آنلاین',
+      paymentMethodWallet: 'کیف پول',
+      free: 'رایگان',
+      student: 'دانش‌آموز',
+      course: 'دوره',
+      payment: 'پرداخت',
+      enrolled: 'ثبت‌نام شده'
+    }
   },
   teachers: {
     title: 'معلمان',
@@ -2944,13 +3005,21 @@ export const fa = {
     thumbnailExplore: 'کاوش ←',
     thumbnailAll: 'همه',
     thumbnailMenu: 'منو',
-    blockHeader: 'سرصفحه',
-    blockHero: 'بنر اصلی',
+    blockHeader: 'ناوبری',
+    blockHero: 'بخش بنر اصلی',
     blockFeatures: 'ویژگی‌ها',
     blockCourses: 'دوره‌ها',
     blockTestimonials: 'نظرات',
-    blockFooter: 'پاصفحه',
+    blockFooter: 'فوتر',
     blockSidebar: 'نوار کناری',
+    blockMarquee: 'عناوین متحرک',
+    blockPricing: 'تعرفه‌ها',
+    blockCta: 'فراخوان به عمل',
+    blockCategories: 'دسته‌بندی‌ها',
+    blockProjects: 'نمونه‌کارها',
+    blockMembership: 'اشتراک',
+    blockSlideshow: 'اسلایدشو / بنر',
+    blockCourseGrid: 'شبکه دوره‌ها',
     defaultSiteUrl: 'https://my-academy.ir'
   },
   userNav: {

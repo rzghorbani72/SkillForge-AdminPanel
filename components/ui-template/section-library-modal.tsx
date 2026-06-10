@@ -11,25 +11,6 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
 import { SectionPreviewFrame } from './section-preview-frame';
 
-// Canonical section name shown in the picker, independent of the source
-// template's variant label.
-const CANON_NAME: Record<string, string> = {
-  header: 'ناوبری',
-  hero: 'هیرو',
-  features: 'ویژگی‌ها',
-  courses: 'دوره‌ها',
-  testimonials: 'نظرات',
-  pricing: 'تعرفه‌ها',
-  cta: 'فراخوان',
-  categories: 'دسته‌بندی‌ها',
-  projects: 'نمونه‌کارها',
-  'course-grid': 'شبکه دوره‌ها',
-  footer: 'فوتر',
-  slideshow: 'اسلایدشو',
-  marquee: 'مارکی',
-  membership: 'اشتراک'
-};
-
 export interface ImageSlot {
   key: string;
   aspect: '16:9' | '4:3' | '1:1' | 'auto';
@@ -77,15 +58,6 @@ interface SectionLibraryModalProps {
   swapTarget?: { blockId: string; type: string } | null;
 }
 
-const BLOCK_TYPE_LABEL_KEYS: Record<string, string> = {
-  header: 'settings.header',
-  hero: 'settings.heroSection',
-  features: 'settings.featuresSection',
-  courses: 'settings.coursesSection',
-  testimonials: 'settings.testimonials',
-  footer: 'settings.footer'
-};
-
 export function SectionLibraryModal({
   open,
   onClose,
@@ -93,6 +65,15 @@ export function SectionLibraryModal({
   swapTarget
 }: SectionLibraryModalProps) {
   const { t } = useTranslation();
+  const blockLabel = (type: string) => {
+    const key =
+      'sitePreview.block' +
+      type
+        .split('-')
+        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+        .join('');
+    return t(key) || type;
+  };
   const [sections, setSections] = useState<SectionCatalogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isImporting, setIsImporting] = useState<string | null>(null);
@@ -283,9 +264,7 @@ export function SectionLibraryModal({
                       : 'bg-muted text-muted-foreground hover:bg-accent'
                   }`}
                 >
-                  {BLOCK_TYPE_LABEL_KEYS[type]
-                    ? t(BLOCK_TYPE_LABEL_KEYS[type] as Parameters<typeof t>[0])
-                    : type}
+                  {blockLabel(type)}
                 </button>
               ))}
             </div>
@@ -354,7 +333,7 @@ export function SectionLibraryModal({
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
                               <p className="truncate text-sm font-bold">
-                                {CANON_NAME[section.blockType] ?? section.label}
+                                {blockLabel(section.blockType)}
                               </p>
                               <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
                                 <LayoutTemplate className="h-3 w-3 shrink-0" />

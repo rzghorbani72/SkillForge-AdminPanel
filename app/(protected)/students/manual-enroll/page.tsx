@@ -42,12 +42,12 @@ interface Enrollment {
 }
 
 export default function ManualEnrollPage() {
+  const { t } = useTranslation();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Form state
   const [courseId, setCourseId] = useState('');
   const [profileId, setProfileId] = useState('');
   const [paidAmount, setPaidAmount] = useState('');
@@ -88,7 +88,7 @@ export default function ManualEnrollPage() {
         payment_note: paymentNote || undefined
       });
       setLastSuccess(
-        `Student "${result?.Profile?.display_name ?? profileId}" enrolled in "${result?.Course?.title ?? courseId}"`
+        `${result?.Profile?.display_name ?? profileId} — ${result?.Course?.title ?? courseId}`
       );
       setCourseId('');
       setProfileId('');
@@ -105,11 +105,11 @@ export default function ManualEnrollPage() {
   const getPaymentMethodLabel = (method: string) => {
     switch (method) {
       case 'BANK_TRANSFER':
-        return 'Bank Transfer';
+        return t('students.manualEnroll.paymentMethodBankTransfer');
       case 'ONLINE':
-        return 'Online';
+        return t('students.manualEnroll.paymentMethodOnline');
       case 'WALLET':
-        return 'Wallet';
+        return t('students.manualEnroll.paymentMethodWallet');
       default:
         return method;
     }
@@ -118,28 +118,31 @@ export default function ManualEnrollPage() {
   return (
     <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Manual Enrollment</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t('students.manualEnroll.title')}
+        </h1>
         <p className="text-muted-foreground">
-          Enroll students who paid outside the platform (cash, bank transfer, or
-          other offline methods)
+          {t('students.manualEnroll.description')}
         </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Enrollment Form */}
         <Card className="lg:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5" /> Enroll a Student
+              <UserPlus className="h-5 w-5" />{' '}
+              {t('students.manualEnroll.enrollStudent')}
             </CardTitle>
             <CardDescription>
-              Creates an active enrollment and records a manual payment
+              {t('students.manualEnroll.enrollStudentDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleEnroll} className="space-y-4">
               <div>
-                <Label htmlFor="courseId">Course ID *</Label>
+                <Label htmlFor="courseId">
+                  {t('students.manualEnroll.courseId')}
+                </Label>
                 <Input
                   id="courseId"
                   type="number"
@@ -151,7 +154,9 @@ export default function ManualEnrollPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="profileId">Student Profile ID *</Label>
+                <Label htmlFor="profileId">
+                  {t('students.manualEnroll.studentProfileId')}
+                </Label>
                 <Input
                   id="profileId"
                   type="number"
@@ -163,22 +168,25 @@ export default function ManualEnrollPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="paidAmount">Amount Paid (IRR)</Label>
+                <Label htmlFor="paidAmount">
+                  {t('students.manualEnroll.amountPaid')}
+                </Label>
                 <Input
                   id="paidAmount"
                   type="number"
                   value={paidAmount}
                   onChange={(e) => setPaidAmount(e.target.value)}
-                  placeholder="Leave empty if free"
+                  placeholder={t('students.manualEnroll.leaveEmptyIfFree')}
                   className="mt-1"
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  This creates a MANUAL/BANK_TRANSFER payment record for your
-                  records
+                  {t('students.manualEnroll.manualPaymentNote')}
                 </p>
               </div>
               <div>
-                <Label htmlFor="paymentNote">Payment Note</Label>
+                <Label htmlFor="paymentNote">
+                  {t('students.manualEnroll.paymentNote')}
+                </Label>
                 <Input
                   id="paymentNote"
                   value={paymentNote}
@@ -200,18 +208,21 @@ export default function ManualEnrollPage() {
                 className="w-full"
                 disabled={isEnrolling || !courseId || !profileId}
               >
-                {isEnrolling ? 'Enrolling...' : 'Enroll Student'}
+                {isEnrolling
+                  ? t('students.manualEnroll.enrolling')
+                  : t('students.manualEnroll.enrollStudentBtn')}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Recent Enrollments */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Recent Enrollments</CardTitle>
+            <CardTitle>
+              {t('students.manualEnroll.recentEnrollments')}
+            </CardTitle>
             <CardDescription>
-              All enrollments in your academy (including manual)
+              {t('students.manualEnroll.recentEnrollmentsDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -219,11 +230,11 @@ export default function ManualEnrollPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Student</TableHead>
-                    <TableHead>Course</TableHead>
-                    <TableHead>Payment</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Enrolled</TableHead>
+                    <TableHead>{t('students.manualEnroll.student')}</TableHead>
+                    <TableHead>{t('students.manualEnroll.course')}</TableHead>
+                    <TableHead>{t('students.manualEnroll.payment')}</TableHead>
+                    <TableHead>{t('common.status')}</TableHead>
+                    <TableHead>{t('students.manualEnroll.enrolled')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -239,7 +250,7 @@ export default function ManualEnrollPage() {
                         colSpan={5}
                         className="h-32 text-center text-muted-foreground"
                       >
-                        No enrollments found
+                        {t('students.manualEnroll.noEnrollmentsFound')}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -266,7 +277,7 @@ export default function ManualEnrollPage() {
                             </div>
                           ) : (
                             <span className="text-xs text-muted-foreground">
-                              Free
+                              {t('students.manualEnroll.free')}
                             </span>
                           )}
                         </TableCell>
