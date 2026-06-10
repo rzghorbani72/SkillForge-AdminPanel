@@ -119,6 +119,8 @@ export interface TemplateCustomizationSidebarProps {
   onReset: () => void;
   onSaveAsTemplate?: () => void;
   onClose: () => void;
+  selectedBlockId?: string | null;
+  onSelectBlock?: (id: string) => void;
 }
 
 // ── Accordion ────────────────────────────────────────────────────────────────
@@ -661,17 +663,31 @@ function BannerImageSection({
 // dragged or removed. Everything in between is drag-reorderable.
 function PinnedRow({
   block,
+  isSelected,
+  onSelect,
   onReplace
 }: {
   block: UIBlockConfig;
+  isSelected: boolean;
+  onSelect?: () => void;
   onReplace: () => void;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-zinc-700/60 bg-zinc-800/30 px-2 py-1.5">
+    <div
+      className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${
+        isSelected
+          ? 'border-blue-500/60 bg-blue-500/10'
+          : 'border-zinc-700/60 bg-zinc-800/30'
+      }`}
+    >
       <Lock className="h-3 w-3 flex-shrink-0 text-zinc-600" />
-      <span className="flex-1 text-xs text-zinc-300">
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
+      >
         {BLOCK_LABELS[block.type] ?? block.type}
-      </span>
+      </button>
       <button
         type="button"
         title="جایگزینی بخش"
@@ -686,9 +702,13 @@ function PinnedRow({
 
 function SortableRow({
   block,
+  isSelected,
+  onSelect,
   onReplace
 }: {
   block: UIBlockConfig;
+  isSelected: boolean;
+  onSelect?: () => void;
   onReplace: () => void;
 }) {
   const {
@@ -704,9 +724,11 @@ function SortableRow({
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center gap-2 rounded-lg bg-zinc-800/60 px-2 py-1.5 ${
-        isDragging ? 'opacity-60' : ''
-      }`}
+      className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${
+        isSelected
+          ? 'border-blue-500/60 bg-blue-500/10'
+          : 'border-transparent bg-zinc-800/60'
+      } ${isDragging ? 'opacity-60' : ''}`}
     >
       <button
         type="button"
@@ -717,9 +739,13 @@ function SortableRow({
       >
         <GripVertical className="h-3.5 w-3.5" />
       </button>
-      <span className="flex-1 text-xs text-zinc-300">
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
+      >
         {BLOCK_LABELS[block.type] ?? block.type}
-      </span>
+      </button>
       <span className="rounded bg-zinc-700 px-1.5 py-0.5 font-mono text-[9px] text-zinc-400">
         {BLOCK_TAG[block.type] ?? 'div'}
       </span>
@@ -738,11 +764,15 @@ function SortableRow({
 function SectionOrderSection({
   blocks,
   onBlocksChange,
-  onOpenPicker
+  onOpenPicker,
+  selectedBlockId,
+  onSelectBlock
 }: {
   blocks: UIBlockConfig[];
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
+  selectedBlockId?: string | null;
+  onSelectBlock?: (id: string) => void;
 }) {
   const sensors = useSensors(useSensor(PointerSensor));
   const sorted = [...blocks].sort((a, b) => a.order - b.order);
@@ -773,11 +803,19 @@ function SectionOrderSection({
 
   const replace = (block: UIBlockConfig) => () =>
     onOpenPicker({ blockId: block.id, type: block.type });
+  const select = (block: UIBlockConfig) => () => onSelectBlock?.(block.id);
 
   return (
     <AccordionSection title="ترتیب و ترکیب بخش‌ها" defaultOpen>
       <div className="space-y-1">
-        {header && <PinnedRow block={header} onReplace={replace(header)} />}
+        {header && (
+          <PinnedRow
+            block={header}
+            isSelected={selectedBlockId === header.id}
+            onSelect={select(header)}
+            onReplace={replace(header)}
+          />
+        )}
 
         <DndContext
           sensors={sensors}
@@ -793,6 +831,8 @@ function SectionOrderSection({
                 <SortableRow
                   key={block.id}
                   block={block}
+                  isSelected={selectedBlockId === block.id}
+                  onSelect={select(block)}
                   onReplace={replace(block)}
                 />
               ))}
@@ -800,7 +840,14 @@ function SectionOrderSection({
           </SortableContext>
         </DndContext>
 
-        {footer && <PinnedRow block={footer} onReplace={replace(footer)} />}
+        {footer && (
+          <PinnedRow
+            block={footer}
+            isSelected={selectedBlockId === footer.id}
+            onSelect={select(footer)}
+            onReplace={replace(footer)}
+          />
+        )}
 
         <button
           type="button"
@@ -836,7 +883,9 @@ export function TemplateCustomizationSidebar({
   onOpenPicker,
   onReset,
   onSaveAsTemplate,
-  onClose
+  onClose,
+  selectedBlockId,
+  onSelectBlock
 }: TemplateCustomizationSidebarProps) {
   return (
     <div
@@ -896,6 +945,8 @@ export function TemplateCustomizationSidebar({
           blocks={blocks}
           onBlocksChange={onBlocksChange}
           onOpenPicker={onOpenPicker}
+          selectedBlockId={selectedBlockId}
+          onSelectBlock={onSelectBlock}
         />
       </div>
 

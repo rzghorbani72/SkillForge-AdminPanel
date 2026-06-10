@@ -26,6 +26,7 @@ import {
 } from '@/lib/ui-template/preview-url';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
 import { TemplateCustomizationSidebar } from '@/components/ui-template/template-customization-sidebar';
+import { SectionCustomizationPanel } from '@/components/ui-template/section-customization-panel';
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
@@ -83,6 +84,7 @@ export default function UITemplateSettingsPage() {
     blockId: string;
     type: string;
   } | null>(null);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
 
   const iframeSrc = baseIframeSrc
     ? appendPreviewCacheBuster(baseIframeSrc, refreshKey)
@@ -115,6 +117,7 @@ export default function UITemplateSettingsPage() {
     setRefreshKey(0);
     setIsApplied(false);
     setShowCustomizer(false);
+    setSelectedBlockId(null);
     setIsPreviewLoading(true);
 
     // Base presets seed their palette from the design system; dedicated
@@ -206,6 +209,7 @@ export default function UITemplateSettingsPage() {
     setSelectedPreset(null);
     setBaseIframeSrc(null);
     setShowCustomizer(false);
+    setSelectedBlockId(null);
   };
 
   const refreshPresets = useCallback(async () => {
@@ -328,6 +332,50 @@ export default function UITemplateSettingsPage() {
     debouncedSaveBlocks(blocks);
   };
 
+  // ── Per-section panel handlers ──────────────────────────────────────────────
+
+  const handleBlockConfigChange = (
+    blockId: string,
+    config: Record<string, unknown>
+  ) => {
+    const updated = draftBlocks.map((b) =>
+      b.id === blockId ? { ...b, config } : b
+    );
+    setDraftBlocks(updated);
+    debouncedSaveBlocks(updated);
+  };
+
+  // Header stays pinned first and footer last; only the middle stack reorders.
+  const handleBlockMove = (blockId: string, dir: 'up' | 'down') => {
+    const sorted = [...draftBlocks].sort((a, b) => a.order - b.order);
+    const header = sorted.find((b) => b.type === 'header');
+    const footer = sorted.find((b) => b.type === 'footer');
+    const middle = sorted.filter(
+      (b) => b.type !== 'header' && b.type !== 'footer'
+    );
+    const i = middle.findIndex((b) => b.id === blockId);
+    const j = dir === 'up' ? i - 1 : i + 1;
+    if (i === -1 || j < 0 || j >= middle.length) return;
+    [middle[i], middle[j]] = [middle[j], middle[i]];
+    const next = [
+      ...(header ? [header] : []),
+      ...middle,
+      ...(footer ? [footer] : [])
+    ].map((block, index) => ({ ...block, order: index + 1 }));
+    handleBlocksChange(next);
+  };
+
+  const handleBlockDelete = (blockId: string) => {
+    const block = draftBlocks.find((b) => b.id === blockId);
+    if (!block || block.type === 'header' || block.type === 'footer') return;
+    const next = draftBlocks
+      .filter((b) => b.id !== blockId)
+      .sort((a, b) => a.order - b.order)
+      .map((b, index) => ({ ...b, order: index + 1 }));
+    setSelectedBlockId(null);
+    handleBlocksChange(next);
+  };
+
   const handleOpenPicker = (target?: { blockId: string; type: string }) => {
     setPickerTarget(target ?? null);
     setPickerOpen(true);
@@ -414,6 +462,15 @@ export default function UITemplateSettingsPage() {
   if (selectedPreset) {
     const ds = getDesignSystem(selectedPreset.id);
     const colors = resolveTemplateColors(selectedPreset);
+
+    const selectedBlock =
+      draftBlocks.find((b) => b.id === selectedBlockId) ?? null;
+    const middleBlocks = [...draftBlocks]
+      .sort((a, b) => a.order - b.order)
+      .filter((b) => b.type !== 'header' && b.type !== 'footer');
+    const midIndex = selectedBlock
+      ? middleBlocks.findIndex((b) => b.id === selectedBlock.id)
+      : -1;
 
     return (
       <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-zinc-950">
@@ -516,6 +573,24 @@ export default function UITemplateSettingsPage() {
               onReset={handleReset}
               onSaveAsTemplate={handleSaveAsTemplate}
               onClose={() => setShowCustomizer(false)}
+              selectedBlockId={selectedBlockId}
+              onSelectBlock={setSelectedBlockId}
+            />
+          )}
+
+          {selectedBlock && (
+            <SectionCustomizationPanel
+              block={selectedBlock}
+              canMoveUp={midIndex > 0}
+              canMoveDown={midIndex >= 0 && midIndex < middleBlocks.length - 1}
+              canDelete={
+                selectedBlock.type !== 'header' &&
+                selectedBlock.type !== 'footer'
+              }
+              onUpdate={handleBlockConfigChange}
+              onMove={handleBlockMove}
+              onDelete={handleBlockDelete}
+              onClose={() => setSelectedBlockId(null)}
             />
           )}
 

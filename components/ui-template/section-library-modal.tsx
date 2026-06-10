@@ -8,6 +8,27 @@ import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
+import { SectionPreviewFrame } from './section-preview-frame';
+
+// Canonical section name shown in the picker, independent of the source
+// template's variant label.
+const CANON_NAME: Record<string, string> = {
+  header: 'ناوبری',
+  hero: 'هیرو',
+  features: 'ویژگی‌ها',
+  courses: 'دوره‌ها',
+  testimonials: 'نظرات',
+  pricing: 'تعرفه‌ها',
+  cta: 'فراخوان',
+  categories: 'دسته‌بندی‌ها',
+  projects: 'نمونه‌کارها',
+  'course-grid': 'شبکه دوره‌ها',
+  footer: 'فوتر',
+  slideshow: 'اسلایدشو',
+  marquee: 'مارکی',
+  membership: 'اشتراک'
+};
 
 export interface ImageSlot {
   key: string;
@@ -77,6 +98,29 @@ export function SectionLibraryModal({
   const [isImporting, setIsImporting] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [preview, setPreview] = useState<{
+    baseUrl: string;
+    token: string;
+  } | null>(null);
+
+  // Preview session powers the live section thumbnails (storefront origin +
+  // academy-scoped token). Fetched once per open; failure degrades to no thumbs.
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    apiClient
+      .getTemplatePreviewSession()
+      .then((session) => {
+        const baseUrl = session.storefrontBaseUrl ?? resolveStorefrontBaseUrl();
+        if (!cancelled && baseUrl) {
+          setPreview({ baseUrl, token: session.token });
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -279,58 +323,90 @@ export function SectionLibraryModal({
                     {group.items.map((section) => (
                       <div
                         key={section.id}
-                        className="flex flex-col gap-2 rounded-lg border p-3 transition-colors hover:border-primary/40"
+                        className="group/card overflow-hidden rounded-lg border transition-colors hover:border-primary/40"
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-medium">
-                              {section.label}
-                            </p>
-                            <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                              <LayoutTemplate className="h-3 w-3 shrink-0" />
-                              {t('settings.sectionFromTemplate', {
-                                name: section.presetName
-                              })}
-                            </p>
-                          </div>
-                          <div className="flex shrink-0 flex-col items-end gap-1">
-                            <Badge variant="secondary" className="text-[9px]">
-                              {section.blockType}
-                            </Badge>
-                            {section.imageSlots.length > 0 && (
-                              <Badge
-                                variant="outline"
-                                className="gap-0.5 text-[9px] text-muted-foreground"
-                              >
-                                <ImageIcon className="h-2.5 w-2.5" />
-                                {section.imageSlots.length}
-                              </Badge>
-                            )}
+                        {/* Live storefront render of this section */}
+                        <div className="relative h-28 w-full border-b bg-muted/30">
+                          {preview ? (
+                            <SectionPreviewFrame
+                              baseUrl={preview.baseUrl}
+                              templateKey={section.presetId}
+                              blockId={section.blockId}
+                              token={preview.token}
+                              className="h-full w-full"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center">
+                              <LayoutTemplate className="h-5 w-5 text-muted-foreground/40" />
+                            </div>
+                          )}
+                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover/card:opacity-100">
+                            <span className="rounded-md bg-white px-2.5 py-1 text-[11px] font-bold text-zinc-900">
+                              {swapTarget
+                                ? t('settings.sectionReplace')
+                                : t('settings.sectionAddToDraft')}
+                            </span>
                           </div>
                         </div>
-                        {section.imageSlots.length > 0 && (
-                          <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <ImageIcon className="h-2.5 w-2.5 shrink-0" />
-                            {t('settings.sectionNeedsImages')}:{' '}
-                            {summarizeImageSlots(section.imageSlots)}
-                          </p>
-                        )}
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          className="h-7 text-xs"
-                          disabled={isImporting === section.id}
-                          onClick={() => handleSelect(section)}
-                        >
-                          {isImporting === section.id
-                            ? swapTarget
-                              ? t('settings.sectionReplacing')
-                              : t('settings.sectionImporting')
-                            : swapTarget
-                              ? t('settings.sectionReplace')
-                              : t('settings.sectionAddToDraft')}
-                        </Button>
+
+                        {/* Meta */}
+                        <div className="flex flex-col gap-2 p-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-bold">
+                                {CANON_NAME[section.blockType] ?? section.label}
+                              </p>
+                              <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                <LayoutTemplate className="h-3 w-3 shrink-0" />
+                                {t('settings.sectionFromTemplate', {
+                                  name: section.presetName
+                                })}
+                              </p>
+                            </div>
+                            <div className="flex shrink-0 flex-col items-end gap-1">
+                              {section.sectionVariant && (
+                                <Badge
+                                  variant="secondary"
+                                  className="text-[9px]"
+                                >
+                                  {section.sectionVariant}
+                                </Badge>
+                              )}
+                              {section.imageSlots.length > 0 && (
+                                <Badge
+                                  variant="outline"
+                                  className="gap-0.5 text-[9px] text-muted-foreground"
+                                >
+                                  <ImageIcon className="h-2.5 w-2.5" />
+                                  {section.imageSlots.length}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          {section.imageSlots.length > 0 && (
+                            <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <ImageIcon className="h-2.5 w-2.5 shrink-0" />
+                              {t('settings.sectionNeedsImages')}:{' '}
+                              {summarizeImageSlots(section.imageSlots)}
+                            </p>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs"
+                            disabled={isImporting === section.id}
+                            onClick={() => handleSelect(section)}
+                          >
+                            {isImporting === section.id
+                              ? swapTarget
+                                ? t('settings.sectionReplacing')
+                                : t('settings.sectionImporting')
+                              : swapTarget
+                                ? t('settings.sectionReplace')
+                                : t('settings.sectionAddToDraft')}
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
