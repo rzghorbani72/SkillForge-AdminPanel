@@ -173,10 +173,16 @@ export const en = {
     coupons: 'Coupons',
     subscriptions: 'Subscriptions',
     platformSettings: 'Platform Settings',
+    allAcademies: 'Academies',
+    myAcademies: 'My Academies',
+    templatesGallery: 'Templates Gallery',
+    templateCovers: 'Template Covers',
     section: {
       manage: 'Manage',
       finance: 'Finance',
-      platform: 'Platform'
+      platform: 'Platform',
+      templates: 'Templates',
+      configuration: 'Configuration'
     }
   },
   auth: {
@@ -2972,7 +2978,24 @@ export const en = {
   sidebar: {
     upgradePlan: 'Upgrade to Enterprise',
     upgradeDescription: 'Unlimited students, API & 99.9% SLA',
-    upgradeButton: 'See plans'
+    upgradeButton: 'See plans',
+    platformAdmin: 'Platform Admin',
+    managementConsole: 'Management Console'
+  },
+  templatesGallery: {
+    title: 'Templates Gallery',
+    description:
+      'Manage and publish public site templates available to all academies.',
+    newTemplate: 'New Template',
+    empty: 'No templates found.',
+    createFirst: 'Create your first template',
+    public: 'Public',
+    private: 'Private',
+    edit: 'Edit',
+    publish: 'Publish',
+    unpublish: 'Unpublish',
+    sections: '{{count}} sections',
+    deleteConfirm: 'Delete template "{{name}}"?'
   },
   plans: {
     title: 'Pricing Plans',

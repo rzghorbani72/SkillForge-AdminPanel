@@ -66,7 +66,7 @@ export const navItems: NavItem[] = [
     title: 'Academies',
     href: '/academies',
     icon: 'store' as IconType,
-    label: 'academies',
+    label: 'allAcademies',
     roles: ['ADMIN', 'SUPPORT'],
     scope: 'platform',
     section: 'platform'

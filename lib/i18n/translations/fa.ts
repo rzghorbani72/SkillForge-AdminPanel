@@ -176,10 +176,16 @@ export const fa = {
     coupons: 'کوپن‌ها',
     subscriptions: 'اشتراک‌ها',
     platformSettings: 'تنظیمات پلتفرم',
+    allAcademies: 'آکادمی‌ها',
+    myAcademies: 'آکادمی‌های من',
+    templatesGallery: 'گالری قالب‌ها',
+    templateCovers: 'کاور قالب‌ها',
     section: {
       manage: 'مدیریت',
       finance: 'مالی',
-      platform: 'پلتفرم'
+      platform: 'پلتفرم',
+      templates: 'قالب‌ها',
+      configuration: 'پیکربندی'
     }
   },
   auth: {
@@ -2842,7 +2848,23 @@ export const fa = {
   sidebar: {
     upgradePlan: 'ارتقا به سازمانی',
     upgradeDescription: 'دانشجوی نامحدود، API و SLA ۹۹.۹٪',
-    upgradeButton: 'مشاهده پلن‌ها'
+    upgradeButton: 'مشاهده پلن‌ها',
+    platformAdmin: 'مدیر پلتفرم',
+    managementConsole: 'کنسول مدیریت'
+  },
+  templatesGallery: {
+    title: 'گالری قالب‌ها',
+    description: 'مدیریت و انتشار قالب‌های عمومی سایت در دسترس همه آکادمی‌ها.',
+    newTemplate: 'قالب جدید',
+    empty: 'قالبی یافت نشد.',
+    createFirst: 'اولین قالب خود را بسازید',
+    public: 'عمومی',
+    private: 'خصوصی',
+    edit: 'ویرایش',
+    publish: 'انتشار',
+    unpublish: 'لغو انتشار',
+    sections: '{{count}} بخش',
+    deleteConfirm: 'حذف قالب «{{name}}»؟'
   },
   plans: {
     title: 'پلن‌های قیمت',

@@ -17,8 +17,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from '@/components/ui/link';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function TemplatesGalleryPage() {
+  const { t } = useTranslation();
   const [templates, setTemplates] = useState<TemplatePreset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -56,7 +58,12 @@ export default function TemplatesGalleryPage() {
   };
 
   const handleDelete = async (template: TemplatePreset) => {
-    if (!window.confirm(`Delete template "${template.name}"?`)) return;
+    if (
+      !window.confirm(
+        t('templatesGallery.deleteConfirm', { name: template.name })
+      )
+    )
+      return;
     setDeletingId(template.id);
     try {
       await apiClient.deleteDedicatedTemplate(template.id);
@@ -73,16 +80,16 @@ export default function TemplatesGalleryPage() {
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Templates Gallery
+            {t('templatesGallery.title')}
           </h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            Manage and publish public site templates available to all academies.
+            {t('templatesGallery.description')}
           </p>
         </div>
         <Link href="/settings/ui-template">
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New Template
+            <Plus className="me-2 h-4 w-4" />
+            {t('templatesGallery.newTemplate')}
           </Button>
         </Link>
       </div>
@@ -96,10 +103,10 @@ export default function TemplatesGalleryPage() {
       ) : templates.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
           <LayoutTemplate className="mb-3 h-12 w-12 opacity-25" />
-          <p className="text-sm">No templates found.</p>
+          <p className="text-sm">{t('templatesGallery.empty')}</p>
           <Link href="/settings/ui-template" className="mt-4">
             <Button variant="outline" size="sm">
-              Create your first template
+              {t('templatesGallery.createFirst')}
             </Button>
           </Link>
         </div>
@@ -108,6 +115,7 @@ export default function TemplatesGalleryPage() {
           {templates.map((template) => (
             <TemplateCard
               key={template.id}
+              t={t}
               template={template}
               isToggling={togglingId === template.id}
               isDeleting={deletingId === template.id}
@@ -122,17 +130,19 @@ export default function TemplatesGalleryPage() {
 }
 
 function TemplateCard({
+  t,
   template,
   isToggling,
   isDeleting,
   onToggleVisibility,
   onDelete
 }: {
+  t: (key: string, params?: Record<string, string | number>) => string;
   template: TemplatePreset;
   isToggling: boolean;
   isDeleting: boolean;
-  onToggleVisibility: (t: TemplatePreset) => void;
-  onDelete: (t: TemplatePreset) => void;
+  onToggleVisibility: (tpl: TemplatePreset) => void;
+  onDelete: (tpl: TemplatePreset) => void;
 }) {
   const isPublic =
     template.visibility === 'PUBLIC' || template.visibility === undefined;
@@ -160,12 +170,12 @@ function TemplateCard({
             {isPublic ? (
               <>
                 <Globe className="h-3 w-3" />
-                Public
+                {t('templatesGallery.public')}
               </>
             ) : (
               <>
                 <Lock className="h-3 w-3" />
-                Private
+                {t('templatesGallery.private')}
               </>
             )}
           </Badge>
@@ -181,8 +191,7 @@ function TemplateCard({
           </p>
         )}
         <p className="mt-2 text-[11px] text-muted-foreground">
-          {template.blocks.length} section
-          {template.blocks.length !== 1 ? 's' : ''}
+          {t('templatesGallery.sections', { count: template.blocks.length })}
         </p>
       </div>
 
@@ -191,7 +200,7 @@ function TemplateCard({
         <Link href="/settings/ui-template" className="flex-1">
           <Button variant="outline" size="sm" className="w-full gap-1.5">
             <Pencil className="h-3.5 w-3.5" />
-            Edit
+            {t('templatesGallery.edit')}
           </Button>
         </Link>
 
@@ -200,7 +209,11 @@ function TemplateCard({
           size="sm"
           disabled={isToggling}
           onClick={() => onToggleVisibility(template)}
-          title={isPublic ? 'Unpublish' : 'Publish'}
+          title={
+            isPublic
+              ? t('templatesGallery.unpublish')
+              : t('templatesGallery.publish')
+          }
           className="gap-1"
         >
           {isToggling ? (
