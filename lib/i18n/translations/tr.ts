@@ -76,6 +76,7 @@ export const tr = {
   navigation: {
     dashboard: 'Kontrol Paneli',
     platformOverview: 'Platform Genel Bakış',
+    supportAccessLogs: 'Destek Erişim Kayıtları',
     stores: 'Enstitüler',
     courses: 'Kurslar',
     students: 'Öğrenciler',

@@ -182,6 +182,14 @@ export const navItems: NavItem[] = [
     label: 'platformSettings',
     roles: ['ADMIN'],
     adminOnly: true
+  },
+  {
+    title: 'Support Access Logs',
+    href: '/support-access-logs',
+    icon: 'shield' as IconType,
+    label: 'supportAccessLogs',
+    roles: ['ADMIN'],
+    adminOnly: true
   }
 ];
 

@@ -76,6 +76,7 @@ export const ar = {
   navigation: {
     dashboard: 'لوحة التحكم',
     platformOverview: 'نظرة عامة على المنصة',
+    supportAccessLogs: 'سجلات وصول الدعم',
     stores: 'المعاهد',
     courses: 'الدورات',
     students: 'الطلاب',

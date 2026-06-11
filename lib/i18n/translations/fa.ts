@@ -96,6 +96,7 @@ export const fa = {
     Dashboard: 'داشبورد',
     dashboard: 'داشبورد',
     platformOverview: 'نمای کلی پلتفرم',
+    supportAccessLogs: 'گزارش دسترسی پشتیبانی',
     management: 'مدیریت',
     'All Stores': 'همه آکادمی‌ها',
     stores: 'آکادمی‌های من',

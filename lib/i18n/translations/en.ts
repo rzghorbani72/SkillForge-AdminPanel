@@ -95,6 +95,7 @@ export const en = {
   navigation: {
     dashboard: 'Dashboard',
     platformOverview: 'Platform Overview',
+    supportAccessLogs: 'Support Access Logs',
     management: 'Management',
     academies: 'My Academies',
     courses: 'Courses',

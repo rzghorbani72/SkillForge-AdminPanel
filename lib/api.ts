@@ -598,6 +598,43 @@ class ApiClient {
     return response;
   }
 
+  async getSupportAccessLogs(params?: {
+    academy_id?: string;
+    actor_user_id?: string;
+    from?: string;
+    to?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const qs = new URLSearchParams();
+    if (params?.academy_id) qs.append('academy_id', params.academy_id);
+    if (params?.actor_user_id) qs.append('actor_user_id', params.actor_user_id);
+    if (params?.from) qs.append('from', params.from);
+    if (params?.to) qs.append('to', params.to);
+    if (params?.page) qs.append('page', String(params.page));
+    if (params?.limit) qs.append('limit', String(params.limit));
+    const query = qs.toString();
+    const response = await this.request(
+      `/support-access-logs${query ? `?${query}` : ''}`
+    );
+    return response.data as {
+      message: string;
+      status: string;
+      data: Array<{
+        id: string;
+        actor_user_id: string;
+        actor_profile_id: string | null;
+        academy_id: string;
+        method: string;
+        path: string;
+        created_at: string;
+      }>;
+      total: number;
+      page: number;
+      limit: number;
+    };
+  }
+
   async getCurrentAcademy() {
     const response = await this.request('/academies/current');
     return response;
