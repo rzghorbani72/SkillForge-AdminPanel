@@ -14,7 +14,9 @@
     "lint": "next lint",
     "format": "prettier . --write",
     "prepare": "husky",
-    "production-report": "ts-node scripts/production-report.ts"
+    "production-report": "ts-node scripts/production-report.ts",
+    "load-test": "k6 run loadtests/basic-load-test.js",
+    "load-test:advanced": "k6 run loadtests/api-load-test.js"
   },
   "lint-staged": {
     "**/*": [

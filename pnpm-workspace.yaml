@@ -1,6 +1,6 @@
 packages:
   - '.'
 allowBuilds:
-  core-js: set this to true or false
+  core-js: false
   sharp: true
   unrs-resolver: true
