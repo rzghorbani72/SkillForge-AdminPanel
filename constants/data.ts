@@ -53,10 +53,19 @@ export type Product = {
 
 export const navItems: NavItem[] = [
   {
+    title: 'Platform Overview',
+    href: '/platform',
+    icon: 'dashboard' as IconType,
+    label: 'platformOverview',
+    roles: ['ADMIN', 'SUPPORT'],
+    scope: 'platform'
+  },
+  {
     title: 'Dashboard',
     href: '/dashboard',
     icon: 'dashboard' as IconType,
-    label: 'dashboard'
+    label: 'dashboard',
+    scope: 'academy'
   },
   {
     title: 'My Academies',
@@ -70,7 +79,8 @@ export const navItems: NavItem[] = [
     href: '/courses',
     icon: 'course' as IconType,
     label: 'courses',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    scope: 'academy'
   },
   {
     title: 'Users',
@@ -78,6 +88,7 @@ export const navItems: NavItem[] = [
     icon: 'users' as IconType,
     label: 'users',
     roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
     children: [
       {
         title: 'Users',
@@ -97,7 +108,8 @@ export const navItems: NavItem[] = [
     href: '/affiliates',
     icon: 'network' as IconType,
     label: 'affiliates',
-    roles: ['ADMIN', 'MANAGER']
+    roles: ['ADMIN', 'MANAGER'],
+    scope: 'academy'
   },
   {
     title: 'My Affiliate',
@@ -111,21 +123,24 @@ export const navItems: NavItem[] = [
     href: '/financial',
     icon: 'dollarSign' as IconType,
     label: 'financial',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER']
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER'],
+    scope: 'academy'
   },
   {
     title: 'Plans',
     href: '/plans',
     icon: 'layers' as IconType,
     label: 'plans',
-    roles: ['ADMIN', 'MANAGER', 'TEACHER']
+    roles: ['ADMIN', 'MANAGER', 'TEACHER'],
+    scope: 'academy'
   },
   {
     title: 'Site Template',
     href: '/settings/ui-template',
     icon: 'layout' as IconType,
     label: 'siteTemplate',
-    roles: ['ADMIN', 'MANAGER']
+    roles: ['ADMIN', 'MANAGER'],
+    scope: 'academy'
   },
   {
     title: 'Template Covers',

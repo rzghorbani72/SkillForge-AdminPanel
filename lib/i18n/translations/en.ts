@@ -94,6 +94,7 @@ export const en = {
   },
   navigation: {
     dashboard: 'Dashboard',
+    platformOverview: 'Platform Overview',
     management: 'Management',
     academies: 'My Academies',
     courses: 'Courses',
@@ -503,6 +504,8 @@ export const en = {
     academiesManagement: 'Stores Management',
     manageStoresDescription: 'Manage your academies and their settings',
     searchStores: 'Search academies...',
+    platformAdmin: 'Platform Admin',
+    platformLevel: 'Platform level',
     noStoresFound: 'No academies found',
     storeCreated: 'Academy created successfully',
     storeUpdated: 'Academy updated successfully',

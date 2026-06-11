@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import {
+  Building2,
   Check,
   ChevronDown,
   GraduationCap,
@@ -15,7 +16,7 @@ import { useAuthUser } from '@/components/providers/user-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
-import { clearAcademyData } from '@/lib/store-utils';
+import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import {
   Popover,
   PopoverContent,
@@ -103,7 +104,7 @@ export function AcademySelector() {
   const [switching, setSwitching] = useState(false);
 
   const isPlatformAdmin = user?.isAdminProfile || user?.platformLevel || false;
-  if (isPlatformAdmin) return null;
+  if (isPlatformAdmin) return <AdminModeSwitcher />;
 
   if (HIDDEN_ROLES.includes(user?.role ?? '')) return null;
 
@@ -287,5 +288,184 @@ export function AcademySelector() {
         <Plus className="h-4 w-4" />
       </button>
     </div>
+  );
+}
+
+// Platform admin: switch between Platform mode (no academy) and managing a
+// specific academy. Unlike managers, admins never reissue their token — they
+// hold an academy-less platform token and scope into an academy purely via the
+// X-Academy-ID header (persisted as the selected academy id), so a reload is
+// enough to re-scope every request and reset the view context.
+function AdminModeSwitcher() {
+  const { t } = useTranslation();
+  const { academies, selectedAcademy, isLoading } = useStore();
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+
+  const enterPlatformMode = () => {
+    setOpen(false);
+    if (!selectedAcademy) return;
+    clearAcademyData();
+    // Full navigation (not router.push) clears all in-memory academy state, so
+    // no academy data bleeds into Platform mode.
+    window.location.href = '/platform';
+  };
+
+  const enterAcademyMode = (academyId: number) => {
+    setOpen(false);
+    setQuery('');
+    if (academyId === selectedAcademy?.id) return;
+    setSelectedAcademyId(academyId);
+    window.location.href = '/dashboard';
+  };
+
+  const platformLabel = t('stores.platformAdmin') || 'Platform Admin';
+
+  const trigger = selectedAcademy ? (
+    <div className="flex items-center gap-2.5">
+      <AcademyAvatar
+        name={selectedAcademy.name}
+        id={selectedAcademy.id}
+        logo={selectedAcademy.logo}
+      />
+      <p className="max-w-[130px] truncate text-sm font-semibold leading-tight">
+        {selectedAcademy.name}
+      </p>
+      <ChevronDown
+        className={cn(
+          'ms-1 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200',
+          open && 'rotate-180'
+        )}
+      />
+    </div>
+  ) : (
+    <div className="flex items-center gap-2.5">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/90">
+        <Building2 className="h-4 w-4 text-background" />
+      </div>
+      <p className="text-sm font-semibold leading-tight">{platformLabel}</p>
+      <ChevronDown
+        className={cn(
+          'ms-1 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200',
+          open && 'rotate-180'
+        )}
+      />
+    </div>
+  );
+
+  const filtered = query
+    ? academies.filter(
+        (a) =>
+          a.name.toLowerCase().includes(query.toLowerCase()) ||
+          getAcademyDomain(a).toLowerCase().includes(query.toLowerCase())
+      )
+    : academies;
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="flex h-10 items-center rounded-xl border bg-background px-3 shadow-sm transition-colors hover:bg-accent"
+        >
+          {trigger}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-72 p-0 shadow-xl"
+        sideOffset={6}
+      >
+        {/* Platform mode entry */}
+        <button
+          type="button"
+          onClick={enterPlatformMode}
+          className={cn(
+            'flex w-full items-center gap-3 border-b px-3 py-2.5 transition-colors hover:bg-accent',
+            !selectedAcademy && 'bg-primary/5'
+          )}
+        >
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/90">
+            <Building2 className="h-4 w-4 text-background" />
+          </div>
+          <div className="min-w-0 flex-1 text-start">
+            <p
+              className={cn(
+                'truncate text-sm font-medium',
+                !selectedAcademy && 'text-primary'
+              )}
+            >
+              {platformLabel}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {t('stores.platformLevel') || 'Platform level'}
+            </p>
+          </div>
+          {!selectedAcademy && (
+            <Check className="h-4 w-4 shrink-0 text-primary" />
+          )}
+        </button>
+
+        <div className="flex items-center gap-2 border-b px-3 py-2">
+          <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <input
+            autoFocus
+            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            placeholder={t('stores.searchStores')}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+
+        <div className="max-h-64 overflow-y-auto py-1.5">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <p className="px-4 py-3 text-sm text-muted-foreground">
+              {t('stores.noStoresFound')}
+            </p>
+          ) : (
+            filtered.map((academy) => {
+              const isActive = selectedAcademy?.id === academy.id;
+              return (
+                <button
+                  key={academy.id}
+                  type="button"
+                  onClick={() => enterAcademyMode(academy.id)}
+                  className={cn(
+                    'flex w-full items-center gap-3 px-3 py-2.5 transition-colors hover:bg-accent',
+                    isActive && 'bg-primary/5'
+                  )}
+                >
+                  <AcademyAvatar
+                    name={academy.name}
+                    id={academy.id}
+                    logo={academy.logo}
+                  />
+                  <div className="min-w-0 flex-1 text-start">
+                    <p
+                      className={cn(
+                        'truncate text-sm font-medium',
+                        isActive && 'text-primary'
+                      )}
+                    >
+                      {academy.name}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {getAcademyDomain(academy)}
+                    </p>
+                  </div>
+                  {isActive && (
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
+                  )}
+                </button>
+              );
+            })
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

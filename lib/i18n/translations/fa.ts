@@ -95,6 +95,7 @@ export const fa = {
   navigation: {
     Dashboard: 'داشبورد',
     dashboard: 'داشبورد',
+    platformOverview: 'نمای کلی پلتفرم',
     management: 'مدیریت',
     'All Stores': 'همه آکادمی‌ها',
     stores: 'آکادمی‌های من',
@@ -508,6 +509,8 @@ export const fa = {
     storesManagement: 'مدیریت آکادمی‌ها',
     manageStoresDescription: 'مدیریت آکادمی‌ها و تنظیمات آن‌ها',
     searchStores: 'جستجوی آکادمی‌ها...',
+    platformAdmin: 'مدیر پلتفرم',
+    platformLevel: 'سطح پلتفرم',
     noStoresFound: 'آکادمی‌ای یافت نشد',
     storeCreated: 'آکادمی با موفقیت ایجاد شد',
     storeUpdated: 'آکادمی با موفقیت به‌روزرسانی شد',

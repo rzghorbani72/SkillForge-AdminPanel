@@ -6,12 +6,14 @@ import { MenuIcon } from 'lucide-react';
 import { useState, Suspense, useMemo } from 'react';
 import { filterNavItemsByRole } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { useHasStore } from '@/hooks/useHasStore';
 
 // import { Playlist } from "../data/playlists";
 
 export function MobileSidebar() {
   const [open, setOpen] = useState(false);
   const { user } = useAuthUser();
+  const hasStore = useHasStore();
 
   // Extract role from authenticated user (fetched from API using JWT cookie)
   const userRole = useMemo(() => {
@@ -20,8 +22,8 @@ export function MobileSidebar() {
   }, [user]);
 
   const filteredNavItems = useMemo(() => {
-    return filterNavItemsByRole(navItems, userRole);
-  }, [userRole]);
+    return filterNavItemsByRole(navItems, userRole, hasStore);
+  }, [userRole, hasStore]);
 
   return (
     <>

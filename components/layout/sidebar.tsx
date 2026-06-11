@@ -11,6 +11,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import Link from '@/components/ui/link';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useHasStore } from '@/hooks/useHasStore';
 import { useBrandingStore } from '@/lib/store';
 
 type SidebarProps = {
@@ -29,30 +30,7 @@ export default function Sidebar({ className }: SidebarProps) {
     return user.role;
   }, [user]);
 
-  const hasStore = useMemo(() => {
-    if (!user || userRole !== 'ADMIN') return undefined;
-
-    const isAdminProfile =
-      user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
-    const platformLevel =
-      user.platformLevel ?? user.profile?.platformLevel ?? false;
-
-    if (isAdminProfile || platformLevel) return false;
-
-    const profile = (user as any)?.profile;
-    const academyId =
-      profile?.academy_id ?? profile?.academyId ?? user.academyId ?? null;
-    const currentAcademyData = profile?.academy ?? profile?.store ?? null;
-
-    if (academyId === null || academyId === undefined || academyId === 0) {
-      if (!currentAcademyData) return false;
-    }
-    if (academyId !== null && academyId !== undefined && academyId !== 0)
-      return true;
-    if (currentAcademyData && currentAcademyData.id) return true;
-
-    return false;
-  }, [user, userRole]);
+  const hasStore = useHasStore();
 
   const filteredNavItems = useMemo(() => {
     return filterNavItemsByRole(navItems, userRole, hasStore);

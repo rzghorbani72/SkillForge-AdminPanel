@@ -6,18 +6,13 @@ import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
 import { AcademySelector } from './AcademySelector';
 import { LanguageSwitcher } from '@/components/language-switcher';
-import { useAuthUser } from '@/hooks/useAuthUser';
 import { Bell, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function Header() {
-  const { user } = useAuthUser();
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
-
-  const isPlatformAdmin =
-    user?.role === 'ADMIN' && (user?.isAdminProfile || user?.platformLevel);
 
   return (
     <header className="sticky inset-x-0 top-0 z-40 w-full">
@@ -48,12 +43,8 @@ export default function Header() {
 
         {/* Right controls */}
         <div className="flex items-center gap-2">
-          {!isPlatformAdmin && (
-            <>
-              <AcademySelector />
-              <div className="h-6 w-px bg-border/50" />
-            </>
-          )}
+          <AcademySelector />
+          <div className="h-6 w-px bg-border/50" />
 
           {/* <div className="flex items-center gap-1">
             <LanguageSwitcher />

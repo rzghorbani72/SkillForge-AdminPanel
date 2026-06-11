@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useStore } from '@/hooks/useStore';
 import { Sparkles, Download } from 'lucide-react';
 import useDashboard from '@/components/dashboard/useDashboard';
 import StatsCards from '@/components/dashboard/StatsCards';
@@ -29,9 +31,20 @@ export default function DashboardPage() {
   const { t, language } = useTranslation();
   const isFa = language === 'fa';
   const { user } = useAuthUser();
+  const router = useRouter();
+  const { selectedAcademy, isLoading: storeLoading } = useStore();
   const [period, setPeriod] = useState<Period>('30d');
 
   useInitializeStores();
+
+  // Platform admins with no academy selected belong in Platform mode; the
+  // academy dashboard has no tenant context to render.
+  const isPlatformAdmin = user?.isAdminProfile || user?.platformLevel || false;
+  useEffect(() => {
+    if (!storeLoading && isPlatformAdmin && !selectedAcademy) {
+      router.replace('/platform');
+    }
+  }, [storeLoading, isPlatformAdmin, selectedAcademy, router]);
 
   const {
     isLoading,

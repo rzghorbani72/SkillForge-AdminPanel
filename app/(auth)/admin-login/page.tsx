@@ -122,8 +122,9 @@ export default function AdminLoginPage() {
         // Manager/Teacher must go through /login.
         const userRole = response.currentProfile?.Role?.name;
         if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
-          // Full navigation so server layout sees HttpOnly jwt on the panel host
-          window.location.href = '/dashboard';
+          // Platform staff (admin + support) default to Platform mode.
+          // Full navigation so server layout sees HttpOnly jwt on the panel host.
+          window.location.href = '/platform';
           return;
         } else {
           ErrorHandler.showWarning(

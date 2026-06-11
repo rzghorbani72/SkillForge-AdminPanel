@@ -16,6 +16,10 @@ export function filterNavItemsByRole(
   if (!userRole) {
     return items.filter((item) => !item.roles || item.roles.length === 0);
   }
+  // Platform mode: a platform-level user (ADMIN/SUPPORT) with no academy selected.
+  // hasStore===false means they are at platform level; true means scoped into one.
+  const isPlatformRole = userRole === 'ADMIN' || userRole === 'SUPPORT';
+  const platformMode = isPlatformRole && hasStore === false;
   return items.filter((item) => {
     // Role allow-list
     if (item.roles && item.roles.length > 0) {
@@ -26,6 +30,10 @@ export function filterNavItemsByRole(
       if (userRole !== 'ADMIN') return false;
       if (hasStore === true) return false;
     }
+    // Mode separation: academy tools hide in Platform mode; platform tools hide
+    // once an academy is selected (Academy mode).
+    if (platformMode && item.scope === 'academy') return false;
+    if (!platformMode && item.scope === 'platform') return false;
     return true;
   });
 }

@@ -157,15 +157,24 @@ class ApiClient {
     // Add store ID header if available (from localStorage - non-sensitive context data)
     // But don't add it for admins without stores or auth flows (login/register use profile pick)
     if (typeof window !== 'undefined' && !isAuthFlowEndpoint) {
-      // Check if user is admin without store by checking cached user state
+      // Use the same key as store-utils.ts
+      const academyId = window.localStorage.getItem(
+        'skillforge_selected_academy_id'
+      );
+      const hasSelectedAcademy =
+        !!academyId && academyId !== 'null' && academyId !== '';
+
+      // Admin without a store: suppress the header only in Platform mode (no
+      // academy selected). An explicit selection (Academy mode) must scope
+      // requests via X-Academy-ID — entering Platform mode clears that id.
       let shouldAddStoreHeader = true;
       try {
         const userStateStr = window.localStorage.getItem('user_state');
         if (userStateStr) {
           const userState = JSON.parse(userStateStr);
-          // If user is admin and has no academy_id, don't add store header
           if (
             userState?.role === 'ADMIN' &&
+            !hasSelectedAcademy &&
             (userState?.academy_id === null ||
               userState?.academy_id === undefined)
           ) {
@@ -176,19 +185,12 @@ class ApiClient {
         // If parsing fails, continue with default behavior
       }
 
-      if (shouldAddStoreHeader) {
-        // Use the same key as store-utils.ts
-        const academyId = window.localStorage.getItem(
-          'skillforge_selected_academy_id'
-        );
-        if (
-          academyId &&
-          academyId !== 'null' &&
-          academyId !== '' &&
-          !headersObj['X-Academy-ID']
-        ) {
-          headersObj['X-Academy-ID'] = academyId;
-        }
+      if (
+        shouldAddStoreHeader &&
+        hasSelectedAcademy &&
+        !headersObj['X-Academy-ID']
+      ) {
+        headersObj['X-Academy-ID'] = academyId as string;
       }
     }
 

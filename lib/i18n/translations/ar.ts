@@ -75,6 +75,7 @@ export const ar = {
   },
   navigation: {
     dashboard: 'لوحة التحكم',
+    platformOverview: 'نظرة عامة على المنصة',
     stores: 'المعاهد',
     courses: 'الدورات',
     students: 'الطلاب',
@@ -333,6 +334,8 @@ export const ar = {
     storesManagement: 'إدارة المعاهد',
     manageStoresDescription: 'إدارة معاهدك وإعداداتها',
     searchStores: 'البحث في المعاهد...',
+    platformAdmin: 'مدير المنصة',
+    platformLevel: 'مستوى المنصة',
     noStoresFound: 'لم يتم العثور على معاهد',
     storeCreated: 'تم إنشاء المعهد بنجاح',
     storeUpdated: 'تم تحديث المعهد بنجاح',

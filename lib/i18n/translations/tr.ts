@@ -75,6 +75,7 @@ export const tr = {
   },
   navigation: {
     dashboard: 'Kontrol Paneli',
+    platformOverview: 'Platform Genel Bakış',
     stores: 'Enstitüler',
     courses: 'Kurslar',
     students: 'Öğrenciler',
@@ -340,6 +341,8 @@ export const tr = {
     storesManagement: 'Enstitü Yönetimi',
     manageStoresDescription: 'Enstitülerinizi ve ayarlarını yönetin',
     searchStores: 'Enstitülerde ara...',
+    platformAdmin: 'Platform Yöneticisi',
+    platformLevel: 'Platform seviyesi',
     noStoresFound: 'Enstitü bulunamadı',
     storeCreated: 'Enstitü başarıyla oluşturuldu',
     storeUpdated: 'Enstitü başarıyla güncellendi',

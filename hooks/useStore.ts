@@ -46,9 +46,23 @@ export function useStore(): UseStoreReturn {
     loadAcademies();
   }, []);
 
+  const role = (user as any)?.role as string | undefined;
+  const isPlatformStaff =
+    !!(user as any)?.isAdminProfile ||
+    !!(user as any)?.platformLevel ||
+    role === 'ADMIN' ||
+    role === 'SUPPORT';
+
   useEffect(() => {
-    if (user && user.role === 'ADMIN' && preferredAcademyId === null) {
-      setSelectedAcademy(null);
+    // Platform staff (admin + support) default to Platform mode (no academy),
+    // but honor an explicit academy selection persisted from the mode switcher.
+    // academyId 0/null/undefined all mean "no bound academy".
+    if (user && isPlatformStaff && !preferredAcademyId) {
+      const selectedId = getSelectedAcademyId();
+      const chosen = selectedId
+        ? (academies.find((a) => a.id === selectedId) ?? null)
+        : null;
+      setSelectedAcademy(chosen);
       return;
     }
 
@@ -58,7 +72,7 @@ export function useStore(): UseStoreReturn {
     } else {
       setSelectedAcademy(null);
     }
-  }, [academies, preferredAcademyId, user]);
+  }, [academies, preferredAcademyId, user, isPlatformStaff]);
 
   const loadAcademies = useCallback(async () => {
     try {

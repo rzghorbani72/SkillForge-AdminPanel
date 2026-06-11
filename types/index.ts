@@ -21,6 +21,7 @@ export interface NavItem {
     | 'AFFILIATE'
   )[]; // If not specified, all roles can access
   adminOnly?: boolean; // If true, only show to admins without stores (platform-level admins)
+  scope?: 'platform' | 'academy'; // 'academy' items hide in Platform mode; 'platform' items hide in Academy mode. Default: both.
 }
 
 export interface NavItemWithChildren extends NavItem {
