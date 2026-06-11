@@ -2571,6 +2571,17 @@ class ApiClient {
     return (response.data as any) ?? null;
   }
 
+  async setTemplateVisibility(key: string, visibility: 'PUBLIC' | 'DEDICATED') {
+    const response = await this.request(
+      `/ui-template/templates/${key}/visibility`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ visibility })
+      }
+    );
+    return (response.data as any) ?? null;
+  }
+
   async importSectionToDraft(payload: { presetId: string; blockId: string }) {
     const response = await this.request('/ui-template/current/draft/sections', {
       method: 'POST',

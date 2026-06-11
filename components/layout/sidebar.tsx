@@ -3,7 +3,13 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, Zap, GraduationCap, ArrowUpRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  Zap,
+  GraduationCap,
+  ArrowUpRight,
+  Shield
+} from 'lucide-react';
 import { Suspense, useMemo } from 'react';
 import { filterNavItemsByRole } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -52,8 +58,8 @@ export default function Sidebar({ className }: SidebarProps) {
     );
   }
 
+  const isPlatformMode = hasStore === false;
   const academyName = currentAcademy?.name || getRoleLabel(userRole, t);
-  const academyInitial = academyName?.charAt(0)?.toUpperCase() || 'A';
 
   return (
     <aside
@@ -70,30 +76,40 @@ export default function Sidebar({ className }: SidebarProps) {
           isMinimized && 'justify-center px-2'
         )}
       >
-        {(() => {
-          const raw = configLogoUrl ?? currentAcademy?.logo?.publicUrl;
-          const src = raw?.startsWith('/')
-            ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${raw}`
-            : raw;
-          return src ? (
-            <img
-              src={src}
-              alt={academyName}
-              className="h-9 w-9 shrink-0 rounded-xl object-cover"
-            />
-          ) : (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md shadow-primary/25 transition-all duration-200">
-              <GraduationCap className="h-5 w-5 text-white" />
-            </div>
-          );
-        })()}
+        {isPlatformMode ? (
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-violet-500 shadow-md shadow-violet-500/25">
+            <Shield className="h-5 w-5 text-white" />
+          </div>
+        ) : (
+          (() => {
+            const raw = configLogoUrl ?? currentAcademy?.logo?.publicUrl;
+            const src = raw?.startsWith('/')
+              ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${raw}`
+              : raw;
+            return src ? (
+              <img
+                src={src}
+                alt={academyName}
+                className="h-9 w-9 shrink-0 rounded-xl object-cover"
+              />
+            ) : (
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md shadow-primary/25 transition-all duration-200">
+                <GraduationCap className="h-5 w-5 text-white" />
+              </div>
+            );
+          })()
+        )}
         {!isMinimized && (
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold leading-tight">
-              {academyName}
+              {isPlatformMode
+                ? t('sidebar.platformAdmin') || 'Platform Admin'
+                : academyName}
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              {t('navigation.dashboard')}
+              {isPlatformMode
+                ? t('sidebar.managementConsole') || 'Management Console'
+                : t('navigation.dashboard')}
             </p>
           </div>
         )}
@@ -125,8 +141,8 @@ export default function Sidebar({ className }: SidebarProps) {
         </Suspense>
       </div>
 
-      {/* Upgrade banner */}
-      {!isMinimized && (
+      {/* Upgrade banner — hidden in platform mode */}
+      {!isPlatformMode && !isMinimized && (
         <div className="p-3">
           <div className="upgrade-banner">
             <div className="mb-2 flex items-center gap-2">
@@ -152,8 +168,8 @@ export default function Sidebar({ className }: SidebarProps) {
         </div>
       )}
 
-      {/* Minimized upgrade icon */}
-      {isMinimized && (
+      {/* Minimized upgrade icon — hidden in platform mode */}
+      {!isPlatformMode && isMinimized && (
         <div className="flex justify-center p-3">
           <Link
             href="/plans"

@@ -20,6 +20,7 @@ import {
   Layers,
   Layout,
   LayoutDashboardIcon,
+  LayoutGrid,
   List,
   Loader2,
   LucideIcon,
@@ -127,7 +128,8 @@ export type IconType =
   | 'network'
   | 'percent'
   | 'calendarClock'
-  | 'webhook';
+  | 'webhook'
+  | 'gallery';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -195,5 +197,6 @@ export const Icons = {
   network: Network,
   percent: Percent,
   calendarClock: CalendarClock,
-  webhook: Webhook
+  webhook: Webhook,
+  gallery: LayoutGrid
 };

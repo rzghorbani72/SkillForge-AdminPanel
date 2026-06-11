@@ -52,14 +52,100 @@ export type Product = {
 };
 
 export const navItems: NavItem[] = [
+  // ── Platform mode ──────────────────────────────────────────────────────────
   {
     title: 'Platform Overview',
     href: '/platform',
     icon: 'dashboard' as IconType,
     label: 'platformOverview',
     roles: ['ADMIN', 'SUPPORT'],
-    scope: 'platform'
+    scope: 'platform',
+    section: 'platform'
   },
+  {
+    title: 'Academies',
+    href: '/academies',
+    icon: 'store' as IconType,
+    label: 'academies',
+    roles: ['ADMIN', 'SUPPORT'],
+    scope: 'platform',
+    section: 'platform'
+  },
+  // Templates section
+  {
+    title: 'Templates Gallery',
+    href: '/platform/templates',
+    icon: 'gallery' as IconType,
+    label: 'templatesGallery',
+    roles: ['ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'templates'
+  },
+  {
+    title: 'Template Covers',
+    href: '/settings/template-covers',
+    icon: 'media' as IconType,
+    label: 'templateCovers',
+    roles: ['ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'templates'
+  },
+  // Finance section
+  {
+    title: 'Withdrawals',
+    href: '/withdrawals',
+    icon: 'banknote' as IconType,
+    label: 'withdrawals',
+    roles: ['ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'finance'
+  },
+  {
+    title: 'Teacher Payouts',
+    href: '/teacher-payouts',
+    icon: 'wallet2' as IconType,
+    label: 'teacherPayouts',
+    roles: ['ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'finance'
+  },
+  {
+    title: 'Subscriptions',
+    href: '/subscriptions',
+    icon: 'calendarClock' as IconType,
+    label: 'subscriptions',
+    roles: ['ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'finance'
+  },
+  // Configuration section
+  {
+    title: 'Platform Settings',
+    href: '/platform-settings',
+    icon: 'settings' as IconType,
+    label: 'platformSettings',
+    roles: ['ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'configuration'
+  },
+  {
+    title: 'Support Access Logs',
+    href: '/support-access-logs',
+    icon: 'shield' as IconType,
+    label: 'supportAccessLogs',
+    roles: ['ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'configuration'
+  },
+
+  // ── Academy mode ───────────────────────────────────────────────────────────
   {
     title: 'Dashboard',
     href: '/dashboard',
@@ -71,8 +157,9 @@ export const navItems: NavItem[] = [
     title: 'My Academies',
     href: '/academies',
     icon: 'store' as IconType,
-    label: 'academies',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER']
+    label: 'myAcademies',
+    roles: ['MANAGER', 'TEACHER'],
+    scope: 'academy'
   },
   {
     title: 'Courses',
@@ -141,55 +228,6 @@ export const navItems: NavItem[] = [
     label: 'siteTemplate',
     roles: ['ADMIN', 'MANAGER'],
     scope: 'academy'
-  },
-  {
-    title: 'Template Covers',
-    href: '/settings/template-covers',
-    icon: 'media' as IconType,
-    label: 'templateCovers',
-    roles: ['ADMIN'],
-    adminOnly: true
-  },
-  // Platform-admin-only items
-  {
-    title: 'Withdrawals',
-    href: '/withdrawals',
-    icon: 'banknote' as IconType,
-    label: 'withdrawals',
-    roles: ['ADMIN'],
-    adminOnly: true
-  },
-  {
-    title: 'Teacher Payouts',
-    href: '/teacher-payouts',
-    icon: 'wallet2' as IconType,
-    label: 'teacherPayouts',
-    roles: ['ADMIN'],
-    adminOnly: true
-  },
-  {
-    title: 'Subscriptions',
-    href: '/subscriptions',
-    icon: 'calendarClock' as IconType,
-    label: 'subscriptions',
-    roles: ['ADMIN'],
-    adminOnly: true
-  },
-  {
-    title: 'Platform Settings',
-    href: '/platform-settings',
-    icon: 'settings' as IconType,
-    label: 'platformSettings',
-    roles: ['ADMIN'],
-    adminOnly: true
-  },
-  {
-    title: 'Support Access Logs',
-    href: '/support-access-logs',
-    icon: 'shield' as IconType,
-    label: 'supportAccessLogs',
-    roles: ['ADMIN'],
-    adminOnly: true
   }
 ];
 
