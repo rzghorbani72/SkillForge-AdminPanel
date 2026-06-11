@@ -2494,6 +2494,25 @@ class ApiClient {
     return Array.isArray(data) ? data : [];
   }
 
+  async overridePublicTemplate(
+    key: string,
+    payload: { blocks: unknown[]; preview?: string }
+  ) {
+    const response = await this.request(`/ui-template/templates/${key}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    return (response.data as any) ?? null;
+  }
+
+  async setOwnedTemplateCover(image: string) {
+    const response = await this.request(
+      '/ui-template/current/dedicated/cover',
+      { method: 'PATCH', body: JSON.stringify({ image }) }
+    );
+    return (response.data as any) ?? null;
+  }
+
   async setTemplateCover(key: string, image: string) {
     const response = await this.request(`/ui-template/templates/${key}/cover`, {
       method: 'PATCH',

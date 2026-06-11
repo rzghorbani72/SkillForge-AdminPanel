@@ -85,6 +85,15 @@ const BLOCK_TAG: Record<string, string> = {
   sidebar: 'div'
 };
 
+/**
+ * Determines which save button(s) appear in the footer:
+ * - 'copy'     : Manager on a public preset — "ذخیره به‌عنوان قالب اختصاصی"
+ * - 'override' : Manager on their own dedicated template — "ذخیره قالب"
+ * - 'both'     : Admin on a public template — copy + override buttons
+ * - 'admin-override' : Admin on a dedicated template — "ذخیره قالب"
+ */
+export type SaveMode = 'copy' | 'override' | 'both' | 'admin-override';
+
 export interface TemplateCustomizationSidebarProps {
   primaryColor: string;
   borderRadius: BorderRadius;
@@ -107,7 +116,9 @@ export interface TemplateCustomizationSidebarProps {
   onBannerImageChange: (url: string) => void;
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
   onReset: () => void;
-  onSaveAsTemplate?: () => void;
+  saveMode?: SaveMode;
+  onSaveAsCopy?: () => void;
+  onSaveOverride?: () => void;
   onClose: () => void;
   selectedBlockId?: string | null;
   onSelectBlock?: (id: string) => void;
@@ -603,6 +614,7 @@ function BannerImageSection({
           ref={fileRef}
           type="file"
           accept="image/*"
+          title="آپلود تصویر بنر"
           className="hidden"
           onChange={handleUpload}
           disabled={isUploading}
@@ -973,7 +985,9 @@ export function TemplateCustomizationSidebar({
   onBannerImageChange,
   onOpenPicker,
   onReset,
-  onSaveAsTemplate,
+  saveMode,
+  onSaveAsCopy,
+  onSaveOverride,
   onClose,
   selectedBlockId,
   onSelectBlock,
@@ -1005,6 +1019,7 @@ export function TemplateCustomizationSidebar({
         </div>
         <button
           type="button"
+          title="بستن"
           onClick={onClose}
           className="rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
         >
@@ -1053,24 +1068,66 @@ export function TemplateCustomizationSidebar({
         />
       </div>
 
-      {/* Footer – save as dedicated template + reset */}
+      {/* Footer – save buttons + reset */}
       <div className="flex-shrink-0 space-y-2 border-t border-zinc-700 p-4">
-        {onSaveAsTemplate && onCoverImageChange && (
+        {saveMode && onCoverImageChange && (
           <CoverImageSection
             coverImage={coverImage}
             onChange={onCoverImageChange}
           />
         )}
-        {onSaveAsTemplate && (
+
+        {/* Manager on public preset → save a copy as dedicated */}
+        {saveMode === 'copy' && onSaveAsCopy && (
           <button
             type="button"
-            onClick={onSaveAsTemplate}
+            onClick={onSaveAsCopy}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-600/10 py-2.5 text-sm font-medium text-indigo-300 transition-colors hover:bg-indigo-600/20"
           >
             <Save className="h-4 w-4" />
             ذخیره به‌عنوان قالب اختصاصی
           </button>
         )}
+
+        {/* Manager on own dedicated template → override in-place */}
+        {(saveMode === 'override' || saveMode === 'admin-override') &&
+          onSaveOverride && (
+            <button
+              type="button"
+              onClick={onSaveOverride}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-600/10 py-2.5 text-sm font-medium text-emerald-300 transition-colors hover:bg-emerald-600/20"
+            >
+              <Save className="h-4 w-4" />
+              ذخیره قالب
+            </button>
+          )}
+
+        {/* Admin on public template → two choices */}
+        {saveMode === 'both' && (
+          <>
+            {onSaveAsCopy && (
+              <button
+                type="button"
+                onClick={onSaveAsCopy}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-600/10 py-2.5 text-sm font-medium text-indigo-300 transition-colors hover:bg-indigo-600/20"
+              >
+                <Save className="h-4 w-4" />
+                ذخیره به‌عنوان کپی اختصاصی
+              </button>
+            )}
+            {onSaveOverride && (
+              <button
+                type="button"
+                onClick={onSaveOverride}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-600/10 py-2.5 text-sm font-medium text-amber-300 transition-colors hover:bg-amber-600/20"
+              >
+                <Save className="h-4 w-4" />
+                بازنویسی قالب عمومی
+              </button>
+            )}
+          </>
+        )}
+
         <button
           type="button"
           onClick={onReset}

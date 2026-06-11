@@ -25,7 +25,10 @@ import {
   appendPreviewCacheBuster
 } from '@/lib/ui-template/preview-url';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
-import { TemplateCustomizationSidebar } from '@/components/ui-template/template-customization-sidebar';
+import {
+  TemplateCustomizationSidebar,
+  type SaveMode
+} from '@/components/ui-template/template-customization-sidebar';
 import { SectionCustomizationPanel } from '@/components/ui-template/section-customization-panel';
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
@@ -232,41 +235,76 @@ export default function UITemplateSettingsPage() {
     }
   };
 
-  const handleSaveAsTemplate = async () => {
-    // Updating your own template keeps its name; only a brand-new one asks for it.
-    const editingOwn =
-      selectedPreset?.isOwned && selectedPreset?.visibility === 'DEDICATED';
-    const name = editingOwn
-      ? selectedPreset!.name
-      : window.prompt('نام قالب اختصاصی را وارد کنید')?.trim();
+  const isAdmin = user?.role === 'ADMIN';
+  const isPublicPreset = selectedPreset?.visibility === 'PUBLIC';
+  const saveMode: SaveMode = isAdmin
+    ? isPublicPreset
+      ? 'both'
+      : 'admin-override'
+    : isPublicPreset
+      ? 'copy'
+      : 'override';
+
+  const flushStyleDraft = async () => {
+    await apiClient.saveThemeDraft({
+      border_radius_style: borderRadius,
+      shadow_style: shadow,
+      dark_mode: darkMode
+    });
+  };
+
+  // Manager on public preset OR admin choosing copy: fork a new dedicated template.
+  const handleSaveAsCopy = async () => {
+    const name = window.prompt('نام قالب اختصاصی را وارد کنید')?.trim();
     if (!name) return;
     setIsSaving(true);
     try {
-      // Flush pending style changes with a targeted save — do NOT rebuild the
-      // full palette from primary here. buildThemeDraftFromPrimary would
-      // overwrite the template's curated design-system colors with
-      // algorithm-derived ones, causing unintentional color drift on every save.
-      await apiClient.saveThemeDraft({
-        border_radius_style: borderRadius,
-        shadow_style: shadow,
-        dark_mode: darkMode
-      });
+      await flushStyleDraft();
       await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
       const saved = (await apiClient.saveDraftAsTemplate({
         name,
         preview: coverImage ?? undefined
       })) as TemplatePreset | null;
-      // Sync the active template so subsequent saves update it instead of forking.
       if (saved) {
         setSelectedPreset(saved);
         setCoverImage(saved.preview ?? null);
       }
       await refreshPresets();
-      ErrorHandler.showSuccess(
-        editingOwn
-          ? `قالب "${name}" به‌روزرسانی شد`
-          : `قالب اختصاصی "${name}" ذخیره شد`
-      );
+      ErrorHandler.showSuccess(`قالب اختصاصی "${name}" ذخیره شد`);
+      handleClosePreview();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Manager on own dedicated template OR admin on dedicated: override in-place.
+  const handleSaveOverride = async () => {
+    if (!selectedPreset) return;
+    setIsSaving(true);
+    try {
+      await flushStyleDraft();
+      await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
+      if (isAdmin && isPublicPreset) {
+        // Admin overriding a public template writes blocks + cover back to the base.
+        await apiClient.overridePublicTemplate(selectedPreset.id, {
+          blocks: draftBlocks,
+          ...(coverImage ? { preview: coverImage } : {})
+        });
+      } else {
+        // Manager overriding their own dedicated template.
+        const saved = (await apiClient.saveDraftAsTemplate({
+          name: selectedPreset.name,
+          preview: coverImage ?? undefined
+        })) as TemplatePreset | null;
+        if (saved) {
+          setSelectedPreset(saved);
+          setCoverImage(saved.preview ?? null);
+        }
+      }
+      await refreshPresets();
+      ErrorHandler.showSuccess(`قالب "${selectedPreset.name}" به‌روزرسانی شد`);
       handleClosePreview();
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -589,7 +627,9 @@ export default function UITemplateSettingsPage() {
               onBannerImageChange={handleBannerImageChange}
               onOpenPicker={handleOpenPicker}
               onReset={handleReset}
-              onSaveAsTemplate={handleSaveAsTemplate}
+              saveMode={saveMode}
+              onSaveAsCopy={handleSaveAsCopy}
+              onSaveOverride={handleSaveOverride}
               onClose={() => setShowCustomizer(false)}
               selectedBlockId={selectedBlockId}
               onSelectBlock={setSelectedBlockId}
