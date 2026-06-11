@@ -562,8 +562,17 @@ export default function UITemplateSettingsPage() {
                 : 'bg-zinc-700 text-zinc-200 hover:bg-zinc-600'
             }`}
           >
-            <Wand2 className="h-3.5 w-3.5" />
-            سفارشی‌سازی
+            {saveMode === 'both' ? (
+              <>
+                <Pencil className="h-3.5 w-3.5" />
+                ویرایش
+              </>
+            ) : (
+              <>
+                <Wand2 className="h-3.5 w-3.5" />
+                سفارشی‌سازی
+              </>
+            )}
           </Button>
 
           <div className="flex items-center gap-1.5">
