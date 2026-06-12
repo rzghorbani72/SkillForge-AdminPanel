@@ -12,17 +12,22 @@ interface SectionPreviewFrameProps {
   token?: string;
   // Virtual render width the iframe is scaled down from. 1280 ≈ desktop.
   virtualWidth?: number;
+  // Allows scrolling/clicking inside the frame instead of the default inert
+  // thumbnail behavior.
+  interactive?: boolean;
   className?: string;
 }
 
 // Real storefront render of a template/section, scaled to fit its container.
-// Non-interactive (pointer-events-none) so the surrounding card stays clickable.
+// Non-interactive by default (pointer-events-none) so a surrounding card stays
+// clickable; pass `interactive` for a scrollable embedded page.
 export function SectionPreviewFrame({
   baseUrl,
   templateKey,
   blockId,
   token,
   virtualWidth = 1280,
+  interactive = false,
   className = ''
 }: SectionPreviewFrameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,13 +46,26 @@ export function SectionPreviewFrame({
     return () => ro.disconnect();
   }, [recalc]);
 
-  const params = new URLSearchParams({ template: templateKey });
+  // embed=1 makes the storefront proxy allow AdminPanel as a frame ancestor;
+  // sample=1 swaps the visitor's academy brand for the neutral sample brand.
+  const params = new URLSearchParams({
+    template: templateKey,
+    embed: '1',
+    sample: '1'
+  });
   if (blockId) params.set('only', blockId);
   if (token) params.set('token', token);
   const src = `${baseUrl.replace(/\/$/, '')}/preview/blocks?${params.toString()}`;
 
   return (
-    <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
+    // dir=ltr keeps the oversized inner box anchored at the visual left edge —
+    // in an RTL page it would overflow leftward and the scaled content would
+    // land outside the container. The iframe document handles its own RTL.
+    <div
+      ref={containerRef}
+      dir="ltr"
+      className={`relative overflow-hidden ${className}`}
+    >
       <div
         className="origin-top-left"
         style={{
@@ -60,7 +78,9 @@ export function SectionPreviewFrame({
           src={src}
           title="Section preview"
           loading="lazy"
-          className="pointer-events-none h-full w-full border-0"
+          className={`h-full w-full border-0 ${
+            interactive ? '' : 'pointer-events-none'
+          }`}
           sandbox="allow-scripts allow-same-origin"
         />
       </div>

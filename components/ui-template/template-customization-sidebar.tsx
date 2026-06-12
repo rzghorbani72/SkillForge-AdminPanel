@@ -1150,30 +1150,17 @@ export function TemplateCustomizationSidebar({
           </button>
         )}
 
-        {/* Admin on public template → primary: override the master, secondary: private copy */}
-        {saveMode === 'both' && (
-          <>
-            {onSaveOverride && (
-              <button
-                type="button"
-                onClick={onSaveOverride}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
-              >
-                <Save className="h-4 w-4" />
-                ذخیره قالب اصلی
-              </button>
-            )}
-            {onSaveAsCopy && (
-              <button
-                type="button"
-                onClick={onSaveAsCopy}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-600 bg-zinc-800/60 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
-              >
-                <Save className="h-3.5 w-3.5" />
-                ذخیره نسخهٔ خصوصی
-              </button>
-            )}
-          </>
+        {/* Admin on public template → single Save that overrides the master
+            template every manager inherits; no dedicated-copy path here. */}
+        {saveMode === 'both' && onSaveOverride && (
+          <button
+            type="button"
+            onClick={onSaveOverride}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
+          >
+            <Save className="h-4 w-4" />
+            ذخیره
+          </button>
         )}
 
         <button
