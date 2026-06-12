@@ -91,7 +91,7 @@ const BLOCK_TAG: Record<string, string> = {
  * - 'override' : Manager on their own dedicated template — "ذخیره قالب"
  * - 'both'     : Admin editing a public template — "ذخیره به‌عنوان قالب عمومی"
  *               (primary) + "ذخیره نسخهٔ خصوصی" (secondary)
- * - 'admin-override' : Admin on a dedicated template — "ذخیره قالب"
+ * - 'admin-override' : Admin on a dedicated template — "ذخیره و انتشار"
  */
 export type SaveMode = 'copy' | 'override' | 'both' | 'admin-override';
 
@@ -1005,6 +1005,9 @@ export function TemplateCustomizationSidebar({
         .join('');
     return t(key) || type;
   };
+  // Admin sessions (public or admin-owned templates) author the public base
+  // managers later customize — distinct labels make that intent explicit.
+  const isAdminEditing = saveMode === 'both' || saveMode === 'admin-override';
   return (
     <div
       className="flex h-full w-60 flex-shrink-0 flex-col border-l border-zinc-700 bg-zinc-900"
@@ -1013,9 +1016,9 @@ export function TemplateCustomizationSidebar({
       {/* Header */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-zinc-700 px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-base">{saveMode === 'both' ? '🌐' : '🤖'}</span>
+          <span className="text-base">{isAdminEditing ? '🌐' : '🤖'}</span>
           <span className="text-sm font-semibold text-zinc-100">
-            {saveMode === 'both' ? 'ویرایش قالب عمومی' : 'سفارشی‌سازی قالب'}
+            {isAdminEditing ? 'ویرایش قالب عمومی' : 'سفارشی‌سازی قالب'}
           </span>
         </div>
         <button
@@ -1091,19 +1094,30 @@ export function TemplateCustomizationSidebar({
         )}
 
         {/* Manager on own dedicated template → override in-place */}
-        {(saveMode === 'override' || saveMode === 'admin-override') &&
-          onSaveOverride && (
-            <button
-              type="button"
-              onClick={onSaveOverride}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-600/10 py-2.5 text-sm font-medium text-emerald-300 transition-colors hover:bg-emerald-600/20"
-            >
-              <Save className="h-4 w-4" />
-              ذخیره قالب
-            </button>
-          )}
+        {saveMode === 'override' && onSaveOverride && (
+          <button
+            type="button"
+            onClick={onSaveOverride}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-600/10 py-2.5 text-sm font-medium text-emerald-300 transition-colors hover:bg-emerald-600/20"
+          >
+            <Save className="h-4 w-4" />
+            ذخیره قالب
+          </button>
+        )}
 
-        {/* Admin on public template → primary: save public, secondary: private copy */}
+        {/* Admin on dedicated template → save & publish as a public base */}
+        {saveMode === 'admin-override' && onSaveOverride && (
+          <button
+            type="button"
+            onClick={onSaveOverride}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
+          >
+            <Save className="h-4 w-4" />
+            ذخیره و انتشار
+          </button>
+        )}
+
+        {/* Admin on public template → primary: save & publish, secondary: private copy */}
         {saveMode === 'both' && (
           <>
             {onSaveOverride && (
@@ -1113,7 +1127,7 @@ export function TemplateCustomizationSidebar({
                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
               >
                 <Save className="h-4 w-4" />
-                ذخیره به‌عنوان قالب عمومی
+                ذخیره و انتشار
               </button>
             )}
             {onSaveAsCopy && (

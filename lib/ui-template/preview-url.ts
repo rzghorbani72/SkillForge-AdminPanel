@@ -23,10 +23,12 @@ export function resolveStorefrontBaseUrl(
 export function buildEmbedPreviewUrl(
   token: string,
   previewPath: string,
-  storefrontBaseUrl?: string | null
+  storefrontBaseUrl?: string | null,
+  options?: { sample?: boolean }
 ): string {
   const base = resolveStorefrontBaseUrl(storefrontBaseUrl);
-  const query = `preview=${encodeURIComponent(token)}&embed=1`;
+  let query = `preview=${encodeURIComponent(token)}&embed=1`;
+  if (options?.sample) query += '&sample=1';
   return base ? `${base}${previewPath}?${query}` : `${previewPath}?${query}`;
 }
 

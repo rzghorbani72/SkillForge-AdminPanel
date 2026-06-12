@@ -184,7 +184,8 @@ export default function UITemplateSettingsPage() {
         buildEmbedPreviewUrl(
           session.token,
           session.previewPath,
-          session.storefrontBaseUrl
+          session.storefrontBaseUrl,
+          { sample: isAdmin }
         )
       );
       setActivePresetId(preset.id);
@@ -562,7 +563,7 @@ export default function UITemplateSettingsPage() {
                 : 'bg-zinc-700 text-zinc-200 hover:bg-zinc-600'
             }`}
           >
-            {saveMode === 'both' ? (
+            {isAdmin ? (
               <>
                 <Pencil className="h-3.5 w-3.5" />
                 ویرایش
