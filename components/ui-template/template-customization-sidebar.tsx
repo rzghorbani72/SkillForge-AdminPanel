@@ -12,7 +12,8 @@ import {
   ArrowLeftRight,
   Lock,
   Plus,
-  Save
+  Save,
+  Globe
 } from 'lucide-react';
 import {
   DndContext,
@@ -30,6 +31,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Input } from '@/components/ui/input';
+import { BlockThumbnail } from '@/components/ui-template/template-preview';
 import { hexToHsl, hslToHex } from '@/lib/design-system-palette';
 import type { UIBlockConfig } from '@/types/api';
 import { apiClient } from '@/lib/api';
@@ -87,11 +89,14 @@ const BLOCK_TAG: Record<string, string> = {
 
 /**
  * Determines which save button(s) appear in the footer:
- * - 'copy'     : Manager on a public preset — "ذخیره به‌عنوان قالب اختصاصی"
+ * - 'copy'     : Manager on a public preset — forks a dedicated copy named
+ *                after the academy ("ساخت نسخهٔ اختصاصی من")
  * - 'override' : Manager on their own dedicated template — "ذخیره قالب"
- * - 'both'     : Admin editing a public template — "ذخیره به‌عنوان قالب عمومی"
- *               (primary) + "ذخیره نسخهٔ خصوصی" (secondary)
+ * - 'both'     : Admin editing the master public template — "ذخیره قالب اصلی"
+ *               (primary, in-place override) + "ذخیره نسخهٔ خصوصی" (secondary)
  * - 'admin-override' : Admin on a dedicated template — "ذخیره و انتشار"
+ *
+ * Every action is gated by a confirmation dialog owned by the page.
  */
 export type SaveMode = 'copy' | 'override' | 'both' | 'admin-override';
 
@@ -691,28 +696,38 @@ function PinnedRow({
   };
   return (
     <div
-      className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${
+      className={`rounded-lg border p-1.5 ${
         isSelected
           ? 'border-blue-500/60 bg-blue-500/10'
           : 'border-zinc-700/60 bg-zinc-800/30'
       }`}
     >
-      <Lock className="h-3 w-3 flex-shrink-0 text-zinc-600" />
       <button
         type="button"
+        title={blockLabel(block.type)}
         onClick={onSelect}
-        className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
+        className="block w-full"
       >
-        {blockLabel(block.type)}
+        <BlockThumbnail block={block} />
       </button>
-      <button
-        type="button"
-        title="جایگزینی بخش"
-        onClick={onReplace}
-        className="text-zinc-500 transition-colors hover:text-zinc-200"
-      >
-        <ArrowLeftRight className="h-3.5 w-3.5" />
-      </button>
+      <div className="mt-1 flex items-center gap-2">
+        <Lock className="h-3 w-3 flex-shrink-0 text-zinc-600" />
+        <button
+          type="button"
+          onClick={onSelect}
+          className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
+        >
+          {blockLabel(block.type)}
+        </button>
+        <button
+          type="button"
+          title="جایگزینی بخش"
+          onClick={onReplace}
+          className="text-zinc-500 transition-colors hover:text-zinc-200"
+        >
+          <ArrowLeftRight className="h-3.5 w-3.5" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -751,7 +766,7 @@ function SortableRow({
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${
+      className={`rounded-lg border p-1.5 ${
         isSelected
           ? 'border-blue-500/60 bg-blue-500/10'
           : 'border-transparent bg-zinc-800/60'
@@ -759,31 +774,41 @@ function SortableRow({
     >
       <button
         type="button"
-        title="جابه‌جایی"
-        className="cursor-grab text-zinc-500 transition-colors hover:text-zinc-200 active:cursor-grabbing"
-        {...attributes}
-        {...listeners}
-      >
-        <GripVertical className="h-3.5 w-3.5" />
-      </button>
-      <button
-        type="button"
+        title={blockLabel(block.type)}
         onClick={onSelect}
-        className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
+        className="block w-full"
       >
-        {blockLabel(block.type)}
+        <BlockThumbnail block={block} />
       </button>
-      <span className="rounded bg-zinc-700 px-1.5 py-0.5 font-mono text-[9px] text-zinc-400">
-        {BLOCK_TAG[block.type] ?? 'div'}
-      </span>
-      <button
-        type="button"
-        title="جایگزینی بخش"
-        onClick={onReplace}
-        className="text-zinc-500 transition-colors hover:text-zinc-200"
-      >
-        <ArrowLeftRight className="h-3.5 w-3.5" />
-      </button>
+      <div className="mt-1 flex items-center gap-2">
+        <button
+          type="button"
+          title="جابه‌جایی"
+          className="cursor-grab text-zinc-500 transition-colors hover:text-zinc-200 active:cursor-grabbing"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={onSelect}
+          className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
+        >
+          {blockLabel(block.type)}
+        </button>
+        <span className="rounded bg-zinc-700 px-1.5 py-0.5 font-mono text-[9px] text-zinc-400">
+          {BLOCK_TAG[block.type] ?? 'div'}
+        </span>
+        <button
+          type="button"
+          title="جایگزینی بخش"
+          onClick={onReplace}
+          className="text-zinc-500 transition-colors hover:text-zinc-200"
+        >
+          <ArrowLeftRight className="h-3.5 w-3.5" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -1031,6 +1056,14 @@ export function TemplateCustomizationSidebar({
         </button>
       </div>
 
+      {/* Master-template notice: admin edits here become every manager's base */}
+      {saveMode === 'both' && (
+        <div className="flex items-start gap-2 border-b border-amber-500/20 bg-amber-500/10 px-4 py-2 text-[11px] leading-relaxed text-amber-300">
+          <Globe className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+          این قالب اصلی است؛ ذخیره، نسخهٔ پایه همه مدیران را به‌روز می‌کند
+        </div>
+      )}
+
       {/* Saving indicator */}
       {isSaving && (
         <div className="flex items-center gap-2 bg-blue-900/40 px-4 py-1.5 text-xs text-blue-300">
@@ -1081,7 +1114,7 @@ export function TemplateCustomizationSidebar({
           />
         )}
 
-        {/* Manager on public preset → save a copy as dedicated */}
+        {/* Manager on public preset → one-click fork named after the academy */}
         {saveMode === 'copy' && onSaveAsCopy && (
           <button
             type="button"
@@ -1089,7 +1122,7 @@ export function TemplateCustomizationSidebar({
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-600/10 py-2.5 text-sm font-medium text-indigo-300 transition-colors hover:bg-indigo-600/20"
           >
             <Save className="h-4 w-4" />
-            ذخیره به‌عنوان قالب اختصاصی
+            ساخت نسخهٔ اختصاصی من
           </button>
         )}
 
@@ -1117,7 +1150,7 @@ export function TemplateCustomizationSidebar({
           </button>
         )}
 
-        {/* Admin on public template → primary: save & publish, secondary: private copy */}
+        {/* Admin on public template → primary: override the master, secondary: private copy */}
         {saveMode === 'both' && (
           <>
             {onSaveOverride && (
@@ -1127,7 +1160,7 @@ export function TemplateCustomizationSidebar({
                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
               >
                 <Save className="h-4 w-4" />
-                ذخیره و انتشار
+                ذخیره قالب اصلی
               </button>
             )}
             {onSaveAsCopy && (

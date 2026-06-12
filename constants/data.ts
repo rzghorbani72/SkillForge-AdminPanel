@@ -74,7 +74,7 @@ export const navItems: NavItem[] = [
   // Templates section
   {
     title: 'Templates Gallery',
-    href: '/platform/templates',
+    href: '/settings/ui-template',
     icon: 'gallery' as IconType,
     label: 'templatesGallery',
     roles: ['ADMIN'],

@@ -31,6 +31,7 @@ import {
 } from '@/components/ui-template/template-customization-sidebar';
 import { SectionCustomizationPanel } from '@/components/ui-template/section-customization-panel';
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
+import { TemplateConfirmDialog } from '@/components/ui-template/template-confirm-dialog';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 // Card/preview swatches follow the template's saved theme when present, so a
@@ -53,6 +54,14 @@ type Shadow = 'none' | 'subtle' | 'medium' | 'strong';
 type SectionSpacing = 'compact' | 'comfortable' | 'spacious';
 type ContainerWidth = 'narrow' | 'standard' | 'wide' | 'full';
 type HeadingScale = 'compact' | 'standard' | 'large';
+
+// Commit action awaiting explicit confirmation. Drafts keep auto-saving;
+// only the committing step (publish/override/fork/delete) is gated.
+type PendingSave =
+  | { kind: 'publish' }
+  | { kind: 'override' }
+  | { kind: 'fork' }
+  | { kind: 'delete'; preset: TemplatePreset };
 
 export default function UITemplateSettingsPage() {
   const user = useUserStore((s) => s.user);
@@ -91,6 +100,7 @@ export default function UITemplateSettingsPage() {
   // Cover image for a dedicated template; seeded from the source template so it
   // inherits a meaningful image until the manager replaces it.
   const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
 
   const iframeSrc = baseIframeSrc
     ? appendPreviewCacheBuster(baseIframeSrc, refreshKey)
@@ -197,7 +207,7 @@ export default function UITemplateSettingsPage() {
     }
   };
 
-  const handleConfirmSelect = async () => {
+  const doPublish = async () => {
     setIsPublishing(true);
     try {
       // Publishing copies the draft (template + theme) to the live site —
@@ -225,8 +235,7 @@ export default function UITemplateSettingsPage() {
     setPresets(data as TemplatePreset[]);
   }, []);
 
-  const handleDeleteTemplate = async (preset: TemplatePreset) => {
-    if (!window.confirm(`حذف قالب اختصاصی "${preset.name}"؟`)) return;
+  const doDeleteTemplate = async (preset: TemplatePreset) => {
     try {
       await apiClient.deleteDedicatedTemplate(preset.id);
       await refreshPresets();
@@ -238,6 +247,8 @@ export default function UITemplateSettingsPage() {
 
   const isAdmin = user?.role === 'ADMIN';
   const isPublicPreset = selectedPreset?.visibility === 'PUBLIC';
+  const academyName =
+    user?.currentAcademy?.name ?? user?.profile?.academy?.name ?? '';
   const saveMode: SaveMode = isAdmin
     ? isPublicPreset
       ? 'both'
@@ -254,10 +265,10 @@ export default function UITemplateSettingsPage() {
     });
   };
 
-  // Manager on public preset OR admin choosing copy: fork a new dedicated template.
-  const handleSaveAsCopy = async () => {
-    const name = window.prompt('نام قالب اختصاصی را وارد کنید')?.trim();
-    if (!name) return;
+  // Manager on public preset OR admin choosing copy: fork a new dedicated
+  // template. The name arrives from the confirmation dialog, pre-stamped with
+  // the academy name so the save never blocks on manual input.
+  const doSaveAsCopy = async (name: string) => {
     setIsSaving(true);
     try {
       await flushStyleDraft();
@@ -281,7 +292,7 @@ export default function UITemplateSettingsPage() {
   };
 
   // Manager on own dedicated template OR admin on dedicated: override in-place.
-  const handleSaveOverride = async () => {
+  const doSaveOverride = async () => {
     if (!selectedPreset) return;
     setIsSaving(true);
     try {
@@ -493,6 +504,89 @@ export default function UITemplateSettingsPage() {
     await saveBlocksDraft(selectedPreset.blocks);
   };
 
+  // ── Save confirmation ───────────────────────────────────────────────────────
+
+  // Forks default to the academy name so the dedicated copy is stamped with
+  // its owner; the manager can still rename in the dialog without blocking.
+  const defaultForkName =
+    selectedPreset && academyName
+      ? `${academyName} - ${selectedPreset.name}`
+      : (selectedPreset?.name ?? '');
+
+  const closeConfirm = () => setPendingSave(null);
+
+  const confirmDialog = (() => {
+    if (!pendingSave) return null;
+    switch (pendingSave.kind) {
+      case 'publish':
+        return (
+          <TemplateConfirmDialog
+            open
+            title="انتشار قالب در سایت"
+            description="قالب و تنظیمات فعلی روی سایت عمومی آکادمی شما منتشر می‌شود."
+            confirmLabel="انتشار"
+            onConfirm={() => {
+              closeConfirm();
+              void doPublish();
+            }}
+            onCancel={closeConfirm}
+          />
+        );
+      case 'override': {
+        const isMasterOverride = isAdmin && isPublicPreset;
+        return (
+          <TemplateConfirmDialog
+            open
+            title={isMasterOverride ? 'ذخیره قالب اصلی' : 'ذخیره قالب اختصاصی'}
+            description={
+              isMasterOverride
+                ? 'این تغییرات روی قالب همه مدیران اعمال می‌شود.'
+                : 'تغییرات روی قالب اختصاصی شما ذخیره می‌شود.'
+            }
+            confirmLabel="ذخیره"
+            onConfirm={() => {
+              closeConfirm();
+              void doSaveOverride();
+            }}
+            onCancel={closeConfirm}
+          />
+        );
+      }
+      case 'fork':
+        return (
+          <TemplateConfirmDialog
+            open
+            title="ساخت نسخهٔ اختصاصی"
+            description="یک نسخه اختصاصی با نام آکادمی شما ساخته می‌شود؛ در صورت نیاز نام را تغییر دهید."
+            confirmLabel="ساخت نسخهٔ اختصاصی"
+            defaultName={defaultForkName}
+            onConfirm={(name) => {
+              closeConfirm();
+              if (name) void doSaveAsCopy(name);
+            }}
+            onCancel={closeConfirm}
+          />
+        );
+      case 'delete': {
+        const { preset } = pendingSave;
+        return (
+          <TemplateConfirmDialog
+            open
+            destructive
+            title="حذف قالب اختصاصی"
+            description={`قالب اختصاصی «${preset.name}» برای همیشه حذف می‌شود.`}
+            confirmLabel="حذف"
+            onConfirm={() => {
+              closeConfirm();
+              void doDeleteTemplate(preset);
+            }}
+            onCancel={closeConfirm}
+          />
+        );
+      }
+    }
+  })();
+
   // ── Loading skeleton ──────────────────────────────────────────────────────
 
   if (isLoading) {
@@ -528,14 +622,16 @@ export default function UITemplateSettingsPage() {
     const midIndex = selectedBlock
       ? middleBlocks.findIndex((b) => b.id === selectedBlock.id)
       : -1;
+    const isEditingMaster = isAdmin && isPublicPreset && showCustomizer;
 
     return (
       <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-zinc-950">
+        {confirmDialog}
         {/* Action bar */}
         <div className="flex flex-shrink-0 items-center gap-2 bg-zinc-900 px-4 py-2.5">
           <Button
             size="sm"
-            onClick={handleConfirmSelect}
+            onClick={() => setPendingSave({ kind: 'publish' })}
             disabled={isApplied || isPublishing}
             className="h-8 gap-1.5 bg-red-500 px-3 text-xs font-semibold text-white hover:bg-red-600 disabled:opacity-70"
           >
@@ -597,13 +693,25 @@ export default function UITemplateSettingsPage() {
             )}
 
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-              <span className="text-[11px] text-zinc-400">پیش‌نمایش زنده</span>
+              <span
+                className={`h-2 w-2 animate-pulse rounded-full ${
+                  isEditingMaster ? 'bg-amber-400' : 'bg-emerald-400'
+                }`}
+              />
+              <span className="text-[11px] text-zinc-400">
+                {isEditingMaster ? 'در حال ویرایش قالب اصلی' : 'پیش‌نمایش زنده'}
+              </span>
             </div>
 
             <span className="text-sm font-semibold text-white">
               {selectedPreset.name}
             </span>
+
+            {isAdmin && isPublicPreset && (
+              <span className="rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
+                قالب اصلی
+              </span>
+            )}
 
             <button
               type="button"
@@ -638,8 +746,8 @@ export default function UITemplateSettingsPage() {
               onOpenPicker={handleOpenPicker}
               onReset={handleReset}
               saveMode={saveMode}
-              onSaveAsCopy={handleSaveAsCopy}
-              onSaveOverride={handleSaveOverride}
+              onSaveAsCopy={() => setPendingSave({ kind: 'fork' })}
+              onSaveOverride={() => setPendingSave({ kind: 'override' })}
               onClose={() => setShowCustomizer(false)}
               selectedBlockId={selectedBlockId}
               onSelectBlock={setSelectedBlockId}
@@ -700,6 +808,7 @@ export default function UITemplateSettingsPage() {
 
   return (
     <div className="min-h-full bg-[#f2ece4] p-8" dir="rtl">
+      {confirmDialog}
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -750,7 +859,9 @@ export default function UITemplateSettingsPage() {
               index={idx}
               onClick={() => handleCardClick(preset)}
               onDelete={
-                preset.isOwned ? () => handleDeleteTemplate(preset) : undefined
+                preset.isOwned
+                  ? () => setPendingSave({ kind: 'delete', preset })
+                  : undefined
               }
             />
           ))}
