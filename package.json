@@ -12,6 +12,8 @@
     "build": "next build",
     "start": "next start --port 4000",
     "lint": "next lint",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "format": "prettier . --write",
     "prepare": "husky",
     "production-report": "ts-node scripts/production-report.ts",
@@ -102,6 +104,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.9.0",
+    "@playwright/test": "^1.60.0",
     "@svgr/webpack": "^8.1.0",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.10",
