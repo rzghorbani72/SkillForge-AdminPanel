@@ -9,7 +9,7 @@
  * CLAUDE.md.
  */
 
-export type LogApp = 'backend' | 'panel' | 'edusphere';
+export type LogApp = 'backend' | 'panel' | 'website';
 export type LogStatus = 'ok' | 'warn' | 'error';
 
 export type LogFields = Record<
