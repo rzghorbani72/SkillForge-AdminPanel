@@ -21,7 +21,7 @@ import type { TemplatePreset, UIBlockConfig } from '@/types/api';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import { TemplatePreview } from '@/components/ui-template/template-preview';
 import {
-  buildEmbedPreviewUrl,
+  buildTemplatePreviewUrl,
   appendPreviewCacheBuster
 } from '@/lib/ui-template/preview-url';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
@@ -159,10 +159,9 @@ export default function UITemplateSettingsPage() {
         await apiClient.saveThemeDraft(themeSeed);
       }
 
-      const [session, themeRaw] = await Promise.all([
-        apiClient.getTemplatePreviewSession(),
-        apiClient.getCurrentThemeConfig().catch(() => null)
-      ]);
+      const themeRaw = await apiClient
+        .getCurrentThemeConfig()
+        .catch(() => null);
 
       const cfg = ((themeRaw as Record<string, any> | null)?.data?.configs ??
         (themeRaw as Record<string, any> | null)?.configs ??
@@ -191,11 +190,12 @@ export default function UITemplateSettingsPage() {
       if (cfg.heading_scale) setHeadingScale(cfg.heading_scale as HeadingScale);
 
       setBaseIframeSrc(
-        buildEmbedPreviewUrl(
-          session.token,
-          session.previewPath,
-          session.storefrontBaseUrl,
-          { sample: isAdmin }
+        buildTemplatePreviewUrl(
+          preset.id,
+          null,
+          // PUBLIC templates preview as neutral sample data; DEDICATED ones
+          // belong to an academy and show its real content.
+          { sample: !isDedicated }
         )
       );
       setActivePresetId(preset.id);
@@ -249,13 +249,14 @@ export default function UITemplateSettingsPage() {
   const isPublicPreset = selectedPreset?.visibility === 'PUBLIC';
   const academyName =
     user?.currentAcademy?.name ?? user?.profile?.academy?.name ?? '';
+  // Admin on public master → 'both' (shows master-template notice + isAdminEditing).
+  // Admin on dedicated → 'admin-override' (isAdminEditing + "ذخیره و انتشار").
+  // Manager always forks a dedicated copy stamped with their academy ('copy').
   const saveMode: SaveMode = isAdmin
     ? isPublicPreset
       ? 'both'
       : 'admin-override'
-    : isPublicPreset
-      ? 'copy'
-      : 'override';
+    : 'copy';
 
   const flushStyleDraft = async () => {
     await apiClient.saveThemeDraft({

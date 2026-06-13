@@ -39,6 +39,17 @@ export function buildFullPreviewUrl(embedPreviewUrl: string): string {
     .replace('?embed=1', '');
 }
 
+export function buildTemplatePreviewUrl(
+  templateId: string,
+  storefrontBaseUrl?: string | null,
+  options?: { sample?: boolean }
+): string {
+  const base = resolveStorefrontBaseUrl(storefrontBaseUrl);
+  let query = `template=${encodeURIComponent(templateId)}&embed=1`;
+  if (options?.sample) query += '&sample=1';
+  return base ? `${base}/preview/blocks?${query}` : `/preview/blocks?${query}`;
+}
+
 export function appendPreviewCacheBuster(
   url: string,
   refreshKey: number
