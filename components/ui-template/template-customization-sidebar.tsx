@@ -938,9 +938,14 @@ function CoverImageSection({
       });
       const raw = result as unknown as Record<string, unknown>;
       const id =
-        (raw?.id as number | undefined) ??
-        ((raw?.data as Record<string, unknown>)?.id as number | undefined);
-      if (id) onChange(`${getBrowserApiBaseUrl()}/images/get-image?id=${id}`);
+        (raw?.id as number | string | undefined) ??
+        ((raw?.data as Record<string, unknown>)?.id as
+          | number
+          | string
+          | undefined);
+      if (!id) throw new Error('Upload succeeded but no image id was returned');
+      // Public retrieval endpoint — the cover renders on unauthenticated pages.
+      onChange(`${getBrowserApiBaseUrl()}/images/get-image?id=${id}`);
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
