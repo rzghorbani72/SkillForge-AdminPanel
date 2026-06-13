@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { useUserStore } from '@/lib/store';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import type { TemplatePreset, UIBlockConfig } from '@/types/api';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import { TemplatePreview } from '@/components/ui-template/template-preview';
@@ -64,7 +64,7 @@ type PendingSave =
   | { kind: 'delete'; preset: TemplatePreset };
 
 export default function UITemplateSettingsPage() {
-  const user = useUserStore((s) => s.user);
+  const { user } = useAuthUser();
 
   const [presets, setPresets] = useState<TemplatePreset[]>([]);
   const [activePresetId, setActivePresetId] = useState('');
@@ -247,8 +247,7 @@ export default function UITemplateSettingsPage() {
 
   const isAdmin = user?.role === 'ADMIN';
   const isPublicPreset = selectedPreset?.visibility === 'PUBLIC';
-  const academyName =
-    user?.currentAcademy?.name ?? user?.profile?.academy?.name ?? '';
+  const academyName = user?.currentAcademy?.name ?? '';
   // Admin on public master → 'both' (shows master-template notice + isAdminEditing).
   // Admin on dedicated → 'admin-override' (isAdminEditing + "ذخیره و انتشار").
   // Manager always forks a dedicated copy stamped with their academy ('copy').
