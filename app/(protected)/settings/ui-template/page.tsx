@@ -806,6 +806,11 @@ export default function UITemplateSettingsPage() {
 
   // ── Gallery mode ──────────────────────────────────────────────────────────
 
+  // Academy-owned (DEDICATED) templates render apart from the shared platform
+  // catalog so managers can tell their own designs from the presets.
+  const academyPresets = presets.filter((p) => p.visibility === 'DEDICATED');
+  const platformPresets = presets.filter((p) => p.visibility === 'PUBLIC');
+
   return (
     <div className="min-h-full bg-[#f2ece4] p-8" dir="rtl">
       {confirmDialog}
@@ -850,24 +855,71 @@ export default function UITemplateSettingsPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {presets.map((preset, idx) => (
-            <GalleryCard
-              key={preset.id}
-              preset={preset}
-              isActive={preset.id === activePresetId}
-              index={idx}
-              onClick={() => handleCardClick(preset)}
-              onDelete={
-                preset.isOwned
-                  ? () => setPendingSave({ kind: 'delete', preset })
-                  : undefined
-              }
+        <div className="space-y-10">
+          {platformPresets.length > 0 && (
+            <TemplateSection
+              title="قالب‌های پلتفرم"
+              description="کاتالوگ آماده پلتفرم؛ برای شروع یک قالب را انتخاب و سفارشی کنید."
+              presets={platformPresets}
+              activePresetId={activePresetId}
+              onSelect={handleCardClick}
+              onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
             />
-          ))}
+          )}
+          {academyPresets.length > 0 && (
+            <TemplateSection
+              title="قالب‌های آکادمی ها"
+              description="قالب‌های اختصاصی."
+              presets={academyPresets}
+              activePresetId={activePresetId}
+              onSelect={handleCardClick}
+              onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
+            />
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+// ── Template Section ────────────────────────────────────────────────────────
+
+interface TemplateSectionProps {
+  title: string;
+  description: string;
+  presets: TemplatePreset[];
+  activePresetId: string;
+  onSelect: (preset: TemplatePreset) => void;
+  onDelete: (preset: TemplatePreset) => void;
+}
+
+function TemplateSection({
+  title,
+  description,
+  presets,
+  activePresetId,
+  onSelect,
+  onDelete
+}: TemplateSectionProps) {
+  return (
+    <section>
+      <div className="mb-4">
+        <h2 className="text-lg font-bold text-foreground">{title}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      </div>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {presets.map((preset, idx) => (
+          <GalleryCard
+            key={preset.id}
+            preset={preset}
+            isActive={preset.id === activePresetId}
+            index={idx}
+            onClick={() => onSelect(preset)}
+            onDelete={preset.isOwned ? () => onDelete(preset) : undefined}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
