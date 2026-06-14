@@ -847,6 +847,126 @@ class ApiClient {
     });
   }
 
+  // ----- Quiz, Assessment & Discussion (checklist 5.19) -----
+  private async quizData<T>(
+    endpoint: string,
+    options?: RequestInit
+  ): Promise<T> {
+    const response = await this.request<{ data: T }>(endpoint, options);
+    return (response.data as { data: T }).data;
+  }
+
+  async getLessonQuiz<T = unknown>(lessonId: string) {
+    return this.quizData<T>(`/lessons/${lessonId}/quiz`);
+  }
+
+  async createQuiz(payload: {
+    lesson_id: string;
+    title: string;
+    description?: string;
+    passing_score?: number;
+  }) {
+    return this.quizData(`/quizzes`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async updateQuiz(
+    id: string,
+    payload: { title?: string; description?: string; passing_score?: number }
+  ) {
+    return this.quizData(`/quizzes/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async addQuizQuestion(
+    quizId: string,
+    payload: {
+      type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'SHORT_TEXT';
+      prompt: string;
+      points?: number;
+      correct_boolean?: boolean;
+      options?: { text: string; is_correct: boolean }[];
+    }
+  ) {
+    return this.quizData(`/quizzes/${quizId}/questions`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async updateQuizQuestion(
+    questionId: string,
+    payload: {
+      prompt?: string;
+      points?: number;
+      correct_boolean?: boolean;
+      options?: { text: string; is_correct: boolean }[];
+    }
+  ) {
+    return this.quizData(`/quiz-questions/${questionId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async deleteQuizQuestion(questionId: string) {
+    return this.quizData(`/quiz-questions/${questionId}`, { method: 'DELETE' });
+  }
+
+  async reorderQuizQuestions(quizId: string, questionIds: string[]) {
+    return this.quizData(`/quizzes/${quizId}/questions/reorder`, {
+      method: 'PATCH',
+      body: JSON.stringify({ question_ids: questionIds })
+    });
+  }
+
+  async setQuizPublished(quizId: string, publish: boolean) {
+    return this.quizData(
+      `/quizzes/${quizId}/${publish ? 'publish' : 'unpublish'}`,
+      { method: 'POST' }
+    );
+  }
+
+  async listQuizAttempts<T = unknown>(quizId: string) {
+    return this.quizData<T>(`/quizzes/${quizId}/attempts`);
+  }
+
+  async getQuizAttempt<T = unknown>(attemptId: string) {
+    return this.quizData<T>(`/quiz-attempts/${attemptId}`);
+  }
+
+  async gradeQuizAnswer(answerId: string, awardedPoints: number) {
+    return this.quizData(`/quiz-answers/${answerId}/grade`, {
+      method: 'PATCH',
+      body: JSON.stringify({ awarded_points: awardedPoints })
+    });
+  }
+
+  async reviewQuizAttempt(attemptId: string, feedback?: string) {
+    return this.quizData(`/quiz-attempts/${attemptId}/review`, {
+      method: 'POST',
+      body: JSON.stringify({ feedback })
+    });
+  }
+
+  async getDiscussionThread<T = unknown>(threadId: string) {
+    return this.quizData<T>(`/discussions/threads/${threadId}`);
+  }
+
+  async postDiscussionMessage(
+    parent: { attempt_id?: string; submission_id?: string },
+    body: string
+  ) {
+    return this.quizData(`/discussions/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ ...parent, body })
+    });
+  }
+
   // Products endpoints
   async getProducts(params?: {
     search?: string;
