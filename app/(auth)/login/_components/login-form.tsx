@@ -13,7 +13,11 @@ import { toEnglishDigits } from '@/lib/phone-utils';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
+type LoginMethod = 'password' | 'otp';
+
 interface LoginFormProps {
+  loginMethod: LoginMethod;
+  onLoginMethodChange: (m: LoginMethod) => void;
   phone: string;
   password: string;
   showPassword: boolean;
@@ -27,6 +31,8 @@ interface LoginFormProps {
 }
 
 export function LoginForm({
+  loginMethod,
+  onLoginMethodChange,
   phone,
   password,
   showPassword,
@@ -61,6 +67,26 @@ export function LoginForm({
       )}
 
       <div className="rounded-2xl border bg-card p-8 shadow-sm">
+        <div className="mb-4 grid grid-cols-2 gap-2 rounded-lg bg-muted p-1">
+          {(['password', 'otp'] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => onLoginMethodChange(m)}
+              className={cn(
+                'rounded-md py-2 text-sm font-medium transition-colors',
+                loginMethod === m
+                  ? 'bg-card text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {m === 'password'
+                ? t('auth.loginWithPassword')
+                : t('auth.loginWithOtp')}
+            </button>
+          ))}
+        </div>
+
         <form onSubmit={onSubmit} className="space-y-4" noValidate>
           <div className="space-y-1.5">
             <Label htmlFor="phone">{t('auth.phoneNumber')}</Label>
@@ -91,71 +117,77 @@ export function LoginForm({
             )}
           </div>
 
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">{t('auth.password')}</Label>
-              <Link
-                href="/forget-password"
-                className="text-xs text-primary hover:underline"
-              >
-                {t('auth.forgotPassword')}
-              </Link>
+          {loginMethod === 'password' && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">{t('auth.password')}</Label>
+                <Link
+                  href="/forget-password"
+                  className="text-xs text-primary hover:underline"
+                >
+                  {t('auth.forgotPassword')}
+                </Link>
+              </div>
+              <div className="relative">
+                <Lock
+                  className={cn(
+                    'absolute top-2.5 h-4 w-4 text-muted-foreground',
+                    isRTL ? 'right-3' : 'left-3'
+                  )}
+                />
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  placeholder={t('auth.enterPassword')}
+                  value={password}
+                  onChange={(e) =>
+                    onPasswordChange(toEnglishDigits(e.target.value))
+                  }
+                  className={cn(
+                    'pl-9 pr-9',
+                    errors.password && 'border-destructive'
+                  )}
+                  disabled={isLoading}
+                  dir="ltr"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={
+                    showPassword ? t('common.inactive') : t('common.active')
+                  }
+                  className={cn(
+                    'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
+                    isRTL ? 'left-0' : 'right-0'
+                  )}
+                  onClick={onTogglePassword}
+                  disabled={isLoading}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              {errors.password && (
+                <p className="text-xs text-destructive">{errors.password}</p>
+              )}
             </div>
-            <div className="relative">
-              <Lock
-                className={cn(
-                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                  isRTL ? 'right-3' : 'left-3'
-                )}
-              />
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                placeholder={t('auth.enterPassword')}
-                value={password}
-                onChange={(e) =>
-                  onPasswordChange(toEnglishDigits(e.target.value))
-                }
-                className={cn(
-                  'pl-9 pr-9',
-                  errors.password && 'border-destructive'
-                )}
-                disabled={isLoading}
-                dir="ltr"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={
-                  showPassword ? t('common.inactive') : t('common.active')
-                }
-                className={cn(
-                  'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
-                  isRTL ? 'left-0' : 'right-0'
-                )}
-                onClick={onTogglePassword}
-                disabled={isLoading}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-            {errors.password && (
-              <p className="text-xs text-destructive">{errors.password}</p>
-            )}
-          </div>
+          )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('auth.signingIn')}
+                {loginMethod === 'otp'
+                  ? t('auth.sendingCode')
+                  : t('auth.signingIn')}
               </>
+            ) : loginMethod === 'otp' ? (
+              t('auth.sendLoginCode')
             ) : (
               t('auth.signIn')
             )}

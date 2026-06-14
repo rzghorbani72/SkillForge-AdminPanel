@@ -25,6 +25,23 @@ test.describe('AdminPanel manager login — validation (no backend)', () => {
 
     await expect(page.locator('#password')).toHaveClass(/border-destructive/);
   });
+
+  test('OTP method hides the password field but still requires phone', async ({
+    page
+  }) => {
+    await page.goto('/login');
+
+    // Password is the default method.
+    await expect(page.locator('#password')).toBeVisible();
+
+    // Second toggle button switches to one-time-code login.
+    await page.locator('.bg-muted button').nth(1).click();
+    await expect(page.locator('#password')).toHaveCount(0);
+
+    // Submitting with no phone still flags the phone field (client-side).
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator('#phone')).toHaveClass(/border-destructive/);
+  });
 });
 
 /**

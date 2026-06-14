@@ -3,16 +3,20 @@ import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { toE164Iran } from '@/lib/phone-utils';
 import { authService } from '@/lib/auth';
+import { apiClient } from '@/lib/api';
+import { OtpType } from '@/constants/data';
 import { ErrorHandler } from '@/lib/error-handler';
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 type Academy = { id: number; name: string; slug: string };
+export type LoginMethod = 'password' | 'otp';
 
 export function useLogin() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
 
+  const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +31,7 @@ export function useLogin() {
   const [pickingAcademy, setPickingAcademy] = useState(false);
 
   const [otpRequired, setOtpRequired] = useState(false);
+  const [otpMode, setOtpMode] = useState<'verify' | 'login'>('verify');
   const [otpTempToken, setOtpTempToken] = useState('');
   const [otpPhone, setOtpPhone] = useState('');
   const [otp, setOtp] = useState('');
@@ -47,8 +52,10 @@ export function useLogin() {
     if (!phone) e.phone = t('auth.phoneRequired');
     else if (phone.replace(/\D/g, '').length < 7)
       e.phone = t('auth.validPhoneNumber');
-    if (!password) e.password = t('auth.passwordRequired');
-    else if (password.length < 6) e.password = t('auth.passwordTooShort');
+    if (loginMethod === 'password') {
+      if (!password) e.password = t('auth.passwordRequired');
+      else if (password.length < 6) e.password = t('auth.passwordTooShort');
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -90,9 +97,25 @@ export function useLogin() {
     );
   }
 
+  async function requestLoginOtp() {
+    setIsLoading(true);
+    try {
+      const phoneE164 = toE164Iran(phone);
+      await apiClient.sendPhoneOtp(phoneE164, OtpType.LOGIN_BY_PHONE);
+      setOtpPhone(phoneE164);
+      setOtpMode('login');
+      setOtpRequired(true);
+    } catch {
+      toast.error(t('error.authenticationFailed'), { toastId: 'login-error' });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
+    if (loginMethod === 'otp') return requestLoginOtp();
     setIsLoading(true);
     try {
       const response = await authService.login({
@@ -164,7 +187,15 @@ export function useLogin() {
     setOtpLoading(true);
     setOtpError('');
     try {
-      const { apiClient } = await import('@/lib/api');
+      if (otpMode === 'login') {
+        const response = await authService.loginPhoneByOtp({
+          phone_number: otpPhone,
+          otp: otp.trim()
+        });
+        toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
+        afterLogin(response);
+        return;
+      }
       const result = await apiClient.confirmPhoneOtp(otpTempToken, otp.trim());
       toast.success(t('success.otpVerified'), { toastId: 'login-success' });
       window.location.href = (result as any)?.redirect_to ?? '/my-affiliate';
@@ -176,6 +207,8 @@ export function useLogin() {
   }
 
   return {
+    loginMethod,
+    setLoginMethod,
     phone,
     setPhone,
     password,
@@ -203,6 +236,7 @@ export function useLogin() {
     handleOtpSubmit,
     resetOtp: () => {
       setOtpRequired(false);
+      setOtpMode('verify');
       setOtp('');
       setOtpError('');
     }

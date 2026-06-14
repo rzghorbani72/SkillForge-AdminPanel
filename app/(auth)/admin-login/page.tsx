@@ -25,6 +25,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { authService } from '@/lib/auth';
+import { apiClient } from '@/lib/api';
 import { toEnglishDigits } from '@/lib/phone-utils';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -40,6 +41,11 @@ export default function AdminLoginPage() {
   const { isRTL } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<'password' | 'otp'>(
+    'password'
+  );
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
@@ -87,66 +93,96 @@ export default function AdminLoginPage() {
       newErrors.phone = t('auth.invalidPhone');
     }
 
-    if (!formData.password) {
-      newErrors.password = t('auth.passwordRequired');
-    } else if (formData.password.length < 6) {
-      newErrors.password = t('auth.passwordTooShort');
+    if (loginMethod === 'password') {
+      if (!formData.password) {
+        newErrors.password = t('auth.passwordRequired');
+      } else if (formData.password.length < 6) {
+        newErrors.password = t('auth.passwordTooShort');
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
+  const routeAfterLogin = (response: {
+    currentProfile?: { Role?: { name?: string } };
+  }) => {
+    ErrorHandler.showSuccess('success.loginSuccess', true);
+    // /admin-login accepts only platform-staff roles (ADMIN, SUPPORT).
+    // Manager/Teacher must go through /login.
+    const userRole = response.currentProfile?.Role?.name;
+    if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
+      // Full navigation so server layout sees HttpOnly jwt on the panel host.
+      window.location.href = '/platform';
+    } else {
+      ErrorHandler.showWarning(
+        'This route is for Admin and Support staff. Please use /login.'
+      );
+      router.push('/login');
     }
+  };
 
+  const handlePasswordLogin = async () => {
     setIsLoading(true);
-
     try {
-      const credentials = {
+      const response = await authService.adminLogin({
         email: formData.email,
         phone_number: formData.fullPhoneNumber || formData.phone,
         password: formData.password
-      };
-
-      const response = await authService.adminLogin(credentials);
-
-      if (response) {
-        ErrorHandler.showSuccess('success.loginSuccess', true);
-
-        // /admin-login accepts only platform-staff roles (ADMIN, SUPPORT).
-        // Manager/Teacher must go through /login.
-        const userRole = response.currentProfile?.Role?.name;
-        if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
-          // Platform staff (admin + support) default to Platform mode.
-          // Full navigation so server layout sees HttpOnly jwt on the panel host.
-          window.location.href = '/platform';
-          return;
-        } else {
-          ErrorHandler.showWarning(
-            'This route is for Admin and Support staff. Please use /login.'
-          );
-          router.push('/login');
-          return;
-        }
-      }
+      });
+      if (response) routeAfterLogin(response);
     } catch (error: unknown) {
       console.error('Admin login error:', error);
-
-      // Parse backend validation errors and map to form fields
       const fieldErrors = ErrorHandler.handleFormError(error);
-
-      // Update form errors
-      if (Object.keys(fieldErrors).length > 0) {
-        setErrors(fieldErrors);
-      }
+      if (Object.keys(fieldErrors).length > 0) setErrors(fieldErrors);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // OTP mode: one shared code is sent to BOTH the admin's email and phone.
+  const handleSendOtp = async () => {
+    setIsLoading(true);
+    try {
+      await apiClient.sendAdminLoginOtp(
+        formData.email,
+        formData.fullPhoneNumber || formData.phone
+      );
+      setOtpSent(true);
+      ErrorHandler.showSuccess('success.otpSent', true);
+    } catch (error: unknown) {
+      ErrorHandler.handleValidationErrors(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otp.trim()) {
+      setErrors((prev) => ({ ...prev, otp: t('auth.otpRequired') }));
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await authService.loginPhoneByOtp({
+        phone_number: formData.fullPhoneNumber || formData.phone,
+        otp: otp.trim()
+      });
+      if (response) routeAfterLogin(response);
+    } catch (error: unknown) {
+      setErrors((prev) => ({ ...prev, otp: t('auth.invalidOtp') }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loginMethod === 'otp' && otpSent) return handleVerifyOtp();
+    if (!validateForm()) return;
+    if (loginMethod === 'otp') return handleSendOtp();
+    return handlePasswordLogin();
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -204,6 +240,31 @@ export default function AdminLoginPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-2 rounded-lg bg-gray-100 p-1">
+                  {(['password', 'otp'] as const).map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => {
+                        setLoginMethod(m);
+                        setOtpSent(false);
+                        setOtp('');
+                        setErrors({});
+                      }}
+                      disabled={isLoading}
+                      className={`rounded-md py-2 text-sm font-medium transition-colors ${
+                        loginMethod === m
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-900'
+                      }`}
+                    >
+                      {m === 'password'
+                        ? t('auth.loginWithPassword')
+                        : t('auth.loginWithOtp')}
+                    </button>
+                  ))}
+                </div>
+
                 <InputWithIcon
                   id="email"
                   label={t('auth.emailAddress')}
@@ -213,7 +274,7 @@ export default function AdminLoginPage() {
                   onChange={(value) => handleInputChange('email', value)}
                   icon={Mail}
                   error={errors.email}
-                  disabled={isLoading}
+                  disabled={isLoading || otpSent}
                 />
 
                 <PhoneInputWithCountry
@@ -227,68 +288,109 @@ export default function AdminLoginPage() {
                   }
                   lockCountryCode="IR"
                   error={errors.phone}
-                  disabled={isLoading}
+                  disabled={isLoading || otpSent}
                 />
 
-                <div className="space-y-2">
-                  <Label htmlFor="password">{t('auth.password')}</Label>
-                  <div className="relative">
-                    <Lock
-                      className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
-                    />
+                {loginMethod === 'otp' && otpSent && (
+                  <div className="space-y-2">
+                    <Label htmlFor="otp">
+                      {t('auth.enterVerificationCode')}
+                    </Label>
                     <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder={t('auth.enterPassword')}
-                      value={formData.password}
-                      onChange={(e) =>
-                        handleInputChange('password', e.target.value)
-                      }
-                      className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
-                        errors.password ? 'border-red-500' : ''
-                      }`}
+                      id="otp"
+                      type="text"
+                      inputMode="numeric"
+                      placeholder={t('auth.verificationCodePlaceholder')}
+                      value={otp}
+                      onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
+                      className={errors.otp ? 'border-red-500' : ''}
                       disabled={isLoading}
-                      dir="rtl"
+                      dir="ltr"
+                      autoFocus
                     />
-                    <Button
+                    {errors.otp && (
+                      <p className="text-sm text-red-500">{errors.otp}</p>
+                    )}
+                    <button
                       type="button"
-                      variant="ghost"
-                      size="sm"
-                      className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
-                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-sm text-purple-600 hover:text-purple-500"
+                      onClick={() => {
+                        setOtpSent(false);
+                        setOtp('');
+                      }}
                       disabled={isLoading}
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
-                      )}
-                    </Button>
+                      ← {t('auth.backToLogin')}
+                    </button>
                   </div>
-                  {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password}</p>
-                  )}
-                </div>
+                )}
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="remember"
-                      aria-label="Remember me"
-                      className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <Label htmlFor="remember" className="text-sm text-gray-600">
-                      {t('auth.rememberMe')}
-                    </Label>
+                {loginMethod === 'password' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="password">{t('auth.password')}</Label>
+                    <div className="relative">
+                      <Lock
+                        className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+                      />
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder={t('auth.enterPassword')}
+                        value={formData.password}
+                        onChange={(e) =>
+                          handleInputChange('password', e.target.value)
+                        }
+                        className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
+                          errors.password ? 'border-red-500' : ''
+                        }`}
+                        disabled={isLoading}
+                        dir="rtl"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
+                        onClick={() => setShowPassword(!showPassword)}
+                        disabled={isLoading}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-gray-400" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-gray-400" />
+                        )}
+                      </Button>
+                    </div>
+                    {errors.password && (
+                      <p className="text-sm text-red-500">{errors.password}</p>
+                    )}
                   </div>
-                  <Link
-                    href="/admin-forget-password"
-                    className="text-sm text-purple-600 hover:text-purple-500"
-                  >
-                    {t('auth.forgotPassword')}
-                  </Link>
-                </div>
+                )}
+
+                {loginMethod === 'password' && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="remember"
+                        aria-label="Remember me"
+                        className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                      />
+                      <Label
+                        htmlFor="remember"
+                        className="text-sm text-gray-600"
+                      >
+                        {t('auth.rememberMe')}
+                      </Label>
+                    </div>
+                    <Link
+                      href="/admin-forget-password"
+                      className="text-sm text-purple-600 hover:text-purple-500"
+                    >
+                      {t('auth.forgotPassword')}
+                    </Link>
+                  </div>
+                )}
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
@@ -296,8 +398,16 @@ export default function AdminLoginPage() {
                       <Loader2
                         className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
                       />
-                      {t('auth.signingIn')}
+                      {loginMethod === 'otp' && !otpSent
+                        ? t('auth.sendingCode')
+                        : t('auth.signingIn')}
                     </>
+                  ) : loginMethod === 'otp' ? (
+                    otpSent ? (
+                      t('auth.verifyAndLogin')
+                    ) : (
+                      t('auth.sendLoginCode')
+                    )
                   ) : (
                     t('auth.signIn')
                   )}

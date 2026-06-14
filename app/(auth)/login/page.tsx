@@ -35,6 +35,8 @@ export default function LoginPage() {
 
   return (
     <LoginForm
+      loginMethod={login.loginMethod}
+      onLoginMethodChange={login.setLoginMethod}
       phone={login.phone}
       password={login.password}
       showPassword={login.showPassword}

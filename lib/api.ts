@@ -468,6 +468,13 @@ class ApiClient {
     });
   }
 
+  async sendAdminLoginOtp(email: string, phone_number: string) {
+    return this.request('/auth/admin/login-otp/send', {
+      method: 'POST',
+      body: JSON.stringify({ email, phone_number })
+    });
+  }
+
   async loginEmailByOtp(credentials: {
     email: string;
     otp: string;
