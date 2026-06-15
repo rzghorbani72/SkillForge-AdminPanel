@@ -9,9 +9,8 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { InputWithIcon } from '@/components/ui/input-with-icon';
+import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -408,52 +407,28 @@ export default function AdminForgetPasswordPage() {
               )}
 
               {step === 'otp' && (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="otp">
-                      {t('forgotPassword.verificationCode')}
-                    </Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      placeholder={t('forgotPassword.enter6DigitCode')}
-                      value={formData.otp}
-                      onChange={(e) => handleInputChange('otp', e.target.value)}
-                      maxLength={6}
-                      dir="rtl"
-                    />
-                    {errors.otp && (
-                      <p className="mt-1 text-sm text-red-600">{errors.otp}</p>
-                    )}
-                  </div>
-
-                  <div
-                    className={`flex ${isRTL ? 'space-x-reverse' : 'space-x-2'}`}
-                  >
-                    <Button
-                      variant="outline"
-                      onClick={() => setStep('identifier')}
-                      className="flex-1"
-                    >
-                      <ArrowLeft
-                        className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`}
-                      />
-                      {t('common.back')}
-                    </Button>
-                    <Button
-                      onClick={handleVerifyOtp}
-                      disabled={isLoading}
-                      className="flex-1"
-                    >
-                      {isLoading ? (
-                        <Loader2
-                          className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
-                        />
-                      ) : null}
-                      {t('forgotPassword.verifyOtp')}
-                    </Button>
-                  </div>
-                </div>
+                <PhoneOtpScreen
+                  embedded
+                  otpPhone={
+                    authMethod === 'phone'
+                      ? formData.fullPhoneNumber || formData.phoneNumber
+                      : formData.email
+                  }
+                  otp={formData.otp}
+                  setOtp={(v) => handleInputChange('otp', v)}
+                  otpLoading={isLoading}
+                  otpError={errors.otp}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleVerifyOtp();
+                  }}
+                  onBack={() => setStep('identifier')}
+                  inputLabel={t('forgotPassword.verificationCode')}
+                  submitLabel={t('forgotPassword.verifyOtp')}
+                  backLabel={t('common.back')}
+                  onResend={handleSendOtp}
+                  resending={isLoading}
+                />
               )}
 
               {step === 'password' && (

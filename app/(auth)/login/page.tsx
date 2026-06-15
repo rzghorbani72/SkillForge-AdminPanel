@@ -3,7 +3,7 @@
 import { useLogin } from './use-login';
 import { LoginForm } from './_components/login-form';
 import { AcademyPicker } from './_components/academy-picker';
-import { PhoneOtpScreen } from './_components/phone-otp-screen';
+import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 
 export default function LoginPage() {
   const login = useLogin();

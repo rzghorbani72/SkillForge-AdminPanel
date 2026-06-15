@@ -13,13 +13,15 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { toE164Iran } from '@/lib/phone-utils';
 import { AuthLayout } from '@/components/auth/auth-layout';
 import { AuthShell } from '@/components/auth/auth-shell';
+import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { StepIndicator } from './_components/step-indicator';
 import {
   RegisterDetailsForm,
   type RegisterValues
 } from './_components/register-details-form';
-import { RegisterOtpStep } from './_components/register-otp-step';
 
 const useRegisterSchema = (t: (k: string) => string) =>
   z
@@ -186,21 +188,61 @@ export default function RegisterPage() {
           />
         )}
 
-        {step === 'verify' && (
-          <RegisterOtpStep
-            phone={form.getValues('phone')}
-            otpCode={otpCode}
-            setOtpCode={setOtpCode}
-            otpLoading={otpLoading}
-            verifying={verifying}
-            phoneVerified={phoneVerified}
-            submitting={submitting}
-            onVerify={verifyCode}
-            onCreateAccount={createAccount}
-            onResend={resendOtp}
-            onBack={() => setStep('details')}
-          />
-        )}
+        {step === 'verify' &&
+          (() => {
+            const [descBefore, descAfter] = t('auth.verifyPhoneDesc').split(
+              '{phone}'
+            );
+            const normalizedPhone = toE164Iran(form.getValues('phone'));
+            return (
+              <PhoneOtpScreen
+                embedded
+                otpPhone={normalizedPhone}
+                otp={otpCode}
+                setOtp={setOtpCode}
+                otpLoading={verifying}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  verifyCode();
+                }}
+                onBack={() => setStep('details')}
+                title={t('auth.verifyPhoneTitle')}
+                subtitle={
+                  <>
+                    {descBefore}
+                    <span className="font-semibold" dir="ltr">
+                      {normalizedPhone}
+                    </span>
+                    {descAfter}
+                  </>
+                }
+                inputLabel={t('auth.enterVerificationCode')}
+                submitLabel={t('auth.verifySmsOtp')}
+                backLabel={t('auth.backToLogin')}
+                verified={phoneVerified}
+                onResend={resendOtp}
+                resending={otpLoading}
+              >
+                {phoneVerified && (
+                  <Button
+                    type="button"
+                    className="w-full"
+                    disabled={submitting}
+                    onClick={createAccount}
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t('auth.creatingAccount')}
+                      </>
+                    ) : (
+                      t('auth.createAccount')
+                    )}
+                  </Button>
+                )}
+              </PhoneOtpScreen>
+            );
+          })()}
       </div>
       <p className="mt-6 text-center text-sm text-muted-foreground">
         {t('auth.alreadyHaveAccount')}{' '}

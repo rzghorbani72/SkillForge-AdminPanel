@@ -34,6 +34,7 @@ import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import Link from '@/components/ui/link';
 import { LanguageDetector } from '@/components/providers/language-detector';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 export default function AdminLoginPage() {
@@ -235,180 +236,172 @@ export default function AdminLoginPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-2 rounded-lg bg-gray-100 p-1">
-                  {(['password', 'otp'] as const).map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => {
-                        setLoginMethod(m);
-                        setOtpSent(false);
-                        setOtp('');
-                        setErrors({});
-                      }}
-                      disabled={isLoading}
-                      className={`rounded-md py-2 text-sm font-medium transition-colors ${
-                        loginMethod === m
-                          ? 'bg-white text-gray-900 shadow-sm'
-                          : 'text-gray-500 hover:text-gray-900'
-                      }`}
-                    >
-                      {m === 'password'
-                        ? t('auth.loginWithPassword')
-                        : t('auth.loginWithOtp')}
-                    </button>
-                  ))}
-                </div>
-
-                <InputWithIcon
-                  id="email"
-                  label={t('auth.emailAddress')}
-                  type="email"
-                  placeholder={t('auth.enterEmail')}
-                  value={formData.email}
-                  onChange={(value) => handleInputChange('email', value)}
-                  icon={Mail}
-                  error={errors.email}
-                  disabled={isLoading || otpSent}
+              {loginMethod === 'otp' && otpSent ? (
+                <PhoneOtpScreen
+                  embedded
+                  otpPhone={formData.fullPhoneNumber || formData.phone}
+                  otp={otp}
+                  setOtp={(v) => setOtp(toEnglishDigits(v))}
+                  otpLoading={isLoading}
+                  otpError={errors.otp}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleVerifyOtp();
+                  }}
+                  onBack={() => {
+                    setOtpSent(false);
+                    setOtp('');
+                  }}
+                  inputLabel={t('auth.enterVerificationCode')}
+                  submitLabel={t('auth.verifyAndLogin')}
+                  backLabel={t('auth.backToLogin')}
+                  onResend={handleSendOtp}
+                  resending={isLoading}
                 />
-
-                <PhoneInputWithCountry
-                  id="phone"
-                  label={t('auth.phoneNumber')}
-                  placeholder="09121234567"
-                  value={formData.phone}
-                  onChange={(value) => handleInputChange('phone', value)}
-                  onFullPhoneChange={(fullPhone) =>
-                    handleInputChange('fullPhoneNumber', fullPhone)
-                  }
-                  lockCountryCode="IR"
-                  error={errors.phone}
-                  disabled={isLoading || otpSent}
-                />
-
-                {loginMethod === 'otp' && otpSent && (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp">
-                      {t('auth.enterVerificationCode')}
-                    </Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      inputMode="numeric"
-                      placeholder={t('auth.verificationCodePlaceholder')}
-                      value={otp}
-                      onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
-                      className={errors.otp ? 'border-red-500' : ''}
-                      disabled={isLoading}
-                      dir="ltr"
-                      autoFocus
-                    />
-                    {errors.otp && (
-                      <p className="text-sm text-red-500">{errors.otp}</p>
-                    )}
-                    <button
-                      type="button"
-                      className="text-sm text-purple-600 hover:text-purple-500"
-                      onClick={() => {
-                        setOtpSent(false);
-                        setOtp('');
-                      }}
-                      disabled={isLoading}
-                    >
-                      ← {t('auth.backToLogin')}
-                    </button>
-                  </div>
-                )}
-
-                {loginMethod === 'password' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="password">{t('auth.password')}</Label>
-                    <div className="relative">
-                      <Lock
-                        className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
-                      />
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder={t('auth.enterPassword')}
-                        value={formData.password}
-                        onChange={(e) =>
-                          handleInputChange('password', e.target.value)
-                        }
-                        className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
-                          errors.password ? 'border-red-500' : ''
-                        }`}
-                        disabled={isLoading}
-                        dir="rtl"
-                      />
-                      <Button
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-2 rounded-lg bg-gray-100 p-1">
+                    {(['password', 'otp'] as const).map((m) => (
+                      <button
+                        key={m}
                         type="button"
-                        variant="ghost"
-                        size="sm"
-                        className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={() => {
+                          setLoginMethod(m);
+                          setOtpSent(false);
+                          setOtp('');
+                          setErrors({});
+                        }}
                         disabled={isLoading}
+                        className={`rounded-md py-2 text-sm font-medium transition-colors ${
+                          loginMethod === m
+                            ? 'bg-white text-gray-900 shadow-sm'
+                            : 'text-gray-500 hover:text-gray-900'
+                        }`}
                       >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-gray-400" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-gray-400" />
-                        )}
-                      </Button>
-                    </div>
-                    {errors.password && (
-                      <p className="text-sm text-red-500">{errors.password}</p>
-                    )}
+                        {m === 'password'
+                          ? t('auth.loginWithPassword')
+                          : t('auth.loginWithOtp')}
+                      </button>
+                    ))}
                   </div>
-                )}
 
-                {loginMethod === 'password' && (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="remember"
-                        aria-label={t('auth.rememberMe')}
-                        className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                      />
-                      <Label
-                        htmlFor="remember"
-                        className="text-sm text-gray-600"
-                      >
-                        {t('auth.rememberMe')}
-                      </Label>
+                  <InputWithIcon
+                    id="email"
+                    label={t('auth.emailAddress')}
+                    type="email"
+                    placeholder={t('auth.enterEmail')}
+                    value={formData.email}
+                    onChange={(value) => handleInputChange('email', value)}
+                    icon={Mail}
+                    error={errors.email}
+                    disabled={isLoading || otpSent}
+                  />
+
+                  <PhoneInputWithCountry
+                    id="phone"
+                    label={t('auth.phoneNumber')}
+                    placeholder="09121234567"
+                    value={formData.phone}
+                    onChange={(value) => handleInputChange('phone', value)}
+                    onFullPhoneChange={(fullPhone) =>
+                      handleInputChange('fullPhoneNumber', fullPhone)
+                    }
+                    lockCountryCode="IR"
+                    error={errors.phone}
+                    disabled={isLoading || otpSent}
+                  />
+
+                  {loginMethod === 'password' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="password">{t('auth.password')}</Label>
+                      <div className="relative">
+                        <Lock
+                          className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+                        />
+                        <Input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder={t('auth.enterPassword')}
+                          value={formData.password}
+                          onChange={(e) =>
+                            handleInputChange('password', e.target.value)
+                          }
+                          className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
+                            errors.password ? 'border-red-500' : ''
+                          }`}
+                          disabled={isLoading}
+                          dir="rtl"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className={`absolute top-0 h-full px-3 py-2 hover:bg-transparent ${isRTL ? 'left-0' : 'right-0'}`}
+                          onClick={() => setShowPassword(!showPassword)}
+                          disabled={isLoading}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
+                      </div>
+                      {errors.password && (
+                        <p className="text-sm text-red-500">
+                          {errors.password}
+                        </p>
+                      )}
                     </div>
-                    <Link
-                      href="/admin-forget-password"
-                      className="text-sm text-purple-600 hover:text-purple-500"
-                    >
-                      {t('auth.forgotPassword')}
-                    </Link>
-                  </div>
-                )}
-
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2
-                        className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
-                      />
-                      {loginMethod === 'otp' && !otpSent
-                        ? t('auth.sendingCode')
-                        : t('auth.signingIn')}
-                    </>
-                  ) : loginMethod === 'otp' ? (
-                    otpSent ? (
-                      t('auth.verifyAndLogin')
-                    ) : (
-                      t('auth.sendLoginCode')
-                    )
-                  ) : (
-                    t('auth.signIn')
                   )}
-                </Button>
-              </form>
+
+                  {loginMethod === 'password' && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="remember"
+                          aria-label={t('auth.rememberMe')}
+                          className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                        />
+                        <Label
+                          htmlFor="remember"
+                          className="text-sm text-gray-600"
+                        >
+                          {t('auth.rememberMe')}
+                        </Label>
+                      </div>
+                      <Link
+                        href="/admin-forget-password"
+                        className="text-sm text-purple-600 hover:text-purple-500"
+                      >
+                        {t('auth.forgotPassword')}
+                      </Link>
+                    </div>
+                  )}
+
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2
+                          className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}
+                        />
+                        {loginMethod === 'otp' && !otpSent
+                          ? t('auth.sendingCode')
+                          : t('auth.signingIn')}
+                      </>
+                    ) : loginMethod === 'otp' ? (
+                      otpSent ? (
+                        t('auth.verifyAndLogin')
+                      ) : (
+                        t('auth.sendLoginCode')
+                      )
+                    ) : (
+                      t('auth.signIn')
+                    )}
+                  </Button>
+                </form>
+              )}
             </CardContent>
 
             <div className="px-6 pb-6">
