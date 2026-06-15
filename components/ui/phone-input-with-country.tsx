@@ -212,6 +212,7 @@ export function PhoneInputWithCountry({
           {/* Country Code — selector when unlocked, static badge when locked */}
           {lockCountryCode ? (
             <div
+              dir="ltr"
               className={`flex items-center gap-2 border border-border bg-muted/50 px-3 ${'rounded-r-none border-r-0'} rounded-md`}
             >
               <span className="text-lg">{selectedCountry.flag}</span>

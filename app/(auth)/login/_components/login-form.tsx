@@ -9,6 +9,7 @@ import {
   AuthGoogleButton
 } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import Link from '@/components/ui/link';
 import { toEnglishDigits } from '@/lib/phone-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -78,15 +79,15 @@ export function LoginForm({
       </div>
 
       <form onSubmit={onSubmit} className="space-y-5" noValidate>
-        <AuthField
+        <PhoneInputWithCountry
+          id="phone"
           label={t('auth.phoneNumber')}
-          type="tel"
-          dir="ltr"
-          autoComplete="tel"
+          placeholder="09121234567"
           value={phone}
-          onChange={(e) => onPhoneChange(toEnglishDigits(e.target.value))}
+          onChange={onPhoneChange}
           error={errors.phone}
           disabled={isLoading}
+          lockCountryCode="IR"
         />
 
         {loginMethod === 'password' && (

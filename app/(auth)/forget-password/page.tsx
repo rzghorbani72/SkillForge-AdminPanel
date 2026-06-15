@@ -348,7 +348,7 @@ export default function ForgetPasswordPage() {
                       }
                       error={errors.phoneNumber}
                       disabled={isLoading}
-                      lockCountryCode={'+98'}
+                      lockCountryCode="IR"
                     />
                   </TabsContent>
                 </Tabs>

@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Eye, EyeOff, Loader2, User, Lock, Phone } from 'lucide-react';
+import { Eye, EyeOff, Loader2, User, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import {
   Form,
   FormControl,
@@ -76,31 +77,18 @@ export function RegisterDetailsForm({
           <FormField
             control={form.control}
             name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('auth.phoneNumber')}</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Phone
-                      className={cn(
-                        'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                        isRTL ? 'right-3' : 'left-3'
-                      )}
-                    />
-                    <Input
-                      type="tel"
-                      dir="ltr"
-                      className={isRTL ? 'pr-9' : 'pl-9'}
-                      placeholder={t('auth.phonePlaceholder')}
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(toEnglishDigits(e.target.value))
-                      }
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <PhoneInputWithCountry
+                id="phone"
+                label={t('auth.phoneNumber')}
+                placeholder={t('auth.phonePlaceholder')}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={fieldState.error?.message}
+                disabled={loading}
+                lockCountryCode="IR"
+              />
             )}
           />
 

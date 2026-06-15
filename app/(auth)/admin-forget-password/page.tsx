@@ -355,6 +355,7 @@ export default function AdminForgetPasswordPage() {
                         }
                         error={errors.phoneNumber}
                         disabled={isLoading}
+                        lockCountryCode="IR"
                       />
                     </TabsContent>
                   </Tabs>
@@ -373,6 +374,7 @@ export default function AdminForgetPasswordPage() {
                       }
                       error={errors.phoneNumber}
                       disabled={isLoading}
+                      lockCountryCode="IR"
                     />
                   )}
 
