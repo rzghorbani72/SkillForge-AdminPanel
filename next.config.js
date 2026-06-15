@@ -8,6 +8,14 @@ const CACHE_CONTROL_API = isDevelopment
   ? 'no-store, no-cache, must-revalidate'
   : 'public, max-age=60, s-maxage=300, stale-while-revalidate=86400';
 
+// Baseline CSP. The panel proxies /api same-origin, so connect-src 'self' covers
+// the backend; images come from the backend over https. 'unsafe-eval' is only
+// needed by Next's dev runtime. frame-ancestors 'none' + X-Frame-Options: DENY
+// stop the panel being framed (clickjacking).
+const CSP = isDevelopment
+  ? "default-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* https:; style-src 'self' 'unsafe-inline' http://localhost:* https:; img-src 'self' data: blob: http://localhost:* https:; font-src 'self' data: http://localhost:* https:; connect-src 'self' http://localhost:* ws://localhost:* wss: https:; media-src 'self' http://localhost:* https: blob: data:; frame-ancestors 'none';"
+  : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self' https: blob: data:; frame-ancestors 'none';";
+
 const SECURITY_HEADERS = [
   {
     key: 'Strict-Transport-Security',
@@ -19,7 +27,7 @@ const SECURITY_HEADERS = [
   },
   {
     key: 'X-Frame-Options',
-    value: 'SAMEORIGIN'
+    value: 'DENY'
   },
   {
     key: 'Permissions-Policy',
@@ -32,6 +40,10 @@ const SECURITY_HEADERS = [
   {
     key: 'Referrer-Policy',
     value: 'origin-when-cross-origin'
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: CSP
   }
   // CORS headers are handled by the backend API
   // Don't set Access-Control-Allow-Origin: * as it conflicts with credentials: true
