@@ -784,6 +784,7 @@ class ApiClient {
     document_id?: string;
     published?: boolean;
     is_featured?: boolean;
+    access_duration_days?: number;
     seasons?: Array<{
       title: string;
       description?: string;
@@ -797,6 +798,15 @@ class ApiClient {
         cover_id?: string;
       }>;
     }>;
+    lessons?: Array<{
+      title: string;
+      description?: string;
+      is_free?: boolean;
+      published?: boolean;
+      video_id?: string;
+      audio_id?: string;
+      cover_id?: string;
+    }>;
   }) {
     return this.request('/courses', {
       method: 'POST',
@@ -808,6 +818,48 @@ class ApiClient {
     return this.request(`/courses/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(courseData)
+    });
+  }
+
+  // Atomic "save the whole course": course fields + every season/lesson +
+  // deletes in ONE backend transaction (no half-saved course on failure).
+  async updateCourseContent(
+    id: string,
+    payload: {
+      title?: string;
+      description?: string;
+      primary_price?: number;
+      secondary_price?: number;
+      category_id?: string;
+      cover_id?: string;
+      published?: boolean;
+      is_featured?: boolean;
+      access_duration_days?: number;
+      seasons: Array<{
+        id?: string;
+        client_key: string;
+        title: string;
+        description?: string;
+      }>;
+      lessons: Array<{
+        id?: string;
+        title: string;
+        description?: string;
+        is_free?: boolean;
+        published?: boolean;
+        video_id?: string;
+        audio_id?: string;
+        cover_id?: string;
+        season_id?: string;
+        season_client_key?: string;
+      }>;
+      deleted_season_ids?: string[];
+      deleted_lesson_ids?: string[];
+    }
+  ) {
+    return this.request(`/courses/${id}/content`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
     });
   }
 

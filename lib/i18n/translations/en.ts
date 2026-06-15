@@ -3145,6 +3145,10 @@ export const en = {
     draftDesc: 'Save as draft — you can publish anytime',
     featuredCourse: 'Featured Course',
     featuredDesc: 'Highlighted on the academy homepage and course listings',
+    accessTerm: 'Access Term',
+    accessTermHint:
+      'For live classes: how many days students keep access after enrolling (e.g. 90 for a 3-month term). Leave empty for lifetime access.',
+    accessTermPlaceholder: 'Days (empty = lifetime)',
     prerequisite: 'Prerequisite Course',
     noPrerequisite: 'None — no prerequisite',
     prerequisiteHint: 'Students must complete the selected course first',

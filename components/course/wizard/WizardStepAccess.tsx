@@ -10,7 +10,8 @@ import {
   FormDescription
 } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
-import { Globe, EyeOff, Star, Lock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Globe, EyeOff, Star, Lock, CalendarClock } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface Props {
@@ -101,6 +102,40 @@ export default function WizardStepAccess({ form, courses }: Props) {
             )}
           />
         </div>
+      </div>
+
+      {/* Access term (live-class / time-boxed access) */}
+      <div className="space-y-3 rounded-xl border bg-card p-5">
+        <div className="flex items-center gap-2">
+          <CalendarClock className="h-4 w-4 text-muted-foreground" />
+          <p className="text-sm font-semibold">{t('wizard.accessTerm')}</p>
+        </div>
+        <FormField
+          control={form.control}
+          name="access_duration_days"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="sr-only">
+                {t('wizard.accessTerm')}
+              </FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min={1}
+                  inputMode="numeric"
+                  placeholder={t('wizard.accessTermPlaceholder')}
+                  value={field.value ?? ''}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value ? Number(e.target.value) : null
+                    )
+                  }
+                />
+              </FormControl>
+              <FormDescription>{t('wizard.accessTermHint')}</FormDescription>
+            </FormItem>
+          )}
+        />
       </div>
 
       {/* Prerequisite */}

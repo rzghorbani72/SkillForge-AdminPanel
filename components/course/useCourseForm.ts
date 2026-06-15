@@ -273,21 +273,7 @@ export function useCourseForm(courseId?: string) {
 
       setIsSaving(true);
       try {
-        // 1. Flush pending deletes
-        if (
-          isEdit &&
-          (deletedLessonIds.length > 0 || deletedSeasonIds.length > 0)
-        ) {
-          setSaveProgress('Removing deleted items…');
-          await Promise.allSettled([
-            ...deletedLessonIds.map((id) => apiClient.deleteLesson(id)),
-            ...deletedSeasonIds.map((id) => apiClient.deleteSeason(id))
-          ]);
-          setDeletedLessonIds([]);
-          setDeletedSeasonIds([]);
-        }
-
-        // 2. Create / update course
+        // Create / update course
         const coursePayload = {
           title: data.title.trim(),
           description: data.description.trim(),
@@ -301,70 +287,40 @@ export function useCourseForm(courseId?: string) {
 
         let courseDbId: string;
         if (isEdit) {
-          setSaveProgress('Updating course…');
-          await apiClient.updateCourse(courseId!, coursePayload);
-          courseDbId = courseId!;
-
-          // 3. Upsert seasons — build clientKey → dbId map
-          const seasonIdMap = new Map<string, string>();
-          for (let si = 0; si < seasons.length; si++) {
-            const s = seasons[si];
-            if (!s.title.trim()) continue;
-            setSaveProgress(`Saving season ${si + 1}…`);
-            let dbId = s.id;
-            if (dbId) {
-              await apiClient.updateSeason(dbId, {
+          // One atomic save: course + every season/lesson + deletes in a single
+          // backend transaction. No more half-saved course on a mid-save error.
+          setSaveProgress('Saving course…');
+          await apiClient.updateCourseContent(courseId!, {
+            ...coursePayload,
+            seasons: seasons
+              .filter((s) => s.title.trim())
+              .map((s) => ({
+                id: s.id,
+                client_key: s.clientKey,
                 title: s.title.trim(),
                 description: s.description.trim() || undefined
-              });
-            } else {
-              const resp = await apiClient.createSeason({
-                title: s.title.trim(),
-                description: s.description.trim() || undefined,
-                order: si + 1,
-                course_id: courseDbId
-              });
-              dbId = extractId(resp);
-            }
-            if (dbId) seasonIdMap.set(s.clientKey, dbId);
-          }
-
-          // 4. Upsert lessons
-          for (let li = 0; li < lessons.length; li++) {
-            const l = lessons[li];
-            if (!l.title.trim()) continue;
-            setSaveProgress(`Saving lesson ${li + 1}…`);
-
-            const season_id = l.seasonClientKey
-              ? (seasonIdMap.get(l.seasonClientKey) ?? null)
-              : null;
-            const media = {
-              video_id: l.video_id,
-              audio_id: l.audio_id,
-              cover_id: l.cover_id
-            };
-
-            if (l.id) {
-              await apiClient.updateLesson(l.id, {
+              })),
+            lessons: lessons
+              .filter((l) => l.title.trim())
+              .map((l) => ({
+                id: l.id,
                 title: l.title.trim(),
                 description: l.description.trim() || undefined,
                 is_free: l.is_free,
                 published: l.published,
-                season_id,
-                ...media
-              });
-            } else {
-              await apiClient.createLesson({
-                title: l.title.trim(),
-                description: l.description.trim() || undefined,
-                course_id: courseDbId,
-                season_id: season_id ?? undefined,
-                is_free: l.is_free,
-                published: l.published,
-                ...media
-              });
-            }
-          }
+                video_id: l.video_id,
+                audio_id: l.audio_id,
+                cover_id: l.cover_id,
+                season_client_key: l.seasonClientKey
+              })),
+            deleted_season_ids:
+              deletedSeasonIds.length > 0 ? deletedSeasonIds : undefined,
+            deleted_lesson_ids:
+              deletedLessonIds.length > 0 ? deletedLessonIds : undefined
+          });
+          courseDbId = courseId!;
+          setDeletedLessonIds([]);
+          setDeletedSeasonIds([]);
         } else {
           // Create: send everything in one atomic request
           setSaveProgress('Creating course…');
@@ -388,9 +344,25 @@ export function useCourseForm(courseId?: string) {
                 }))
             }));
 
+          // Lessons not attached to any season — sent top-level so they are
+          // persisted unassigned instead of being silently dropped.
+          const unassignedLessons = lessons
+            .filter((l) => !l.seasonClientKey && l.title.trim())
+            .map((l) => ({
+              title: l.title.trim(),
+              description: l.description.trim() || undefined,
+              is_free: l.is_free,
+              published: l.published,
+              video_id: l.video_id,
+              audio_id: l.audio_id,
+              cover_id: l.cover_id
+            }));
+
           const resp = await apiClient.createCourse({
             ...coursePayload,
-            seasons: seasonsPayload.length > 0 ? seasonsPayload : undefined
+            seasons: seasonsPayload.length > 0 ? seasonsPayload : undefined,
+            lessons:
+              unassignedLessons.length > 0 ? unassignedLessons : undefined
           });
           const id = extractId(resp);
           if (!id) throw new Error('Course creation returned no id');
