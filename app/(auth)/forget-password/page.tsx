@@ -185,7 +185,9 @@ export default function ForgetPasswordPage() {
       setStep('otp');
     } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to send OTP';
+        error instanceof Error
+          ? error.message
+          : t('forgotPassword.failedToSendOtp');
       setErrors({ identifier: errorMessage });
     } finally {
       setIsLoading(false);

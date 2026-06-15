@@ -66,9 +66,7 @@ export default function AdminLoginPage() {
     const message = searchParams.get('message');
 
     if (error === 'unauthorized_role') {
-      const errorMessage =
-        message ||
-        'You do not have permission to access the admin dashboard. Only ADMIN role is allowed.';
+      const errorMessage = message || t('auth.adminUnauthorizedRole');
       setUnauthorizedError(errorMessage);
       ErrorHandler.handleValidationErrors({ message: errorMessage });
 
@@ -116,9 +114,7 @@ export default function AdminLoginPage() {
       // Full navigation so server layout sees HttpOnly jwt on the panel host.
       window.location.href = '/platform';
     } else {
-      ErrorHandler.showWarning(
-        'This route is for Admin and Support staff. Please use /login.'
-      );
+      ErrorHandler.showWarning(t('auth.staffRouteOnly'));
       router.push('/login');
     }
   };
@@ -373,7 +369,7 @@ export default function AdminLoginPage() {
                       <input
                         type="checkbox"
                         id="remember"
-                        aria-label="Remember me"
+                        aria-label={t('auth.rememberMe')}
                         className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                       />
                       <Label
@@ -433,19 +429,19 @@ export default function AdminLoginPage() {
           {/* Footer */}
           <div className="mt-8 text-center">
             <p className="text-xs text-gray-500">
-              By signing in, you agree to our{' '}
+              {t('auth.bySigningIn')}{' '}
               <Link
                 href="/terms"
                 className="text-purple-600 hover:text-purple-500"
               >
-                Terms of Service
+                {t('auth.termsOfService')}
               </Link>{' '}
-              and{' '}
+              {t('auth.and')}{' '}
               <Link
                 href="/privacy"
                 className="text-purple-600 hover:text-purple-500"
               >
-                Privacy Policy
+                {t('auth.privacyPolicy')}
               </Link>
             </p>
           </div>

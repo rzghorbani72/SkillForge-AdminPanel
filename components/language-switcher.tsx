@@ -42,7 +42,7 @@ export function LanguageSwitcher() {
       <Button
         variant="outline"
         size="sm"
-        className="gap-2 border-border bg-white text-foreground shadow-sm hover:bg-muted/50"
+        className="gap-2 border-border bg-white/10 text-foreground shadow-sm hover:bg-muted/50"
         disabled
       >
         <Globe className="h-4 w-4 text-foreground" />
@@ -62,7 +62,7 @@ export function LanguageSwitcher() {
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 border-border bg-white text-foreground shadow-sm hover:bg-muted/50"
+          className="gap-2 border-border bg-white/10 text-foreground shadow-sm hover:bg-muted/50"
           disabled={isChanging}
         >
           <Globe className="h-4 w-4 text-foreground" />

@@ -258,6 +258,12 @@ export const tr = {
     adminOnly: 'Bu panel yalnızca',
     adminsOnly: 'yöneticiler içindir.',
     signInAsAdmin: 'Yönetici olarak giriş yapın',
+    staffRouteOnly:
+      'Bu rota Yönetici ve Destek personeli içindir. Lütfen normal girişi kullanın.',
+    adminUnauthorizedRole:
+      'Yönetici paneline erişim izniniz yok. Yalnızca ADMIN rolüne izin verilir.',
+    bySigningIn: 'Giriş yaparak şunları kabul edersiniz:',
+    togglePasswordVisibility: 'Şifre görünürlüğünü değiştir',
     notAdmin: 'Yönetici değil misiniz?',
     regularLogin: 'Normal Giriş'
   },
@@ -938,6 +944,7 @@ export const tr = {
     otpVerifiedSuccess: 'OTP başarıyla doğrulandı',
     passwordResetFailed: 'Şifre sıfırlama başarısız oldu',
     sendOtp: 'OTP Gönder',
+    failedToSendOtp: 'OTP gönderilemedi',
     verifyOtp: 'OTP Doğrula',
     resetPassword: 'Şifreyi Sıfırla',
     backToLogin: 'Girişe Dön',

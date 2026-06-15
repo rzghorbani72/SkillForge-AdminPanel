@@ -131,7 +131,7 @@ export function RegisterDetailsForm({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      aria-label="toggle password"
+                      aria-label={t('auth.togglePasswordVisibility')}
                       className={cn(
                         'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
                         isRTL ? 'left-0' : 'right-0'
@@ -178,7 +178,7 @@ export function RegisterDetailsForm({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      aria-label="toggle confirm password"
+                      aria-label={t('auth.togglePasswordVisibility')}
                       className={cn(
                         'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
                         isRTL ? 'left-0' : 'right-0'

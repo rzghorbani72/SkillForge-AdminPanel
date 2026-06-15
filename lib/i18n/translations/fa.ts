@@ -308,6 +308,12 @@ export const fa = {
     adminOnly: 'این پنل مخصوص',
     adminsOnly: 'ادمین‌ها هستند.',
     signInAsAdmin: 'به عنوان ادمین وارد شوید',
+    staffRouteOnly:
+      'این مسیر برای کارکنان ادمین و پشتیبانی است. لطفاً از ورود عادی استفاده کنید.',
+    adminUnauthorizedRole:
+      'شما اجازه دسترسی به پنل ادمین را ندارید. فقط نقش ادمین مجاز است.',
+    bySigningIn: 'با ورود، شما با',
+    togglePasswordVisibility: 'نمایش/مخفی کردن رمز عبور',
     notAdmin: 'ادمین نیستید؟',
     regularLogin: 'ورود عادی',
     loginTitle: 'به حساب خود وارد شوید',
@@ -1561,6 +1567,7 @@ export const fa = {
     otpVerifiedSuccess: 'کد تأیید با موفقیت تأیید شد',
     passwordResetFailed: 'بازنشانی رمز عبور ناموفق بود',
     sendOtp: 'ارسال کد تأیید',
+    failedToSendOtp: 'ارسال کد تأیید ناموفق بود',
     verifyOtp: 'تأیید کد تأیید',
     resetPassword: 'بازنشانی رمز عبور',
     backToLogin: 'بازگشت به ورود',

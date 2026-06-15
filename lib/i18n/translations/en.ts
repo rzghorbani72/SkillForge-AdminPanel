@@ -305,6 +305,12 @@ export const en = {
     adminOnly: 'This panel is for',
     adminsOnly: 'admins only.',
     signInAsAdmin: 'Sign in as administrator',
+    staffRouteOnly:
+      'This route is for Admin and Support staff. Please use the regular login.',
+    adminUnauthorizedRole:
+      'You do not have permission to access the admin dashboard. Only ADMIN role is allowed.',
+    bySigningIn: 'By signing in, you agree to our',
+    togglePasswordVisibility: 'Toggle password visibility',
     notAdmin: 'Not an admin?',
     regularLogin: 'Regular Login',
     loginTitle: 'Sign in to your account',
@@ -1166,6 +1172,7 @@ export const en = {
     otpVerifiedSuccess: 'OTP verified successfully',
     passwordResetFailed: 'Failed to reset password',
     sendOtp: 'Send OTP',
+    failedToSendOtp: 'Failed to send OTP',
     verifyOtp: 'Verify OTP',
     resetPassword: 'Reset Password',
     backToLogin: 'Back to Login',

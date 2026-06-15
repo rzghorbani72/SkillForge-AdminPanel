@@ -253,6 +253,12 @@ export const ar = {
     adminOnly: 'هذه اللوحة مخصصة لـ',
     adminsOnly: 'المديرين فقط.',
     signInAsAdmin: 'تسجيل الدخول كمدير',
+    staffRouteOnly:
+      'هذا المسار مخصص لموظفي الإدارة والدعم. يرجى استخدام تسجيل الدخول العادي.',
+    adminUnauthorizedRole:
+      'ليس لديك إذن للوصول إلى لوحة تحكم المدير. مسموح لدور المدير فقط.',
+    bySigningIn: 'بتسجيل الدخول، فإنك توافق على',
+    togglePasswordVisibility: 'إظهار/إخفاء كلمة المرور',
     notAdmin: 'لست مديراً؟',
     regularLogin: 'تسجيل الدخول العادي'
   },
@@ -913,6 +919,7 @@ export const ar = {
     otpVerifiedSuccess: 'تم التحقق من رمز التحقق بنجاح',
     passwordResetFailed: 'فشل إعادة تعيين كلمة المرور',
     sendOtp: 'إرسال رمز التحقق',
+    failedToSendOtp: 'فشل إرسال رمز التحقق',
     verifyOtp: 'التحقق من رمز التحقق',
     resetPassword: 'إعادة تعيين كلمة المرور',
     backToLogin: 'العودة إلى تسجيل الدخول',
