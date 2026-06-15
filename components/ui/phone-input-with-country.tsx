@@ -255,9 +255,6 @@ export function PhoneInputWithCountry({
 
           {/* Phone Number Input */}
           <div className="relative flex-1">
-            <Phone
-              className={`left-3} absolute top-3 h-4 w-4 text-muted-foreground`}
-            />
             <Input
               id={id}
               type="tel"
