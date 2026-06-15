@@ -1,16 +1,17 @@
 'use client';
 
-import { Eye, EyeOff, Lock, Loader2, Phone, Sparkles } from 'lucide-react';
-import { AuthLayout } from '@/components/auth/auth-layout';
-import { AuthBrand } from '@/components/auth/auth-brand';
+import { toast } from 'react-toastify';
+import { AuthShell } from '@/components/auth/auth-shell';
+import {
+  AuthField,
+  AuthSubmit,
+  AuthDivider,
+  AuthGoogleButton
+} from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import Link from '@/components/ui/link';
-import { LanguageSwitcher } from '@/components/language-switcher';
 import { toEnglishDigits } from '@/lib/phone-utils';
-import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
 type LoginMethod = 'password' | 'otp';
@@ -35,164 +36,98 @@ export function LoginForm({
   onLoginMethodChange,
   phone,
   password,
-  showPassword,
   isLoading,
   errors,
   unauthorizedError,
   onPhoneChange,
   onPasswordChange,
-  onTogglePassword,
   onSubmit
 }: LoginFormProps) {
   const { t } = useTranslation();
-  const { isRTL } = useLanguage();
 
   return (
-    <AuthLayout>
-      <div className={cn('fixed top-4 z-50', isRTL ? 'left-4' : 'right-4')}>
-        <LanguageSwitcher />
-      </div>
-
-      <AuthBrand
-        icon={<Sparkles className="h-6 w-6 text-primary-foreground" />}
-        title={t('auth.loginTitle')}
-        subtitle={t('auth.loginSubtitle')}
-        large
-      />
-
+    <AuthShell
+      activeTab="login"
+      title={t('auth.loginTitle')}
+      subtitle={t('auth.loginSubtitle')}
+    >
       {unauthorizedError && (
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>{unauthorizedError}</AlertDescription>
         </Alert>
       )}
 
-      <div className="rounded-2xl border bg-card p-8 shadow-sm">
-        <div className="mb-4 grid grid-cols-2 gap-2 rounded-lg bg-muted p-1">
-          {(['password', 'otp'] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => onLoginMethodChange(m)}
-              className={cn(
-                'rounded-md py-2 text-sm font-medium transition-colors',
-                loginMethod === m
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              {m === 'password'
-                ? t('auth.loginWithPassword')
-                : t('auth.loginWithOtp')}
-            </button>
-          ))}
-        </div>
-
-        <form onSubmit={onSubmit} className="space-y-4" noValidate>
-          <div className="space-y-1.5">
-            <Label htmlFor="phone">{t('auth.phoneNumber')}</Label>
-            <div className="relative">
-              <Phone
-                className={cn(
-                  'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                  isRTL ? 'right-3' : 'left-3'
-                )}
-              />
-              <Input
-                id="phone"
-                type="tel"
-                autoComplete="tel"
-                placeholder={t('auth.phonePlaceholder')}
-                value={phone}
-                onChange={(e) => onPhoneChange(toEnglishDigits(e.target.value))}
-                className={cn(
-                  isRTL ? 'pr-9' : 'pl-9',
-                  errors.phone && 'border-destructive'
-                )}
-                disabled={isLoading}
-                dir="ltr"
-              />
-            </div>
-            {errors.phone && (
-              <p className="text-xs text-destructive">{errors.phone}</p>
+      <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+        {(['password', 'otp'] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => onLoginMethodChange(m)}
+            className={cn(
+              'rounded-md py-1.5 text-xs font-medium transition-colors',
+              loginMethod === m
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             )}
+          >
+            {m === 'password'
+              ? t('auth.loginWithPassword')
+              : t('auth.loginWithOtp')}
+          </button>
+        ))}
+      </div>
+
+      <form onSubmit={onSubmit} className="space-y-5" noValidate>
+        <AuthField
+          label={t('auth.phoneNumber')}
+          type="tel"
+          dir="ltr"
+          autoComplete="tel"
+          value={phone}
+          onChange={(e) => onPhoneChange(toEnglishDigits(e.target.value))}
+          error={errors.phone}
+          disabled={isLoading}
+        />
+
+        {loginMethod === 'password' && (
+          <div className="space-y-2">
+            <AuthField
+              label={t('auth.password')}
+              type="password"
+              dir="ltr"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) =>
+                onPasswordChange(toEnglishDigits(e.target.value))
+              }
+              error={errors.password}
+              disabled={isLoading}
+            />
+            <div className="text-left">
+              <Link
+                href="/forget-password"
+                className="text-xs text-primary hover:underline"
+              >
+                {t('auth.forgotPassword')}
+              </Link>
+            </div>
           </div>
+        )}
 
-          {loginMethod === 'password' && (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">{t('auth.password')}</Label>
-                <Link
-                  href="/forget-password"
-                  className="text-xs text-primary hover:underline"
-                >
-                  {t('auth.forgotPassword')}
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock
-                  className={cn(
-                    'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                    isRTL ? 'right-3' : 'left-3'
-                  )}
-                />
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  placeholder={t('auth.enterPassword')}
-                  value={password}
-                  onChange={(e) =>
-                    onPasswordChange(toEnglishDigits(e.target.value))
-                  }
-                  className={cn(
-                    'pl-9 pr-9',
-                    errors.password && 'border-destructive'
-                  )}
-                  disabled={isLoading}
-                  dir="ltr"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  aria-label={
-                    showPassword ? t('common.inactive') : t('common.active')
-                  }
-                  className={cn(
-                    'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
-                    isRTL ? 'left-0' : 'right-0'
-                  )}
-                  onClick={onTogglePassword}
-                  disabled={isLoading}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-              {errors.password && (
-                <p className="text-xs text-destructive">{errors.password}</p>
-              )}
-            </div>
-          )}
+        <AuthSubmit loading={isLoading} disabled={isLoading}>
+          {isLoading
+            ? loginMethod === 'otp'
+              ? t('auth.sendingCode')
+              : t('auth.signingIn')
+            : loginMethod === 'otp'
+              ? t('auth.sendLoginCode')
+              : t('auth.signIn')}
+        </AuthSubmit>
+      </form>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {loginMethod === 'otp'
-                  ? t('auth.sendingCode')
-                  : t('auth.signingIn')}
-              </>
-            ) : loginMethod === 'otp' ? (
-              t('auth.sendLoginCode')
-            ) : (
-              t('auth.signIn')
-            )}
-          </Button>
-        </form>
+      <div className="mt-6 space-y-5">
+        <AuthDivider />
+        <AuthGoogleButton onClick={() => toast.info(t('auth.googleSoon'))} />
       </div>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
@@ -204,6 +139,6 @@ export function LoginForm({
           {t('auth.signUp')}
         </Link>
       </p>
-    </AuthLayout>
+    </AuthShell>
   );
 }

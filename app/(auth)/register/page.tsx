@@ -4,16 +4,15 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle2, Sparkles } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
-import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { toE164Iran } from '@/lib/phone-utils';
-import { LanguageDetector } from '@/components/providers/language-detector';
-import { LanguageSwitcher } from '@/components/language-switcher';
-import { cn } from '@/lib/utils';
+import { AuthLayout } from '@/components/auth/auth-layout';
+import { AuthShell } from '@/components/auth/auth-shell';
 import { toast } from 'react-toastify';
 import { StepIndicator } from './_components/step-indicator';
 import {
@@ -37,7 +36,6 @@ const useRegisterSchema = (t: (k: string) => string) =>
 
 export default function RegisterPage() {
   const { t } = useTranslation();
-  const { isRTL } = useLanguage();
   const router = useRouter();
 
   const [step, setStep] = useState<'details' | 'verify'>('details');
@@ -159,93 +157,63 @@ export default function RegisterPage() {
 
   if (done) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <div className="space-y-3 text-center">
+      <AuthLayout>
+        <div className="auth-card fade-in-up space-y-3 rounded-2xl p-8 text-center">
           <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-500" />
           <h2 className="text-xl font-bold">{t('auth.accountCreatedTitle')}</h2>
           <p className="text-sm text-muted-foreground">
             {t('auth.redirectingToSignIn')}
           </p>
         </div>
-      </div>
+      </AuthLayout>
     );
   }
 
   return (
-    <>
-      <LanguageDetector />
-      <div
-        className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
-        dir="rtl"
-      >
-        <div className={cn('fixed top-4 z-50', isRTL ? 'left-4' : 'right-4')}>
-          <LanguageSwitcher />
-        </div>
+    <AuthShell
+      activeTab="register"
+      title={t('auth.registerTitle')}
+      subtitle={t('auth.registerSubtitle')}
+    >
+      <StepIndicator totalSteps={2} current={step === 'details' ? 0 : 1} />
 
-        <div className="w-full max-w-sm">
-          <div className="mb-8 text-center">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/25">
-              <Sparkles className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              {t('auth.registerTitle')}
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {t('auth.registerSubtitle')}
-            </p>
-          </div>
+      <div className="mt-5">
+        {step === 'details' && (
+          <RegisterDetailsForm
+            form={form}
+            loading={otpLoading}
+            onSubmit={onDetailsSubmit}
+          />
+        )}
 
-          <StepIndicator totalSteps={2} current={step === 'details' ? 0 : 1} />
-
-          <div className="rounded-2xl border bg-card p-8 shadow-sm">
-            {step === 'details' && (
-              <RegisterDetailsForm
-                form={form}
-                loading={otpLoading}
-                onSubmit={onDetailsSubmit}
-              />
-            )}
-
-            {step === 'verify' && (
-              <RegisterOtpStep
-                phone={form.getValues('phone')}
-                otpCode={otpCode}
-                setOtpCode={setOtpCode}
-                otpLoading={otpLoading}
-                verifying={verifying}
-                phoneVerified={phoneVerified}
-                submitting={submitting}
-                onVerify={verifyCode}
-                onCreateAccount={createAccount}
-                onResend={resendOtp}
-                onBack={() => setStep('details')}
-              />
-            )}
-          </div>
-
-          <p className="mt-4 text-center text-xs text-muted-foreground">
-            {t('auth.byCreatingAccount')}{' '}
-            <Link href="/terms" className="underline hover:text-foreground">
-              {t('auth.termsOfService')}
-            </Link>{' '}
-            {t('auth.and')}{' '}
-            <Link href="/privacy" className="underline hover:text-foreground">
-              {t('auth.privacyPolicy')}
-            </Link>
-            {t('auth.agree')}
-          </p>
-
-          <p className="mt-3 text-center text-sm text-muted-foreground">
-            {t('auth.alreadyHaveAccount')}{' '}
-            <Link
-              href="/login"
-              className="font-semibold text-primary hover:underline"
-            >
-              {t('auth.signIn')}
-            </Link>
-          </p>
-        </div>
+        {step === 'verify' && (
+          <RegisterOtpStep
+            phone={form.getValues('phone')}
+            otpCode={otpCode}
+            setOtpCode={setOtpCode}
+            otpLoading={otpLoading}
+            verifying={verifying}
+            phoneVerified={phoneVerified}
+            submitting={submitting}
+            onVerify={verifyCode}
+            onCreateAccount={createAccount}
+            onResend={resendOtp}
+            onBack={() => setStep('details')}
+          />
+        )}
       </div>
-    </>
+
+      <p className="mt-5 text-center text-xs text-muted-foreground">
+        {t('auth.byCreatingAccount')}{' '}
+        <Link href="/terms" className="underline hover:text-foreground">
+          {t('auth.termsOfService')}
+        </Link>{' '}
+        {t('auth.and')}{' '}
+        <Link href="/privacy" className="underline hover:text-foreground">
+          {t('auth.privacyPolicy')}
+        </Link>
+        {t('auth.agree')}
+      </p>
+    </AuthShell>
   );
 }

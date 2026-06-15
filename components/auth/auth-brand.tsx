@@ -10,7 +10,7 @@ interface AuthBrandProps {
 export function AuthBrand({ icon, title, subtitle, large }: AuthBrandProps) {
   return (
     <div className="mb-8 text-center">
-      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/25">
+      <div className="brand-tile mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl">
         {icon}
       </div>
       <h1
