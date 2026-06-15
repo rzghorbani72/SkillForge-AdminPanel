@@ -422,7 +422,7 @@ export default function BundlesPage() {
 
   async function onSubmit(values: FormValues) {
     if (!academyId) {
-      toast.error('No academy selected');
+      toast.error(t('common.noStoreSelected'));
       return;
     }
     if (selectedCourseIds.length === 0) {
@@ -564,7 +564,7 @@ export default function BundlesPage() {
                     <FormLabel>{t('bundles.bundleTitle')}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="e.g. Full Stack Mastery Pack"
+                        placeholder={t('bundles.titlePlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -655,7 +655,7 @@ export default function BundlesPage() {
                     <FormControl>
                       <Textarea
                         rows={3}
-                        placeholder="Brief description visible to students…"
+                        placeholder={t('bundles.descriptionPlaceholder')}
                         {...field}
                       />
                     </FormControl>

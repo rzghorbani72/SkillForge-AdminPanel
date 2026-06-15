@@ -10,8 +10,10 @@ import { apiClient } from '@/lib/api';
 import { Season, Course } from '@/types/api';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function SeasonViewPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const { selectedAcademy } = useStore();
@@ -59,7 +61,9 @@ export default function SeasonViewPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="text-muted-foreground">Loading season...</p>
+            <p className="text-muted-foreground">
+              {t('courses.loadingSeason')}
+            </p>
           </div>
         </div>
       </div>
@@ -71,9 +75,11 @@ export default function SeasonViewPage() {
       <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <h2 className="mb-4 text-2xl font-bold">Season Not Found</h2>
+            <h2 className="mb-4 text-2xl font-bold">
+              {t('courses.seasonNotFound')}
+            </h2>
             <p className="mb-4 text-muted-foreground">
-              The season you're looking for doesn't exist.
+              {t('courses.seasonNotFoundDesc')}
             </p>
             <Button
               variant="outline"
@@ -81,7 +87,7 @@ export default function SeasonViewPage() {
               onClick={() => router.push(`/courses/${courseId}/seasons`)}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Seasons
+              {t('courses.backToSeasons')}
             </Button>
           </div>
         </div>
@@ -107,7 +113,7 @@ export default function SeasonViewPage() {
           onClick={() => router.push('/courses')}
           className="transition-colors hover:text-foreground"
         >
-          Courses
+          {t('courses.title')}
         </button>
         <span>/</span>
         <button
@@ -121,7 +127,7 @@ export default function SeasonViewPage() {
           onClick={() => router.push(`/courses/${courseId}/seasons`)}
           className="transition-colors hover:text-foreground"
         >
-          Seasons
+          {t('courses.seasons')}
         </button>
         <span>/</span>
         <span className="font-medium text-foreground">{season.title}</span>
@@ -136,12 +142,12 @@ export default function SeasonViewPage() {
             onClick={() => router.push(`/courses/${courseId}/seasons`)}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Seasons
+            {t('courses.backToSeasons')}
           </Button>
           <div>
             <h1 className="text-3xl font-bold">{season.title}</h1>
             <p className="text-muted-foreground">
-              Season details for "{course.title}"
+              {t('courses.seasonDetailsSubtitle', { title: course.title })}
             </p>
           </div>
         </div>
@@ -153,7 +159,7 @@ export default function SeasonViewPage() {
             }
           >
             <BookOpen className="mr-2 h-4 w-4" />
-            Manage Lessons
+            {t('courses.manageLessons')}
           </Button>
           <Button
             onClick={() =>
@@ -161,7 +167,7 @@ export default function SeasonViewPage() {
             }
           >
             <Edit className="mr-2 h-4 w-4" />
-            Edit Season
+            {t('courses.editSeason')}
           </Button>
         </div>
       </div>
@@ -172,36 +178,36 @@ export default function SeasonViewPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Calendar className="mr-2 h-5 w-5" />
-              Season Information
+              {t('courses.seasonInformation')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Title
+                {t('common.title')}
               </label>
               <p className="text-lg font-semibold">{season.title}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Description
+                {t('common.description')}
               </label>
               <p className="text-sm">
-                {season.description || 'No description provided'}
+                {season.description || t('common.noDescriptionProvided')}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Order
+                {t('courses.orderLabel')}
               </label>
               <p className="text-sm">{season.order}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Status
+                {t('common.status')}
               </label>
               <Badge variant={season.is_active ? 'default' : 'secondary'}>
-                {season.is_active ? 'Active' : 'Inactive'}
+                {season.is_active ? t('common.active') : t('common.inactive')}
               </Badge>
             </div>
           </CardContent>
@@ -211,30 +217,32 @@ export default function SeasonViewPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <BookOpen className="mr-2 h-5 w-5" />
-              Course Information
+              {t('courses.courseInformation')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Course
+                {t('courses.courseLabel')}
               </label>
               <p className="text-lg font-semibold">{course.title}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Course Description
+                {t('courses.courseDescriptionLabel')}
               </label>
               <p className="text-sm">
-                {course.description || 'No description provided'}
+                {course.description || t('common.noDescriptionProvided')}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Course Status
+                {t('courses.courseStatus')}
               </label>
               <Badge variant={course.is_published ? 'default' : 'secondary'}>
-                {course.is_published ? 'Published' : 'Draft'}
+                {course.is_published
+                  ? t('courses.published')
+                  : t('courses.draft')}
               </Badge>
             </div>
           </CardContent>
@@ -244,7 +252,7 @@ export default function SeasonViewPage() {
       {/* Course Management */}
       <Card>
         <CardHeader>
-          <CardTitle>Season Management</CardTitle>
+          <CardTitle>{t('courses.seasonManagement')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center space-x-4">
@@ -275,7 +283,7 @@ export default function SeasonViewPage() {
               }
             >
               <Play className="mr-2 h-4 w-4" />
-              Add New Lesson
+              {t('courses.addNewLesson')}
             </Button>
           </div>
         </CardContent>

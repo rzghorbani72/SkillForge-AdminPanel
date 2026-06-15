@@ -61,6 +61,7 @@ type AffiliateLink = {
 // ─── Copy button ──────────────────────────────────────────────────────────────
 
 function CopyBtn({ text }: { text: string }) {
+  const { t } = useTranslation();
   const [done, setDone] = useState(false);
   function copy() {
     navigator.clipboard.writeText(text).then(() => {
@@ -79,7 +80,7 @@ function CopyBtn({ text }: { text: string }) {
       ) : (
         <Copy className="h-3.5 w-3.5" />
       )}
-      {done ? 'Copied' : 'Copy'}
+      {done ? t('affiliates.copied') : t('affiliates.copy')}
     </button>
   );
 }
@@ -150,7 +151,9 @@ function LinkCard({
       <div className="flex items-start justify-between gap-3 p-5">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold">{academy?.name ?? 'Academy'}</h3>
+            <h3 className="font-semibold">
+              {academy?.name ?? t('affiliates.academyFallback')}
+            </h3>
             <Badge
               variant="outline"
               className={cn(
@@ -160,11 +163,11 @@ function LinkCard({
                   : 'border-amber-300 text-amber-700'
               )}
             >
-              {commPct}% commission
+              {t('affiliates.commissionBadge')}
             </Badge>
             {!link.is_active && (
               <Badge variant="secondary" className="text-xs">
-                Paused
+                {t('affiliates.paused')}
               </Badge>
             )}
           </div>
@@ -184,7 +187,9 @@ function LinkCard({
       {/* Referral link */}
       <div className="mx-5 mb-4 flex items-center justify-between gap-2 rounded-xl border bg-muted/40 px-3 py-2">
         <div className="min-w-0 flex-1">
-          <p className="text-xs text-muted-foreground">Your referral link</p>
+          <p className="text-xs text-muted-foreground">
+            {t('affiliates.yourReferralLink')}
+          </p>
           <p className="truncate font-mono text-sm">{refUrl}</p>
         </div>
         <CopyBtn text={refUrl} />
@@ -195,7 +200,9 @@ function LinkCard({
           {link.code}
         </code>
         <CopyBtn text={link.code} />
-        <span className="text-xs text-muted-foreground">code only</span>
+        <span className="text-xs text-muted-foreground">
+          {t('affiliates.codeOnly')}
+        </span>
       </div>
 
       {/* Stats row */}
@@ -203,19 +210,20 @@ function LinkCard({
       <div className="grid grid-cols-3 divide-x p-4 text-center">
         <div>
           <p className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-            <MousePointerClick className="h-3.5 w-3.5" /> Clicks
+            <MousePointerClick className="h-3.5 w-3.5" />{' '}
+            {t('affiliates.clicks')}
           </p>
           <p className="text-xl font-bold">{link.clicks}</p>
         </div>
         <div>
           <p className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-            <ShoppingCart className="h-3.5 w-3.5" /> Sales
+            <ShoppingCart className="h-3.5 w-3.5" /> {t('affiliates.sales')}
           </p>
           <p className="text-xl font-bold">{conversions}</p>
         </div>
         <div>
           <p className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-            <TrendingUp className="h-3.5 w-3.5" /> Conversion
+            <TrendingUp className="h-3.5 w-3.5" /> {t('affiliates.conversion')}
           </p>
           <p className="text-xl font-bold">
             {link.clicks > 0
@@ -229,13 +237,17 @@ function LinkCard({
       <div className="border-t" />
       <div className="flex items-center justify-between px-5 py-4">
         <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Total earned</p>
+          <p className="text-xs text-muted-foreground">
+            {t('affiliates.totalEarned')}
+          </p>
           <p className="text-2xl font-bold text-emerald-600">
             {formatCurrency(link.total_earned)}
           </p>
         </div>
         <div className="space-y-1 text-right">
-          <p className="text-xs text-muted-foreground">Available balance</p>
+          <p className="text-xs text-muted-foreground">
+            {t('affiliates.availableBalance')}
+          </p>
           <p className="text-xl font-semibold">
             {formatCurrency(link.available_balance)}
           </p>
@@ -247,7 +259,8 @@ function LinkCard({
         <div className="px-5 pb-5">
           <Button className="w-full" onClick={() => onRequestPayout(link)}>
             <Wallet className="me-2 h-4 w-4" />
-            Request payout — {formatCurrency(link.available_balance)}
+            {t('affiliates.requestPayout')} —{' '}
+            {formatCurrency(link.available_balance)}
           </Button>
         </div>
       )}
@@ -255,7 +268,7 @@ function LinkCard({
       {pendingWithdrawals.length > 0 && (
         <div className="px-5 pb-5">
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-center text-xs text-amber-700">
-            Payout request pending (
+            {t('affiliates.payoutPending')} (
             {formatCurrency(
               pendingWithdrawals.reduce((s, w) => s + w.amount, 0)
             )}
@@ -269,7 +282,7 @@ function LinkCard({
         <div className="border-t">
           <div className="p-4">
             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Payout history
+              {t('affiliates.payoutHistory')}
             </p>
             <div className="space-y-1.5">
               {link.Withdrawals.map((w) => (
@@ -315,7 +328,7 @@ export default function MyAffiliatePage() {
       const data = await apiClient.getMyAffiliateLinks();
       setLinks(Array.isArray(data) ? data : []);
     } catch {
-      toast.error('Failed to load affiliate data');
+      toast.error(t('affiliates.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -329,18 +342,18 @@ export default function MyAffiliatePage() {
     if (!dialogLink) return;
     const amt = parseFloat(amount);
     if (!amt || amt <= 0) {
-      toast.error('Enter a valid amount');
+      toast.error(t('affiliates.enterValidAmount'));
       return;
     }
     setRequesting(true);
     try {
       await apiClient.requestAffiliateWithdrawal(dialogLink.id, amt);
-      toast.success('Payout requested! The academy will process it soon.');
+      toast.success(t('affiliates.payoutRequested'));
       setDialogLink(null);
       setAmount('');
       load();
     } catch (e: any) {
-      toast.error(e?.message ?? 'Failed to request payout');
+      toast.error(e?.message ?? t('affiliates.requestPayoutFailed'));
     } finally {
       setRequesting(false);
     }
@@ -365,7 +378,7 @@ export default function MyAffiliatePage() {
           {t('affiliates.title')}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Track your referral links, impressions, and earnings.
+          {t('affiliates.myDashSubtitle')}
         </p>
       </div>
 
@@ -378,10 +391,11 @@ export default function MyAffiliatePage() {
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
             <Network className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h2 className="text-lg font-semibold">No affiliate links yet</h2>
+          <h2 className="text-lg font-semibold">
+            {t('affiliates.noLinksYet')}
+          </h2>
           <p className="mt-1 max-w-xs text-sm text-muted-foreground">
-            Contact the academy to be added as an affiliate and receive your
-            referral link.
+            {t('affiliates.noLinksDesc')}
           </p>
         </div>
       ) : (
@@ -391,25 +405,25 @@ export default function MyAffiliatePage() {
             {[
               {
                 icon: <MousePointerClick className="h-5 w-5 text-blue-600" />,
-                label: 'Total clicks',
+                label: t('affiliates.totalClicks'),
                 value: totals.clicks,
                 color: 'bg-blue-100'
               },
               {
                 icon: <ShoppingCart className="h-5 w-5 text-amber-600" />,
-                label: 'Total sales',
+                label: t('affiliates.totalSales'),
                 value: totals.sales,
                 color: 'bg-amber-100'
               },
               {
                 icon: <TrendingUp className="h-5 w-5 text-violet-600" />,
-                label: 'Total earned',
+                label: t('affiliates.totalEarned'),
                 value: formatCurrency(totals.earned),
                 color: 'bg-violet-100'
               },
               {
                 icon: <Wallet className="h-5 w-5 text-emerald-600" />,
-                label: 'Available',
+                label: t('affiliates.available'),
                 value: formatCurrency(totals.available),
                 color: 'bg-emerald-100'
               }
@@ -462,18 +476,18 @@ export default function MyAffiliatePage() {
       >
         <DialogContent className="max-w-sm" dir={'rtl'}>
           <DialogHeader>
-            <DialogTitle>Request Payout</DialogTitle>
+            <DialogTitle>{t('affiliates.requestPayoutTitle')}</DialogTitle>
             <DialogDescription>
-              Available balance:{' '}
-              <strong>
-                {formatCurrency(dialogLink?.available_balance ?? 0)}
-              </strong>
-              . The academy will review and process your request.
+              {t('affiliates.payoutDialogDesc', {
+                amount: formatCurrency(dialogLink?.available_balance ?? 0)
+              })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium">Amount</label>
+              <label className="mb-1.5 block text-sm font-medium">
+                {t('affiliates.amount')}
+              </label>
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
@@ -493,7 +507,7 @@ export default function MyAffiliatePage() {
                     )
                   }
                 >
-                  Max
+                  {t('affiliates.max')}
                 </Button>
               </div>
             </div>
@@ -505,13 +519,13 @@ export default function MyAffiliatePage() {
                   setAmount('');
                 }}
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={submitWithdrawal} disabled={requesting}>
                 {requesting && (
                   <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 )}
-                Submit Request
+                {t('affiliates.submitRequest')}
               </Button>
             </div>
           </div>

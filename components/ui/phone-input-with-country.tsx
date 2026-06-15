@@ -148,7 +148,7 @@ export function PhoneInputWithCountry({
   }, [value, selectedCountry, isLoadingCountry]);
 
   const handleCountryChange = (countryCode: string) => {
-    if (lockedCountry) return;
+    if (lockCountryCode) return;
     const country = COUNTRY_CODES.find((c) => c.code === countryCode);
     if (country) {
       setSelectedCountry(country);
@@ -210,13 +210,9 @@ export function PhoneInputWithCountry({
       <div className="relative">
         <div className={`flex ${isRTL ? 'flex-row-reverse' : ''}`}>
           {/* Country Code — selector when unlocked, static badge when locked */}
-          {lockedCountry ? (
+          {lockCountryCode ? (
             <div
-              className={`flex items-center gap-2 border border-border bg-muted/50 px-3 ${
-                isRTL
-                  ? 'rounded-l-none border-l-0'
-                  : 'rounded-r-none border-r-0'
-              } rounded-md`}
+              className={`flex items-center gap-2 border border-border bg-muted/50 px-3 ${'rounded-r-none border-r-0'} rounded-md`}
             >
               <span className="text-lg">{selectedCountry.flag}</span>
               <span className="text-sm font-medium text-muted-foreground">
@@ -230,7 +226,7 @@ export function PhoneInputWithCountry({
               disabled={disabled || isLoadingCountry}
             >
               <SelectTrigger
-                className={`w-[140px] focus:ring-0 focus:ring-offset-0 ${isRTL ? 'rounded-l-none border-l-0' : 'rounded-r-none border-r-0'}`}
+                className={`border-r-0'} w-[140px] rounded-r-none focus:ring-0 focus:ring-offset-0`}
               >
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{selectedCountry.flag}</span>
@@ -259,7 +255,7 @@ export function PhoneInputWithCountry({
           {/* Phone Number Input */}
           <div className="relative flex-1">
             <Phone
-              className={`absolute top-3 h-4 w-4 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`}
+              className={`left-3} absolute top-3 h-4 w-4 text-muted-foreground`}
             />
             <Input
               id={id}
@@ -269,9 +265,7 @@ export function PhoneInputWithCountry({
               onChange={(e) => handlePhoneChange(e.target.value)}
               onBlur={onBlur}
               className={cn(
-                isRTL
-                  ? 'rounded-r-none border-r-0 pe-10 pr-10'
-                  : 'rounded-l-none border-l-0 pl-10 ps-10',
+                'rounded-l-none border-l-0 pl-10 ps-10',
                 error && 'border-red-500',
                 className
               )}

@@ -54,7 +54,7 @@ export default function VouchersPage() {
       }
     } catch (error) {
       console.error('Error fetching vouchers:', error);
-      toast.error('Failed to fetch vouchers');
+      toast.error(t('vouchers.fetchFailed'));
       setVouchers([]);
     } finally {
       setIsLoading(false);
@@ -67,25 +67,25 @@ export default function VouchersPage() {
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!formData.code.trim()) newErrors.code = 'Code is required';
+    if (!formData.code.trim()) newErrors.code = t('vouchers.codeRequired');
     if (!formData.discount_value || formData.discount_value <= 0)
-      newErrors.discount_value =
-        'Discount value is required and must be greater than 0';
+      newErrors.discount_value = t('vouchers.discountValueRequired');
     if (formData.discount_type === 'PERCENT' && formData.discount_value > 100)
-      newErrors.discount_value = 'Percent discount cannot exceed 100';
+      newErrors.discount_value = t('vouchers.percentMax');
     if (
       formData.usage_type === 'LIMITED' &&
       (!formData.usage_limit || formData.usage_limit < 1)
     )
-      newErrors.usage_limit = 'Usage limit is required and must be at least 1';
-    if (!formData.start_date) newErrors.start_date = 'Start date is required';
-    if (!formData.end_date) newErrors.end_date = 'End date is required';
+      newErrors.usage_limit = t('vouchers.usageLimitRequired');
+    if (!formData.start_date)
+      newErrors.start_date = t('vouchers.startDateRequired');
+    if (!formData.end_date) newErrors.end_date = t('vouchers.endDateRequired');
     if (
       formData.start_date &&
       formData.end_date &&
       new Date(formData.end_date) <= new Date(formData.start_date)
     )
-      newErrors.end_date = 'End date must be after start date';
+      newErrors.end_date = t('vouchers.endDateAfterStart');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -97,7 +97,7 @@ export default function VouchersPage() {
 
   const handleCreate = async () => {
     if (!validateForm()) {
-      toast.error('Please fill in all required fields');
+      toast.error(t('vouchers.fillRequiredFields'));
       return;
     }
     try {
@@ -106,12 +106,12 @@ export default function VouchersPage() {
         start_date: new Date(formData.start_date).toISOString(),
         end_date: new Date(formData.end_date).toISOString()
       });
-      toast.success(response?.message || 'Voucher created successfully');
+      toast.success(response?.message || t('vouchers.createdSuccess'));
       setIsCreateOpen(false);
       resetForm();
       fetchVouchers();
     } catch (error: unknown) {
-      toast.error((error as Error)?.message || 'Failed to create voucher');
+      toast.error((error as Error)?.message || t('vouchers.createFailed'));
     }
   };
 
@@ -123,10 +123,10 @@ export default function VouchersPage() {
       formData.end_date &&
       new Date(formData.end_date) <= new Date(formData.start_date)
     )
-      updateErrors.end_date = 'End date must be after start date';
+      updateErrors.end_date = t('vouchers.endDateAfterStart');
     if (Object.keys(updateErrors).length > 0) {
       setErrors(updateErrors);
-      toast.error('Please fix the validation errors');
+      toast.error(t('vouchers.fixValidationErrors'));
       return;
     }
     try {
@@ -139,12 +139,12 @@ export default function VouchersPage() {
           ? new Date(formData.end_date).toISOString()
           : undefined
       });
-      toast.success(response?.message || 'Voucher updated successfully');
+      toast.success(response?.message || t('vouchers.updatedSuccess'));
       setEditingVoucher(null);
       resetForm();
       fetchVouchers();
     } catch (error: unknown) {
-      toast.error((error as Error)?.message || 'Failed to update voucher');
+      toast.error((error as Error)?.message || t('vouchers.updateFailed'));
     }
   };
 
@@ -152,10 +152,10 @@ export default function VouchersPage() {
     if (!confirm(t('vouchers.confirmDelete'))) return;
     try {
       const response = await apiClient.deleteDiscount(id);
-      toast.success(response?.message || 'Voucher deleted successfully');
+      toast.success(response?.message || t('vouchers.deletedSuccess'));
       fetchVouchers();
     } catch (error: unknown) {
-      toast.error((error as Error)?.message || 'Failed to delete voucher');
+      toast.error((error as Error)?.message || t('vouchers.deleteFailed'));
     }
   };
 

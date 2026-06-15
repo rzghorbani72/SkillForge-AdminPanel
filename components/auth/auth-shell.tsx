@@ -39,12 +39,12 @@ export function AuthShell({
           </div>
         </header>
 
-        <AuthTabs active={activeTab} />
+        {/* <AuthTabs active={activeTab} /> */}
 
-        <div className="mb-6">
+        <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
           {subtitle && (
-            <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+            <p className="mt-3 text-sm text-muted-foreground">{subtitle}</p>
           )}
         </div>
 

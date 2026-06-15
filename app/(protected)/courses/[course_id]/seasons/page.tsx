@@ -47,9 +47,11 @@ import { Season, Course, Lesson } from '@/types/api';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import CreateSeasonDialog from '@/components/content/create-season-dialog';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { toast } from 'sonner';
 
 export default function SeasonsPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const { selectedAcademy } = useStore();
@@ -138,7 +140,7 @@ export default function SeasonsPage() {
     try {
       setIsDeleting(seasonId);
       await apiClient.deleteSeason(seasonId);
-      toast.success('Season deleted successfully');
+      toast.success(t('courses.seasonDeleted'));
       fetchData(); // Refresh data
     } catch (error) {
       console.error('Error deleting season:', error);
@@ -151,7 +153,7 @@ export default function SeasonsPage() {
   const handleDeleteLesson = async (lessonId: string) => {
     try {
       await apiClient.deleteLesson(lessonId);
-      toast.success('Lesson deleted successfully');
+      toast.success(t('courses.lessonDeleted'));
       fetchData(); // Refresh data
     } catch (error) {
       console.error('Error deleting lesson:', error);
@@ -189,7 +191,9 @@ export default function SeasonsPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="text-muted-foreground">Loading seasons...</p>
+            <p className="text-muted-foreground">
+              {t('courses.loadingSeasons')}
+            </p>
           </div>
         </div>
       </div>
@@ -201,9 +205,11 @@ export default function SeasonsPage() {
       <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <h2 className="mb-4 text-2xl font-bold">Course Not Found</h2>
+            <h2 className="mb-4 text-2xl font-bold">
+              {t('courses.courseNotFound')}
+            </h2>
             <p className="mb-4 text-muted-foreground">
-              The course you're looking for doesn't exist.
+              {t('courses.courseNotFoundDesc')}
             </p>
             <Button
               variant="outline"
@@ -211,7 +217,7 @@ export default function SeasonsPage() {
               onClick={() => router.push('/courses')}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Courses
+              {t('courses.backToCourses')}
             </Button>
           </div>
         </div>
@@ -227,7 +233,7 @@ export default function SeasonsPage() {
           onClick={() => router.push('/courses')}
           className="transition-colors hover:text-foreground"
         >
-          Courses
+          {t('courses.title')}
         </button>
         <span>/</span>
         <button
@@ -237,7 +243,9 @@ export default function SeasonsPage() {
           {course.title}
         </button>
         <span>/</span>
-        <span className="font-medium text-foreground">Seasons</span>
+        <span className="font-medium text-foreground">
+          {t('courses.seasons')}
+        </span>
       </div>
 
       {/* Header */}
@@ -249,12 +257,14 @@ export default function SeasonsPage() {
             onClick={() => router.push(`/courses/${courseId}`)}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Course
+            {t('courses.backToCourse')}
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Seasons Management</h1>
+            <h1 className="text-3xl font-bold">
+              {t('courses.seasonsManagement')}
+            </h1>
             <p className="text-muted-foreground">
-              Manage seasons and lessons for "{course.title}"
+              {t('courses.seasonsManagementSubtitle', { title: course.title })}
             </p>
           </div>
         </div>
@@ -267,7 +277,7 @@ export default function SeasonsPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
             <Input
-              placeholder="Search seasons and lessons..."
+              placeholder={t('courses.searchSeasonsLessons')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-80 pl-10"
@@ -280,7 +290,7 @@ export default function SeasonsPage() {
               <div className="text-center">
                 <div className="text-2xl font-bold">{seasons.length}</div>
                 <div className="text-sm text-muted-foreground">
-                  Total Seasons
+                  {t('courses.totalSeasons')}
                 </div>
               </div>
               <div className="text-center">
@@ -291,7 +301,7 @@ export default function SeasonsPage() {
                   )}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Total Lessons
+                  {t('courses.totalLessons')}
                 </div>
               </div>
             </div>
@@ -304,11 +314,13 @@ export default function SeasonsPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-2 text-lg font-semibold">No seasons found</h3>
+            <h3 className="mb-2 text-lg font-semibold">
+              {t('courses.noSeasonsFound')}
+            </h3>
             <p className="mb-4 text-center text-muted-foreground">
               {searchTerm
-                ? 'No seasons match your search criteria.'
-                : "This course doesn't have any seasons yet."}
+                ? t('courses.noSeasonsMatchSearch')
+                : t('courses.noSeasonsYet')}
             </p>
             {!searchTerm && (
               <CreateSeasonDialog
@@ -336,19 +348,22 @@ export default function SeasonsPage() {
                         {season.title}
                       </h3>
                       <p className="text-start text-sm text-muted-foreground">
-                        {season.description || 'No description provided'}
+                        {season.description ||
+                          t('common.noDescriptionProvided')}
                       </p>
                     </div>
-                    <Badge variant="outline">Season</Badge>
+                    <Badge variant="outline">{t('courses.season')}</Badge>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <span className="flex items-center">
                       <BookOpen className="mr-1 h-4 w-4" />
-                      {season.lessons?.length || 0} lessons
+                      {t('courses.lessonsCount', {
+                        count: season.lessons?.length || 0
+                      })}
                     </span>
                     <span className="flex items-center">
                       <Play className="mr-1 h-4 w-4" />
-                      Order: {season.order}
+                      {t('courses.orderLabel')}: {season.order}
                     </span>
                   </div>
                 </div>
@@ -369,7 +384,7 @@ export default function SeasonsPage() {
                       }}
                     >
                       <Edit className="mr-1 h-4 w-4" />
-                      Edit Season
+                      {t('courses.editSeason')}
                     </Button>
                     <Button
                       variant="outline"
@@ -381,33 +396,37 @@ export default function SeasonsPage() {
                       }
                     >
                       <Plus className="mr-1 h-4 w-4" />
-                      Add Lesson
+                      {t('courses.addLesson')}
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="outline" size="sm">
                           <Trash2 className="mr-1 h-4 w-4" />
-                          Delete Season
+                          {t('courses.deleteSeason')}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            {t('common.areYouSure')}
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete the season "{season.title}" and all its
-                            lessons.
+                            {t('courses.deleteSeasonDesc', {
+                              title: season.title
+                            })}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>
+                            {t('common.cancel')}
+                          </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDeleteSeason(season.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
                             {isDeleting === season.id
-                              ? 'Deleting...'
-                              : 'Delete'}
+                              ? t('common.deleting')
+                              : t('common.delete')}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -437,13 +456,13 @@ export default function SeasonsPage() {
                                     }
                                   >
                                     {lesson.is_published
-                                      ? 'Published'
-                                      : 'Draft'}
+                                      ? t('courses.published')
+                                      : t('courses.draft')}
                                   </Badge>
                                 </div>
                                 <p className="mb-2 text-sm text-muted-foreground">
                                   {lesson.description ||
-                                    'No description provided'}
+                                    t('common.noDescriptionProvided')}
                                 </p>
                                 <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                                   <span className="flex items-center">
@@ -452,7 +471,8 @@ export default function SeasonsPage() {
                                   </span>
                                   <span className="flex items-center">
                                     <Play className="mr-1 h-3 w-3" />
-                                    Order: {lesson.order || 'N/A'}
+                                    {t('courses.orderLabel')}:{' '}
+                                    {lesson.order || 'N/A'}
                                   </span>
                                   <span className="flex items-center">
                                     <Video className="mr-1 h-3 w-3" />
@@ -460,8 +480,8 @@ export default function SeasonsPage() {
                                     lesson.audio_id ||
                                     lesson.document_id ||
                                     lesson.image_id
-                                      ? 'Media'
-                                      : 'No Media'}
+                                      ? t('courses.hasMedia')
+                                      : t('courses.noMedia')}
                                   </span>
                                 </div>
                               </div>
@@ -476,7 +496,7 @@ export default function SeasonsPage() {
                                   }
                                 >
                                   <Eye className="mr-1 h-3 w-3" />
-                                  View
+                                  {t('common.view')}
                                 </Button>
                                 <Button
                                   variant="outline"
@@ -488,30 +508,29 @@ export default function SeasonsPage() {
                                   }
                                 >
                                   <Edit className="mr-1 h-3 w-3" />
-                                  Edit
+                                  {t('common.edit')}
                                 </Button>
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
                                     <Button variant="outline" size="sm">
                                       <Trash2 className="mr-1 h-3 w-3" />
-                                      Delete
+                                      {t('common.delete')}
                                     </Button>
                                   </AlertDialogTrigger>
                                   <AlertDialogContent>
                                     <AlertDialogHeader>
                                       <AlertDialogTitle>
-                                        Are you sure?
+                                        {t('common.areYouSure')}
                                       </AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        This action cannot be undone. This will
-                                        permanently delete the lesson "
-                                        {lesson.title}" and all its associated
-                                        content.
+                                        {t('courses.deleteLessonDesc', {
+                                          title: lesson.title
+                                        })}
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>
-                                        Cancel
+                                        {t('common.cancel')}
                                       </AlertDialogCancel>
                                       <AlertDialogAction
                                         onClick={() =>
@@ -519,7 +538,7 @@ export default function SeasonsPage() {
                                         }
                                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                       >
-                                        Delete
+                                        {t('common.delete')}
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
                                   </AlertDialogContent>
@@ -533,7 +552,7 @@ export default function SeasonsPage() {
                   ) : (
                     <div className="py-8 text-center text-muted-foreground">
                       <BookOpen className="mx-auto mb-2 h-8 w-8" />
-                      <p>No lessons in this season yet.</p>
+                      <p>{t('courses.noLessonsInSeason')}</p>
                       <Button
                         variant="outline"
                         size="sm"
@@ -545,7 +564,7 @@ export default function SeasonsPage() {
                         }
                       >
                         <Plus className="mr-1 h-3 w-3" />
-                        Add First Lesson
+                        {t('courses.addFirstLesson')}
                       </Button>
                     </div>
                   )}
@@ -562,10 +581,10 @@ export default function SeasonsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <BookOpen className="mr-2 h-5 w-5" />
-              Lessons Without Season
+              {t('courses.lessonsWithoutSeason')}
             </CardTitle>
             <CardDescription>
-              These lessons are not assigned to any season
+              {t('courses.lessonsWithoutSeasonDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -585,11 +604,14 @@ export default function SeasonsPage() {
                               lesson.is_published ? 'default' : 'secondary'
                             }
                           >
-                            {lesson.is_published ? 'Published' : 'Draft'}
+                            {lesson.is_published
+                              ? t('courses.published')
+                              : t('courses.draft')}
                           </Badge>
                         </div>
                         <p className="mb-2 text-sm text-muted-foreground">
-                          {lesson.description || 'No description provided'}
+                          {lesson.description ||
+                            t('common.noDescriptionProvided')}
                         </p>
                         <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                           <span className="flex items-center">
@@ -598,7 +620,7 @@ export default function SeasonsPage() {
                           </span>
                           <span className="flex items-center">
                             <Play className="mr-1 h-3 w-3" />
-                            Order: {lesson.order || 'N/A'}
+                            {t('courses.orderLabel')}: {lesson.order || 'N/A'}
                           </span>
                           <span className="flex items-center">
                             <Video className="mr-1 h-3 w-3" />
@@ -606,8 +628,8 @@ export default function SeasonsPage() {
                             lesson.audio_id ||
                             lesson.document_id ||
                             lesson.image_id
-                              ? 'Media'
-                              : 'No Media'}
+                              ? t('courses.hasMedia')
+                              : t('courses.noMedia')}
                           </span>
                         </div>
                       </div>
@@ -622,7 +644,7 @@ export default function SeasonsPage() {
                           }
                         >
                           <Eye className="mr-1 h-3 w-3" />
-                          View
+                          {t('common.view')}
                         </Button>
                         <Button
                           variant="outline"
@@ -634,31 +656,35 @@ export default function SeasonsPage() {
                           }
                         >
                           <Edit className="mr-1 h-3 w-3" />
-                          Edit
+                          {t('common.edit')}
                         </Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="outline" size="sm">
                               <Trash2 className="mr-1 h-3 w-3" />
-                              Delete
+                              {t('common.delete')}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogTitle>
+                                {t('common.areYouSure')}
+                              </AlertDialogTitle>
                               <AlertDialogDescription>
-                                This action cannot be undone. This will
-                                permanently delete the lesson "{lesson.title}"
-                                and all its associated content.
+                                {t('courses.deleteLessonDesc', {
+                                  title: lesson.title
+                                })}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>
+                                {t('common.cancel')}
+                              </AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDeleteLesson(lesson.id)}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                               >
-                                Delete
+                                {t('common.delete')}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

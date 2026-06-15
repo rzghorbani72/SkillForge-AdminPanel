@@ -202,7 +202,15 @@ export default function RegisterPage() {
           />
         )}
       </div>
-
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        {t('auth.alreadyHaveAccount')}{' '}
+        <Link
+          href="/login"
+          className="font-semibold text-primary hover:underline"
+        >
+          {t('auth.signIn')}
+        </Link>
+      </p>
       <p className="mt-5 text-center text-xs text-muted-foreground">
         {t('auth.byCreatingAccount')}{' '}
         <Link href="/terms" className="underline hover:text-foreground">

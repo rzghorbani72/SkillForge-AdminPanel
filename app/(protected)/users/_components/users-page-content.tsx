@@ -321,7 +321,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
       const details = await apiClient.getUserDetails(user.id);
       setSelectedUserDetails(details?.data || details);
     } catch (error) {
-      toast.error('Failed to load user details');
+      toast.error(t('users.loadUserDetailsFailed'));
       setSelectedUserDetails(null);
     } finally {
       setIsDetailsLoading(false);
@@ -343,34 +343,34 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
 
   const handleResetPassword = async () => {
     if (!selectedUser || !canManageUser) return;
-    const newPassword = window.prompt('Enter new password (min 6 chars)');
+    const newPassword = window.prompt(t('users.enterNewPasswordPrompt'));
     if (!newPassword) return;
     try {
       await apiClient.resetUserPassword(selectedUser.id, newPassword);
-      toast.success('Password reset successfully');
+      toast.success(t('users.passwordResetSuccessMsg'));
     } catch (error: any) {
-      toast.error(error?.message || 'Failed to reset password');
+      toast.error(error?.message || t('users.passwordResetFailedMsg'));
     }
   };
 
   const handleGrantCourse = async () => {
     if (!selectedUser || !canManageUser) return;
-    const courseId = window.prompt('Enter course ID to grant');
+    const courseId = window.prompt(t('users.enterCourseIdPrompt'));
     if (!courseId) return;
     try {
       await apiClient.grantCourseAccess(selectedUser.id, {
         course_id: Number(courseId)
       });
-      toast.success('Course access granted');
+      toast.success(t('users.courseAccessGranted'));
     } catch (error: any) {
-      toast.error(error?.message || 'Failed to grant course access');
+      toast.error(error?.message || t('users.grantCourseFailed'));
     }
   };
 
   const handleAssignVoucher = async () => {
     if (!selectedUser || !canManageUser) return;
-    const prefix = window.prompt('Voucher code prefix', 'SUPPORT');
-    const value = window.prompt('Voucher value');
+    const prefix = window.prompt(t('users.voucherPrefixPrompt'), 'SUPPORT');
+    const value = window.prompt(t('users.voucherValuePrompt'));
     if (!prefix || !value) return;
     try {
       const result = await apiClient.assignVoucher(selectedUser.id, {
@@ -379,10 +379,12 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
         discount_value: Number(value)
       });
       toast.success(
-        `Voucher created: ${result?.data?.code || result?.code || 'success'}`
+        t('users.voucherCreated', {
+          code: result?.data?.code || result?.code || 'success'
+        })
       );
     } catch (error: any) {
-      toast.error(error?.message || 'Failed to assign voucher');
+      toast.error(error?.message || t('users.assignVoucherFailed'));
     }
   };
 
@@ -485,14 +487,16 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>UUID</TableHead>
-                <TableHead>Full Name</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t('users.id')}</TableHead>
+                <TableHead>{t('users.colUuid')}</TableHead>
+                <TableHead>{t('users.colFullName')}</TableHead>
+                <TableHead>{t('users.colRole')}</TableHead>
+                <TableHead>{t('users.colEmail')}</TableHead>
+                <TableHead>{t('users.colPhone')}</TableHead>
+                <TableHead>{t('common.status')}</TableHead>
+                <TableHead className="text-right">
+                  {t('users.colActions')}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -587,25 +591,32 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
               {selectedUser?.name || selectedUser?.display_name}
             </SheetTitle>
             <SheetDescription>
-              User detail, purchase history, academy roles, and support actions
+              {t('users.detailSheetDescription')}
             </SheetDescription>
           </SheetHeader>
 
           {isDetailsLoading ? (
             <div className="py-8 text-sm text-muted-foreground">
-              Loading details...
+              {t('users.loadingDetails')}
             </div>
           ) : selectedUserDetails ? (
             <div className="space-y-6 py-4">
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>ID: {selectedUserDetails.profile?.id}</div>
-                <div>UUID: {selectedUserDetails.profile?.uuid || '-'}</div>
                 <div>
-                  Name:{' '}
+                  {t('users.id')}: {selectedUserDetails.profile?.id}
+                </div>
+                <div>
+                  {t('users.colUuid')}:{' '}
+                  {selectedUserDetails.profile?.uuid || '-'}
+                </div>
+                <div>
+                  {t('users.detailName')}:{' '}
                   {selectedUserDetails.profile?.full_name ||
                     selectedUserDetails.profile?.display_name}
                 </div>
-                <div>Role: {selectedUserDetails.profile?.role_name}</div>
+                <div>
+                  {t('users.colRole')}: {selectedUserDetails.profile?.role_name}
+                </div>
               </div>
 
               {canManageUser && (
@@ -615,32 +626,35 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
                     variant="outline"
                     onClick={handleResetPassword}
                   >
-                    Reset Password
+                    {t('users.resetPassword')}
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={handleGrantCourse}
                   >
-                    Grant Course
+                    {t('users.grantCourse')}
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={handleAssignVoucher}
                   >
-                    Assign Voucher
+                    {t('users.assignVoucher')}
                   </Button>
                 </div>
               )}
 
               <div>
-                <h3 className="mb-2 font-medium">Roles in Academies</h3>
+                <h3 className="mb-2 font-medium">
+                  {t('users.rolesInAcademies')}
+                </h3>
                 <div className="space-y-2 text-sm">
                   {(selectedUserDetails.roles_across_academies || []).map(
                     (item: any) => (
                       <div key={item.profile_id} className="rounded border p-2">
-                        {item.academy_name || 'Platform'} - {item.role}
+                        {item.academy_name || t('users.platformFallback')} -{' '}
+                        {item.role}
                       </div>
                     )
                   )}
@@ -648,7 +662,9 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
               </div>
 
               <div>
-                <h3 className="mb-2 font-medium">Purchase History</h3>
+                <h3 className="mb-2 font-medium">
+                  {t('users.purchaseHistory')}
+                </h3>
                 <div className="space-y-2 text-sm">
                   {(selectedUserDetails.purchase_history || [])
                     .slice(0, 20)
@@ -663,7 +679,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
             </div>
           ) : (
             <div className="py-8 text-sm text-muted-foreground">
-              No detail data available.
+              {t('users.noDetailData')}
             </div>
           )}
         </SheetContent>

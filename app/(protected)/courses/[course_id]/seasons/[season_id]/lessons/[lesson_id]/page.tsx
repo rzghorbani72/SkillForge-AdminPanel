@@ -31,9 +31,11 @@ import { Lesson, Season, Course } from '@/types/api';
 import { sanitizeRichText } from '@/lib/sanitize';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { toast } from 'sonner';
 
 export default function LessonViewPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const { selectedAcademy } = useStore();
@@ -86,7 +88,7 @@ export default function LessonViewPage() {
   const handleDeleteLesson = async () => {
     try {
       await apiClient.deleteLesson(lessonId);
-      toast.success('Lesson deleted successfully');
+      toast.success(t('courses.lessonDeleted'));
       router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`);
     } catch (error) {
       console.error('Error deleting lesson:', error);
@@ -100,7 +102,9 @@ export default function LessonViewPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="text-muted-foreground">Loading lesson...</p>
+            <p className="text-muted-foreground">
+              {t('courses.loadingLesson')}
+            </p>
           </div>
         </div>
       </div>
@@ -112,9 +116,11 @@ export default function LessonViewPage() {
       <div className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <h2 className="mb-4 text-2xl font-bold">Lesson Not Found</h2>
+            <h2 className="mb-4 text-2xl font-bold">
+              {t('courses.lessonNotFound')}
+            </h2>
             <p className="mb-4 text-muted-foreground">
-              The lesson you're looking for doesn't exist.
+              {t('courses.lessonNotFoundDesc')}
             </p>
             <Button
               variant="outline"
@@ -124,7 +130,7 @@ export default function LessonViewPage() {
               }
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Lessons
+              {t('courses.backToLessons')}
             </Button>
           </div>
         </div>
@@ -140,7 +146,7 @@ export default function LessonViewPage() {
           onClick={() => router.push('/courses')}
           className="transition-colors hover:text-foreground"
         >
-          Courses
+          {t('courses.title')}
         </button>
         <span>/</span>
         <button
@@ -154,7 +160,7 @@ export default function LessonViewPage() {
           onClick={() => router.push(`/courses/${courseId}/seasons`)}
           className="transition-colors hover:text-foreground"
         >
-          Seasons
+          {t('courses.seasons')}
         </button>
         <span>/</span>
         <button
@@ -172,7 +178,7 @@ export default function LessonViewPage() {
           }
           className="transition-colors hover:text-foreground"
         >
-          Lessons
+          {t('courses.lessons')}
         </button>
         <span>/</span>
         <span className="font-medium text-foreground">{lesson.title}</span>
@@ -194,7 +200,10 @@ export default function LessonViewPage() {
           <div>
             <h1 className="text-3xl font-bold">{lesson.title}</h1>
             <p className="text-muted-foreground">
-              Lesson details for "{season.title}" in "{course.title}"
+              {t('courses.lessonDetailsSubtitle', {
+                season: season.title,
+                course: course.title
+              })}
             </p>
           </div>
         </div>
@@ -208,30 +217,29 @@ export default function LessonViewPage() {
             }
           >
             <Edit className="mr-2 h-4 w-4" />
-            Edit Lesson
+            {t('courses.editLesson')}
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="outline">
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete Lesson
+                {t('courses.deleteLesson')}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogTitle>{t('common.areYouSure')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  lesson "{lesson.title}" and all its associated content.
+                  {t('courses.deleteLessonDesc', { title: lesson.title })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDeleteLesson}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  Delete
+                  {t('common.delete')}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -245,42 +253,44 @@ export default function LessonViewPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <BookOpen className="mr-2 h-5 w-5" />
-              Lesson Information
+              {t('courses.lessonInformation')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Title
+                {t('common.title')}
               </label>
               <p className="text-lg font-semibold">{lesson.title}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Description
+                {t('common.description')}
               </label>
               <p className="text-sm">
-                {lesson.description || 'No description provided'}
+                {lesson.description || t('common.noDescriptionProvided')}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Duration
+                {t('courses.duration')}
               </label>
               <p className="text-sm">{lesson.duration || 'N/A'}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Order
+                {t('courses.orderLabel')}
               </label>
               <p className="text-sm">{lesson.order || 'N/A'}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Status
+                {t('common.status')}
               </label>
               <Badge variant={lesson.is_published ? 'default' : 'secondary'}>
-                {lesson.is_published ? 'Published' : 'Draft'}
+                {lesson.is_published
+                  ? t('courses.published')
+                  : t('courses.draft')}
               </Badge>
             </div>
           </CardContent>
@@ -290,33 +300,33 @@ export default function LessonViewPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Play className="mr-2 h-5 w-5" />
-              Course & Season Information
+              {t('courses.courseSeasonInformation')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Course
+                {t('courses.courseLabel')}
               </label>
               <p className="text-lg font-semibold">{course.title}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Season
+                {t('courses.season')}
               </label>
               <p className="text-lg font-semibold">{season.title}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Season Description
+                {t('courses.seasonDescriptionLabel')}
               </label>
               <p className="text-sm">
-                {season.description || 'No description provided'}
+                {season.description || t('common.noDescriptionProvided')}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Season Order
+                {t('courses.seasonOrder')}
               </label>
               <p className="text-sm">{season.order}</p>
             </div>
@@ -330,7 +340,7 @@ export default function LessonViewPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <FileText className="mr-2 h-5 w-5" />
-              Lesson Content
+              {t('courses.lessonContent')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -351,7 +361,7 @@ export default function LessonViewPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Video className="mr-2 h-5 w-5" />
-              Lesson Video
+              {t('courses.lessonVideoTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -369,7 +379,7 @@ export default function LessonViewPage() {
                   src={apiClient.getVideoStreamUrl(lesson.video_id!)}
                   type="video/mp4"
                 />
-                Your browser does not support the video tag.
+                {t('courses.videoNotSupported')}
               </video>
             </div>
           </CardContent>
@@ -381,41 +391,41 @@ export default function LessonViewPage() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Video className="mr-2 h-5 w-5" />
-            Media Information
+            {t('courses.mediaInformation')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Video ID
+                {t('courses.videoId')}
               </label>
               <p className="text-sm">
-                {lesson.video_id || 'No video assigned'}
+                {lesson.video_id || t('courses.noVideoAssigned')}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Audio ID
+                {t('courses.audioId')}
               </label>
               <p className="text-sm">
-                {lesson.audio_id || 'No audio assigned'}
+                {lesson.audio_id || t('courses.noAudioAssigned')}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Document ID
+                {t('courses.documentId')}
               </label>
               <p className="text-sm">
-                {lesson.document_id || 'No document assigned'}
+                {lesson.document_id || t('courses.noDocumentAssigned')}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Video Poster Image ID
+                {t('courses.videoPosterImageId')}
               </label>
               <p className="text-sm">
-                {lesson.image_id || 'No image assigned'}
+                {lesson.image_id || t('courses.noImageAssigned')}
               </p>
             </div>
           </div>
@@ -425,21 +435,21 @@ export default function LessonViewPage() {
       {/* Content Management */}
       <Card>
         <CardHeader>
-          <CardTitle>Content Management</CardTitle>
+          <CardTitle>{t('courses.contentManagement')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center space-x-4">
             <Button variant="outline" onClick={() => router.push(`/videos`)}>
               <Video className="mr-2 h-4 w-4" />
-              Manage Videos
+              {t('courses.manageVideos')}
             </Button>
             <Button variant="outline" onClick={() => router.push(`/audios`)}>
               <Volume2 className="mr-2 h-4 w-4" />
-              Manage Audios
+              {t('courses.manageAudios')}
             </Button>
             <Button variant="outline" onClick={() => router.push(`/documents`)}>
               <FileText className="mr-2 h-4 w-4" />
-              Manage Documents
+              {t('courses.manageDocuments')}
             </Button>
             <Button
               variant="outline"
@@ -450,7 +460,7 @@ export default function LessonViewPage() {
               }
             >
               <Edit className="mr-2 h-4 w-4" />
-              Edit Lesson
+              {t('courses.editLesson')}
             </Button>
           </div>
         </CardContent>

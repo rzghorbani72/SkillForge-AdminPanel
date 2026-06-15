@@ -85,7 +85,7 @@ export default function CategoriesPage() {
   const handleCreateCategoryHandler = async () => {
     try {
       if (!formData.name.trim()) {
-        toast.error('Category name is required');
+        toast.error(t('categories.nameRequired'));
         return;
       }
 
@@ -103,25 +103,25 @@ export default function CategoriesPage() {
         const message =
           typeof payload.data === 'string'
             ? payload.data
-            : payload.message || 'Failed to create category';
+            : payload.message || t('categories.createFailed');
         toast.error(message);
         return;
       }
 
       await fetchCategories({ force: true });
-      toast.success('Category created successfully');
+      toast.success(t('categories.createSuccess'));
       setIsCreateDialogOpen(false);
       resetForm();
     } catch (error) {
       console.error('Error creating category:', error);
-      toast.error('Failed to create category');
+      toast.error(t('categories.createFailed'));
     }
   };
 
   const handleEditCategoryHandler = async () => {
     try {
       if (!editingCategory || !formData.name.trim()) {
-        toast.error('Category name is required');
+        toast.error(t('categories.nameRequired'));
         return;
       }
 
@@ -134,13 +134,13 @@ export default function CategoriesPage() {
 
       await apiClient.updateCategory(editingCategory.id, updateData);
       await fetchCategories({ force: true });
-      toast.success('Category updated successfully');
+      toast.success(t('categories.updateSuccess'));
       setIsEditDialogOpen(false);
       setEditingCategory(null);
       resetForm();
     } catch (error) {
       console.error('Error updating category:', error);
-      toast.error('Failed to update category');
+      toast.error(t('categories.updateFailed'));
     }
   };
 
@@ -154,21 +154,17 @@ export default function CategoriesPage() {
   );
 
   const handleDeleteCategory = async (categoryId: number) => {
-    if (
-      !confirm(
-        'Are you sure you want to delete this category? This action cannot be undone.'
-      )
-    ) {
+    if (!confirm(t('categories.deleteConfirm'))) {
       return;
     }
 
     try {
       await apiClient.deleteCategory(categoryId);
       await fetchCategories({ force: true });
-      toast.success('Category deleted successfully');
+      toast.success(t('categories.deleteSuccess'));
     } catch (error) {
       console.error('Error deleting category:', error);
-      toast.error('Failed to delete category');
+      toast.error(t('categories.deleteFailed'));
     }
   };
 

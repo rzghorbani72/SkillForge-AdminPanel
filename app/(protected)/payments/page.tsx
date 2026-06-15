@@ -328,14 +328,14 @@ export default function PaymentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>UUID</TableHead>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Course</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Gateway Ref</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>{t('payments.colId')}</TableHead>
+                  <TableHead>{t('payments.colUuid')}</TableHead>
+                  <TableHead>{t('payments.colStudent')}</TableHead>
+                  <TableHead>{t('payments.colCourse')}</TableHead>
+                  <TableHead>{t('payments.colAmount')}</TableHead>
+                  <TableHead>{t('payments.colStatus')}</TableHead>
+                  <TableHead>{t('payments.colGatewayRef')}</TableHead>
+                  <TableHead>{t('payments.colDate')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -424,55 +424,77 @@ export default function PaymentsPage() {
       >
         <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
           <SheetHeader>
-            <SheetTitle>Transaction #{selectedPayment?.id}</SheetTitle>
+            <SheetTitle>
+              {t('payments.detailTitle', { id: selectedPayment?.id ?? '' })}
+            </SheetTitle>
             <SheetDescription>
-              Payment and transaction tracking details
+              {t('payments.detailDescription')}
             </SheetDescription>
           </SheetHeader>
           <div className="space-y-2 py-4 text-sm">
-            <div>UUID: {selectedPayment?.uuid || '-'}</div>
-            <div>Status: {selectedPayment?.status}</div>
-            <div>Gateway Ref: {selectedPayment?.gateway_id || '-'}</div>
-            <div>Authority: {selectedPayment?.authority || '-'}</div>
             <div>
-              Platform Commission:{' '}
+              {t('payments.colUuid')}: {selectedPayment?.uuid || '-'}
+            </div>
+            <div>
+              {t('payments.colStatus')}: {selectedPayment?.status}
+            </div>
+            <div>
+              {t('payments.colGatewayRef')}:{' '}
+              {selectedPayment?.gateway_id || '-'}
+            </div>
+            <div>
+              {t('payments.detailAuthority')}:{' '}
+              {selectedPayment?.authority || '-'}
+            </div>
+            <div>
+              {t('payments.detailPlatformCommission')}:{' '}
               {selectedPayment?.financials?.platform_commission ??
                 selectedPayment?.platform_fee ??
                 0}
             </div>
-            <div>VAT: {selectedPayment?.financials?.vat_amount ?? 0}</div>
             <div>
-              Academy Revenue:{' '}
+              {t('payments.detailVat')}:{' '}
+              {selectedPayment?.financials?.vat_amount ?? 0}
+            </div>
+            <div>
+              {t('payments.detailAcademyRevenue')}:{' '}
               {selectedPayment?.financials?.academy_revenue ?? 0}
             </div>
             {selectedPaymentNotes ? (
               <>
-                <div>Flow: {selectedPaymentNotes.s || '-'}</div>
-                <div>Pricing Profile: {selectedPaymentNotes.p || '-'}</div>
-                <div>Market: {selectedPaymentNotes.m || '-'}</div>
                 <div>
-                  Affiliate Fee:{' '}
+                  {t('payments.detailFlow')}: {selectedPaymentNotes.s || '-'}
+                </div>
+                <div>
+                  {t('payments.detailPricingProfile')}:{' '}
+                  {selectedPaymentNotes.p || '-'}
+                </div>
+                <div>
+                  {t('payments.detailMarket')}: {selectedPaymentNotes.m || '-'}
+                </div>
+                <div>
+                  {t('payments.detailAffiliateFee')}:{' '}
                   {formatCurrencyWithStore(
                     selectedPaymentNotes.a ?? 0,
                     currentAcademy
                   )}
                 </div>
                 <div>
-                  Platform Fee:{' '}
+                  {t('payments.detailPlatformFee')}:{' '}
                   {formatCurrencyWithStore(
                     selectedPaymentNotes.pf ?? 0,
                     currentAcademy
                   )}
                 </div>
                 <div>
-                  Instructor Share:{' '}
+                  {t('payments.detailInstructorShare')}:{' '}
                   {formatCurrencyWithStore(
                     selectedPaymentNotes.tp ?? 0,
                     currentAcademy
                   )}
                 </div>
                 <div>
-                  Net Settlement:{' '}
+                  {t('payments.detailNetSettlement')}:{' '}
                   {formatCurrencyWithStore(
                     selectedPaymentNotes.sn ?? 0,
                     currentAcademy

@@ -348,40 +348,10 @@ export default function ForgetPasswordPage() {
                       }
                       error={errors.phoneNumber}
                       disabled={isLoading}
+                      lockCountryCode={'+98'}
                     />
                   </TabsContent>
                 </Tabs>
-
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="store_slug">
-                      {t('stores.title')} ({t('common.optional')})
-                    </Label>
-                    <select
-                      id="store_slug"
-                      aria-label={t('stores.title')}
-                      value={formData.store_slug}
-                      onChange={(e) =>
-                        handleInputChange('store_slug', e.target.value)
-                      }
-                      className="mt-1 w-full rounded-md border border-input bg-transparent px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                      disabled={isLoadingStores}
-                      dir={'rtl'}
-                    >
-                      <option value="">{t('common.select')}</option>
-                      {stores.map((store) => (
-                        <option key={store.id} value={store.slug}>
-                          {store.name}
-                        </option>
-                      ))}
-                    </select>
-                    {isLoadingStores && (
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {t('common.loading')}
-                      </p>
-                    )}
-                  </div>
-                </div>
 
                 <Button
                   onClick={handleSendOtp}

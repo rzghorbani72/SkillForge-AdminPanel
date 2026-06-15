@@ -3,11 +3,17 @@
 UI tests for the auth/account flows (checklist 5.1). Mirrors the backend's
 `Backend/test/auth.e2e-spec.ts` at the browser level.
 
-## Routes under test
+## Layout
 
-- `/login` — MANAGER / TEACHER login (phone + password → staff login)
-- `/register` — standalone MANAGER sign-up (details → phone OTP)
-- (`/admin-login` is for ADMIN / SUPPORT — separate flow)
+- `e2e/auth/` — login/register form validation + happy-path login (`@backend`).
+  The auth pages use the redesigned `<AuthField>`/`<AuthSubmit>` components, so
+  specs select `input[type="tel"]` / `input[type="password"]` and assert the
+  `has-error` class (not legacy ids / `border-destructive`).
+- `e2e/smoke/` — **no backend needed**, all green in CI/dev:
+  - `security-headers.spec.ts` — CSP (the panel had none before) + `X-Frame-Options: DENY` + nosniff (OWASP A05).
+  - `public-pages.spec.ts` — `/login`, `/admin-login`, `/register`, `/unauthorized`, 404 all render (no crash).
+  - `auth-guard.spec.ts` — **hacker**: every protected route (`/dashboard`, `/students`, `/platform/*`, …) bounces to `/login` when unauthenticated.
+- `e2e/roles/` — `@backend` role matrix: MANAGER / TEACHER / ADMIN journeys **plus the privilege-escalation hacker path** (a MANAGER/TEACHER cannot open ADMIN-only `/platform/*` by URL).
 
 ## What runs without a backend
 

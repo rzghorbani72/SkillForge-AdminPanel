@@ -12,6 +12,7 @@ interface PhoneInputProps {
   label?: string;
   value: string;
   onChange: (value: string) => void;
+  onFullPhoneChange?: (fullPhone: string) => void;
   onBlur?: () => void;
   error?: string;
   disabled?: boolean;
@@ -23,6 +24,7 @@ export function PhoneInput({
   label,
   value,
   onChange,
+  onFullPhoneChange,
   onBlur,
   error,
   disabled,
@@ -45,9 +47,17 @@ export function PhoneInput({
           id={id}
           type="tel"
           autoComplete="tel"
+          maxLength={11}
+          minLength={11}
           placeholder={t('auth.phonePlaceholder')}
           value={value}
-          onChange={(e) => onChange(toEnglishDigits(e.target.value))}
+          onChange={(e) => {
+            const newValue = toEnglishDigits(e.target.value);
+            onChange(newValue);
+            if (onFullPhoneChange) {
+              onFullPhoneChange(newValue);
+            }
+          }}
           onBlur={onBlur}
           className={cn(isRTL ? 'pr-9' : 'pl-9', error && 'border-destructive')}
           disabled={disabled}

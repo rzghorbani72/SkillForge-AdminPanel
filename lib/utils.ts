@@ -301,7 +301,7 @@ export function isValidEmail(email: string): boolean {
 }
 
 export function isValidPhone(phone: string): boolean {
-  const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
+  const phoneRegex = /^0?9\d{9}$/;
   return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
 }
 

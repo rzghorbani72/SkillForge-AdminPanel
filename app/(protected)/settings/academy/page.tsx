@@ -141,7 +141,7 @@ export default function AcademySettingsPage() {
         amount: Number(renewAmount || 0),
         note: renewNote || undefined
       });
-      ErrorHandler.showSuccess('Subscription renewed successfully');
+      ErrorHandler.showSuccess(t('settings.subscriptionRenewedSuccess'));
       setRenewNote('');
       fetchSubscription();
     } catch (error) {
@@ -276,28 +276,28 @@ export default function AcademySettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Subscription
+                {t('settings.subscriptionTitle')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               {isLoadingSubscription ? (
-                <p>Loading subscription...</p>
+                <p>{t('settings.loadingSubscription')}</p>
               ) : (
                 <>
                   <div className="flex justify-between">
-                    <span>Plan</span>
+                    <span>{t('settings.subscriptionPlan')}</span>
                     <span className="font-medium text-foreground">
                       {subscription?.academy?.subscription_plan || 'none'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Status</span>
+                    <span>{t('settings.subscriptionStatus')}</span>
                     <span className="font-medium text-foreground">
                       {subscription?.status || 'INACTIVE'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Expires</span>
+                    <span>{t('settings.subscriptionExpires')}</span>
                     <span className="font-medium text-foreground">
                       {subscription?.academy?.subscription_expires
                         ? new Date(
@@ -307,13 +307,13 @@ export default function AcademySettingsPage() {
                     </span>
                   </div>
                   <div className="space-y-2 rounded-md border p-3">
-                    <Label>Renew Plan</Label>
+                    <Label>{t('settings.renewPlan')}</Label>
                     <Input
                       value={renewPlan}
                       onChange={(e) => setRenewPlan(e.target.value)}
-                      placeholder="starter | builder | growth"
+                      placeholder={t('settings.renewPlanPlaceholder')}
                     />
-                    <Label>Months</Label>
+                    <Label>{t('settings.renewMonths')}</Label>
                     <Input
                       type="number"
                       min={1}
@@ -321,32 +321,34 @@ export default function AcademySettingsPage() {
                       value={renewMonths}
                       onChange={(e) => setRenewMonths(e.target.value)}
                     />
-                    <Label>Amount (IRR)</Label>
+                    <Label>{t('settings.renewAmountIrr')}</Label>
                     <Input
                       type="number"
                       min={0}
                       value={renewAmount}
                       onChange={(e) => setRenewAmount(e.target.value)}
                     />
-                    <Label>Note</Label>
+                    <Label>{t('settings.renewNote')}</Label>
                     <Input
                       value={renewNote}
                       onChange={(e) => setRenewNote(e.target.value)}
-                      placeholder="transfer ref, invoice no, etc."
+                      placeholder={t('settings.renewNotePlaceholder')}
                     />
                     <Button
                       onClick={handleRenew}
                       disabled={isRenewing || !renewPlan || !renewMonths}
                       className="w-full"
                     >
-                      {isRenewing ? 'Renewing...' : 'Renew Subscription'}
+                      {isRenewing
+                        ? t('settings.renewing')
+                        : t('settings.renewSubscription')}
                     </Button>
                   </div>
 
                   {subscription?.invoices?.length ? (
                     <div className="rounded-md border p-3">
                       <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Recent Invoices
+                        {t('settings.recentInvoices')}
                       </p>
                       <div className="space-y-2">
                         {subscription.invoices.slice(0, 5).map((invoice) => (

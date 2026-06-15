@@ -4,8 +4,10 @@ import { useStore } from '@/hooks/useStore';
 import { useCategoriesStore } from '@/lib/store';
 import useLessonForm from '@/components/lesson/useLessonForm';
 import LessonFormPage from '@/components/lesson/LessonFormPage';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function EditLessonPage() {
+  const { t } = useTranslation();
   const { selectedAcademy } = useStore();
   const { categories, isLoading: categoriesLoading } = useCategoriesStore();
   const {
@@ -26,10 +28,10 @@ export default function EditLessonPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-muted-foreground">
-              No Store Selected
+              {t('common.noStoreSelected')}
             </h2>
             <p className="text-muted-foreground">
-              Please select a store from the header to edit lessons.
+              {t('common.selectStoreToManageLessons')}
             </p>
           </div>
         </div>
@@ -43,7 +45,7 @@ export default function EditLessonPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="text-muted-foreground">Loading...</p>
+            <p className="text-muted-foreground">{t('common.loading')}</p>
           </div>
         </div>
       </div>
@@ -55,7 +57,9 @@ export default function EditLessonPage() {
       <div id="edit-lesson-page" className="container mx-auto py-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <p className="text-muted-foreground">Lesson not found.</p>
+            <p className="text-muted-foreground">
+              {t('courses.lessonNotFound')}
+            </p>
           </div>
         </div>
       </div>
