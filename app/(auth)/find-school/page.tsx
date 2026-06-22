@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { ErrorHandler } from '@/lib/error-handler';
 import Link from '@/components/ui/link';
+import { AuthWideLayout } from '@/components/auth/auth-wide-layout';
+import { AuthBrand } from '@/components/auth/auth-brand';
 
 export default function FindStorePage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,22 +79,15 @@ export default function FindStorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-accent p-4">
-      <div className="mx-auto max-w-4xl">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-            <Building2 className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mb-2 text-3xl font-bold text-foreground">
-            Find Your Store
-          </h1>
-          <p className="text-muted-foreground">
-            Enter your store&apos;s domain or name to access your learning
-            dashboard
-          </p>
-        </div>
+    <AuthWideLayout>
+      <AuthBrand
+        large
+        icon={<Building2 className="h-6 w-6 text-primary-foreground" />}
+        title="Find Your Store"
+        subtitle="Enter your store's domain or name to access your learning dashboard"
+      />
 
+      <div>
         {/* Search Form */}
         <Card className="mb-8">
           <CardHeader>
@@ -327,6 +322,6 @@ export default function FindStorePage() {
           </p>
         </div>
       </div>
-    </div>
+    </AuthWideLayout>
   );
 }

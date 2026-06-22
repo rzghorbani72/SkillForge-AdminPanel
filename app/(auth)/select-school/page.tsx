@@ -23,6 +23,8 @@ import { authService } from '@/lib/auth';
 import type { Academy } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
+import { AuthWideLayout } from '@/components/auth/auth-wide-layout';
+import { AuthBrand } from '@/components/auth/auth-brand';
 
 export default function SelectStorePage() {
   const [stores, setStores] = useState<any[]>([]);
@@ -95,41 +97,34 @@ export default function SelectStorePage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-accent">
-        <div className="flex items-center space-x-2">
+      <AuthWideLayout>
+        <div className="flex min-h-[50vh] items-center justify-center gap-2 text-muted-foreground">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading your stores...</span>
         </div>
-      </div>
+      </AuthWideLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-accent p-4">
-      <div className="mx-auto max-w-4xl">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-            <Building2 className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mb-2 text-3xl font-bold text-foreground">
-            Select Your Store
-          </h1>
-          <p className="text-muted-foreground">
-            You&apos;re enrolled in multiple stores. Choose which one you&apos;d
-            like to access.
+    <AuthWideLayout>
+      <AuthBrand
+        large
+        icon={<Building2 className="h-6 w-6 text-primary-foreground" />}
+        title="Select Your Store"
+        subtitle="You're enrolled in multiple stores. Choose which one you'd like to access."
+      />
+      <div>
+        {user &&
+        typeof user === 'object' &&
+        'user' in user &&
+        user.user &&
+        typeof user.user === 'object' &&
+        'name' in user.user ? (
+          <p className="mb-6 text-center text-sm text-muted-foreground">
+            Welcome back, {(user.user as { name?: string }).name ?? 'User'}
           </p>
-          {user &&
-          typeof user === 'object' &&
-          'user' in user &&
-          user.user &&
-          typeof user.user === 'object' &&
-          'name' in user.user ? (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Welcome back, {(user.user as { name?: string }).name ?? 'User'}
-            </p>
-          ) : null}
-        </div>
+        ) : null}
 
         {/* Search */}
         <div className="mb-6">
@@ -253,6 +248,6 @@ export default function SelectStorePage() {
           </AlertDescription>
         </Alert>
       </div>
-    </div>
+    </AuthWideLayout>
   );
 }
