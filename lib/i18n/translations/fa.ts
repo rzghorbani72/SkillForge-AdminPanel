@@ -2,6 +2,64 @@
  * Persian (Farsi) translations for Admin Panel - RTL
  */
 export const fa = {
+  findSchool: {
+    title: 'آکادمی خود را پیدا کنید',
+    subtitle:
+      'دامنه یا نام آکادمی خود را وارد کنید تا به داشبورد یادگیری دسترسی پیدا کنید',
+    searchTitle: 'جستجوی آکادمی',
+    searchDescription: 'دامنه یا نام آکادمی خود را وارد کنید',
+    searchLabel: 'دامنه یا نام آکادمی',
+    searchPlaceholder: 'مثلاً my-academy یا نام آکادمی من',
+    goToStore: 'ورود به آکادمی',
+    searching: 'در حال جستجو...',
+    enterStorePrompt: 'لطفاً نام یا دامنه آکادمی را وارد کنید',
+    redirectingTo: 'در حال انتقال به {{url}}',
+    searchFailed:
+      'آکادمی پیدا نشد. لطفاً دامنه را بررسی کنید یا با پشتیبانی تماس بگیرید.',
+    byDomain: 'بر اساس دامنه',
+    customDomain: 'دامنه اختصاصی',
+    subdomainLabel: 'زیردامنه',
+    byStoreName: 'بر اساس نام آکادمی',
+    fullStoreName: 'نام کامل آکادمی',
+    shortName: 'نام کوتاه',
+    popularStores: 'آکادمی‌های محبوب',
+    popularStoresDescription: 'دسترسی سریع به برخی از محبوب‌ترین آکادمی‌ها',
+    cantFindStore: 'آکادمی خود را پیدا نمی‌کنید؟',
+    cantFindStoreHelp:
+      'برای دریافت دامنه صحیح با مدیر آکادمی خود تماس بگیرید یا از او بخواهید یک حساب ایجاد کند.',
+    needToCreateStore: 'می‌خواهید آکادمی بسازید؟',
+    needToCreateStoreHelp1: 'اگر مدرس یا مدیر هستید، می‌توانید ',
+    registerHere: 'اینجا ثبت‌نام کنید',
+    needToCreateStoreHelp2: ' تا آکادمی خود را بسازید.',
+    backToLogin: 'بازگشت به ورود',
+    createNewStore: 'ساخت آکادمی جدید',
+    needHelp: 'کمک می‌خواهید؟',
+    contactSupport: 'تماس با پشتیبانی'
+  },
+  selectSchool: {
+    title: 'آکادمی خود را انتخاب کنید',
+    subtitle:
+      'شما در چند آکادمی عضو هستید. انتخاب کنید به کدام دسترسی می‌خواهید.',
+    loading: 'در حال بارگذاری آکادمی‌های شما...',
+    welcomeBack: 'خوش آمدید، {{name}}',
+    noStoresFound: 'هیچ آکادمی‌ای برای حساب شما پیدا نشد',
+    redirectingTo: 'در حال انتقال به {{name}}...',
+    searchPlaceholder: 'جستجوی آکادمی‌های شما...',
+    searchLabel: 'جستجوی آکادمی‌ها',
+    status: 'وضعیت:',
+    active: 'فعال',
+    domain: 'دامنه:',
+    accessAcademy: 'ورود به آکادمی',
+    noResultsTitle: 'آکادمی‌ای پیدا نشد',
+    noResultsMessage: 'هیچ آکادمی‌ای با جستجوی «{{term}}» مطابقت ندارد',
+    clearSearch: 'پاک کردن جستجو',
+    signOut: 'خروج',
+    accessAdminPanel: 'ورود به پنل مدیریت',
+    needHelp: 'کمک می‌خواهید؟',
+    needHelpText:
+      'اگر آکادمی خود را پیدا نمی‌کنید یا می‌خواهید در آکادمی جدیدی عضو شوید، لطفاً با مدیر آکادمی خود تماس بگیرید یا',
+    contactSupport: 'با پشتیبانی تماس بگیرید'
+  },
   common: {
     loading: 'در حال بارگذاری...',
     error: 'خطایی رخ داد',

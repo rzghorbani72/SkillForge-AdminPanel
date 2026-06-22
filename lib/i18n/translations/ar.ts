@@ -2,6 +2,62 @@
  * Arabic translations for Admin Panel - RTL
  */
 export const ar = {
+  findSchool: {
+    title: 'ابحث عن أكاديميتك',
+    subtitle: 'أدخل نطاق أو اسم أكاديميتك للوصول إلى لوحة التعلم الخاصة بك',
+    searchTitle: 'البحث عن أكاديميتك',
+    searchDescription: 'أدخل نطاق أو اسم أكاديميتك',
+    searchLabel: 'نطاق أو اسم الأكاديمية',
+    searchPlaceholder: 'مثال: my-academy أو اسم أكاديميتي',
+    goToStore: 'الدخول إلى الأكاديمية',
+    searching: 'جارٍ البحث...',
+    enterStorePrompt: 'يرجى إدخال اسم أو نطاق الأكاديمية',
+    redirectingTo: 'جارٍ التحويل إلى {{url}}',
+    searchFailed:
+      'تعذر العثور على الأكاديمية. يرجى التحقق من النطاق أو الاتصال بالدعم.',
+    byDomain: 'حسب النطاق',
+    customDomain: 'نطاق مخصص',
+    subdomainLabel: 'نطاق فرعي',
+    byStoreName: 'حسب اسم الأكاديمية',
+    fullStoreName: 'الاسم الكامل للأكاديمية',
+    shortName: 'الاسم المختصر',
+    popularStores: 'الأكاديميات الشهيرة',
+    popularStoresDescription: 'وصول سريع إلى بعض أكثر الأكاديميات شهرة',
+    cantFindStore: 'لا تجد أكاديميتك؟',
+    cantFindStoreHelp:
+      'اتصل بمسؤول أكاديميتك للحصول على النطاق الصحيح أو اطلب منه إنشاء حساب.',
+    needToCreateStore: 'تحتاج إلى إنشاء أكاديمية؟',
+    needToCreateStoreHelp1: 'إذا كنت معلمًا أو مسؤولاً، يمكنك ',
+    registerHere: 'التسجيل هنا',
+    needToCreateStoreHelp2: ' لإنشاء أكاديميتك الخاصة.',
+    backToLogin: 'العودة إلى تسجيل الدخول',
+    createNewStore: 'إنشاء أكاديمية جديدة',
+    needHelp: 'تحتاج مساعدة؟',
+    contactSupport: 'اتصل بالدعم'
+  },
+  selectSchool: {
+    title: 'اختر أكاديميتك',
+    subtitle: 'أنت مسجل في عدة أكاديميات. اختر التي تريد الوصول إليها.',
+    loading: 'جارٍ تحميل أكاديمياتك...',
+    welcomeBack: 'مرحبًا بعودتك، {{name}}',
+    noStoresFound: 'لم يتم العثور على أكاديميات لحسابك',
+    redirectingTo: 'جارٍ التحويل إلى {{name}}...',
+    searchPlaceholder: 'ابحث في أكاديمياتك...',
+    searchLabel: 'البحث في الأكاديميات',
+    status: 'الحالة:',
+    active: 'نشط',
+    domain: 'النطاق:',
+    accessAcademy: 'الدخول إلى الأكاديمية',
+    noResultsTitle: 'لم يتم العثور على أكاديميات',
+    noResultsMessage: 'لا توجد أكاديميات تطابق بحثك عن «{{term}}»',
+    clearSearch: 'مسح البحث',
+    signOut: 'تسجيل الخروج',
+    accessAdminPanel: 'الدخول إلى لوحة الإدارة',
+    needHelp: 'تحتاج مساعدة؟',
+    needHelpText:
+      'إذا لم تجد أكاديميتك أو كنت بحاجة للتسجيل في واحدة جديدة، يرجى الاتصال بمسؤول أكاديميتك أو',
+    contactSupport: 'اتصل بالدعم'
+  },
   common: {
     loading: 'جاري التحميل...',
     error: 'حدث خطأ',

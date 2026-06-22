@@ -2,6 +2,64 @@
  * Turkish translations for Admin Panel - LTR
  */
 export const tr = {
+  findSchool: {
+    title: 'Akademinizi Bulun',
+    subtitle:
+      'Öğrenme panelinize erişmek için akademi alan adınızı veya adını girin',
+    searchTitle: 'Akademinizi Arayın',
+    searchDescription: 'Akademi alan adınızı veya adını girin',
+    searchLabel: 'Akademi Alan Adı veya Adı',
+    searchPlaceholder: 'örn. my-academy veya Akademi Adım',
+    goToStore: 'Akademiye Git',
+    searching: 'Aranıyor...',
+    enterStorePrompt: 'Lütfen bir akademi adı veya alan adı girin',
+    redirectingTo: '{{url}} adresine yönlendiriliyor',
+    searchFailed:
+      'Akademi bulunamadı. Lütfen alan adını kontrol edin veya destek ile iletişime geçin.',
+    byDomain: 'Alan Adına Göre',
+    customDomain: 'Özel Alan Adı',
+    subdomainLabel: 'Alt Alan Adı',
+    byStoreName: 'Akademi Adına Göre',
+    fullStoreName: 'Tam Akademi Adı',
+    shortName: 'Kısa Ad',
+    popularStores: 'Popüler Akademiler',
+    popularStoresDescription: 'En popüler akademilerin bazılarına hızlı erişim',
+    cantFindStore: 'Akademinizi bulamıyor musunuz?',
+    cantFindStoreHelp:
+      'Doğru alan adını almak için akademi yöneticinizle iletişime geçin veya bir hesap oluşturmasını isteyin.',
+    needToCreateStore: 'Akademi oluşturmanız mı gerekiyor?',
+    needToCreateStoreHelp1: 'Öğretmen veya yönetici iseniz, ',
+    registerHere: 'buradan kayıt olabilirsiniz',
+    needToCreateStoreHelp2: ' ve kendi akademinizi oluşturabilirsiniz.',
+    backToLogin: 'Girişe Dön',
+    createNewStore: 'Yeni Akademi Oluştur',
+    needHelp: 'Yardım mı lazım?',
+    contactSupport: 'Destek ile İletişime Geçin'
+  },
+  selectSchool: {
+    title: 'Akademinizi Seçin',
+    subtitle:
+      'Birden fazla akademiye kayıtlısınız. Erişmek istediğinizi seçin.',
+    loading: 'Akademileriniz yükleniyor...',
+    welcomeBack: 'Tekrar hoş geldiniz, {{name}}',
+    noStoresFound: 'Hesabınız için akademi bulunamadı',
+    redirectingTo: '{{name}} adresine yönlendiriliyor...',
+    searchPlaceholder: 'Akademilerinizde arayın...',
+    searchLabel: 'Akademilerde ara',
+    status: 'Durum:',
+    active: 'Aktif',
+    domain: 'Alan adı:',
+    accessAcademy: 'Akademiye eriş',
+    noResultsTitle: 'Akademi bulunamadı',
+    noResultsMessage: '"{{term}}" aramanızla eşleşen akademi yok',
+    clearSearch: 'Aramayı temizle',
+    signOut: 'Çıkış yap',
+    accessAdminPanel: 'Yönetim Paneline Eriş',
+    needHelp: 'Yardım mı lazım?',
+    needHelpText:
+      'Akademinizi bulamıyorsanız veya yeni bir akademiye kaydolmanız gerekiyorsa, lütfen akademi yöneticinizle iletişime geçin veya',
+    contactSupport: 'destek ile iletişime geçin'
+  },
   common: {
     loading: 'Yükleniyor...',
     error: 'Bir hata oluştu',

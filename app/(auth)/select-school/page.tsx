@@ -25,8 +25,10 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
 import { AuthWideLayout } from '@/components/auth/auth-wide-layout';
 import { AuthBrand } from '@/components/auth/auth-brand';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function SelectStorePage() {
+  const { t } = useTranslation();
   const [stores, setStores] = useState<any[]>([]);
   const [filteredStores, setFilteredStores] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,7 +52,7 @@ export default function SelectStorePage() {
         const userStores = await authService.getUserAcademies();
 
         if (userStores.length === 0) {
-          ErrorHandler.showWarning('No stores found for your account');
+          ErrorHandler.showWarning(t('selectSchool.noStoresFound'));
           router.push('/login');
           return;
         }
@@ -73,7 +75,7 @@ export default function SelectStorePage() {
     };
 
     loadUserStores();
-  }, [router]);
+  }, [router, t]);
 
   useEffect(() => {
     // Filter stores based on search term
@@ -87,7 +89,9 @@ export default function SelectStorePage() {
 
   const handleStoreSelect = (academy: Academy) => {
     const storeUrl = authService.getAcademyDashboardUrl(academy);
-    ErrorHandler.showInfo(`Redirecting to ${academy.name}...`);
+    ErrorHandler.showInfo(
+      t('selectSchool.redirectingTo', { name: academy.name })
+    );
     window.location.href = storeUrl;
   };
 
@@ -100,7 +104,7 @@ export default function SelectStorePage() {
       <AuthWideLayout>
         <div className="flex min-h-[50vh] items-center justify-center gap-2 text-muted-foreground">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading your stores...</span>
+          <span>{t('selectSchool.loading')}</span>
         </div>
       </AuthWideLayout>
     );
@@ -111,8 +115,8 @@ export default function SelectStorePage() {
       <AuthBrand
         large
         icon={<Building2 className="h-6 w-6 text-primary-foreground" />}
-        title="Select Your Store"
-        subtitle="You're enrolled in multiple stores. Choose which one you'd like to access."
+        title={t('selectSchool.title')}
+        subtitle={t('selectSchool.subtitle')}
       />
       <div>
         {user &&
@@ -122,24 +126,26 @@ export default function SelectStorePage() {
         typeof user.user === 'object' &&
         'name' in user.user ? (
           <p className="mb-6 text-center text-sm text-muted-foreground">
-            Welcome back, {(user.user as { name?: string }).name ?? 'User'}
+            {t('selectSchool.welcomeBack', {
+              name: (user.user as { name?: string }).name ?? 'User'
+            })}
           </p>
         ) : null}
 
         {/* Search */}
         <div className="mb-6">
           <Label htmlFor="search" className="sr-only">
-            Search stores
+            {t('selectSchool.searchLabel')}
           </Label>
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="search"
               type="text"
-              placeholder="Search your stores..."
+              placeholder={t('selectSchool.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pr-10"
             />
           </div>
         </div>
@@ -168,14 +174,20 @@ export default function SelectStorePage() {
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Status:</span>
-                    <span className="font-medium text-success">Active</span>
+                    <span className="text-muted-foreground">
+                      {t('selectSchool.status')}
+                    </span>
+                    <span className="font-medium text-success">
+                      {t('selectSchool.active')}
+                    </span>
                   </div>
                   {(academy.domain?.public_address ||
                     (academy as { Domain?: { public_address?: string } }).Domain
                       ?.public_address) && (
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Domain:</span>
+                      <span className="text-muted-foreground">
+                        {t('selectSchool.domain')}
+                      </span>
                       <span className="font-medium text-primary">
                         {academy.domain?.public_address ||
                           (academy as { Domain?: { public_address?: string } })
@@ -185,8 +197,8 @@ export default function SelectStorePage() {
                   )}
                 </div>
                 <Button className="mt-4 w-full" variant="outline">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Access academy
+                  <ExternalLink className="me-2 h-4 w-4" />
+                  {t('selectSchool.accessAcademy')}
                 </Button>
               </CardContent>
             </Card>
@@ -199,13 +211,13 @@ export default function SelectStorePage() {
             <CardContent>
               <Building2 className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
               <h3 className="mb-2 text-lg font-medium text-foreground">
-                No stores found
+                {t('selectSchool.noResultsTitle')}
               </h3>
               <p className="mb-4 text-muted-foreground">
-                No stores match your search for &quot;{searchTerm}&quot;
+                {t('selectSchool.noResultsMessage', { term: searchTerm })}
               </p>
               <Button variant="outline" onClick={() => setSearchTerm('')}>
-                Clear search
+                {t('selectSchool.clearSearch')}
               </Button>
             </CardContent>
           </Card>
@@ -218,7 +230,7 @@ export default function SelectStorePage() {
             onClick={handleLogout}
             className="w-full sm:w-auto"
           >
-            Sign out
+            {t('selectSchool.signOut')}
           </Button>
           <Button
             variant="outline"
@@ -227,7 +239,7 @@ export default function SelectStorePage() {
             }}
             className="w-full sm:w-auto"
           >
-            Access Admin Panel
+            {t('selectSchool.accessAdminPanel')}
           </Button>
         </div>
 
@@ -235,14 +247,13 @@ export default function SelectStorePage() {
         <Alert className="mt-8">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Need help?</strong> If you can&apos;t find your store or
-            need to enroll in a new one, please contact your store administrator
-            or{' '}
+            <strong>{t('selectSchool.needHelp')}</strong>{' '}
+            {t('selectSchool.needHelpText')}{' '}
             <a
               href="/support"
               className="text-primary underline hover:text-primary"
             >
-              contact support
+              {t('selectSchool.contactSupport')}
             </a>
             .
           </AlertDescription>

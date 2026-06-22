@@ -2,6 +2,65 @@
  * English translations for Admin Panel
  */
 export const en = {
+  findSchool: {
+    title: 'Find Your Academy',
+    subtitle:
+      'Enter your academy domain or name to access your learning dashboard',
+    searchTitle: 'Search for Your Academy',
+    searchDescription: 'Enter your academy domain or name',
+    searchLabel: 'Academy Domain or Name',
+    searchPlaceholder: 'e.g., my-academy or My Academy Name',
+    goToStore: 'Go to Academy',
+    searching: 'Searching...',
+    enterStorePrompt: 'Please enter an academy name or domain',
+    redirectingTo: 'Redirecting to {{url}}',
+    searchFailed:
+      'Could not find the academy. Please check the domain or contact support.',
+    byDomain: 'By Domain',
+    customDomain: 'Custom Domain',
+    subdomainLabel: 'Subdomain',
+    byStoreName: 'By Academy Name',
+    fullStoreName: 'Full Academy Name',
+    shortName: 'Short Name',
+    popularStores: 'Popular Academies',
+    popularStoresDescription:
+      'Quick access to some of the most popular academies',
+    cantFindStore: "Can't find your academy?",
+    cantFindStoreHelp:
+      'Contact your academy administrator to get the correct domain or ask them to set up an account.',
+    needToCreateStore: 'Need to create an academy?',
+    needToCreateStoreHelp1: "If you're a teacher or administrator, you can ",
+    registerHere: 'register here',
+    needToCreateStoreHelp2: ' to create your own academy.',
+    backToLogin: 'Back to Login',
+    createNewStore: 'Create New Academy',
+    needHelp: 'Need help?',
+    contactSupport: 'Contact Support'
+  },
+  selectSchool: {
+    title: 'Select Your Academy',
+    subtitle:
+      "You're enrolled in multiple academies. Choose which one you'd like to access.",
+    loading: 'Loading your academies...',
+    welcomeBack: 'Welcome back, {{name}}',
+    noStoresFound: 'No academies found for your account',
+    redirectingTo: 'Redirecting to {{name}}...',
+    searchPlaceholder: 'Search your academies...',
+    searchLabel: 'Search academies',
+    status: 'Status:',
+    active: 'Active',
+    domain: 'Domain:',
+    accessAcademy: 'Access academy',
+    noResultsTitle: 'No academies found',
+    noResultsMessage: 'No academies match your search for "{{term}}"',
+    clearSearch: 'Clear search',
+    signOut: 'Sign out',
+    accessAdminPanel: 'Access Admin Panel',
+    needHelp: 'Need help?',
+    needHelpText:
+      "If you can't find your academy or need to enroll in a new one, please contact your academy administrator or",
+    contactSupport: 'contact support'
+  },
   common: {
     loading: 'Loading...',
     error: 'An error occurred',

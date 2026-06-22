@@ -25,8 +25,44 @@ import { ErrorHandler } from '@/lib/error-handler';
 import Link from '@/components/ui/link';
 import { AuthWideLayout } from '@/components/auth/auth-wide-layout';
 import { AuthBrand } from '@/components/auth/auth-brand';
+import { useTranslation } from '@/lib/i18n/hooks';
+
+const POPULAR_STORES = [
+  {
+    name: 'Harvard University',
+    domain: 'harvard',
+    students: '50K+',
+    courses: '500+'
+  },
+  { name: 'MIT', domain: 'mit', students: '30K+', courses: '300+' },
+  {
+    name: 'Stanford University',
+    domain: 'stanford',
+    students: '40K+',
+    courses: '400+'
+  },
+  {
+    name: 'Yale University',
+    domain: 'yale',
+    students: '25K+',
+    courses: '250+'
+  },
+  {
+    name: 'Princeton University',
+    domain: 'princeton',
+    students: '20K+',
+    courses: '200+'
+  },
+  {
+    name: 'Columbia University',
+    domain: 'columbia',
+    students: '35K+',
+    courses: '350+'
+  }
+];
 
 export default function FindStorePage() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
@@ -34,45 +70,34 @@ export default function FindStorePage() {
     e.preventDefault();
 
     if (!searchTerm.trim()) {
-      ErrorHandler.showWarning('Please enter a store name or domain');
+      ErrorHandler.showWarning(t('findSchool.enterStorePrompt'));
       return;
     }
 
     setIsSearching(true);
 
     try {
-      // This would call the backend API to search for stores
-      // For now, we'll simulate the search
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Extract domain from search term
       let domain = searchTerm.trim().toLowerCase();
-
-      // Remove protocol if present
       if (domain.startsWith('http://') || domain.startsWith('https://')) {
         domain = domain.replace(/^https?:\/\//, '');
       }
-
-      // Remove www. if present
       if (domain.startsWith('www.')) {
         domain = domain.replace(/^www\./, '');
       }
-
-      // Remove .skillforge.com if present
       if (domain.endsWith('.skillforge.com')) {
         domain = domain.replace(/\.skillforge\.com$/, '');
       }
 
-      // Construct the store URL
       const storeUrl = `https://${domain}.skillforge.com`;
-
-      ErrorHandler.showSuccess(`Redirecting to ${storeUrl}`);
+      ErrorHandler.showSuccess(
+        t('findSchool.redirectingTo', { url: storeUrl })
+      );
       window.location.href = storeUrl;
     } catch (error) {
       console.error('Search error:', error);
-      ErrorHandler.showWarning(
-        'Failed to find store. Please check the domain or contact support.'
-      );
+      ErrorHandler.showWarning(t('findSchool.searchFailed'));
     } finally {
       setIsSearching(false);
     }
@@ -83,33 +108,34 @@ export default function FindStorePage() {
       <AuthBrand
         large
         icon={<Building2 className="h-6 w-6 text-primary-foreground" />}
-        title="Find Your Store"
-        subtitle="Enter your store's domain or name to access your learning dashboard"
+        title={t('findSchool.title')}
+        subtitle={t('findSchool.subtitle')}
       />
 
       <div>
         {/* Search Form */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Search for Your Store</CardTitle>
+            <CardTitle>{t('findSchool.searchTitle')}</CardTitle>
             <CardDescription>
-              Enter your store&apos;s domain (e.g., mystore.skillforge.com) or
-              store name
+              {t('findSchool.searchDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSearch} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="store-search">Store Domain or Name</Label>
+                <Label htmlFor="store-search">
+                  {t('findSchool.searchLabel')}
+                </Label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="store-search"
                     type="text"
-                    placeholder="e.g., mystore.skillforge.com or My Store Name"
+                    placeholder={t('findSchool.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pr-10"
                     disabled={isSearching}
                   />
                 </div>
@@ -117,13 +143,13 @@ export default function FindStorePage() {
               <Button type="submit" className="w-full" disabled={isSearching}>
                 {isSearching ? (
                   <>
-                    <Search className="mr-2 h-4 w-4 animate-spin" />
-                    Searching...
+                    <Search className="me-2 h-4 w-4 animate-spin" />
+                    {t('findSchool.searching')}
                   </>
                 ) : (
                   <>
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    Go to Store
+                    <ExternalLink className="me-2 h-4 w-4" />
+                    {t('findSchool.goToStore')}
                   </>
                 )}
               </Button>
@@ -135,16 +161,16 @@ export default function FindStorePage() {
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
+              <CardTitle className="flex items-center gap-2">
                 <Globe className="h-5 w-5 text-primary" />
-                <span>By Domain</span>
+                <span>{t('findSchool.byDomain')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="rounded-lg bg-muted p-3">
                   <p className="text-sm font-medium text-foreground">
-                    Custom Domain
+                    {t('findSchool.customDomain')}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     https://yourstore.com
@@ -152,7 +178,7 @@ export default function FindStorePage() {
                 </div>
                 <div className="rounded-lg bg-muted p-3">
                   <p className="text-sm font-medium text-foreground">
-                    آکادمی Subdomain
+                    {t('findSchool.subdomainLabel')}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     https://yourstore.skillforge.com
@@ -164,16 +190,16 @@ export default function FindStorePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
+              <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-success" />
-                <span>By Store Name</span>
+                <span>{t('findSchool.byStoreName')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="rounded-lg bg-muted p-3">
                   <p className="text-sm font-medium text-foreground">
-                    Full Store Name
+                    {t('findSchool.fullStoreName')}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Harvard University
@@ -181,7 +207,7 @@ export default function FindStorePage() {
                 </div>
                 <div className="rounded-lg bg-muted p-3">
                   <p className="text-sm font-medium text-foreground">
-                    Short Name
+                    {t('findSchool.shortName')}
                   </p>
                   <p className="text-sm text-muted-foreground">Harvard</p>
                 </div>
@@ -193,60 +219,22 @@ export default function FindStorePage() {
         {/* Popular Stores */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Popular Stores</CardTitle>
+            <CardTitle>{t('findSchool.popularStores')}</CardTitle>
             <CardDescription>
-              Quick access to some of the most popular stores on آکادمی
+              {t('findSchool.popularStoresDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[
-                {
-                  name: 'Harvard University',
-                  domain: 'harvard',
-                  students: '50K+',
-                  courses: '500+'
-                },
-                {
-                  name: 'MIT',
-                  domain: 'mit',
-                  students: '30K+',
-                  courses: '300+'
-                },
-                {
-                  name: 'Stanford University',
-                  domain: 'stanford',
-                  students: '40K+',
-                  courses: '400+'
-                },
-                {
-                  name: 'Yale University',
-                  domain: 'yale',
-                  students: '25K+',
-                  courses: '250+'
-                },
-                {
-                  name: 'Princeton University',
-                  domain: 'princeton',
-                  students: '20K+',
-                  courses: '200+'
-                },
-                {
-                  name: 'Columbia University',
-                  domain: 'columbia',
-                  students: '35K+',
-                  courses: '350+'
-                }
-              ].map((store) => (
+              {POPULAR_STORES.map((store) => (
                 <div
                   key={store.domain}
                   className="cursor-pointer rounded-lg border p-4 transition-shadow hover:shadow-md"
                   onClick={() => {
-                    const storeUrl = `https://${store.domain}.skillforge.com`;
-                    window.location.href = storeUrl;
+                    window.location.href = `https://${store.domain}.skillforge.com`;
                   }}
                 >
-                  <div className="mb-3 flex items-center space-x-3">
+                  <div className="mb-3 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
                       <Building2 className="h-5 w-5 text-primary" />
                     </div>
@@ -260,12 +248,12 @@ export default function FindStorePage() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span className="flex items-center">
-                      <Users className="mr-1 h-4 w-4" />
+                    <span className="flex items-center gap-1">
+                      <Users className="h-4 w-4" />
                       {store.students}
                     </span>
-                    <span className="flex items-center">
-                      <BookOpen className="mr-1 h-4 w-4" />
+                    <span className="flex items-center gap-1">
+                      <BookOpen className="h-4 w-4" />
                       {store.courses}
                     </span>
                   </div>
@@ -279,23 +267,22 @@ export default function FindStorePage() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <Alert>
             <AlertDescription>
-              <strong>Can&apos;t find your store?</strong> Contact your store
-              administrator to get the correct domain or ask them to set up a
-              آکادمی account.
+              <strong>{t('findSchool.cantFindStore')}</strong>{' '}
+              {t('findSchool.cantFindStoreHelp')}
             </AlertDescription>
           </Alert>
 
           <Alert>
             <AlertDescription>
-              <strong>Need to create a store?</strong> If you&apos;re a teacher
-              or administrator, you can{' '}
+              <strong>{t('findSchool.needToCreateStore')}</strong>{' '}
+              {t('findSchool.needToCreateStoreHelp1')}
               <Link
                 href="/register"
                 className="text-primary underline hover:text-primary"
               >
-                register here
-              </Link>{' '}
-              to create your own store on آکادمی.
+                {t('findSchool.registerHere')}
+              </Link>
+              {t('findSchool.needToCreateStoreHelp2')}
             </AlertDescription>
           </Alert>
         </div>
@@ -304,20 +291,20 @@ export default function FindStorePage() {
         <div className="mt-8 space-y-4 text-center">
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/login">
-              <Button variant="outline">Back to Login</Button>
+              <Button variant="outline">{t('findSchool.backToLogin')}</Button>
             </Link>
             <Link href="/register">
-              <Button>Create New Store</Button>
+              <Button>{t('findSchool.createNewStore')}</Button>
             </Link>
           </div>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Need help?{' '}
+            {t('findSchool.needHelp')}{' '}
             <a
               href="/support"
               className="text-primary underline hover:text-primary"
             >
-              Contact Support
+              {t('findSchool.contactSupport')}
             </a>
           </p>
         </div>
