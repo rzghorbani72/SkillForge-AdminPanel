@@ -14,8 +14,8 @@ body {
 
 /* ─── Design Tokens ──────────────────────────────────────────────────────────
    Mentoryar design system — Sharp & Modern, Persian-first.
-   Brand = "Emerald Sharp" (2026): vivid emerald primary (#059669) + amber
-   accent on crisp emerald-neutral surfaces and near-black ink.
+   Brand = "Teal Sharp" (2026): deep teal primary (#0E7490) + amber
+   accent on crisp teal-neutral surfaces and near-black ink.
    (oklch notes below are the original warm/cherry baseline, kept for history.)
 
    oklch → HSL conversions:
@@ -36,31 +36,31 @@ body {
    ──────────────────────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    /* ── Surfaces — crisp emerald-neutral (sharp, not warm) ─── */
-    --background: 156 16% 98%; /* near-white, faint emerald */
-    --foreground: 165 28% 9%; /* near-black ink */
+    /* ── Surfaces — crisp teal-neutral (sharp, not warm) ─── */
+    --background: 192 16% 98%; /* near-white, faint teal */
+    --foreground: 195 28% 10%; /* near-black ink */
 
     --card: 0 0% 100%; /* pure white */
-    --card-foreground: 165 28% 9%;
+    --card-foreground: 195 28% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 165 28% 9%;
+    --popover-foreground: 195 28% 10%;
 
     /* ── Muted (surface-2) ─── */
-    --muted: 156 12% 96%;
-    --muted-foreground: 158 9% 46%;
+    --muted: 192 12% 96%;
+    --muted-foreground: 192 9% 46%;
 
-    /* ── Primary — Emerald Sharp (2026) ─── */
-    --primary: 161 94% 30%; /* emerald #059669 */
+    /* ── Primary — Teal Sharp (2026) ─── */
+    --primary: 193 82% 31%; /* teal #0E7490 */
     --primary-foreground: 0 0% 100%;
 
     /* ── Secondary ─── */
-    --secondary: 156 12% 96%;
-    --secondary-foreground: 165 16% 26%;
+    --secondary: 192 12% 96%;
+    --secondary-foreground: 195 16% 26%;
 
-    /* ── Accent tint — emerald wash ─── */
-    --accent: 158 60% 95%; /* emerald tint */
-    --accent-foreground: 162 94% 24%;
+    /* ── Accent tint — teal wash ─── */
+    --accent: 188 55% 94%; /* teal tint */
+    --accent-foreground: 193 82% 26%;
 
     /* ── Semantic ─── */
     --destructive: 8 67% 49%; /* --negative: oklch(0.55 0.17 25) */
@@ -72,25 +72,25 @@ body {
     --info: 215 50% 45%; /* --info: oklch(0.55 0.13 240) */
     --info-foreground: 0 0% 100%;
 
-    /* ── Borders (warm, not cool) ─── */
-    --border: 156 10% 90%;
-    --input: 156 10% 90%;
-    --ring: 161 94% 30%; /* emerald */
+    /* ── Borders (cool teal-neutral) ─── */
+    --border: 192 10% 90%;
+    --input: 192 10% 90%;
+    --ring: 193 82% 31%; /* teal */
 
     /* ── Border radius (10px base, matching design --r-md) ─── */
     --radius: 0.625rem;
 
-    /* ── Charts (chart-1 = brand emerald, chart-2 = amber accent) ─── */
-    --chart-1: 161 84% 33%; /* emerald */
+    /* ── Charts (chart-1 = brand teal, chart-2 = amber accent) ─── */
+    --chart-1: 193 80% 35%; /* teal */
     --chart-2: 38 92% 50%; /* amber #F59E0B */
     --chart-3: 215 60% 50%;
     --chart-4: 280 55% 55%;
     --chart-5: 0 53% 57%;
 
-    /* ── Sidebar (crisp emerald-neutral surface) ─── */
-    --sidebar-bg: 156 12% 96%;
-    --sidebar-border: 156 9% 93%;
-    --sidebar-hover: 156 14% 94%;
+    /* ── Sidebar (crisp teal-neutral surface) ─── */
+    --sidebar-bg: 192 12% 96%;
+    --sidebar-border: 192 9% 93%;
+    --sidebar-hover: 192 14% 94%;
   }
 }
 
@@ -188,7 +188,7 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
-  /* 3px cherry accent bar flush with sidebar start edge */
+  /* 3px brand accent bar flush with sidebar start edge */
   .sidebar-item.active::before {
     content: '';
     position: absolute;
@@ -248,7 +248,7 @@ body {
     border-radius: 3px;
   }
   .beautiful-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(34 14% 85%); /* --border-strong */
+    background: hsl(192 12% 84%); /* --border-strong */
   }
 
   /* ─── Shimmer skeleton ────────────────────────────────────────── */
@@ -357,28 +357,28 @@ html.transitioning *::after {
    from them.
    ──────────────────────────────────────────────────────────────────────────── */
 .auth-theme {
-  /* ── Brand emerald — single source of truth (2026 "Emerald Sharp") ─── */
-  --brand: 161 94% 30%; /* solid brand emerald     #059669 */
-  --brand-from: 160 84% 39%; /* gradient start (brighter) #10B981 */
-  --brand-to: 163 94% 24%; /* gradient end (deeper)   #047857 */
-  --brand-glow: 160 70% 45%; /* ambient page glow       */
+  /* ── Brand teal — single source of truth (2026 "Teal Sharp") ─── */
+  --brand: 193 82% 31%; /* solid brand teal        #0E7490 */
+  --brand-from: 192 91% 36%; /* gradient start (brighter) #0891B2 */
+  --brand-to: 190 80% 22%; /* gradient end (deeper)   #0B5563 */
+  --brand-glow: 192 70% 45%; /* ambient page glow       */
   --brand-accent: 38 92% 50%; /* amber highlight        #F59E0B */
 
-  /* ── Light surfaces — crisp emerald-neutral (matches app default) ─── */
-  --background: 156 16% 98%;
-  --foreground: 165 28% 9%;
+  /* ── Light surfaces — crisp teal-neutral (matches app default) ─── */
+  --background: 192 16% 98%;
+  --foreground: 195 28% 10%;
   --card: 0 0% 100%;
-  --card-foreground: 165 28% 9%;
+  --card-foreground: 195 28% 10%;
   --popover: 0 0% 100%;
-  --popover-foreground: 165 28% 9%;
-  --muted: 156 12% 96%;
-  --muted-foreground: 158 9% 46%;
-  --secondary: 156 12% 96%;
-  --secondary-foreground: 165 16% 26%;
-  --accent: 158 60% 95%;
-  --accent-foreground: 162 94% 24%;
-  --border: 156 10% 90%;
-  --input: 156 10% 90%;
+  --popover-foreground: 195 28% 10%;
+  --muted: 192 12% 96%;
+  --muted-foreground: 192 9% 46%;
+  --secondary: 192 12% 96%;
+  --secondary-foreground: 195 16% 26%;
+  --accent: 188 55% 94%;
+  --accent-foreground: 193 82% 26%;
+  --border: 192 10% 90%;
+  --input: 192 10% 90%;
 
   /* ── Brand-derived semantics ─── */
   --primary: var(--brand);
