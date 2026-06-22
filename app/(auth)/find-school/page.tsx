@@ -77,17 +77,17 @@ export default function FindStorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background to-accent p-4">
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary">
             <Building2 className="h-8 w-8 text-white" />
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+          <h1 className="mb-2 text-3xl font-bold text-foreground">
             Find Your Store
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Enter your store&apos;s domain or name to access your learning
             dashboard
           </p>
@@ -107,7 +107,7 @@ export default function FindStorePage() {
               <div className="space-y-2">
                 <Label htmlFor="store-search">Store Domain or Name</Label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="store-search"
                     type="text"
@@ -141,23 +141,25 @@ export default function FindStorePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Globe className="h-5 w-5 text-blue-600" />
+                <Globe className="h-5 w-5 text-primary" />
                 <span>By Domain</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="rounded-lg bg-muted p-3">
+                  <p className="text-sm font-medium text-foreground">
                     Custom Domain
                   </p>
-                  <p className="text-sm text-gray-600">https://yourstore.com</p>
+                  <p className="text-sm text-muted-foreground">
+                    https://yourstore.com
+                  </p>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="rounded-lg bg-muted p-3">
+                  <p className="text-sm font-medium text-foreground">
                     آکادمی Subdomain
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     https://yourstore.skillforge.com
                   </p>
                 </div>
@@ -168,23 +170,25 @@ export default function FindStorePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <MapPin className="h-5 w-5 text-green-600" />
+                <MapPin className="h-5 w-5 text-success" />
                 <span>By Store Name</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="rounded-lg bg-muted p-3">
+                  <p className="text-sm font-medium text-foreground">
                     Full Store Name
                   </p>
-                  <p className="text-sm text-gray-600">Harvard University</p>
+                  <p className="text-sm text-muted-foreground">
+                    Harvard University
+                  </p>
                 </div>
-                <div className="rounded-lg bg-gray-50 p-3">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="rounded-lg bg-muted p-3">
+                  <p className="text-sm font-medium text-foreground">
                     Short Name
                   </p>
-                  <p className="text-sm text-gray-600">Harvard</p>
+                  <p className="text-sm text-muted-foreground">Harvard</p>
                 </div>
               </div>
             </CardContent>
@@ -248,19 +252,19 @@ export default function FindStorePage() {
                   }}
                 >
                   <div className="mb-3 flex items-center space-x-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                      <Building2 className="h-5 w-5 text-blue-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
+                      <Building2 className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
+                      <h3 className="font-medium text-foreground">
                         {store.name}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         {store.domain}.skillforge.com
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-gray-600">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <span className="flex items-center">
                       <Users className="mr-1 h-4 w-4" />
                       {store.students}
@@ -292,7 +296,7 @@ export default function FindStorePage() {
               or administrator, you can{' '}
               <Link
                 href="/register"
-                className="text-blue-600 underline hover:text-blue-500"
+                className="text-primary underline hover:text-primary"
               >
                 register here
               </Link>{' '}
@@ -312,11 +316,11 @@ export default function FindStorePage() {
             </Link>
           </div>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             Need help?{' '}
             <a
               href="/support"
-              className="text-blue-600 underline hover:text-blue-500"
+              className="text-primary underline hover:text-primary"
             >
               Contact Support
             </a>

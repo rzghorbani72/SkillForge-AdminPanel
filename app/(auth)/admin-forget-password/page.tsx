@@ -261,16 +261,16 @@ export default function AdminForgetPasswordPage() {
   return (
     <>
       <LanguageDetector />
-      <div className="relative flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="relative flex min-h-screen items-center justify-center bg-muted px-4 py-12 sm:px-6 lg:px-8">
         <div className={`absolute top-4 z-50 ${isRTL ? 'left-4' : 'right-4'}`}>
           <LanguageSwitcher />
         </div>
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-6 text-3xl font-extrabold text-foreground">
               {t('forgotPassword.title')}
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-muted-foreground">
               {step === 'identifier' && t('forgotPassword.enterIdentifier')}
               {step === 'otp' && t('forgotPassword.enterOtp')}
               {step === 'password' && t('forgotPassword.enterNewPassword')}
@@ -488,11 +488,11 @@ export default function AdminForgetPasswordPage() {
 
               {step === 'success' && (
                 <div className="space-y-4 text-center">
-                  <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <CheckCircle className="mx-auto h-12 w-12 text-success" />
+                  <h3 className="text-lg font-medium text-foreground">
                     {t('forgotPassword.passwordResetSuccessTitle')}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {t('forgotPassword.passwordResetSuccessMessage')}
                   </p>
                   <div
@@ -525,7 +525,7 @@ export default function AdminForgetPasswordPage() {
               <div className="mt-6 text-center">
                 <Link
                   href="/admin-login"
-                  className="text-sm text-blue-600 hover:text-blue-500"
+                  className="text-sm text-primary hover:text-primary"
                 >
                   {t('forgotPassword.backToLogin')}
                 </Link>

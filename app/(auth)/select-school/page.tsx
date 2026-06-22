@@ -95,7 +95,7 @@ export default function SelectStorePage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-accent">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading your stores...</span>
@@ -105,17 +105,17 @@ export default function SelectStorePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background to-accent p-4">
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary">
             <Building2 className="h-8 w-8 text-white" />
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+          <h1 className="mb-2 text-3xl font-bold text-foreground">
             Select Your Store
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             You&apos;re enrolled in multiple stores. Choose which one you&apos;d
             like to access.
           </p>
@@ -125,7 +125,7 @@ export default function SelectStorePage() {
           user.user &&
           typeof user.user === 'object' &&
           'name' in user.user ? (
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-muted-foreground">
               Welcome back, {(user.user as { name?: string }).name ?? 'User'}
             </p>
           ) : null}
@@ -137,7 +137,7 @@ export default function SelectStorePage() {
             Search stores
           </Label>
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="search"
               type="text"
@@ -159,8 +159,8 @@ export default function SelectStorePage() {
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                    <Building2 className="h-6 w-6 text-blue-600" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent">
+                    <Building2 className="h-6 w-6 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">{academy.name}</CardTitle>
@@ -173,15 +173,15 @@ export default function SelectStorePage() {
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Status:</span>
-                    <span className="font-medium text-green-600">Active</span>
+                    <span className="text-muted-foreground">Status:</span>
+                    <span className="font-medium text-success">Active</span>
                   </div>
                   {(academy.domain?.public_address ||
                     (academy as { Domain?: { public_address?: string } }).Domain
                       ?.public_address) && (
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Domain:</span>
-                      <span className="font-medium text-blue-600">
+                      <span className="text-muted-foreground">Domain:</span>
+                      <span className="font-medium text-primary">
                         {academy.domain?.public_address ||
                           (academy as { Domain?: { public_address?: string } })
                             .Domain?.public_address}
@@ -202,11 +202,11 @@ export default function SelectStorePage() {
         {filteredStores.length === 0 && searchTerm && (
           <Card className="py-8 text-center">
             <CardContent>
-              <Building2 className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-              <h3 className="mb-2 text-lg font-medium text-gray-900">
+              <Building2 className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+              <h3 className="mb-2 text-lg font-medium text-foreground">
                 No stores found
               </h3>
-              <p className="mb-4 text-gray-600">
+              <p className="mb-4 text-muted-foreground">
                 No stores match your search for &quot;{searchTerm}&quot;
               </p>
               <Button variant="outline" onClick={() => setSearchTerm('')}>
@@ -245,7 +245,7 @@ export default function SelectStorePage() {
             or{' '}
             <a
               href="/support"
-              className="text-blue-600 underline hover:text-blue-500"
+              className="text-primary underline hover:text-primary"
             >
               contact support
             </a>

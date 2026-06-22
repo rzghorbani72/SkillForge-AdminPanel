@@ -177,8 +177,6 @@ export default function RegisterPage() {
       title={t('auth.registerTitle')}
       subtitle={t('auth.registerSubtitle')}
     >
-      <StepIndicator totalSteps={2} current={step === 'details' ? 0 : 1} />
-
       <div className="mt-5">
         {step === 'details' && (
           <RegisterDetailsForm

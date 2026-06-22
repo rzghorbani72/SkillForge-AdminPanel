@@ -5,16 +5,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Anti-flash: paint warm off-white before any dynamic styles load */
+/* Anti-flash: paint crisp near-white before any dynamic styles load */
 html,
 body {
-  background: #f9f7f6;
+  background: #f7faf9;
   color-scheme: light;
 }
 
 /* ─── Design Tokens ──────────────────────────────────────────────────────────
-   Mentoryar design system — Editorial & Calm, Persian-first.
-   Directly derived from styles.css oklch values (light mode only).
+   Mentoryar design system — Sharp & Modern, Persian-first.
+   Brand = "Emerald Sharp" (2026): vivid emerald primary (#059669) + amber
+   accent on crisp emerald-neutral surfaces and near-black ink.
+   (oklch notes below are the original warm/cherry baseline, kept for history.)
 
    oklch → HSL conversions:
      --bg:        oklch(0.985 0.004 80)  → warm off-white  → hsl(34 20% 97%)
@@ -34,31 +36,31 @@ body {
    ──────────────────────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    /* ── Surfaces (warm, not cool blue-gray) ─── */
-    --background: 34 20% 97%; /* --bg: warm off-white */
-    --foreground: 228 25% 16%; /* --ink: dark blue-ink */
+    /* ── Surfaces — crisp emerald-neutral (sharp, not warm) ─── */
+    --background: 156 16% 98%; /* near-white, faint emerald */
+    --foreground: 165 28% 9%; /* near-black ink */
 
-    --card: 0 0% 100%; /* --surface: pure white */
-    --card-foreground: 228 25% 16%;
+    --card: 0 0% 100%; /* pure white */
+    --card-foreground: 165 28% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 228 25% 16%;
+    --popover-foreground: 165 28% 9%;
 
-    /* ── Muted (surface-2 — warm, not cool) ─── */
-    --muted: 34 16% 96%; /* --surface-2 */
-    --muted-foreground: 228 10% 62%; /* --ink-4 */
+    /* ── Muted (surface-2) ─── */
+    --muted: 156 12% 96%;
+    --muted-foreground: 158 9% 46%;
 
-    /* ── Primary — cherry red ─── */
-    --primary: 4 72% 52%; /* --accent: oklch(0.58 0.18 22) */
+    /* ── Primary — Emerald Sharp (2026) ─── */
+    --primary: 161 94% 30%; /* emerald #059669 */
     --primary-foreground: 0 0% 100%;
 
     /* ── Secondary ─── */
-    --secondary: 34 16% 96%; /* --surface-2 */
-    --secondary-foreground: 228 18% 35%; /* --ink-2 */
+    --secondary: 156 12% 96%;
+    --secondary-foreground: 165 16% 26%;
 
-    /* ── Accent tint ─── */
-    --accent: 4 72% 96%; /* --accent-tint */
-    --accent-foreground: 4 72% 42%;
+    /* ── Accent tint — emerald wash ─── */
+    --accent: 158 60% 95%; /* emerald tint */
+    --accent-foreground: 162 94% 24%;
 
     /* ── Semantic ─── */
     --destructive: 8 67% 49%; /* --negative: oklch(0.55 0.17 25) */
@@ -71,24 +73,24 @@ body {
     --info-foreground: 0 0% 100%;
 
     /* ── Borders (warm, not cool) ─── */
-    --border: 34 12% 91%; /* --border: oklch(0.92 0.005 80) */
-    --input: 34 12% 91%;
-    --ring: 4 72% 52%;
+    --border: 156 10% 90%;
+    --input: 156 10% 90%;
+    --ring: 161 94% 30%; /* emerald */
 
     /* ── Border radius (10px base, matching design --r-md) ─── */
     --radius: 0.625rem;
 
-    /* ── Charts ─── */
-    --chart-1: 4 72% 52%;
-    --chart-2: 215 50% 45%;
-    --chart-3: 38 85% 58%;
+    /* ── Charts (chart-1 = brand emerald, chart-2 = amber accent) ─── */
+    --chart-1: 161 84% 33%; /* emerald */
+    --chart-2: 38 92% 50%; /* amber #F59E0B */
+    --chart-3: 215 60% 50%;
     --chart-4: 280 55% 55%;
-    --chart-5: 142 43% 40%;
+    --chart-5: 0 53% 57%;
 
-    /* ── Sidebar (warm surface-2 background, like design) ─── */
-    --sidebar-bg: 34 16% 96%; /* --surface-2: slightly warm off-white */
-    --sidebar-border: 34 10% 93%; /* --hairline */
-    --sidebar-hover: 34 18% 94%; /* --surface-3 */
+    /* ── Sidebar (crisp emerald-neutral surface) ─── */
+    --sidebar-bg: 156 12% 96%;
+    --sidebar-border: 156 9% 93%;
+    --sidebar-hover: 156 14% 94%;
   }
 }
 
@@ -346,48 +348,49 @@ html.transitioning *::after {
 }
 
 /* ─── Auth experience theme ───────────────────────────────────────────────────
-   Self-contained DARK theme for the (auth) pages only. Scoped to `.auth-theme`
-   so it never leaks into the (light) app. Existing components (Button, Input…)
-   adapt automatically because they read these semantic tokens.
+   Self-contained LIGHT theme for the (auth) pages only (matches the app
+   default). Scoped to `.auth-theme` so its brand utilities stay isolated.
+   Existing components (Button, Input…) adapt automatically via these tokens.
 
    CHANGE THE RED IN ONE PLACE: edit the --brand-* tokens below.
    Everything red (logo, primary button, focus ring, links, glow) derives
    from them.
    ──────────────────────────────────────────────────────────────────────────── */
 .auth-theme {
-  /* ── Brand red — single source of truth ─── */
-  --brand: 0 84% 55%; /* solid brand red */
-  --brand-from: 0 86% 60%; /* gradient start (lighter) */
-  --brand-to: 353 78% 44%; /* gradient end (deeper)  */
-  --brand-glow: 0 84% 50%; /* ambient page glow      */
+  /* ── Brand emerald — single source of truth (2026 "Emerald Sharp") ─── */
+  --brand: 161 94% 30%; /* solid brand emerald     #059669 */
+  --brand-from: 160 84% 39%; /* gradient start (brighter) #10B981 */
+  --brand-to: 163 94% 24%; /* gradient end (deeper)   #047857 */
+  --brand-glow: 160 70% 45%; /* ambient page glow       */
+  --brand-accent: 38 92% 50%; /* amber highlight        #F59E0B */
 
-  /* ── Dark surfaces ─── */
-  --background: 240 6% 5%;
-  --foreground: 0 0% 98%;
-  --card: 240 5% 9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 5% 9%;
-  --popover-foreground: 0 0% 98%;
-  --muted: 240 4% 14%;
-  --muted-foreground: 0 0% 62%;
-  --secondary: 240 4% 14%;
-  --secondary-foreground: 0 0% 92%;
-  --accent: 240 4% 16%;
-  --accent-foreground: 0 0% 98%;
-  --border: 240 5% 18%;
-  --input: 240 5% 18%;
+  /* ── Light surfaces — crisp emerald-neutral (matches app default) ─── */
+  --background: 156 16% 98%;
+  --foreground: 165 28% 9%;
+  --card: 0 0% 100%;
+  --card-foreground: 165 28% 9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 165 28% 9%;
+  --muted: 156 12% 96%;
+  --muted-foreground: 158 9% 46%;
+  --secondary: 156 12% 96%;
+  --secondary-foreground: 165 16% 26%;
+  --accent: 158 60% 95%;
+  --accent-foreground: 162 94% 24%;
+  --border: 156 10% 90%;
+  --input: 156 10% 90%;
 
   /* ── Brand-derived semantics ─── */
   --primary: var(--brand);
   --primary-foreground: 0 0% 100%;
   --ring: var(--brand);
-  --destructive: 0 72% 55%;
+  --destructive: 8 67% 49%;
   --destructive-foreground: 0 0% 100%;
 
-  color-scheme: dark;
+  color-scheme: light;
 }
 
-/* Ambient red glow behind the auth card */
+/* Ambient emerald glow behind the auth card */
 .auth-glow {
   background:
     radial-gradient(
@@ -407,7 +410,8 @@ html.transitioning *::after {
 .auth-card {
   position: relative;
   background: hsl(var(--card));
-  border: 1px solid hsl(0 0% 100% / 0.07);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 12px 32px -16px hsl(165 28% 9% / 0.18);
 }
 .auth-card::before {
   content: '';
@@ -419,7 +423,7 @@ html.transitioning *::after {
     90deg,
     transparent,
     hsl(var(--brand-from)),
-    hsl(38 92% 55%),
+    hsl(var(--brand-accent)),
     hsl(var(--brand-to)),
     transparent
   );
@@ -445,7 +449,7 @@ html.transitioning *::after {
   opacity: 0.6;
 }
 
-/* Reusable brand logo tile (the red rounded square) */
+/* Reusable brand logo tile (the emerald rounded square) */
 .brand-tile {
   background-image: linear-gradient(
     145deg,
@@ -460,18 +464,24 @@ html.transitioning *::after {
   width: 100%;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid hsl(0 0% 100% / 0.12);
+  border-bottom: 1px solid hsl(165 14% 80%);
   border-radius: 0;
   padding: 0.5rem 0;
   color: hsl(var(--foreground));
-  transition: border-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 .auth-input::placeholder {
   color: hsl(var(--muted-foreground));
 }
+.auth-input:hover:not(:focus) {
+  border-bottom-color: hsl(165 14% 60%);
+}
 .auth-input:focus {
   outline: none;
   border-bottom-color: hsl(var(--brand));
+  box-shadow: 0 1px 0 0 hsl(var(--brand));
 }
 .auth-input.with-toggle {
   padding-left: 2.25rem;

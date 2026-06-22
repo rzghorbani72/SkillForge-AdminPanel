@@ -192,7 +192,7 @@ export default function AdminLoginPage() {
   return (
     <>
       <LanguageDetector />
-      <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 to-indigo-100 p-4">
+      <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-accent p-4">
         {/* Language Switcher - Top Right/Left based on RTL */}
         <div
           className={`absolute top-4 z-[100] ${isRTL ? 'left-4' : 'right-4'}`}
@@ -203,11 +203,11 @@ export default function AdminLoginPage() {
         <div className="w-full max-w-md">
           {/* Logo/Brand */}
           <div className="mb-8 text-center">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-purple-600">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary">
               <Shield className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">آکادمی</h1>
-            <p className="text-gray-600">{t('auth.adminLogin')}</p>
+            <h1 className="text-2xl font-bold text-foreground">آکادمی</h1>
+            <p className="text-muted-foreground">{t('auth.adminLogin')}</p>
           </div>
 
           {/* Unauthorized Role Error */}
@@ -260,7 +260,7 @@ export default function AdminLoginPage() {
                 />
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2 rounded-lg bg-gray-100 p-1">
+                  <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted p-1">
                     {(['password', 'otp'] as const).map((m) => (
                       <button
                         key={m}
@@ -274,8 +274,8 @@ export default function AdminLoginPage() {
                         disabled={isLoading}
                         className={`rounded-md py-2 text-sm font-medium transition-colors ${
                           loginMethod === m
-                            ? 'bg-white text-gray-900 shadow-sm'
-                            : 'text-gray-500 hover:text-gray-900'
+                            ? 'bg-white text-foreground shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground'
                         }`}
                       >
                         {m === 'password'
@@ -316,7 +316,7 @@ export default function AdminLoginPage() {
                       <Label htmlFor="password">{t('auth.password')}</Label>
                       <div className="relative">
                         <Lock
-                          className={`absolute top-3 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`}
+                          className={`absolute top-3 h-4 w-4 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`}
                         />
                         <Input
                           id="password"
@@ -327,7 +327,7 @@ export default function AdminLoginPage() {
                             handleInputChange('password', e.target.value)
                           }
                           className={`${isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10'} ${
-                            errors.password ? 'border-red-500' : ''
+                            errors.password ? 'border-destructive' : ''
                           }`}
                           disabled={isLoading}
                           dir="rtl"
@@ -341,14 +341,14 @@ export default function AdminLoginPage() {
                           disabled={isLoading}
                         >
                           {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
+                            <EyeOff className="h-4 w-4 text-muted-foreground" />
                           ) : (
-                            <Eye className="h-4 w-4 text-gray-400" />
+                            <Eye className="h-4 w-4 text-muted-foreground" />
                           )}
                         </Button>
                       </div>
                       {errors.password && (
-                        <p className="text-sm text-red-500">
+                        <p className="text-sm text-destructive">
                           {errors.password}
                         </p>
                       )}
@@ -362,18 +362,18 @@ export default function AdminLoginPage() {
                           type="checkbox"
                           id="remember"
                           aria-label={t('auth.rememberMe')}
-                          className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                          className="rounded border-input text-primary focus:ring-ring"
                         />
                         <Label
                           htmlFor="remember"
-                          className="text-sm text-gray-600"
+                          className="text-sm text-muted-foreground"
                         >
                           {t('auth.rememberMe')}
                         </Label>
                       </div>
                       <Link
                         href="/admin-forget-password"
-                        className="text-sm text-purple-600 hover:text-purple-500"
+                        className="text-sm text-primary hover:text-primary"
                       >
                         {t('auth.forgotPassword')}
                       </Link>
@@ -406,11 +406,11 @@ export default function AdminLoginPage() {
 
             <div className="px-6 pb-6">
               <div className="text-center">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {t('auth.notAdmin')}{' '}
                   <Link
                     href="/login"
-                    className="font-medium text-purple-600 hover:text-purple-500"
+                    className="font-medium text-primary hover:text-primary"
                   >
                     {t('auth.regularLogin')}
                   </Link>
@@ -421,19 +421,13 @@ export default function AdminLoginPage() {
 
           {/* Footer */}
           <div className="mt-8 text-center">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               {t('auth.bySigningIn')}{' '}
-              <Link
-                href="/terms"
-                className="text-purple-600 hover:text-purple-500"
-              >
+              <Link href="/terms" className="text-primary hover:text-primary">
                 {t('auth.termsOfService')}
               </Link>{' '}
               {t('auth.and')}{' '}
-              <Link
-                href="/privacy"
-                className="text-purple-600 hover:text-purple-500"
-              >
+              <Link href="/privacy" className="text-primary hover:text-primary">
                 {t('auth.privacyPolicy')}
               </Link>
             </p>
