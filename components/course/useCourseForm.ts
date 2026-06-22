@@ -8,6 +8,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n/hooks';
 import type { Season, Lesson } from '@/types/api';
 import { courseFormSchema, type CourseFormData } from './schema';
 
@@ -17,6 +18,8 @@ export interface LessonDraft {
   id?: string;
   title: string;
   description: string;
+  /** Lesson length as mm:ss (stored on the backend as whole seconds) */
+  duration: string;
   is_free: boolean;
   published: boolean;
   video_id?: string;
@@ -42,9 +45,49 @@ export interface SeasonDraft {
 let _keyCounter = 0;
 const newKey = () => `k-${++_keyCounter}`;
 
+const DEFAULT_DURATION = '00:00';
+
+/** mm:ss (or hh:mm:ss) → whole seconds. Bad input falls back to 0. */
+export function durationToSeconds(value: string): number {
+  const parts = value.split(':').map((p) => Number(p));
+  if (parts.some((n) => Number.isNaN(n) || n < 0)) return 0;
+  return parts.reduce((acc, n) => acc * 60 + n, 0);
+}
+
+/** Whole seconds → mm:ss (zero-padded). */
+export function secondsToDuration(total?: number | null): string {
+  if (!total || total < 0) return DEFAULT_DURATION;
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+/**
+ * Pre-publish gate. Returns a translation key for the first problem found, or
+ * null when the curriculum is publishable. Kept pure so it is unit-testable.
+ */
+export function validateForPublish(
+  seasons: SeasonDraft[],
+  lessons: LessonDraft[]
+): string | null {
+  if (seasons.some((s) => !s.title.trim())) {
+    return 'courses.publishSeasonTitleRequired';
+  }
+  if (lessons.some((l) => !l.title.trim())) {
+    return 'courses.publishLessonTitleRequired';
+  }
+  const hasEmptySeason = seasons.some(
+    (s) => !lessons.some((l) => l.seasonClientKey === s.clientKey)
+  );
+  if (hasEmptySeason) return 'courses.publishEmptySeason';
+  if (lessons.length === 0) return 'courses.publishNeedsLesson';
+  return null;
+}
+
 export const emptyLesson = (seasonClientKey?: string): LessonDraft => ({
   title: '',
   description: '',
+  duration: DEFAULT_DURATION,
   is_free: false,
   published: false,
   clientKey: newKey(),
@@ -66,6 +109,7 @@ function extractId(resp: unknown): string | undefined {
 
 export function useCourseForm(courseId?: string) {
   const router = useRouter();
+  const { t } = useTranslation();
   const { selectedAcademy } = useStore();
   const isEdit = courseId !== undefined;
 
@@ -140,6 +184,7 @@ export function useCourseForm(courseId?: string) {
             id: l.id,
             title: l.title,
             description: l.description ?? '',
+            duration: secondsToDuration(l.duration),
             is_free: l.is_free,
             published: l.is_published,
             video_id: l.video_id,
@@ -271,6 +316,14 @@ export function useCourseForm(courseId?: string) {
       }
       if (isSaving) return;
 
+      if (data.published) {
+        const problem = validateForPublish(seasons, lessons);
+        if (problem) {
+          toast.error(t(problem));
+          return;
+        }
+      }
+
       setIsSaving(true);
       try {
         // Create / update course
@@ -306,6 +359,7 @@ export function useCourseForm(courseId?: string) {
                 id: l.id,
                 title: l.title.trim(),
                 description: l.description.trim() || undefined,
+                duration: durationToSeconds(l.duration),
                 is_free: l.is_free,
                 published: l.published,
                 video_id: l.video_id,
@@ -336,6 +390,7 @@ export function useCourseForm(courseId?: string) {
                 .map((l) => ({
                   title: l.title.trim(),
                   description: l.description.trim() || undefined,
+                  duration: durationToSeconds(l.duration),
                   is_free: l.is_free,
                   published: l.published,
                   video_id: l.video_id,
@@ -351,6 +406,7 @@ export function useCourseForm(courseId?: string) {
             .map((l) => ({
               title: l.title.trim(),
               description: l.description.trim() || undefined,
+              duration: durationToSeconds(l.duration),
               is_free: l.is_free,
               published: l.published,
               video_id: l.video_id,
@@ -370,7 +426,11 @@ export function useCourseForm(courseId?: string) {
         }
 
         toast.success(isEdit ? 'Course updated' : 'Course created');
-        router.push(`/courses/${courseDbId}`);
+        // Edit stays on the detail view; a fresh course goes straight to the
+        // curriculum step (step 2) so the manager can add seasons & lessons.
+        router.push(
+          isEdit ? `/courses/${courseDbId}` : `/courses/${courseDbId}/edit`
+        );
       } catch (err) {
         ErrorHandler.handleApiError(err);
       } finally {
@@ -387,7 +447,8 @@ export function useCourseForm(courseId?: string) {
       lessons,
       deletedSeasonIds,
       deletedLessonIds,
-      router
+      router,
+      t
     ]
   );
 

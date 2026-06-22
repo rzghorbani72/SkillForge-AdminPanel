@@ -185,6 +185,16 @@ export function SortableLessonRow({
               className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
+          <div className="space-y-1">
+            <Label className="text-xs">{t('courses.lessonDuration')}</Label>
+            <Input
+              value={lesson.duration}
+              onChange={(e) => onUpdate({ duration: e.target.value })}
+              placeholder="00:00"
+              inputMode="numeric"
+              className="h-8 w-28 text-sm"
+            />
+          </div>
           {seasons.length > 0 && (
             <div className="space-y-1">
               <Label className="text-xs">{t('courses.season')}</Label>

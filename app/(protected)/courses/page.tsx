@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, BookOpen } from 'lucide-react';
 import { useStore } from '@/hooks/useStore';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,6 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { Building2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import PageContainer from '@/components/layout/page-container';
-import NewCourseModal from '@/components/course/NewCourseModal';
 import useCourses, { CourseWithRevenue } from '@/components/course/useCourses';
 import { CourseCard } from '@/components/course/CourseCard';
 import { CourseRow } from '@/components/course/CourseRow';
@@ -17,13 +17,12 @@ import { CourseFilterBar } from '@/components/course/CourseFilterBar';
 import { ConfirmDeleteDialog } from '@/components/shared/ConfirmDeleteDialog';
 
 export default function CoursesPage() {
+  const router = useRouter();
   const { selectedAcademy } = useStore();
   const { t } = useTranslation();
 
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [category, setCategory] = useState<string>('all');
-  const [showWizard, setShowWizard] = useState(false);
-  const [editCourseId, setEditCourseId] = useState<string | undefined>();
   const [courseToDelete, setCourseToDelete] =
     useState<CourseWithRevenue | null>(null);
 
@@ -33,13 +32,15 @@ export default function CoursesPage() {
     searchTerm,
     setSearchTerm,
     pricingFilter,
-    refresh,
     handleDeleteCourse
   } = useCourses();
 
+  function handleCreate() {
+    router.push('/courses/create');
+  }
+
   function handleEditCard(course: CourseWithRevenue) {
-    setEditCourseId(course.id);
-    setShowWizard(true);
+    router.push(`/courses/${course.id}/edit`);
   }
 
   const categories = (() => {
@@ -103,11 +104,7 @@ export default function CoursesPage() {
         <div className="py-16 text-center text-muted-foreground">
           <BookOpen className="mx-auto mb-3 h-10 w-10 opacity-30" />
           <p className="text-sm">{t('courses.noCourses')}</p>
-          <Button
-            size="sm"
-            className="mt-4 gap-1.5"
-            onClick={() => setShowWizard(true)}
-          >
+          <Button size="sm" className="mt-4 gap-1.5" onClick={handleCreate}>
             <Plus className="h-3.5 w-3.5" /> {t('courses.newCourse')}
           </Button>
         </div>
@@ -127,7 +124,8 @@ export default function CoursesPage() {
             />
           ))}
           <button
-            onClick={() => setShowWizard(true)}
+            type="button"
+            onClick={handleCreate}
             className="flex min-h-[260px] flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-border/70 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -177,16 +175,6 @@ export default function CoursesPage() {
           </table>
         </div>
       )}
-
-      <NewCourseModal
-        open={showWizard}
-        onClose={() => {
-          setShowWizard(false);
-          setEditCourseId(undefined);
-        }}
-        onCreated={refresh}
-        editCourseId={editCourseId}
-      />
 
       <ConfirmDeleteDialog
         open={!!courseToDelete}

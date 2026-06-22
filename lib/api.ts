@@ -791,6 +791,7 @@ class ApiClient {
       lessons?: Array<{
         title: string;
         description?: string;
+        duration?: number;
         is_free?: boolean;
         published?: boolean;
         video_id?: string;
@@ -801,6 +802,7 @@ class ApiClient {
     lessons?: Array<{
       title: string;
       description?: string;
+      duration?: number;
       is_free?: boolean;
       published?: boolean;
       video_id?: string;
@@ -845,6 +847,7 @@ class ApiClient {
         id?: string;
         title: string;
         description?: string;
+        duration?: number;
         is_free?: boolean;
         published?: boolean;
         video_id?: string;
