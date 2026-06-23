@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   X,
   Check,
@@ -84,7 +84,7 @@ export default function UITemplateSettingsPage() {
   const [showCustomizer, setShowCustomizer] = useState(false);
   const [viewport, setViewport] = useState<ViewportMode>('desktop');
   const [primaryColor, setPrimaryColor] = useState('#3b82f6');
-  const [fontFamily, setFontFamily] = useState<FontFamily>('IRANYekan');
+  const [fontFamily, setFontFamily] = useState<FontFamily>('vazirmatn');
   const [borderRadius, setBorderRadius] = useState<BorderRadius>('soft');
   const [shadow, setShadow] = useState<Shadow>('medium');
   const [darkMode, setDarkMode] = useState<boolean | null>(null);
@@ -107,6 +107,10 @@ export default function UITemplateSettingsPage() {
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
+
+  // A typing burst captures the pre-burst block state once; it is committed to
+  // history only after the user pauses, so undo jumps per edit, not per key.
+  const pendingHistoryRef = useRef<UIBlockConfig[] | null>(null);
 
   const savedAgo = useRelativeTime(lastSavedAt);
 
@@ -144,6 +148,7 @@ export default function UITemplateSettingsPage() {
     setSelectedBlockId(null);
     setHistory([]);
     setFuture([]);
+    pendingHistoryRef.current = null;
     setLastSavedAt(null);
     setViewport('desktop');
     setCoverImage(preset.preview ?? null);
@@ -372,22 +377,59 @@ export default function UITemplateSettingsPage() {
   const debouncedSaveTheme = useDebouncedCallback(saveThemeDraft, 800);
   const debouncedSaveBlocks = useDebouncedCallback(saveBlocksDraft, 800);
 
-  // Single funnel for every draft-block mutation, so undo history is complete.
-  // Snapshots the current blocks onto the history stack before applying `next`.
+  const pushHistory = useCallback((snapshot: UIBlockConfig[]) => {
+    setHistory((h) => {
+      const next = [...h, snapshot];
+      return next.length > HISTORY_LIMIT ? next.slice(1) : next;
+    });
+    setFuture([]);
+  }, []);
+
+  const flushPendingHistory = useCallback(() => {
+    if (pendingHistoryRef.current) {
+      pushHistory(pendingHistoryRef.current);
+      pendingHistoryRef.current = null;
+    }
+  }, [pushHistory]);
+
+  const debouncedFlushHistory = useDebouncedCallback(flushPendingHistory, 600);
+
+  // Discrete structural change (move/delete/duplicate/reorder/visibility) —
+  // each is its own undo step, so any in-progress typing burst is finalized
+  // first, then the current state is snapshotted.
   const commitBlocks = useCallback(
     (next: UIBlockConfig[]) => {
-      setHistory((h) => {
-        const snapshot = [...h, draftBlocks];
-        return snapshot.length > HISTORY_LIMIT ? snapshot.slice(1) : snapshot;
-      });
-      setFuture([]);
+      flushPendingHistory();
+      pushHistory(draftBlocks);
       setDraftBlocks(next);
       debouncedSaveBlocks(next);
     },
-    [draftBlocks, debouncedSaveBlocks]
+    [draftBlocks, flushPendingHistory, pushHistory, debouncedSaveBlocks]
+  );
+
+  // Continuous content edit (typing) — coalesced into one undo step.
+  const commitContent = useCallback(
+    (next: UIBlockConfig[]) => {
+      if (pendingHistoryRef.current === null) {
+        pendingHistoryRef.current = draftBlocks;
+      }
+      setDraftBlocks(next);
+      debouncedSaveBlocks(next);
+      debouncedFlushHistory();
+    },
+    [draftBlocks, debouncedSaveBlocks, debouncedFlushHistory]
   );
 
   const undo = useCallback(() => {
+    // An unfinished typing burst is the most recent step to reverse.
+    if (pendingHistoryRef.current) {
+      const prev = pendingHistoryRef.current;
+      pendingHistoryRef.current = null;
+      setFuture((f) => [...f, draftBlocks]);
+      setDraftBlocks(prev);
+      void saveBlocksDraft(prev);
+      return;
+    }
     if (history.length === 0) return;
     const prev = history[history.length - 1];
     setHistory((h) => h.slice(0, -1));
@@ -477,7 +519,7 @@ export default function UITemplateSettingsPage() {
     blockId: string,
     config: Record<string, unknown>
   ) => {
-    commitBlocks(
+    commitContent(
       draftBlocks.map((b) => (b.id === blockId ? { ...b, config } : b))
     );
   };
@@ -599,6 +641,7 @@ export default function UITemplateSettingsPage() {
     setDraftBlocks(selectedPreset.blocks);
     setHistory([]);
     setFuture([]);
+    pendingHistoryRef.current = null;
     await saveBlocksDraft(selectedPreset.blocks);
   };
 

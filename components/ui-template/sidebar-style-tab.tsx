@@ -15,7 +15,7 @@ import type {
   HeadingScale,
   FontFamily
 } from './sidebar-types';
-import { FONT_FAMILIES } from './sidebar-types';
+import { FONT_OPTIONS } from './sidebar-types';
 import { AccordionSection } from './sidebar-primitives';
 
 const PRESET_COLORS = [
@@ -227,18 +227,19 @@ function FontFamilySection({
   return (
     <AccordionSection title="فونت">
       <div className="grid grid-cols-2 gap-1.5">
-        {FONT_FAMILIES.map((font) => (
+        {FONT_OPTIONS.map((font) => (
           <button
-            key={font}
+            key={font.slug}
             type="button"
-            onClick={() => onFontFamilyChange(font)}
+            onClick={() => onFontFamilyChange(font.slug)}
+            style={{ fontFamily: font.preview }}
             className={`rounded-lg border py-2 text-sm font-medium transition-colors ${
-              fontFamily === font
+              fontFamily === font.slug
                 ? 'border-blue-500 bg-blue-600 text-white'
                 : 'border-zinc-700 text-zinc-300 hover:border-zinc-500'
             }`}
           >
-            {font}
+            {font.label}
           </button>
         ))}
       </div>

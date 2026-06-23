@@ -37,7 +37,7 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
     backgroundDark: '#0f172a',
     surface: '#f8fafc'
   },
-  typography: { fontFamily: 'Inter', displayWeight: '700' },
+  typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
   shape: { borderRadius: 'soft', shadow: 'medium' },
   darkMode: null
 };
@@ -56,7 +56,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
       backgroundDark: '#0f172a',
       surface: '#ffffff'
     },
-    typography: { fontFamily: 'IRANYekan', displayWeight: '900' },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '900' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     darkMode: null
   },
@@ -73,7 +73,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
       backgroundDark: '#0f1117',
       surface: '#ffffff'
     },
-    typography: { fontFamily: 'IRANYekan', displayWeight: '700' },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     darkMode: null
   },
@@ -92,7 +92,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
       backgroundDark: '#0f172a',
       surface: '#ffffff'
     },
-    typography: { fontFamily: 'IRANYekan', displayWeight: '900' },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '900' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     darkMode: null
   }

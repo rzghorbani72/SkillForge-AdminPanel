@@ -5,13 +5,24 @@ export type ContainerWidth = 'narrow' | 'standard' | 'wide' | 'full';
 export type HeadingScale = 'compact' | 'standard' | 'large';
 export type ViewportMode = 'mobile' | 'tablet' | 'desktop';
 
-export const FONT_FAMILIES = [
-  'IRANYekan',
-  'Vazir',
-  'Shabnam',
-  'Estedad'
+// Slugs mirror Backend FONT_FAMILY_SLUGS + edusphere font stacks. The public
+// site only loads these families, so the picker can never offer a font that
+// fails to render. `preview` is the CSS stack used for the in-picker label.
+export const FONT_OPTIONS = [
+  {
+    slug: 'vazirmatn',
+    label: 'وزیرمتن (مدرن)',
+    preview: "'Vazirmatn', sans-serif"
+  },
+  { slug: 'markazi', label: 'مرکزی (سریف)', preview: "'Markazi Text', serif" },
+  {
+    slug: 'noto-naskh',
+    label: 'نسخ (سنتی)',
+    preview: "'Noto Naskh Arabic', serif"
+  },
+  { slug: 'lalezar', label: 'لاله‌زار (تیتر)', preview: "'Lalezar', cursive" }
 ] as const;
-export type FontFamily = (typeof FONT_FAMILIES)[number];
+export type FontFamily = (typeof FONT_OPTIONS)[number]['slug'];
 
 /**
  * Save action surfaced in the sidebar footer:
