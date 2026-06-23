@@ -9,11 +9,13 @@ import type { CourseWithRevenue } from './useCourses';
 export function CourseCard({
   course,
   onEdit,
-  onDelete
+  onDelete,
+  onClick
 }: {
   course: CourseWithRevenue;
   onEdit?: () => void;
   onDelete?: () => void;
+  onClick?: () => void;
 }) {
   const { t } = useTranslation();
   const hue = courseHue(course.id);
@@ -44,7 +46,10 @@ export function CourseCard({
     : ((course as any).status ?? 'DRAFT');
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card transition-all duration-200 hover:border-border/80">
+    <div
+      className={`overflow-hidden rounded-xl border border-border bg-card transition-all duration-200 hover:border-border/80${onClick ? ' cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <div
         className="relative aspect-video overflow-hidden"
         style={{
@@ -117,7 +122,7 @@ export function CourseCard({
             <div className="mb-0.5 text-[10.5px] uppercase tracking-wider text-muted-foreground">
               {t('courses.student')}
             </div>
-            <div className="font-mono text-[13px] font-semibold">
+            <div className="text-[13px] font-semibold">
               {formatNumber(studentsCount)}
             </div>
           </div>
@@ -125,7 +130,7 @@ export function CourseCard({
             <div className="mb-0.5 text-[10.5px] uppercase tracking-wider text-muted-foreground">
               {t('courses.price')}
             </div>
-            <div className="font-mono text-[13px] font-semibold text-primary">
+            <div className="text-[13px] font-semibold text-primary">
               {pricingType === 'FREE'
                 ? t('courses.free')
                 : priceVal > 0

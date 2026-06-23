@@ -119,6 +119,7 @@ export default function CoursesPage() {
             <CourseCard
               key={c.id}
               course={c}
+              onClick={() => router.push(`/courses/${c.id}`)}
               onEdit={() => handleEditCard(c)}
               onDelete={() => setCourseToDelete(c)}
             />
@@ -167,6 +168,7 @@ export default function CoursesPage() {
                 <CourseRow
                   key={c.id}
                   course={c}
+                  onClick={() => router.push(`/courses/${c.id}`)}
                   onEdit={() => handleEditCard(c)}
                   onDelete={() => setCourseToDelete(c)}
                 />

@@ -9,11 +9,13 @@ import type { CourseWithRevenue } from './useCourses';
 export function CourseRow({
   course,
   onEdit,
-  onDelete
+  onDelete,
+  onClick
 }: {
   course: CourseWithRevenue;
   onEdit?: () => void;
   onDelete?: () => void;
+  onClick?: () => void;
 }) {
   const { t } = useTranslation();
   const hue = courseHue(course.id);
@@ -41,7 +43,10 @@ export function CourseRow({
     course.lessons_count ?? (course as any)._count?.Lesson ?? 0;
 
   return (
-    <tr className="border-b border-border/50 transition-colors hover:bg-muted/30">
+    <tr
+      className={`border-b border-border/50 transition-colors hover:bg-muted/30${onClick ? ' cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
           <div

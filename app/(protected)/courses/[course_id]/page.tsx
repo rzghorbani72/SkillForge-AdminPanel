@@ -190,10 +190,10 @@ export default function CourseDetailPage() {
         status: 'PAID',
         limit: 500
       })) as any;
-      const list: any[] = Array.isArray(data)
+      const raw = Array.isArray(data)
         ? data
         : (data?.payments ?? data?.data ?? []);
-      setPayments(list);
+      setPayments(Array.isArray(raw) ? raw : []);
     } catch {
       setPayments([]);
     } finally {
