@@ -30,7 +30,7 @@ export function ProtectedLayoutWrapper({
         <Sidebar />
         <main className="flex flex-1 flex-col overflow-hidden">
           <Header />
-          <div className="beautiful-scrollbar flex-1 overflow-auto">
+          <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
             {children}
           </div>
         </main>
