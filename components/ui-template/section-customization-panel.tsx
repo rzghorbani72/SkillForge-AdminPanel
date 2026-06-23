@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   X,
   ChevronDown,
@@ -8,11 +8,17 @@ import {
   ArrowUp,
   ArrowDown,
   Trash2,
+  Copy,
+  Eye,
   Upload,
-  AlertTriangle
+  AlertTriangle,
+  Bold,
+  Italic,
+  Quote
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { BlockThumbnail } from '@/components/ui-template/template-preview';
 import type { UIBlockConfig } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -38,6 +44,8 @@ export interface SectionCustomizationPanelProps {
   onUpdate: (blockId: string, config: Record<string, unknown>) => void;
   onMove: (blockId: string, dir: 'up' | 'down') => void;
   onDelete: (blockId: string) => void;
+  onDuplicate: (blockId: string) => void;
+  onToggleVisible: (blockId: string, visible: boolean) => void;
   onClose: () => void;
 }
 
@@ -49,6 +57,8 @@ export function SectionCustomizationPanel({
   onUpdate,
   onMove,
   onDelete,
+  onDuplicate,
+  onToggleVisible,
   onClose
 }: SectionCustomizationPanelProps) {
   const { t } = useTranslation();
@@ -97,6 +107,11 @@ export function SectionCustomizationPanel({
         </button>
       </div>
 
+      {/* Section thumbnail — confirms which section is selected */}
+      <div className="flex-shrink-0 border-b border-zinc-700 px-4 py-2.5">
+        <BlockThumbnail block={block} />
+      </div>
+
       {/* Tabs */}
       <div className="flex flex-shrink-0 gap-1 border-b border-zinc-700 px-3 py-2">
         {TABS.map(({ id, label }) => (
@@ -140,6 +155,8 @@ export function SectionCustomizationPanel({
             canDelete={canDelete}
             onMove={onMove}
             onDelete={onDelete}
+            onDuplicate={onDuplicate}
+            onToggleVisible={onToggleVisible}
           />
         )}
       </div>
@@ -216,6 +233,63 @@ function ContentTab({
   );
 }
 
+// Minimal inline formatting: wraps the selected text in an HTML tag. Templates
+// render these fields as raw HTML, so the stored value keeps the tags.
+function RichTextArea({
+  value,
+  placeholder,
+  onChange
+}: {
+  value: string;
+  placeholder?: string;
+  onChange: (v: string) => void;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  const wrap = (tag: string) => {
+    const el = ref.current;
+    if (!el) return;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const selected = value.slice(start, end) || '';
+    const next =
+      value.slice(0, start) + `<${tag}>${selected}</${tag}>` + value.slice(end);
+    onChange(next);
+  };
+
+  const tools: { tag: string; icon: typeof Bold; label: string }[] = [
+    { tag: 'strong', icon: Bold, label: 'پررنگ' },
+    { tag: 'em', icon: Italic, label: 'کج' },
+    { tag: 'blockquote', icon: Quote, label: 'نقل‌قول' }
+  ];
+
+  return (
+    <div className="space-y-1">
+      <div className="flex gap-1">
+        {tools.map(({ tag, icon: Icon, label }) => (
+          <button
+            key={tag}
+            type="button"
+            title={label}
+            onClick={() => wrap(tag)}
+            className="rounded border border-zinc-600 p-1 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+          >
+            <Icon className="h-3 w-3" />
+          </button>
+        ))}
+      </div>
+      <textarea
+        ref={ref}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={2}
+        className="w-full resize-none rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500 focus:outline-none"
+      />
+    </div>
+  );
+}
+
 function Field({
   field,
   cfg,
@@ -246,12 +320,10 @@ function Field({
     <div className="space-y-1.5">
       <span className="text-xs text-zinc-300">{field.label}</span>
       {field.kind === 'textarea' ? (
-        <textarea
+        <RichTextArea
           value={value}
-          onChange={(e) => set(field.key, e.target.value)}
           placeholder={field.placeholder}
-          rows={2}
-          className="w-full resize-none rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500 focus:outline-none"
+          onChange={(v) => set(field.key, v)}
         />
       ) : (
         <Input
@@ -493,7 +565,9 @@ function LayoutTab({
   canMoveDown,
   canDelete,
   onMove,
-  onDelete
+  onDelete,
+  onDuplicate,
+  onToggleVisible
 }: {
   block: UIBlockConfig;
   cfg: Record<string, unknown>;
@@ -504,11 +578,28 @@ function LayoutTab({
   canDelete: boolean;
   onMove: (blockId: string, dir: 'up' | 'down') => void;
   onDelete: (blockId: string) => void;
+  onDuplicate: (blockId: string) => void;
+  onToggleVisible: (blockId: string, visible: boolean) => void;
 }) {
   const { t } = useTranslation();
+  const isVisible = block.isVisible !== false;
 
   return (
     <div className="space-y-4">
+      {/* Header/footer stay structural and are never hideable. */}
+      {canDelete && (
+        <div className="flex items-center justify-between rounded-lg border border-zinc-700 bg-zinc-800/40 px-3 py-2">
+          <span className="flex items-center gap-2 text-xs text-zinc-300">
+            <Eye className="h-3.5 w-3.5" />
+            {t('sitePreview.panelSectionVisible')}
+          </span>
+          <Switch
+            checked={isVisible}
+            onCheckedChange={(v) => onToggleVisible(block.id, v)}
+          />
+        </div>
+      )}
+
       {schema.hasAlignment && (
         <ChipRow
           title={t('sitePreview.panelTextAlignment')}
@@ -571,6 +662,16 @@ function LayoutTab({
             {t('settings.moveDown')}
           </button>
         </div>
+        {canDelete && (
+          <button
+            type="button"
+            onClick={() => onDuplicate(block.id)}
+            className="flex w-full items-center justify-center gap-1.5 rounded border border-zinc-600 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+          >
+            <Copy className="h-3.5 w-3.5" />
+            {t('sitePreview.panelDuplicateSection')}
+          </button>
+        )}
         {canDelete && (
           <button
             type="button"

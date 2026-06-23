@@ -2072,6 +2072,8 @@ export const ar = {
     panelColumns: 'الأعمدة',
     panelPositionInPage: 'الموقع في الصفحة',
     panelDeleteSection: 'حذف هذا القسم',
+    panelDuplicateSection: 'نسخ القسم',
+    panelSectionVisible: 'إظهار هذا القسم',
     sidebarTitle: 'تخصيص القالب',
     sidebarSaving: 'جاري الحفظ...',
     sidebarSaveAsTemplate: 'حفظ كقالب مخصص',

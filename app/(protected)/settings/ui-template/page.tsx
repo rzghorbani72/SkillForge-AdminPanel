@@ -8,9 +8,11 @@ import {
   Wand2,
   LayoutTemplate,
   Pencil,
-  Eye,
-  Lock,
-  Trash2
+  Smartphone,
+  Tablet,
+  Monitor,
+  Undo2,
+  Redo2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,12 +21,12 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import type { TemplatePreset, UIBlockConfig } from '@/types/api';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
-import { TemplatePreview } from '@/components/ui-template/template-preview';
 import {
   buildTemplatePreviewUrl,
   appendPreviewCacheBuster
 } from '@/lib/ui-template/preview-url';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
+import { useRelativeTime } from '@/lib/ui-template/use-relative-time';
 import {
   TemplateCustomizationSidebar,
   type SaveMode
@@ -32,28 +34,24 @@ import {
 import { SectionCustomizationPanel } from '@/components/ui-template/section-customization-panel';
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
 import { TemplateConfirmDialog } from '@/components/ui-template/template-confirm-dialog';
+import { EditorPreview } from '@/components/ui-template/editor-preview';
+import {
+  TemplateSection,
+  resolveTemplateColors,
+  getTemplateCategory,
+  CATEGORY_LABELS,
+  type TemplateCategory
+} from '@/components/ui-template/gallery-cards';
+import type {
+  BorderRadius,
+  Shadow,
+  SectionSpacing,
+  ContainerWidth,
+  HeadingScale,
+  FontFamily,
+  ViewportMode
+} from '@/components/ui-template/sidebar-types';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
-
-// Card/preview swatches follow the template's saved theme when present, so a
-// dedicated template shows its real palette instead of the design-system default.
-function resolveTemplateColors(preset: TemplatePreset) {
-  const ds = getDesignSystem(preset.id);
-  const t = preset.theme ?? null;
-  const pick = (key: string, fallback: string) =>
-    t && typeof t[key] === 'string' && t[key] ? t[key] : fallback;
-  return {
-    background: pick('background_color', ds.colors.background),
-    primary: pick('primary_color', ds.colors.primary),
-    secondary: pick('secondary_color', ds.colors.secondary),
-    accent: pick('accent_color', ds.colors.accent)
-  };
-}
-
-type BorderRadius = 'sharp' | 'soft' | 'rounded';
-type Shadow = 'none' | 'subtle' | 'medium' | 'strong';
-type SectionSpacing = 'compact' | 'comfortable' | 'spacious';
-type ContainerWidth = 'narrow' | 'standard' | 'wide' | 'full';
-type HeadingScale = 'compact' | 'standard' | 'large';
 
 // Commit action awaiting explicit confirmation. Drafts keep auto-saving;
 // only the committing step (publish/override/fork/delete) is gated.
@@ -62,6 +60,8 @@ type PendingSave =
   | { kind: 'override' }
   | { kind: 'fork' }
   | { kind: 'delete'; preset: TemplatePreset };
+
+const HISTORY_LIMIT = 30;
 
 export default function UITemplateSettingsPage() {
   const { user } = useAuthUser();
@@ -76,10 +76,15 @@ export default function UITemplateSettingsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<
+    TemplateCategory | 'all'
+  >('all');
 
   // Customizer state
   const [showCustomizer, setShowCustomizer] = useState(false);
+  const [viewport, setViewport] = useState<ViewportMode>('desktop');
   const [primaryColor, setPrimaryColor] = useState('#3b82f6');
+  const [fontFamily, setFontFamily] = useState<FontFamily>('IRANYekan');
   const [borderRadius, setBorderRadius] = useState<BorderRadius>('soft');
   const [shadow, setShadow] = useState<Shadow>('medium');
   const [darkMode, setDarkMode] = useState<boolean | null>(null);
@@ -89,7 +94,10 @@ export default function UITemplateSettingsPage() {
     useState<ContainerWidth>('standard');
   const [headingScale, setHeadingScale] = useState<HeadingScale>('standard');
   const [draftBlocks, setDraftBlocks] = useState<UIBlockConfig[]>([]);
+  const [history, setHistory] = useState<UIBlockConfig[][]>([]);
+  const [future, setFuture] = useState<UIBlockConfig[][]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<{
@@ -97,10 +105,10 @@ export default function UITemplateSettingsPage() {
     type: string;
   } | null>(null);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
-  // Cover image for a dedicated template; seeded from the source template so it
-  // inherits a meaningful image until the manager replaces it.
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
+
+  const savedAgo = useRelativeTime(lastSavedAt);
 
   const iframeSrc = baseIframeSrc
     ? appendPreviewCacheBuster(baseIframeSrc, refreshKey)
@@ -134,11 +142,13 @@ export default function UITemplateSettingsPage() {
     setIsApplied(false);
     setShowCustomizer(false);
     setSelectedBlockId(null);
+    setHistory([]);
+    setFuture([]);
+    setLastSavedAt(null);
+    setViewport('desktop');
     setCoverImage(preset.preview ?? null);
     setIsPreviewLoading(true);
 
-    // Base presets seed their palette from the design system; dedicated
-    // templates carry their own saved theme, restored server-side on apply.
     const isDedicated = preset.visibility === 'DEDICATED';
     const ds = getDesignSystem(preset.id);
     if (!isDedicated) {
@@ -146,14 +156,13 @@ export default function UITemplateSettingsPage() {
       setBorderRadius(ds.shape.borderRadius);
       setShadow(ds.shape.shadow);
       setDarkMode(ds.darkMode);
+      setFontFamily(ds.typography.fontFamily as FontFamily);
     }
     setDraftBlocks(preset.blocks);
 
     try {
       await apiClient.applyTemplatePreset(preset.id);
 
-      // Seeding the draft theme only applies to base presets — doing it for a
-      // dedicated template would overwrite its restored palette with defaults.
       if (!isDedicated) {
         const { name: _omitName, ...themeSeed } = buildThemePayload(ds);
         await apiClient.saveThemeDraft(themeSeed);
@@ -162,12 +171,10 @@ export default function UITemplateSettingsPage() {
       const themeRaw = await apiClient
         .getCurrentThemeConfig()
         .catch(() => null);
-
       const cfg = ((themeRaw as Record<string, any> | null)?.data?.configs ??
         (themeRaw as Record<string, any> | null)?.configs ??
         {}) as Record<string, string | boolean | null>;
 
-      // Hydrate the sidebar from a dedicated template's restored palette.
       if (isDedicated) {
         if (cfg.primary_color) setPrimaryColor(cfg.primary_color as string);
         if (cfg.border_radius_style)
@@ -181,8 +188,7 @@ export default function UITemplateSettingsPage() {
               : null
         );
       }
-
-      // Design-size tokens are not part of a preset palette and survive a switch.
+      if (cfg.font_family) setFontFamily(cfg.font_family as FontFamily);
       if (cfg.section_spacing)
         setSectionSpacing(cfg.section_spacing as SectionSpacing);
       if (cfg.container_width)
@@ -190,13 +196,7 @@ export default function UITemplateSettingsPage() {
       if (cfg.heading_scale) setHeadingScale(cfg.heading_scale as HeadingScale);
 
       setBaseIframeSrc(
-        buildTemplatePreviewUrl(
-          preset.id,
-          null,
-          // PUBLIC templates preview as neutral sample data; DEDICATED ones
-          // belong to an academy and show its real content.
-          { sample: !isDedicated }
-        )
+        buildTemplatePreviewUrl(preset.id, null, { sample: !isDedicated })
       );
       setActivePresetId(preset.id);
     } catch (error) {
@@ -207,12 +207,28 @@ export default function UITemplateSettingsPage() {
     }
   };
 
+  // Quick apply: apply the preset and publish it live without opening the
+  // editor — the fast path for a returning manager who knows the template.
+  const handleQuickApply = async (preset: TemplatePreset) => {
+    try {
+      setIsPreviewLoading(true);
+      await apiClient.applyTemplatePreset(preset.id);
+      const ds = getDesignSystem(preset.id);
+      const { name: _omit, ...themeSeed } = buildThemePayload(ds);
+      await apiClient.saveThemeDraft(themeSeed);
+      await apiClient.publishSite();
+      setActivePresetId(preset.id);
+      ErrorHandler.showSuccess(`قالب «${preset.name}» منتشر شد`);
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsPreviewLoading(false);
+    }
+  };
+
   const doPublish = async () => {
     setIsPublishing(true);
     try {
-      // Publishing copies the draft (template + theme) to the live site —
-      // without this, the public academy page keeps showing the previously
-      // published design while the preview shows the new draft.
       await apiClient.publishSite();
       setIsApplied(true);
       ErrorHandler.showSuccess('قالب با موفقیت روی سایت منتشر شد');
@@ -248,9 +264,6 @@ export default function UITemplateSettingsPage() {
   const isAdmin = user?.role === 'ADMIN';
   const isPublicPreset = selectedPreset?.visibility === 'PUBLIC';
   const academyName = user?.currentAcademy?.name ?? '';
-  // Admin on public master → 'both' (shows master-template notice + isAdminEditing).
-  // Admin on dedicated → 'admin-override' (isAdminEditing + "ذخیره و انتشار").
-  // Manager always forks a dedicated copy stamped with their academy ('copy').
   const saveMode: SaveMode = isAdmin
     ? isPublicPreset
       ? 'both'
@@ -261,13 +274,11 @@ export default function UITemplateSettingsPage() {
     await apiClient.saveThemeDraft({
       border_radius_style: borderRadius,
       shadow_style: shadow,
-      dark_mode: darkMode
+      dark_mode: darkMode,
+      font_family: fontFamily
     });
   };
 
-  // Manager on public preset OR admin choosing copy: fork a new dedicated
-  // template. The name arrives from the confirmation dialog, pre-stamped with
-  // the academy name so the save never blocks on manual input.
   const doSaveAsCopy = async (name: string) => {
     setIsSaving(true);
     try {
@@ -291,7 +302,6 @@ export default function UITemplateSettingsPage() {
     }
   };
 
-  // Manager on own dedicated template OR admin on dedicated: override in-place.
   const doSaveOverride = async () => {
     if (!selectedPreset) return;
     setIsSaving(true);
@@ -299,13 +309,11 @@ export default function UITemplateSettingsPage() {
       await flushStyleDraft();
       await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
       if (isAdmin && isPublicPreset) {
-        // Admin overriding a public template writes blocks + cover back to the base.
         await apiClient.overridePublicTemplate(selectedPreset.id, {
           blocks: draftBlocks,
           ...(coverImage ? { preview: coverImage } : {})
         });
       } else {
-        // Manager overriding their own dedicated template.
         const saved = (await apiClient.saveDraftAsTemplate({
           name: selectedPreset.name,
           preview: coverImage ?? undefined
@@ -338,6 +346,7 @@ export default function UITemplateSettingsPage() {
         });
         await apiClient.saveThemeDraft({ ...payload, dark_mode: dm });
         setRefreshKey((k) => k + 1);
+        setLastSavedAt(Date.now());
       } catch (error) {
         ErrorHandler.handleApiError(error);
       } finally {
@@ -352,6 +361,7 @@ export default function UITemplateSettingsPage() {
     try {
       await apiClient.saveUITemplateDraft({ blocks });
       setRefreshKey((k) => k + 1);
+      setLastSavedAt(Date.now());
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -361,6 +371,56 @@ export default function UITemplateSettingsPage() {
 
   const debouncedSaveTheme = useDebouncedCallback(saveThemeDraft, 800);
   const debouncedSaveBlocks = useDebouncedCallback(saveBlocksDraft, 800);
+
+  // Single funnel for every draft-block mutation, so undo history is complete.
+  // Snapshots the current blocks onto the history stack before applying `next`.
+  const commitBlocks = useCallback(
+    (next: UIBlockConfig[]) => {
+      setHistory((h) => {
+        const snapshot = [...h, draftBlocks];
+        return snapshot.length > HISTORY_LIMIT ? snapshot.slice(1) : snapshot;
+      });
+      setFuture([]);
+      setDraftBlocks(next);
+      debouncedSaveBlocks(next);
+    },
+    [draftBlocks, debouncedSaveBlocks]
+  );
+
+  const undo = useCallback(() => {
+    if (history.length === 0) return;
+    const prev = history[history.length - 1];
+    setHistory((h) => h.slice(0, -1));
+    setFuture((f) => [...f, draftBlocks]);
+    setDraftBlocks(prev);
+    void saveBlocksDraft(prev);
+  }, [history, draftBlocks, saveBlocksDraft]);
+
+  const redo = useCallback(() => {
+    if (future.length === 0) return;
+    const nextState = future[future.length - 1];
+    setFuture((f) => f.slice(0, -1));
+    setHistory((h) => [...h, draftBlocks]);
+    setDraftBlocks(nextState);
+    void saveBlocksDraft(nextState);
+  }, [future, draftBlocks, saveBlocksDraft]);
+
+  useEffect(() => {
+    if (!selectedPreset) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      const key = e.key.toLowerCase();
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if (key === 'y' || (key === 'z' && e.shiftKey)) {
+        e.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedPreset, undo, redo]);
 
   // ── Customizer handlers ─────────────────────────────────────────────────────
 
@@ -379,6 +439,19 @@ export default function UITemplateSettingsPage() {
     debouncedSaveTheme(primaryColor, borderRadius, shadow, dm);
   };
 
+  const handleFontFamilyChange = (f: FontFamily) => {
+    setFontFamily(f);
+    setIsSaving(true);
+    apiClient
+      .saveThemeDraft({ font_family: f })
+      .then(() => {
+        setRefreshKey((k) => k + 1);
+        setLastSavedAt(Date.now());
+      })
+      .catch((error) => ErrorHandler.handleApiError(error))
+      .finally(() => setIsSaving(false));
+  };
+
   const handleDesignSizeChange = (patch: {
     section_spacing?: SectionSpacing;
     container_width?: ContainerWidth;
@@ -390,30 +463,25 @@ export default function UITemplateSettingsPage() {
     setIsSaving(true);
     apiClient
       .saveThemeDraft(patch)
-      .then(() => setRefreshKey((k) => k + 1))
+      .then(() => {
+        setRefreshKey((k) => k + 1);
+        setLastSavedAt(Date.now());
+      })
       .catch((error) => ErrorHandler.handleApiError(error))
       .finally(() => setIsSaving(false));
   };
 
-  const handleBlocksChange = (blocks: UIBlockConfig[]) => {
-    setDraftBlocks(blocks);
-    debouncedSaveBlocks(blocks);
-  };
-
-  // ── Per-section panel handlers ──────────────────────────────────────────────
+  const handleBlocksChange = (blocks: UIBlockConfig[]) => commitBlocks(blocks);
 
   const handleBlockConfigChange = (
     blockId: string,
     config: Record<string, unknown>
   ) => {
-    const updated = draftBlocks.map((b) =>
-      b.id === blockId ? { ...b, config } : b
+    commitBlocks(
+      draftBlocks.map((b) => (b.id === blockId ? { ...b, config } : b))
     );
-    setDraftBlocks(updated);
-    debouncedSaveBlocks(updated);
   };
 
-  // Header stays pinned first and footer last; only the middle stack reorders.
   const handleBlockMove = (blockId: string, dir: 'up' | 'down') => {
     const sorted = [...draftBlocks].sort((a, b) => a.order - b.order);
     const header = sorted.find((b) => b.type === 'header');
@@ -430,7 +498,7 @@ export default function UITemplateSettingsPage() {
       ...middle,
       ...(footer ? [footer] : [])
     ].map((block, index) => ({ ...block, order: index + 1 }));
-    handleBlocksChange(next);
+    commitBlocks(next);
   };
 
   const handleBlockDelete = (blockId: string) => {
@@ -441,7 +509,36 @@ export default function UITemplateSettingsPage() {
       .sort((a, b) => a.order - b.order)
       .map((b, index) => ({ ...b, order: index + 1 }));
     setSelectedBlockId(null);
-    handleBlocksChange(next);
+    commitBlocks(next);
+  };
+
+  const handleBlockToggleVisible = (blockId: string, visible: boolean) => {
+    commitBlocks(
+      draftBlocks.map((b) =>
+        b.id === blockId ? { ...b, isVisible: visible } : b
+      )
+    );
+  };
+
+  const handleBlockDuplicate = (blockId: string) => {
+    const block = draftBlocks.find((b) => b.id === blockId);
+    if (!block || block.type === 'header' || block.type === 'footer') return;
+    const clone: UIBlockConfig = {
+      ...block,
+      id:
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `${block.id}-copy-${Date.now()}`,
+      config: { ...(block.config ?? {}) }
+    };
+    const sorted = [...draftBlocks].sort((a, b) => a.order - b.order);
+    const at = sorted.findIndex((b) => b.id === blockId);
+    const next = [
+      ...sorted.slice(0, at + 1),
+      clone,
+      ...sorted.slice(at + 1)
+    ].map((b, index) => ({ ...b, order: index + 1 }));
+    commitBlocks(next);
   };
 
   const handleOpenPicker = (target?: { blockId: string; type: string }) => {
@@ -449,8 +546,6 @@ export default function UITemplateSettingsPage() {
     setPickerOpen(true);
   };
 
-  // Import/swap mutate the draft server-side, so pull the canonical block list
-  // back and refresh the live preview.
   const handleSectionPicked = async () => {
     try {
       const data = (await apiClient.getCurrentUITemplate()) as Record<
@@ -468,21 +563,21 @@ export default function UITemplateSettingsPage() {
   };
 
   const handleBannerImageChange = (url: string) => {
-    const updated = draftBlocks.map((b) =>
-      b.type === 'hero' || b.type === 'slideshow'
-        ? {
-            ...b,
-            config: {
-              ...(b.config ?? {}),
-              backgroundImage: url,
-              bgImage: url,
-              bgType: 'image'
+    commitBlocks(
+      draftBlocks.map((b) =>
+        b.type === 'hero' || b.type === 'slideshow'
+          ? {
+              ...b,
+              config: {
+                ...(b.config ?? {}),
+                backgroundImage: url,
+                bgImage: url,
+                bgType: 'image'
+              }
             }
-          }
-        : b
+          : b
+      )
     );
-    setDraftBlocks(updated);
-    debouncedSaveBlocks(updated);
   };
 
   const handleReset = async () => {
@@ -493,6 +588,7 @@ export default function UITemplateSettingsPage() {
       setBorderRadius(ds.shape.borderRadius);
       setShadow(ds.shape.shadow);
       setDarkMode(ds.darkMode);
+      setFontFamily(ds.typography.fontFamily as FontFamily);
       await saveThemeDraft(
         ds.colors.primary,
         ds.shape.borderRadius,
@@ -501,13 +597,13 @@ export default function UITemplateSettingsPage() {
       );
     }
     setDraftBlocks(selectedPreset.blocks);
+    setHistory([]);
+    setFuture([]);
     await saveBlocksDraft(selectedPreset.blocks);
   };
 
   // ── Save confirmation ───────────────────────────────────────────────────────
 
-  // Forks default to the academy name so the dedicated copy is stamped with
-  // its owner; the manager can still rename in the dialog without blocking.
   const defaultForkName =
     selectedPreset && academyName
       ? `${academyName} - ${selectedPreset.name}`
@@ -599,21 +695,20 @@ export default function UITemplateSettingsPage() {
           </div>
           <Skeleton className="h-10 w-52 rounded-xl" />
         </div>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-72 rounded-2xl" />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="h-80 rounded-2xl" />
           ))}
         </div>
       </div>
     );
   }
 
-  // ── Preview mode ──────────────────────────────────────────────────────────
+  // ── Preview / editor mode ─────────────────────────────────────────────────
 
   if (selectedPreset) {
     const ds = getDesignSystem(selectedPreset.id);
     const colors = resolveTemplateColors(selectedPreset);
-
     const selectedBlock =
       draftBlocks.find((b) => b.id === selectedBlockId) ?? null;
     const middleBlocks = [...draftBlocks]
@@ -624,65 +719,105 @@ export default function UITemplateSettingsPage() {
       : -1;
     const isEditingMaster = isAdmin && isPublicPreset && showCustomizer;
 
+    const VIEWPORTS: {
+      mode: ViewportMode;
+      icon: typeof Monitor;
+      label: string;
+    }[] = [
+      { mode: 'mobile', icon: Smartphone, label: 'موبایل' },
+      { mode: 'tablet', icon: Tablet, label: 'تبلت' },
+      { mode: 'desktop', icon: Monitor, label: 'دسکتاپ' }
+    ];
+
     return (
       <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-zinc-950">
         {confirmDialog}
+
         {/* Action bar */}
         <div className="flex flex-shrink-0 items-center gap-2 bg-zinc-900 px-4 py-2.5">
-          <Button
-            size="sm"
-            onClick={() => setPendingSave({ kind: 'publish' })}
-            disabled={isApplied || isPublishing}
-            className="h-8 gap-1.5 bg-red-500 px-3 text-xs font-semibold text-white hover:bg-red-600 disabled:opacity-70"
+          <button
+            type="button"
+            title="بستن پیش‌نمایش"
+            onClick={handleClosePreview}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white"
           >
-            {isApplied ? (
-              <>
-                <Check className="h-3.5 w-3.5" />
-                منتشر شد
-              </>
-            ) : isPublishing ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                در حال انتشار...
-              </>
-            ) : (
-              'انتشار این قالب در سایت'
-            )}
-          </Button>
+            <X className="h-4 w-4" />
+          </button>
 
-          <Button
-            size="sm"
-            onClick={() => setShowCustomizer((v) => !v)}
-            className={`h-8 gap-1.5 px-3 text-xs font-semibold ${
-              showCustomizer
-                ? 'bg-amber-500 text-white hover:bg-amber-600'
-                : 'bg-zinc-700 text-zinc-200 hover:bg-zinc-600'
-            }`}
-          >
-            {isAdmin ? (
-              <>
-                <Pencil className="h-3.5 w-3.5" />
-                ویرایش
-              </>
-            ) : (
-              <>
-                <Wand2 className="h-3.5 w-3.5" />
-                سفارشی‌سازی
-              </>
-            )}
-          </Button>
+          <span className="text-sm font-semibold text-white">
+            {selectedPreset.name}
+          </span>
 
+          {isAdmin && isPublicPreset && (
+            <span className="rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
+              قالب اصلی
+            </span>
+          )}
+
+          {/* Draft status chip */}
           <div className="flex items-center gap-1.5">
-            {[colors.primary, colors.secondary, colors.accent].map((c, i) => (
-              <span
-                key={i}
-                className="h-4 w-4 rounded-full border-2 border-zinc-700 shadow-sm"
-                style={{ background: c }}
-              />
-            ))}
+            <span
+              className={`h-2 w-2 rounded-full ${
+                isSaving
+                  ? 'animate-pulse bg-amber-400'
+                  : isEditingMaster
+                    ? 'bg-amber-400'
+                    : 'bg-emerald-400'
+              }`}
+            />
+            <span className="text-[11px] text-zinc-400">
+              {isSaving
+                ? 'در حال ذخیره...'
+                : savedAgo
+                  ? `ذخیره شد ${savedAgo}`
+                  : isEditingMaster
+                    ? 'در حال ویرایش قالب اصلی'
+                    : 'پیش‌نمایش زنده'}
+            </span>
           </div>
 
-          <div className="ml-auto flex items-center gap-4">
+          {/* Undo / Redo */}
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              title="واگرد (Ctrl+Z)"
+              onClick={undo}
+              disabled={history.length === 0}
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white disabled:opacity-30"
+            >
+              <Undo2 className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              title="ازنو (Ctrl+Y)"
+              onClick={redo}
+              disabled={future.length === 0}
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white disabled:opacity-30"
+            >
+              <Redo2 className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          <div className="ml-auto flex items-center gap-3">
+            {/* Viewport switcher */}
+            <div className="flex items-center gap-0.5 rounded-lg bg-zinc-800 p-0.5">
+              {VIEWPORTS.map(({ mode, icon: Icon, label }) => (
+                <button
+                  key={mode}
+                  type="button"
+                  title={label}
+                  onClick={() => setViewport(mode)}
+                  className={`flex h-6 w-7 items-center justify-center rounded-md transition-colors ${
+                    viewport === mode
+                      ? 'bg-white text-zinc-900'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                </button>
+              ))}
+            </div>
+
             {ds.tagline && (
               <span
                 className="rounded-full px-2.5 py-1 text-[10px] font-semibold text-white"
@@ -692,43 +827,57 @@ export default function UITemplateSettingsPage() {
               </span>
             )}
 
-            <div className="flex items-center gap-1.5">
-              <span
-                className={`h-2 w-2 animate-pulse rounded-full ${
-                  isEditingMaster ? 'bg-amber-400' : 'bg-emerald-400'
-                }`}
-              />
-              <span className="text-[11px] text-zinc-400">
-                {isEditingMaster ? 'در حال ویرایش قالب اصلی' : 'پیش‌نمایش زنده'}
-              </span>
-            </div>
-
-            <span className="text-sm font-semibold text-white">
-              {selectedPreset.name}
-            </span>
-
-            {isAdmin && isPublicPreset && (
-              <span className="rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
-                قالب اصلی
-              </span>
-            )}
-
-            <button
-              type="button"
-              title="بستن پیش‌نمایش"
-              onClick={handleClosePreview}
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white"
+            <Button
+              size="sm"
+              onClick={() => setShowCustomizer((v) => !v)}
+              className={`h-8 gap-1.5 px-3 text-xs font-semibold ${
+                showCustomizer
+                  ? 'bg-amber-500 text-white hover:bg-amber-600'
+                  : 'bg-zinc-700 text-zinc-200 hover:bg-zinc-600'
+              }`}
             >
-              <X className="h-4 w-4" />
-            </button>
+              {isAdmin ? (
+                <>
+                  <Pencil className="h-3.5 w-3.5" />
+                  ویرایش
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-3.5 w-3.5" />
+                  سفارشی‌سازی
+                </>
+              )}
+            </Button>
+
+            <Button
+              size="sm"
+              onClick={() => setPendingSave({ kind: 'publish' })}
+              disabled={isApplied || isPublishing}
+              className="h-8 gap-1.5 bg-red-500 px-3 text-xs font-semibold text-white hover:bg-red-600 disabled:opacity-70"
+            >
+              {isApplied ? (
+                <>
+                  <Check className="h-3.5 w-3.5" />
+                  منتشر شد
+                </>
+              ) : isPublishing ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  در حال انتشار...
+                </>
+              ) : (
+                'انتشار در سایت'
+              )}
+            </Button>
           </div>
         </div>
 
-        {/* Content: sidebar + iframe */}
+        {/* Content: sidebar + section panel + preview */}
         <div className="flex min-h-0 flex-1 overflow-hidden">
           {showCustomizer && (
             <TemplateCustomizationSidebar
               primaryColor={primaryColor}
+              fontFamily={fontFamily}
               borderRadius={borderRadius}
               shadow={shadow}
               darkMode={darkMode}
@@ -738,6 +887,7 @@ export default function UITemplateSettingsPage() {
               blocks={draftBlocks}
               isSaving={isSaving}
               onColorChange={handleColorChange}
+              onFontFamilyChange={handleFontFamilyChange}
               onBorderRadiusChange={handleBorderRadiusChange}
               onDarkModeChange={handleDarkModeChange}
               onDesignSizeChange={handleDesignSizeChange}
@@ -768,6 +918,8 @@ export default function UITemplateSettingsPage() {
               onUpdate={handleBlockConfigChange}
               onMove={handleBlockMove}
               onDelete={handleBlockDelete}
+              onDuplicate={handleBlockDuplicate}
+              onToggleVisible={handleBlockToggleVisible}
               onClose={() => setSelectedBlockId(null)}
             />
           )}
@@ -779,26 +931,12 @@ export default function UITemplateSettingsPage() {
             onImported={handleSectionPicked}
           />
 
-          <div className="relative flex-1 bg-zinc-950">
-            {isPreviewLoading && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-950">
-                <div className="flex flex-col items-center gap-3">
-                  <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
-                  <p className="text-sm text-zinc-500">
-                    در حال بارگذاری پیش‌نمایش...
-                  </p>
-                </div>
-              </div>
-            )}
-            {iframeSrc && (
-              <iframe
-                key={iframeSrc}
-                src={iframeSrc}
-                className="h-full w-full border-0"
-                title={`Preview: ${selectedPreset.name}`}
-              />
-            )}
-          </div>
+          <EditorPreview
+            viewport={viewport}
+            iframeSrc={iframeSrc}
+            isLoading={isPreviewLoading}
+            title={`Preview: ${selectedPreset.name}`}
+          />
         </div>
       </div>
     );
@@ -806,15 +944,21 @@ export default function UITemplateSettingsPage() {
 
   // ── Gallery mode ──────────────────────────────────────────────────────────
 
-  // Academy-owned (DEDICATED) templates render apart from the shared platform
-  // catalog so managers can tell their own designs from the presets.
   const academyPresets = presets.filter((p) => p.visibility === 'DEDICATED');
   const platformPresets = presets.filter((p) => p.visibility === 'PUBLIC');
+  const filteredPlatform =
+    categoryFilter === 'all'
+      ? platformPresets
+      : platformPresets.filter(
+          (p) => getTemplateCategory(p) === categoryFilter
+        );
+  const activePreset = presets.find((p) => p.id === activePresetId) ?? null;
 
   return (
     <div className="min-h-full bg-[#f2ece4] p-8" dir="rtl">
       {confirmDialog}
-      <div className="mb-8 flex items-start justify-between">
+
+      <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             قالب‌های آماده
@@ -824,24 +968,48 @@ export default function UITemplateSettingsPage() {
             آن کلیک کنید
           </p>
         </div>
+      </div>
 
-        <div className="flex items-center gap-1 rounded-xl border border-border/60 bg-background p-1 shadow-sm">
-          <button
-            type="button"
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/60"
+      {/* Currently live callout */}
+      {activePreset && (
+        <div className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+          <span className="h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-emerald-500" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-emerald-900">
+              قالب فعلی: {activePreset.name}
+            </p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 gap-1.5 border-emerald-300 text-xs text-emerald-800"
+            onClick={() => handleCardClick(activePreset)}
           >
             <Pencil className="h-3.5 w-3.5" />
-            ساز قالب
-          </button>
-          <button
-            type="button"
-            className="flex items-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background"
-          >
-            <LayoutTemplate className="h-3.5 w-3.5" />
-            قالب‌های آماده
-          </button>
+            ویرایش
+          </Button>
         </div>
-      </div>
+      )}
+
+      {/* Category filter bar */}
+      {platformPresets.length > 0 && (
+        <div className="mb-6 flex flex-wrap gap-2">
+          {CATEGORY_LABELS.map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setCategoryFilter(value)}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
+                categoryFilter === value
+                  ? 'bg-foreground text-background'
+                  : 'border border-border/60 bg-background text-muted-foreground hover:bg-muted/60'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {presets.length === 0 ? (
         <div className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/70 bg-background/60 px-6 text-center">
@@ -856,13 +1024,14 @@ export default function UITemplateSettingsPage() {
         </div>
       ) : (
         <div className="space-y-10">
-          {platformPresets.length > 0 && (
+          {filteredPlatform.length > 0 && (
             <TemplateSection
               title="قالب‌های پلتفرم"
               description="کاتالوگ آماده پلتفرم؛ برای شروع یک قالب را انتخاب و سفارشی کنید."
-              presets={platformPresets}
+              presets={filteredPlatform}
               activePresetId={activePresetId}
               onSelect={handleCardClick}
+              onQuickApply={handleQuickApply}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
             />
           )}
@@ -873,185 +1042,12 @@ export default function UITemplateSettingsPage() {
               presets={academyPresets}
               activePresetId={activePresetId}
               onSelect={handleCardClick}
+              onQuickApply={handleQuickApply}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
             />
           )}
         </div>
       )}
     </div>
-  );
-}
-
-// ── Template Section ────────────────────────────────────────────────────────
-
-interface TemplateSectionProps {
-  title: string;
-  description: string;
-  presets: TemplatePreset[];
-  activePresetId: string;
-  onSelect: (preset: TemplatePreset) => void;
-  onDelete: (preset: TemplatePreset) => void;
-}
-
-function TemplateSection({
-  title,
-  description,
-  presets,
-  activePresetId,
-  onSelect,
-  onDelete
-}: TemplateSectionProps) {
-  return (
-    <section>
-      <div className="mb-4">
-        <h2 className="text-lg font-bold text-foreground">{title}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-      </div>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {presets.map((preset, idx) => (
-          <GalleryCard
-            key={preset.id}
-            preset={preset}
-            isActive={preset.id === activePresetId}
-            index={idx}
-            onClick={() => onSelect(preset)}
-            onDelete={preset.isOwned ? () => onDelete(preset) : undefined}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ── Gallery Card ──────────────────────────────────────────────────────────────
-
-interface GalleryCardProps {
-  preset: TemplatePreset;
-  isActive: boolean;
-  index: number;
-  onClick: () => void;
-  onDelete?: () => void;
-}
-
-function GalleryCard({
-  preset,
-  isActive,
-  index,
-  onClick,
-  onDelete
-}: GalleryCardProps) {
-  const ds = getDesignSystem(preset.id);
-  const isDedicated = preset.visibility === 'DEDICATED';
-  const colors = resolveTemplateColors(preset);
-  const swatches = [
-    colors.background,
-    colors.primary,
-    colors.secondary,
-    colors.accent
-  ];
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{ animationDelay: `${index * 55}ms` }}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-border/50 bg-background text-right shadow-sm duration-300 animate-in fade-in slide-in-from-bottom-3 hover:-translate-y-1 hover:border-border hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]"
-    >
-      {/* Dedicated badge + owner delete */}
-      <div className="absolute left-2.5 top-2.5 z-20 flex items-center gap-1.5">
-        {isDedicated && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
-            <Lock className="h-2.5 w-2.5" />
-            اختصاصی
-          </span>
-        )}
-        {onDelete && (
-          <span
-            role="button"
-            tabIndex={0}
-            title="حذف قالب اختصاصی"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            className="inline-flex items-center justify-center rounded-full bg-white/90 p-1 text-red-600 shadow-sm transition-colors hover:bg-red-50"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </span>
-        )}
-      </div>
-
-      {/* Thumbnail — static cover image at the locked 16/9 cover ratio */}
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted/40">
-        {preset.preview ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={preset.preview}
-            alt={preset.name}
-            loading="lazy"
-            className="h-full w-full object-cover object-top"
-          />
-        ) : (
-          <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">
-            <div
-              className="origin-top-left"
-              style={{ transform: 'scale(0.5)', width: '200%' }}
-            >
-              <TemplatePreview preset={preset} />
-            </div>
-          </div>
-        )}
-
-        {/* Hover overlay */}
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/[0.52] opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-xs font-bold text-zinc-900 shadow-sm">
-            <Eye className="h-3.5 w-3.5" />
-            پیش‌نمایش کامل
-          </span>
-        </div>
-
-        {isActive && (
-          <span className="absolute right-2.5 top-2.5 z-10 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
-            فعال
-          </span>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="px-4 pb-4 pt-3.5">
-        <div className="mb-1.5 flex items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[15px] font-bold text-foreground">
-              {preset.name}
-            </span>
-            {!isDedicated && ds.tagline && (
-              <span
-                className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                style={{
-                  background: `${colors.primary}1a`,
-                  color: colors.primary
-                }}
-              >
-                {ds.tagline}
-              </span>
-            )}
-          </div>
-          <div className="flex flex-shrink-0 gap-1">
-            {swatches.map((c, i) => (
-              <span
-                key={i}
-                className="h-3 w-3 flex-shrink-0 rounded-[3px] border border-black/[0.09]"
-                style={{ background: c }}
-              />
-            ))}
-          </div>
-        </div>
-        {preset.description && (
-          <p className="m-0 line-clamp-2 text-[12.5px] leading-relaxed text-muted-foreground">
-            {preset.description}
-          </p>
-        )}
-      </div>
-    </button>
   );
 }

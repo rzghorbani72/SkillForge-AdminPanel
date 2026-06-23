@@ -3386,6 +3386,8 @@ export const fa = {
     panelColumns: 'تعداد ستون‌ها',
     panelPositionInPage: 'موقعیت در صفحه',
     panelDeleteSection: 'حذف این بخش',
+    panelDuplicateSection: 'کپی بخش',
+    panelSectionVisible: 'نمایش این بخش',
     sidebarTitle: 'سفارشی‌سازی قالب',
     sidebarSaving: 'در حال ذخیره...',
     sidebarSaveAsTemplate: 'ذخیره به‌عنوان قالب اختصاصی',

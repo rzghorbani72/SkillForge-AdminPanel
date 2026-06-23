@@ -2129,6 +2129,8 @@ export const tr = {
     panelColumns: 'Sütunlar',
     panelPositionInPage: 'Sayfadaki Konum',
     panelDeleteSection: 'Bu Bölümü Sil',
+    panelDuplicateSection: 'Bölümü Çoğalt',
+    panelSectionVisible: 'Bu Bölümü Göster',
     sidebarTitle: 'Şablon Özelleştirme',
     sidebarSaving: 'Kaydediliyor...',
     sidebarSaveAsTemplate: 'Özel Şablon Olarak Kaydet',

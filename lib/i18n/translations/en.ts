@@ -3508,6 +3508,8 @@ export const en = {
     panelColumns: 'Columns',
     panelPositionInPage: 'Position in Page',
     panelDeleteSection: 'Delete This Section',
+    panelDuplicateSection: 'Duplicate Section',
+    panelSectionVisible: 'Show This Section',
     sidebarTitle: 'Template Customization',
     sidebarSaving: 'Saving...',
     sidebarSaveAsTemplate: 'Save as Custom Template',
