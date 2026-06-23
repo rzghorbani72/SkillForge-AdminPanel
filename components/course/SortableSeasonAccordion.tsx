@@ -7,7 +7,7 @@ import {
   GripVertical,
   Trash2
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,16 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { MESSAGES } from '@/constants/messages';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
 import { LessonList } from './LessonList';
+import { useState } from 'react';
+
+// Completeness helper — mirrors the one in SortableLessonRow
+function isLessonComplete(lesson: LessonDraft): boolean {
+  if (!lesson.title.trim()) return false;
+  if (lesson.lesson_type === 'LIVE') return true;
+  if (lesson.lesson_type === 'VIDEO') return !!lesson.video_id;
+  if (lesson.lesson_type === 'AUDIO') return !!lesson.audio_id;
+  return !!lesson.document_id;
+}
 
 interface SeasonAccordionProps {
   season: SeasonDraft;
@@ -25,6 +35,9 @@ interface SeasonAccordionProps {
   canRemove: boolean;
   lessons: LessonDraft[];
   allSeasons: SeasonDraft[];
+  /** When provided, this component becomes controlled. Otherwise it manages its own open state. */
+  open?: boolean;
+  onToggle?: () => void;
   onUpdate: (
     patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>
   ) => void;
@@ -42,6 +55,8 @@ export function SortableSeasonAccordion({
   canRemove,
   lessons,
   allSeasons,
+  open: controlledOpen,
+  onToggle,
   onUpdate,
   onRemove,
   onAddLesson,
@@ -51,8 +66,18 @@ export function SortableSeasonAccordion({
   onReorderLessons
 }: SeasonAccordionProps) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(true);
+  const [localOpen, setLocalOpen] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  // Support both controlled and uncontrolled
+  const isOpen = controlledOpen !== undefined ? controlledOpen : localOpen;
+  function toggle() {
+    if (onToggle) {
+      onToggle();
+    } else {
+      setLocalOpen((v) => !v);
+    }
+  }
 
   const {
     attributes,
@@ -61,9 +86,7 @@ export function SortableSeasonAccordion({
     transform,
     transition,
     isDragging
-  } = useSortable({
-    id: season.clientKey
-  });
+  } = useSortable({ id: season.clientKey });
 
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const combinedRef = useCallback(
@@ -78,6 +101,9 @@ export function SortableSeasonAccordion({
     nodeRef.current.style.transform = CSS.Transform.toString(transform) ?? '';
     nodeRef.current.style.transition = transition ?? '';
   }, [transform, transition]);
+
+  const totalLessons = lessons.length;
+  const readyCount = lessons.filter(isLessonComplete).length;
 
   return (
     <div
@@ -99,10 +125,10 @@ export function SortableSeasonAccordion({
         </button>
         <button
           type="button"
-          onClick={() => setOpen((o) => !o)}
+          onClick={toggle}
           className="flex flex-1 items-center gap-1.5 text-left"
         >
-          {open ? (
+          {isOpen ? (
             <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
           ) : (
             <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -112,7 +138,12 @@ export function SortableSeasonAccordion({
             {season.title ? ` — ${season.title}` : ''}
           </span>
           <span className="ml-auto text-xs text-muted-foreground">
-            {lessons.length} {t('courses.lessons')}
+            {totalLessons > 0
+              ? t('courses.lessonsReady', {
+                  n: readyCount,
+                  total: totalLessons
+                })
+              : `0 ${t('courses.lessons')}`}
           </span>
         </button>
         <button
@@ -160,7 +191,7 @@ export function SortableSeasonAccordion({
         </div>
       )}
 
-      {open && (
+      {isOpen && (
         <div className="space-y-4 border-t px-4 pb-4 pt-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">

@@ -13,7 +13,8 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { Plus } from 'lucide-react';
+import { ChevronsDownUp, ChevronsUpDown, Plus } from 'lucide-react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -60,6 +61,25 @@ export function SeasonsSection({
   const { t } = useTranslation();
   const seasonSensors = useSensors(useSensor(PointerSensor));
 
+  // Track open state for every season by clientKey (true = open)
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
+
+  const isOpen = useCallback(
+    (key: string) => openMap[key] !== false, // default open
+    [openMap]
+  );
+
+  function toggle(key: string) {
+    setOpenMap((prev) => ({ ...prev, [key]: !isOpen(key) }));
+  }
+
+  const allOpen = seasons.every((s) => isOpen(s.clientKey));
+
+  function toggleAll() {
+    const next = !allOpen;
+    setOpenMap(Object.fromEntries(seasons.map((s) => [s.clientKey, next])));
+  }
+
   function handleSeasonDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -77,16 +97,45 @@ export function SeasonsSection({
             {t('courses.seasonsHint')}
           </p>
         </div>
-        <Button type="button" variant="outline" size="sm" onClick={onAddSeason}>
-          <Plus className="mr-1.5 h-4 w-4" />
-          {t('courses.addSeason')}
-        </Button>
+        <div className="flex items-center gap-2">
+          {seasons.length > 1 && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1 px-2 text-xs text-muted-foreground"
+              onClick={toggleAll}
+            >
+              {allOpen ? (
+                <>
+                  <ChevronsDownUp className="h-3.5 w-3.5" />
+                  {t('courses.collapseAll')}
+                </>
+              ) : (
+                <>
+                  <ChevronsUpDown className="h-3.5 w-3.5" />
+                  {t('courses.expandAll')}
+                </>
+              )}
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onAddSeason}
+          >
+            <Plus className="mr-1.5 h-4 w-4" />
+            {t('courses.addSeason')}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="rounded-md border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
-          {t('courses.addSeasonFirst')}
-        </p>
-        {seasons.length > 0 && (
+        {seasons.length === 0 ? (
+          <p className="rounded-md border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('courses.addSeasonFirst')}
+          </p>
+        ) : (
           <DndContext
             sensors={seasonSensors}
             collisionDetection={closestCenter}
@@ -110,6 +159,8 @@ export function SeasonsSection({
                       canRemove={seasons.length > 1}
                       lessons={seasonLessons}
                       allSeasons={seasons}
+                      open={isOpen(season.clientKey)}
+                      onToggle={() => toggle(season.clientKey)}
                       onUpdate={(patch) =>
                         onUpdateSeason(season.clientKey, patch)
                       }

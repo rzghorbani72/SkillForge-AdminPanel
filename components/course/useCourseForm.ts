@@ -14,20 +14,31 @@ import { courseFormSchema, type CourseFormData } from './schema';
 
 // ─── Draft types ──────────────────────────────────────────────────────────────
 
+export type LessonType =
+  | 'VIDEO'
+  | 'AUDIO'
+  | 'TEXT'
+  | 'QUIZ'
+  | 'ASSIGNMENT'
+  | 'LIVE';
+
 export interface LessonDraft {
   id?: string;
   title: string;
   description: string;
   /** Lesson length as mm:ss (stored on the backend as whole seconds) */
   duration: string;
+  lesson_type: LessonType;
   is_free: boolean;
   published: boolean;
   video_id?: string;
   audio_id?: string;
   cover_id?: string;
+  document_id?: string;
   videoPreviewUrl?: string;
   audioPreviewUrl?: string;
   coverPreviewUrl?: string;
+  documentPreviewName?: string;
   clientKey: string;
   /** clientKey of the SeasonDraft this lesson belongs to (undefined = unassigned) */
   seasonClientKey?: string;
@@ -88,6 +99,7 @@ export const emptyLesson = (seasonClientKey?: string): LessonDraft => ({
   title: '',
   description: '',
   duration: DEFAULT_DURATION,
+  lesson_type: 'VIDEO',
   is_free: false,
   published: false,
   clientKey: newKey(),
@@ -185,10 +197,13 @@ export function useCourseForm(courseId?: string) {
             title: l.title,
             description: l.description ?? '',
             duration: secondsToDuration(l.duration),
+            lesson_type: l.lesson_type ?? 'VIDEO',
             is_free: l.is_free,
             published: l.is_published,
             video_id: l.video_id,
+            audio_id: l.audio_id,
             cover_id: l.image_id,
+            document_id: l.document_id,
             videoPreviewUrl: l.video?.publicUrl,
             coverPreviewUrl: l.image?.publicUrl,
             clientKey: newKey(),
@@ -360,11 +375,13 @@ export function useCourseForm(courseId?: string) {
                 title: l.title.trim(),
                 description: l.description.trim() || undefined,
                 duration: durationToSeconds(l.duration),
+                lesson_type: l.lesson_type,
                 is_free: l.is_free,
                 published: l.published,
                 video_id: l.video_id,
                 audio_id: l.audio_id,
                 cover_id: l.cover_id,
+                document_id: l.document_id,
                 season_client_key: l.seasonClientKey
               })),
             deleted_season_ids:
@@ -391,11 +408,13 @@ export function useCourseForm(courseId?: string) {
                   title: l.title.trim(),
                   description: l.description.trim() || undefined,
                   duration: durationToSeconds(l.duration),
+                  lesson_type: l.lesson_type,
                   is_free: l.is_free,
                   published: l.published,
                   video_id: l.video_id,
                   audio_id: l.audio_id,
-                  cover_id: l.cover_id
+                  cover_id: l.cover_id,
+                  document_id: l.document_id
                 }))
             }));
 
@@ -407,11 +426,13 @@ export function useCourseForm(courseId?: string) {
               title: l.title.trim(),
               description: l.description.trim() || undefined,
               duration: durationToSeconds(l.duration),
+              lesson_type: l.lesson_type,
               is_free: l.is_free,
               published: l.published,
               video_id: l.video_id,
               audio_id: l.audio_id,
-              cover_id: l.cover_id
+              cover_id: l.cover_id,
+              document_id: l.document_id
             }));
 
           const resp = await apiClient.createCourse({

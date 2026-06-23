@@ -3,7 +3,12 @@
 import {
   ChevronDown,
   ChevronRight,
+  ClipboardCheck,
+  ClipboardList,
+  FileText,
   GripVertical,
+  Mic,
+  Radio,
   Trash2,
   Video
 } from 'lucide-react';
@@ -25,8 +30,46 @@ import {
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { MESSAGES } from '@/constants/messages';
-import type { LessonDraft, SeasonDraft } from './useCourseForm';
+import type { LessonDraft, LessonType, SeasonDraft } from './useCourseForm';
 import { LessonMedia } from './LessonMedia';
+
+// ─── Type chip config ──────────────────────────────────────────────────────────
+
+const LESSON_TYPES: {
+  type: LessonType;
+  labelKey: string;
+  Icon: React.ElementType;
+}[] = [
+  { type: 'VIDEO', labelKey: 'courses.lessonTypeVideo', Icon: Video },
+  { type: 'AUDIO', labelKey: 'courses.lessonTypeAudio', Icon: Mic },
+  { type: 'TEXT', labelKey: 'courses.lessonTypeText', Icon: FileText },
+  { type: 'QUIZ', labelKey: 'courses.lessonTypeQuiz', Icon: ClipboardList },
+  {
+    type: 'ASSIGNMENT',
+    labelKey: 'courses.lessonTypeAssignment',
+    Icon: ClipboardCheck
+  },
+  { type: 'LIVE', labelKey: 'courses.lessonTypeLive', Icon: Radio }
+];
+
+const TYPE_ICON_MAP: Record<LessonType, React.ElementType> = {
+  VIDEO: Video,
+  AUDIO: Mic,
+  TEXT: FileText,
+  QUIZ: ClipboardList,
+  ASSIGNMENT: ClipboardCheck,
+  LIVE: Radio
+};
+
+// ─── Completeness ──────────────────────────────────────────────────────────────
+
+function isLessonComplete(lesson: LessonDraft): boolean | null {
+  if (!lesson.title.trim()) return null;
+  if (lesson.lesson_type === 'LIVE') return true;
+  if (lesson.lesson_type === 'VIDEO') return !!lesson.video_id;
+  if (lesson.lesson_type === 'AUDIO') return !!lesson.audio_id;
+  return !!lesson.document_id;
+}
 
 interface LessonRowProps {
   lesson: LessonDraft;
@@ -35,6 +78,8 @@ interface LessonRowProps {
   onUpdate: (patch: Partial<LessonDraft>) => void;
   onRemove: () => void;
   onAssign: (seasonClientKey: string | undefined) => void;
+  titleInputRef?: React.RefObject<HTMLInputElement | null>;
+  onTitleEnter?: () => void;
 }
 
 export function SortableLessonRow({
@@ -43,7 +88,9 @@ export function SortableLessonRow({
   seasons,
   onUpdate,
   onRemove,
-  onAssign
+  onAssign,
+  titleInputRef,
+  onTitleEnter
 }: LessonRowProps) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -56,11 +103,7 @@ export function SortableLessonRow({
     transform,
     transition,
     isDragging
-  } = useSortable({
-    id: lesson.clientKey
-  });
-
-  const hasMedia = !!(lesson.video_id || lesson.cover_id);
+  } = useSortable({ id: lesson.clientKey });
 
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const combinedRef = useCallback(
@@ -76,6 +119,16 @@ export function SortableLessonRow({
     nodeRef.current.style.transition = transition ?? '';
   }, [transform, transition]);
 
+  const TypeIcon = TYPE_ICON_MAP[lesson.lesson_type] ?? Video;
+  const complete = isLessonComplete(lesson);
+
+  function handleTitleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onTitleEnter?.();
+    }
+  }
+
   return (
     <div
       ref={combinedRef}
@@ -84,6 +137,7 @@ export function SortableLessonRow({
         isDragging && 'opacity-50 shadow-lg ring-1 ring-primary/30'
       )}
     >
+      {/* ── Compact row ─────────────────────────────────────────────────── */}
       <div className="flex items-center gap-2 px-3 py-2.5">
         <button
           type="button"
@@ -97,18 +151,45 @@ export function SortableLessonRow({
         <span className="w-5 shrink-0 text-center text-xs text-muted-foreground">
           {index + 1}
         </span>
+
+        {/* Completeness dot */}
+        <span
+          className={cn(
+            'h-2 w-2 shrink-0 rounded-full',
+            complete === null
+              ? 'bg-muted-foreground/40'
+              : complete
+                ? 'bg-emerald-500'
+                : 'bg-amber-400'
+          )}
+          title={
+            complete === null
+              ? ''
+              : complete
+                ? t('courses.lessonComplete')
+                : t('courses.lessonIncomplete')
+          }
+        />
+
         <Input
+          ref={titleInputRef as React.RefObject<HTMLInputElement>}
           value={lesson.title}
           onChange={(e) => onUpdate({ title: e.target.value })}
+          onKeyDown={handleTitleKeyDown}
           placeholder={t('courses.enterLessonTitle')}
           className="h-7 flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
         />
+
         <div className="flex shrink-0 items-center gap-1">
-          {hasMedia && (
-            <Badge variant="secondary" className="h-5 gap-1 px-1.5 text-[10px]">
-              <Video className="h-2.5 w-2.5" />
-            </Badge>
-          )}
+          <Badge
+            variant="secondary"
+            className="h-5 gap-1 px-1.5 text-[10px]"
+            title={t(
+              `courses.lessonType${lesson.lesson_type.charAt(0) + lesson.lesson_type.slice(1).toLowerCase()}`
+            )}
+          >
+            <TypeIcon className="h-2.5 w-2.5" />
+          </Badge>
           {lesson.is_free && (
             <Badge
               variant="outline"
@@ -145,6 +226,7 @@ export function SortableLessonRow({
         </div>
       </div>
 
+      {/* ── Delete confirm ───────────────────────────────────────────────── */}
       {confirmDelete && (
         <div className="flex items-center justify-between border-t bg-destructive/5 px-3 py-2 text-sm">
           <span className="text-destructive">
@@ -173,8 +255,32 @@ export function SortableLessonRow({
         </div>
       )}
 
+      {/* ── Expanded panel ───────────────────────────────────────────────── */}
       {expanded && (
         <div className="space-y-4 border-t px-3 py-3">
+          {/* Lesson type chips */}
+          <div className="space-y-1.5">
+            <Label className="text-xs">{t('courses.lessonTitle')}</Label>
+            <div className="flex flex-wrap gap-1.5">
+              {LESSON_TYPES.map(({ type, labelKey, Icon }) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => onUpdate({ lesson_type: type })}
+                  className={cn(
+                    'flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors',
+                    lesson.lesson_type === type
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                  )}
+                >
+                  <Icon className="h-3 w-3" />
+                  {t(labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="space-y-1">
             <Label className="text-xs">{t('courses.lessonDescription')}</Label>
             <textarea
@@ -185,6 +291,7 @@ export function SortableLessonRow({
               className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
+
           <div className="space-y-1">
             <Label className="text-xs">{t('courses.lessonDuration')}</Label>
             <Input
@@ -195,6 +302,7 @@ export function SortableLessonRow({
               className="h-8 w-28 text-sm"
             />
           </div>
+
           {seasons.length > 0 && (
             <div className="space-y-1">
               <Label className="text-xs">{t('courses.season')}</Label>
@@ -220,6 +328,7 @@ export function SortableLessonRow({
               </Select>
             </div>
           )}
+
           <div className="flex flex-wrap gap-4">
             <label className="flex cursor-pointer items-center gap-2">
               <Switch
@@ -236,7 +345,15 @@ export function SortableLessonRow({
               <span className="text-sm">{t('courses.published')}</span>
             </label>
           </div>
-          <LessonMedia lesson={lesson} onUpdate={onUpdate} />
+
+          {/* Live lesson notice */}
+          {lesson.lesson_type === 'LIVE' ? (
+            <p className="rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+              {t('courses.liveSaveFirst')}
+            </p>
+          ) : (
+            <LessonMedia lesson={lesson} onUpdate={onUpdate} />
+          )}
         </div>
       )}
     </div>
