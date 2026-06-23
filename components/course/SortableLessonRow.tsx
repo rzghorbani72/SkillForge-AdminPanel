@@ -260,7 +260,7 @@ export function SortableLessonRow({
         <div className="space-y-4 border-t px-3 py-3">
           {/* Lesson type chips */}
           <div className="space-y-1.5">
-            <Label className="text-xs">{t('courses.lessonTitle')}</Label>
+            <Label className="text-xs">{t('courses.lessonType')}</Label>
             <div className="flex flex-wrap gap-1.5">
               {LESSON_TYPES.map(({ type, labelKey, Icon }) => (
                 <button
@@ -292,42 +292,44 @@ export function SortableLessonRow({
             />
           </div>
 
-          <div className="space-y-1">
-            <Label className="text-xs">{t('courses.lessonDuration')}</Label>
-            <Input
-              value={lesson.duration}
-              onChange={(e) => onUpdate({ duration: e.target.value })}
-              placeholder="00:00"
-              inputMode="numeric"
-              className="h-8 w-28 text-sm"
-            />
-          </div>
-
-          {seasons.length > 0 && (
+          <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
-              <Label className="text-xs">{t('courses.season')}</Label>
-              <Select
-                value={lesson.seasonClientKey ?? '__unassigned__'}
-                onValueChange={(v) =>
-                  onAssign(v === '__unassigned__' ? undefined : v)
-                }
-              >
-                <SelectTrigger className="h-8 text-sm">
-                  <SelectValue placeholder={MESSAGES.course.unassigned} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__unassigned__">
-                    {MESSAGES.course.unassigned}
-                  </SelectItem>
-                  {seasons.map((s) => (
-                    <SelectItem key={s.clientKey} value={s.clientKey}>
-                      {s.title || MESSAGES.course.seasonUntitled}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label className="text-xs">{t('courses.lessonDuration')}</Label>
+              <Input
+                value={lesson.duration}
+                onChange={(e) => onUpdate({ duration: e.target.value })}
+                placeholder="00:00"
+                inputMode="numeric"
+                className="h-8 text-sm"
+              />
             </div>
-          )}
+
+            {seasons.length > 0 && (
+              <div className="space-y-1">
+                <Label className="text-xs">{t('courses.season')}</Label>
+                <Select
+                  value={lesson.seasonClientKey ?? '__unassigned__'}
+                  onValueChange={(v) =>
+                    onAssign(v === '__unassigned__' ? undefined : v)
+                  }
+                >
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder={MESSAGES.course.unassigned} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__unassigned__">
+                      {MESSAGES.course.unassigned}
+                    </SelectItem>
+                    {seasons.map((s) => (
+                      <SelectItem key={s.clientKey} value={s.clientKey}>
+                        {s.title || MESSAGES.course.seasonUntitled}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-wrap gap-4">
             <label className="flex cursor-pointer items-center gap-2">

@@ -11,6 +11,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { SubscriptionPlanData, PlanFormData } from './plan-types';
@@ -76,19 +77,17 @@ export function PlanFormDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>{MESSAGES.planForm.monthlyPrice}</Label>
-              <Input
-                type="number"
+              <PriceInput
                 value={form.price_monthly}
-                onChange={(e) => onChange('price_monthly', e.target.value)}
+                onChange={(raw) => onChange('price_monthly', raw)}
                 placeholder="0"
               />
             </div>
             <div className="space-y-1.5">
               <Label>{MESSAGES.planForm.yearlyPrice}</Label>
-              <Input
-                type="number"
+              <PriceInput
                 value={form.price_yearly}
-                onChange={(e) => onChange('price_yearly', e.target.value)}
+                onChange={(raw) => onChange('price_yearly', raw)}
                 placeholder={t('common.optional')}
               />
             </div>

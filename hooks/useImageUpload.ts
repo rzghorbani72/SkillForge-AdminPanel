@@ -68,7 +68,8 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
           title: options.title || selectedFile.name,
           description: options.description || 'Uploaded image'
         },
-        abortController.signal
+        undefined,
+        abortController
       );
       // Handle response structure: { message, status, data: { id, url, ... } }
       // or direct image object: { id, url, ... }

@@ -1438,26 +1438,76 @@ class ApiClient {
   }
 
   // Media endpoints
+  // Shared XHR uploader so every asset type (image/audio/document/video)
+  // reports upload progress through one code path instead of duplicating it.
+  private uploadFileWithProgress(
+    endpoint: string,
+    formData: FormData,
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
+  ): Promise<{ data?: unknown } & Record<string, unknown>> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      let lastProgress = 0;
+
+      if (abortController) {
+        abortController.signal.addEventListener('abort', () => xhr.abort());
+      }
+
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable && onProgress) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          if (progress !== lastProgress) {
+            lastProgress = progress;
+            onProgress(progress);
+          }
+        }
+      });
+      xhr.upload.addEventListener('loadstart', () => onProgress?.(0));
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            onProgress?.(100);
+            resolve(response);
+          } catch {
+            reject(new Error('Failed to parse response'));
+          }
+        } else {
+          reject(new Error(`Upload failed with status: ${xhr.status}`));
+        }
+      });
+      xhr.addEventListener('error', () => reject(new Error('Upload failed')));
+      xhr.addEventListener('abort', () =>
+        reject(new Error('Upload cancelled'))
+      );
+      xhr.ontimeout = () => reject(new Error('Upload timeout'));
+
+      xhr.open('POST', `${this.baseURL}${endpoint}`);
+      xhr.withCredentials = true;
+      xhr.timeout = 300000; // 5 minutes
+      xhr.send(formData);
+    });
+  }
+
   async uploadImage(
     file: File,
     metadata?: { title?: string; description?: string },
-    signal?: AbortSignal
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
   ) {
     const formData = new FormData();
     formData.append('imagefile', file); // Backend expects 'imagefile'
     formData.append('alt', metadata?.title || file.name); // Backend expects 'alt' field
 
-    const response = await this.request('/images/upload', {
-      method: 'POST',
-      headers: {}, // Let browser set content-type for FormData
-      body: formData,
-      signal
-    });
-
-    if (response.data) {
-      return response.data as any;
-    }
-    return null as any;
+    const response = await this.uploadFileWithProgress(
+      '/images/upload',
+      formData,
+      onProgress,
+      abortController
+    );
+    return (response.data ?? null) as any;
   }
 
   // Alternative upload method with better progress tracking
@@ -1659,7 +1709,9 @@ class ApiClient {
 
   async uploadAudio(
     file: File,
-    metadata?: { title?: string; description?: string }
+    metadata?: { title?: string; description?: string },
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
   ) {
     const formData = new FormData();
     formData.append('audioFile', file); // Backend expects 'audioFile'
@@ -1668,16 +1720,19 @@ class ApiClient {
       formData.append('description', metadata.description || '');
     }
 
-    return this.request('/audios/upload', {
-      method: 'POST',
-      headers: {}, // Let browser set content-type for FormData
-      body: formData
-    });
+    return this.uploadFileWithProgress(
+      '/audios/upload',
+      formData,
+      onProgress,
+      abortController
+    );
   }
 
   async uploadDocument(
     file: File,
-    metadata?: { title?: string; description?: string }
+    metadata?: { title?: string; description?: string },
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
   ) {
     const formData = new FormData();
     formData.append('documentfile', file);
@@ -1686,11 +1741,12 @@ class ApiClient {
       formData.append('description', metadata.description || '');
     }
 
-    return this.request('/files/upload', {
-      method: 'POST',
-      headers: {}, // Let browser set content-type for FormData
-      body: formData
-    });
+    return this.uploadFileWithProgress(
+      '/files/upload',
+      formData,
+      onProgress,
+      abortController
+    );
   }
 
   async getImages() {

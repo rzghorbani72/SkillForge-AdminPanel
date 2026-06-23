@@ -573,6 +573,7 @@ export const tr = {
       'Kursunuzu sezonlara göre düzenleyin, ardından her sezona ders ekleyin',
     saving: 'Kaydediliyor…',
     saveChanges: 'Değişiklikleri Kaydet',
+    lessonType: 'Tür',
     lessonTypeVideo: 'Video',
     lessonTypeAudio: 'Ses',
     lessonTypeText: 'Metin',

@@ -831,6 +831,7 @@ export const fa = {
     confirmDeleteSeason: 'این فصل و تمام درس‌هایش حذف شود؟',
     deletingSeason: 'در حال حذف فصل…',
     deletingLesson: 'در حال حذف درس…',
+    lessonType: 'نوع',
     lessonTypeVideo: 'ویدیو',
     lessonTypeAudio: 'صدا',
     lessonTypeText: 'متن',

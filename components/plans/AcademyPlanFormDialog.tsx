@@ -10,6 +10,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -99,11 +100,9 @@ export function AcademyPlanFormDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>{t('plans.priceLabel')}</Label>
-              <Input
-                type="number"
-                min="0"
+              <PriceInput
                 value={form.price}
-                onChange={(e) => onChange('price', e.target.value)}
+                onChange={(raw) => onChange('price', raw)}
               />
             </div>
             {form.kind === 'SUBSCRIPTION' && (

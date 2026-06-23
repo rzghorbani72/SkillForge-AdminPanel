@@ -559,6 +559,7 @@ export const ar = {
     seasonsHint: 'نظّم دورتك في فصول، ثم أضف دروساً لكل فصل',
     saving: 'جارٍ الحفظ…',
     saveChanges: 'حفظ التغييرات',
+    lessonType: 'النوع',
     lessonTypeVideo: 'فيديو',
     lessonTypeAudio: 'صوت',
     lessonTypeText: 'نص',

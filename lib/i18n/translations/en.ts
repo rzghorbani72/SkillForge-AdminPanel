@@ -832,6 +832,7 @@ export const en = {
     confirmDeleteSeason: 'Delete this season and all its lessons?',
     deletingSeason: 'Deleting season…',
     deletingLesson: 'Deleting lesson…',
+    lessonType: 'Type',
     lessonTypeVideo: 'Video',
     lessonTypeAudio: 'Audio',
     lessonTypeText: 'Text',

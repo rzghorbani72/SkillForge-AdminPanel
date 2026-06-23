@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -351,14 +352,12 @@ export default function PlatformPricingPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label>Storage Overage Fee (IRR/GB)</Label>
-              <Input
-                type="number"
-                min={0}
+              <PriceInput
                 value={settingsForm.storage_overage_fee_irr}
-                onChange={(e) =>
+                onChange={(raw) =>
                   setSettingsForm({
                     ...settingsForm,
-                    storage_overage_fee_irr: e.target.value
+                    storage_overage_fee_irr: raw
                   })
                 }
               />
@@ -525,26 +524,19 @@ export default function PlatformPricingPage() {
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Monthly Price (IRR)</Label>
-                  <Input
-                    type="number"
-                    min={0}
+                  <PriceInput
                     value={planForm.price_monthly}
-                    onChange={(e) =>
-                      setPlanForm({
-                        ...planForm,
-                        price_monthly: e.target.value
-                      })
+                    onChange={(raw) =>
+                      setPlanForm({ ...planForm, price_monthly: raw })
                     }
                   />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Annual Price (IRR)</Label>
-                  <Input
-                    type="number"
-                    min={0}
+                  <PriceInput
                     value={planForm.price_yearly}
-                    onChange={(e) =>
-                      setPlanForm({ ...planForm, price_yearly: e.target.value })
+                    onChange={(raw) =>
+                      setPlanForm({ ...planForm, price_yearly: raw })
                     }
                     placeholder="optional"
                   />

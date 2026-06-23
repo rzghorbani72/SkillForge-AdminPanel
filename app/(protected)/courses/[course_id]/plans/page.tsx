@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
@@ -240,7 +241,12 @@ export default function PaymentPlansPage() {
                       {t('paymentPlans.amountPerInstallment')}
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" {...field} />
+                      <PriceInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

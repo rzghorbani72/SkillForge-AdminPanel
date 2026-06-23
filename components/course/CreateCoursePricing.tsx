@@ -7,7 +7,7 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UseFormReturn } from 'react-hook-form';
@@ -46,14 +46,12 @@ export default function CreateCoursePricing({ form }: Props) {
                       Amount *
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        inputMode="numeric"
+                      <PriceInput
                         placeholder="0"
-                        min="0"
-                        max="999999999"
-                        step="1"
-                        {...field}
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
                       />
                     </FormControl>
                     <FormMessage />
@@ -80,14 +78,12 @@ export default function CreateCoursePricing({ form }: Props) {
                       Amount
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        inputMode="numeric"
+                      <PriceInput
                         placeholder="0"
-                        min="0"
-                        max="999999999"
-                        step="1"
-                        {...field}
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
                       />
                     </FormControl>
                     <FormMessage />
