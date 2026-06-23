@@ -2731,6 +2731,14 @@ class ApiClient {
     return (response.data as any)?.data ?? null;
   }
 
+  async generateTemplate(payload: { field: string; presetId?: string }) {
+    const response = await this.request('/ui-template/current/generate', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return (response.data as any)?.data ?? null;
+  }
+
   async createDedicatedTemplate(payload: {
     name: string;
     description?: string;

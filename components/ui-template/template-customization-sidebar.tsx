@@ -195,7 +195,7 @@ export function TemplateCustomizationSidebar({
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-600/10 py-2.5 text-sm font-medium text-indigo-300 transition-colors hover:bg-indigo-600/20"
           >
             <Save className="h-4 w-4" />
-            ساخت نسخهٔ اختصاصی من
+            ذخیره تغییرات سایت من
           </button>
         )}
 
@@ -238,7 +238,7 @@ export function TemplateCustomizationSidebar({
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-600/10 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-600/20"
         >
           <RotateCcw className="h-4 w-4" />
-          بازنشانی همه تغییرات
+          بازگشت به حالت اولیه
         </button>
       </div>
     </div>

@@ -42,11 +42,16 @@ export function buildFullPreviewUrl(embedPreviewUrl: string): string {
 export function buildTemplatePreviewUrl(
   templateId: string,
   storefrontBaseUrl?: string | null,
-  options?: { sample?: boolean }
+  options?: { sample?: boolean; draft?: boolean; token?: string }
 ): string {
   const base = resolveStorefrontBaseUrl(storefrontBaseUrl);
   let query = `template=${encodeURIComponent(templateId)}&embed=1`;
   if (options?.sample) query += '&sample=1';
+  // Draft mode renders the academy's own work-in-progress blocks (e.g. a freshly
+  // generated, personalized site). It needs a preview token to scope the academy.
+  if (options?.draft && options.token) {
+    query += `&draft=1&token=${encodeURIComponent(options.token)}`;
+  }
   return base ? `${base}/preview/blocks?${query}` : `/preview/blocks?${query}`;
 }
 

@@ -33,6 +33,10 @@ import {
 } from '@/components/ui-template/template-customization-sidebar';
 import { SectionCustomizationPanel } from '@/components/ui-template/section-customization-panel';
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
+import {
+  GenerateTemplateDialog,
+  type AcademyField
+} from '@/components/ui-template/generate-template-dialog';
 import { TemplateConfirmDialog } from '@/components/ui-template/template-confirm-dialog';
 import { EditorPreview } from '@/components/ui-template/editor-preview';
 import {
@@ -82,6 +86,8 @@ export default function UITemplateSettingsPage() {
 
   // Customizer state
   const [showCustomizer, setShowCustomizer] = useState(false);
+  const [showGenerate, setShowGenerate] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [viewport, setViewport] = useState<ViewportMode>('desktop');
   const [primaryColor, setPrimaryColor] = useState('#3b82f6');
   const [fontFamily, setFontFamily] = useState<FontFamily>('vazirmatn');
@@ -139,7 +145,10 @@ export default function UITemplateSettingsPage() {
     })();
   }, []);
 
-  const handleCardClick = async (preset: TemplatePreset) => {
+  const handleCardClick = async (
+    preset: TemplatePreset,
+    opts?: { seededBlocks?: UIBlockConfig[]; draftPreviewToken?: string }
+  ) => {
     setSelectedPreset(preset);
     setBaseIframeSrc(null);
     setRefreshKey(0);
@@ -163,10 +172,14 @@ export default function UITemplateSettingsPage() {
       setDarkMode(ds.darkMode);
       setFontFamily(ds.typography.fontFamily as FontFamily);
     }
-    setDraftBlocks(preset.blocks);
+    setDraftBlocks(opts?.seededBlocks ?? preset.blocks);
 
     try {
-      await apiClient.applyTemplatePreset(preset.id);
+      // Generation has already written the seeded draft server-side; a re-apply
+      // here would overwrite that copy with the bare preset, so skip it.
+      if (!opts?.seededBlocks) {
+        await apiClient.applyTemplatePreset(preset.id);
+      }
 
       if (!isDedicated) {
         const { name: _omitName, ...themeSeed } = buildThemePayload(ds);
@@ -201,7 +214,12 @@ export default function UITemplateSettingsPage() {
       if (cfg.heading_scale) setHeadingScale(cfg.heading_scale as HeadingScale);
 
       setBaseIframeSrc(
-        buildTemplatePreviewUrl(preset.id, null, { sample: !isDedicated })
+        opts?.draftPreviewToken
+          ? buildTemplatePreviewUrl(preset.id, null, {
+              draft: true,
+              token: opts.draftPreviewToken
+            })
+          : buildTemplatePreviewUrl(preset.id, null, { sample: !isDedicated })
       );
       setActivePresetId(preset.id);
     } catch (error) {
@@ -228,6 +246,47 @@ export default function UITemplateSettingsPage() {
       ErrorHandler.handleApiError(error);
     } finally {
       setIsPreviewLoading(false);
+    }
+  };
+
+  // Field → recommended preset, mirrors Backend FIELD_CONTENT.recommendedPreset.
+  const FIELD_PRESET: Record<AcademyField, string> = {
+    language: 'flow',
+    exam: 'flow',
+    coding: 'code',
+    arts: 'creative',
+    business: 'flow',
+    general: 'flow'
+  };
+
+  const handleGenerate = async (field: AcademyField) => {
+    try {
+      setIsGenerating(true);
+      const result = await apiClient.generateTemplate({ field });
+      // Open the editor on the just-generated preset. `template_preset` on the
+      // response is the still-published one, so resolve from the field instead.
+      const presetId = FIELD_PRESET[field];
+      const preset = presets.find((p) => p.id === presetId);
+      const seededBlocks = (result?.blocks as UIBlockConfig[]) ?? undefined;
+
+      // Mint a preview token so the editor renders the seeded DRAFT (the
+      // personalized site), not the bare catalog preset.
+      const tokenRes = await apiClient
+        .createTemplatePreviewToken()
+        .catch(() => null);
+
+      setShowGenerate(false);
+      if (preset) {
+        await handleCardClick(preset, {
+          seededBlocks,
+          draftPreviewToken: tokenRes?.token
+        });
+        ErrorHandler.showSuccess('سایت شما ساخته شد');
+      }
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -1012,6 +1071,37 @@ export default function UITemplateSettingsPage() {
           </p>
         </div>
       </div>
+
+      {/* Lead action — generate a starter site from the academy's field */}
+      <button
+        type="button"
+        onClick={() => setShowGenerate(true)}
+        className="mb-6 flex w-full items-center gap-4 rounded-2xl border border-primary/20 bg-gradient-to-l from-primary/10 to-primary/5 px-5 py-4 text-right transition-colors hover:from-primary/15"
+      >
+        <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+          <Wand2 className="h-6 w-6" />
+        </span>
+        <div className="flex-1">
+          <p className="text-base font-bold text-foreground">
+            ساخت خودکار سایت
+          </p>
+          <p className="text-sm text-muted-foreground">
+            بگویید آکادمی شما چه آموزش می‌دهد تا یک سایت آماده با متن‌های مرتبط
+            بسازیم
+          </p>
+        </div>
+        <span className="hidden flex-shrink-0 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground sm:block">
+          شروع
+        </span>
+      </button>
+
+      <GenerateTemplateDialog
+        open={showGenerate}
+        academyName={academyName || 'آکادمی'}
+        isGenerating={isGenerating}
+        onGenerate={handleGenerate}
+        onClose={() => setShowGenerate(false)}
+      />
 
       {/* Currently live callout */}
       {activePreset && (

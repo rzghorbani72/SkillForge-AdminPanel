@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { Upload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { hexToHsl, hslToHex } from '@/lib/design-system-palette';
+import { derivePaletteFromPrimary } from '@/lib/design-system-palette';
 import type { UIBlockConfig } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -18,16 +18,19 @@ import type {
 import { FONT_OPTIONS } from './sidebar-types';
 import { AccordionSection } from './sidebar-primitives';
 
-const PRESET_COLORS = [
-  '#ef4444',
-  '#f97316',
-  '#22c55e',
-  '#8b5cf6',
-  '#3b82f6',
-  '#84cc16',
-  '#7c3aed',
-  '#f59e0b',
-  '#ec4899'
+// Named palettes expose ONLY a primary color. Every other shade (accent,
+// background, contrast text) is derived by derivePaletteFromPrimary, so a
+// manager can never pick an unreadable primary/background combination.
+const COLOR_PALETTES: { name: string; primary: string }[] = [
+  { name: 'اقیانوسی', primary: '#3b82f6' },
+  { name: 'بنفش', primary: '#8b5cf6' },
+  { name: 'سبز', primary: '#22c55e' },
+  { name: 'نارنجی', primary: '#f97316' },
+  { name: 'قرمز', primary: '#ef4444' },
+  { name: 'صورتی', primary: '#ec4899' },
+  { name: 'فیروزه‌ای', primary: '#14b8a6' },
+  { name: 'طلایی', primary: '#f59e0b' },
+  { name: 'مشکی مدرن', primary: '#27272a' }
 ];
 
 const RADIUS_PRESETS: { label: string; value: BorderRadius }[] = [
@@ -75,39 +78,38 @@ function ColorPreview({ color }: { color: string }) {
   );
 }
 
-function ColorSlider({
-  label,
-  min,
-  max,
-  value,
-  track,
-  onChange
+function PaletteCard({
+  name,
+  primary,
+  selected,
+  onSelect
 }: {
-  label: string;
-  min: number;
-  max: number;
-  value: number;
-  track: string;
-  onChange: (n: number) => void;
+  name: string;
+  primary: string;
+  selected: boolean;
+  onSelect: () => void;
 }) {
+  const palette = derivePaletteFromPrimary(primary);
+  const swatches = [palette.primary, palette.accent, palette.backgroundLight];
+
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-zinc-400">{label}</span>
-        <span className="font-mono text-xs text-zinc-300">{value}</span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        aria-label={label}
-        title={label}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full border border-zinc-600"
-        style={{ background: track }}
-      />
-    </div>
+    <button
+      type="button"
+      onClick={onSelect}
+      title={name}
+      className={`flex items-center gap-2 rounded-lg border-2 px-2.5 py-2 transition-all ${
+        selected
+          ? 'border-white bg-zinc-800'
+          : 'border-zinc-700 bg-zinc-800/40 hover:border-zinc-500'
+      }`}
+    >
+      <span className="flex flex-shrink-0 overflow-hidden rounded-md border border-black/20">
+        {swatches.map((c, i) => (
+          <span key={i} className="h-6 w-3.5" style={{ backgroundColor: c }} />
+        ))}
+      </span>
+      <span className="truncate text-xs font-medium text-zinc-200">{name}</span>
+    </button>
   );
 }
 
@@ -119,7 +121,7 @@ function BrandColorSection({
   onColorChange: (c: string) => void;
 }) {
   const [hexInput, setHexInput] = useState(primaryColor);
-  const [showPicker, setShowPicker] = useState(false);
+  const [showCustom, setShowCustom] = useState(false);
 
   const applyHex = () => {
     const val = hexInput.trim();
@@ -129,84 +131,54 @@ function BrandColorSection({
     }
   };
 
-  const hsl = hexToHsl(primaryColor);
-  const emitHsl = (h: number, s: number, l: number) => {
-    const hex = hslToHex(h, s, l);
-    setHexInput(hex);
-    onColorChange(hex);
-  };
+  const isPreset = COLOR_PALETTES.some(
+    (p) => p.primary.toLowerCase() === primaryColor.toLowerCase()
+  );
 
   return (
     <AccordionSection title="رنگ برند" defaultOpen>
       <div className="space-y-3">
         <ColorPreview color={primaryColor} />
 
-        <div className="grid grid-cols-5 gap-1.5">
-          {PRESET_COLORS.map((color) => (
-            <button
-              key={color}
-              type="button"
-              title={color}
-              onClick={() => {
-                onColorChange(color);
-                setHexInput(color);
-              }}
-              className="h-8 w-full rounded-lg border-2 transition-all duration-150"
-              style={{
-                backgroundColor: color,
-                borderColor: primaryColor === color ? '#fff' : 'transparent',
-                transform: primaryColor === color ? 'scale(1.12)' : undefined,
-                boxShadow:
-                  primaryColor === color ? `0 0 0 2px ${color}55` : undefined
+        <div className="grid grid-cols-2 gap-1.5">
+          {COLOR_PALETTES.map((p) => (
+            <PaletteCard
+              key={p.primary}
+              name={p.name}
+              primary={p.primary}
+              selected={primaryColor.toLowerCase() === p.primary.toLowerCase()}
+              onSelect={() => {
+                onColorChange(p.primary);
+                setHexInput(p.primary);
               }}
             />
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            aria-label="انتخاب رنگ سفارشی"
-            title="انتخاب رنگ سفارشی"
-            onClick={() => setShowPicker((v) => !v)}
-            className="h-8 w-9 flex-shrink-0 cursor-pointer rounded-lg border border-zinc-600"
-            style={{ backgroundColor: primaryColor }}
-          />
-          <Input
-            value={hexInput}
-            onChange={(e) => setHexInput(e.target.value)}
-            onBlur={applyHex}
-            onKeyDown={(e) => e.key === 'Enter' && applyHex()}
-            placeholder="#3B82F6"
-            className="h-8 flex-1 border-zinc-600 bg-zinc-800 font-mono text-xs text-zinc-200 placeholder:text-zinc-600"
-          />
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowCustom((v) => !v)}
+          className="text-[11px] font-medium text-zinc-400 transition-colors hover:text-zinc-200"
+        >
+          {showCustom ? 'بستن رنگ سفارشی' : 'رنگ سفارشی +'}
+        </button>
 
-        {showPicker && (
-          <div className="space-y-2.5 rounded-lg border border-zinc-700 bg-zinc-800/40 p-3">
-            <ColorSlider
-              label="رنگ"
-              min={0}
-              max={360}
-              value={Math.round(hsl.h)}
-              track="linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)"
-              onChange={(h) => emitHsl(h, hsl.s, hsl.l)}
+        {(showCustom || !isPreset) && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="پیش‌نمایش رنگ سفارشی"
+              title="رنگ سفارشی"
+              className="h-8 w-9 flex-shrink-0 rounded-lg border border-zinc-600"
+              style={{ backgroundColor: primaryColor }}
             />
-            <ColorSlider
-              label="اشباع"
-              min={0}
-              max={100}
-              value={Math.round(hsl.s)}
-              track={`linear-gradient(to right, ${hslToHex(hsl.h, 0, hsl.l)}, ${hslToHex(hsl.h, 100, hsl.l)})`}
-              onChange={(s) => emitHsl(hsl.h, s, hsl.l)}
-            />
-            <ColorSlider
-              label="روشنایی"
-              min={0}
-              max={100}
-              value={Math.round(hsl.l)}
-              track={`linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}
-              onChange={(l) => emitHsl(hsl.h, hsl.s, l)}
+            <Input
+              value={hexInput}
+              onChange={(e) => setHexInput(e.target.value)}
+              onBlur={applyHex}
+              onKeyDown={(e) => e.key === 'Enter' && applyHex()}
+              placeholder="#3B82F6"
+              className="h-8 flex-1 border-zinc-600 bg-zinc-800 font-mono text-xs text-zinc-200 placeholder:text-zinc-600"
             />
           </div>
         )}
@@ -218,9 +190,22 @@ function BrandColorSection({
 // ── Font Family ───────────────────────────────────────────────────────────────
 
 const SCRIPT_GROUPS: { script: 'arabic' | 'latin'; label: string }[] = [
-  { script: 'arabic', label: 'فارسی / عربی' },
-  { script: 'latin', label: 'لاتین / انگلیسی' }
+  { script: 'arabic', label: 'مناسب برای محتوای فارسی' },
+  { script: 'latin', label: 'مناسب برای محتوای لاتین' }
 ];
+
+function FontPreview({ fontFamily }: { fontFamily: FontFamily }) {
+  const css = FONT_OPTIONS.find((f) => f.slug === fontFamily)?.preview;
+  return (
+    <div
+      className="rounded-lg border border-zinc-700 bg-zinc-800/40 p-3 text-center"
+      style={{ fontFamily: css }}
+    >
+      <p className="text-lg font-bold text-zinc-100">یادگیری حرفه‌ای</p>
+      <p className="text-sm text-zinc-400">Professional Academy</p>
+    </div>
+  );
+}
 
 function FontFamilySection({
   fontFamily,
@@ -232,11 +217,12 @@ function FontFamilySection({
   return (
     <AccordionSection title="فونت">
       <div className="space-y-3">
+        <FontPreview fontFamily={fontFamily} />
         {SCRIPT_GROUPS.map(({ script, label }) => {
           const group = FONT_OPTIONS.filter((f) => f.script === script);
           return (
             <div key={script}>
-              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+              <p className="mb-1.5 text-[10px] font-semibold text-zinc-500">
                 {label}
               </p>
               <div className="grid grid-cols-2 gap-1.5">
@@ -446,7 +432,7 @@ function DesignSizeSection({
   }) => void;
 }) {
   return (
-    <AccordionSection title="اندازه‌های طراحی">
+    <AccordionSection title="تنظیمات پیشرفته">
       <div className="space-y-4">
         <SizeRow
           title="فاصله بخش‌ها"

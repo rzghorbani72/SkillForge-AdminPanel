@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ImageIcon, LayoutTemplate, Search, X } from 'lucide-react';
+import { Check, ImageIcon, LayoutTemplate, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -48,6 +48,62 @@ function summarizeImageSlots(slots: ImageSlot[]): string {
     .join(', ');
 }
 
+// Lightweight CSS layout hint shown when a section has no cover screenshot.
+// It sketches the section's shape so the manager can tell types apart at a
+// glance. Temporary until real per-section screenshots exist.
+function SectionTypeThumb({ type }: { type: string }) {
+  const bar = 'rounded-sm bg-muted-foreground/25';
+  const shapes: Record<string, React.ReactNode> = {
+    header: <div className={`h-2 w-full ${bar}`} />,
+    hero: (
+      <div className="flex w-full flex-col items-center gap-1.5">
+        <div className={`h-2.5 w-1/2 ${bar}`} />
+        <div className={`h-1.5 w-2/3 ${bar}`} />
+        <div className="mt-1 h-3 w-16 rounded-md bg-primary/40" />
+      </div>
+    ),
+    courses: (
+      <div className="flex w-full gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={`h-10 flex-1 ${bar}`} />
+        ))}
+      </div>
+    ),
+    testimonials: (
+      <div className="flex w-full flex-col items-center gap-1">
+        <div className="text-2xl leading-none text-muted-foreground/40">“</div>
+        <div className={`h-1.5 w-3/4 ${bar}`} />
+        <div className={`h-1.5 w-1/2 ${bar}`} />
+      </div>
+    ),
+    pricing: (
+      <div className="flex w-full items-end justify-center gap-1.5">
+        <div className={`h-8 w-1/4 ${bar}`} />
+        <div className="h-11 w-1/4 rounded-sm bg-primary/40" />
+        <div className={`h-8 w-1/4 ${bar}`} />
+      </div>
+    ),
+    cta: (
+      <div className="flex w-full flex-col items-center gap-1.5">
+        <div className={`h-2 w-1/2 ${bar}`} />
+        <div className="h-4 w-20 rounded-md bg-primary/40" />
+      </div>
+    ),
+    footer: <div className={`h-4 w-full rounded-sm bg-muted-foreground/15`} />
+  };
+
+  return (
+    <div className="flex h-full w-full items-center justify-center px-6 py-4">
+      {shapes[type] ?? (
+        <div className="flex w-full flex-col gap-1.5">
+          <div className={`h-2 w-1/3 ${bar}`} />
+          <div className={`h-8 w-full ${bar}`} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface SectionLibraryModalProps {
   open: boolean;
   onClose: () => void;
@@ -75,7 +131,8 @@ export function SectionLibraryModal({
   };
   const [sections, setSections] = useState<SectionCatalogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isImporting, setIsImporting] = useState<string | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [selected, setSelected] = useState<SectionCatalogEntry | null>(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
 
@@ -84,6 +141,7 @@ export function SectionLibraryModal({
 
     let cancelled = false;
     setIsLoading(true);
+    setSelected(null);
 
     apiClient
       .getSectionCatalog()
@@ -153,19 +211,22 @@ export function SectionLibraryModal({
     }));
   }, [filtered]);
 
-  const handleSelect = async (section: SectionCatalogEntry) => {
+  // Clicking a card only selects it; the change is committed from the
+  // confirmation footer so a swap/import is never applied by accident.
+  const handleConfirm = async () => {
+    if (!selected) return;
     try {
-      setIsImporting(section.id);
+      setIsImporting(true);
       if (swapTarget) {
         await apiClient.swapSectionInDraft(swapTarget.blockId, {
-          presetId: section.presetId,
-          blockId: section.blockId
+          presetId: selected.presetId,
+          blockId: selected.blockId
         });
         ErrorHandler.showSuccess(t('settings.sectionSwappedSuccess'));
       } else {
         await apiClient.importSectionToDraft({
-          presetId: section.presetId,
-          blockId: section.blockId
+          presetId: selected.presetId,
+          blockId: selected.blockId
         });
         ErrorHandler.showSuccess(t('settings.sectionImportedSuccess'));
       }
@@ -174,7 +235,7 @@ export function SectionLibraryModal({
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
-      setIsImporting(null);
+      setIsImporting(false);
     }
   };
 
@@ -205,6 +266,19 @@ export function SectionLibraryModal({
             <X className="h-4 w-4" />
           </button>
         </div>
+
+        {swapTarget && (
+          <div className="flex items-center gap-2 border-b bg-amber-500/10 px-5 py-2.5 text-xs text-amber-700 dark:text-amber-400">
+            <span className="font-semibold">
+              {t('settings.sectionReplacing')}:
+            </span>
+            <span className="rounded-md bg-amber-500/15 px-2 py-0.5 font-bold">
+              {blockLabel(swapTarget.type)}
+            </span>
+            <span className="text-amber-700/70 dark:text-amber-400/70">←</span>
+            <span>{t('settings.sectionReplaceDescription')}</span>
+          </div>
+        )}
 
         <div className="space-y-3 border-b px-5 py-3">
           <div className="relative">
@@ -275,104 +349,130 @@ export function SectionLibraryModal({
                     <p className="text-xs font-semibold">{group.presetName}</p>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">
-                    {group.items.map((section) => (
-                      <div
-                        key={section.id}
-                        className="group/card overflow-hidden rounded-lg border transition-colors hover:border-primary/40"
-                      >
-                        {/* Static cover at the locked 16/9 cover ratio */}
-                        <div className="relative aspect-[16/9] w-full border-b bg-muted/30">
-                          {section.coverImage ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={section.coverImage}
-                              alt={blockLabel(section.blockType)}
-                              loading="lazy"
-                              className="h-full w-full object-cover object-top"
-                            />
-                          ) : (
-                            <div className="flex h-full flex-col items-center justify-center gap-1 text-muted-foreground/50">
-                              <LayoutTemplate className="h-6 w-6" />
-                              <span className="text-[10px]">
-                                {blockLabel(section.blockType)}
-                              </span>
-                            </div>
-                          )}
-                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover/card:opacity-100">
-                            <span className="rounded-md bg-white px-2.5 py-1 text-[11px] font-bold text-zinc-900">
-                              {swapTarget
-                                ? t('settings.sectionReplace')
-                                : t('settings.sectionAddToDraft')}
-                            </span>
+                    {group.items.map((section) => {
+                      const isSelected = selected?.id === section.id;
+                      return (
+                        <button
+                          key={section.id}
+                          type="button"
+                          onClick={() => setSelected(section)}
+                          className={`group/card overflow-hidden rounded-lg border text-right transition-colors ${
+                            isSelected
+                              ? 'border-primary ring-2 ring-primary/40'
+                              : 'hover:border-primary/40'
+                          }`}
+                        >
+                          {/* Cover screenshot, or a CSS layout hint when absent */}
+                          <div className="relative aspect-[16/9] w-full border-b bg-muted/30">
+                            {section.coverImage ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={section.coverImage}
+                                alt={blockLabel(section.blockType)}
+                                loading="lazy"
+                                className="h-full w-full object-cover object-top"
+                              />
+                            ) : (
+                              <SectionTypeThumb type={section.blockType} />
+                            )}
+                            {isSelected && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-primary/15">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                                  <Check className="h-4 w-4" />
+                                </span>
+                              </div>
+                            )}
                           </div>
-                        </div>
 
-                        {/* Meta */}
-                        <div className="flex flex-col gap-2 p-3">
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-bold">
-                                {blockLabel(section.blockType)}
-                              </p>
+                          {/* Meta */}
+                          <div className="flex flex-col gap-2 p-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-bold">
+                                  {blockLabel(section.blockType)}
+                                </p>
+                                <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                  <LayoutTemplate className="h-3 w-3 shrink-0" />
+                                  {t('settings.sectionFromTemplate', {
+                                    name: section.presetName
+                                  })}
+                                </p>
+                              </div>
+                              <div className="flex shrink-0 flex-col items-end gap-1">
+                                {section.sectionVariant && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[9px]"
+                                  >
+                                    {section.sectionVariant}
+                                  </Badge>
+                                )}
+                                {section.imageSlots.length > 0 && (
+                                  <Badge
+                                    variant="outline"
+                                    className="gap-0.5 text-[9px] text-muted-foreground"
+                                  >
+                                    <ImageIcon className="h-2.5 w-2.5" />
+                                    {section.imageSlots.length}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            {section.imageSlots.length > 0 && (
                               <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                <LayoutTemplate className="h-3 w-3 shrink-0" />
-                                {t('settings.sectionFromTemplate', {
-                                  name: section.presetName
-                                })}
+                                <ImageIcon className="h-2.5 w-2.5 shrink-0" />
+                                {t('settings.sectionNeedsImages')}:{' '}
+                                {summarizeImageSlots(section.imageSlots)}
                               </p>
-                            </div>
-                            <div className="flex shrink-0 flex-col items-end gap-1">
-                              {section.sectionVariant && (
-                                <Badge
-                                  variant="secondary"
-                                  className="text-[9px]"
-                                >
-                                  {section.sectionVariant}
-                                </Badge>
-                              )}
-                              {section.imageSlots.length > 0 && (
-                                <Badge
-                                  variant="outline"
-                                  className="gap-0.5 text-[9px] text-muted-foreground"
-                                >
-                                  <ImageIcon className="h-2.5 w-2.5" />
-                                  {section.imageSlots.length}
-                                </Badge>
-                              )}
-                            </div>
+                            )}
                           </div>
-                          {section.imageSlots.length > 0 && (
-                            <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                              <ImageIcon className="h-2.5 w-2.5 shrink-0" />
-                              {t('settings.sectionNeedsImages')}:{' '}
-                              {summarizeImageSlots(section.imageSlots)}
-                            </p>
-                          )}
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            className="h-7 text-xs"
-                            disabled={isImporting === section.id}
-                            onClick={() => handleSelect(section)}
-                          >
-                            {isImporting === section.id
-                              ? swapTarget
-                                ? t('settings.sectionReplacing')
-                                : t('settings.sectionImporting')
-                              : swapTarget
-                                ? t('settings.sectionReplace')
-                                : t('settings.sectionAddToDraft')}
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        {selected && (
+          <div className="flex items-center justify-between gap-3 border-t bg-muted/30 px-5 py-3">
+            <p className="min-w-0 truncate text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                {blockLabel(selected.blockType)}
+              </span>{' '}
+              · {selected.presetName}
+            </p>
+            <div className="flex shrink-0 gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="h-8 text-xs"
+                disabled={isImporting}
+                onClick={() => setSelected(null)}
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                className="h-8 text-xs"
+                disabled={isImporting}
+                onClick={handleConfirm}
+              >
+                {isImporting
+                  ? swapTarget
+                    ? t('settings.sectionReplacing')
+                    : t('settings.sectionImporting')
+                  : swapTarget
+                    ? t('settings.sectionReplace')
+                    : t('settings.sectionAddToDraft')}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
