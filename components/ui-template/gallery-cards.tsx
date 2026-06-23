@@ -1,9 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { Eye, Lock, Trash2, Check } from 'lucide-react';
 import type { TemplatePreset } from '@/types/api';
 import { getDesignSystem } from '@/lib/design-systems';
-import { TemplatePreview } from '@/components/ui-template/template-preview';
 
 // Card/preview swatches follow the template's saved theme when present, so a
 // dedicated template shows its real palette instead of the design-system default.
@@ -104,6 +104,7 @@ function GalleryCard({
   onQuickApply,
   onDelete
 }: GalleryCardProps) {
+  const [imgError, setImgError] = useState(false);
   const ds = getDesignSystem(preset.id);
   const isDedicated = preset.visibility === 'DEDICATED';
   const colors = resolveTemplateColors(preset);
@@ -113,14 +114,19 @@ function GalleryCard({
     colors.secondary,
     colors.accent
   ];
+  const showGradientCover = !preset.preview || imgError;
 
   return (
     <div
       style={{ animationDelay: `${index * 55}ms` }}
-      className="group relative overflow-hidden rounded-2xl border border-border/50 bg-background text-right shadow-sm duration-300 animate-in fade-in slide-in-from-bottom-3 hover:-translate-y-1 hover:border-border hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]"
+      className={`group relative overflow-hidden rounded-2xl border text-right duration-300 animate-in fade-in slide-in-from-bottom-3 hover:-translate-y-1 ${
+        isActive
+          ? 'border-emerald-400/80 bg-background shadow-[0_0_0_1px_#34d39966,0_8px_32px_rgba(16,185,129,0.18)] hover:shadow-[0_16px_40px_rgba(16,185,129,0.22)]'
+          : 'border-border/50 bg-background shadow-sm hover:border-border hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]'
+      }`}
     >
       {isActive && (
-        <span className="absolute inset-y-0 right-0 z-20 w-1 bg-emerald-500" />
+        <div className="absolute inset-x-0 top-0 z-20 h-[2px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
       )}
 
       {/* Dedicated badge + owner delete */}
@@ -147,27 +153,41 @@ function GalleryCard({
         )}
       </div>
 
-      {/* Thumbnail — taller 3:4 portrait shows more of the template */}
+      {/* Thumbnail */}
       <button
         type="button"
         onClick={onClick}
-        className="relative block aspect-[3/4] w-full overflow-hidden bg-muted/40"
+        className="relative block aspect-[4/3] w-full overflow-hidden bg-muted/40"
       >
-        {preset.preview ? (
+        {!showGradientCover && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={preset.preview}
+            src={preset.preview!}
             alt={preset.name}
             loading="lazy"
+            onError={() => setImgError(true)}
             className="h-full w-full object-cover object-top"
           />
-        ) : (
-          <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">
-            <div
-              className="origin-top-left"
-              style={{ transform: 'scale(0.5)', width: '200%' }}
-            >
-              <TemplatePreview preset={preset} />
+        )}
+
+        {showGradientCover && (
+          <div
+            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3"
+            style={{
+              background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`
+            }}
+          >
+            <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
+              {preset.name}
+            </span>
+            <div className="flex gap-1.5">
+              {swatches.map((c, i) => (
+                <span
+                  key={i}
+                  className="h-2.5 w-2.5 rounded-full border border-white/40"
+                  style={{ background: c }}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -195,7 +215,8 @@ function GalleryCard({
         </div>
 
         {isActive && (
-          <span className="absolute right-2.5 top-2.5 z-10 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+          <span className="absolute right-2.5 top-2.5 z-10 flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
             فعال
           </span>
         )}

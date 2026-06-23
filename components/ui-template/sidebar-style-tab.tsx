@@ -217,6 +217,11 @@ function BrandColorSection({
 
 // ── Font Family ───────────────────────────────────────────────────────────────
 
+const SCRIPT_GROUPS: { script: 'arabic' | 'latin'; label: string }[] = [
+  { script: 'arabic', label: 'فارسی / عربی' },
+  { script: 'latin', label: 'لاتین / انگلیسی' }
+];
+
 function FontFamilySection({
   fontFamily,
   onFontFamilyChange
@@ -226,22 +231,34 @@ function FontFamilySection({
 }) {
   return (
     <AccordionSection title="فونت">
-      <div className="grid grid-cols-2 gap-1.5">
-        {FONT_OPTIONS.map((font) => (
-          <button
-            key={font.slug}
-            type="button"
-            onClick={() => onFontFamilyChange(font.slug)}
-            style={{ fontFamily: font.preview }}
-            className={`rounded-lg border py-2 text-sm font-medium transition-colors ${
-              fontFamily === font.slug
-                ? 'border-blue-500 bg-blue-600 text-white'
-                : 'border-zinc-700 text-zinc-300 hover:border-zinc-500'
-            }`}
-          >
-            {font.label}
-          </button>
-        ))}
+      <div className="space-y-3">
+        {SCRIPT_GROUPS.map(({ script, label }) => {
+          const group = FONT_OPTIONS.filter((f) => f.script === script);
+          return (
+            <div key={script}>
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+                {label}
+              </p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {group.map((font) => (
+                  <button
+                    key={font.slug}
+                    type="button"
+                    onClick={() => onFontFamilyChange(font.slug)}
+                    style={{ fontFamily: font.preview }}
+                    className={`rounded-lg border py-2 text-sm font-medium transition-colors ${
+                      fontFamily === font.slug
+                        ? 'border-blue-500 bg-blue-600 text-white'
+                        : 'border-zinc-700 text-zinc-300 hover:border-zinc-500'
+                    }`}
+                  >
+                    {font.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </AccordionSection>
   );

@@ -8,19 +8,52 @@ export type ViewportMode = 'mobile' | 'tablet' | 'desktop';
 // Slugs mirror Backend FONT_FAMILY_SLUGS + edusphere font stacks. The public
 // site only loads these families, so the picker can never offer a font that
 // fails to render. `preview` is the CSS stack used for the in-picker label.
+// `script` groups fonts in the picker: 'arabic' = Persian/Arabic, 'latin' = English/Latin.
 export const FONT_OPTIONS = [
+  // Persian / Arabic
   {
     slug: 'vazirmatn',
-    label: 'وزیرمتن (مدرن)',
+    label: 'وزیرمتن',
+    script: 'arabic' as const,
     preview: "'Vazirmatn', sans-serif"
   },
-  { slug: 'markazi', label: 'مرکزی (سریف)', preview: "'Markazi Text', serif" },
+  {
+    slug: 'markazi',
+    label: 'مرکزی',
+    script: 'arabic' as const,
+    preview: "'Markazi Text', serif"
+  },
   {
     slug: 'noto-naskh',
-    label: 'نسخ (سنتی)',
+    label: 'نسخ',
+    script: 'arabic' as const,
     preview: "'Noto Naskh Arabic', serif"
   },
-  { slug: 'lalezar', label: 'لاله‌زار (تیتر)', preview: "'Lalezar', cursive" }
+  {
+    slug: 'lalezar',
+    label: 'لاله‌زار',
+    script: 'arabic' as const,
+    preview: "'Lalezar', cursive"
+  },
+  // Latin / English
+  {
+    slug: 'inter',
+    label: 'Inter',
+    script: 'latin' as const,
+    preview: "'Inter', sans-serif"
+  },
+  {
+    slug: 'poppins',
+    label: 'Poppins',
+    script: 'latin' as const,
+    preview: "'Poppins', sans-serif"
+  },
+  {
+    slug: 'playfair',
+    label: 'Playfair',
+    script: 'latin' as const,
+    preview: "'Playfair Display', serif"
+  }
 ] as const;
 export type FontFamily = (typeof FONT_OPTIONS)[number]['slug'];
 
