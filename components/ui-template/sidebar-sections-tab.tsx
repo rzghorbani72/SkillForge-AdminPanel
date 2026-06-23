@@ -15,10 +15,92 @@ import {
   arrayMove
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, ArrowLeftRight, Lock, Plus, EyeOff } from 'lucide-react';
+import {
+  GripVertical,
+  ArrowLeftRight,
+  Lock,
+  Plus,
+  Eye,
+  EyeOff,
+  Copy,
+  Trash2,
+  type LucideIcon
+} from 'lucide-react';
 import { BlockThumbnail } from '@/components/ui-template/template-preview';
 import type { UIBlockConfig } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+
+// Per-section quick actions, surfaced on the row like Wix's section toolbar so
+// hide / duplicate / swap / delete are one click instead of buried in a panel.
+interface RowActionHandlers {
+  onReplace: () => void;
+  onDuplicate: (id: string) => void;
+  onToggleVisible: (id: string, visible: boolean) => void;
+  onDelete: (id: string) => void;
+}
+
+function IconButton({
+  icon: Icon,
+  title,
+  onClick,
+  danger
+}: {
+  icon: LucideIcon;
+  title: string;
+  onClick: () => void;
+  danger?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      title={title}
+      aria-label={title}
+      onClick={onClick}
+      className={`rounded p-1 text-zinc-500 transition-colors ${
+        danger
+          ? 'hover:bg-red-500/10 hover:text-red-400'
+          : 'hover:text-zinc-200'
+      }`}
+    >
+      <Icon className="h-3.5 w-3.5" />
+    </button>
+  );
+}
+
+function RowActions({
+  block,
+  onReplace,
+  onDuplicate,
+  onToggleVisible,
+  onDelete
+}: { block: UIBlockConfig } & RowActionHandlers) {
+  const isVisible = block.isVisible !== false;
+  return (
+    <div className="flex items-center gap-0.5">
+      <IconButton
+        icon={isVisible ? Eye : EyeOff}
+        title={isVisible ? 'پنهان کردن' : 'نمایش'}
+        onClick={() => onToggleVisible(block.id, !isVisible)}
+      />
+      <IconButton
+        icon={Copy}
+        title="تکثیر"
+        onClick={() => onDuplicate(block.id)}
+      />
+      <IconButton
+        icon={ArrowLeftRight}
+        title="جایگزینی بخش"
+        onClick={onReplace}
+      />
+      <IconButton
+        icon={Trash2}
+        title="حذف"
+        danger
+        onClick={() => onDelete(block.id)}
+      />
+    </div>
+  );
+}
 
 const BLOCK_TAG: Record<string, string> = {
   header: 'nav',
@@ -102,13 +184,15 @@ function SortableRow({
   block,
   isSelected,
   onSelect,
-  onReplace
+  onReplace,
+  onDuplicate,
+  onToggleVisible,
+  onDelete
 }: {
   block: UIBlockConfig;
   isSelected: boolean;
   onSelect?: () => void;
-  onReplace: () => void;
-}) {
+} & RowActionHandlers) {
   const blockLabel = useBlockLabel();
   const {
     attributes,
@@ -151,24 +235,20 @@ function SortableRow({
         <button
           type="button"
           onClick={onSelect}
-          className="flex-1 text-right text-xs text-zinc-300 hover:text-zinc-100"
+          className="flex-1 truncate text-right text-xs text-zinc-300 hover:text-zinc-100"
         >
           {blockLabel(block.type)}
           {isHidden && (
             <EyeOff className="mr-1 inline h-2.5 w-2.5 text-zinc-500" />
           )}
         </button>
-        <span className="rounded bg-zinc-700 px-1.5 py-0.5 font-mono text-[9px] text-zinc-400">
-          {BLOCK_TAG[block.type] ?? 'div'}
-        </span>
-        <button
-          type="button"
-          title="جایگزینی بخش"
-          onClick={onReplace}
-          className="text-zinc-500 transition-colors hover:text-zinc-200"
-        >
-          <ArrowLeftRight className="h-3.5 w-3.5" />
-        </button>
+        <RowActions
+          block={block}
+          onReplace={onReplace}
+          onDuplicate={onDuplicate}
+          onToggleVisible={onToggleVisible}
+          onDelete={onDelete}
+        />
       </div>
     </div>
   );
@@ -180,6 +260,9 @@ export interface SidebarSectionsTabProps {
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
   selectedBlockId?: string | null;
   onSelectBlock?: (id: string) => void;
+  onDuplicateBlock: (id: string) => void;
+  onToggleVisibleBlock: (id: string, visible: boolean) => void;
+  onDeleteBlock: (id: string) => void;
 }
 
 export function SidebarSectionsTab({
@@ -187,7 +270,10 @@ export function SidebarSectionsTab({
   onBlocksChange,
   onOpenPicker,
   selectedBlockId,
-  onSelectBlock
+  onSelectBlock,
+  onDuplicateBlock,
+  onToggleVisibleBlock,
+  onDeleteBlock
 }: SidebarSectionsTabProps) {
   const sensors = useSensors(useSensor(PointerSensor));
   const sorted = [...blocks].sort((a, b) => a.order - b.order);
@@ -246,6 +332,9 @@ export function SidebarSectionsTab({
                 isSelected={selectedBlockId === block.id}
                 onSelect={select(block)}
                 onReplace={replace(block)}
+                onDuplicate={onDuplicateBlock}
+                onToggleVisible={onToggleVisibleBlock}
+                onDelete={onDeleteBlock}
               />
             ))}
           </div>

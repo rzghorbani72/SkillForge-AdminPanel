@@ -996,6 +996,9 @@ export default function UITemplateSettingsPage() {
               onBlocksChange={handleBlocksChange}
               onBannerImageChange={handleBannerImageChange}
               onOpenPicker={handleOpenPicker}
+              onDuplicateBlock={handleBlockDuplicate}
+              onToggleVisibleBlock={handleBlockToggleVisible}
+              onDeleteBlock={handleBlockDelete}
               onReset={handleReset}
               saveMode={saveMode}
               onSaveAsCopy={() => setPendingSave({ kind: 'fork' })}

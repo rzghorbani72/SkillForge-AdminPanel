@@ -43,6 +43,9 @@ export interface TemplateCustomizationSidebarProps {
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
   onBannerImageChange: (url: string) => void;
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
+  onDuplicateBlock: (id: string) => void;
+  onToggleVisibleBlock: (id: string, visible: boolean) => void;
+  onDeleteBlock: (id: string) => void;
   onReset: () => void;
   saveMode?: SaveMode;
   onSaveAsCopy?: () => void;
@@ -73,6 +76,9 @@ export function TemplateCustomizationSidebar({
   onBlocksChange,
   onBannerImageChange,
   onOpenPicker,
+  onDuplicateBlock,
+  onToggleVisibleBlock,
+  onDeleteBlock,
   onReset,
   saveMode,
   onSaveAsCopy,
@@ -158,6 +164,9 @@ export function TemplateCustomizationSidebar({
             onOpenPicker={onOpenPicker}
             selectedBlockId={selectedBlockId}
             onSelectBlock={onSelectBlock}
+            onDuplicateBlock={onDuplicateBlock}
+            onToggleVisibleBlock={onToggleVisibleBlock}
+            onDeleteBlock={onDeleteBlock}
           />
         ) : (
           <SidebarStyleTab
