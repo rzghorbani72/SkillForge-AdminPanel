@@ -35,7 +35,7 @@ export function EditorPreview({
   const isDesktop = viewport === 'desktop';
 
   return (
-    <div className="relative flex flex-1 justify-center overflow-auto bg-zinc-950 p-0">
+    <div className="relative flex flex-1 justify-center overflow-hidden bg-zinc-950 p-0">
       {isLoading && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-950">
           <div className="flex flex-col items-center gap-3">
