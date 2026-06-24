@@ -36,16 +36,10 @@ export interface SectionSchema {
   hasHeight?: boolean;
   // Layout tab: grid column chips (2/3/4).
   hasColumns?: boolean;
+  // Shown in the Content tab to explain which parts come from live academy data
+  // (not editable here) vs static text (editable in the fields above).
+  dynamicContentNote?: string;
 }
-
-const TITLE: ContentFieldSchema = {
-  key: 'title',
-  label: 'عنوان بخش',
-  kind: 'text',
-  required: true,
-  placeholder: 'عنوان این بخش',
-  defaultValue: 'عنوان بخش'
-};
 
 export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
   header: {
@@ -53,13 +47,15 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     content: [
       {
         key: 'brandName',
-        label: 'نام برند',
+        label: 'نام برند / آکادمی',
         kind: 'text',
         required: true,
-        placeholder: 'نام آکادمی'
+        placeholder: 'نام آکادمی خود را وارد کنید',
+        defaultValue: 'آکادمی من'
       }
     ]
   },
+
   hero: {
     name: 'بخش بنر اصلی',
     content: [
@@ -92,8 +88,8 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         advanced: true,
         placeholder: 'مثلاً: بیشتر بدانید'
       },
-      // Fields used by flow / code / creative hero styles.
-      // Shown under "Advanced" so the default hero stays clean.
+      // Extra fields used by flow / code / creative hero styles.
+      // Hidden under "Advanced" so the default hero keeps a clean panel.
       {
         key: 'tag',
         label: 'برچسب بالای عنوان',
@@ -120,14 +116,15 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         label: 'تعداد یادگیرندگان',
         kind: 'text',
         advanced: true,
-        placeholder: 'مثلاً: ۱۲٬۰۰۰+'
+        placeholder: 'مثلاً: ۱۲٬۰۰۰+',
+        hint: 'اگر «نمایش آمار واقعی» فعال باشد این مقدار از API جایگزین می‌شود'
       },
       {
         key: 'useLiveData',
         label: 'نمایش آمار واقعی آکادمی',
         kind: 'toggle',
         defaultOn: false,
-        hint: 'به‌جای اعداد نمونه، تعداد واقعی دوره‌ها و دانشجویان آکادمی نمایش داده می‌شود'
+        hint: 'تعداد واقعی دوره‌ها و دانشجویان به‌جای اعداد نمونه نمایش داده می‌شود'
       },
       { key: 'showCTA', label: 'نمایش دکمه', kind: 'toggle', advanced: true }
     ],
@@ -135,24 +132,80 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     hasAlignment: true,
     hasHeight: true
   },
+
   features: {
     name: 'ویژگی‌ها',
-    content: [{ ...TITLE }],
-    hasColumns: true
+    content: [
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'ویژگی‌های کلیدی ما'
+      },
+      {
+        key: 'subtitle',
+        label: 'توضیحات زیر عنوان',
+        kind: 'textarea',
+        placeholder: 'چرا ما را انتخاب کنید',
+        defaultValue: 'آنچه یادگیری در آکادمی ما را خاص می‌کند'
+      }
+    ],
+    hasColumns: true,
+    dynamicContentNote:
+      'کارت‌های ویژگی از محتوای پیش‌فرض قالب نمایش داده می‌شوند. برای تغییر طرح‌بندی یا نوع کارت‌ها، می‌توانید این بخش را با یک سبک جدید جایگزین کنید.'
   },
+
   courses: {
     name: 'دوره‌ها',
-    content: [{ ...TITLE }],
-    hasColumns: true
+    content: [
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'دوره‌های آموزشی'
+      }
+    ],
+    hasColumns: true,
+    dynamicContentNote:
+      'کارت‌های دوره به‌صورت زنده از دوره‌های واقعی آکادمی شما بارگذاری می‌شوند. مدیریت دوره‌ها از بخش «دوره‌ها» در داشبورد انجام می‌شود.'
   },
+
   testimonials: {
     name: 'نظرات',
-    content: [{ ...TITLE }]
+    content: [
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'نظرات دانشجویان ما'
+      }
+    ],
+    dynamicContentNote:
+      'نظرات به‌صورت زنده از بازخوردهای ثبت‌شده دانشجویان آکادمی شما نمایش داده می‌شوند.'
   },
+
   pricing: {
     name: 'تعرفه‌ها',
-    content: [{ ...TITLE }]
+    content: [
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'پلان‌های اشتراک'
+      }
+    ],
+    dynamicContentNote:
+      'کارت‌های قیمت‌گذاری از تنظیمات پلان‌های آکادمی شما بارگذاری می‌شوند. مدیریت پلان‌ها از بخش «تنظیمات / اشتراک» انجام می‌شود.'
   },
+
   cta: {
     name: 'فراخوان به عمل',
     content: [
@@ -168,31 +221,68 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         key: 'subtitle',
         label: 'متن پشتیبان',
         kind: 'textarea',
+        placeholder: 'توضیح تکمیلی',
         defaultValue: 'به جمع یادگیرندگان ما بپیوندید'
       },
       {
         key: 'ctaText',
         label: 'متن دکمه',
         kind: 'text',
+        placeholder: 'مثلاً: ثبت‌نام کنید',
         defaultValue: 'ثبت‌نام کنید'
       }
     ]
   },
+
   categories: {
     name: 'دسته‌بندی‌ها',
-    content: [{ ...TITLE }],
-    hasColumns: true
+    content: [
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'دسته‌بندی‌های آموزشی'
+      }
+    ],
+    hasColumns: true,
+    dynamicContentNote:
+      'دسته‌بندی‌ها به‌صورت زنده از دسته‌بندی‌های دوره‌های آکادمی شما بارگذاری می‌شوند.'
   },
+
   projects: {
     name: 'نمونه‌کارها',
-    content: [{ ...TITLE }],
+    content: [
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'نمونه‌کارهای برگزیده'
+      }
+    ],
     hasColumns: true
   },
+
   'course-grid': {
     name: 'شبکه دوره‌ها',
-    content: [{ ...TITLE }],
-    hasColumns: true
+    content: [
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'همه دوره‌ها'
+      }
+    ],
+    hasColumns: true,
+    dynamicContentNote:
+      'دوره‌ها به‌صورت زنده از کاتالوگ دوره‌های آکادمی شما نمایش داده می‌شوند.'
   },
+
   footer: { name: 'فوتر', content: [] },
   slideshow: { name: 'اسلایدشو / بنر', content: [] },
   marquee: { name: 'عناوین متحرک', content: [] },
@@ -211,6 +301,8 @@ export function isSectionIncomplete(
 ): boolean {
   const schema = getSectionSchema(type);
   return schema.content.some(
-    (field) => field.required && !String((config ?? {})[field.key] ?? '').trim()
+    (field) =>
+      field.required &&
+      !String((config ?? {})[field.key] ?? field.defaultValue ?? '').trim()
   );
 }

@@ -2,7 +2,6 @@
 
 import { Plus } from 'lucide-react';
 import type { UIBlockConfig } from '@/types/api';
-import { useSwappableSectionTypes } from '@/lib/ui-template/use-swappable-types';
 import { SectionEditor } from './section-customization-panel';
 import type { HeroPreviewContext } from './hero-variant-picker';
 
@@ -36,11 +35,6 @@ export function SidebarSectionsTab({
   onCloseSection,
   preview
 }: SidebarSectionsTabProps) {
-  const swappableTypes = useSwappableSectionTypes(blocks.length > 0);
-  // Until the catalog loads (null), don't hide a valid swap; afterwards show it
-  // only for types that actually have alternative designs.
-  const canSwap = (type: string) =>
-    swappableTypes === null || swappableTypes.has(type);
   const sorted = [...blocks].sort((a, b) => a.order - b.order);
   const header = sorted.find((b) => b.type === 'header') ?? null;
   const footer = sorted.find((b) => b.type === 'footer') ?? null;
@@ -82,11 +76,6 @@ export function SidebarSectionsTab({
         onMove={(_id, dir) => handleMove(dir)}
         onDelete={onDeleteBlock}
         onToggleVisible={onToggleVisibleBlock}
-        onReplace={
-          canSwap(selected.type)
-            ? () => onOpenPicker({ blockId: selected.id, type: selected.type })
-            : undefined
-        }
         onBack={onCloseSection}
         preview={preview}
       />

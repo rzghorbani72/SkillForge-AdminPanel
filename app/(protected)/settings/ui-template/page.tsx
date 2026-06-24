@@ -471,7 +471,9 @@ export default function UITemplateSettingsPage() {
   }, []);
 
   const debouncedSaveTheme = useDebouncedCallback(saveThemeDraft, 800);
-  const debouncedSaveBlocks = useDebouncedCallback(saveBlocksDraft, 800);
+  // 400ms gives fast preview refresh for discrete style/layout clicks while
+  // still batching rapid keystrokes into a single API call.
+  const debouncedSaveBlocks = useDebouncedCallback(saveBlocksDraft, 400);
 
   const pushHistory = useCallback((snapshot: UIBlockConfig[]) => {
     setHistory((h) => {
@@ -645,6 +647,12 @@ export default function UITemplateSettingsPage() {
   };
 
   const handleBlockToggleVisible = (blockId: string, visible: boolean) => {
+    // Instantly hide/show the section in the preview without waiting for the
+    // full save + iframe reload cycle — gives immediate visual feedback.
+    previewIframeRef.current?.contentWindow?.postMessage(
+      { source: 'mentoma-admin', type: 'toggle-visible', blockId, visible },
+      '*'
+    );
     commitBlocks(
       draftBlocks.map((b) =>
         b.id === blockId ? { ...b, isVisible: visible } : b

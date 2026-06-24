@@ -3,7 +3,6 @@
 import { useRef, useState, useEffect } from 'react';
 import {
   ArrowRight,
-  ArrowLeftRight,
   ChevronDown,
   ChevronUp,
   ArrowUp,
@@ -14,11 +13,11 @@ import {
   AlertTriangle,
   Bold,
   Italic,
-  Quote
+  Quote,
+  Info
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { BlockThumbnail } from '@/components/ui-template/template-preview';
 import type { UIBlockConfig } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -49,7 +48,6 @@ export interface SectionEditorProps {
   onMove: (blockId: string, dir: 'up' | 'down') => void;
   onDelete: (blockId: string) => void;
   onToggleVisible: (blockId: string, visible: boolean) => void;
-  onReplace?: () => void;
   onBack: () => void;
   // Live-preview context for the hero design picker (null = picker hidden).
   preview?: HeroPreviewContext | null;
@@ -66,7 +64,6 @@ export function SectionEditor({
   onMove,
   onDelete,
   onToggleVisible,
-  onReplace,
   onBack,
   preview
 }: SectionEditorProps) {
@@ -115,17 +112,6 @@ export function SectionEditor({
             title={t('sitePreview.panelIncomplete')}
             className="h-2 w-2 rounded-full bg-amber-400"
           />
-        )}
-        {onReplace && (
-          <button
-            type="button"
-            onClick={onReplace}
-            aria-label="تغییر طراحی بخش"
-            title="تغییر طراحی بخش"
-            className="ms-auto rounded-lg p-1 text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
-          >
-            <ArrowLeftRight className="h-4 w-4" />
-          </button>
         )}
       </div>
 
@@ -255,6 +241,17 @@ function ContentTab({
         <div className="space-y-3">
           <TextOverridesEditor blockType={block.type} cfg={cfg} set={set} />
           <SectionSlotEditor blockType={block.type} cfg={cfg} set={set} />
+        </div>
+      )}
+
+      {/* Live-data note — clarifies which parts of this section come from the
+          academy API (not editable here) vs the static text fields above. */}
+      {schema.dynamicContentNote && (
+        <div className="flex items-start gap-2 rounded-lg border border-blue-400/20 bg-blue-400/5 px-3 py-2.5">
+          <Info className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-blue-400" />
+          <p className="text-[11px] leading-relaxed text-zinc-500">
+            {schema.dynamicContentNote}
+          </p>
         </div>
       )}
 
