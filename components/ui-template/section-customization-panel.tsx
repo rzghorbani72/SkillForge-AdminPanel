@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ArrowRight,
   ChevronDown,
@@ -11,9 +11,7 @@ import {
   Eye,
   Upload,
   AlertTriangle,
-  Bold,
-  Italic,
-  Quote,
+  MousePointerClick,
   Info
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -199,6 +197,14 @@ function ContentTab({
 
   return (
     <div className="space-y-4">
+      {/* Inline-edit hint — always shown so the manager knows how to edit text */}
+      <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5">
+        <MousePointerClick className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
+        <p className="text-[11px] leading-relaxed text-blue-700">
+          برای ویرایش متن، روی آن در پیش‌نمایش کلیک کنید
+        </p>
+      </div>
+
       {block.type === 'hero' && preview && (
         <div className="border-b border-zinc-200/70 pb-4">
           <HeroVariantPicker
@@ -264,63 +270,6 @@ function ContentTab({
   );
 }
 
-// Minimal inline formatting: wraps the selected text in an HTML tag. Templates
-// render these fields as raw HTML, so the stored value keeps the tags.
-function RichTextArea({
-  value,
-  placeholder,
-  onChange
-}: {
-  value: string;
-  placeholder?: string;
-  onChange: (v: string) => void;
-}) {
-  const ref = useRef<HTMLTextAreaElement>(null);
-
-  const wrap = (tag: string) => {
-    const el = ref.current;
-    if (!el) return;
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-    const selected = value.slice(start, end) || '';
-    const next =
-      value.slice(0, start) + `<${tag}>${selected}</${tag}>` + value.slice(end);
-    onChange(next);
-  };
-
-  const tools: { tag: string; icon: typeof Bold; label: string }[] = [
-    { tag: 'strong', icon: Bold, label: 'پررنگ' },
-    { tag: 'em', icon: Italic, label: 'کج' },
-    { tag: 'blockquote', icon: Quote, label: 'نقل‌قول' }
-  ];
-
-  return (
-    <div className="space-y-1">
-      <div className="flex gap-1">
-        {tools.map(({ tag, icon: Icon, label }) => (
-          <button
-            key={tag}
-            type="button"
-            title={label}
-            onClick={() => wrap(tag)}
-            className="rounded border border-zinc-300 p-1 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
-          >
-            <Icon className="h-3 w-3" />
-          </button>
-        ))}
-      </div>
-      <textarea
-        ref={ref}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        rows={2}
-        className="w-full resize-none rounded-md border border-zinc-300 bg-zinc-100 px-2.5 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-600 focus:border-blue-500 focus:outline-none"
-      />
-    </div>
-  );
-}
-
 function Field({
   field,
   cfg,
@@ -351,8 +300,7 @@ function Field({
     );
   }
 
-  // Show the stored value; fall back to defaultValue so the input reflects what
-  // the preview displays when config hasn't been filled in yet.
+  // text / textarea — editing happens directly in the preview canvas
   const rawValue = cfg[field.key];
   const value =
     rawValue !== undefined && rawValue !== null
@@ -360,29 +308,31 @@ function Field({
       : (field.defaultValue ?? '');
   const empty = field.required && !value.trim();
 
+  // Strip HTML tags for the preview snippet (subtitle may contain <b> etc.)
+  const snippet = value.replace(/<[^>]*>/g, '').trim();
+
   return (
-    <div className="space-y-1.5">
-      <span className="text-xs text-zinc-700">{field.label}</span>
-      {field.kind === 'textarea' ? (
-        <RichTextArea
-          value={value}
-          placeholder={field.placeholder}
-          onChange={(v) => set(field.key, v)}
-        />
-      ) : (
-        <Input
-          value={value}
-          onChange={(e) => set(field.key, e.target.value)}
-          placeholder={field.placeholder}
-          className="h-8 border-zinc-300 bg-zinc-100 text-sm text-zinc-900 placeholder:text-zinc-600"
-        />
-      )}
-      {empty && (
+    <div className="space-y-1">
+      <span className="text-[11px] font-medium text-zinc-500">
+        {field.label}
+      </span>
+      <div className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50 px-2.5 py-2">
+        {snippet ? (
+          <p className="line-clamp-2 text-xs leading-relaxed text-zinc-700">
+            {snippet}
+          </p>
+        ) : (
+          <p className="text-xs italic text-zinc-400">
+            {field.placeholder ?? '—'}
+          </p>
+        )}
+      </div>
+      {empty ? (
         <p className="flex items-center gap-1 text-[11px] text-amber-400">
           <AlertTriangle className="h-3 w-3 shrink-0" />
           {t('sitePreview.panelRequiredHint', { field: field.label })}
         </p>
-      )}
+      ) : null}
     </div>
   );
 }
