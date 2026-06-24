@@ -331,12 +331,19 @@ function Field({
 
   if (field.kind === 'toggle') {
     return (
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-zinc-700">{field.label}</span>
-        <Switch
-          checked={(cfg[field.key] as boolean) ?? field.defaultOn ?? true}
-          onCheckedChange={(v) => set(field.key, v)}
-        />
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-zinc-700">{field.label}</span>
+          <Switch
+            checked={(cfg[field.key] as boolean) ?? field.defaultOn ?? true}
+            onCheckedChange={(v) => set(field.key, v)}
+          />
+        </div>
+        {field.hint && (
+          <p className="text-[11px] leading-relaxed text-zinc-500">
+            {field.hint}
+          </p>
+        )}
       </div>
     );
   }

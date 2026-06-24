@@ -17,6 +17,8 @@ export interface ContentFieldSchema {
   placeholder?: string;
   // For toggle fields: the value when unset (defaults to true when omitted).
   defaultOn?: boolean;
+  // Optional one-line explanation shown under the field.
+  hint?: string;
 }
 
 export interface SectionSchema {
@@ -83,14 +85,14 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         advanced: true,
         placeholder: 'مثلاً: بیشتر بدانید'
       },
-      { key: 'showCTA', label: 'نمایش دکمه', kind: 'toggle', advanced: true },
       {
         key: 'useLiveData',
         label: 'نمایش آمار واقعی آکادمی',
         kind: 'toggle',
-        advanced: true,
-        defaultOn: false
-      }
+        defaultOn: false,
+        hint: 'به‌جای اعداد نمونه، تعداد واقعی دوره‌ها و دانشجویان آکادمی نمایش داده می‌شود'
+      },
+      { key: 'showCTA', label: 'نمایش دکمه', kind: 'toggle', advanced: true }
     ],
     hasBackground: true,
     hasAlignment: true,
