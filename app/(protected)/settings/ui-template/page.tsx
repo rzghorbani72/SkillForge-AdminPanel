@@ -23,8 +23,10 @@ import type { TemplatePreset, UIBlockConfig } from '@/types/api';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import {
   buildTemplatePreviewUrl,
-  appendPreviewCacheBuster
+  appendPreviewCacheBuster,
+  resolveStorefrontBaseUrl
 } from '@/lib/ui-template/preview-url';
+import type { HeroPreviewContext } from '@/components/ui-template/hero-variant-picker';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
 import { useRelativeTime } from '@/lib/ui-template/use-relative-time';
 import {
@@ -110,7 +112,7 @@ export default function UITemplateSettingsPage() {
     type: string;
   } | null>(null);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
-  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [previewToken, setPreviewToken] = useState<string | null>(null);
   const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
 
   // A typing burst captures the pre-burst block state once; it is committed to
@@ -182,6 +184,7 @@ export default function UITemplateSettingsPage() {
   ) => {
     setSelectedPreset(preset);
     setBaseIframeSrc(null);
+    setPreviewToken(null);
     setRefreshKey(0);
     setIsApplied(false);
     setShowCustomizer(false);
@@ -191,7 +194,6 @@ export default function UITemplateSettingsPage() {
     pendingHistoryRef.current = null;
     setLastSavedAt(null);
     setViewport('desktop');
-    setCoverImage(preset.preview ?? null);
     setIsPreviewLoading(true);
 
     const isDedicated = preset.visibility === 'DEDICATED';
@@ -250,6 +252,7 @@ export default function UITemplateSettingsPage() {
       const token =
         opts?.draftPreviewToken ??
         (await apiClient.createTemplatePreviewToken().catch(() => null))?.token;
+      setPreviewToken(token ?? null);
       setBaseIframeSrc(
         token
           ? buildTemplatePreviewUrl(preset.id, null, {
@@ -344,6 +347,7 @@ export default function UITemplateSettingsPage() {
   const handleClosePreview = () => {
     setSelectedPreset(null);
     setBaseIframeSrc(null);
+    setPreviewToken(null);
     setShowCustomizer(false);
     setSelectedBlockId(null);
   };
@@ -387,13 +391,9 @@ export default function UITemplateSettingsPage() {
       await flushStyleDraft();
       await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
       const saved = (await apiClient.saveDraftAsTemplate({
-        name,
-        preview: coverImage ?? undefined
+        name
       })) as TemplatePreset | null;
-      if (saved) {
-        setSelectedPreset(saved);
-        setCoverImage(saved.preview ?? null);
-      }
+      if (saved) setSelectedPreset(saved);
       await refreshPresets();
       ErrorHandler.showSuccess(`قالب اختصاصی "${name}" ذخیره شد`);
       handleClosePreview();
@@ -412,18 +412,13 @@ export default function UITemplateSettingsPage() {
       await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
       if (isAdmin && isPublicPreset) {
         await apiClient.overridePublicTemplate(selectedPreset.id, {
-          blocks: draftBlocks,
-          ...(coverImage ? { preview: coverImage } : {})
+          blocks: draftBlocks
         });
       } else {
         const saved = (await apiClient.saveDraftAsTemplate({
-          name: selectedPreset.name,
-          preview: coverImage ?? undefined
+          name: selectedPreset.name
         })) as TemplatePreset | null;
-        if (saved) {
-          setSelectedPreset(saved);
-          setCoverImage(saved.preview ?? null);
-        }
+        if (saved) setSelectedPreset(saved);
       }
       await refreshPresets();
       ErrorHandler.showSuccess(`قالب "${selectedPreset.name}" به‌روزرسانی شد`);
@@ -811,6 +806,18 @@ export default function UITemplateSettingsPage() {
     const colors = resolveTemplateColors(selectedPreset);
     const isEditingMaster = isAdmin && isPublicPreset && showCustomizer;
 
+    // Live-preview context for the hero design picker — needs a storefront URL
+    // and an academy-scoped token to render real, themed hero thumbnails.
+    const storefrontBaseUrl = resolveStorefrontBaseUrl();
+    const heroPreview: HeroPreviewContext | null =
+      previewToken && storefrontBaseUrl
+        ? {
+            baseUrl: storefrontBaseUrl,
+            templateKey: selectedPreset.id,
+            token: previewToken
+          }
+        : null;
+
     const VIEWPORTS: {
       mode: ViewportMode;
       icon: typeof Monitor;
@@ -822,21 +829,21 @@ export default function UITemplateSettingsPage() {
     ];
 
     return (
-      <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-zinc-950">
+      <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-zinc-100">
         {confirmDialog}
 
         {/* Action bar */}
-        <div className="flex flex-shrink-0 items-center gap-2 bg-zinc-900 px-4 py-2.5">
+        <div className="flex flex-shrink-0 items-center gap-2 border-b border-zinc-200 bg-white px-4 py-2.5">
           <button
             type="button"
             title="بستن پیش‌نمایش"
             onClick={handleClosePreview}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white"
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
           >
             <X className="h-4 w-4" />
           </button>
 
-          <span className="text-sm font-semibold text-white">
+          <span className="text-sm font-semibold text-zinc-900">
             {selectedPreset.name}
           </span>
 
@@ -857,7 +864,7 @@ export default function UITemplateSettingsPage() {
                     : 'bg-emerald-400'
               }`}
             />
-            <span className="text-[11px] text-zinc-400">
+            <span className="text-[11px] text-zinc-600">
               {isSaving
                 ? 'در حال ذخیره...'
                 : savedAgo
@@ -875,7 +882,7 @@ export default function UITemplateSettingsPage() {
               title="واگرد (Ctrl+Z)"
               onClick={undo}
               disabled={history.length === 0}
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white disabled:opacity-30"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900 disabled:opacity-30"
             >
               <Undo2 className="h-3.5 w-3.5" />
             </button>
@@ -884,7 +891,7 @@ export default function UITemplateSettingsPage() {
               title="ازنو (Ctrl+Y)"
               onClick={redo}
               disabled={future.length === 0}
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white disabled:opacity-30"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900 disabled:opacity-30"
             >
               <Redo2 className="h-3.5 w-3.5" />
             </button>
@@ -892,7 +899,7 @@ export default function UITemplateSettingsPage() {
 
           <div className="ml-auto flex items-center gap-3">
             {/* Viewport switcher */}
-            <div className="flex items-center gap-0.5 rounded-lg bg-zinc-800 p-0.5">
+            <div className="flex items-center gap-0.5 rounded-lg bg-zinc-100 p-0.5">
               {VIEWPORTS.map(({ mode, icon: Icon, label }) => (
                 <button
                   key={mode}
@@ -902,7 +909,7 @@ export default function UITemplateSettingsPage() {
                   className={`flex h-6 w-7 items-center justify-center rounded-md transition-colors ${
                     viewport === mode
                       ? 'bg-white text-zinc-900'
-                      : 'text-zinc-400 hover:text-white'
+                      : 'text-zinc-600 hover:text-zinc-900'
                   }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -925,7 +932,7 @@ export default function UITemplateSettingsPage() {
               className={`h-8 gap-1.5 px-3 text-xs font-semibold ${
                 showCustomizer
                   ? 'bg-amber-500 text-white hover:bg-amber-600'
-                  : 'bg-zinc-700 text-zinc-200 hover:bg-zinc-600'
+                  : 'bg-zinc-200 text-zinc-800 hover:bg-zinc-300'
               }`}
             >
               {isAdmin ? (
@@ -996,8 +1003,7 @@ export default function UITemplateSettingsPage() {
               onClose={() => setShowCustomizer(false)}
               onCloseSection={() => setSelectedBlockId(null)}
               selectedBlockId={selectedBlockId}
-              coverImage={coverImage}
-              onCoverImageChange={setCoverImage}
+              preview={heroPreview}
             />
           )}
 

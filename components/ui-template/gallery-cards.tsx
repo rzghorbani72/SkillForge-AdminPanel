@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Eye, Lock, Trash2, Check } from 'lucide-react';
 import type { TemplatePreset } from '@/types/api';
 import { getDesignSystem } from '@/lib/design-systems';
+import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
+import { SectionPreviewFrame } from './section-preview-frame';
 
 // Card/preview swatches follow the template's saved theme when present, so a
 // dedicated template shows its real palette instead of the design-system default.
@@ -104,7 +106,7 @@ function GalleryCard({
   onQuickApply,
   onDelete
 }: GalleryCardProps) {
-  const [imgError, setImgError] = useState(false);
+  const [frameLoaded, setFrameLoaded] = useState(false);
   const ds = getDesignSystem(preset.id);
   const isDedicated = preset.visibility === 'DEDICATED';
   const colors = resolveTemplateColors(preset);
@@ -114,7 +116,10 @@ function GalleryCard({
     colors.secondary,
     colors.accent
   ];
-  const showGradientCover = !preset.preview || imgError;
+  // The cover is a real storefront render of the template, so no manual cover
+  // upload is needed. The brand gradient shows as a placeholder until the iframe
+  // finishes loading (and stays as the fallback if no storefront URL is set).
+  const storefrontBaseUrl = resolveStorefrontBaseUrl();
 
   return (
     <div
@@ -159,37 +164,37 @@ function GalleryCard({
         onClick={onClick}
         className="relative block aspect-[4/3] w-full overflow-hidden bg-muted/40"
       >
-        {!showGradientCover && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={preset.preview!}
-            alt={preset.name}
-            loading="lazy"
-            onError={() => setImgError(true)}
-            className="h-full w-full object-cover object-top"
-          />
-        )}
-
-        {showGradientCover && (
-          <div
-            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3"
-            style={{
-              background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`
-            }}
-          >
-            <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
-              {preset.name}
-            </span>
-            <div className="flex gap-1.5">
-              {swatches.map((c, i) => (
-                <span
-                  key={i}
-                  className="h-2.5 w-2.5 rounded-full border border-white/40"
-                  style={{ background: c }}
-                />
-              ))}
-            </div>
+        <div
+          className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-500 ${
+            frameLoaded ? 'opacity-0' : 'opacity-100'
+          }`}
+          style={{
+            background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`
+          }}
+        >
+          <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
+            {preset.name}
+          </span>
+          <div className="flex gap-1.5">
+            {swatches.map((c, i) => (
+              <span
+                key={i}
+                className="h-2.5 w-2.5 rounded-full border border-white/40"
+                style={{ background: c }}
+              />
+            ))}
           </div>
+        </div>
+
+        {storefrontBaseUrl && (
+          <SectionPreviewFrame
+            baseUrl={storefrontBaseUrl}
+            templateKey={preset.id}
+            onLoad={() => setFrameLoaded(true)}
+            className={`h-full w-full transition-opacity duration-500 ${
+              frameLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
         )}
 
         {/* Hover overlay: full preview + quick apply */}

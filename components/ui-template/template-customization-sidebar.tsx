@@ -12,9 +12,9 @@ import type {
   FontFamily,
   SaveMode
 } from './sidebar-types';
-import { CoverImageSection } from './sidebar-primitives';
 import { SidebarStyleTab } from './sidebar-style-tab';
 import { SidebarSectionsTab } from './sidebar-sections-tab';
+import type { HeroPreviewContext } from './hero-variant-picker';
 
 export type { SaveMode } from './sidebar-types';
 
@@ -53,8 +53,7 @@ export interface TemplateCustomizationSidebarProps {
   onClose: () => void;
   onCloseSection: () => void;
   selectedBlockId?: string | null;
-  coverImage?: string | null;
-  onCoverImageChange?: (url: string) => void;
+  preview?: HeroPreviewContext | null;
 }
 
 export function TemplateCustomizationSidebar({
@@ -86,8 +85,7 @@ export function TemplateCustomizationSidebar({
   onClose,
   onCloseSection,
   selectedBlockId,
-  coverImage,
-  onCoverImageChange
+  preview
 }: TemplateCustomizationSidebarProps) {
   const [tab, setTab] = useState<Tab>('sections');
   const isAdminEditing = saveMode === 'both' || saveMode === 'admin-override';
@@ -105,14 +103,14 @@ export function TemplateCustomizationSidebar({
 
   return (
     <div
-      className="flex h-full w-72 flex-shrink-0 flex-col border-l border-zinc-700 bg-zinc-900"
+      className="flex h-full w-72 flex-shrink-0 flex-col border-l border-zinc-200 bg-white"
       dir="rtl"
     >
       {/* Header */}
-      <div className="flex flex-shrink-0 items-center justify-between border-b border-zinc-700 px-4 py-3">
+      <div className="flex flex-shrink-0 items-center justify-between border-b border-zinc-200 px-4 py-3">
         <div className="flex items-center gap-2">
           <span className="text-base">{isAdminEditing ? '🌐' : '🤖'}</span>
-          <span className="text-sm font-semibold text-zinc-100">
+          <span className="text-sm font-semibold text-zinc-900">
             {isAdminEditing ? 'ویرایش قالب عمومی' : 'سفارشی‌سازی قالب'}
           </span>
         </div>
@@ -120,7 +118,7 @@ export function TemplateCustomizationSidebar({
           type="button"
           title="بستن"
           onClick={onClose}
-          className="rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+          className="rounded-lg p-1 text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
         >
           <X className="h-4 w-4" />
         </button>
@@ -135,7 +133,7 @@ export function TemplateCustomizationSidebar({
       )}
 
       {/* Tab switcher */}
-      <div className="flex flex-shrink-0 gap-1 border-b border-zinc-700 px-3 py-2">
+      <div className="flex flex-shrink-0 gap-1 border-b border-zinc-200 px-3 py-2">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -143,8 +141,8 @@ export function TemplateCustomizationSidebar({
             onClick={() => setTab(id)}
             className={`flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium transition-colors ${
               tab === id
-                ? 'bg-zinc-700 text-zinc-100'
-                : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                ? 'bg-zinc-200 text-zinc-900'
+                : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
             }`}
           >
             <Icon className="h-3.5 w-3.5" />
@@ -173,6 +171,7 @@ export function TemplateCustomizationSidebar({
             onToggleVisibleBlock={onToggleVisibleBlock}
             onDeleteBlock={onDeleteBlock}
             onCloseSection={onCloseSection}
+            preview={preview}
           />
         ) : (
           <SidebarStyleTab
@@ -194,15 +193,8 @@ export function TemplateCustomizationSidebar({
         )}
       </div>
 
-      {/* Footer – cover + save buttons + reset */}
-      <div className="flex-shrink-0 space-y-2 border-t border-zinc-700 p-4">
-        {isAdminEditing && onCoverImageChange && (
-          <CoverImageSection
-            coverImage={coverImage}
-            onChange={onCoverImageChange}
-          />
-        )}
-
+      {/* Footer – save buttons + reset */}
+      <div className="flex-shrink-0 space-y-2 border-t border-zinc-200 p-4">
         {saveMode === 'copy' && onSaveAsCopy && (
           <button
             type="button"

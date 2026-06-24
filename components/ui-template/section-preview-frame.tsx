@@ -15,6 +15,10 @@ interface SectionPreviewFrameProps {
   // Allows scrolling/clicking inside the frame instead of the default inert
   // thumbnail behavior.
   interactive?: boolean;
+  // Extra query params forwarded to /preview/blocks (e.g. heroStyle override).
+  params?: Record<string, string>;
+  // Fires once the embedded storefront finishes loading (for fade-in/placeholder).
+  onLoad?: () => void;
   className?: string;
 }
 
@@ -28,6 +32,8 @@ export function SectionPreviewFrame({
   token,
   virtualWidth = 1280,
   interactive = false,
+  params,
+  onLoad,
   className = ''
 }: SectionPreviewFrameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -48,14 +54,19 @@ export function SectionPreviewFrame({
 
   // embed=1 makes the storefront proxy allow AdminPanel as a frame ancestor;
   // sample=1 swaps the visitor's academy brand for the neutral sample brand.
-  const params = new URLSearchParams({
+  const queryParams = new URLSearchParams({
     template: templateKey,
     embed: '1',
     sample: '1'
   });
-  if (blockId) params.set('only', blockId);
-  if (token) params.set('token', token);
-  const src = `${baseUrl.replace(/\/$/, '')}/preview/blocks?${params.toString()}`;
+  if (blockId) queryParams.set('only', blockId);
+  if (token) queryParams.set('token', token);
+  if (params) {
+    for (const [key, value] of Object.entries(params)) {
+      queryParams.set(key, value);
+    }
+  }
+  const src = `${baseUrl.replace(/\/$/, '')}/preview/blocks?${queryParams.toString()}`;
 
   return (
     // dir=ltr keeps the oversized inner box anchored at the visual left edge —
@@ -78,6 +89,7 @@ export function SectionPreviewFrame({
           src={src}
           title="Section preview"
           loading="lazy"
+          onLoad={onLoad}
           className={`h-full w-full border-0 ${
             interactive ? '' : 'pointer-events-none'
           }`}

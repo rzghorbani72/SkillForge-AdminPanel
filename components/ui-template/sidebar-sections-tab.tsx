@@ -4,6 +4,7 @@ import { Plus } from 'lucide-react';
 import type { UIBlockConfig } from '@/types/api';
 import { useSwappableSectionTypes } from '@/lib/ui-template/use-swappable-types';
 import { SectionEditor } from './section-customization-panel';
+import type { HeroPreviewContext } from './hero-variant-picker';
 
 export interface SidebarSectionsTabProps {
   blocks: UIBlockConfig[];
@@ -14,6 +15,7 @@ export interface SidebarSectionsTabProps {
   onToggleVisibleBlock: (id: string, visible: boolean) => void;
   onDeleteBlock: (id: string) => void;
   onCloseSection: () => void;
+  preview?: HeroPreviewContext | null;
 }
 
 function moveItem<T>(arr: T[], from: number, to: number): T[] {
@@ -31,7 +33,8 @@ export function SidebarSectionsTab({
   onUpdateBlock,
   onToggleVisibleBlock,
   onDeleteBlock,
-  onCloseSection
+  onCloseSection,
+  preview
 }: SidebarSectionsTabProps) {
   const swappableTypes = useSwappableSectionTypes(blocks.length > 0);
   // Until the catalog loads (null), don't hide a valid swap; afterwards show it
@@ -85,6 +88,7 @@ export function SidebarSectionsTab({
             : undefined
         }
         onBack={onCloseSection}
+        preview={preview}
       />
     );
   }
@@ -94,7 +98,7 @@ export function SidebarSectionsTab({
       <button
         type="button"
         onClick={() => onOpenPicker()}
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-zinc-600 py-2 text-xs text-zinc-400 transition-colors hover:border-blue-500 hover:text-blue-400"
+        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-zinc-300 py-2 text-xs text-zinc-600 transition-colors hover:border-blue-500 hover:text-blue-400"
       >
         <Plus className="h-3.5 w-3.5" />
         افزودن بخش

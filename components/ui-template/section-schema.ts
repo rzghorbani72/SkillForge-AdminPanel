@@ -15,6 +15,8 @@ export interface ContentFieldSchema {
   // Secondary fields hidden under the Content tab's "Advanced" expander.
   advanced?: boolean;
   placeholder?: string;
+  // For toggle fields: the value when unset (defaults to true when omitted).
+  defaultOn?: boolean;
 }
 
 export interface SectionSchema {
@@ -81,7 +83,14 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         advanced: true,
         placeholder: 'مثلاً: بیشتر بدانید'
       },
-      { key: 'showCTA', label: 'نمایش دکمه', kind: 'toggle', advanced: true }
+      { key: 'showCTA', label: 'نمایش دکمه', kind: 'toggle', advanced: true },
+      {
+        key: 'useLiveData',
+        label: 'نمایش آمار واقعی آکادمی',
+        kind: 'toggle',
+        advanced: true,
+        defaultOn: false
+      }
     ],
     hasBackground: true,
     hasAlignment: true,

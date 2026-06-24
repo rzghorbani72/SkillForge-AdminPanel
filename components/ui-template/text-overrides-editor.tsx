@@ -37,20 +37,20 @@ export function TextOverridesEditor({
   };
 
   return (
-    <div className="space-y-2 rounded-md border border-dashed border-zinc-700 p-2.5">
-      <span className="text-xs font-medium text-zinc-200">
+    <div className="space-y-2 rounded-md border border-dashed border-zinc-200 p-2.5">
+      <span className="text-xs font-medium text-zinc-800">
         {t('sitePreview.panelStaticText')}
       </span>
       {fields.map(({ key, label }) => (
         <div key={key} className="space-y-1">
-          <span className="text-[10px] uppercase tracking-wide text-zinc-400">
+          <span className="text-[10px] uppercase tracking-wide text-zinc-600">
             {translateLabel(label)}
           </span>
           <Input
             value={text[key] ?? ''}
             onChange={(e) => setText(key, e.target.value)}
             placeholder={translateLabel(label)}
-            className="h-7 border-zinc-600 bg-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
+            className="h-7 border-zinc-300 bg-zinc-100 text-xs text-zinc-900 placeholder:text-zinc-600"
           />
         </div>
       ))}

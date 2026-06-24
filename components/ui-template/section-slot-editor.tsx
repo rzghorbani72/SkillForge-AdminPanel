@@ -55,8 +55,8 @@ export function SectionSlotEditor({
   };
 
   return (
-    <div className="space-y-3 rounded-md border border-dashed border-zinc-700 p-2.5">
-      <span className="text-xs font-medium text-zinc-200">
+    <div className="space-y-3 rounded-md border border-dashed border-zinc-200 p-2.5">
+      <span className="text-xs font-medium text-zinc-800">
         {t('sitePreview.panelSlotsAndSizing')}
       </span>
 
@@ -71,10 +71,10 @@ export function SectionSlotEditor({
           return (
             <div key={key} className="space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wide text-zinc-400">
+                <span className="text-[10px] uppercase tracking-wide text-zinc-600">
                   {sliderLabel}
                 </span>
-                <span className="text-[10px] text-zinc-400">
+                <span className="text-[10px] text-zinc-600">
                   {value != null ? `${value}px` : 'auto'}
                 </span>
               </div>
@@ -95,7 +95,7 @@ export function SectionSlotEditor({
 
       {/* Per-slot visibility */}
       <div className="space-y-1.5">
-        <span className="text-[10px] uppercase tracking-wide text-zinc-400">
+        <span className="text-[10px] uppercase tracking-wide text-zinc-600">
           {t('sitePreview.panelSlotVisibility')}
         </span>
         {Array.from({ length: count }, (_, i) => {
@@ -103,10 +103,10 @@ export function SectionSlotEditor({
           return (
             <div
               key={i}
-              className="space-y-1 rounded border border-zinc-700 p-1.5"
+              className="space-y-1 rounded border border-zinc-200 p-1.5"
             >
               <div className="flex items-center gap-1.5">
-                <span className="w-5 shrink-0 text-[10px] font-medium text-zinc-400">
+                <span className="w-5 shrink-0 text-[10px] font-medium text-zinc-600">
                   #{i + 1}
                 </span>
                 <div className="flex flex-1 gap-1">
@@ -118,7 +118,7 @@ export function SectionSlotEditor({
                       className={`flex-1 rounded border py-0.5 text-[10px] font-medium transition-colors ${
                         slot.visibility === v
                           ? 'border-blue-500 bg-blue-600 text-white'
-                          : 'border-zinc-600 text-zinc-300 hover:bg-zinc-800'
+                          : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100'
                       }`}
                     >
                       {SLOT_VISIBILITY_KEYS[v] ? t(SLOT_VISIBILITY_KEYS[v]) : v}
@@ -133,7 +133,7 @@ export function SectionSlotEditor({
                     setSlot(i, { placeholderText: e.target.value })
                   }
                   placeholder={t('sitePreview.panelPlaceholderTextHint')}
-                  className="h-7 border-zinc-600 bg-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
+                  className="h-7 border-zinc-300 bg-zinc-100 text-xs text-zinc-900 placeholder:text-zinc-600"
                 />
               )}
             </div>

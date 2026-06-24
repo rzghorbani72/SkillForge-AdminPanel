@@ -79,7 +79,7 @@ const SCHEME_ROLES = [
 function ColorPreview({ color }: { color: string }) {
   const p = derivePaletteFromPrimary(color);
   return (
-    <div className="overflow-hidden rounded-lg border border-zinc-700">
+    <div className="overflow-hidden rounded-lg border border-zinc-200">
       <div
         className="px-3 py-2.5"
         style={{ backgroundColor: p.backgroundLight }}
@@ -104,11 +104,11 @@ function ColorPreview({ color }: { color: string }) {
           />
         </div>
       </div>
-      <div className="flex border-t border-zinc-700">
+      <div className="flex border-t border-zinc-200">
         {SCHEME_ROLES.map(({ label, key }) => (
           <div
             key={key}
-            className="flex-1 border-r border-zinc-700 last:border-r-0"
+            className="flex-1 border-r border-zinc-200 last:border-r-0"
           >
             <div className="h-4" style={{ backgroundColor: p[key] }} />
             <p className="py-0.5 text-center text-[8px] text-zinc-500">
@@ -142,8 +142,8 @@ function PaletteCard({
       title={name}
       className={`flex items-center gap-2 rounded-lg border-2 px-2.5 py-2 transition-all ${
         selected
-          ? 'border-white bg-zinc-800'
-          : 'border-zinc-700 bg-zinc-800/40 hover:border-zinc-500'
+          ? 'border-blue-500 bg-blue-50'
+          : 'border-zinc-200 bg-zinc-50 hover:border-zinc-400'
       }`}
     >
       <span className="flex flex-shrink-0 overflow-hidden rounded-md border border-black/20">
@@ -151,7 +151,7 @@ function PaletteCard({
           <span key={i} className="h-6 w-3.5" style={{ backgroundColor: c }} />
         ))}
       </span>
-      <span className="truncate text-xs font-medium text-zinc-200">{name}</span>
+      <span className="truncate text-xs font-medium text-zinc-800">{name}</span>
     </button>
   );
 }
@@ -201,7 +201,7 @@ function BrandColorSection({
         <button
           type="button"
           onClick={() => setShowCustom((v) => !v)}
-          className="text-[11px] font-medium text-zinc-400 transition-colors hover:text-zinc-200"
+          className="text-[11px] font-medium text-zinc-600 transition-colors hover:text-zinc-900"
         >
           {showCustom ? 'بستن رنگ سفارشی' : 'رنگ سفارشی +'}
         </button>
@@ -212,7 +212,7 @@ function BrandColorSection({
               type="button"
               aria-label="پیش‌نمایش رنگ سفارشی"
               title="رنگ سفارشی"
-              className="h-8 w-9 flex-shrink-0 rounded-lg border border-zinc-600"
+              className="h-8 w-9 flex-shrink-0 rounded-lg border border-zinc-300"
               style={{ backgroundColor: primaryColor }}
             />
             <Input
@@ -221,7 +221,7 @@ function BrandColorSection({
               onBlur={applyHex}
               onKeyDown={(e) => e.key === 'Enter' && applyHex()}
               placeholder="#3B82F6"
-              className="h-8 flex-1 border-zinc-600 bg-zinc-800 font-mono text-xs text-zinc-200 placeholder:text-zinc-600"
+              className="h-8 flex-1 border-zinc-300 bg-zinc-100 font-mono text-xs text-zinc-800 placeholder:text-zinc-600"
             />
           </div>
         )}
@@ -241,11 +241,11 @@ function FontPreview({ fontFamily }: { fontFamily: FontFamily }) {
   const css = FONT_OPTIONS.find((f) => f.slug === fontFamily)?.preview;
   return (
     <div
-      className="rounded-lg border border-zinc-700 bg-zinc-800/40 p-3 text-center"
+      className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center"
       style={{ fontFamily: css }}
     >
-      <p className="text-lg font-bold text-zinc-100">یادگیری حرفه‌ای</p>
-      <p className="text-sm text-zinc-400">Professional Academy</p>
+      <p className="text-lg font-bold text-zinc-900">یادگیری حرفه‌ای</p>
+      <p className="text-sm text-zinc-600">Professional Academy</p>
     </div>
   );
 }
@@ -278,7 +278,7 @@ function FontFamilySection({
                     className={`rounded-lg border py-2 text-sm font-medium transition-colors ${
                       fontFamily === font.slug
                         ? 'border-blue-500 bg-blue-600 text-white'
-                        : 'border-zinc-700 text-zinc-300 hover:border-zinc-500'
+                        : 'border-zinc-200 text-zinc-700 hover:border-zinc-400'
                     }`}
                   >
                     {font.label}
@@ -311,8 +311,8 @@ function RoundedCornersSection({
       <div className="space-y-4">
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-400">شعاع کارت‌ها</span>
-            <span className="font-mono text-xs text-zinc-300">{cardPx}px</span>
+            <span className="text-xs text-zinc-600">شعاع کارت‌ها</span>
+            <span className="font-mono text-xs text-zinc-700">{cardPx}px</span>
           </div>
           <input
             type="range"
@@ -335,7 +335,7 @@ function RoundedCornersSection({
               className={`flex-1 rounded py-1.5 text-[11px] font-medium transition-colors ${
                 borderRadius === value
                   ? 'bg-blue-600 text-white'
-                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
               }`}
             >
               {label}
@@ -388,12 +388,12 @@ function ThemeModeSection({
             className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-right transition-all ${
               darkMode === mode.value
                 ? 'border-blue-500 bg-blue-500/10'
-                : 'border-zinc-700 hover:border-zinc-500'
+                : 'border-zinc-200 hover:border-zinc-400'
             }`}
           >
             <span className="text-base">{mode.icon}</span>
             <div className="flex-1">
-              <p className="text-sm font-medium text-zinc-200">{mode.label}</p>
+              <p className="text-sm font-medium text-zinc-800">{mode.label}</p>
               <p className="text-[10px] text-zinc-500">{mode.desc}</p>
             </div>
             {darkMode === mode.value && (
@@ -438,7 +438,7 @@ function SizeRow<T extends string>({
 }) {
   return (
     <div className="space-y-1.5">
-      <span className="text-xs text-zinc-400">{title}</span>
+      <span className="text-xs text-zinc-600">{title}</span>
       <div className="flex gap-1">
         {options.map((o) => (
           <button
@@ -448,7 +448,7 @@ function SizeRow<T extends string>({
             className={`flex-1 rounded py-1.5 text-[11px] font-medium transition-colors ${
               value === o.value
                 ? 'bg-blue-600 text-white'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
             }`}
           >
             {o.label}
@@ -555,7 +555,7 @@ function BannerImageSection({
     <AccordionSection title="تصویر بنر">
       <div className="space-y-3">
         {currentImage && (
-          <div className="overflow-hidden rounded-lg border border-zinc-700">
+          <div className="overflow-hidden rounded-lg border border-zinc-200">
             <img
               src={currentImage}
               alt="Banner"
@@ -566,7 +566,7 @@ function BannerImageSection({
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-600 py-2.5 text-xs text-zinc-400 transition-colors hover:border-blue-500 hover:text-blue-400"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-300 py-2.5 text-xs text-zinc-600 transition-colors hover:border-blue-500 hover:text-blue-400"
         >
           <Upload className="h-3.5 w-3.5" />
           {isUploading ? 'در حال آپلود...' : 'آپلود تصویر از دستگاه'}
@@ -586,7 +586,7 @@ function BannerImageSection({
             onChange={(e) => setUrlInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && applyUrl()}
             placeholder="...//https"
-            className="h-8 flex-1 border-zinc-600 bg-zinc-800 text-right text-xs text-zinc-200 placeholder:text-zinc-600"
+            className="h-8 flex-1 border-zinc-300 bg-zinc-100 text-right text-xs text-zinc-800 placeholder:text-zinc-600"
             dir="ltr"
           />
           <button
@@ -606,7 +606,7 @@ function BannerImageSection({
                 type="button"
                 title={`تصویر نمونه ${i + 1}`}
                 onClick={() => onBannerImageChange(src)}
-                className="overflow-hidden rounded-lg border border-zinc-700 transition-all hover:scale-[1.03] hover:border-blue-500"
+                className="overflow-hidden rounded-lg border border-zinc-200 transition-all hover:scale-[1.03] hover:border-blue-500"
               >
                 <img
                   src={src}

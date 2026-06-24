@@ -32,6 +32,10 @@ import {
 import { TextOverridesEditor } from './text-overrides-editor';
 import { SectionSlotEditor } from './section-slot-editor';
 import { isGridSection } from './slot-constants';
+import {
+  HeroVariantPicker,
+  type HeroPreviewContext
+} from './hero-variant-picker';
 
 type Tab = 'content' | 'style' | 'layout';
 type HeroBgType = 'gradient' | 'solid' | 'image';
@@ -47,6 +51,8 @@ export interface SectionEditorProps {
   onToggleVisible: (blockId: string, visible: boolean) => void;
   onReplace?: () => void;
   onBack: () => void;
+  // Live-preview context for the hero design picker (null = picker hidden).
+  preview?: HeroPreviewContext | null;
 }
 
 // Section-specific editor embedded inside the main sidebar's Sections tab when a
@@ -61,7 +67,8 @@ export function SectionEditor({
   onDelete,
   onToggleVisible,
   onReplace,
-  onBack
+  onBack,
+  preview
 }: SectionEditorProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('content');
@@ -84,17 +91,17 @@ export function SectionEditor({
   return (
     <div className="flex h-full flex-col" dir="rtl">
       {/* Header — back to the sections list */}
-      <div className="flex flex-shrink-0 items-center gap-2 border-b border-zinc-700 px-3 py-2.5">
+      <div className="flex flex-shrink-0 items-center gap-2 border-b border-zinc-200 px-3 py-2.5">
         <button
           type="button"
           onClick={onBack}
           aria-label="بازگشت"
           title="بازگشت"
-          className="rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+          className="rounded-lg p-1 text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
         >
           <ArrowRight className="h-4 w-4" />
         </button>
-        <span className="text-sm font-semibold text-zinc-100">
+        <span className="text-sm font-semibold text-zinc-900">
           {schema.name}
         </span>
         {incomplete && (
@@ -109,7 +116,7 @@ export function SectionEditor({
             onClick={onReplace}
             aria-label="تغییر طراحی بخش"
             title="تغییر طراحی بخش"
-            className="ms-auto rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+            className="ms-auto rounded-lg p-1 text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
           >
             <ArrowLeftRight className="h-4 w-4" />
           </button>
@@ -117,7 +124,7 @@ export function SectionEditor({
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-shrink-0 gap-1 border-b border-zinc-700 px-3 py-2">
+      <div className="flex flex-shrink-0 gap-1 border-b border-zinc-200 px-3 py-2">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
@@ -125,8 +132,8 @@ export function SectionEditor({
             onClick={() => setTab(id)}
             className={`flex-1 rounded-md py-1.5 text-xs font-medium transition-colors ${
               tab === id
-                ? 'bg-zinc-700 text-zinc-100'
-                : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                ? 'bg-zinc-200 text-zinc-900'
+                : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
             }`}
           >
             {label}
@@ -137,7 +144,13 @@ export function SectionEditor({
       {/* Body */}
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
         {tab === 'content' && (
-          <ContentTab block={block} cfg={cfg} set={set} schema={schema} />
+          <ContentTab
+            block={block}
+            cfg={cfg}
+            set={set}
+            schema={schema}
+            preview={preview}
+          />
         )}
         {tab === 'style' && (
           <StyleTab
@@ -173,12 +186,14 @@ function ContentTab({
   block,
   cfg,
   set,
-  schema
+  schema,
+  preview
 }: {
   block: UIBlockConfig;
   cfg: Record<string, unknown>;
   set: (key: string, value: unknown) => void;
   schema: ReturnType<typeof getSectionSchema>;
+  preview?: HeroPreviewContext | null;
 }) {
   const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -192,16 +207,26 @@ function ContentTab({
 
   return (
     <div className="space-y-4">
+      {block.type === 'hero' && preview && (
+        <div className="border-b border-zinc-200/70 pb-4">
+          <HeroVariantPicker
+            heroBlockId={block.id}
+            value={(cfg.style as string) ?? 'default'}
+            onChange={(style) => set('style', style)}
+            preview={preview}
+          />
+        </div>
+      )}
       {primary.map((field) => (
         <Field key={field.key} field={field} cfg={cfg} set={set} />
       ))}
 
       {advanced.length > 0 && (
-        <div className="border-t border-zinc-700/60 pt-3">
+        <div className="border-t border-zinc-200/70 pt-3">
           <button
             type="button"
             onClick={() => setShowAdvanced((v) => !v)}
-            className="flex w-full items-center justify-between text-xs font-medium text-zinc-400 hover:text-zinc-200"
+            className="flex w-full items-center justify-between text-xs font-medium text-zinc-600 hover:text-zinc-900"
           >
             <span>{t('sitePreview.panelAdvanced')}</span>
             {showAdvanced ? (
@@ -275,7 +300,7 @@ function RichTextArea({
             type="button"
             title={label}
             onClick={() => wrap(tag)}
-            className="rounded border border-zinc-600 p-1 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+            className="rounded border border-zinc-300 p-1 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
           >
             <Icon className="h-3 w-3" />
           </button>
@@ -287,7 +312,7 @@ function RichTextArea({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={2}
-        className="w-full resize-none rounded-md border border-zinc-600 bg-zinc-800 px-2.5 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500 focus:outline-none"
+        className="w-full resize-none rounded-md border border-zinc-300 bg-zinc-100 px-2.5 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-600 focus:border-blue-500 focus:outline-none"
       />
     </div>
   );
@@ -307,9 +332,9 @@ function Field({
   if (field.kind === 'toggle') {
     return (
       <div className="flex items-center justify-between">
-        <span className="text-xs text-zinc-300">{field.label}</span>
+        <span className="text-xs text-zinc-700">{field.label}</span>
         <Switch
-          checked={(cfg[field.key] as boolean) ?? true}
+          checked={(cfg[field.key] as boolean) ?? field.defaultOn ?? true}
           onCheckedChange={(v) => set(field.key, v)}
         />
       </div>
@@ -321,7 +346,7 @@ function Field({
 
   return (
     <div className="space-y-1.5">
-      <span className="text-xs text-zinc-300">{field.label}</span>
+      <span className="text-xs text-zinc-700">{field.label}</span>
       {field.kind === 'textarea' ? (
         <RichTextArea
           value={value}
@@ -333,7 +358,7 @@ function Field({
           value={value}
           onChange={(e) => set(field.key, e.target.value)}
           placeholder={field.placeholder}
-          className="h-8 border-zinc-600 bg-zinc-800 text-sm text-zinc-100 placeholder:text-zinc-600"
+          className="h-8 border-zinc-300 bg-zinc-100 text-sm text-zinc-900 placeholder:text-zinc-600"
         />
       )}
       {empty && (
@@ -435,7 +460,7 @@ function HeroBackground({
               className={`rounded border py-1.5 text-xs font-medium transition-colors ${
                 bgType === type
                   ? 'border-blue-500 bg-blue-600 text-white'
-                  : 'border-zinc-600 text-zinc-300 hover:bg-zinc-800'
+                  : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100'
               }`}
             >
               {label}
@@ -451,12 +476,12 @@ function HeroBackground({
             title={t('sitePreview.panelBackground')}
             value={(cfg.bgColor as string) ?? '#3b82f6'}
             onChange={(e) => set('bgColor', e.target.value)}
-            className="h-8 w-9 shrink-0 cursor-pointer rounded border border-zinc-600 bg-transparent"
+            className="h-8 w-9 shrink-0 cursor-pointer rounded border border-zinc-300 bg-transparent"
           />
           <Input
             value={(cfg.bgColor as string) ?? '#3b82f6'}
             onChange={(e) => set('bgColor', e.target.value)}
-            className="h-8 border-zinc-600 bg-zinc-800 font-mono text-xs text-zinc-100"
+            className="h-8 border-zinc-300 bg-zinc-100 font-mono text-xs text-zinc-900"
             placeholder="#3b82f6"
           />
         </div>
@@ -465,7 +490,7 @@ function HeroBackground({
       {bgType === 'image' && (
         <div className="space-y-2">
           {cfg.bgImage ? (
-            <div className="group relative overflow-hidden rounded-md border border-zinc-700">
+            <div className="group relative overflow-hidden rounded-md border border-zinc-200">
               <img
                 src={cfg.bgImage as string}
                 alt="Hero background"
@@ -484,7 +509,7 @@ function HeroBackground({
               </label>
             </div>
           ) : (
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-zinc-600 py-4 text-xs text-zinc-400 transition-colors hover:border-blue-500 hover:text-blue-400">
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-zinc-300 py-4 text-xs text-zinc-600 transition-colors hover:border-blue-500 hover:text-blue-400">
               <Upload className="h-4 w-4" />
               {isUploading
                 ? t('sitePreview.panelUploading')
@@ -500,10 +525,10 @@ function HeroBackground({
           )}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-400">
+              <span className="text-xs text-zinc-600">
                 {t('sitePreview.panelOverlayOpacity')}
               </span>
-              <span className="text-xs text-zinc-300">
+              <span className="text-xs text-zinc-700">
                 {(cfg.overlayOpacity as number) ?? 40}%
               </span>
             </div>
@@ -538,7 +563,7 @@ function ChipRow<T extends string | number>({
 }) {
   return (
     <div className="space-y-1.5">
-      <span className="text-xs text-zinc-400">{title}</span>
+      <span className="text-xs text-zinc-600">{title}</span>
       <div className="flex gap-1.5">
         {options.map((o) => (
           <button
@@ -548,7 +573,7 @@ function ChipRow<T extends string | number>({
             className={`flex-1 rounded border py-1.5 text-xs font-medium transition-colors ${
               value === o.value
                 ? 'border-blue-500 bg-blue-600 text-white'
-                : 'border-zinc-600 text-zinc-300 hover:bg-zinc-800'
+                : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100'
             }`}
           >
             {o.label}
@@ -589,8 +614,8 @@ function LayoutTab({
     <div className="space-y-4">
       {/* Header/footer stay structural and are never hideable. */}
       {canDelete && (
-        <div className="flex items-center justify-between rounded-lg border border-zinc-700 bg-zinc-800/40 px-3 py-2">
-          <span className="flex items-center gap-2 text-xs text-zinc-300">
+        <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
+          <span className="flex items-center gap-2 text-xs text-zinc-700">
             <Eye className="h-3.5 w-3.5" />
             {t('sitePreview.panelSectionVisible')}
           </span>
@@ -639,8 +664,8 @@ function LayoutTab({
         />
       )}
 
-      <div className="space-y-1.5 border-t border-zinc-700/60 pt-3">
-        <span className="text-xs text-zinc-400">
+      <div className="space-y-1.5 border-t border-zinc-200/70 pt-3">
+        <span className="text-xs text-zinc-600">
           {t('sitePreview.panelPositionInPage')}
         </span>
         <div className="flex gap-1.5">
@@ -648,7 +673,7 @@ function LayoutTab({
             type="button"
             disabled={!canMoveUp}
             onClick={() => onMove(block.id, 'up')}
-            className="flex flex-1 items-center justify-center gap-1 rounded border border-zinc-600 py-1.5 text-xs text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-40"
+            className="flex flex-1 items-center justify-center gap-1 rounded border border-zinc-300 py-1.5 text-xs text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-40"
           >
             <ArrowUp className="h-3.5 w-3.5" />
             {t('settings.moveUp')}
@@ -657,7 +682,7 @@ function LayoutTab({
             type="button"
             disabled={!canMoveDown}
             onClick={() => onMove(block.id, 'down')}
-            className="flex flex-1 items-center justify-center gap-1 rounded border border-zinc-600 py-1.5 text-xs text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-40"
+            className="flex flex-1 items-center justify-center gap-1 rounded border border-zinc-300 py-1.5 text-xs text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-40"
           >
             <ArrowDown className="h-3.5 w-3.5" />
             {t('settings.moveDown')}
