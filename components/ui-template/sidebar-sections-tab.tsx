@@ -29,6 +29,7 @@ import {
 import { BlockThumbnail } from '@/components/ui-template/template-preview';
 import type { UIBlockConfig } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useSwappableSectionTypes } from '@/lib/ui-template/use-swappable-types';
 
 // Per-section quick actions, surfaced on the row like Wix's section toolbar so
 // hide / duplicate / swap / delete are one click instead of buried in a panel.
@@ -69,11 +70,12 @@ function IconButton({
 
 function RowActions({
   block,
+  canSwap,
   onReplace,
   onDuplicate,
   onToggleVisible,
   onDelete
-}: { block: UIBlockConfig } & RowActionHandlers) {
+}: { block: UIBlockConfig; canSwap: boolean } & RowActionHandlers) {
   const isVisible = block.isVisible !== false;
   return (
     <div className="flex items-center gap-0.5">
@@ -87,11 +89,13 @@ function RowActions({
         title="تکثیر"
         onClick={() => onDuplicate(block.id)}
       />
-      <IconButton
-        icon={ArrowLeftRight}
-        title="جایگزینی بخش"
-        onClick={onReplace}
-      />
+      {canSwap && (
+        <IconButton
+          icon={ArrowLeftRight}
+          title="تغییر طراحی بخش"
+          onClick={onReplace}
+        />
+      )}
       <IconButton
         icon={Trash2}
         title="حذف"
@@ -129,11 +133,13 @@ function useBlockLabel() {
 function PinnedRow({
   block,
   isSelected,
+  canSwap,
   onSelect,
   onReplace
 }: {
   block: UIBlockConfig;
   isSelected: boolean;
+  canSwap: boolean;
   onSelect?: () => void;
   onReplace: () => void;
 }) {
@@ -167,14 +173,16 @@ function PinnedRow({
             <EyeOff className="mr-1 inline h-2.5 w-2.5 text-zinc-500" />
           )}
         </button>
-        <button
-          type="button"
-          title="جایگزینی بخش"
-          onClick={onReplace}
-          className="text-zinc-500 transition-colors hover:text-zinc-200"
-        >
-          <ArrowLeftRight className="h-3.5 w-3.5" />
-        </button>
+        {canSwap && (
+          <button
+            type="button"
+            title="تغییر طراحی بخش"
+            onClick={onReplace}
+            className="text-zinc-500 transition-colors hover:text-zinc-200"
+          >
+            <ArrowLeftRight className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -183,6 +191,7 @@ function PinnedRow({
 function SortableRow({
   block,
   isSelected,
+  canSwap,
   onSelect,
   onReplace,
   onDuplicate,
@@ -191,6 +200,7 @@ function SortableRow({
 }: {
   block: UIBlockConfig;
   isSelected: boolean;
+  canSwap: boolean;
   onSelect?: () => void;
 } & RowActionHandlers) {
   const blockLabel = useBlockLabel();
@@ -244,6 +254,7 @@ function SortableRow({
         </button>
         <RowActions
           block={block}
+          canSwap={canSwap}
           onReplace={onReplace}
           onDuplicate={onDuplicate}
           onToggleVisible={onToggleVisible}
@@ -276,6 +287,11 @@ export function SidebarSectionsTab({
   onDeleteBlock
 }: SidebarSectionsTabProps) {
   const sensors = useSensors(useSensor(PointerSensor));
+  const swappableTypes = useSwappableSectionTypes(blocks.length > 0);
+  // Until the catalog loads (null), don't hide a valid swap; afterwards show it
+  // only for types that actually have alternative designs.
+  const canSwap = (type: string) =>
+    swappableTypes === null || swappableTypes.has(type);
   const sorted = [...blocks].sort((a, b) => a.order - b.order);
   const header = sorted.find((b) => b.type === 'header') ?? null;
   const footer = sorted.find((b) => b.type === 'footer') ?? null;
@@ -311,6 +327,7 @@ export function SidebarSectionsTab({
         <PinnedRow
           block={header}
           isSelected={selectedBlockId === header.id}
+          canSwap={canSwap(header.type)}
           onSelect={select(header)}
           onReplace={replace(header)}
         />
@@ -330,6 +347,7 @@ export function SidebarSectionsTab({
                 key={block.id}
                 block={block}
                 isSelected={selectedBlockId === block.id}
+                canSwap={canSwap(block.type)}
                 onSelect={select(block)}
                 onReplace={replace(block)}
                 onDuplicate={onDuplicateBlock}
@@ -344,6 +362,7 @@ export function SidebarSectionsTab({
         <PinnedRow
           block={footer}
           isSelected={selectedBlockId === footer.id}
+          canSwap={canSwap(footer.type)}
           onSelect={select(footer)}
           onReplace={replace(footer)}
         />

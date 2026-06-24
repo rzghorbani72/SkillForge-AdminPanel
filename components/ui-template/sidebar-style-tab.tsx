@@ -56,24 +56,67 @@ const SAMPLE_BANNER_IMAGES = [
 
 // ── Brand Color ───────────────────────────────────────────────────────────────
 
+// Readable text color for a swatch — white on dark, near-black on light. Keeps
+// the preview's button label legible for any primary (e.g. yellow vs navy).
+function readableText(hex: string): string {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum > 0.6 ? '#18181b' : '#ffffff';
+}
+
+const SCHEME_ROLES = [
+  { label: 'اصلی', key: 'primary' as const },
+  { label: 'تأکید', key: 'accent' as const },
+  { label: 'پس‌زمینه', key: 'backgroundLight' as const }
+];
+
+// Wix/Zarla-style color-theme preview: a mini storefront swatch rendered with
+// the FULL derived scheme (background, text, primary, accent) plus a labelled
+// role strip, so the manager sees the whole palette they're applying.
 function ColorPreview({ color }: { color: string }) {
+  const p = derivePaletteFromPrimary(color);
   return (
-    <div
-      className="flex items-center justify-between gap-2 rounded-lg border border-zinc-700 bg-zinc-800/40 px-3 py-2.5"
-      dir="rtl"
-    >
-      <div className="min-w-0">
-        <p className="truncate text-sm font-bold" style={{ color }}>
+    <div className="overflow-hidden rounded-lg border border-zinc-700">
+      <div
+        className="px-3 py-2.5"
+        style={{ backgroundColor: p.backgroundLight }}
+        dir="rtl"
+      >
+        <p className="truncate text-sm font-bold" style={{ color: '#18181b' }}>
           عنوان نمونه
         </p>
-        <p className="truncate text-[11px] text-zinc-400">متن توضیحی کوچک‌تر</p>
+        <p className="mb-2 truncate text-[11px]" style={{ color: '#52525b' }}>
+          متن توضیحی کوچک‌تر
+        </p>
+        <div className="flex items-center gap-2">
+          <span
+            className="rounded-md px-3 py-1 text-[11px] font-semibold"
+            style={{ background: p.primary, color: readableText(p.primary) }}
+          >
+            دکمه
+          </span>
+          <span
+            className="h-4 w-4 rounded-full"
+            style={{ backgroundColor: p.accent }}
+          />
+        </div>
       </div>
-      <span
-        className="flex-shrink-0 rounded-md px-3 py-1 text-[11px] font-semibold text-white"
-        style={{ background: color }}
-      >
-        دکمه
-      </span>
+      <div className="flex border-t border-zinc-700">
+        {SCHEME_ROLES.map(({ label, key }) => (
+          <div
+            key={key}
+            className="flex-1 border-r border-zinc-700 last:border-r-0"
+          >
+            <div className="h-4" style={{ backgroundColor: p[key] }} />
+            <p className="py-0.5 text-center text-[8px] text-zinc-500">
+              {label}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
