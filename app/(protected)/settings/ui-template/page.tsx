@@ -121,6 +121,19 @@ export default function UITemplateSettingsPage() {
   // history only after the user pauses, so undo jumps per edit, not per key.
   const pendingHistoryRef = useRef<UIBlockConfig[] | null>(null);
   const previewIframeRef = useRef<HTMLIFrameElement | null>(null);
+  // Stable ref so the message handler always sees the latest blocks without
+  // re-registering the listener on every keystroke.
+  const draftBlocksRef = useRef(draftBlocks);
+  useEffect(() => {
+    draftBlocksRef.current = draftBlocks;
+  }, [draftBlocks]);
+  // Ref for handleBlockConfigChange — initialised to a no-op and patched after
+  // the function is declared further below (avoids "used before declaration").
+  const handleBlockConfigChangeRef = useRef<
+    (blockId: string, config: Record<string, unknown>) => void
+  >(() => {
+    /* patched after declaration */
+  });
 
   // Tell the in-canvas preview which section is selected, so it shows the dashed
   // outline and scrolls to it. Re-sent on iframe (re)load to survive refreshes.
@@ -131,18 +144,33 @@ export default function UITemplateSettingsPage() {
     );
   }, []);
 
-  // Receive a click-to-select from the preview canvas → open that section's panel.
+  // Receive messages from the preview canvas:
+  // - 'select'      → click-to-select a section, opens its edit panel
+  // - 'field-update' → inline text edit committed, update draftBlocks directly
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
       const data = e.data as {
         source?: string;
         type?: string;
         blockId?: string;
+        fieldKey?: string;
+        value?: string;
       };
-      if (data?.source !== 'mentoma-editor' || data.type !== 'select') return;
-      if (data.blockId) {
+      if (data?.source !== 'mentoma-editor') return;
+
+      if (data.type === 'select' && data.blockId) {
         setSelectedBlockId(data.blockId);
         setShowCustomizer(true);
+      }
+
+      if (data.type === 'field-update' && data.blockId && data.fieldKey) {
+        const block = draftBlocksRef.current.find((b) => b.id === data.blockId);
+        if (block) {
+          handleBlockConfigChangeRef.current(data.blockId, {
+            ...(block.config ?? {}),
+            [data.fieldKey]: data.value ?? ''
+          });
+        }
       }
     };
     window.addEventListener('message', onMessage);
@@ -633,7 +661,27 @@ export default function UITemplateSettingsPage() {
     commitContent(
       draftBlocks.map((b) => (b.id === blockId ? { ...b, config } : b))
     );
+    // Push each changed field to the preview instantly so the live text updates
+    // without waiting for the full debounced save + iframe reload cycle.
+    const prev = draftBlocks.find((b) => b.id === blockId)?.config ?? {};
+    for (const [fieldKey, value] of Object.entries(config)) {
+      if (prev[fieldKey] !== value) {
+        previewIframeRef.current?.contentWindow?.postMessage(
+          {
+            source: 'mentoma-admin',
+            type: 'sync-field',
+            blockId,
+            fieldKey,
+            value
+          },
+          '*'
+        );
+      }
+    }
   };
+  // Keep the ref in sync so the message handler (registered once) always calls
+  // the latest version of this function without needing to re-register.
+  handleBlockConfigChangeRef.current = handleBlockConfigChange;
 
   const handleBlockDelete = (blockId: string) => {
     const block = draftBlocks.find((b) => b.id === blockId);
