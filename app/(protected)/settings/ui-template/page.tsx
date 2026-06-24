@@ -54,6 +54,7 @@ import type {
   ContainerWidth,
   HeadingScale,
   FontFamily,
+  TextDirection,
   ViewportMode
 } from '@/components/ui-template/sidebar-types';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
@@ -95,6 +96,7 @@ export default function UITemplateSettingsPage() {
   const [borderRadius, setBorderRadius] = useState<BorderRadius>('soft');
   const [shadow, setShadow] = useState<Shadow>('medium');
   const [darkMode, setDarkMode] = useState<boolean | null>(null);
+  const [textDirection, setTextDirection] = useState<TextDirection>('rtl');
   const [sectionSpacing, setSectionSpacing] =
     useState<SectionSpacing>('comfortable');
   const [containerWidth, setContainerWidth] =
@@ -245,6 +247,8 @@ export default function UITemplateSettingsPage() {
       if (cfg.container_width)
         setContainerWidth(cfg.container_width as ContainerWidth);
       if (cfg.heading_scale) setHeadingScale(cfg.heading_scale as HeadingScale);
+      if (cfg.text_direction === 'ltr' || cfg.text_direction === 'rtl')
+        setTextDirection(cfg.text_direction);
 
       // The editor always previews the academy's DRAFT (not the catalog preset)
       // so swaps, text, colors and layout edits show live, and sections become
@@ -578,6 +582,19 @@ export default function UITemplateSettingsPage() {
     setIsSaving(true);
     apiClient
       .saveThemeDraft({ font_family: f })
+      .then(() => {
+        setRefreshKey((k) => k + 1);
+        setLastSavedAt(Date.now());
+      })
+      .catch((error) => ErrorHandler.handleApiError(error))
+      .finally(() => setIsSaving(false));
+  };
+
+  const handleTextDirectionChange = (d: TextDirection) => {
+    setTextDirection(d);
+    setIsSaving(true);
+    apiClient
+      .saveThemeDraft({ text_direction: d })
       .then(() => {
         setRefreshKey((k) => k + 1);
         setLastSavedAt(Date.now());
@@ -980,6 +997,7 @@ export default function UITemplateSettingsPage() {
               borderRadius={borderRadius}
               shadow={shadow}
               darkMode={darkMode}
+              textDirection={textDirection}
               sectionSpacing={sectionSpacing}
               containerWidth={containerWidth}
               headingScale={headingScale}
@@ -989,6 +1007,7 @@ export default function UITemplateSettingsPage() {
               onFontFamilyChange={handleFontFamilyChange}
               onBorderRadiusChange={handleBorderRadiusChange}
               onDarkModeChange={handleDarkModeChange}
+              onTextDirectionChange={handleTextDirectionChange}
               onDesignSizeChange={handleDesignSizeChange}
               onBlocksChange={handleBlocksChange}
               onUpdateBlock={handleBlockConfigChange}
@@ -1018,6 +1037,7 @@ export default function UITemplateSettingsPage() {
             viewport={viewport}
             iframeSrc={iframeSrc}
             isLoading={isPreviewLoading}
+            isSaving={isSaving}
             title={`Preview: ${selectedPreset.name}`}
             iframeRef={previewIframeRef}
             onIframeLoad={() => postHighlight(selectedBlockId)}

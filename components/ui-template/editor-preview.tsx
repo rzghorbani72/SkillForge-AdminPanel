@@ -25,6 +25,7 @@ export function EditorPreview({
   viewport,
   iframeSrc,
   isLoading,
+  isSaving,
   title,
   iframeRef,
   onIframeLoad
@@ -32,6 +33,7 @@ export function EditorPreview({
   viewport: ViewportMode;
   iframeSrc: string | null;
   isLoading: boolean;
+  isSaving?: boolean;
   title: string;
   iframeRef?: Ref<HTMLIFrameElement>;
   onIframeLoad?: () => void;
@@ -49,6 +51,13 @@ export function EditorPreview({
               در حال بارگذاری پیش‌نمایش...
             </p>
           </div>
+        </div>
+      )}
+      {/* Subtle saving indicator — lets the user know the preview will refresh soon. */}
+      {isSaving && !isLoading && (
+        <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-zinc-900/80 px-3 py-1.5 text-[11px] text-zinc-300 backdrop-blur-sm">
+          <Loader2 className="h-3 w-3 animate-spin" />
+          در حال اعمال تغییرات...
         </div>
       )}
       <div

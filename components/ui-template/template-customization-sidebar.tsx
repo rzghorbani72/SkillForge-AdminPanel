@@ -10,6 +10,7 @@ import type {
   ContainerWidth,
   HeadingScale,
   FontFamily,
+  TextDirection,
   SaveMode
 } from './sidebar-types';
 import { SidebarStyleTab } from './sidebar-style-tab';
@@ -26,6 +27,7 @@ export interface TemplateCustomizationSidebarProps {
   borderRadius: BorderRadius;
   shadow: Shadow;
   darkMode: boolean | null;
+  textDirection: TextDirection;
   sectionSpacing: SectionSpacing;
   containerWidth: ContainerWidth;
   headingScale: HeadingScale;
@@ -35,6 +37,7 @@ export interface TemplateCustomizationSidebarProps {
   onFontFamilyChange: (f: FontFamily) => void;
   onBorderRadiusChange: (r: BorderRadius) => void;
   onDarkModeChange: (mode: boolean | null) => void;
+  onTextDirectionChange: (d: TextDirection) => void;
   onDesignSizeChange: (patch: {
     section_spacing?: SectionSpacing;
     container_width?: ContainerWidth;
@@ -62,6 +65,7 @@ export function TemplateCustomizationSidebar({
   borderRadius,
   shadow: _shadow,
   darkMode,
+  textDirection,
   sectionSpacing,
   containerWidth,
   headingScale,
@@ -71,6 +75,7 @@ export function TemplateCustomizationSidebar({
   onFontFamilyChange,
   onBorderRadiusChange,
   onDarkModeChange,
+  onTextDirectionChange,
   onDesignSizeChange,
   onBlocksChange,
   onUpdateBlock,
@@ -179,6 +184,7 @@ export function TemplateCustomizationSidebar({
             fontFamily={fontFamily}
             borderRadius={borderRadius}
             darkMode={darkMode}
+            textDirection={textDirection}
             sectionSpacing={sectionSpacing}
             containerWidth={containerWidth}
             headingScale={headingScale}
@@ -187,6 +193,7 @@ export function TemplateCustomizationSidebar({
             onFontFamilyChange={onFontFamilyChange}
             onBorderRadiusChange={onBorderRadiusChange}
             onDarkModeChange={onDarkModeChange}
+            onTextDirectionChange={onTextDirectionChange}
             onDesignSizeChange={onDesignSizeChange}
             onBannerImageChange={onBannerImageChange}
           />

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import {
   ArrowRight,
   ArrowLeftRight,
@@ -72,6 +72,12 @@ export function SectionEditor({
 }: SectionEditorProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('content');
+
+  // Always land on the content tab when the user selects a different section
+  // so the inputs are immediately visible instead of whichever tab was last open.
+  useEffect(() => {
+    setTab('content');
+  }, [block?.id]);
 
   if (!block) return null;
 
@@ -348,7 +354,13 @@ function Field({
     );
   }
 
-  const value = String(cfg[field.key] ?? '');
+  // Show the stored value; fall back to defaultValue so the input reflects what
+  // the preview displays when config hasn't been filled in yet.
+  const rawValue = cfg[field.key];
+  const value =
+    rawValue !== undefined && rawValue !== null
+      ? String(rawValue)
+      : (field.defaultValue ?? '');
   const empty = field.required && !value.trim();
 
   return (
@@ -463,7 +475,19 @@ function HeroBackground({
             <button
               key={type}
               type="button"
-              onClick={() => set('bgType', type)}
+              onClick={() => {
+                // When switching to solid without an existing color, default
+                // to the primary blue so the preview immediately shows solid.
+                if (type === 'solid' && !cfg.bgColor) {
+                  onUpdate(block.id, {
+                    ...cfg,
+                    bgType: 'solid',
+                    bgColor: '#3b82f6'
+                  });
+                } else {
+                  set('bgType', type);
+                }
+              }}
               className={`rounded border py-1.5 text-xs font-medium transition-colors ${
                 bgType === type
                   ? 'border-blue-500 bg-blue-600 text-white'

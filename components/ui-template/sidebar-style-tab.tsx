@@ -13,7 +13,8 @@ import type {
   SectionSpacing,
   ContainerWidth,
   HeadingScale,
-  FontFamily
+  FontFamily,
+  TextDirection
 } from './sidebar-types';
 import { FONT_OPTIONS } from './sidebar-types';
 import { AccordionSection } from './sidebar-primitives';
@@ -500,6 +501,66 @@ function DesignSizeSection({
   );
 }
 
+// ── Text Direction ────────────────────────────────────────────────────────────
+
+function DirectionSection({
+  textDirection,
+  onTextDirectionChange
+}: {
+  textDirection: TextDirection;
+  onTextDirectionChange: (d: TextDirection) => void;
+}) {
+  const options: {
+    label: string;
+    desc: string;
+    icon: string;
+    value: TextDirection;
+  }[] = [
+    {
+      label: 'راست به چپ',
+      desc: 'مناسب برای فارسی و عربی',
+      icon: '←',
+      value: 'rtl'
+    },
+    {
+      label: 'چپ به راست',
+      desc: 'مناسب برای انگلیسی و لاتین',
+      icon: '→',
+      value: 'ltr'
+    }
+  ];
+
+  return (
+    <AccordionSection title="جهت نوشتار">
+      <div className="space-y-2">
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => onTextDirectionChange(opt.value)}
+            className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-right transition-all ${
+              textDirection === opt.value
+                ? 'border-blue-500 bg-blue-500/10'
+                : 'border-zinc-200 hover:border-zinc-400'
+            }`}
+          >
+            <span className="text-base font-bold text-zinc-600">
+              {opt.icon}
+            </span>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-zinc-800">{opt.label}</p>
+              <p className="text-[10px] text-zinc-500">{opt.desc}</p>
+            </div>
+            {textDirection === opt.value && (
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
+            )}
+          </button>
+        ))}
+      </div>
+    </AccordionSection>
+  );
+}
+
 // ── Banner Image ──────────────────────────────────────────────────────────────
 
 function BannerImageSection({
@@ -629,6 +690,7 @@ export interface SidebarStyleTabProps {
   fontFamily: FontFamily;
   borderRadius: BorderRadius;
   darkMode: boolean | null;
+  textDirection: TextDirection;
   sectionSpacing: SectionSpacing;
   containerWidth: ContainerWidth;
   headingScale: HeadingScale;
@@ -637,6 +699,7 @@ export interface SidebarStyleTabProps {
   onFontFamilyChange: (f: FontFamily) => void;
   onBorderRadiusChange: (r: BorderRadius) => void;
   onDarkModeChange: (mode: boolean | null) => void;
+  onTextDirectionChange: (d: TextDirection) => void;
   onDesignSizeChange: (patch: {
     section_spacing?: SectionSpacing;
     container_width?: ContainerWidth;
@@ -650,6 +713,7 @@ export function SidebarStyleTab({
   fontFamily,
   borderRadius,
   darkMode,
+  textDirection,
   sectionSpacing,
   containerWidth,
   headingScale,
@@ -658,6 +722,7 @@ export function SidebarStyleTab({
   onFontFamilyChange,
   onBorderRadiusChange,
   onDarkModeChange,
+  onTextDirectionChange,
   onDesignSizeChange,
   onBannerImageChange
 }: SidebarStyleTabProps) {
@@ -670,6 +735,10 @@ export function SidebarStyleTab({
       <FontFamilySection
         fontFamily={fontFamily}
         onFontFamilyChange={onFontFamilyChange}
+      />
+      <DirectionSection
+        textDirection={textDirection}
+        onTextDirectionChange={onTextDirectionChange}
       />
       <RoundedCornersSection
         borderRadius={borderRadius}

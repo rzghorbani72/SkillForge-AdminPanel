@@ -1,3 +1,4 @@
+export type TextDirection = 'ltr' | 'rtl';
 export type BorderRadius = 'sharp' | 'soft' | 'rounded';
 export type Shadow = 'none' | 'subtle' | 'medium' | 'strong';
 export type SectionSpacing = 'compact' | 'comfortable' | 'spacious';

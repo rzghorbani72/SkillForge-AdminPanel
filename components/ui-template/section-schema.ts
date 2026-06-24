@@ -15,6 +15,9 @@ export interface ContentFieldSchema {
   // Secondary fields hidden under the Content tab's "Advanced" expander.
   advanced?: boolean;
   placeholder?: string;
+  // Pre-fills the input when block.config has no value for this key yet —
+  // shown so the manager sees what the preview is displaying, not an empty box.
+  defaultValue?: string;
   // For toggle fields: the value when unset (defaults to true when omitted).
   defaultOn?: boolean;
   // Optional one-line explanation shown under the field.
@@ -40,7 +43,8 @@ const TITLE: ContentFieldSchema = {
   label: 'عنوان بخش',
   kind: 'text',
   required: true,
-  placeholder: 'عنوان این بخش'
+  placeholder: 'عنوان این بخش',
+  defaultValue: 'عنوان بخش'
 };
 
 export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
@@ -64,19 +68,22 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         label: 'عنوان اصلی',
         kind: 'text',
         required: true,
-        placeholder: 'پیام اصلی صفحه'
+        placeholder: 'پیام اصلی صفحه',
+        defaultValue: 'به آکادمی ما خوش آمدید'
       },
       {
         key: 'subtitle',
         label: 'متن پشتیبان',
         kind: 'textarea',
-        placeholder: 'توضیح کوتاه زیر عنوان'
+        placeholder: 'توضیح کوتاه زیر عنوان',
+        defaultValue: 'بهترین دوره‌های آموزشی را اینجا بیابید'
       },
       {
         key: 'ctaText',
         label: 'متن دکمه اصلی',
         kind: 'text',
-        placeholder: 'مثلاً: شروع کنید'
+        placeholder: 'مثلاً: شروع کنید',
+        defaultValue: 'شروع کنید'
       },
       {
         key: 'ctaSecondary',
@@ -84,6 +91,36 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         advanced: true,
         placeholder: 'مثلاً: بیشتر بدانید'
+      },
+      // Fields used by flow / code / creative hero styles.
+      // Shown under "Advanced" so the default hero stays clean.
+      {
+        key: 'tag',
+        label: 'برچسب بالای عنوان',
+        kind: 'text',
+        advanced: true,
+        placeholder: 'مثلاً: جدید — ویژگی تازه'
+      },
+      {
+        key: 'titleEm',
+        label: 'کلمه کلیدی برجسته (میانه عنوان)',
+        kind: 'text',
+        advanced: true,
+        placeholder: 'بخش رنگی وسط عنوان'
+      },
+      {
+        key: 'titleEnd',
+        label: 'ادامه عنوان (بعد از کلمه برجسته)',
+        kind: 'text',
+        advanced: true,
+        placeholder: 'پایان جمله عنوان'
+      },
+      {
+        key: 'trustCount',
+        label: 'تعداد یادگیرندگان',
+        kind: 'text',
+        advanced: true,
+        placeholder: 'مثلاً: ۱۲٬۰۰۰+'
       },
       {
         key: 'useLiveData',
@@ -124,10 +161,21 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         label: 'عنوان اصلی',
         kind: 'text',
         required: true,
-        placeholder: 'دعوت به اقدام'
+        placeholder: 'دعوت به اقدام',
+        defaultValue: 'همین حالا شروع کنید'
       },
-      { key: 'subtitle', label: 'متن پشتیبان', kind: 'textarea' },
-      { key: 'ctaText', label: 'متن دکمه', kind: 'text' }
+      {
+        key: 'subtitle',
+        label: 'متن پشتیبان',
+        kind: 'textarea',
+        defaultValue: 'به جمع یادگیرندگان ما بپیوندید'
+      },
+      {
+        key: 'ctaText',
+        label: 'متن دکمه',
+        kind: 'text',
+        defaultValue: 'ثبت‌نام کنید'
+      }
     ]
   },
   categories: {
