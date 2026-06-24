@@ -69,8 +69,10 @@ export function EditorPreview({
           <span className="absolute left-1/2 top-1.5 z-20 h-1.5 w-20 -translate-x-1/2 rounded-full bg-zinc-100" />
         )}
         {iframeSrc && (
+          // No key prop — React updates src in-place so the iframe element
+          // stays alive and navigates to the new URL instead of being
+          // unmounted/remounted (which caused a full white-flash on every save).
           <iframe
-            key={iframeSrc}
             ref={iframeRef}
             src={iframeSrc}
             onLoad={onIframeLoad}
