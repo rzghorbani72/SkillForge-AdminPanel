@@ -1743,6 +1743,7 @@ export const en = {
     sectionAddToDraft: 'Add to draft',
     sectionImporting: 'Adding…',
     sectionImportedSuccess: 'Section added to draft',
+    sectionStyleLabel: 'Design',
     sectionReplaceTitle: 'Change section design',
     sectionReplaceDescription:
       'Pick a different design for this section. Your content is kept.',

@@ -42,7 +42,12 @@ export function buildFullPreviewUrl(embedPreviewUrl: string): string {
 export function buildTemplatePreviewUrl(
   templateId: string,
   storefrontBaseUrl?: string | null,
-  options?: { sample?: boolean; draft?: boolean; token?: string }
+  options?: {
+    sample?: boolean;
+    draft?: boolean;
+    edit?: boolean;
+    token?: string;
+  }
 ): string {
   const base = resolveStorefrontBaseUrl(storefrontBaseUrl);
   let query = `template=${encodeURIComponent(templateId)}&embed=1`;
@@ -52,6 +57,8 @@ export function buildTemplatePreviewUrl(
   if (options?.draft && options.token) {
     query += `&draft=1&token=${encodeURIComponent(options.token)}`;
   }
+  // Edit mode turns on in-canvas section selection (click a section to edit it).
+  if (options?.edit) query += '&edit=1';
   return base ? `${base}/preview/blocks?${query}` : `/preview/blocks?${query}`;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, RotateCcw, Save, Globe, Palette, Layers } from 'lucide-react';
 import type { UIBlockConfig } from '@/types/api';
 import type {
@@ -41,9 +41,9 @@ export interface TemplateCustomizationSidebarProps {
     heading_scale?: HeadingScale;
   }) => void;
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
+  onUpdateBlock: (blockId: string, config: Record<string, unknown>) => void;
   onBannerImageChange: (url: string) => void;
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
-  onDuplicateBlock: (id: string) => void;
   onToggleVisibleBlock: (id: string, visible: boolean) => void;
   onDeleteBlock: (id: string) => void;
   onReset: () => void;
@@ -51,8 +51,8 @@ export interface TemplateCustomizationSidebarProps {
   onSaveAsCopy?: () => void;
   onSaveOverride?: () => void;
   onClose: () => void;
+  onCloseSection: () => void;
   selectedBlockId?: string | null;
-  onSelectBlock?: (id: string) => void;
   coverImage?: string | null;
   onCoverImageChange?: (url: string) => void;
 }
@@ -74,9 +74,9 @@ export function TemplateCustomizationSidebar({
   onDarkModeChange,
   onDesignSizeChange,
   onBlocksChange,
+  onUpdateBlock,
   onBannerImageChange,
   onOpenPicker,
-  onDuplicateBlock,
   onToggleVisibleBlock,
   onDeleteBlock,
   onReset,
@@ -84,13 +84,19 @@ export function TemplateCustomizationSidebar({
   onSaveAsCopy,
   onSaveOverride,
   onClose,
+  onCloseSection,
   selectedBlockId,
-  onSelectBlock,
   coverImage,
   onCoverImageChange
 }: TemplateCustomizationSidebarProps) {
   const [tab, setTab] = useState<Tab>('sections');
   const isAdminEditing = saveMode === 'both' || saveMode === 'admin-override';
+
+  // Selecting a section in the preview should reveal its editor, which lives in
+  // the Sections tab.
+  useEffect(() => {
+    if (selectedBlockId) setTab('sections');
+  }, [selectedBlockId]);
 
   const TABS: { id: Tab; label: string; icon: typeof Layers }[] = [
     { id: 'sections', label: 'بخش‌ها', icon: Layers },
@@ -163,10 +169,10 @@ export function TemplateCustomizationSidebar({
             onBlocksChange={onBlocksChange}
             onOpenPicker={onOpenPicker}
             selectedBlockId={selectedBlockId}
-            onSelectBlock={onSelectBlock}
-            onDuplicateBlock={onDuplicateBlock}
+            onUpdateBlock={onUpdateBlock}
             onToggleVisibleBlock={onToggleVisibleBlock}
             onDeleteBlock={onDeleteBlock}
+            onCloseSection={onCloseSection}
           />
         ) : (
           <SidebarStyleTab
@@ -190,7 +196,7 @@ export function TemplateCustomizationSidebar({
 
       {/* Footer – cover + save buttons + reset */}
       <div className="flex-shrink-0 space-y-2 border-t border-zinc-700 p-4">
-        {saveMode && onCoverImageChange && (
+        {isAdminEditing && onCoverImageChange && (
           <CoverImageSection
             coverImage={coverImage}
             onChange={onCoverImageChange}

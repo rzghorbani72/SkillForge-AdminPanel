@@ -1498,6 +1498,7 @@ export const fa = {
     sectionAddToDraft: 'افزودن به پیش‌نویس',
     sectionImporting: 'در حال افزودن…',
     sectionImportedSuccess: 'بخش به پیش‌نویس اضافه شد',
+    sectionStyleLabel: 'طراحی',
     sectionReplaceTitle: 'تغییر طراحی بخش',
     sectionReplaceDescription:
       'یک طراحی دیگر برای این بخش انتخاب کنید. محتوای شما حفظ می‌شود.',

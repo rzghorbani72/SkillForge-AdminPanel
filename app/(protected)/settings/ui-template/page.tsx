@@ -31,7 +31,6 @@ import {
   TemplateCustomizationSidebar,
   type SaveMode
 } from '@/components/ui-template/template-customization-sidebar';
-import { SectionCustomizationPanel } from '@/components/ui-template/section-customization-panel';
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
 import {
   GenerateTemplateDialog,
@@ -117,6 +116,38 @@ export default function UITemplateSettingsPage() {
   // A typing burst captures the pre-burst block state once; it is committed to
   // history only after the user pauses, so undo jumps per edit, not per key.
   const pendingHistoryRef = useRef<UIBlockConfig[] | null>(null);
+  const previewIframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  // Tell the in-canvas preview which section is selected, so it shows the dashed
+  // outline and scrolls to it. Re-sent on iframe (re)load to survive refreshes.
+  const postHighlight = useCallback((blockId: string | null) => {
+    previewIframeRef.current?.contentWindow?.postMessage(
+      { source: 'mentoma-admin', type: 'highlight', blockId },
+      '*'
+    );
+  }, []);
+
+  // Receive a click-to-select from the preview canvas → open that section's panel.
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      const data = e.data as {
+        source?: string;
+        type?: string;
+        blockId?: string;
+      };
+      if (data?.source !== 'mentoma-editor' || data.type !== 'select') return;
+      if (data.blockId) {
+        setSelectedBlockId(data.blockId);
+        setShowCustomizer(true);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
+  useEffect(() => {
+    postHighlight(selectedBlockId);
+  }, [selectedBlockId, postHighlight]);
 
   const savedAgo = useRelativeTime(lastSavedAt);
 
@@ -213,11 +244,18 @@ export default function UITemplateSettingsPage() {
         setContainerWidth(cfg.container_width as ContainerWidth);
       if (cfg.heading_scale) setHeadingScale(cfg.heading_scale as HeadingScale);
 
+      // The editor always previews the academy's DRAFT (not the catalog preset)
+      // so swaps, text, colors and layout edits show live, and sections become
+      // click-to-select (edit=1). A preview token scopes it to this academy.
+      const token =
+        opts?.draftPreviewToken ??
+        (await apiClient.createTemplatePreviewToken().catch(() => null))?.token;
       setBaseIframeSrc(
-        opts?.draftPreviewToken
+        token
           ? buildTemplatePreviewUrl(preset.id, null, {
               draft: true,
-              token: opts.draftPreviewToken
+              edit: true,
+              token
             })
           : buildTemplatePreviewUrl(preset.id, null, { sample: !isDedicated })
       );
@@ -583,25 +621,6 @@ export default function UITemplateSettingsPage() {
     );
   };
 
-  const handleBlockMove = (blockId: string, dir: 'up' | 'down') => {
-    const sorted = [...draftBlocks].sort((a, b) => a.order - b.order);
-    const header = sorted.find((b) => b.type === 'header');
-    const footer = sorted.find((b) => b.type === 'footer');
-    const middle = sorted.filter(
-      (b) => b.type !== 'header' && b.type !== 'footer'
-    );
-    const i = middle.findIndex((b) => b.id === blockId);
-    const j = dir === 'up' ? i - 1 : i + 1;
-    if (i === -1 || j < 0 || j >= middle.length) return;
-    [middle[i], middle[j]] = [middle[j], middle[i]];
-    const next = [
-      ...(header ? [header] : []),
-      ...middle,
-      ...(footer ? [footer] : [])
-    ].map((block, index) => ({ ...block, order: index + 1 }));
-    commitBlocks(next);
-  };
-
   const handleBlockDelete = (blockId: string) => {
     const block = draftBlocks.find((b) => b.id === blockId);
     if (!block || block.type === 'header' || block.type === 'footer') return;
@@ -619,27 +638,6 @@ export default function UITemplateSettingsPage() {
         b.id === blockId ? { ...b, isVisible: visible } : b
       )
     );
-  };
-
-  const handleBlockDuplicate = (blockId: string) => {
-    const block = draftBlocks.find((b) => b.id === blockId);
-    if (!block || block.type === 'header' || block.type === 'footer') return;
-    const clone: UIBlockConfig = {
-      ...block,
-      id:
-        typeof crypto !== 'undefined' && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `${block.id}-copy-${Date.now()}`,
-      config: { ...(block.config ?? {}) }
-    };
-    const sorted = [...draftBlocks].sort((a, b) => a.order - b.order);
-    const at = sorted.findIndex((b) => b.id === blockId);
-    const next = [
-      ...sorted.slice(0, at + 1),
-      clone,
-      ...sorted.slice(at + 1)
-    ].map((b, index) => ({ ...b, order: index + 1 }));
-    commitBlocks(next);
   };
 
   const handleOpenPicker = (target?: { blockId: string; type: string }) => {
@@ -811,14 +809,6 @@ export default function UITemplateSettingsPage() {
   if (selectedPreset) {
     const ds = getDesignSystem(selectedPreset.id);
     const colors = resolveTemplateColors(selectedPreset);
-    const selectedBlock =
-      draftBlocks.find((b) => b.id === selectedBlockId) ?? null;
-    const middleBlocks = [...draftBlocks]
-      .sort((a, b) => a.order - b.order)
-      .filter((b) => b.type !== 'header' && b.type !== 'footer');
-    const midIndex = selectedBlock
-      ? middleBlocks.findIndex((b) => b.id === selectedBlock.id)
-      : -1;
     const isEditingMaster = isAdmin && isPublicPreset && showCustomizer;
 
     const VIEWPORTS: {
@@ -994,9 +984,9 @@ export default function UITemplateSettingsPage() {
               onDarkModeChange={handleDarkModeChange}
               onDesignSizeChange={handleDesignSizeChange}
               onBlocksChange={handleBlocksChange}
+              onUpdateBlock={handleBlockConfigChange}
               onBannerImageChange={handleBannerImageChange}
               onOpenPicker={handleOpenPicker}
-              onDuplicateBlock={handleBlockDuplicate}
               onToggleVisibleBlock={handleBlockToggleVisible}
               onDeleteBlock={handleBlockDelete}
               onReset={handleReset}
@@ -1004,28 +994,10 @@ export default function UITemplateSettingsPage() {
               onSaveAsCopy={() => setPendingSave({ kind: 'fork' })}
               onSaveOverride={() => setPendingSave({ kind: 'override' })}
               onClose={() => setShowCustomizer(false)}
+              onCloseSection={() => setSelectedBlockId(null)}
               selectedBlockId={selectedBlockId}
-              onSelectBlock={setSelectedBlockId}
               coverImage={coverImage}
               onCoverImageChange={setCoverImage}
-            />
-          )}
-
-          {selectedBlock && (
-            <SectionCustomizationPanel
-              block={selectedBlock}
-              canMoveUp={midIndex > 0}
-              canMoveDown={midIndex >= 0 && midIndex < middleBlocks.length - 1}
-              canDelete={
-                selectedBlock.type !== 'header' &&
-                selectedBlock.type !== 'footer'
-              }
-              onUpdate={handleBlockConfigChange}
-              onMove={handleBlockMove}
-              onDelete={handleBlockDelete}
-              onDuplicate={handleBlockDuplicate}
-              onToggleVisible={handleBlockToggleVisible}
-              onClose={() => setSelectedBlockId(null)}
             />
           )}
 
@@ -1041,6 +1013,8 @@ export default function UITemplateSettingsPage() {
             iframeSrc={iframeSrc}
             isLoading={isPreviewLoading}
             title={`Preview: ${selectedPreset.name}`}
+            iframeRef={previewIframeRef}
+            onIframeLoad={() => postHighlight(selectedBlockId)}
           />
         </div>
       </div>

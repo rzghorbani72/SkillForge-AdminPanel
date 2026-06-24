@@ -1,5 +1,6 @@
 'use client';
 
+import type { Ref } from 'react';
 import { Loader2 } from 'lucide-react';
 import type { ViewportMode } from './sidebar-types';
 
@@ -24,12 +25,16 @@ export function EditorPreview({
   viewport,
   iframeSrc,
   isLoading,
-  title
+  title,
+  iframeRef,
+  onIframeLoad
 }: {
   viewport: ViewportMode;
   iframeSrc: string | null;
   isLoading: boolean;
   title: string;
+  iframeRef?: Ref<HTMLIFrameElement>;
+  onIframeLoad?: () => void;
 }) {
   const v = VIEWPORT[viewport];
   const isDesktop = viewport === 'desktop';
@@ -57,7 +62,9 @@ export function EditorPreview({
         {iframeSrc && (
           <iframe
             key={iframeSrc}
+            ref={iframeRef}
             src={iframeSrc}
+            onLoad={onIframeLoad}
             className="h-full w-full border-0"
             title={title}
           />

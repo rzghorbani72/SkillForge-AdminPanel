@@ -2,13 +2,13 @@
 
 import { useRef, useState } from 'react';
 import {
-  X,
+  ArrowRight,
+  ArrowLeftRight,
   ChevronDown,
   ChevronUp,
   ArrowUp,
   ArrowDown,
   Trash2,
-  Copy,
   Eye,
   Upload,
   AlertTriangle,
@@ -36,7 +36,7 @@ import { isGridSection } from './slot-constants';
 type Tab = 'content' | 'style' | 'layout';
 type HeroBgType = 'gradient' | 'solid' | 'image';
 
-export interface SectionCustomizationPanelProps {
+export interface SectionEditorProps {
   block: UIBlockConfig | null;
   canMoveUp: boolean;
   canMoveDown: boolean;
@@ -44,12 +44,14 @@ export interface SectionCustomizationPanelProps {
   onUpdate: (blockId: string, config: Record<string, unknown>) => void;
   onMove: (blockId: string, dir: 'up' | 'down') => void;
   onDelete: (blockId: string) => void;
-  onDuplicate: (blockId: string) => void;
   onToggleVisible: (blockId: string, visible: boolean) => void;
-  onClose: () => void;
+  onReplace?: () => void;
+  onBack: () => void;
 }
 
-export function SectionCustomizationPanel({
+// Section-specific editor embedded inside the main sidebar's Sections tab when a
+// section is selected (in the preview). `onBack` returns to the sections list.
+export function SectionEditor({
   block,
   canMoveUp,
   canMoveDown,
@@ -57,10 +59,10 @@ export function SectionCustomizationPanel({
   onUpdate,
   onMove,
   onDelete,
-  onDuplicate,
   onToggleVisible,
-  onClose
-}: SectionCustomizationPanelProps) {
+  onReplace,
+  onBack
+}: SectionEditorProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('content');
 
@@ -80,36 +82,38 @@ export function SectionCustomizationPanel({
   ];
 
   return (
-    <div
-      className="flex h-full w-80 flex-shrink-0 flex-col border-r border-zinc-700 bg-zinc-900"
-      dir="rtl"
-    >
-      {/* Header */}
-      <div className="flex flex-shrink-0 items-center justify-between border-b border-zinc-700 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-zinc-100">
-            {schema.name}
-          </span>
-          {incomplete && (
-            <span
-              title={t('sitePreview.panelIncomplete')}
-              className="h-2 w-2 rounded-full bg-amber-400"
-            />
-          )}
-        </div>
+    <div className="flex h-full flex-col" dir="rtl">
+      {/* Header — back to the sections list */}
+      <div className="flex flex-shrink-0 items-center gap-2 border-b border-zinc-700 px-3 py-2.5">
         <button
           type="button"
-          onClick={onClose}
-          aria-label={t('common.close')}
+          onClick={onBack}
+          aria-label="بازگشت"
+          title="بازگشت"
           className="rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
         >
-          <X className="h-4 w-4" />
+          <ArrowRight className="h-4 w-4" />
         </button>
-      </div>
-
-      {/* Section thumbnail — confirms which section is selected */}
-      <div className="flex-shrink-0 border-b border-zinc-700 px-4 py-2.5">
-        <BlockThumbnail block={block} />
+        <span className="text-sm font-semibold text-zinc-100">
+          {schema.name}
+        </span>
+        {incomplete && (
+          <span
+            title={t('sitePreview.panelIncomplete')}
+            className="h-2 w-2 rounded-full bg-amber-400"
+          />
+        )}
+        {onReplace && (
+          <button
+            type="button"
+            onClick={onReplace}
+            aria-label="تغییر طراحی بخش"
+            title="تغییر طراحی بخش"
+            className="ms-auto rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+          >
+            <ArrowLeftRight className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -155,7 +159,6 @@ export function SectionCustomizationPanel({
             canDelete={canDelete}
             onMove={onMove}
             onDelete={onDelete}
-            onDuplicate={onDuplicate}
             onToggleVisible={onToggleVisible}
           />
         )}
@@ -566,7 +569,6 @@ function LayoutTab({
   canDelete,
   onMove,
   onDelete,
-  onDuplicate,
   onToggleVisible
 }: {
   block: UIBlockConfig;
@@ -578,7 +580,6 @@ function LayoutTab({
   canDelete: boolean;
   onMove: (blockId: string, dir: 'up' | 'down') => void;
   onDelete: (blockId: string) => void;
-  onDuplicate: (blockId: string) => void;
   onToggleVisible: (blockId: string, visible: boolean) => void;
 }) {
   const { t } = useTranslation();
@@ -662,16 +663,6 @@ function LayoutTab({
             {t('settings.moveDown')}
           </button>
         </div>
-        {canDelete && (
-          <button
-            type="button"
-            onClick={() => onDuplicate(block.id)}
-            className="flex w-full items-center justify-center gap-1.5 rounded border border-zinc-600 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
-          >
-            <Copy className="h-3.5 w-3.5" />
-            {t('sitePreview.panelDuplicateSection')}
-          </button>
-        )}
         {canDelete && (
           <button
             type="button"

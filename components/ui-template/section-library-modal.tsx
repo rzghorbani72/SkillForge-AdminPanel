@@ -239,6 +239,79 @@ export function SectionLibraryModal({
     }
   };
 
+  // One card, shared by the add-from-library grid and the swap "section style"
+  // grid. `title`/`sublabel` differ per mode so swap mode reads as design
+  // options (no "from template X" framing).
+  const renderCard = (
+    section: SectionCatalogEntry,
+    title: string,
+    sublabel: string | null
+  ) => {
+    const isSelected = selected?.id === section.id;
+    return (
+      <button
+        key={section.id}
+        type="button"
+        onClick={() => setSelected(section)}
+        className={`group/card overflow-hidden rounded-lg border text-right transition-colors ${
+          isSelected
+            ? 'border-primary ring-2 ring-primary/40'
+            : 'hover:border-primary/40'
+        }`}
+      >
+        <div className="relative aspect-[16/9] w-full border-b bg-muted/30">
+          {section.coverImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={section.coverImage}
+              alt={title}
+              loading="lazy"
+              className="h-full w-full object-cover object-top"
+            />
+          ) : (
+            <SectionTypeThumb type={section.blockType} />
+          )}
+          {isSelected && (
+            <div className="absolute inset-0 flex items-center justify-center bg-primary/15">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <Check className="h-4 w-4" />
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 p-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold">{title}</p>
+              {sublabel && (
+                <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <LayoutTemplate className="h-3 w-3 shrink-0" />
+                  {sublabel}
+                </p>
+              )}
+            </div>
+            {section.imageSlots.length > 0 && (
+              <Badge
+                variant="outline"
+                className="shrink-0 gap-0.5 text-[9px] text-muted-foreground"
+              >
+                <ImageIcon className="h-2.5 w-2.5" />
+                {section.imageSlots.length}
+              </Badge>
+            )}
+          </div>
+          {section.imageSlots.length > 0 && (
+            <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
+              <ImageIcon className="h-2.5 w-2.5 shrink-0" />
+              {t('settings.sectionNeedsImages')}:{' '}
+              {summarizeImageSlots(section.imageSlots)}
+            </p>
+          )}
+        </div>
+      </button>
+    );
+  };
+
   if (!open) return null;
 
   return (
@@ -268,15 +341,11 @@ export function SectionLibraryModal({
         </div>
 
         {swapTarget && (
-          <div className="flex items-center gap-2 border-b bg-amber-500/10 px-5 py-2.5 text-xs text-amber-700 dark:text-amber-400">
-            <span className="font-semibold">
-              {t('settings.sectionReplacing')}:
-            </span>
-            <span className="rounded-md bg-amber-500/15 px-2 py-0.5 font-bold">
+          <div className="flex items-center gap-2 border-b bg-muted/40 px-5 py-2.5 text-xs text-muted-foreground">
+            <span>{t('settings.sectionReplaceDescription')}</span>
+            <span className="rounded-md bg-primary/10 px-2 py-0.5 font-bold text-primary">
               {blockLabel(swapTarget.type)}
             </span>
-            <span className="text-amber-700/70 dark:text-amber-400/70">←</span>
-            <span>{t('settings.sectionReplaceDescription')}</span>
           </div>
         )}
 
@@ -330,6 +399,18 @@ export function SectionLibraryModal({
             <p className="py-8 text-center text-sm text-muted-foreground">
               {t('settings.sectionLibraryEmpty')}
             </p>
+          ) : swapTarget ? (
+            // Style mode: a flat grid of design options for THIS section, with
+            // no source-template framing — just "Design 1, 2, 3…".
+            <div className="grid gap-2 sm:grid-cols-2">
+              {filtered.map((section, i) =>
+                renderCard(
+                  section,
+                  `${t('settings.sectionStyleLabel')} ${(i + 1).toLocaleString('fa-IR')}`,
+                  null
+                )
+              )}
+            </div>
           ) : (
             <div className="space-y-4">
               {groups.map((group) => (
@@ -349,86 +430,15 @@ export function SectionLibraryModal({
                     <p className="text-xs font-semibold">{group.presetName}</p>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">
-                    {group.items.map((section) => {
-                      const isSelected = selected?.id === section.id;
-                      return (
-                        <button
-                          key={section.id}
-                          type="button"
-                          onClick={() => setSelected(section)}
-                          className={`group/card overflow-hidden rounded-lg border text-right transition-colors ${
-                            isSelected
-                              ? 'border-primary ring-2 ring-primary/40'
-                              : 'hover:border-primary/40'
-                          }`}
-                        >
-                          {/* Cover screenshot, or a CSS layout hint when absent */}
-                          <div className="relative aspect-[16/9] w-full border-b bg-muted/30">
-                            {section.coverImage ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={section.coverImage}
-                                alt={blockLabel(section.blockType)}
-                                loading="lazy"
-                                className="h-full w-full object-cover object-top"
-                              />
-                            ) : (
-                              <SectionTypeThumb type={section.blockType} />
-                            )}
-                            {isSelected && (
-                              <div className="absolute inset-0 flex items-center justify-center bg-primary/15">
-                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                                  <Check className="h-4 w-4" />
-                                </span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Meta */}
-                          <div className="flex flex-col gap-2 p-3">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0">
-                                <p className="truncate text-sm font-bold">
-                                  {blockLabel(section.blockType)}
-                                </p>
-                                <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                  <LayoutTemplate className="h-3 w-3 shrink-0" />
-                                  {t('settings.sectionFromTemplate', {
-                                    name: section.presetName
-                                  })}
-                                </p>
-                              </div>
-                              <div className="flex shrink-0 flex-col items-end gap-1">
-                                {section.sectionVariant && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-[9px]"
-                                  >
-                                    {section.sectionVariant}
-                                  </Badge>
-                                )}
-                                {section.imageSlots.length > 0 && (
-                                  <Badge
-                                    variant="outline"
-                                    className="gap-0.5 text-[9px] text-muted-foreground"
-                                  >
-                                    <ImageIcon className="h-2.5 w-2.5" />
-                                    {section.imageSlots.length}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            {section.imageSlots.length > 0 && (
-                              <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                <ImageIcon className="h-2.5 w-2.5 shrink-0" />
-                                {t('settings.sectionNeedsImages')}:{' '}
-                                {summarizeImageSlots(section.imageSlots)}
-                              </p>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
+                    {group.items.map((section) =>
+                      renderCard(
+                        section,
+                        blockLabel(section.blockType),
+                        t('settings.sectionFromTemplate', {
+                          name: section.presetName
+                        })
+                      )
+                    )}
                   </div>
                 </div>
               ))}
@@ -441,8 +451,8 @@ export function SectionLibraryModal({
             <p className="min-w-0 truncate text-xs text-muted-foreground">
               <span className="font-semibold text-foreground">
                 {blockLabel(selected.blockType)}
-              </span>{' '}
-              · {selected.presetName}
+              </span>
+              {!swapTarget && ` · ${selected.presetName}`}
             </p>
             <div className="flex shrink-0 gap-2">
               <Button
