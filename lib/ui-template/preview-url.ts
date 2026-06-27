@@ -47,11 +47,14 @@ export function buildTemplatePreviewUrl(
     draft?: boolean;
     edit?: boolean;
     token?: string;
+    realData?: boolean;
   }
 ): string {
   const base = resolveStorefrontBaseUrl(storefrontBaseUrl);
   let query = `template=${encodeURIComponent(templateId)}&embed=1`;
   if (options?.sample) query += '&sample=1';
+  // Real-data mode renders dynamic blocks with the academy's own records.
+  if (options?.realData) query += '&data=real';
   // Draft mode renders the academy's own work-in-progress blocks (e.g. a freshly
   // generated, personalized site). It needs a preview token to scope the academy.
   if (options?.draft && options.token) {

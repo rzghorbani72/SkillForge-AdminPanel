@@ -12,7 +12,8 @@ import {
   Tablet,
   Monitor,
   Undo2,
-  Redo2
+  Redo2,
+  Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -116,6 +117,9 @@ export default function UITemplateSettingsPage() {
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [previewToken, setPreviewToken] = useState<string | null>(null);
   const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
+  // Preview data source: false = placeholder/sample design, true = the academy's
+  // real backend records (courses, stats) so the manager sees the live site view.
+  const [useRealData, setUseRealData] = useState(false);
 
   // A typing burst captures the pre-burst block state once; it is committed to
   // history only after the user pauses, so undo jumps per edit, not per key.
@@ -290,9 +294,13 @@ export default function UITemplateSettingsPage() {
           ? buildTemplatePreviewUrl(preset.id, null, {
               draft: true,
               edit: true,
-              token
+              token,
+              realData: useRealData
             })
-          : buildTemplatePreviewUrl(preset.id, null, { sample: !isDedicated })
+          : buildTemplatePreviewUrl(preset.id, null, {
+              sample: !isDedicated,
+              realData: useRealData
+            })
       );
       setActivePresetId(preset.id);
     } catch (error) {
@@ -382,6 +390,28 @@ export default function UITemplateSettingsPage() {
     setPreviewToken(null);
     setShowCustomizer(false);
     setSelectedBlockId(null);
+  };
+
+  // Flip the preview between placeholder/sample content and the academy's real
+  // backend data, rebuilding the iframe URL so dynamic blocks refetch.
+  const handleToggleRealData = () => {
+    const next = !useRealData;
+    setUseRealData(next);
+    if (!selectedPreset) return;
+    const isDedicated = selectedPreset.visibility === 'DEDICATED';
+    setBaseIframeSrc(
+      previewToken
+        ? buildTemplatePreviewUrl(selectedPreset.id, null, {
+            draft: true,
+            edit: true,
+            token: previewToken,
+            realData: next
+          })
+        : buildTemplatePreviewUrl(selectedPreset.id, null, {
+            sample: !isDedicated,
+            realData: next
+          })
+    );
   };
 
   const refreshPresets = useCallback(async () => {
@@ -971,6 +1001,23 @@ export default function UITemplateSettingsPage() {
           </div>
 
           <div className="ml-auto flex items-center gap-3">
+            {/* Data source toggle: sample design vs real backend data */}
+            <button
+              type="button"
+              onClick={handleToggleRealData}
+              title={
+                useRealData ? 'نمایش داده واقعی آکادمی' : 'نمایش داده نمونه'
+              }
+              className={`flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors ${
+                useRealData
+                  ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                  : 'bg-zinc-200 text-zinc-700 hover:bg-zinc-300'
+              }`}
+            >
+              <Database className="h-3.5 w-3.5" />
+              {useRealData ? 'داده واقعی' : 'داده نمونه'}
+            </button>
+
             {/* Viewport switcher */}
             <div className="flex items-center gap-0.5 rounded-lg bg-zinc-100 p-0.5">
               {VIEWPORTS.map(({ mode, icon: Icon, label }) => (
