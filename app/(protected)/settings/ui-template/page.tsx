@@ -143,7 +143,7 @@ export default function UITemplateSettingsPage() {
   // outline and scrolls to it. Re-sent on iframe (re)load to survive refreshes.
   const postHighlight = useCallback((blockId: string | null) => {
     previewIframeRef.current?.contentWindow?.postMessage(
-      { source: 'mentoma-admin', type: 'highlight', blockId },
+      { source: 'template-admin', type: 'highlight', blockId },
       '*'
     );
   }, []);
@@ -160,7 +160,7 @@ export default function UITemplateSettingsPage() {
         fieldKey?: string;
         value?: string;
       };
-      if (data?.source !== 'mentoma-editor') return;
+      if (data?.source !== 'template-editor') return;
 
       if (data.type === 'select' && data.blockId) {
         setSelectedBlockId(data.blockId);
@@ -698,7 +698,7 @@ export default function UITemplateSettingsPage() {
       if (prev[fieldKey] !== value) {
         previewIframeRef.current?.contentWindow?.postMessage(
           {
-            source: 'mentoma-admin',
+            source: 'template-admin',
             type: 'sync-field',
             blockId,
             fieldKey,
@@ -728,7 +728,7 @@ export default function UITemplateSettingsPage() {
     // Instantly hide/show the section in the preview without waiting for the
     // full save + iframe reload cycle — gives immediate visual feedback.
     previewIframeRef.current?.contentWindow?.postMessage(
-      { source: 'mentoma-admin', type: 'toggle-visible', blockId, visible },
+      { source: 'template-admin', type: 'toggle-visible', blockId, visible },
       '*'
     );
     commitBlocks(
