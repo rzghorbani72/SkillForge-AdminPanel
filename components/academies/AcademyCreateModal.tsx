@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Upload, Loader2, Check } from 'lucide-react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { Upload, Loader2, Check, X, CircleDashed } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -49,6 +49,52 @@ type AcademyCreateModalProps = {
   t: (k: string) => string;
 };
 
+const SLUG_DOMAIN = 'mentoma.com';
+
+const RESERVED_SLUGS = new Set([
+  'api',
+  'www',
+  'admin',
+  'app',
+  'mail',
+  'email',
+  'ftp',
+  'smtp',
+  'pop',
+  'imap',
+  'blog',
+  'shop',
+  'store',
+  'support',
+  'help',
+  'docs',
+  'status',
+  'cdn',
+  'static',
+  'assets',
+  'media',
+  'img',
+  'images',
+  'auth',
+  'login',
+  'logout',
+  'signup',
+  'register',
+  'dashboard',
+  'panel',
+  'console',
+  'portal',
+  'dev',
+  'staging',
+  'test',
+  'demo',
+  'beta',
+  'internal',
+  'platform',
+  'mentoma',
+  'edusphere'
+]);
+
 function toSlug(value: string): string {
   return value
     .toLowerCase()
@@ -58,6 +104,12 @@ function toSlug(value: string): string {
     .replace(/-+/g, '-')
     .slice(0, 40);
 }
+
+function isValidSlug(slug: string): boolean {
+  return /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/.test(slug);
+}
+
+type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
 
 export function AcademyCreateModal({
   open,
@@ -71,6 +123,8 @@ export function AcademyCreateModal({
   // Step 0 — Details
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
+  const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
+  const slugDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
 
@@ -109,9 +163,42 @@ export function AcademyCreateModal({
       .finally(() => setLoadingPlans(false));
   }, [step, plans.length]);
 
+  const checkSlug = useCallback((value: string) => {
+    if (slugDebounceRef.current) clearTimeout(slugDebounceRef.current);
+    if (!value) {
+      setSlugStatus('idle');
+      return;
+    }
+    if (!isValidSlug(value)) {
+      setSlugStatus('invalid');
+      return;
+    }
+    if (RESERVED_SLUGS.has(value)) {
+      setSlugStatus('taken');
+      return;
+    }
+    setSlugStatus('checking');
+    slugDebounceRef.current = setTimeout(async () => {
+      try {
+        const result = await apiClient.checkSlugAvailability(value);
+        setSlugStatus(result.available ? 'available' : 'taken');
+      } catch {
+        setSlugStatus('idle');
+      }
+    }, 400);
+  }, []);
+
   function handleNameChange(value: string) {
     setName(value);
-    setSlug(toSlug(value));
+    const newSlug = toSlug(value);
+    setSlug(newSlug);
+    checkSlug(newSlug);
+  }
+
+  function handleSlugChange(value: string) {
+    const normalized = toSlug(value);
+    setSlug(normalized);
+    checkSlug(normalized);
   }
 
   async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -132,9 +219,11 @@ export function AcademyCreateModal({
   }
 
   function handleClose() {
+    if (slugDebounceRef.current) clearTimeout(slugDebounceRef.current);
     setStep(0);
     setName('');
     setSlug('');
+    setSlugStatus('idle');
     setDescription('');
     setCategory('');
     setLogoId(null);
@@ -221,19 +310,49 @@ export function AcademyCreateModal({
                 <label className="mb-1 block text-sm font-medium">
                   {t('stores.subdomain')}
                 </label>
-                <div className="flex items-center overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-ring">
+                <div
+                  className={cn(
+                    'flex items-center overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-ring',
+                    slugStatus === 'taken' && 'border-destructive',
+                    slugStatus === 'available' && 'border-green-500'
+                  )}
+                >
                   <input
                     className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground"
                     value={slug}
-                    onChange={(e) => setSlug(toSlug(e.target.value))}
+                    onChange={(e) => handleSlugChange(e.target.value)}
                     placeholder="mehr"
                     dir="ltr"
                     aria-label={t('stores.subdomain')}
                   />
-                  <span className="shrink-0 border-r bg-muted px-3 py-2 text-xs text-muted-foreground">
-                    mentoryar.ir
+                  <span className="flex shrink-0 items-center gap-1 border-r bg-muted px-3 py-2 text-xs text-muted-foreground">
+                    {slugStatus === 'checking' && (
+                      <CircleDashed className="h-3 w-3 animate-spin" />
+                    )}
+                    {slugStatus === 'available' && (
+                      <Check className="h-3 w-3 text-green-500" />
+                    )}
+                    {slugStatus === 'taken' && (
+                      <X className="h-3 w-3 text-destructive" />
+                    )}
+                    .{SLUG_DOMAIN}
                   </span>
                 </div>
+                {slugStatus === 'invalid' && slug.length > 0 && (
+                  <p className="mt-1 text-xs text-destructive">
+                    {t('stores.slugInvalid')}
+                  </p>
+                )}
+                {slugStatus === 'taken' && (
+                  <p className="mt-1 text-xs text-destructive">
+                    {t('stores.slugTaken')}
+                  </p>
+                )}
+                {slugStatus === 'available' && (
+                  <p className="mt-1 text-xs text-green-600">
+                    {t('stores.slugAvailable')}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -470,7 +589,14 @@ export function AcademyCreateModal({
               <Button
                 size="sm"
                 onClick={() => setStep((s) => s + 1)}
-                disabled={step === 0 && (!name.trim() || !slug.trim())}
+                disabled={
+                  step === 0 &&
+                  (!name.trim() ||
+                    !slug.trim() ||
+                    slugStatus === 'taken' ||
+                    slugStatus === 'invalid' ||
+                    slugStatus === 'checking')
+                }
               >
                 {t('stores.nextStep')} &lsaquo;
               </Button>

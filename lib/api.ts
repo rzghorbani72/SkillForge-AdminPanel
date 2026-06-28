@@ -647,6 +647,13 @@ class ApiClient {
     return response;
   }
 
+  async checkSlugAvailability(slug: string): Promise<{ available: boolean }> {
+    const res = await this.request<{ available: boolean }>(
+      `/academies/slug-available?slug=${encodeURIComponent(slug)}`
+    );
+    return (res as any)?.data ?? res;
+  }
+
   async createAcademy(storeData: {
     name: string;
     private_domain: string;
