@@ -44,7 +44,7 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
 
 export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
   flow: {
-    name: 'منتوریار فلو',
+    name: 'منتوما فلو',
     tagline: 'یادگیری · مسیرمحور · مینیمال',
     colors: {
       primary: '#00b388',

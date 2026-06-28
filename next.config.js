@@ -51,10 +51,10 @@ const SECURITY_HEADERS = [
 ];
 
 const PRODUCTION_PUBLIC_DEFAULTS = {
-  /** Same-origin path — cookies must be set on the panel host, not api-academy.darkube.ir */
-  API_URL: '/api',
-  BACKEND_API_URL: 'https://api-academy.darkube.ir/api',
-  PANEL_HOST: 'https://panel-academy.darkube.ir'
+  /** Same-origin path — cookies must be set on the panel host, not api.mentoma.com */
+  API_URL: '/v1',
+  BACKEND_API_URL: 'https://api.mentoma.com/v1',
+  PANEL_HOST: 'https://admin.mentoma.com'
 };
 
 const nextConfig = {
@@ -76,7 +76,7 @@ const nextConfig = {
     const destination = backendTarget.replace(/\/$/, '');
     return [
       {
-        source: '/api/:path*',
+        source: '/v1/:path*',
         destination: `${destination}/:path*`
       }
     ];
@@ -91,13 +91,13 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '3000',
-        pathname: '/api/images/**'
+        pathname: '/v1/images/**'
       },
       {
         protocol: 'https',
         hostname: 'localhost',
         port: '3000',
-        pathname: '/api/images/**'
+        pathname: '/v1/images/**'
       }
     ],
     // Device sizes for responsive images

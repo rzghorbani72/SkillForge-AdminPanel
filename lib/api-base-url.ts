@@ -1,9 +1,9 @@
 /**
- * Browser calls use a same-origin path (/api) so HttpOnly auth cookies are set on the panel host.
+ * Browser calls use a same-origin path (/v1) so HttpOnly auth cookies are set on the panel host.
  * Server components/actions use an absolute backend URL (rewrite target or direct API).
  */
-const DEFAULT_BROWSER_API = '/api';
-const DEFAULT_SERVER_API = 'http://localhost:3000/api';
+const DEFAULT_BROWSER_API = '/v1';
+const DEFAULT_SERVER_API = 'http://localhost:3000/v1';
 
 export function getBrowserApiBaseUrl(): string {
   const raw =
@@ -14,7 +14,7 @@ export function getBrowserApiBaseUrl(): string {
     return raw;
   }
 
-  // **In production, absolute URLs break same-origin cookies; Next.js rewrites /api to the backend.**
+  // **In production, absolute URLs break same-origin cookies; Next.js rewrites /v1 to the backend.**
   if (raw.startsWith('http://') || raw.startsWith('https://')) {
     return DEFAULT_BROWSER_API;
   }
@@ -48,6 +48,6 @@ export function getBackendRewriteTarget(): string {
   const target =
     process.env.BACKEND_API_URL?.replace(/\/$/, '') ||
     process.env.NEXT_PUBLIC_BACKEND_API_URL?.replace(/\/$/, '') ||
-    'https://api-academy.darkube.ir/api';
+    'https://api.mentoma.com/v1';
   return target.startsWith('http') ? target : `https://${target}`;
 }
