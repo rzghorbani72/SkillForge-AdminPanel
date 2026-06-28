@@ -194,7 +194,7 @@ export default function CreateAcademyPage() {
       <div className="w-full max-w-[480px]">
         {/* Top bar */}
         <div className="mb-12 flex items-center justify-between">
-          <span className="text-lg font-bold tracking-tight">skillforge</span>
+          <span className="text-lg font-bold tracking-tight">mentoma</span>
           <ProgressDots current={step} total={TOTAL_STEPS} />
         </div>
 

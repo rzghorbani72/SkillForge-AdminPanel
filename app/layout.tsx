@@ -9,9 +9,9 @@ import { ToastContainerWrapper } from '@/components/providers/toast-container-wr
 import { LanguageSync } from '@/components/providers/language-sync';
 
 export const metadata: Metadata = {
-  title: 'آکادمی Admin Panel',
-  description:
-    'Admin panel for آکادمی - Manage your stores, courses, and students'
+  title: 'منتوما | mentoma.com',
+  description: 'پنل مدیریت منتوما — مدیریت آکادمی‌ها، دوره‌ها و دانشجویان',
+  robots: { index: false, follow: false }
 };
 
 export default async function RootLayout({
