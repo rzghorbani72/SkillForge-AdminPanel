@@ -256,7 +256,7 @@ export function AcademyEditModal({
                     aria-label={t('stores.subdomain')}
                   />
                   <span className="shrink-0 border-r bg-muted px-3 py-2 text-xs text-muted-foreground">
-                    mentoryar.ir
+                    Mentoma.ir
                   </span>
                 </div>
               </div>

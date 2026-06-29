@@ -59,7 +59,7 @@ const NavItemContent = React.memo(
           item.disabled && 'cursor-not-allowed opacity-60'
         )}
       >
-        {/* Plain icon — no box, matches Mentoryar design */}
+        {/* Plain icon — no box, matches Mentoma design */}
         <Icon
           className={cn(
             'h-[18px] w-[18px] shrink-0 transition-colors duration-150',

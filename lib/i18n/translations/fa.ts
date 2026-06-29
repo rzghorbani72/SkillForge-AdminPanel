@@ -3365,7 +3365,7 @@ export const fa = {
     blockMembership: 'اشتراک',
     blockSlideshow: 'اسلایدشو / بنر',
     blockCourseGrid: 'شبکه دوره‌ها',
-    defaultSiteUrl: 'https://my-academy.ir',
+    defaultSiteUrl: 'https://my-.com',
     panelTabContent: 'محتوا',
     panelTabStyle: 'ظاهر',
     panelTabLayout: 'چیدمان',

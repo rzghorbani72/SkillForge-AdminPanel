@@ -77,8 +77,8 @@ export default function AffiliatesPage() {
   const baseUrl = academy
     ? (academy as any).domain?.public_address
       ? `https://${(academy as any).domain.public_address}`
-      : `https://${(academy as any).slug}.mentoryar.ir`
-    : 'https://mentoryar.ir';
+      : `https://${(academy as any).slug}.Mentoma.ir`
+    : 'https://Mentoma.ir';
 
   return (
     <div className="flex-1 space-y-6 p-6" dir="rtl">

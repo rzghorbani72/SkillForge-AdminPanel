@@ -2,7 +2,7 @@
 
 import { ThemeConfigPayload } from '@/types/api';
 
-// Mentoryar design system defaults — light mode only.
+// Mentoma design system defaults — light mode only.
 // Primary: cherry red hsl(4 72% 52%).
 // All surface/border/muted colors are owned by globals.css — NOT set here.
 export const DEFAULT_THEME_CONFIG: ThemeConfigPayload = {

@@ -2008,7 +2008,7 @@ export const ar = {
     roleAdded: 'تمت إضافة دور المسوّق لـ{{name}}! الرمز: {{code}}',
     createdSuccess: 'تم إنشاء المسوّق! الرمز: {{code}}',
     passwordRequired: 'كلمة المرور مطلوبة للحسابات الجديدة',
-    previewPanelTitle: 'لوحة المسوّق · Mentoryar',
+    previewPanelTitle: 'لوحة المسوّق · Mentoma',
     previewBadge: 'معاينة',
     previewPhoneTitle: 'تسجيل الدخول للوحة المسوّق',
     previewPhoneDesc: 'أدخل رقم الجوال الذي سجّلت به',

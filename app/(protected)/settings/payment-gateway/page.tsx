@@ -349,7 +349,7 @@ export default function PaymentGatewaySettingsPage() {
                         </Label>
                         <Input
                           id={`callback-${gw.id}`}
-                          placeholder="https://mentoryaracademy.com/payment/callback"
+                          placeholder="https://Mentomaacademy.com/payment/callback"
                           value={gw.callbackUrl}
                           onChange={(e) =>
                             updateGateway(gw.id, {
