@@ -119,7 +119,10 @@ export default function UITemplateSettingsPage() {
   const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
   // Preview data source: false = placeholder/sample design, true = the academy's
   // real backend records (courses, stats) so the manager sees the live site view.
-  const [useRealData, setUseRealData] = useState(false);
+  // Persisted in localStorage so the preference survives editor close/reopen.
+  const [useRealData, setUseRealData] = useState(
+    () => localStorage.getItem('preview_real_data') === '1'
+  );
 
   // A typing burst captures the pre-burst block state once; it is committed to
   // history only after the user pauses, so undo jumps per edit, not per key.
@@ -397,6 +400,7 @@ export default function UITemplateSettingsPage() {
   const handleToggleRealData = () => {
     const next = !useRealData;
     setUseRealData(next);
+    localStorage.setItem('preview_real_data', next ? '1' : '0');
     if (!selectedPreset) return;
     const isDedicated = selectedPreset.visibility === 'DEDICATED';
     setBaseIframeSrc(
