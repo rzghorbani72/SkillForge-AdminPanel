@@ -18,6 +18,8 @@ export default function LoginPage() {
         otpLoading={login.otpLoading}
         onSubmit={login.handleOtpSubmit}
         onBack={login.resetOtp}
+        onResend={login.resendOtp}
+        resending={login.otpLoading}
       />
     );
   }

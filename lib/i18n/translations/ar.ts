@@ -837,6 +837,8 @@ export const ar = {
     codeSentTo: 'تم إرسال الرمز إلى {{value}}',
     otpPlaceholder: '000000',
     resendCode: 'إعادة الإرسال',
+    resending: 'جارٍ الإرسال...',
+    resendIn: 'إعادة الإرسال بعد',
     uploadingPhoto: 'جارٍ الرفع…',
     changePhoto: 'تغيير الصورة',
     storeSettingsTitle: 'إعدادات المعهد',

@@ -403,6 +403,7 @@ export const fa = {
     creatingAccount: 'در حال ایجاد حساب...',
     resendCode: 'ارسال مجدد کد',
     resending: 'در حال ارسال...',
+    resendIn: 'ارسال مجدد در',
     accountCreatedTitle: 'حساب ایجاد شد!',
     redirectingToSignIn: 'در حال انتقال به صفحه ورود...',
     dontHaveAccountYet: 'حساب کاربری ندارید؟',

@@ -1,11 +1,13 @@
 'use client';
 
 import { Check, CheckCircle2, Loader2, Phone } from 'lucide-react';
+import { useEffect } from 'react';
 import { AuthLayout } from '@/components/auth/auth-layout';
 import { AuthBrand } from '@/components/auth/auth-brand';
 import { Button } from '@/components/ui/button';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useOtpTimer } from '@/hooks/use-otp-timer';
 
 const DEFAULT_OTP_LENGTH = 5;
 
@@ -51,6 +53,12 @@ export function PhoneOtpScreen({
   children
 }: PhoneOtpScreenProps) {
   const { t } = useTranslation();
+  const timer = useOtpTimer();
+
+  useEffect(() => {
+    if (onResend) timer.start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const resolvedTitle = title ?? t('auth.verifyYourContact');
   const resolvedSubtitle = subtitle ?? (
@@ -106,16 +114,24 @@ export function PhoneOtpScreen({
         >
           ← {backLabel ?? t('auth.backToLogin')}
         </button>
-        {onResend && (
-          <button
-            type="button"
-            className="text-primary hover:underline disabled:opacity-50"
-            disabled={resending}
-            onClick={onResend}
-          >
-            {resending ? t('auth.resending') : t('auth.resendCode')}
-          </button>
-        )}
+        {onResend &&
+          (timer.canResend ? (
+            <button
+              type="button"
+              className="text-primary hover:underline disabled:opacity-50"
+              disabled={resending}
+              onClick={() => {
+                timer.start();
+                onResend();
+              }}
+            >
+              {resending ? t('auth.resending') : t('auth.resendCode')}
+            </button>
+          ) : (
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {t('auth.resendIn')} {timer.formatted}
+            </span>
+          ))}
       </div>
     </form>
   );

@@ -206,6 +206,19 @@ export function useLogin() {
     }
   }
 
+  async function resendOtp() {
+    setOtpLoading(true);
+    setOtpError('');
+    try {
+      await apiClient.sendPhoneOtp(otpPhone, OtpType.LOGIN_BY_PHONE);
+      toast.success(t('success.otpSent'), { toastId: 'otp-resent' });
+    } catch {
+      toast.error(t('error.authenticationFailed'), { toastId: 'login-error' });
+    } finally {
+      setOtpLoading(false);
+    }
+  }
+
   return {
     loginMethod,
     setLoginMethod,
@@ -234,6 +247,7 @@ export function useLogin() {
     otpLoading,
     otpError,
     handleOtpSubmit,
+    resendOtp,
     resetOtp: () => {
       setOtpRequired(false);
       setOtpMode('verify');

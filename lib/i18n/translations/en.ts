@@ -401,6 +401,7 @@ export const en = {
     creatingAccount: 'Creating account...',
     resendCode: 'Resend code',
     resending: 'Resending...',
+    resendIn: 'Resend in',
     accountCreatedTitle: 'Account created!',
     redirectingToSignIn: 'Redirecting to sign in...',
     dontHaveAccountYet: "Don't have an account?",

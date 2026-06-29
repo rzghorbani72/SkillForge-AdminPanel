@@ -857,6 +857,8 @@ export const tr = {
     codeSentTo: '{{value}} adresine/numarasına kod gönderildi',
     otpPlaceholder: '000000',
     resendCode: 'Yeniden gönder',
+    resending: 'Gönderiliyor...',
+    resendIn: 'Yeniden gönder:',
     uploadingPhoto: 'Yükleniyor…',
     changePhoto: 'Fotoğrafı Değiştir',
     storeSettingsTitle: 'Enstitü Ayarları',
