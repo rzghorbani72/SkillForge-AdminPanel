@@ -4,10 +4,11 @@ import { test, expect } from '@playwright/test';
  * AdminPanel `/login` is the MANAGER / TEACHER entry (phone + password staff
  * login). `/admin-login` is for ADMIN / SUPPORT and is covered separately.
  *
- * The auth pages were redesigned to the <AuthField>/<AuthSubmit> components:
- *  - inputs are typed (`input[type="tel"]` / `[type="password"]`), not id-based;
- *  - a field error renders the `has-error` class + a `.text-destructive` message;
- *  - the submit is an <AuthSubmit> button (no explicit type) inside the <form>.
+ * Form components used:
+ *  - Phone: <PhoneInputWithCountry> — error adds `border-red-500` to the input
+ *    (NOT `has-error`, which is the <AuthField> convention for password inputs).
+ *  - Password: <AuthField> — error adds `has-error` class to the input.
+ *  - Submit: <AuthSubmit> — no explicit type, so the last non-type-button in the form.
  */
 const submit = (page: import('@playwright/test').Page) =>
   page.locator('form button:not([type="button"])').last();
@@ -18,8 +19,11 @@ test.describe('AdminPanel manager login — validation (no backend)', () => {
 
     await submit(page).click();
 
-    // Client-side validate() flags both inputs without calling the backend.
-    await expect(page.locator('input[type="tel"]')).toHaveClass(/has-error/);
+    // PhoneInputWithCountry flags the phone field with border-red-500.
+    await expect(page.locator('input[type="tel"]')).toHaveClass(
+      /border-red-500/
+    );
+    // AuthField flags the password field with has-error.
     await expect(page.locator('input[type="password"]')).toHaveClass(
       /has-error/
     );
@@ -51,7 +55,9 @@ test.describe('AdminPanel manager login — validation (no backend)', () => {
 
     // Submitting with no phone still flags the phone field (client-side).
     await submit(page).click();
-    await expect(page.locator('input[type="tel"]')).toHaveClass(/has-error/);
+    await expect(page.locator('input[type="tel"]')).toHaveClass(
+      /border-red-500/
+    );
   });
 });
 

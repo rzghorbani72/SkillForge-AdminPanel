@@ -10,7 +10,8 @@ test.describe('AdminPanel manager register — validation (no backend)', () => {
     await page.goto('/register');
 
     await page.locator('input[name="name"]').fill('Test Manager');
-    await page.locator('input[name="phone"]').fill('9121234567');
+    // PhoneInputWithCountry renders input[type="tel"] — it does NOT emit name="phone".
+    await page.locator('input[type="tel"]').fill('9121234567');
     await page.locator('input[name="password"]').fill('Passw0rd!');
     await page.locator('input[name="confirmPassword"]').fill('Different1!');
     await page.locator('button[type="submit"]').click();
@@ -27,7 +28,8 @@ test.describe('AdminPanel manager register — validation (no backend)', () => {
     await page.goto('/register');
 
     await page.locator('input[name="name"]').fill('Test Manager');
-    await page.locator('input[name="phone"]').fill('9121234567');
+    // PhoneInputWithCountry renders input[type="tel"] — it does NOT emit name="phone".
+    await page.locator('input[type="tel"]').fill('9121234567');
     await page.locator('input[name="password"]').fill('123');
     await page.locator('input[name="confirmPassword"]').fill('123');
     await page.locator('button[type="submit"]').click();
