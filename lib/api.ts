@@ -430,11 +430,20 @@ class ApiClient {
     bio?: string;
     website?: string;
     location?: string;
+    accepted_terms_version?: string;
+    accepted_privacy_version?: string;
+    accepted_agreement_version?: string;
   }) {
     return this.request('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData)
     });
+  }
+
+  async getLegalDocuments(locale = 'fa') {
+    return this.request<
+      { type: string; version: string; title: string; published_at: string }[]
+    >(`/legal/documents?locale=${locale}`, { method: 'GET' });
   }
 
   async createUser(data: {

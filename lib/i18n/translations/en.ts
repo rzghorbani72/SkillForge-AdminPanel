@@ -305,6 +305,9 @@ export const en = {
       configuration: 'Configuration'
     }
   },
+  legal: {
+    mustAcceptTerms: 'You must accept the Terms and Privacy Policy to continue.'
+  },
   auth: {
     login: 'Login',
     register: 'Register',

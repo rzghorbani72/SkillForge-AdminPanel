@@ -302,6 +302,9 @@ export const fa = {
       configuration: 'پیکربندی'
     }
   },
+  legal: {
+    mustAcceptTerms: 'برای ادامه باید قوانین و سیاست حریم خصوصی را بپذیرید.'
+  },
   auth: {
     login: 'ورود',
     register: 'ثبت‌نام',

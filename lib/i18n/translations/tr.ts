@@ -205,6 +205,10 @@ export const tr = {
       platform: 'Platform'
     }
   },
+  legal: {
+    mustAcceptTerms:
+      'Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.'
+  },
   auth: {
     login: 'Giriş Yap',
     register: 'Kayıt Ol',

@@ -203,6 +203,9 @@ export const ar = {
       platform: 'المنصة'
     }
   },
+  legal: {
+    mustAcceptTerms: 'يجب قبول الشروط وسياسة الخصوصية للمتابعة.'
+  },
   auth: {
     login: 'تسجيل الدخول',
     register: 'التسجيل',
