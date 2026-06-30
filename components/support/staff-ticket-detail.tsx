@@ -46,8 +46,9 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
   const [internal, setInternal] = useState(false);
   const [callNote, setCallNote] = useState('');
   const [busy, setBusy] = useState(false);
-  const imgUrl = (id: string) =>
-    `${getBrowserApiBaseUrl()}/images/get-image?id=${encodeURIComponent(id)}`;
+  // Capability-checked proxy — NOT the public-by-id /images/get-image endpoint.
+  const imgUrl = (attachmentId: string) =>
+    `${getBrowserApiBaseUrl()}/support/tickets/${encodeURIComponent(ticketId)}/attachments/${encodeURIComponent(attachmentId)}`;
 
   const load = useCallback(async () => {
     const data = await apiClient.getSupportTicket(ticketId);
@@ -199,13 +200,13 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
                   {m.Attachment.map((a) => (
                     <a
                       key={a.id}
-                      href={imgUrl(a.image_id)}
+                      href={imgUrl(a.id)}
                       target="_blank"
                       rel="noreferrer"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={imgUrl(a.image_id)}
+                        src={imgUrl(a.id)}
                         alt=""
                         className="h-16 w-16 rounded border object-cover"
                       />
