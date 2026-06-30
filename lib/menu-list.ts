@@ -9,6 +9,7 @@ import {
   Image,
   Volume2,
   FileText,
+  LifeBuoy,
   LucideIcon
 } from 'lucide-react';
 
@@ -110,6 +111,14 @@ export function getMenuList(pathname: string): Group[] {
     {
       groupLabel: 'Settings',
       menus: [
+        {
+          href: '/support',
+          label: 'Support',
+          active:
+            pathname.includes('/support') &&
+            !pathname.includes('/support-access-logs'),
+          icon: LifeBuoy
+        },
         {
           href: '/users',
           label: 'Users',

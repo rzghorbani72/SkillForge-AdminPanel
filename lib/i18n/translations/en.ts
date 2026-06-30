@@ -2,6 +2,61 @@
  * English translations for Admin Panel
  */
 export const en = {
+  support: {
+    title: 'Support',
+    academyInbox: 'Academy inbox',
+    platformInbox: 'Platform support',
+    open: 'Open',
+    reply: 'Reply',
+    replyPlaceholder: 'Write a reply…',
+    internalNote: 'Internal note (staff only)',
+    send: 'Send',
+    reassign: 'Reassign',
+    changeStatus: 'Status',
+    changePriority: 'Priority',
+    logCall: 'Log call',
+    callOutcome: 'Call outcome',
+    save: 'Save',
+    from: 'From',
+    responsible: 'Responsible',
+    empty: 'No tickets',
+    loading: 'Loading…',
+    error: 'Something went wrong',
+    selectTicket: 'Select a ticket to view',
+    messages: 'messages',
+    responsibleChanged: 'Responsible changed from {from} to {to} by {by}',
+    responsibleAssigned: 'Assigned to {to} by {by}',
+    callRequested: 'A phone call was requested',
+    categories: {
+      BILLING: 'Billing',
+      PAYMENT: 'Payment',
+      COURSE_ACCESS: 'Course access',
+      LIVE_CLASS: 'Live class',
+      TECHNICAL: 'Technical',
+      CONTENT: 'Content',
+      OTHER: 'Other'
+    },
+    statuses: {
+      OPEN: 'Open',
+      IN_PROGRESS: 'In progress',
+      WAITING_ON_USER: 'Waiting on user',
+      RESOLVED: 'Resolved',
+      CLOSED: 'Closed',
+      REOPENED: 'Reopened'
+    },
+    priorities: {
+      LOW: 'Low',
+      NORMAL: 'Normal',
+      HIGH: 'High',
+      URGENT: 'Urgent'
+    },
+    callStatuses: {
+      REQUESTED: 'Requested',
+      SCHEDULED: 'Scheduled',
+      COMPLETED: 'Completed',
+      NO_ANSWER: 'No answer'
+    }
+  },
   findSchool: {
     title: 'Find Your Academy',
     subtitle:

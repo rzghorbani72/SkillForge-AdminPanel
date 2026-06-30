@@ -2,6 +2,56 @@
  * Persian (Farsi) translations for Admin Panel - RTL
  */
 export const fa = {
+  support: {
+    title: 'پشتیبانی',
+    academyInbox: 'تیکت‌های آکادمی',
+    platformInbox: 'پشتیبانی پلتفرم',
+    open: 'باز کردن',
+    reply: 'پاسخ',
+    replyPlaceholder: 'پاسخ بنویسید…',
+    internalNote: 'یادداشت داخلی (فقط کارکنان)',
+    send: 'ارسال',
+    reassign: 'تغییر مسئول',
+    changeStatus: 'وضعیت',
+    changePriority: 'اولویت',
+    logCall: 'ثبت تماس',
+    callOutcome: 'نتیجه تماس',
+    save: 'ذخیره',
+    from: 'از طرف',
+    responsible: 'مسئول',
+    empty: 'تیکتی وجود ندارد',
+    loading: 'در حال بارگذاری…',
+    error: 'خطایی رخ داد',
+    selectTicket: 'برای مشاهده یک تیکت انتخاب کنید',
+    messages: 'پیام',
+    responsibleChanged: 'مسئول از {from} به {to} توسط {by} تغییر کرد',
+    responsibleAssigned: 'توسط {by} به {to} واگذار شد',
+    callRequested: 'درخواست تماس تلفنی ثبت شد',
+    categories: {
+      BILLING: 'صورتحساب',
+      PAYMENT: 'پرداخت',
+      COURSE_ACCESS: 'دسترسی دوره',
+      LIVE_CLASS: 'کلاس زنده',
+      TECHNICAL: 'فنی',
+      CONTENT: 'محتوا',
+      OTHER: 'سایر'
+    },
+    statuses: {
+      OPEN: 'باز',
+      IN_PROGRESS: 'در حال بررسی',
+      WAITING_ON_USER: 'در انتظار کاربر',
+      RESOLVED: 'حل‌شده',
+      CLOSED: 'بسته‌شده',
+      REOPENED: 'بازگشایی‌شده'
+    },
+    priorities: { LOW: 'کم', NORMAL: 'عادی', HIGH: 'زیاد', URGENT: 'فوری' },
+    callStatuses: {
+      REQUESTED: 'درخواست‌شده',
+      SCHEDULED: 'زمان‌بندی‌شده',
+      COMPLETED: 'انجام‌شده',
+      NO_ANSWER: 'بی‌پاسخ'
+    }
+  },
   findSchool: {
     title: 'آکادمی خود را پیدا کنید',
     subtitle:

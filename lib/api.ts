@@ -642,6 +642,94 @@ class ApiClient {
     };
   }
 
+  // ----- Support tickets (staff) -----
+  private supportQuery(params?: Record<string, string | undefined>) {
+    const qs = new URLSearchParams();
+    if (params)
+      for (const [k, v] of Object.entries(params)) if (v) qs.append(k, v);
+    const s = qs.toString();
+    return s ? `?${s}` : '';
+  }
+
+  async getSupportInbox(params?: {
+    status?: string;
+    priority?: string;
+    page?: number;
+  }) {
+    const res = await this.request(
+      `/support/inbox${this.supportQuery({ status: params?.status, priority: params?.priority, page: params?.page ? String(params.page) : undefined })}`
+    );
+    return (res as any).data;
+  }
+
+  async getSupportPlatformInbox(params?: {
+    status?: string;
+    priority?: string;
+    academy_id?: string;
+    page?: number;
+  }) {
+    const res = await this.request(
+      `/support/platform/inbox${this.supportQuery({ status: params?.status, priority: params?.priority, academy_id: params?.academy_id, page: params?.page ? String(params.page) : undefined })}`
+    );
+    return (res as any).data;
+  }
+
+  async getSupportTicket(id: string) {
+    const res = await this.request(`/support/tickets/${id}`);
+    return (res as any).data;
+  }
+
+  async listSupportResponsibles() {
+    const res = await this.request(`/support/responsibles`);
+    return (res as any).data;
+  }
+
+  async replySupportTicket(
+    id: string,
+    body: { body: string; image_ids?: string[]; internal_note?: boolean }
+  ) {
+    const res = await this.request(`/support/tickets/${id}/reply`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    return (res as any).data;
+  }
+
+  async reassignSupportTicket(id: string, responsible_id: string) {
+    const res = await this.request(`/support/tickets/${id}/reassign`, {
+      method: 'POST',
+      body: JSON.stringify({ responsible_id })
+    });
+    return (res as any).data;
+  }
+
+  async changeSupportStatus(id: string, status: string) {
+    const res = await this.request(`/support/tickets/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status })
+    });
+    return (res as any).data;
+  }
+
+  async changeSupportPriority(id: string, priority: string) {
+    const res = await this.request(`/support/tickets/${id}/priority`, {
+      method: 'PATCH',
+      body: JSON.stringify({ priority })
+    });
+    return (res as any).data;
+  }
+
+  async logSupportCall(
+    id: string,
+    body: { status: string; outcome_note?: string; called_at?: string }
+  ) {
+    const res = await this.request(`/support/tickets/${id}/log-call`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    return (res as any).data;
+  }
+
   async getCurrentAcademy() {
     const response = await this.request('/academies/current');
     return response;
