@@ -7,6 +7,7 @@ import { getAdminLanguage, getAdminDirection } from '@/lib/i18n/server';
 import { cookies } from 'next/headers';
 import { ToastContainerWrapper } from '@/components/providers/toast-container-wrapper';
 import { LanguageSync } from '@/components/providers/language-sync';
+import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
 
 export const metadata: Metadata = {
   title: 'منتوما | mentoma.com',
@@ -27,8 +28,24 @@ export default async function RootLayout({
   const direction = getAdminDirection(languagePreference, null);
 
   return (
-    <html lang={language} dir={'rtl'} suppressHydrationWarning>
-      <head />
+    <html lang={language} dir={direction} suppressHydrationWarning>
+      <head>
+        <link
+          rel="alternate"
+          hrefLang="fa-IR"
+          href={process.env.NEXT_PUBLIC_IR_DOMAIN ?? ''}
+        />
+        <link
+          rel="alternate"
+          hrefLang="en"
+          href={process.env.NEXT_PUBLIC_COM_DOMAIN ?? ''}
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href={process.env.NEXT_PUBLIC_COM_DOMAIN ?? ''}
+        />
+      </head>
       <body suppressHydrationWarning>
         <ThemeProviderWrapper>
           <I18nProvider initialLanguage={language}>
@@ -36,6 +53,9 @@ export default async function RootLayout({
             {children}
             <Toaster />
             <ToastContainerWrapper />
+            {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && (
+              <GdprConsentBanner />
+            )}
           </I18nProvider>
         </ThemeProviderWrapper>
       </body>

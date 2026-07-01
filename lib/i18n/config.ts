@@ -209,6 +209,7 @@ export const COUNTRY_LANGUAGE_MAP: Record<string, CountryLanguageMapping> = {
   }, // Pakistan - Urdu (RTL)
 
   // LTR Countries
+  EE: { countryCode: 'EE', defaultLanguage: 'en', supportedLanguages: ['en'] }, // Estonia - English (EU beachhead)
   US: {
     countryCode: 'US',
     defaultLanguage: 'en',

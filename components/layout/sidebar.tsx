@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Suspense, useMemo } from 'react';
 import { filterNavItemsByRole } from '@/lib/nav-filter';
+import { isPaymentEnabled } from '@/lib/payment';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
@@ -141,8 +142,8 @@ export default function Sidebar({ className }: SidebarProps) {
         </Suspense>
       </div>
 
-      {/* Upgrade banner — hidden in platform mode */}
-      {!isPlatformMode && !isMinimized && (
+      {/* Upgrade banner — hidden in platform mode and when payments are disabled */}
+      {!isPlatformMode && !isMinimized && isPaymentEnabled && (
         <div className="p-3">
           <div className="upgrade-banner">
             <div className="mb-2 flex items-center gap-2">
@@ -168,8 +169,8 @@ export default function Sidebar({ className }: SidebarProps) {
         </div>
       )}
 
-      {/* Minimized upgrade icon — hidden in platform mode */}
-      {!isPlatformMode && isMinimized && (
+      {/* Minimized upgrade icon — hidden in platform mode and when payments are disabled */}
+      {!isPlatformMode && isMinimized && isPaymentEnabled && (
         <div className="flex justify-center p-3">
           <Link
             href="/plans"

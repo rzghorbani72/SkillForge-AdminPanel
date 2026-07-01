@@ -2,11 +2,14 @@ import { NavItem } from '@/types';
 
 type Role = 'ADMIN' | 'SUPPORT' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
 
+const paymentEnabled = process.env.NEXT_PUBLIC_PAYMENT_ENABLED === 'true';
+
 /**
  * Filter sidebar items by the caller's role.
  * - `roles`: allow-list of roles that can see this item; absence means everyone.
  * - `adminOnly`: only platform-level admins (ADMIN role without a store).
  * - `hasStore`: true when the ADMIN has a specific academy attached.
+ * - `paymentGated`: hidden when NEXT_PUBLIC_PAYMENT_ENABLED !== 'true'.
  */
 export function filterNavItemsByRole(
   items: NavItem[],
@@ -21,6 +24,8 @@ export function filterNavItemsByRole(
   const isPlatformRole = userRole === 'ADMIN' || userRole === 'SUPPORT';
   const platformMode = isPlatformRole && hasStore === false;
   return items.filter((item) => {
+    // Payment-gated items hidden when payments are disabled for this deployment
+    if (item.paymentGated && !paymentEnabled) return false;
     // Role allow-list
     if (item.roles && item.roles.length > 0) {
       if (!(item.roles as Role[]).includes(userRole)) return false;

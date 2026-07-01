@@ -22,6 +22,7 @@ export interface NavItem {
   )[]; // If not specified, all roles can access
   adminOnly?: boolean; // If true, only show to admins without stores (platform-level admins)
   scope?: 'platform' | 'academy'; // 'academy' items hide in Platform mode; 'platform' items hide in Academy mode. Default: both.
+  paymentGated?: boolean; // If true, hidden when NEXT_PUBLIC_PAYMENT_ENABLED !== 'true'
 }
 
 export interface NavItemWithChildren extends NavItem {
