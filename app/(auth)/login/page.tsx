@@ -4,9 +4,19 @@ import { useLogin } from './use-login';
 import { LoginForm } from './_components/login-form';
 import { AcademyPicker } from './_components/academy-picker';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
+import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 
 export default function LoginPage() {
   const login = useLogin();
+
+  if (login.redirectPending) {
+    return (
+      <AuthStatusScreen
+        title={login.redirectPending.title}
+        message={login.redirectPending.message}
+      />
+    );
+  }
 
   if (login.otpRequired) {
     return (

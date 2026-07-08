@@ -4,20 +4,18 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle2 } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toE164Iran } from '@/lib/phone-utils';
-import { AuthLayout } from '@/components/auth/auth-layout';
 import { AuthShell } from '@/components/auth/auth-shell';
+import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { StepIndicator } from './_components/step-indicator';
 import {
   RegisterDetailsForm,
   type RegisterValues
@@ -52,6 +50,12 @@ export default function RegisterPage() {
     terms: '1.0',
     privacy: '1.0'
   });
+
+  useEffect(() => {
+    if (!done) return;
+    const timer = window.setTimeout(() => router.push('/login'), 2200);
+    return () => window.clearTimeout(timer);
+  }, [done, router]);
 
   useEffect(() => {
     apiClient
@@ -155,10 +159,10 @@ export default function RegisterPage() {
         accepted_privacy_version: privacyVersion
       });
       setDone(true);
-      toast.success(t('auth.accountCreatedTitle'));
-      setTimeout(() => router.push('/login'), 1800);
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
+      toast.error((err as { message?: string })?.message ?? t('common.error'), {
+        toastId: 'register-error'
+      });
     } finally {
       setSubmitting(false);
     }
@@ -193,15 +197,10 @@ export default function RegisterPage() {
 
   if (done) {
     return (
-      <AuthLayout>
-        <div className="auth-card fade-in-up space-y-3 rounded-2xl p-8 text-center">
-          <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-500" />
-          <h2 className="text-xl font-bold">{t('auth.accountCreatedTitle')}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t('auth.redirectingToSignIn')}
-          </p>
-        </div>
-      </AuthLayout>
+      <AuthStatusScreen
+        title={t('auth.accountCreatedTitle')}
+        message={t('auth.redirectingToSignIn')}
+      />
     );
   }
 

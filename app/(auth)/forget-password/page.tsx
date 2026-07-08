@@ -49,8 +49,20 @@ export default function ForgetPasswordPage() {
     Array<{ id: number; name: string; slug: string }>
   >([]);
   const [isLoadingStores, setIsLoadingStores] = useState(false);
+  const [autoRedirecting, setAutoRedirecting] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (step !== 'success') {
+      setAutoRedirecting(false);
+      return;
+    }
+
+    setAutoRedirecting(true);
+    const timer = window.setTimeout(() => router.push('/login'), 2200);
+    return () => window.clearTimeout(timer);
+  }, [step, router]);
 
   // Fetch stores on component mount
   useEffect(() => {
@@ -188,6 +200,7 @@ export default function ForgetPasswordPage() {
           ? error.message
           : t('forgotPassword.failedToSendOtp');
       setErrors({ identifier: errorMessage });
+      toast.error(errorMessage, { toastId: 'forget-password-error' });
     } finally {
       setIsLoading(false);
     }
@@ -222,6 +235,7 @@ export default function ForgetPasswordPage() {
       const errorMessage =
         error instanceof Error ? error.message : t('forgotPassword.invalidOtp');
       setErrors({ otp: errorMessage });
+      toast.error(errorMessage, { toastId: 'forget-password-otp-error' });
     } finally {
       setIsLoading(false);
     }
@@ -256,6 +270,7 @@ export default function ForgetPasswordPage() {
           ? error.message
           : t('forgotPassword.passwordResetFailed');
       setErrors({ password: errorMessage });
+      toast.error(errorMessage, { toastId: 'forget-password-reset-error' });
     } finally {
       setIsLoading(false);
     }
@@ -456,6 +471,12 @@ export default function ForgetPasswordPage() {
                 <p className="text-sm text-muted-foreground">
                   {t('forgotPassword.passwordResetSuccessMessage')}
                 </p>
+                {autoRedirecting && (
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>{t('forgotPassword.redirectingToLogin')}</span>
+                  </div>
+                )}
                 <div
                   className={`flex ${isRTL ? 'space-x-reverse' : 'space-x-2'}`}
                 >

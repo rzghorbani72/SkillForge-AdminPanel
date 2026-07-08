@@ -8,13 +8,31 @@ import { OtpType } from '@/constants/data';
 import { ErrorHandler } from '@/lib/error-handler';
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
 
 type Academy = { id: number; name: string; slug: string };
 export type LoginMethod = 'password' | 'otp';
 
+type LoginResponse = {
+  currentProfile?: { Role?: { name?: string }; academy_id?: number };
+  currentAcademy?: unknown;
+  phone_verification_required?: boolean;
+  temp_token?: string;
+  phone?: string;
+  availableAcademies?: Academy[];
+  available_academies?: Academy[];
+  requires_academy_selection?: boolean;
+};
+
+function getApiErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof Error && error.message) return error.message;
+  return fallback;
+}
+
 export function useLogin() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
+  const { pending: redirectPending, scheduleRedirect } = useDelayedRedirect();
 
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
   const [phone, setPhone] = useState('');
@@ -60,38 +78,54 @@ export function useLogin() {
     return Object.keys(e).length === 0;
   }
 
-  function afterLogin(response: any) {
+  function schedulePostLoginRedirect(response: LoginResponse) {
     const userRole = response.currentProfile?.Role?.name;
     const hasNoAcademy =
-      !response.currentAcademy &&
-      !response.currentProfile?.academy_id &&
-      !(response.currentProfile as any)?.Academy;
+      !response.currentAcademy && !response.currentProfile?.academy_id;
 
     if (userRole === 'AFFILIATE') {
-      window.location.href = '/my-affiliate';
+      scheduleRedirect({
+        href: '/my-affiliate',
+        title: t('success.loginSuccess'),
+        message: t('auth.redirectingToAffiliate')
+      });
       return;
     }
+
     if (userRole === 'STUDENT') {
       if (isDevelopmentMode()) logDevInfo('Student → dashboard (dev)');
-      window.location.href = isDevelopmentMode()
-        ? '/dashboard'
-        : '/student-dashboard';
+      scheduleRedirect({
+        href: isDevelopmentMode() ? '/dashboard' : '/student-dashboard',
+        title: t('success.loginSuccess'),
+        message: t('auth.redirectingToDashboard')
+      });
       return;
     }
+
     if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
-      window.location.href = '/admin-login';
+      scheduleRedirect({
+        href: '/admin-login',
+        title: t('success.loginSuccess'),
+        message: t('auth.redirectingToAdminLogin')
+      });
       return;
     }
+
     if (
       userRole === 'USER' ||
       userRole === 'MANAGER' ||
       userRole === 'TEACHER'
     ) {
-      window.location.href = hasNoAcademy
-        ? '/onboarding/create-academy'
-        : '/dashboard';
+      scheduleRedirect({
+        href: hasNoAcademy ? '/onboarding/create-academy' : '/dashboard',
+        title: t('success.loginSuccess'),
+        message: hasNoAcademy
+          ? t('auth.redirectingToOnboarding')
+          : t('auth.redirectingToDashboard')
+      });
       return;
     }
+
     ErrorHandler.showWarning(
       t('auth.panelForStaff') + ' ' + t('auth.teachersManagersAdmins')
     );
@@ -105,8 +139,11 @@ export function useLogin() {
       setOtpPhone(phoneE164);
       setOtpMode('login');
       setOtpRequired(true);
-    } catch {
-      toast.error(t('error.authenticationFailed'), { toastId: 'login-error' });
+      toast.success(t('success.otpSent'), { toastId: 'login-otp-sent' });
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, t('error.authenticationFailed')), {
+        toastId: 'login-error'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -118,42 +155,39 @@ export function useLogin() {
     if (loginMethod === 'otp') return requestLoginOtp();
     setIsLoading(true);
     try {
-      const response = await authService.login({
+      const response = (await authService.login({
         identifier: toE164Iran(phone),
         password
-      });
+      })) as LoginResponse | null;
       if (!response) return;
 
-      if ((response as any).phone_verification_required) {
-        setOtpTempToken((response as any).temp_token ?? '');
-        setOtpPhone((response as any).phone ?? '');
+      if (response.phone_verification_required) {
+        setOtpTempToken(response.temp_token ?? '');
+        setOtpPhone(response.phone ?? '');
         setOtpRequired(true);
         return;
       }
 
       const academies =
-        (response as any).availableAcademies ||
-        (response as any).available_academies ||
-        [];
+        response.availableAcademies || response.available_academies || [];
 
       if (academies.length === 1) {
         await handleAcademySelect(academies[0].id);
         return;
       }
 
-      if (
-        (response as any).requires_academy_selection ||
-        academies.length > 0
-      ) {
+      if (response.requires_academy_selection || academies.length > 0) {
         setAvailableAcademies(academies);
         setAcademyPickerOpen(true);
         return;
       }
 
       toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
-      afterLogin(response);
-    } catch {
-      toast.error(t('error.authenticationFailed'), { toastId: 'login-error' });
+      schedulePostLoginRedirect(response);
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, t('error.authenticationFailed')), {
+        toastId: 'login-error'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -162,17 +196,19 @@ export function useLogin() {
   async function handleAcademySelect(academyId: number) {
     setPickingAcademy(true);
     try {
-      const response = await authService.login({
+      const response = (await authService.login({
         identifier: toE164Iran(phone),
         password,
         academy_id: academyId
-      });
+      })) as LoginResponse | null;
       if (response) {
         toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
-        afterLogin(response);
+        schedulePostLoginRedirect(response);
       }
-    } catch {
-      toast.error(t('error.authenticationFailed'), { toastId: 'login-error' });
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, t('error.authenticationFailed')), {
+        toastId: 'login-error'
+      });
     } finally {
       setPickingAcademy(false);
     }
@@ -188,19 +224,30 @@ export function useLogin() {
     setOtpError('');
     try {
       if (otpMode === 'login') {
-        const response = await authService.loginPhoneByOtp({
+        const response = (await authService.loginPhoneByOtp({
           phone_number: otpPhone,
           otp: otp.trim()
-        });
+        })) as LoginResponse;
         toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
-        afterLogin(response);
+        schedulePostLoginRedirect(response);
         return;
       }
+
       const result = await apiClient.confirmPhoneOtp(otpTempToken, otp.trim());
       toast.success(t('success.otpVerified'), { toastId: 'login-success' });
-      window.location.href = (result as any)?.redirect_to ?? '/my-affiliate';
-    } catch {
-      setOtpError(t('error.authenticationFailed'));
+      scheduleRedirect({
+        href:
+          (result as { redirect_to?: string })?.redirect_to ?? '/my-affiliate',
+        title: t('success.otpVerified'),
+        message: t('auth.redirectingToAffiliate')
+      });
+    } catch (error: unknown) {
+      const message = getApiErrorMessage(
+        error,
+        t('error.authenticationFailed')
+      );
+      setOtpError(message);
+      toast.error(message, { toastId: 'login-otp-error' });
     } finally {
       setOtpLoading(false);
     }
@@ -212,8 +259,10 @@ export function useLogin() {
     try {
       await apiClient.sendPhoneOtp(otpPhone, OtpType.LOGIN_BY_PHONE);
       toast.success(t('success.otpSent'), { toastId: 'otp-resent' });
-    } catch {
-      toast.error(t('error.authenticationFailed'), { toastId: 'login-error' });
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, t('error.authenticationFailed')), {
+        toastId: 'login-error'
+      });
     } finally {
       setOtpLoading(false);
     }
@@ -233,6 +282,7 @@ export function useLogin() {
     setErrors,
     unauthorizedError,
     handleSubmit,
+    redirectPending,
 
     academyPickerOpen,
     availableAcademies,

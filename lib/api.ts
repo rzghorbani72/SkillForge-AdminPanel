@@ -5,6 +5,7 @@ import { t } from './i18n';
 import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
 import { getBrowserApiBaseUrl } from './api-base-url';
 import { ApiResponseError } from './api-toast';
+import { isAuthPagePath } from './auth-routes';
 
 const API_BASE_URL = getBrowserApiBaseUrl();
 
@@ -79,11 +80,7 @@ class ApiClient {
   private redirectToLogin(): void {
     if (typeof window !== 'undefined') {
       const currentPath = window.location.pathname + window.location.search;
-      // Don't redirect if already on auth pages
-      if (
-        !currentPath.includes('/login') &&
-        !currentPath.includes('/register')
-      ) {
+      if (!isAuthPagePath(currentPath)) {
         window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
       }
     }
@@ -233,6 +230,7 @@ class ApiClient {
           endpoint.includes('/auth/login-by-phone-otp') ||
           endpoint.includes('/auth/login-by-email-otp') ||
           endpoint.includes('/auth/register') ||
+          endpoint.includes('/auth/otp/') ||
           endpoint.includes('/auth/refresh');
 
         if (!isAuthEndpoint) {

@@ -470,6 +470,10 @@ export const en = {
     resendIn: 'Resend in',
     accountCreatedTitle: 'Account created!',
     redirectingToSignIn: 'Redirecting to sign in...',
+    redirectingToDashboard: 'Redirecting to dashboard...',
+    redirectingToAffiliate: 'Redirecting to affiliate panel...',
+    redirectingToOnboarding: 'Redirecting to academy setup...',
+    redirectingToAdminLogin: 'Redirecting to admin sign in...',
     dontHaveAccountYet: "Don't have an account?",
     chooseAcademy: 'Choose your academy',
     chooseAcademyDesc:
@@ -1423,6 +1427,7 @@ export const en = {
     passwordResetSuccessTitle: 'Password Reset Successfully!',
     passwordResetSuccessMessage:
       'Your password has been reset. You can now login with your new password.',
+    redirectingToLogin: 'Redirecting to sign in...',
     resetAnotherPassword: 'Reset Another Password',
     goToLogin: 'Go to Login'
   },

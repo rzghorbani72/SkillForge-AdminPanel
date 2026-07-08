@@ -466,6 +466,10 @@ export const fa = {
     resendIn: 'ارسال مجدد در',
     accountCreatedTitle: 'حساب ایجاد شد!',
     redirectingToSignIn: 'در حال انتقال به صفحه ورود...',
+    redirectingToDashboard: 'در حال انتقال به داشبورد...',
+    redirectingToAffiliate: 'در حال انتقال به پنل همکاری...',
+    redirectingToOnboarding: 'در حال انتقال به راه‌اندازی آکادمی...',
+    redirectingToAdminLogin: 'در حال انتقال به ورود ادمین...',
     dontHaveAccountYet: 'حساب کاربری ندارید؟',
     chooseAcademy: 'آکادمی خود را انتخاب کنید',
     chooseAcademyDesc:
@@ -1841,6 +1845,7 @@ export const fa = {
     passwordResetSuccessTitle: 'رمز عبور با موفقیت بازنشانی شد!',
     passwordResetSuccessMessage:
       'رمز عبور شما بازنشانی شد. اکنون می‌توانید با رمز عبور جدید خود وارد شوید.',
+    redirectingToLogin: 'در حال انتقال به صفحه ورود...',
     resetAnotherPassword: 'بازنشانی رمز عبور دیگر',
     goToLogin: 'رفتن به ورود'
   },
