@@ -25,18 +25,15 @@ export async function POST(request: NextRequest) {
     const token = cookieStore.get('jwt')?.value;
     const academyId = cookieStore.get('academy_id')?.value;
 
-    const backendRes = await fetch(
-      `${BACKEND_URL}/api/payments/verify/payping`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-          ...(academyId && { 'X-Academy-ID': academyId })
-        },
-        body: JSON.stringify({ payment_id, ref_id: ref_id || '' })
-      }
-    );
+    const backendRes = await fetch(`${BACKEND_URL}/payments/verify/payping`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...(academyId && { 'X-Academy-ID': academyId })
+      },
+      body: JSON.stringify({ payment_id, ref_id: ref_id || '' })
+    });
 
     const data = await backendRes.json();
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { browserApiPath } from '@/lib/api-config';
 import { Button } from '@/components/ui/button';
 import { Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -113,7 +114,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             className={`w-full max-w-md overflow-hidden rounded-lg border border-border ${className}`}
           >
             <Image
-              src={`${process.env.NEXT_PUBLIC_HOST}/api/images/fetch-image-by-id/${uploadedImageId}`}
+              src={`${process.env.NEXT_PUBLIC_HOST}${browserApiPath(`/images/fetch-image-by-id/${uploadedImageId}`)}`}
               alt={alt}
               className="h-auto w-full object-contain"
               width={0}
@@ -143,7 +144,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
     return (
       <div className="relative h-48 w-full overflow-hidden rounded-lg border">
         <Image
-          src={existingImageUrl || `/api/media/${existingImageId}`}
+          src={existingImageUrl || browserApiPath(`/media/${existingImageId}`)}
           alt="Current image"
           className="h-full w-full object-cover"
           width={0}

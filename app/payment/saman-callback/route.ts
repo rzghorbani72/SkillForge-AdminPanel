@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     const token = cookieStore.get('jwt')?.value;
     const academyId = cookieStore.get('academy_id')?.value;
 
-    const verifyRes = await fetch(`${BACKEND_URL}/api/payments/verify/saman`, {
+    const verifyRes = await fetch(`${BACKEND_URL}/payments/verify/saman`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
