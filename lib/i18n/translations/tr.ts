@@ -207,7 +207,9 @@ export const tr = {
   },
   legal: {
     mustAcceptTerms:
-      'Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.'
+      'Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.',
+    lastUpdated: 'Son güncelleme',
+    version: 'Sürüm'
   },
   auth: {
     login: 'Giriş Yap',

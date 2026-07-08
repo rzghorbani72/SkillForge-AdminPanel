@@ -303,7 +303,9 @@ export const fa = {
     }
   },
   legal: {
-    mustAcceptTerms: 'برای ادامه باید قوانین و سیاست حریم خصوصی را بپذیرید.'
+    mustAcceptTerms: 'برای ادامه باید قوانین و سیاست حریم خصوصی را بپذیرید.',
+    lastUpdated: 'آخرین به‌روزرسانی',
+    version: 'نسخه'
   },
   auth: {
     login: 'ورود',

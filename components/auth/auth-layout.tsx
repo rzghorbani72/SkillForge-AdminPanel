@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
-  maxWidth?: 'sm' | 'md';
+  maxWidth?: 'sm' | 'md' | 'lg';
 }
 
 export function AuthLayout({ children, maxWidth = 'sm' }: AuthLayoutProps) {
@@ -20,7 +20,14 @@ export function AuthLayout({ children, maxWidth = 'sm' }: AuthLayoutProps) {
         </div>
 
         <div
-          className={cn('w-full', maxWidth === 'md' ? 'max-w-md' : 'max-w-sm')}
+          className={cn(
+            'w-full',
+            maxWidth === 'lg'
+              ? 'max-w-3xl'
+              : maxWidth === 'md'
+                ? 'max-w-md'
+                : 'max-w-sm'
+          )}
         >
           {children}
         </div>

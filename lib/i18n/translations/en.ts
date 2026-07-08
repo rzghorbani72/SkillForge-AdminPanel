@@ -306,7 +306,10 @@ export const en = {
     }
   },
   legal: {
-    mustAcceptTerms: 'You must accept the Terms and Privacy Policy to continue.'
+    mustAcceptTerms:
+      'You must accept the Terms and Privacy Policy to continue.',
+    lastUpdated: 'Last updated',
+    version: 'Version'
   },
   auth: {
     login: 'Login',

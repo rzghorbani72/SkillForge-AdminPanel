@@ -204,7 +204,9 @@ export const ar = {
     }
   },
   legal: {
-    mustAcceptTerms: 'يجب قبول الشروط وسياسة الخصوصية للمتابعة.'
+    mustAcceptTerms: 'يجب قبول الشروط وسياسة الخصوصية للمتابعة.',
+    lastUpdated: 'آخر تحديث',
+    version: 'الإصدار'
   },
   auth: {
     login: 'تسجيل الدخول',
