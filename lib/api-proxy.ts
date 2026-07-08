@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerApiBaseUrl } from './api-base-url';
-
-const BACKEND_URL = getServerApiBaseUrl();
+import { buildTrustedBackendUrl } from './security/ssrf';
+import { isAuthPagePath } from './auth-routes';
 
 /**
- * Proxy API request to backend and handle redirects based on response status codes
- * - 401: Redirect to login
- * - 403: Redirect to dashboard
+ * Proxy API request to backend and handle redirects based on response status codes.
  */
 export async function proxyApiRequest(
   request: NextRequest,
@@ -14,9 +11,8 @@ export async function proxyApiRequest(
   options: RequestInit = {}
 ): Promise<NextResponse> {
   try {
-    const url = `${BACKEND_URL}${backendPath}`;
+    const url = buildTrustedBackendUrl(backendPath);
 
-    // Forward cookies from the request
     const cookies = request.cookies.toString();
 
     const headers = new Headers();
@@ -47,7 +43,6 @@ export async function proxyApiRequest(
       headers.set('X-CSRF-Token', csrfToken);
     }
 
-    // Make request to backend
     const response = await fetch(url, {
       method: request.method,
       headers,
@@ -55,30 +50,23 @@ export async function proxyApiRequest(
       ...options
     });
 
-    // Handle 401 - Unauthorized: Redirect to login
     if (response.status === 401) {
-      const loginUrl = new URL('/login', request.url);
       const currentPath = request.nextUrl.pathname + request.nextUrl.search;
-      if (
-        !currentPath.includes('/login') &&
-        !currentPath.includes('/register')
-      ) {
+      if (!isAuthPagePath(currentPath)) {
+        const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('redirect', currentPath);
+        return NextResponse.redirect(loginUrl, { status: 302 });
       }
-
-      // Return redirect response
-      return NextResponse.redirect(loginUrl, { status: 302 });
     }
 
-    // Handle 403 - Forbidden: Redirect to dashboard
     if (response.status === 403) {
-      const dashboardUrl = new URL('/dashboard', request.url);
-
-      // Return redirect response
-      return NextResponse.redirect(dashboardUrl, { status: 302 });
+      const currentPath = request.nextUrl.pathname;
+      if (!currentPath.includes('/dashboard') && !isAuthPagePath(currentPath)) {
+        const dashboardUrl = new URL('/dashboard', request.url);
+        return NextResponse.redirect(dashboardUrl, { status: 302 });
+      }
     }
 
-    // For other status codes, return the response as-is
     const data = await response.json().catch(() => ({}));
 
     return NextResponse.json(data, {

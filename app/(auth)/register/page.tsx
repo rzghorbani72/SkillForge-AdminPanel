@@ -34,6 +34,8 @@ const useRegisterSchema = (t: (k: string) => string) =>
       path: ['confirmPassword']
     });
 
+const LEGAL_VERSION_FALLBACK = '1.1';
+
 export default function RegisterPage() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -47,8 +49,8 @@ export default function RegisterPage() {
   const [done, setDone] = useState(false);
   const [acceptedLegal, setAcceptedLegal] = useState(true);
   const [legalVersions, setLegalVersions] = useState({
-    terms: '1.0',
-    privacy: '1.0'
+    terms: LEGAL_VERSION_FALLBACK,
+    privacy: LEGAL_VERSION_FALLBACK
   });
 
   useEffect(() => {
@@ -139,14 +141,19 @@ export default function RegisterPage() {
     const e164Phone = toE164Iran(values.phone);
     setSubmitting(true);
     try {
-      const docsRes = await apiClient.getLegalDocuments('fa');
-      const list = Array.isArray(docsRes.data) ? docsRes.data : [];
-      const termsVersion =
-        list.find((d) => d.type === 'TERMS')?.version ?? legalVersions.terms;
-      const privacyVersion =
-        list.find((d) => d.type === 'PRIVACY')?.version ??
-        legalVersions.privacy;
-      setLegalVersions({ terms: termsVersion, privacy: privacyVersion });
+      let termsVersion = legalVersions.terms;
+      let privacyVersion = legalVersions.privacy;
+      try {
+        const docsRes = await apiClient.getLegalDocuments('fa');
+        const list = Array.isArray(docsRes.data) ? docsRes.data : [];
+        termsVersion =
+          list.find((d) => d.type === 'TERMS')?.version ?? termsVersion;
+        privacyVersion =
+          list.find((d) => d.type === 'PRIVACY')?.version ?? privacyVersion;
+        setLegalVersions({ terms: termsVersion, privacy: privacyVersion });
+      } catch {
+        // Keep cached/fallback versions when the legal API is unavailable.
+      }
 
       await apiClient.register({
         name: values.name,

@@ -5,6 +5,7 @@ import {
   resolveBackendRewriteTarget,
   stripTrailingSlash
 } from './api-config';
+import { resolveTrustedBackendBaseUrl } from './security/ssrf';
 
 /**
  * Browser calls use a same-origin path (/v1) so HttpOnly auth cookies are set on the panel host.
@@ -31,28 +32,7 @@ export function getBrowserApiBaseUrl(): string {
 }
 
 export function getServerApiBaseUrl(): string {
-  const internal =
-    stripTrailingSlash(process.env.INTERNAL_API_URL ?? '') ||
-    stripTrailingSlash(process.env.BACKEND_API_URL ?? '') ||
-    stripTrailingSlash(process.env.NEXT_PUBLIC_BACKEND_API_URL ?? '');
-
-  if (internal.startsWith('http')) {
-    return internal;
-  }
-
-  const publicUrl = stripTrailingSlash(process.env.NEXT_PUBLIC_API_URL ?? '');
-  if (publicUrl.startsWith('http')) {
-    return publicUrl;
-  }
-
-  const host = stripTrailingSlash(
-    process.env.NEXT_PUBLIC_HOST ||
-      process.env.VERCEL_URL ||
-      API_DEVELOPMENT_DEFAULTS.backendOrigin
-  );
-  const origin = host.startsWith('http') ? host : `https://${host}`;
-  const path = publicUrl.startsWith('/') ? publicUrl : API_VERSION_PATH;
-  return `${origin}${path}`;
+  return resolveTrustedBackendBaseUrl();
 }
 
 export function getBackendRewriteTarget(): string {

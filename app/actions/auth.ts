@@ -1,10 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
-
-import { getServerApiBaseUrl } from '@/lib/api-base-url';
-
-const API_BASE_URL = getServerApiBaseUrl();
+import { buildTrustedBackendUrl } from '@/lib/security/ssrf';
 
 export async function logout(): Promise<{ success: boolean; error?: string }> {
   try {
@@ -15,7 +12,7 @@ export async function logout(): Promise<{ success: boolean; error?: string }> {
     if (token) {
       try {
         const signal = AbortSignal.timeout(3000);
-        await fetch(`${API_BASE_URL}/auth/logout`, {
+        await fetch(buildTrustedBackendUrl('/auth/logout'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

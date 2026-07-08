@@ -3,6 +3,10 @@ import {
   getCountryByCode,
   getDefaultCountry
 } from './country-codes';
+import { DEFAULT_GEO_SERVICE_URLS } from './security/config';
+import { assertAllowedExternalFetchUrl } from './security/ssrf';
+
+const GEO_ALLOWED_HOSTS = ['ipapi.co', 'ip-api.com', 'api.country.is'] as const;
 
 export interface GeoLocationData {
   country: string;
@@ -15,14 +19,11 @@ export interface GeoLocationData {
 export const detectUserCountry = async (): Promise<CountryCode> => {
   try {
     // Try multiple IP geolocation services for better reliability
-    const services = [
-      'https://ipapi.co/json/',
-      'https://ip-api.com/json/',
-      'https://api.country.is/'
-    ];
+    const services = [...DEFAULT_GEO_SERVICE_URLS];
 
     for (const service of services) {
       try {
+        assertAllowedExternalFetchUrl(service, GEO_ALLOWED_HOSTS);
         const response = await fetch(service, {
           method: 'GET',
           headers: {

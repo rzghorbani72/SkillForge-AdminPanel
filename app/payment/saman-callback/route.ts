@@ -1,8 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { getServerApiBaseUrl } from '@/lib/api-base-url';
 import { cookies } from 'next/headers';
-
-const BACKEND_URL = getServerApiBaseUrl();
+import { buildTrustedBackendUrl } from '@/lib/security/ssrf';
 
 /**
  * Saman SEP POSTs the payment result here after the user completes (or cancels) payment.
@@ -70,15 +68,18 @@ export async function POST(request: NextRequest) {
     const token = cookieStore.get('jwt')?.value;
     const academyId = cookieStore.get('academy_id')?.value;
 
-    const verifyRes = await fetch(`${BACKEND_URL}/payments/verify/saman`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...(academyId && { 'X-Academy-ID': academyId })
-      },
-      body: JSON.stringify({ payment_id: resNum, ref_num: refNum })
-    });
+    const verifyRes = await fetch(
+      buildTrustedBackendUrl('/payments/verify/saman'),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+          ...(academyId && { 'X-Academy-ID': academyId })
+        },
+        body: JSON.stringify({ payment_id: resNum, ref_num: refNum })
+      }
+    );
 
     const data = (await verifyRes.json()) as {
       status?: string;
