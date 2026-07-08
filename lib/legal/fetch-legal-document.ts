@@ -19,10 +19,13 @@ export async function fetchLegalDocument(
     try {
       const res = await fetch(
         `${base}/legal/documents/${type}?locale=${encodeURIComponent(loc)}`,
-        { next: { revalidate: 3600 } }
+        { cache: 'no-store' }
       );
       if (res.ok) {
-        return (await res.json()) as LegalDocument;
+        const payload = (await res.json()) as LegalDocument;
+        if (payload.body && payload.title) {
+          return payload;
+        }
       }
     } catch {
       // try next locale

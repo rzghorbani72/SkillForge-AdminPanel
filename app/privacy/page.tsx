@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { LegalDocumentPage } from '@/components/legal/legal-document-page';
 import { fetchLegalDocument } from '@/lib/legal/fetch-legal-document';
 import { markdownToHtml } from '@/lib/legal/markdown-to-html';
+import { prepareLegalMarkdown } from '@/lib/legal/prepare-legal-markdown';
 import { getAdminLanguage } from '@/lib/i18n/server';
 
 export const dynamic = 'force-dynamic';
@@ -22,7 +23,9 @@ export default async function PrivacyPage() {
   return (
     <LegalDocumentPage
       document={document}
-      html={markdownToHtml(document.body)}
+      html={markdownToHtml(
+        prepareLegalMarkdown(document.body, document.locale)
+      )}
     />
   );
 }

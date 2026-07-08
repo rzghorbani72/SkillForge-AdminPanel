@@ -47,7 +47,7 @@ export default function RegisterPage() {
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [acceptedLegal, setAcceptedLegal] = useState(false);
+  const [acceptedLegal, setAcceptedLegal] = useState(true);
   const [legalVersions, setLegalVersions] = useState({
     terms: '1.0',
     privacy: '1.0'
@@ -56,8 +56,8 @@ export default function RegisterPage() {
   useEffect(() => {
     apiClient
       .getLegalDocuments('fa')
-      .then((docs) => {
-        const list = Array.isArray(docs) ? docs : [];
+      .then((res) => {
+        const list = Array.isArray(res.data) ? res.data : [];
         setLegalVersions((prev) => ({
           terms: list.find((d) => d.type === 'TERMS')?.version ?? prev.terms,
           privacy:
@@ -135,6 +135,15 @@ export default function RegisterPage() {
     const e164Phone = toE164Iran(values.phone);
     setSubmitting(true);
     try {
+      const docsRes = await apiClient.getLegalDocuments('fa');
+      const list = Array.isArray(docsRes.data) ? docsRes.data : [];
+      const termsVersion =
+        list.find((d) => d.type === 'TERMS')?.version ?? legalVersions.terms;
+      const privacyVersion =
+        list.find((d) => d.type === 'PRIVACY')?.version ??
+        legalVersions.privacy;
+      setLegalVersions({ terms: termsVersion, privacy: privacyVersion });
+
       await apiClient.register({
         name: values.name,
         phone_number: e164Phone,
@@ -142,8 +151,8 @@ export default function RegisterPage() {
         confirmed_password: values.confirmPassword,
         role: 'MANAGER',
         display_name: values.name,
-        accepted_terms_version: legalVersions.terms,
-        accepted_privacy_version: legalVersions.privacy
+        accepted_terms_version: termsVersion,
+        accepted_privacy_version: privacyVersion
       });
       setDone(true);
       toast.success(t('auth.accountCreatedTitle'));

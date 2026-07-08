@@ -305,7 +305,12 @@ export const fa = {
   legal: {
     mustAcceptTerms: 'برای ادامه باید قوانین و سیاست حریم خصوصی را بپذیرید.',
     lastUpdated: 'آخرین به‌روزرسانی',
-    version: 'نسخه'
+    version: 'نسخه',
+    reacceptTitle: 'به‌روزرسانی اسناد حقوقی',
+    reacceptDescription:
+      'شرایط خدمات یا سیاست حریم خصوصی تغییر کرده است. برای ادامه استفاده از پنل، آن‌ها را مطالعه و بپذیرید.',
+    acceptAndContinue: 'می‌پذیرم و ادامه می‌دهم',
+    accepting: 'در حال ثبت پذیرش...'
   },
   auth: {
     login: 'ورود',

@@ -24,6 +24,7 @@ export function getBrowserApiBaseUrl(): string {
 export function getServerApiBaseUrl(): string {
   const internal =
     process.env.INTERNAL_API_URL?.replace(/\/$/, '') ||
+    process.env.BACKEND_API_URL?.replace(/\/$/, '') ||
     process.env.NEXT_PUBLIC_BACKEND_API_URL?.replace(/\/$/, '');
   if (internal?.startsWith('http')) {
     return internal;
@@ -37,7 +38,7 @@ export function getServerApiBaseUrl(): string {
   const host = (
     process.env.NEXT_PUBLIC_HOST ||
     process.env.VERCEL_URL ||
-    'http://localhost:3000'
+    DEFAULT_SERVER_API.replace(/\/v1$/, '')
   ).replace(/\/$/, '');
   const origin = host.startsWith('http') ? host : `https://${host}`;
   const path = publicUrl?.startsWith('/') ? publicUrl : DEFAULT_BROWSER_API;

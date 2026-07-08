@@ -26,25 +26,21 @@ export default async function RootLayout({
 
   const language = getAdminLanguage(languagePreference, null);
   const direction = getAdminDirection(languagePreference, null);
+  const irDomain = process.env.NEXT_PUBLIC_IR_DOMAIN?.trim();
+  const comDomain = process.env.NEXT_PUBLIC_COM_DOMAIN?.trim();
 
   return (
     <html lang={language} dir={direction} suppressHydrationWarning>
       <head>
-        <link
-          rel="alternate"
-          hrefLang="fa-IR"
-          href={process.env.NEXT_PUBLIC_IR_DOMAIN ?? ''}
-        />
-        <link
-          rel="alternate"
-          hrefLang="en"
-          href={process.env.NEXT_PUBLIC_COM_DOMAIN ?? ''}
-        />
-        <link
-          rel="alternate"
-          hrefLang="x-default"
-          href={process.env.NEXT_PUBLIC_COM_DOMAIN ?? ''}
-        />
+        {irDomain ? (
+          <link rel="alternate" hrefLang="fa-IR" href={irDomain} />
+        ) : null}
+        {comDomain ? (
+          <>
+            <link rel="alternate" hrefLang="en" href={comDomain} />
+            <link rel="alternate" hrefLang="x-default" href={comDomain} />
+          </>
+        ) : null}
       </head>
       <body suppressHydrationWarning>
         <ThemeProviderWrapper>
