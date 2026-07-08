@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -47,6 +47,25 @@ export default function RegisterPage() {
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [acceptedLegal, setAcceptedLegal] = useState(true);
+  const [legalVersions, setLegalVersions] = useState({
+    terms: '1.0',
+    privacy: '1.0'
+  });
+
+  useEffect(() => {
+    apiClient
+      .getLegalDocuments('fa')
+      .then((res) => {
+        const list = Array.isArray(res.data) ? res.data : [];
+        setLegalVersions((prev) => ({
+          terms: list.find((d) => d.type === 'TERMS')?.version ?? prev.terms,
+          privacy:
+            list.find((d) => d.type === 'PRIVACY')?.version ?? prev.privacy
+        }));
+      })
+      .catch(() => {});
+  }, []);
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(useRegisterSchema(t)),
@@ -108,17 +127,32 @@ export default function RegisterPage() {
   }
 
   async function createAccount() {
+    if (!acceptedLegal) {
+      toast.error(t('legal.mustAcceptTerms'));
+      return;
+    }
     const values = form.getValues();
     const e164Phone = toE164Iran(values.phone);
     setSubmitting(true);
     try {
+      const docsRes = await apiClient.getLegalDocuments('fa');
+      const list = Array.isArray(docsRes.data) ? docsRes.data : [];
+      const termsVersion =
+        list.find((d) => d.type === 'TERMS')?.version ?? legalVersions.terms;
+      const privacyVersion =
+        list.find((d) => d.type === 'PRIVACY')?.version ??
+        legalVersions.privacy;
+      setLegalVersions({ terms: termsVersion, privacy: privacyVersion });
+
       await apiClient.register({
         name: values.name,
         phone_number: e164Phone,
         password: values.password,
         confirmed_password: values.confirmPassword,
         role: 'MANAGER',
-        display_name: values.name
+        display_name: values.name,
+        accepted_terms_version: termsVersion,
+        accepted_privacy_version: privacyVersion
       });
       setDone(true);
       toast.success(t('auth.accountCreatedTitle'));
@@ -222,21 +256,48 @@ export default function RegisterPage() {
                 resending={otpLoading}
               >
                 {phoneVerified && (
-                  <Button
-                    type="button"
-                    className="w-full"
-                    disabled={submitting}
-                    onClick={createAccount}
-                  >
-                    {submitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('auth.creatingAccount')}
-                      </>
-                    ) : (
-                      t('auth.createAccount')
-                    )}
-                  </Button>
+                  <>
+                    <label className="flex items-start gap-2 text-xs text-muted-foreground">
+                      <input
+                        type="checkbox"
+                        checked={acceptedLegal}
+                        onChange={(e) => setAcceptedLegal(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0"
+                      />
+                      <span>
+                        {t('auth.byCreatingAccount')}{' '}
+                        <Link
+                          href="/terms"
+                          className="underline hover:text-foreground"
+                        >
+                          {t('auth.termsOfService')}
+                        </Link>{' '}
+                        {t('auth.and')}{' '}
+                        <Link
+                          href="/privacy"
+                          className="underline hover:text-foreground"
+                        >
+                          {t('auth.privacyPolicy')}
+                        </Link>
+                        {t('auth.agree')}
+                      </span>
+                    </label>
+                    <Button
+                      type="button"
+                      className="w-full"
+                      disabled={submitting || !acceptedLegal}
+                      onClick={createAccount}
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {t('auth.creatingAccount')}
+                        </>
+                      ) : (
+                        t('auth.createAccount')
+                      )}
+                    </Button>
+                  </>
                 )}
               </PhoneOtpScreen>
             );

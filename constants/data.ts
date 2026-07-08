@@ -101,7 +101,8 @@ export const navItems: NavItem[] = [
     roles: ['ADMIN'],
     adminOnly: true,
     scope: 'platform',
-    section: 'finance'
+    section: 'finance',
+    paymentGated: true
   },
   {
     title: 'Teacher Payouts',
@@ -111,7 +112,8 @@ export const navItems: NavItem[] = [
     roles: ['ADMIN'],
     adminOnly: true,
     scope: 'platform',
-    section: 'finance'
+    section: 'finance',
+    paymentGated: true
   },
   {
     title: 'Subscriptions',
@@ -121,7 +123,8 @@ export const navItems: NavItem[] = [
     roles: ['ADMIN'],
     adminOnly: true,
     scope: 'platform',
-    section: 'finance'
+    section: 'finance',
+    paymentGated: true
   },
   // Configuration section
   {
@@ -211,7 +214,8 @@ export const navItems: NavItem[] = [
     icon: 'dollarSign' as IconType,
     label: 'financial',
     roles: ['ADMIN', 'SUPPORT', 'MANAGER'],
-    scope: 'academy'
+    scope: 'academy',
+    paymentGated: true
   },
   {
     title: 'Plans',
@@ -219,7 +223,8 @@ export const navItems: NavItem[] = [
     icon: 'layers' as IconType,
     label: 'plans',
     roles: ['ADMIN', 'MANAGER', 'TEACHER'],
-    scope: 'academy'
+    scope: 'academy',
+    paymentGated: true
   },
   {
     title: 'Site Template',

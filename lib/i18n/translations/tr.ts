@@ -205,6 +205,17 @@ export const tr = {
       platform: 'Platform'
     }
   },
+  legal: {
+    mustAcceptTerms:
+      'Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.',
+    lastUpdated: 'Son güncelleme',
+    version: 'Sürüm',
+    reacceptTitle: 'Güncellenmiş yasal belgeler',
+    reacceptDescription:
+      'Hizmet Şartları veya Gizlilik Politikası değişti. Devam etmek için inceleyip kabul edin.',
+    acceptAndContinue: 'Kabul et ve devam et',
+    accepting: 'Kabul kaydediliyor...'
+  },
   auth: {
     login: 'Giriş Yap',
     register: 'Kayıt Ol',

@@ -203,6 +203,16 @@ export const ar = {
       platform: 'المنصة'
     }
   },
+  legal: {
+    mustAcceptTerms: 'يجب قبول الشروط وسياسة الخصوصية للمتابعة.',
+    lastUpdated: 'آخر تحديث',
+    version: 'الإصدار',
+    reacceptTitle: 'تحديث المستندات القانونية',
+    reacceptDescription:
+      'تم تحديث شروط الخدمة أو سياسة الخصوصية. راجعها واقبلها للمتابعة.',
+    acceptAndContinue: 'أوافق وأتابع',
+    accepting: 'جارٍ حفظ الموافقة...'
+  },
   auth: {
     login: 'تسجيل الدخول',
     register: 'التسجيل',

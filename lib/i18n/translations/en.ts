@@ -305,6 +305,17 @@ export const en = {
       configuration: 'Configuration'
     }
   },
+  legal: {
+    mustAcceptTerms:
+      'You must accept the Terms and Privacy Policy to continue.',
+    lastUpdated: 'Last updated',
+    version: 'Version',
+    reacceptTitle: 'Updated legal documents',
+    reacceptDescription:
+      'Our Terms of Service or Privacy Policy changed. Review and accept to continue using the panel.',
+    acceptAndContinue: 'Accept and continue',
+    accepting: 'Saving acceptance...'
+  },
   auth: {
     login: 'Login',
     register: 'Register',

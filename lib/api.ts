@@ -293,6 +293,27 @@ class ApiClient {
 
       // Handle forbidden responses (403) - redirect to dashboard
       if (response.status === 403) {
+        const payload =
+          data && typeof data.message === 'object' && data.message !== null
+            ? (data.message as Record<string, unknown>)
+            : (data as Record<string, unknown> | null);
+        const legalConsentCode =
+          payload?.code === 'LEGAL_CONSENT_REQUIRED' ||
+          (data as Record<string, unknown> | null)?.code ===
+            'LEGAL_CONSENT_REQUIRED';
+
+        if (legalConsentCode) {
+          const pending = (payload?.pending ??
+            (data as Record<string, unknown> | null)?.pending) as unknown;
+          const error = new Error('LEGAL_CONSENT_REQUIRED') as Error & {
+            code: string;
+            pending: unknown;
+          };
+          error.code = 'LEGAL_CONSENT_REQUIRED';
+          error.pending = pending;
+          throw error;
+        }
+
         const getCurrentLanguage = (): LanguageCode => {
           if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
           const stored = localStorage.getItem('preferred_language');
@@ -430,10 +451,35 @@ class ApiClient {
     bio?: string;
     website?: string;
     location?: string;
+    accepted_terms_version?: string;
+    accepted_privacy_version?: string;
+    accepted_agreement_version?: string;
   }) {
     return this.request('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData)
+    });
+  }
+
+  async getLegalDocuments(locale = 'fa') {
+    return this.request<
+      { type: string; version: string; title: string; published_at: string }[]
+    >(`/legal/documents?locale=${locale}`, { method: 'GET' });
+  }
+
+  async getLegalAcceptanceStatus(locale = 'fa') {
+    return this.request<{
+      up_to_date: boolean;
+      pending: { type: string; title: string; version: string }[];
+    }>(`/legal/acceptances/status?locale=${encodeURIComponent(locale)}`, {
+      method: 'GET'
+    });
+  }
+
+  async acceptPlatformLegalDocuments(locale = 'fa') {
+    return this.request<{ accepted: string[] }>(`/legal/acceptances/platform`, {
+      method: 'POST',
+      body: JSON.stringify({ locale })
     });
   }
 
