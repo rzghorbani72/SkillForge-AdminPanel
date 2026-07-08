@@ -1,54 +1,69 @@
+import {
+  API_DEVELOPMENT_DEFAULTS,
+  API_VERSION_PATH,
+  isLegacyApiPath,
+  resolveBackendRewriteTarget,
+  stripTrailingSlash
+} from './api-config';
+
 /**
  * Browser calls use a same-origin path (/v1) so HttpOnly auth cookies are set on the panel host.
  * Server components/actions use an absolute backend URL (rewrite target or direct API).
  */
-const DEFAULT_BROWSER_API = '/v1';
-const DEFAULT_SERVER_API = 'http://localhost:3000/v1';
-
 export function getBrowserApiBaseUrl(): string {
   const raw =
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || DEFAULT_BROWSER_API;
+    stripTrailingSlash(process.env.NEXT_PUBLIC_API_URL ?? '') ||
+    API_VERSION_PATH;
 
-  // **In development, use NEXT_PUBLIC_API_URL directly from .env.local**
   if (process.env.NODE_ENV === 'development') {
     return raw;
   }
 
-  // **In production, absolute URLs break same-origin cookies; Next.js rewrites /v1 to the backend.**
-  if (raw.startsWith('http://') || raw.startsWith('https://')) {
-    return DEFAULT_BROWSER_API;
+  if (
+    raw.startsWith('http://') ||
+    raw.startsWith('https://') ||
+    isLegacyApiPath(raw)
+  ) {
+    return API_VERSION_PATH;
   }
+
   return raw.startsWith('/') ? raw : `/${raw}`;
 }
 
 export function getServerApiBaseUrl(): string {
   const internal =
-    process.env.INTERNAL_API_URL?.replace(/\/$/, '') ||
-    process.env.BACKEND_API_URL?.replace(/\/$/, '') ||
-    process.env.NEXT_PUBLIC_BACKEND_API_URL?.replace(/\/$/, '');
-  if (internal?.startsWith('http')) {
+    stripTrailingSlash(process.env.INTERNAL_API_URL ?? '') ||
+    stripTrailingSlash(process.env.BACKEND_API_URL ?? '') ||
+    stripTrailingSlash(process.env.NEXT_PUBLIC_BACKEND_API_URL ?? '');
+
+  if (internal.startsWith('http')) {
     return internal;
   }
 
-  const publicUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
-  if (publicUrl?.startsWith('http')) {
+  const publicUrl = stripTrailingSlash(process.env.NEXT_PUBLIC_API_URL ?? '');
+  if (publicUrl.startsWith('http')) {
     return publicUrl;
   }
 
-  const host = (
+  const host = stripTrailingSlash(
     process.env.NEXT_PUBLIC_HOST ||
-    process.env.VERCEL_URL ||
-    DEFAULT_SERVER_API.replace(/\/v1$/, '')
-  ).replace(/\/$/, '');
+      process.env.VERCEL_URL ||
+      API_DEVELOPMENT_DEFAULTS.backendOrigin
+  );
   const origin = host.startsWith('http') ? host : `https://${host}`;
-  const path = publicUrl?.startsWith('/') ? publicUrl : DEFAULT_BROWSER_API;
+  const path = publicUrl.startsWith('/') ? publicUrl : API_VERSION_PATH;
   return `${origin}${path}`;
 }
 
 export function getBackendRewriteTarget(): string {
-  const target =
-    process.env.BACKEND_API_URL?.replace(/\/$/, '') ||
-    process.env.NEXT_PUBLIC_BACKEND_API_URL?.replace(/\/$/, '') ||
-    'https://api.mentoma.com/v1';
-  return target.startsWith('http') ? target : `https://${target}`;
+  return resolveBackendRewriteTarget(
+    process.env.BACKEND_API_URL || process.env.NEXT_PUBLIC_BACKEND_API_URL
+  );
 }
+
+export {
+  API_VERSION_PATH,
+  browserApiPath,
+  LEGACY_API_PATH,
+  API_PRODUCTION_DEFAULTS
+} from './api-config';
