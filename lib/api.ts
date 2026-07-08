@@ -92,11 +92,26 @@ class ApiClient {
   private redirectToDashboard(): void {
     if (typeof window !== 'undefined') {
       const currentPath = window.location.pathname;
-      // Don't redirect if already on dashboard
-      if (!currentPath.includes('/dashboard')) {
+      if (!currentPath.includes('/dashboard') && !isAuthPagePath(currentPath)) {
         window.location.href = '/dashboard';
       }
     }
+  }
+
+  private isAuthFlowEndpoint(endpoint: string): boolean {
+    return (
+      endpoint.includes('/auth/login') ||
+      endpoint.includes('/auth/public/login') ||
+      endpoint.includes('/auth/staff/login') ||
+      endpoint.includes('/auth/admin/login') ||
+      endpoint.includes('/auth/forget-password') ||
+      endpoint.includes('/auth/admin/forget-password') ||
+      endpoint.includes('/auth/login-by-phone-otp') ||
+      endpoint.includes('/auth/login-by-email-otp') ||
+      endpoint.includes('/auth/register') ||
+      endpoint.includes('/auth/otp/') ||
+      endpoint.includes('/auth/refresh')
+    );
   }
 
   private async request<T>(
@@ -138,18 +153,7 @@ class ApiClient {
       }
     }
 
-    const isAuthFlowEndpoint =
-      endpoint.includes('/auth/login') ||
-      endpoint.includes('/auth/public/login') ||
-      endpoint.includes('/auth/staff/login') ||
-      endpoint.includes('/auth/admin/login') ||
-      endpoint.includes('/auth/forget-password') ||
-      endpoint.includes('/auth/admin/forget-password') ||
-      endpoint.includes('/auth/login-by-phone-otp') ||
-      endpoint.includes('/auth/login-by-email-otp') ||
-      endpoint.includes('/auth/register') ||
-      endpoint.includes('/auth/otp/') ||
-      endpoint.includes('/auth/refresh');
+    const isAuthFlowEndpoint = this.isAuthFlowEndpoint(endpoint);
 
     // Add store ID header if available (from localStorage - non-sensitive context data)
     // But don't add it for admins without stores or auth flows (login/register use profile pick)
@@ -220,18 +224,7 @@ class ApiClient {
       // Handle unauthorized responses (401) - attempt token refresh, then redirect to login
       if (response.status === 401 && retryAfterRefresh) {
         // Skip refresh for auth endpoints (login/register/otp/password reset flows)
-        const isAuthEndpoint =
-          endpoint.includes('/auth/login') ||
-          endpoint.includes('/auth/public/login') ||
-          endpoint.includes('/auth/staff/login') ||
-          endpoint.includes('/auth/admin/login') ||
-          endpoint.includes('/auth/forget-password') ||
-          endpoint.includes('/auth/admin/forget-password') ||
-          endpoint.includes('/auth/login-by-phone-otp') ||
-          endpoint.includes('/auth/login-by-email-otp') ||
-          endpoint.includes('/auth/register') ||
-          endpoint.includes('/auth/otp/') ||
-          endpoint.includes('/auth/refresh');
+        const isAuthEndpoint = isAuthFlowEndpoint;
 
         if (!isAuthEndpoint) {
           console.log('[Auth] Access token expired, attempting refresh...');
@@ -343,8 +336,11 @@ class ApiClient {
           t('error.noPermission', getCurrentLanguage());
 
         if (typeof window !== 'undefined') {
-          toast.error(errorMessage);
-          this.redirectToDashboard();
+          const onAuthPage = isAuthPagePath(window.location.pathname);
+          if (!isAuthFlowEndpoint && !onAuthPage) {
+            toast.error(errorMessage);
+            this.redirectToDashboard();
+          }
         }
 
         throw new Error(errorMessage);
@@ -357,10 +353,14 @@ class ApiClient {
           (Array.isArray(rawMsg402) ? rawMsg402.join(', ') : rawMsg402) ||
           'Subscription is required to continue.';
         if (typeof window !== 'undefined') {
-          toast.error(errorMessage);
-          // Keep user in subscription-manageable area
-          if (!window.location.pathname.includes('/settings/academy')) {
-            window.location.href = '/settings/academy';
+          if (
+            !isAuthFlowEndpoint &&
+            !isAuthPagePath(window.location.pathname)
+          ) {
+            toast.error(errorMessage);
+            if (!window.location.pathname.includes('/settings/academy')) {
+              window.location.href = '/settings/academy';
+            }
           }
         }
         throw new Error(errorMessage);

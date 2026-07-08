@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify';
 import { t } from './i18n';
 import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
+import { isAuthPagePath } from './auth-routes';
 
 /**
  * Get current language from localStorage or default
@@ -186,14 +187,14 @@ export class ErrorHandler {
         }
       }
     } else if (error?.response?.status === 403) {
-      // API client already handles redirect to dashboard
-      // Only show toast if this is called from outside API client
       if (typeof window !== 'undefined' && !error._handledByApiClient) {
         try {
           toast.error(t('error.noPermission', language));
-          // Redirect to dashboard if not already there
           const currentPath = window.location.pathname;
-          if (!currentPath.includes('/dashboard')) {
+          if (
+            !currentPath.includes('/dashboard') &&
+            !isAuthPagePath(currentPath)
+          ) {
             window.location.href = '/dashboard';
           }
         } catch (toastError) {
