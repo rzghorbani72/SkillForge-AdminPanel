@@ -290,6 +290,7 @@ export const fa = {
     coupons: 'کوپن‌ها',
     subscriptions: 'اشتراک‌ها',
     platformSettings: 'تنظیمات پلتفرم',
+    legalDocuments: 'اسناد حقوقی',
     allAcademies: 'آکادمی‌ها',
     myAcademies: 'آکادمی‌های من',
     templatesGallery: 'گالری قالب‌ها',
@@ -311,6 +312,32 @@ export const fa = {
       'شرایط خدمات یا سیاست حریم خصوصی تغییر کرده است. برای ادامه استفاده از پنل، آن‌ها را مطالعه و بپذیرید.',
     acceptAndContinue: 'می‌پذیرم و ادامه می‌دهم',
     accepting: 'در حال ثبت پذیرش...'
+  },
+  legalAdmin: {
+    title: 'اسناد حقوقی',
+    description:
+      'پیش‌نویس و انتشار شرایط، حریم خصوصی، بازگشت وجه و قرارداد آکادمی — بدون نیاز به دیپلوی مجدد.',
+    documentType: 'نوع سند',
+    locale: 'زبان',
+    editor: 'ویرایشگر',
+    docTitle: 'عنوان',
+    markdownBody: 'متن (مارک‌داون)',
+    saveDraft: 'ذخیره پیش‌نویس',
+    publish: 'انتشار نسخه',
+    publishVersion: 'شماره نسخه',
+    preview: 'پیش‌نمایش',
+    history: 'تاریخچه نسخه‌ها',
+    draftSaved: 'پیش‌نویس ذخیره شد',
+    published: 'سند منتشر شد — در صورت نیاز کاربران باید دوباره بپذیرند',
+    draftExists: 'پیش‌نویس فعال',
+    validationRequired: 'عنوان و متن الزامی است',
+    versionRequired: 'شماره نسخه را وارد کنید (مثلاً ۱.۲)',
+    types: {
+      TERMS: 'شرایط استفاده',
+      PRIVACY: 'سیاست حریم خصوصی',
+      REFUND: 'سیاست بازگشت وجه',
+      ACADEMY_AGREEMENT: 'قرارداد سکو و آکادمی'
+    }
   },
   auth: {
     login: 'ورود',

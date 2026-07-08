@@ -293,6 +293,7 @@ export const en = {
     coupons: 'Coupons',
     subscriptions: 'Subscriptions',
     platformSettings: 'Platform Settings',
+    legalDocuments: 'Legal Documents',
     allAcademies: 'Academies',
     myAcademies: 'My Academies',
     templatesGallery: 'Templates Gallery',
@@ -315,6 +316,32 @@ export const en = {
       'Our Terms of Service or Privacy Policy changed. Review and accept to continue using the panel.',
     acceptAndContinue: 'Accept and continue',
     accepting: 'Saving acceptance...'
+  },
+  legalAdmin: {
+    title: 'Legal Documents',
+    description:
+      'Draft and publish Terms, Privacy, Refund, and Academy Agreement without redeploying.',
+    documentType: 'Document type',
+    locale: 'Locale',
+    editor: 'Editor',
+    docTitle: 'Title',
+    markdownBody: 'Markdown body',
+    saveDraft: 'Save draft',
+    publish: 'Publish version',
+    publishVersion: 'Version to publish',
+    preview: 'Preview',
+    history: 'Version history',
+    draftSaved: 'Draft saved',
+    published: 'Document published — users must re-accept if required',
+    draftExists: 'Draft in progress',
+    validationRequired: 'Title and body are required',
+    versionRequired: 'Enter a version number (e.g. 1.2)',
+    types: {
+      TERMS: 'Terms of Service',
+      PRIVACY: 'Privacy Policy',
+      REFUND: 'Refund Policy',
+      ACADEMY_AGREEMENT: 'Platform–Academy Agreement'
+    }
   },
   auth: {
     login: 'Login',

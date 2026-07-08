@@ -138,6 +138,16 @@ export const navItems: NavItem[] = [
     section: 'configuration'
   },
   {
+    title: 'Legal Documents',
+    href: '/platform/legal',
+    icon: 'fileText' as IconType,
+    label: 'legalDocuments',
+    roles: ['ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'configuration'
+  },
+  {
     title: 'Support Access Logs',
     href: '/support-access-logs',
     icon: 'shield' as IconType,

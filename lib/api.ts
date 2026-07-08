@@ -465,6 +465,20 @@ class ApiClient {
     >(`/legal/documents?locale=${locale}`, { method: 'GET' });
   }
 
+  async getLegalDocument(type: string, locale = 'fa') {
+    const res = await this.request<{
+      title: string;
+      body: string;
+      version: string;
+      type: string;
+      locale: string;
+    }>(
+      `/legal/documents/${encodeURIComponent(type)}?locale=${encodeURIComponent(locale)}`,
+      { method: 'GET' }
+    );
+    return (res.data as { data?: typeof res.data })?.data ?? res.data;
+  }
+
   async getLegalAcceptanceStatus(locale = 'fa') {
     return this.request<{
       up_to_date: boolean;
@@ -479,6 +493,84 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ locale })
     });
+  }
+
+  async getLegalAdminOverview(type: string, locale = 'fa') {
+    const res = await this.request<{
+      current: {
+        id: string;
+        type: string;
+        locale: string;
+        version: string;
+        title: string;
+        status: string;
+        is_current: boolean;
+        published_at: string | null;
+        created_at: string;
+        content_hash: string;
+      } | null;
+      draft: {
+        id: string;
+        title: string;
+        body: string;
+        updated_at: string;
+      } | null;
+      suggested_version: string;
+      history: {
+        id: string;
+        type: string;
+        locale: string;
+        version: string;
+        title: string;
+        status: string;
+        is_current: boolean;
+        published_at: string | null;
+        created_at: string;
+        content_hash: string;
+      }[];
+    }>(
+      `/legal/admin/documents/${encodeURIComponent(type)}?locale=${encodeURIComponent(locale)}`
+    );
+    return (res.data as { data?: typeof res.data })?.data ?? res.data;
+  }
+
+  async saveLegalDraft(
+    type: string,
+    payload: { title: string; body: string; locale?: string }
+  ) {
+    const res = await this.request<{
+      id: string;
+      type: string;
+      locale: string;
+      title: string;
+      body: string;
+      status: string;
+    }>(`/legal/admin/documents/${encodeURIComponent(type)}/draft`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+    return (res.data as { data?: typeof res.data })?.data ?? res.data;
+  }
+
+  async publishLegalDocument(
+    type: string,
+    payload: { version: string; locale?: string }
+  ) {
+    const res = await this.request<{
+      id: string;
+      type: string;
+      locale: string;
+      version: string;
+      title: string;
+      status: string;
+      is_current: boolean;
+      published_at: string | null;
+      content_hash: string;
+    }>(`/legal/admin/documents/${encodeURIComponent(type)}/publish`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
 
   async createUser(data: {

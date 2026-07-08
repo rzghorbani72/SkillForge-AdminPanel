@@ -28,10 +28,12 @@ export function LegalDocumentPage({ document, html }: LegalDocumentPageProps) {
   const { t } = useTranslation();
   const docLang = documentLanguage(document.locale);
   const label = (key: string) => translate(key, docLang);
-  const publishedAt = new Date(document.published_at).toLocaleDateString(
-    docLang === 'fa' ? 'fa-IR' : docLang === 'ar' ? 'ar' : undefined,
-    { year: 'numeric', month: 'long', day: 'numeric' }
-  );
+  const publishedAt = document.published_at
+    ? new Date(document.published_at).toLocaleDateString(
+        docLang === 'fa' ? 'fa-IR' : docLang === 'ar' ? 'ar' : undefined,
+        { year: 'numeric', month: 'long', day: 'numeric' }
+      )
+    : null;
 
   return (
     <AuthLayout
@@ -45,7 +47,11 @@ export function LegalDocumentPage({ document, html }: LegalDocumentPageProps) {
             {document.title}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            {label('legal.lastUpdated')}: {publishedAt} ·{' '}
+            {publishedAt && (
+              <>
+                {label('legal.lastUpdated')}: {publishedAt} ·{' '}
+              </>
+            )}
             {label('legal.version')} {document.version}
           </p>
         </header>
