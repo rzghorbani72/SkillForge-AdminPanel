@@ -205,6 +205,8 @@ export const ar = {
   },
   legal: {
     mustAcceptTerms: 'يجب قبول الشروط وسياسة الخصوصية للمتابعة.',
+    documentsUnavailable:
+      'المستندات القانونية غير متاحة حالياً. يرجى المحاولة لاحقاً أو التواصل مع الدعم.',
     lastUpdated: 'آخر تحديث',
     version: 'الإصدار',
     reacceptTitle: 'تحديث المستندات القانونية',

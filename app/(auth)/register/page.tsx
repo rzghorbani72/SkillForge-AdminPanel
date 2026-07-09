@@ -34,8 +34,6 @@ const useRegisterSchema = (t: (k: string) => string) =>
       path: ['confirmPassword']
     });
 
-const LEGAL_VERSION_FALLBACK = '1.1';
-
 export default function RegisterPage() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -48,10 +46,10 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [acceptedLegal, setAcceptedLegal] = useState(true);
-  const [legalVersions, setLegalVersions] = useState({
-    terms: LEGAL_VERSION_FALLBACK,
-    privacy: LEGAL_VERSION_FALLBACK
-  });
+  const [legalVersions, setLegalVersions] = useState<{
+    terms: string | null;
+    privacy: string | null;
+  }>({ terms: null, privacy: null });
 
   useEffect(() => {
     if (!done) return;
@@ -64,13 +62,14 @@ export default function RegisterPage() {
       .getLegalDocuments()
       .then((res) => {
         const list = Array.isArray(res.data) ? res.data : [];
-        setLegalVersions((prev) => ({
-          terms: list.find((d) => d.type === 'TERMS')?.version ?? prev.terms,
-          privacy:
-            list.find((d) => d.type === 'PRIVACY')?.version ?? prev.privacy
-        }));
+        setLegalVersions({
+          terms: list.find((d) => d.type === 'TERMS')?.version ?? null,
+          privacy: list.find((d) => d.type === 'PRIVACY')?.version ?? null
+        });
       })
-      .catch(() => {});
+      .catch(() => {
+        setLegalVersions({ terms: null, privacy: null });
+      });
   }, []);
 
   const form = useForm<RegisterValues>({
@@ -146,13 +145,21 @@ export default function RegisterPage() {
       try {
         const docsRes = await apiClient.getLegalDocuments();
         const list = Array.isArray(docsRes.data) ? docsRes.data : [];
-        termsVersion =
-          list.find((d) => d.type === 'TERMS')?.version ?? termsVersion;
+        termsVersion = list.find((d) => d.type === 'TERMS')?.version ?? null;
         privacyVersion =
-          list.find((d) => d.type === 'PRIVACY')?.version ?? privacyVersion;
+          list.find((d) => d.type === 'PRIVACY')?.version ?? null;
         setLegalVersions({ terms: termsVersion, privacy: privacyVersion });
       } catch {
-        // Keep cached/fallback versions when the legal API is unavailable.
+        termsVersion = null;
+        privacyVersion = null;
+        setLegalVersions({ terms: null, privacy: null });
+      }
+
+      if (!termsVersion || !privacyVersion) {
+        toast.error(t('legal.documentsUnavailable'), {
+          toastId: 'register-legal-unavailable'
+        });
+        return;
       }
 
       await apiClient.register({

@@ -309,6 +309,8 @@ export const en = {
   legal: {
     mustAcceptTerms:
       'You must accept the Terms and Privacy Policy to continue.',
+    documentsUnavailable:
+      'Legal documents are not available yet. Please try again later or contact support.',
     lastUpdated: 'Last updated',
     version: 'Version',
     reacceptTitle: 'Updated legal documents',

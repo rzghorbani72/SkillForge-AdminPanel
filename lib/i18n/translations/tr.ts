@@ -208,6 +208,8 @@ export const tr = {
   legal: {
     mustAcceptTerms:
       'Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.',
+    documentsUnavailable:
+      'Yasal belgeler henüz kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.',
     lastUpdated: 'Son güncelleme',
     version: 'Sürüm',
     reacceptTitle: 'Güncellenmiş yasal belgeler',
