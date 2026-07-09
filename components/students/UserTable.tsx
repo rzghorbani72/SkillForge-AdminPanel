@@ -1,7 +1,16 @@
 'use client';
 
-import { CheckCircle, Mail, Phone, Users, XCircle } from 'lucide-react';
+import {
+  CheckCircle,
+  ExternalLink,
+  Mail,
+  Phone,
+  Users,
+  XCircle
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import Link from '@/components/ui/link';
 import {
   Table,
   TableBody,
@@ -16,14 +25,17 @@ interface Props {
   users: User[];
   emptyMessage: string;
   t: (key: string) => string;
+  showWorkspace?: boolean;
 }
 
-export function UserTable({ users, emptyMessage, t }: Props) {
+export function UserTable({ users, emptyMessage, t, showWorkspace }: Props) {
   if (users.length === 0) {
     return (
       <div className="py-8 text-center">
         <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-2 text-sm font-medium">No users found</h3>
+        <h3 className="mt-2 text-sm font-medium">
+          {t('students.noUsersFound')}
+        </h3>
         <p className="mt-1 text-sm text-muted-foreground">{emptyMessage}</p>
       </div>
     );
@@ -34,10 +46,17 @@ export function UserTable({ users, emptyMessage, t }: Props) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-center">Name</TableHead>
-            <TableHead className="text-center">Email</TableHead>
-            <TableHead className="text-center">Phone</TableHead>
-            <TableHead className="text-center">Status</TableHead>
+            <TableHead className="text-center">
+              {t('students.studentName')}
+            </TableHead>
+            <TableHead className="text-center">{t('students.email')}</TableHead>
+            <TableHead className="text-center">{t('students.phone')}</TableHead>
+            <TableHead className="text-center">{t('common.status')}</TableHead>
+            {showWorkspace && (
+              <TableHead className="text-center">
+                {t('learningOperations.workspace')}
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -93,6 +112,16 @@ export function UserTable({ users, emptyMessage, t }: Props) {
                   </Badge>
                 </div>
               </TableCell>
+              {showWorkspace && (
+                <TableCell className="text-center">
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/students/${user.id}`}>
+                      {t('learningOperations.openWorkspace')}
+                      <ExternalLink className="ms-2 h-3.5 w-3.5" />
+                    </Link>
+                  </Button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

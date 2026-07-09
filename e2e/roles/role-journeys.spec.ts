@@ -56,6 +56,8 @@ test.describe('AdminPanel role journeys @backend', () => {
     await expect(page.locator('body')).not.toContainText(
       'Internal Server Error'
     );
+    await expect(page.locator('a[href="/assignments"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/analytics"]').first()).toBeVisible();
   });
 
   test('HACKER — MANAGER cannot open ADMIN-only platform screens by URL', async ({
@@ -91,6 +93,8 @@ test.describe('AdminPanel role journeys @backend', () => {
     test.skip(!phone || !password, 'E2E_TEACHER_PHONE/PASSWORD required');
 
     await staffLogin(page, phone!, password!);
+    await expect(page.locator('a[href="/assignments"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/analytics"]')).toHaveCount(0);
     await page.goto('/platform/academies', { waitUntil: 'domcontentloaded' });
     await expect(page).not.toHaveURL(/\/platform\/academies/, {
       timeout: 10_000

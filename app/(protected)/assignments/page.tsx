@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -40,57 +40,36 @@ import {
   Star
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-
-interface Assignment {
-  id: number;
-  title: string;
-  description?: string;
-  due_date?: string;
-  max_score: number;
-  is_required: boolean;
-  Lesson?: {
-    id: number;
-    title: string;
-    Season?: { id: number; title: string; course_id: number };
-  };
-  _count?: { Submission: number };
-}
-
-interface Submission {
-  id: number;
-  status: string;
-  score?: number;
-  feedback?: string;
-  submitted_at?: string;
-  graded_at?: string;
-  content?: string;
-  file_url?: string;
-  Assignment?: { id: number; title: string; max_score: number };
-  Profile?: { id: number; display_name: string };
-  GradedBy?: { id: number; display_name: string };
-}
+import type {
+  ApiPagination,
+  AssignmentSubmission,
+  LearningAssignment
+} from '@/types/learning-operations';
+import { DiscussionThread } from '@/components/discussion/discussion-thread';
 
 export default function AssignmentsPage() {
   const { t, language } = useTranslation();
   const isRtl = language === 'fa' || language === 'ar';
 
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [pagination, setPagination] = useState<any>(null);
-  const [subPagination, setSubPagination] = useState<any>(null);
+  const [assignments, setAssignments] = useState<LearningAssignment[]>([]);
+  const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
+  const [pagination, setPagination] = useState<ApiPagination | null>(null);
+  const [subPagination, setSubPagination] = useState<ApiPagination | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isSubLoading, setIsSubLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [subPage, setSubPage] = useState(1);
   const [activeTab, setActiveTab] = useState<'assignments' | 'submissions'>(
-    'assignments'
+    'submissions'
   );
 
   // Grade dialog
   const [gradeDialog, setGradeDialog] = useState<{
     open: boolean;
-    submission: Submission | null;
+    submission: AssignmentSubmission | null;
   }>({ open: false, submission: null });
   const [gradeScore, setGradeScore] = useState('');
   const [gradeFeedback, setGradeFeedback] = useState('');
@@ -129,15 +108,25 @@ export default function AssignmentsPage() {
     fetchAssignments();
   }, [fetchAssignments]);
   useEffect(() => {
-    if (activeTab === 'submissions') fetchSubmissions();
-  }, [activeTab, fetchSubmissions]);
+    void fetchSubmissions();
+  }, [fetchSubmissions]);
 
   const handleGrade = async () => {
     if (!gradeDialog.submission) return;
+    const score = Number(gradeScore);
+    const maxScore = gradeDialog.submission.Assignment?.max_score;
+    if (
+      !Number.isFinite(score) ||
+      score < 0 ||
+      maxScore === undefined ||
+      score > maxScore
+    ) {
+      return;
+    }
     try {
       setIsGrading(true);
       await apiClient.gradeSubmission(gradeDialog.submission.id, {
-        score: Number(gradeScore),
+        score,
         feedback: gradeFeedback || undefined
       });
       setGradeDialog({ open: false, submission: null });
@@ -149,7 +138,7 @@ export default function AssignmentsPage() {
     }
   };
 
-  const openGradeDialog = (sub: Submission) => {
+  const openGradeDialog = (sub: AssignmentSubmission) => {
     setGradeDialog({ open: true, submission: sub });
     setGradeScore(sub.score != null ? String(sub.score) : '');
     setGradeFeedback(sub.feedback ?? '');
@@ -173,9 +162,18 @@ export default function AssignmentsPage() {
         a.title.toLowerCase().includes(search.toLowerCase())
       )
     : assignments;
+  const reviewQueue = useMemo(
+    () =>
+      [...submissions].sort(
+        (first, second) =>
+          Number(second.status === 'SUBMITTED') -
+          Number(first.status === 'SUBMITTED')
+      ),
+    [submissions]
+  );
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           {t('assignmentsPage.title')}
@@ -309,7 +307,7 @@ export default function AssignmentsPage() {
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {a.due_date
-                            ? new Date(a.due_date).toLocaleDateString()
+                            ? new Date(a.due_date).toLocaleDateString(language)
                             : t('assignmentsPage.notAvailable')}
                         </TableCell>
                         <TableCell>
@@ -393,7 +391,7 @@ export default function AssignmentsPage() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    submissions.map((sub) => (
+                    reviewQueue.map((sub) => (
                       <TableRow key={sub.id}>
                         <TableCell className="font-medium">
                           {sub.Profile?.display_name ??
@@ -405,7 +403,7 @@ export default function AssignmentsPage() {
                         </TableCell>
                         <TableCell>
                           <Badge className={statusColor(sub.status)}>
-                            {sub.status}
+                            {t(`learningOperations.status.${sub.status}`)}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm">
@@ -415,7 +413,9 @@ export default function AssignmentsPage() {
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {sub.submitted_at
-                            ? new Date(sub.submitted_at).toLocaleDateString()
+                            ? new Date(sub.submitted_at).toLocaleDateString(
+                                language
+                              )
                             : t('assignmentsPage.notAvailable')}
                         </TableCell>
                         <TableCell>
@@ -491,17 +491,27 @@ export default function AssignmentsPage() {
                 </a>
               </div>
             )}
+            {gradeDialog.submission && (
+              <div className="rounded-lg border p-3">
+                <DiscussionThread
+                  submissionId={String(gradeDialog.submission.id)}
+                  threadId={gradeDialog.submission.discussion_thread_id}
+                />
+              </div>
+            )}
             <div>
               <Label htmlFor="score">
                 {t('assignmentsPage.scoreMax', {
-                  max: gradeDialog.submission?.Assignment?.max_score ?? 100
+                  max:
+                    gradeDialog.submission?.Assignment?.max_score ??
+                    t('assignmentsPage.notAvailable')
                 })}
               </Label>
               <Input
                 id="score"
                 type="number"
                 min={0}
-                max={gradeDialog.submission?.Assignment?.max_score ?? 100}
+                max={gradeDialog.submission?.Assignment?.max_score}
                 value={gradeScore}
                 onChange={(e) => setGradeScore(e.target.value)}
                 className="mt-1"
@@ -528,7 +538,14 @@ export default function AssignmentsPage() {
             >
               {t('common.cancel')}
             </Button>
-            <Button onClick={handleGrade} disabled={isGrading || !gradeScore}>
+            <Button
+              onClick={handleGrade}
+              disabled={
+                isGrading ||
+                !gradeScore ||
+                gradeDialog.submission?.Assignment?.max_score === undefined
+              }
+            >
               {isGrading ? t('common.saving') : t('assignmentsPage.saveGrade')}
             </Button>
           </DialogFooter>

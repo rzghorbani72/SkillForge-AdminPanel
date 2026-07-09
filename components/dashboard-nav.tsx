@@ -80,12 +80,12 @@ const NavItemContent = React.memo(
             >
               {translatedTitle}
             </span>
-            {(item as any).badge && (
+            {item.badge !== undefined && (
               <Badge
                 variant="secondary"
                 className="h-5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary"
               >
-                {(item as any).badge}
+                {item.badge}
               </Badge>
             )}
           </div>
@@ -138,7 +138,7 @@ const NavItemButton = React.memo(
     onClick: () => void;
     children: React.ReactNode;
   }) => (
-    <button className="w-full text-right" onClick={onClick}>
+    <button className="w-full text-start" onClick={onClick}>
       {children}
     </button>
   )
@@ -368,7 +368,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
             isExpanded &&
             (() => {
               return (
-                <div className="ml-5 mt-1 space-y-1 border-l-2 border-border/50 pl-3">
+                <div className="ms-5 mt-1 space-y-1 border-s-2 border-border/50 ps-3">
                   {item.children &&
                     item.children.map((child, index) => (
                       <div key={`${child.title}-${index}`}>

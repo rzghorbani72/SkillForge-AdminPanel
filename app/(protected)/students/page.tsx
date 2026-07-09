@@ -37,6 +37,10 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Pagination } from '@/components/shared/Pagination';
+import type {
+  EnrollmentListResponse,
+  GroupedUsersResponse
+} from '@/types/learning-operations';
 
 type StudentStatus = 'all' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 
@@ -50,8 +54,8 @@ interface PaginationInfo {
 }
 
 export default function StudentsPage() {
-  const { t } = useTranslation();
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
+  const isRtl = language === 'fa' || language === 'ar';
   const searchParams = useSearchParams();
 
   // Get role from query parameter and manage active tab
@@ -139,7 +143,7 @@ export default function StudentsPage() {
             : undefined
       });
 
-      const payload = response as any;
+      const payload: GroupedUsersResponse = response;
 
       // Extract all groups from the grouped response
       if (payload?.data?.grouped) {
@@ -214,10 +218,8 @@ export default function StudentsPage() {
         limit: 25
       });
 
-      const payload = response as any;
-      const list = Array.isArray(payload)
-        ? payload
-        : ((payload?.enrollments as Enrollment[]) ?? []);
+      const payload: EnrollmentListResponse = response;
+      const list = payload.enrollments ?? [];
       setEnrollments(list);
     } catch (error) {
       console.error('Error fetching enrollments:', error);
@@ -317,7 +319,7 @@ export default function StudentsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -432,7 +434,7 @@ export default function StudentsPage() {
         value={activeTab}
         onValueChange={setActiveTab}
         className="space-y-4"
-        dir={'rtl'}
+        dir={isRtl ? 'rtl' : 'ltr'}
       >
         <TabsList>
           <TabsTrigger value="managers">
@@ -504,6 +506,7 @@ export default function StudentsPage() {
                 users={students}
                 emptyMessage={t('students.willAppearWhenRegistered')}
                 t={t}
+                showWorkspace
               />
             </CardContent>
           </Card>

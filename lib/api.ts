@@ -1,11 +1,31 @@
 import { OtpType } from '@/constants/data';
-import { User as UserType } from '@/types/api';
+import { Enrollment, User as UserType } from '@/types/api';
 import { toast } from 'react-toastify';
 import { t } from './i18n';
 import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
 import { getBrowserApiBaseUrl } from './api-base-url';
 import { ApiResponseError } from './api-toast';
 import { isAuthPagePath } from './auth-routes';
+import type {
+  AssignmentListResponse,
+  AssignmentSubmission,
+  CreateTutoringEngagementPayload,
+  CreateTutoringOfferPayload,
+  EnrollmentListResponse,
+  LearningAssignment,
+  LearningSummaryResponse,
+  LearningTimelineResponse,
+  LessonDownloadPolicy,
+  OpsQueueResponse,
+  RescheduleTutoringSessionPayload,
+  ScheduleTutoringSessionPayload,
+  SubmissionListResponse,
+  TutoringAttendanceStatus,
+  TutoringEngagement,
+  TutoringOffer,
+  TutoringSession,
+  UpdateLessonDownloadPolicyPayload
+} from '@/types/learning-operations';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -21,6 +41,13 @@ export interface PaginatedResponse<T> {
     limit: number;
     totalPages: number;
   };
+}
+
+function unwrapDataEnvelope<T>(payload: T | { data: T }): T {
+  if (typeof payload === 'object' && payload !== null && 'data' in payload) {
+    return payload.data;
+  }
+  return payload;
 }
 
 /** Why the client stopped issuing new API calls (first 401/403 wins). */
@@ -2483,14 +2510,9 @@ class ApiClient {
     return response.data as any;
   }
 
-  async getUser(id: number) {
-    const response = await this.request(`/users/${id}`);
-
-    // Return the user data directly
-    if (response.data) {
-      return response.data;
-    }
-    return response;
+  async getUser(id: number): Promise<UserType> {
+    const response = await this.request<UserType>(`/users/${id}`);
+    return response.data;
   }
 
   async getUserDetails(id: number) {
@@ -2774,7 +2796,7 @@ class ApiClient {
     course_id?: string;
     user_id?: string;
     academy_id?: number;
-  }) {
+  }): Promise<EnrollmentListResponse> {
     const queryParams = new URLSearchParams();
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -2787,14 +2809,13 @@ class ApiClient {
     const queryString = queryParams.toString();
     const url = queryString ? `/enrollments?${queryString}` : '/enrollments';
 
-    const response = await this.request(url);
-    const payload = response.data as any;
-
-    if (payload?.status === 'ok' && payload?.data) {
-      return payload.data;
-    }
-
-    return payload;
+    const response = await this.request<
+      | Enrollment[]
+      | EnrollmentListResponse
+      | { data: Enrollment[] | EnrollmentListResponse }
+    >(url);
+    const payload = unwrapDataEnvelope(response.data);
+    return Array.isArray(payload) ? { enrollments: payload } : payload;
   }
 
   async getEnrollment(id: number) {
@@ -4003,16 +4024,17 @@ class ApiClient {
     limit?: number;
     lesson_id?: number;
     course_id?: number;
-  }) {
+  }): Promise<AssignmentListResponse> {
     const qs = new URLSearchParams();
     if (params)
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined) qs.append(k, String(v));
       });
     const url = qs.toString() ? `/assignments?${qs}` : '/assignments';
-    const res = await this.request(url);
-    const payload = res.data as any;
-    return payload?.data ?? payload;
+    const res = await this.request<
+      AssignmentListResponse | { data: AssignmentListResponse }
+    >(url);
+    return unwrapDataEnvelope(res.data);
   }
 
   async createAssignment(data: {
@@ -4022,12 +4044,14 @@ class ApiClient {
     due_date?: string;
     max_score?: number;
     is_required?: boolean;
-  }) {
-    const res = await this.request('/assignments', {
+  }): Promise<LearningAssignment> {
+    const res = await this.request<
+      LearningAssignment | { data: LearningAssignment }
+    >('/assignments', {
       method: 'POST',
       body: JSON.stringify(data)
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapDataEnvelope(res.data);
   }
 
   async updateAssignment(
@@ -4039,12 +4063,14 @@ class ApiClient {
       max_score: number;
       is_required: boolean;
     }>
-  ) {
-    const res = await this.request(`/assignments/${id}`, {
+  ): Promise<LearningAssignment> {
+    const res = await this.request<
+      LearningAssignment | { data: LearningAssignment }
+    >(`/assignments/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data)
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapDataEnvelope(res.data);
   }
 
   async getSubmissions(params?: {
@@ -4053,8 +4079,8 @@ class ApiClient {
     assignment_id?: number;
     profile_id?: number;
     enrollment_id?: number;
-    status?: string;
-  }) {
+    status?: 'DRAFT' | 'SUBMITTED' | 'GRADED' | 'REJECTED';
+  }): Promise<SubmissionListResponse> {
     const qs = new URLSearchParams();
     if (params)
       Object.entries(params).forEach(([k, v]) => {
@@ -4063,20 +4089,198 @@ class ApiClient {
     const url = qs.toString()
       ? `/assignments/submissions?${qs}`
       : '/assignments/submissions';
-    const res = await this.request(url);
-    const payload = res.data as any;
-    return payload?.data ?? payload;
+    const res = await this.request<
+      SubmissionListResponse | { data: SubmissionListResponse }
+    >(url);
+    return unwrapDataEnvelope(res.data);
   }
 
   async gradeSubmission(
     submissionId: number,
     data: { score: number; feedback?: string }
-  ) {
-    const res = await this.request(
-      `/assignments/submissions/${submissionId}/grade`,
+  ): Promise<AssignmentSubmission> {
+    const res = await this.request<
+      AssignmentSubmission | { data: AssignmentSubmission }
+    >(`/assignments/submissions/${submissionId}/grade`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return unwrapDataEnvelope(res.data);
+  }
+
+  // ─── Learning record ───────────────────────────────────────────────────────
+
+  async getLearningTimeline(params?: {
+    profile_id?: string;
+    enrollment_id?: string;
+    course_id?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<LearningTimelineResponse> {
+    const qs = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) qs.append(key, String(value));
+      });
+    }
+    const url = qs.toString()
+      ? `/learning-record/timeline?${qs}`
+      : '/learning-record/timeline';
+    const res = await this.request<
+      LearningTimelineResponse | { data: LearningTimelineResponse }
+    >(url);
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getLearningSummary(params?: {
+    profile_id?: string;
+    course_id?: string;
+  }): Promise<LearningSummaryResponse> {
+    const qs = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) qs.append(key, String(value));
+      });
+    }
+    const url = qs.toString()
+      ? `/learning-record/summary?${qs}`
+      : '/learning-record/summary';
+    const res = await this.request<
+      LearningSummaryResponse | { data: LearningSummaryResponse }
+    >(url);
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getLearningOpsQueue(params?: {
+    course_id?: string;
+    inactive_days?: number;
+    low_score_threshold?: number;
+  }): Promise<OpsQueueResponse> {
+    const qs = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) qs.append(key, String(value));
+      });
+    }
+    const url = qs.toString()
+      ? `/learning-record/ops/queue?${qs}`
+      : '/learning-record/ops/queue';
+    const res = await this.request<
+      OpsQueueResponse | { data: OpsQueueResponse }
+    >(url);
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async createInterventionNote(data: {
+    profile_id: string;
+    note: string;
+    follow_up_at?: string;
+    course_id?: string;
+    enrollment_id?: string;
+  }): Promise<{ id: string; created_at: string }> {
+    const res = await this.request<
+      | { id: string; created_at: string }
+      | { data: { id: string; created_at: string } }
+    >('/learning-record/ops/intervention-notes', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return unwrapDataEnvelope(res.data);
+  }
+
+  // ─── Tutoring ──────────────────────────────────────────────────────────────
+
+  async createTutoringOffer(
+    data: CreateTutoringOfferPayload
+  ): Promise<TutoringOffer> {
+    const res = await this.request<TutoringOffer | { data: TutoringOffer }>(
+      '/tutoring/offers',
+      { method: 'POST', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async createTutoringEngagement(
+    data: CreateTutoringEngagementPayload
+  ): Promise<TutoringEngagement> {
+    const res = await this.request<
+      TutoringEngagement | { data: TutoringEngagement }
+    >('/tutoring/engagements', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getTutoringEngagements(params?: {
+    course_id?: string;
+  }): Promise<TutoringEngagement[]> {
+    const qs = new URLSearchParams();
+    if (params?.course_id) qs.append('course_id', params.course_id);
+    const url = qs.toString()
+      ? `/tutoring/engagements?${qs}`
+      : '/tutoring/engagements';
+    const res = await this.request<
+      TutoringEngagement[] | { data: TutoringEngagement[] }
+    >(url);
+    const payload = unwrapDataEnvelope(res.data);
+    return Array.isArray(payload) ? payload : [];
+  }
+
+  async updateLessonDownloadPolicy(
+    lessonId: string,
+    data: UpdateLessonDownloadPolicyPayload
+  ): Promise<LessonDownloadPolicy> {
+    const res = await this.request<
+      LessonDownloadPolicy | { data: LessonDownloadPolicy }
+    >(`/tutoring/lessons/${lessonId}/download-policy`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async scheduleTutoringSession(
+    data: ScheduleTutoringSessionPayload
+  ): Promise<TutoringSession> {
+    const res = await this.request<TutoringSession | { data: TutoringSession }>(
+      '/tutoring/sessions',
+      { method: 'POST', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async rescheduleTutoringSession(
+    sessionId: string,
+    data: RescheduleTutoringSessionPayload
+  ): Promise<TutoringSession> {
+    const res = await this.request<TutoringSession | { data: TutoringSession }>(
+      `/tutoring/sessions/${sessionId}/reschedule`,
       { method: 'PATCH', body: JSON.stringify(data) }
     );
-    return (res.data as any)?.data ?? res.data;
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async cancelTutoringSession(
+    sessionId: string,
+    data?: { reason?: string }
+  ): Promise<TutoringSession> {
+    const res = await this.request<TutoringSession | { data: TutoringSession }>(
+      `/tutoring/sessions/${sessionId}/cancel`,
+      { method: 'PATCH', body: JSON.stringify(data ?? {}) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async markTutoringAttendance(
+    sessionId: string,
+    data: { profile_id: string; status?: TutoringAttendanceStatus }
+  ): Promise<unknown> {
+    const res = await this.request(
+      `/tutoring/sessions/${sessionId}/attendance`,
+      { method: 'POST', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
   }
 
   // ─── Manual Enrollment ─────────────────────────────────────────────────────

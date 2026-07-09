@@ -5,6 +5,8 @@ import { useCategoriesStore } from '@/lib/store';
 import useLessonForm from '@/components/lesson/useLessonForm';
 import LessonFormPage from '@/components/lesson/LessonFormPage';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { QuizBuilder } from '@/components/quiz/quiz-builder';
+import { LessonDownloadPolicyEditor } from '@/components/lesson/lesson-download-policy-editor';
 
 export default function EditLessonPage() {
   const { t } = useTranslation();
@@ -67,17 +69,35 @@ export default function EditLessonPage() {
   }
 
   return (
-    <LessonFormPage
-      initialValues={initialValues}
-      categories={categories}
-      isSubmitting={isSubmitting}
-      onSubmit={onSubmit}
-      onCancel={() => window.history.back()}
-      season={season}
-      course={course}
-      isEdit={isEdit}
-      lesson={lesson}
-      onLiveSessionSaved={refetch}
-    />
+    <div className="space-y-8">
+      <LessonFormPage
+        initialValues={initialValues}
+        categories={categories}
+        isSubmitting={isSubmitting}
+        onSubmit={onSubmit}
+        onCancel={() => window.history.back()}
+        season={season}
+        course={course}
+        isEdit={isEdit}
+        lesson={lesson}
+        onLiveSessionSaved={refetch}
+      />
+      {lesson && (
+        <section
+          className="container mx-auto pb-8"
+          aria-label={t('downloadPolicy.title')}
+        >
+          <LessonDownloadPolicyEditor lesson={lesson} />
+        </section>
+      )}
+      {lesson?.lesson_type === 'QUIZ' && (
+        <section
+          className="container mx-auto pb-8"
+          aria-label={t('quiz.manager')}
+        >
+          <QuizBuilder lessonId={lesson.id} />
+        </section>
+      )}
+    </div>
   );
 }

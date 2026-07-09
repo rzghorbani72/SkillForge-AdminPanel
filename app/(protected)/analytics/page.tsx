@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   Area,
@@ -22,7 +21,7 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import { Calendar, DollarSign, Eye, Filter, Star, Users } from 'lucide-react';
+import { DollarSign, Eye, Star, Users } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from './_hooks/use-analytics-data';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -45,16 +44,15 @@ export default function AnalyticsPage() {
   const { t, language } = useTranslation();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
   const currentAcademy = useCurrentAcademy();
-  const locale = 'fa-IR';
-
-  if (process.env.NODE_ENV === 'development' && currentAcademy) {
-    console.log('Academy currency config:', {
-      currency: currentAcademy.currency,
-      currency_symbol: currentAcademy.currency_symbol,
-      currency_position: currentAcademy.currency_position,
-      country_code: currentAcademy.country_code
-    });
-  }
+  const locale =
+    language === 'fa'
+      ? 'fa-IR'
+      : language === 'ar'
+        ? 'ar'
+        : language === 'tr'
+          ? 'tr'
+          : 'en';
+  const isRtl = language === 'fa' || language === 'ar';
 
   const { revenueTrend, totalRevenue, totalEnrollments, activeEnrollments } =
     useMemo(() => {
@@ -166,17 +164,16 @@ export default function AnalyticsPage() {
     return courses
       .map((course) => ({
         name: course.title,
-        students: course.students_count ?? course?.enrollments_count ?? 0,
-        revenue: (course.students_count ?? 0) * 9900
+        students: course.students_count ?? course?.enrollments_count ?? 0
       }))
       .sort((a, b) => b.students - a.students)
       .slice(0, 5);
   }, [courses]);
 
-  const revenueLeader = useMemo(
+  const enrollmentLeader = useMemo(
     () =>
       topCourses.length > 0
-        ? Math.max(...topCourses.map((course) => course.revenue))
+        ? Math.max(...topCourses.map((course) => course.students))
         : 0,
     [topCourses]
   );
@@ -197,8 +194,8 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
-      <div className="flex items-center justify-between">
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
+      <div>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             {t('analytics.overview')}
@@ -206,16 +203,6 @@ export default function AnalyticsPage() {
           <p className="text-muted-foreground">
             {t('analytics.overviewDescription')}
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Calendar className="me-2 h-4 w-4" />
-            {t('analytics.last30Days')}
-          </Button>
-          <Button variant="outline">
-            <Filter className="me-2 h-4 w-4" />
-            {t('analytics.export')}
-          </Button>
         </div>
       </div>
 
@@ -389,20 +376,13 @@ export default function AnalyticsPage() {
                 </div>
                 <div className="flex w-full flex-col gap-2 md:w-64">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{t('analytics.revenue')}</span>
-                    <Badge variant="outline">
-                      {formatCurrencyWithStore(
-                        course.revenue,
-                        currentAcademy,
-                        100,
-                        language
-                      )}
-                    </Badge>
+                    <span>{t('analytics.totalEnrollments')}</span>
+                    <Badge variant="outline">{course.students}</Badge>
                   </div>
                   <Progress
                     value={
-                      revenueLeader > 0
-                        ? Math.round((course.revenue / revenueLeader) * 100)
+                      enrollmentLeader > 0
+                        ? Math.round((course.students / enrollmentLeader) * 100)
                         : 0
                     }
                     className="h-2"

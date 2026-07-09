@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { QuizGrading } from './quiz-grading';
 
 type QType = 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'SHORT_TEXT';
 
@@ -46,6 +48,8 @@ const BLANK_OPTIONS = () => [
 
 /** Teacher quiz authoring: create the quiz, add/remove questions, publish. */
 export function QuizBuilder({ lessonId }: QuizBuilderProps) {
+  const { t, language } = useTranslation();
+  const isRtl = language === 'fa' || language === 'ar';
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +88,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
       await fn();
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Action failed');
+      setError(e instanceof Error ? e.message : t('quiz.actionFailed'));
     }
   };
 
@@ -117,25 +121,28 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
   const togglePublish = () =>
     run(() => apiClient.setQuizPublished(quiz!.id, !quiz!.is_published));
 
-  if (loading) return <p className="text-sm text-muted-foreground">Loading…</p>;
+  if (loading)
+    return (
+      <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+    );
 
   if (!quiz) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Create a quiz for this lesson</CardTitle>
+          <CardTitle>{t('quiz.createForLesson')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Title</Label>
+            <Label>{t('common.title')}</Label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Quiz title"
+              placeholder={t('quiz.titlePlaceholder')}
             />
           </div>
           <div className="space-y-2">
-            <Label>Passing score</Label>
+            <Label>{t('quiz.passingScore')}</Label>
             <Input
               type="number"
               min={0}
@@ -145,7 +152,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button onClick={createQuiz} disabled={title.trim().length < 2}>
-            Create quiz
+            {t('quiz.create')}
           </Button>
         </CardContent>
       </Card>
@@ -156,26 +163,29 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
   const hasAttemptsLock = false; // structural edits are blocked server-side once attempts exist
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <Card>
         <CardHeader className="flex-row items-center justify-between">
           <div>
             <CardTitle>{quiz.title}</CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">
-              {quiz.Question.length} questions · {totalPoints} pts · passing{' '}
-              {quiz.passing_score}
+              {t('quiz.summary', {
+                questions: quiz.Question.length,
+                points: totalPoints,
+                passing: quiz.passing_score
+              })}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant={quiz.is_published ? 'default' : 'outline'}>
-              {quiz.is_published ? 'Published' : 'Draft'}
+              {quiz.is_published ? t('courses.published') : t('courses.draft')}
             </Badge>
             <Button
               size="sm"
               variant={quiz.is_published ? 'outline' : 'default'}
               onClick={togglePublish}
             >
-              {quiz.is_published ? 'Unpublish' : 'Publish'}
+              {quiz.is_published ? t('quiz.unpublish') : t('quiz.publish')}
             </Button>
           </div>
         </CardHeader>
@@ -189,7 +199,8 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                 <p className="text-sm font-medium">
                   {i + 1}. {q.prompt}{' '}
                   <span className="text-xs text-muted-foreground">
-                    ({q.type} · {q.points} pts)
+                    ({t(`quiz.type.${q.type}`)} ·{' '}
+                    {t('quiz.pointsValue', { count: q.points })})
                   </span>
                 </p>
                 {q.type === 'MULTIPLE_CHOICE' && (
@@ -204,7 +215,8 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                 )}
                 {q.type === 'TRUE_FALSE' && (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Answer: {q.correct_boolean ? 'True' : 'False'}
+                    {t('quiz.answer')}:{' '}
+                    {q.correct_boolean ? t('common.yes') : t('common.no')}
                   </p>
                 )}
               </div>
@@ -212,6 +224,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                 size="sm"
                 variant="ghost"
                 onClick={() => deleteQuestion(q.id)}
+                aria-label={t('quiz.deleteQuestion')}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -219,7 +232,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
           ))}
           {quiz.Question.length === 0 && (
             <p className="text-sm text-muted-foreground">
-              No questions yet — add the first below.
+              {t('quiz.noQuestions')}
             </p>
           )}
         </CardContent>
@@ -227,24 +240,26 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Add question</CardTitle>
+          <CardTitle>{t('quiz.addQuestion')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Type</Label>
+              <Label>{t('quiz.questionType')}</Label>
               <select
                 value={qType}
                 onChange={(e) => setQType(e.target.value as QType)}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="MULTIPLE_CHOICE">Multiple choice</option>
-                <option value="TRUE_FALSE">True / False</option>
-                <option value="SHORT_TEXT">Short text</option>
+                <option value="MULTIPLE_CHOICE">
+                  {t('quiz.type.MULTIPLE_CHOICE')}
+                </option>
+                <option value="TRUE_FALSE">{t('quiz.type.TRUE_FALSE')}</option>
+                <option value="SHORT_TEXT">{t('quiz.type.SHORT_TEXT')}</option>
               </select>
             </div>
             <div className="space-y-2">
-              <Label>Points</Label>
+              <Label>{t('quiz.points')}</Label>
               <Input
                 type="number"
                 min={1}
@@ -255,7 +270,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>Prompt</Label>
+            <Label>{t('quiz.prompt')}</Label>
             <Textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -265,7 +280,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
 
           {qType === 'MULTIPLE_CHOICE' && (
             <div className="space-y-2">
-              <Label>Options (select the one correct answer)</Label>
+              <Label>{t('quiz.optionsHelp')}</Label>
               {options.map((o, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <input
@@ -287,7 +302,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                         )
                       )
                     }
-                    placeholder={`Option ${idx + 1}`}
+                    placeholder={t('quiz.optionNumber', { number: idx + 1 })}
                   />
                   {options.length > 2 && (
                     <Button
@@ -298,6 +313,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                       }
                     >
                       <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">{t('common.delete')}</span>
                     </Button>
                   )}
                 </div>
@@ -312,14 +328,14 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                   ])
                 }
               >
-                <Plus className="mr-1 h-4 w-4" /> Add option
+                <Plus className="me-1 h-4 w-4" /> {t('quiz.addOption')}
               </Button>
             </div>
           )}
 
           {qType === 'TRUE_FALSE' && (
             <div className="space-y-2">
-              <Label>Correct answer</Label>
+              <Label>{t('quiz.correctAnswer')}</Label>
               <div className="flex gap-4">
                 {[true, false].map((v) => (
                   <label
@@ -332,7 +348,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                       checked={tfAnswer === v}
                       onChange={() => setTfAnswer(v)}
                     />
-                    {v ? 'True' : 'False'}
+                    {v ? t('common.yes') : t('common.no')}
                   </label>
                 ))}
               </div>
@@ -344,8 +360,16 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
             onClick={addQuestion}
             disabled={prompt.trim().length < 1 || hasAttemptsLock}
           >
-            <Plus className="mr-1 h-4 w-4" /> Add question
+            <Plus className="me-1 h-4 w-4" /> {t('quiz.addQuestion')}
           </Button>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('quiz.attemptReview')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <QuizGrading quizId={quiz.id} />
         </CardContent>
       </Card>
     </div>

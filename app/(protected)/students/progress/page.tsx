@@ -25,6 +25,9 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { Enrollment } from '@/types/api';
 import { ChartLine, Search, Target } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import Link from '@/components/ui/link';
+import { Button } from '@/components/ui/button';
+import type { EnrollmentListResponse } from '@/types/learning-operations';
 
 interface PaginationInfo {
   page: number;
@@ -40,6 +43,7 @@ type StageFilter = 'all' | 'on-track' | 'lagging' | 'completed';
 
 export default function StudentProgressPage() {
   const { t, language } = useTranslation();
+  const isRtl = language === 'fa' || language === 'ar';
 
   const STATUS_OPTIONS: Array<{ label: string; value: StatusFilter }> = [
     { label: t('students.allStatuses'), value: 'all' },
@@ -74,10 +78,8 @@ export default function StudentProgressPage() {
         search: searchTerm || undefined
       });
 
-      const payload = response as any;
-      const list = Array.isArray(payload)
-        ? payload
-        : ((payload?.enrollments as Enrollment[]) ?? []);
+      const payload: EnrollmentListResponse = response;
+      const list = payload.enrollments ?? [];
 
       setEnrollments(list);
 
@@ -156,7 +158,7 @@ export default function StudentProgressPage() {
   ).length;
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -354,6 +356,13 @@ export default function StudentProgressPage() {
                           <span>{t('students.progress')}</span>
                           <span>{enrollment.progressValue}%</span>
                         </div>
+                        {enrollment.user?.id && (
+                          <Button asChild size="sm" variant="ghost">
+                            <Link href={`/students/${enrollment.user.id}`}>
+                              {t('learningOperations.openWorkspace')}
+                            </Link>
+                          </Button>
+                        )}
                       </div>
                     </div>
                   );

@@ -9,6 +9,7 @@ export interface NavItem {
   icon?: IconType;
   label?: string;
   description?: string;
+  badge?: string | number;
   children?: NavItem[];
   /** Section label rendered above this item as a group header */
   section?: string;

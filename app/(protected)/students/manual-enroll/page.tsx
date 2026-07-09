@@ -25,12 +25,13 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { CheckCircle, CreditCard, UserPlus } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import type { ApiPagination } from '@/types/learning-operations';
 
 interface Enrollment {
-  id: number;
+  id: string | number;
   status: string;
   enrolled_at: string;
-  progress_percent: number;
+  progress_percent?: number;
   Course?: { id: number; title: string };
   Profile?: { id: number; display_name: string };
   Payment?: {
@@ -44,7 +45,7 @@ interface Enrollment {
 export default function ManualEnrollPage() {
   const { t } = useTranslation();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [pagination, setPagination] = useState<any>(null);
+  const [pagination, setPagination] = useState<ApiPagination | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 

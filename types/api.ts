@@ -403,6 +403,10 @@ export interface Lesson {
   is_published: boolean;
   is_free: boolean;
   lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
+  allow_download_free?: boolean;
+  allow_download_enrollment?: boolean;
+  allow_download_subscription?: boolean;
+  allow_download_tutoring?: boolean;
   created_at: string;
   updated_at: string;
   LiveSession?: LiveSession | null;
@@ -495,7 +499,7 @@ export interface CourseTag {
 
 // Enrollment and Progress Types
 export interface Enrollment {
-  id: string;
+  id: string | number;
   user_id: string;
   course_id: string;
   status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';

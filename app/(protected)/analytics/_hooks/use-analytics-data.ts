@@ -13,6 +13,23 @@ export interface AnalyticsSnapshots {
   refresh: () => void;
 }
 
+function normalizeList<T>(payload: unknown, key?: string): T[] {
+  if (Array.isArray(payload)) return payload as T[];
+  if (typeof payload !== 'object' || payload === null) return [];
+
+  if (key && key in payload) {
+    const keyedValue = (payload as Record<string, unknown>)[key];
+    return Array.isArray(keyedValue) ? (keyedValue as T[]) : [];
+  }
+
+  if ('data' in payload) {
+    const data = (payload as Record<string, unknown>).data;
+    return Array.isArray(data) ? (data as T[]) : [];
+  }
+
+  return [];
+}
+
 export function useAnalyticsData(): AnalyticsSnapshots {
   const [courses, setCourses] = useState<Course[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
@@ -41,26 +58,16 @@ export function useAnalyticsData(): AnalyticsSnapshots {
         if (!isMounted) return;
 
         if (coursesResponse.status === 'fulfilled') {
-          const payload = coursesResponse.value as any;
-          const list = Array.isArray(payload?.courses)
-            ? (payload.courses as Course[])
-            : Array.isArray(payload)
-              ? (payload as Course[])
-              : [];
-          setCourses(list);
+          setCourses(normalizeList<Course>(coursesResponse.value, 'courses'));
         } else {
           console.error('Failed to fetch courses:', coursesResponse.reason);
           setCourses([]);
         }
 
         if (enrollmentsResponse.status === 'fulfilled') {
-          const payload = enrollmentsResponse.value as any;
-          const list = Array.isArray(payload)
-            ? (payload as Enrollment[])
-            : Array.isArray(payload?.data)
-              ? (payload.data as Enrollment[])
-              : [];
-          setEnrollments(list);
+          setEnrollments(
+            normalizeList<Enrollment>(enrollmentsResponse.value, 'enrollments')
+          );
         } else {
           console.error(
             'Failed to fetch enrollments:',
@@ -70,13 +77,9 @@ export function useAnalyticsData(): AnalyticsSnapshots {
         }
 
         if (paymentsResponse.status === 'fulfilled') {
-          const payload = paymentsResponse.value as any;
-          const list = Array.isArray(payload)
-            ? (payload as Payment[])
-            : Array.isArray(payload?.data)
-              ? (payload.data as Payment[])
-              : [];
-          setPayments(list);
+          setPayments(
+            normalizeList<Payment>(paymentsResponse.value, 'payments')
+          );
         } else {
           console.error('Failed to fetch payments:', paymentsResponse.reason);
           setPayments([]);

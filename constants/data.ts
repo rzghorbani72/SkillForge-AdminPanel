@@ -204,6 +204,63 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'Students',
+    href: '/students',
+    icon: 'graduationCap' as IconType,
+    label: 'students',
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'learning',
+    children: [
+      {
+        title: 'Students',
+        href: '/students?role=STUDENT',
+        label: 'all-students'
+      },
+      {
+        title: 'Progress',
+        href: '/students/progress',
+        label: 'progress'
+      }
+    ]
+  },
+  {
+    title: 'Assignments',
+    href: '/assignments',
+    icon: 'bookOpen' as IconType,
+    label: 'assignments',
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'learning'
+  },
+  {
+    title: 'Ops Queue',
+    href: '/learning/ops-queue',
+    icon: 'trendingUp' as IconType,
+    label: 'opsQueue',
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'learning'
+  },
+  {
+    title: 'Tutoring',
+    href: '/tutoring',
+    icon: 'userPlus' as IconType,
+    label: 'tutoring',
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'learning'
+  },
+  {
+    title: 'Analytics',
+    href: '/analytics',
+    icon: 'barChart' as IconType,
+    label: 'analytics',
+    roles: ['ADMIN', 'SUPPORT', 'MANAGER'],
+    scope: 'academy',
+    section: 'learning'
+  },
+  {
     title: 'Marketing',
     href: '/affiliates',
     icon: 'network' as IconType,

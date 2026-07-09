@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface Attempt {
   id: string;
@@ -41,7 +42,10 @@ const statusVariant = (s: Attempt['status']) =>
 
 /** Teacher review/grading screen: pick an attempt, score short-text answers, finalize, discuss. */
 export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
+  const { t, language } = useTranslation();
+  const isRtl = language === 'fa' || language === 'ar';
   const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<AttemptDetail | null>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [feedback, setFeedback] = useState('');
@@ -49,12 +53,15 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
 
   const loadAttempts = useCallback(async () => {
     try {
+      setLoading(true);
       const list = await apiClient.listQuizAttempts<Attempt[]>(quizId);
       setAttempts(list);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load attempts');
+      setError(e instanceof Error ? e.message : t('quiz.loadAttemptsFailed'));
+    } finally {
+      setLoading(false);
     }
-  }, [quizId]);
+  }, [quizId, t]);
 
   useEffect(() => {
     void loadAttempts();
@@ -70,7 +77,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
       detail.Answer.forEach((a) => (initial[a.id] = a.awarded_points));
       setScores(initial);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to open attempt');
+      setError(e instanceof Error ? e.message : t('quiz.openAttemptFailed'));
     }
   };
 
@@ -89,19 +96,29 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
       await loadAttempts();
       await openAttempt(selected.id);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to finalize');
+      setError(e instanceof Error ? e.message : t('quiz.finalizeFailed'));
     }
   };
 
   return (
-    <div className="grid gap-6 md:grid-cols-[280px_1fr]">
+    <div
+      className="grid gap-6 md:grid-cols-[280px_1fr]"
+      dir={isRtl ? 'rtl' : 'ltr'}
+    >
       <Card>
         <CardHeader>
-          <CardTitle>Attempts</CardTitle>
+          <CardTitle>{t('quiz.attempts')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {attempts.length === 0 && (
-            <p className="text-sm text-muted-foreground">No attempts yet.</p>
+          {loading && (
+            <p className="text-sm text-muted-foreground">
+              {t('common.loading')}
+            </p>
+          )}
+          {!loading && attempts.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              {t('quiz.noAttempts')}
+            </p>
           )}
           {attempts.map((a) => (
             <button
@@ -109,12 +126,14 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
               onClick={() => openAttempt(a.id)}
               className={`flex w-full items-center justify-between rounded-md border p-2 text-left text-sm ${selected?.id === a.id ? 'border-primary' : ''}`}
             >
-              <span>{a.Profile?.display_name ?? 'Student'}</span>
+              <span>
+                {a.Profile?.display_name ?? t('students.unknownStudent')}
+              </span>
               <Badge variant={statusVariant(a.status)}>
                 {a.status === 'PENDING_REVIEW'
-                  ? 'Review'
+                  ? t('quiz.review')
                   : a.status === 'GRADED'
-                    ? 'Graded'
+                    ? t('assignmentsPage.graded')
                     : '…'}
               </Badge>
             </button>
@@ -126,7 +145,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
         {error && <p className="text-sm text-destructive">{error}</p>}
         {!selected && (
           <p className="text-sm text-muted-foreground">
-            Select an attempt to grade.
+            {t('quiz.selectAttempt')}
           </p>
         )}
 
@@ -135,7 +154,8 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
             <Card>
               <CardHeader className="flex-row items-center justify-between">
                 <CardTitle>
-                  {selected.Profile?.display_name ?? 'Student'}
+                  {selected.Profile?.display_name ??
+                    t('students.unknownStudent')}
                 </CardTitle>
                 <Badge variant={statusVariant(selected.status)}>
                   {selected.score} / {selected.max_score}
@@ -144,18 +164,20 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
               <CardContent className="space-y-4">
                 {shortAnswers.length === 0 && (
                   <p className="text-sm text-muted-foreground">
-                    No short-text answers — auto-graded.
+                    {t('quiz.autoGraded')}
                   </p>
                 )}
                 {shortAnswers.map((a) => (
                   <div key={a.id} className="space-y-2 rounded-md border p-3">
                     <p className="text-sm font-medium">{a.Question?.prompt}</p>
                     <p className="whitespace-pre-wrap rounded bg-muted p-2 text-sm">
-                      {a.answer_text || <em>No answer</em>}
+                      {a.answer_text || <em>{t('quiz.noAnswer')}</em>}
                     </p>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">
-                        Score (max {a.Question?.points}):
+                        {t('quiz.scoreMax', {
+                          max: a.Question?.points ?? 0
+                        })}
                       </span>
                       <Input
                         type="number"
@@ -180,10 +202,12 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
                       value={feedback}
                       onChange={(e) => setFeedback(e.target.value)}
                       rows={2}
-                      placeholder="Overall feedback (optional)"
+                      placeholder={t('quiz.feedbackPlaceholder')}
                       maxLength={2000}
                     />
-                    <Button onClick={finalize}>Finalize grade</Button>
+                    <Button onClick={finalize}>
+                      {t('quiz.finalizeGrade')}
+                    </Button>
                   </div>
                 )}
               </CardContent>
