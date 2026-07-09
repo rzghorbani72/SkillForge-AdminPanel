@@ -23,9 +23,20 @@ export interface PaginatedResponse<T> {
   };
 }
 
+/** Why the client stopped issuing new API calls (first 401/403 wins). */
+export type ApiPauseReason = 'session' | 'legal' | 'forbidden';
+
+export const LEGAL_CONSENT_REQUIRED_EVENT = 'mentoma:legal-consent-required';
+
+export type LegalConsentRequiredDetail = {
+  pending: { type: string; title: string; version: string }[];
+};
+
 class ApiClient {
   private isRefreshing: boolean = false;
   private refreshPromise: Promise<boolean> | null = null;
+  /** Blocks new fetches after the first auth/consent failure to avoid throttle storms. */
+  private pauseReason: ApiPauseReason | null = null;
 
   /** Resolve base URL per request so language switches apply immediately. */
   private get baseURL(): string {
@@ -33,6 +44,78 @@ class ApiClient {
   }
 
   constructor() {}
+
+  getPauseReason(): ApiPauseReason | null {
+    return this.pauseReason;
+  }
+
+  /** Clear the pause gate after legal accept (or a full page navigation). */
+  resumeRequests(): void {
+    this.pauseReason = null;
+  }
+
+  /**
+   * Pause non-allowlisted calls when pending legal docs are known
+   * (from status check or a 403 LEGAL_CONSENT_REQUIRED response).
+   */
+  pauseForLegalConsent(
+    pending: LegalConsentRequiredDetail['pending'] = []
+  ): void {
+    this.enterPause('legal', pending);
+  }
+
+  private enterPause(
+    reason: ApiPauseReason,
+    pending?: LegalConsentRequiredDetail['pending']
+  ): void {
+    // First pause wins. Allow legal→legal so we can refresh the pending payload/event.
+    if (
+      this.pauseReason !== null &&
+      !(this.pauseReason === 'legal' && reason === 'legal')
+    ) {
+      return;
+    }
+    this.pauseReason = reason;
+    if (
+      reason === 'legal' &&
+      typeof window !== 'undefined' &&
+      Array.isArray(pending) &&
+      pending.length > 0
+    ) {
+      window.dispatchEvent(
+        new CustomEvent<LegalConsentRequiredDetail>(
+          LEGAL_CONSENT_REQUIRED_EVENT,
+          { detail: { pending } }
+        )
+      );
+    }
+  }
+
+  private isAllowedDuringPause(endpoint: string): boolean {
+    if (this.isAuthFlowEndpoint(endpoint)) return true;
+    // Session bootstrap + legal accept/status must work while paused
+    if (endpoint.includes('/auth/me')) return true;
+    if (endpoint.includes('/legal/acceptances')) return true;
+    return false;
+  }
+
+  private throwIfPaused(endpoint: string): void {
+    if (!this.pauseReason || this.isAllowedDuringPause(endpoint)) return;
+
+    if (this.pauseReason === 'legal') {
+      const error = new Error('LEGAL_CONSENT_REQUIRED') as Error & {
+        code: string;
+      };
+      error.code = 'LEGAL_CONSENT_REQUIRED';
+      throw error;
+    }
+
+    if (this.pauseReason === 'session') {
+      throw new Error('Session expired. API calls paused.');
+    }
+
+    throw new Error('Request blocked after forbidden response.');
+  }
 
   /**
    * Attempt to refresh the access token using the refresh token cookie
@@ -120,6 +203,8 @@ class ApiClient {
     retryAfterRefresh: boolean = true,
     lang?: string | null
   ): Promise<ApiResponse<T>> {
+    this.throwIfPaused(endpoint);
+
     const url = `${lang ? getBrowserApiBaseUrl(lang) : this.baseURL}${endpoint}`;
 
     // SECURITY: JWT token is stored in HttpOnly cookie and sent automatically by browser
@@ -275,6 +360,9 @@ class ApiClient {
           (Array.isArray(rawMsg) ? rawMsg.join(', ') : rawMsg) ||
           t('error.sessionExpired', getCurrentLanguage());
 
+        // Pause further calls before redirect so parallel mounts do not hammer auth
+        this.enterPause('session');
+
         if (typeof window !== 'undefined') {
           toast.error(errorMessage);
           this.redirectToLogin();
@@ -283,7 +371,7 @@ class ApiClient {
         throw new Error(errorMessage);
       }
 
-      // Handle forbidden responses (403) - redirect to dashboard
+      // Handle forbidden responses (403) - legal consent modal or redirect to dashboard
       if (response.status === 403) {
         const payload =
           data && typeof data.message === 'object' && data.message !== null
@@ -295,11 +383,15 @@ class ApiClient {
             'LEGAL_CONSENT_REQUIRED';
 
         if (legalConsentCode) {
-          const pending = (payload?.pending ??
+          const pendingRaw = (payload?.pending ??
             (data as Record<string, unknown> | null)?.pending) as unknown;
+          const pending = Array.isArray(pendingRaw)
+            ? (pendingRaw as LegalConsentRequiredDetail['pending'])
+            : [];
+          this.enterPause('legal', pending);
           const error = new Error('LEGAL_CONSENT_REQUIRED') as Error & {
             code: string;
-            pending: unknown;
+            pending: LegalConsentRequiredDetail['pending'];
           };
           error.code = 'LEGAL_CONSENT_REQUIRED';
           error.pending = pending;
@@ -339,6 +431,8 @@ class ApiClient {
         if (typeof window !== 'undefined') {
           const onAuthPage = isAuthPagePath(window.location.pathname);
           if (!isAuthFlowEndpoint && !onAuthPage) {
+            // Only pause when we redirect — silent 403s (e.g. role probes) must not lock the app
+            this.enterPause('forbidden');
             toast.error(errorMessage);
             this.redirectToDashboard();
           }

@@ -10,11 +10,7 @@ import { LegalConsentGate } from '@/components/legal/legal-consent-gate';
 import { useCategoriesStore } from '@/lib/store';
 import { useI18n } from '@/lib/i18n/provider';
 
-export function ProtectedLayoutWrapper({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+function ProtectedShell({ children }: { children: React.ReactNode }) {
   const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
   const hasFetchedCategories = useRef(false);
   const { direction } = useI18n();
@@ -26,21 +22,31 @@ export function ProtectedLayoutWrapper({
   }, [fetchCategories]);
 
   return (
-    <UserProvider>
-      <StoreProvider>
-        <LegalConsentGate>
-          <ThemeInitializer />
-          <div className="flex h-screen overflow-hidden" dir={direction}>
-            <Sidebar />
-            <main className="flex flex-1 flex-col overflow-hidden">
-              <Header />
-              <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
-                {children}
-              </div>
-            </main>
+    <StoreProvider>
+      <ThemeInitializer />
+      <div className="flex h-screen overflow-hidden" dir={direction}>
+        <Sidebar />
+        <main className="flex flex-1 flex-col overflow-hidden">
+          <Header />
+          <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
+            {children}
           </div>
-        </LegalConsentGate>
-      </StoreProvider>
+        </main>
+      </div>
+    </StoreProvider>
+  );
+}
+
+export function ProtectedLayoutWrapper({
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <UserProvider>
+      <LegalConsentGate>
+        <ProtectedShell>{children}</ProtectedShell>
+      </LegalConsentGate>
     </UserProvider>
   );
 }
