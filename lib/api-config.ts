@@ -19,6 +19,8 @@ export const API_DEVELOPMENT_DEFAULTS = {
 
 export const API_REWRITE_SOURCES = {
   current: `${API_VERSION_PATH}/:path*`,
+  /** /fa/v1/... or /en/v1/... — lang segment is forwarded to the backend */
+  langPrefixed: `/:lang/${API_VERSION_PATH.slice(1)}/:path*`,
   legacy: `${LEGACY_API_PATH}/:path*`
 } as const;
 

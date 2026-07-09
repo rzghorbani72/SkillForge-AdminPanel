@@ -1,23 +1,36 @@
 import {
-  API_DEVELOPMENT_DEFAULTS,
   API_VERSION_PATH,
   isLegacyApiPath,
   resolveBackendRewriteTarget,
   stripTrailingSlash
 } from './api-config';
+import { langApiVersionPath } from './api-lang';
+import { DEFAULT_LANGUAGE } from './i18n/config';
 import { resolveTrustedBackendBaseUrl } from './security/ssrf';
 
+function readPreferredLanguage(): string {
+  if (typeof window !== 'undefined') {
+    return (
+      window.localStorage.getItem('preferred_language') || DEFAULT_LANGUAGE
+    );
+  }
+  return DEFAULT_LANGUAGE;
+}
+
 /**
- * Browser calls use a same-origin path (/v1) so HttpOnly auth cookies are set on the panel host.
+ * Browser calls use a same-origin path (/fa/v1) so HttpOnly auth cookies are set on the panel host.
  * Server components/actions use an absolute backend URL (rewrite target or direct API).
  */
-export function getBrowserApiBaseUrl(): string {
+export function getBrowserApiBaseUrl(lang?: string | null): string {
+  const versionPath = langApiVersionPath(lang ?? readPreferredLanguage());
   const raw =
-    stripTrailingSlash(process.env.NEXT_PUBLIC_API_URL ?? '') ||
-    API_VERSION_PATH;
+    stripTrailingSlash(process.env.NEXT_PUBLIC_API_URL ?? '') || versionPath;
 
   if (process.env.NODE_ENV === 'development') {
-    return raw;
+    if (raw.startsWith('http://') || raw.startsWith('https://')) {
+      return raw.replace(/\/v1\/?$/, versionPath);
+    }
+    return versionPath;
   }
 
   if (
@@ -25,14 +38,20 @@ export function getBrowserApiBaseUrl(): string {
     raw.startsWith('https://') ||
     isLegacyApiPath(raw)
   ) {
-    return API_VERSION_PATH;
+    return versionPath;
+  }
+
+  if (raw === API_VERSION_PATH || raw.endsWith('/v1')) {
+    return versionPath;
   }
 
   return raw.startsWith('/') ? raw : `/${raw}`;
 }
 
-export function getServerApiBaseUrl(): string {
-  return resolveTrustedBackendBaseUrl();
+export function getServerApiBaseUrl(lang?: string | null): string {
+  const base = resolveTrustedBackendBaseUrl();
+  const versionPath = langApiVersionPath(lang ?? DEFAULT_LANGUAGE);
+  return base.replace(/\/v1\/?$/, versionPath);
 }
 
 export function getBackendRewriteTarget(): string {
@@ -47,3 +66,5 @@ export {
   LEGACY_API_PATH,
   API_PRODUCTION_DEFAULTS
 } from './api-config';
+
+export { normalizeApiLang, langApiVersionPath } from './api-lang';

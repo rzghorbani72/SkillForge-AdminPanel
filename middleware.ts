@@ -70,9 +70,15 @@ async function verifyJWT(
 }
 
 function shouldSkipPageAuth(pathname: string): boolean {
-  return SKIP_AUTH_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(prefix)
-  );
+  if (
+    SKIP_AUTH_PREFIXES.some(
+      (prefix) => pathname === prefix || pathname.startsWith(prefix)
+    )
+  ) {
+    return true;
+  }
+  // /fa/v1/... or /en/v1/... API rewrites
+  return /^\/[a-z]{2,5}\/v1(\/|$)/i.test(pathname);
 }
 
 function isPublicRoute(pathname: string): boolean {

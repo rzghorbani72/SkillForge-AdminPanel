@@ -61,7 +61,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     apiClient
-      .getLegalDocuments('fa')
+      .getLegalDocuments()
       .then((res) => {
         const list = Array.isArray(res.data) ? res.data : [];
         setLegalVersions((prev) => ({
@@ -144,7 +144,7 @@ export default function RegisterPage() {
       let termsVersion = legalVersions.terms;
       let privacyVersion = legalVersions.privacy;
       try {
-        const docsRes = await apiClient.getLegalDocuments('fa');
+        const docsRes = await apiClient.getLegalDocuments();
         const list = Array.isArray(docsRes.data) ? docsRes.data : [];
         termsVersion =
           list.find((d) => d.type === 'TERMS')?.version ?? termsVersion;

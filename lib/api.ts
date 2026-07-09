@@ -7,8 +7,6 @@ import { getBrowserApiBaseUrl } from './api-base-url';
 import { ApiResponseError } from './api-toast';
 import { isAuthPagePath } from './auth-routes';
 
-const API_BASE_URL = getBrowserApiBaseUrl();
-
 export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
@@ -26,13 +24,15 @@ export interface PaginatedResponse<T> {
 }
 
 class ApiClient {
-  private baseURL: string;
   private isRefreshing: boolean = false;
   private refreshPromise: Promise<boolean> | null = null;
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
+  /** Resolve base URL per request so language switches apply immediately. */
+  private get baseURL(): string {
+    return getBrowserApiBaseUrl();
   }
+
+  constructor() {}
 
   /**
    * Attempt to refresh the access token using the refresh token cookie
@@ -117,9 +117,10 @@ class ApiClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    retryAfterRefresh: boolean = true
+    retryAfterRefresh: boolean = true,
+    lang?: string | null
   ): Promise<ApiResponse<T>> {
-    const url = `${this.baseURL}${endpoint}`;
+    const url = `${lang ? getBrowserApiBaseUrl(lang) : this.baseURL}${endpoint}`;
 
     // SECURITY: JWT token is stored in HttpOnly cookie and sent automatically by browser
     // We no longer read tokens from localStorage to prevent XSS attacks
@@ -459,13 +460,13 @@ class ApiClient {
     });
   }
 
-  async getLegalDocuments(locale = 'fa') {
+  async getLegalDocuments(lang?: string) {
     return this.request<
       { type: string; version: string; title: string; published_at: string }[]
-    >(`/legal/documents?locale=${locale}`, { method: 'GET' });
+    >(`/legal/documents`, { method: 'GET' }, true, lang);
   }
 
-  async getLegalDocument(type: string, locale = 'fa') {
+  async getLegalDocument(type: string, lang?: string) {
     const res = await this.request<{
       title: string;
       body: string;
@@ -473,29 +474,34 @@ class ApiClient {
       type: string;
       locale: string;
     }>(
-      `/legal/documents/${encodeURIComponent(type)}?locale=${encodeURIComponent(locale)}`,
-      { method: 'GET' }
+      `/legal/documents/${encodeURIComponent(type)}`,
+      { method: 'GET' },
+      true,
+      lang
     );
     return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
 
-  async getLegalAcceptanceStatus(locale = 'fa') {
+  async getLegalAcceptanceStatus(lang?: string) {
     return this.request<{
       up_to_date: boolean;
       pending: { type: string; title: string; version: string }[];
-    }>(`/legal/acceptances/status?locale=${encodeURIComponent(locale)}`, {
-      method: 'GET'
-    });
+    }>(`/legal/acceptances/status`, { method: 'GET' }, true, lang);
   }
 
-  async acceptPlatformLegalDocuments(locale = 'fa') {
-    return this.request<{ accepted: string[] }>(`/legal/acceptances/platform`, {
-      method: 'POST',
-      body: JSON.stringify({ locale })
-    });
+  async acceptPlatformLegalDocuments(lang?: string) {
+    return this.request<{ accepted: string[] }>(
+      `/legal/acceptances/platform`,
+      {
+        method: 'POST',
+        body: JSON.stringify({})
+      },
+      true,
+      lang
+    );
   }
 
-  async getLegalAdminOverview(type: string, locale = 'fa') {
+  async getLegalAdminOverview(type: string, lang = 'fa') {
     const res = await this.request<{
       current: {
         id: string;
@@ -529,7 +535,10 @@ class ApiClient {
         content_hash: string;
       }[];
     }>(
-      `/legal/admin/documents/${encodeURIComponent(type)}?locale=${encodeURIComponent(locale)}`
+      `/legal/admin/documents/${encodeURIComponent(type)}`,
+      { method: 'GET' },
+      true,
+      lang
     );
     return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
@@ -538,6 +547,7 @@ class ApiClient {
     type: string,
     payload: { title: string; body: string; locale?: string }
   ) {
+    const lang = payload.locale;
     const res = await this.request<{
       id: string;
       type: string;
@@ -545,10 +555,15 @@ class ApiClient {
       title: string;
       body: string;
       status: string;
-    }>(`/legal/admin/documents/${encodeURIComponent(type)}/draft`, {
-      method: 'PUT',
-      body: JSON.stringify(payload)
-    });
+    }>(
+      `/legal/admin/documents/${encodeURIComponent(type)}/draft`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ title: payload.title, body: payload.body })
+      },
+      true,
+      lang
+    );
     return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
 
@@ -556,6 +571,7 @@ class ApiClient {
     type: string,
     payload: { version: string; locale?: string }
   ) {
+    const lang = payload.locale;
     const res = await this.request<{
       id: string;
       type: string;
@@ -566,10 +582,15 @@ class ApiClient {
       is_current: boolean;
       published_at: string | null;
       content_hash: string;
-    }>(`/legal/admin/documents/${encodeURIComponent(type)}/publish`, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
+    }>(
+      `/legal/admin/documents/${encodeURIComponent(type)}/publish`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ version: payload.version })
+      },
+      true,
+      lang
+    );
     return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
 
@@ -4670,4 +4691,4 @@ export interface GatewayRegistryStatus {
   implemented: boolean;
 }
 
-export const apiClient = new ApiClient(API_BASE_URL);
+export const apiClient = new ApiClient();

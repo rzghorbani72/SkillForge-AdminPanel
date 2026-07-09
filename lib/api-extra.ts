@@ -4,10 +4,8 @@
 
 import { getBrowserApiBaseUrl } from './api-base-url';
 
-const BASE = getBrowserApiBaseUrl();
-
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await fetch(`${getBrowserApiBaseUrl()}${path}`, {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',

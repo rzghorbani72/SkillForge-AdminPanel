@@ -48,6 +48,10 @@ const nextConfig: NextConfig = {
 
     return [
       {
+        source: API_REWRITE_SOURCES.langPrefixed,
+        destination: `${destination.replace(/\/v1\/?$/, '')}/:lang/v1/:path*`
+      },
+      {
         source: API_REWRITE_SOURCES.current,
         destination: `${destination}/:path*`
       },
@@ -69,6 +73,10 @@ const nextConfig: NextConfig = {
       {
         source: '/_next/:slug*',
         headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_APP }]
+      },
+      {
+        source: API_REWRITE_SOURCES.langPrefixed,
+        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_API }]
       },
       {
         source: API_REWRITE_SOURCES.legacy,
