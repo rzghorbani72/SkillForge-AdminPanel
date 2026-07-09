@@ -489,6 +489,9 @@ class AuthService {
         if (typeof window !== 'undefined') {
           window.localStorage.removeItem('user_state');
 
+          const { clearAcademyData } = await import('@/lib/store-utils');
+          clearAcademyData();
+
           // Clear Zustand stores
           const storeModule = await import('@/lib/store');
           storeModule.useUserStore.getState().reset();
@@ -506,6 +509,13 @@ class AuthService {
       this.persistSession(null);
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem('user_state');
+
+        try {
+          const { clearAcademyData } = await import('@/lib/store-utils');
+          clearAcademyData();
+        } catch (e) {
+          console.warn('Failed to clear academy cache:', e);
+        }
 
         // Clear Zustand stores even on error
         try {

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { logout } from '@/app/actions/auth';
+import { clearAcademyData } from '@/lib/store-utils';
 import { Building2, ChevronDown, LogOut, Settings, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -57,6 +58,7 @@ export function UserNav() {
 
   async function handleLogout() {
     setIsLoggingOut(true);
+    clearAcademyData();
     await logout();
     router.replace('/login');
   }

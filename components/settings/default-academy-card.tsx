@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -11,38 +11,20 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ErrorHandler } from '@/lib/error-handler';
-import { apiClient } from '@/lib/api';
 import { userPrefsApi } from '@/lib/api-extra';
+import { useStore } from '@/hooks/useStore';
 import { Loader2, Save } from 'lucide-react';
 import { MESSAGES } from '@/constants/messages';
 
 // Lets a multi-academy user pin their default academy. Backend uses this to
 // decide which academy to load first on next sign-in (Mig 1).
 
-type AcademyOpt = { id: number; name: string };
-
 export function DefaultAcademyCard() {
-  const [options, setOptions] = useState<AcademyOpt[]>([]);
+  const { academies, isLoading } = useStore();
   const [selected, setSelected] = useState<number | ''>('');
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await apiClient.getMyAcademies();
-        const list = (resp as any)?.data?.data ?? (resp as any)?.data ?? [];
-        const opts: AcademyOpt[] = Array.isArray(list)
-          ? list.map((x: any) => ({ id: x.id, name: x.name }))
-          : [];
-        setOptions(opts);
-      } catch (e) {
-        ErrorHandler.handleApiError(e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  const options = academies.map((a) => ({ id: a.id, name: a.name }));
 
   const save = async () => {
     setSaving(true);
@@ -63,7 +45,7 @@ export function DefaultAcademyCard() {
         <CardDescription>{MESSAGES.academy.defaultAcademyDesc}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {loading ? (
+        {isLoading ? (
           <div className="flex h-10 items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />{' '}
             {MESSAGES.academy.loadingAcademies}

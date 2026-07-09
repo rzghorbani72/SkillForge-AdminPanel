@@ -5,6 +5,7 @@ import Sidebar from '@/components/layout/sidebar';
 import Header from '@/components/layout/header';
 import { ThemeInitializer } from '@/components/providers/ThemeInitializer';
 import { UserProvider } from '@/components/providers/user-provider';
+import { StoreProvider } from '@/components/providers/store-provider';
 import { LegalConsentGate } from '@/components/legal/legal-consent-gate';
 import { useCategoriesStore } from '@/lib/store';
 import { useI18n } from '@/lib/i18n/provider';
@@ -26,18 +27,20 @@ export function ProtectedLayoutWrapper({
 
   return (
     <UserProvider>
-      <LegalConsentGate>
-        <ThemeInitializer />
-        <div className="flex h-screen overflow-hidden" dir={direction}>
-          <Sidebar />
-          <main className="flex flex-1 flex-col overflow-hidden">
-            <Header />
-            <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
-              {children}
-            </div>
-          </main>
-        </div>
-      </LegalConsentGate>
+      <StoreProvider>
+        <LegalConsentGate>
+          <ThemeInitializer />
+          <div className="flex h-screen overflow-hidden" dir={direction}>
+            <Sidebar />
+            <main className="flex flex-1 flex-col overflow-hidden">
+              <Header />
+              <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
+                {children}
+              </div>
+            </main>
+          </div>
+        </LegalConsentGate>
+      </StoreProvider>
     </UserProvider>
   );
 }
