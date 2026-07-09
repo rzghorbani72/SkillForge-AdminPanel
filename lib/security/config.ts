@@ -67,6 +67,21 @@ export function normalizeHostname(host: string): string {
   return trimmed.split(':')[0] ?? trimmed;
 }
 
+/**
+ * K8s/Darkube HTTP probes call the pod IP and send Host: <pod-ip>.
+ * Those must pass the trusted-host guard or readiness stays 403 forever.
+ */
+export function isClusterOrLoopbackHost(hostname: string): boolean {
+  const host = normalizeHostname(hostname);
+  if (!host) return false;
+  if (host === 'localhost' || host === '127.0.0.1' || host === '::1') {
+    return true;
+  }
+  if (/^10\./.test(host) || /^192\.168\./.test(host)) return true;
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(host)) return true;
+  return host.endsWith('.cluster.local') || host.endsWith('.svc');
+}
+
 export function isHostAllowed(
   hostname: string,
   allowlist: readonly string[]

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   getAllowedPanelHosts,
+  isClusterOrLoopbackHost,
   isHostAllowed,
   isHostUnderMentomaDomains,
   normalizeHostname
@@ -90,6 +91,7 @@ export function enforceTrustedHost(request: NextRequest): NextResponse | null {
 
   const hostname = normalizeHostname(host);
   if (
+    isClusterOrLoopbackHost(hostname) ||
     isHostAllowed(hostname, getAllowedPanelHosts()) ||
     isHostUnderMentomaDomains(hostname)
   ) {
