@@ -77,7 +77,17 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
             {t('legal.reacceptTitle')}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            {t('legal.reacceptDescription')}
+            {t('legal.reacceptDescriptionBefore')
+              ? `${t('legal.reacceptDescriptionBefore')} `
+              : null}
+            <Link href="/terms" className="underline hover:text-foreground">
+              {t('auth.termsOfService')}
+            </Link>{' '}
+            {t('legal.reacceptDescriptionMiddle')}{' '}
+            <Link href="/privacy" className="underline hover:text-foreground">
+              {t('auth.privacyPolicy')}
+            </Link>{' '}
+            {t('legal.reacceptDescriptionAfter')}
           </p>
 
           <ul className="mt-4 space-y-2 text-sm">

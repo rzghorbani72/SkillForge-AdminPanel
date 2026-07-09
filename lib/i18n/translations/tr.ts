@@ -213,8 +213,9 @@ export const tr = {
     lastUpdated: 'Son güncelleme',
     version: 'Sürüm',
     reacceptTitle: 'Güncellenmiş yasal belgeler',
-    reacceptDescription:
-      'Hizmet Şartları veya Gizlilik Politikası değişti. Devam etmek için inceleyip kabul edin.',
+    reacceptDescriptionBefore: '',
+    reacceptDescriptionMiddle: 'veya',
+    reacceptDescriptionAfter: 'değişti. Devam etmek için inceleyip kabul edin.',
     acceptAndContinue: 'Kabul et ve devam et',
     accepting: 'Kabul kaydediliyor...'
   },

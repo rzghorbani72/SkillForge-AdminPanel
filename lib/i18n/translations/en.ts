@@ -314,8 +314,10 @@ export const en = {
     lastUpdated: 'Last updated',
     version: 'Version',
     reacceptTitle: 'Updated legal documents',
-    reacceptDescription:
-      'Our Terms of Service or Privacy Policy changed. Review and accept to continue using the panel.',
+    reacceptDescriptionBefore: 'Our',
+    reacceptDescriptionMiddle: 'or',
+    reacceptDescriptionAfter:
+      'changed. Review and accept to continue using the panel.',
     acceptAndContinue: 'Accept and continue',
     accepting: 'Saving acceptance...'
   },

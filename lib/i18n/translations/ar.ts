@@ -210,8 +210,9 @@ export const ar = {
     lastUpdated: 'آخر تحديث',
     version: 'الإصدار',
     reacceptTitle: 'تحديث المستندات القانونية',
-    reacceptDescription:
-      'تم تحديث شروط الخدمة أو سياسة الخصوصية. راجعها واقبلها للمتابعة.',
+    reacceptDescriptionBefore: 'تم تحديث',
+    reacceptDescriptionMiddle: 'أو',
+    reacceptDescriptionAfter: '. راجعها واقبلها للمتابعة.',
     acceptAndContinue: 'أوافق وأتابع',
     accepting: 'جارٍ حفظ الموافقة...'
   },

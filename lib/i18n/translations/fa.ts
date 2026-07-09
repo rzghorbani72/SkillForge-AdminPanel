@@ -310,8 +310,10 @@ export const fa = {
     lastUpdated: 'آخرین به‌روزرسانی',
     version: 'نسخه',
     reacceptTitle: 'به‌روزرسانی اسناد حقوقی',
-    reacceptDescription:
-      'شرایط خدمات یا سیاست حریم خصوصی تغییر کرده است. برای ادامه استفاده از پنل، آن‌ها را مطالعه و بپذیرید.',
+    reacceptDescriptionBefore: '',
+    reacceptDescriptionMiddle: 'یا',
+    reacceptDescriptionAfter:
+      'تغییر کرده است. برای ادامه استفاده از پنل، آن‌ها را مطالعه و بپذیرید.',
     acceptAndContinue: 'می‌پذیرم و ادامه می‌دهم',
     accepting: 'در حال ثبت پذیرش...'
   },

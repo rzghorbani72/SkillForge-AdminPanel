@@ -76,12 +76,12 @@ export function t(
   };
 
   const localizedValue = resolveFromPack(translationPack(language) as any);
-  if (localizedValue) {
+  if (localizedValue !== null) {
     return interpolate(localizedValue, params);
   }
 
   const englishValue = resolveFromPack(translations.en as any);
-  if (englishValue) {
+  if (englishValue !== null) {
     return interpolate(englishValue, params);
   }
 
