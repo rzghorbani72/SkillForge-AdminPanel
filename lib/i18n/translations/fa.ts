@@ -50,7 +50,25 @@ export const fa = {
       SCHEDULED: 'زمان‌بندی‌شده',
       COMPLETED: 'انجام‌شده',
       NO_ANSWER: 'بی‌پاسخ'
-    }
+    },
+    filters: {
+      status: 'فیلتر وضعیت',
+      priority: 'فیلتر اولویت',
+      allStatuses: 'همه وضعیت‌ها',
+      allPriorities: 'همه اولویت‌ها',
+      academyId: 'شناسه آکادمی'
+    },
+    events: {
+      callLogged: 'تماس ثبت شد ({status})',
+      emailLogged: 'ایمیل ثبت شد',
+      system: 'رویداد سیستمی'
+    },
+    csat: 'رضایت مشتری',
+    callHistory: 'تاریخچه تماس',
+    logEmail: 'ثبت ایمیل',
+    emailOutcome: 'خلاصه ایمیل',
+    resolutionSummaryRequired: 'خلاصه رفع مشکل الزامی است',
+    resolutionSummaryPlaceholder: 'توضیح دهید این تیکت چگونه حل شد…'
   },
   findSchool: {
     title: 'آکادمی خود را پیدا کنید',
@@ -294,6 +312,9 @@ export const fa = {
     platformSettings: 'تنظیمات پلتفرم',
     legalDocuments: 'اسناد حقوقی',
     allAcademies: 'آکادمی‌ها',
+    supportInbox: 'صندوق پشتیبانی',
+    planPricing: 'قیمت‌گذاری پلن‌ها',
+    broadcasts: 'اعلان‌های سراسری',
     myAcademies: 'آکادمی‌های من',
     templatesGallery: 'گالری قالب‌ها',
     templateCovers: 'کاور قالب‌ها',
@@ -2172,7 +2193,15 @@ export const fa = {
     cannotModifyOlderAdmin: 'نمی‌توانید ادمین قدیمی‌تر را تغییر دهید',
     statusUpdatedToActive: 'وضعیت ادمین به فعال به‌روزرسانی شد',
     statusUpdatedToInactive: 'وضعیت ادمین به غیرفعال به‌روزرسانی شد',
-    failedToUpdateStatus: 'به‌روزرسانی وضعیت ادمین ناموفق بود'
+    failedToUpdateStatus: 'به‌روزرسانی وضعیت ادمین ناموفق بود',
+    platformRole: 'نقش پلتفرم',
+    revokeSessions: 'لغو نشست‌ها',
+    sessionsRevoked: 'نشست‌ها با موفقیت لغو شد',
+    platformStaff: {
+      ADMIN: 'ادمین پلتفرم',
+      FINANCE: 'مالی',
+      SUPPORT: 'پشتیبانی'
+    }
   },
   createAdminUser: {
     title: 'ایجاد کاربر ادمین',
@@ -2204,7 +2233,8 @@ export const fa = {
     pleaseEnterEmailOtp: 'لطفاً کد OTP ایمیل را وارد کنید',
     pleaseVerifyBothOtps: 'لطفاً هر دو OTP تلفن و ایمیل را تأیید کنید',
     passwordsDoNotMatch: 'رمزهای عبور مطابقت ندارند',
-    adminUserCreatedSuccess: 'کاربر ادمین با موفقیت ایجاد شد'
+    adminUserCreatedSuccess: 'کاربر ادمین با موفقیت ایجاد شد',
+    platformRole: 'نقش پلتفرم'
   },
   changeUserRole: {
     title: 'تغییر نقش کاربر',
@@ -3734,6 +3764,81 @@ export const fa = {
     replyPlaceholder: 'پاسخ مرتبط بنویسید…',
     send: 'ارسال پاسخ',
     sendFailed: 'ارسال پیام ناموفق بود.'
+  },
+  pricing: {
+    planLimits: {
+      name: 'نام',
+      slug: 'اسلاگ',
+      monthlyToman: 'قیمت ماهانه (تومان)',
+      yearlyToman: 'قیمت سالانه (تومان)',
+      optional: 'اختیاری',
+      commissionOverride: 'کمیسیون اختصاصی (%)',
+      storageLimitGb: 'سقف فضا (GB)',
+      annualMonthsIncluded: 'ماه اضافه در پلن سالانه',
+      sortOrder: 'ترتیب نمایش',
+      active: 'فعال',
+      mostPopular: 'محبوب‌ترین',
+      limitsTitle: 'محدودیت‌های پلن',
+      features: 'ویژگی‌ها (هر خط یک مورد)',
+      keys: {
+        managers: 'مدیران',
+        teachers: 'معلمان',
+        courses: 'دوره‌ها',
+        seasons_per_course: 'فصل / دوره',
+        lessons_per_course: 'درس / دوره',
+        active_students: 'دانشجوی فعال',
+        storage_gb: 'فضا (GB)',
+        live_classes_per_month: 'کلاس زنده / ماه',
+        videos: 'ویدیوها'
+      }
+    }
+  },
+  broadcasts: {
+    title: 'اعلان‌های سراسری',
+    compose: 'نوشتن اعلان',
+    composeDescription:
+      'پیام را بنویسید و برای مدیران یا معلمان آکادمی‌ها ارسال کنید.',
+    saveDraft: 'ذخیره پیش‌نویس',
+    send: 'ارسال',
+    created: 'پیش‌نویس اعلان ذخیره شد',
+    sent: 'اعلان ارسال شد',
+    empty: 'اعلانی وجود ندارد',
+    history: 'تاریخچه اعلان‌ها',
+    accessDenied: 'فقط ادمین‌های پلتفرم می‌توانند اعلان ارسال کنند.',
+    fields: {
+      title: 'عنوان',
+      body: 'متن',
+      audience: 'مخاطب',
+      status: 'وضعیت',
+      recipients: 'گیرندگان',
+      academyIds: 'شناسه آکادمی‌ها',
+      academyIdsPlaceholder: 'شناسه‌ها با کاما جدا شوند'
+    },
+    audiences: {
+      ALL_MANAGERS: 'همه مدیران',
+      ALL_TEACHERS: 'همه معلمان',
+      SELECTED_ACADEMIES: 'آکادمی‌های انتخاب‌شده'
+    },
+    statuses: {
+      DRAFT: 'پیش‌نویس',
+      SENT: 'ارسال‌شده'
+    }
+  },
+  notifications: {
+    bell: {
+      title: 'اعلان‌ها',
+      empty: 'اعلانی وجود ندارد',
+      markAllRead: 'علامت‌گذاری همه به‌عنوان خوانده‌شده'
+    }
+  },
+  academiesHealth: {
+    title: 'سلامت آکادمی‌ها',
+    empty: 'داده سلامت آکادمی موجود نیست',
+    name: 'آکادمی',
+    plan: 'پلن',
+    expiry: 'انقضا',
+    storage: 'مصرف فضا',
+    openTickets: 'تیکت‌های باز'
   },
   userNav: {
     profile: 'پروفایل',

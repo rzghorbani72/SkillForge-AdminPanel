@@ -9,6 +9,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
+import { isPlatformStaff } from '@/lib/roles';
 
 type Academy = { id: number; name: string; slug: string };
 export type LoginMethod = 'password' | 'otp';
@@ -102,7 +103,7 @@ export function useLogin() {
       return;
     }
 
-    if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
+    if (isPlatformStaff({ role: userRole })) {
       scheduleRedirect({
         href: '/admin-login',
         title: t('success.loginSuccess'),

@@ -52,6 +52,7 @@ import { User } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { CreateAdminUserDialog } from '../_components/create-admin-user-dialog';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin, isPlatformOwner } from '@/lib/roles';
 import { toast } from 'react-toastify';
 
 type UserStatus = 'all' | 'ACTIVE' | 'INACTIVE';
@@ -65,7 +66,7 @@ export default function AdminsPage() {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateAdminDialog, setShowCreateAdminDialog] = useState(false);
-  const [updatingStatus, setUpdatingStatus] = useState<number | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [updatingConfirmation, setUpdatingConfirmation] = useState<{
     id: number;
     type: 'email' | 'phone';
@@ -121,32 +122,35 @@ export default function AdminsPage() {
       }
     };
 
-    if (currentUser?.role === 'ADMIN') {
+    if (isPlatformAdmin(currentUser)) {
       fetchCurrentUserProfile();
     }
   }, [currentUser]);
 
-  // Check if current admin can modify target admin based on creation timestamp
-  const canModifyAdmin = (targetAdmin: User): boolean => {
-    if (!currentUserProfile || currentUserProfile.role !== 'ADMIN') {
+  const canModifyStaff = (
+    targetAdmin: User & { platform_role?: string }
+  ): boolean => {
+    if (!currentUser || !isPlatformAdmin(currentUser)) return false;
+    if (String(targetAdmin.id) === String(currentUser.id)) return false;
+    if (targetAdmin.platform_role === 'PLATFORM_OWNER') return false;
+    if (
+      targetAdmin.platform_role === 'ADMIN' &&
+      !isPlatformOwner(currentUser)
+    ) {
       return false;
     }
-
-    // Cannot modify self
-    if (targetAdmin.id === currentUserProfile.id) {
-      return false;
-    }
-
-    // Can modify if current admin was created before target admin
-    const currentCreatedAt = new Date(currentUserProfile.created_at);
-    const targetCreatedAt = new Date(targetAdmin.created_at);
-    return currentCreatedAt < targetCreatedAt;
+    return true;
   };
 
-  const handleStatusChange = async (adminId: number, newStatus: boolean) => {
+  const handleStatusChange = async (adminId: string, newStatus: boolean) => {
     try {
       setUpdatingStatus(adminId);
-      await apiClient.updateUser(adminId, { is_active: newStatus });
+      await apiClient.updatePlatformStaff(adminId, {
+        is_active: newStatus,
+        reason: newStatus
+          ? 'Reactivated by platform admin'
+          : 'Deactivated by platform admin'
+      });
       toast.success(
         newStatus
           ? t('admins.statusUpdatedToActive')
@@ -163,6 +167,15 @@ export default function AdminsPage() {
       ErrorHandler.handleApiError(error);
     } finally {
       setUpdatingStatus(null);
+    }
+  };
+
+  const handleRevokeSessions = async (adminId: string) => {
+    try {
+      await apiClient.revokePlatformStaffSessions(adminId);
+      toast.success(t('admins.sessionsRevoked'));
+    } catch (error: unknown) {
+      ErrorHandler.handleApiError(error);
     }
   };
 
@@ -198,12 +211,10 @@ export default function AdminsPage() {
     try {
       setIsLoading(true);
 
-      const response = await apiClient.getUsers({
-        role: 'ADMIN',
+      const response = await apiClient.getPlatformStaff({
         search: searchTerm || undefined,
         is_active:
           statusFilter !== 'all' ? statusFilter === 'ACTIVE' : undefined,
-        filter: 'none',
         page: pagination.page,
         limit: pagination.limit
       });
@@ -222,9 +233,11 @@ export default function AdminsPage() {
           email_confirmed: profile.email_confirmed,
           phone_confirmed: profile.phone_confirmed,
           is_active: profile.is_active,
+          platform_role: profile.platform_role,
           status: profile.is_active ? 'ACTIVE' : 'INACTIVE',
           created_at: profile.created_at,
           updated_at: profile.updated_at,
+          last_login: profile.last_login,
           profiles: [
             {
               id: profile.id,
@@ -384,12 +397,15 @@ export default function AdminsPage() {
                       {t('admins.phone')}
                     </TableHead>
                     <TableHead className="text-center">
+                      {t('admins.platformRole')}
+                    </TableHead>
+                    <TableHead className="text-center">
                       {t('admins.status')}
                     </TableHead>
                     <TableHead className="text-center">
                       {t('admins.created')}
                     </TableHead>
-                    {currentUserProfile?.role === 'ADMIN' && (
+                    {isPlatformAdmin(currentUser) && (
                       <TableHead className="text-center">
                         {t('common.actions')}
                       </TableHead>
@@ -398,7 +414,7 @@ export default function AdminsPage() {
                 </TableHeader>
                 <TableBody>
                   {admins.map((admin) => {
-                    const canModify = canModifyAdmin(admin);
+                    const canModify = canModifyStaff(admin);
                     return (
                       <TableRow key={admin.id}>
                         <TableCell>
@@ -454,6 +470,12 @@ export default function AdminsPage() {
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
+                          <Badge variant="outline">
+                            {(admin as { platform_role?: string })
+                              .platform_role ?? 'ADMIN'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
                           <div className="flex justify-center">
                             <Badge
                               variant={
@@ -471,7 +493,7 @@ export default function AdminsPage() {
                             {new Date(admin.created_at).toLocaleDateString()}
                           </span>
                         </TableCell>
-                        {currentUserProfile?.role === 'ADMIN' && (
+                        {isPlatformAdmin(currentUser) && (
                           <TableCell className="text-center">
                             {canModify ? (
                               <DropdownMenu>
@@ -479,9 +501,11 @@ export default function AdminsPage() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    disabled={updatingStatus === admin.id}
+                                    disabled={
+                                      updatingStatus === String(admin.id)
+                                    }
                                   >
-                                    {updatingStatus === admin.id ? (
+                                    {updatingStatus === String(admin.id) ? (
                                       <Loader2 className="h-4 w-4 animate-spin" />
                                     ) : (
                                       <MoreVertical className="h-4 w-4" />
@@ -491,11 +515,11 @@ export default function AdminsPage() {
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuItem
                                     onClick={() =>
-                                      handleStatusChange(admin.id, true)
+                                      handleStatusChange(String(admin.id), true)
                                     }
                                     disabled={
                                       admin.is_active ||
-                                      updatingStatus === admin.id
+                                      updatingStatus === String(admin.id)
                                     }
                                   >
                                     <CheckCircle className="me-2 h-4 w-4" />
@@ -503,15 +527,26 @@ export default function AdminsPage() {
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     onClick={() =>
-                                      handleStatusChange(admin.id, false)
+                                      handleStatusChange(
+                                        String(admin.id),
+                                        false
+                                      )
                                     }
                                     disabled={
                                       !admin.is_active ||
-                                      updatingStatus === admin.id
+                                      updatingStatus === String(admin.id)
                                     }
                                   >
                                     <XCircle className="me-2 h-4 w-4" />
                                     {t('common.deactivate')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleRevokeSessions(String(admin.id))
+                                    }
+                                  >
+                                    <Shield className="me-2 h-4 w-4" />
+                                    {t('admins.revokeSessions')}
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
@@ -554,7 +589,7 @@ export default function AdminsPage() {
                               </DropdownMenu>
                             ) : (
                               <span className="text-xs text-muted-foreground">
-                                {admin.id === currentUserProfile.id
+                                {String(admin.id) === String(currentUser?.id)
                                   ? t('admins.cannotModifyYourself')
                                   : t('admins.cannotModifyOlderAdmin')}
                               </span>

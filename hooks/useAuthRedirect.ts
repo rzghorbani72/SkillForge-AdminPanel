@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { authService } from '@/lib/auth';
 import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
+import { isPanelStaffRole } from '@/lib/roles';
 
 interface UseAuthRedirectOptions {
   redirectTo?: string;
@@ -40,11 +41,11 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
 
           // Page doesn't require authentication, but user is authenticated
           // Redirect based on user type
-          if (
-            currentUser.currentProfile?.role?.name === 'ADMIN' ||
-            currentUser.currentProfile?.role?.name === 'MANAGER' ||
-            currentUser.currentProfile?.role?.name === 'TEACHER'
-          ) {
+          const roleName =
+            currentUser.currentProfile?.role?.name ??
+            (currentUser as { role?: string }).role ??
+            (currentUser.user as { role?: string } | undefined)?.role;
+          if (isPanelStaffRole(roleName)) {
             if (requireStaff) {
               // Staff user accessing staff page - allow access
               setIsLoading(false);
@@ -107,11 +108,11 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
     isLoading,
     user,
     isAuthenticated: !!user,
-    isStaff:
-      user?.user?.role === 'ADMIN' ||
-      user?.user?.role === 'MANAGER' ||
-      user?.user?.role === 'TEACHER' ||
-      false,
+    isStaff: isPanelStaffRole(
+      (user as { role?: string })?.role ??
+        (user?.user as { role?: string } | undefined)?.role ??
+        user?.currentProfile?.role?.name
+    ),
     isStudent: user?.user?.role === 'STUDENT' || false
   };
 }

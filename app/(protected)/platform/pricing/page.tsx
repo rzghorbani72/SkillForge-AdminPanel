@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -24,64 +23,62 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin } from '@/lib/roles';
 import { ErrorHandler } from '@/lib/error-handler';
 import {
   apiClient,
   PlatformSettingsData,
   SubscriptionPlanData
 } from '@/lib/api';
+import {
+  PlanFormFields,
+  type PlanFormState
+} from '@/components/platform/pricing/plan-form-fields';
+import {
+  DEFAULT_LIMITS,
+  formatIRR,
+  formatToman,
+  fromPercent,
+  irrToToman,
+  tomanToIrr,
+  toPercent
+} from '@/components/platform/pricing/pricing-helpers';
 
-// ─── helpers ────────────────────────────────────────────────────────────────
-
-const toPercent = (rate: number) => +(rate * 100).toFixed(4);
-const fromPercent = (pct: number) => +(pct / 100).toFixed(6);
-const formatIRR = (v: number) => v.toLocaleString('fa-IR') + ' ریال';
-
-// ─── types ───────────────────────────────────────────────────────────────────
-
-type PlanForm = {
-  name: string;
-  slug: string;
-  price_monthly: string;
-  price_yearly: string;
-  commission_rate: string;
-  storage_limit_gb: string;
-  features: string;
-  is_active: boolean;
-  sort_order: string;
-};
-
-const emptyPlanForm = (): PlanForm => ({
+const emptyPlanForm = (): PlanFormState => ({
   name: '',
   slug: '',
-  price_monthly: '0',
-  price_yearly: '',
+  price_monthly_toman: '0',
+  price_yearly_toman: '',
   commission_rate: '',
   storage_limit_gb: '200',
   features: '',
   is_active: true,
-  sort_order: '0'
+  is_most_popular: false,
+  annual_months_included: '0',
+  sort_order: '0',
+  limits: { ...DEFAULT_LIMITS }
 });
 
-const planToForm = (p: SubscriptionPlanData): PlanForm => ({
+const planToForm = (p: SubscriptionPlanData): PlanFormState => ({
   name: p.name,
   slug: p.slug,
-  price_monthly: String(p.price_monthly),
-  price_yearly: p.price_yearly != null ? String(p.price_yearly) : '',
+  price_monthly_toman: String(irrToToman(p.price_monthly)),
+  price_yearly_toman:
+    p.price_yearly != null ? String(irrToToman(p.price_yearly)) : '',
   commission_rate:
     p.commission_rate != null ? String(toPercent(p.commission_rate)) : '',
   storage_limit_gb: String(p.storage_limit_gb),
   features: (p.features ?? []).join('\n'),
   is_active: p.is_active,
-  sort_order: String(p.sort_order)
+  is_most_popular: p.is_most_popular ?? false,
+  annual_months_included: String(p.annual_months_included ?? 0),
+  sort_order: String(p.sort_order),
+  limits: { ...DEFAULT_LIMITS, ...(p.limits ?? {}) }
 });
-
-// ─── main component ──────────────────────────────────────────────────────────
 
 export default function PlatformPricingPage() {
   const { user, isLoading } = useAuthUser();
-  const isPlatformAdmin =
-    user?.role === 'ADMIN' && (user?.isAdminProfile || user?.platformLevel);
+  const isPlatformAdminUser = isPlatformAdmin(user);
 
   // -- global settings state
   const [settings, setSettings] = useState<PlatformSettingsData | null>(null);
@@ -101,17 +98,17 @@ export default function PlatformPricingPage() {
 
   // -- plans state
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
-  const [editingPlanId, setEditingPlanId] = useState<number | 'new' | null>(
+  const [editingPlanId, setEditingPlanId] = useState<string | 'new' | null>(
     null
   );
-  const [planForm, setPlanForm] = useState<PlanForm>(emptyPlanForm());
+  const [planForm, setPlanForm] = useState<PlanFormState>(emptyPlanForm());
   const [savingPlan, setSavingPlan] = useState(false);
-  const [deletingPlanId, setDeletingPlanId] = useState<number | null>(null);
+  const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
 
   // ── load ──────────────────────────────────────────────────────────────────
 
   const loadAll = useCallback(async () => {
-    if (!isPlatformAdmin) return;
+    if (!isPlatformAdminUser) return;
     try {
       const [s, p] = await Promise.all([
         apiClient.getPlatformSettings(),
@@ -134,7 +131,7 @@ export default function PlatformPricingPage() {
     } catch {
       ErrorHandler.showError('Failed to load platform settings');
     }
-  }, [isPlatformAdmin]);
+  }, [isPlatformAdminUser]);
 
   useEffect(() => {
     if (!isLoading) loadAll();
@@ -195,9 +192,9 @@ export default function PlatformPricingPage() {
     return {
       name: planForm.name,
       slug: planForm.slug,
-      price_monthly: Number(planForm.price_monthly),
-      price_yearly: planForm.price_yearly
-        ? Number(planForm.price_yearly)
+      price_monthly: tomanToIrr(Number(planForm.price_monthly_toman) || 0),
+      price_yearly: planForm.price_yearly_toman
+        ? tomanToIrr(Number(planForm.price_yearly_toman))
         : undefined,
       commission_rate: planForm.commission_rate
         ? fromPercent(Number(planForm.commission_rate))
@@ -205,7 +202,10 @@ export default function PlatformPricingPage() {
       storage_limit_gb: Number(planForm.storage_limit_gb),
       features: featuresArr.length ? featuresArr : undefined,
       is_active: planForm.is_active,
-      sort_order: Number(planForm.sort_order)
+      is_most_popular: planForm.is_most_popular,
+      annual_months_included: Number(planForm.annual_months_included) || 0,
+      sort_order: Number(planForm.sort_order),
+      limits: planForm.limits
     };
   };
 
@@ -235,7 +235,7 @@ export default function PlatformPricingPage() {
     }
   };
 
-  const handleDeletePlan = async (id: number) => {
+  const handleDeletePlan = async (id: string) => {
     setDeletingPlanId(id);
     try {
       await apiClient.deleteSubscriptionPlan(id);
@@ -252,7 +252,7 @@ export default function PlatformPricingPage() {
 
   if (isLoading) return <div className="flex-1 p-6" />;
 
-  if (!isPlatformAdmin) {
+  if (!isPlatformAdminUser) {
     return (
       <div className="flex-1 space-y-6 p-6">
         <Card>
@@ -493,116 +493,11 @@ export default function PlatformPricingPage() {
               <h3 className="text-sm font-semibold">
                 {editingPlanId === 'new' ? 'New Plan' : 'Edit Plan'}
               </h3>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="space-y-1">
-                  <Label className="text-xs">Name *</Label>
-                  <Input
-                    value={planForm.name}
-                    onChange={(e) => {
-                      const name = e.target.value;
-                      const slug =
-                        editingPlanId === 'new'
-                          ? name
-                              .toLowerCase()
-                              .replace(/\s+/g, '-')
-                              .replace(/[^a-z0-9-]/g, '')
-                          : planForm.slug;
-                      setPlanForm({ ...planForm, name, slug });
-                    }}
-                    placeholder="Starter"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Slug *</Label>
-                  <Input
-                    value={planForm.slug}
-                    onChange={(e) =>
-                      setPlanForm({ ...planForm, slug: e.target.value })
-                    }
-                    placeholder="starter"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Monthly Price (IRR)</Label>
-                  <PriceInput
-                    value={planForm.price_monthly}
-                    onChange={(raw) =>
-                      setPlanForm({ ...planForm, price_monthly: raw })
-                    }
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Annual Price (IRR)</Label>
-                  <PriceInput
-                    value={planForm.price_yearly}
-                    onChange={(raw) =>
-                      setPlanForm({ ...planForm, price_yearly: raw })
-                    }
-                    placeholder="optional"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Commission Override (%)</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={100}
-                    step={0.01}
-                    value={planForm.commission_rate}
-                    onChange={(e) =>
-                      setPlanForm({
-                        ...planForm,
-                        commission_rate: e.target.value
-                      })
-                    }
-                    placeholder="leave blank = global"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Storage Limit (GB)</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={planForm.storage_limit_gb}
-                    onChange={(e) =>
-                      setPlanForm({
-                        ...planForm,
-                        storage_limit_gb: e.target.value
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Sort Order</Label>
-                  <Input
-                    type="number"
-                    value={planForm.sort_order}
-                    onChange={(e) =>
-                      setPlanForm({ ...planForm, sort_order: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="flex items-end space-x-2 pb-1">
-                  <Switch
-                    checked={planForm.is_active}
-                    onCheckedChange={(v) =>
-                      setPlanForm({ ...planForm, is_active: v })
-                    }
-                  />
-                  <Label className="text-xs">Active</Label>
-                </div>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Features (one per line)</Label>
-                <textarea
-                  className="min-h-[80px] w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                  value={planForm.features}
-                  onChange={(e) =>
-                    setPlanForm({ ...planForm, features: e.target.value })
-                  }
-                  placeholder="Unlimited courses&#10;Custom domain&#10;Priority support"
-                />
-              </div>
+              <PlanFormFields
+                form={planForm}
+                isNew={editingPlanId === 'new'}
+                onChange={setPlanForm}
+              />
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={cancelPlan}>
                   <X className="mr-1 h-3 w-3" /> Cancel
@@ -647,11 +542,25 @@ export default function PlatformPricingPage() {
                         {plan.slug}
                       </div>
                     </TableCell>
-                    <TableCell>{formatIRR(plan.price_monthly)}</TableCell>
                     <TableCell>
-                      {plan.price_yearly != null
-                        ? formatIRR(plan.price_yearly)
-                        : '—'}
+                      <div>{formatToman(irrToToman(plan.price_monthly))}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {formatIRR(plan.price_monthly)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {plan.price_yearly != null ? (
+                        <>
+                          <div>
+                            {formatToman(irrToToman(plan.price_yearly))}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {formatIRR(plan.price_yearly)}
+                          </div>
+                        </>
+                      ) : (
+                        '—'
+                      )}
                     </TableCell>
                     <TableCell>
                       {plan.commission_rate != null ? (

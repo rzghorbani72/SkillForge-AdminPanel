@@ -8,6 +8,8 @@ import { toEnglishDigits } from '@/lib/phone-utils';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { isPlatformStaff } from '@/lib/roles';
+import type { AuthUser } from '@/lib/auth';
 
 type LoginMethod = 'password' | 'otp';
 
@@ -69,12 +71,14 @@ export function useAdminLogin() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const routeAfterLogin = (response: {
-    currentProfile?: { Role?: { name?: string } };
-  }) => {
+  const routeAfterLogin = (response: AuthUser) => {
     ErrorHandler.showSuccess('success.loginSuccess', true);
-    const userRole = response.currentProfile?.Role?.name;
-    if (userRole === 'ADMIN' || userRole === 'SUPPORT') {
+    const authData = response as AuthUser & { role?: string };
+    const userRole =
+      authData.role ??
+      response.currentProfile?.Role?.name ??
+      response.currentProfile?.role?.name;
+    if (isPlatformStaff({ role: userRole })) {
       window.location.href = '/platform';
     } else {
       ErrorHandler.showWarning(t('auth.staffRouteOnly'));

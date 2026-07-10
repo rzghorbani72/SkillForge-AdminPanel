@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
 import { AcademySelector } from './AcademySelector';
-import { LanguageSwitcher } from '@/components/language-switcher';
-import { Bell, Search } from 'lucide-react';
+import { NotificationBell } from './notification-bell';
+import { Search } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -52,15 +52,7 @@ export default function Header() {
           </div> */}
 
           {/* Notification bell */}
-          <button
-            type="button"
-            className="relative flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            aria-label="Notifications"
-          >
-            <Bell className="h-4.5 w-4.5 h-[18px] w-[18px]" />
-            {/* Unread dot */}
-            <span className="absolute end-2 top-2 h-2 w-2 rounded-full bg-primary ring-2 ring-background" />
-          </button>
+          <NotificationBell />
 
           <div className="h-6 w-px bg-border/50" />
 

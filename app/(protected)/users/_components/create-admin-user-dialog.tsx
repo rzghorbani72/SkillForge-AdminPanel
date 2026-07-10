@@ -12,14 +12,25 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin, isPlatformOwner } from '@/lib/roles';
 import { Loader2, Mail, Phone } from 'lucide-react';
 import { OtpType } from '@/constants/data';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'react-toastify';
+
+type PlatformStaffRole = 'ADMIN' | 'FINANCE' | 'SUPPORT';
 
 interface CreateAdminUserDialogProps {
   open: boolean;
@@ -33,7 +44,12 @@ export function CreateAdminUserDialog({
   onSuccess
 }: CreateAdminUserDialogProps) {
   const { t } = useTranslation();
-  const [step, setStep] = useState<'form' | 'otp'>('form');
+  const { user } = useAuthUser();
+  const showPlatformRoles = isPlatformAdmin(user);
+  const canAssignAdmin = isPlatformOwner(user);
+  const [platformRole, setPlatformRole] = useState<PlatformStaffRole>(
+    canAssignAdmin ? 'ADMIN' : 'FINANCE'
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
 
@@ -206,7 +222,8 @@ export function CreateAdminUserDialog({
         phone_otp: formData.autoConfirmPhone ? '' : otpData.phoneOtp,
         email_otp: formData.autoConfirmEmail ? '' : otpData.emailOtp,
         auto_confirm_email: formData.autoConfirmEmail,
-        auto_confirm_phone: formData.autoConfirmPhone
+        auto_confirm_phone: formData.autoConfirmPhone,
+        ...(showPlatformRoles ? { platform_role: platformRole } : {})
       });
 
       ErrorHandler.showSuccess(t('createAdminUser.adminUserCreatedSuccess'));
@@ -237,7 +254,7 @@ export function CreateAdminUserDialog({
     });
     setOtpSent({ phone: false, email: false });
     setOtpVerified({ phone: false, email: false });
-    setStep('form');
+    setPlatformRole(canAssignAdmin ? 'ADMIN' : 'FINANCE');
   };
 
   const handleClose = (open: boolean) => {
@@ -469,6 +486,36 @@ export function CreateAdminUserDialog({
               )}
             </div>
           </div>
+
+          {showPlatformRoles && (
+            <div className="space-y-2">
+              <Label htmlFor="platformRole">
+                {t('createAdminUser.platformRole')}
+              </Label>
+              <Select
+                value={platformRole}
+                onValueChange={(v) => setPlatformRole(v as PlatformStaffRole)}
+                disabled={isLoading}
+              >
+                <SelectTrigger id="platformRole">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {canAssignAdmin && (
+                    <SelectItem value="ADMIN">
+                      {t('admins.platformStaff.ADMIN')}
+                    </SelectItem>
+                  )}
+                  <SelectItem value="FINANCE">
+                    {t('admins.platformStaff.FINANCE')}
+                  </SelectItem>
+                  <SelectItem value="SUPPORT">
+                    {t('admins.platformStaff.SUPPORT')}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="password">{t('createAdminUser.password')} *</Label>

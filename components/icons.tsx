@@ -25,6 +25,7 @@ import {
   Loader2,
   LucideIcon,
   LogOut,
+  Megaphone,
   Newspaper,
   LucideShoppingBag,
   Moon,
@@ -129,7 +130,8 @@ export type IconType =
   | 'percent'
   | 'calendarClock'
   | 'webhook'
-  | 'gallery';
+  | 'gallery'
+  | 'megaphone';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -198,5 +200,6 @@ export const Icons = {
   percent: Percent,
   calendarClock: CalendarClock,
   webhook: Webhook,
-  gallery: LayoutGrid
+  gallery: LayoutGrid,
+  megaphone: Megaphone
 };

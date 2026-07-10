@@ -929,27 +929,34 @@ class ApiClient {
     return s ? `?${s}` : '';
   }
 
-  async getSupportInbox(params?: {
-    status?: string;
-    priority?: string;
-    page?: number;
-  }) {
+  async getSupportInbox(params?: SupportInboxQuery) {
     const res = await this.request(
-      `/support/inbox${this.supportQuery({ status: params?.status, priority: params?.priority, page: params?.page ? String(params.page) : undefined })}`
+      `/support/inbox${this.supportQuery(this.supportInboxQueryParams(params))}`
     );
-    return (res as any).data;
+    return unwrapSupportInbox(res);
   }
 
-  async getSupportPlatformInbox(params?: {
-    status?: string;
-    priority?: string;
-    academy_id?: string;
-    page?: number;
-  }) {
+  async getSupportPlatformInbox(params?: SupportInboxQuery) {
     const res = await this.request(
-      `/support/platform/inbox${this.supportQuery({ status: params?.status, priority: params?.priority, academy_id: params?.academy_id, page: params?.page ? String(params.page) : undefined })}`
+      `/support/platform/inbox${this.supportQuery(this.supportInboxQueryParams(params))}`
     );
-    return (res as any).data;
+    return unwrapSupportInbox(res);
+  }
+
+  private supportInboxQueryParams(
+    params?: SupportInboxQuery
+  ): Record<string, string | undefined> {
+    if (!params) return {};
+    return {
+      status: params.status,
+      priority: params.priority,
+      academy_id: params.academy_id,
+      category: params.category,
+      assigned_to: params.assigned_to,
+      search: params.search,
+      page: params.page != null ? String(params.page) : undefined,
+      limit: params.limit != null ? String(params.limit) : undefined
+    };
   }
 
   async getSupportTicket(id: string) {
@@ -959,6 +966,24 @@ class ApiClient {
 
   async listSupportResponsibles() {
     const res = await this.request(`/support/responsibles`);
+    return (res as any).data;
+  }
+
+  async getPlatformResponsibles() {
+    const res = await this.request(`/support/platform/responsibles`);
+    return (res as any).data;
+  }
+
+  async createPlatformTicket(body: {
+    subject: string;
+    body: string;
+    category: string;
+    priority?: string;
+  }) {
+    const res = await this.request(`/support/platform/tickets`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
     return (res as any).data;
   }
 
@@ -981,10 +1006,14 @@ class ApiClient {
     return (res as any).data;
   }
 
-  async changeSupportStatus(id: string, status: string) {
+  async changeSupportStatus(
+    id: string,
+    status: string,
+    resolution_summary?: string
+  ) {
     const res = await this.request(`/support/tickets/${id}/status`, {
       method: 'PATCH',
-      body: JSON.stringify({ status })
+      body: JSON.stringify({ status, resolution_summary })
     });
     return (res as any).data;
   }
@@ -1006,6 +1035,107 @@ class ApiClient {
       body: JSON.stringify(body)
     });
     return (res as any).data;
+  }
+
+  async logSupportEmail(id: string, body: { outcome_note?: string }) {
+    const res = await this.request(`/support/tickets/${id}/log-email`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    return (res as any).data;
+  }
+
+  async getPlatformAcademiesHealth() {
+    const res = await this.request('/platform/academies/health');
+    const body = (
+      res as {
+        data?: {
+          data?: { academies?: AcademyHealthView[] };
+          academies?: AcademyHealthView[];
+        };
+      }
+    ).data;
+    return body?.data?.academies ?? body?.academies ?? [];
+  }
+
+  async getNotifications(params?: { page?: number; limit?: number }) {
+    const qs = new URLSearchParams();
+    if (params?.page) qs.append('page', String(params.page));
+    if (params?.limit) qs.append('limit', String(params.limit));
+    const query = qs.toString();
+    const res = await this.request(`/notifications${query ? `?${query}` : ''}`);
+    const body = (
+      res as {
+        data?: { data?: NotificationListResponse } & NotificationListResponse;
+      }
+    ).data;
+    return body?.data ?? body;
+  }
+
+  async getUnreadNotificationCount() {
+    const res = await this.request('/notifications/unread-count');
+    const body = (
+      res as { data?: { data?: { count?: number }; count?: number } }
+    ).data;
+    return body?.data?.count ?? body?.count ?? 0;
+  }
+
+  async markNotificationRead(id: string) {
+    const res = await this.request(`/notifications/${id}/read`, {
+      method: 'PATCH'
+    });
+    return (res as { data?: unknown }).data;
+  }
+
+  async markAllNotificationsRead() {
+    const res = await this.request('/notifications/read-all', {
+      method: 'POST'
+    });
+    return (res as { data?: unknown }).data;
+  }
+
+  async listPlatformBroadcasts() {
+    const res = await this.request('/platform/broadcasts');
+    const body = (
+      res as {
+        data?: {
+          data?: { broadcasts?: PlatformBroadcast[] };
+          broadcasts?: PlatformBroadcast[];
+        };
+      }
+    ).data;
+    return body?.data?.broadcasts ?? body?.broadcasts ?? [];
+  }
+
+  async createPlatformBroadcast(body: CreatePlatformBroadcastPayload) {
+    const res = await this.request('/platform/broadcasts', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    const payload = (
+      res as {
+        data?: {
+          data?: { broadcast?: PlatformBroadcast };
+          broadcast?: PlatformBroadcast;
+        };
+      }
+    ).data;
+    return payload?.data?.broadcast ?? payload?.broadcast;
+  }
+
+  async sendPlatformBroadcast(id: string) {
+    const res = await this.request(`/platform/broadcasts/${id}/send`, {
+      method: 'POST'
+    });
+    const payload = (
+      res as {
+        data?: {
+          data?: { broadcast?: PlatformBroadcast };
+          broadcast?: PlatformBroadcast;
+        };
+      }
+    ).data;
+    return payload?.data?.broadcast ?? payload?.broadcast;
   }
 
   async getCurrentAcademy() {
@@ -2548,14 +2678,62 @@ class ApiClient {
     password: string;
     phone_otp: string;
     email_otp: string;
+    platform_role?: 'ADMIN' | 'FINANCE' | 'SUPPORT';
     auto_confirm_email?: boolean;
     auto_confirm_phone?: boolean;
-    // Note: academy_id is not included - new admins are always created without a store
   }) {
-    const response = await this.request('/users/admin', {
+    const endpoint = userData.platform_role
+      ? '/users/platform-staff'
+      : '/users/admin';
+    const response = await this.request(endpoint, {
       method: 'POST',
       body: JSON.stringify(userData)
     });
+    return response.data as any;
+  }
+
+  async getPlatformStaff(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    is_active?: boolean;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', String(params.page));
+    if (params?.limit) queryParams.append('limit', String(params.limit));
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.is_active !== undefined) {
+      queryParams.append('is_active', String(params.is_active));
+    }
+    const qs = queryParams.toString();
+    const response = await this.request(
+      `/users/platform-staff${qs ? `?${qs}` : ''}`
+    );
+    return response.data as any;
+  }
+
+  async updatePlatformStaff(
+    id: string,
+    body: {
+      platform_role?: 'ADMIN' | 'FINANCE' | 'SUPPORT';
+      is_active?: boolean;
+      reason?: string;
+    }
+  ) {
+    const response = await this.request(`/users/platform-staff/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    });
+    return response.data as any;
+  }
+
+  async revokePlatformStaffSessions(id: string) {
+    const response = await this.request(
+      `/users/platform-staff/${id}/sessions`,
+      {
+        method: 'DELETE'
+      }
+    );
     return response.data as any;
   }
 
@@ -4386,7 +4564,7 @@ class ApiClient {
   }
 
   async updateSubscriptionPlan(
-    id: number,
+    id: string,
     data: Partial<SubscriptionPlanData>
   ) {
     const res = await this.request<SubscriptionPlanData>(
@@ -4399,7 +4577,7 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
-  async deleteSubscriptionPlan(id: number) {
+  async deleteSubscriptionPlan(id: string) {
     const res = await this.request(`/platform-settings/plans/${id}`, {
       method: 'DELETE'
     });
@@ -4951,8 +5129,20 @@ export interface PlatformSettingsData {
   updated_at: string;
 }
 
+export interface StructuredPlanLimits {
+  managers: number;
+  teachers: number;
+  courses: number;
+  seasons_per_course: number;
+  lessons_per_course: number;
+  active_students: number;
+  storage_gb: number;
+  live_classes_per_month: number;
+  videos: number;
+}
+
 export interface SubscriptionPlanData {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   price_monthly: number;
@@ -4962,8 +5152,104 @@ export interface SubscriptionPlanData {
   features: string[] | null;
   is_active: boolean;
   sort_order: number;
+  limits?: StructuredPlanLimits | null;
+  is_most_popular?: boolean;
+  annual_months_included?: number | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface SupportInboxQuery {
+  status?: string;
+  priority?: string;
+  academy_id?: string;
+  category?: string;
+  assigned_to?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface SupportInboxResult {
+  items: unknown[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface PlanLimitUsageEntry {
+  limit: number;
+  used: number;
+}
+
+export type PlanLimitUsageSnapshot = Record<string, PlanLimitUsageEntry>;
+
+export interface AcademyHealthView {
+  id: string;
+  name: string;
+  slug: string;
+  plan_slug: string | null;
+  expires_at: string | null;
+  monthly_revenue?: number;
+  student_count?: number;
+  course_count?: number;
+  open_ticket_count?: number;
+  limits?: PlanLimitUsageSnapshot;
+}
+
+export interface PanelNotification {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface NotificationListResponse {
+  notifications: PanelNotification[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+export type PlatformBroadcastAudience =
+  | 'ALL_MANAGERS'
+  | 'ALL_TEACHERS'
+  | 'SELECTED_ACADEMIES';
+
+export interface PlatformBroadcast {
+  id: string;
+  title: string;
+  body: string;
+  audience: PlatformBroadcastAudience;
+  status: 'DRAFT' | 'SENT';
+  sent_at: string | null;
+  recipient_count: number | null;
+  created_at: string;
+}
+
+export interface CreatePlatformBroadcastPayload {
+  title: string;
+  body: string;
+  audience: PlatformBroadcastAudience;
+  academy_ids?: string[];
+}
+
+function unwrapSupportInbox(res: unknown): SupportInboxResult {
+  const payload = (
+    res as { data?: SupportInboxResult | { data?: SupportInboxResult } }
+  ).data;
+  if (payload && 'items' in payload) return payload;
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    return (payload as { data: SupportInboxResult }).data;
+  }
+  return { items: [], total: 0, page: 1, limit: 20 };
 }
 
 export interface GatewayConfigData {

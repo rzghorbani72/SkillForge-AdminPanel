@@ -64,3 +64,14 @@ export function canAccessSupportOps(
   const role = user.role ?? '';
   return role === 'PLATFORM_OWNER' || role === 'ADMIN' || role === 'SUPPORT';
 }
+
+export function isPanelStaffRole(role: string | null | undefined): boolean {
+  return (
+    role === 'PLATFORM_OWNER' ||
+    role === 'ADMIN' ||
+    role === 'FINANCE' ||
+    role === 'SUPPORT' ||
+    role === 'MANAGER' ||
+    role === 'TEACHER'
+  );
+}

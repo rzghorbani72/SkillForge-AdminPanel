@@ -161,6 +161,16 @@ export const navItems: NavItem[] = [
     section: 'configuration'
   },
   {
+    title: 'Broadcasts',
+    href: '/platform/broadcasts',
+    icon: 'megaphone' as IconType,
+    label: 'broadcasts',
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'configuration'
+  },
+  {
     title: 'Legal Documents',
     href: '/platform/legal',
     icon: 'fileText' as IconType,

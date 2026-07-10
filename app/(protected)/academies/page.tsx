@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/select';
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformStaff, isPlatformAdmin } from '@/lib/roles';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import { apiClient } from '@/lib/api';
@@ -23,6 +24,7 @@ import {
 } from '@/components/academies/AcademyCard';
 import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
 import { AcademyEditModal } from '@/components/academies/AcademyEditModal';
+import { AcademiesHealthTable } from '@/components/academies/academies-health-table';
 import type { Academy } from '@/types/api';
 
 export default function AcademiesPage() {
@@ -30,6 +32,7 @@ export default function AcademiesPage() {
   const { academies, isLoading, refreshAcademies, selectedAcademy } =
     useStore();
   const { user } = useAuthUser();
+  const platformStaffView = isPlatformStaff(user);
   const [switching, setSwitching] = useState<number | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [editAcademy, setEditAcademy] = useState<Academy | null>(null);
@@ -40,9 +43,9 @@ export default function AcademiesPage() {
 
   const currentAcademyId = selectedAcademy?.id ?? null;
   const canCreate =
-    user?.role === 'ADMIN' ||
-    (user as any)?.isAdminProfile ||
-    user?.role === 'MANAGER';
+    isPlatformAdmin(user) ||
+    user?.role === 'MANAGER' ||
+    (user as { isAdminProfile?: boolean })?.isAdminProfile;
 
   function resolveUserRole(academy: { id: number; userRole?: string }): string {
     const raw =
@@ -242,6 +245,12 @@ export default function AcademiesPage() {
           </Select>
         </div>
       </div>
+
+      {platformStaffView && (
+        <div className="mb-6">
+          <AcademiesHealthTable />
+        </div>
+      )}
 
       {/* Loading */}
       {isLoading ? (

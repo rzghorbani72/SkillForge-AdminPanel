@@ -8,23 +8,39 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Pagination } from '@/components/shared/Pagination';
 import { StaffTicketDetail } from '@/components/support/staff-ticket-detail';
+import {
+  SupportInboxFilters,
+  SupportInboxFiltersState
+} from '@/components/support/support-inbox-filters';
 import { StaffTicketListItem } from '@/components/support/staff-support-types';
+import { isPlatformStaff } from '@/lib/roles';
 
 type InboxKind = 'academy' | 'platform';
+
+const emptyFilters = (): SupportInboxFiltersState => ({
+  status: '',
+  priority: '',
+  academy_id: ''
+});
 
 export default function SupportPage() {
   const { t } = useTranslation();
   const { user } = useAuthUser();
-  const role = (user as { role?: string } | null)?.role;
-  const isPlatformStaff = role === 'ADMIN' || role === 'SUPPORT';
+  const platformStaffMode = isPlatformStaff(user);
 
   const tabs = useMemo<InboxKind[]>(
-    () => (isPlatformStaff ? ['platform'] : ['academy', 'platform']),
-    [isPlatformStaff]
+    () => (platformStaffMode ? ['platform'] : ['academy', 'platform']),
+    [platformStaffMode]
   );
   const [tab, setTab] = useState<InboxKind>('academy');
+  const [filters, setFilters] =
+    useState<SupportInboxFiltersState>(emptyFilters);
+  const [page, setPage] = useState(1);
   const [items, setItems] = useState<StaffTicketListItem[] | null>(null);
+  const [total, setTotal] = useState(0);
+  const [limit, setLimit] = useState(20);
   const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,19 +50,31 @@ export default function SupportPage() {
   const load = useCallback(async () => {
     setItems(null);
     try {
+      const query = {
+        status: filters.status || undefined,
+        priority: filters.priority || undefined,
+        academy_id: filters.academy_id || undefined,
+        page,
+        limit
+      };
       const res =
         tab === 'academy'
-          ? await apiClient.getSupportInbox()
-          : await apiClient.getSupportPlatformInbox();
-      setItems(res.items ?? []);
+          ? await apiClient.getSupportInbox(query)
+          : await apiClient.getSupportPlatformInbox(query);
+      setItems((res.items ?? []) as StaffTicketListItem[]);
+      setTotal(res.total ?? 0);
+      setLimit(res.limit ?? limit);
     } catch {
       setItems([]);
+      setTotal(0);
     }
-  }, [tab]);
+  }, [tab, filters, page, limit]);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  const totalPages = Math.max(1, Math.ceil(total / limit));
 
   return (
     <div className="space-y-4 p-4">
@@ -60,6 +88,8 @@ export default function SupportPage() {
         onValueChange={(v) => {
           setTab(v as InboxKind);
           setSelected(null);
+          setPage(1);
+          setFilters(emptyFilters());
         }}
       >
         <TabsList>
@@ -73,14 +103,23 @@ export default function SupportPage() {
         </TabsList>
       </Tabs>
 
+      <SupportInboxFilters
+        tab={tab}
+        filters={filters}
+        onChange={(next) => {
+          setFilters(next);
+          setPage(1);
+        }}
+      />
+
       <div className="grid gap-4 md:grid-cols-[minmax(260px,360px)_1fr]">
-        <Card className="h-[70vh] overflow-y-auto">
+        <Card className="flex h-[70vh] flex-col overflow-hidden">
           <CardHeader className="py-3">
             <CardTitle className="text-sm">
-              {items?.length ?? 0} {t('support.messages')}
+              {total} {t('support.messages')}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="flex-1 space-y-2 overflow-y-auto">
             {items === null && (
               <p className="text-sm text-muted-foreground">
                 {t('support.loading')}
@@ -116,6 +155,19 @@ export default function SupportPage() {
               </button>
             ))}
           </CardContent>
+          {total > limit && (
+            <div className="border-t p-2">
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+                hasNextPage={page < totalPages}
+                hasPreviousPage={page > 1}
+                totalItems={total}
+                itemsPerPage={limit}
+              />
+            </div>
+          )}
         </Card>
 
         <Card className="h-[70vh] overflow-hidden">

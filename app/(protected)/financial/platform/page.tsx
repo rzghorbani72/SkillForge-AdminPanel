@@ -37,6 +37,7 @@ import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { canAccessFinance } from '@/lib/roles';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useFinancialFilters } from '@/hooks/useFinancialFilters';
 import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
@@ -138,13 +139,13 @@ export default function PlatformFinancialPage() {
   } | null>(null);
 
   useEffect(() => {
-    if (user && user?.role !== 'ADMIN') {
+    if (user && !canAccessFinance(user)) {
       router.replace('/dashboard');
     }
   }, [user, router]);
 
   useEffect(() => {
-    if (user?.role === 'ADMIN') loadData();
+    if (user && canAccessFinance(user)) loadData();
   }, [selectedYear, selectedMonth, user]);
 
   const formatCurrency = useMemo(

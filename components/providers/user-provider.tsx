@@ -133,7 +133,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         userDisplayName: currentUser?.user_display_name ?? null,
         email: currentUser?.email ?? '',
         phone: currentUser?.phone_number ?? '',
-        role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
+        role: role as AuthUser['role'],
         lastLogin: currentUser?.last_login ?? null,
         academyId: academyId,
         currentAcademy: currentAcademy,
@@ -146,7 +146,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           academy_id: academyId,
           academyId: academyId,
           academy: currentAcademy || null,
-          role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
+          role: role as AuthUser['role'],
           isAdminProfile: isAdminProfile,
           platformLevel: platformLevel
         }

@@ -55,7 +55,25 @@ export const en = {
       SCHEDULED: 'Scheduled',
       COMPLETED: 'Completed',
       NO_ANSWER: 'No answer'
-    }
+    },
+    filters: {
+      status: 'Status filter',
+      priority: 'Priority filter',
+      allStatuses: 'All statuses',
+      allPriorities: 'All priorities',
+      academyId: 'Academy ID'
+    },
+    events: {
+      callLogged: 'Call logged ({status})',
+      emailLogged: 'Email logged',
+      system: 'System event'
+    },
+    csat: 'Customer satisfaction',
+    callHistory: 'Call history',
+    logEmail: 'Log email',
+    emailOutcome: 'Email summary',
+    resolutionSummaryRequired: 'Resolution summary required',
+    resolutionSummaryPlaceholder: 'Describe how this ticket was resolved…'
   },
   findSchool: {
     title: 'Find Your Academy',
@@ -217,6 +235,7 @@ export const en = {
     platformOverview: 'Platform Overview',
     supportInbox: 'Support Inbox',
     planPricing: 'Plan Pricing',
+    broadcasts: 'Broadcasts',
     supportAccessLogs: 'Support Access Logs',
     management: 'Management',
     academies: 'My Academies',
@@ -2248,7 +2267,15 @@ export const en = {
     emailUnconfirmed: 'Email unconfirmed',
     phoneConfirmed: 'Phone confirmed',
     phoneUnconfirmed: 'Phone unconfirmed',
-    failedToUpdateConfirmation: 'Failed to update confirmation status'
+    failedToUpdateConfirmation: 'Failed to update confirmation status',
+    platformRole: 'Platform role',
+    revokeSessions: 'Revoke sessions',
+    sessionsRevoked: 'Sessions revoked successfully',
+    platformStaff: {
+      ADMIN: 'Platform admin',
+      FINANCE: 'Finance',
+      SUPPORT: 'Support'
+    }
   },
   createAdminUser: {
     title: 'Create Admin User',
@@ -2285,7 +2312,8 @@ export const en = {
     adminUserCreatedSuccess: 'Admin user created successfully',
     autoConfirmEmail: 'Auto-confirm email',
     autoConfirmPhone: 'Auto-confirm phone',
-    autoConfirmed: 'Auto-confirmed'
+    autoConfirmed: 'Auto-confirmed',
+    platformRole: 'Platform role'
   },
   changeUserRole: {
     title: 'Change User Role',
@@ -3867,6 +3895,81 @@ export const en = {
     replyPlaceholder: 'Write a contextual reply…',
     send: 'Send reply',
     sendFailed: 'Failed to send the message.'
+  },
+  pricing: {
+    planLimits: {
+      name: 'Name',
+      slug: 'Slug',
+      monthlyToman: 'Monthly price (Toman)',
+      yearlyToman: 'Annual price (Toman)',
+      optional: 'Optional',
+      commissionOverride: 'Commission override (%)',
+      storageLimitGb: 'Storage limit (GB)',
+      annualMonthsIncluded: 'Extra months in annual plan',
+      sortOrder: 'Sort order',
+      active: 'Active',
+      mostPopular: 'Most popular',
+      limitsTitle: 'Plan limits',
+      features: 'Features (one per line)',
+      keys: {
+        managers: 'Managers',
+        teachers: 'Teachers',
+        courses: 'Courses',
+        seasons_per_course: 'Seasons / course',
+        lessons_per_course: 'Lessons / course',
+        active_students: 'Active students',
+        storage_gb: 'Storage (GB)',
+        live_classes_per_month: 'Live classes / month',
+        videos: 'Videos'
+      }
+    }
+  },
+  broadcasts: {
+    title: 'Platform broadcasts',
+    compose: 'Compose broadcast',
+    composeDescription:
+      'Draft a message and send it to academy managers or teachers.',
+    saveDraft: 'Save draft',
+    send: 'Send',
+    created: 'Broadcast draft saved',
+    sent: 'Broadcast sent',
+    empty: 'No broadcasts yet',
+    history: 'Broadcast history',
+    accessDenied: 'Only platform admins can manage broadcasts.',
+    fields: {
+      title: 'Title',
+      body: 'Message',
+      audience: 'Audience',
+      status: 'Status',
+      recipients: 'Recipients',
+      academyIds: 'Academy IDs',
+      academyIdsPlaceholder: 'Comma-separated academy IDs'
+    },
+    audiences: {
+      ALL_MANAGERS: 'All managers',
+      ALL_TEACHERS: 'All teachers',
+      SELECTED_ACADEMIES: 'Selected academies'
+    },
+    statuses: {
+      DRAFT: 'Draft',
+      SENT: 'Sent'
+    }
+  },
+  notifications: {
+    bell: {
+      title: 'Notifications',
+      empty: 'No notifications',
+      markAllRead: 'Mark all read'
+    }
+  },
+  academiesHealth: {
+    title: 'Academy health',
+    empty: 'No academy health data',
+    name: 'Academy',
+    plan: 'Plan',
+    expiry: 'Expiry',
+    storage: 'Storage used',
+    openTickets: 'Open tickets'
   },
   userNav: {
     profile: 'Profile',
