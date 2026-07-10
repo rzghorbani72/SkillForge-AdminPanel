@@ -215,6 +215,8 @@ export const en = {
   navigation: {
     dashboard: 'Dashboard',
     platformOverview: 'Platform Overview',
+    supportInbox: 'Support Inbox',
+    planPricing: 'Plan Pricing',
     supportAccessLogs: 'Support Access Logs',
     management: 'Management',
     academies: 'My Academies',
@@ -3872,7 +3874,9 @@ export const en = {
     logout: 'Sign out',
     loggingOut: 'Signing out...',
     roles: {
+      PLATFORM_OWNER: 'Owner',
       ADMIN: 'System Admin',
+      FINANCE: 'Finance',
       SUPPORT: 'Support',
       MANAGER: 'Academy Manager',
       TEACHER: 'Instructor',

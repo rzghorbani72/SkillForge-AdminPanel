@@ -29,7 +29,16 @@ interface ChangeUserRoleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: User | null;
-  currentRole: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER' | null;
+  currentRole:
+    | 'PLATFORM_OWNER'
+    | 'ADMIN'
+    | 'FINANCE'
+    | 'SUPPORT'
+    | 'MANAGER'
+    | 'TEACHER'
+    | 'STUDENT'
+    | 'USER'
+    | null;
   onSuccess?: () => void;
 }
 

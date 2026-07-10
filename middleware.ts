@@ -31,7 +31,14 @@ const authRoutes = [
   '/admin-forget-password'
 ] as const;
 
-const ALLOWED_PANEL_ROLES = ['ADMIN', 'MANAGER', 'TEACHER'] as const;
+const ALLOWED_PANEL_ROLES = [
+  'PLATFORM_OWNER',
+  'ADMIN',
+  'FINANCE',
+  'SUPPORT',
+  'MANAGER',
+  'TEACHER'
+] as const;
 
 const SKIP_AUTH_PREFIXES = [
   '/api/',

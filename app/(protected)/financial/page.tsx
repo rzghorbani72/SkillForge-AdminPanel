@@ -20,10 +20,14 @@ export default function FinancialPage() {
 
     const role = user?.role?.toUpperCase();
 
-    if (role === 'ADMIN') {
+    if (role === 'MANAGER' || role === 'TEACHER') {
+      router.replace('/financial/academy');
+    } else if (
+      role === 'PLATFORM_OWNER' ||
+      role === 'ADMIN' ||
+      role === 'FINANCE'
+    ) {
       router.replace('/financial/platform');
-    } else if (role === 'MANAGER' || role === 'TEACHER') {
-      router.replace('/financial/store');
     } else {
       router.replace('/dashboard');
     }

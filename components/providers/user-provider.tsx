@@ -22,7 +22,14 @@ interface AuthUser {
   userDisplayName?: string | null;
   email: string;
   phone: string;
-  role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+  role:
+    | 'PLATFORM_OWNER'
+    | 'ADMIN'
+    | 'FINANCE'
+    | 'SUPPORT'
+    | 'MANAGER'
+    | 'TEACHER'
+    | 'STUDENT';
   lastLogin?: string | null;
   academyId?: number | null;
   currentAcademy?: { id?: number; name: string; domain?: string | null } | null;
@@ -32,7 +39,14 @@ interface AuthUser {
   canManagePlatform?: boolean;
   profiles: AcademyProfile[];
   profile?: {
-    role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+    role?:
+      | 'PLATFORM_OWNER'
+      | 'ADMIN'
+      | 'FINANCE'
+      | 'SUPPORT'
+      | 'MANAGER'
+      | 'TEACHER'
+      | 'STUDENT';
     academy_id?: number | null;
     academyId?: number | null;
     [key: string]: unknown;

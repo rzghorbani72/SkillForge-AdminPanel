@@ -1,6 +1,7 @@
 import { NavItem } from '@/types';
+import { PanelRole } from '@/lib/roles';
 
-type Role = 'ADMIN' | 'SUPPORT' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+type Role = PanelRole;
 
 const paymentEnabled = process.env.NEXT_PUBLIC_PAYMENT_ENABLED === 'true';
 
@@ -21,7 +22,11 @@ export function filterNavItemsByRole(
   }
   // Platform mode: a platform-level user (ADMIN/SUPPORT) with no academy selected.
   // hasStore===false means they are at platform level; true means scoped into one.
-  const isPlatformRole = userRole === 'ADMIN' || userRole === 'SUPPORT';
+  const isPlatformRole =
+    userRole === 'PLATFORM_OWNER' ||
+    userRole === 'ADMIN' ||
+    userRole === 'FINANCE' ||
+    userRole === 'SUPPORT';
   const platformMode = isPlatformRole && hasStore === false;
   return items.filter((item) => {
     // Payment-gated items hidden when payments are disabled for this deployment
@@ -32,8 +37,26 @@ export function filterNavItemsByRole(
     }
     // adminOnly: only visible to ADMIN users who do NOT have a store (platform-level)
     if (item.adminOnly) {
-      if (userRole !== 'ADMIN') return false;
+      if (userRole !== 'ADMIN' && userRole !== 'PLATFORM_OWNER') return false;
       if (hasStore === true) return false;
+    }
+    if (item.financeOnly) {
+      if (
+        userRole !== 'PLATFORM_OWNER' &&
+        userRole !== 'ADMIN' &&
+        userRole !== 'FINANCE'
+      ) {
+        return false;
+      }
+    }
+    if (item.supportOnly) {
+      if (
+        userRole !== 'PLATFORM_OWNER' &&
+        userRole !== 'ADMIN' &&
+        userRole !== 'SUPPORT'
+      ) {
+        return false;
+      }
     }
     // Mode separation: academy tools hide in Platform mode; platform tools hide
     // once an academy is selected (Academy mode).

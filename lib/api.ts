@@ -4675,7 +4675,7 @@ class ApiClient {
     data: { bank_transaction_code: string; notes?: string }
   ) {
     const res = await this.request<any>(
-      `/financial/withdrawals/${id}/approve`,
+      `/financial/settlement/withdrawals/${id}/approve`,
       {
         method: 'POST',
         body: JSON.stringify(data)
@@ -4685,10 +4685,13 @@ class ApiClient {
   }
 
   async rejectWithdrawal(id: number, data: { notes?: string }) {
-    const res = await this.request<any>(`/financial/withdrawals/${id}/reject`, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    const res = await this.request<any>(
+      `/financial/settlement/withdrawals/${id}/reject`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
     return (res.data as any)?.data ?? res.data;
   }
 

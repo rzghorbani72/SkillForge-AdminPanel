@@ -1,19 +1,22 @@
 import { jwtDecode } from 'jwt-decode';
 import { authService } from './auth';
+import { PanelRole } from '@/lib/roles';
 
-/**
- * Extract user role from JWT token or auth service
- * Tries multiple sources in order:
- * 1. JWT token from cookie (if accessible)
- * 2. Auth service current user
- * 3. LocalStorage cached user state
- */
-export function getUserRole():
-  | 'ADMIN'
-  | 'MANAGER'
-  | 'TEACHER'
-  | 'STUDENT'
-  | null {
+const PANEL_ROLES: PanelRole[] = [
+  'PLATFORM_OWNER',
+  'ADMIN',
+  'FINANCE',
+  'SUPPORT',
+  'MANAGER',
+  'TEACHER',
+  'STUDENT'
+];
+
+function isPanelRole(role: string): role is PanelRole {
+  return (PANEL_ROLES as string[]).includes(role);
+}
+
+export function getUserRole(): PanelRole | null {
   if (typeof window === 'undefined') return null;
 
   try {
@@ -26,8 +29,8 @@ export function getUserRole():
         (currentUser.currentProfile as any)?.role ||
         (currentUser as any)?.role;
 
-      if (role && ['ADMIN', 'MANAGER', 'TEACHER', 'STUDENT'].includes(role)) {
-        return role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+      if (role && isPanelRole(role)) {
+        return role;
       }
     }
 
@@ -36,11 +39,8 @@ export function getUserRole():
     if (userStateStr) {
       try {
         const userState = JSON.parse(userStateStr);
-        if (
-          userState?.role &&
-          ['ADMIN', 'MANAGER', 'TEACHER', 'STUDENT'].includes(userState.role)
-        ) {
-          return userState.role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+        if (userState?.role && isPanelRole(userState.role)) {
+          return userState.role;
         }
       } catch (e) {
         // Invalid JSON, continue
@@ -61,11 +61,8 @@ export function getUserRole():
           try {
             const decoded = jwtDecode<any>(token);
             const role = decoded?.roles?.[0] || decoded?.role;
-            if (
-              role &&
-              ['ADMIN', 'MANAGER', 'TEACHER', 'STUDENT'].includes(role)
-            ) {
-              return role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+            if (role && isPanelRole(role)) {
+              return role;
             }
           } catch (decodeError) {
             // Token decode failed, continue
@@ -87,8 +84,8 @@ export function getUserRole():
           authUser?.currentProfile?.role ||
           authUser?.role;
 
-        if (role && ['ADMIN', 'MANAGER', 'TEACHER', 'STUDENT'].includes(role)) {
-          return role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
+        if (role && isPanelRole(role)) {
+          return role;
         }
       } catch (e) {
         // Invalid JSON, continue

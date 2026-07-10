@@ -58,7 +58,7 @@ export const navItems: NavItem[] = [
     href: '/platform',
     icon: 'dashboard' as IconType,
     label: 'platformOverview',
-    roles: ['ADMIN', 'SUPPORT'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT'],
     scope: 'platform',
     section: 'platform'
   },
@@ -67,7 +67,17 @@ export const navItems: NavItem[] = [
     href: '/academies',
     icon: 'store' as IconType,
     label: 'allAcademies',
-    roles: ['ADMIN', 'SUPPORT'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT'],
+    scope: 'platform',
+    section: 'platform'
+  },
+  {
+    title: 'Support Inbox',
+    href: '/support',
+    icon: 'help' as IconType,
+    label: 'supportInbox',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
+    supportOnly: true,
     scope: 'platform',
     section: 'platform'
   },
@@ -77,7 +87,7 @@ export const navItems: NavItem[] = [
     href: '/settings/ui-template',
     icon: 'gallery' as IconType,
     label: 'templatesGallery',
-    roles: ['ADMIN'],
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
     section: 'templates'
@@ -87,7 +97,7 @@ export const navItems: NavItem[] = [
     href: '/settings/template-covers',
     icon: 'media' as IconType,
     label: 'templateCovers',
-    roles: ['ADMIN'],
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
     section: 'templates'
@@ -98,7 +108,8 @@ export const navItems: NavItem[] = [
     href: '/withdrawals',
     icon: 'banknote' as IconType,
     label: 'withdrawals',
-    roles: ['ADMIN'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+    financeOnly: true,
     adminOnly: true,
     scope: 'platform',
     section: 'finance',
@@ -109,7 +120,8 @@ export const navItems: NavItem[] = [
     href: '/teacher-payouts',
     icon: 'wallet2' as IconType,
     label: 'teacherPayouts',
-    roles: ['ADMIN'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+    financeOnly: true,
     adminOnly: true,
     scope: 'platform',
     section: 'finance',
@@ -120,7 +132,8 @@ export const navItems: NavItem[] = [
     href: '/subscriptions',
     icon: 'calendarClock' as IconType,
     label: 'subscriptions',
-    roles: ['ADMIN'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+    financeOnly: true,
     adminOnly: true,
     scope: 'platform',
     section: 'finance',
@@ -132,7 +145,17 @@ export const navItems: NavItem[] = [
     href: '/platform-settings',
     icon: 'settings' as IconType,
     label: 'platformSettings',
-    roles: ['ADMIN'],
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'configuration'
+  },
+  {
+    title: 'Plan Pricing',
+    href: '/platform/pricing',
+    icon: 'layers' as IconType,
+    label: 'planPricing',
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
     section: 'configuration'
@@ -142,7 +165,7 @@ export const navItems: NavItem[] = [
     href: '/platform/legal',
     icon: 'fileText' as IconType,
     label: 'legalDocuments',
-    roles: ['ADMIN'],
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
     section: 'configuration'
@@ -152,7 +175,7 @@ export const navItems: NavItem[] = [
     href: '/support-access-logs',
     icon: 'shield' as IconType,
     label: 'supportAccessLogs',
-    roles: ['ADMIN'],
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
     section: 'configuration'
@@ -179,7 +202,14 @@ export const navItems: NavItem[] = [
     href: '/courses',
     icon: 'course' as IconType,
     label: 'courses',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
     scope: 'academy'
   },
   {
@@ -187,7 +217,14 @@ export const navItems: NavItem[] = [
     href: '/users',
     icon: 'users' as IconType,
     label: 'users',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
     scope: 'academy',
     children: [
       {
@@ -208,7 +245,14 @@ export const navItems: NavItem[] = [
     href: '/students',
     icon: 'graduationCap' as IconType,
     label: 'students',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
     scope: 'academy',
     section: 'learning',
     children: [
@@ -229,7 +273,14 @@ export const navItems: NavItem[] = [
     href: '/assignments',
     icon: 'bookOpen' as IconType,
     label: 'assignments',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
     scope: 'academy',
     section: 'learning'
   },
@@ -238,7 +289,14 @@ export const navItems: NavItem[] = [
     href: '/learning/ops-queue',
     icon: 'trendingUp' as IconType,
     label: 'opsQueue',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
     scope: 'academy',
     section: 'learning'
   },
@@ -247,7 +305,14 @@ export const navItems: NavItem[] = [
     href: '/tutoring',
     icon: 'userPlus' as IconType,
     label: 'tutoring',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
     scope: 'academy',
     section: 'learning'
   },
@@ -256,7 +321,7 @@ export const navItems: NavItem[] = [
     href: '/analytics',
     icon: 'barChart' as IconType,
     label: 'analytics',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy',
     section: 'learning'
   },
@@ -265,7 +330,7 @@ export const navItems: NavItem[] = [
     href: '/affiliates',
     icon: 'network' as IconType,
     label: 'affiliates',
-    roles: ['ADMIN', 'MANAGER'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy'
   },
   {
@@ -280,7 +345,7 @@ export const navItems: NavItem[] = [
     href: '/financial',
     icon: 'dollarSign' as IconType,
     label: 'financial',
-    roles: ['ADMIN', 'SUPPORT', 'MANAGER'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
     scope: 'academy',
     paymentGated: true
   },
@@ -289,7 +354,7 @@ export const navItems: NavItem[] = [
     href: '/plans',
     icon: 'layers' as IconType,
     label: 'plans',
-    roles: ['ADMIN', 'MANAGER', 'TEACHER'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
     scope: 'academy',
     paymentGated: true
   },
@@ -298,7 +363,7 @@ export const navItems: NavItem[] = [
     href: '/settings/ui-template',
     icon: 'layout' as IconType,
     label: 'siteTemplate',
-    roles: ['ADMIN', 'MANAGER'],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy'
   }
 ];

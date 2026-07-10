@@ -14,16 +14,20 @@ export interface NavItem {
   /** Section label rendered above this item as a group header */
   section?: string;
   roles?: (
+    | 'PLATFORM_OWNER'
     | 'ADMIN'
+    | 'FINANCE'
     | 'SUPPORT'
     | 'MANAGER'
     | 'TEACHER'
     | 'STUDENT'
     | 'AFFILIATE'
-  )[]; // If not specified, all roles can access
-  adminOnly?: boolean; // If true, only show to admins without stores (platform-level admins)
-  scope?: 'platform' | 'academy'; // 'academy' items hide in Platform mode; 'platform' items hide in Academy mode. Default: both.
-  paymentGated?: boolean; // If true, hidden when NEXT_PUBLIC_PAYMENT_ENABLED !== 'true'
+  )[];
+  adminOnly?: boolean;
+  financeOnly?: boolean;
+  supportOnly?: boolean;
+  scope?: 'platform' | 'academy';
+  paymentGated?: boolean;
 }
 
 export interface NavItemWithChildren extends NavItem {
