@@ -19,6 +19,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
 import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { AcademyFeaturesCard } from '@/components/settings/academy-features-card';
 
 interface AcademyFormState {
   name: string;
@@ -190,58 +191,64 @@ export default function AcademySettingsPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('settings.generalInformation')}</CardTitle>
-            <CardDescription>
-              {t('settings.generalInformationDescription')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="storeName">{t('settings.storeName')}</Label>
-                <Input
-                  id="storeName"
-                  value={form.name}
-                  onChange={(event) =>
-                    setForm({ ...form, name: event.target.value })
-                  }
-                  placeholder={t('settings.storeNamePlaceholder')}
-                />
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('settings.generalInformation')}</CardTitle>
+              <CardDescription>
+                {t('settings.generalInformationDescription')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="storeName">{t('settings.storeName')}</Label>
+                  <Input
+                    id="storeName"
+                    value={form.name}
+                    onChange={(event) =>
+                      setForm({ ...form, name: event.target.value })
+                    }
+                    placeholder={t('settings.storeNamePlaceholder')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="domain">{t('settings.customDomain')}</Label>
+                  <Input
+                    id="domain"
+                    value={form.domain}
+                    onChange={(event) =>
+                      setForm({ ...form, domain: event.target.value })
+                    }
+                    placeholder={t('settings.customDomainPlaceholder')}
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="description">
+                    {t('settings.description')}
+                  </Label>
+                  <Textarea
+                    id="description"
+                    rows={4}
+                    value={form.description}
+                    onChange={(event) =>
+                      setForm({ ...form, description: event.target.value })
+                    }
+                    placeholder={t('settings.descriptionPlaceholder')}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="domain">{t('settings.customDomain')}</Label>
-                <Input
-                  id="domain"
-                  value={form.domain}
-                  onChange={(event) =>
-                    setForm({ ...form, domain: event.target.value })
-                  }
-                  placeholder={t('settings.customDomainPlaceholder')}
-                />
+              <div className="flex justify-end">
+                <Button onClick={handleSave} disabled={isSaving}>
+                  <Save className="mr-2 h-4 w-4" />
+                  {isSaving ? t('settings.saving') : t('settings.saveChanges')}
+                </Button>
               </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="description">{t('settings.description')}</Label>
-                <Textarea
-                  id="description"
-                  rows={4}
-                  value={form.description}
-                  onChange={(event) =>
-                    setForm({ ...form, description: event.target.value })
-                  }
-                  placeholder={t('settings.descriptionPlaceholder')}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <Button onClick={handleSave} disabled={isSaving}>
-                <Save className="mr-2 h-4 w-4" />
-                {isSaving ? t('settings.saving') : t('settings.saveChanges')}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          <AcademyFeaturesCard />
+        </div>
 
         <div className="space-y-4">
           <Card>

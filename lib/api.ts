@@ -59,6 +59,13 @@ export type LegalConsentRequiredDetail = {
   pending: { type: string; title: string; version: string }[];
 };
 
+export interface AcademyFeatureFlags {
+  enrollment_enabled: boolean;
+  subscription_enabled: boolean;
+  live_classes_enabled: boolean;
+  tutor_led_learning_enabled: boolean;
+}
+
 class ApiClient {
   private isRefreshing: boolean = false;
   private refreshPromise: Promise<boolean> | null = null;
@@ -1173,6 +1180,25 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(storeData)
     });
+  }
+
+  async getCurrentAcademyFeatures(): Promise<AcademyFeatureFlags> {
+    const res = await this.request<
+      AcademyFeatureFlags | { data: AcademyFeatureFlags }
+    >('/academies/current/features');
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async updateCurrentAcademyFeatures(
+    data: Partial<AcademyFeatureFlags>
+  ): Promise<AcademyFeatureFlags> {
+    const res = await this.request<
+      AcademyFeatureFlags | { data: AcademyFeatureFlags }
+    >('/academies/current/features', {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return unwrapDataEnvelope(res.data);
   }
 
   async updateAcademyById(

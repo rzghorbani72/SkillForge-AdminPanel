@@ -1593,6 +1593,21 @@ export const en = {
     storeSettingsTitle: 'Academy Settings',
     storeSettingsSubtitle:
       'Manage how your academy appears across the آکادمی ecosystem.',
+    academyFeaturesTitle: 'Learning features',
+    academyFeaturesDescription:
+      'Enable or disable learning paths and follow-up tools for your academy.',
+    tutorLedLearningEnabled: 'Learning follow-up',
+    tutorLedLearningEnabledDescription:
+      'Follow-up queue, private tutoring, and staff notes for managers and teachers.',
+    enrollmentEnabled: 'One-time enrollment',
+    enrollmentEnabledDescription: 'Sell courses with a single payment.',
+    subscriptionEnabled: 'Course subscriptions',
+    subscriptionEnabledDescription:
+      'Recurring access and subscription renewals.',
+    liveClassesEnabled: 'Live classes',
+    liveClassesEnabledDescription: 'Schedule and run online live sessions.',
+    featuresUpdatedSuccess: 'Features updated successfully',
+    savingFeatures: 'Saving…',
     generalInformation: 'General Information',
     generalInformationDescription:
       'Update the name, description, and domain for your academy.',
@@ -3795,7 +3810,15 @@ export const en = {
     savingNote: 'Saving…',
     noteSaved: 'Intervention note saved',
     noteRequired: 'Profile id and note are required',
-    useForNote: 'Use for note'
+    useForNote: 'Use for note',
+    featureDisabled: 'Learning follow-up is disabled for this academy',
+    featureDisabledDescription:
+      'Enable learning follow-up in academy settings to use this page.',
+    enableFeature: 'Enable learning follow-up',
+    enablingFeature: 'Enabling…',
+    featureEnabledSuccess: 'Learning follow-up enabled',
+    contactManager:
+      'Ask your academy manager to enable learning follow-up for access.'
   },
   tutoring: {
     title: 'Tutoring',

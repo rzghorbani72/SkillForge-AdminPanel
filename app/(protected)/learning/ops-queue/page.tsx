@@ -1,7 +1,8 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import {
   AlertTriangle,
   Clock3,
@@ -13,6 +14,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/components/providers/user-provider';
 import type { OpsQueueResponse } from '@/types/learning-operations';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -38,9 +40,17 @@ const EMPTY_QUEUE: OpsQueueResponse = {
 
 export default function OpsQueuePage() {
   const { t, language } = useTranslation();
+  const { user } = useAuthUser();
   const isRtl = language === 'fa' || language === 'ar';
+  const isManager =
+    user?.role === 'MANAGER' ||
+    user?.role === 'ADMIN' ||
+    user?.role === 'PLATFORM_OWNER';
+  const [featureEnabled, setFeatureEnabled] = useState<boolean | null>(null);
+  const [checkingFeature, setCheckingFeature] = useState(true);
+  const [enablingFeature, setEnablingFeature] = useState(false);
   const [queue, setQueue] = useState<OpsQueueResponse>(EMPTY_QUEUE);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [courseId, setCourseId] = useState('');
   const [inactiveDays, setInactiveDays] = useState('14');
   const [lowScoreThreshold, setLowScoreThreshold] = useState('50');
@@ -48,8 +58,37 @@ export default function OpsQueuePage() {
   const [noteText, setNoteText] = useState('');
   const [followUpAt, setFollowUpAt] = useState('');
   const [savingNote, setSavingNote] = useState(false);
+  const isFetchingRef = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const checkFeature = async () => {
+      try {
+        setCheckingFeature(true);
+        const features = await apiClient.getCurrentAcademyFeatures();
+        if (!cancelled) {
+          setFeatureEnabled(features.tutor_led_learning_enabled);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setFeatureEnabled(false);
+          ErrorHandler.handleApiError(error);
+        }
+      } finally {
+        if (!cancelled) {
+          setCheckingFeature(false);
+        }
+      }
+    };
+    void checkFeature();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const loadQueue = useCallback(async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
     setLoading(true);
     try {
       const data = await apiClient.getLearningOpsQueue({
@@ -67,12 +106,30 @@ export default function OpsQueuePage() {
       setQueue(EMPTY_QUEUE);
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
   }, [courseId, inactiveDays, lowScoreThreshold]);
 
   useEffect(() => {
-    void loadQueue();
-  }, [loadQueue]);
+    if (featureEnabled) {
+      void loadQueue();
+    }
+  }, [featureEnabled, loadQueue]);
+
+  const enableLearningFollowUp = async () => {
+    setEnablingFeature(true);
+    try {
+      const updated = await apiClient.updateCurrentAcademyFeatures({
+        tutor_led_learning_enabled: true
+      });
+      setFeatureEnabled(updated.tutor_led_learning_enabled);
+      toast.success(t('opsQueue.featureEnabledSuccess'));
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setEnablingFeature(false);
+    }
+  };
 
   const saveInterventionNote = async () => {
     if (!noteProfileId.trim() || !noteText.trim()) {
@@ -113,270 +170,323 @@ export default function OpsQueuePage() {
         <p className="text-muted-foreground">{t('opsQueue.description')}</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('opsQueue.filters')}</CardTitle>
-          <CardDescription>{t('opsQueue.filtersDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-4">
-          <div className="space-y-2">
-            <Label htmlFor="courseId">{t('opsQueue.courseId')}</Label>
-            <Input
-              id="courseId"
-              value={courseId}
-              onChange={(event) => setCourseId(event.target.value)}
-              placeholder={t('opsQueue.courseIdPlaceholder')}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="inactiveDays">{t('opsQueue.inactiveDays')}</Label>
-            <Input
-              id="inactiveDays"
-              type="number"
-              min={1}
-              value={inactiveDays}
-              onChange={(event) => setInactiveDays(event.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="lowScore">{t('opsQueue.lowScoreThreshold')}</Label>
-            <Input
-              id="lowScore"
-              type="number"
-              min={0}
-              value={lowScoreThreshold}
-              onChange={(event) => setLowScoreThreshold(event.target.value)}
-            />
-          </div>
-          <div className="flex items-end">
-            <Button onClick={() => void loadQueue()} className="w-full">
-              {t('opsQueue.refresh')}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <StickyNote className="h-4 w-4" />
-            {t('opsQueue.interventionNote')}
-          </CardTitle>
-          <CardDescription>
-            {t('opsQueue.interventionNoteDescription')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="noteProfileId">{t('opsQueue.profile')}</Label>
-            <Input
-              id="noteProfileId"
-              value={noteProfileId}
-              onChange={(event) => setNoteProfileId(event.target.value)}
-              placeholder={t('opsQueue.profileIdPlaceholder')}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="followUpAt">{t('opsQueue.followUpAt')}</Label>
-            <Input
-              id="followUpAt"
-              type="datetime-local"
-              value={followUpAt}
-              onChange={(event) => setFollowUpAt(event.target.value)}
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="noteText">{t('opsQueue.note')}</Label>
-            <Textarea
-              id="noteText"
-              value={noteText}
-              onChange={(event) => setNoteText(event.target.value)}
-              rows={3}
-              placeholder={t('opsQueue.notePlaceholder')}
-            />
-          </div>
-          <div className="md:col-span-2">
-            <Button
-              onClick={() => void saveInterventionNote()}
-              disabled={savingNote}
-            >
-              {savingNote ? t('opsQueue.savingNote') : t('opsQueue.saveNote')}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {loading ? (
+      {checkingFeature ? (
         <div className="flex min-h-40 items-center justify-center">
           <span className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
         </div>
+      ) : featureEnabled === false ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              {t('opsQueue.featureDisabled')}
+            </CardTitle>
+            <CardDescription>
+              {t('opsQueue.featureDisabledDescription')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-3">
+            {isManager ? (
+              <>
+                <Button
+                  onClick={() => void enableLearningFollowUp()}
+                  disabled={enablingFeature}
+                >
+                  {enablingFeature
+                    ? t('opsQueue.enablingFeature')
+                    : t('opsQueue.enableFeature')}
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/settings/academy">
+                    {t('settings.storeSettings')}
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                {t('opsQueue.contactManager')}
+              </p>
+            )}
+          </CardContent>
+        </Card>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
-          <QueueCard
-            title={t('opsQueue.overdueGrading')}
-            description={t('opsQueue.overdueGradingDescription')}
-            icon={<Clock3 className="h-4 w-4" />}
-            count={queue.overdue_grading.length}
-            empty={t('opsQueue.empty')}
-          >
-            {queue.overdue_grading.map((item) => (
-              <div
-                key={String(item.id)}
-                className="rounded-lg border p-3 text-sm"
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('opsQueue.filters')}</CardTitle>
+              <CardDescription>
+                {t('opsQueue.filtersDescription')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label htmlFor="courseId">{t('opsQueue.courseId')}</Label>
+                <Input
+                  id="courseId"
+                  value={courseId}
+                  onChange={(event) => setCourseId(event.target.value)}
+                  placeholder={t('opsQueue.courseIdPlaceholder')}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="inactiveDays">
+                  {t('opsQueue.inactiveDays')}
+                </Label>
+                <Input
+                  id="inactiveDays"
+                  type="number"
+                  min={1}
+                  value={inactiveDays}
+                  onChange={(event) => setInactiveDays(event.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lowScore">
+                  {t('opsQueue.lowScoreThreshold')}
+                </Label>
+                <Input
+                  id="lowScore"
+                  type="number"
+                  min={0}
+                  value={lowScoreThreshold}
+                  onChange={(event) => setLowScoreThreshold(event.target.value)}
+                />
+              </div>
+              <div className="flex items-end">
+                <Button onClick={() => void loadQueue()} className="w-full">
+                  {t('opsQueue.refresh')}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <StickyNote className="h-4 w-4" />
+                {t('opsQueue.interventionNote')}
+              </CardTitle>
+              <CardDescription>
+                {t('opsQueue.interventionNoteDescription')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="noteProfileId">{t('opsQueue.profile')}</Label>
+                <Input
+                  id="noteProfileId"
+                  value={noteProfileId}
+                  onChange={(event) => setNoteProfileId(event.target.value)}
+                  placeholder={t('opsQueue.profileIdPlaceholder')}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="followUpAt">{t('opsQueue.followUpAt')}</Label>
+                <Input
+                  id="followUpAt"
+                  type="datetime-local"
+                  value={followUpAt}
+                  onChange={(event) => setFollowUpAt(event.target.value)}
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="noteText">{t('opsQueue.note')}</Label>
+                <Textarea
+                  id="noteText"
+                  value={noteText}
+                  onChange={(event) => setNoteText(event.target.value)}
+                  rows={3}
+                  placeholder={t('opsQueue.notePlaceholder')}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Button
+                  onClick={() => void saveInterventionNote()}
+                  disabled={savingNote}
+                >
+                  {savingNote
+                    ? t('opsQueue.savingNote')
+                    : t('opsQueue.saveNote')}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {loading ? (
+            <div className="flex min-h-40 items-center justify-center">
+              <span className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+            </div>
+          ) : (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <QueueCard
+                title={t('opsQueue.overdueGrading')}
+                description={t('opsQueue.overdueGradingDescription')}
+                icon={<Clock3 className="h-4 w-4" />}
+                count={queue.overdue_grading.length}
+                empty={t('opsQueue.empty')}
               >
-                <p className="font-medium">
-                  {item.Assignment?.title ?? t('assignmentsPage.notAvailable')}
-                </p>
-                <p className="text-muted-foreground">
-                  {t('opsQueue.profile')}: {item.profile_id}
-                </p>
-                <p className="text-muted-foreground">
-                  {item.submitted_at
-                    ? new Date(item.submitted_at).toLocaleString(language)
-                    : '—'}
-                </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 h-auto px-0"
-                  onClick={() => setNoteProfileId(item.profile_id)}
-                >
-                  {t('opsQueue.useForNote')}
-                </Button>
-              </div>
-            ))}
-          </QueueCard>
+                {queue.overdue_grading.map((item) => (
+                  <div
+                    key={String(item.id)}
+                    className="rounded-lg border p-3 text-sm"
+                  >
+                    <p className="font-medium">
+                      {item.Assignment?.title ??
+                        t('assignmentsPage.notAvailable')}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('opsQueue.profile')}: {item.profile_id}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {item.submitted_at
+                        ? new Date(item.submitted_at).toLocaleString(language)
+                        : '—'}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 h-auto px-0"
+                      onClick={() => setNoteProfileId(item.profile_id)}
+                    >
+                      {t('opsQueue.useForNote')}
+                    </Button>
+                  </div>
+                ))}
+              </QueueCard>
 
-          <QueueCard
-            title={t('opsQueue.inactivity')}
-            description={t('opsQueue.inactivityDescription')}
-            icon={<AlertTriangle className="h-4 w-4" />}
-            count={queue.inactivity.length}
-            empty={t('opsQueue.empty')}
-          >
-            {queue.inactivity.map((item) => (
-              <div key={item.id} className="rounded-lg border p-3 text-sm">
-                <p className="font-medium">
-                  {t('opsQueue.profile')}: {item.profile_id}
-                </p>
-                <p className="text-muted-foreground">
-                  {t('opsQueue.courseId')}: {item.course_id}
-                </p>
-                <p className="text-muted-foreground">
-                  {t('learningOperations.lastAccessed')}:{' '}
-                  {item.last_accessed
-                    ? new Date(item.last_accessed).toLocaleString(language)
-                    : '—'}
-                </p>
-                {typeof item.progress_percent === 'number' && (
-                  <Badge variant="outline">{item.progress_percent}%</Badge>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 h-auto px-0"
-                  onClick={() => setNoteProfileId(item.profile_id)}
-                >
-                  {t('opsQueue.useForNote')}
-                </Button>
-              </div>
-            ))}
-          </QueueCard>
-
-          <QueueCard
-            title={t('opsQueue.lowScores')}
-            description={t('opsQueue.lowScoresDescription')}
-            icon={<GraduationCap className="h-4 w-4" />}
-            count={queue.low_scores.length}
-            empty={t('opsQueue.empty')}
-          >
-            {queue.low_scores.map((item) => (
-              <div
-                key={String(item.id)}
-                className="rounded-lg border p-3 text-sm"
+              <QueueCard
+                title={t('opsQueue.inactivity')}
+                description={t('opsQueue.inactivityDescription')}
+                icon={<AlertTriangle className="h-4 w-4" />}
+                count={queue.inactivity.length}
+                empty={t('opsQueue.empty')}
               >
-                <p className="font-medium">
-                  {item.Assignment?.title ?? t('assignmentsPage.notAvailable')}
-                </p>
-                <p className="text-muted-foreground">
-                  {t('opsQueue.profile')}: {item.profile_id}
-                </p>
-                <Badge variant="secondary">
-                  {item.score ?? '—'} / {item.Assignment?.max_score ?? '—'}
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 h-auto px-0"
-                  onClick={() => setNoteProfileId(item.profile_id)}
-                >
-                  {t('opsQueue.useForNote')}
-                </Button>
-              </div>
-            ))}
-          </QueueCard>
+                {queue.inactivity.map((item) => (
+                  <div key={item.id} className="rounded-lg border p-3 text-sm">
+                    <p className="font-medium">
+                      {t('opsQueue.profile')}: {item.profile_id}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('opsQueue.courseId')}: {item.course_id}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('learningOperations.lastAccessed')}:{' '}
+                      {item.last_accessed
+                        ? new Date(item.last_accessed).toLocaleString(language)
+                        : '—'}
+                    </p>
+                    {typeof item.progress_percent === 'number' && (
+                      <Badge variant="outline">{item.progress_percent}%</Badge>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 h-auto px-0"
+                      onClick={() => setNoteProfileId(item.profile_id)}
+                    >
+                      {t('opsQueue.useForNote')}
+                    </Button>
+                  </div>
+                ))}
+              </QueueCard>
 
-          <QueueCard
-            title={t('opsQueue.missedClasses')}
-            description={t('opsQueue.missedClassesDescription')}
-            icon={<UserX className="h-4 w-4" />}
-            count={queue.missed_classes.length}
-            empty={t('opsQueue.empty')}
-          >
-            {queue.missed_classes.map((item) => (
-              <div key={item.id} className="rounded-lg border p-3 text-sm">
-                <p className="font-medium">
-                  {t('opsQueue.profile')}: {item.profile_id}
-                </p>
-                <p className="text-muted-foreground">
-                  {t('opsQueue.sessionId')}: {item.tutoring_session_id}
-                </p>
-                <p className="text-muted-foreground">
-                  {new Date(item.created_at).toLocaleString(language)}
-                </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 h-auto px-0"
-                  onClick={() => setNoteProfileId(item.profile_id)}
-                >
-                  {t('opsQueue.useForNote')}
-                </Button>
-              </div>
-            ))}
-          </QueueCard>
+              <QueueCard
+                title={t('opsQueue.lowScores')}
+                description={t('opsQueue.lowScoresDescription')}
+                icon={<GraduationCap className="h-4 w-4" />}
+                count={queue.low_scores.length}
+                empty={t('opsQueue.empty')}
+              >
+                {queue.low_scores.map((item) => (
+                  <div
+                    key={String(item.id)}
+                    className="rounded-lg border p-3 text-sm"
+                  >
+                    <p className="font-medium">
+                      {item.Assignment?.title ??
+                        t('assignmentsPage.notAvailable')}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('opsQueue.profile')}: {item.profile_id}
+                    </p>
+                    <Badge variant="secondary">
+                      {item.score ?? '—'} / {item.Assignment?.max_score ?? '—'}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 h-auto px-0"
+                      onClick={() => setNoteProfileId(item.profile_id)}
+                    >
+                      {t('opsQueue.useForNote')}
+                    </Button>
+                  </div>
+                ))}
+              </QueueCard>
 
-          <QueueCard
-            title={t('opsQueue.unansweredThreads')}
-            description={t('opsQueue.unansweredThreadsDescription')}
-            icon={<MessageCircle className="h-4 w-4" />}
-            count={queue.unanswered_threads.length}
-            empty={t('opsQueue.empty')}
-          >
-            {queue.unanswered_threads.map((item) => (
-              <div key={item.id} className="rounded-lg border p-3 text-sm">
-                <p className="font-medium">{item.context_type}</p>
-                <p className="text-muted-foreground">
-                  {t('opsQueue.profile')}: {item.profile_id}
-                </p>
-                <p className="text-muted-foreground">
-                  {t('opsQueue.threadId')}: {item.id}
-                </p>
-                <p className="text-muted-foreground">
-                  {new Date(item.last_message_at).toLocaleString(language)}
-                </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 h-auto px-0"
-                  onClick={() => setNoteProfileId(item.profile_id)}
-                >
-                  {t('opsQueue.useForNote')}
-                </Button>
-              </div>
-            ))}
-          </QueueCard>
-        </div>
+              <QueueCard
+                title={t('opsQueue.missedClasses')}
+                description={t('opsQueue.missedClassesDescription')}
+                icon={<UserX className="h-4 w-4" />}
+                count={queue.missed_classes.length}
+                empty={t('opsQueue.empty')}
+              >
+                {queue.missed_classes.map((item) => (
+                  <div key={item.id} className="rounded-lg border p-3 text-sm">
+                    <p className="font-medium">
+                      {t('opsQueue.profile')}: {item.profile_id}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('opsQueue.sessionId')}: {item.tutoring_session_id}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {new Date(item.created_at).toLocaleString(language)}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 h-auto px-0"
+                      onClick={() => setNoteProfileId(item.profile_id)}
+                    >
+                      {t('opsQueue.useForNote')}
+                    </Button>
+                  </div>
+                ))}
+              </QueueCard>
+
+              <QueueCard
+                title={t('opsQueue.unansweredThreads')}
+                description={t('opsQueue.unansweredThreadsDescription')}
+                icon={<MessageCircle className="h-4 w-4" />}
+                count={queue.unanswered_threads.length}
+                empty={t('opsQueue.empty')}
+              >
+                {queue.unanswered_threads.map((item) => (
+                  <div key={item.id} className="rounded-lg border p-3 text-sm">
+                    <p className="font-medium">{item.context_type}</p>
+                    <p className="text-muted-foreground">
+                      {t('opsQueue.profile')}: {item.profile_id}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('opsQueue.threadId')}: {item.id}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {new Date(item.last_message_at).toLocaleString(language)}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 h-auto px-0"
+                      onClick={() => setNoteProfileId(item.profile_id)}
+                    >
+                      {t('opsQueue.useForNote')}
+                    </Button>
+                  </div>
+                ))}
+              </QueueCard>
+            </div>
+          )}
+        </>
       )}
     </main>
   );
