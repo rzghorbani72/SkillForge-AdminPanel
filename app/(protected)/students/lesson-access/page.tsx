@@ -29,9 +29,14 @@ import {
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Pagination } from '@/components/shared/Pagination';
+import {
+  CourseSearchCombobox,
+  LessonSearchCombobox,
+  StudentProfileSearchCombobox
+} from '@/components/entity-search';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { Lock, LockOpen, Plus, Search, Trash2 } from 'lucide-react';
+import { Lock, LockOpen, Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface AccessRecord {
@@ -58,6 +63,7 @@ export default function StudentLessonAccessPage() {
 
   const [dialog, setDialog] = useState(false);
   const [profileId, setProfileId] = useState('');
+  const [courseId, setCourseId] = useState('');
   const [lessonId, setLessonId] = useState('');
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [note, setNote] = useState('');
@@ -94,6 +100,7 @@ export default function StudentLessonAccessPage() {
       });
       setDialog(false);
       setProfileId('');
+      setCourseId('');
       setLessonId('');
       setNote('');
       setIsUnlocked(true);
@@ -141,16 +148,16 @@ export default function StudentLessonAccessPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-3">
-            <div className="relative max-w-xs flex-1">
-              <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t('students.lessonAccess.filterByProfileId')}
+            <div className="relative max-w-xs flex-1 space-y-2">
+              <Label>{t('students.lessonAccess.filterByProfileId')}</Label>
+              <StudentProfileSearchCombobox
                 value={profileIdFilter}
-                onChange={(e) => {
-                  setProfileIdFilter(e.target.value);
+                onValueChange={(value) => {
+                  setProfileIdFilter(value);
                   setCurrentPage(1);
                 }}
-                className="ps-8"
+                placeholder={t('entitySearch.searchPlaceholder')}
+                clearable
               />
             </div>
           </div>
@@ -258,23 +265,33 @@ export default function StudentLessonAccessPage() {
               <Label htmlFor="pid">
                 {t('students.lessonAccess.studentProfileId')}
               </Label>
-              <Input
+              <StudentProfileSearchCombobox
                 id="pid"
-                type="number"
                 value={profileId}
-                onChange={(e) => setProfileId(e.target.value)}
-                placeholder="e.g. 42"
+                onValueChange={setProfileId}
+                placeholder={t('entitySearch.searchPlaceholder')}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label>{t('students.manualEnroll.courseId')}</Label>
+              <CourseSearchCombobox
+                value={courseId}
+                onValueChange={(value) => {
+                  setCourseId(value);
+                  setLessonId('');
+                }}
+                placeholder={t('entitySearch.searchPlaceholder')}
                 className="mt-1"
               />
             </div>
             <div>
               <Label htmlFor="lid">{t('students.lessonAccess.lessonId')}</Label>
-              <Input
+              <LessonSearchCombobox
                 id="lid"
-                type="number"
+                courseId={courseId}
                 value={lessonId}
-                onChange={(e) => setLessonId(e.target.value)}
-                placeholder="e.g. 15"
+                onValueChange={setLessonId}
                 className="mt-1"
               />
             </div>

@@ -3648,8 +3648,8 @@ export const fa = {
       'تکالیف در انتظار نمره، دانش‌آموزان غیرفعال، نمرات پایین، جلسات خصوصی غایب و پرسش‌های بی‌پاسخ را یک‌جا ببینید.',
     filters: 'فیلترها',
     filtersDescription: 'بر اساس دوره و آستانه‌ها لیست را محدود کنید.',
-    courseId: 'شناسه دوره',
-    courseIdPlaceholder: 'شناسه دوره اختیاری',
+    courseId: 'دوره',
+    courseIdPlaceholder: 'همه دوره‌ها (اختیاری)',
     inactiveDays: 'روزهای غیرفعال',
     lowScoreThreshold: 'آستانه نمره پایین',
     refresh: 'بروزرسانی',
@@ -3671,7 +3671,7 @@ export const fa = {
     interventionNote: 'یادداشت پیگیری',
     interventionNoteDescription:
       'یادداشت پیگیری را در تایم‌لاین یادگیری دانش‌آموز ذخیره کنید.',
-    profileIdPlaceholder: 'شناسه پروفایل دانشجو',
+    profileIdPlaceholder: 'جستجوی دانشجو با نام یا شناسه',
     followUpAt: 'تاریخ پیگیری',
     note: 'یادداشت',
     notePlaceholder: 'معلم یا مدیر در مرحله بعد چه کاری باید انجام دهد؟',
@@ -3862,6 +3862,14 @@ export const fa = {
     expiry: 'انقضا',
     storage: 'مصرف فضا',
     openTickets: 'تیکت‌های باز'
+  },
+  entitySearch: {
+    searchPlaceholder: 'جستجو با نام یا شناسه…',
+    searchTeacher: 'جستجوی مدرس با نام یا شناسه…',
+    noResults: 'موردی یافت نشد.',
+    loading: 'در حال جستجو…',
+    clear: 'پاک کردن انتخاب',
+    selectCourseFirst: 'ابتدا یک دوره انتخاب کنید'
   },
   userNav: {
     profile: 'پروفایل',

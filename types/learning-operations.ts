@@ -253,6 +253,15 @@ export interface TutoringSession {
   status: TutoringSessionStatus;
 }
 
+export interface TutoringSessionListItem {
+  id: string;
+  starts_at: string;
+  status: TutoringSessionStatus;
+  engagement_id: string;
+  Course: { id: string; title: string } | null;
+  Student: { id: string; display_name: string | null } | null;
+}
+
 export interface LessonDownloadPolicy {
   id: string;
   allow_download_free: boolean;

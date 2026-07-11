@@ -3779,8 +3779,8 @@ export const en = {
     filters: 'Queue filters',
     filtersDescription:
       'Narrow the intervention list by course and thresholds.',
-    courseId: 'Course ID',
-    courseIdPlaceholder: 'Optional course id',
+    courseId: 'Course',
+    courseIdPlaceholder: 'All courses (optional)',
     inactiveDays: 'Inactive days',
     lowScoreThreshold: 'Low score threshold',
     refresh: 'Refresh queue',
@@ -3802,7 +3802,7 @@ export const en = {
     interventionNote: 'Intervention note',
     interventionNoteDescription:
       'Save a follow-up note on the student learning timeline.',
-    profileIdPlaceholder: 'Student profile id',
+    profileIdPlaceholder: 'Search student by name or ID',
     followUpAt: 'Follow-up date',
     note: 'Note',
     notePlaceholder: 'What should the tutor or manager do next?',
@@ -3993,6 +3993,14 @@ export const en = {
     expiry: 'Expiry',
     storage: 'Storage used',
     openTickets: 'Open tickets'
+  },
+  entitySearch: {
+    searchPlaceholder: 'Search by name or ID…',
+    searchTeacher: 'Search instructor by name or ID…',
+    noResults: 'No matches found.',
+    loading: 'Searching…',
+    clear: 'Clear selection',
+    selectCourseFirst: 'Select a course first'
   },
   userNav: {
     profile: 'Profile',

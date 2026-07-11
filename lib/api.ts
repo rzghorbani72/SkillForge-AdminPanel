@@ -24,6 +24,7 @@ import type {
   TutoringEngagement,
   TutoringOffer,
   TutoringSession,
+  TutoringSessionListItem,
   UpdateLessonDownloadPolicyPayload
 } from '@/types/learning-operations';
 
@@ -1263,9 +1264,10 @@ class ApiClient {
     const queryParams = new URLSearchParams();
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
-          queryParams.append(key, value.toString());
+        if (value === undefined || value === '') {
+          return;
         }
+        queryParams.append(key, value.toString());
       });
     }
 
@@ -4426,6 +4428,25 @@ class ApiClient {
       : '/tutoring/engagements';
     const res = await this.request<
       TutoringEngagement[] | { data: TutoringEngagement[] }
+    >(url);
+    const payload = unwrapDataEnvelope(res.data);
+    return Array.isArray(payload) ? payload : [];
+  }
+
+  async listTutoringSessions(params?: {
+    search?: string;
+    engagement_id?: string;
+    limit?: number;
+  }): Promise<TutoringSessionListItem[]> {
+    const qs = new URLSearchParams();
+    if (params?.search) qs.append('search', params.search);
+    if (params?.engagement_id) qs.append('engagement_id', params.engagement_id);
+    if (params?.limit) qs.append('limit', String(params.limit));
+    const url = qs.toString()
+      ? `/tutoring/sessions?${qs}`
+      : '/tutoring/sessions';
+    const res = await this.request<
+      TutoringSessionListItem[] | { data: TutoringSessionListItem[] }
     >(url);
     const payload = unwrapDataEnvelope(res.data);
     return Array.isArray(payload) ? payload : [];

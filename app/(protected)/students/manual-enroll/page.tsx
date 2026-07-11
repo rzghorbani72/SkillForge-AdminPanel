@@ -20,6 +20,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
+import {
+  CourseSearchCombobox,
+  StudentProfileSearchCombobox
+} from '@/components/entity-search';
 import { Pagination } from '@/components/shared/Pagination';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -144,13 +148,11 @@ export default function ManualEnrollPage() {
                 <Label htmlFor="courseId">
                   {t('students.manualEnroll.courseId')}
                 </Label>
-                <Input
+                <CourseSearchCombobox
                   id="courseId"
-                  type="number"
                   value={courseId}
-                  onChange={(e) => setCourseId(e.target.value)}
-                  placeholder="e.g. 12"
-                  required
+                  onValueChange={setCourseId}
+                  placeholder={t('entitySearch.searchPlaceholder')}
                   className="mt-1"
                 />
               </div>
@@ -158,13 +160,11 @@ export default function ManualEnrollPage() {
                 <Label htmlFor="profileId">
                   {t('students.manualEnroll.studentProfileId')}
                 </Label>
-                <Input
+                <StudentProfileSearchCombobox
                   id="profileId"
-                  type="number"
                   value={profileId}
-                  onChange={(e) => setProfileId(e.target.value)}
-                  placeholder="e.g. 55"
-                  required
+                  onValueChange={setProfileId}
+                  placeholder={t('entitySearch.searchPlaceholder')}
                   className="mt-1"
                 />
               </div>
