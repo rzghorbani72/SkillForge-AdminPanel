@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -35,6 +36,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { cn } from '@/lib/utils';
+import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
 import { PlanFormDialog } from '@/components/plans/PlanFormDialog';
 import { AcademyPlanFormDialog } from '@/components/plans/AcademyPlanFormDialog';
 import { AcademyPlansList } from '@/components/plans/AcademyPlansList';
@@ -54,6 +56,11 @@ import {
 export default function PlansPage() {
   const { t } = useTranslation();
   const { user } = useAuthUser();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [managerTab, setManagerTab] = useState<'subscription' | 'academy'>(
+    tabParam === 'academy' ? 'academy' : 'subscription'
+  );
 
   const isPlatformAdmin =
     user?.role === 'ADMIN' && (user?.isAdminProfile || user?.platformLevel);
@@ -132,6 +139,13 @@ export default function PlansPage() {
       setIsAcademyPlansLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (tabParam === 'academy') {
+      setManagerTab('academy');
+      void fetchAcademyPlans();
+    }
+  }, [tabParam, fetchAcademyPlans]);
 
   useEffect(() => {
     fetchSubscriptionPlans();
@@ -526,12 +540,17 @@ export default function PlansPage() {
         <h1 className="text-2xl font-bold tracking-tight">
           {t('plans.title')}
         </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t('plans.subtitle')}
+        </p>
       </div>
 
       <Tabs
-        defaultValue="subscription"
+        value={managerTab}
         onValueChange={(v) => {
-          if (v === 'academy') fetchAcademyPlans();
+          const next = v as 'subscription' | 'academy';
+          setManagerTab(next);
+          if (next === 'academy') fetchAcademyPlans();
         }}
       >
         <TabsList>
@@ -544,6 +563,11 @@ export default function PlansPage() {
         </TabsList>
 
         <TabsContent value="subscription" className="space-y-6 pt-4">
+          <PlansTabScopeHeader
+            scope="platform"
+            title={t('plans.platformTabTitle')}
+            description={t('plans.platformTabDescription')}
+          />
           <CurrentSubscriptionBanner
             currentSub={currentSub}
             currentPlan={currentPlan}
@@ -608,6 +632,11 @@ export default function PlansPage() {
         </TabsContent>
 
         <TabsContent value="academy" className="pt-4">
+          <PlansTabScopeHeader
+            scope="academy"
+            title={t('plans.academyTabTitle')}
+            description={t('plans.academyTabDescription')}
+          />
           {academyPlansPanel}
         </TabsContent>
       </Tabs>

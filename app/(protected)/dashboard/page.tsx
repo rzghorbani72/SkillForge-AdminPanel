@@ -15,6 +15,7 @@ import CompletionDonut from '@/components/dashboard/CompletionDonut';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useInitializeStores } from '@/hooks/useInitializeStores';
 import CampaignBanner from '@/components/dashboard/CampaignBanner';
+import { SubscriptionStatusCard } from '@/components/dashboard/subscription-status-card';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { cn } from '@/lib/utils';
 
@@ -126,6 +127,9 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Subscription upgrade — Platform scope */}
+      <SubscriptionStatusCard />
 
       {/* Campaign banner */}
       <CampaignBanner />

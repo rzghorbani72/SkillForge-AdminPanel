@@ -302,6 +302,11 @@ export const fa = {
     siteTemplate: 'قالب سایت',
     financial: 'مالی',
     plans: 'پلن‌ها',
+    platformPlan: 'پلن پلتفرم',
+    academyProfile: 'پروفایل آکادمی',
+    studentPlans: 'پلن‌های دانشجو',
+    studentPricing: 'قیمت‌گذاری دانشجو',
+    settingsHub: 'تنظیمات',
     bundles: 'بسته‌ها',
     refunds: 'بازپرداخت‌ها',
     withdrawals: 'برداشت‌ها',
@@ -324,7 +329,8 @@ export const fa = {
       finance: 'مالی',
       platform: 'پلتفرم',
       templates: 'قالب‌ها',
-      configuration: 'پیکربندی'
+      configuration: 'پیکربندی',
+      students: 'دانشجویان'
     }
   },
   legal: {
@@ -1262,6 +1268,41 @@ export const fa = {
     renewSubscription: 'تمدید اشتراک',
     recentInvoices: 'فاکتورهای اخیر',
     subscriptionRenewedSuccess: 'اشتراک با موفقیت تمدید شد',
+    scope: {
+      personal: 'شخصی',
+      personalDescription: 'فقط حساب کاربری شما',
+      platform: 'پلتفرم',
+      platformDescription: 'پلن اشتراک و تنظیمات آکادمی شما روی پلتفرم',
+      academy: 'دانشجویان',
+      academyDescription:
+        'سایت، قیمت‌گذاری و پلن‌هایی که فراگیران می‌بینند و می‌خرند'
+    },
+    groupPersonal: 'شخصی',
+    groupPersonalDescription: 'پروفایل و امنیت حساب کاربری شما',
+    groupPlatform: 'پلتفرم',
+    groupPlatformDescription: 'پلن اشتراک، پروفایل آکادمی و محدودیت‌های پلتفرم',
+    groupAcademy: 'دانشجویان',
+    groupAcademyDescription:
+      'قالب سایت، پلن‌های دانشجو و قیمت‌گذاری برای فراگیران',
+    platformPlanTitle: 'پلن پلتفرم',
+    platformPlanDescription: 'مشاهده، ارتقا یا تمدید اشتراک آکادمی',
+    managePlatformPlan: 'مدیریت پلن',
+    noPlan: 'بدون پلن',
+    daysRemaining: 'روز باقی‌مانده',
+    subscriptionReadOnlyHint:
+      'ارتقا یا تغییر پلن از صفحه پلن پلتفرم انجام می‌شود',
+    storeSettingsPlatformDescription: 'نام، دامنه و هویت آکادمی روی پلتفرم',
+    studentPricingTitle: 'صفحه قیمت‌گذاری دانشجو',
+    studentPricingDescription:
+      'متن بازاریابی صفحه قیمت‌گذاری که دانشجویان می‌بینند',
+    studentPlansTitle: 'پلن‌های دانشجو',
+    studentPlansDescription:
+      'پلن‌های اشتراکی و بسته‌ای که به دانشجویان می‌فروشید',
+    platformPricingTitle: 'قیمت‌گذاری پلتفرم',
+    platformPricingDescription:
+      'سیاست درآمدزایی نمایش‌داده‌شده به مدیران آکادمی',
+    paymentGatewayTitle: 'درگاه پرداخت',
+    paymentGatewayDescription: 'پیکربندی پی‌پینگ و سایر درگاه‌های پرداخت',
     description:
       'پروفایل، پیکربندی آکادمی، برندینگ و تنظیمات امنیتی خود را مدیریت کنید.',
     refreshData: 'به‌روزرسانی داده‌ها',
@@ -3312,9 +3353,15 @@ export const fa = {
     backToCourses: 'بازگشت به دوره‌ها'
   },
   sidebar: {
-    upgradePlan: 'ارتقا به سازمانی',
-    upgradeDescription: 'دانشجوی نامحدود، API و SLA ۹۹.۹٪',
+    upgradePlan: 'ارتقای پلن',
+    upgradeDescription: 'دوره، فضای ذخیره و امکانات بیشتر با پلن بالاتر',
+    upgradeDescriptionExpiring:
+      'پلن شما تا {{days}} روز دیگر منقضی می‌شود. همین حالا تمدید کنید.',
+    subscriptionExpiring: 'پلن {{plan}}',
     upgradeButton: 'مشاهده پلن‌ها',
+    manageSubscription: 'مدیریت پلن',
+    currentPlan: 'پلن {{plan}}',
+    managePlanHint: 'مشاهده یا تغییر اشتراک پلتفرم',
     platformAdmin: 'مدیر پلتفرم',
     managementConsole: 'کنسول مدیریت'
   },
@@ -3387,6 +3434,10 @@ export const fa = {
     platformPlansTab: 'پلن‌های پلتفرم',
     academyPlansTab: 'پلن‌های آکادمی',
     mySubscriptionTab: 'اشتراک من',
+    platformTabTitle: 'پلن پلتفرم',
+    platformTabDescription: 'انتخاب یا ارتقای پلن اشتراک این آکادمی',
+    academyTabTitle: 'پلن‌های دانشجو',
+    academyTabDescription: 'پلن‌هایی بسازید که دانشجویان از آکادمی شما می‌خرند',
     kindLabel: 'نوع',
     kindSubscription: 'اشتراکی',
     kindPackage: 'بسته',

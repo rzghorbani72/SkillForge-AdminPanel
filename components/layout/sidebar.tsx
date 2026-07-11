@@ -3,13 +3,7 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
-import {
-  ChevronLeft,
-  Zap,
-  GraduationCap,
-  ArrowUpRight,
-  Shield
-} from 'lucide-react';
+import { ChevronLeft, GraduationCap, Shield } from 'lucide-react';
 import { Suspense, useMemo } from 'react';
 import { filterNavItemsByRole } from '@/lib/nav-filter';
 import { isPaymentEnabled } from '@/lib/payment';
@@ -20,6 +14,7 @@ import Link from '@/components/ui/link';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useHasStore } from '@/hooks/useHasStore';
 import { useBrandingStore } from '@/lib/store';
+import { SidebarUpgradeBanner } from '@/components/layout/sidebar-upgrade-banner';
 
 type SidebarProps = {
   className?: string;
@@ -142,45 +137,9 @@ export default function Sidebar({ className }: SidebarProps) {
         </Suspense>
       </div>
 
-      {/* Upgrade banner — hidden in platform mode and when payments are disabled */}
-      {!isPlatformMode && !isMinimized && isPaymentEnabled && (
-        <div className="p-3">
-          <div className="upgrade-banner">
-            <div className="mb-2 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/15">
-                <Zap className="h-3.5 w-3.5 text-primary" />
-              </div>
-              <span className="text-xs font-semibold text-foreground">
-                {t('sidebar.upgradePlan') || 'Upgrade Plan'}
-              </span>
-            </div>
-            <p className="mb-3 text-[11px] leading-relaxed text-muted-foreground">
-              {t('sidebar.upgradeDescription') ||
-                'Unlock unlimited courses & advanced analytics'}
-            </p>
-            <Link
-              href="/plans"
-              className="flex items-center justify-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              {t('sidebar.upgradeButton') || 'Upgrade'}
-              <ArrowUpRight className="h-3 w-3" />
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Minimized upgrade icon — hidden in platform mode and when payments are disabled */}
-      {!isPlatformMode && isMinimized && isPaymentEnabled && (
-        <div className="flex justify-center p-3">
-          <Link
-            href="/plans"
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors hover:bg-primary hover:text-white"
-            title={t('sidebar.upgradePlan') || 'Upgrade'}
-          >
-            <Zap className="h-4 w-4" />
-          </Link>
-        </div>
-      )}
+      {!isPlatformMode && isPaymentEnabled ? (
+        <SidebarUpgradeBanner isMinimized={isMinimized} />
+      ) : null}
     </aside>
   );
 }

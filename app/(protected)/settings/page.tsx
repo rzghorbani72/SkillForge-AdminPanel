@@ -1,6 +1,5 @@
 'use client';
 
-import Link from '@/components/ui/link';
 import {
   Card,
   CardContent,
@@ -10,14 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  ArrowRight,
-  Shield,
-  User,
-  Building,
-  Layout,
-  CreditCard
-} from 'lucide-react';
+import { SettingsHubGroups } from '@/components/settings/settings-hub-groups';
 import { useSettingsData } from './_hooks/use-settings-data';
 import { format } from 'date-fns';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -31,63 +23,6 @@ export default function SettingsOverviewPage() {
   const isPlatformAdmin =
     authUser?.role === 'ADMIN' &&
     (authUser?.isAdminProfile || authUser?.platformLevel);
-
-  const SECTIONS = [
-    {
-      title: t('settings.profileSettings'),
-      description: t('settings.profileSettingsDescription'),
-      href: '/settings/profile',
-      icon: User
-    },
-    {
-      title: t('settings.storeSettings'),
-      description: t('settings.storeSettingsDescription'),
-      href: '/settings/academy',
-      icon: Building
-    },
-    ...(!isPlatformAdmin
-      ? [
-          {
-            title: 'Academy Pricing',
-            description:
-              'Manage pricing content shown to students in your academy.',
-            href: '/settings/pricing',
-            icon: Building
-          }
-        ]
-      : [
-          {
-            title: 'Platform Pricing',
-            description:
-              'Manage platform monetization policy shown to academy managers.',
-            href: '/platform/pricing',
-            icon: Building
-          }
-        ]),
-    {
-      title: t('settings.uiTemplateBuilder'),
-      description: t('settings.uiTemplateBuilderDescription'),
-      href: '/settings/ui-template',
-      icon: Layout
-    },
-    {
-      title: t('settings.security'),
-      description: t('settings.securityDescription'),
-      href: '/settings/security',
-      icon: Shield
-    },
-    ...(isPlatformAdmin
-      ? [
-          {
-            title: 'Payment Gateway',
-            description:
-              'Configure PayPing and other payment gateway tokens and credentials.',
-            href: '/settings/payment-gateway',
-            icon: CreditCard
-          }
-        ]
-      : [])
-  ] as const;
 
   if (isLoading) {
     return (
@@ -196,31 +131,7 @@ export default function SettingsOverviewPage() {
       </div>
 
       <DefaultAcademyCard />
-
-      <div className="grid gap-4 md:grid-cols-2">
-        {SECTIONS.map(({ title, description, href, icon: Icon }) => (
-          <Card
-            key={href}
-            className="transition hover:border-primary/50 hover:shadow-sm"
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-                <Icon className="h-5 w-5" />
-                {title}
-              </CardTitle>
-              <CardDescription>{description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="link" asChild className="px-0 font-medium">
-                <Link href={href} className="inline-flex items-center gap-2">
-                  {t('settings.openSettings')}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <SettingsHubGroups isPlatformAdmin={Boolean(isPlatformAdmin)} />
     </div>
   );
 }

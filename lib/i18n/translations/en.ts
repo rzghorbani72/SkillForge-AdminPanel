@@ -308,6 +308,11 @@ export const en = {
     siteTemplate: 'Site Template',
     financial: 'Financial',
     plans: 'Plans',
+    platformPlan: 'Platform Plan',
+    academyProfile: 'Academy Profile',
+    studentPlans: 'Student Plans',
+    studentPricing: 'Student Pricing',
+    settingsHub: 'Settings',
     bundles: 'Bundles',
     refunds: 'Refunds',
     withdrawals: 'Withdrawals',
@@ -327,7 +332,8 @@ export const en = {
       finance: 'Finance',
       platform: 'Platform',
       templates: 'Templates',
-      configuration: 'Configuration'
+      configuration: 'Configuration',
+      students: 'Students'
     }
   },
   legal: {
@@ -1507,6 +1513,44 @@ export const en = {
     renewSubscription: 'Renew Subscription',
     recentInvoices: 'Recent Invoices',
     subscriptionRenewedSuccess: 'Subscription renewed successfully',
+    scope: {
+      personal: 'Personal',
+      personalDescription: 'Your user account only',
+      platform: 'Platform',
+      platformDescription:
+        'Your subscription plan and academy settings on the platform',
+      academy: 'Students',
+      academyDescription: 'Site, pricing, and plans your learners see and buy'
+    },
+    groupPersonal: 'Personal',
+    groupPersonalDescription: 'Your profile and account security',
+    groupPlatform: 'Platform',
+    groupPlatformDescription:
+      'Subscription plan, academy profile, and platform limits',
+    groupAcademy: 'Students',
+    groupAcademyDescription:
+      'Site template, student plans, and pricing for learners',
+    platformPlanTitle: 'Platform Plan',
+    platformPlanDescription:
+      'View, upgrade, or renew your academy subscription',
+    managePlatformPlan: 'Manage plan',
+    noPlan: 'No plan',
+    daysRemaining: 'Days remaining',
+    subscriptionReadOnlyHint:
+      'Upgrade or change plan from the Platform Plan page',
+    storeSettingsPlatformDescription:
+      'Academy name, domain, and identity on the platform',
+    studentPricingTitle: 'Student Pricing Page',
+    studentPricingDescription:
+      'Marketing copy on the pricing page your students see',
+    studentPlansTitle: 'Student Plans',
+    studentPlansDescription:
+      'Subscription and package plans you sell to students',
+    platformPricingTitle: 'Platform Pricing',
+    platformPricingDescription: 'Monetization policy shown to academy managers',
+    paymentGatewayTitle: 'Payment Gateway',
+    paymentGatewayDescription:
+      'Configure PayPing and other payment gateway credentials',
     general: 'General',
     language: 'Language',
     theme: 'Theme',
@@ -3436,9 +3480,16 @@ export const en = {
     backToCourses: 'Back to Courses'
   },
   sidebar: {
-    upgradePlan: 'Upgrade to Enterprise',
-    upgradeDescription: 'Unlimited students, API & 99.9% SLA',
-    upgradeButton: 'See plans',
+    upgradePlan: 'Upgrade plan',
+    upgradeDescription:
+      'Unlock more courses, storage, and features with a higher tier',
+    upgradeDescriptionExpiring:
+      'Your plan expires in {{days}} days. Renew now to avoid interruption.',
+    subscriptionExpiring: '{{plan}} plan',
+    upgradeButton: 'View plans',
+    manageSubscription: 'Manage plan',
+    currentPlan: '{{plan}} plan',
+    managePlanHint: 'View or change your platform subscription',
     platformAdmin: 'Platform Admin',
     managementConsole: 'Management Console'
   },
@@ -3513,6 +3564,12 @@ export const en = {
     platformPlansTab: 'Platform Plans',
     academyPlansTab: 'Academy Plans',
     mySubscriptionTab: 'My Subscription',
+    platformTabTitle: 'Platform plan',
+    platformTabDescription:
+      'Choose or upgrade the subscription plan for this academy',
+    academyTabTitle: 'Student plans',
+    academyTabDescription:
+      'Create plans that your students buy from your academy',
     kindLabel: 'Type',
     kindSubscription: 'Subscription',
     kindPackage: 'Package',

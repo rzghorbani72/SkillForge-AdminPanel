@@ -343,12 +343,63 @@ export const navItems: NavItem[] = [
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy'
   },
+  // ── Platform scope settings ────────────────────────────────────────────────
   {
-    title: 'My Affiliate',
-    href: '/my-affiliate',
-    icon: 'network' as IconType,
-    label: 'my-affiliate',
-    roles: ['STUDENT', 'TEACHER', 'AFFILIATE']
+    title: 'Platform Plan',
+    href: '/plans',
+    icon: 'layers' as IconType,
+    label: 'platformPlan',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'platform',
+    paymentGated: true
+  },
+  {
+    title: 'Academy Profile',
+    href: '/settings/academy',
+    icon: 'store' as IconType,
+    label: 'academyProfile',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'platform'
+  },
+  {
+    title: 'Settings',
+    href: '/settings',
+    icon: 'settings' as IconType,
+    label: 'settingsHub',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'platform'
+  },
+  // ── Students scope settings ────────────────────────────────────────────────
+  {
+    title: 'Site Template',
+    href: '/settings/ui-template',
+    icon: 'layout' as IconType,
+    label: 'siteTemplate',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'students'
+  },
+  {
+    title: 'Student Plans',
+    href: '/plans?tab=academy',
+    icon: 'layers' as IconType,
+    label: 'studentPlans',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'students',
+    paymentGated: true
+  },
+  {
+    title: 'Student Pricing',
+    href: '/settings/pricing',
+    icon: 'dollarSign' as IconType,
+    label: 'studentPricing',
+    roles: ['MANAGER'],
+    scope: 'academy',
+    section: 'students'
   },
   {
     title: 'Financial',
@@ -357,24 +408,15 @@ export const navItems: NavItem[] = [
     label: 'financial',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
     scope: 'academy',
+    section: 'students',
     paymentGated: true
   },
   {
-    title: 'Plans',
-    href: '/plans',
-    icon: 'layers' as IconType,
-    label: 'plans',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
-    scope: 'academy',
-    paymentGated: true
-  },
-  {
-    title: 'Site Template',
-    href: '/settings/ui-template',
-    icon: 'layout' as IconType,
-    label: 'siteTemplate',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-    scope: 'academy'
+    title: 'My Affiliate',
+    href: '/my-affiliate',
+    icon: 'network' as IconType,
+    label: 'my-affiliate',
+    roles: ['STUDENT', 'TEACHER', 'AFFILIATE']
   }
 ];
 
