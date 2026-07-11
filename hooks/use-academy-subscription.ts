@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { isStarterPlan, shouldShowUpgradePrompt } from '@/lib/settings-scope';
+import { getPlanDisplayName } from '@/lib/plan-display-name';
 
 export interface AcademySubscriptionInvoice {
   id: number;
@@ -58,7 +59,8 @@ export function useAcademySubscription(enabled = true) {
   }, [refresh]);
 
   const planSlug = subscription?.academy?.subscription_plan ?? null;
-  const planName = planSlug && planSlug !== 'none' ? planSlug : null;
+  const planName =
+    planSlug && planSlug !== 'none' ? getPlanDisplayName(planSlug) : null;
   const status = subscription?.status;
   const daysRemaining = subscription?.days_remaining ?? null;
 

@@ -12,6 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiClient, AcademyHealthView } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getPlanDisplayName } from '@/lib/plan-display-name';
 
 function storagePercent(academy: AcademyHealthView): string {
   const storage = academy.limits?.storage_gb;
@@ -62,7 +63,9 @@ export function AcademiesHealthTable() {
               {rows.map((academy) => (
                 <TableRow key={academy.id}>
                   <TableCell className="font-medium">{academy.name}</TableCell>
-                  <TableCell>{academy.plan_slug ?? '—'}</TableCell>
+                  <TableCell>
+                    {getPlanDisplayName(academy.plan_slug) ?? '—'}
+                  </TableCell>
                   <TableCell>
                     {academy.expires_at
                       ? new Date(academy.expires_at).toLocaleDateString()

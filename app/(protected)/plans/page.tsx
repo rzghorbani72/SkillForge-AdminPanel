@@ -38,6 +38,7 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { cn } from '@/lib/utils';
 import { AcademySubscriptionState } from '@/hooks/use-academy-subscription';
+import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
 import { PlanFormDialog } from '@/components/plans/PlanFormDialog';
 import { AcademyPlanFormDialog } from '@/components/plans/AcademyPlanFormDialog';
@@ -889,7 +890,8 @@ function CurrentSubscriptionBanner({
           </div>
           <div>
             <p className="font-semibold">
-              {currentPlan?.name ?? currentSub.academy.subscription_plan}
+              {currentPlan?.name ??
+                getPlanDisplayName(currentSub.academy.subscription_plan)}
             </p>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
               <span

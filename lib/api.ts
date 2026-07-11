@@ -1279,19 +1279,9 @@ class ApiClient {
     };
   }
 
-  async downloadCurrentAcademySubscriptionInvoicePdf(
-    invoiceId: number
-  ): Promise<Blob> {
-    const endpoint = `/academies/current/subscription/invoices/${invoiceId}/pdf`;
-    const url = `${this.baseURL}${endpoint}`;
-    const response = await fetch(url, {
-      method: 'GET',
-      credentials: 'include'
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to download invoice PDF: ${response.status}`);
-    }
-    return response.blob();
+  /** Auth is cookie-based, so this URL can be opened directly (e.g. `window.open`). */
+  getCurrentAcademySubscriptionInvoicePdfUrl(invoiceId: number): string {
+    return `${this.baseURL}/academies/current/subscription/invoices/${invoiceId}/pdf`;
   }
 
   // Courses endpoints

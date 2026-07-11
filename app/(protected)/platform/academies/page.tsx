@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import { apiClient } from '@/lib/api';
+import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -329,8 +330,9 @@ export default function PlatformAcademiesPage() {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-lg font-semibold capitalize">
-                {selectedStore.subscription_plan || t('common.none')}
+              <div className="text-lg font-semibold">
+                {getPlanDisplayName(selectedStore.subscription_plan) ||
+                  t('common.none')}
               </div>
               <p className="text-xs text-muted-foreground">
                 {t('platform.stores.expires')}:{' '}

@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import type { Academy } from '@/types/api';
+import { getPlanDisplayName } from '@/lib/plan-display-name';
 
 const CARD_COLORS = [
   { bg: 'bg-blue-100', icon: 'bg-blue-200 text-blue-700' },
@@ -105,7 +106,8 @@ export function AcademyCard({
     academy.Domain?.private_address ??
     academy.slug ??
     '';
-  const plan = academy.subscription_plan ?? t('stores.planBasic');
+  const plan =
+    getPlanDisplayName(academy.subscription_plan) ?? t('stores.planBasic');
   const isActive = academy.is_active !== false;
 
   return (

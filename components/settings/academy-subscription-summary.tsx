@@ -14,6 +14,7 @@ import Link from '@/components/ui/link';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getLocaleForLanguage } from '@/lib/i18n/config';
+import { getPlanDisplayName } from '@/lib/plan-display-name';
 
 const SUBSCRIPTION_STATUS_LABEL_KEYS: Record<string, string> = {
   ACTIVE: 'settings.statusActive',
@@ -27,23 +28,10 @@ export function AcademySubscriptionSummary() {
   const locale = getLocaleForLanguage(language);
   const { subscription, isLoading } = useAcademySubscription(true);
 
-  const handleDownloadInvoice = async (invoiceId: number) => {
+  const handleViewInvoice = async (invoiceId: number) => {
     const { apiClient } = await import('@/lib/api');
-    const { ErrorHandler } = await import('@/lib/error-handler');
-    try {
-      const blob =
-        await apiClient.downloadCurrentAcademySubscriptionInvoicePdf(invoiceId);
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `subscription-invoice-${invoiceId}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      ErrorHandler.handleApiError(error);
-    }
+    const url = apiClient.getCurrentAcademySubscriptionInvoicePdfUrl(invoiceId);
+    window.open(url, '_blank');
   };
 
   return (
@@ -63,8 +51,8 @@ export function AcademySubscriptionSummary() {
           <>
             <div className="flex justify-between">
               <span>{t('settings.subscriptionPlan')}</span>
-              <span className="font-medium capitalize text-foreground">
-                {subscription?.academy?.subscription_plan ||
+              <span className="font-medium text-foreground">
+                {getPlanDisplayName(subscription?.academy?.subscription_plan) ||
                   t('settings.noPlan')}
               </span>
             </div>
@@ -107,7 +95,8 @@ export function AcademySubscriptionSummary() {
                     >
                       <div className="min-w-0">
                         <p className="truncate text-xs font-medium text-foreground">
-                          #{invoice.id} - {invoice.plan_name}
+                          #{invoice.id} -{' '}
+                          {getPlanDisplayName(invoice.plan_name)}
                         </p>
                         <p className="text-xs">
                           {invoice.amount.toLocaleString(locale)}{' '}
@@ -124,7 +113,7 @@ export function AcademySubscriptionSummary() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleDownloadInvoice(invoice.id)}
+                        onClick={() => handleViewInvoice(invoice.id)}
                       >
                         {t('settings.downloadPdf')}
                       </Button>
