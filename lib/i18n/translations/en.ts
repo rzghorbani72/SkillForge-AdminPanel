@@ -3778,12 +3778,20 @@ export const en = {
       'Overdue grading, inactive learners, low scores, missed tutoring classes, and unanswered threads.',
     filters: 'Queue filters',
     filtersDescription:
-      'Narrow the intervention list by course and thresholds.',
+      'Each filter affects specific intervention queues. Change values, then refresh to update the lists.',
     courseId: 'Course',
     courseIdPlaceholder: 'All courses (optional)',
-    inactiveDays: 'Inactive days',
-    lowScoreThreshold: 'Low score threshold',
+    courseFilterHint:
+      'Limits every queue to one course. Leave empty to include all courses in the academy.',
+    filterAppliesAll: 'All queues',
+    inactiveDays: 'Days without course access',
+    inactiveDaysHint:
+      'Shows active enrollments where the student has not opened the course for at least this many days.',
+    lowScoreThreshold: 'Low score cutoff',
+    lowScoreThresholdHint:
+      'Shows graded assignments with a raw score below this number in the low scores queue.',
     refresh: 'Refresh queue',
+    refreshHint: 'Apply filter changes and reload all intervention queues.',
     overdueGrading: 'Overdue grading',
     overdueGradingDescription: 'Submitted assignments waiting for review.',
     inactivity: 'Inactive learners',

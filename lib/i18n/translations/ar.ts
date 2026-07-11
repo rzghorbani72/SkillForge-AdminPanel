@@ -2185,12 +2185,21 @@ export const ar = {
     description:
       'تقييم متأخر، متعلمون غير نشطين، درجات منخفضة، حصص تدريس خاصة فائتة، ومحادثات بلا رد.',
     filters: 'مرشحات القائمة',
-    filtersDescription: 'ضيّق قائمة التدخل حسب الدورة والعتبات.',
-    courseId: 'معرّف الدورة',
-    courseIdPlaceholder: 'معرّف دورة اختياري',
-    inactiveDays: 'أيام عدم النشاط',
-    lowScoreThreshold: 'عتبة الدرجة المنخفضة',
+    filtersDescription:
+      'كل مرشح يؤثر على قوائم تدخل محددة. غيّر القيم ثم حدّث القائمة.',
+    courseId: 'الدورة',
+    courseIdPlaceholder: 'كل الدورات (اختياري)',
+    courseFilterHint:
+      'يحدّ كل القوائم بدورة واحدة. اتركه فارغاً ليشمل كل دورات الأكاديمية.',
+    filterAppliesAll: 'كل القوائم',
+    inactiveDays: 'أيام بدون دخول للدورة',
+    inactiveDaysHint:
+      'يعرض التسجيلات النشطة التي لم يفتح فيها الطالب الدورة منذ هذا العدد من الأيام على الأقل.',
+    lowScoreThreshold: 'حد الدرجة الضعيفة',
+    lowScoreThresholdHint:
+      'يعرض الواجبات المُقيَّمة بدرجة خام أقل من هذا الرقم في قائمة الدرجات المنخفضة.',
     refresh: 'تحديث القائمة',
+    refreshHint: 'طبّق تغييرات المرشحات وأعد تحميل كل قوائم التدخل.',
     overdueGrading: 'تقييم متأخر',
     overdueGradingDescription: 'واجبات مُسلَّمة بانتظار المراجعة.',
     inactivity: 'متعلمون غير نشطين',

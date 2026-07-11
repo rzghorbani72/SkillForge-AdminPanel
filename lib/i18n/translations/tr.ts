@@ -2244,12 +2244,22 @@ export const tr = {
     description:
       'Gecikmiş puanlama, pasif öğrenciler, düşük puanlar, kaçırılan özel dersler ve yanıtsız tartışmalar.',
     filters: 'Kuyruk filtreleri',
-    filtersDescription: 'Müdahale listesini kurs ve eşiklerle daraltın.',
-    courseId: 'Kurs kimliği',
-    courseIdPlaceholder: 'İsteğe bağlı kurs kimliği',
-    inactiveDays: 'Pasif günler',
-    lowScoreThreshold: 'Düşük puan eşiği',
+    filtersDescription:
+      'Her filtre belirli müdahale kuyruklarını etkiler. Değerleri değiştirin, ardından yenileyin.',
+    courseId: 'Kurs',
+    courseIdPlaceholder: 'Tüm kurslar (isteğe bağlı)',
+    courseFilterHint:
+      'Tüm kuyrukları tek bir kursla sınırlar. Akademideki tüm kurslar için boş bırakın.',
+    filterAppliesAll: 'Tüm kuyruklar',
+    inactiveDays: 'Kursa erişimsiz gün sayısı',
+    inactiveDaysHint:
+      'Öğrencinin kursu en az bu kadar gündür açmadığı aktif kayıtları pasif öğrenciler kuyruğunda gösterir.',
+    lowScoreThreshold: 'Düşük puan sınırı',
+    lowScoreThresholdHint:
+      'Ham puanı bu sayının altında olan notlandırılmış ödevleri düşük puanlar kuyruğunda gösterir.',
     refresh: 'Kuyruğu yenile',
+    refreshHint:
+      'Filtre değişikliklerini uygulayın ve tüm müdahale kuyruklarını yeniden yükleyin.',
     overdueGrading: 'Gecikmiş puanlama',
     overdueGradingDescription: 'İnceleme bekleyen gönderilmiş ödevler.',
     inactivity: 'Pasif öğrenciler',

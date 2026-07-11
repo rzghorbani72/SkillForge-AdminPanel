@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { CourseSearchCombobox } from '@/components/entity-search';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -21,6 +23,39 @@ interface OpsQueueFiltersCardProps {
   lowScoreThreshold: string;
   onLowScoreThresholdChange: (value: string) => void;
   onRefresh: () => void;
+}
+
+interface OpsQueueFilterFieldProps {
+  id: string;
+  label: string;
+  appliesTo: string;
+  hint: string;
+  children: ReactNode;
+}
+
+function OpsQueueFilterField({
+  id,
+  label,
+  appliesTo,
+  hint,
+  children
+}: OpsQueueFilterFieldProps) {
+  const hintId = `${id}-hint`;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <Label htmlFor={id}>{label}</Label>
+        <Badge variant="outline" className="font-normal">
+          {appliesTo}
+        </Badge>
+      </div>
+      {children}
+      <p id={hintId} className="text-xs leading-relaxed text-muted-foreground">
+        {hint}
+      </p>
+    </div>
+  );
 }
 
 export function OpsQueueFiltersCard({
@@ -40,9 +75,13 @@ export function OpsQueueFiltersCard({
         <CardTitle>{t('opsQueue.filters')}</CardTitle>
         <CardDescription>{t('opsQueue.filtersDescription')}</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4 md:grid-cols-4">
-        <div className="space-y-2">
-          <Label htmlFor="courseId">{t('opsQueue.courseId')}</Label>
+      <CardContent className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <OpsQueueFilterField
+          id="courseId"
+          label={t('opsQueue.courseId')}
+          appliesTo={t('opsQueue.filterAppliesAll')}
+          hint={t('opsQueue.courseFilterHint')}
+        >
           <CourseSearchCombobox
             id="courseId"
             value={courseId}
@@ -50,31 +89,47 @@ export function OpsQueueFiltersCard({
             placeholder={t('opsQueue.courseIdPlaceholder')}
             clearable
           />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="inactiveDays">{t('opsQueue.inactiveDays')}</Label>
+        </OpsQueueFilterField>
+
+        <OpsQueueFilterField
+          id="inactiveDays"
+          label={t('opsQueue.inactiveDays')}
+          appliesTo={t('opsQueue.inactivity')}
+          hint={t('opsQueue.inactiveDaysHint')}
+        >
           <Input
             id="inactiveDays"
             type="number"
             min={1}
             value={inactiveDays}
+            aria-describedby="inactiveDays-hint"
             onChange={(event) => onInactiveDaysChange(event.target.value)}
           />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="lowScore">{t('opsQueue.lowScoreThreshold')}</Label>
+        </OpsQueueFilterField>
+
+        <OpsQueueFilterField
+          id="lowScore"
+          label={t('opsQueue.lowScoreThreshold')}
+          appliesTo={t('opsQueue.lowScores')}
+          hint={t('opsQueue.lowScoreThresholdHint')}
+        >
           <Input
             id="lowScore"
             type="number"
             min={0}
             value={lowScoreThreshold}
+            aria-describedby="lowScore-hint"
             onChange={(event) => onLowScoreThresholdChange(event.target.value)}
           />
-        </div>
-        <div className="flex items-end">
+        </OpsQueueFilterField>
+
+        <div className="flex flex-col justify-end gap-2">
           <Button onClick={() => void onRefresh()} className="w-full">
             {t('opsQueue.refresh')}
           </Button>
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {t('opsQueue.refreshHint')}
+          </p>
         </div>
       </CardContent>
     </Card>
