@@ -1,7 +1,7 @@
 'use client';
 
 import { BookOpen, Clock, Star, Pencil, Trash2 } from 'lucide-react';
-import { browserApiPath } from '@/lib/api-config';
+import { langApiVersionPath } from '@/lib/api-lang';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { StatusPill } from './StatusPill';
 import { courseHue, formatNumber, pricingTypeLabel } from './courseUtils';
@@ -34,7 +34,7 @@ export function CourseCard({
   const coverUrl =
     imageObj?.publicUrl ||
     (imageObj?.id
-      ? browserApiPath(`/images/fetch-image-by-id/${imageObj.id}`)
+      ? `${langApiVersionPath()}/images/fetch-image-by-id/${imageObj.id}`
       : null);
   const teacher =
     (course as any).Profile?.display_name ??

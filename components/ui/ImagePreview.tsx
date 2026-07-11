@@ -1,5 +1,5 @@
 import React from 'react';
-import { browserApiPath } from '@/lib/api-config';
+import { langApiVersionPath } from '@/lib/api-lang';
 import { Button } from '@/components/ui/button';
 import { Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -16,6 +16,27 @@ interface ImagePreviewProps {
   showPlaceholder?: boolean;
   placeholderText?: string;
   placeholderSubtext?: string;
+}
+
+/** Same-origin API image URL (lang-prefixed /v1). Keep relative for the image loader. */
+function fetchImageByIdSrc(id: string | number): string {
+  return `${langApiVersionPath()}/images/fetch-image-by-id/${id}`;
+}
+
+/**
+ * Prefer relative same-origin paths so the custom loader resolves the panel host.
+ * Absolute / blob / data URLs pass through unchanged.
+ */
+function resolveImageSrc(pathOrUrl: string): string {
+  if (
+    pathOrUrl.startsWith('http://') ||
+    pathOrUrl.startsWith('https://') ||
+    pathOrUrl.startsWith('blob:') ||
+    pathOrUrl.startsWith('data:')
+  ) {
+    return pathOrUrl;
+  }
+  return pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
 }
 
 const ImagePreview: React.FC<ImagePreviewProps> = ({
@@ -40,11 +61,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             className={`w-full max-w-md overflow-hidden rounded-lg border border-border ${className}`}
           >
             <Image
-              src={
-                preview.startsWith('/')
-                  ? `${process.env.NEXT_PUBLIC_HOST}${preview}`
-                  : preview
-              }
+              src={resolveImageSrc(preview)}
               alt={alt}
               className="h-auto w-full object-contain"
               width={0}
@@ -80,7 +97,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             className={`w-full max-w-md overflow-hidden rounded-lg border border-border ${className}`}
           >
             <Image
-              src={`${selectedImage.publicUrl.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${selectedImage.publicUrl}` : selectedImage.publicUrl}`}
+              src={resolveImageSrc(selectedImage.publicUrl)}
               alt={alt}
               className="h-auto w-full object-contain"
               width={0}
@@ -114,7 +131,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             className={`w-full max-w-md overflow-hidden rounded-lg border border-border ${className}`}
           >
             <Image
-              src={`${process.env.NEXT_PUBLIC_HOST}${browserApiPath(`/images/fetch-image-by-id/${uploadedImageId}`)}`}
+              src={fetchImageByIdSrc(uploadedImageId)}
               alt={alt}
               className="h-auto w-full object-contain"
               width={0}
@@ -141,10 +158,14 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
 
   // Show existing image if no preview and existing image exists
   if (existingImageUrl || existingImageId) {
+    const existingSrc = existingImageUrl
+      ? resolveImageSrc(existingImageUrl)
+      : fetchImageByIdSrc(existingImageId!);
+
     return (
       <div className="relative h-48 w-full overflow-hidden rounded-lg border">
         <Image
-          src={existingImageUrl || browserApiPath(`/media/${existingImageId}`)}
+          src={existingSrc}
           alt="Current image"
           className="h-full w-full object-cover"
           width={0}
