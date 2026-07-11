@@ -26,6 +26,12 @@ export interface AcademySubscriptionState {
   status?: 'ACTIVE' | 'GRACE' | 'EXPIRED' | 'INACTIVE';
   days_remaining?: number | null;
   grace_until?: string | null;
+  storage?: {
+    usage_gb: number;
+    included_gb: number;
+    overage_gb: number;
+    overage_fee_irr: number;
+  };
   invoices?: AcademySubscriptionInvoice[];
 }
 

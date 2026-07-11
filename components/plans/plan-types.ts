@@ -2,16 +2,6 @@ import { SubscriptionPlanData } from '@/lib/api';
 
 export type { SubscriptionPlanData };
 
-export interface AcademySubscription {
-  id: number;
-  plan_name: string;
-  status: string;
-  started_at: string;
-  expires_at: string | null;
-  storage_used_gb?: number;
-  students_count?: number;
-}
-
 export interface AcademyPlanData {
   id: number;
   academy_id: number;

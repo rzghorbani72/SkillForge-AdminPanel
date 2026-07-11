@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getLocaleForLanguage } from '@/lib/i18n/config';
 
 const W_STYLE: Record<string, string> = {
   PENDING: 'bg-amber-100 text-amber-700',
@@ -14,7 +15,14 @@ const W_STYLE: Record<string, string> = {
   REJECTED: 'bg-red-100 text-red-700'
 };
 
-function WBadge({ status }: { status: string }) {
+const W_STATUS_LABEL_KEYS: Record<string, string> = {
+  PENDING: 'affiliates.statusPending',
+  APPROVED: 'affiliates.statusApproved',
+  PAID: 'affiliates.statusPaid',
+  REJECTED: 'affiliates.statusRejected'
+};
+
+function WBadge({ status, t }: { status: string; t: (key: string) => string }) {
   const icons: Record<string, React.ReactNode> = {
     PENDING: <Clock className="h-3 w-3" />,
     APPROVED: <CircleCheck className="h-3 w-3" />,
@@ -29,7 +37,7 @@ function WBadge({ status }: { status: string }) {
       )}
     >
       {icons[status]}
-      {status.charAt(0) + status.slice(1).toLowerCase()}
+      {t(W_STATUS_LABEL_KEYS[status] ?? 'affiliates.statusPending')}
     </span>
   );
 }
@@ -39,7 +47,8 @@ export function WithdrawalsSection({
 }: {
   formatCurrency: (n: number) => string;
 }) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const locale = getLocaleForLanguage(language);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState<number | null>(null);
@@ -125,10 +134,10 @@ export function WithdrawalsSection({
                   {formatCurrency(w.amount)}
                 </td>
                 <td className="px-4 py-3 text-xs text-muted-foreground">
-                  {new Date(w.requested_at).toLocaleDateString()}
+                  {new Date(w.requested_at).toLocaleDateString(locale)}
                 </td>
                 <td className="px-4 py-3">
-                  <WBadge status={w.status} />
+                  <WBadge status={w.status} t={t} />
                 </td>
                 <td className="px-4 py-3">
                   {w.status === 'PENDING' && (

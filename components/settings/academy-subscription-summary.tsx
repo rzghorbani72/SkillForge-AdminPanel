@@ -13,9 +13,18 @@ import { ArrowRight } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getLocaleForLanguage } from '@/lib/i18n/config';
+
+const SUBSCRIPTION_STATUS_LABEL_KEYS: Record<string, string> = {
+  ACTIVE: 'settings.statusActive',
+  GRACE: 'settings.statusGrace',
+  EXPIRED: 'settings.statusExpired',
+  INACTIVE: 'settings.statusInactive'
+};
 
 export function AcademySubscriptionSummary() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const locale = getLocaleForLanguage(language);
   const { subscription, isLoading } = useAcademySubscription(true);
 
   const handleDownloadInvoice = async (invoiceId: number) => {
@@ -62,7 +71,11 @@ export function AcademySubscriptionSummary() {
             <div className="flex justify-between">
               <span>{t('settings.subscriptionStatus')}</span>
               <span className="font-medium text-foreground">
-                {subscription?.status || 'INACTIVE'}
+                {t(
+                  SUBSCRIPTION_STATUS_LABEL_KEYS[
+                    subscription?.status ?? 'INACTIVE'
+                  ]
+                )}
               </span>
             </div>
             <div className="flex justify-between">
@@ -71,7 +84,7 @@ export function AcademySubscriptionSummary() {
                 {subscription?.academy?.subscription_expires
                   ? new Date(
                       subscription.academy.subscription_expires
-                    ).toLocaleDateString()
+                    ).toLocaleDateString(locale)
                   : '—'}
               </span>
             </div>
@@ -97,15 +110,23 @@ export function AcademySubscriptionSummary() {
                           #{invoice.id} - {invoice.plan_name}
                         </p>
                         <p className="text-xs">
-                          {invoice.amount.toLocaleString()} {invoice.currency}
+                          {invoice.amount.toLocaleString(locale)}{' '}
+                          {invoice.currency}
                         </p>
+                        {invoice.paid_at && (
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(invoice.paid_at).toLocaleDateString(
+                              locale
+                            )}
+                          </p>
+                        )}
                       </div>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleDownloadInvoice(invoice.id)}
                       >
-                        PDF
+                        {t('settings.downloadPdf')}
                       </Button>
                     </div>
                   ))}

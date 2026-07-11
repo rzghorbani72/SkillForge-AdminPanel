@@ -51,6 +51,14 @@ const rejectSchema = z.object({ notes: z.string().optional() });
 type ApproveValues = z.infer<typeof approveSchema>;
 type RejectValues = z.infer<typeof rejectSchema>;
 
+const STATUS_FILTER_LABEL_KEYS: Record<string, string> = {
+  ALL: 'withdrawals.statusAll',
+  PENDING: 'withdrawals.statusPending',
+  APPROVED: 'withdrawals.statusApproved',
+  REJECTED: 'withdrawals.statusRejected',
+  PAID: 'withdrawals.statusPaid'
+};
+
 export default function WithdrawalsPage() {
   const { t } = useTranslation();
   const STATUS_FILTERS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'PAID'];
@@ -142,7 +150,7 @@ export default function WithdrawalsPage() {
             <SelectContent>
               {STATUS_FILTERS.map((s) => (
                 <SelectItem key={s} value={s}>
-                  {s}
+                  {t(STATUS_FILTER_LABEL_KEYS[s])}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -164,7 +172,7 @@ export default function WithdrawalsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
+                  <TableHead>{t('withdrawals.id')}</TableHead>
                   <TableHead>{t('withdrawals.academy')}</TableHead>
                   <TableHead>{t('withdrawals.amount')}</TableHead>
                   <TableHead>{t('common.status')}</TableHead>
@@ -186,11 +194,14 @@ export default function WithdrawalsPage() {
                     <TableCell>
                       <StatusBadge
                         status={w.status?.toLowerCase() ?? 'pending'}
+                        label={t(
+                          STATUS_FILTER_LABEL_KEYS[w.status ?? 'PENDING']
+                        )}
                       />
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {w.requested_at
-                        ? new Date(w.requested_at).toLocaleDateString()
+                        ? new Date(w.requested_at).toLocaleDateString('fa-IR')
                         : '—'}
                     </TableCell>
                     <TableCell className="text-xs">

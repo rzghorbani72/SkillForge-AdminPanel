@@ -20,11 +20,11 @@ import {
   Zap,
   Check,
   CheckCircle2,
+  Lock,
   Loader2,
   Crown,
   Calendar,
   HardDrive,
-  Users,
   AlertTriangle,
   Eye,
   Pencil,
@@ -37,12 +37,12 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { cn } from '@/lib/utils';
+import { AcademySubscriptionState } from '@/hooks/use-academy-subscription';
 import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
 import { PlanFormDialog } from '@/components/plans/PlanFormDialog';
 import { AcademyPlanFormDialog } from '@/components/plans/AcademyPlanFormDialog';
 import { AcademyPlansList } from '@/components/plans/AcademyPlansList';
 import {
-  AcademySubscription,
   AcademyPlanData,
   PlanFormData,
   AcademyPlanFormData,
@@ -72,7 +72,7 @@ export default function PlansPage() {
 
   const [period, setPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
-  const [currentSub, setCurrentSub] = useState<AcademySubscription | null>(
+  const [currentSub, setCurrentSub] = useState<AcademySubscriptionState | null>(
     null
   );
   const [isLoading, setIsLoading] = useState(true);
@@ -402,12 +402,16 @@ export default function PlansPage() {
     }
   }
 
-  const currentPlan = currentSub
+  const currentPlanSlug = currentSub?.academy?.subscription_plan ?? null;
+  const currentPlan = currentPlanSlug
     ? plans.find(
-        (p) =>
-          p.name === currentSub.plan_name || p.slug === currentSub.plan_name
+        (p) => p.slug === currentPlanSlug || p.name === currentPlanSlug
       )
     : null;
+  // A plan is only "paid" once its subscription is ACTIVE. While it is
+  // active, only higher-tier (upper) plans may be selected; the current
+  // and lower tiers unlock again once this subscription ends.
+  const hasActivePaidPlan = currentSub?.status === 'ACTIVE' && !!currentPlan;
   const popularIndex = Math.floor(plans.length / 2);
 
   if (isLoading) {
@@ -667,6 +671,14 @@ export default function PlansPage() {
               {plans.map((plan, i) => {
                 const isPopular = i === popularIndex && plans.length >= 2;
                 const isCurrent = currentPlan?.id === plan.id;
+                // While the current plan is actively paid, only upper
+                // (higher-tier) plans can be selected for upgrade; the
+                // current and lower tiers unlock once it ends.
+                const isUpperPlan = currentPlan
+                  ? plan.sort_order > currentPlan.sort_order
+                  : true;
+                const isLocked =
+                  hasActivePaidPlan && !isCurrent && !isUpperPlan;
                 const price =
                   period === 'yearly' && plan.price_yearly
                     ? plan.price_yearly
@@ -677,10 +689,13 @@ export default function PlansPage() {
                     plan={plan}
                     isPopular={isPopular}
                     isCurrent={isCurrent}
+                    isLocked={isLocked}
                     price={price}
                     period={period}
                     canSelect={canManagePlan}
-                    onSelect={() => !isCurrent && openSelectPlan(plan)}
+                    onSelect={() =>
+                      !isCurrent && !isLocked && openSelectPlan(plan)
+                    }
                     t={t}
                   />
                 );
@@ -858,11 +873,13 @@ function CurrentSubscriptionBanner({
   currentPlan,
   t
 }: {
-  currentSub: AcademySubscription | null;
+  currentSub: AcademySubscriptionState | null;
   currentPlan: SubscriptionPlanData | null | undefined;
   t: (key: string) => string;
 }) {
-  if (!currentSub) return null;
+  if (!currentSub?.academy) return null;
+  const expiresAt = currentSub.academy.subscription_expires;
+  const storageUsedGb = currentSub.storage?.usage_gb;
   return (
     <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -871,7 +888,9 @@ function CurrentSubscriptionBanner({
             <Crown className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <p className="font-semibold">{currentSub.plan_name}</p>
+            <p className="font-semibold">
+              {currentPlan?.name ?? currentSub.academy.subscription_plan}
+            </p>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
               <span
                 className={cn(
@@ -885,55 +904,44 @@ function CurrentSubscriptionBanner({
                   ? t('plans.subscriptionActive')
                   : t('plans.subscriptionExpired')}
               </span>
-              {currentSub.expires_at && (
+              {expiresAt && (
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
                   {t('plans.expiresAt')}{' '}
-                  {new Date(currentSub.expires_at).toLocaleDateString('fa-IR')}
+                  {new Date(expiresAt).toLocaleDateString('fa-IR')}
                 </span>
               )}
             </div>
           </div>
         </div>
 
-        {currentPlan && (
+        {currentPlan && storageUsedGb !== undefined && (
           <div className="flex gap-5 text-sm">
-            {currentSub.students_count !== undefined && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Users className="h-4 w-4" />
-                <span className="font-mono font-semibold text-foreground">
-                  {currentSub.students_count.toLocaleString('fa-IR')}
-                </span>
-                <span className="text-xs">{t('plans.studentsUsed')}</span>
-              </div>
-            )}
-            {currentSub.storage_used_gb !== undefined && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <HardDrive className="h-4 w-4" />
-                <span className="font-mono font-semibold text-foreground">
-                  {formatStorage(currentSub.storage_used_gb)}
-                </span>
-                <span className="text-xs">
-                  / {formatStorage(currentPlan.storage_limit_gb)}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <HardDrive className="h-4 w-4" />
+              <span className="font-mono font-semibold text-foreground">
+                {formatStorage(storageUsedGb)}
+              </span>
+              <span className="text-xs">
+                / {formatStorage(currentPlan.storage_limit_gb)}
+              </span>
+            </div>
           </div>
         )}
       </div>
 
-      {currentPlan && currentSub.storage_used_gb !== undefined && (
+      {currentPlan && storageUsedGb !== undefined && (
         <div className="mt-3 space-y-1.5">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{t('plans.storageUsed')}</span>
             <span>
-              {formatStorage(currentSub.storage_used_gb)} /{' '}
+              {formatStorage(storageUsedGb)} /{' '}
               {formatStorage(currentPlan.storage_limit_gb)}
             </span>
           </div>
           <Progress
             value={Math.min(
-              (currentSub.storage_used_gb / currentPlan.storage_limit_gb) * 100,
+              (storageUsedGb / currentPlan.storage_limit_gb) * 100,
               100
             )}
             className="h-1.5"
@@ -948,6 +956,7 @@ function SubscriptionPlanCard({
   plan,
   isPopular,
   isCurrent,
+  isLocked,
   price,
   period,
   canSelect,
@@ -957,6 +966,7 @@ function SubscriptionPlanCard({
   plan: SubscriptionPlanData;
   isPopular: boolean;
   isCurrent: boolean;
+  isLocked: boolean;
   price: number;
   period: 'monthly' | 'yearly';
   canSelect: boolean;
@@ -1018,11 +1028,14 @@ function SubscriptionPlanCard({
       {canSelect && (
         <button
           type="button"
-          disabled={isCurrent}
+          disabled={isCurrent || isLocked}
           onClick={onSelect}
+          title={isLocked ? t('plans.lockedUntilCurrentEnds') : undefined}
           className={cn(
             'mb-5 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150',
-            isCurrent ? 'cursor-default opacity-60' : 'active:scale-[0.99]',
+            isCurrent || isLocked
+              ? 'cursor-not-allowed opacity-60'
+              : 'active:scale-[0.99]',
             isPopular
               ? 'bg-primary text-white hover:opacity-90'
               : 'bg-foreground text-background hover:opacity-85'
@@ -1032,6 +1045,11 @@ function SubscriptionPlanCard({
             <span className="flex items-center justify-center gap-2">
               <Check className="h-4 w-4" />
               {t('plans.currentPlan')}
+            </span>
+          ) : isLocked ? (
+            <span className="flex items-center justify-center gap-2">
+              <Lock className="h-4 w-4" />
+              {t('plans.lockedUntilCurrentEnds')}
             </span>
           ) : (
             t('plans.choosePlan')

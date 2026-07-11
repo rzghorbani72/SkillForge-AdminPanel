@@ -16,6 +16,7 @@ import { usePaymentsData } from '../_hooks/use-payments-data';
 import { cn, formatCurrencyWithStore } from '@/lib/utils';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getLocaleForLanguage } from '@/lib/i18n/config';
 
 const STATUS_COLORS: Record<string, string> = {
   PAID: 'bg-green-100 text-green-800',
@@ -25,9 +26,20 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: 'bg-muted text-foreground'
 };
 
-function formatDate(value?: string | null): string {
+const STATUS_LABEL_KEYS: Record<string, string> = {
+  PAID: 'payments.paid',
+  PENDING: 'payments.pending',
+  FAILED: 'payments.failed',
+  REFUNDED: 'payments.refunded',
+  CANCELLED: 'payments.cancelled'
+};
+
+function formatDate(
+  value: string | null | undefined,
+  language: string
+): string {
   if (!value) return '—';
-  return new Date(value).toLocaleDateString();
+  return new Date(value).toLocaleDateString(getLocaleForLanguage(language));
 }
 
 export default function InvoicesPage() {
@@ -232,17 +244,19 @@ export default function InvoicesPage() {
                       )}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDate(payment.payment_date)}
+                      {formatDate(payment.payment_date, language)}
                     </p>
                   </div>
                   <Badge
                     className={cn(
-                      'capitalize',
                       STATUS_COLORS[payment.status] ??
                         'bg-muted text-muted-foreground'
                     )}
                   >
-                    {payment.status?.toLowerCase() ?? 'unknown'}
+                    {t(
+                      STATUS_LABEL_KEYS[payment.status] ??
+                        'payments.unknownStatus'
+                    )}
                   </Badge>
                   <Button variant="outline" size="sm">
                     {t('payments.download')}
