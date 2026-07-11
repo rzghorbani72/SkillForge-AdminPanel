@@ -63,13 +63,16 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
     }
   }, [applyPending, language]);
 
+  const isPlatformAdmin = !!user?.isAdminProfile || !!user?.platformLevel;
+
   useEffect(() => {
-    if (userLoading || !user) return;
+    if (userLoading || !user || isPlatformAdmin) return;
     void loadStatus();
-  }, [loadStatus, user, userLoading]);
+  }, [loadStatus, user, userLoading, isPlatformAdmin]);
 
   // First LEGAL_CONSENT_REQUIRED 403 from any API opens the modal and pauses fetches
   useEffect(() => {
+    if (isPlatformAdmin) return;
     const onLegalRequired = (event: Event) => {
       const detail = (event as CustomEvent<LegalConsentRequiredDetail>).detail;
       const list = isPendingList(detail?.pending) ? detail.pending : [];
@@ -84,7 +87,7 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener(LEGAL_CONSENT_REQUIRED_EVENT, onLegalRequired);
     };
-  }, [loadStatus]);
+  }, [loadStatus, isPlatformAdmin]);
 
   async function handleAccept() {
     if (!accepted) {
@@ -103,6 +106,11 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  // Platform AdminProfile is not Profile-scoped; never block the panel on legal gate.
+  if (isPlatformAdmin) {
+    return <>{children}</>;
   }
 
   // Wait for auth + consent before mounting the shell (avoids parallel API storms)
