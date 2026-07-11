@@ -3421,6 +3421,7 @@ export const fa = {
     months6: '۶ ماه',
     months12: '۱۲ ماه',
     confirmChange: 'تأیید و پرداخت',
+    selectGateway: 'درگاه پرداخت',
     deletePlan: 'حذف پلن',
     deleteWarning: 'این پلن برای همیشه حذف خواهد شد. این عمل قابل بازگشت نیست.',
     planActive: 'فعال',

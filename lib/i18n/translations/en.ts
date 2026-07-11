@@ -3550,6 +3550,7 @@ export const en = {
     months6: '6 months',
     months12: '12 months',
     confirmChange: 'Confirm & Pay',
+    selectGateway: 'Payment gateway',
     deletePlan: 'Delete Plan',
     deleteWarning:
       'This plan will be permanently deleted. This action cannot be undone.',

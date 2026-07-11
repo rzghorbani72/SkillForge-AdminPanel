@@ -4,14 +4,13 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { apiClient } from '@/lib/api';
 
 /**
- * Payment gateway callback page for AdminPanel.
- * PayPing / Simulator redirects here with:
- *   ?refid=<gateway_ref>&clientrefid=<payment_id>
- *
- * After verifying, shows success/failure and redirects to plans page.
+ * Payment gateway result page for AdminPanel (platform plan renew).
+ * Saman/Mellat callback routes verify with the backend, then redirect here with:
+ *   ?success=true&refid=<gateway_ref>&clientrefid=<payment_id>
+ * or:
+ *   ?success=false&error=<reason>
  */
 export default function AdminPaymentCallbackPage() {
   const searchParams = useSearchParams();
@@ -21,58 +20,39 @@ export default function AdminPaymentCallbackPage() {
   const [result, setResult] = useState<{
     success: boolean;
     refId?: string;
-    amount?: number;
     error?: string;
   } | null>(null);
 
+  const successParam = searchParams.get('success');
   const refId = searchParams.get('refid');
-  const clientRefId = searchParams.get('clientrefid');
+  const errorParam = searchParams.get('error');
 
   useEffect(() => {
-    const verify = async () => {
-      if (!refId || !clientRefId) {
-        setResult({
-          success: false,
-          error: 'پارامترهای بازگشت از بانک ناقص است'
-        });
-        setProcessing(false);
-        return;
-      }
+    if (successParam === 'true') {
+      setResult({
+        success: true,
+        refId: refId ?? undefined
+      });
+      setProcessing(false);
+      return;
+    }
 
-      const paymentId = clientRefId;
+    if (successParam === 'false' || errorParam) {
+      setResult({
+        success: false,
+        error: errorParam || 'پرداخت ناموفق بود'
+      });
+      setProcessing(false);
+      return;
+    }
 
-      try {
-        const res = await fetch('/api/payment/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ payment_id: paymentId, ref_id: refId })
-        });
-        const data = await res.json();
-
-        if (data.success || data.already_paid) {
-          setResult({
-            success: true,
-            refId: data.ref_id || refId,
-            amount: data.amount
-          });
-        } else {
-          setResult({
-            success: false,
-            error: data.error || 'تأیید پرداخت ناموفق بود'
-          });
-        }
-      } catch {
-        setResult({
-          success: false,
-          error: 'خطا در بررسی پرداخت. لطفاً با پشتیبانی تماس بگیرید.'
-        });
-      } finally {
-        setProcessing(false);
-      }
-    };
-
-    verify();
-  }, [refId, clientRefId]);
+    // Legacy PayPing-style params without success flag — treat as incomplete.
+    setResult({
+      success: false,
+      error: 'پارامترهای بازگشت از بانک ناقص است'
+    });
+    setProcessing(false);
+  }, [successParam, refId, errorParam]);
 
   if (processing) {
     return (

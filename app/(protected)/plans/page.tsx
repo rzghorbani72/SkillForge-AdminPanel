@@ -92,6 +92,13 @@ export default function PlansPage() {
     useState<SubscriptionPlanData | null>(null);
   const [selectedMonths, setSelectedMonths] = useState<number>(1);
   const [isChanging, setIsChanging] = useState(false);
+  const [selectedGateway, setSelectedGateway] = useState<
+    'SAMAN_SEP' | 'MELLAT_BP' | null
+  >(null);
+  const [availableGateways, setAvailableGateways] = useState<
+    Array<{ provider: string; display_name: string }>
+  >([]);
+  const [needsGatewaySelection, setNeedsGatewaySelection] = useState(false);
 
   const [academyPlans, setAcademyPlans] = useState<AcademyPlanData[]>([]);
   const [isAcademyPlansLoading, setIsAcademyPlansLoading] = useState(false);
@@ -231,18 +238,85 @@ export default function PlansPage() {
   function openSelectPlan(plan: SubscriptionPlanData) {
     setSelectingPlan(plan);
     setSelectedMonths(1);
+    setSelectedGateway(null);
+    setAvailableGateways([]);
+    setNeedsGatewaySelection(false);
+  }
+
+  function callbackUrlForProvider(provider: 'SAMAN_SEP' | 'MELLAT_BP'): string {
+    const origin = window.location.origin;
+    return provider === 'SAMAN_SEP'
+      ? `${origin}/payment/saman-callback`
+      : `${origin}/payment/mellat-callback`;
   }
 
   async function handleChangePlan() {
     if (!selectingPlan) return;
     try {
       setIsChanging(true);
-      await apiClient.renewCurrentAcademySubscription({
+
+      let provider = selectedGateway;
+      if (!provider) {
+        const probe = await apiClient.renewCurrentAcademySubscription({
+          plan_name: selectingPlan.slug,
+          months: selectedMonths,
+          amount: selectingPlan.price_monthly * selectedMonths,
+          callback_url: `${window.location.origin}/payment/saman-callback`
+        });
+
+        if (probe.redirect_url) {
+          window.location.href = probe.redirect_url;
+          return;
+        }
+
+        if (probe.needs_gateway_selection && probe.available_gateways?.length) {
+          setAvailableGateways(probe.available_gateways);
+          if (probe.available_gateways.length === 1) {
+            provider = probe.available_gateways[0].provider as
+              | 'SAMAN_SEP'
+              | 'MELLAT_BP';
+            setSelectedGateway(provider);
+          } else {
+            setNeedsGatewaySelection(true);
+            return;
+          }
+        } else {
+          // Manual / zero-amount renew — already activated
+          setSelectingPlan(null);
+          setNeedsGatewaySelection(false);
+          setAvailableGateways([]);
+          await fetchSubscriptionPlans();
+          return;
+        }
+      }
+
+      if (!provider) {
+        setNeedsGatewaySelection(true);
+        return;
+      }
+
+      const result = await apiClient.renewCurrentAcademySubscription({
         plan_name: selectingPlan.slug,
         months: selectedMonths,
-        amount: selectingPlan.price_monthly * selectedMonths
+        amount: selectingPlan.price_monthly * selectedMonths,
+        provider,
+        callback_url: callbackUrlForProvider(provider)
       });
+
+      if (result.needs_gateway_selection && result.available_gateways) {
+        setNeedsGatewaySelection(true);
+        setAvailableGateways(result.available_gateways);
+        return;
+      }
+
+      if (result.redirect_url) {
+        window.location.href = result.redirect_url;
+        return;
+      }
+
       setSelectingPlan(null);
+      setNeedsGatewaySelection(false);
+      setAvailableGateways([]);
       await fetchSubscriptionPlans();
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -692,12 +766,45 @@ export default function PlansPage() {
                   </span>
                 </span>
               </div>
+              {(needsGatewaySelection || availableGateways.length > 1) && (
+                <div className="space-y-2">
+                  <Label>{t('plans.selectGateway')}</Label>
+                  <div className="grid gap-2">
+                    {availableGateways.map((gw) => {
+                      const provider = gw.provider as 'SAMAN_SEP' | 'MELLAT_BP';
+                      return (
+                        <button
+                          key={gw.provider}
+                          type="button"
+                          onClick={() => setSelectedGateway(provider)}
+                          className={cn(
+                            'rounded-xl border px-3 py-2.5 text-start text-sm font-medium transition-all duration-150',
+                            selectedGateway === provider
+                              ? 'border-primary bg-primary/5 text-primary'
+                              : 'border-border bg-card text-foreground hover:border-primary/40'
+                          )}
+                        >
+                          {gw.display_name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setSelectingPlan(null)}>
                 {t('common.cancel')}
               </Button>
-              <Button onClick={handleChangePlan} disabled={isChanging}>
+              <Button
+                onClick={handleChangePlan}
+                disabled={
+                  isChanging ||
+                  (needsGatewaySelection &&
+                    availableGateways.length > 1 &&
+                    !selectedGateway)
+                }
+              >
                 {isChanging && (
                   <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 )}

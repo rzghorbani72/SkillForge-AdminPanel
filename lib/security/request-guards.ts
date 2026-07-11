@@ -10,7 +10,10 @@ import {
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 /** External webhooks — no browser Origin header. */
-const CSRF_ORIGIN_SKIP_PREFIXES = ['/payment/saman-callback'] as const;
+const CSRF_ORIGIN_SKIP_PREFIXES = [
+  '/payment/saman-callback',
+  '/payment/mellat-callback'
+] as const;
 
 const RATE_LIMIT_RULES: Array<{
   prefix: string;

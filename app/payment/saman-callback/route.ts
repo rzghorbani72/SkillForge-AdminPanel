@@ -87,8 +87,8 @@ export async function POST(request: NextRequest) {
     };
 
     if (data.status === 'ok') {
-      // Reuse the existing /payment/callback page (it reads refid and clientrefid)
       const url = new URL(`${origin}/payment/callback`);
+      url.searchParams.set('success', 'true');
       url.searchParams.set('refid', refNum);
       url.searchParams.set('clientrefid', data.data?.payment_id ?? resNum);
       return NextResponse.redirect(url.toString(), { status: 303 });

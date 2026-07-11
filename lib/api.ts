@@ -1226,7 +1226,27 @@ class ApiClient {
     months: number;
     amount: number;
     note?: string;
-  }) {
+    callback_url?: string;
+    provider?: 'SAMAN_SEP' | 'MELLAT_BP';
+  }): Promise<{
+    academy?: unknown;
+    payment_id?: string;
+    redirect_url?: string;
+    amount?: number;
+    provider?: string;
+    needs_gateway_selection?: boolean;
+    available_gateways?: Array<{
+      provider: string;
+      display_name: string;
+    }>;
+    billing?: {
+      base_plan_amount_irr: number;
+      upload_overage_fee_irr: number;
+      total_amount_irr: number;
+      storage_usage_gb: number;
+    };
+    [key: string]: unknown;
+  }> {
     const response = await this.request(
       '/academies/current/subscription/renew',
       {
@@ -1234,8 +1254,29 @@ class ApiClient {
         body: JSON.stringify(data)
       }
     );
-    const payload = response.data as any;
-    return payload?.data ?? payload;
+    const payload = response.data as {
+      data?: Record<string, unknown>;
+      [key: string]: unknown;
+    };
+    return (payload?.data ?? payload) as {
+      academy?: unknown;
+      payment_id?: string;
+      redirect_url?: string;
+      amount?: number;
+      provider?: string;
+      needs_gateway_selection?: boolean;
+      available_gateways?: Array<{
+        provider: string;
+        display_name: string;
+      }>;
+      billing?: {
+        base_plan_amount_irr: number;
+        upload_overage_fee_irr: number;
+        total_amount_irr: number;
+        storage_usage_gb: number;
+      };
+      [key: string]: unknown;
+    };
   }
 
   async downloadCurrentAcademySubscriptionInvoicePdf(
