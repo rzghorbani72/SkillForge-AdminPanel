@@ -35,6 +35,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin } from '@/lib/roles';
 import { cn } from '@/lib/utils';
 import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
 import { PlanFormDialog } from '@/components/plans/PlanFormDialog';
@@ -62,12 +63,12 @@ export default function PlansPage() {
     tabParam === 'academy' ? 'academy' : 'subscription'
   );
 
-  const isPlatformAdmin =
-    user?.role === 'ADMIN' && (user?.isAdminProfile || user?.platformLevel);
+  const isPlatformAdminUser = isPlatformAdmin(user);
   const canManagePlan =
-    !isPlatformAdmin && (user?.role === 'ADMIN' || user?.role === 'MANAGER');
+    !isPlatformAdminUser &&
+    (user?.role === 'ADMIN' || user?.role === 'MANAGER');
   const isTeacher = user?.role === 'TEACHER';
-  const canManageAcademyPlans = isPlatformAdmin || canManagePlan;
+  const canManageAcademyPlans = isPlatformAdminUser || canManagePlan;
 
   const [period, setPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
@@ -116,10 +117,10 @@ export default function PlansPage() {
   const fetchSubscriptionPlans = useCallback(async () => {
     try {
       setIsLoading(true);
-      const plansPromise = isPlatformAdmin
+      const plansPromise = isPlatformAdminUser
         ? apiClient.getSubscriptionPlans().catch(() => [])
         : apiClient.getActivePlans().catch(() => []);
-      const subPromise = !isPlatformAdmin
+      const subPromise = !isPlatformAdminUser
         ? apiClient.getCurrentAcademySubscription().catch(() => null)
         : Promise.resolve(null);
       const [plansData, subData] = await Promise.all([
@@ -133,7 +134,7 @@ export default function PlansPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [isPlatformAdmin]);
+  }, [isPlatformAdminUser]);
 
   const fetchAcademyPlans = useCallback(async () => {
     try {
@@ -523,7 +524,7 @@ export default function PlansPage() {
     </>
   );
 
-  if (isPlatformAdmin) {
+  if (isPlatformAdminUser) {
     return (
       <div className="fade-in-up flex-1 space-y-6 p-6">
         <div>

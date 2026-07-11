@@ -28,7 +28,7 @@ import { apiClient, GatewayConfigData, GatewayRegistryStatus } from '@/lib/api';
 import { toast } from 'react-toastify';
 
 interface GatewayState {
-  id: number;
+  id: string;
   name: string;
   display_name: string;
   is_active: boolean;
@@ -60,8 +60,8 @@ export default function PaymentGatewaySettingsPage() {
     setIsLoading(true);
     try {
       const data = await apiClient.listGatewayConfigs();
-      const list: GatewayConfigData[] = data?.gateways ?? [];
-      const reg: GatewayRegistryStatus[] = data?.registry ?? [];
+      const list: GatewayConfigData[] = data.gateways;
+      const reg: GatewayRegistryStatus[] = data.adapter_availability;
 
       setRegistry(reg);
       setGateways(
@@ -152,7 +152,7 @@ export default function PaymentGatewaySettingsPage() {
     }
   };
 
-  const updateGateway = (id: number, patch: Partial<GatewayState>) => {
+  const updateGateway = (id: string, patch: Partial<GatewayState>) => {
     setGateways((prev) =>
       prev.map((g) => (g.id === id ? { ...g, ...patch } : g))
     );

@@ -35,7 +35,9 @@ export function isPlatformAdmin(
 ): boolean {
   if (!user) return false;
   const role = user.role ?? '';
-  return role === 'PLATFORM_OWNER' || role === 'ADMIN';
+  if (role === 'PLATFORM_OWNER') return true;
+  // ADMIN must be an AdminProfile session — never an academy Profile.
+  return role === 'ADMIN' && (!!user.isAdminProfile || !!user.platformLevel);
 }
 
 export function isPlatformOwner(

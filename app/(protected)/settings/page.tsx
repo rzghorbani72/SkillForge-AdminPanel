@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SettingsHubGroups } from '@/components/settings/settings-hub-groups';
+import { isPlatformAdmin } from '@/lib/roles';
 import { useSettingsData } from './_hooks/use-settings-data';
 import { format } from 'date-fns';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -20,9 +21,7 @@ export default function SettingsOverviewPage() {
   const { t } = useTranslation();
   const { user: authUser } = useAuthUser();
   const { user, academy, isLoading, refresh } = useSettingsData();
-  const isPlatformAdmin =
-    authUser?.role === 'ADMIN' &&
-    (authUser?.isAdminProfile || authUser?.platformLevel);
+  const isPlatformAdminUser = isPlatformAdmin(authUser);
 
   if (isLoading) {
     return (
@@ -131,7 +130,7 @@ export default function SettingsOverviewPage() {
       </div>
 
       <DefaultAcademyCard />
-      <SettingsHubGroups isPlatformAdmin={Boolean(isPlatformAdmin)} />
+      <SettingsHubGroups isPlatformAdmin={Boolean(isPlatformAdminUser)} />
     </div>
   );
 }

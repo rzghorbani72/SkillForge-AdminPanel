@@ -3,28 +3,28 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin } from '@/lib/roles';
 import { LegalAdminWorkspace } from '@/components/legal/legal-admin-workspace';
 
 export default function PlatformLegalPage() {
   const router = useRouter();
   const { user, isLoading } = useAuthUser();
-  const isPlatformAdmin =
-    user?.role === 'ADMIN' && (user?.isAdminProfile || user?.platformLevel);
+  const isPlatformAdminUser = isPlatformAdmin(user);
 
   useEffect(() => {
     if (isLoading) return;
-    if (!isPlatformAdmin) {
+    if (!isPlatformAdminUser) {
       router.replace('/platform');
     }
-  }, [isLoading, isPlatformAdmin, router]);
+  }, [isLoading, isPlatformAdminUser, router]);
 
-  if (isLoading || !isPlatformAdmin) {
+  if (isLoading || !isPlatformAdminUser) {
     return null;
   }
 
   return (
     <div className="container max-w-6xl py-8">
-      <LegalAdminWorkspace enabled={isPlatformAdmin} />
+      <LegalAdminWorkspace enabled={isPlatformAdminUser} />
     </div>
   );
 }

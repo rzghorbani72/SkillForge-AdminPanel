@@ -4611,8 +4611,19 @@ class ApiClient {
   // -------------------------------------------------------------------------
 
   async getPlatformSettings() {
-    const res = await this.request<PlatformSettingsData>('/platform-settings');
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<
+      PlatformSettingsData & { data?: PlatformSettingsData }
+    >('/platform-settings');
+    const body = res.data;
+    const settings = body?.data ?? body;
+    if (
+      !settings ||
+      typeof settings !== 'object' ||
+      !('vat_rate' in settings)
+    ) {
+      throw new Error('Invalid platform settings response');
+    }
+    return settings as PlatformSettingsData;
   }
 
   async updatePlatformSettings(data: Partial<PlatformSettingsData>) {
@@ -4624,10 +4635,15 @@ class ApiClient {
   }
 
   async getSubscriptionPlans() {
-    const res = await this.request<SubscriptionPlanData[]>(
-      '/platform-settings/plans'
-    );
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<
+      SubscriptionPlanData[] | { data?: SubscriptionPlanData[] }
+    >('/platform-settings/plans');
+    const body = res.data;
+    if (Array.isArray(body)) return body;
+    if (body && typeof body === 'object' && Array.isArray(body.data)) {
+      return body.data;
+    }
+    return [];
   }
 
   // No auth guard — safe for MANAGER / TEACHER
@@ -4676,14 +4692,34 @@ class ApiClient {
   // Payment Gateway Config (Admin)
   // -------------------------------------------------------------------------
 
-  async listGatewayConfigs() {
-    const res = await this.request('/payments/gateways/configs');
-    const payload = res.data as any;
-    return payload?.data ?? payload;
+  async listGatewayConfigs(): Promise<{
+    gateways: GatewayConfigData[];
+    adapter_availability: GatewayRegistryStatus[];
+  }> {
+    const res = await this.request<{
+      status?: string;
+      data?: {
+        gateways?: GatewayConfigData[];
+        adapter_availability?: GatewayRegistryStatus[];
+        registry?: GatewayRegistryStatus[];
+      };
+      gateways?: GatewayConfigData[];
+      adapter_availability?: GatewayRegistryStatus[];
+      registry?: GatewayRegistryStatus[];
+    }>('/payments/gateways/configs');
+    const payload = res.data;
+    const body = payload?.data ?? payload;
+    const gateways = Array.isArray(body?.gateways) ? body.gateways : [];
+    const adapter_availability = Array.isArray(body?.adapter_availability)
+      ? body.adapter_availability
+      : Array.isArray(body?.registry)
+        ? body.registry
+        : [];
+    return { gateways, adapter_availability };
   }
 
   async updateGatewayConfig(
-    id: number,
+    id: string,
     data: {
       token?: string;
       is_active?: boolean;
@@ -4694,7 +4730,7 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(data)
     });
-    return (res.data as any)?.data ?? res.data;
+    return (res.data as { data?: unknown })?.data ?? res.data;
   }
 
   async ensurePayPingGateway() {
@@ -5202,7 +5238,7 @@ class ApiClient {
 }
 
 export interface PlatformSettingsData {
-  id: number;
+  id: string;
   vat_rate: number;
   commission_rate: number;
   teacher_share_rate: number;
@@ -5341,7 +5377,7 @@ function unwrapSupportInbox(res: unknown): SupportInboxResult {
 }
 
 export interface GatewayConfigData {
-  id: number;
+  id: string;
   name: string;
   display_name: string;
   country_code: string;

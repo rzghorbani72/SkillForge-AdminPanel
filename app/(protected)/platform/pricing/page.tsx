@@ -25,15 +25,18 @@ import { Badge } from '@/components/ui/badge';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   apiClient,
-  PlatformSettingsData,
-  SubscriptionPlanData
+  type GatewayConfigData,
+  type PlatformSettingsData,
+  type SubscriptionPlanData
 } from '@/lib/api';
 import {
   PlanFormFields,
   type PlanFormState
 } from '@/components/platform/pricing/plan-form-fields';
+import { GatewayTogglesCard } from '@/components/platform/pricing/gateway-toggles-card';
 import {
   DEFAULT_LIMITS,
   formatIRR,
@@ -59,6 +62,11 @@ const emptyPlanForm = (): PlanFormState => ({
   limits: { ...DEFAULT_LIMITS }
 });
 
+const asNumber = (value: unknown, fallback = 0): number => {
+  const n = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(n) ? n : fallback;
+};
+
 const planToForm = (p: SubscriptionPlanData): PlanFormState => ({
   name: p.name,
   slug: p.slug,
@@ -68,7 +76,7 @@ const planToForm = (p: SubscriptionPlanData): PlanFormState => ({
   commission_rate:
     p.commission_rate != null ? String(toPercent(p.commission_rate)) : '',
   storage_limit_gb: String(p.storage_limit_gb),
-  features: (p.features ?? []).join('\n'),
+  features: Array.isArray(p.features) ? p.features.join('\n') : '',
   is_active: p.is_active,
   is_most_popular: p.is_most_popular ?? false,
   annual_months_included: String(p.annual_months_included ?? 0),
@@ -77,10 +85,10 @@ const planToForm = (p: SubscriptionPlanData): PlanFormState => ({
 });
 
 export default function PlatformPricingPage() {
+  const { t } = useTranslation();
   const { user, isLoading } = useAuthUser();
   const isPlatformAdminUser = isPlatformAdmin(user);
 
-  // -- global settings state
   const [settings, setSettings] = useState<PlatformSettingsData | null>(null);
   const [settingsForm, setSettingsForm] = useState({
     vat_rate: '',
@@ -96,7 +104,6 @@ export default function PlatformPricingPage() {
   });
   const [savingSettings, setSavingSettings] = useState(false);
 
-  // -- plans state
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
   const [editingPlanId, setEditingPlanId] = useState<string | 'new' | null>(
     null
@@ -105,39 +112,69 @@ export default function PlatformPricingPage() {
   const [savingPlan, setSavingPlan] = useState(false);
   const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
 
-  // ── load ──────────────────────────────────────────────────────────────────
+  const [gateways, setGateways] = useState<GatewayConfigData[]>([]);
+  const [savingGatewayId, setSavingGatewayId] = useState<string | null>(null);
+
+  const applySettings = useCallback((s: PlatformSettingsData) => {
+    setSettings(s);
+    setSettingsForm({
+      vat_rate: String(toPercent(asNumber(s.vat_rate))),
+      commission_rate: String(toPercent(asNumber(s.commission_rate))),
+      teacher_share_rate: String(toPercent(asNumber(s.teacher_share_rate))),
+      storage_overage_fee_irr: String(asNumber(s.storage_overage_fee_irr)),
+      subscription_grace_days: String(asNumber(s.subscription_grace_days)),
+      subscription_reminder_days: String(
+        asNumber(s.subscription_reminder_days)
+      ),
+      payment_release_phase: s.payment_release_phase ?? '',
+      legal_entity_name: s.legal_entity_name ?? '',
+      vat_registration_no: s.vat_registration_no ?? '',
+      economic_code: s.economic_code ?? ''
+    });
+  }, []);
+
+  const loadGateways = useCallback(async () => {
+    try {
+      const data = await apiClient.listGatewayConfigs();
+      setGateways(data.gateways);
+    } catch {
+      ErrorHandler.showError(t('pricing.platform.gatewaysLoadFailed'));
+    }
+  }, [t]);
 
   const loadAll = useCallback(async () => {
     if (!isPlatformAdminUser) return;
-    try {
-      const [s, p] = await Promise.all([
+
+    const [settingsResult, plansResult, gatewaysResult] =
+      await Promise.allSettled([
         apiClient.getPlatformSettings(),
-        apiClient.getSubscriptionPlans()
+        apiClient.getSubscriptionPlans(),
+        apiClient.listGatewayConfigs()
       ]);
-      setSettings(s);
-      setSettingsForm({
-        vat_rate: String(toPercent(s.vat_rate)),
-        commission_rate: String(toPercent(s.commission_rate)),
-        teacher_share_rate: String(toPercent(s.teacher_share_rate)),
-        storage_overage_fee_irr: String(s.storage_overage_fee_irr),
-        subscription_grace_days: String(s.subscription_grace_days),
-        subscription_reminder_days: String(s.subscription_reminder_days),
-        payment_release_phase: s.payment_release_phase,
-        legal_entity_name: s.legal_entity_name ?? '',
-        vat_registration_no: s.vat_registration_no ?? '',
-        economic_code: s.economic_code ?? ''
-      });
-      setPlans(Array.isArray(p) ? p : []);
-    } catch {
-      ErrorHandler.showError('Failed to load platform settings');
+
+    if (settingsResult.status === 'fulfilled' && settingsResult.value) {
+      applySettings(settingsResult.value);
+    } else {
+      ErrorHandler.showError(t('pricing.platform.loadFailed'));
     }
-  }, [isPlatformAdminUser]);
+
+    if (plansResult.status === 'fulfilled') {
+      const raw = plansResult.value;
+      setPlans(Array.isArray(raw) ? raw : []);
+    } else {
+      ErrorHandler.showError(t('pricing.platform.plansLoadFailed'));
+    }
+
+    if (gatewaysResult.status === 'fulfilled') {
+      setGateways(gatewaysResult.value.gateways);
+    } else {
+      ErrorHandler.showError(t('pricing.platform.gatewaysLoadFailed'));
+    }
+  }, [applySettings, isPlatformAdminUser, t]);
 
   useEffect(() => {
-    if (!isLoading) loadAll();
+    if (!isLoading) void loadAll();
   }, [isLoading, loadAll]);
-
-  // ── save settings ─────────────────────────────────────────────────────────
 
   const handleSaveSettings = async () => {
     setSavingSettings(true);
@@ -158,16 +195,14 @@ export default function PlatformPricingPage() {
         vat_registration_no: settingsForm.vat_registration_no || null,
         economic_code: settingsForm.economic_code || null
       } as Partial<PlatformSettingsData>);
-      ErrorHandler.showSuccess('Platform settings saved');
+      ErrorHandler.showSuccess(t('pricing.platform.saveSettingsSuccess'));
       await loadAll();
     } catch {
-      ErrorHandler.showError('Failed to save settings');
+      ErrorHandler.showError(t('pricing.platform.saveSettingsFailed'));
     } finally {
       setSavingSettings(false);
     }
   };
-
-  // ── plan CRUD ─────────────────────────────────────────────────────────────
 
   const startNewPlan = () => {
     setPlanForm(emptyPlanForm());
@@ -218,18 +253,18 @@ export default function PlatformPricingPage() {
             typeof apiClient.createSubscriptionPlan
           >[0]
         );
-        ErrorHandler.showSuccess('Plan created');
+        ErrorHandler.showSuccess(t('pricing.platform.planCreated'));
       } else if (editingPlanId) {
         await apiClient.updateSubscriptionPlan(
           editingPlanId,
           buildPlanPayload()
         );
-        ErrorHandler.showSuccess('Plan updated');
+        ErrorHandler.showSuccess(t('pricing.platform.planUpdated'));
       }
       cancelPlan();
       await loadAll();
     } catch {
-      ErrorHandler.showError('Failed to save plan');
+      ErrorHandler.showError(t('pricing.platform.savePlanFailed'));
     } finally {
       setSavingPlan(false);
     }
@@ -239,16 +274,37 @@ export default function PlatformPricingPage() {
     setDeletingPlanId(id);
     try {
       await apiClient.deleteSubscriptionPlan(id);
-      ErrorHandler.showSuccess('Plan deleted');
+      ErrorHandler.showSuccess(t('pricing.platform.planDeleted'));
       await loadAll();
     } catch {
-      ErrorHandler.showError('Failed to delete plan');
+      ErrorHandler.showError(t('pricing.platform.deletePlanFailed'));
     } finally {
       setDeletingPlanId(null);
     }
   };
 
-  // ── access guard ──────────────────────────────────────────────────────────
+  const handleToggleGateway = async (
+    gateway: GatewayConfigData,
+    isActive: boolean
+  ) => {
+    setSavingGatewayId(gateway.id);
+    setGateways((prev) =>
+      prev.map((g) => (g.id === gateway.id ? { ...g, is_active: isActive } : g))
+    );
+    try {
+      await apiClient.updateGatewayConfig(gateway.id, { is_active: isActive });
+      ErrorHandler.showSuccess(t('pricing.platform.gatewaySaved'));
+    } catch {
+      setGateways((prev) =>
+        prev.map((g) =>
+          g.id === gateway.id ? { ...g, is_active: gateway.is_active } : g
+        )
+      );
+      ErrorHandler.showError(t('pricing.platform.gatewaySaveFailed'));
+    } finally {
+      setSavingGatewayId(null);
+    }
+  };
 
   if (isLoading) return <div className="flex-1 p-6" />;
 
@@ -257,9 +313,9 @@ export default function PlatformPricingPage() {
       <div className="flex-1 space-y-6 p-6">
         <Card>
           <CardHeader>
-            <CardTitle>Access Restricted</CardTitle>
+            <CardTitle>{t('pricing.platform.accessRestricted')}</CardTitle>
             <CardDescription>
-              Only platform administrators can manage pricing settings.
+              {t('pricing.platform.accessRestrictedDesc')}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -267,34 +323,28 @@ export default function PlatformPricingPage() {
     );
   }
 
-  // ── render ────────────────────────────────────────────────────────────────
-
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">
-          Platform Pricing & Commission
+          {t('pricing.platform.title')}
         </h1>
         <p className="text-muted-foreground">
-          Manage VAT, platform commission, teacher revenue share, and
-          subscription plan pricing. Changes take effect on the next request
-          (60-second cache).
+          {t('pricing.platform.subtitle')}
         </p>
       </div>
 
-      {/* ── Global financial rates ─────────────────────────────────────── */}
       <Card>
         <CardHeader>
-          <CardTitle>Financial Rates</CardTitle>
+          <CardTitle>{t('pricing.platform.financialRates')}</CardTitle>
           <CardDescription>
-            These rates apply to all payment settlements and financial reports.
-            Enter values as percentages (e.g. 9 = 9%).
+            {t('pricing.platform.financialRatesDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
-              <Label>VAT Rate (%)</Label>
+              <Label>{t('pricing.platform.vatRate')}</Label>
               <Input
                 type="number"
                 min={0}
@@ -306,11 +356,11 @@ export default function PlatformPricingPage() {
                 }
               />
               <p className="text-xs text-muted-foreground">
-                Current Iran VAT is 9%
+                {t('pricing.platform.vatRateHint')}
               </p>
             </div>
             <div className="space-y-2">
-              <Label>Platform Commission (%)</Label>
+              <Label>{t('pricing.platform.commissionRate')}</Label>
               <Input
                 type="number"
                 min={0}
@@ -325,11 +375,11 @@ export default function PlatformPricingPage() {
                 }
               />
               <p className="text-xs text-muted-foreground">
-                Default take-rate per sale
+                {t('pricing.platform.commissionRateHint')}
               </p>
             </div>
             <div className="space-y-2">
-              <Label>Teacher Revenue Share (%)</Label>
+              <Label>{t('pricing.platform.teacherShare')}</Label>
               <Input
                 type="number"
                 min={0}
@@ -344,14 +394,14 @@ export default function PlatformPricingPage() {
                 }
               />
               <p className="text-xs text-muted-foreground">
-                Portion paid to instructor
+                {t('pricing.platform.teacherShareHint')}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
-              <Label>Storage Overage Fee (IRR/GB)</Label>
+              <Label>{t('pricing.platform.overageFee')}</Label>
               <PriceInput
                 value={settingsForm.storage_overage_fee_irr}
                 onChange={(raw) =>
@@ -363,7 +413,7 @@ export default function PlatformPricingPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Subscription Grace Days</Label>
+              <Label>{t('pricing.platform.graceDays')}</Label>
               <Input
                 type="number"
                 min={0}
@@ -377,7 +427,7 @@ export default function PlatformPricingPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Subscription Reminder Days (before expiry)</Label>
+              <Label>{t('pricing.platform.reminderDays')}</Label>
               <Input
                 type="number"
                 min={0}
@@ -393,7 +443,7 @@ export default function PlatformPricingPage() {
           </div>
 
           <div className="max-w-xs space-y-2">
-            <Label>Payment Release Phase</Label>
+            <Label>{t('pricing.platform.paymentPhase')}</Label>
             <Input
               value={settingsForm.payment_release_phase}
               onChange={(e) =>
@@ -404,23 +454,20 @@ export default function PlatformPricingPage() {
               }
             />
             <p className="text-xs text-muted-foreground">
-              e.g. IRAN_PAYPING_ONLY | ALL_GATEWAYS
+              {t('pricing.platform.paymentPhaseHint')}
             </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* ── Iran legal / tax metadata ────────────────────────────────────── */}
       <Card>
         <CardHeader>
-          <CardTitle>Iran Tax Registration</CardTitle>
-          <CardDescription>
-            Used in official settlement statements and tax reports.
-          </CardDescription>
+          <CardTitle>{t('pricing.platform.taxTitle')}</CardTitle>
+          <CardDescription>{t('pricing.platform.taxDesc')}</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label>Legal Entity Name</Label>
+            <Label>{t('pricing.platform.legalEntityName')}</Label>
             <Input
               value={settingsForm.legal_entity_name}
               onChange={(e) =>
@@ -429,11 +476,10 @@ export default function PlatformPricingPage() {
                   legal_entity_name: e.target.value
                 })
               }
-              placeholder="شرکت مثال"
             />
           </div>
           <div className="space-y-2">
-            <Label>VAT Registration No</Label>
+            <Label>{t('pricing.platform.vatRegNo')}</Label>
             <Input
               value={settingsForm.vat_registration_no}
               onChange={(e) =>
@@ -442,11 +488,10 @@ export default function PlatformPricingPage() {
                   vat_registration_no: e.target.value
                 })
               }
-              placeholder="12345678901"
             />
           </div>
           <div className="space-y-2">
-            <Label>Economic Code</Label>
+            <Label>{t('pricing.platform.economicCode')}</Label>
             <Input
               value={settingsForm.economic_code}
               onChange={(e) =>
@@ -455,7 +500,6 @@ export default function PlatformPricingPage() {
                   economic_code: e.target.value
                 })
               }
-              placeholder="10860287511"
             />
           </div>
         </CardContent>
@@ -463,35 +507,34 @@ export default function PlatformPricingPage() {
 
       <div className="flex justify-end">
         <Button onClick={handleSaveSettings} disabled={savingSettings}>
-          <Save className="mr-2 h-4 w-4" />
-          {savingSettings ? 'Saving…' : 'Save Settings'}
+          <Save className="me-2 h-4 w-4" />
+          {savingSettings
+            ? t('pricing.platform.saving')
+            : t('pricing.platform.saveSettings')}
         </Button>
       </div>
 
-      {/* ── Subscription Plans ────────────────────────────────────────────── */}
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
-            <CardTitle>Subscription Plans</CardTitle>
-            <CardDescription>
-              Define plans sold to academy owners. Commission rate overrides the
-              global rate per plan.
-            </CardDescription>
+            <CardTitle>{t('pricing.platform.plansTitle')}</CardTitle>
+            <CardDescription>{t('pricing.platform.plansDesc')}</CardDescription>
           </div>
           <Button
             size="sm"
             onClick={startNewPlan}
             disabled={editingPlanId !== null}
           >
-            <Plus className="mr-2 h-4 w-4" /> New Plan
+            <Plus className="me-2 h-4 w-4" /> {t('pricing.platform.newPlan')}
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* ── inline new/edit form ────────────────────────────────────── */}
           {editingPlanId !== null && (
             <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
               <h3 className="text-sm font-semibold">
-                {editingPlanId === 'new' ? 'New Plan' : 'Edit Plan'}
+                {editingPlanId === 'new'
+                  ? t('pricing.platform.newPlan')
+                  : t('pricing.platform.editPlan')}
               </h3>
               <PlanFormFields
                 form={planForm}
@@ -500,37 +543,39 @@ export default function PlatformPricingPage() {
               />
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={cancelPlan}>
-                  <X className="mr-1 h-3 w-3" /> Cancel
+                  <X className="me-1 h-3 w-3" /> {t('pricing.platform.cancel')}
                 </Button>
                 <Button
                   size="sm"
                   onClick={handleSavePlan}
                   disabled={savingPlan}
                 >
-                  <Check className="mr-1 h-3 w-3" />
-                  {savingPlan ? 'Saving…' : 'Save Plan'}
+                  <Check className="me-1 h-3 w-3" />
+                  {savingPlan
+                    ? t('pricing.platform.saving')
+                    : t('pricing.platform.savePlan')}
                 </Button>
               </div>
             </div>
           )}
 
-          {/* ── plans table ─────────────────────────────────────────────── */}
           {plans.length === 0 && editingPlanId === null ? (
             <p className="py-6 text-center text-sm text-muted-foreground">
-              No subscription plans yet. Click &quot;New Plan&quot; to create
-              one.
+              {t('pricing.platform.noPlans')}
             </p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Monthly</TableHead>
-                  <TableHead>Annual</TableHead>
-                  <TableHead>Commission</TableHead>
-                  <TableHead>Storage</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('pricing.platform.colName')}</TableHead>
+                  <TableHead>{t('pricing.platform.colMonthly')}</TableHead>
+                  <TableHead>{t('pricing.platform.colAnnual')}</TableHead>
+                  <TableHead>{t('pricing.platform.colCommission')}</TableHead>
+                  <TableHead>{t('pricing.platform.colStorage')}</TableHead>
+                  <TableHead>{t('pricing.platform.colStatus')}</TableHead>
+                  <TableHead className="text-end">
+                    {t('pricing.platform.colActions')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -567,17 +612,19 @@ export default function PlatformPricingPage() {
                         `${toPercent(plan.commission_rate)}%`
                       ) : (
                         <span className="text-xs text-muted-foreground">
-                          global
+                          {t('pricing.platform.commissionGlobal')}
                         </span>
                       )}
                     </TableCell>
                     <TableCell>{plan.storage_limit_gb} GB</TableCell>
                     <TableCell>
                       <Badge variant={plan.is_active ? 'default' : 'secondary'}>
-                        {plan.is_active ? 'Active' : 'Inactive'}
+                        {plan.is_active
+                          ? t('pricing.platform.statusActive')
+                          : t('pricing.platform.statusInactive')}
                       </Badge>
                     </TableCell>
-                    <TableCell className="space-x-1 text-right">
+                    <TableCell className="space-x-1 text-end">
                       <Button
                         variant="ghost"
                         size="icon"
@@ -605,65 +652,90 @@ export default function PlatformPricingPage() {
         </CardContent>
       </Card>
 
-      {/* ── current effective rates summary ─────────────────────────────── */}
+      <GatewayTogglesCard
+        gateways={gateways}
+        savingId={savingGatewayId}
+        onToggle={handleToggleGateway}
+        onRefresh={() => void loadGateways()}
+      />
+
       {settings && (
         <Card>
           <CardHeader>
-            <CardTitle>Effective Rates Summary</CardTitle>
+            <CardTitle>{t('pricing.platform.summaryTitle')}</CardTitle>
             <CardDescription>
-              What the payment engine currently uses.
+              {t('pricing.platform.summaryDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-4">
               <div>
-                <dt className="text-muted-foreground">VAT</dt>
+                <dt className="text-muted-foreground">
+                  {t('pricing.platform.summaryVat')}
+                </dt>
                 <dd className="font-semibold">
-                  {toPercent(settings.vat_rate)}%
+                  {toPercent(asNumber(settings.vat_rate))}%
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Commission</dt>
+                <dt className="text-muted-foreground">
+                  {t('pricing.platform.summaryCommission')}
+                </dt>
                 <dd className="font-semibold">
-                  {toPercent(settings.commission_rate)}%
+                  {toPercent(asNumber(settings.commission_rate))}%
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Teacher Share</dt>
+                <dt className="text-muted-foreground">
+                  {t('pricing.platform.summaryTeacherShare')}
+                </dt>
                 <dd className="font-semibold">
-                  {toPercent(settings.teacher_share_rate)}%
+                  {toPercent(asNumber(settings.teacher_share_rate))}%
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Platform Net</dt>
+                <dt className="text-muted-foreground">
+                  {t('pricing.platform.summaryPlatformNet')}
+                </dt>
                 <dd className="font-semibold">
                   {toPercent(
-                    settings.commission_rate -
-                      settings.commission_rate * settings.teacher_share_rate
+                    asNumber(settings.commission_rate) -
+                      asNumber(settings.commission_rate) *
+                        asNumber(settings.teacher_share_rate)
                   )}
                   %
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Grace Period</dt>
+                <dt className="text-muted-foreground">
+                  {t('pricing.platform.summaryGrace')}
+                </dt>
                 <dd className="font-semibold">
-                  {settings.subscription_grace_days} days
+                  {settings.subscription_grace_days}{' '}
+                  {t('pricing.platform.days')}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Reminder</dt>
+                <dt className="text-muted-foreground">
+                  {t('pricing.platform.summaryReminder')}
+                </dt>
                 <dd className="font-semibold">
-                  {settings.subscription_reminder_days} days before
+                  {settings.subscription_reminder_days}{' '}
+                  {t('pricing.platform.daysBefore')}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Overage Fee</dt>
+                <dt className="text-muted-foreground">
+                  {t('pricing.platform.summaryOverage')}
+                </dt>
                 <dd className="font-semibold">
-                  {formatIRR(settings.storage_overage_fee_irr)}/GB
+                  {formatIRR(asNumber(settings.storage_overage_fee_irr))}/GB
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Payment Phase</dt>
+                <dt className="text-muted-foreground">
+                  {t('pricing.platform.summaryPhase')}
+                </dt>
                 <dd className="text-xs font-semibold">
                   {settings.payment_release_phase}
                 </dd>

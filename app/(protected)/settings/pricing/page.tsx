@@ -19,6 +19,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin } from '@/lib/roles';
 
 interface PricingConfigForm {
   title: string;
@@ -38,10 +39,10 @@ export default function PricingSettingsPage() {
   const [form, setForm] = useState<PricingConfigForm>(DEFAULT_FORM);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const isPlatformAdmin =
-    user?.role === 'ADMIN' && (user?.isAdminProfile || user?.platformLevel);
+  const isPlatformAdminUser = isPlatformAdmin(user);
   const canManageAcademyPricing =
-    !isPlatformAdmin && (user?.role === 'MANAGER' || user?.role === 'ADMIN');
+    !isPlatformAdminUser &&
+    (user?.role === 'MANAGER' || user?.role === 'ADMIN');
 
   const fetchConfig = async () => {
     try {
