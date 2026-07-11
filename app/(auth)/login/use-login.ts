@@ -10,6 +10,7 @@ import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
 import { isPlatformStaff } from '@/lib/roles';
+import { isUserNotRegisteredError } from '@/lib/auth-login-errors';
 
 type Academy = { id: number; name: string; slug: string };
 export type LoginMethod = 'password' | 'otp';
@@ -28,6 +29,19 @@ type LoginResponse = {
 function getApiErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof Error && error.message) return error.message;
   return fallback;
+}
+
+function resolveLoginError(
+  error: unknown,
+  fallback: string,
+  notRegisteredMessage: string
+): { message: string; registrationRequired: boolean } {
+  const raw = getApiErrorMessage(error, fallback);
+  const registrationRequired = isUserNotRegisteredError(raw);
+  return {
+    message: registrationRequired ? notRegisteredMessage : raw,
+    registrationRequired
+  };
 }
 
 export function useLogin() {
@@ -56,6 +70,7 @@ export function useLogin() {
   const [otp, setOtp] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
+  const [registrationRequired, setRegistrationRequired] = useState(false);
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -134,6 +149,7 @@ export function useLogin() {
 
   async function requestLoginOtp() {
     setIsLoading(true);
+    setRegistrationRequired(false);
     try {
       const phoneE164 = toE164Iran(phone);
       await apiClient.sendPhoneOtp(phoneE164, OtpType.LOGIN_BY_PHONE);
@@ -142,9 +158,18 @@ export function useLogin() {
       setOtpRequired(true);
       toast.success(t('success.otpSent'), { toastId: 'login-otp-sent' });
     } catch (error: unknown) {
-      toast.error(getApiErrorMessage(error, t('error.authenticationFailed')), {
-        toastId: 'login-error'
-      });
+      const { message, registrationRequired: needsRegistration } =
+        resolveLoginError(
+          error,
+          t('error.authenticationFailed'),
+          t('auth.accountNotRegisteredForLogin')
+        );
+      setRegistrationRequired(needsRegistration);
+      if (needsRegistration) {
+        setErrors((prev) => ({ ...prev, phone: '' }));
+      } else {
+        toast.error(message, { toastId: 'login-error' });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -243,12 +268,17 @@ export function useLogin() {
         message: t('auth.redirectingToAffiliate')
       });
     } catch (error: unknown) {
-      const message = getApiErrorMessage(
-        error,
-        t('error.authenticationFailed')
-      );
+      const { message, registrationRequired: needsRegistration } =
+        resolveLoginError(
+          error,
+          t('error.authenticationFailed'),
+          t('auth.accountNotRegisteredForLogin')
+        );
+      setRegistrationRequired(needsRegistration);
       setOtpError(message);
-      toast.error(message, { toastId: 'login-otp-error' });
+      if (!needsRegistration) {
+        toast.error(message, { toastId: 'login-otp-error' });
+      }
     } finally {
       setOtpLoading(false);
     }
@@ -257,16 +287,30 @@ export function useLogin() {
   async function resendOtp() {
     setOtpLoading(true);
     setOtpError('');
+    setRegistrationRequired(false);
     try {
       await apiClient.sendPhoneOtp(otpPhone, OtpType.LOGIN_BY_PHONE);
       toast.success(t('success.otpSent'), { toastId: 'otp-resent' });
     } catch (error: unknown) {
-      toast.error(getApiErrorMessage(error, t('error.authenticationFailed')), {
-        toastId: 'login-error'
-      });
+      const { message, registrationRequired: needsRegistration } =
+        resolveLoginError(
+          error,
+          t('error.authenticationFailed'),
+          t('auth.accountNotRegisteredForLogin')
+        );
+      setRegistrationRequired(needsRegistration);
+      setOtpError(needsRegistration ? message : '');
+      if (!needsRegistration) {
+        toast.error(message, { toastId: 'login-error' });
+      }
     } finally {
       setOtpLoading(false);
     }
+  }
+
+  function clearRegistrationHint() {
+    setRegistrationRequired(false);
+    setErrors((prev) => ({ ...prev, phone: '' }));
   }
 
   return {
@@ -297,6 +341,8 @@ export function useLogin() {
     setOtp,
     otpLoading,
     otpError,
+    registrationRequired,
+    clearRegistrationHint,
     handleOtpSubmit,
     resendOtp,
     resetOtp: () => {
@@ -304,6 +350,7 @@ export function useLogin() {
       setOtpMode('verify');
       setOtp('');
       setOtpError('');
+      setRegistrationRequired(false);
     }
   };
 }

@@ -392,6 +392,10 @@ export const en = {
     loginWithPassword: 'Password',
     loginWithOtp: 'One-time code',
     sendLoginCode: 'Send code',
+    accountNotRegisteredForLogin:
+      'No account is registered with this phone number.',
+    registerToLoginHint: 'Create a free account first, then sign in.',
+    createAccountToContinue: 'Create account',
     sendingCode: 'Sending code...',
     otpRequired: 'Verification code is required',
     invalidOtp: 'Invalid verification code',

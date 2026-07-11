@@ -26,6 +26,7 @@ interface LoginFormProps {
   isLoading: boolean;
   errors: Record<string, string>;
   unauthorizedError: string | null;
+  registrationRequired?: boolean;
   onPhoneChange: (v: string) => void;
   onPasswordChange: (v: string) => void;
   onTogglePassword: () => void;
@@ -40,6 +41,7 @@ export function LoginForm({
   isLoading,
   errors,
   unauthorizedError,
+  registrationRequired = false,
   onPhoneChange,
   onPasswordChange,
   onSubmit
@@ -55,6 +57,21 @@ export function LoginForm({
       {unauthorizedError && (
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>{unauthorizedError}</AlertDescription>
+        </Alert>
+      )}
+
+      {registrationRequired && (
+        <Alert className="mb-4 border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+          <AlertDescription className="space-y-2">
+            <p>{t('auth.accountNotRegisteredForLogin')}</p>
+            <p className="text-sm">{t('auth.registerToLoginHint')}</p>
+            <Link
+              href="/register"
+              className="inline-block text-sm font-semibold text-primary hover:underline"
+            >
+              {t('auth.createAccountToContinue')} →
+            </Link>
+          </AlertDescription>
         </Alert>
       )}
 
