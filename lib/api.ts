@@ -4723,6 +4723,7 @@ class ApiClient {
     data: {
       token?: string;
       is_active?: boolean;
+      is_sandbox?: boolean;
       extra?: Record<string, unknown>;
     }
   ) {
@@ -5384,6 +5385,7 @@ export interface GatewayConfigData {
   region: string;
   supported_currencies: string[];
   is_active: boolean;
+  is_sandbox: boolean;
   config_schema: {
     token: string | null;
     token_configured: boolean;

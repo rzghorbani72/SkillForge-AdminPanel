@@ -32,6 +32,7 @@ interface GatewayState {
   name: string;
   display_name: string;
   is_active: boolean;
+  is_sandbox: boolean;
   token_configured: boolean;
   newToken: string;
   terminalId: string;
@@ -40,6 +41,7 @@ interface GatewayState {
   showToken: boolean;
   isSaving: boolean;
   initialIsActive: boolean;
+  initialIsSandbox: boolean;
   initialToken: string;
   initialTerminalId: string;
   initialMerchantId: string;
@@ -70,6 +72,7 @@ export default function PaymentGatewaySettingsPage() {
           name: g.name,
           display_name: g.display_name,
           is_active: g.is_active,
+          is_sandbox: g.is_sandbox,
           token_configured: Boolean(g.config_schema?.token_configured),
           newToken: '',
           terminalId: String(g.config_schema?.terminal_id ?? ''),
@@ -78,6 +81,7 @@ export default function PaymentGatewaySettingsPage() {
           showToken: false,
           isSaving: false,
           initialIsActive: g.is_active,
+          initialIsSandbox: g.is_sandbox,
           initialToken: '',
           initialTerminalId: String(g.config_schema?.terminal_id ?? ''),
           initialMerchantId: String(g.config_schema?.merchant_id ?? ''),
@@ -111,6 +115,7 @@ export default function PaymentGatewaySettingsPage() {
   const handleSave = async (gw: GatewayState) => {
     const hasNoChanges =
       gw.is_active === gw.initialIsActive &&
+      gw.is_sandbox === gw.initialIsSandbox &&
       gw.newToken.trim() === gw.initialToken &&
       gw.terminalId.trim() === gw.initialTerminalId &&
       gw.merchantId.trim() === gw.initialMerchantId &&
@@ -129,6 +134,7 @@ export default function PaymentGatewaySettingsPage() {
       await apiClient.updateGatewayConfig(gw.id, {
         ...(gw.newToken.trim() ? { token: gw.newToken.trim() } : {}),
         is_active: gw.is_active,
+        is_sandbox: gw.is_sandbox,
         extra: {
           ...(gw.terminalId.trim()
             ? { terminal_id: gw.terminalId.trim() }
@@ -271,6 +277,21 @@ export default function PaymentGatewaySettingsPage() {
                       {gw.is_active
                         ? 'Active — accepting payments'
                         : 'Inactive — disabled'}
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Switch
+                      id={`sandbox-${gw.id}`}
+                      checked={gw.is_sandbox}
+                      onCheckedChange={(v) =>
+                        updateGateway(gw.id, { is_sandbox: v })
+                      }
+                    />
+                    <Label htmlFor={`sandbox-${gw.id}`}>
+                      {gw.is_sandbox
+                        ? 'Sandbox mode — uses test credentials & test bank endpoint'
+                        : 'Production mode — uses live bank endpoint'}
                     </Label>
                   </div>
 
