@@ -3,65 +3,151 @@ import { PanelRole } from '@/lib/roles';
 
 type Role = PanelRole;
 
+export type LearningNavVisibility = {
+  students: boolean;
+  assignments: boolean;
+  ops_queue: boolean;
+  tutoring: boolean;
+};
+
+type FilterNavOptions = {
+  role: Role | null;
+  hasStore?: boolean;
+  learningVisibility?: LearningNavVisibility | null;
+};
+
 const paymentEnabled = process.env.NEXT_PUBLIC_PAYMENT_ENABLED === 'true';
 
+const ACADEMY_CAPABILITY_ROLES: Role[] = [
+  'TEACHER',
+  'MANAGER',
+  'ADMIN',
+  'SUPPORT',
+  'FINANCE',
+  'PLATFORM_OWNER'
+];
+
+function isPlatformMode(role: Role, hasStore?: boolean): boolean {
+  const isPlatformRole =
+    role === 'PLATFORM_OWNER' ||
+    role === 'ADMIN' ||
+    role === 'FINANCE' ||
+    role === 'SUPPORT';
+  return isPlatformRole && hasStore === false;
+}
+
+export function shouldApplyLearningNavGating(
+  userRole: Role,
+  hasStore?: boolean
+): boolean {
+  if (!ACADEMY_CAPABILITY_ROLES.includes(userRole)) return false;
+  if (isPlatformMode(userRole, hasStore)) return false;
+  if (userRole === 'TEACHER' || userRole === 'MANAGER') return true;
+  return hasStore === true;
+}
+
+function passesRoleFilters(
+  item: NavItem,
+  userRole: Role,
+  hasStore?: boolean,
+  platformMode?: boolean
+): boolean {
+  if (item.paymentGated && !paymentEnabled) return false;
+  if (item.roles && item.roles.length > 0) {
+    if (!(item.roles as Role[]).includes(userRole)) return false;
+  }
+  if (item.adminOnly) {
+    if (userRole !== 'ADMIN' && userRole !== 'PLATFORM_OWNER') return false;
+    if (hasStore === true) return false;
+  }
+  if (item.financeOnly) {
+    if (
+      userRole !== 'PLATFORM_OWNER' &&
+      userRole !== 'ADMIN' &&
+      userRole !== 'FINANCE'
+    ) {
+      return false;
+    }
+  }
+  if (item.supportOnly) {
+    if (
+      userRole !== 'PLATFORM_OWNER' &&
+      userRole !== 'ADMIN' &&
+      userRole !== 'SUPPORT'
+    ) {
+      return false;
+    }
+  }
+  if (platformMode && item.scope === 'academy') return false;
+  if (!platformMode && item.scope === 'platform') return false;
+  return true;
+}
+
+function passesLearningCapability(
+  item: NavItem,
+  userRole: Role,
+  hasStore: boolean | undefined,
+  learningVisibility: LearningNavVisibility | null | undefined
+): boolean {
+  if (!item.requiresLearningCapability) return true;
+  if (!shouldApplyLearningNavGating(userRole, hasStore)) return true;
+  if (!learningVisibility) return false;
+  return learningVisibility[item.requiresLearningCapability] === true;
+}
+
+function filterItem(
+  item: NavItem,
+  options: FilterNavOptions,
+  platformMode: boolean
+): NavItem | null {
+  const { role, hasStore, learningVisibility } = options;
+  if (!role) {
+    if (item.roles && item.roles.length > 0) return null;
+    return item;
+  }
+  if (!passesRoleFilters(item, role, hasStore, platformMode)) return null;
+  if (!passesLearningCapability(item, role, hasStore, learningVisibility)) {
+    return null;
+  }
+
+  if (!item.children?.length) return item;
+
+  const children = item.children
+    .map((child) => filterItem(child, options, platformMode))
+    .filter((child): child is NavItem => child !== null);
+
+  if (item.requiresLearningCapability && children.length === 0) {
+    return null;
+  }
+
+  return { ...item, children };
+}
+
 /**
- * Filter sidebar items by the caller's role.
- * - `roles`: allow-list of roles that can see this item; absence means everyone.
- * - `adminOnly`: only platform-level admins (ADMIN role without a store).
- * - `hasStore`: true when the ADMIN has a specific academy attached.
- * - `paymentGated`: hidden when NEXT_PUBLIC_PAYMENT_ENABLED !== 'true'.
+ * Filter sidebar items by role, platform/academy mode, payment gate,
+ * and learning capabilities from course selling types.
  */
+export function filterNavItems(
+  items: NavItem[],
+  options: FilterNavOptions
+): NavItem[] {
+  const { role, hasStore } = options;
+  if (!role) {
+    return items.filter((item) => !item.roles || item.roles.length === 0);
+  }
+
+  const platformMode = isPlatformMode(role, hasStore);
+
+  return items
+    .map((item) => filterItem(item, options, platformMode))
+    .filter((item): item is NavItem => item !== null);
+}
+
+/** @deprecated Use filterNavItems */
 export function filterNavItemsByRole(
   items: NavItem[],
   userRole: Role | null,
   hasStore?: boolean
 ): NavItem[] {
-  if (!userRole) {
-    return items.filter((item) => !item.roles || item.roles.length === 0);
-  }
-  // Platform mode: a platform-level user (ADMIN/SUPPORT) with no academy selected.
-  // hasStore===false means they are at platform level; true means scoped into one.
-  const isPlatformRole =
-    userRole === 'PLATFORM_OWNER' ||
-    userRole === 'ADMIN' ||
-    userRole === 'FINANCE' ||
-    userRole === 'SUPPORT';
-  const platformMode = isPlatformRole && hasStore === false;
-  return items.filter((item) => {
-    // Payment-gated items hidden when payments are disabled for this deployment
-    if (item.paymentGated && !paymentEnabled) return false;
-    // Role allow-list
-    if (item.roles && item.roles.length > 0) {
-      if (!(item.roles as Role[]).includes(userRole)) return false;
-    }
-    // adminOnly: only visible to ADMIN users who do NOT have a store (platform-level)
-    if (item.adminOnly) {
-      if (userRole !== 'ADMIN' && userRole !== 'PLATFORM_OWNER') return false;
-      if (hasStore === true) return false;
-    }
-    if (item.financeOnly) {
-      if (
-        userRole !== 'PLATFORM_OWNER' &&
-        userRole !== 'ADMIN' &&
-        userRole !== 'FINANCE'
-      ) {
-        return false;
-      }
-    }
-    if (item.supportOnly) {
-      if (
-        userRole !== 'PLATFORM_OWNER' &&
-        userRole !== 'ADMIN' &&
-        userRole !== 'SUPPORT'
-      ) {
-        return false;
-      }
-    }
-    // Mode separation: academy tools hide in Platform mode; platform tools hide
-    // once an academy is selected (Academy mode).
-    if (platformMode && item.scope === 'academy') return false;
-    if (!platformMode && item.scope === 'platform') return false;
-    return true;
-  });
+  return filterNavItems(items, { role: userRole, hasStore });
 }

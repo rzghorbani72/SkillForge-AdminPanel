@@ -42,6 +42,7 @@ export interface LearningAssignment {
   Lesson?: {
     id: number;
     title: string;
+    Course?: { id: number; title: string };
     Season?: { id: number; title: string; course_id: number };
   };
   _count?: { Submission: number };
@@ -64,6 +65,10 @@ export interface AssignmentSubmission {
     id: number;
     title: string;
     max_score: number;
+    Lesson?: {
+      Course?: { id: number; title: string };
+      Season?: { id: number; title: string };
+    };
   };
   Profile?: {
     id: number;

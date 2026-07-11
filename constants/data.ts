@@ -265,16 +265,19 @@ export const navItems: NavItem[] = [
     ],
     scope: 'academy',
     section: 'learning',
+    requiresLearningCapability: 'students',
     children: [
       {
         title: 'Students',
         href: '/students?role=STUDENT',
-        label: 'all-students'
+        label: 'all-students',
+        requiresLearningCapability: 'students'
       },
       {
         title: 'Progress',
         href: '/students/progress',
-        label: 'progress'
+        label: 'progress',
+        requiresLearningCapability: 'students'
       }
     ]
   },
@@ -292,7 +295,8 @@ export const navItems: NavItem[] = [
       'TEACHER'
     ],
     scope: 'academy',
-    section: 'learning'
+    section: 'learning',
+    requiresLearningCapability: 'assignments'
   },
   {
     title: 'Ops Queue',
@@ -308,7 +312,8 @@ export const navItems: NavItem[] = [
       'TEACHER'
     ],
     scope: 'academy',
-    section: 'learning'
+    section: 'learning',
+    requiresLearningCapability: 'ops_queue'
   },
   {
     title: 'Tutoring',
@@ -324,7 +329,8 @@ export const navItems: NavItem[] = [
       'TEACHER'
     ],
     scope: 'academy',
-    section: 'learning'
+    section: 'learning',
+    requiresLearningCapability: 'tutoring'
   },
   {
     title: 'Analytics',

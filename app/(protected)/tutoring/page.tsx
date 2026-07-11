@@ -8,79 +8,105 @@ import { ScheduleSessionCard } from './_components/schedule-session-card';
 import { RescheduleSessionCard } from './_components/reschedule-session-card';
 import { MarkAttendanceCard } from './_components/mark-attendance-card';
 import { LastSessionCard } from './_components/last-session-card';
+import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
+import { OpsQueueFeatureGate } from '@/app/(protected)/learning/ops-queue/_components/ops-queue-feature-gate';
+import { useTutorLedFeature } from '@/app/(protected)/learning/ops-queue/hooks/use-tutor-led-feature';
 
 export default function TutoringPage() {
   const { t, language } = useTranslation();
   const isRtl = language === 'fa' || language === 'ar';
   const tutoring = useTutoringPage();
+  const {
+    featureEnabled,
+    checkingFeature,
+    enablingFeature,
+    isManager,
+    enableLearningFollowUp
+  } = useTutorLedFeature();
+
+  const showTutoring = !checkingFeature && featureEnabled !== false;
 
   return (
-    <main
-      className="space-y-6 p-4 sm:p-6"
-      dir={isRtl ? 'rtl' : 'ltr'}
-      aria-labelledby="tutoring-title"
-    >
-      <div>
-        <h1 id="tutoring-title" className="text-3xl font-bold tracking-tight">
-          {t('tutoring.title')}
-        </h1>
-        <p className="text-muted-foreground">{t('tutoring.description')}</p>
-      </div>
+    <LearningNavGate requiredCapability="tutoring">
+      <main
+        className="space-y-6 p-4 sm:p-6"
+        dir={isRtl ? 'rtl' : 'ltr'}
+        aria-labelledby="tutoring-title"
+      >
+        <div>
+          <h1 id="tutoring-title" className="text-3xl font-bold tracking-tight">
+            {t('tutoring.title')}
+          </h1>
+          <p className="text-muted-foreground">{t('tutoring.description')}</p>
+        </div>
 
-      <TutoringEngagementsCard
-        engagements={tutoring.engagements}
-        loading={tutoring.loading}
-        courseFilter={tutoring.courseFilter}
-        onCourseFilterChange={tutoring.setCourseFilter}
-        onRefresh={tutoring.loadData}
-      />
+        {!showTutoring ? (
+          <OpsQueueFeatureGate
+            checkingFeature={checkingFeature}
+            featureEnabled={featureEnabled}
+            isManager={isManager}
+            enablingFeature={enablingFeature}
+            onEnable={enableLearningFollowUp}
+          />
+        ) : (
+          <>
+            <TutoringEngagementsCard
+              engagements={tutoring.engagements}
+              loading={tutoring.loading}
+              courseFilter={tutoring.courseFilter}
+              onCourseFilterChange={tutoring.setCourseFilter}
+              onRefresh={tutoring.loadData}
+            />
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <CreateEngagementCard
-          form={tutoring.engagementForm}
-          onChange={tutoring.setEngagementForm}
-          saving={tutoring.saving}
-          onSubmit={tutoring.createEngagement}
-        />
+            <div className="grid gap-4 lg:grid-cols-2">
+              <CreateEngagementCard
+                form={tutoring.engagementForm}
+                onChange={tutoring.setEngagementForm}
+                saving={tutoring.saving}
+                onSubmit={tutoring.createEngagement}
+              />
 
-        <ScheduleSessionCard
-          form={tutoring.sessionForm}
-          onChange={tutoring.setSessionForm}
-          activeEngagements={tutoring.activeEngagements}
-          saving={tutoring.saving}
-          onSubmit={tutoring.scheduleSession}
-        />
+              <ScheduleSessionCard
+                form={tutoring.sessionForm}
+                onChange={tutoring.setSessionForm}
+                activeEngagements={tutoring.activeEngagements}
+                saving={tutoring.saving}
+                onSubmit={tutoring.scheduleSession}
+              />
 
-        <RescheduleSessionCard
-          form={tutoring.rescheduleForm}
-          onChange={tutoring.setRescheduleForm}
-          saving={tutoring.saving}
-          onReschedule={tutoring.rescheduleSession}
-          onCancel={(sessionId) => void tutoring.cancelSession(sessionId)}
-        />
+              <RescheduleSessionCard
+                form={tutoring.rescheduleForm}
+                onChange={tutoring.setRescheduleForm}
+                saving={tutoring.saving}
+                onReschedule={tutoring.rescheduleSession}
+                onCancel={(sessionId) => void tutoring.cancelSession(sessionId)}
+              />
 
-        <MarkAttendanceCard
-          form={tutoring.attendanceForm}
-          onSessionIdChange={(sessionId) =>
-            void tutoring.setAttendanceSessionId(sessionId)
-          }
-          onProfileIdChange={(profileId) =>
-            tutoring.setAttendanceForm((prev) => ({
-              ...prev,
-              profile_id: profileId
-            }))
-          }
-          onStatusChange={(status) =>
-            tutoring.setAttendanceForm((prev) => ({ ...prev, status }))
-          }
-          saving={tutoring.saving}
-          onSubmit={tutoring.markAttendance}
-        />
-      </div>
+              <MarkAttendanceCard
+                form={tutoring.attendanceForm}
+                onSessionIdChange={(sessionId) =>
+                  void tutoring.setAttendanceSessionId(sessionId)
+                }
+                onProfileIdChange={(profileId) =>
+                  tutoring.setAttendanceForm((prev) => ({
+                    ...prev,
+                    profile_id: profileId
+                  }))
+                }
+                onStatusChange={(status) =>
+                  tutoring.setAttendanceForm((prev) => ({ ...prev, status }))
+                }
+                saving={tutoring.saving}
+                onSubmit={tutoring.markAttendance}
+              />
+            </div>
 
-      {tutoring.lastSession ? (
-        <LastSessionCard session={tutoring.lastSession} />
-      ) : null}
-    </main>
+            {tutoring.lastSession ? (
+              <LastSessionCard session={tutoring.lastSession} />
+            ) : null}
+          </>
+        )}
+      </main>
+    </LearningNavGate>
   );
 }

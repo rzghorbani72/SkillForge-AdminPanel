@@ -4,9 +4,10 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { navItems } from '@/constants/data';
 import { MenuIcon } from 'lucide-react';
 import { useState, Suspense, useMemo } from 'react';
-import { filterNavItemsByRole } from '@/lib/nav-filter';
+import { filterNavItems } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHasStore } from '@/hooks/useHasStore';
+import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
 
 // import { Playlist } from "../data/playlists";
 
@@ -14,16 +15,20 @@ export function MobileSidebar() {
   const [open, setOpen] = useState(false);
   const { user } = useAuthUser();
   const hasStore = useHasStore();
+  const { visibility: learningVisibility } = useLearningNavCapabilities();
 
-  // Extract role from authenticated user (fetched from API using JWT cookie)
   const userRole = useMemo(() => {
     if (!user) return null;
     return user.role;
   }, [user]);
 
   const filteredNavItems = useMemo(() => {
-    return filterNavItemsByRole(navItems, userRole, hasStore);
-  }, [userRole, hasStore]);
+    return filterNavItems(navItems, {
+      role: userRole,
+      hasStore,
+      learningVisibility
+    });
+  }, [userRole, hasStore, learningVisibility]);
 
   return (
     <>

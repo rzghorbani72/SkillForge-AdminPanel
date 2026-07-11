@@ -258,7 +258,9 @@ export function StudentWorkspace({
                     {submission.Assignment?.title ??
                       t('assignmentsPage.notAvailable')}
                   </CardTitle>
-                  <CardDescription>{submission.status}</CardDescription>
+                  <CardDescription>
+                    {t(`learningOperations.status.${submission.status}`)}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {submission.score !== undefined && (

@@ -67,6 +67,24 @@ export interface AcademyFeatureFlags {
   tutor_led_learning_enabled: boolean;
 }
 
+export interface LearningNavCapabilities {
+  course_scope: 'owned' | 'academy';
+  selling_types: {
+    one_time: boolean;
+    public_sub: boolean;
+    private_sub: boolean;
+  };
+  academy_features: {
+    tutor_led_learning_enabled: boolean;
+  };
+  visibility: {
+    students: boolean;
+    assignments: boolean;
+    ops_queue: boolean;
+    tutoring: boolean;
+  };
+}
+
 class ApiClient {
   private isRefreshing: boolean = false;
   private refreshPromise: Promise<boolean> | null = null;
@@ -1199,6 +1217,13 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(data)
     });
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getLearningNavCapabilities(): Promise<LearningNavCapabilities> {
+    const res = await this.request<
+      LearningNavCapabilities | { data: LearningNavCapabilities }
+    >('/staff/me/learning-capabilities');
     return unwrapDataEnvelope(res.data);
   }
 
@@ -4316,6 +4341,7 @@ class ApiClient {
     assignment_id?: number;
     profile_id?: number;
     enrollment_id?: number;
+    course_id?: number;
     status?: 'DRAFT' | 'SUBMITTED' | 'GRADED' | 'REJECTED';
   }): Promise<SubmissionListResponse> {
     const qs = new URLSearchParams();

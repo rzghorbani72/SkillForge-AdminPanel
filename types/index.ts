@@ -28,6 +28,11 @@ export interface NavItem {
   supportOnly?: boolean;
   scope?: 'platform' | 'academy';
   paymentGated?: boolean;
+  requiresLearningCapability?:
+    | 'students'
+    | 'assignments'
+    | 'ops_queue'
+    | 'tutoring';
 }
 
 export interface NavItemWithChildren extends NavItem {

@@ -5,7 +5,7 @@ import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, GraduationCap, Shield } from 'lucide-react';
 import { Suspense, useMemo } from 'react';
-import { filterNavItemsByRole } from '@/lib/nav-filter';
+import { filterNavItems } from '@/lib/nav-filter';
 import { isPaymentEnabled } from '@/lib/payment';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -15,6 +15,7 @@ import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useHasStore } from '@/hooks/useHasStore';
 import { useBrandingStore } from '@/lib/store';
 import { SidebarUpgradeBanner } from '@/components/layout/sidebar-upgrade-banner';
+import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
 
 type SidebarProps = {
   className?: string;
@@ -33,10 +34,15 @@ export default function Sidebar({ className }: SidebarProps) {
   }, [user]);
 
   const hasStore = useHasStore();
+  const { visibility: learningVisibility } = useLearningNavCapabilities();
 
   const filteredNavItems = useMemo(() => {
-    return filterNavItemsByRole(navItems, userRole, hasStore);
-  }, [userRole, hasStore]);
+    return filterNavItems(navItems, {
+      role: userRole,
+      hasStore,
+      learningVisibility
+    });
+  }, [userRole, hasStore, learningVisibility]);
 
   if (isLoading) {
     return (

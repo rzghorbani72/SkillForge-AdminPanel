@@ -2143,7 +2143,23 @@ export const en = {
     feedbackOptional: 'Feedback (optional)',
     feedbackPlaceholder: 'Provide feedback to the student...',
     saveGrade: 'Save Grade',
-    scoreMax: 'Score (max: {{max}})'
+    scoreMax: 'Score (max: {{max}})',
+    course: 'Course',
+    season: 'Season',
+    filters: 'Filters',
+    filterByCourse: 'Filter by course',
+    filterByStatus: 'Filter by status',
+    allStatuses: 'All statuses',
+    clearFilters: 'Clear filters'
+  },
+  learningNav: {
+    accessDenied: 'Access not available',
+    accessDeniedHint:
+      'Publish a course with a supported selling type or activate private tutoring to unlock this section.',
+    noSellingCourses:
+      'No courses with one-time, public subscription, or private tutoring sales were found in your scope.',
+    privateSubRequired:
+      'Private tutoring must be active on at least one course, and learning follow-up must be enabled.'
   },
   users: {
     allUsers: 'All Users',

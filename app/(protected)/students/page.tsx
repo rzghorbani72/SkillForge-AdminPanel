@@ -41,6 +41,7 @@ import type {
   EnrollmentListResponse,
   GroupedUsersResponse
 } from '@/types/learning-operations';
+import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
 
 type StudentStatus = 'all' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 
@@ -305,418 +306,422 @@ export default function StudentsPage() {
 
   if (studentsLoading && totals.total === 0) {
     return (
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t('students.loadingUsersData')}
-            </p>
+      <LearningNavGate requiredCapability="students">
+        <div className="flex-1 space-y-6 p-6">
+          <div className="flex h-64 items-center justify-center">
+            <div className="text-center">
+              <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+              <p className="mt-2 text-sm text-muted-foreground">
+                {t('students.loadingUsersData')}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </LearningNavGate>
     );
   }
 
   return (
-    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t('students.allUsers')}
-          </h1>
-          <p className="text-muted-foreground">
-            {t('students.manageAllUsers')}
-          </p>
+    <LearningNavGate requiredCapability="students">
+      <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t('students.allUsers')}
+            </h1>
+            <p className="text-muted-foreground">
+              {t('students.manageAllUsers')}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button>
+              <Plus className="me-2 h-4 w-4" />
+              {t('students.addUser')}
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button>
-            <Plus className="me-2 h-4 w-4" />
-            {t('students.addUser')}
+
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          <div className="relative flex-1">
+            <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder={t('students.searchUsersByNameEmailPhone')}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="ps-8"
+              autoComplete="off"
+            />
+          </div>
+          <Select
+            value={studentStatusFilter}
+            onValueChange={(value) =>
+              setStudentStatusFilter(value as StudentStatus)
+            }
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder={t('common.filter')} />
+            </SelectTrigger>
+            <SelectContent>
+              {STUDENT_STATUS_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button variant="outline" className="hidden md:inline-flex">
+            <Filter className="me-2 h-4 w-4" />
+            {t('common.moreFilters')}
           </Button>
         </div>
-      </div>
 
-      <div className="flex flex-col gap-3 md:flex-row md:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={t('students.searchUsersByNameEmailPhone')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="ps-8"
-            autoComplete="off"
-          />
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {t('students.totalUsersCard')}
+              </CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totals.total}</div>
+              <p className="text-xs text-muted-foreground">
+                {t('students.allRegisteredUsers')}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {t('students.managers')}
+              </CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totals.managers}</div>
+              <p className="text-xs text-muted-foreground">
+                {t('students.storeAdministrators')}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {t('students.teachers')}
+              </CardTitle>
+              <GraduationCap className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totals.teachers}</div>
+              <p className="text-xs text-muted-foreground">
+                {t('students.courseInstructors')}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {t('navigation.students')}
+              </CardTitle>
+              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totals.students}</div>
+              <p className="text-xs text-muted-foreground">
+                {t('students.courseLearners')}
+              </p>
+            </CardContent>
+          </Card>
         </div>
-        <Select
-          value={studentStatusFilter}
-          onValueChange={(value) =>
-            setStudentStatusFilter(value as StudentStatus)
-          }
+
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-4"
+          dir={isRtl ? 'rtl' : 'ltr'}
         >
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder={t('common.filter')} />
-          </SelectTrigger>
-          <SelectContent>
-            {STUDENT_STATUS_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button variant="outline" className="hidden md:inline-flex">
-          <Filter className="me-2 h-4 w-4" />
-          {t('common.moreFilters')}
-        </Button>
-      </div>
+          <TabsList>
+            <TabsTrigger value="managers">
+              {t('students.managers')} ({totals.managers})
+            </TabsTrigger>
+            <TabsTrigger value="teachers">
+              {t('students.teachers')} ({totals.teachers})
+            </TabsTrigger>
+            <TabsTrigger value="students">
+              {t('navigation.students')} ({totals.students})
+            </TabsTrigger>
+            <TabsTrigger value="users">
+              {t('students.users')} ({totals.users})
+            </TabsTrigger>
+            <TabsTrigger value="enrollments">
+              {t('students.enrollments')} ({filteredEnrollments.length})
+            </TabsTrigger>
+            <TabsTrigger value="progress">
+              {t('students.progressTracking')}
+            </TabsTrigger>
+          </TabsList>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('students.totalUsersCard')}
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totals.total}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('students.allRegisteredUsers')}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('students.managers')}
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totals.managers}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('students.storeAdministrators')}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('students.teachers')}
-            </CardTitle>
-            <GraduationCap className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totals.teachers}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('students.courseInstructors')}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('navigation.students')}
-            </CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totals.students}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('students.courseLearners')}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          <TabsContent value="managers" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('students.allManagers')}</CardTitle>
+                <CardDescription>
+                  {t('students.storeManagersAndAdmins')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <UserTable
+                  users={managers}
+                  emptyMessage={t('students.noManagersFound')}
+                  t={t}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-4"
-        dir={isRtl ? 'rtl' : 'ltr'}
-      >
-        <TabsList>
-          <TabsTrigger value="managers">
-            {t('students.managers')} ({totals.managers})
-          </TabsTrigger>
-          <TabsTrigger value="teachers">
-            {t('students.teachers')} ({totals.teachers})
-          </TabsTrigger>
-          <TabsTrigger value="students">
-            {t('navigation.students')} ({totals.students})
-          </TabsTrigger>
-          <TabsTrigger value="users">
-            {t('students.users')} ({totals.users})
-          </TabsTrigger>
-          <TabsTrigger value="enrollments">
-            {t('students.enrollments')} ({filteredEnrollments.length})
-          </TabsTrigger>
-          <TabsTrigger value="progress">
-            {t('students.progressTracking')}
-          </TabsTrigger>
-        </TabsList>
+          <TabsContent value="teachers" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('students.allTeachers')}</CardTitle>
+                <CardDescription>
+                  {t('students.courseInstructorsAndEducators')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <UserTable
+                  users={teachers}
+                  emptyMessage={t('students.noTeachersFound')}
+                  t={t}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="managers" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('students.allManagers')}</CardTitle>
-              <CardDescription>
-                {t('students.storeManagersAndAdmins')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <UserTable
-                users={managers}
-                emptyMessage={t('students.noManagersFound')}
-                t={t}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="students" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('students.allStudents')}</CardTitle>
+                <CardDescription>
+                  {t('students.manageRosterDescription')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <UserTable
+                  users={students}
+                  emptyMessage={t('students.willAppearWhenRegistered')}
+                  t={t}
+                  showWorkspace
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="teachers" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('students.allTeachers')}</CardTitle>
-              <CardDescription>
-                {t('students.courseInstructorsAndEducators')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <UserTable
-                users={teachers}
-                emptyMessage={t('students.noTeachersFound')}
-                t={t}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="users" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('students.allUsers')}</CardTitle>
+                <CardDescription>
+                  {t('students.generalUsersNoRoles')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <UserTable
+                  users={users}
+                  emptyMessage={t('students.noGeneralUsersFound')}
+                  t={t}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="students" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('students.allStudents')}</CardTitle>
-              <CardDescription>
-                {t('students.manageRosterDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <UserTable
-                users={students}
-                emptyMessage={t('students.willAppearWhenRegistered')}
-                t={t}
-                showWorkspace
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="users" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('students.allUsers')}</CardTitle>
-              <CardDescription>
-                {t('students.generalUsersNoRoles')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <UserTable
-                users={users}
-                emptyMessage={t('students.noGeneralUsersFound')}
-                t={t}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="enrollments" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('students.studentEnrollments')}</CardTitle>
-              <CardDescription>
-                {t('students.enrollmentsDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  {t('students.useSearchAndFilters')}
-                </p>
-                <Select
-                  value={enrollmentStatusFilter}
-                  onValueChange={(value) =>
-                    setEnrollmentStatusFilter(
-                      value as
-                        | 'all'
-                        | 'ACTIVE'
-                        | 'COMPLETED'
-                        | 'CANCELLED'
-                        | 'EXPIRED'
-                    )
-                  }
-                >
-                  <SelectTrigger className="w-[160px]">
-                    <SelectValue placeholder={t('students.filterByStatus')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ENROLLMENT_STATUS_FILTERS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {enrollmentsLoading && enrollments.length === 0 ? (
-                <div className="py-8 text-center">
-                  <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {t('students.loadingEnrollments')}
+          <TabsContent value="enrollments" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('students.studentEnrollments')}</CardTitle>
+                <CardDescription>
+                  {t('students.enrollmentsDescription')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    {t('students.useSearchAndFilters')}
                   </p>
+                  <Select
+                    value={enrollmentStatusFilter}
+                    onValueChange={(value) =>
+                      setEnrollmentStatusFilter(
+                        value as
+                          | 'all'
+                          | 'ACTIVE'
+                          | 'COMPLETED'
+                          | 'CANCELLED'
+                          | 'EXPIRED'
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-[160px]">
+                      <SelectValue placeholder={t('students.filterByStatus')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ENROLLMENT_STATUS_FILTERS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              ) : filteredEnrollments.length === 0 ? (
-                <div className="py-8 text-center">
-                  <GraduationCap className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-2 text-sm font-medium">
-                    {t('students.noEnrollmentsFound')}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {t('students.adjustFilters')}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {filteredEnrollments.map((enrollment) => (
-                    <div
-                      key={enrollment.id}
-                      className="flex flex-col gap-3 rounded-lg border p-4 md:flex-row md:items-center md:justify-between"
-                    >
-                      <div className="flex flex-1 items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarFallback>
-                            {enrollment.user?.name
-                              ?.split(' ')
-                              .map((n) => n[0])
-                              .join('') || 'U'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium leading-none">
-                            {enrollment.user?.name ||
-                              t('students.unknownStudent')}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {enrollment.course?.title ||
-                              t('students.unknownCourse')}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {t('students.enrolledOn')}{' '}
-                            {new Date(
-                              enrollment.enrolled_at
-                            ).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-start gap-2 md:items-end">
-                        <Badge
-                          className={getEnrollmentStatusColor(
-                            enrollment.status
-                          )}
-                        >
-                          {enrollment.status === 'ACTIVE'
-                            ? t('common.active')
-                            : enrollment.status === 'COMPLETED'
-                              ? t('students.completed')
-                              : enrollment.status === 'CANCELLED'
-                                ? t('students.cancelled')
-                                : enrollment.status === 'EXPIRED'
-                                  ? t('students.expired')
-                                  : enrollment.status}
-                        </Badge>
-                        {typeof enrollment.progress_percent === 'number' && (
-                          <span className="text-xs text-muted-foreground">
-                            {t('students.progress')}:{' '}
-                            {Math.round(enrollment.progress_percent)}%
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value="progress" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('students.progressTracking')}</CardTitle>
-              <CardDescription>
-                {t('students.monitorProgressDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {enrollmentsLoading && enrollments.length === 0 ? (
-                <div className="py-8 text-center">
-                  <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {t('students.loadingProgressData')}
-                  </p>
-                </div>
-              ) : filteredEnrollments.length === 0 ? (
-                <div className="py-8 text-center">
-                  <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-2 text-sm font-medium">
-                    {t('students.noProgressData')}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {t('students.progressWillBeTracked')}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {filteredEnrollments.map((enrollment) => {
-                    const percentage = getProgressPercentage(enrollment);
-                    return (
-                      <div key={enrollment.id} className="space-y-2">
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback>
-                                {enrollment.user?.name
-                                  ?.split(' ')
-                                  .map((n) => n[0])
-                                  .join('') || 'U'}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="text-sm font-medium">
-                                {enrollment.user?.name ||
-                                  t('students.unknownStudent')}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {enrollment.course?.title ||
-                                  t('students.unknownCourse')}
-                              </p>
-                            </div>
+                {enrollmentsLoading && enrollments.length === 0 ? (
+                  <div className="py-8 text-center">
+                    <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {t('students.loadingEnrollments')}
+                    </p>
+                  </div>
+                ) : filteredEnrollments.length === 0 ? (
+                  <div className="py-8 text-center">
+                    <GraduationCap className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-2 text-sm font-medium">
+                      {t('students.noEnrollmentsFound')}
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {t('students.adjustFilters')}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredEnrollments.map((enrollment) => (
+                      <div
+                        key={enrollment.id}
+                        className="flex flex-col gap-3 rounded-lg border p-4 md:flex-row md:items-center md:justify-between"
+                      >
+                        <div className="flex flex-1 items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback>
+                              {enrollment.user?.name
+                                ?.split(' ')
+                                .map((n) => n[0])
+                                .join('') || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium leading-none">
+                              {enrollment.user?.name ||
+                                t('students.unknownStudent')}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {enrollment.course?.title ||
+                                t('students.unknownCourse')}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {t('students.enrolledOn')}{' '}
+                              {new Date(
+                                enrollment.enrolled_at
+                              ).toLocaleDateString()}
+                            </p>
                           </div>
-                          <span className="text-sm font-medium">
-                            {percentage}%
-                          </span>
                         </div>
-                        <Progress value={percentage} className="h-2" />
+                        <div className="flex flex-col items-start gap-2 md:items-end">
+                          <Badge
+                            className={getEnrollmentStatusColor(
+                              enrollment.status
+                            )}
+                          >
+                            {enrollment.status === 'ACTIVE'
+                              ? t('common.active')
+                              : enrollment.status === 'COMPLETED'
+                                ? t('students.completed')
+                                : enrollment.status === 'CANCELLED'
+                                  ? t('students.cancelled')
+                                  : enrollment.status === 'EXPIRED'
+                                    ? t('students.expired')
+                                    : enrollment.status}
+                          </Badge>
+                          {typeof enrollment.progress_percent === 'number' && (
+                            <span className="text-xs text-muted-foreground">
+                              {t('students.progress')}:{' '}
+                              {Math.round(enrollment.progress_percent)}%
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="progress" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('students.progressTracking')}</CardTitle>
+                <CardDescription>
+                  {t('students.monitorProgressDescription')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {enrollmentsLoading && enrollments.length === 0 ? (
+                  <div className="py-8 text-center">
+                    <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {t('students.loadingProgressData')}
+                    </p>
+                  </div>
+                ) : filteredEnrollments.length === 0 ? (
+                  <div className="py-8 text-center">
+                    <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-2 text-sm font-medium">
+                      {t('students.noProgressData')}
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {t('students.progressWillBeTracked')}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredEnrollments.map((enrollment) => {
+                      const percentage = getProgressPercentage(enrollment);
+                      return (
+                        <div key={enrollment.id} className="space-y-2">
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback>
+                                  {enrollment.user?.name
+                                    ?.split(' ')
+                                    .map((n) => n[0])
+                                    .join('') || 'U'}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="text-sm font-medium">
+                                  {enrollment.user?.name ||
+                                    t('students.unknownStudent')}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {enrollment.course?.title ||
+                                    t('students.unknownCourse')}
+                                </p>
+                              </div>
+                            </div>
+                            <span className="text-sm font-medium">
+                              {percentage}%
+                            </span>
+                          </div>
+                          <Progress value={percentage} className="h-2" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </LearningNavGate>
   );
 }
