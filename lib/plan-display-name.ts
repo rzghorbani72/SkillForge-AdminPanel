@@ -6,12 +6,12 @@
  * row. This mapping keeps those raw slugs readable in the UI.
  */
 const PLAN_DISPLAY_NAMES_FA: Record<string, string> = {
-  basic: 'پایه',
-  starter: 'پایه',
+  basic: 'استارتر',
+  starter: 'استارتر',
   growth: 'رشد',
   builder: 'رشد',
-  pro: 'حرفه‌ای',
-  professional: 'حرفه‌ای',
+  pro: 'پرو',
+  professional: 'پرو',
   enterprise: 'سازمانی',
   custom: 'سفارشی'
 };
