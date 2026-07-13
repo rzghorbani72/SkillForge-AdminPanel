@@ -2,7 +2,10 @@
 
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useTutoringPage } from './hooks/use-tutoring-page';
+import { useTutoringOffers } from './hooks/use-tutoring-offers';
 import { TutoringEngagementsCard } from './_components/tutoring-engagements-card';
+import { TutoringOffersCard } from './_components/tutoring-offers-card';
+import { CreateOfferCard } from './_components/create-offer-card';
 import { CreateEngagementCard } from './_components/create-engagement-card';
 import { ScheduleSessionCard } from './_components/schedule-session-card';
 import { RescheduleSessionCard } from './_components/reschedule-session-card';
@@ -16,6 +19,7 @@ export default function TutoringPage() {
   const { t, language } = useTranslation();
   const isRtl = language === 'fa' || language === 'ar';
   const tutoring = useTutoringPage();
+  const offers = useTutoringOffers();
   const {
     featureEnabled,
     checkingFeature,
@@ -50,6 +54,13 @@ export default function TutoringPage() {
           />
         ) : (
           <>
+            <TutoringOffersCard
+              offers={offers.offers}
+              loading={offers.loading}
+              saving={offers.saving}
+              onToggleActive={(offer) => void offers.toggleActive(offer)}
+            />
+
             <TutoringEngagementsCard
               engagements={tutoring.engagements}
               loading={tutoring.loading}
@@ -59,6 +70,13 @@ export default function TutoringPage() {
             />
 
             <div className="grid gap-4 lg:grid-cols-2">
+              <CreateOfferCard
+                form={offers.form}
+                onChange={offers.setForm}
+                saving={offers.saving}
+                onSubmit={offers.createOffer}
+              />
+
               <CreateEngagementCard
                 form={tutoring.engagementForm}
                 onChange={tutoring.setEngagementForm}

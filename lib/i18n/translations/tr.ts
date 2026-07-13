@@ -2294,6 +2294,22 @@ export const tr = {
   tutoring: {
     title: 'Özel ders',
     description: '1:1 ilişkileri, oturumları ve yoklamayı yönetin.',
+    offers: 'Özel abonelik teklifleri',
+    offersDescription:
+      'Öğrencinin bir eğitmene abone olmak için satın aldığı şey. Ücret dönem başına alınır.',
+    noOffers:
+      'Henüz teklif yok. Öğrencilerin abone olabilmesi için bir tane oluşturun.',
+    createOffer: 'Teklif oluştur',
+    offerTitle: 'Teklif başlığı',
+    offerTitlePlaceholder: 'örn. Sara ile haftalık 1:1',
+    offerPrice: 'Fiyat',
+    offerDurationDays: 'Süre (gün)',
+    offerSessionsOptional: 'Dahil oturumlar (isteğe bağlı)',
+    durationDaysLabel: '{{days}} gün',
+    offerActive: 'Aktif',
+    offerInactive: 'Pasif',
+    activate: 'Etkinleştir',
+    deactivate: 'Devre dışı bırak',
     engagements: 'İlişkiler',
     engagementsDescription: 'Aktif ve geçmiş özel ders ilişkileri.',
     filterCourse: 'Kursa göre filtrele',

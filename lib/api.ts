@@ -25,7 +25,8 @@ import type {
   TutoringOffer,
   TutoringSession,
   TutoringSessionListItem,
-  UpdateLessonDownloadPolicyPayload
+  UpdateLessonDownloadPolicyPayload,
+  UpdateTutoringOfferPayload
 } from '@/types/learning-operations';
 
 export interface ApiResponse<T = unknown> {
@@ -4459,6 +4460,30 @@ class ApiClient {
     const res = await this.request<TutoringOffer | { data: TutoringOffer }>(
       '/tutoring/offers',
       { method: 'POST', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getTutoringOffers(params?: {
+    course_id?: string;
+  }): Promise<TutoringOffer[]> {
+    const qs = new URLSearchParams();
+    if (params?.course_id) qs.append('course_id', params.course_id);
+    const url = qs.toString() ? `/tutoring/offers?${qs}` : '/tutoring/offers';
+    const res = await this.request<TutoringOffer[] | { data: TutoringOffer[] }>(
+      url
+    );
+    const payload = unwrapDataEnvelope(res.data);
+    return Array.isArray(payload) ? payload : [];
+  }
+
+  async updateTutoringOffer(
+    offerId: string,
+    data: UpdateTutoringOfferPayload
+  ): Promise<TutoringOffer> {
+    const res = await this.request<TutoringOffer | { data: TutoringOffer }>(
+      `/tutoring/offers/${offerId}`,
+      { method: 'PATCH', body: JSON.stringify(data) }
     );
     return unwrapDataEnvelope(res.data);
   }

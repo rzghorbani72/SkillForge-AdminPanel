@@ -225,6 +225,17 @@ export interface TutoringOffer {
   duration_days?: number | null;
   status: string;
   is_active: boolean;
+  Course?: { id: string; title: string } | null;
+  Tutor?: { id: string; display_name: string | null } | null;
+}
+
+export interface UpdateTutoringOfferPayload {
+  title?: string;
+  description?: string;
+  price?: number;
+  sessions_included?: number;
+  duration_days?: number;
+  is_active?: boolean;
 }
 
 export interface TutoringEngagement {
