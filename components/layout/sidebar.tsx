@@ -15,6 +15,7 @@ import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useHasStore } from '@/hooks/useHasStore';
 import { useBrandingStore } from '@/lib/store';
 import { SidebarUpgradeBanner } from '@/components/layout/sidebar-upgrade-banner';
+import { SidebarPlanBadge } from '@/components/layout/sidebar-plan-badge';
 import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
 
 type SidebarProps = {
@@ -108,11 +109,15 @@ export default function Sidebar({ className }: SidebarProps) {
                 ? t('sidebar.platformAdmin') || 'Platform Admin'
                 : academyName}
             </p>
-            <p className="truncate text-xs text-muted-foreground">
-              {isPlatformMode
-                ? t('sidebar.managementConsole') || 'Management Console'
-                : t('navigation.dashboard')}
-            </p>
+            {isPlatformMode ? (
+              <p className="truncate text-xs text-muted-foreground">
+                {t('sidebar.managementConsole') || 'Management Console'}
+              </p>
+            ) : (
+              <div className="mt-1">
+                <SidebarPlanBadge />
+              </div>
+            )}
           </div>
         )}
       </div>

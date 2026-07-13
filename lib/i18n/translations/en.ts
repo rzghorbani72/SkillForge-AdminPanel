@@ -3524,7 +3524,9 @@ export const en = {
     currentPlan: '{{plan}} plan',
     managePlanHint: 'View or change your platform subscription',
     platformAdmin: 'Platform Admin',
-    managementConsole: 'Management Console'
+    managementConsole: 'Management Console',
+    planBadgeFree: 'Free plan',
+    planBadgeExpired: 'Expired'
   },
   templatesGallery: {
     title: 'Templates Gallery',

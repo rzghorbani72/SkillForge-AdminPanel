@@ -3436,7 +3436,9 @@ export const fa = {
     currentPlan: 'پلن {{plan}}',
     managePlanHint: 'مشاهده یا تغییر اشتراک پلتفرم',
     platformAdmin: 'مدیر پلتفرم',
-    managementConsole: 'کنسول مدیریت'
+    managementConsole: 'کنسول مدیریت',
+    planBadgeFree: 'پلن رایگان',
+    planBadgeExpired: 'منقضی‌شده'
   },
   templatesGallery: {
     title: 'گالری قالب‌ها',
