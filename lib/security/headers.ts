@@ -11,7 +11,7 @@ export function buildContentSecurityPolicy(isDevelopment: boolean): string {
       "style-src 'self' 'unsafe-inline' http://localhost:* https:",
       "img-src 'self' data: blob: http://localhost:* https:",
       "font-src 'self' data: http://localhost:* https:",
-      "connect-src 'self' http://localhost:* ws://localhost:* wss: https:",
+      "connect-src 'self' http://localhost:* ws://localhost:* ws: wss: https:",
       "media-src 'self' http://localhost:* https: blob: data:",
       "frame-ancestors 'none'"
     ].join('; ');
