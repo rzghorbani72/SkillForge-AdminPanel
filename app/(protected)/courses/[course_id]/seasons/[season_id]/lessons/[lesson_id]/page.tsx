@@ -369,11 +369,13 @@ export default function LessonViewPage() {
               <video
                 controls
                 className="h-full w-full"
-                poster={
-                  lesson.image?.publicUrl
-                    ? `${lesson.image.publicUrl.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST}${lesson.image.publicUrl}` : lesson.image.publicUrl}`
-                    : undefined
-                }
+                poster={(() => {
+                  const posterUrl = (lesson.Image ?? lesson.image)?.publicUrl;
+                  if (!posterUrl) return undefined;
+                  return posterUrl.startsWith('/')
+                    ? `${process.env.NEXT_PUBLIC_HOST}${posterUrl}`
+                    : posterUrl;
+                })()}
               >
                 <source
                   src={apiClient.getVideoStreamUrl(lesson.video_id!)}

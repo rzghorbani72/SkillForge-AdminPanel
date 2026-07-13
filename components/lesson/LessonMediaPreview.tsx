@@ -41,6 +41,12 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
   const hasDocument = !!lesson.document_id;
   const hasImage = !!lesson.image_id;
 
+  // Backend returns capitalized relations with a resolved publicUrl; keep the
+  // lowercase aliases only as a defensive fallback.
+  const audioRel = lesson.Audio ?? lesson.audio;
+  const documentRel = lesson.Document ?? lesson.document;
+  const imageRel = lesson.Image ?? lesson.image;
+
   const hasAnyMedia = hasVideo || hasAudio || hasDocument || hasImage;
 
   if (!hasAnyMedia) {
@@ -59,40 +65,28 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
     return apiClient.getVideoStreamUrl(lesson.video_id);
   };
 
+  const toAbsolute = (url: string) => {
+    if (url.startsWith('http')) return url;
+    const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
+    return `${getBrowserApiBaseUrl()}${normalizedUrl}`;
+  };
+
   const getAudioUrl = () => {
     if (!lesson.audio_id) return '';
-    // If audio relation is loaded, use its URL
-    if (lesson.audio?.publicUrl) {
-      const url = lesson.audio.publicUrl;
-      if (url.startsWith('http')) return url;
-      const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
-      return `${getBrowserApiBaseUrl()}${normalizedUrl}`;
-    }
-    return `${getBrowserApiBaseUrl()}/audios/stream/${lesson.audio_id}`;
+    if (audioRel?.publicUrl) return toAbsolute(audioRel.publicUrl);
+    return `${getBrowserApiBaseUrl()}/audios/fetch-audio-by-id/${lesson.audio_id}`;
   };
 
   const getDocumentUrl = () => {
     if (!lesson.document_id) return '';
-    // If document relation is loaded, use its URL
-    if (lesson.document?.publicUrl) {
-      const url = lesson.document.publicUrl;
-      if (url.startsWith('http')) return url;
-      const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
-      return `${getBrowserApiBaseUrl()}${normalizedUrl}`;
-    }
-    return `${getBrowserApiBaseUrl()}/documents/${lesson.document_id}`;
+    if (documentRel?.publicUrl) return toAbsolute(documentRel.publicUrl);
+    return `${getBrowserApiBaseUrl()}/files/download/${lesson.document_id}`;
   };
 
   const getImageUrl = () => {
     if (!lesson.image_id) return '';
-    // If image relation is loaded, use its URL
-    if (lesson.image?.publicUrl) {
-      const url = lesson.image.publicUrl;
-      if (url.startsWith('http')) return url;
-      const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
-      return `${getBrowserApiBaseUrl()}${normalizedUrl}`;
-    }
-    return `${getBrowserApiBaseUrl()}/images/${lesson.image_id}`;
+    if (imageRel?.publicUrl) return toAbsolute(imageRel.publicUrl);
+    return `${getBrowserApiBaseUrl()}/images/fetch-image-by-id/${lesson.image_id}`;
   };
 
   const openPreview = (type: 'video' | 'audio' | 'document' | 'image') => {
@@ -197,14 +191,15 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                 <div className="rounded-lg border bg-muted p-4">
                   <div className="mb-2">
                     <h4 className="font-medium">
-                      {lesson.audio?.title || `Audio File #${lesson.audio_id}`}
+                      {audioRel?.title || `Audio File #${lesson.audio_id}`}
                     </h4>
-                    {lesson.audio?.duration && (
+                    {audioRel?.duration && (
                       <p className="text-sm text-muted-foreground">
-                        Duration: {Math.floor(lesson.audio.duration / 60)}:
-                        {String(
-                          Math.floor(lesson.audio.duration % 60)
-                        ).padStart(2, '0')}
+                        Duration: {Math.floor(audioRel.duration / 60)}:
+                        {String(Math.floor(audioRel.duration % 60)).padStart(
+                          2,
+                          '0'
+                        )}
                       </p>
                     )}
                   </div>
@@ -230,18 +225,17 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                 <div className="rounded-lg border bg-muted p-6 text-center">
                   <FileText className="mx-auto h-16 w-16 text-muted-foreground" />
                   <h4 className="mt-4 font-medium">
-                    {lesson.document?.title ||
-                      `Document #${lesson.document_id}`}
+                    {documentRel?.title || `Document #${lesson.document_id}`}
                   </h4>
-                  {lesson.document?.file_size && (
+                  {documentRel?.file_size && (
                     <p className="text-sm text-muted-foreground">
-                      Size:{' '}
-                      {(lesson.document.file_size / 1024 / 1024).toFixed(2)} MB
+                      Size: {(documentRel.file_size / 1024 / 1024).toFixed(2)}{' '}
+                      MB
                     </p>
                   )}
-                  {lesson.document?.mime_type && (
+                  {documentRel?.mime_type && (
                     <p className="text-sm text-muted-foreground">
-                      Type: {lesson.document.mime_type}
+                      Type: {documentRel.mime_type}
                     </p>
                   )}
                 </div>
@@ -262,9 +256,7 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                 <div className="relative w-full overflow-hidden rounded-lg border">
                   <img
                     src={getImageUrl()}
-                    alt={
-                      lesson.image?.title || `Lesson image #${lesson.image_id}`
-                    }
+                    alt={imageRel?.title || `Lesson image #${lesson.image_id}`}
                     className="h-auto w-full object-contain"
                     onError={(e) => {
                       // Fallback if image fails to load
@@ -273,9 +265,9 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                     }}
                   />
                 </div>
-                {lesson.image?.title && (
+                {imageRel?.title && (
                   <p className="text-center text-sm text-muted-foreground">
-                    {lesson.image.title}
+                    {imageRel.title}
                   </p>
                 )}
                 <Button

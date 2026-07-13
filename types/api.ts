@@ -435,6 +435,13 @@ export interface Lesson {
   updated_at: string;
   LiveSession?: LiveSession | null;
   season?: Season;
+  // Backend Prisma relations come back capitalized; these are the real response shape.
+  Video?: Video;
+  Audio?: Audio;
+  Document?: Document;
+  Image?: Image;
+  // Deprecated lowercase aliases — backend never returns these; kept only so older
+  // read sites type-check. Prefer the capitalized relations above.
   video?: Video;
   audio?: Audio;
   document?: Document;

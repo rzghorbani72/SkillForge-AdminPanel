@@ -22,6 +22,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadAbortController, setUploadAbortController] =
     useState<AbortController | null>(null);
   const [uploadedImageId, setUploadedImageId] = useState<string | null>(null);
@@ -60,6 +61,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
     const abortController = new AbortController();
     setUploadAbortController(abortController);
     setIsUploading(true);
+    setUploadProgress(0);
 
     try {
       const uploadResponse = await apiClient.uploadImage(
@@ -68,7 +70,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
           title: options.title || selectedFile.name,
           description: options.description || 'Uploaded image'
         },
-        undefined,
+        setUploadProgress,
         abortController
       );
       // Handle response structure: { message, status, data: { id, url, ... } }
@@ -110,6 +112,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
       }
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
       setUploadAbortController(null);
     }
   }, [selectedFile, options]);
@@ -150,6 +153,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
     selectedFile,
     preview,
     isUploading,
+    uploadProgress,
     uploadedImageId,
 
     // Actions

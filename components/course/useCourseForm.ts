@@ -204,8 +204,13 @@ export function useCourseForm(courseId?: string) {
             audio_id: l.audio_id,
             cover_id: l.image_id,
             document_id: l.document_id,
-            videoPreviewUrl: l.video?.publicUrl,
-            coverPreviewUrl: l.image?.publicUrl,
+            videoPreviewUrl:
+              l.Video?.publicUrl ??
+              (l.video_id
+                ? apiClient.getVideoStreamUrl(l.video_id)
+                : undefined),
+            audioPreviewUrl: l.Audio?.publicUrl,
+            coverPreviewUrl: l.Image?.publicUrl,
             clientKey: newKey(),
             seasonClientKey:
               l.season_id != null

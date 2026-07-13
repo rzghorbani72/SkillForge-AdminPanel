@@ -101,7 +101,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
           {imageUpload.isUploading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading...
+              Uploading... {imageUpload.uploadProgress}%
             </>
           ) : imageUpload.hasFile ? (
             <>
@@ -146,6 +146,16 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
           </Button>
         )}
       </div>
+
+      {/* Upload progress */}
+      {imageUpload.isUploading && (
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full bg-primary transition-all"
+            style={{ width: `${imageUpload.uploadProgress}%` }}
+          />
+        </div>
+      )}
 
       {/* Image Preview */}
       <ImagePreview

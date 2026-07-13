@@ -191,7 +191,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
               (data) =>
                 onUpdate({
                   video_id: String(data.id),
-                  videoPreviewUrl: (data.publicUrl as string) ?? ''
+                  videoPreviewUrl: apiClient.getVideoStreamUrl(String(data.id))
                 })
             )
           }
