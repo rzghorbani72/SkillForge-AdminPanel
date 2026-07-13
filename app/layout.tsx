@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProviderWrapper } from '@/components/providers/theme-provider-wrapper';
-import { Toaster } from '@/components/ui/toaster';
 import { I18nProvider } from '@/lib/i18n/provider';
 import { getAdminLanguage, getAdminDirection } from '@/lib/i18n/server';
 import { cookies } from 'next/headers';
@@ -47,7 +46,6 @@ export default async function RootLayout({
           <I18nProvider initialLanguage={language}>
             <LanguageSync />
             {children}
-            <Toaster />
             <ToastContainerWrapper />
             {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && (
               <GdprConsentBanner />

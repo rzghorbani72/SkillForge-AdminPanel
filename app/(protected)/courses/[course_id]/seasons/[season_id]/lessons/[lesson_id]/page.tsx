@@ -32,7 +32,7 @@ import { sanitizeRichText } from '@/lib/sanitize';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 export default function LessonViewPage() {
   const { t } = useTranslation();

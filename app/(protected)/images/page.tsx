@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import Image from 'next/image';
 import {
   AccessControlBadge,

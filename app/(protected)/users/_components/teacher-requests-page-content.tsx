@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Users, Check, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';

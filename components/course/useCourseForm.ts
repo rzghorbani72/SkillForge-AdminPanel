@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { Season, Lesson } from '@/types/api';
 import { courseFormSchema, type CourseFormData } from './schema';

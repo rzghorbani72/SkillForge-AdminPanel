@@ -1,8 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Active, DataRef, Over } from '@dnd-kit/core';
-import { ColumnDragData } from '@/sections/kanban/board-column';
-import { TaskDragData } from '@/sections/kanban/task-card';
 import type { Academy } from '@/types/api';
 import { DEFAULT_LANGUAGE, getLocaleForLanguage } from '@/lib/i18n/config';
 
@@ -18,8 +15,6 @@ export type AcademyCurrencyFormatting =
       currency_position?: 'before' | 'after';
     };
 
-type DraggableData = ColumnDragData | TaskDragData;
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -28,23 +23,6 @@ export function isAuth(cookieStore: {
 }) {
   const token = cookieStore.get('jwt')?.value;
   return !!token;
-}
-export function hasDraggableData<T extends Active | Over>(
-  entry: T | null | undefined
-): entry is T & {
-  data: DataRef<DraggableData>;
-} {
-  if (!entry) {
-    return false;
-  }
-
-  const data = entry.data.current;
-
-  if (data?.type === 'Column' || data?.type === 'Task') {
-    return true;
-  }
-
-  return false;
 }
 
 export function formatBytes(

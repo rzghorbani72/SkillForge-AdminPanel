@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 

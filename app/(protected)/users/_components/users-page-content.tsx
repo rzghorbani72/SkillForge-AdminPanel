@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { Users, Filter, Plus, RefreshCw, Download } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';

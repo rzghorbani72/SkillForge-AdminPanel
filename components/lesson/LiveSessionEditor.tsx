@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Video } from 'lucide-react';
 

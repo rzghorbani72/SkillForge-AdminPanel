@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { User } from '@/types/api';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import {
   Card,
   CardContent,

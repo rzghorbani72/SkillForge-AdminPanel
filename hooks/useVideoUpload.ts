@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import {
   VIDEO_CONSTRAINTS,
   formatFileSize,

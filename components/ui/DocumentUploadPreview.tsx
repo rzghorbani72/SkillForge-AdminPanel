@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Upload, Loader2, X, FileText } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { ErrorHandler } from '@/lib/error-handler';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';

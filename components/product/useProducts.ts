@@ -4,7 +4,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { Product } from '@/types/api';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 type UseProductsReturn = {

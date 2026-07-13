@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { useStore } from '@/hooks/useStore';
 import { Course } from '@/types/api';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 export type CourseWithRevenue = Course & {
   revenue: number;

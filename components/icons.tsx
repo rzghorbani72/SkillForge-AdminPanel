@@ -6,7 +6,6 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  CircuitBoardIcon,
   Command,
   CreditCard,
   DollarSign,
@@ -75,7 +74,6 @@ export type IconType =
   | 'close'
   | 'product'
   | 'spinner'
-  | 'kanban'
   | 'chevronLeft'
   | 'chevronRight'
   | 'trash'
@@ -145,7 +143,6 @@ export const Icons = {
   close: X,
   product: LucideShoppingBag,
   spinner: Loader2,
-  kanban: CircuitBoardIcon,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
   trash: Trash,

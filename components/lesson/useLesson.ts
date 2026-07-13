@@ -4,7 +4,7 @@ import { useStore } from '@/hooks/useStore';
 import { Course, Lesson, Season } from '@/types/api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 const useLesson = () => {

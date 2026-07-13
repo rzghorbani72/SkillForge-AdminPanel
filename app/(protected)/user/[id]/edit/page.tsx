@@ -27,7 +27,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 type EditableRole = 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
 

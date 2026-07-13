@@ -48,7 +48,7 @@ import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import CreateSeasonDialog from '@/components/content/create-season-dialog';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 export default function SeasonsPage() {
   const { t } = useTranslation();

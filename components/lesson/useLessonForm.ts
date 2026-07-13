@@ -18,7 +18,7 @@ type LessonFormData = {
   is_free: boolean;
   lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
 };
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 type UseLessonFormReturn = {
   lesson: Lesson | null;

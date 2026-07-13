@@ -35,7 +35,7 @@ import {
   AccessControlBadge,
   AccessControlActions
 } from '@/components/ui/access-control-badge';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import {
