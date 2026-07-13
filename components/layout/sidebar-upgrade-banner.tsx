@@ -3,6 +3,7 @@
 import Link from '@/components/ui/link';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { canManageSubscription } from '@/lib/subscription-access';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 import { ArrowUpRight, Zap } from 'lucide-react';
@@ -16,13 +17,11 @@ export function SidebarUpgradeBanner({
 }: SidebarUpgradeBannerProps) {
   const { t } = useTranslation();
   const { user } = useAuthUser();
-  const canManageSubscription =
-    user?.role === 'MANAGER' ||
-    (user?.role === 'ADMIN' && !user?.isAdminProfile && !user?.platformLevel);
+  const canManage = canManageSubscription(user);
   const { shouldShowUpgrade, planName, daysRemaining, isLoading } =
-    useAcademySubscription(canManageSubscription);
+    useAcademySubscription(canManage);
 
-  if (!canManageSubscription) {
+  if (!canManage) {
     return null;
   }
 

@@ -6,6 +6,7 @@ import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
 import { AcademySelector } from './AcademySelector';
 import { NotificationBell } from './notification-bell';
+import { HeaderUpgradeButton } from './header-upgrade-button';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -50,6 +51,8 @@ export default function Header() {
             <LanguageSwitcher />
             <ThemeToggle />
           </div> */}
+
+          <HeaderUpgradeButton />
 
           {/* Notification bell */}
           <NotificationBell />
