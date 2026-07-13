@@ -31,6 +31,7 @@ import {
   Plus,
   Trash2
 } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -40,6 +41,7 @@ import { cn } from '@/lib/utils';
 import { AcademySubscriptionState } from '@/hooks/use-academy-subscription';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
+import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoices-list';
 import { PlanFormDialog } from '@/components/plans/PlanFormDialog';
 import { AcademyPlanFormDialog } from '@/components/plans/AcademyPlanFormDialog';
 import { AcademyPlansList } from '@/components/plans/AcademyPlansList';
@@ -60,6 +62,7 @@ export default function PlansPage() {
   const { user } = useAuthUser();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
+  const paidParam = searchParams.get('paid');
   const [managerTab, setManagerTab] = useState<'subscription' | 'academy'>(
     tabParam === 'academy' ? 'academy' : 'subscription'
   );
@@ -159,6 +162,12 @@ export default function PlansPage() {
   useEffect(() => {
     fetchSubscriptionPlans();
   }, [fetchSubscriptionPlans]);
+
+  useEffect(() => {
+    if (paidParam) {
+      toast.success(t('plans.paymentSuccess'));
+    }
+  }, [paidParam, t]);
 
   function openCreate() {
     setEditingPlan(null);
@@ -414,6 +423,9 @@ export default function PlansPage() {
   // and lower tiers unlock again once this subscription ends.
   const hasActivePaidPlan = currentSub?.status === 'ACTIVE' && !!currentPlan;
   const popularIndex = Math.floor(plans.length / 2);
+  const newestPaidInvoiceId = (currentSub?.invoices ?? [])
+    .filter((invoice) => invoice.status === 'PAID')
+    .reduce((newest, invoice) => Math.max(newest, invoice.id), 0);
 
   if (isLoading) {
     return (
@@ -720,6 +732,16 @@ export default function PlansPage() {
               </Button>
             </div>
           </div>
+
+          <div className="rounded-2xl border bg-card p-6">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('plans.billingHistory')}
+            </h3>
+            <SubscriptionInvoicesList
+              invoices={currentSub?.invoices ?? []}
+              highlightId={paidParam ? newestPaidInvoiceId : undefined}
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="academy" className="pt-4">
@@ -795,13 +817,16 @@ export default function PlansPage() {
                           type="button"
                           onClick={() => setSelectedGateway(provider)}
                           className={cn(
-                            'rounded-xl border px-3 py-2.5 text-start text-sm font-medium transition-all duration-150',
+                            'flex items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-start text-sm font-medium transition-all duration-150',
                             selectedGateway === provider
                               ? 'border-primary bg-primary/5 text-primary'
                               : 'border-border bg-card text-foreground hover:border-primary/40'
                           )}
                         >
-                          {gw.display_name}
+                          <span className="truncate">{gw.display_name}</span>
+                          {selectedGateway === provider && (
+                            <CheckCircle2 className="h-4 w-4 shrink-0" />
+                          )}
                         </button>
                       );
                     })}

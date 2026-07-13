@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 /**
  * Payment gateway result page for AdminPanel (platform plan renew).
@@ -13,6 +14,7 @@ import { Button } from '@/components/ui/button';
  *   ?success=false&error=<reason>
  */
 export default function AdminPaymentCallbackPage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -29,10 +31,7 @@ export default function AdminPaymentCallbackPage() {
 
   useEffect(() => {
     if (successParam === 'true') {
-      setResult({
-        success: true,
-        refId: refId ?? undefined
-      });
+      setResult({ success: true, refId: refId ?? undefined });
       setProcessing(false);
       return;
     }
@@ -40,27 +39,26 @@ export default function AdminPaymentCallbackPage() {
     if (successParam === 'false' || errorParam) {
       setResult({
         success: false,
-        error: errorParam || 'پرداخت ناموفق بود'
+        error: errorParam || t('plans.payFailedDefault')
       });
       setProcessing(false);
       return;
     }
 
-    // Legacy PayPing-style params without success flag — treat as incomplete.
-    setResult({
-      success: false,
-      error: 'پارامترهای بازگشت از بانک ناقص است'
-    });
+    // Legacy params without a success flag — treat as incomplete.
+    setResult({ success: false, error: t('plans.payIncompleteParams') });
     setProcessing(false);
-  }, [successParam, refId, errorParam]);
+  }, [successParam, refId, errorParam, t]);
 
   if (processing) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center p-4">
         <div className="space-y-4 text-center">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-sky-600" />
-          <h2 className="text-xl font-semibold">در حال تأیید پرداخت...</h2>
-          <p className="text-sm text-muted-foreground">لطفاً صبر کنید</p>
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+          <h2 className="text-xl font-semibold">{t('plans.payVerifying')}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t('plans.payPleaseWait')}
+          </p>
         </div>
       </div>
     );
@@ -70,18 +68,21 @@ export default function AdminPaymentCallbackPage() {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="w-full max-w-md space-y-6 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle className="h-8 w-8 text-green-600" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
           </div>
-          <h1 className="text-2xl font-bold">پرداخت موفق</h1>
-          <p className="text-muted-foreground">پلن شما با موفقیت فعال شد.</p>
+          <h1 className="text-2xl font-bold">{t('plans.paySuccessTitle')}</h1>
+          <p className="text-muted-foreground">{t('plans.paySuccessDesc')}</p>
           {result.refId && (
-            <div className="rounded-lg border p-4 text-left font-mono text-sm">
-              کد پیگیری: {result.refId}
+            <div className="rounded-lg border p-4 text-start font-mono text-sm">
+              {t('plans.payTrackingCode')}: {result.refId}
             </div>
           )}
-          <Button onClick={() => router.push('/plans')} className="w-full">
-            بازگشت به پلن‌ها
+          <Button
+            onClick={() => router.push('/plans?paid=1')}
+            className="w-full"
+          >
+            {t('plans.payBackToPlans')}
           </Button>
         </div>
       </div>
@@ -91,15 +92,15 @@ export default function AdminPaymentCallbackPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-          <XCircle className="h-8 w-8 text-red-600" />
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+          <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
         </div>
-        <h1 className="text-2xl font-bold">پرداخت ناموفق</h1>
+        <h1 className="text-2xl font-bold">{t('plans.payFailedTitle')}</h1>
         <p className="text-muted-foreground">
-          {result?.error || 'خطایی در پردازش پرداخت رخ داد'}
+          {result?.error || t('plans.payFailedDesc')}
         </p>
         <Button onClick={() => router.push('/plans')} className="w-full">
-          بازگشت به پلن‌ها
+          {t('plans.payBackToPlans')}
         </Button>
       </div>
     </div>

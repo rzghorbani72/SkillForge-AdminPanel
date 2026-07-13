@@ -15,6 +15,7 @@ import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getLocaleForLanguage } from '@/lib/i18n/config';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
+import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoices-list';
 
 const SUBSCRIPTION_STATUS_LABEL_KEYS: Record<string, string> = {
   ACTIVE: 'settings.statusActive',
@@ -27,12 +28,6 @@ export function AcademySubscriptionSummary() {
   const { t, language } = useTranslation();
   const locale = getLocaleForLanguage(language);
   const { subscription, isLoading } = useAcademySubscription(true);
-
-  const handleViewInvoice = async (invoiceId: number) => {
-    const { apiClient } = await import('@/lib/api');
-    const url = apiClient.getCurrentAcademySubscriptionInvoicePdfUrl(invoiceId);
-    window.open(url, '_blank');
-  };
 
   return (
     <Card>
@@ -87,39 +82,9 @@ export function AcademySubscriptionSummary() {
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {t('settings.recentInvoices')}
                 </p>
-                <div className="space-y-2">
-                  {subscription.invoices.slice(0, 5).map((invoice) => (
-                    <div
-                      key={invoice.id}
-                      className="flex items-center justify-between rounded border px-2 py-1.5"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate text-xs font-medium text-foreground">
-                          #{invoice.id} -{' '}
-                          {getPlanDisplayName(invoice.plan_name)}
-                        </p>
-                        <p className="text-xs">
-                          {invoice.amount.toLocaleString(locale)}{' '}
-                          {invoice.currency}
-                        </p>
-                        {invoice.paid_at && (
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(invoice.paid_at).toLocaleDateString(
-                              locale
-                            )}
-                          </p>
-                        )}
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleViewInvoice(invoice.id)}
-                      >
-                        {t('settings.downloadPdf')}
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                <SubscriptionInvoicesList
+                  invoices={subscription.invoices.slice(0, 5)}
+                />
               </div>
             ) : null}
           </>
