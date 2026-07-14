@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { pickFile } from '@/lib/file-picker';
 import type { LessonDraft } from './useCourseForm';
 
 type SlotKey = 'video' | 'audio' | 'image' | 'document';
@@ -43,6 +44,23 @@ function UploadSlot({
   onCancel
 }: UploadSlotProps) {
   const { t } = useTranslation();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function handleActivate(e: React.MouseEvent<HTMLLabelElement>) {
+    // Try the async File System Access picker first — the classic
+    // <input>.click() path freezes the tab's paint while Chromium's native
+    // file dialog is open. Cancel the label's default (which would also
+    // fire the hidden input's click) so we don't open two pickers.
+    e.preventDefault();
+    const picked = await pickFile(accept);
+    if (picked === undefined) {
+      // Unsupported browser or the picker threw — fall back to the input.
+      inputRef.current?.click();
+      return;
+    }
+    if (picked) onSelect(picked);
+  }
+
   return (
     <div className="space-y-2">
       <Label className="text-xs font-medium text-muted-foreground">
@@ -70,13 +88,18 @@ function UploadSlot({
           )}
         </div>
       ) : (
-        <label className="flex cursor-pointer flex-col items-center gap-1.5 rounded-md border border-dashed p-4 transition-colors hover:bg-muted/40">
+        <label
+          onClick={handleActivate}
+          className="flex cursor-pointer flex-col items-center gap-1.5 rounded-md border border-dashed p-4 transition-colors hover:bg-muted/40"
+        >
           {icon}
           <span className="text-xs text-muted-foreground">{uploadLabel}</span>
           <input
+            ref={inputRef}
             type="file"
             accept={accept}
             className="sr-only"
+            tabIndex={-1}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) onSelect(file);
