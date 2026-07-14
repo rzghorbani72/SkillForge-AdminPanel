@@ -14,6 +14,7 @@ import CreateCoursePricing from './CreateCoursePricing';
 import CreateCourseAssociations from './CreateCourseAssociations';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
+import { CourseOfferingsSection } from './CourseOfferingsSection';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -211,6 +212,11 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                 onAssignLesson={assignLesson}
                 onReorderLessons={reorderLessons}
               />
+            )}
+
+            {/* Pricing offerings — multi-price per course (edit screen only) */}
+            {isEdit && courseId && (
+              <CourseOfferingsSection courseId={courseId} />
             )}
 
             {/* Footer actions */}

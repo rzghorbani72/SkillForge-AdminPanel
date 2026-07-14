@@ -985,3 +985,37 @@ export interface PlatformFinancialSummary {
   vat_rate?: number;
   platform_commission_rate?: number;
 }
+
+export type OfferingType =
+  | 'FREE'
+  | 'ONE_TIME'
+  | 'SUBSCRIPTION'
+  | 'PRIVATE'
+  | 'PAYMENT_PLAN';
+
+export interface CourseOffering {
+  id: string;
+  course_id: string;
+  type: OfferingType;
+  price: number;
+  currency: string;
+  access_duration_days: number | null;
+  is_active: boolean;
+  academy_plan_id: string | null;
+  payment_plan_id: string | null;
+  tutoring_offer_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CourseOfferingInput {
+  course_id: string;
+  type: OfferingType;
+  price?: number;
+  currency?: string;
+  access_duration_days?: number | null;
+  is_active?: boolean;
+  academy_plan_id?: string | null;
+  payment_plan_id?: string | null;
+  tutoring_offer_id?: string | null;
+}

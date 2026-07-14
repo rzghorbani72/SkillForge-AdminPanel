@@ -1,5 +1,10 @@
 import { OtpType } from '@/constants/data';
-import { Enrollment, User as UserType } from '@/types/api';
+import {
+  Enrollment,
+  User as UserType,
+  CourseOffering,
+  CourseOfferingInput
+} from '@/types/api';
 import { toast } from 'react-toastify';
 import { t } from './i18n';
 import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
@@ -915,6 +920,34 @@ class ApiClient {
   async getMyAcademies() {
     const response = await this.request('/academies');
     return response;
+  }
+
+  // ── Course offerings (multi-price-per-course) ──────────────────────────────
+  async getCourseOfferings(courseId: string) {
+    const response = await this.request(
+      `/course-offerings/manage/course/${courseId}`
+    );
+    return (response.data as CourseOffering[]) ?? [];
+  }
+
+  async createCourseOffering(body: CourseOfferingInput) {
+    const response = await this.request('/course-offerings', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    return response.data as CourseOffering;
+  }
+
+  async updateCourseOffering(id: string, body: Partial<CourseOfferingInput>) {
+    const response = await this.request(`/course-offerings/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    });
+    return response.data as CourseOffering;
+  }
+
+  async deleteCourseOffering(id: string) {
+    await this.request(`/course-offerings/${id}`, { method: 'DELETE' });
   }
 
   async getSupportAccessLogs(params?: {

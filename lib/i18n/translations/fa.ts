@@ -855,6 +855,20 @@ export const fa = {
   },
   courses: {
     title: 'دوره‌ها',
+    offeringsTitle: 'پلن‌های قیمت‌گذاری',
+    offeringsHint:
+      'این دوره را می‌توانید هم‌زمان با چند پلن بفروشید — خرید یک‌باره، اشتراکی، خصوصی یا رایگان.',
+    addOffering: 'افزودن پلن',
+    offeringType: 'نوع',
+    offeringPrice: 'قیمت',
+    offeringActive: 'فعال',
+    noOfferings:
+      'هنوز پلنی ندارید. یک پلن اضافه کنید تا دانشجو بتواند دوره را بخرد.',
+    offeringFREE: 'رایگان',
+    offeringONE_TIME: 'خرید یک‌باره',
+    offeringSUBSCRIPTION: 'اشتراکی',
+    offeringPRIVATE: 'تدریس خصوصی',
+    offeringPAYMENT_PLAN: 'اقساطی',
     seasonDeleted: 'فصل با موفقیت حذف شد',
     lessonDeleted: 'درس با موفقیت حذف شد',
     loadingSeasons: 'در حال بارگذاری فصل‌ها...',
