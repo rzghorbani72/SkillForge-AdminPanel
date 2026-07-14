@@ -230,7 +230,66 @@ export const en = {
       user: 'User'
     }
   },
+  roles: {
+    title: 'Roles & Permissions',
+    description:
+      'Create roles and control what each role can access across the platform',
+    addRole: 'Add role',
+    systemBadge: 'System',
+    customBadge: 'Custom',
+    userCount: '{{count}} users',
+    permissionCount: '{{count}} permissions',
+    editPermissions: 'Edit permissions',
+    deleteRole: 'Delete role',
+    accessDenied: 'Access denied',
+    accessDeniedDescription: 'Only the platform owner can manage roles.',
+    editPermissionsFor: '{{role}} permissions',
+    permissionsHint: 'Pick the access level this role has for each area.',
+    ownerLockedHint:
+      'The platform owner has full access and cannot be changed.',
+    permissionsSaved: 'Permissions saved',
+    createTitle: 'Create a new role',
+    createHint: 'Create a custom role with a unique key.',
+    nameLabel: 'Role key (UPPERCASE)',
+    nameInvalid: 'Only uppercase letters, digits and underscore are allowed.',
+    labelLabel: 'Display label',
+    descriptionLabel: 'Description',
+    levelLabel: 'Access level (0-5)',
+    levelHint:
+      'Higher level means more authority; level 6 is reserved for the platform owner.',
+    roleCreated: 'Role created',
+    roleDeleted: 'Role deleted',
+    deleteTitle: 'Delete role',
+    deleteConfirm: 'Delete the role "{{role}}"?',
+    action: {
+      read: 'View',
+      write: 'Edit',
+      delete: 'Delete'
+    },
+    resource: {
+      academies: 'Academies',
+      users: 'Users',
+      staff: 'Staff',
+      courses: 'Courses',
+      lessons: 'Lessons',
+      enrollments: 'Enrollments',
+      payments: 'Payments',
+      financial: 'Financial',
+      discounts: 'Discounts',
+      quiz: 'Quizzes',
+      assignments: 'Assignments',
+      discussions: 'Discussions',
+      live_classes: 'Live classes',
+      support: 'Support',
+      analytics: 'Analytics',
+      notifications: 'Notifications',
+      legal: 'Legal documents',
+      theme: 'Theme',
+      roles: 'Roles & permissions'
+    }
+  },
   navigation: {
+    rolesPermissions: 'Roles & Permissions',
     dashboard: 'Dashboard',
     platformOverview: 'Platform Overview',
     supportInbox: 'Support Inbox',

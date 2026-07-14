@@ -16,10 +16,12 @@ import {
   Users,
   BookOpen,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  ShieldCheck
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
+import { isPlatformOwner } from '@/lib/roles';
 
 export default function PlatformOverviewPage() {
   const { t, language } = useTranslation();
@@ -310,6 +312,15 @@ export default function PlatformOverviewPage() {
                 {t('platform.overview.platformAnalyticsLink')}
               </span>
             </a>
+            {isPlatformOwner(user) && (
+              <a
+                href="/platform/roles"
+                className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
+              >
+                <ShieldCheck className="mb-2 h-8 w-8 text-primary" />
+                <span className="text-sm font-medium">{t('roles.title')}</span>
+              </a>
+            )}
           </div>
         </CardContent>
       </Card>

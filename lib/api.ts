@@ -28,6 +28,13 @@ import type {
   UpdateLessonDownloadPolicyPayload,
   UpdateTutoringOfferPayload
 } from '@/types/learning-operations';
+import type {
+  CreateRolePayload,
+  PermissionCatalog,
+  RolePermission,
+  RolesListResponse,
+  UpdateRolePayload
+} from '@/types/roles';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -2839,6 +2846,49 @@ class ApiClient {
       body: JSON.stringify({ new_password: newPassword })
     });
     return response.data as any;
+  }
+
+  // ----- Platform roles & permissions (PLATFORM_OWNER only) -----
+
+  async getPermissionCatalog(): Promise<PermissionCatalog> {
+    const response = await this.request('/platform/roles/catalog');
+    return response.data as PermissionCatalog;
+  }
+
+  async getPlatformRoles(): Promise<RolesListResponse> {
+    const response = await this.request('/platform/roles');
+    return response.data as RolesListResponse;
+  }
+
+  async createPlatformRole(payload: CreateRolePayload) {
+    const response = await this.request('/platform/roles', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return response.data as { id: string; name: string };
+  }
+
+  async updatePlatformRole(id: string, payload: UpdateRolePayload) {
+    const response = await this.request(`/platform/roles/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    return response.data as { id: string };
+  }
+
+  async setPlatformRolePermissions(id: string, permissions: RolePermission[]) {
+    const response = await this.request(`/platform/roles/${id}/permissions`, {
+      method: 'PUT',
+      body: JSON.stringify({ permissions })
+    });
+    return response.data as { id: string; permission_count: number };
+  }
+
+  async deletePlatformRole(id: string) {
+    const response = await this.request(`/platform/roles/${id}`, {
+      method: 'DELETE'
+    });
+    return response.data as { id: string };
   }
 
   async grantCourseAccess(

@@ -190,6 +190,16 @@ export const navItems: NavItem[] = [
     scope: 'platform',
     section: 'configuration'
   },
+  {
+    title: 'Roles & Permissions',
+    href: '/platform/roles',
+    icon: 'shield' as IconType,
+    label: 'rolesPermissions',
+    roles: ['PLATFORM_OWNER'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'configuration'
+  },
 
   // ── Academy mode ───────────────────────────────────────────────────────────
   {
