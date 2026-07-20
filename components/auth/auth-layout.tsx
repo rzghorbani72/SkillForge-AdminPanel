@@ -7,20 +7,29 @@ interface AuthLayoutProps {
   maxWidth?: 'sm' | 'md' | 'lg';
   scrollable?: boolean;
   dir?: 'rtl' | 'ltr';
+  /** Design pins the card to the left edge; centered is used by wide pages. */
+  align?: 'left' | 'center';
 }
+
+const MAX_WIDTH_CLASS = {
+  sm: 'max-w-[526px]',
+  md: 'max-w-md',
+  lg: 'max-w-3xl'
+} as const;
 
 export function AuthLayout({
   children,
   maxWidth = 'sm',
   scrollable = false,
-  dir = 'rtl'
+  dir = 'rtl',
+  align = 'left'
 }: AuthLayoutProps) {
   return (
     <>
       <LanguageDetector />
       <div
         className={cn(
-          'auth-theme auth-glow relative flex flex-col items-center p-4 text-foreground',
+          'auth-theme auth-glow relative flex flex-col p-4 text-foreground',
           scrollable
             ? 'fixed inset-0 z-0 overflow-y-auto overscroll-y-contain py-8'
             : 'min-h-screen justify-center'
@@ -33,12 +42,9 @@ export function AuthLayout({
 
         <div
           className={cn(
-            'w-full',
-            maxWidth === 'lg'
-              ? 'max-w-3xl'
-              : maxWidth === 'md'
-                ? 'max-w-md'
-                : 'max-w-sm'
+            'mx-auto w-full',
+            MAX_WIDTH_CLASS[maxWidth],
+            align === 'left' && 'lg:ml-[4.3%] lg:mr-auto'
           )}
         >
           {children}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Loader2, Sparkles } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
 import { AuthLayout } from '@/components/auth/auth-layout';
 import { AuthBrand } from '@/components/auth/auth-brand';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -40,7 +40,6 @@ export function AcademyPicker({
   return (
     <AuthLayout maxWidth="md">
       <AuthBrand
-        icon={<Sparkles className="h-6 w-6 text-primary-foreground" />}
         title={t('auth.chooseAcademy')}
         subtitle={t('auth.chooseAcademyDesc')}
       />

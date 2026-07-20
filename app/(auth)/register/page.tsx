@@ -13,6 +13,7 @@ import { toE164Iran } from '@/lib/phone-utils';
 import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
+import { AuthSecondaryButton } from '@/components/auth/auth-fields';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -219,12 +220,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <AuthShell
-      activeTab="register"
-      title={t('auth.registerTitle')}
-      subtitle={t('auth.registerSubtitle')}
-    >
-      <div className="mt-5">
+    <AuthShell activeTab="register" title={t('auth.registerTitle')}>
+      <div>
         {step === 'details' && (
           <RegisterDetailsForm
             form={form}
@@ -316,26 +313,9 @@ export default function RegisterPage() {
             );
           })()}
       </div>
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        {t('auth.alreadyHaveAccount')}{' '}
-        <Link
-          href="/login"
-          className="font-semibold text-primary hover:underline"
-        >
-          {t('auth.signIn')}
-        </Link>
-      </p>
-      <p className="mt-5 text-center text-xs text-muted-foreground">
-        {t('auth.byCreatingAccount')}{' '}
-        <Link href="/terms" className="underline hover:text-foreground">
-          {t('auth.termsOfService')}
-        </Link>{' '}
-        {t('auth.and')}{' '}
-        <Link href="/privacy" className="underline hover:text-foreground">
-          {t('auth.privacyPolicy')}
-        </Link>
-        {t('auth.agree')}
-      </p>
+      <AuthSecondaryButton onClick={() => router.push('/login')}>
+        {t('auth.signIn')}
+      </AuthSecondaryButton>
     </AuthShell>
   );
 }

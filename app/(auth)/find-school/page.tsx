@@ -107,7 +107,6 @@ export default function FindStorePage() {
     <AuthWideLayout>
       <AuthBrand
         large
-        icon={<Building2 className="h-6 w-6 text-primary-foreground" />}
         title={t('findSchool.title')}
         subtitle={t('findSchool.subtitle')}
       />

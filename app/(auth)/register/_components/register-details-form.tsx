@@ -1,22 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Eye, EyeOff, Loader2, User, Lock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { toEnglishDigits } from '@/lib/phone-utils';
-import { cn } from '@/lib/utils';
 
 export type RegisterValues = {
   name: string;
@@ -31,173 +18,60 @@ interface RegisterDetailsFormProps {
   onSubmit: (values: RegisterValues) => void;
 }
 
+const toEnglish = (value: string) => toEnglishDigits(value);
+
 export function RegisterDetailsForm({
   form,
   loading,
   onSubmit
 }: RegisterDetailsFormProps) {
   const { t } = useTranslation();
-  const { isRTL } = useLanguage();
-  const [showPw, setShowPw] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const { errors } = form.formState;
 
   return (
-    <>
-      <p className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-        {t('auth.yourDetails')}
-      </p>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('auth.fullName')}</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <User
-                      className={cn(
-                        'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                        isRTL ? 'right-3' : 'left-3'
-                      )}
-                    />
-                    <Input
-                      className={isRTL ? 'pr-9' : 'pl-9'}
-                      placeholder={t('auth.fullNamePlaceholder')}
-                      {...field}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <AuthField
+        label={t('auth.fullName')}
+        autoComplete="name"
+        error={errors.name?.message}
+        disabled={loading}
+        {...form.register('name')}
+      />
 
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field, fieldState }) => (
-              <PhoneInputWithCountry
-                id="phone"
-                label={t('auth.phoneNumber')}
-                placeholder={t('auth.phonePlaceholder')}
-                value={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                error={fieldState.error?.message}
-                disabled={loading}
-                lockCountryCode="IR"
-              />
-            )}
-          />
+      <AuthField
+        label={t('auth.phoneNumber')}
+        type="tel"
+        inputMode="tel"
+        dir="ltr"
+        autoComplete="tel"
+        error={errors.phone?.message}
+        disabled={loading}
+        {...form.register('phone', { setValueAs: toEnglish })}
+      />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('auth.password')}</FormLabel>
-                <FormControl>
-                  <div className="relative" dir="ltr">
-                    <Lock
-                      className={cn(
-                        'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                        isRTL ? 'right-3' : 'left-3'
-                      )}
-                    />
-                    <Input
-                      type={showPw ? 'text' : 'password'}
-                      className="pl-9 pr-9"
-                      placeholder={t('auth.passwordPlaceholder')}
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(toEnglishDigits(e.target.value))
-                      }
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t('auth.togglePasswordVisibility')}
-                      className={cn(
-                        'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
-                        isRTL ? 'left-0' : 'right-0'
-                      )}
-                      onClick={() => setShowPw((v) => !v)}
-                    >
-                      {showPw ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <AuthField
+        label={t('auth.password')}
+        type="password"
+        dir="ltr"
+        autoComplete="new-password"
+        error={errors.password?.message}
+        disabled={loading}
+        {...form.register('password', { setValueAs: toEnglish })}
+      />
 
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('auth.confirmPassword')}</FormLabel>
-                <FormControl>
-                  <div className="relative" dir="ltr">
-                    <Lock
-                      className={cn(
-                        'absolute top-2.5 h-4 w-4 text-muted-foreground',
-                        isRTL ? 'right-3' : 'left-3'
-                      )}
-                    />
-                    <Input
-                      type={showConfirm ? 'text' : 'password'}
-                      className="pl-9 pr-9"
-                      placeholder={t('auth.repeatPasswordPlaceholder')}
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(toEnglishDigits(e.target.value))
-                      }
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t('auth.togglePasswordVisibility')}
-                      className={cn(
-                        'absolute top-0 h-full w-9 text-muted-foreground hover:bg-transparent',
-                        isRTL ? 'left-0' : 'right-0'
-                      )}
-                      onClick={() => setShowConfirm((v) => !v)}
-                    >
-                      {showConfirm ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <AuthField
+        label={t('auth.confirmPassword')}
+        type="password"
+        dir="ltr"
+        autoComplete="new-password"
+        error={errors.confirmPassword?.message}
+        disabled={loading}
+        {...form.register('confirmPassword', { setValueAs: toEnglish })}
+      />
 
-          <Button type="submit" className="mt-2 w-full" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('auth.sending')}
-              </>
-            ) : (
-              t('auth.continueBtn')
-            )}
-          </Button>
-        </form>
-      </Form>
-    </>
+      <AuthSubmit loading={loading} disabled={loading}>
+        {loading ? t('auth.sending') : t('auth.continueBtn')}
+      </AuthSubmit>
+    </form>
   );
 }

@@ -114,7 +114,6 @@ export default function SelectStorePage() {
     <AuthWideLayout>
       <AuthBrand
         large
-        icon={<Building2 className="h-6 w-6 text-primary-foreground" />}
         title={t('selectSchool.title')}
         subtitle={t('selectSchool.subtitle')}
       />

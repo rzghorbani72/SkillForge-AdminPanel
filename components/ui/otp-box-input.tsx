@@ -83,7 +83,7 @@ export function OtpBoxInput({
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={handlePaste}
           className={cn(
-            'h-12 w-10 rounded-md border bg-background text-center font-mono text-lg font-semibold',
+            'h-14 w-14 rounded-xl border border-[#c7c7c7] bg-transparent text-center font-mono text-xl font-semibold',
             'outline-none transition-colors',
             'focus:border-primary focus:ring-2 focus:ring-primary/20',
             'disabled:cursor-not-allowed disabled:opacity-50'

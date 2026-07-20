@@ -363,12 +363,12 @@ html.transitioning *::after {
    from them.
    ──────────────────────────────────────────────────────────────────────────── */
 .auth-theme {
-  /* ── Brand teal — single source of truth (2026 "Teal Sharp") ─── */
-  --brand: 193 82% 31%; /* solid brand teal        #0E7490 */
-  --brand-from: 192 91% 36%; /* gradient start (brighter) #0891B2 */
-  --brand-to: 190 80% 22%; /* gradient end (deeper)   #0B5563 */
-  --brand-glow: 192 70% 45%; /* ambient page glow       */
-  --brand-accent: 38 92% 50%; /* amber highlight        #F59E0B */
+  /* ── Brand blue — single source of truth (Figma "mentoma" #1B98E0) ─── */
+  --brand: 202 78% 49%; /* solid brand blue        #1B98E0 */
+  --brand-from: 202 80% 53%; /* gradient start (brighter) */
+  --brand-to: 200 78% 42%; /* gradient end (deeper)   */
+  --brand-glow: 190 70% 55%; /* ambient page glow       */
+  --brand-accent: 165 72% 45%; /* teal-green highlight     #22C1A4 */
 
   /* ── Light surfaces — crisp teal-neutral (matches app default) ─── */
   --background: 192 16% 98%;
@@ -398,52 +398,21 @@ html.transitioning *::after {
 
 /* Ambient emerald glow behind the auth card */
 .auth-glow {
-  background:
-    radial-gradient(
-      55% 45% at 85% 25%,
-      hsl(var(--brand-glow) / 0.2),
-      transparent 70%
-    ),
-    radial-gradient(
-      45% 40% at 30% 100%,
-      hsl(var(--brand-glow) / 0.08),
-      transparent 70%
-    ),
-    hsl(var(--background));
+  background: #dbe4ea url('/auth-bg.jpg') center center / cover no-repeat;
 }
 
-/* Card with the design's gradient hairline on top */
+/* Frosted glass card (Figma: #FFFFFF 25%, background blur 24) */
 .auth-card {
   position: relative;
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  box-shadow: 0 12px 32px -16px hsl(165 28% 9% / 0.18);
-}
-.auth-card::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 2px;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    hsl(var(--brand-from)),
-    hsl(var(--brand-accent)),
-    hsl(var(--brand-to)),
-    transparent
-  );
+  background: rgba(255, 255, 255, 0.25);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
 }
 
-/* Reusable brand gradient button */
+/* Reusable solid brand button */
 .btn-brand {
-  background-image: linear-gradient(
-    90deg,
-    hsl(var(--brand-from)),
-    hsl(var(--brand-to))
-  );
+  background-color: hsl(var(--brand));
   color: #fff;
-  box-shadow: 0 8px 24px -8px hsl(var(--brand) / 0.6);
   transition:
     filter 0.15s ease,
     box-shadow 0.15s ease;
@@ -465,33 +434,35 @@ html.transitioning *::after {
   box-shadow: 0 8px 20px -6px hsl(var(--brand) / 0.6);
 }
 
-/* Underline input matching the design */
+/* Boxed input matching the design (56px, 16px radius, #C7C7C7 hairline) */
 .auth-input {
   width: 100%;
+  height: 3.5rem;
   background: transparent;
-  border: 0;
-  border-bottom: 1px solid hsl(165 14% 80%);
-  border-radius: 0;
-  padding: 0.5rem 0;
+  border: 1px solid #c7c7c7;
+  border-radius: 16px;
+  padding: 0 0.75rem;
+  font-size: 1rem;
+  line-height: 2rem;
   color: hsl(var(--foreground));
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
 }
 .auth-input::placeholder {
-  color: hsl(var(--muted-foreground));
+  color: #616579;
 }
 .auth-input:hover:not(:focus) {
-  border-bottom-color: hsl(165 14% 60%);
+  border-color: #9aa0ac;
 }
 .auth-input:focus {
   outline: none;
-  border-bottom-color: hsl(var(--brand));
-  box-shadow: 0 1px 0 0 hsl(var(--brand));
+  border-color: hsl(var(--brand));
+  box-shadow: 0 0 0 3px hsl(var(--brand) / 0.16);
 }
 .auth-input.with-toggle {
-  padding-left: 2.25rem;
+  padding-left: 2.75rem;
 }
 .auth-input.has-error {
-  border-bottom-color: hsl(var(--destructive));
+  border-color: hsl(var(--destructive));
 }

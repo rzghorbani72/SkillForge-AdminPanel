@@ -1,8 +1,8 @@
 'use client';
 
 import { AuthLayout } from '@/components/auth/auth-layout';
-import { AuthTabs, type AuthTab } from '@/components/auth/auth-tabs';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { AuthLogo } from '@/components/auth/auth-logo';
+import type { AuthTab } from '@/components/auth/auth-tabs';
 
 interface AuthShellProps {
   activeTab: AuthTab;
@@ -11,49 +11,23 @@ interface AuthShellProps {
   children: React.ReactNode;
 }
 
-export function AuthShell({
-  activeTab,
-  title,
-  subtitle,
-  children
-}: AuthShellProps) {
-  const { t } = useTranslation();
-
+export function AuthShell({ title, subtitle, children }: AuthShellProps) {
   return (
     <AuthLayout>
-      <div className="auth-card fade-in-up rounded-2xl p-7">
-        <header className="mb-6 flex items-center justify-start gap-3">
-          <div
-            className="brand-tile flex h-11 w-11 items-center justify-center rounded-xl text-xl font-extrabold text-white"
-            aria-hidden
-          >
-            {t('auth.brandInitial')}
-          </div>
-          <div className="text-right">
-            <h1 className="text-lg font-extrabold leading-tight">
-              {t('auth.brandName')}
-            </h1>
-            <p className="text-xs text-muted-foreground">
-              {t('auth.brandTagline')}
-            </p>
-          </div>
-        </header>
+      <div className="auth-card fade-in-up flex flex-col gap-4 rounded-3xl p-6 sm:p-12">
+        <AuthLogo className="self-center" />
 
-        {/* <AuthTabs active={activeTab} /> */}
-
-        <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+        <div className="px-4 text-start">
+          <h1 className="text-lg font-bold leading-8 text-[#181C20]">
+            {title}
+          </h1>
           {subtitle && (
-            <p className="mt-3 text-sm text-muted-foreground">{subtitle}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
           )}
         </div>
 
         {children}
       </div>
-
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        {t('auth.footer')}
-      </p>
     </AuthLayout>
   );
 }

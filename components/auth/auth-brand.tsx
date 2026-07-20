@@ -1,22 +1,20 @@
+import { AuthLogo } from '@/components/auth/auth-logo';
 import { cn } from '@/lib/utils';
 
 interface AuthBrandProps {
-  icon: React.ReactNode;
   title: string;
   subtitle?: React.ReactNode;
   large?: boolean;
 }
 
-export function AuthBrand({ icon, title, subtitle, large }: AuthBrandProps) {
+export function AuthBrand({ title, subtitle, large }: AuthBrandProps) {
   return (
-    <div className="mb-8 text-center">
-      <div className="brand-tile mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl">
-        {icon}
-      </div>
+    <div className="mb-8 flex flex-col items-center text-center">
+      <AuthLogo className="mb-4" />
       <h1
         className={cn(
-          'font-bold',
-          large ? 'text-2xl tracking-tight' : 'text-xl'
+          'font-bold text-[#181C20]',
+          large ? 'text-2xl tracking-tight' : 'text-lg'
         )}
       >
         {title}

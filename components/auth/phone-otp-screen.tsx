@@ -1,10 +1,9 @@
 'use client';
 
-import { Check, CheckCircle2, Loader2, Phone } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { useEffect } from 'react';
-import { AuthLayout } from '@/components/auth/auth-layout';
-import { AuthBrand } from '@/components/auth/auth-brand';
-import { Button } from '@/components/ui/button';
+import { AuthShell } from '@/components/auth/auth-shell';
+import { AuthSubmit } from '@/components/auth/auth-fields';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
@@ -43,7 +42,6 @@ export function PhoneOtpScreen({
   length = DEFAULT_OTP_LENGTH,
   title,
   subtitle,
-  inputLabel,
   submitLabel,
   backLabel,
   verified = false,
@@ -70,9 +68,6 @@ export function PhoneOtpScreen({
   const form = (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
-        <label className="block text-center text-sm font-medium">
-          {inputLabel ?? t('auth.phoneOtp')}
-        </label>
         <OtpBoxInput
           length={length}
           value={otp}
@@ -90,18 +85,13 @@ export function PhoneOtpScreen({
           {t('auth.verified')}
         </p>
       ) : (
-        <Button
+        <AuthSubmit
           type="submit"
-          className="w-full"
+          loading={otpLoading}
           disabled={otpLoading || otp.length < length}
         >
-          {otpLoading ? (
-            <Loader2 className="me-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Check className="me-2 h-4 w-4" />
-          )}
           {submitLabel ?? t('auth.verifyAndLogin')}
-        </Button>
+        </AuthSubmit>
       )}
 
       {children}
@@ -138,17 +128,11 @@ export function PhoneOtpScreen({
 
   if (embedded) {
     return (
-      <div className="space-y-5">
-        {title && (
-          <div className="space-y-1 text-center">
-            <Phone className="mx-auto h-8 w-8 text-primary" />
-            <p className="text-sm font-semibold">{resolvedTitle}</p>
-            {subtitle && (
-              <p className="text-xs text-muted-foreground">
-                {resolvedSubtitle}
-              </p>
-            )}
-          </div>
+      <div className="space-y-4">
+        {subtitle && (
+          <p className="px-4 text-start text-base text-[#616579]">
+            {resolvedSubtitle}
+          </p>
         )}
         {form}
       </div>
@@ -156,13 +140,11 @@ export function PhoneOtpScreen({
   }
 
   return (
-    <AuthLayout>
-      <AuthBrand
-        icon={<Phone className="h-6 w-6 text-primary-foreground" />}
-        title={resolvedTitle}
-        subtitle={resolvedSubtitle}
-      />
+    <AuthShell activeTab="login" title={resolvedTitle}>
+      <p className="px-4 text-start text-base text-[#616579]">
+        {resolvedSubtitle}
+      </p>
       {form}
-    </AuthLayout>
+    </AuthShell>
   );
 }

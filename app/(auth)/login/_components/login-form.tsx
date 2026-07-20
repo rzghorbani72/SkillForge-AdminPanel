@@ -1,15 +1,13 @@
 'use client';
 
-import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 import { AuthShell } from '@/components/auth/auth-shell';
 import {
   AuthField,
   AuthSubmit,
-  AuthDivider,
-  AuthGoogleButton
+  AuthSecondaryButton
 } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import Link from '@/components/ui/link';
 import { toEnglishDigits } from '@/lib/phone-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -47,13 +45,10 @@ export function LoginForm({
   onSubmit
 }: LoginFormProps) {
   const { t } = useTranslation();
+  const router = useRouter();
 
   return (
-    <AuthShell
-      activeTab="login"
-      title={t('auth.loginTitle')}
-      subtitle={t('auth.loginSubtitle')}
-    >
+    <AuthShell activeTab="login" title={t('auth.loginTitle')}>
       {unauthorizedError && (
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>{unauthorizedError}</AlertDescription>
@@ -75,17 +70,17 @@ export function LoginForm({
         </Alert>
       )}
 
-      <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+      <div className="flex gap-4">
         {(['password', 'otp'] as const).map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => onLoginMethodChange(m)}
             className={cn(
-              'rounded-md py-1.5 text-xs font-medium transition-colors',
+              'h-12 flex-1 rounded-2xl text-base transition-colors',
               loginMethod === m
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-white/50 font-medium text-[#181C20]'
+                : 'text-[#727272] hover:bg-white/30'
             )}
           >
             {m === 'password'
@@ -95,20 +90,22 @@ export function LoginForm({
         ))}
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-5" noValidate>
-        <PhoneInputWithCountry
+      <form onSubmit={onSubmit} className="space-y-4" noValidate>
+        <AuthField
           id="phone"
           label={t('auth.phoneNumber')}
-          placeholder="09121234567"
+          type="tel"
+          inputMode="tel"
+          dir="ltr"
+          autoComplete="tel"
           value={phone}
-          onChange={onPhoneChange}
+          onChange={(e) => onPhoneChange(toEnglishDigits(e.target.value))}
           error={errors.phone}
           disabled={isLoading}
-          lockCountryCode="IR"
         />
 
         {loginMethod === 'password' && (
-          <div className="space-y-2">
+          <>
             <AuthField
               label={t('auth.password')}
               type="password"
@@ -121,15 +118,15 @@ export function LoginForm({
               error={errors.password}
               disabled={isLoading}
             />
-            <div className="text-left">
+            <div className="px-3 text-end">
               <Link
                 href="/forget-password"
-                className="text-xs text-primary hover:underline"
+                className="text-base text-[#181C20] hover:underline"
               >
                 {t('auth.forgotPassword')}
               </Link>
             </div>
-          </div>
+          </>
         )}
 
         <AuthSubmit loading={isLoading} disabled={isLoading}>
@@ -143,20 +140,9 @@ export function LoginForm({
         </AuthSubmit>
       </form>
 
-      <div className="mt-6 space-y-5">
-        <AuthDivider />
-        <AuthGoogleButton onClick={() => toast.info(t('auth.googleSoon'))} />
-      </div>
-
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        {t('auth.dontHaveAccountYet')}{' '}
-        <Link
-          href="/register"
-          className="font-semibold text-primary hover:underline"
-        >
-          {t('auth.signUp')}
-        </Link>
-      </p>
+      <AuthSecondaryButton onClick={() => router.push('/register')}>
+        {t('auth.signUp')}
+      </AuthSecondaryButton>
     </AuthShell>
   );
 }
