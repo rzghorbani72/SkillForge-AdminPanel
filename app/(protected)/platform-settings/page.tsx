@@ -31,7 +31,6 @@ import { useTranslation } from '@/lib/i18n/hooks';
 
 const settingsSchema = z.object({
   vat_rate_pct: z.coerce.number().min(0).max(100),
-  commission_rate_pct: z.coerce.number().min(0).max(100),
   teacher_share_rate_pct: z.coerce.number().min(0).max(100),
   subscription_grace_days: z.coerce.number().int().min(0),
   subscription_reminder_days: z.coerce.number().int().min(0),
@@ -50,7 +49,6 @@ export default function PlatformSettingsPage() {
     resolver: zodResolver(settingsSchema),
     defaultValues: {
       vat_rate_pct: 0,
-      commission_rate_pct: 0,
       teacher_share_rate_pct: 0,
       subscription_grace_days: 0,
       subscription_reminder_days: 0,
@@ -67,7 +65,6 @@ export default function PlatformSettingsPage() {
         if (data) {
           form.reset({
             vat_rate_pct: (data.vat_rate ?? 0) * 100,
-            commission_rate_pct: (data.commission_rate ?? 0) * 100,
             teacher_share_rate_pct: (data.teacher_share_rate ?? 0) * 100,
             subscription_grace_days: data.subscription_grace_days ?? 0,
             subscription_reminder_days: data.subscription_reminder_days ?? 0,
@@ -90,7 +87,7 @@ export default function PlatformSettingsPage() {
     try {
       await apiClient.updatePlatformSettings({
         vat_rate: values.vat_rate_pct / 100,
-        commission_rate: values.commission_rate_pct / 100,
+        commission_rate: 0,
         teacher_share_rate: values.teacher_share_rate_pct / 100,
         subscription_grace_days: values.subscription_grace_days,
         subscription_reminder_days: values.subscription_reminder_days,
@@ -156,30 +153,6 @@ export default function PlatformSettingsPage() {
                     </FormControl>
                     <FormDescription>
                       {t('platformSettings.vatRateHint')}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="commission_rate_pct"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('platformSettings.commissionRate')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t('platformSettings.commissionRateHint')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

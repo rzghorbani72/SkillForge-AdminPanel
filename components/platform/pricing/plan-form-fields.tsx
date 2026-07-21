@@ -13,7 +13,6 @@ export type PlanFormState = {
   slug: string;
   price_monthly_toman: string;
   price_yearly_toman: string;
-  commission_rate: string;
   storage_limit_gb: string;
   features: string;
   is_active: boolean;
@@ -86,19 +85,6 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
             value={form.price_yearly_toman}
             onChange={(raw) => set({ price_yearly_toman: raw })}
             placeholder={t('pricing.planLimits.optional')}
-          />
-        </div>
-        <div className="space-y-1">
-          <Label className="text-xs">
-            {t('pricing.planLimits.commissionOverride')}
-          </Label>
-          <Input
-            type="number"
-            min={0}
-            max={100}
-            step={0.01}
-            value={form.commission_rate}
-            onChange={(e) => set({ commission_rate: e.target.value })}
           />
         </div>
         <div className="space-y-1">

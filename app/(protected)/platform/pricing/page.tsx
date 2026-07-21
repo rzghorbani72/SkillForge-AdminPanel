@@ -52,8 +52,7 @@ const emptyPlanForm = (): PlanFormState => ({
   slug: '',
   price_monthly_toman: '0',
   price_yearly_toman: '',
-  commission_rate: '',
-  storage_limit_gb: '200',
+  storage_limit_gb: '20',
   features: '',
   is_active: true,
   is_most_popular: false,
@@ -73,8 +72,6 @@ const planToForm = (p: SubscriptionPlanData): PlanFormState => ({
   price_monthly_toman: String(irrToToman(p.price_monthly)),
   price_yearly_toman:
     p.price_yearly != null ? String(irrToToman(p.price_yearly)) : '',
-  commission_rate:
-    p.commission_rate != null ? String(toPercent(p.commission_rate)) : '',
   storage_limit_gb: String(p.storage_limit_gb),
   features: Array.isArray(p.features) ? p.features.join('\n') : '',
   is_active: p.is_active,
@@ -92,7 +89,6 @@ export default function PlatformPricingPage() {
   const [settings, setSettings] = useState<PlatformSettingsData | null>(null);
   const [settingsForm, setSettingsForm] = useState({
     vat_rate: '',
-    commission_rate: '',
     teacher_share_rate: '',
     storage_overage_fee_irr: '',
     subscription_grace_days: '',
@@ -119,7 +115,6 @@ export default function PlatformPricingPage() {
     setSettings(s);
     setSettingsForm({
       vat_rate: String(toPercent(asNumber(s.vat_rate))),
-      commission_rate: String(toPercent(asNumber(s.commission_rate))),
       teacher_share_rate: String(toPercent(asNumber(s.teacher_share_rate))),
       storage_overage_fee_irr: String(asNumber(s.storage_overage_fee_irr)),
       subscription_grace_days: String(asNumber(s.subscription_grace_days)),
@@ -181,7 +176,7 @@ export default function PlatformPricingPage() {
     try {
       await apiClient.updatePlatformSettings({
         vat_rate: fromPercent(Number(settingsForm.vat_rate)),
-        commission_rate: fromPercent(Number(settingsForm.commission_rate)),
+        commission_rate: 0,
         teacher_share_rate: fromPercent(
           Number(settingsForm.teacher_share_rate)
         ),
@@ -231,9 +226,7 @@ export default function PlatformPricingPage() {
       price_yearly: planForm.price_yearly_toman
         ? tomanToIrr(Number(planForm.price_yearly_toman))
         : undefined,
-      commission_rate: planForm.commission_rate
-        ? fromPercent(Number(planForm.commission_rate))
-        : undefined,
+      commission_rate: 0,
       storage_limit_gb: Number(planForm.storage_limit_gb),
       features: featuresArr.length ? featuresArr : undefined,
       is_active: planForm.is_active,
@@ -357,25 +350,6 @@ export default function PlatformPricingPage() {
               />
               <p className="text-xs text-muted-foreground">
                 {t('pricing.platform.vatRateHint')}
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label>{t('pricing.platform.commissionRate')}</Label>
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                step={0.01}
-                value={settingsForm.commission_rate}
-                onChange={(e) =>
-                  setSettingsForm({
-                    ...settingsForm,
-                    commission_rate: e.target.value
-                  })
-                }
-              />
-              <p className="text-xs text-muted-foreground">
-                {t('pricing.platform.commissionRateHint')}
               </p>
             </div>
             <div className="space-y-2">
@@ -570,7 +544,6 @@ export default function PlatformPricingPage() {
                   <TableHead>{t('pricing.platform.colName')}</TableHead>
                   <TableHead>{t('pricing.platform.colMonthly')}</TableHead>
                   <TableHead>{t('pricing.platform.colAnnual')}</TableHead>
-                  <TableHead>{t('pricing.platform.colCommission')}</TableHead>
                   <TableHead>{t('pricing.platform.colStorage')}</TableHead>
                   <TableHead>{t('pricing.platform.colStatus')}</TableHead>
                   <TableHead className="text-end">
@@ -605,15 +578,6 @@ export default function PlatformPricingPage() {
                         </>
                       ) : (
                         '—'
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {plan.commission_rate != null ? (
-                        `${toPercent(plan.commission_rate)}%`
-                      ) : (
-                        <span className="text-xs text-muted-foreground">
-                          {t('pricing.platform.commissionGlobal')}
-                        </span>
                       )}
                     </TableCell>
                     <TableCell>{plan.storage_limit_gb} GB</TableCell>
@@ -679,31 +643,10 @@ export default function PlatformPricingPage() {
               </div>
               <div>
                 <dt className="text-muted-foreground">
-                  {t('pricing.platform.summaryCommission')}
-                </dt>
-                <dd className="font-semibold">
-                  {toPercent(asNumber(settings.commission_rate))}%
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">
                   {t('pricing.platform.summaryTeacherShare')}
                 </dt>
                 <dd className="font-semibold">
                   {toPercent(asNumber(settings.teacher_share_rate))}%
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">
-                  {t('pricing.platform.summaryPlatformNet')}
-                </dt>
-                <dd className="font-semibold">
-                  {toPercent(
-                    asNumber(settings.commission_rate) -
-                      asNumber(settings.commission_rate) *
-                        asNumber(settings.teacher_share_rate)
-                  )}
-                  %
                 </dd>
               </div>
               <div>
