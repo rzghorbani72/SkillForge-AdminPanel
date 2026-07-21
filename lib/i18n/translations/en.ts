@@ -4151,7 +4151,7 @@ export const en = {
         courses: 'Courses',
         seasons_per_course: 'Seasons / course',
         lessons_per_course: 'Lessons / course',
-        active_students: 'Active students',
+        active_learners: 'Learners with access',
         storage_gb: 'Storage (GB)',
         live_classes_per_month: 'Live classes / month',
         videos: 'Videos'

@@ -5384,7 +5384,7 @@ export interface StructuredPlanLimits {
   courses: number;
   seasons_per_course: number;
   lessons_per_course: number;
-  active_students: number;
+  active_learners: number;
   storage_gb: number;
   live_classes_per_month: number;
   videos: number;
