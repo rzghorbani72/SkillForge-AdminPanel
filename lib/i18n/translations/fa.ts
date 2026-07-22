@@ -4053,7 +4053,7 @@ export const fa = {
         courses: 'دوره‌ها',
         seasons_per_course: 'فصل / دوره',
         lessons_per_course: 'درس / دوره',
-        active_learners: 'دانشجوی دارای دسترسی',
+        tutoring_students: 'دانشجوی تدریس خصوصی',
         storage_gb: 'فضا (GB)',
         live_classes_per_month: 'کلاس زنده / ماه',
         videos: 'ویدیوها'

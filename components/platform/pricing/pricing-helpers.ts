@@ -6,7 +6,7 @@ export const PLAN_LIMIT_KEYS: (keyof StructuredPlanLimits)[] = [
   'courses',
   'seasons_per_course',
   'lessons_per_course',
-  'active_learners',
+  'tutoring_students',
   'storage_gb',
   'live_classes_per_month',
   'videos'
@@ -18,7 +18,7 @@ export const DEFAULT_LIMITS: StructuredPlanLimits = {
   courses: 1,
   seasons_per_course: 5,
   lessons_per_course: 50,
-  active_learners: 125,
+  tutoring_students: 125,
   storage_gb: 5,
   live_classes_per_month: 8,
   videos: 10
