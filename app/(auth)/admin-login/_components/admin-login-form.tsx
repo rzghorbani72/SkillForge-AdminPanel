@@ -79,6 +79,7 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
           lockCountryCode="IR"
           error={login.errors.phone}
           disabled={login.isLoading}
+          className="text-center"
         />
 
         {login.loginMethod === 'password' && (

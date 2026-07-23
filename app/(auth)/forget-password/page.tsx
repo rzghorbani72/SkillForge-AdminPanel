@@ -363,6 +363,7 @@ export default function ForgetPasswordPage() {
                       error={errors.phoneNumber}
                       disabled={isLoading}
                       lockCountryCode="IR"
+                      className="text-center"
                     />
                   </TabsContent>
                 </Tabs>

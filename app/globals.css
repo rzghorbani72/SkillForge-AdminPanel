@@ -445,6 +445,7 @@ html.transitioning *::after {
   font-size: 1rem;
   line-height: 2rem;
   color: hsl(var(--foreground));
+  text-align: center;
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
@@ -462,6 +463,7 @@ html.transitioning *::after {
 }
 .auth-input.with-toggle {
   padding-left: 2.75rem;
+  padding-right: 2.75rem;
 }
 .auth-input.has-error {
   border-color: hsl(var(--destructive));

@@ -67,6 +67,7 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
           lockCountryCode="IR"
           error={fp.errors.phoneNumber}
           disabled={fp.isLoading}
+          className="text-center"
         />
 
         <AuthSubmit loading={fp.isLoading} disabled={fp.isLoading}>

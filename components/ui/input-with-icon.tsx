@@ -50,6 +50,7 @@ export function InputWithIcon({
           onChange={(e) => onChange(e.target.value)}
           className={cn(
             isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10',
+            'text-center',
             error && 'border-red-500',
             className
           )}
