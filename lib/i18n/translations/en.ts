@@ -629,6 +629,7 @@ export const en = {
     creatingAcademy: 'Creating academy...',
     academyCreatedTitle: 'Academy created!',
     goingToDashboard: 'Taking you to your dashboard…',
+    goingToPlans: 'Taking you to your plan…',
     whatHappensNext: "What's next",
     onboardingStep1: 'Your academy is created and you become its manager',
     onboardingStep2: 'Add courses, invite teachers, set up pricing',

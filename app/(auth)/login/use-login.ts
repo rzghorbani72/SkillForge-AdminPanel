@@ -47,6 +47,7 @@ function resolveLoginError(
 export function useLogin() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
+  const planParam = searchParams.get('plan');
   const { pending: redirectPending, scheduleRedirect } = useDelayedRedirect();
 
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
@@ -132,8 +133,15 @@ export function useLogin() {
       userRole === 'MANAGER' ||
       userRole === 'TEACHER'
     ) {
+      const planQuery = planParam
+        ? `?plan=${encodeURIComponent(planParam)}`
+        : '';
       scheduleRedirect({
-        href: hasNoAcademy ? '/onboarding/create-academy' : '/dashboard',
+        href: hasNoAcademy
+          ? `/onboarding/create-academy${planQuery}`
+          : planParam
+            ? `/plans${planQuery}`
+            : '/dashboard',
         title: t('success.loginSuccess'),
         message: hasNoAcademy
           ? t('auth.redirectingToOnboarding')

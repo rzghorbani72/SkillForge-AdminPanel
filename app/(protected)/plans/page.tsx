@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -63,6 +63,7 @@ export default function PlansPage() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
   const paidParam = searchParams.get('paid');
+  const planParam = searchParams.get('plan');
   const [managerTab, setManagerTab] = useState<'subscription' | 'academy'>(
     tabParam === 'academy' ? 'academy' : 'subscription'
   );
@@ -168,6 +169,21 @@ export default function PlansPage() {
       toast.success(t('plans.paymentSuccess'));
     }
   }, [paidParam, t]);
+
+  // Coming from the landing page's "enroll" link: open the confirm dialog
+  // pre-selected on that plan so buying it is one click away, not a re-pick.
+  // Guarded by a ref (not just clearing the param) so the dialog doesn't
+  // reopen if the manager closes it and the plans list re-renders.
+  const planParamHandledRef = useRef(false);
+  useEffect(() => {
+    if (planParamHandledRef.current) return;
+    if (!planParam || !canManagePlan || plans.length === 0) return;
+    const matched = plans.find((plan) => plan.slug === planParam);
+    if (matched) {
+      openSelectPlan(matched);
+    }
+    planParamHandledRef.current = true;
+  }, [planParam, canManagePlan, plans]);
 
   function openCreate() {
     setEditingPlan(null);

@@ -622,6 +622,7 @@ export const fa = {
     creatingAcademy: 'در حال ایجاد آکادمی...',
     academyCreatedTitle: 'آکادمی ایجاد شد!',
     goingToDashboard: 'در حال انتقال به داشبورد...',
+    goingToPlans: 'در حال انتقال به بخش پلن‌ها...',
     whatHappensNext: 'مراحل بعدی',
     onboardingStep1: 'آکادمی شما ایجاد می‌شود و مدیر آن می‌شوید',
     onboardingStep2: 'دوره اضافه کنید، معلم دعوت کنید، قیمت‌گذاری تنظیم کنید',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -88,6 +89,11 @@ export default function CreateAcademyPage() {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const { refreshAcademies } = useStore();
+  const searchParams = useSearchParams();
+  const planParam = searchParams.get('plan');
+  const postCreateHref = planParam
+    ? `/plans?plan=${encodeURIComponent(planParam)}`
+    : '/dashboard';
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
   const [created, setCreated] = useState(false);
@@ -148,7 +154,7 @@ export default function CreateAcademyPage() {
       setCreated(true);
       toast.success(t('auth.academyCreatedTitle'));
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        window.location.href = postCreateHref;
       }, 1500);
     } catch (err: unknown) {
       toast.error((err as { message?: string })?.message ?? t('common.error'));
@@ -168,7 +174,7 @@ export default function CreateAcademyPage() {
             {t('auth.academyCreatedTitle')}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {t('auth.goingToDashboard')}
+            {planParam ? t('auth.goingToPlans') : t('auth.goingToDashboard')}
           </p>
         </div>
       </div>

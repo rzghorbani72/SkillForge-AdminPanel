@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from '@/components/ui/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -38,6 +38,11 @@ const useRegisterSchema = (t: (k: string) => string) =>
 export default function RegisterPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const planParam = searchParams.get('plan');
+  const loginHref = planParam
+    ? `/login?plan=${encodeURIComponent(planParam)}`
+    : '/login';
 
   const [step, setStep] = useState<'details' | 'verify'>('details');
   const [otpCode, setOtpCode] = useState('');
@@ -54,9 +59,9 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (!done) return;
-    const timer = window.setTimeout(() => router.push('/login'), 2200);
+    const timer = window.setTimeout(() => router.push(loginHref), 2200);
     return () => window.clearTimeout(timer);
-  }, [done, router]);
+  }, [done, router, loginHref]);
 
   useEffect(() => {
     apiClient
@@ -313,7 +318,7 @@ export default function RegisterPage() {
             );
           })()}
       </div>
-      <AuthSecondaryButton onClick={() => router.push('/login')}>
+      <AuthSecondaryButton onClick={() => router.push(loginHref)}>
         {t('auth.signIn')}
       </AuthSecondaryButton>
     </AuthShell>
