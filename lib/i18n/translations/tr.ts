@@ -154,6 +154,8 @@ export const tr = {
     permissionsSaved: 'İzinler kaydedildi',
     createTitle: 'Yeni rol oluştur',
     createHint: 'Benzersiz bir anahtarla özel bir rol oluşturun.',
+    createDisabledHint:
+      'İzin uygulaması tamamen devreye alınana kadar özel rol oluşturma geçici olarak devre dışı.',
     nameLabel: 'Rol anahtarı (BÜYÜK HARF)',
     nameInvalid: 'Yalnızca büyük harf, rakam ve alt çizgi kullanılabilir.',
     labelLabel: 'Görünen etiket',

@@ -17,7 +17,6 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import type { PermissionCatalog, PlatformRole } from '@/types/roles';
 import { RolePermissionsDialog } from './role-permissions-dialog';
-import { CreateRoleDialog } from './create-role-dialog';
 
 export function RolesManager() {
   const { t } = useTranslation();
@@ -25,7 +24,6 @@ export function RolesManager() {
   const [catalog, setCatalog] = useState<PermissionCatalog | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<PlatformRole | null>(null);
-  const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState<PlatformRole | null>(null);
 
   const load = async () => {
@@ -70,11 +68,14 @@ export function RolesManager() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-end">
-        <Button onClick={() => setCreating(true)}>
+      <div className="flex flex-col items-end gap-1">
+        <Button disabled title={t('roles.createDisabledHint')}>
           <Plus className="mr-2 h-4 w-4" />
           {t('roles.addRole')}
         </Button>
+        <p className="text-xs text-muted-foreground">
+          {t('roles.createDisabledHint')}
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -140,12 +141,6 @@ export function RolesManager() {
           onSaved={load}
         />
       )}
-
-      <CreateRoleDialog
-        open={creating}
-        onClose={() => setCreating(false)}
-        onCreated={load}
-      />
 
       <ConfirmDeleteDialog
         open={!!deleting}

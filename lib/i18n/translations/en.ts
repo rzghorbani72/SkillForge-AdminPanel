@@ -250,6 +250,8 @@ export const en = {
     permissionsSaved: 'Permissions saved',
     createTitle: 'Create a new role',
     createHint: 'Create a custom role with a unique key.',
+    createDisabledHint:
+      'Custom role creation is temporarily disabled while permission enforcement is being rolled out.',
     nameLabel: 'Role key (UPPERCASE)',
     nameInvalid: 'Only uppercase letters, digits and underscore are allowed.',
     labelLabel: 'Display label',
