@@ -152,11 +152,24 @@ export function useLogin() {
     setRegistrationRequired(false);
     try {
       const phoneE164 = toE164Iran(phone);
-      await apiClient.sendPhoneOtp(phoneE164, OtpType.LOGIN_BY_PHONE);
+      const response = await apiClient.sendPhoneOtp(
+        phoneE164,
+        OtpType.LOGIN_BY_PHONE
+      );
       setOtpPhone(phoneE164);
       setOtpMode('login');
       setOtpRequired(true);
-      toast.success(t('success.otpSent'), { toastId: 'login-otp-sent' });
+
+      // TODO: Remove debug OTP display when real SMS provider is integrated
+      if (response?.data?.otp) {
+        toast.info(`${t('success.otpSent')}\n\n🔐 Code: ${response.data.otp}`, {
+          toastId: 'login-otp-sent',
+          autoClose: 8000,
+          style: { whiteSpace: 'pre-wrap' }
+        });
+      } else {
+        toast.success(t('success.otpSent'), { toastId: 'login-otp-sent' });
+      }
     } catch (error: unknown) {
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(
@@ -289,8 +302,21 @@ export function useLogin() {
     setOtpError('');
     setRegistrationRequired(false);
     try {
-      await apiClient.sendPhoneOtp(otpPhone, OtpType.LOGIN_BY_PHONE);
-      toast.success(t('success.otpSent'), { toastId: 'otp-resent' });
+      const response = await apiClient.sendPhoneOtp(
+        otpPhone,
+        OtpType.LOGIN_BY_PHONE
+      );
+
+      // TODO: Remove debug OTP display when real SMS provider is integrated
+      if (response?.data?.otp) {
+        toast.info(`${t('success.otpSent')}\n\n🔐 Code: ${response.data.otp}`, {
+          toastId: 'otp-resent',
+          autoClose: 8000,
+          style: { whiteSpace: 'pre-wrap' }
+        });
+      } else {
+        toast.success(t('success.otpSent'), { toastId: 'otp-resent' });
+      }
     } catch (error: unknown) {
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(

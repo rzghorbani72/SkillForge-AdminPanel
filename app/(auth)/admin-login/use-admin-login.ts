@@ -6,6 +6,7 @@ import { authService } from '@/lib/auth';
 import { apiClient } from '@/lib/api';
 import { toEnglishDigits } from '@/lib/phone-utils';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
+import { toast } from 'react-toastify';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { isPlatformStaff } from '@/lib/roles';
@@ -106,12 +107,22 @@ export function useAdminLogin() {
   const handleSendOtp = async () => {
     setIsLoading(true);
     try {
-      await apiClient.sendAdminLoginOtp(
+      const response = await apiClient.sendAdminLoginOtp(
         formData.email,
         formData.fullPhoneNumber || formData.phone
       );
       setOtpSent(true);
-      ErrorHandler.showSuccess('success.otpSent', true);
+
+      // TODO: Remove debug OTP display when real SMS provider is integrated
+      const otp = (response?.data as { otp?: string })?.otp;
+      if (otp) {
+        toast.info(`${t('success.otpSent')}\n\n🔐 Code: ${otp}`, {
+          autoClose: 8000,
+          style: { whiteSpace: 'pre-wrap' }
+        });
+      } else {
+        ErrorHandler.showSuccess('success.otpSent', true);
+      }
     } catch (error: unknown) {
       ErrorHandler.handleValidationErrors(error);
     } finally {
