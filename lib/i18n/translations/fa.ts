@@ -1414,6 +1414,16 @@ export const fa = {
   },
   settings: {
     title: 'تنظیمات',
+    defaultAcademy: {
+      title: 'آکادمی پیش‌فرض',
+      description:
+        'اگر در چند آکادمی پروفایل دارید، پس از ورود به‌صورت پیش‌فرض وارد همین آکادمی می‌شوید.',
+      loading: 'در حال بارگذاری آکادمی‌ها…',
+      single: 'شما فقط یک آکادمی دارید — نیازی به انتخاب پیش‌فرض نیست.',
+      pickOne: 'یکی را انتخاب کنید',
+      noDefault: '— بدون پیش‌فرض —',
+      saved: 'آکادمی پیش‌فرض ذخیره شد'
+    },
     subscriptionTitle: 'اشتراک',
     loadingSubscription: 'در حال بارگذاری اشتراک...',
     subscriptionPlan: 'پلن',

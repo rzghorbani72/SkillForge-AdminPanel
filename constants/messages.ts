@@ -6,9 +6,7 @@ export const MESSAGES = {
     creating: 'Creating...',
     uploading: 'Uploading...',
     unavailable: 'Unavailable',
-    watch: 'Watch',
-    noDefault: '— no default —',
-    pickOne: 'Pick one'
+    watch: 'Watch'
   },
 
   category: {
@@ -36,15 +34,6 @@ export const MESSAGES = {
     selectCourse: 'Select a course',
     orderingConflict:
       'Unable to create season due to ordering conflict. Please try again.'
-  },
-
-  academy: {
-    defaultAcademy: 'Default academy',
-    defaultAcademyDesc:
-      'When you have a profile in multiple academies, sign-in lands on this one by default.',
-    loadingAcademies: 'Loading academies…',
-    singleAcademy: 'You only have one academy — no need to pick a default.',
-    defaultSaved: 'Default academy saved'
   },
 
   video: {

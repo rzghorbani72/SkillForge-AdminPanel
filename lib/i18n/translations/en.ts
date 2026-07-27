@@ -1659,6 +1659,16 @@ export const en = {
   },
   settings: {
     title: 'Settings',
+    defaultAcademy: {
+      title: 'Default academy',
+      description:
+        'When you have a profile in multiple academies, sign-in lands on this one by default.',
+      loading: 'Loading academies…',
+      single: 'You only have one academy — no need to pick a default.',
+      pickOne: 'Pick one',
+      noDefault: '— no default —',
+      saved: 'Default academy saved'
+    },
     subscriptionTitle: 'Subscription',
     loadingSubscription: 'Loading subscription...',
     subscriptionPlan: 'Plan',

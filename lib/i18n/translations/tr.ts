@@ -817,6 +817,16 @@ export const tr = {
   },
   settings: {
     title: 'Ayarlar',
+    defaultAcademy: {
+      title: 'Varsayılan akademi',
+      description:
+        'Birden fazla akademide profiliniz varsa, oturum açtığınızda varsayılan olarak bu akademiye yönlendirilirsiniz.',
+      loading: 'Akademiler yükleniyor…',
+      single: 'Yalnızca bir akademiniz var — varsayılan seçmenize gerek yok.',
+      pickOne: 'Birini seçin',
+      noDefault: '— varsayılan yok —',
+      saved: 'Varsayılan akademi kaydedildi'
+    },
     subscriptionTitle: 'Abonelik',
     loadingSubscription: 'Abonelik yükleniyor...',
     subscriptionPlan: 'Plan',

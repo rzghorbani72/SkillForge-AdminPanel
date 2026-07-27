@@ -12,13 +12,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SettingsHubGroups } from '@/components/settings/settings-hub-groups';
 import { isPlatformAdmin } from '@/lib/roles';
 import { useSettingsData } from './_hooks/use-settings-data';
-import { format } from 'date-fns';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { DefaultAcademyCard } from '@/components/settings/default-academy-card';
 
 export default function SettingsOverviewPage() {
   const { t } = useTranslation();
+  const formatDate = useDateFormat();
   const { user: authUser } = useAuthUser();
   const { user, academy, isLoading, refresh } = useSettingsData();
   const isPlatformAdminUser = isPlatformAdmin(authUser);
@@ -84,7 +85,7 @@ export default function SettingsOverviewPage() {
               <div className="flex justify-between">
                 <span>{t('settings.joined')}</span>
                 <span className="font-medium text-foreground">
-                  {format(new Date(user.created_at), 'dd MMM yyyy')}
+                  {formatDate(user.created_at)}
                 </span>
               </div>
             )}
@@ -120,9 +121,7 @@ export default function SettingsOverviewPage() {
             <div className="flex justify-between">
               <span>{t('settings.created')}</span>
               <span className="font-medium text-foreground">
-                {academy?.created_at
-                  ? format(new Date(academy.created_at), 'dd MMM yyyy')
-                  : '—'}
+                {academy?.created_at ? formatDate(academy.created_at) : '—'}
               </span>
             </div>
           </CardContent>

@@ -14,12 +14,13 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { userPrefsApi } from '@/lib/api-extra';
 import { useStore } from '@/hooks/useStore';
 import { Loader2, Save } from 'lucide-react';
-import { MESSAGES } from '@/constants/messages';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 // Lets a multi-academy user pin their default academy. Backend uses this to
 // decide which academy to load first on next sign-in (Mig 1).
 
 export function DefaultAcademyCard() {
+  const { t } = useTranslation();
   const { academies, isLoading } = useStore();
   const [selected, setSelected] = useState<number | ''>('');
   const [saving, setSaving] = useState(false);
@@ -30,7 +31,7 @@ export function DefaultAcademyCard() {
     setSaving(true);
     try {
       await userPrefsApi.setDefaultAcademy(selected === '' ? null : selected);
-      ErrorHandler.showSuccess(MESSAGES.academy.defaultSaved);
+      ErrorHandler.showSuccess(t('settings.defaultAcademy.saved'));
     } catch (e) {
       ErrorHandler.handleApiError(e);
     } finally {
@@ -41,23 +42,25 @@ export function DefaultAcademyCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{MESSAGES.academy.defaultAcademy}</CardTitle>
-        <CardDescription>{MESSAGES.academy.defaultAcademyDesc}</CardDescription>
+        <CardTitle>{t('settings.defaultAcademy.title')}</CardTitle>
+        <CardDescription>
+          {t('settings.defaultAcademy.description')}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {isLoading ? (
           <div className="flex h-10 items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />{' '}
-            {MESSAGES.academy.loadingAcademies}
+            {t('settings.defaultAcademy.loading')}
           </div>
         ) : options.length <= 1 ? (
           <p className="text-sm text-muted-foreground">
-            {MESSAGES.academy.singleAcademy}
+            {t('settings.defaultAcademy.single')}
           </p>
         ) : (
           <>
             <Label className="text-xs uppercase tracking-wide text-muted-foreground">
-              {MESSAGES.common.pickOne}
+              {t('settings.defaultAcademy.pickOne')}
             </Label>
             <div className="flex gap-2">
               <select
@@ -67,7 +70,9 @@ export function DefaultAcademyCard() {
                   setSelected(e.target.value ? Number(e.target.value) : '')
                 }
               >
-                <option value="">{MESSAGES.common.noDefault}</option>
+                <option value="">
+                  {t('settings.defaultAcademy.noDefault')}
+                </option>
                 {options.map((o) => (
                   <option key={o.id} value={o.id}>
                     {o.name}
@@ -76,11 +81,11 @@ export function DefaultAcademyCard() {
               </select>
               <Button onClick={save} disabled={saving}>
                 {saving ? (
-                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-1 h-4 w-4 animate-spin" />
                 ) : (
-                  <Save className="mr-1 h-4 w-4" />
+                  <Save className="me-1 h-4 w-4" />
                 )}
-                {MESSAGES.common.save}
+                {t('common.save')}
               </Button>
             </div>
           </>
