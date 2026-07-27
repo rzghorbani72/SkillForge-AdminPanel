@@ -860,20 +860,20 @@ export const tr = {
     profileSettings: 'Profil Ayarları',
     profileSettingsDescription:
       'Kişisel bilgilerinizi, avatarınızı ve iletişim bilgilerinizi güncelleyin.',
-    storeSettings: 'Enstitü Ayarları',
+    storeSettings: 'Akademi Bilgileri',
     storeSettingsDescription:
       'Enstitü adınızı, açıklamanızı ve alan adı yapılandırmanızı yönetin.',
     themeBranding: 'Tema ve Marka',
     themeBrandingDescription:
       'Öğrenciler için renkleri, logoları ve görsel görünümü özelleştirin.',
-    uiTemplateBuilder: 'UI Şablon Oluşturucu',
+    uiTemplateBuilder: 'Site Şablonu',
     uiTemplateBuilderDescription:
       'Enstitü web sitenizdeki UI bloklarının düzenini, görünürlüğünü ve yapılandırmasını özelleştirin.',
     security: 'Güvenlik',
     securityDescription:
       'Şifreleri değiştirin, iki faktörlü kimlik doğulamayı etkinleştirin ve bildirimleri yönetin.',
     openSettings: 'Ayarları aç',
-    uiTemplateBuilderTitle: 'UI Şablon Oluşturucu',
+    uiTemplateBuilderTitle: 'Site Şablonu',
     uiTemplateBuilderSubtitle:
       'Enstitü web sitenizdeki UI bloklarının düzenini, görünürlüğünü ve yapılandırmasını özelleştirin.',
     basedOn: 'Dayalı',
@@ -957,7 +957,7 @@ export const tr = {
     resendIn: 'Yeniden gönder:',
     uploadingPhoto: 'Yükleniyor…',
     changePhoto: 'Fotoğrafı Değiştir',
-    storeSettingsTitle: 'Enstitü Ayarları',
+    storeSettingsTitle: 'Akademi Bilgileri',
     storeSettingsSubtitle:
       'Enstitünüzün آکادمی ekosisteminde nasıl göründüğünü yönetin.',
     generalInformation: 'Genel Bilgiler',

@@ -841,18 +841,18 @@ export const ar = {
     profileSettings: 'إعدادات الملف الشخصي',
     profileSettingsDescription:
       'تحديث تفاصيلك الشخصية والصورة الرمزية ومعلومات الاتصال.',
-    storeSettings: 'إعدادات المعهد',
+    storeSettings: 'بيانات المعهد',
     storeSettingsDescription: 'إدارة اسم معهدك ووصفه وإعدادات النطاق.',
     themeBranding: 'المظهر والعلامة التجارية',
     themeBrandingDescription: 'تخصيص الألوان والشعارات والمظهر المرئي للطلاب.',
-    uiTemplateBuilder: 'منشئ قالب واجهة المستخدم',
+    uiTemplateBuilder: 'قالب الموقع',
     uiTemplateBuilderDescription:
       'تخصيص التخطيط والرؤية وإعدادات كتل واجهة المستخدم على موقع مدرستك.',
     security: 'الأمان',
     securityDescription:
       'تغيير كلمات المرور وتمكين المصادقة الثنائية وإدارة الإشعارات.',
     openSettings: 'فتح الإعدادات',
-    uiTemplateBuilderTitle: 'منشئ قالب واجهة المستخدم',
+    uiTemplateBuilderTitle: 'قالب الموقع',
     uiTemplateBuilderSubtitle:
       'تخصيص التخطيط والرؤية وإعدادات كتل واجهة المستخدم على موقع مدرستك.',
     basedOn: 'بناءً على',
@@ -934,7 +934,7 @@ export const ar = {
     resendIn: 'إعادة الإرسال بعد',
     uploadingPhoto: 'جارٍ الرفع…',
     changePhoto: 'تغيير الصورة',
-    storeSettingsTitle: 'إعدادات المعهد',
+    storeSettingsTitle: 'بيانات المعهد',
     storeSettingsSubtitle: 'إدارة كيفية ظهور معهدك عبر نظام آکادمی.',
     generalInformation: 'المعلومات العامة',
     generalInformationDescription: 'تحديث الاسم والوصف والنطاق لمعهدك.',

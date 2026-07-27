@@ -404,8 +404,8 @@ export const en = {
     siteTemplate: 'Site Template',
     financial: 'Financial',
     plans: 'Plans',
-    platformPlan: 'Platform Plan',
-    academyProfile: 'Academy Profile',
+    platformPlan: 'Academy Subscription',
+    academyProfile: 'Academy Details',
     studentPlans: 'Student Plans',
     studentPricing: 'Student Pricing',
     settingsHub: 'Settings',
@@ -1701,22 +1701,21 @@ export const en = {
     },
     groupPersonal: 'Personal',
     groupPersonalDescription: 'Your profile and account security',
-    groupPlatform: 'Platform',
+    groupPlatform: 'Academy & subscription',
     groupPlatformDescription:
-      'Subscription plan, academy profile, and platform limits',
-    groupAcademy: 'Students',
-    groupAcademyDescription:
-      'Site template, student plans, and pricing for learners',
-    platformPlanTitle: 'Platform Plan',
+      'Your subscription, academy details, and plan limits',
+    groupAcademy: 'Site & student sales',
+    groupAcademyDescription: 'Site template and the plans students see and buy',
+    platformPlanTitle: 'Academy Subscription',
     platformPlanDescription:
-      'View, upgrade, or renew your academy subscription',
-    managePlatformPlan: 'Manage plan',
+      'The subscription you pay to use the platform — view, upgrade, or renew',
+    managePlatformPlan: 'Manage subscription',
     noPlan: 'No plan',
     daysRemaining: 'Days remaining',
     subscriptionReadOnlyHint:
       'Upgrade or change plan from the Platform Plan page',
     storeSettingsPlatformDescription:
-      'Academy name, domain, and identity on the platform',
+      'Your academy name, site address, and description',
     studentPricingTitle: 'Student Pricing Page',
     studentPricingDescription:
       'Marketing copy on the pricing page your students see',
@@ -1746,7 +1745,7 @@ export const en = {
     phone: 'Phone',
     joined: 'Joined',
     storeSnapshot: 'Academy Snapshot',
-    storeSnapshotDescription: 'Your primary academy on آکادمی.',
+    storeSnapshotDescription: 'An overview of your active academy.',
     name: 'Name',
     domain: 'Domain',
     students: 'Students',
@@ -1754,15 +1753,15 @@ export const en = {
     profileSettings: 'Profile Settings',
     profileSettingsDescription:
       'Update your personal details, avatar, and contact information.',
-    storeSettings: 'Academy Settings',
+    storeSettings: 'Academy Details',
     storeSettingsDescription:
-      'Manage your academy name, description, and domain configuration.',
+      'Edit your academy name, description, and site address.',
     themeBranding: 'Theme & Branding',
     themeBrandingDescription:
       'Customize colours, logos, and visual appearance for students.',
-    uiTemplateBuilder: 'UI Template Builder',
+    uiTemplateBuilder: 'Site Template',
     uiTemplateBuilderDescription:
-      'Customize the layout, visibility, and configuration of UI blocks on your academy website.',
+      'Arrange the layout and sections of the academy site students see.',
     securityDescription:
       'Change passwords, enable two-factor authentication, and manage notifications.',
     openSettings: 'Open settings',
@@ -1815,9 +1814,9 @@ export const en = {
     resendCode: 'Resend',
     uploadingPhoto: 'Uploading…',
     changePhoto: 'Change Photo',
-    storeSettingsTitle: 'Academy Settings',
+    storeSettingsTitle: 'Academy Details',
     storeSettingsSubtitle:
-      'Manage how your academy appears across the آکادمی ecosystem.',
+      'Sets your academy name, site address, and description on the platform.',
     academyFeaturesTitle: 'Learning features',
     academyFeaturesDescription:
       'Enable or disable learning paths and follow-up tools for your academy.',
@@ -1837,7 +1836,7 @@ export const en = {
     generalInformationDescription:
       'Update the name, description, and domain for your academy.',
     storeName: 'Academy name',
-    storeNamePlaceholder: 'آکادمی',
+    storeNamePlaceholder: 'e.g. Mehr Language Academy',
     customDomain: 'Custom domain',
     customDomainPlaceholder: 'academy',
     descriptionPlaceholder: 'Describe your academy for prospective students',
@@ -1970,9 +1969,9 @@ export const en = {
     shadowSubtle: 'Subtle',
     shadowMedium: 'Medium',
     shadowStrong: 'Strong',
-    uiTemplateBuilderTitle: 'UI Template Builder',
+    uiTemplateBuilderTitle: 'Site Template',
     uiTemplateBuilderSubtitle:
-      'Customize the layout, visibility, and configuration of UI blocks on your academy website.',
+      'Arrange the layout and sections of the academy site students see.',
     basedOn: 'Based on',
     chooseTemplate: 'Choose Template',
     chooseTemplateLayout: 'Choose Template Layout',

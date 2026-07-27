@@ -369,7 +369,7 @@ export const navItems: NavItem[] = [
   },
   // ── Platform scope settings ────────────────────────────────────────────────
   {
-    title: 'Platform Plan',
+    title: 'Academy Subscription',
     href: '/plans',
     icon: 'layers' as IconType,
     label: 'platformPlan',
@@ -379,7 +379,7 @@ export const navItems: NavItem[] = [
     paymentGated: true
   },
   {
-    title: 'Academy Profile',
+    title: 'Academy Details',
     href: '/settings/academy',
     icon: 'store' as IconType,
     label: 'academyProfile',
