@@ -417,15 +417,6 @@ export const navItems: NavItem[] = [
     paymentGated: true
   },
   {
-    title: 'Student Pricing',
-    href: '/settings/pricing',
-    icon: 'dollarSign' as IconType,
-    label: 'studentPricing',
-    roles: ['MANAGER'],
-    scope: 'academy',
-    section: 'students'
-  },
-  {
     title: 'Financial',
     href: '/financial',
     icon: 'dollarSign' as IconType,

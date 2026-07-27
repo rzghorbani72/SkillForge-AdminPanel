@@ -202,13 +202,6 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             scope: 'academy'
           },
           {
-            title: t('settings.studentPricingTitle'),
-            description: t('settings.studentPricingDescription'),
-            href: '/settings/pricing',
-            icon: Building,
-            scope: 'academy'
-          },
-          {
             title: t('settings.studentPlansTitle'),
             description: t('settings.studentPlansDescription'),
             href: '/plans?tab=academy',

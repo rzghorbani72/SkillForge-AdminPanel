@@ -55,9 +55,11 @@ test.describe('Manager settings @backend', () => {
     );
   });
 
-  test('pricing settings page loads', async ({ page }) => {
+  test('legacy pricing settings route redirects to the academy plans tab', async ({
+    page
+  }) => {
     await page.goto('/settings/pricing');
-    await expect(page).toHaveURL(/\/settings\/pricing/);
+    await expect(page).toHaveURL(/\/plans\?tab=academy/);
     await expect(page.locator('body')).not.toContainText(
       'Internal Server Error'
     );

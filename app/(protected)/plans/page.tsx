@@ -50,6 +50,7 @@ import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoic
 import { PlanFormDialog } from '@/components/plans/PlanFormDialog';
 import { AcademyPlanFormDialog } from '@/components/plans/AcademyPlanFormDialog';
 import { AcademyPlansList } from '@/components/plans/AcademyPlansList';
+import { AcademyPricingCopyCard } from '@/components/plans/academy-pricing-copy-card';
 import {
   AcademyPlanData,
   PlanFormData,
@@ -898,13 +899,14 @@ export default function PlansPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="academy" className="pt-4">
+        <TabsContent value="academy" className="space-y-6 pt-4">
           <PlansTabScopeHeader
             scope="academy"
             title={t('plans.academyTabTitle')}
             description={t('plans.academyTabDescription')}
           />
           {academyPlansPanel}
+          <AcademyPricingCopyCard canManage={canManagePlan} t={t} />
         </TabsContent>
       </Tabs>
 
