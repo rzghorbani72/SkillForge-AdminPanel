@@ -37,6 +37,8 @@ interface AuthUser {
   platformLevel?: boolean;
   canManageAllAcademies?: boolean;
   canManagePlatform?: boolean;
+  /** "resource:action" grants from the roles/permissions engine (empty for PLATFORM_OWNER — it bypasses the grid). */
+  granularPermissions: string[];
   profiles: AcademyProfile[];
   profile?: {
     role?:
@@ -117,6 +119,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         currentUser?.canManageAllStores ??
         false;
       const canManagePlatform = currentUser?.canManagePlatform ?? false;
+      const granularPermissions: string[] =
+        currentUser?.granularPermissions ?? [];
 
       const rawProfiles: AcademyProfile[] = (
         currentUser?.availableProfiles ??
@@ -141,6 +145,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         platformLevel: platformLevel,
         canManageAllAcademies: canManageAllAcademies,
         canManagePlatform: canManagePlatform,
+        granularPermissions: granularPermissions,
         profiles: rawProfiles,
         profile: {
           academy_id: academyId,

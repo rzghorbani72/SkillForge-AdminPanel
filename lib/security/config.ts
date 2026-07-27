@@ -4,21 +4,21 @@ import { API_PRODUCTION_DEFAULTS } from '../api-config';
 const LOCAL_HOSTS = ['localhost', '127.0.0.1'] as const;
 
 const DEFAULT_PANEL_HOSTS = [
-  'admin.mentoma.com',
+  'admin.mentoma.ir',
   'admin.mentoma.ir',
   'panel-academy.darkube.ir',
   ...LOCAL_HOSTS
 ] as const;
 
 const DEFAULT_BACKEND_HOSTS = [
-  'api.mentoma.com',
+  'api.mentoma.ir',
   'api.mentoma.ir',
   'api-academy.darkube.ir',
   ...LOCAL_HOSTS
 ] as const;
 
 const DEFAULT_MENTOMA_BASE_DOMAINS = [
-  'mentoma.com',
+  'mentoma.ir',
   'mentoma.ir',
   'darkube.ir'
 ] as const;

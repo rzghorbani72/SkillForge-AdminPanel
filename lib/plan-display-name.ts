@@ -10,9 +10,10 @@ const PLAN_DISPLAY_NAMES_FA: Record<string, string> = {
   starter: 'استارتر',
   growth: 'رشد',
   builder: 'رشد',
-  pro: 'پرو',
-  professional: 'پرو',
-  enterprise: 'سازمانی',
+  business: 'بیزینس',
+  pro: 'بیزینس',
+  professional: 'بیزینس',
+  enterprise: 'بیزینس',
   custom: 'سفارشی'
 };
 

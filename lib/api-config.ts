@@ -7,9 +7,9 @@ export const LEGACY_API_PATH = '/api' as const;
 
 export const API_PRODUCTION_DEFAULTS = {
   browserApiUrl: API_VERSION_PATH,
-  backendApiUrl: 'https://api.mentoma.com/v1',
-  backendOrigin: 'https://api.mentoma.com',
-  panelHost: 'https://admin.mentoma.com'
+  backendApiUrl: 'https://api.mentoma.ir/v1',
+  backendOrigin: 'https://api.mentoma.ir',
+  panelHost: 'https://admin.mentoma.ir'
 } as const;
 
 export const API_DEVELOPMENT_DEFAULTS = {

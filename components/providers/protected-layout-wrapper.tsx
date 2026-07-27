@@ -7,6 +7,7 @@ import { ThemeInitializer } from '@/components/providers/ThemeInitializer';
 import { UserProvider } from '@/components/providers/user-provider';
 import { StoreProvider } from '@/components/providers/store-provider';
 import { LegalConsentGate } from '@/components/legal/legal-consent-gate';
+import { SubscriptionRequiredGate } from '@/components/subscription/subscription-required-gate';
 import { useCategoriesStore } from '@/lib/store';
 import { useI18n } from '@/lib/i18n/provider';
 
@@ -24,6 +25,7 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
   return (
     <StoreProvider>
       <ThemeInitializer />
+      <SubscriptionRequiredGate />
       <div className="flex h-screen overflow-hidden" dir={direction}>
         <Sidebar />
         <main className="flex flex-1 flex-col overflow-hidden">

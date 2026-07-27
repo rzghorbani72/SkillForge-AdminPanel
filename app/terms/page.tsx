@@ -23,6 +23,7 @@ export default async function TermsPage() {
   return (
     <LegalDocumentPage
       document={document}
+      requestedLocale={locale}
       html={markdownToHtml(
         prepareLegalMarkdown(document.body, document.locale)
       )}

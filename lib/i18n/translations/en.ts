@@ -242,7 +242,7 @@ export const en = {
     editPermissions: 'Edit permissions',
     deleteRole: 'Delete role',
     accessDenied: 'Access denied',
-    accessDeniedDescription: 'Only the platform owner can manage roles.',
+    accessDeniedDescription: 'You do not have permission to manage roles.',
     editPermissionsFor: '{{role}} permissions',
     permissionsHint: 'Pick the access level this role has for each area.',
     ownerLockedHint:
@@ -250,15 +250,14 @@ export const en = {
     permissionsSaved: 'Permissions saved',
     createTitle: 'Create a new role',
     createHint: 'Create a custom role with a unique key.',
-    createDisabledHint:
-      'Custom role creation is temporarily disabled while permission enforcement is being rolled out.',
     nameLabel: 'Role key (UPPERCASE)',
     nameInvalid: 'Only uppercase letters, digits and underscore are allowed.',
     labelLabel: 'Display label',
     descriptionLabel: 'Description',
-    levelLabel: 'Access level (0-5)',
+    levelLabel: 'Access level',
     levelHint:
       'Higher level means more authority; level 6 is reserved for the platform owner.',
+    levelCapHint: 'You can create roles up to level {{level}}.',
     roleCreated: 'Role created',
     roleDeleted: 'Role deleted',
     deleteTitle: 'Delete role',
@@ -289,6 +288,10 @@ export const en = {
       theme: 'Theme',
       roles: 'Roles & permissions'
     }
+  },
+  accessControl: {
+    deniedTitle: 'Access denied',
+    deniedDescription: 'You do not have permission to view this page.'
   },
   navigation: {
     rolesPermissions: 'Roles & Permissions',
@@ -410,7 +413,17 @@ export const en = {
     reacceptDescriptionAfter:
       'changed. Review and accept to continue using the panel.',
     acceptAndContinue: 'Accept and continue',
-    accepting: 'Saving acceptance...'
+    accepting: 'Saving acceptance...',
+    agreeByClicking: 'By clicking Accept and continue, you agree to our',
+    notTranslatedNotice:
+      'This document is not translated into your language yet. Showing the English version.'
+  },
+  subscription: {
+    expiredTitle: 'Upgrade to continue',
+    expiredWarning:
+      'Your academy subscription has expired. Renew to restore access — your data is safe.',
+    upgradeCta: 'Upgrade plan',
+    continueViewing: 'Continue viewing'
   },
   legalAdmin: {
     title: 'Legal Documents',
@@ -622,6 +635,9 @@ export const en = {
     academyNamePlaceholder: 'e.g. Digital Design Academy',
     academyUrl: 'Academy URL',
     academyUrlDesc: 'Your academy will be at {url}',
+    slugChecking: 'Checking availability…',
+    slugAvailable: 'This address is available',
+    slugTaken: 'This address is already taken',
     academyDescriptionLabel: 'Description',
     academyDescriptionPlaceholder:
       'What does your academy teach? A brief overview for students…',
@@ -747,6 +763,8 @@ export const en = {
     upgradePlanDesc:
       'Get more storage, more students, and priority support with Pro.',
     upgradePlanCta: 'View Plans',
+    renewPlanTitle: 'Renew Your Subscription',
+    renewPlanDesc: 'Your plan is expiring soon — renew now to keep access.',
     inviteTeamTitle: 'Invite Your Team',
     inviteTeamDesc: 'Add teachers and managers to collaborate on your academy.',
     inviteTeamCta: 'Invite Users',
@@ -843,6 +861,37 @@ export const en = {
     slugTaken: 'This address is already taken',
     slugChecking: 'Checking...',
     slugInvalid: 'Only lowercase letters, numbers, and hyphens allowed',
+    statusSiteDisabled: 'Site disabled',
+    siteReopenAt: 'Reopens automatically at',
+    siteReopenAtHint:
+      'Required. The academy comes back on its own at this time, and every student subscription and course is extended by the paused span. Max 180 days.',
+    siteReopensOn: 'Reopens on',
+    siteDisableTimeReserved:
+      'Students keep the time they paid for — it is extended when the academy reopens. They are notified by SMS and email.',
+    siteStatusTitle: 'Academy site status',
+    siteCurrentlyDisabled:
+      'This academy is offline. Visitors and students see the disabled notice with your contact details.',
+    siteEnableAction: 'Bring the site back online',
+    siteDisableExplain:
+      'While disabled, the academy domain and subdomain show a notice instead of the site. Nothing is deleted and everything returns when you re-enable it.',
+    siteDisableStudentsWarning: 'Students who already paid will lose access.',
+    siteDisableActiveSubscriptions: 'Active subscriptions',
+    siteDisableActiveEnrollments: 'Active enrollments',
+    siteDisableAcknowledge:
+      'I understand these students cannot reach their courses until I re-enable the site.',
+    siteContactEmail: 'Contact email',
+    siteContactPhone: 'Contact phone',
+    siteContactPhoneHint:
+      'The phone is your registered platform number and cannot be edited here — change it in your account. Email is optional.',
+    siteContactPhoneMissing: 'No phone on your account',
+    siteDisableMessage: 'Message for students (optional)',
+    siteDisableMessagePlaceholder: 'e.g. We are closed until September.',
+    siteDisableAction: 'Disable the academy site',
+    siteDisableConfirmTitle: 'Disable the site — are you sure?',
+    siteDisableConfirmBody:
+      'On confirm the academy goes offline immediately; visitors and students see only the disabled notice with your contact details.',
+    siteDisableConfirmAffected: 'Students affected',
+    siteDisableConfirmAction: 'Yes, disable the site',
     mainCategory: 'Main Category',
     shortDescription: 'Short Description',
     shortDescriptionPlaceholder: 'What makes your academy unique?',
@@ -870,6 +919,10 @@ export const en = {
     offeringType: 'Type',
     offeringPrice: 'Price',
     offeringActive: 'Active',
+    offerFromCoursePrice: 'The course own price',
+    offeringAccessDays: 'Access (days)',
+    offeringAccessDaysHint: 'Leave blank for {{days}} days',
+    offeringAccessDaysValue: '{{days}} days',
     noOfferings: 'No offerings yet. Add one so students can buy this course.',
     offeringFREE: 'Free',
     offeringONE_TIME: 'One-time',
@@ -3587,6 +3640,15 @@ export const en = {
     notFound: 'Course not found.',
     backToCourses: 'Back to Courses'
   },
+  subscriptionStatus: {
+    active: 'Active',
+    trial: 'Trial',
+    grace: 'Payment due',
+    expired: 'Expired',
+    inactive: 'No active plan',
+    noPlanTitle: "You don't have an active plan yet",
+    startPlanHint: 'Choose and activate one of the plans below to get started.'
+  },
   sidebar: {
     upgradePlan: 'Upgrade plan',
     upgradeDescription:
@@ -3596,6 +3658,7 @@ export const en = {
     subscriptionExpiring: '{{plan}} plan',
     upgradeButton: 'View plans',
     manageSubscription: 'Manage plan',
+    renewPlan: 'Renew plan',
     currentPlan: '{{plan}} plan',
     managePlanHint: 'View or change your platform subscription',
     platformAdmin: 'Platform Admin',
@@ -3621,12 +3684,14 @@ export const en = {
   plans: {
     title: 'Pricing Plans',
     subtitle:
-      'Choose a plan for your academy or build custom plans for your students',
+      'Choose a plan for your academy or build subscriptions for your students',
     badge: 'Platform',
     monthly: 'Monthly',
     yearly: 'Yearly · 2 months free',
     pricePerMonth: 'Toman / month',
     pricePerYear: 'Toman / year',
+    equivalentPerMonth: 'equivalent to {{price}} Toman / month',
+    yearlyDiscount: '{{percent}}% off',
     choosePlan: 'Choose plan',
     currentPlan: 'Current plan',
     lockedUntilCurrentEnds: 'Available after your current plan ends',
@@ -3653,6 +3718,23 @@ export const en = {
     confirmChangePlan: 'Confirm Plan Change',
     confirmChangePlanDesc:
       'Select a subscription period. The full amount will be charged.',
+    confirmUpgradeDesc:
+      'You are upgrading to a higher plan. Only the difference for the days left on your current plan is charged.',
+    upgradeSummary: 'Upgrade summary',
+    daysRemaining: 'Days left on current plan',
+    daysUnit: 'days',
+    activationDate: 'Activation date',
+    activatesToday: 'Today (takes effect immediately)',
+    expiryUnchanged:
+      'Your expiry date does not change — the better plan applies to the time you already own.',
+    planDiff: 'Plan difference',
+    storageCredit: 'Storage credit',
+    proratedTotal: 'Prorated amount due',
+    youPayLess: 'You pay less than the full price',
+    upgradeWhyLess:
+      'Because the {{days}} days left on your {{plan}} plan are credited, you pay only the difference to the new plan for those days — not their full price.',
+    fullPriceRef: 'Full price for these days on the new plan',
+    confirmUpgrade: 'Confirm upgrade',
     subscriptionPeriod: 'Subscription period',
     totalPrice: 'Total',
     toman: 'Toman',
@@ -3692,26 +3774,31 @@ export const en = {
     saving: 'Saving...',
     teacherNote: 'Contact your academy manager to change the plan.',
     platformPlansTab: 'Platform Plans',
-    academyPlansTab: 'Academy Plans',
+    academyPlansTab: 'Student Subscriptions',
     mySubscriptionTab: 'My Subscription',
     platformTabTitle: 'Platform plan',
     platformTabDescription:
       'Choose or upgrade the subscription plan for this academy',
-    academyTabTitle: 'Student plans',
+    academyTabTitle: 'Student Subscriptions',
     academyTabDescription:
-      'Create plans that your students buy from your academy',
+      'Create subscriptions that your students buy from your academy',
     kindLabel: 'Type',
     kindSubscription: 'Subscription',
     kindPackage: 'Package',
     durationDays: 'Duration (days)',
+    durationPlaceholder: 'e.g. 30',
     descriptionLabel: 'Description',
+    nameLabel: 'Subscription name',
+    namePlaceholder: 'e.g. Monthly Access',
     priceLabel: 'Price',
-    createAcademyPlan: 'Create Plan',
-    editAcademyPlan: 'Edit Plan',
-    noAcademyPlans: 'No plans created yet.',
-    createFirstAcademyPlan: 'Create your first plan',
-    selectAcademyFirst: 'Select an academy context to manage its plans.',
-    subscriptionOnlyDuration: 'Only required for Subscription plans'
+    dialogSubtitle: 'Create a subscription students buy to access your courses',
+    createAcademyPlan: 'Create Subscription',
+    editAcademyPlan: 'Edit Subscription',
+    noAcademyPlans: 'No subscriptions created yet.',
+    createFirstAcademyPlan: 'Create your first subscription',
+    selectAcademyFirst:
+      'Select an academy context to manage its subscriptions.',
+    subscriptionOnlyDuration: 'Only required for subscriptions'
   },
   sitePreview: {
     academyName: 'Your Academy',

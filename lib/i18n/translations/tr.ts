@@ -147,22 +147,21 @@ export const tr = {
     editPermissions: 'İzinleri düzenle',
     deleteRole: 'Rolü sil',
     accessDenied: 'Erişim reddedildi',
-    accessDeniedDescription: 'Rolleri yalnızca platform sahibi yönetebilir.',
+    accessDeniedDescription: 'Rolleri yönetme izniniz yok.',
     editPermissionsFor: '{{role}} izinleri',
     permissionsHint: 'Her alan için bu rolün erişim düzeyini seçin.',
     ownerLockedHint: 'Platform sahibi tam erişime sahiptir ve değiştirilemez.',
     permissionsSaved: 'İzinler kaydedildi',
     createTitle: 'Yeni rol oluştur',
     createHint: 'Benzersiz bir anahtarla özel bir rol oluşturun.',
-    createDisabledHint:
-      'İzin uygulaması tamamen devreye alınana kadar özel rol oluşturma geçici olarak devre dışı.',
     nameLabel: 'Rol anahtarı (BÜYÜK HARF)',
     nameInvalid: 'Yalnızca büyük harf, rakam ve alt çizgi kullanılabilir.',
     labelLabel: 'Görünen etiket',
     descriptionLabel: 'Açıklama',
-    levelLabel: 'Erişim düzeyi (0-5)',
+    levelLabel: 'Erişim düzeyi',
     levelHint:
       'Daha yüksek düzey daha fazla yetki demektir; 6. düzey platform sahibine ayrılmıştır.',
+    levelCapHint: '{{level}} düzeyine kadar rol oluşturabilirsiniz.',
     roleCreated: 'Rol oluşturuldu',
     roleDeleted: 'Rol silindi',
     deleteTitle: 'Rolü sil',
@@ -193,6 +192,10 @@ export const tr = {
       theme: 'Tema',
       roles: 'Roller ve izinler'
     }
+  },
+  accessControl: {
+    deniedTitle: 'Erişim reddedildi',
+    deniedDescription: 'Bu sayfayı görüntüleme izniniz yok.'
   },
   navigation: {
     rolesPermissions: 'Roller ve İzinler',
@@ -280,7 +283,9 @@ export const tr = {
     reacceptDescriptionMiddle: 'veya',
     reacceptDescriptionAfter: 'değişti. Devam etmek için inceleyip kabul edin.',
     acceptAndContinue: 'Kabul et ve devam et',
-    accepting: 'Kabul kaydediliyor...'
+    accepting: 'Kabul kaydediliyor...',
+    notTranslatedNotice:
+      'Bu belge henüz dilinize çevrilmedi. İngilizce sürüm gösteriliyor.'
   },
   auth: {
     login: 'Giriş Yap',
@@ -407,7 +412,8 @@ export const tr = {
     bySigningIn: 'Giriş yaparak şunları kabul edersiniz:',
     togglePasswordVisibility: 'Şifre görünürlüğünü değiştir',
     notAdmin: 'Yönetici değil misiniz?',
-    regularLogin: 'Normal Giriş'
+    regularLogin: 'Normal Giriş',
+    loginTitle: 'Hesabınıza giriş yapın'
   },
   dashboard: {
     title: 'Kontrol Paneli',

@@ -9,11 +9,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { Bell, Loader2 } from 'lucide-react';
 import { apiClient, PanelNotification } from '@/lib/api';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
 export function NotificationBell() {
   const { t } = useTranslation();
+  const { locale } = useLanguage();
   const [open, setOpen] = useState(false);
   const [unread, setUnread] = useState(0);
   const [items, setItems] = useState<PanelNotification[]>([]);
@@ -75,7 +76,9 @@ export function NotificationBell() {
           <Bell className="h-[18px] w-[18px]" />
           {unread > 0 && (
             <span className="absolute end-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground ring-2 ring-background">
-              {unread > 9 ? '9+' : unread}
+              {unread > 9
+                ? `${(9).toLocaleString(locale)}+`
+                : unread.toLocaleString(locale)}
             </span>
           )}
         </button>
@@ -119,7 +122,7 @@ export function NotificationBell() {
                   {n.message}
                 </p>
                 <p className="mt-1 text-[10px] text-muted-foreground">
-                  {new Date(n.created_at).toLocaleString()}
+                  {new Date(n.created_at).toLocaleString(locale)}
                 </p>
               </button>
             ))

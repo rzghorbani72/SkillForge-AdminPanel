@@ -1,10 +1,5 @@
 import { OtpType } from '@/constants/data';
-import {
-  Enrollment,
-  User as UserType,
-  CourseOffering,
-  CourseOfferingInput
-} from '@/types/api';
+import { Enrollment, User as UserType, Offer, OfferInput } from '@/types/api';
 import { toast } from 'react-toastify';
 import { t } from './i18n';
 import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
@@ -73,6 +68,12 @@ export type LegalConsentRequiredDetail = {
   pending: { type: string; title: string; version: string }[];
 };
 
+export const SUBSCRIPTION_REQUIRED_EVENT = 'mentoma:subscription-required';
+
+export type SubscriptionRequiredDetail = {
+  message: string;
+};
+
 export interface AcademyFeatureFlags {
   enrollment_enabled: boolean;
   subscription_enabled: boolean;
@@ -111,8 +112,32 @@ class ApiClient {
 
   constructor() {}
 
+  /** Ensures the expired-subscription warning is dispatched once, not per blocked write. */
+  private subscriptionRequiredNotified = false;
+
   getPauseReason(): ApiPauseReason | null {
     return this.pauseReason;
+  }
+
+  /**
+   * A lapsed academy keeps read-only GET access; only writes get a 402. We surface
+   * that as a dismissible warning + Upgrade CTA (see SubscriptionRequiredGate) instead
+   * of throwing, which would freeze the panel with a dev error overlay.
+   */
+  private notifySubscriptionRequired(message: string): void {
+    if (typeof window === 'undefined' || this.subscriptionRequiredNotified)
+      return;
+    this.subscriptionRequiredNotified = true;
+    window.dispatchEvent(
+      new CustomEvent<SubscriptionRequiredDetail>(SUBSCRIPTION_REQUIRED_EVENT, {
+        detail: { message }
+      })
+    );
+  }
+
+  /** Let the gate re-arm the warning after the manager dismisses it. */
+  clearSubscriptionRequired(): void {
+    this.subscriptionRequiredNotified = false;
   }
 
   /** Clear the pause gate after legal accept (or a full page navigation). */
@@ -507,22 +532,24 @@ class ApiClient {
         throw new Error(errorMessage);
       }
 
-      // Handle payment required (402) - subscription expired/inactive
+      // Handle payment required (402) - subscription expired/inactive.
+      // A lapsed academy stays read-only (GETs still work); only writes 402 here.
+      // Surface a dismissible warning + Upgrade CTA and leave the panel usable,
+      // instead of throwing (freezes the panel) or force-redirecting.
       if (response.status === 402) {
         const rawMsg402 = data && (data.message || data.error);
         const errorMessage =
           (Array.isArray(rawMsg402) ? rawMsg402.join(', ') : rawMsg402) ||
           'Subscription is required to continue.';
-        if (typeof window !== 'undefined') {
-          if (
-            !isAuthFlowEndpoint &&
-            !isAuthPagePath(window.location.pathname)
-          ) {
-            toast.error(errorMessage);
-            if (!window.location.pathname.includes('/settings/academy')) {
-              window.location.href = '/settings/academy';
-            }
-          }
+        if (
+          typeof window !== 'undefined' &&
+          !isAuthFlowEndpoint &&
+          !isAuthPagePath(window.location.pathname)
+        ) {
+          this.notifySubscriptionRequired(errorMessage);
+          // The blocked write is intentionally left unresolved: the caller keeps
+          // its pending state while the gate prompts the manager to upgrade.
+          return new Promise<ApiResponse<T>>(() => {});
         }
         throw new Error(errorMessage);
       }
@@ -922,32 +949,35 @@ class ApiClient {
     return response;
   }
 
-  // ── Course offerings (multi-price-per-course) ──────────────────────────────
-  async getCourseOfferings(courseId: string) {
-    const response = await this.request(
-      `/course-offerings/manage/course/${courseId}`
-    );
-    return (response.data as CourseOffering[]) ?? [];
+  // ── Offers (one purchasable option over one or more courses) ───────────────
+  async getCourseOffers(courseId: string) {
+    const response = await this.request(`/offers/manage/course/${courseId}`);
+    return (response.data as Offer[]) ?? [];
   }
 
-  async createCourseOffering(body: CourseOfferingInput) {
-    const response = await this.request('/course-offerings', {
+  async getAcademyOffers() {
+    const response = await this.request('/offers/manage');
+    return (response.data as Offer[]) ?? [];
+  }
+
+  async createOffer(body: OfferInput) {
+    const response = await this.request('/offers', {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    return response.data as CourseOffering;
+    return response.data as Offer;
   }
 
-  async updateCourseOffering(id: string, body: Partial<CourseOfferingInput>) {
-    const response = await this.request(`/course-offerings/${id}`, {
+  async updateOffer(id: string, body: Partial<OfferInput>) {
+    const response = await this.request(`/offers/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(body)
     });
-    return response.data as CourseOffering;
+    return response.data as Offer;
   }
 
-  async deleteCourseOffering(id: string) {
-    await this.request(`/course-offerings/${id}`, { method: 'DELETE' });
+  async deleteOffer(id: string) {
+    await this.request(`/offers/${id}`, { method: 'DELETE' });
   }
 
   async getSupportAccessLogs(params?: {
@@ -1217,6 +1247,23 @@ class ApiClient {
     return (res as any)?.data ?? res;
   }
 
+  async getAcademySiteStatus(): Promise<AcademySiteStatusData> {
+    const response = await this.request('/academies/current/site-status');
+    const payload = response.data as any;
+    return (payload?.data ?? payload) as AcademySiteStatusData;
+  }
+
+  async disableAcademySite(payload: DisableAcademySitePayload) {
+    return this.request('/academies/current/site/disable', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async enableAcademySite() {
+    return this.request('/academies/current/site/enable', { method: 'POST' });
+  }
+
   async createAcademy(storeData: {
     name: string;
     private_domain: string;
@@ -1341,6 +1388,68 @@ class ApiClient {
         total_amount_irr: number;
         storage_usage_gb: number;
       };
+      [key: string]: unknown;
+    };
+  }
+
+  /**
+   * What switching to a higher plan costs right now: the prorated diff over the
+   * days still owned, plus the storage-quota credit. No commitment — this is a
+   * read-only quote the confirm dialog shows before the manager upgrades.
+   */
+  async getAcademyUpgradeQuote(planSlug: string): Promise<AcademyUpgradeQuote> {
+    const response = await this.request(
+      `/academies/current/subscription/upgrade-quote?plan=${encodeURIComponent(planSlug)}`
+    );
+    const payload = response.data as { data?: AcademyUpgradeQuote };
+    return (payload?.data ?? payload) as AcademyUpgradeQuote;
+  }
+
+  /**
+   * Applies the plan switch priced by {@link getAcademyUpgradeQuote}. When
+   * the prorated diff is greater than zero, this INITIATES gateway checkout
+   * (mirrors renew) and the plan does not change until that payment verifies
+   * — it never applies on initiate, so a manager can't end up on a higher
+   * plan without ever paying for it.
+   */
+  async upgradeCurrentAcademyPlan(
+    planSlug: string,
+    options?: {
+      callback_url?: string;
+      provider?: 'SAMAN_SEP' | 'MELLAT_BP';
+    }
+  ): Promise<{
+    academy?: unknown;
+    payment_id?: string;
+    redirect_url?: string;
+    amount?: number;
+    provider?: string;
+    needs_gateway_selection?: boolean;
+    available_gateways?: Array<{
+      provider: string;
+      display_name: string;
+    }>;
+    [key: string]: unknown;
+  }> {
+    const response = await this.request(
+      '/academies/current/subscription/upgrade',
+      {
+        method: 'POST',
+        body: JSON.stringify({ plan_slug: planSlug, ...options })
+      }
+    );
+    const payload = response.data as { data?: Record<string, unknown> };
+    return (payload?.data ?? payload) as {
+      academy?: unknown;
+      payment_id?: string;
+      redirect_url?: string;
+      amount?: number;
+      provider?: string;
+      needs_gateway_selection?: boolean;
+      available_gateways?: Array<{
+        provider: string;
+        display_name: string;
+      }>;
       [key: string]: unknown;
     };
   }
@@ -4770,12 +4879,21 @@ class ApiClient {
     return [];
   }
 
-  // No auth guard — safe for MANAGER / TEACHER
-  async getActivePlans() {
-    const res = await this.request<SubscriptionPlanData[]>(
-      '/platform-settings/plans/active'
-    );
-    return (res.data as any)?.data ?? res.data;
+  // No auth guard — safe for MANAGER / TEACHER. Backend returns the public
+  // pricing-page shape (no id, Toman-suffixed fields), so normalize it into
+  // SubscriptionPlanData here — the single place callers need to know about
+  // that difference.
+  async getActivePlans(): Promise<SubscriptionPlanData[]> {
+    const res = await this.request<
+      PublicSubscriptionPlanData[] | { data?: PublicSubscriptionPlanData[] }
+    >('/platform-settings/plans/active');
+    const body = res.data;
+    const list = Array.isArray(body)
+      ? body
+      : Array.isArray(body?.data)
+        ? body.data
+        : [];
+    return list.map(mapPublicPlanToSubscriptionPlan);
   }
 
   async createSubscriptionPlan(
@@ -4959,13 +5077,13 @@ class ApiClient {
   // Payment Plans
   // -------------------------------------------------------------------------
 
-  async getPaymentPlans(courseId: number) {
+  async getPaymentPlans(courseId: string) {
     const res = await this.request<any>(`/payment-plans/courses/${courseId}`);
     return (res.data as any)?.data ?? res.data;
   }
 
   async createPaymentPlan(
-    courseId: number,
+    courseId: string,
     data: {
       installment_count: number;
       amount_per_installment: number;
@@ -4980,7 +5098,7 @@ class ApiClient {
   }
 
   async updatePaymentPlan(
-    id: number,
+    id: string,
     data: Partial<{
       is_active: boolean;
       amount_per_installment: number;
@@ -4997,60 +5115,6 @@ class ApiClient {
   // -------------------------------------------------------------------------
   // Bundles
   // -------------------------------------------------------------------------
-
-  async getBundles(params?: {
-    academy_id?: number;
-    page?: number;
-    limit?: number;
-  }) {
-    const qs = new URLSearchParams();
-    if (params)
-      Object.entries(params).forEach(([k, v]) => {
-        if (v !== undefined) qs.append(k, String(v));
-      });
-    const res = await this.request<any>(
-      `/bundles${qs.toString() ? `?${qs}` : ''}`
-    );
-    return (res.data as any)?.data ?? res.data;
-  }
-
-  async getBundle(id: number) {
-    const res = await this.request<any>(`/bundles/${id}`);
-    return (res.data as any)?.data ?? res.data;
-  }
-
-  async createBundle(data: {
-    academy_id: number;
-    title: string;
-    slug: string;
-    price: number;
-    course_ids: number[];
-    description?: string;
-  }) {
-    const res = await this.request<any>('/bundles', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-    return (res.data as any)?.data ?? res.data;
-  }
-
-  async updateBundle(
-    id: number,
-    data: Partial<{
-      title: string;
-      slug: string;
-      price: number;
-      course_ids: number[];
-      description: string;
-      is_active: boolean;
-    }>
-  ) {
-    const res = await this.request<any>(`/bundles/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
-    return (res.data as any)?.data ?? res.data;
-  }
 
   // -------------------------------------------------------------------------
   // Refunds
@@ -5390,6 +5454,30 @@ export interface StructuredPlanLimits {
   videos: number;
 }
 
+export interface AcademySiteStatusData {
+  disabled: boolean;
+  disabled_at: string | null;
+  disabled_until: string | null;
+  message: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  /** Manager's registered platform phone — what students see; not editable. */
+  default_contact_phone: string | null;
+  open_obligations: {
+    active_subscriptions: number;
+    active_enrollments: number;
+    total: number;
+  };
+}
+
+export interface DisableAcademySitePayload {
+  /** Required: when the academy reopens by itself (ISO string). */
+  disabled_until: string;
+  message?: string;
+  contact_email?: string;
+  acknowledge_obligations?: boolean;
+}
+
 export interface SubscriptionPlanData {
   id: string;
   name: string;
@@ -5406,6 +5494,72 @@ export interface SubscriptionPlanData {
   annual_months_included?: number | null;
   created_at: string;
   updated_at: string;
+}
+
+// Prorated upgrade quote from `/academies/current/subscription/upgrade-quote`.
+// Amounts ending in `_toman` mirror the manager-facing Toman prices; `_toman`
+// can be negative for storage credit but `amount_toman` is floored at zero.
+export interface AcademyUpgradeQuote {
+  fromSlug: string;
+  toSlug: string;
+  remainingDays: number;
+  isDowngrade: boolean;
+  expiresAt: string | null;
+  storage_usage_gb: number;
+  amount_toman: number;
+  plan_amount_toman: number;
+  storage_amount_toman: number;
+  target_full_period_toman: number;
+  target_plan: {
+    slug: string;
+    name: string;
+    price_monthly_toman: number;
+    storage_gb: number;
+  };
+}
+
+// Shape of the public, unauthenticated `/platform-settings/plans/active`
+// pricing-page endpoint (see Backend PublicPlan). It has no `id`/`sort_order`
+// and uses Toman-suffixed field names — never assume it matches
+// SubscriptionPlanData without going through mapPublicPlanToSubscriptionPlan.
+export interface PublicSubscriptionPlanData {
+  slug: string;
+  name: string;
+  price_monthly_toman: number;
+  price_yearly_toman: number | null;
+  storage_gb: number;
+  limits: StructuredPlanLimits;
+  features: string[];
+  is_most_popular: boolean;
+  annual_months_included: number;
+  commission_rate: number;
+}
+
+// Public plans only ever come back active and pre-sorted by the backend, so
+// the array index doubles as sort_order and is_active is always true.
+// created_at/updated_at aren't part of the public shape; they're unused by
+// every screen that consumes this normalized data, so they're left blank.
+function mapPublicPlanToSubscriptionPlan(
+  plan: PublicSubscriptionPlanData,
+  index: number
+): SubscriptionPlanData {
+  return {
+    id: plan.slug,
+    name: plan.name,
+    slug: plan.slug,
+    price_monthly: plan.price_monthly_toman,
+    price_yearly: plan.price_yearly_toman,
+    commission_rate: plan.commission_rate,
+    storage_limit_gb: plan.storage_gb,
+    features: plan.features,
+    is_active: true,
+    sort_order: index,
+    limits: plan.limits,
+    is_most_popular: plan.is_most_popular,
+    annual_months_included: plan.annual_months_included,
+    created_at: '',
+    updated_at: ''
+  };
 }
 
 export interface SupportInboxQuery {

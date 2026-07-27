@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle
@@ -13,15 +14,7 @@ import { Input } from '@/components/ui/input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
 import { AcademyPlanData, AcademyPlanFormData } from './plan-types';
-import { MESSAGES } from '@/constants/messages';
 
 interface Props {
   open: boolean;
@@ -53,38 +46,16 @@ export function AcademyPlanFormDialog({
               ? t('plans.editAcademyPlan')
               : t('plans.createAcademyPlan')}
           </DialogTitle>
+          <DialogDescription>{t('plans.dialogSubtitle')}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-1.5">
-            <Label>{t('plans.kindLabel')}</Label>
-            <Select
-              value={form.kind}
-              onValueChange={(v) =>
-                onChange('kind', v as 'SUBSCRIPTION' | 'PACKAGE')
-              }
-              disabled={!!editingPlan}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SUBSCRIPTION">
-                  {t('plans.kindSubscription')}
-                </SelectItem>
-                <SelectItem value="PACKAGE">
-                  {t('plans.kindPackage')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label>{MESSAGES.planForm.name}</Label>
+            <Label>{t('plans.nameLabel')}</Label>
             <Input
               value={form.name}
               onChange={(e) => onChange('name', e.target.value)}
-              placeholder="e.g. Monthly Access"
+              placeholder={t('plans.namePlaceholder')}
             />
           </div>
 
@@ -105,18 +76,16 @@ export function AcademyPlanFormDialog({
                 onChange={(raw) => onChange('price', raw)}
               />
             </div>
-            {form.kind === 'SUBSCRIPTION' && (
-              <div className="space-y-1.5">
-                <Label>{t('plans.durationDays')}</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  value={form.duration_days}
-                  onChange={(e) => onChange('duration_days', e.target.value)}
-                  placeholder="e.g. 30"
-                />
-              </div>
-            )}
+            <div className="space-y-1.5">
+              <Label>{t('plans.durationDays')}</Label>
+              <Input
+                type="number"
+                min="1"
+                value={form.duration_days}
+                onChange={(e) => onChange('duration_days', e.target.value)}
+                placeholder={t('plans.durationPlaceholder')}
+              />
+            </div>
           </div>
 
           {editingPlan && (

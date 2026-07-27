@@ -21,6 +21,7 @@ import {
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
+import type { Offer } from '@/types/api';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
@@ -46,18 +47,9 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Course = { id: number; title: string; price: number; slug: string };
-type Bundle = {
-  id: number;
-  title: string;
-  slug: string;
-  price: number;
-  description?: string;
-  is_active: boolean;
-  academy_id: number;
-  Courses?: Array<{ Course: Course }>;
-  courses?: Course[];
-};
+type Course = { id: string; title: string; price: number; slug: string };
+// A bundle is simply an Offer that unlocks several courses at one price.
+type Bundle = Offer & { courses?: Course[] };
 
 // ─── Schema (no academy_id — derived from context) ───────────────────────────
 
@@ -92,8 +84,8 @@ function CourseMultiSelect({
   formatCurrency
 }: {
   courses: Course[];
-  selected: number[];
-  onChange: (ids: number[]) => void;
+  selected: string[];
+  onChange: (ids: string[]) => void;
   t: (k: string) => string;
   formatCurrency: (n: number) => string;
 }) {
@@ -107,7 +99,7 @@ function CourseMultiSelect({
   const selectedCourses = courses.filter((c) => selected.includes(c.id));
   const originalTotal = selectedCourses.reduce((s, c) => s + (c.price ?? 0), 0);
 
-  function toggle(id: number) {
+  function toggle(id: string) {
     onChange(
       selected.includes(id)
         ? selected.filter((x) => x !== id)
@@ -341,7 +333,7 @@ export default function BundlesPage() {
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Bundle | null>(null);
-  const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([]);
+  const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
   const form = useForm<FormValues>({
@@ -361,12 +353,10 @@ export default function BundlesPage() {
   async function loadBundles() {
     setLoadingBundles(true);
     try {
-      const data = await apiClient.getBundles(
-        academyId ? { academy_id: academyId } : undefined
-      );
-      setBundles(
-        Array.isArray(data) ? data : (data?.bundles ?? data?.data ?? [])
-      );
+      const data = await apiClient.getAcademyOffers();
+      // Single-course offers are managed on the course itself; this page is the
+      // bundle view, so it only lists offers that span more than one course.
+      setBundles(data.filter((o) => (o.Courses?.length ?? 0) > 1));
     } catch {
       toast.error(t('common.error'));
     } finally {
@@ -412,8 +402,8 @@ export default function BundlesPage() {
       [];
     setSelectedCourseIds(existing);
     form.reset({
-      title: bundle.title,
-      slug: bundle.slug,
+      title: bundle.title ?? '',
+      slug: bundle.slug ?? '',
       price: bundle.price,
       description: bundle.description ?? ''
     });
@@ -432,14 +422,16 @@ export default function BundlesPage() {
     setSaving(true);
     try {
       const payload = {
-        ...values,
-        academy_id: academyId,
+        title: values.title,
+        slug: values.slug,
+        description: values.description,
+        price: values.price,
         course_ids: selectedCourseIds
       };
       if (editTarget) {
-        await apiClient.updateBundle(editTarget.id, payload);
+        await apiClient.updateOffer(editTarget.id, payload);
       } else {
-        await apiClient.createBundle(payload);
+        await apiClient.createOffer({ ...payload, type: 'ONE_TIME' });
       }
       toast.success(t('common.success'));
       setDialogOpen(false);
@@ -453,7 +445,7 @@ export default function BundlesPage() {
 
   async function toggleActive(bundle: Bundle) {
     try {
-      await apiClient.updateBundle(bundle.id, { is_active: !bundle.is_active });
+      await apiClient.updateOffer(bundle.id, { is_active: !bundle.is_active });
       loadBundles();
     } catch {
       toast.error(t('common.error'));

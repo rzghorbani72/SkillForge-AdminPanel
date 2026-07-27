@@ -9,7 +9,7 @@ import { LanguageSync } from '@/components/providers/language-sync';
 import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
 
 export const metadata: Metadata = {
-  title: 'منتوما | mentoma.com',
+  title: 'منتوما | mentoma.ir',
   description: 'پنل مدیریت منتوما — مدیریت آکادمی‌ها، دوره‌ها و دانشجویان',
   robots: { index: false, follow: false }
 };
@@ -27,14 +27,26 @@ export default async function RootLayout({
   const direction = getAdminDirection(languagePreference, null);
   const irDomain = process.env.NEXT_PUBLIC_IR_DOMAIN?.trim();
   const comDomain = process.env.NEXT_PUBLIC_COM_DOMAIN?.trim();
+  const distinctMarkets =
+    irDomain && comDomain
+      ? new URL(irDomain).hostname.toLowerCase() !==
+        new URL(comDomain).hostname.toLowerCase()
+      : Boolean(comDomain);
 
   return (
-    <html lang={language} dir={direction} suppressHydrationWarning>
+    <html
+      lang={language}
+      dir={direction}
+      translate="no"
+      className="notranslate"
+      suppressHydrationWarning
+    >
       <head>
+        <meta name="google" content="notranslate" />
         {irDomain ? (
           <link rel="alternate" hrefLang="fa-IR" href={irDomain} />
         ) : null}
-        {comDomain ? (
+        {distinctMarkets && comDomain ? (
           <>
             <link rel="alternate" hrefLang="en" href={comDomain} />
             <link rel="alternate" hrefLang="x-default" href={comDomain} />

@@ -33,12 +33,17 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
+import type { AcademyUpgradeQuote } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { cn } from '@/lib/utils';
 import { AcademySubscriptionState } from '@/hooks/use-academy-subscription';
+import {
+  getSubscriptionStatusDisplay,
+  SUBSCRIPTION_TONE_CLASSES
+} from '@/lib/subscription-status';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
 import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoices-list';
@@ -54,7 +59,8 @@ import {
   DEFAULT_ACADEMY_PLAN_FORM,
   PERIOD_OPTIONS,
   formatPrice,
-  formatStorage
+  formatStorage,
+  planFeatureList
 } from '@/components/plans/plan-types';
 
 export default function PlansPage() {
@@ -98,6 +104,13 @@ export default function PlansPage() {
     useState<SubscriptionPlanData | null>(null);
   const [selectedMonths, setSelectedMonths] = useState<number>(1);
   const [isChanging, setIsChanging] = useState(false);
+  // Present only when the selected plan is an UPGRADE (active paid plan → higher
+  // tier): its presence switches the dialog from full-price purchase to the
+  // prorated diff.
+  const [upgradeQuote, setUpgradeQuote] = useState<AcademyUpgradeQuote | null>(
+    null
+  );
+  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
   const [selectedGateway, setSelectedGateway] = useState<
     'SAMAN_SEP' | 'MELLAT_BP' | null
   >(null);
@@ -268,6 +281,26 @@ export default function PlansPage() {
     setSelectedGateway(null);
     setAvailableGateways([]);
     setNeedsGatewaySelection(false);
+    setUpgradeQuote(null);
+
+    // Upgrading from an active paid plan to a higher tier is a prorated diff,
+    // not a full purchase — fetch the quote so the dialog can show it.
+    const isUpgrade =
+      hasActivePaidPlan &&
+      !!currentPlan &&
+      plan.sort_order > currentPlan.sort_order;
+    if (isUpgrade) void loadUpgradeQuote(plan.slug);
+  }
+
+  async function loadUpgradeQuote(planSlug: string) {
+    try {
+      setIsQuoteLoading(true);
+      setUpgradeQuote(await apiClient.getAcademyUpgradeQuote(planSlug));
+    } catch (e) {
+      ErrorHandler.handleApiError(e);
+    } finally {
+      setIsQuoteLoading(false);
+    }
   }
 
   function callbackUrlForProvider(provider: 'SAMAN_SEP' | 'MELLAT_BP'): string {
@@ -279,6 +312,87 @@ export default function PlansPage() {
 
   async function handleChangePlan() {
     if (!selectingPlan) return;
+
+    // Upgrade path: charge only the prorated diff, keeping the current
+    // expiry. When money is owed this goes through the same gateway checkout
+    // as a renewal below — the plan only switches once that payment verifies,
+    // never on confirm, so a manager can't end up on a higher plan for free.
+    if (upgradeQuote) {
+      try {
+        setIsChanging(true);
+
+        let provider = selectedGateway;
+        if (!provider) {
+          const probe = await apiClient.upgradeCurrentAcademyPlan(
+            selectingPlan.slug,
+            { callback_url: `${window.location.origin}/payment/saman-callback` }
+          );
+
+          if (probe.redirect_url) {
+            window.location.href = probe.redirect_url;
+            return;
+          }
+
+          if (
+            probe.needs_gateway_selection &&
+            probe.available_gateways?.length
+          ) {
+            setAvailableGateways(probe.available_gateways);
+            if (probe.available_gateways.length === 1) {
+              provider = probe.available_gateways[0].provider as
+                | 'SAMAN_SEP'
+                | 'MELLAT_BP';
+              setSelectedGateway(provider);
+            } else {
+              setNeedsGatewaySelection(true);
+              return;
+            }
+          } else {
+            // Zero-cost plan change (downgrade, or fully absorbed by storage
+            // credit) — nothing to pay, already applied.
+            setSelectingPlan(null);
+            setUpgradeQuote(null);
+            setNeedsGatewaySelection(false);
+            setAvailableGateways([]);
+            await fetchSubscriptionPlans();
+            return;
+          }
+        }
+
+        if (!provider) {
+          setNeedsGatewaySelection(true);
+          return;
+        }
+
+        const result = await apiClient.upgradeCurrentAcademyPlan(
+          selectingPlan.slug,
+          { provider, callback_url: callbackUrlForProvider(provider) }
+        );
+
+        if (result.needs_gateway_selection && result.available_gateways) {
+          setNeedsGatewaySelection(true);
+          setAvailableGateways(result.available_gateways);
+          return;
+        }
+
+        if (result.redirect_url) {
+          window.location.href = result.redirect_url;
+          return;
+        }
+
+        setSelectingPlan(null);
+        setUpgradeQuote(null);
+        setNeedsGatewaySelection(false);
+        setAvailableGateways([]);
+        await fetchSubscriptionPlans();
+      } catch (e) {
+        ErrorHandler.handleApiError(e);
+      } finally {
+        setIsChanging(false);
+      }
+      return;
+    }
+
     try {
       setIsChanging(true);
 
@@ -434,11 +548,25 @@ export default function PlansPage() {
         (p) => p.slug === currentPlanSlug || p.name === currentPlanSlug
       )
     : null;
-  // A plan is only "paid" once its subscription is ACTIVE. While it is
-  // active, only higher-tier (upper) plans may be selected; the current
-  // and lower tiers unlock again once this subscription ends.
-  const hasActivePaidPlan = currentSub?.status === 'ACTIVE' && !!currentPlan;
+  // Three states: no plan, free trial (ACTIVE but never paid), and a real paid
+  // plan. Only the paid one is a prorated UPGRADE — a trial or no plan buys at
+  // full price. `has_paid` (from the backend) is the deciding flag, NOT the
+  // ACTIVE status, which a trial also has. While on a paid plan only higher
+  // tiers may be selected; current/lower tiers unlock once it ends.
+  const hasActivePaidPlan =
+    currentSub?.status === 'ACTIVE' &&
+    currentSub?.has_paid === true &&
+    !!currentPlan;
   const popularIndex = Math.floor(plans.length / 2);
+  // Recommended is fixed on the popular tier; selection is a click-to-compare
+  // highlight that only one card holds at a time (defaults to the current
+  // plan, else the recommended one) — mirroring the public pricing page.
+  const recommendedSlug = plans[popularIndex]?.slug ?? null;
+  const [selectedCardSlug, setSelectedCardSlug] = useState<string | null>(null);
+  useEffect(() => {
+    if (selectedCardSlug || plans.length === 0) return;
+    setSelectedCardSlug(currentPlanSlug ?? recommendedSlug);
+  }, [selectedCardSlug, plans.length, currentPlanSlug, recommendedSlug]);
   const newestPaidInvoiceId = (currentSub?.invoices ?? [])
     .filter((invoice) => invoice.status === 'PAID')
     .reduce((newest, invoice) => Math.max(newest, invoice.id), 0);
@@ -526,7 +654,7 @@ export default function PlansPage() {
         open={!!deletingAcademyPlan}
         onOpenChange={(o) => !o && setDeletingAcademyPlan(null)}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" dir="rtl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-destructive" />
@@ -559,7 +687,7 @@ export default function PlansPage() {
 
   if (isPlatformAdminUser) {
     return (
-      <div className="fade-in-up flex-1 space-y-6 p-6">
+      <div className="fade-in-up flex-1 space-y-6 p-6" dir="rtl">
         <div>
           <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
             {t('plans.badge')}
@@ -607,7 +735,7 @@ export default function PlansPage() {
           open={!!deletingPlan}
           onOpenChange={(o) => !o && setDeletingPlan(null)}
         >
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md" dir="rtl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-destructive" />
@@ -640,7 +768,7 @@ export default function PlansPage() {
 
   // Manager / Academy Admin View
   return (
-    <div className="fade-in-up flex-1 space-y-6 p-6">
+    <div className="fade-in-up flex-1 space-y-6 p-6" dir="rtl">
       <div>
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
           {t('plans.badge')}
@@ -696,10 +824,18 @@ export default function PlansPage() {
               </p>
             </div>
           ) : (
-            <div className="stagger-children grid gap-5 sm:grid-cols-3">
+            <div
+              dir="rtl"
+              className="stagger-children grid items-stretch gap-5 pt-3 sm:grid-cols-3"
+            >
               {plans.map((plan, i) => {
                 const isPopular = i === popularIndex && plans.length >= 2;
-                const isCurrent = currentPlan?.id === plan.id;
+                // Only a genuinely PAID plan is "current" (locked). During a
+                // free trial the academy sits on a plan it hasn't paid for, so
+                // every tier — including that one — stays buyable at full price
+                // to convert the trial into a paid subscription.
+                const isCurrent =
+                  hasActivePaidPlan && currentPlan?.id === plan.id;
                 // While the current plan is actively paid, only upper
                 // (higher-tier) plans can be selected for upgrade; the
                 // current and lower tiers unlock once it ends.
@@ -716,12 +852,14 @@ export default function PlansPage() {
                   <SubscriptionPlanCard
                     key={plan.id}
                     plan={plan}
-                    isPopular={isPopular}
+                    isRecommended={isPopular}
+                    isSelected={selectedCardSlug === plan.slug}
                     isCurrent={isCurrent}
                     isLocked={isLocked}
                     price={price}
                     period={period}
                     canSelect={canManagePlan}
+                    onCardSelect={() => setSelectedCardSlug(plan.slug)}
                     onSelect={() =>
                       !isCurrent && !isLocked && openSelectPlan(plan)
                     }
@@ -772,11 +910,13 @@ export default function PlansPage() {
 
       {selectingPlan && (
         <Dialog open onOpenChange={(o) => !o && setSelectingPlan(null)}>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md" dir="rtl">
             <DialogHeader>
               <DialogTitle>{t('plans.confirmChangePlan')}</DialogTitle>
               <DialogDescription>
-                {t('plans.confirmChangePlanDesc')}
+                {upgradeQuote || isQuoteLoading
+                  ? t('plans.confirmUpgradeDesc')
+                  : t('plans.confirmChangePlanDesc')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-5 py-2">
@@ -790,37 +930,50 @@ export default function PlansPage() {
                   {t('plans.pricePerMonth')}
                 </p>
               </div>
-              <div className="space-y-2">
-                <Label>{t('plans.subscriptionPeriod')}</Label>
-                <div className="grid grid-cols-4 gap-2">
-                  {PERIOD_OPTIONS.map(({ months, key }) => (
-                    <button
-                      key={months}
-                      type="button"
-                      onClick={() => setSelectedMonths(months)}
-                      className={cn(
-                        'rounded-xl border px-2 py-2.5 text-sm font-medium transition-all duration-150',
-                        selectedMonths === months
-                          ? 'border-primary bg-primary/5 text-primary'
-                          : 'border-border bg-card text-foreground hover:border-primary/40'
-                      )}
-                    >
-                      {t(`plans.${key}` as Parameters<typeof t>[0])}
-                    </button>
-                  ))}
+
+              {isQuoteLoading ? (
+                <div className="flex justify-center py-6">
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                 </div>
-              </div>
-              <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3">
-                <span className="text-sm font-medium">
-                  {t('plans.totalPrice')}
-                </span>
-                <span className="font-mono text-xl font-bold">
-                  {formatPrice(selectingPlan.price_monthly * selectedMonths)}{' '}
-                  <span className="text-sm font-normal text-muted-foreground">
-                    {t('plans.toman')}
-                  </span>
-                </span>
-              </div>
+              ) : upgradeQuote ? (
+                <UpgradeSummary quote={upgradeQuote} t={t} />
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label>{t('plans.subscriptionPeriod')}</Label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {PERIOD_OPTIONS.map(({ months, key }) => (
+                        <button
+                          key={months}
+                          type="button"
+                          onClick={() => setSelectedMonths(months)}
+                          className={cn(
+                            'rounded-xl border px-2 py-2.5 text-sm font-medium transition-all duration-150',
+                            selectedMonths === months
+                              ? 'border-primary bg-primary/5 text-primary'
+                              : 'border-border bg-card text-foreground hover:border-primary/40'
+                          )}
+                        >
+                          {t(`plans.${key}` as Parameters<typeof t>[0])}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3">
+                    <span className="text-sm font-medium">
+                      {t('plans.totalPrice')}
+                    </span>
+                    <span className="text-xl font-bold">
+                      {formatPrice(
+                        selectingPlan.price_monthly * selectedMonths
+                      )}{' '}
+                      <span className="text-sm font-normal text-muted-foreground">
+                        {t('plans.toman')}
+                      </span>
+                    </span>
+                  </div>
+                </>
+              )}
               {(needsGatewaySelection || availableGateways.length > 1) && (
                 <div className="space-y-2">
                   <Label>{t('plans.selectGateway')}</Label>
@@ -858,6 +1011,7 @@ export default function PlansPage() {
                 onClick={handleChangePlan}
                 disabled={
                   isChanging ||
+                  isQuoteLoading ||
                   (needsGatewaySelection &&
                     availableGateways.length > 1 &&
                     !selectedGateway)
@@ -866,7 +1020,9 @@ export default function PlansPage() {
                 {isChanging && (
                   <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 )}
-                {t('plans.confirmChange')}
+                {upgradeQuote
+                  ? t('plans.confirmUpgrade')
+                  : t('plans.confirmChange')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -879,6 +1035,83 @@ export default function PlansPage() {
 }
 
 // ── Sub-components ───────────────────────────────────────────────────────────
+
+function UpgradeSummary({
+  quote,
+  t
+}: {
+  quote: AcademyUpgradeQuote;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}) {
+  const today = new Date().toLocaleDateString('fa-IR');
+  const hasStorageCredit = quote.storage_amount_toman !== 0;
+  return (
+    <div className="space-y-3">
+      <div className="rounded-xl border border-success/30 bg-success/5 p-3.5 text-sm">
+        <p className="font-semibold text-success">{t('plans.youPayLess')}</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          {t('plans.upgradeWhyLess', {
+            days: quote.remainingDays,
+            plan: getPlanDisplayName(quote.fromSlug) ?? quote.fromSlug
+          })}
+        </p>
+      </div>
+
+      <div className="rounded-xl border bg-muted/30 p-4 text-sm">
+        <div className="flex items-center justify-between py-1">
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            {t('plans.daysRemaining')}
+          </span>
+          <span className="font-semibold">
+            {quote.remainingDays.toLocaleString('fa-IR')} {t('plans.daysUnit')}
+          </span>
+        </div>
+        <div className="flex items-center justify-between py-1">
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <Zap className="h-3.5 w-3.5" />
+            {t('plans.activationDate')}
+          </span>
+          <span className="font-semibold">{today}</span>
+        </div>
+      </div>
+
+      <div className="space-y-1.5 rounded-xl border bg-muted/30 p-4 text-sm">
+        <div className="flex items-center justify-between text-muted-foreground">
+          <span>{t('plans.fullPriceRef')}</span>
+          <span className="line-through">
+            {formatPrice(quote.target_full_period_toman)} {t('plans.toman')}
+          </span>
+        </div>
+        <div className="flex items-center justify-between text-muted-foreground">
+          <span>{t('plans.planDiff')}</span>
+          <span>
+            {formatPrice(quote.plan_amount_toman)} {t('plans.toman')}
+          </span>
+        </div>
+        {hasStorageCredit && (
+          <div className="flex items-center justify-between text-success">
+            <span>{t('plans.storageCredit')}</span>
+            <span>
+              − {formatPrice(Math.abs(quote.storage_amount_toman))}{' '}
+              {t('plans.toman')}
+            </span>
+          </div>
+        )}
+        <div className="mt-1 flex items-center justify-between border-t pt-2 font-bold">
+          <span>{t('plans.proratedTotal')}</span>
+          <span className="text-lg">
+            {formatPrice(quote.amount_toman)} {t('plans.toman')}
+          </span>
+        </div>
+      </div>
+
+      <p className="text-xs text-muted-foreground">
+        {t('plans.expiryUnchanged')}
+      </p>
+    </div>
+  );
+}
 
 function BillingPeriodToggle({
   period,
@@ -922,6 +1155,44 @@ function CurrentSubscriptionBanner({
   if (!currentSub?.academy) return null;
   const expiresAt = currentSub.academy.subscription_expires;
   const storageUsedGb = currentSub.storage?.usage_gb;
+  const display = getSubscriptionStatusDisplay(
+    currentSub.status,
+    currentSub.is_trial
+  );
+
+  // Never selected/paid a plan: the `starter` value is only a DB default, not a
+  // real subscription, so we must NOT render it as a plan (name, crown, quota).
+  // Show a neutral "no plan yet — pick one below" state instead.
+  if (currentSub.status === 'INACTIVE') {
+    return (
+      <div className="rounded-2xl border bg-muted/30 p-5">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
+            <Crown className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-semibold">
+                {t('subscriptionStatus.noPlanTitle')}
+              </p>
+              <span
+                className={cn(
+                  'inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium',
+                  SUBSCRIPTION_TONE_CLASSES.inactive
+                )}
+              >
+                {t('subscriptionStatus.inactive')}
+              </span>
+            </div>
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              {t('subscriptionStatus.startPlanHint')}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -938,14 +1209,10 @@ function CurrentSubscriptionBanner({
               <span
                 className={cn(
                   'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium',
-                  currentSub.status === 'ACTIVE'
-                    ? 'bg-success/10 text-success'
-                    : 'bg-destructive/10 text-destructive'
+                  SUBSCRIPTION_TONE_CLASSES[display.tone]
                 )}
               >
-                {currentSub.status === 'ACTIVE'
-                  ? t('plans.subscriptionActive')
-                  : t('plans.subscriptionExpired')}
+                {t(display.labelKey)}
               </span>
               {expiresAt && (
                 <span className="flex items-center gap-1">
@@ -955,6 +1222,11 @@ function CurrentSubscriptionBanner({
                 </span>
               )}
             </div>
+            {display.needsPlan && (
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                {t('subscriptionStatus.startPlanHint')}
+              </p>
+            )}
           </div>
         </div>
 
@@ -962,7 +1234,7 @@ function CurrentSubscriptionBanner({
           <div className="flex gap-5 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">
               <HardDrive className="h-4 w-4" />
-              <span className="font-mono font-semibold text-foreground">
+              <span className="font-semibold text-foreground">
                 {formatStorage(storageUsedGb)}
               </span>
               <span className="text-xs">
@@ -997,124 +1269,135 @@ function CurrentSubscriptionBanner({
 
 function SubscriptionPlanCard({
   plan,
-  isPopular,
+  isRecommended,
+  isSelected,
   isCurrent,
   isLocked,
   price,
   period,
   canSelect,
+  onCardSelect,
   onSelect,
   t
 }: {
   plan: SubscriptionPlanData;
-  isPopular: boolean;
+  isRecommended: boolean;
+  isSelected: boolean;
   isCurrent: boolean;
   isLocked: boolean;
   price: number;
   period: 'monthly' | 'yearly';
   canSelect: boolean;
+  onCardSelect: () => void;
   onSelect: () => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }) {
-  const features = plan.features ?? [];
+  const features = planFeatureList(plan.slug, plan.features);
   return (
     <div
+      dir="rtl"
+      onClick={onCardSelect}
       className={cn(
-        'relative rounded-2xl border p-7 transition-all duration-200',
-        isPopular
-          ? '-translate-y-1 border-foreground bg-foreground text-background shadow-xl'
-          : 'border-border bg-card hover:shadow-md'
+        'relative flex h-full cursor-pointer flex-col rounded-2xl border bg-card p-8 transition-all duration-200',
+        isSelected
+          ? 'border-primary shadow-md ring-2 ring-primary/40'
+          : 'border-border hover:border-primary/40 hover:shadow-md'
       )}
     >
-      {isPopular && (
-        <span className="absolute end-3.5 top-3.5 rounded-full bg-primary px-2.5 py-1 text-[10.5px] font-semibold text-primary-foreground">
+      {isRecommended && (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-primary-foreground shadow">
           {t('plans.popular')}
         </span>
       )}
-      <div
-        className={cn(
-          'mb-2 text-xs font-semibold uppercase tracking-widest',
-          isPopular ? 'text-background/40' : 'text-muted-foreground/50'
-        )}
-      >
-        {plan.slug}
-      </div>
-      <h2
-        className={cn(
-          'text-[26px] font-bold tracking-tight',
-          isPopular ? 'text-background' : 'text-foreground'
-        )}
-      >
+
+      <h2 className="text-center text-lg font-bold text-foreground">
         {plan.name}
       </h2>
-      <div className="mb-5 mt-4 flex items-baseline gap-1.5">
-        <span
-          className={cn(
-            'font-mono text-[34px] font-extrabold tracking-tight',
-            isPopular ? 'text-background' : 'text-foreground'
-          )}
-        >
+      <p className="mt-1.5 text-center text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+        {plan.slug}
+      </p>
+
+      <p className="mt-6 text-center">
+        <span className="text-[34px] font-black leading-none text-foreground">
           {formatPrice(price)}
         </span>
-        <span
-          className={cn(
-            'text-[13px]',
-            isPopular ? 'text-background/50' : 'text-muted-foreground'
-          )}
-        >
+        <span className="ms-2 text-[13px] text-muted-foreground">
           {period === 'yearly'
             ? t('plans.pricePerYear')
             : t('plans.pricePerMonth')}
         </span>
-      </div>
+      </p>
+
+      {period === 'yearly' && plan.price_yearly && (
+        <div className="mt-2 flex items-center justify-center gap-2 text-[12px]">
+          <span className="text-muted-foreground">
+            {t('plans.equivalentPerMonth', {
+              price: formatPrice(Math.round(plan.price_yearly / 12))
+            })}
+          </span>
+          <span className="rounded-full bg-success/10 px-2 py-0.5 font-semibold text-success">
+            {t('plans.yearlyDiscount', {
+              percent: Math.round(
+                100 - (plan.price_yearly / (plan.price_monthly * 12)) * 100
+              )
+            })}
+          </span>
+        </div>
+      )}
+
+      {features.length > 0 && (
+        <ul className="mt-7 flex flex-1 flex-col gap-3.5">
+          {features.map((feature, fi) => (
+            <li
+              key={fi}
+              className="flex items-start gap-2.5 text-[13.5px] leading-[1.7] text-foreground/80"
+            >
+              <Check
+                size={15}
+                strokeWidth={3}
+                aria-hidden
+                className="mt-1 shrink-0 text-primary"
+              />
+              {feature}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {canSelect && (
         <button
           type="button"
           disabled={isCurrent || isLocked}
-          onClick={onSelect}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect();
+          }}
           title={isLocked ? t('plans.lockedUntilCurrentEnds') : undefined}
           className={cn(
-            'mb-5 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150',
-            isCurrent || isLocked
-              ? 'cursor-not-allowed opacity-60'
-              : 'active:scale-[0.99]',
-            isPopular
-              ? 'bg-primary text-white hover:opacity-90'
-              : 'bg-foreground text-background hover:opacity-85'
+            'mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-bold transition-all duration-150',
+            isCurrent
+              ? 'cursor-default bg-muted text-muted-foreground'
+              : isLocked
+                ? 'cursor-not-allowed border border-border bg-muted/40 text-muted-foreground'
+                : isSelected
+                  ? 'bg-primary text-primary-foreground hover:-translate-y-0.5 active:scale-[0.99]'
+                  : 'border border-border bg-muted/40 text-foreground hover:border-primary/40'
           )}
         >
           {isCurrent ? (
-            <span className="flex items-center justify-center gap-2">
+            <>
               <Check className="h-4 w-4" />
               {t('plans.currentPlan')}
-            </span>
+            </>
           ) : isLocked ? (
-            <span className="flex items-center justify-center gap-2">
+            <>
               <Lock className="h-4 w-4" />
               {t('plans.lockedUntilCurrentEnds')}
-            </span>
+            </>
           ) : (
             t('plans.choosePlan')
           )}
         </button>
-      )}
-
-      {features.length > 0 && (
-        <ul className="space-y-2.5">
-          {features.map((feature, fi) => (
-            <li key={fi} className="flex items-start gap-2.5 text-sm">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <span
-                className={cn(
-                  isPopular ? 'text-background/90' : 'text-foreground/75'
-                )}
-              >
-                {feature}
-              </span>
-            </li>
-          ))}
-        </ul>
       )}
     </div>
   );
@@ -1170,7 +1453,10 @@ function PlatformPlansAdmin({
           </Button>
         </div>
       ) : (
-        <div className="stagger-children grid gap-5 sm:grid-cols-3">
+        <div
+          dir="rtl"
+          className="stagger-children grid items-stretch gap-5 pt-3 sm:grid-cols-3"
+        >
           {plans.map((plan, i) => {
             const isPopular = i === popularIndex && plans.length >= 2;
             const price =
@@ -1181,8 +1467,9 @@ function PlatformPlansAdmin({
             return (
               <div
                 key={plan.id}
+                dir="rtl"
                 className={cn(
-                  'relative rounded-2xl border p-7 transition-all duration-200',
+                  'relative rounded-2xl border p-7 text-right transition-all duration-200',
                   isPopular
                     ? '-translate-y-1 border-foreground bg-foreground text-background shadow-xl'
                     : 'border-border bg-card hover:shadow-md',
@@ -1246,7 +1533,8 @@ function PlatformPlansAdmin({
                       : 'text-muted-foreground/50'
                   )}
                 >
-                  {t('plans.sortOrder')} {plan.sort_order}
+                  {t('plans.sortOrder')}{' '}
+                  {plan.sort_order.toLocaleString('fa-IR')}
                 </div>
                 <h2
                   className={cn(
@@ -1257,10 +1545,10 @@ function PlatformPlansAdmin({
                   {plan.name}
                 </h2>
 
-                <div className="mb-5 mt-4 flex items-baseline gap-1.5">
+                <div className="mb-5 mt-4 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
                   <span
                     className={cn(
-                      'font-mono text-[32px] font-extrabold tracking-tight',
+                      'text-[32px] font-extrabold tracking-tight',
                       isPopular ? 'text-background' : 'text-foreground'
                     )}
                   >

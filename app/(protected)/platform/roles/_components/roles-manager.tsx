@@ -12,19 +12,38 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmDeleteDialog } from '@/components/shared/ConfirmDeleteDialog';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { hasPermission } from '@/lib/permissions';
 import type { PermissionCatalog, PlatformRole } from '@/types/roles';
 import { RolePermissionsDialog } from './role-permissions-dialog';
+import { CreateRoleDialog } from './create-role-dialog';
+
+// A non-owner actor's creation ceiling: the named reference role whose
+// hierarchy_level bounds what they may create (mirrors the backend's
+// ROLE_CREATION_CAP in Backend/src/roles/permission-catalog.ts).
+const CREATION_CAP_ROLE: Record<string, string> = {
+  ADMIN: 'MANAGER',
+  MANAGER: 'TEACHER'
+};
 
 export function RolesManager() {
   const { t } = useTranslation();
+  const { user } = useAuthUser();
   const [roles, setRoles] = useState<PlatformRole[]>([]);
   const [catalog, setCatalog] = useState<PermissionCatalog | null>(null);
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<PlatformRole | null>(null);
   const [deleting, setDeleting] = useState<PlatformRole | null>(null);
+
+  const canCreate = hasPermission(user, 'roles', 'write');
+  const capRoleName = user?.role ? CREATION_CAP_ROLE[user.role] : undefined;
+  const maxLevel = capRoleName
+    ? roles.find((r) => r.name === capRoleName)?.hierarchy_level
+    : 5; // PLATFORM_OWNER (no cap role) — DTO's own ceiling for custom roles.
 
   const load = async () => {
     try {
@@ -68,15 +87,14 @@ export function RolesManager() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col items-end gap-1">
-        <Button disabled title={t('roles.createDisabledHint')}>
-          <Plus className="mr-2 h-4 w-4" />
-          {t('roles.addRole')}
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          {t('roles.createDisabledHint')}
-        </p>
-      </div>
+      {canCreate && (
+        <div className="flex justify-end">
+          <Button onClick={() => setCreating(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            {t('roles.addRole')}
+          </Button>
+        </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {roles.map((role) => (
@@ -131,6 +149,13 @@ export function RolesManager() {
           </Card>
         ))}
       </div>
+
+      <CreateRoleDialog
+        open={creating}
+        onClose={() => setCreating(false)}
+        onCreated={load}
+        maxLevel={maxLevel}
+      />
 
       {editing && catalog && (
         <RolePermissionsDialog

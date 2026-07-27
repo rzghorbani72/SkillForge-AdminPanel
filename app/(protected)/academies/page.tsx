@@ -24,6 +24,7 @@ import {
 } from '@/components/academies/AcademyCard';
 import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
 import { AcademyEditModal } from '@/components/academies/AcademyEditModal';
+import { AcademySiteStatusDialog } from '@/components/academies/academy-site-status-dialog';
 import { AcademiesHealthTable } from '@/components/academies/academies-health-table';
 import type { Academy } from '@/types/api';
 
@@ -36,6 +37,12 @@ export default function AcademiesPage() {
   const [switching, setSwitching] = useState<number | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [editAcademy, setEditAcademy] = useState<Academy | null>(null);
+  const [siteAcademy, setSiteAcademy] = useState<Academy | null>(null);
+  // Last site on/off this session, so the card flips the moment the manager acts
+  // instead of waiting for the academies refetch to come back.
+  const [siteDisabledById, setSiteDisabledById] = useState<
+    Record<number, string | null>
+  >({});
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<
     'all' | 'active' | 'inactive'
@@ -282,11 +289,20 @@ export default function AcademiesPage() {
           {filteredAcademies.map((academy: Academy) => (
             <AcademyCard
               key={academy.id}
-              academy={academy as any}
+              academy={
+                {
+                  ...academy,
+                  site_disabled_at:
+                    academy.id in siteDisabledById
+                      ? siteDisabledById[academy.id]
+                      : academy.site_disabled_at
+                } as any
+              }
               isCurrent={academy.id === currentAcademyId}
               userRole={resolveUserRole(academy)}
               onSwitch={handleSwitch}
               onEdit={setEditAcademy}
+              onManageSite={setSiteAcademy}
               switching={switching}
               t={t}
             />
@@ -304,6 +320,23 @@ export default function AcademiesPage() {
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         onSubmit={handleCreate}
+        t={t}
+      />
+
+      {/* Public site on/off for the current academy */}
+      <AcademySiteStatusDialog
+        open={!!siteAcademy}
+        academyName={siteAcademy?.name ?? ''}
+        onClose={() => setSiteAcademy(null)}
+        onChanged={(disabled) => {
+          if (siteAcademy) {
+            setSiteDisabledById((prev) => ({
+              ...prev,
+              [siteAcademy.id]: disabled ? new Date().toISOString() : null
+            }));
+          }
+          refreshAcademies();
+        }}
         t={t}
       />
 

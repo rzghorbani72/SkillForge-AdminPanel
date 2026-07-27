@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MoreHorizontal, Pencil, Loader2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, Loader2, Power } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import type { Academy } from '@/types/api';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
+import { ACADEMY_DOMAIN } from '@/lib/slug';
 
 const CARD_COLORS = [
   { bg: 'bg-blue-100', icon: 'bg-blue-200 text-blue-700' },
@@ -78,6 +79,7 @@ type AcademyCardProps = {
   userRole?: string;
   onSwitch: (id: number) => void;
   onEdit: (academy: Academy) => void;
+  onManageSite: (academy: Academy) => void;
   switching: number | null;
   t: (k: string) => string;
 };
@@ -88,6 +90,7 @@ export function AcademyCard({
   userRole,
   onSwitch,
   onEdit,
+  onManageSite,
   switching,
   t
 }: AcademyCardProps) {
@@ -109,6 +112,7 @@ export function AcademyCard({
   const plan =
     getPlanDisplayName(academy.subscription_plan) ?? t('stores.planBasic');
   const isActive = academy.is_active !== false;
+  const siteDisabled = Boolean(academy.site_disabled_at);
 
   return (
     <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
@@ -118,18 +122,28 @@ export function AcademyCard({
         <span
           className={cn(
             'flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
-            isActive
-              ? 'bg-green-100 text-green-700'
-              : 'bg-yellow-100 text-yellow-700'
+            siteDisabled
+              ? 'bg-red-100 text-red-700'
+              : isActive
+                ? 'bg-green-100 text-green-700'
+                : 'bg-yellow-100 text-yellow-700'
           )}
         >
           <span
             className={cn(
               'h-1.5 w-1.5 rounded-full',
-              isActive ? 'bg-green-500' : 'bg-yellow-500'
+              siteDisabled
+                ? 'bg-red-500'
+                : isActive
+                  ? 'bg-green-500'
+                  : 'bg-yellow-500'
             )}
           />
-          {isActive ? t('stores.statusActive') : t('stores.statusPaused')}
+          {siteDisabled
+            ? t('stores.statusSiteDisabled')
+            : isActive
+              ? t('stores.statusActive')
+              : t('stores.statusPaused')}
         </span>
 
         {/* Icon floats at bottom-right of header */}
@@ -164,9 +178,13 @@ export function AcademyCard({
             </Button>
           )}
         </div>
-        <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
-          {domain}
-        </p>
+        <a
+          href={`https://${domain}.${ACADEMY_DOMAIN}`}
+          target="blank"
+          className="mt-0.5 truncate font-mono text-xs text-muted-foreground hover:text-blue-400"
+        >
+          {domain}.{ACADEMY_DOMAIN}
+        </a>
 
         {/* Stats row */}
         <div className="mt-4 flex items-center justify-between text-sm">
@@ -199,10 +217,24 @@ export function AcademyCard({
         {/* Actions */}
         <div className="mt-4 flex items-center gap-2">
           {isCurrent ? (
-            <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">
-              <span className="h-2 w-2 rounded-full bg-green-500" />
-              {t('stores.currentAcademy')}
-            </span>
+            <>
+              <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">
+                <span className="h-2 w-2 rounded-full bg-green-500" />
+                {t('stores.currentAcademy')}
+              </span>
+              {canEdit && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-9 w-9 rounded-xl p-0"
+                  title={t('stores.siteStatusTitle')}
+                  aria-label={t('stores.siteStatusTitle')}
+                  onClick={() => onManageSite(academy)}
+                >
+                  <Power className="h-4 w-4" />
+                </Button>
+              )}
+            </>
           ) : canEnter ? (
             <Button
               size="sm"

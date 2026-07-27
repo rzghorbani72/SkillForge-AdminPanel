@@ -63,10 +63,50 @@ export const PERIOD_OPTIONS = [
   { months: 12, key: 'months12' }
 ] as const;
 
+// Mirrors the public landing's curated per-plan checklist
+// (edusphere landing.messages `pricing.plans[].features`) so the manager
+// panel's plan cards read identically to the marketing pricing page.
+// Keyed by plan slug; falls back to the plan's own `features` when unknown.
+export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
+  starter: [
+    '۲ معلم',
+    '۱۲۵ دانشجوی تدریس خصوصی',
+    '۳۰ گیگابایت فضا',
+    'فروش عمومی نامحدود',
+    'دامنه اختصاصی',
+    'بدون کارمزد فروش'
+  ],
+  growth: [
+    '۵ معلم',
+    '۳۵۰ دانشجوی تدریس خصوصی',
+    '۹۰ گیگابایت فضا',
+    'فروش عمومی نامحدود',
+    'دامنه اختصاصی',
+    '۲ مدیر'
+  ],
+  business: [
+    '۱۵ معلم',
+    '۹۰۰ دانشجوی تدریس خصوصی',
+    '۲۰۰ گیگابایت فضا',
+    'فروش عمومی نامحدود',
+    '۵ مدیر',
+    'دامنه اختصاصی'
+  ]
+};
+
+export function planFeatureList(
+  slug: string,
+  fallback: readonly string[] | null | undefined
+): readonly string[] {
+  return PLAN_FEATURE_LIST_FA[slug] ?? fallback ?? [];
+}
+
 export function formatPrice(price: number) {
   return price.toLocaleString('fa-IR');
 }
 
 export function formatStorage(gb: number) {
-  return gb >= 1000 ? `${(gb / 1000).toFixed(0)} TB` : `${gb} GB`;
+  const isTb = gb >= 1000;
+  const value = isTb ? Math.round(gb / 1000) : gb;
+  return `${value.toLocaleString('fa-IR')} ${isTb ? 'TB' : 'GB'}`;
 }

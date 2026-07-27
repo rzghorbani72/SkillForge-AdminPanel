@@ -14,7 +14,7 @@ import CreateCoursePricing from './CreateCoursePricing';
 import CreateCourseAssociations from './CreateCourseAssociations';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
-import { CourseOfferingsSection } from './CourseOfferingsSection';
+import { CourseOffersSection } from './CourseOffersSection';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -215,9 +215,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
             )}
 
             {/* Pricing offerings — multi-price per course (edit screen only) */}
-            {isEdit && courseId && (
-              <CourseOfferingsSection courseId={courseId} />
-            )}
+            {isEdit && courseId && <CourseOffersSection courseId={courseId} />}
 
             {/* Footer actions */}
             <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-4 py-3">

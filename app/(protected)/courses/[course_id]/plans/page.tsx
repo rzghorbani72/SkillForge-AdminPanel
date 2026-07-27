@@ -55,7 +55,7 @@ type PlanValues = z.infer<typeof planSchema>;
 export default function PaymentPlansPage() {
   const { t } = useTranslation();
   const params = useParams<{ course_id: string }>();
-  const courseId = parseInt(params.course_id, 10);
+  const courseId = params.course_id;
 
   const [plans, setPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,7 +84,7 @@ export default function PaymentPlansPage() {
   }
 
   useEffect(() => {
-    if (!isNaN(courseId)) load();
+    if (courseId) load();
   }, [courseId]);
 
   async function onSubmit(values: PlanValues) {

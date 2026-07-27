@@ -36,7 +36,6 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
   const { t, language } = useTranslation();
   const { user, isLoading: userLoading } = useAuthUser();
   const [pending, setPending] = useState<PendingLegalDocument[] | null>(null);
-  const [accepted, setAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,10 +89,6 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
   }, [loadStatus, isPlatformAdmin]);
 
   async function handleAccept() {
-    if (!accepted) {
-      setError(t('legal.mustAcceptTerms'));
-      return;
-    }
     setSubmitting(true);
     setError(null);
     try {
@@ -165,25 +160,17 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
           ))}
         </ul>
 
-        <label className="mt-5 flex items-start gap-2 text-sm text-muted-foreground">
-          <input
-            type="checkbox"
-            checked={accepted}
-            onChange={(e) => setAccepted(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0"
-          />
-          <span>
-            {t('auth.byCreatingAccount')}{' '}
-            <Link href="/terms" className="underline hover:text-foreground">
-              {t('auth.termsOfService')}
-            </Link>{' '}
-            {t('auth.and')}{' '}
-            <Link href="/privacy" className="underline hover:text-foreground">
-              {t('auth.privacyPolicy')}
-            </Link>
-            {t('auth.agree')}
-          </span>
-        </label>
+        <p className="mt-5 text-sm text-muted-foreground">
+          {t('legal.agreeByClicking')}{' '}
+          <Link href="/terms" className="underline hover:text-foreground">
+            {t('auth.termsOfService')}
+          </Link>{' '}
+          {t('auth.and')}{' '}
+          <Link href="/privacy" className="underline hover:text-foreground">
+            {t('auth.privacyPolicy')}
+          </Link>
+          {t('auth.agree')}
+        </p>
 
         {error && (
           <p className="mt-3 text-sm text-destructive" role="alert">
@@ -194,7 +181,7 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
         <Button
           type="button"
           className="mt-5 w-full"
-          disabled={submitting || !accepted}
+          disabled={submitting}
           onClick={handleAccept}
         >
           {submitting ? (

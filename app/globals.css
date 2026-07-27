@@ -409,6 +409,13 @@ html.transitioning *::after {
   backdrop-filter: blur(24px);
 }
 
+/* Long-form reading surface (terms/privacy): the 25% glass card reads fine for
+   a short form, but long paragraphs of gray/black body text lose contrast
+   against the busy background image. Near-solid instead of translucent. */
+.legal-card {
+  background: rgba(255, 255, 255, 0.96);
+}
+
 /* Reusable solid brand button */
 .btn-brand {
   background-color: hsl(var(--brand));
