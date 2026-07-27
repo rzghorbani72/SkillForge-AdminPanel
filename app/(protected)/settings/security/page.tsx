@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -17,7 +17,6 @@ import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Profile } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface PasswordForm {
@@ -48,8 +47,7 @@ const DEFAULT_NOTIFICATIONS: NotificationSettings = {
 
 export default function SecuritySettingsPage() {
   const { t } = useTranslation();
-  const { user, isLoading } = useSettingsData();
-  const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
+  const { isLoading } = useSettingsData();
   const [passwordForm, setPasswordForm] = useState<PasswordForm>(
     DEFAULT_PASSWORD_FORM
   );
@@ -60,56 +58,18 @@ export default function SecuritySettingsPage() {
   const [isSavingNotifications, setIsSavingNotifications] =
     useState<boolean>(false);
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const response = await apiClient.getUserProfiles();
-        const payload = (response?.data ?? response) as
-          | Profile[]
-          | { status?: string; data?: Profile[] };
-
-        let profiles: Profile[] = [];
-        if (
-          payload &&
-          typeof payload === 'object' &&
-          !Array.isArray(payload) &&
-          payload.status === 'ok' &&
-          Array.isArray(payload.data)
-        ) {
-          profiles = payload.data;
-        } else if (Array.isArray(payload)) {
-          profiles = payload;
-        }
-
-        setActiveProfile(profiles.length > 0 ? profiles[0] : null);
-      } catch (error) {
-        console.error('Failed to load profiles for security page', error);
-        setActiveProfile(null);
-      }
-    };
-
-    loadProfile();
-  }, []);
-
   const handlePasswordChange = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       ErrorHandler.showWarning(t('settings.newPasswordsDoNotMatch'));
       return;
     }
 
-    if (!user || !activeProfile) {
-      ErrorHandler.showWarning(t('settings.unableToLoadProfile'));
-      return;
-    }
-
     try {
       setIsSavingPassword(true);
       await apiClient.changeProfilePassword({
-        profile_id: activeProfile.id,
         current_password: passwordForm.currentPassword,
         new_password: passwordForm.newPassword,
-        confirm_new_password: passwordForm.confirmPassword,
-        user_id: user.id
+        confirm_new_password: passwordForm.confirmPassword
       });
       ErrorHandler.showSuccess(t('settings.passwordUpdatedSuccess'));
       setPasswordForm(DEFAULT_PASSWORD_FORM);

@@ -3361,11 +3361,11 @@ class ApiClient {
 
   // Profile password management
   async changeProfilePassword(data: {
-    profile_id: number;
+    /** Omit to change the signed-in profile's own password. */
+    profile_id?: string | number;
     current_password: string;
     new_password: string;
     confirm_new_password: string;
-    user_id?: number;
   }) {
     return this.request('/auth/change-password', {
       method: 'POST',
