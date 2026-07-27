@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import type {
@@ -83,7 +84,9 @@ export function RolePermissionsDialog({
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {t('roles.editPermissionsFor', { role: role.label })}
+            {t('roles.editPermissionsFor', {
+              role: getRoleLabel(role.name, t)
+            })}
           </DialogTitle>
           <DialogDescription>
             {locked ? t('roles.ownerLockedHint') : t('roles.permissionsHint')}

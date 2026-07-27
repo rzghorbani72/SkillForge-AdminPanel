@@ -1,37 +1,29 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api';
-import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
-import { Users, Filter, Plus, RefreshCw, Download } from 'lucide-react';
+import { Users, Plus, RefreshCw, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Pagination } from '@/components/shared/Pagination';
+import { DataList, DataPanel } from '@/components/shared/data-list';
 import { UserFilters } from '@/components/users/UserFilters';
-import { User, UserStatus } from '@/types/api';
 import { useAuthUser } from '@/hooks/useAuthUser';
-import { ChangeUserRoleDialog } from './change-user-role-dialog';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import type { User } from '@/types/api';
+import { ChangeUserRoleDialog } from './change-user-role-dialog';
+import { UserDetailsSheet } from './user-details-sheet';
+import { UserCard } from '@/components/users/user-card';
+import { buildUserColumns } from './user-columns';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle
-} from '@/components/ui/sheet';
-
-type UserCategory = 'all' | 'students' | 'teachers' | 'managers';
+  CATEGORY_CONFIG,
+  exportUsersCsv,
+  type UserCategory,
+  type UsersQuery
+} from './users-query';
 
 interface PaginationInfo {
   page: number;
@@ -42,79 +34,7 @@ interface PaginationInfo {
   hasPreviousPage: boolean;
 }
 
-const CATEGORY_KEY_CONFIG: Record<
-  UserCategory,
-  {
-    titleKey: string;
-    descriptionKey: string;
-    defaultRole: 'all' | 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
-    roleLocked: boolean;
-    fetcher: (params: {
-      page: number;
-      limit: number;
-      search?: string;
-      status?: string;
-      academy_id?: number | null;
-    }) => Promise<any>;
-  }
-> = {
-  all: {
-    titleKey: 'users.allUsers',
-    descriptionKey: 'users.manageAllUsersDescription',
-    defaultRole: 'all',
-    roleLocked: false,
-    fetcher: (params) =>
-      apiClient.getUsers({
-        page: params.page,
-        limit: params.limit,
-        search: params.search,
-        status: params.status as any,
-        academy_id: params.academy_id ?? undefined
-      })
-  },
-  students: {
-    titleKey: 'users.students',
-    descriptionKey: 'users.studentsDescription',
-    defaultRole: 'STUDENT',
-    roleLocked: true,
-    fetcher: (params) =>
-      apiClient.getStudentUsers({
-        page: params.page,
-        limit: params.limit,
-        search: params.search,
-        status: params.status as any,
-        academy_id: params.academy_id ?? undefined
-      })
-  },
-  teachers: {
-    titleKey: 'users.teachers',
-    descriptionKey: 'users.teachersDescription',
-    defaultRole: 'TEACHER',
-    roleLocked: true,
-    fetcher: (params) =>
-      apiClient.getTeacherUsers({
-        page: params.page,
-        limit: params.limit,
-        search: params.search,
-        status: params.status as any,
-        academy_id: params.academy_id ?? undefined
-      })
-  },
-  managers: {
-    titleKey: 'users.managers',
-    descriptionKey: 'users.managersDescription',
-    defaultRole: 'MANAGER',
-    roleLocked: true,
-    fetcher: (params) =>
-      apiClient.getManagerUsers({
-        page: params.page,
-        limit: params.limit,
-        search: params.search,
-        status: params.status as any,
-        academy_id: params.academy_id ?? undefined
-      })
-  }
-};
+const PAGE_SIZE = 20;
 
 interface UsersPageContentProps {
   category: UserCategory;
@@ -122,102 +42,51 @@ interface UsersPageContentProps {
 
 export function UsersPageContent({ category }: UsersPageContentProps) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryConfig = CATEGORY_KEY_CONFIG[category];
+  const categoryConfig = CATEGORY_CONFIG[category];
   const { user: authUser } = useAuthUser();
-  const [roleChangeDialog, setRoleChangeDialog] = useState<{
-    open: boolean;
-    user: User | null;
-  }>({ open: false, user: null });
 
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedUserDetails, setSelectedUserDetails] = useState<any>(null);
-  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
+  const [roleChangeUser, setRoleChangeUser] = useState<User | null>(null);
+  const [detailsUser, setDetailsUser] = useState<User | null>(null);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRole, setSelectedRole] = useState<
-    'all' | 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER'
-  >(categoryConfig.defaultRole);
-  const [selectedStatus, setSelectedStatus] = useState<
-    'all' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED'
-  >('all');
+  const [selectedRole, setSelectedRole] = useState<UsersQuery['role']>(
+    categoryConfig.defaultRole
+  );
+  const [selectedStatus, setSelectedStatus] =
+    useState<UsersQuery['status']>('all');
   const [selectedStore, setSelectedStore] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 20;
+
   const queryKey = JSON.stringify({
     category,
     currentPage,
-    pageSize,
     searchTerm,
     selectedRole,
     selectedStatus,
-    selectedStore,
-    roleLocked: categoryConfig.roleLocked,
-    defaultRole: categoryConfig.defaultRole
+    selectedStore
   });
   const previousQueryKeyRef = useRef<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
-      const params: {
-        page: number;
-        limit: number;
-        search?: string;
-        status?: string;
-        academy_id?: number | null;
-      } = {
+      const data = await categoryConfig.fetch({
         page: currentPage,
-        limit: pageSize,
+        limit: PAGE_SIZE,
+        search: searchTerm || undefined,
+        status: selectedStatus,
+        role: selectedRole,
         academy_id: selectedStore
-      };
-
-      if (searchTerm) params.search = searchTerm;
-      if (selectedStatus !== 'all') params.status = selectedStatus;
-
-      let data;
-
-      if (!categoryConfig.roleLocked && selectedRole !== 'all') {
-        data = await apiClient.getUsers({
-          page: params.page,
-          limit: params.limit,
-          search: params.search,
-          status: params.status as any,
-          academy_id: params.academy_id ?? undefined,
-          role: selectedRole
-        });
-      } else {
-        data = await categoryConfig.fetcher(params);
-      }
-
-      if (data && typeof data === 'object') {
-        if ('users' in data || 'profiles' in data) {
-          const list = (data as any).users || (data as any).profiles || [];
-          setUsers(
-            list.map((item: any) => ({
-              ...item,
-              name: item.full_name || item.display_name || item.name,
-              display_name: item.full_name || item.display_name || item.name
-            }))
-          );
-          setPagination((data as any).pagination || null);
-        } else if (Array.isArray(data)) {
-          setUsers(data as any);
-          setPagination(null);
-        } else {
-          setUsers([]);
-          setPagination(null);
-        }
-      } else {
-        setUsers([]);
-        setPagination(null);
-      }
+      });
+      setUsers(data.users);
+      setPagination(data.pagination);
     } catch (error) {
-      console.error('Error fetching users:', error);
       toast.error(t('error.failedToLoad'));
       setUsers([]);
       setPagination(null);
@@ -227,22 +96,15 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   }, [
     categoryConfig,
     currentPage,
-    pageSize,
     searchTerm,
     selectedRole,
     selectedStatus,
-    selectedStore
+    selectedStore,
+    t
   ]);
 
   useEffect(() => {
-    if (!isInitialized) {
-      return;
-    }
-
-    if (previousQueryKeyRef.current === queryKey) {
-      return;
-    }
-
+    if (!isInitialized || previousQueryKeyRef.current === queryKey) return;
     previousQueryKeyRef.current = queryKey;
     fetchUsers();
   }, [fetchUsers, isInitialized, queryKey]);
@@ -252,438 +114,177 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
     const statusParam = searchParams.get('status');
     const storeParam = searchParams.get('academy_id');
 
-    if (
-      roleParam &&
-      ['ADMIN', 'MANAGER', 'TEACHER', 'STUDENT', 'USER'].includes(roleParam) &&
-      !categoryConfig.roleLocked
-    ) {
-      setSelectedRole((prev) =>
-        prev === roleParam ? prev : (roleParam as any)
-      );
+    if (roleParam && !categoryConfig.roleLocked) {
+      setSelectedRole(roleParam as UsersQuery['role']);
     }
-
-    if (
-      statusParam &&
-      ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'BANNED'].includes(statusParam)
-    ) {
-      setSelectedStatus((prev) =>
-        prev === statusParam ? prev : (statusParam as any)
-      );
+    if (statusParam) {
+      setSelectedStatus(statusParam as UsersQuery['status']);
     }
-
-    if (storeParam) {
-      const parsedStore = parseInt(storeParam);
-      setSelectedStore((prev) => (prev === parsedStore ? prev : parsedStore));
-    } else {
-      setSelectedStore((prev) => (prev === null ? prev : null));
-    }
-
+    setSelectedStore(storeParam ? Number(storeParam) : null);
     setIsInitialized(true);
   }, [categoryConfig.roleLocked, searchParams]);
 
-  useEffect(() => {
-    if (categoryConfig.roleLocked) {
-      setSelectedRole((prev) =>
-        prev === categoryConfig.defaultRole ? prev : categoryConfig.defaultRole
-      );
-    }
-  }, [categoryConfig.defaultRole, categoryConfig.roleLocked]);
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
-
-  const handleRoleFilter = (role: string) => {
-    if (categoryConfig.roleLocked) return;
-    setSelectedRole(role as any);
-    setCurrentPage(1);
-  };
-
-  const handleStatusFilter = (status: string) => {
-    setSelectedStatus(status as any);
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleRefresh = () => {
-    fetchUsers();
-    toast.success(t('success.refreshed'));
-  };
-
-  const handleViewUser = async (user: User) => {
-    setSelectedUser(user);
-    setIsDetailsLoading(true);
-    try {
-      const details = await apiClient.getUserDetails(user.id);
-      setSelectedUserDetails(details?.data || details);
-    } catch (error) {
-      toast.error(t('users.loadUserDetailsFailed'));
-      setSelectedUserDetails(null);
-    } finally {
-      setIsDetailsLoading(false);
-    }
-  };
-
-  const handleEditUser = (user: User) => {
-    router.push(`/user/${user.id}/edit`);
-  };
-
-  const handleRoleChange = (user: User) => {
-    setRoleChangeDialog({ open: true, user });
-  };
-
   const canChangeRole = authUser?.role === 'MANAGER' && category === 'students';
-
   const canManageUser =
     authUser?.role === 'ADMIN' || authUser?.role === 'MANAGER';
 
-  const handleResetPassword = async () => {
-    if (!selectedUser || !canManageUser) return;
-    const newPassword = window.prompt(t('users.enterNewPasswordPrompt'));
-    if (!newPassword) return;
-    try {
-      await apiClient.resetUserPassword(selectedUser.id, newPassword);
-      toast.success(t('users.passwordResetSuccessMsg'));
-    } catch (error: any) {
-      toast.error(error?.message || t('users.passwordResetFailedMsg'));
-    }
-  };
+  const columns = useMemo(
+    () =>
+      buildUserColumns({
+        t,
+        formatNumber,
+        canChangeRole,
+        onView: setDetailsUser,
+        onEdit: (user) => router.push(`/user/${user.id}/edit`),
+        onRoleChange: setRoleChangeUser
+      }),
+    [t, formatNumber, canChangeRole, router]
+  );
 
-  const handleGrantCourse = async () => {
-    if (!selectedUser || !canManageUser) return;
-    const courseId = window.prompt(t('users.enterCourseIdPrompt'));
-    if (!courseId) return;
-    try {
-      await apiClient.grantCourseAccess(selectedUser.id, {
-        course_id: Number(courseId)
-      });
-      toast.success(t('users.courseAccessGranted'));
-    } catch (error: any) {
-      toast.error(error?.message || t('users.grantCourseFailed'));
-    }
-  };
-
-  const handleAssignVoucher = async () => {
-    if (!selectedUser || !canManageUser) return;
-    const prefix = window.prompt(t('users.voucherPrefixPrompt'), 'SUPPORT');
-    const value = window.prompt(t('users.voucherValuePrompt'));
-    if (!prefix || !value) return;
-    try {
-      const result = await apiClient.assignVoucher(selectedUser.id, {
-        code_prefix: prefix,
-        discount_type: 'PERCENT',
-        discount_value: Number(value)
-      });
-      toast.success(
-        t('users.voucherCreated', {
-          code: result?.data?.code || result?.code || 'success'
-        })
-      );
-    } catch (error: any) {
-      toast.error(error?.message || t('users.assignVoucherFailed'));
-    }
-  };
+  const isFiltered =
+    searchTerm !== '' || selectedStatus !== 'all' || selectedRole !== 'all';
 
   const handleExport = () => {
-    // Export users data as CSV
     if (users.length === 0) {
       toast.error(t('error.noDataToExport'));
       return;
     }
-
-    const csvHeaders = [
-      t('users.id'),
-      t('common.name'),
-      t('common.email'),
-      t('common.phone'),
-      t('common.status'),
-      t('users.createdAt')
-    ];
-    const csvRows = users.map((user) => [
-      user.id,
-      user.name,
-      user.email || '',
-      user.phone_number,
-      user.status || (user.is_active ? 'ACTIVE' : 'INACTIVE'),
-      new Date(user.created_at).toLocaleDateString()
-    ]);
-
-    const csvContent = [
-      csvHeaders.join(','),
-      ...csvRows.map((row) => row.join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute(
-      'download',
-      `users-${category}-${new Date().toISOString().split('T')[0]}.csv`
-    );
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportUsersCsv(users, category, t);
     toast.success(t('success.exported'));
   };
-
-  if (isLoading) {
-    return <LoadingSpinner message={t('users.loadingUsersData')} />;
-  }
 
   return (
     <div className="flex-1 space-y-6 p-6">
       <PageHeader
+        icon={<Users className="h-5 w-5" />}
         title={t(categoryConfig.titleKey)}
         description={t(categoryConfig.descriptionKey)}
       >
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleRefresh}>
-            <RefreshCw className="mr-2 h-4 w-4" />
-            {t('common.refresh')}
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" />
-            {t('payments.exportCsv')}
-          </Button>
-          <Button size="sm">
-            <Plus className="mr-2 h-4 w-4" />
-            {t('users.addUser')}
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-lg"
+          onClick={fetchUsers}
+        >
+          <RefreshCw className="me-1.5 h-4 w-4" />
+          {t('common.refresh')}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-lg"
+          onClick={handleExport}
+        >
+          <Download className="me-1.5 h-4 w-4" />
+          {t('payments.exportCsv')}
+        </Button>
+        <Button size="sm" className="rounded-lg">
+          <Plus className="me-1.5 h-4 w-4" />
+          {t('users.addUser')}
+        </Button>
       </PageHeader>
 
-      <UserFilters
-        searchTerm={searchTerm}
-        onSearchChange={handleSearch}
-        selectedRole={selectedRole}
-        onRoleChange={handleRoleFilter}
-        selectedStatus={selectedStatus}
-        onStatusChange={handleStatusFilter}
-        roleDisabled={categoryConfig.roleLocked}
-      />
-
-      <div className="rounded-md border">
-        {users.length === 0 ? (
-          <div className="py-10">
-            <EmptyState
-              icon={<Users className="h-12 w-12" />}
-              title={t('users.noUsersFound')}
-              description={
-                searchTerm ||
-                selectedStatus !== 'all' ||
-                (!categoryConfig.roleLocked && selectedRole !== 'all')
-                  ? t('common.tryAdjustingFilters')
-                  : t('users.getStartedByAddingUser')
+      <DataPanel
+        title={t('users.listTitle')}
+        subtitle={
+          pagination
+            ? `${formatNumber(pagination.total)} ${t('users.users')}`
+            : undefined
+        }
+        filters={
+          <UserFilters
+            searchTerm={searchTerm}
+            onSearchChange={(value) => {
+              setSearchTerm(value);
+              setCurrentPage(1);
+            }}
+            selectedRole={selectedRole}
+            onRoleChange={(role) => {
+              if (categoryConfig.roleLocked) return;
+              setSelectedRole(role as UsersQuery['role']);
+              setCurrentPage(1);
+            }}
+            selectedStatus={selectedStatus}
+            onStatusChange={(status) => {
+              setSelectedStatus(status as UsersQuery['status']);
+              setCurrentPage(1);
+            }}
+            roleDisabled={categoryConfig.roleLocked}
+          />
+        }
+        footer={
+          pagination && pagination.totalPages > 1 ? (
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={setCurrentPage}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.limit}
+            />
+          ) : null
+        }
+      >
+        <DataList
+          items={users}
+          columns={columns}
+          rowKey={(user) => user.id}
+          isLoading={isLoading}
+          renderCard={(user) => (
+            <UserCard
+              user={user}
+              actions={
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 rounded-lg"
+                    onClick={() => setDetailsUser(user)}
+                  >
+                    {t('common.view')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 rounded-lg"
+                    onClick={() => router.push(`/user/${user.id}/edit`)}
+                  >
+                    {t('common.edit')}
+                  </Button>
+                </>
               }
             />
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('users.id')}</TableHead>
-                <TableHead>{t('users.colUuid')}</TableHead>
-                <TableHead>{t('users.colFullName')}</TableHead>
-                <TableHead>{t('users.colRole')}</TableHead>
-                <TableHead>{t('users.colEmail')}</TableHead>
-                <TableHead>{t('users.colPhone')}</TableHead>
-                <TableHead>{t('common.status')}</TableHead>
-                <TableHead className="text-right">
-                  {t('users.colActions')}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell className="max-w-[180px] truncate">
-                    {(user as any).uuid || (user as any).user_uuid || '-'}
-                  </TableCell>
-                  <TableCell>{user.name || user.display_name}</TableCell>
-                  <TableCell>
-                    {(
-                      (user as any).role_name ||
-                      user.profiles?.[0]?.role?.name ||
-                      user.profiles?.[0]?.Role?.name ||
-                      '-'
-                    ).toString()}
-                  </TableCell>
-                  <TableCell>{user.email || '-'}</TableCell>
-                  <TableCell>{user.phone_number || '-'}</TableCell>
-                  <TableCell>
-                    {user.is_active ? 'ACTIVE' : 'INACTIVE'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewUser(user)}
-                      >
-                        Details
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditUser(user)}
-                      >
-                        Edit
-                      </Button>
-                      {canChangeRole && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleRoleChange(user)}
-                        >
-                          Role
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
-
-      {pagination && pagination.totalPages > 1 && (
-        <Pagination
-          currentPage={pagination.page}
-          totalPages={pagination.totalPages}
-          onPageChange={handlePageChange}
-          hasNextPage={pagination.hasNextPage}
-          hasPreviousPage={pagination.hasPreviousPage}
-          totalItems={pagination.total}
-          itemsPerPage={pagination.limit}
+          )}
+          emptyState={
+            <div className="py-12">
+              <EmptyState
+                icon={<Users className="h-10 w-10" />}
+                title={t('users.noUsersFound')}
+                description={
+                  isFiltered
+                    ? t('common.tryAdjustingFilters')
+                    : t('users.getStartedByAddingUser')
+                }
+              />
+            </div>
+          }
         />
-      )}
+      </DataPanel>
 
       <ChangeUserRoleDialog
-        open={roleChangeDialog.open}
-        onOpenChange={(open) => setRoleChangeDialog({ open, user: null })}
-        user={roleChangeDialog.user}
+        open={!!roleChangeUser}
+        onOpenChange={(open) => !open && setRoleChangeUser(null)}
+        user={roleChangeUser}
         currentRole={authUser?.role || null}
-        onSuccess={() => {
-          fetchUsers();
-        }}
+        onSuccess={fetchUsers}
       />
 
-      <Sheet
-        open={!!selectedUser}
-        onOpenChange={(open) => {
-          if (!open) {
-            setSelectedUser(null);
-            setSelectedUserDetails(null);
-          }
-        }}
-      >
-        <SheetContent className="w-full overflow-y-auto sm:max-w-2xl">
-          <SheetHeader>
-            <SheetTitle>
-              {selectedUser?.name || selectedUser?.display_name}
-            </SheetTitle>
-            <SheetDescription>
-              {t('users.detailSheetDescription')}
-            </SheetDescription>
-          </SheetHeader>
-
-          {isDetailsLoading ? (
-            <div className="py-8 text-sm text-muted-foreground">
-              {t('users.loadingDetails')}
-            </div>
-          ) : selectedUserDetails ? (
-            <div className="space-y-6 py-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  {t('users.id')}: {selectedUserDetails.profile?.id}
-                </div>
-                <div>
-                  {t('users.colUuid')}:{' '}
-                  {selectedUserDetails.profile?.uuid || '-'}
-                </div>
-                <div>
-                  {t('users.detailName')}:{' '}
-                  {selectedUserDetails.profile?.full_name ||
-                    selectedUserDetails.profile?.display_name}
-                </div>
-                <div>
-                  {t('users.colRole')}: {selectedUserDetails.profile?.role_name}
-                </div>
-              </div>
-
-              {canManageUser && (
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleResetPassword}
-                  >
-                    {t('users.resetPassword')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleGrantCourse}
-                  >
-                    {t('users.grantCourse')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleAssignVoucher}
-                  >
-                    {t('users.assignVoucher')}
-                  </Button>
-                </div>
-              )}
-
-              <div>
-                <h3 className="mb-2 font-medium">
-                  {t('users.rolesInAcademies')}
-                </h3>
-                <div className="space-y-2 text-sm">
-                  {(selectedUserDetails.roles_across_academies || []).map(
-                    (item: any) => (
-                      <div key={item.profile_id} className="rounded border p-2">
-                        {item.academy_name || t('users.platformFallback')} -{' '}
-                        {item.role}
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="mb-2 font-medium">
-                  {t('users.purchaseHistory')}
-                </h3>
-                <div className="space-y-2 text-sm">
-                  {(selectedUserDetails.purchase_history || [])
-                    .slice(0, 20)
-                    .map((item: any) => (
-                      <div key={item.id} className="rounded border p-2">
-                        #{item.id} - {item.Course?.title || 'N/A'} -{' '}
-                        {item.status} - {item.amount}
-                      </div>
-                    ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="py-8 text-sm text-muted-foreground">
-              {t('users.noDetailData')}
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
+      <UserDetailsSheet
+        user={detailsUser}
+        canManage={canManageUser}
+        onClose={() => setDetailsUser(null)}
+      />
     </div>
   );
 }

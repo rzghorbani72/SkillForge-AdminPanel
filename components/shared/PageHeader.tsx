@@ -31,7 +31,11 @@ export function PageHeader({
     >
       <div className="space-y-1">
         <div className="flex items-center gap-3">
-          {icon && <div className="icon-container-primary">{icon}</div>}
+          {icon && (
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              {icon}
+            </div>
+          )}
           <div>
             <div className="flex items-center gap-2">
               <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight sm:text-3xl">

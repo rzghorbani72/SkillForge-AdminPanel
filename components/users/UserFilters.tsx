@@ -1,3 +1,6 @@
+'use client';
+
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -6,7 +9,10 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
+
+const ROLE_OPTIONS = ['ADMIN', 'MANAGER', 'TEACHER', 'STUDENT', 'USER'];
+const STATUS_OPTIONS = ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'BANNED'];
 
 interface UserFiltersProps {
   searchTerm: string;
@@ -27,50 +33,49 @@ export function UserFilters({
   onStatusChange,
   roleDisabled = false
 }: UserFiltersProps) {
+  const { t } = useTranslation();
+
   return (
-    <div className="flex flex-col gap-4 sm:flex-row">
-      <div className="flex-1">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
-          <Input
-            placeholder="Search users by name, email, or phone..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+    <>
+      <div className="relative min-w-[200px] flex-1">
+        <Search className="absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder={t('users.searchUsersPlaceholder')}
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="h-8 rounded-lg bg-card ps-8 text-sm"
+        />
       </div>
-      <div className="flex gap-2">
-        <Select
-          value={selectedRole}
-          onValueChange={onRoleChange}
-          disabled={roleDisabled}
-        >
-          <SelectTrigger className="w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="ADMIN">Admin</SelectItem>
-            <SelectItem value="MANAGER">Manager</SelectItem>
-            <SelectItem value="TEACHER">Teacher</SelectItem>
-            <SelectItem value="STUDENT">Student</SelectItem>
-            <SelectItem value="USER">User</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={selectedStatus} onValueChange={onStatusChange}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="ACTIVE">Active</SelectItem>
-            <SelectItem value="INACTIVE">Inactive</SelectItem>
-            <SelectItem value="SUSPENDED">Suspended</SelectItem>
-            <SelectItem value="BANNED">Banned</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
+      <Select
+        value={selectedRole}
+        onValueChange={onRoleChange}
+        disabled={roleDisabled}
+      >
+        <SelectTrigger className="h-8 w-[140px] rounded-lg bg-card text-sm">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t('users.allRoles')}</SelectItem>
+          {ROLE_OPTIONS.map((role) => (
+            <SelectItem key={role} value={role}>
+              {t(`common.roles.${role}`)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select value={selectedStatus} onValueChange={onStatusChange}>
+        <SelectTrigger className="h-8 w-[140px] rounded-lg bg-card text-sm">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t('users.allStatuses')}</SelectItem>
+          {STATUS_OPTIONS.map((status) => (
+            <SelectItem key={status} value={status}>
+              {t(`users.status.${status}`)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </>
   );
 }

@@ -33,14 +33,16 @@ function colorIndex(id: string | number): number {
   return hash % CARD_COLORS.length;
 }
 
-function AcademyIcon({
+export function AcademyIcon({
   name,
   id,
-  logo
+  logo,
+  size = 40
 }: {
   name: string;
   id: number;
   logo?: { id: number; publicUrl: string } | null;
+  size?: number;
 }) {
   const color = CARD_COLORS[colorIndex(id)];
   const logoUrl = logo?.publicUrl
@@ -48,19 +50,23 @@ function AcademyIcon({
       ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${logo.publicUrl}`
       : logo.publicUrl
     : null;
+  const style = { width: size, height: size };
+
   if (logoUrl) {
     return (
       <img
         src={logoUrl}
         alt={name}
-        className="h-10 w-10 rounded-xl object-cover shadow-sm"
+        style={style}
+        className="shrink-0 rounded-xl object-cover shadow-sm"
       />
     );
   }
   return (
     <div
+      style={{ ...style, fontSize: size * 0.45 }}
       className={cn(
-        'flex h-10 w-10 items-center justify-center rounded-xl text-lg font-bold',
+        'flex shrink-0 items-center justify-center rounded-xl font-bold',
         color.icon
       )}
     >

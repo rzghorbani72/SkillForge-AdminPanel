@@ -16,6 +16,9 @@ export interface User {
   phone_confirmed: boolean;
   is_active: boolean;
   status?: UserStatus;
+  /** Flattened role name returned by the role-scoped list endpoints. */
+  role_name?: string;
+  full_name?: string;
   created_at: string;
   updated_at: string;
   profiles?: UserProfile[];

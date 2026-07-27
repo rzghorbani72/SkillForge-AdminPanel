@@ -1,131 +1,164 @@
 'use client';
 
-import {
-  CheckCircle,
-  ExternalLink,
-  Mail,
-  Phone,
-  Users,
-  XCircle
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { useMemo } from 'react';
+import { CheckCircle, ExternalLink, Users, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from '@/components/ui/link';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { DataList, type DataColumn } from '@/components/shared/data-list';
+import { UserAvatar } from '@/components/users/user-avatar';
+import { UserStatusPill } from '@/components/users/user-status-pill';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
-import { User } from '@/types/api';
+  UserCard,
+  getUserStatus,
+  userTone
+} from '@/components/users/user-card';
+import type { InterpolationParams } from '@/lib/i18n';
+import type { User } from '@/types/api';
 
-interface Props {
+interface UserTableProps {
   users: User[];
   emptyMessage: string;
-  t: (key: string) => string;
+  t: (key: string, params?: InterpolationParams) => string;
   showWorkspace?: boolean;
 }
 
-export function UserTable({ users, emptyMessage, t, showWorkspace }: Props) {
-  if (users.length === 0) {
-    return (
-      <div className="py-8 text-center">
-        <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-2 text-sm font-medium">
-          {t('students.noUsersFound')}
-        </h3>
-        <p className="mt-1 text-sm text-muted-foreground">{emptyMessage}</p>
-      </div>
-    );
-  }
+function VerifiedMark({
+  verified,
+  label
+}: {
+  verified: boolean;
+  label: string;
+}) {
+  return (
+    <span title={label} className="shrink-0">
+      {verified ? (
+        <CheckCircle className="h-3.5 w-3.5 text-success" />
+      ) : (
+        <XCircle className="h-3.5 w-3.5 text-muted-foreground/60" />
+      )}
+    </span>
+  );
+}
+
+export function UserTable({
+  users,
+  emptyMessage,
+  t,
+  showWorkspace
+}: UserTableProps) {
+  const columns = useMemo<DataColumn<User>[]>(
+    () => [
+      {
+        id: 'user',
+        header: t('students.studentName'),
+        cell: (user) => (
+          <div className="flex items-center gap-2.5">
+            <UserAvatar
+              name={user.display_name || user.name}
+              tone={userTone(user)}
+            />
+            <span className="truncate font-semibold">
+              {user.display_name || user.name}
+            </span>
+          </div>
+        )
+      },
+      {
+        id: 'email',
+        header: t('students.email'),
+        className: 'hidden md:table-cell',
+        cell: (user) =>
+          user.email ? (
+            <span className="flex items-center gap-1.5 text-muted-foreground">
+              <span className="truncate">{user.email}</span>
+              <VerifiedMark
+                verified={user.email_confirmed}
+                label={t('common.email')}
+              />
+            </span>
+          ) : (
+            <span className="text-muted-foreground">—</span>
+          )
+      },
+      {
+        id: 'phone',
+        header: t('students.phone'),
+        className: 'hidden sm:table-cell',
+        cell: (user) => (
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <span dir="ltr">{user.phone_number || '—'}</span>
+            <VerifiedMark
+              verified={user.phone_confirmed}
+              label={t('common.phone')}
+            />
+          </span>
+        )
+      },
+      {
+        id: 'status',
+        header: t('common.status'),
+        cell: (user) => <UserStatusPill status={getUserStatus(user)} />
+      },
+      ...(showWorkspace
+        ? [
+            {
+              id: 'workspace',
+              header: t('learningOperations.workspace'),
+              align: 'end' as const,
+              cell: (user: User) => (
+                <Button
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="h-8 rounded-lg text-xs"
+                >
+                  <Link href={`/students/${user.id}`}>
+                    {t('learningOperations.openWorkspace')}
+                    <ExternalLink className="ms-1.5 h-3 w-3" />
+                  </Link>
+                </Button>
+              )
+            }
+          ]
+        : [])
+    ],
+    [t, showWorkspace]
+  );
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-center">
-              {t('students.studentName')}
-            </TableHead>
-            <TableHead className="text-center">{t('students.email')}</TableHead>
-            <TableHead className="text-center">{t('students.phone')}</TableHead>
-            <TableHead className="text-center">{t('common.status')}</TableHead>
-            {showWorkspace && (
-              <TableHead className="text-center">
-                {t('learningOperations.workspace')}
-              </TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>
-                <div className="flex items-center justify-center gap-3">
-                  <span className="font-medium">{user.name}</span>
-                </div>
-              </TableCell>
-              <TableCell className="text-center">
-                <div className="flex items-center justify-center gap-2">
-                  {user.email ? (
-                    <>
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{user.email}</span>
-                      {user.email_confirmed ? (
-                        <span title="Email verified">
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                        </span>
-                      ) : (
-                        <span title="Email not verified">
-                          <XCircle className="h-4 w-4 text-red-600" />
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">-</span>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell className="text-center">
-                <div className="flex items-center justify-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm" dir="rtl">
-                    {user.phone_number}
-                  </span>
-                  {user.phone_confirmed ? (
-                    <span title="Phone verified">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    </span>
-                  ) : (
-                    <span title="Phone not verified">
-                      <XCircle className="h-4 w-4 text-red-600" />
-                    </span>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell className="text-center">
-                <div className="flex justify-center">
-                  <Badge variant={user.is_active ? 'default' : 'secondary'}>
-                    {user.is_active ? t('common.active') : t('common.inactive')}
-                  </Badge>
-                </div>
-              </TableCell>
-              {showWorkspace && (
-                <TableCell className="text-center">
-                  <Button asChild size="sm" variant="outline">
-                    <Link href={`/students/${user.id}`}>
-                      {t('learningOperations.openWorkspace')}
-                      <ExternalLink className="ms-2 h-3.5 w-3.5" />
-                    </Link>
-                  </Button>
-                </TableCell>
-              )}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <DataList
+      items={users}
+      columns={columns}
+      rowKey={(user) => user.id}
+      renderCard={(user) => (
+        <UserCard
+          user={user}
+          actions={
+            showWorkspace ? (
+              <Button
+                asChild
+                size="sm"
+                variant="outline"
+                className="flex-1 rounded-lg"
+              >
+                <Link href={`/students/${user.id}`}>
+                  {t('learningOperations.openWorkspace')}
+                </Link>
+              </Button>
+            ) : undefined
+          }
+        />
+      )}
+      emptyState={
+        <div className="py-12">
+          <EmptyState
+            icon={<Users className="h-10 w-10" />}
+            title={t('students.noUsersFound')}
+            description={emptyMessage}
+          />
+        </div>
+      }
+    />
   );
 }

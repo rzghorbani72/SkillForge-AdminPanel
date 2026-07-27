@@ -1,25 +1,15 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
 import {
   Users,
   GraduationCap,
-  TrendingUp,
   Plus,
   Search,
   Filter,
@@ -29,6 +19,10 @@ import { apiClient } from '@/lib/api';
 import { User, Enrollment } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { UserTable } from '@/components/students/UserTable';
+import { DataPanel } from '@/components/shared/data-list';
+import { EnrollmentsList } from '@/components/students/enrollments-list';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import {
   Select,
   SelectContent,
@@ -36,7 +30,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Pagination } from '@/components/shared/Pagination';
 import type {
   EnrollmentListResponse,
   GroupedUsersResponse
@@ -45,17 +38,9 @@ import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
 
 type StudentStatus = 'all' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 
-interface PaginationInfo {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
 export default function StudentsPage() {
   const { t, language } = useTranslation();
+  const formatNumber = useNumberFormat();
   const isRtl = language === 'fa' || language === 'ar';
   const searchParams = useSearchParams();
 
@@ -113,10 +98,7 @@ export default function StudentsPage() {
     total: 0
   });
 
-  const [studentPagination, setStudentPagination] =
-    useState<PaginationInfo | null>(null);
   const [studentsLoading, setStudentsLoading] = useState(true);
-  const [studentPage, setStudentPage] = useState(1);
   const [studentStatusFilter, setStudentStatusFilter] =
     useState<StudentStatus>('all');
   const [searchInput, setSearchInput] = useState('');
@@ -127,8 +109,6 @@ export default function StudentsPage() {
   const [enrollmentStatusFilter, setEnrollmentStatusFilter] = useState<
     'all' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED'
   >('all');
-
-  const studentPageSize = 10;
 
   const fetchStudents = useCallback(async () => {
     try {
@@ -160,29 +140,6 @@ export default function StudentsPage() {
         if (payload.data.totals) {
           setTotals(payload.data.totals);
         }
-
-        // Apply status filter to students for pagination
-        const studentsData = (grouped.students as User[]) || [];
-        let filteredStudents = studentsData;
-        if (studentStatusFilter !== 'all') {
-          filteredStudents = studentsData.filter((student: User) => {
-            const status =
-              student.status || (student.is_active ? 'ACTIVE' : 'INACTIVE');
-            return status === studentStatusFilter;
-          });
-        }
-
-        // Set pagination info for students tab
-        const total = filteredStudents.length;
-        const totalPages = Math.ceil(total / studentPageSize);
-        setStudentPagination({
-          page: studentPage,
-          limit: studentPageSize,
-          total,
-          totalPages,
-          hasNextPage: studentPage < totalPages,
-          hasPreviousPage: studentPage > 1
-        });
       } else {
         setManagers([]);
         setTeachers([]);
@@ -195,21 +152,18 @@ export default function StudentsPage() {
           users: 0,
           total: 0
         });
-        setStudentPagination(null);
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
       setManagers([]);
       setTeachers([]);
       setStudents([]);
       setUsers([]);
       setTotals({ managers: 0, teachers: 0, students: 0, users: 0, total: 0 });
-      setStudentPagination(null);
       ErrorHandler.handleApiError(error);
     } finally {
       setStudentsLoading(false);
     }
-  }, [studentPage, studentPageSize, searchTerm, studentStatusFilter]);
+  }, [searchTerm, studentStatusFilter]);
 
   const fetchEnrollments = useCallback(async () => {
     try {
@@ -242,41 +196,10 @@ export default function StudentsPage() {
   useEffect(() => {
     const handler = setTimeout(() => {
       setSearchTerm(searchInput.trim());
-      setStudentPage(1);
     }, 400);
 
     return () => clearTimeout(handler);
   }, [searchInput]);
-
-  const getEnrollmentStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'bg-green-100 text-green-800';
-      case 'COMPLETED':
-        return 'bg-blue-100 text-blue-800';
-      case 'CANCELLED':
-        return 'bg-red-100 text-red-800';
-      case 'EXPIRED':
-        return 'bg-muted text-muted-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
-  };
-
-  const getProgressPercentage = (enrollment: Enrollment) => {
-    if (typeof enrollment.progress_percent === 'number') {
-      return Math.round(enrollment.progress_percent);
-    }
-
-    if (!enrollment.progress || enrollment.progress.length === 0) return 0;
-    const completedLessons = enrollment.progress.filter(
-      (p) => p.status === 'COMPLETED'
-    ).length;
-    const totalLessons = enrollment.progress.length;
-    return totalLessons > 0
-      ? Math.round((completedLessons / totalLessons) * 100)
-      : 0;
-  };
 
   const filteredEnrollments = useMemo(() => {
     if (enrollmentStatusFilter === 'all') {
@@ -286,23 +209,6 @@ export default function StudentsPage() {
       (enrollment) => enrollment.status === enrollmentStatusFilter
     );
   }, [enrollments, enrollmentStatusFilter]);
-
-  const totalStudents = totals.students;
-  const activeEnrollmentsCount = enrollments.filter(
-    (e) => e.status === 'ACTIVE'
-  ).length;
-  const completedEnrollmentsCount = enrollments.filter(
-    (e) => e.status === 'COMPLETED'
-  ).length;
-  const averageProgress =
-    enrollments.length > 0
-      ? Math.round(
-          enrollments.reduce(
-            (acc, enrollment) => acc + getProgressPercentage(enrollment),
-            0
-          ) / enrollments.length
-        )
-      : 0;
 
   if (studentsLoading && totals.total === 0) {
     return (
@@ -324,31 +230,25 @@ export default function StudentsPage() {
   return (
     <LearningNavGate requiredCapability="students">
       <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {t('students.allUsers')}
-            </h1>
-            <p className="text-muted-foreground">
-              {t('students.manageAllUsers')}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button>
-              <Plus className="me-2 h-4 w-4" />
-              {t('students.addUser')}
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          icon={<Users className="h-5 w-5" />}
+          title={t('students.allUsers')}
+          description={t('students.manageAllUsers')}
+        >
+          <Button size="sm" className="rounded-lg">
+            <Plus className="me-1.5 h-4 w-4" />
+            {t('students.addUser')}
+          </Button>
+        </PageHeader>
 
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <div className="relative flex-1">
-            <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute start-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t('students.searchUsersByNameEmailPhone')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="ps-8"
+              className="rounded-lg ps-8"
               autoComplete="off"
             />
           </div>
@@ -358,7 +258,7 @@ export default function StudentsPage() {
               setStudentStatusFilter(value as StudentStatus)
             }
           >
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[200px] rounded-lg">
               <SelectValue placeholder={t('common.filter')} />
             </SelectTrigger>
             <SelectContent>
@@ -369,69 +269,57 @@ export default function StudentsPage() {
               ))}
             </SelectContent>
           </Select>
-          <Button variant="outline" className="hidden md:inline-flex">
+          <Button
+            variant="outline"
+            className="hidden rounded-lg md:inline-flex"
+          >
             <Filter className="me-2 h-4 w-4" />
             {t('common.moreFilters')}
           </Button>
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('students.totalUsersCard')}
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totals.total}</div>
-              <p className="text-xs text-muted-foreground">
-                {t('students.allRegisteredUsers')}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('students.managers')}
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totals.managers}</div>
-              <p className="text-xs text-muted-foreground">
-                {t('students.storeAdministrators')}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('students.teachers')}
-              </CardTitle>
-              <GraduationCap className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totals.teachers}</div>
-              <p className="text-xs text-muted-foreground">
-                {t('students.courseInstructors')}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('navigation.students')}
-              </CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totals.students}</div>
-              <p className="text-xs text-muted-foreground">
-                {t('students.courseLearners')}
-              </p>
-            </CardContent>
-          </Card>
+          {[
+            {
+              icon: Users,
+              label: t('students.totalUsersCard'),
+              value: totals.total,
+              hint: t('students.allRegisteredUsers')
+            },
+            {
+              icon: Users,
+              label: t('students.managers'),
+              value: totals.managers,
+              hint: t('students.storeAdministrators')
+            },
+            {
+              icon: GraduationCap,
+              label: t('students.teachers'),
+              value: totals.teachers,
+              hint: t('students.courseInstructors')
+            },
+            {
+              icon: CheckCircle,
+              label: t('navigation.students'),
+              value: totals.students,
+              hint: t('students.courseLearners')
+            }
+          ].map((stat) => (
+            <Card key={stat.label}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {stat.label}
+                </CardTitle>
+                <stat.icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatNumber(stat.value)}
+                </div>
+                <p className="text-xs text-muted-foreground">{stat.hint}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         <Tabs
@@ -442,283 +330,130 @@ export default function StudentsPage() {
         >
           <TabsList>
             <TabsTrigger value="managers">
-              {t('students.managers')} ({totals.managers})
+              {t('students.managers')} ({formatNumber(totals.managers)})
             </TabsTrigger>
             <TabsTrigger value="teachers">
-              {t('students.teachers')} ({totals.teachers})
+              {t('students.teachers')} ({formatNumber(totals.teachers)})
             </TabsTrigger>
             <TabsTrigger value="students">
-              {t('navigation.students')} ({totals.students})
+              {t('navigation.students')} ({formatNumber(totals.students)})
             </TabsTrigger>
             <TabsTrigger value="users">
-              {t('students.users')} ({totals.users})
+              {t('students.users')} ({formatNumber(totals.users)})
             </TabsTrigger>
             <TabsTrigger value="enrollments">
-              {t('students.enrollments')} ({filteredEnrollments.length})
+              {t('students.enrollments')} (
+              {formatNumber(filteredEnrollments.length)})
             </TabsTrigger>
             <TabsTrigger value="progress">
               {t('students.progressTracking')}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="managers" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('students.allManagers')}</CardTitle>
-                <CardDescription>
-                  {t('students.storeManagersAndAdmins')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <UserTable
-                  users={managers}
-                  emptyMessage={t('students.noManagersFound')}
-                  t={t}
-                />
-              </CardContent>
-            </Card>
+          <TabsContent value="managers">
+            <DataPanel
+              title={t('students.allManagers')}
+              subtitle={t('students.storeManagersAndAdmins')}
+            >
+              <UserTable
+                users={managers}
+                emptyMessage={t('students.noManagersFound')}
+                t={t}
+              />
+            </DataPanel>
           </TabsContent>
 
-          <TabsContent value="teachers" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('students.allTeachers')}</CardTitle>
-                <CardDescription>
-                  {t('students.courseInstructorsAndEducators')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <UserTable
-                  users={teachers}
-                  emptyMessage={t('students.noTeachersFound')}
-                  t={t}
-                />
-              </CardContent>
-            </Card>
+          <TabsContent value="teachers">
+            <DataPanel
+              title={t('students.allTeachers')}
+              subtitle={t('students.courseInstructorsAndEducators')}
+            >
+              <UserTable
+                users={teachers}
+                emptyMessage={t('students.noTeachersFound')}
+                t={t}
+              />
+            </DataPanel>
           </TabsContent>
 
-          <TabsContent value="students" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('students.allStudents')}</CardTitle>
-                <CardDescription>
-                  {t('students.manageRosterDescription')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <UserTable
-                  users={students}
-                  emptyMessage={t('students.willAppearWhenRegistered')}
-                  t={t}
-                  showWorkspace
-                />
-              </CardContent>
-            </Card>
+          <TabsContent value="students">
+            <DataPanel
+              title={t('students.allStudents')}
+              subtitle={t('students.manageRosterDescription')}
+            >
+              <UserTable
+                users={students}
+                emptyMessage={t('students.willAppearWhenRegistered')}
+                t={t}
+                showWorkspace
+              />
+            </DataPanel>
           </TabsContent>
 
-          <TabsContent value="users" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('students.allUsers')}</CardTitle>
-                <CardDescription>
-                  {t('students.generalUsersNoRoles')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <UserTable
-                  users={users}
-                  emptyMessage={t('students.noGeneralUsersFound')}
-                  t={t}
-                />
-              </CardContent>
-            </Card>
+          <TabsContent value="users">
+            <DataPanel
+              title={t('students.allUsers')}
+              subtitle={t('students.generalUsersNoRoles')}
+            >
+              <UserTable
+                users={users}
+                emptyMessage={t('students.noGeneralUsersFound')}
+                t={t}
+              />
+            </DataPanel>
           </TabsContent>
 
-          <TabsContent value="enrollments" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('students.studentEnrollments')}</CardTitle>
-                <CardDescription>
-                  {t('students.enrollmentsDescription')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    {t('students.useSearchAndFilters')}
-                  </p>
-                  <Select
-                    value={enrollmentStatusFilter}
-                    onValueChange={(value) =>
-                      setEnrollmentStatusFilter(
-                        value as
-                          | 'all'
-                          | 'ACTIVE'
-                          | 'COMPLETED'
-                          | 'CANCELLED'
-                          | 'EXPIRED'
-                      )
-                    }
-                  >
-                    <SelectTrigger className="w-[160px]">
-                      <SelectValue placeholder={t('students.filterByStatus')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ENROLLMENT_STATUS_FILTERS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {enrollmentsLoading && enrollments.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {t('students.loadingEnrollments')}
-                    </p>
-                  </div>
-                ) : filteredEnrollments.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <GraduationCap className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-2 text-sm font-medium">
-                      {t('students.noEnrollmentsFound')}
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {t('students.adjustFilters')}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {filteredEnrollments.map((enrollment) => (
-                      <div
-                        key={enrollment.id}
-                        className="flex flex-col gap-3 rounded-lg border p-4 md:flex-row md:items-center md:justify-between"
-                      >
-                        <div className="flex flex-1 items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback>
-                              {enrollment.user?.name
-                                ?.split(' ')
-                                .map((n) => n[0])
-                                .join('') || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="space-y-1">
-                            <p className="text-sm font-medium leading-none">
-                              {enrollment.user?.name ||
-                                t('students.unknownStudent')}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {enrollment.course?.title ||
-                                t('students.unknownCourse')}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {t('students.enrolledOn')}{' '}
-                              {new Date(
-                                enrollment.enrolled_at
-                              ).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-start gap-2 md:items-end">
-                          <Badge
-                            className={getEnrollmentStatusColor(
-                              enrollment.status
-                            )}
-                          >
-                            {enrollment.status === 'ACTIVE'
-                              ? t('common.active')
-                              : enrollment.status === 'COMPLETED'
-                                ? t('students.completed')
-                                : enrollment.status === 'CANCELLED'
-                                  ? t('students.cancelled')
-                                  : enrollment.status === 'EXPIRED'
-                                    ? t('students.expired')
-                                    : enrollment.status}
-                          </Badge>
-                          {typeof enrollment.progress_percent === 'number' && (
-                            <span className="text-xs text-muted-foreground">
-                              {t('students.progress')}:{' '}
-                              {Math.round(enrollment.progress_percent)}%
-                            </span>
-                          )}
-                        </div>
-                      </div>
+          <TabsContent value="enrollments">
+            <DataPanel
+              title={t('students.studentEnrollments')}
+              subtitle={t('students.enrollmentsDescription')}
+              filters={
+                <Select
+                  value={enrollmentStatusFilter}
+                  onValueChange={(value) =>
+                    setEnrollmentStatusFilter(
+                      value as
+                        | 'all'
+                        | 'ACTIVE'
+                        | 'COMPLETED'
+                        | 'CANCELLED'
+                        | 'EXPIRED'
+                    )
+                  }
+                >
+                  <SelectTrigger className="h-8 w-[160px] rounded-lg bg-card text-sm">
+                    <SelectValue placeholder={t('students.filterByStatus')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ENROLLMENT_STATUS_FILTERS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
                     ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  </SelectContent>
+                </Select>
+              }
+            >
+              <EnrollmentsList
+                enrollments={filteredEnrollments}
+                isLoading={enrollmentsLoading && enrollments.length === 0}
+                t={t}
+              />
+            </DataPanel>
           </TabsContent>
 
-          <TabsContent value="progress" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('students.progressTracking')}</CardTitle>
-                <CardDescription>
-                  {t('students.monitorProgressDescription')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {enrollmentsLoading && enrollments.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {t('students.loadingProgressData')}
-                    </p>
-                  </div>
-                ) : filteredEnrollments.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-2 text-sm font-medium">
-                      {t('students.noProgressData')}
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {t('students.progressWillBeTracked')}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {filteredEnrollments.map((enrollment) => {
-                      const percentage = getProgressPercentage(enrollment);
-                      return (
-                        <div key={enrollment.id} className="space-y-2">
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-8 w-8">
-                                <AvatarFallback>
-                                  {enrollment.user?.name
-                                    ?.split(' ')
-                                    .map((n) => n[0])
-                                    .join('') || 'U'}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <p className="text-sm font-medium">
-                                  {enrollment.user?.name ||
-                                    t('students.unknownStudent')}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {enrollment.course?.title ||
-                                    t('students.unknownCourse')}
-                                </p>
-                              </div>
-                            </div>
-                            <span className="text-sm font-medium">
-                              {percentage}%
-                            </span>
-                          </div>
-                          <Progress value={percentage} className="h-2" />
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+          <TabsContent value="progress">
+            <DataPanel
+              title={t('students.progressTracking')}
+              subtitle={t('students.monitorProgressDescription')}
+            >
+              <EnrollmentsList
+                enrollments={filteredEnrollments}
+                isLoading={enrollmentsLoading && enrollments.length === 0}
+                t={t}
+                variant="progress"
+              />
+            </DataPanel>
           </TabsContent>
         </Tabs>
       </div>
