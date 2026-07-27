@@ -155,6 +155,8 @@ export interface Academy {
   logo_id?: number;
   cover_id?: number;
   is_active: boolean;
+  /** Set while the manager has taken the public site offline. */
+  site_disabled_at?: string | null;
   country_code?: string;
   currency?: string;
   currency_symbol?: string;
@@ -993,29 +995,46 @@ export type OfferingType =
   | 'PRIVATE'
   | 'PAYMENT_PLAN';
 
-export interface CourseOffering {
+export interface OfferCourseRef {
+  Course: { id: string; title: string; slug: string };
+}
+
+export interface PaymentPlan {
   id: string;
   course_id: string;
+  installment_count: number;
+  amount_per_installment: number;
+  interval_days: number;
+  is_active: boolean;
+}
+
+export interface Offer {
+  id: string;
+  academy_id: string;
   type: OfferingType;
+  title: string | null;
+  slug: string | null;
+  description: string | null;
   price: number;
   currency: string;
   access_duration_days: number | null;
   is_active: boolean;
-  academy_plan_id: string | null;
+  /** Set only on a PAYMENT_PLAN offer — the installment plan it charges through. */
   payment_plan_id: string | null;
-  tutoring_offer_id: string | null;
+  /** Set when this offer IS the course's own price — edit the course instead. */
+  source_course_id: string | null;
   created_at: string;
-  updated_at: string;
+  Courses: OfferCourseRef[];
 }
 
-export interface CourseOfferingInput {
-  course_id: string;
+export interface OfferInput {
+  course_ids: string[];
   type: OfferingType;
   price?: number;
-  currency?: string;
+  title?: string;
+  slug?: string;
+  description?: string;
   access_duration_days?: number | null;
   is_active?: boolean;
-  academy_plan_id?: string | null;
   payment_plan_id?: string | null;
-  tutoring_offer_id?: string | null;
 }

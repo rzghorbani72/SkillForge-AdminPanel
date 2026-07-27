@@ -48,7 +48,7 @@ export function LoginForm({
   const router = useRouter();
 
   return (
-    <AuthShell activeTab="login" title={t('auth.loginTitle')}>
+    <AuthShell activeTab="login" title={t('auth.loginTitle')} centerTitle>
       {unauthorizedError && (
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>{unauthorizedError}</AlertDescription>

@@ -22,6 +22,8 @@ export interface PlatformRole {
   is_system: boolean;
   is_active: boolean;
   hierarchy_level: number;
+  /** null = global/platform-wide role; set = scoped to one academy (MANAGER-created). */
+  academy_id: string | null;
   user_count: number;
   permissions: RolePermission[];
 }

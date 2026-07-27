@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
-import { isStarterPlan, shouldShowUpgradePrompt } from '@/lib/settings-scope';
+import {
+  isStarterPlan,
+  isTopPlan,
+  shouldShowUpgradePrompt
+} from '@/lib/settings-scope';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 
 export interface AcademySubscriptionInvoice {
@@ -27,6 +31,10 @@ export interface AcademySubscriptionState {
   status?: 'ACTIVE' | 'GRACE' | 'EXPIRED' | 'INACTIVE';
   days_remaining?: number | null;
   grace_until?: string | null;
+  // A free trial is ACTIVE but not paid; only a truly paid plan can be upgraded
+  // (prorated). Trial and no-plan both buy at full price.
+  is_trial?: boolean;
+  has_paid?: boolean;
   storage?: {
     usage_gb: number;
     included_gb: number;
@@ -72,7 +80,11 @@ export function useAcademySubscription(enabled = true) {
     planName,
     status,
     daysRemaining,
+    isTrial: subscription?.is_trial ?? false,
     isStarter: isStarterPlan(planSlug),
+    // Business has no higher self-serve tier — once paid and active, there is
+    // nothing to upgrade to, only to renew when it's expiring.
+    isTopPlan: isTopPlan(planSlug),
     shouldShowUpgrade: shouldShowUpgradePrompt(status, daysRemaining, planSlug)
   };
 }

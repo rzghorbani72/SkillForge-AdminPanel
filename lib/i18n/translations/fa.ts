@@ -235,21 +235,20 @@ export const fa = {
     editPermissions: 'ویرایش دسترسی‌ها',
     deleteRole: 'حذف نقش',
     accessDenied: 'دسترسی مجاز نیست',
-    accessDeniedDescription: 'فقط مالک پلتفرم می‌تواند نقش‌ها را مدیریت کند.',
+    accessDeniedDescription: 'شما مجوز مدیریت نقش‌ها را ندارید.',
     editPermissionsFor: 'دسترسی‌های {{role}}',
     permissionsHint: 'برای هر بخش، سطح دسترسی این نقش را انتخاب کنید.',
     ownerLockedHint: 'مالک پلتفرم به همه‌چیز دسترسی دارد و قابل تغییر نیست.',
     permissionsSaved: 'دسترسی‌ها ذخیره شد',
     createTitle: 'ساخت نقش جدید',
     createHint: 'یک نقش سفارشی با نام یکتا بسازید.',
-    createDisabledHint:
-      'ساخت نقش سفارشی موقتاً غیرفعال است تا اعمال دسترسی‌ها به‌طور کامل تکمیل شود.',
     nameLabel: 'کلید نقش (انگلیسیِ بزرگ)',
     nameInvalid: 'فقط حروف بزرگ انگلیسی، عدد و زیرخط مجاز است.',
     labelLabel: 'برچسب نمایشی',
     descriptionLabel: 'توضیح',
-    levelLabel: 'سطح دسترسی (۰ تا ۵)',
+    levelLabel: 'سطح دسترسی',
     levelHint: 'سطح بالاتر یعنی اختیارات بیشتر؛ سطح ۶ مخصوص مالک پلتفرم است.',
+    levelCapHint: 'شما می‌توانید نقشی تا سطح {{level}} بسازید.',
     roleCreated: 'نقش ساخته شد',
     roleDeleted: 'نقش حذف شد',
     deleteTitle: 'حذف نقش',
@@ -280,6 +279,10 @@ export const fa = {
       theme: 'قالب',
       roles: 'نقش‌ها و دسترسی‌ها'
     }
+  },
+  accessControl: {
+    deniedTitle: 'دسترسی مجاز نیست',
+    deniedDescription: 'شما مجوز مشاهده این صفحه را ندارید.'
   },
   navigation: {
     rolesPermissions: 'نقش‌ها و دسترسی‌ها',
@@ -403,7 +406,17 @@ export const fa = {
     reacceptDescriptionAfter:
       'تغییر کرده است. برای ادامه استفاده از پنل، آن‌ها را مطالعه و بپذیرید.',
     acceptAndContinue: 'می‌پذیرم و ادامه می‌دهم',
-    accepting: 'در حال ثبت پذیرش...'
+    accepting: 'در حال ثبت پذیرش...',
+    agreeByClicking: 'با کلیک روی «می‌پذیرم و ادامه می‌دهم»، با',
+    notTranslatedNotice:
+      'این سند هنوز به زبان شما ترجمه نشده است. نسخهٔ انگلیسی نمایش داده می‌شود.'
+  },
+  subscription: {
+    expiredTitle: 'برای ادامه، پلن را ارتقا دهید',
+    expiredWarning:
+      'اشتراک آکادمی شما منقضی شده است. برای بازگرداندن دسترسی تمدید کنید — اطلاعات شما محفوظ است.',
+    upgradeCta: 'ارتقای پلن',
+    continueViewing: 'ادامهٔ مشاهده'
   },
   legalAdmin: {
     title: 'اسناد حقوقی',
@@ -615,6 +628,9 @@ export const fa = {
     academyNamePlaceholder: 'مثال: آکادمی طراحی دیجیتال',
     academyUrl: 'آدرس آکادمی',
     academyUrlDesc: 'آکادمی شما در آدرس {url} قرار خواهد گرفت',
+    slugChecking: 'در حال بررسی در دسترس بودن…',
+    slugAvailable: 'این آدرس در دسترس است',
+    slugTaken: 'این آدرس قبلاً گرفته شده است',
     academyDescriptionLabel: 'توضیحات',
     academyDescriptionPlaceholder:
       'آکادمی شما چه چیزی تدریس می‌کند؟ معرفی کوتاهی برای دانشجویان...',
@@ -740,6 +756,10 @@ export const fa = {
     upgradePlanDesc:
       'با پلن Pro فضای ذخیره‌سازی بیشتر، دانشجویان بیشتر و پشتیبانی اولویت‌دار دریافت کنید.',
     upgradePlanCta: 'مشاهده پلن‌ها',
+    // Business has no higher tier — this card must not invite an upgrade there.
+    renewPlanTitle: 'اشتراک خود را تمدید کنید',
+    renewPlanDesc:
+      'پلن شما به‌زودی منقضی می‌شود؛ برای حفظ دسترسی همین حالا تمدید کنید.',
     inviteTeamTitle: 'تیم خود را دعوت کنید',
     inviteTeamDesc: 'معلمان و مدیران را برای همکاری در آکادمی اضافه کنید.',
     inviteTeamCta: 'دعوت کاربران',
@@ -838,6 +858,38 @@ export const fa = {
     slugTaken: 'این آدرس قبلاً گرفته شده',
     slugChecking: 'در حال بررسی...',
     slugInvalid: 'فقط حروف انگلیسی کوچک، عدد و خط تیره مجاز است',
+    statusSiteDisabled: 'سایت غیرفعال',
+    siteReopenAt: 'زمان بازگشایی خودکار',
+    siteReopenAtHint:
+      'اجباری است. آکادمی در این زمان خودکار فعال می‌شود و به‌اندازه مدت توقف، به اعتبار اشتراک و دوره‌های دانشجویان اضافه می‌شود. حداکثر ۱۸۰ روز.',
+    siteReopensOn: 'بازگشایی خودکار در',
+    siteDisableTimeReserved:
+      'زمان پرداخت‌شده دانشجویان محفوظ می‌ماند و پس از بازگشایی تمدید می‌شود. اطلاع‌رسانی با پیامک و ایمیل انجام می‌شود.',
+    siteStatusTitle: 'وضعیت سایت آکادمی',
+    siteCurrentlyDisabled:
+      'سایت این آکادمی غیرفعال است و بازدیدکنندگان و دانشجویان پیام غیرفعالی و راه تماس شما را می‌بینند.',
+    siteEnableAction: 'فعال‌سازی دوباره سایت',
+    siteDisableExplain:
+      'با غیرفعال کردن، دامنه و زیردامنه آکادمی به جای سایت یک پیام نشان می‌دهند. هیچ داده‌ای پاک نمی‌شود و با فعال‌سازی همه چیز برمی‌گردد.',
+    siteDisableStudentsWarning:
+      'دانشجویانی هستند که هزینه پرداخت کرده‌اند و دسترسی‌شان قطع می‌شود.',
+    siteDisableActiveSubscriptions: 'اشتراک فعال',
+    siteDisableActiveEnrollments: 'ثبت‌نام فعال',
+    siteDisableAcknowledge:
+      'می‌دانم این دانشجویان تا زمان فعال‌سازی دوباره به دوره‌ها دسترسی ندارند.',
+    siteContactEmail: 'ایمیل تماس',
+    siteContactPhone: 'تلفن تماس',
+    siteContactPhoneHint:
+      'شماره تماس، شماره ثبت‌شده شما در پلتفرم است و قابل تغییر نیست؛ برای عوض کردن آن، شماره حساب کاربری خود را به‌روزرسانی کنید. ایمیل اختیاری است.',
+    siteContactPhoneMissing: 'شماره‌ای در حساب شما ثبت نشده است',
+    siteDisableMessage: 'پیام برای دانشجویان (اختیاری)',
+    siteDisableMessagePlaceholder: 'مثلاً: تا اول مهر تعطیل هستیم.',
+    siteDisableAction: 'غیرفعال کردن سایت آکادمی',
+    siteDisableConfirmTitle: 'از غیرفعال کردن سایت مطمئن هستید؟',
+    siteDisableConfirmBody:
+      'با تأیید، سایت آکادمی بلافاصله از دسترس خارج می‌شود و بازدیدکنندگان و دانشجویان فقط پیام غیرفعالی و راه تماس شما را می‌بینند.',
+    siteDisableConfirmAffected: 'دانشجویان متأثر',
+    siteDisableConfirmAction: 'بله، سایت را غیرفعال کن',
     mainCategory: 'دسته‌بندی اصلی',
     shortDescription: 'توضیح کوتاه',
     shortDescriptionPlaceholder: 'چه چیزی آکادمی شما را متمایز می‌کند؟',
@@ -865,6 +917,10 @@ export const fa = {
     offeringType: 'نوع',
     offeringPrice: 'قیمت',
     offeringActive: 'فعال',
+    offerFromCoursePrice: 'قیمت خود دوره',
+    offeringAccessDays: 'مدت دسترسی (روز)',
+    offeringAccessDaysHint: 'خالی بگذارید تا {{days}} روز شود',
+    offeringAccessDaysValue: '{{days}} روز',
     noOfferings:
       'هنوز پلنی ندارید. یک پلن اضافه کنید تا دانشجو بتواند دوره را بخرد.',
     offeringFREE: 'رایگان',
@@ -3498,6 +3554,16 @@ export const fa = {
     notFound: 'دوره پیدا نشد',
     backToCourses: 'بازگشت به دوره‌ها'
   },
+  subscriptionStatus: {
+    active: 'فعال',
+    trial: 'دورهٔ آزمایشی',
+    grace: 'مهلت پرداخت',
+    expired: 'منقضی‌شده',
+    inactive: 'بدون پلن فعال',
+    noPlanTitle: 'هنوز پلنی فعال ندارید',
+    startPlanHint:
+      'برای شروع، یک پلن را از بین گزینه‌های زیر انتخاب و فعال کنید.'
+  },
   sidebar: {
     upgradePlan: 'ارتقای پلن',
     upgradeDescription: 'دوره، فضای ذخیره و امکانات بیشتر با پلن بالاتر',
@@ -3506,6 +3572,9 @@ export const fa = {
     subscriptionExpiring: 'پلن {{plan}}',
     upgradeButton: 'مشاهده پلن‌ها',
     manageSubscription: 'مدیریت پلن',
+    // Business has no higher tier — when it's paid & active there's nothing to
+    // upgrade to; when it's expiring, the action is renewal, not upgrade.
+    renewPlan: 'تمدید پلن',
     currentPlan: 'پلن {{plan}}',
     managePlanHint: 'مشاهده یا تغییر اشتراک پلتفرم',
     platformAdmin: 'مدیر پلتفرم',
@@ -3530,16 +3599,18 @@ export const fa = {
   plans: {
     title: 'پلن‌های قیمت',
     subtitle:
-      'پلن مناسب آکادمی خود را انتخاب کنید یا برای دانشجویان خود پلن سفارشی بسازید',
+      'پلن مناسب آکادمی خود را انتخاب کنید یا برای دانشجویان خود اشتراک بسازید',
     badge: 'پلتفرم',
     monthly: 'ماهانه',
     yearly: 'سالانه (۲ ماه رایگان)',
     pricePerMonth: 'تومان / ماه',
     pricePerYear: 'تومان / سال',
+    equivalentPerMonth: 'معادل {{price}} تومان در ماه',
+    yearlyDiscount: '٪{{percent}} تخفیف',
     choosePlan: 'انتخاب پلن',
     currentPlan: 'پلن فعلی',
     lockedUntilCurrentEnds: 'پس از پایان پلن فعلی قابل انتخاب است',
-    popular: 'محبوب‌ترین',
+    popular: 'پیشنهاد ما',
     managePlans: 'مدیریت پلن‌ها',
     addPlan: 'افزودن پلن',
     needMoreTitle: 'نیاز به چیز دیگری دارید؟',
@@ -3562,6 +3633,23 @@ export const fa = {
     confirmChangePlan: 'تأیید تغییر پلن',
     confirmChangePlanDesc:
       'مدت اشتراک خود را انتخاب کنید. مبلغ به صورت کامل محاسبه خواهد شد.',
+    confirmUpgradeDesc:
+      'شما در حال ارتقا به یک پلن بالاتر هستید. فقط مابه‌التفاوت روزهای باقی‌ماندهٔ پلن فعلی محاسبه می‌شود.',
+    upgradeSummary: 'خلاصهٔ ارتقا',
+    daysRemaining: 'روزهای باقی‌مانده از پلن فعلی',
+    daysUnit: 'روز',
+    activationDate: 'تاریخ فعال‌سازی',
+    activatesToday: 'همین امروز (بلافاصله)',
+    expiryUnchanged:
+      'تاریخ انقضا تغییری نمی‌کند؛ پلن بهتر برای همان زمانِ باقی‌مانده فعال می‌شود.',
+    planDiff: 'مابه‌التفاوت پلن',
+    storageCredit: 'اعتبار فضای ذخیره‌سازی',
+    proratedTotal: 'مبلغ قابل پرداخت (نسبتی)',
+    youPayLess: 'شما کمتر از قیمت کامل می‌پردازید',
+    upgradeWhyLess:
+      'چون {{days}} روز باقی‌ماندهٔ پلن {{plan}} شما به‌عنوان اعتبار محاسبه شده، فقط مابه‌التفاوت تا پلن جدید را برای همین روزها می‌پردازید، نه قیمت کامل آن‌ها.',
+    fullPriceRef: 'قیمت کامل این روزها با پلن جدید',
+    confirmUpgrade: 'تأیید ارتقا',
     subscriptionPeriod: 'مدت اشتراک',
     totalPrice: 'مبلغ کل',
     toman: 'تومان',
@@ -3600,24 +3688,30 @@ export const fa = {
     saving: 'در حال ذخیره...',
     teacherNote: 'برای تغییر پلن با مدیر آکادمی تماس بگیرید.',
     platformPlansTab: 'پلن‌های پلتفرم',
-    academyPlansTab: 'پلن‌های آکادمی',
+    academyPlansTab: 'اشتراک دانشجویان',
     mySubscriptionTab: 'اشتراک من',
     platformTabTitle: 'پلن پلتفرم',
     platformTabDescription: 'انتخاب یا ارتقای پلن اشتراک این آکادمی',
-    academyTabTitle: 'پلن‌های دانشجو',
-    academyTabDescription: 'پلن‌هایی بسازید که دانشجویان از آکادمی شما می‌خرند',
+    academyTabTitle: 'اشتراک دانشجویان',
+    academyTabDescription:
+      'اشتراک‌هایی بسازید که دانشجویان از آکادمی شما می‌خرند',
     kindLabel: 'نوع',
     kindSubscription: 'اشتراکی',
     kindPackage: 'بسته',
     durationDays: 'مدت (روز)',
+    durationPlaceholder: 'مثلاً ۳۰',
     descriptionLabel: 'توضیحات',
+    nameLabel: 'نام اشتراک',
+    namePlaceholder: 'مثلاً دسترسی ماهانه',
     priceLabel: 'قیمت',
-    createAcademyPlan: 'ایجاد پلن',
-    editAcademyPlan: 'ویرایش پلن',
-    noAcademyPlans: 'هنوز پلنی ایجاد نشده است.',
-    createFirstAcademyPlan: 'اولین پلن را بسازید',
-    selectAcademyFirst: 'برای مدیریت پلن‌ها ابتدا یک آکادمی انتخاب کنید.',
-    subscriptionOnlyDuration: 'فقط برای پلن‌های اشتراکی لازم است'
+    dialogSubtitle:
+      'اشتراکی بسازید که دانشجویان برای دسترسی به دوره‌های شما می‌خرند',
+    createAcademyPlan: 'ایجاد اشتراک',
+    editAcademyPlan: 'ویرایش اشتراک',
+    noAcademyPlans: 'هنوز اشتراکی ایجاد نشده است.',
+    createFirstAcademyPlan: 'اولین اشتراک را بسازید',
+    selectAcademyFirst: 'برای مدیریت اشتراک‌ها ابتدا یک آکادمی انتخاب کنید.',
+    subscriptionOnlyDuration: 'فقط برای اشتراک‌ها لازم است'
   },
   sitePreview: {
     academyName: 'آکادمی شما',

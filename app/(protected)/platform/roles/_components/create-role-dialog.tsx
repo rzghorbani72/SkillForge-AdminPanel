@@ -21,22 +21,30 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onCreated: () => void;
+  /** Ceiling for the level input — the actor's own rank cap (see roles-manager.tsx). */
+  maxLevel?: number;
 }
 
 const NAME_PATTERN = /^[A-Z][A-Z0-9_]*$/;
 
-export function CreateRoleDialog({ open, onClose, onCreated }: Props) {
+export function CreateRoleDialog({
+  open,
+  onClose,
+  onCreated,
+  maxLevel = 5
+}: Props) {
   const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState('');
   const [label, setLabel] = useState('');
   const [description, setDescription] = useState('');
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(0);
 
   const nameValid = NAME_PATTERN.test(name);
+  const levelValid = level >= 0 && level <= maxLevel;
 
   const submit = async () => {
-    if (!nameValid) return;
+    if (!nameValid || !levelValid) return;
     try {
       setSaving(true);
       await apiClient.createPlatformRole({
@@ -51,7 +59,7 @@ export function CreateRoleDialog({ open, onClose, onCreated }: Props) {
       setName('');
       setLabel('');
       setDescription('');
-      setLevel(1);
+      setLevel(0);
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -107,10 +115,15 @@ export function CreateRoleDialog({ open, onClose, onCreated }: Props) {
               id="role-level"
               type="number"
               min={0}
-              max={5}
+              max={maxLevel}
               value={level}
               onChange={(e) => setLevel(Number(e.target.value))}
             />
+            {!levelValid && (
+              <p className="text-xs text-destructive">
+                {t('roles.levelCapHint', { level: maxLevel })}
+              </p>
+            )}
             <p className="text-xs text-muted-foreground">
               {t('roles.levelHint')}
             </p>
@@ -121,7 +134,10 @@ export function CreateRoleDialog({ open, onClose, onCreated }: Props) {
           <Button variant="outline" onClick={onClose} disabled={saving}>
             {t('common.cancel')}
           </Button>
-          <Button onClick={submit} disabled={saving || !nameValid}>
+          <Button
+            onClick={submit}
+            disabled={saving || !nameValid || !levelValid}
+          >
             {saving ? t('common.saving') : t('common.create')}
           </Button>
         </DialogFooter>

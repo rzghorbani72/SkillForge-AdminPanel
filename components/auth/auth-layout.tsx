@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
-  maxWidth?: 'sm' | 'md' | 'lg';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
   scrollable?: boolean;
   dir?: 'rtl' | 'ltr';
   /** Design pins the card to the left edge; centered is used by wide pages. */
@@ -14,7 +14,8 @@ interface AuthLayoutProps {
 const MAX_WIDTH_CLASS = {
   sm: 'max-w-[526px]',
   md: 'max-w-md',
-  lg: 'max-w-3xl'
+  lg: 'max-w-3xl',
+  xl: 'max-w-5xl'
 } as const;
 
 export function AuthLayout({

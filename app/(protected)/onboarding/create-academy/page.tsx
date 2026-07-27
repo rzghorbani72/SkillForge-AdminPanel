@@ -1,11 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Globe, ArrowLeft, CheckCircle2, Check } from 'lucide-react';
+import {
+  Loader2,
+  Globe,
+  ArrowLeft,
+  CheckCircle2,
+  Check,
+  X
+} from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,6 +44,10 @@ const useAcademySchema = (t: (k: string) => string) =>
   });
 
 type AcademyValues = { name: string; slug: string; description?: string };
+
+type SlugStatus = 'idle' | 'checking' | 'available' | 'taken';
+
+const SLUG_PATTERN = /^[a-z0-9-]{2,40}$/;
 
 const TOTAL_STEPS = 4;
 
@@ -83,6 +94,45 @@ function ProgressDots({ current, total }: { current: number; total: number }) {
   );
 }
 
+// ─── Slug availability hint ───────────────────────────────────────────────
+
+function SlugAvailability({
+  status,
+  t
+}: {
+  status: SlugStatus;
+  t: (k: string) => string;
+}) {
+  if (status === 'idle') return null;
+  const config = {
+    checking: {
+      icon: Loader2,
+      key: 'auth.slugChecking',
+      className: 'text-muted-foreground',
+      spin: true
+    },
+    available: {
+      icon: Check,
+      key: 'auth.slugAvailable',
+      className: 'text-emerald-500',
+      spin: false
+    },
+    taken: {
+      icon: X,
+      key: 'auth.slugTaken',
+      className: 'text-destructive',
+      spin: false
+    }
+  }[status];
+  const Icon = config.icon;
+  return (
+    <p className={cn('flex items-center gap-1.5 text-xs', config.className)}>
+      <Icon className={cn('h-3.5 w-3.5', config.spin && 'animate-spin')} />
+      {t(config.key)}
+    </p>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────
 
 export default function CreateAcademyPage() {
@@ -105,16 +155,32 @@ export default function CreateAcademyPage() {
   });
 
   const slug = form.watch('slug');
+  const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
+  const slugCheck = useRef<{
+    timer: ReturnType<typeof setTimeout> | null;
+    token: number;
+  }>({ timer: null, token: 0 });
 
-  function handleNameChange(value: string) {
-    form.setValue('name', value);
-    const currentSlug = form.getValues('slug');
-    const prev = toSlug(
-      form.getValues('name').slice(0, value.length - 1) || ''
-    );
-    if (!currentSlug || currentSlug === prev) {
-      form.setValue('slug', toSlug(value), { shouldValidate: false });
-    }
+  function handleSlugChange(raw: string) {
+    const next = toSlug(raw);
+    form.setValue('slug', next, { shouldValidate: false });
+
+    if (slugCheck.current.timer) clearTimeout(slugCheck.current.timer);
+    setSlugStatus('idle');
+    if (!SLUG_PATTERN.test(next)) return;
+
+    setSlugStatus('checking');
+    const token = ++slugCheck.current.token;
+    slugCheck.current.timer = setTimeout(async () => {
+      try {
+        const { available } = await apiClient.checkSlugAvailability(next);
+        if (token !== slugCheck.current.token) return;
+        setSlugStatus(available ? 'available' : 'taken');
+      } catch {
+        if (token !== slugCheck.current.token) return;
+        setSlugStatus('idle');
+      }
+    }, 400);
   }
 
   async function goNext() {
@@ -123,7 +189,7 @@ export default function CreateAcademyPage() {
       if (valid) setStep((s) => s + 1);
     } else if (step === 2) {
       const valid = await form.trigger('slug');
-      if (valid) setStep((s) => s + 1);
+      if (valid && slugStatus === 'available') setStep((s) => s + 1);
     } else {
       setStep((s) => s + 1);
     }
@@ -230,7 +296,6 @@ export default function CreateAcademyPage() {
                         placeholder={t('auth.academyNamePlaceholder')}
                         autoFocus
                         {...field}
-                        onChange={(e) => handleNameChange(e.target.value)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -257,9 +322,7 @@ export default function CreateAcademyPage() {
                           placeholder="your-academy"
                           autoFocus
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(toSlug(e.target.value))
-                          }
+                          onChange={(e) => handleSlugChange(e.target.value)}
                           aria-label={t('auth.academyUrl')}
                         />
                       </div>
@@ -269,6 +332,7 @@ export default function CreateAcademyPage() {
                         {`platform.com/${slug}`}
                       </p>
                     )}
+                    <SlugAvailability status={slugStatus} t={t} />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -335,6 +399,7 @@ export default function CreateAcademyPage() {
                   type="button"
                   size="lg"
                   className="h-12 w-full"
+                  disabled={step === 2 && slugStatus !== 'available'}
                   onClick={goNext}
                 >
                   {t('auth.continueBtn')}

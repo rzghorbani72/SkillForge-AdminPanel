@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { Upload, Loader2, Check, X, CircleDashed } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Upload, Loader2, Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { apiClient, type SubscriptionPlanData } from '@/lib/api';
 import { formatStorage } from '@/components/plans/plan-types';
+import { SlugField } from '@/components/academies/slug-field';
+import { toSlug } from '@/lib/slug';
+import {
+  isSlugBlocking,
+  useSlugAvailability
+} from '@/hooks/use-slug-availability';
 
 const STEPS = ['stepSpecs', 'stepBranding', 'stepPlan'] as const;
 
@@ -49,68 +55,6 @@ type AcademyCreateModalProps = {
   t: (k: string) => string;
 };
 
-const SLUG_DOMAIN = 'mentoma.com';
-
-const RESERVED_SLUGS = new Set([
-  'api',
-  'www',
-  'admin',
-  'app',
-  'mail',
-  'email',
-  'ftp',
-  'smtp',
-  'pop',
-  'imap',
-  'blog',
-  'shop',
-  'store',
-  'support',
-  'help',
-  'docs',
-  'status',
-  'cdn',
-  'static',
-  'assets',
-  'media',
-  'img',
-  'images',
-  'auth',
-  'login',
-  'logout',
-  'signup',
-  'register',
-  'dashboard',
-  'panel',
-  'console',
-  'portal',
-  'dev',
-  'staging',
-  'test',
-  'demo',
-  'beta',
-  'internal',
-  'platform',
-  'mentoma',
-  'edusphere'
-]);
-
-function toSlug(value: string): string {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .slice(0, 40);
-}
-
-function isValidSlug(slug: string): boolean {
-  return /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/.test(slug);
-}
-
-type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
-
 export function AcademyCreateModal({
   open,
   onClose,
@@ -123,8 +67,11 @@ export function AcademyCreateModal({
   // Step 0 — Details
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
-  const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
-  const slugDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const {
+    status: slugStatus,
+    check: checkSlug,
+    reset: resetSlug
+  } = useSlugAvailability();
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
 
@@ -158,35 +105,15 @@ export function AcademyCreateModal({
     setLoadingPlans(true);
     apiClient
       .getActivePlans()
-      .then((data) => setPlans(Array.isArray(data) ? data : []))
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setPlans(list);
+        const defaultPlan = list.find((p) => p.is_most_popular) ?? list[0];
+        if (defaultPlan) setSelectedPlan(defaultPlan);
+      })
       .catch(() => setPlans([]))
       .finally(() => setLoadingPlans(false));
   }, [step, plans.length]);
-
-  const checkSlug = useCallback((value: string) => {
-    if (slugDebounceRef.current) clearTimeout(slugDebounceRef.current);
-    if (!value) {
-      setSlugStatus('idle');
-      return;
-    }
-    if (!isValidSlug(value)) {
-      setSlugStatus('invalid');
-      return;
-    }
-    if (RESERVED_SLUGS.has(value)) {
-      setSlugStatus('taken');
-      return;
-    }
-    setSlugStatus('checking');
-    slugDebounceRef.current = setTimeout(async () => {
-      try {
-        const result = await apiClient.checkSlugAvailability(value);
-        setSlugStatus(result.available ? 'available' : 'taken');
-      } catch {
-        setSlugStatus('idle');
-      }
-    }, 400);
-  }, []);
 
   function handleNameChange(value: string) {
     setName(value);
@@ -219,11 +146,10 @@ export function AcademyCreateModal({
   }
 
   function handleClose() {
-    if (slugDebounceRef.current) clearTimeout(slugDebounceRef.current);
+    resetSlug();
     setStep(0);
     setName('');
     setSlug('');
-    setSlugStatus('idle');
     setDescription('');
     setCategory('');
     setLogoId(null);
@@ -235,7 +161,7 @@ export function AcademyCreateModal({
   }
 
   async function handleSubmit() {
-    if (!name.trim() || !slug.trim()) return;
+    if (!name.trim() || !slug.trim() || isSlugBlocking(slugStatus)) return;
     setSaving(true);
     try {
       await onSubmit({
@@ -306,54 +232,12 @@ export function AcademyCreateModal({
                   autoFocus
                 />
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium">
-                  {t('stores.subdomain')}
-                </label>
-                <div
-                  className={cn(
-                    'flex items-center overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-ring',
-                    slugStatus === 'taken' && 'border-destructive',
-                    slugStatus === 'available' && 'border-green-500'
-                  )}
-                >
-                  <input
-                    className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground"
-                    value={slug}
-                    onChange={(e) => handleSlugChange(e.target.value)}
-                    placeholder="mehr"
-                    dir="ltr"
-                    aria-label={t('stores.subdomain')}
-                  />
-                  <span className="flex shrink-0 items-center gap-1 border-r bg-muted px-3 py-2 text-xs text-muted-foreground">
-                    {slugStatus === 'checking' && (
-                      <CircleDashed className="h-3 w-3 animate-spin" />
-                    )}
-                    {slugStatus === 'available' && (
-                      <Check className="h-3 w-3 text-green-500" />
-                    )}
-                    {slugStatus === 'taken' && (
-                      <X className="h-3 w-3 text-destructive" />
-                    )}
-                    .{SLUG_DOMAIN}
-                  </span>
-                </div>
-                {slugStatus === 'invalid' && slug.length > 0 && (
-                  <p className="mt-1 text-xs text-destructive">
-                    {t('stores.slugInvalid')}
-                  </p>
-                )}
-                {slugStatus === 'taken' && (
-                  <p className="mt-1 text-xs text-destructive">
-                    {t('stores.slugTaken')}
-                  </p>
-                )}
-                {slugStatus === 'available' && (
-                  <p className="mt-1 text-xs text-green-600">
-                    {t('stores.slugAvailable')}
-                  </p>
-                )}
-              </div>
+              <SlugField
+                value={slug}
+                status={slugStatus}
+                onChange={handleSlugChange}
+                t={t}
+              />
             </div>
 
             <div>
@@ -521,21 +405,26 @@ export function AcademyCreateModal({
                       type="button"
                       onClick={() => setSelectedPlan(selected ? null : plan)}
                       className={cn(
-                        'relative flex flex-col gap-2 rounded-xl border p-4 text-right transition-colors',
+                        'relative flex flex-col gap-2 rounded-xl border p-4 text-right transition-all duration-150',
                         selected
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50'
+                          ? 'border-primary bg-primary/5 shadow-md ring-1 ring-primary/20'
+                          : 'border-border bg-card hover:border-primary/40 hover:shadow-sm'
                       )}
                     >
+                      {plan.is_most_popular && !selected && (
+                        <span className="absolute end-3 top-3 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                          {t('plans.popular')}
+                        </span>
+                      )}
                       {selected && (
-                        <span className="absolute left-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <span className="absolute end-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
                           <Check className="h-3 w-3" />
                         </span>
                       )}
                       <p className="text-sm font-semibold">{plan.name}</p>
                       <p className="text-xl font-bold">
                         {price.toLocaleString('fa-IR')}
-                        <span className="mr-1 text-xs font-normal text-muted-foreground">
+                        <span className="ms-1 text-xs font-normal text-muted-foreground">
                           {period === 'monthly'
                             ? t('plans.pricePerMonth')
                             : t('plans.pricePerYear')}
@@ -591,11 +480,7 @@ export function AcademyCreateModal({
                 onClick={() => setStep((s) => s + 1)}
                 disabled={
                   step === 0 &&
-                  (!name.trim() ||
-                    !slug.trim() ||
-                    slugStatus === 'taken' ||
-                    slugStatus === 'invalid' ||
-                    slugStatus === 'checking')
+                  (!name.trim() || !slug.trim() || isSlugBlocking(slugStatus))
                 }
               >
                 {t('stores.nextStep')} &lsaquo;

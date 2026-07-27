@@ -144,21 +144,20 @@ export const ar = {
     editPermissions: 'تعديل الصلاحيات',
     deleteRole: 'حذف الدور',
     accessDenied: 'الوصول مرفوض',
-    accessDeniedDescription: 'يمكن لمالك المنصة فقط إدارة الأدوار.',
+    accessDeniedDescription: 'ليس لديك صلاحية لإدارة الأدوار.',
     editPermissionsFor: 'صلاحيات {{role}}',
     permissionsHint: 'اختر مستوى وصول هذا الدور لكل قسم.',
     ownerLockedHint: 'مالك المنصة لديه وصول كامل ولا يمكن تغييره.',
     permissionsSaved: 'تم حفظ الصلاحيات',
     createTitle: 'إنشاء دور جديد',
     createHint: 'أنشئ دورًا مخصصًا بمفتاح فريد.',
-    createDisabledHint:
-      'إنشاء الأدوار المخصصة معطّل مؤقتًا أثناء تفعيل فرض الصلاحيات بالكامل.',
     nameLabel: 'مفتاح الدور (أحرف كبيرة)',
     nameInvalid: 'يُسمح فقط بالأحرف الكبيرة والأرقام والشرطة السفلية.',
     labelLabel: 'التسمية الظاهرة',
     descriptionLabel: 'الوصف',
-    levelLabel: 'مستوى الوصول (0-5)',
+    levelLabel: 'مستوى الوصول',
     levelHint: 'المستوى الأعلى يعني صلاحيات أكثر؛ المستوى 6 مخصص لمالك المنصة.',
+    levelCapHint: 'يمكنك إنشاء أدوار حتى المستوى {{level}}.',
     roleCreated: 'تم إنشاء الدور',
     roleDeleted: 'تم حذف الدور',
     deleteTitle: 'حذف الدور',
@@ -189,6 +188,10 @@ export const ar = {
       theme: 'السمة',
       roles: 'الأدوار والصلاحيات'
     }
+  },
+  accessControl: {
+    deniedTitle: 'الوصول مرفوض',
+    deniedDescription: 'ليس لديك صلاحية لعرض هذه الصفحة.'
   },
   navigation: {
     rolesPermissions: 'الأدوار والصلاحيات',
@@ -275,7 +278,9 @@ export const ar = {
     reacceptDescriptionMiddle: 'أو',
     reacceptDescriptionAfter: '. راجعها واقبلها للمتابعة.',
     acceptAndContinue: 'أوافق وأتابع',
-    accepting: 'جارٍ حفظ الموافقة...'
+    accepting: 'جارٍ حفظ الموافقة...',
+    notTranslatedNotice:
+      'لم تتم ترجمة هذا المستند إلى لغتك بعد. يتم عرض النسخة الإنجليزية.'
   },
   auth: {
     login: 'تسجيل الدخول',
@@ -397,7 +402,8 @@ export const ar = {
     bySigningIn: 'بتسجيل الدخول، فإنك توافق على',
     togglePasswordVisibility: 'إظهار/إخفاء كلمة المرور',
     notAdmin: 'لست مديراً؟',
-    regularLogin: 'تسجيل الدخول العادي'
+    regularLogin: 'تسجيل الدخول العادي',
+    loginTitle: 'سجّل الدخول إلى حسابك'
   },
   dashboard: {
     title: 'لوحة التحكم',

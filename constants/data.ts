@@ -195,7 +195,7 @@ export const navItems: NavItem[] = [
     href: '/platform/roles',
     icon: 'shield' as IconType,
     label: 'rolesPermissions',
-    roles: ['PLATFORM_OWNER'],
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
     section: 'configuration'
@@ -215,6 +215,14 @@ export const navItems: NavItem[] = [
     icon: 'store' as IconType,
     label: 'myAcademies',
     roles: ['MANAGER', 'TEACHER'],
+    scope: 'academy'
+  },
+  {
+    title: 'Roles & Permissions',
+    href: '/platform/roles',
+    icon: 'shield' as IconType,
+    label: 'rolesPermissions',
+    roles: ['MANAGER'],
     scope: 'academy'
   },
   {

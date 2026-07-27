@@ -14,16 +14,16 @@ Hardening for SSRF, CSRF, host abuse, and Next.js server resource limits.
 ## Environment overrides
 
 ```env
-SECURITY_ALLOWED_PANEL_HOSTS=admin.mentoma.com,admin.mentoma.ir,panel-academy.darkube.ir
-SECURITY_ALLOWED_BACKEND_HOSTS=api.mentoma.com,api.mentoma.ir,api-academy.darkube.ir
-SECURITY_MENTOMA_BASE_DOMAINS=mentoma.com,mentoma.ir,darkube.ir
-SECURITY_SERVER_ACTION_ORIGINS=https://admin.mentoma.com,https://admin.mentoma.ir
+SECURITY_ALLOWED_PANEL_HOSTS=admin.mentoma.ir,admin.mentoma.ir,panel-academy.darkube.ir
+SECURITY_ALLOWED_BACKEND_HOSTS=api.mentoma.ir,api.mentoma.ir,api-academy.darkube.ir
+SECURITY_MENTOMA_BASE_DOMAINS=mentoma.ir,mentoma.ir,darkube.ir
+SECURITY_SERVER_ACTION_ORIGINS=https://admin.mentoma.ir,https://admin.mentoma.ir
 ```
 
 ## Defaults (production)
 
-- **Panel hosts:** `admin.mentoma.com`, `admin.mentoma.ir`, `panel-academy.darkube.ir`
-- **Backend hosts:** `api.mentoma.com`, `api.mentoma.ir`, `api-academy.darkube.ir`
+- **Panel hosts:** `admin.mentoma.ir`, `admin.mentoma.ir`, `panel-academy.darkube.ir`
+- **Backend hosts:** `api.mentoma.ir`, `api.mentoma.ir`, `api-academy.darkube.ir`
 - **Server actions:** 1 MB body limit, origin allowlist
 - **API rate limits:** `/api/payment/*` 20/min, `/api/geolocation` 30/min, other `/api/*` 120/min per IP
 - **CSRF (Next API routes):** mutating `/api/*` requires trusted `Origin`/`Referer` (webhooks like `/payment/saman-callback` are excluded)

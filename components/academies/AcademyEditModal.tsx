@@ -14,6 +14,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { apiClient, type SubscriptionPlanData } from '@/lib/api';
 import { formatStorage } from '@/components/plans/plan-types';
+import { SlugField } from '@/components/academies/slug-field';
+import { toSlug } from '@/lib/slug';
+import {
+  isSlugBlocking,
+  useSlugAvailability
+} from '@/hooks/use-slug-availability';
 import type { Academy } from '@/types/api';
 
 const STEPS = ['stepSpecs', 'stepBranding', 'stepPlan'] as const;
@@ -32,16 +38,6 @@ const BRAND_COLORS: { hex: string; tw: string }[] = [
   { hex: '#64748b', tw: 'bg-[#64748b]' },
   { hex: '#1e293b', tw: 'bg-[#1e293b]' }
 ];
-
-function toSlug(value: string): string {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .slice(0, 40);
-}
 
 function resolveLogoUrl(url: string | undefined): string {
   if (!url) return '';
@@ -80,8 +76,14 @@ export function AcademyEditModal({
   // Step 0 — Details
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
+  const [ownSlug, setOwnSlug] = useState('');
   const [publicAddress, setPublicAddress] = useState('');
   const [description, setDescription] = useState('');
+  const {
+    status: slugStatus,
+    check: checkSlug,
+    reset: resetSlug
+  } = useSlugAvailability({ ownSlug });
 
   // Step 1 — Branding
   const [logoId, setLogoId] = useState<string | null>(null);
@@ -106,12 +108,14 @@ export function AcademyEditModal({
     setPlans([]);
     setSelectedPlan(null);
     setName(academy.name ?? '');
-    setSlug(
+    const currentSlug =
       academy.domain?.private_address ??
-        academy.Domain?.private_address ??
-        academy.slug ??
-        ''
-    );
+      academy.Domain?.private_address ??
+      academy.slug ??
+      '';
+    setSlug(currentSlug);
+    setOwnSlug(currentSlug);
+    resetSlug();
     setPublicAddress(
       academy.domain?.public_address ?? academy.Domain?.public_address ?? ''
     );
@@ -131,7 +135,7 @@ export function AcademyEditModal({
         }
       })
       .catch(() => {});
-  }, [academy]);
+  }, [academy, resetSlug]);
 
   useEffect(() => {
     if (step !== 2 || plans.length > 0) return;
@@ -141,14 +145,16 @@ export function AcademyEditModal({
       .then((data) => {
         const list = Array.isArray(data) ? data : [];
         setPlans(list);
-        if (academy?.subscription_plan) {
-          const match = list.find(
-            (p) =>
-              p.slug === academy.subscription_plan ||
-              p.name === academy.subscription_plan
-          );
-          if (match) setSelectedPlan(match);
-        }
+        const match = academy?.subscription_plan
+          ? list.find(
+              (p) =>
+                p.slug === academy.subscription_plan ||
+                p.name === academy.subscription_plan
+            )
+          : undefined;
+        const defaultPlan =
+          match ?? list.find((p) => p.is_most_popular) ?? list[0];
+        if (defaultPlan) setSelectedPlan(defaultPlan);
       })
       .catch(() => setPlans([]))
       .finally(() => setLoadingPlans(false));
@@ -171,8 +177,15 @@ export function AcademyEditModal({
     }
   }
 
+  function handleSlugChange(value: string) {
+    const normalized = toSlug(value);
+    setSlug(normalized);
+    checkSlug(normalized);
+  }
+
   async function handleSave() {
     if (!academy || !name.trim() || !slug.trim()) return;
+    if (isSlugBlocking(slugStatus)) return;
     setSaving(true);
     try {
       await onSubmit(academy.id, {
@@ -242,24 +255,12 @@ export function AcademyEditModal({
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-sm font-medium">
-                  {t('stores.subdomain')}
-                </label>
-                <div className="flex items-center overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-ring">
-                  <input
-                    className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground"
-                    value={slug}
-                    onChange={(e) => setSlug(toSlug(e.target.value))}
-                    placeholder="my-academy"
-                    dir="ltr"
-                    aria-label={t('stores.subdomain')}
-                  />
-                  <span className="shrink-0 border-r bg-muted px-3 py-2 text-xs text-muted-foreground">
-                    Mentoma.ir
-                  </span>
-                </div>
-              </div>
+              <SlugField
+                value={slug}
+                status={slugStatus}
+                onChange={handleSlugChange}
+                t={t}
+              />
 
               <div>
                 <label className="mb-1 block text-sm font-medium">
@@ -414,21 +415,26 @@ export function AcademyEditModal({
                       type="button"
                       onClick={() => setSelectedPlan(selected ? null : plan)}
                       className={cn(
-                        'relative flex flex-col gap-2 rounded-xl border p-4 text-right transition-colors',
+                        'relative flex flex-col gap-2 rounded-xl border p-4 text-right transition-all duration-150',
                         selected
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50'
+                          ? 'border-primary bg-primary/5 shadow-md ring-1 ring-primary/20'
+                          : 'border-border bg-card hover:border-primary/40 hover:shadow-sm'
                       )}
                     >
+                      {plan.is_most_popular && !selected && (
+                        <span className="absolute end-3 top-3 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                          {t('plans.popular')}
+                        </span>
+                      )}
                       {selected && (
-                        <span className="absolute left-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <span className="absolute end-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
                           <Check className="h-3 w-3" />
                         </span>
                       )}
                       <p className="text-sm font-semibold">{plan.name}</p>
                       <p className="text-xl font-bold">
                         {price.toLocaleString('fa-IR')}
-                        <span className="mr-1 text-xs font-normal text-muted-foreground">
+                        <span className="ms-1 text-xs font-normal text-muted-foreground">
                           {period === 'monthly'
                             ? t('plans.pricePerMonth')
                             : t('plans.pricePerYear')}
@@ -475,7 +481,12 @@ export function AcademyEditModal({
 
           <Button
             onClick={handleSave}
-            disabled={saving || !name.trim() || !slug.trim()}
+            disabled={
+              saving ||
+              !name.trim() ||
+              !slug.trim() ||
+              isSlugBlocking(slugStatus)
+            }
           >
             {saving && <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />}
             {t('stores.saveChanges')}

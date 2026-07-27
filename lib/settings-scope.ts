@@ -25,6 +25,22 @@ export function isStarterPlan(planSlug: string | null | undefined): boolean {
   return STARTER_PLAN_SLUGS.has(planSlug.toLowerCase());
 }
 
+// Mirrors Backend's normalizePlanSlug: business/enterprise/pro all resolve to
+// the top tier. There is no self-serve plan above Business — anything bigger
+// is a sales-negotiated custom deal, not a plan in this list — so "top plan"
+// here means "no higher tier to upgrade to", not "the current max sort_order".
+export function isTopPlan(planSlug: string | null | undefined): boolean {
+  if (!planSlug) return false;
+  const s = planSlug.toLowerCase();
+  return (
+    s.includes('business') ||
+    s.includes('enterprise') ||
+    s.includes('pro') ||
+    s.includes('بیزینس') ||
+    s.includes('سازمانی')
+  );
+}
+
 export function shouldShowUpgradePrompt(
   status: string | undefined,
   daysRemaining: number | null | undefined,
