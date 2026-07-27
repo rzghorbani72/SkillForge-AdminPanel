@@ -34,7 +34,7 @@ export function useLanguage() {
   return {
     language,
     direction,
-    isRTL: true,
+    isRTL,
     config,
     locale: getLocaleForLanguage(language)
   };

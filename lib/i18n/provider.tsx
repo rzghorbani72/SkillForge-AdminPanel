@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
+import { DirectionProvider } from '@radix-ui/react-direction';
 import type { LanguageCode, TextDirection, LanguageConfig } from './config';
 import {
   DEFAULT_LANGUAGE,
@@ -95,7 +96,7 @@ export function I18nProvider({
         isRTL: rtl
       }}
     >
-      {children}
+      <DirectionProvider dir={direction}>{children}</DirectionProvider>
     </I18nContext.Provider>
   );
 }
