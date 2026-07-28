@@ -1,16 +1,15 @@
 'use client';
 
-import { Mail, Phone } from 'lucide-react';
 import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
-import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
+import { toEnglishDigits, toE164Iran } from '@/lib/phone-utils';
 import { cn } from '@/lib/utils';
 import type { useAdminForgetPassword } from '../use-admin-forget-password';
 
 type Fp = ReturnType<typeof useAdminForgetPassword>;
 
 const CHANNELS = [
-  { key: 'email', labelKey: 'auth.email', Icon: Mail },
-  { key: 'phone', labelKey: 'auth.phone', Icon: Phone }
+  { key: 'email', labelKey: 'auth.email' },
+  { key: 'phone', labelKey: 'auth.phone' }
 ] as const;
 
 export function IdentifierStep({ fp }: { fp: Fp }) {
@@ -18,21 +17,20 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
-        {CHANNELS.map(({ key, labelKey, Icon }) => (
+      <div className="flex gap-4">
+        {CHANNELS.map(({ key, labelKey }) => (
           <button
             key={key}
             type="button"
             onClick={() => fp.setAuthMethod(key)}
             disabled={fp.isLoading}
             className={cn(
-              'flex items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium transition-colors',
+              'h-12 flex-1 rounded-2xl text-base transition-colors',
               fp.authMethod === key
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-white/50 font-medium text-[#181C20]'
+                : 'text-[#727272] hover:bg-white/30'
             )}
           >
-            <Icon className="h-3.5 w-3.5" />
             {t(labelKey)}
           </button>
         ))}
@@ -57,17 +55,21 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
           disabled={fp.isLoading}
         />
 
-        <PhoneInputWithCountry
+        <AuthField
           id="phone"
           label={t('auth.phoneNumber')}
-          placeholder={t('auth.enterPhone')}
+          type="tel"
+          inputMode="tel"
+          dir="ltr"
+          autoComplete="tel"
           value={fp.formData.phoneNumber}
-          onChange={(v) => fp.handleInputChange('phoneNumber', v)}
-          onFullPhoneChange={(v) => fp.handleInputChange('fullPhoneNumber', v)}
-          lockCountryCode="IR"
+          onChange={(e) => {
+            const v = toEnglishDigits(e.target.value);
+            fp.handleInputChange('phoneNumber', v);
+            fp.handleInputChange('fullPhoneNumber', toE164Iran(v));
+          }}
           error={fp.errors.phoneNumber}
           disabled={fp.isLoading}
-          className="text-center"
         />
 
         <AuthSubmit loading={fp.isLoading} disabled={fp.isLoading}>
