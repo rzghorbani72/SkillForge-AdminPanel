@@ -45,6 +45,9 @@ export function SubscriptionRequiredGate() {
       role="alertdialog"
       aria-modal="true"
       aria-labelledby="subscription-required-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) dismiss();
+      }}
     >
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
         <div className="flex items-center gap-3">

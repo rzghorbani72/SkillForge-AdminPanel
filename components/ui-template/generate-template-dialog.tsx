@@ -60,6 +60,9 @@ export function GenerateTemplateDialog({
     <div
       className="dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
       dir="rtl"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div className="flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border bg-background shadow-xl">
         <div className="flex items-start justify-between border-b px-6 py-5">
