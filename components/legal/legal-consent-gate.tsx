@@ -167,6 +167,11 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="legal-consent-title"
+        onClick={(e) => {
+          // Outside the card means decline — there's no neutral "just close"
+          // state, since requests stay paused until the user accepts or logs out.
+          if (e.target === e.currentTarget) void handleCancel();
+        }}
       >
         <div className="w-full max-w-2xl rounded-2xl border-[2px] border-gray-200 bg-white p-6 shadow-xl">
           <h2 id="legal-consent-title" className="text-xl font-bold">
