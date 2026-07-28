@@ -1,10 +1,9 @@
 'use client';
 
-import { AlertCircle } from 'lucide-react';
 import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
+import { toEnglishDigits, toE164Iran } from '@/lib/phone-utils';
 import Link from '@/components/ui/link';
 import { cn } from '@/lib/utils';
 import type { useAdminLogin } from '../use-admin-login';
@@ -19,22 +18,15 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
       activeTab="login"
       title={t('auth.adminLogin')}
       subtitle={t('auth.signInAsAdmin')}
+      centerTitle
     >
       {login.unauthorizedError && (
         <Alert variant="destructive" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
           <AlertDescription>{login.unauthorizedError}</AlertDescription>
         </Alert>
       )}
 
-      <Alert className="mb-5" dir="rtl">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          {t('auth.adminOnly')} <strong>{t('auth.adminsOnly')}</strong>
-        </AlertDescription>
-      </Alert>
-
-      <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+      <div className="flex gap-4">
         {(['password', 'otp'] as const).map((m) => (
           <button
             key={m}
@@ -42,10 +34,10 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
             onClick={() => login.changeMethod(m)}
             disabled={login.isLoading}
             className={cn(
-              'rounded-md py-1.5 text-xs font-medium transition-colors',
+              'h-12 flex-1 rounded-2xl text-base transition-colors',
               login.loginMethod === m
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-white/50 font-medium text-[#181C20]'
+                : 'text-[#727272] hover:bg-white/30'
             )}
           >
             {m === 'password'
@@ -55,7 +47,7 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
         ))}
       </div>
 
-      <form onSubmit={login.handleSubmit} className="space-y-5" noValidate>
+      <form onSubmit={login.handleSubmit} className="space-y-4" noValidate>
         <AuthField
           label={t('auth.emailAddress')}
           type="email"
@@ -67,23 +59,25 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
           disabled={login.isLoading}
         />
 
-        <PhoneInputWithCountry
+        <AuthField
           id="phone"
           label={t('auth.phoneNumber')}
-          placeholder="09121234567"
+          type="tel"
+          inputMode="tel"
+          dir="ltr"
+          autoComplete="tel"
           value={login.formData.phone}
-          onChange={(v) => login.handleInputChange('phone', v)}
-          onFullPhoneChange={(v) =>
-            login.handleInputChange('fullPhoneNumber', v)
-          }
-          lockCountryCode="IR"
+          onChange={(e) => {
+            const v = toEnglishDigits(e.target.value);
+            login.handleInputChange('phone', v);
+            login.handleInputChange('fullPhoneNumber', toE164Iran(v));
+          }}
           error={login.errors.phone}
           disabled={login.isLoading}
-          className="text-center"
         />
 
         {login.loginMethod === 'password' && (
-          <div className="space-y-2">
+          <>
             <AuthField
               label={t('auth.password')}
               type="password"
@@ -96,15 +90,15 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
               error={login.errors.password}
               disabled={login.isLoading}
             />
-            <div className="text-left">
+            <div className="px-3 text-end">
               <Link
                 href="/admin-forget-password"
-                className="text-xs text-primary hover:underline"
+                className="text-base text-[#181C20] hover:underline"
               >
                 {t('auth.forgotPassword')}
               </Link>
             </div>
-          </div>
+          </>
         )}
 
         <AuthSubmit loading={login.isLoading} disabled={login.isLoading}>
