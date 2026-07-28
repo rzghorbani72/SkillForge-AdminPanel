@@ -42,6 +42,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))'
         },
+        brandMint: {
+          DEFAULT: 'hsl(var(--brand-mint))',
+          foreground: 'hsl(var(--brand-mint-foreground))'
+        },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))'

@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" role="img" aria-label="Mentoma logomark">
-  <path d="M12 50V14L32 36L52 14V50" stroke="#121430" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"></path>
-  <circle cx="12" cy="14" r="5" fill="#121430"></circle>
-  <circle cx="52" cy="14" r="5" fill="#121430"></circle>
-  <circle cx="12" cy="50" r="5" fill="#121430"></circle>
-  <circle cx="52" cy="50" r="5" fill="#121430"></circle>
-  <circle cx="32" cy="36" r="6.4" fill="#6d5efc"></circle>
-</svg>

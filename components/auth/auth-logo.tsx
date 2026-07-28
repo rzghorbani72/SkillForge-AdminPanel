@@ -1,16 +1,31 @@
 import { cn } from '@/lib/utils';
 
-/** Brand lockup used at the top of every auth card (Figma: logo 140×50). */
+/**
+ * Brand lockup used at the top of every auth card: mark + wordmark, same
+ * pattern as edusphere's landing header. The mark carries its own
+ * mint/blue gradients, so it sits on the bare surface with no tile.
+ */
 export function AuthLogo({ className }: { className?: string }) {
   return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img
-      src="/auth-logo.svg"
-      alt=""
-      width={140}
-      height={50}
-      aria-hidden
-      className={cn('h-[50px] w-[140px]', className)}
-    />
+    <div className={cn('flex items-center gap-4', className)}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo-mark.svg"
+        alt=""
+        width={38}
+        height={38}
+        aria-hidden
+        className="h-[38px] w-[38px]"
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo-type.svg"
+        alt=""
+        width={52}
+        height={16}
+        aria-hidden
+        className="h-4 w-[52px]"
+      />
+    </div>
   );
 }

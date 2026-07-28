@@ -19,26 +19,10 @@ body {
 }
 
 /* ─── Design Tokens ──────────────────────────────────────────────────────────
-   Mentoma design system — Sharp & Modern, Persian-first.
-   Brand = "Teal Sharp" (2026): deep teal primary (#0E7490) + amber
-   accent on crisp teal-neutral surfaces and near-black ink.
-   (oklch notes below are the original warm/cherry baseline, kept for history.)
-
-   oklch → HSL conversions:
-     --bg:        oklch(0.985 0.004 80)  → warm off-white  → hsl(34 20% 97%)
-     --surface:   oklch(1 0 0)           → pure white       → hsl(0 0% 100%)
-     --surface-2: oklch(0.975 0.005 80)  → warm light       → hsl(34 16% 96%)
-     --surface-3: oklch(0.955 0.006 80)  → warm mid-light   → hsl(34 18% 94%)
-     --border:    oklch(0.92 0.005 80)   → warm border      → hsl(34 12% 91%)
-     --hairline:  oklch(0.94 0.004 80)   → very subtle      → hsl(34 10% 93%)
-     --border-strong: oklch(0.86 0.006 80) → stronger      → hsl(34 14% 85%)
-     --ink:       oklch(0.22 0.012 255)  → dark blue-ink    → hsl(228 25% 16%)
-     --ink-2:     oklch(0.38 0.012 255)  → mid ink          → hsl(228 18% 35%)
-     --ink-3:     oklch(0.55 0.012 255)  → muted ink        → hsl(228 12% 48%)
-     --ink-4:     oklch(0.70 0.010 255)  → dim ink          → hsl(228 10% 62%)
-     --accent:    oklch(0.58 0.18 22)    → cherry red       → hsl(4 72% 52%)
-     --accent-2:  oklch(0.50 0.18 22)    → cherry dark      → hsl(4 72% 44%)
-     --accent-tint: oklch(0.96 0.03 22)  → cherry tint      → hsl(4 72% 96%)
+   Brand aligned with edusphere's landing page: blue primary (#1B98E0, the
+   same value the (auth) pages already used) across the whole app, plus a
+   mint accent (#30FFB4) reserved for marketing-style CTAs (e.g. the
+   upgrade banner) — mirroring edusphere's mint-CTA / blue-secondary system.
    ──────────────────────────────────────────────────────────────────────────── */
 @layer base {
   :root {
@@ -56,8 +40,8 @@ body {
     --muted: 192 12% 96%;
     --muted-foreground: 192 9% 46%;
 
-    /* ── Primary — Teal Sharp (2026) ─── */
-    --primary: 193 82% 31%; /* teal #0E7490 */
+    /* ── Primary — brand blue (matches edusphere, #1B98E0) ─── */
+    --primary: 202 78% 49%; /* #1B98E0 */
     --primary-foreground: 0 0% 100%;
 
     /* ── Secondary ─── */
@@ -67,6 +51,10 @@ body {
     /* ── Accent tint — teal wash ─── */
     --accent: 188 55% 94%; /* teal tint */
     --accent-foreground: 193 82% 26%;
+
+    /* ── Brand mint — marketing-style CTA accent (matches edusphere, #30FFB4) ─── */
+    --brand-mint: 158 100% 61%; /* #30FFB4 */
+    --brand-mint-foreground: 195 28% 10%; /* dark ink — mint is too light for white text */
 
     /* ── Semantic ─── */
     --destructive: 8 67% 49%; /* --negative: oklch(0.55 0.17 25) */
@@ -81,7 +69,7 @@ body {
     /* ── Borders (cool teal-neutral) ─── */
     --border: 192 10% 90%;
     --input: 192 10% 90%;
-    --ring: 193 82% 31%; /* teal */
+    --ring: 202 78% 49%; /* #1B98E0 */
 
     /* ── Border radius (10px base, matching design --r-md) ─── */
     --radius: 0.625rem;
@@ -418,9 +406,10 @@ html.transitioning *::after {
    default). Scoped to `.auth-theme` so its brand utilities stay isolated.
    Existing components (Button, Input…) adapt automatically via these tokens.
 
-   CHANGE THE RED IN ONE PLACE: edit the --brand-* tokens below.
-   Everything red (logo, primary button, focus ring, links, glow) derives
-   from them.
+   --brand here is the same blue as root --primary above; kept as a separate
+   set of tokens because the gradient/glow utilities below (.brand-tile,
+   .auth-glow) need --brand-from/--brand-to/--brand-glow, which --primary
+   alone can't express.
    ──────────────────────────────────────────────────────────────────────────── */
 .auth-theme {
   /* ── Brand blue — single source of truth (Figma "mentoma" #1B98E0) ─── */

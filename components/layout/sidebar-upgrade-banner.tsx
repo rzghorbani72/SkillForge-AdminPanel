@@ -95,10 +95,10 @@ export function SidebarUpgradeBanner({
         <Link
           href="/plans"
           className={cn(
-            'flex items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90',
+            'flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-semibold',
             isUrgent
-              ? 'bg-primary text-primary-foreground'
-              : 'border bg-background text-foreground'
+              ? 'rounded-full bg-brandMint text-brandMint-foreground shadow-[0_12px_31px_-12px_rgba(48,255,180,0.6)] transition-transform hover:-translate-y-0.5'
+              : 'rounded-lg border bg-background text-foreground transition-opacity hover:opacity-90'
           )}
         >
           {ctaLabel}

@@ -3,7 +3,7 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, GraduationCap, Shield } from 'lucide-react';
+import { ChevronLeft, GraduationCap } from 'lucide-react';
 import { Suspense, useMemo } from 'react';
 import { filterNavItems } from '@/lib/nav-filter';
 import { isPaymentEnabled } from '@/lib/payment';
@@ -80,9 +80,13 @@ export default function Sidebar({ className }: SidebarProps) {
         )}
       >
         {isPlatformMode ? (
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-violet-500 shadow-md shadow-violet-500/25">
-            <Shield className="h-5 w-5 text-white" />
-          </div>
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src="/logo-mark.svg"
+            alt=""
+            aria-hidden
+            className="h-9 w-9 shrink-0"
+          />
         ) : (
           (() => {
             const raw = configLogoUrl ?? currentAcademy?.logo?.publicUrl;
