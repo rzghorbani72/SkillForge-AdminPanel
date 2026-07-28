@@ -31,7 +31,7 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
         <main className="flex flex-1 flex-col overflow-hidden">
           <Header />
           <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
-            {children}
+            <div className="mx-auto w-full max-w-[1400px]">{children}</div>
           </div>
         </main>
       </div>
