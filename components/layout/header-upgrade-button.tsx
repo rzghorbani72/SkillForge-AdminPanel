@@ -42,7 +42,7 @@ export function HeaderUpgradeButton() {
       className={cn(
         'inline-flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-sm font-semibold transition-opacity hover:opacity-90 sm:px-3',
         isUrgent
-          ? 'bg-primary text-primary-foreground'
+          ? 'bg-brandGreen text-brandGreen-foreground'
           : 'border border-border/60 bg-muted/50 text-foreground'
       )}
     >

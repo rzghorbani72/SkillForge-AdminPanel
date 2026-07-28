@@ -12,12 +12,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import {
-  applyThemeVariables,
-  dispatchThemeUpdate,
-  parseThemeResponse,
-  DEFAULT_THEME_CONFIG
-} from '@/lib/theme';
 
 type ThemeChoice = 'light' | 'dark' | 'system';
 
@@ -46,12 +40,9 @@ export default function ThemeToggle() {
 
       setIsUpdating(true);
       try {
-        const response = await apiClient.updateCurrentThemeConfig({
+        await apiClient.updateCurrentThemeConfig({
           dark_mode: darkModeValue
         });
-        const updatedConfig = parseThemeResponse(response);
-        applyThemeVariables(updatedConfig);
-        dispatchThemeUpdate(updatedConfig);
       } catch (error) {
         ErrorHandler.handleApiError(error);
       } finally {

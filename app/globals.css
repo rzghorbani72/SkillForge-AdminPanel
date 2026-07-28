@@ -56,6 +56,10 @@ body {
     --brand-mint: 158 100% 61%; /* #30FFB4 */
     --brand-mint-foreground: 195 28% 10%; /* dark ink — mint is too light for white text */
 
+    /* ── Brand green — growth/upgrade accent (#30FFBA) ─── */
+    --brand-green: 160 100% 59%; /* #30FFBA */
+    --brand-green-foreground: 195 28% 10%; /* dark ink — too light for white text, same as mint */
+
     /* ── Semantic ─── */
     --destructive: 8 67% 49%; /* --negative: oklch(0.55 0.17 25) */
     --destructive-foreground: 0 0% 100%;

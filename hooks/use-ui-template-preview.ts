@@ -11,7 +11,6 @@ import {
 } from '@/lib/ui-template/preview-url';
 import type { ThemeDraftPayload } from '@/lib/ui-template/theme-draft-payload';
 import type { UIBlockConfig } from '@/types/api';
-import { applyThemeVariables, dispatchThemeUpdate } from '@/lib/theme';
 
 interface UseUiTemplatePreviewOptions {
   storeSlug: string;
@@ -58,11 +57,6 @@ export function useUiTemplatePreview({
           : apiClient.createUITemplate({ blocks, is_active: isActive }),
         apiClient.saveThemeDraft(colorPayload)
       ]);
-
-      if (!silent) {
-        applyThemeVariables(colorPayload);
-        dispatchThemeUpdate(colorPayload);
-      }
 
       onDraftSaved?.();
       return colorPayload;
