@@ -183,9 +183,9 @@ export default function ForgetPasswordPage() {
         setMessage(t('forgotPassword.otpSentToPhone'));
 
         // TODO: Remove when real SMS/email provider is integrated
-        if (response?.otp) {
+        if (response?.data?.otp) {
           toast.info(
-            `${t('forgotPassword.otpSentToPhone')}\n\n🔐 Code: ${response.otp}`,
+            `${t('forgotPassword.otpSentToPhone')}\n\n🔐 Code: ${response.data.otp}`,
             {
               autoClose: 8000,
               style: { whiteSpace: 'pre-wrap' }
