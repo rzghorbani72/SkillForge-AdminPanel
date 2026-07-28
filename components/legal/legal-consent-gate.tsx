@@ -71,16 +71,13 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
     }
   }, [applyPending, language]);
 
-  const isPlatformAdmin = !!user?.isAdminProfile || !!user?.platformLevel;
-
   useEffect(() => {
-    if (userLoading || !user || isPlatformAdmin) return;
+    if (userLoading || !user) return;
     void loadStatus();
-  }, [loadStatus, user, userLoading, isPlatformAdmin]);
+  }, [loadStatus, user, userLoading]);
 
   // First LEGAL_CONSENT_REQUIRED 403 from any API opens the modal and pauses fetches
   useEffect(() => {
-    if (isPlatformAdmin) return;
     const onLegalRequired = (event: Event) => {
       const detail = (event as CustomEvent<LegalConsentRequiredDetail>).detail;
       const list = isPendingList(detail?.pending) ? detail.pending : [];
@@ -95,7 +92,7 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener(LEGAL_CONSENT_REQUIRED_EVENT, onLegalRequired);
     };
-  }, [loadStatus, isPlatformAdmin]);
+  }, [loadStatus]);
 
   // Fetch the change diff only once the modal actually has something pending
   // — this is a nice-to-have, so a failure here never blocks acceptance.
@@ -136,11 +133,6 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
     setLoggingOut(true);
     // authService.logout() clears the session and redirects to /login itself
     await authService.logout();
-  }
-
-  // Platform AdminProfile is not Profile-scoped; never block the panel on legal gate.
-  if (isPlatformAdmin) {
-    return <>{children}</>;
   }
 
   // Wait for auth + consent before mounting the shell (avoids parallel API storms)
