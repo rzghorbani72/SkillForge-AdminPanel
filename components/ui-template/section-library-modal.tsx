@@ -315,7 +315,7 @@ export function SectionLibraryModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border bg-background shadow-xl">
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div>

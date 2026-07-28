@@ -432,15 +432,20 @@ export const fa = {
     lastUpdated: 'آخرین به‌روزرسانی',
     version: 'نسخه',
     reacceptTitle: 'به‌روزرسانی اسناد حقوقی',
-    reacceptDescriptionBefore: '',
-    reacceptDescriptionMiddle: 'یا',
-    reacceptDescriptionAfter:
-      'تغییر کرده است. برای ادامه استفاده از پنل، آن‌ها را مطالعه و بپذیرید.',
+    reacceptSubtitle: 'برای ادامه، تغییرات زیر را مرور و تأیید کنید.',
     acceptAndContinue: 'می‌پذیرم و ادامه می‌دهم',
     accepting: 'در حال ثبت پذیرش...',
     agreeByClicking: 'با کلیک روی «می‌پذیرم و ادامه می‌دهم»، با',
     notTranslatedNotice:
-      'این سند هنوز به زبان شما ترجمه نشده است. نسخهٔ انگلیسی نمایش داده می‌شود.'
+      'این سند هنوز به زبان شما ترجمه نشده است. نسخهٔ انگلیسی نمایش داده می‌شود.',
+    whatChanged: 'تغییرات نسبت به آخرین باری که پذیرفتید',
+    versionChange: 'نسخه {{previous}} ← {{current}}',
+    firstTimeAcceptance: 'این اولین باری است که باید این سند را بپذیرید.',
+    diffUnavailable:
+      'در حال حاضر نمایش خلاصهٔ تغییرات ممکن نیست. لطفاً سند کامل را مطالعه کنید.',
+    viewFullDocument: 'مشاهدهٔ سند کامل',
+    declineAndSignOut: 'رد می‌کنم و خارج می‌شوم',
+    decliningAndSigningOut: 'در حال خروج...'
   },
   subscription: {
     expiredTitle: 'برای ادامه، پلن را ارتقا دهید',

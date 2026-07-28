@@ -274,13 +274,19 @@ export const ar = {
     lastUpdated: 'آخر تحديث',
     version: 'الإصدار',
     reacceptTitle: 'تحديث المستندات القانونية',
-    reacceptDescriptionBefore: 'تم تحديث',
-    reacceptDescriptionMiddle: 'أو',
-    reacceptDescriptionAfter: '. راجعها واقبلها للمتابعة.',
+    reacceptSubtitle: 'راجع التغييرات أدناه لمتابعة استخدام اللوحة.',
     acceptAndContinue: 'أوافق وأتابع',
     accepting: 'جارٍ حفظ الموافقة...',
     notTranslatedNotice:
-      'لم تتم ترجمة هذا المستند إلى لغتك بعد. يتم عرض النسخة الإنجليزية.'
+      'لم تتم ترجمة هذا المستند إلى لغتك بعد. يتم عرض النسخة الإنجليزية.',
+    whatChanged: 'ما الذي تغيّر منذ آخر موافقة',
+    versionChange: 'الإصدار {{previous}} ← {{current}}',
+    firstTimeAcceptance: 'هذه أول مرة يجب فيها قبول هذا المستند.',
+    diffUnavailable:
+      'ملخص التغييرات غير متاح حالياً. يرجى قراءة المستند كاملاً.',
+    viewFullDocument: 'عرض المستند كاملاً',
+    declineAndSignOut: 'أرفض وأخرج',
+    decliningAndSigningOut: 'جارٍ تسجيل الخروج...'
   },
   auth: {
     login: 'تسجيل الدخول',

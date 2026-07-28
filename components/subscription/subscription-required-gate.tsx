@@ -41,7 +41,7 @@ export function SubscriptionRequiredGate() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm"
+      className="dialog-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4"
       role="alertdialog"
       aria-modal="true"
       aria-labelledby="subscription-required-title"

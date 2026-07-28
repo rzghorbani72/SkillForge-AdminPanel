@@ -223,7 +223,7 @@ export function AffiliateLoginPreview({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm"
+      className="dialog-backdrop fixed inset-0 z-50 flex items-center justify-center"
       onClick={onClose}
     >
       <button

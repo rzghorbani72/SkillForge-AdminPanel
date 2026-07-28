@@ -58,7 +58,7 @@ export function GenerateTemplateDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
       dir="rtl"
     >
       <div className="flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border bg-background shadow-xl">

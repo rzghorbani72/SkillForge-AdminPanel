@@ -440,15 +440,21 @@ export const en = {
     lastUpdated: 'Last updated',
     version: 'Version',
     reacceptTitle: 'Updated legal documents',
-    reacceptDescriptionBefore: 'Our',
-    reacceptDescriptionMiddle: 'or',
-    reacceptDescriptionAfter:
-      'changed. Review and accept to continue using the panel.',
+    reacceptSubtitle: 'Review the changes below to keep using the panel.',
     acceptAndContinue: 'Accept and continue',
     accepting: 'Saving acceptance...',
     agreeByClicking: 'By clicking Accept and continue, you agree to our',
     notTranslatedNotice:
-      'This document is not translated into your language yet. Showing the English version.'
+      'This document is not translated into your language yet. Showing the English version.',
+    whatChanged: 'What changed since you last agreed',
+    versionChange: 'Version {{previous}} → {{current}}',
+    firstTimeAcceptance:
+      'This is the first time you need to accept this document.',
+    diffUnavailable:
+      'The change summary is not available right now. Please read the full document.',
+    viewFullDocument: 'View full document',
+    declineAndSignOut: 'Decline and sign out',
+    decliningAndSigningOut: 'Signing out...'
   },
   subscription: {
     expiredTitle: 'Upgrade to continue',

@@ -227,13 +227,73 @@ body {
     );
   }
 
-  /* ─── Stat cards ──────────────────────────────────────────────── */
+  /* ─── Stat cards (frosted glass) ─────────────────────────────── */
   .stat-card {
-    @apply relative overflow-hidden rounded-[14px] border bg-card p-5 transition-all duration-200;
+    @apply relative overflow-hidden rounded-[16px] border border-white/70 bg-white/75 p-5 backdrop-blur-xl transition-all duration-200;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 25, 0.04),
+      0 16px 32px -20px hsl(var(--primary) / 0.22);
   }
 
   .stat-card:hover {
-    @apply -translate-y-0.5 shadow-lg shadow-primary/5;
+    @apply -translate-y-0.5;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 25, 0.04),
+      0 20px 40px -18px hsl(var(--primary) / 0.3);
+  }
+
+  /* ─── Dashboard glass background ─────────────────────────────── */
+  .dashboard-shell {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .dashboard-glow {
+    position: absolute;
+    z-index: -10;
+    border-radius: 9999px;
+    filter: blur(110px);
+    pointer-events: none;
+  }
+
+  .dashboard-glow-1 {
+    top: -140px;
+    inset-inline-start: -100px;
+    width: 440px;
+    height: 440px;
+    background: hsl(var(--primary) / 0.16);
+  }
+
+  .dashboard-glow-2 {
+    top: 120px;
+    inset-inline-end: -140px;
+    width: 380px;
+    height: 380px;
+    background: hsl(38 92% 50% / 0.14);
+  }
+
+  .dashboard-glow-3 {
+    top: 760px;
+    inset-inline-start: 35%;
+    width: 480px;
+    height: 480px;
+    background: hsl(215 60% 50% / 0.1);
+  }
+
+  /* ─── Dashboard cards (frosted glass, matches .stat-card) ────── */
+  .dashboard-card {
+    @apply relative overflow-hidden rounded-2xl border border-white/70 bg-white/75 backdrop-blur-xl transition-all duration-200;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 25, 0.04),
+      0 16px 32px -20px hsl(var(--primary) / 0.25);
+  }
+
+  .dashboard-card:hover {
+    @apply -translate-y-0.5;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 25, 0.04),
+      0 20px 40px -18px hsl(var(--primary) / 0.32);
   }
 
   /* ─── Scrollbar (matches design) ────────────────────────────── */
@@ -414,6 +474,11 @@ html.transitioning *::after {
    against the busy background image. Near-solid instead of translucent. */
 .legal-card {
   background: rgba(255, 255, 255, 0.96);
+}
+
+/* Default backdrop for every dialog/modal/gate overlay in the panel */
+.dialog-backdrop {
+  @apply bg-black/60 backdrop-blur-sm;
 }
 
 /* Reusable solid brand button */

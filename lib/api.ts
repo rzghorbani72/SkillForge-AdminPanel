@@ -71,6 +71,20 @@ export type LegalConsentRequiredDetail = {
   pending: { type: string; title: string; version: string }[];
 };
 
+export type LegalDiffPart = {
+  value: string;
+  added?: boolean;
+  removed?: boolean;
+};
+
+export type LegalPendingDocumentDiff = {
+  type: string;
+  title: string;
+  version: string;
+  previousVersion: string | null;
+  diff: LegalDiffPart[] | null;
+};
+
 export const SUBSCRIPTION_REQUIRED_EVENT = 'mentoma:subscription-required';
 
 export type SubscriptionRequiredDetail = {
@@ -626,6 +640,15 @@ class ApiClient {
       up_to_date: boolean;
       pending: { type: string; title: string; version: string }[];
     }>(`/legal/acceptances/status`, { method: 'GET' }, true, lang);
+  }
+
+  async getLegalAcceptanceDiff(lang?: string) {
+    return this.request<LegalPendingDocumentDiff[]>(
+      `/legal/acceptances/diff`,
+      { method: 'GET' },
+      true,
+      lang
+    );
   }
 
   async acceptPlatformLegalDocuments(lang?: string) {

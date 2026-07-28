@@ -279,13 +279,20 @@ export const tr = {
     lastUpdated: 'Son güncelleme',
     version: 'Sürüm',
     reacceptTitle: 'Güncellenmiş yasal belgeler',
-    reacceptDescriptionBefore: '',
-    reacceptDescriptionMiddle: 'veya',
-    reacceptDescriptionAfter: 'değişti. Devam etmek için inceleyip kabul edin.',
+    reacceptSubtitle:
+      'Devam etmek için aşağıdaki değişiklikleri inceleyip kabul edin.',
     acceptAndContinue: 'Kabul et ve devam et',
     accepting: 'Kabul kaydediliyor...',
     notTranslatedNotice:
-      'Bu belge henüz dilinize çevrilmedi. İngilizce sürüm gösteriliyor.'
+      'Bu belge henüz dilinize çevrilmedi. İngilizce sürüm gösteriliyor.',
+    whatChanged: 'Son kabulünüzden bu yana neler değişti',
+    versionChange: 'Sürüm {{previous}} → {{current}}',
+    firstTimeAcceptance: 'Bu belgeyi ilk kez kabul etmeniz gerekiyor.',
+    diffUnavailable:
+      'Değişiklik özeti şu anda kullanılamıyor. Lütfen belgenin tamamını okuyun.',
+    viewFullDocument: 'Belgenin tamamını görüntüle',
+    declineAndSignOut: 'Reddet ve çıkış yap',
+    decliningAndSigningOut: 'Çıkış yapılıyor...'
   },
   auth: {
     login: 'Giriş Yap',
