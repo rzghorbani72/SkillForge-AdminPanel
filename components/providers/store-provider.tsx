@@ -22,6 +22,8 @@ import {
   autoSelectAcademy
 } from '@/lib/store-utils';
 import { useAuthUser } from '@/components/providers/user-provider';
+import { isApiResponseError, resolveApiErrorMessage } from '@/lib/api-error';
+import { currentLanguage } from '@/lib/current-language';
 
 interface StoreContextValue {
   academies: Academy[];
@@ -107,11 +109,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setAcademies(list);
     } catch (err) {
       console.error('Error fetching academies:', err);
-      setError(
-        err instanceof Error ? err.message : 'Failed to fetch academies'
-      );
+      setError(resolveApiErrorMessage(err, currentLanguage()));
 
-      if (err instanceof Error && err.message.includes('401')) {
+      if (isApiResponseError(err) && err.error.status === 401) {
         clearAcademyData();
         router.push('/login');
       }

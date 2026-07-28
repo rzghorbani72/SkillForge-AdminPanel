@@ -4449,5 +4449,192 @@ export const en = {
       STUDENT: 'Student',
       USER: 'User'
     }
+  },
+
+  /**
+   * Backend error codes -> user-facing text. Generated from
+   * Backend/src/common/errors; keep both apps identical.
+   * Real English text.
+   */
+  apiError: {
+    AUTH_INVALID_CREDENTIALS:
+      'That phone/email or password is not correct. If you forgot your password, use "Reset password".',
+    AUTH_USER_NOT_REGISTERED:
+      'No account is registered with these details. Tap "Sign up" to create one.',
+    AUTH_NO_PASSWORD_SET:
+      'This account has no password set. Please sign in with a one-time code, then set a password in settings.',
+    AUTH_ACCOUNT_EXPIRED:
+      'This account has expired. Please ask your academy manager to recreate it.',
+    AUTH_ACCOUNT_DISABLED:
+      'This account has been deactivated. Contact your academy manager to reactivate it.',
+    AUTH_PHONE_VERIFICATION_REQUIRED:
+      'You need to verify your phone number to continue. A verification code has been sent to you.',
+    AUTH_MUST_VERIFY_PHONE:
+      'You must verify your phone number before signing up. Request and enter the verification code first.',
+    AUTH_MUST_VERIFY_EMAIL:
+      'You must verify your email before signing up. Request and enter the verification code first.',
+    AUTH_IDENTIFIER_REQUIRED:
+      'Please enter your phone number or email to continue.',
+    AUTH_ACADEMY_ID_REQUIRED: 'Please select your academy to sign in.',
+    AUTH_ACADEMY_ACCESS_DENIED:
+      'You do not have access to this academy. Contact the academy manager if you should.',
+    AUTH_USER_ALREADY_EXISTS:
+      'An account with these details already exists. Please sign in, or reset your password.',
+    AUTH_PASSWORD_MISMATCH:
+      'The password and its confirmation do not match. Please re-enter both fields.',
+    AUTH_CURRENT_PASSWORD_INCORRECT:
+      'The current password you entered is not correct. Please try again.',
+    AUTH_ADMIN_ROLE_NOT_ALLOWED:
+      'An admin account cannot be created through this route.',
+    AUTH_ADMIN_ONLY: 'Only system admins can perform this action.',
+    AUTH_NOT_AUTHENTICATED: 'Your session is not valid. Please sign in again.',
+    AUTH_SESSION_EXPIRED:
+      'Your session has ended. Please sign in again to continue.',
+    AUTH_REFRESH_TOKEN_MISSING:
+      'Your session could not be found. Please sign in again.',
+    AUTH_REFRESH_TOKEN_INVALID:
+      'Your session is no longer valid. Please sign in again to continue.',
+    AUTH_TEMP_TOKEN_INVALID:
+      'This step has expired. Please start signing in again.',
+    AUTH_SESSION_NOT_FOUND:
+      'That session was not found, or it has already been closed.',
+    OTP_INVALID:
+      'That verification code is not correct. Please check it, or request a new code.',
+    OTP_EXPIRED:
+      'This verification code has expired. Tap "Resend" to get a new one.',
+    OTP_ALREADY_USED:
+      'This verification code has already been used. Please request a new one.',
+    OTP_COOLDOWN:
+      'A code was just sent to you. Please wait {seconds} seconds before requesting another.',
+    OTP_RATE_LIMITED:
+      'You have requested too many verification codes. Please try again a little later.',
+    OTP_PHONE_REQUIRED:
+      'Please enter your phone number to receive a verification code.',
+    OTP_PHONE_INVALID:
+      'That phone number is not valid. Enter it with the country code, for example +989121234567.',
+    OTP_TYPE_REQUIRED:
+      'The verification code type was not specified. Please try again.',
+    OTP_SEND_FAILED:
+      'We could not send the verification code. Please try again shortly; contact support if it keeps happening.',
+    VALIDATION_FAILED:
+      'Some fields in the form are not filled in correctly. Please fix the highlighted items.',
+    VALIDATION_REQUIRED: '{field} is required.',
+    VALIDATION_MIN_LENGTH: '{field} must be at least {min} characters.',
+    VALIDATION_MAX_LENGTH: '{field} must be no longer than {max} characters.',
+    VALIDATION_EMAIL:
+      '{field} is not a valid email address. Example: name@example.com',
+    VALIDATION_PHONE:
+      '{field} is not a valid phone number. Enter it with the country code.',
+    VALIDATION_PATTERN:
+      'The format of {field} is not correct. Please enter it as the field describes.',
+    VALIDATION_STRING: '{field} must be text.',
+    VALIDATION_NUMBER: '{field} must be a number.',
+    VALIDATION_MIN: '{field} must not be less than {min}.',
+    VALIDATION_MAX: '{field} must not be more than {max}.',
+    VALIDATION_BOOLEAN: '{field} must be yes or no.',
+    VALIDATION_DATE: '{field} is not a valid date.',
+    VALIDATION_ARRAY: '{field} must be a list of values.',
+    VALIDATION_ENUM:
+      'The selected value for {field} is not allowed. Please choose one of the available options.',
+    VALIDATION_UUID: 'The {field} identifier is not valid.',
+    VALIDATION_INVALID: 'The value entered for {field} is not valid.',
+    CONFLICT_DUPLICATE:
+      'An item with this name or details already exists. Please choose a different one.',
+    RESOURCE_NOT_FOUND:
+      'What you were looking for was not found. It may have been deleted.',
+    PERMISSION_DENIED:
+      'You do not have permission to do this. Contact your academy manager for access.',
+    TENANT_MISMATCH: 'This item does not belong to your academy.',
+    FILE_TOO_LARGE:
+      'The file is larger than allowed. Please choose a smaller file.',
+    FILE_TYPE_NOT_ALLOWED:
+      'This file type is not allowed. Please choose a supported format.',
+    EXTERNAL_SERVICE_FAILED:
+      'We could not reach an external service. Please try again in a moment.',
+    HTTP_400:
+      'The information sent was incomplete or invalid. Please check the form and try again.',
+    BAD_REQUEST:
+      'The information sent was incomplete or invalid. Please check the form and try again.',
+    HTTP_401: 'You need to be signed in to do this. Please sign in again.',
+    UNAUTHENTICATED:
+      'You need to be signed in to do this. Please sign in again.',
+    HTTP_403:
+      'You do not have permission to do this. If you think this is a mistake, contact your academy manager.',
+    FORBIDDEN:
+      'You do not have permission to do this. If you think this is a mistake, contact your academy manager.',
+    HTTP_404:
+      'What you were looking for was not found. It may have been deleted, or the address may be wrong.',
+    NOT_FOUND:
+      'What you were looking for was not found. It may have been deleted, or the address may be wrong.',
+    HTTP_409:
+      'This item already exists. Please choose a different name or value.',
+    CONFLICT:
+      'This item already exists. Please choose a different name or value.',
+    HTTP_413:
+      'The uploaded file is larger than allowed. Please choose a smaller file.',
+    PAYLOAD_TOO_LARGE:
+      'The uploaded file is larger than allowed. Please choose a smaller file.',
+    HTTP_415:
+      'That file type is not supported. Please choose a file in an allowed format.',
+    UNSUPPORTED_MEDIA_TYPE:
+      'That file type is not supported. Please choose a file in an allowed format.',
+    HTTP_422:
+      'The submitted data could not be processed. Please review the values and try again.',
+    UNPROCESSABLE:
+      'The submitted data could not be processed. Please review the values and try again.',
+    HTTP_429:
+      'You have made too many attempts. Please wait a little and try again.',
+    RATE_LIMITED:
+      'You have made too many attempts. Please wait a little and try again.',
+    HTTP_500:
+      'Something went wrong on our side and the error has been logged. Please try again in a moment; contact support if it keeps happening.',
+    INTERNAL_ERROR:
+      'Something went wrong on our side and the error has been logged. Please try again in a moment; contact support if it keeps happening.',
+    HTTP_502:
+      'We could not reach one of our external services. Please try again in a moment.',
+    UPSTREAM_ERROR:
+      'We could not reach one of our external services. Please try again in a moment.',
+    HTTP_503:
+      'The service is temporarily unavailable, likely for maintenance. Please try again in a few minutes.',
+    SERVICE_UNAVAILABLE:
+      'The service is temporarily unavailable, likely for maintenance. Please try again in a few minutes.',
+    HTTP_504: 'An external service took too long to respond. Please try again.',
+    UPSTREAM_TIMEOUT:
+      'An external service took too long to respond. Please try again.',
+    NETWORK_ERROR:
+      'We could not reach the server. Check your internet connection and try again.',
+    UNKNOWN:
+      'An unexpected error occurred and has been logged. Please try again; contact support if it keeps happening.',
+    fields: {
+      identifier: 'Phone or email',
+      email: 'Email',
+      phone_number: 'Phone number',
+      password: 'Password',
+      current_password: 'Current password',
+      new_password: 'New password',
+      confirm_new_password: 'New password confirmation',
+      confirmed_password: 'Password confirmation',
+      otp: 'Verification code',
+      name: 'Name',
+      display_name: 'Display name',
+      title: 'Title',
+      description: 'Description',
+      role: 'Role',
+      academy_id: 'Academy',
+      course_id: 'Course',
+      lesson_id: 'Lesson',
+      season_id: 'Season',
+      profile_id: 'Profile',
+      offering_id: 'Offering',
+      plan_id: 'Plan',
+      amount: 'Amount',
+      price: 'Price',
+      slug: 'Slug',
+      domain: 'Domain',
+      starts_at: 'Start date',
+      ends_at: 'End date',
+      file: 'File',
+      image_id: 'Image'
+    }
   }
 };

@@ -1,45 +1,31 @@
 import { toast } from 'react-toastify';
+import { resolveApiErrorMessage } from './api-error';
+import { currentLanguage } from './current-language';
+import { t } from './i18n';
 
-export class ApiResponseError extends Error {
-  messageEn: string;
-  messageFa: string;
+export { ApiResponseError } from './api-error';
 
-  constructor(messageFa: string, messageEn: string) {
-    super(messageEn || messageFa);
-    this.messageFa = messageFa;
-    this.messageEn = messageEn || messageFa;
-  }
-}
-
-function preferredLang(): string {
-  if (typeof window === 'undefined') return 'en';
-  return localStorage.getItem('preferred_language') || 'en';
-}
-
-function pickMessage(fa: string, en: string): string {
-  return preferredLang() === 'fa' ? fa || en : en || fa;
-}
-
-function extractMessages(raw: unknown): { fa: string; en: string } {
-  const obj = raw as Record<string, unknown> | null;
-  const fa = String(obj?.message || obj?.messageFa || '');
-  const en = String(obj?.message_en || obj?.messageEn || obj?.message || '');
-  return { fa, en };
+/**
+ * Success text is whatever the backend already localized for this request's
+ * language. Errors go through `resolveApiErrorMessage`, which translates the
+ * stable error code and can never fall through to English for a Persian user.
+ */
+function successMessage(response: unknown, fallback?: string): string {
+  const body = response as Record<string, unknown> | null;
+  const message = body?.message;
+  if (typeof message === 'string' && message.length > 0) return message;
+  return fallback ?? t('success.operationCompleted', currentLanguage());
 }
 
 export const apiToast = {
   success(response: unknown, fallback?: string) {
-    const { fa, en } = extractMessages(response);
-    const msg = pickMessage(fa, en) || fallback || 'Done';
-    toast.success(msg);
+    toast.success(successMessage(response, fallback));
   },
 
   error(err: unknown, fallback?: string) {
-    if (err instanceof ApiResponseError) {
-      toast.error(pickMessage(err.messageFa, err.messageEn));
-      return;
-    }
-    const msg = err instanceof Error ? err.message : String(err || '');
-    toast.error(msg || fallback || 'Something went wrong');
+    const message = resolveApiErrorMessage(err, currentLanguage());
+    toast.error(
+      message || fallback || t('error.unexpected', currentLanguage())
+    );
   }
 };

@@ -1,10 +1,13 @@
 import { OtpType } from '@/constants/data';
 import { Enrollment, User as UserType, Offer, OfferInput } from '@/types/api';
 import { toast } from 'react-toastify';
-import { t } from './i18n';
-import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
 import { getBrowserApiBaseUrl } from './api-base-url';
-import { ApiResponseError } from './api-toast';
+import {
+  ApiResponseError,
+  parseApiError,
+  resolveApiErrorMessage
+} from './api-error';
+import { currentLanguage } from './current-language';
 import { isAuthPagePath } from './auth-routes';
 import type {
   AssignmentListResponse,
@@ -415,41 +418,17 @@ class ApiClient {
 
         // For auth endpoints, let the caller handle the message (avoid extra redirect/toast)
         if (isAuthEndpoint) {
-          throw new Error(
-            (data && (data.message || data.error)) || 'Authentication failed'
-          );
+          throw new ApiResponseError(parseApiError(response.status, data));
         }
 
         // Refresh failed - redirect to login
-        const getCurrentLanguage = (): LanguageCode => {
-          if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
-          const stored = localStorage.getItem('preferred_language');
-          const validLanguages: LanguageCode[] = [
-            'en',
-            'fa',
-            'ar',
-            'tr',
-            'de',
-            'fr',
-            'es',
-            'it',
-            'ru',
-            'zh',
-            'ja',
-            'ko',
-            'hi',
-            'ur',
-            'he'
-          ];
-          return stored && validLanguages.includes(stored as LanguageCode)
-            ? (stored as LanguageCode)
-            : DEFAULT_LANGUAGE;
-        };
-
-        const rawMsg = data && (data.message || data.error);
-        const errorMessage =
-          (Array.isArray(rawMsg) ? rawMsg.join(', ') : rawMsg) ||
-          t('error.sessionExpired', getCurrentLanguage());
+        const sessionError = new ApiResponseError(
+          parseApiError(response.status, data)
+        );
+        const errorMessage = resolveApiErrorMessage(
+          sessionError,
+          currentLanguage()
+        );
 
         // Pause further calls before redirect so parallel mounts do not hammer auth
         this.enterPause('session');
@@ -459,7 +438,7 @@ class ApiClient {
           this.redirectToLogin();
         }
 
-        throw new Error(errorMessage);
+        throw sessionError;
       }
 
       // Handle forbidden responses (403) - legal consent modal or redirect to dashboard
@@ -489,35 +468,13 @@ class ApiClient {
           throw error;
         }
 
-        const getCurrentLanguage = (): LanguageCode => {
-          if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
-          const stored = localStorage.getItem('preferred_language');
-          const validLanguages: LanguageCode[] = [
-            'en',
-            'fa',
-            'ar',
-            'tr',
-            'de',
-            'fr',
-            'es',
-            'it',
-            'ru',
-            'zh',
-            'ja',
-            'ko',
-            'hi',
-            'ur',
-            'he'
-          ];
-          return stored && validLanguages.includes(stored as LanguageCode)
-            ? (stored as LanguageCode)
-            : DEFAULT_LANGUAGE;
-        };
-
-        const rawMsg403 = data && (data.message || data.error);
-        const errorMessage =
-          (Array.isArray(rawMsg403) ? rawMsg403.join(', ') : rawMsg403) ||
-          t('error.noPermission', getCurrentLanguage());
+        const forbiddenError = new ApiResponseError(
+          parseApiError(response.status, data)
+        );
+        const errorMessage = resolveApiErrorMessage(
+          forbiddenError,
+          currentLanguage()
+        );
 
         if (typeof window !== 'undefined') {
           const onAuthPage = isAuthPagePath(window.location.pathname);
@@ -529,7 +486,7 @@ class ApiClient {
           }
         }
 
-        throw new Error(errorMessage);
+        throw forbiddenError;
       }
 
       // Handle payment required (402) - subscription expired/inactive.
@@ -537,10 +494,13 @@ class ApiClient {
       // Surface a dismissible warning + Upgrade CTA and leave the panel usable,
       // instead of throwing (freezes the panel) or force-redirecting.
       if (response.status === 402) {
-        const rawMsg402 = data && (data.message || data.error);
-        const errorMessage =
-          (Array.isArray(rawMsg402) ? rawMsg402.join(', ') : rawMsg402) ||
-          'Subscription is required to continue.';
+        const subscriptionError = new ApiResponseError(
+          parseApiError(response.status, data)
+        );
+        const errorMessage = resolveApiErrorMessage(
+          subscriptionError,
+          currentLanguage()
+        );
         if (
           typeof window !== 'undefined' &&
           !isAuthFlowEndpoint &&
@@ -551,19 +511,11 @@ class ApiClient {
           // its pending state while the gate prompts the manager to upgrade.
           return new Promise<ApiResponse<T>>(() => {});
         }
-        throw new Error(errorMessage);
+        throw subscriptionError;
       }
 
       if (!response.ok) {
-        const fa =
-          data?.message ||
-          data?.error ||
-          `HTTP error! status: ${response.status}`;
-        const en = data?.message_en || (Array.isArray(fa) ? fa.join(', ') : fa);
-        throw new ApiResponseError(
-          Array.isArray(fa) ? fa.join(', ') : String(fa),
-          Array.isArray(en) ? en.join(', ') : String(en)
-        );
+        throw new ApiResponseError(parseApiError(response.status, data));
       }
 
       return {

@@ -36,6 +36,7 @@ import { Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { isApiResponseError } from '@/lib/api-error';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import { MESSAGES } from '@/constants/messages';
 
@@ -101,17 +102,15 @@ export default function CreateSeasonDialog({
     } catch (error) {
       console.error('Error creating season:', error);
 
-      // Handle specific database constraint errors
+      // A duplicate ordering needs its own explanation, not the generic
+      // conflict text. Matched on the backend's code — this used to match the
+      // raw Prisma string 'Unique constraint failed', which should never have
+      // reached the browser in the first place.
       if (
-        error &&
-        typeof error === 'object' &&
-        'message' in error &&
-        typeof error.message === 'string' &&
-        error.message.includes('Unique constraint failed')
+        isApiResponseError(error) &&
+        error.error.code === 'CONFLICT_DUPLICATE'
       ) {
-        ErrorHandler.handleApiError(
-          new Error(MESSAGES.season.orderingConflict)
-        );
+        ErrorHandler.showError(MESSAGES.season.orderingConflict);
       } else {
         ErrorHandler.handleApiError(error);
       }

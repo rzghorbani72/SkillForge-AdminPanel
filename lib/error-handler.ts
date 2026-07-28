@@ -1,326 +1,98 @@
 import { toast } from 'react-toastify';
 import { t } from './i18n';
-import { DEFAULT_LANGUAGE, type LanguageCode } from './i18n/config';
+import { currentLanguage } from './current-language';
 import { isAuthPagePath } from './auth-routes';
+import {
+  isApiResponseError,
+  resolveApiErrorMessage,
+  resolveFieldLabel,
+  resolveFieldMessage,
+  type FieldError
+} from './api-error';
 
 /**
- * Get current language from localStorage or default
+ * Displays backend errors.
+ *
+ * This used to reconstruct validation errors by splitting the message on commas
+ * and matching English fragments like 'should not be empty'. That could only
+ * ever work for an English response, so Persian users — the default — saw a
+ * generic message and lost all field information. The backend now returns a
+ * stable code plus a `fields` array, so all of that parsing is gone.
  */
-function getCurrentLanguage(): LanguageCode {
-  if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
-  const stored = localStorage.getItem('preferred_language');
-  const validLanguages: LanguageCode[] = [
-    'en',
-    'fa',
-    'ar',
-    'tr',
-    'de',
-    'fr',
-    'es',
-    'it',
-    'ru',
-    'zh',
-    'ja',
-    'ko',
-    'hi',
-    'ur',
-    'he'
-  ];
-  if (stored && validLanguages.includes(stored as LanguageCode)) {
-    return stored as LanguageCode;
-  }
-  return DEFAULT_LANGUAGE;
-}
-
-export interface ValidationError {
-  field: string;
-  message: string;
-}
-
-export interface ApiError {
-  message: string;
-  statusCode?: number;
-  errors?: ValidationError[];
-}
-
 export class ErrorHandler {
-  /**
-   * Parse backend validation errors and display them as toast notifications
-   */
-  static handleValidationErrors(error: any): void {
-    // Handle different error formats from the backend
-    let errorMessage = '';
-    let validationErrors: ValidationError[] = [];
+  /** Per-field toasts driven by the backend's `fields` array. */
+  static handleValidationErrors(error: unknown): void {
+    const language = currentLanguage();
+    const fields = isApiResponseError(error) ? error.error.fields : [];
 
-    if (typeof error === 'string') {
-      // Simple string error
-      errorMessage = error;
-    } else if (error?.message) {
-      // Error object with message
-      errorMessage = error.message;
-
-      // Check if it's a validation error string from backend
-      if (typeof error.message === 'string' && error.message.includes(',')) {
-        // Parse comma-separated validation errors
-        const errorParts = error.message
-          .split(',')
-          .map((part: string) => part.trim());
-
-        errorParts.forEach((part: string) => {
-          if (part.includes('should not be empty')) {
-            const field = part.split(' ')[0];
-            validationErrors.push({
-              field,
-              message: `${this.formatFieldName(field)} is required`
-            });
-          } else if (part.includes('must be a valid phone number')) {
-            validationErrors.push({
-              field: 'phone_number',
-              message: 'Please enter a valid phone number'
-            });
-          } else if (part.includes('must be shorter than or equal to')) {
-            const field = part.split(' ')[0];
-            const maxLength = part.match(/(\d+)/)?.[1] || '';
-            validationErrors.push({
-              field,
-              message: `${this.formatFieldName(field)} must be ${maxLength} characters or less`
-            });
-          } else if (part.includes('must be longer than or equal to')) {
-            const field = part.split(' ')[0];
-            const minLength = part.match(/(\d+)/)?.[1] || '';
-            validationErrors.push({
-              field,
-              message: `${this.formatFieldName(field)} must be at least ${minLength} characters`
-            });
-          } else if (part.includes('must be a string')) {
-            const field = part.split(' ')[0];
-            validationErrors.push({
-              field,
-              message: `${this.formatFieldName(field)} must be text`
-            });
-          } else {
-            // Generic error
-            validationErrors.push({
-              field: 'general',
-              message: part
-            });
-          }
-        });
+    if (fields.length > 0) {
+      for (const fieldError of fields) {
+        toast.error(resolveFieldMessage(fieldError, language));
       }
-    } else if (error?.errors && Array.isArray(error.errors)) {
-      // Array of validation errors
-      validationErrors = error.errors;
-    } else if (error?.response?.data) {
-      // Axios error response
-      const responseData = error.response.data;
-      if (responseData.message) {
-        errorMessage = responseData.message;
-      }
-      if (responseData.errors) {
-        validationErrors = responseData.errors;
-      }
+      return;
     }
 
-    // Display validation errors as individual toasts
-    if (validationErrors.length > 0) {
-      validationErrors.forEach((validationError) => {
-        try {
-          if (validationError.field === 'general') {
-            toast.error(validationError.message);
-          } else {
-            toast.error(
-              `${this.formatFieldName(validationError.field)}: ${validationError.message}`
-            );
-          }
-        } catch (error) {
-          console.error('Error displaying toast:', error);
-          console.error('Validation error:', validationError);
-        }
-      });
-    } else if (errorMessage) {
-      // Display general error message
-      try {
-        toast.error(errorMessage);
-      } catch (error) {
-        console.error('Error displaying toast:', error);
-        console.error('Error message:', errorMessage);
-      }
-    } else {
-      // Fallback error message
-      try {
-        toast.error(t('error.unexpected', getCurrentLanguage()));
-      } catch (error) {
-        console.error('Error displaying toast:', error);
-        console.error('Fallback error message');
-      }
-    }
+    toast.error(resolveApiErrorMessage(error, language));
   }
 
   /**
-   * Handle general API errors
-   * Note: 401 and 403 are handled by the API client with redirects
-   * This method is for other error handling scenarios
+   * 401 and 403 are already handled (redirect + toast) by the API client; this
+   * covers everything else.
    */
-  static handleApiError(error: any): void {
-    console.error('API Error:', error);
+  static handleApiError(error: unknown): void {
+    const language = currentLanguage();
+    const status = isApiResponseError(error) ? error.error.status : 0;
 
-    const language = getCurrentLanguage();
-
-    // 401 and 403 are handled by API client with redirects
-    // Only show toast if it's not already handled (e.g., from non-API client calls)
-    if (error?.response?.status === 401) {
-      // API client already handles redirect to login
-      // Only show toast if this is called from outside API client
-      if (typeof window !== 'undefined' && !error._handledByApiClient) {
-        try {
-          toast.error(t('error.authenticationFailed', language));
-          // Redirect to login if not already on auth pages
-          const currentPath = window.location.pathname;
-          if (
-            !currentPath.includes('/login') &&
-            !currentPath.includes('/register')
-          ) {
-            window.location.href = `/login?redirect=${encodeURIComponent(currentPath + window.location.search)}`;
-          }
-        } catch (toastError) {
-          console.error('Authentication failed. Please log in again.');
-        }
+    if (status === 401) {
+      if (typeof window === 'undefined') return;
+      toast.error(resolveApiErrorMessage(error, language));
+      const currentPath = window.location.pathname;
+      if (!isAuthPagePath(currentPath)) {
+        const target = currentPath + window.location.search;
+        window.location.href = `/login?redirect=${encodeURIComponent(target)}`;
       }
-    } else if (error?.response?.status === 403) {
-      if (typeof window !== 'undefined' && !error._handledByApiClient) {
-        try {
-          toast.error(t('error.noPermission', language));
-          const currentPath = window.location.pathname;
-          if (
-            !currentPath.includes('/dashboard') &&
-            !isAuthPagePath(currentPath)
-          ) {
-            window.location.href = '/dashboard';
-          }
-        } catch (toastError) {
-          console.error('You do not have permission to perform this action.');
-        }
-      }
-    } else if (error?.response?.status === 404) {
-      try {
-        toast.error(t('error.resourceNotFound', language));
-      } catch (toastError) {
-        console.error('The requested resource was not found.');
-      }
-    } else if (error?.response?.status === 422) {
-      // Validation errors
-      this.handleValidationErrors(error);
-    } else if (error?.response?.status >= 500) {
-      try {
-        toast.error(t('error.serverError', language));
-      } catch (toastError) {
-        console.error('Server error. Please try again later.');
-      }
-    } else {
-      this.handleValidationErrors(error);
+      return;
     }
+
+    if (status === 403) {
+      if (typeof window === 'undefined') return;
+      toast.error(resolveApiErrorMessage(error, language));
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/dashboard') && !isAuthPagePath(currentPath)) {
+        window.location.href = '/dashboard';
+      }
+      return;
+    }
+
+    this.handleValidationErrors(error);
   }
 
   /**
-   * Handle form submission errors
+   * Maps backend field errors onto form field names for inline display.
+   * Anything unmapped is surfaced as a toast so it is never silently swallowed.
    */
-  static handleFormError(error: any): Record<string, string> {
+  static handleFormError(error: unknown): Record<string, string> {
+    const language = currentLanguage();
     const fieldErrors: Record<string, string> = {};
+    const fields: FieldError[] = isApiResponseError(error)
+      ? error.error.fields
+      : [];
 
-    if (typeof error === 'string') {
-      // Simple string error - show as general error
-      try {
-        toast.error(error);
-      } catch (toastError) {
-        console.error('Form error:', error);
-      }
-      return fieldErrors;
-    }
-
-    if (error?.message) {
-      const errorMessage = error.message;
-
-      // Parse validation errors and map to form fields
-      if (typeof errorMessage === 'string' && errorMessage.includes(',')) {
-        const errorParts = errorMessage
-          .split(',')
-          .map((part: string) => part.trim());
-
-        errorParts.forEach((part: string) => {
-          if (part.includes('should not be empty')) {
-            const field = part.split(' ')[0];
-            const formattedField = this.mapFieldName(field);
-            if (formattedField) {
-              fieldErrors[formattedField] =
-                `${this.formatFieldName(field)} is required`;
-            }
-          } else if (part.includes('must be a valid phone number')) {
-            fieldErrors['phone_number'] = 'Please enter a valid phone number';
-          } else if (part.includes('must be shorter than or equal to')) {
-            const field = part.split(' ')[0];
-            const maxLength = part.match(/(\d+)/)?.[1] || '';
-            const formattedField = this.mapFieldName(field);
-            if (formattedField) {
-              fieldErrors[formattedField] =
-                `${this.formatFieldName(field)} must be ${maxLength} characters or less`;
-            }
-          } else if (part.includes('must be longer than or equal to')) {
-            const field = part.split(' ')[0];
-            const minLength = part.match(/(\d+)/)?.[1] || '';
-            const formattedField = this.mapFieldName(field);
-            if (formattedField) {
-              fieldErrors[formattedField] =
-                `${this.formatFieldName(field)} must be at least ${minLength} characters`;
-            }
-          } else if (part.includes('must be a string')) {
-            const field = part.split(' ')[0];
-            const formattedField = this.mapFieldName(field);
-            if (formattedField) {
-              fieldErrors[formattedField] =
-                `${this.formatFieldName(field)} must be text`;
-            }
-          }
-        });
+    for (const fieldError of fields) {
+      const formField = this.mapFieldName(fieldError.field);
+      if (formField) {
+        fieldErrors[formField] = resolveFieldMessage(fieldError, language);
       }
     }
 
-    // Show any unmapped errors as toast
-    if (Object.keys(fieldErrors).length === 0 && error?.message) {
-      try {
-        toast.error(error.message);
-      } catch (toastError) {
-        console.error('Unmapped error:', error.message);
-      }
+    if (Object.keys(fieldErrors).length === 0) {
+      toast.error(resolveApiErrorMessage(error, language));
     }
 
     return fieldErrors;
   }
 
-  /**
-   * Format field names for display
-   */
-  private static formatFieldName(field: string): string {
-    const fieldMap: Record<string, string> = {
-      phone_number: 'Phone number',
-      confirmed_password: 'Confirm password',
-      otp: 'OTP code',
-      password: 'Password',
-      email: 'Email',
-      name: 'Name',
-      role: 'Role',
-      academy_id: 'Store',
-      display_name: 'Display name'
-    };
-
-    return (
-      fieldMap[field] ||
-      field.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
-    );
-  }
-
-  /**
-   * Map backend field names to frontend field names
-   */
+  /** Backend DTO field name -> the name the form uses for that input. */
   private static mapFieldName(field: string): string | null {
     const fieldMap: Record<string, string> = {
       phone_number: 'phone',
@@ -334,51 +106,30 @@ export class ErrorHandler {
       display_name: 'name'
     };
 
-    return fieldMap[field] || null;
+    return fieldMap[field] ?? null;
+  }
+
+  /** Translated label for a backend field name. */
+  static fieldLabel(field: string): string {
+    return resolveFieldLabel(field, currentLanguage());
   }
 
   /**
-   * Show success message
-   * Can accept either a translation key (e.g., 'success.loginSuccess') or a plain string
+   * Accepts either a translation key (e.g. 'success.loginSuccess') or ready text.
    */
   static showSuccess(message: string, useTranslation: boolean = false): void {
-    try {
-      const displayMessage = useTranslation
-        ? t(message, getCurrentLanguage())
-        : message;
-      toast.success(displayMessage);
-    } catch (error) {
-      console.log('Success:', message);
-    }
+    toast.success(useTranslation ? t(message, currentLanguage()) : message);
   }
 
-  /**
-   * Show info message
-   */
   static showInfo(message: string): void {
-    try {
-      toast.info(message);
-    } catch (error) {
-      console.log('Info:', message);
-    }
+    toast.info(message);
   }
 
-  /**
-   * Show warning message
-   */
   static showWarning(message: string): void {
-    try {
-      toast.warning(message);
-    } catch (error) {
-      console.warn('Warning:', message);
-    }
+    toast.warning(message);
   }
 
   static showError(message: string): void {
-    try {
-      toast.error(message);
-    } catch (error) {
-      console.error('Error:', message);
-    }
+    toast.error(message);
   }
 }

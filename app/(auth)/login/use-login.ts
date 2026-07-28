@@ -11,6 +11,8 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
 import { isPlatformStaff } from '@/lib/roles';
 import { isUserNotRegisteredError } from '@/lib/auth-login-errors';
+import { isApiResponseError, resolveApiErrorMessage } from '@/lib/api-error';
+import { currentLanguage } from '@/lib/current-language';
 
 type Academy = { id: number; name: string; slug: string };
 export type LoginMethod = 'password' | 'otp';
@@ -26,8 +28,14 @@ type LoginResponse = {
   requires_academy_selection?: boolean;
 };
 
+/**
+ * Uses the backend's stable error code when we have one; otherwise the
+ * caller's fallback, which is more specific than a generic unknown-error text.
+ */
 function getApiErrorMessage(error: unknown, fallback: string): string {
-  if (error instanceof Error && error.message) return error.message;
+  if (isApiResponseError(error)) {
+    return resolveApiErrorMessage(error, currentLanguage());
+  }
   return fallback;
 }
 
@@ -36,10 +44,11 @@ function resolveLoginError(
   fallback: string,
   notRegisteredMessage: string
 ): { message: string; registrationRequired: boolean } {
-  const raw = getApiErrorMessage(error, fallback);
-  const registrationRequired = isUserNotRegisteredError(raw);
+  const registrationRequired = isUserNotRegisteredError(error);
   return {
-    message: registrationRequired ? notRegisteredMessage : raw,
+    message: registrationRequired
+      ? notRegisteredMessage
+      : getApiErrorMessage(error, fallback),
     registrationRequired
   };
 }
