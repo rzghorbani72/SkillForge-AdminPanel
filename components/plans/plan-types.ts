@@ -1,6 +1,6 @@
-import { SubscriptionPlanData } from '@/lib/api';
+import { SubscriptionPlanData, StructuredPlanLimits } from '@/lib/api';
 
-export type { SubscriptionPlanData };
+export type { SubscriptionPlanData, StructuredPlanLimits };
 
 export interface AcademyPlanData {
   id: number;
@@ -35,6 +35,47 @@ export interface AcademyPlanFormData {
   duration_days: string;
   is_active: boolean;
 }
+
+// Distinct from AcademyPlanData above (an academy's own student-facing products).
+export interface AcademyCustomPlanData {
+  custom_plan_enabled: boolean;
+  custom_plan_name: string | null;
+  custom_plan_limits: StructuredPlanLimits | null;
+  custom_plan_features: string[] | null;
+  custom_plan_price_monthly: number | null;
+  custom_plan_price_yearly: number | null;
+  custom_plan_note: string | null;
+  custom_plan_assigned_at: string | null;
+  custom_plan_assigned_by: string | null;
+}
+
+export interface AcademyCustomPlanFormData {
+  name: string;
+  limits: Record<keyof StructuredPlanLimits, string>;
+  features: string;
+  price_monthly_toman: string;
+  price_yearly_toman: string;
+  note: string;
+}
+
+export const DEFAULT_CUSTOM_PLAN_FORM: AcademyCustomPlanFormData = {
+  name: '',
+  limits: {
+    managers: '1',
+    teachers: '1',
+    courses: '1',
+    seasons_per_course: '5',
+    lessons_per_course: '50',
+    tutoring_students: '10',
+    storage_gb: '10',
+    live_classes_per_month: '8',
+    videos: '10'
+  },
+  features: '',
+  price_monthly_toman: '',
+  price_yearly_toman: '',
+  note: ''
+};
 
 export const DEFAULT_PLAN_FORM: PlanFormData = {
   name: '',

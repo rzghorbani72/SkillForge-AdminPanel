@@ -1203,6 +1203,7 @@ function CurrentSubscriptionBanner({
   if (!currentSub?.academy) return null;
   const expiresAt = currentSub.academy.subscription_expires;
   const storageUsedGb = currentSub.storage?.usage_gb;
+  const includedStorageGb = currentSub.storage?.included_gb;
   const display = getSubscriptionStatusDisplay(
     currentSub.status,
     currentSub.is_trial
@@ -1250,7 +1251,8 @@ function CurrentSubscriptionBanner({
           </div>
           <div>
             <p className="font-semibold">
-              {currentPlan?.name ??
+              {currentSub.academy.custom_plan?.name ??
+                currentPlan?.name ??
                 getPlanDisplayName(currentSub.academy.subscription_plan)}
             </p>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
@@ -1278,7 +1280,7 @@ function CurrentSubscriptionBanner({
           </div>
         </div>
 
-        {currentPlan && storageUsedGb !== undefined && (
+        {includedStorageGb !== undefined && storageUsedGb !== undefined && (
           <div className="flex gap-5 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">
               <HardDrive className="h-4 w-4" />
@@ -1286,27 +1288,24 @@ function CurrentSubscriptionBanner({
                 {formatStorage(storageUsedGb)}
               </span>
               <span className="text-xs">
-                / {formatStorage(currentPlan.storage_limit_gb)}
+                / {formatStorage(includedStorageGb)}
               </span>
             </div>
           </div>
         )}
       </div>
 
-      {currentPlan && storageUsedGb !== undefined && (
+      {includedStorageGb !== undefined && storageUsedGb !== undefined && (
         <div className="mt-3 space-y-1.5">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{t('plans.storageUsed')}</span>
             <span>
               {formatStorage(storageUsedGb)} /{' '}
-              {formatStorage(currentPlan.storage_limit_gb)}
+              {formatStorage(includedStorageGb)}
             </span>
           </div>
           <Progress
-            value={Math.min(
-              (storageUsedGb / currentPlan.storage_limit_gb) * 100,
-              100
-            )}
+            value={Math.min((storageUsedGb / includedStorageGb) * 100, 100)}
             className="h-1.5"
           />
         </div>

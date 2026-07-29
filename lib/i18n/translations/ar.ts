@@ -2014,7 +2014,45 @@ export const ar = {
       totalCosts: 'إجمالي التكاليف',
       netProfit: 'صافي الربح',
       noFinancialData: 'لا توجد بيانات مالية متاحة',
-      noPayments: 'لم يتم العثور على مدفوعات'
+      noPayments: 'لم يتم العثور على مدفوعات',
+      customPlan: {
+        tab: 'خطة مخصصة',
+        title: 'الخطة المخصصة لهذه الأكاديمية',
+        description:
+          'حدد قيودًا وميزات مخصصة للأكاديميات الكبيرة — تحل محل الخطة القياسية.',
+        enabledBadge: 'الخطة المخصصة مفعّلة',
+        disabledHint:
+          'لا تملك هذه الأكاديمية خطة مخصصة بعد — تستخدم خطتها القياسية.',
+        nameLabel: 'اسم الخطة',
+        namePlaceholder: 'مثال: خطة مؤسسية — أكاديمية رها',
+        limitsTitle: 'الحدود',
+        managers: 'المدراء',
+        teachers: 'المعلمون',
+        courses: 'الدورات',
+        seasonsPerCourse: 'الفصول لكل دورة',
+        lessonsPerCourse: 'الدروس لكل دورة',
+        tutoringStudents: 'طلاب التدريس الخصوصي',
+        storageGb: 'مساحة التخزين (جيجابايت)',
+        liveClassesPerMonth: 'الحصص المباشرة شهريًا',
+        videos: 'الفيديوهات',
+        featuresLabel: 'الميزات (سطر لكل ميزة)',
+        featuresPlaceholder: 'مثال: دعم مخصص',
+        priceMonthlyLabel: 'السعر الشهري (تومان)',
+        priceYearlyLabel: 'السعر السنوي (تومان)',
+        priceHint: 'للعلم فقط — لا يتم تحصيله تلقائيًا من الأكاديمية.',
+        noteLabel: 'ملاحظة داخلية',
+        notePlaceholder: 'مرجع العقد، تفاصيل الاتفاق...',
+        save: 'حفظ الخطة المخصصة',
+        saving: 'جارٍ الحفظ...',
+        clear: 'إلغاء الخطة المخصصة',
+        clearConfirmTitle: 'إلغاء الخطة المخصصة',
+        clearConfirmDesc:
+          'ستعود الأكاديمية إلى حدود خطتها القياسية. الأرقام المدخلة تبقى محفوظة ومتاحة عند إعادة التفعيل.',
+        clearing: 'جارٍ الإلغاء...',
+        assignedAt: 'تاريخ التعيين',
+        saveSuccess: 'تم حفظ الخطة المخصصة',
+        clearSuccess: 'تم إلغاء الخطة المخصصة'
+      }
     }
   },
   affiliates: {

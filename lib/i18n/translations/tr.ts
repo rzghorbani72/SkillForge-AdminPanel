@@ -2068,7 +2068,46 @@ export const tr = {
       totalCosts: 'Toplam Maliyetler',
       netProfit: 'Net Kar',
       noFinancialData: 'Finansal veri mevcut değil',
-      noPayments: 'Ödeme bulunamadı'
+      noPayments: 'Ödeme bulunamadı',
+      customPlan: {
+        tab: 'Özel Plan',
+        title: 'Bu akademinin özel planı',
+        description:
+          'Büyük akademiler için özel limitler ve özellikler belirleyin — standart planın yerini alır.',
+        enabledBadge: 'Özel plan aktif',
+        disabledHint:
+          'Bu akademinin henüz özel planı yok — standart planını kullanıyor.',
+        nameLabel: 'Plan adı',
+        namePlaceholder: 'ör. Kurumsal — Acme Akademi',
+        limitsTitle: 'Limitler',
+        managers: 'Yöneticiler',
+        teachers: 'Öğretmenler',
+        courses: 'Kurslar',
+        seasonsPerCourse: 'Kurs başına sezon',
+        lessonsPerCourse: 'Kurs başına ders',
+        tutoringStudents: 'Özel ders öğrencileri',
+        storageGb: 'Depolama (GB)',
+        liveClassesPerMonth: 'Aylık canlı ders',
+        videos: 'Videolar',
+        featuresLabel: 'Özellikler (satır başına bir tane)',
+        featuresPlaceholder: 'ör. Özel destek',
+        priceMonthlyLabel: 'Aylık fiyat (Toman)',
+        priceYearlyLabel: 'Yıllık fiyat (Toman)',
+        priceHint:
+          'Yalnızca bilgi amaçlıdır — akademiden otomatik olarak tahsil edilmez.',
+        noteLabel: 'Dahili not',
+        notePlaceholder: 'Sözleşme referansı, anlaşma detayları...',
+        save: 'Özel planı kaydet',
+        saving: 'Kaydediliyor...',
+        clear: 'Özel planı kaldır',
+        clearConfirmTitle: 'Özel planı kaldır',
+        clearConfirmDesc:
+          'Akademi standart planının limitlerine geri döner. Girilen sayılar silinmez, yeniden etkinleştirildiğinde tekrar kullanılabilir.',
+        clearing: 'Kaldırılıyor...',
+        assignedAt: 'Belirlenme tarihi',
+        saveSuccess: 'Özel plan kaydedildi',
+        clearSuccess: 'Özel plan kaldırıldı'
+      }
     }
   },
   affiliates: {

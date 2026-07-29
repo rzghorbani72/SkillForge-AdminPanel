@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api';
+import { apiClient, type StructuredPlanLimits } from '@/lib/api';
 import {
   isStarterPlan,
   isTopPlan,
@@ -27,6 +27,11 @@ export interface AcademySubscriptionState {
     name: string;
     subscription_plan?: string | null;
     subscription_expires?: string | null;
+    custom_plan?: {
+      name: string | null;
+      limits: StructuredPlanLimits;
+      features: string[];
+    } | null;
   };
   status?: 'ACTIVE' | 'GRACE' | 'EXPIRED' | 'INACTIVE';
   days_remaining?: number | null;
@@ -67,8 +72,10 @@ export function useAcademySubscription(enabled = true) {
   }, [refresh]);
 
   const planSlug = subscription?.academy?.subscription_plan ?? null;
+  const customPlan = subscription?.academy?.custom_plan ?? null;
   const planName =
-    planSlug && planSlug !== 'none' ? getPlanDisplayName(planSlug) : null;
+    customPlan?.name ??
+    (planSlug && planSlug !== 'none' ? getPlanDisplayName(planSlug) : null);
   const status = subscription?.status;
   const daysRemaining = subscription?.days_remaining ?? null;
 
@@ -84,7 +91,8 @@ export function useAcademySubscription(enabled = true) {
     isStarter: isStarterPlan(planSlug),
     // Business has no higher self-serve tier — once paid and active, there is
     // nothing to upgrade to, only to renew when it's expiring.
-    isTopPlan: isTopPlan(planSlug),
-    shouldShowUpgrade: shouldShowUpgradePrompt(status, daysRemaining, planSlug)
+    isTopPlan: !!customPlan || isTopPlan(planSlug),
+    shouldShowUpgrade:
+      !customPlan && shouldShowUpgradePrompt(status, daysRemaining, planSlug)
   };
 }

@@ -40,6 +40,8 @@ import {
 import { formatCurrency, formatCurrencyWithStore } from '@/lib/utils';
 import type { Academy } from '@/types/api';
 import { Pagination } from '@/components/shared/Pagination';
+import { AcademyCustomPlanCard } from '@/components/plans/AcademyCustomPlanCard';
+import { canAccessSupportOps } from '@/lib/roles';
 
 type AcademySettlementRow = {
   academy_id: number;
@@ -110,7 +112,7 @@ export default function PlatformAcademiesPage() {
       }
     };
 
-    if (!userLoading && user?.isAdminProfile) {
+    if (!userLoading && canAccessSupportOps(user)) {
       fetchStores();
     }
   }, [user, userLoading]);
@@ -118,7 +120,7 @@ export default function PlatformAcademiesPage() {
   // Fetch store detail and financial data when academyId is present
   useEffect(() => {
     const fetchStoreDetail = async () => {
-      if (!academyId || !user?.isAdminProfile) return;
+      if (!academyId || !canAccessSupportOps(user)) return;
 
       try {
         setIsLoadingDetail(true);
@@ -158,8 +160,8 @@ export default function PlatformAcademiesPage() {
     }
   }, [academyId, stores, user]);
 
-  // Redirect if not platform-level admin
-  if (!userLoading && user && !user.isAdminProfile && !user.platformLevel) {
+  // Redirect if not platform-level admin/support
+  if (!userLoading && user && !canAccessSupportOps(user)) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Card className="w-full max-w-md">
@@ -357,6 +359,9 @@ export default function PlatformAcademiesPage() {
             </TabsTrigger>
             <TabsTrigger value="details">
               {t('platform.stores.storeDetails')}
+            </TabsTrigger>
+            <TabsTrigger value="custom-plan">
+              {t('platform.stores.customPlan.tab')}
             </TabsTrigger>
           </TabsList>
 
@@ -582,6 +587,10 @@ export default function PlatformAcademiesPage() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="custom-plan" className="space-y-4">
+            <AcademyCustomPlanCard academyId={selectedStore.id} t={t} />
           </TabsContent>
         </Tabs>
       </div>

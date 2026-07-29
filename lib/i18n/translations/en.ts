@@ -3264,6 +3264,47 @@ export const en = {
       noExpiry: '—',
       pending: 'PENDING',
       notAvailable: '-'
+    },
+    stores: {
+      customPlan: {
+        tab: 'Custom Plan',
+        title: "This academy's custom plan",
+        description:
+          'Set custom limits and features for large academies — replaces the standard plan.',
+        enabledBadge: 'Custom plan active',
+        disabledHint:
+          "This academy doesn't have a custom plan yet — it uses its standard plan.",
+        nameLabel: 'Plan name',
+        namePlaceholder: 'e.g. Enterprise — Acme Academy',
+        limitsTitle: 'Limits',
+        managers: 'Managers',
+        teachers: 'Teachers',
+        courses: 'Courses',
+        seasonsPerCourse: 'Seasons per course',
+        lessonsPerCourse: 'Lessons per course',
+        tutoringStudents: 'Tutoring students',
+        storageGb: 'Storage (GB)',
+        liveClassesPerMonth: 'Live classes / month',
+        videos: 'Videos',
+        featuresLabel: 'Features (one per line)',
+        featuresPlaceholder: 'e.g. Dedicated support',
+        priceMonthlyLabel: 'Monthly price (Toman)',
+        priceYearlyLabel: 'Yearly price (Toman)',
+        priceHint:
+          'Informational only — never billed automatically from the academy.',
+        noteLabel: 'Internal note',
+        notePlaceholder: 'Contract reference, deal context, etc...',
+        save: 'Save custom plan',
+        saving: 'Saving...',
+        clear: 'Clear custom plan',
+        clearConfirmTitle: 'Clear custom plan',
+        clearConfirmDesc:
+          "The academy falls back to its standard plan's limits. The entered numbers are kept and available again if you re-enable it.",
+        clearing: 'Clearing...',
+        assignedAt: 'Set on',
+        saveSuccess: 'Custom plan saved',
+        clearSuccess: 'Custom plan cleared'
+      }
     }
   },
   bundles: {

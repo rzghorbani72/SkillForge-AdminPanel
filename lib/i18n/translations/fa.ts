@@ -3257,7 +3257,46 @@ export const fa = {
       totalCosts: 'کل هزینه‌ها',
       netProfit: 'سود خالص',
       noFinancialData: 'داده مالی موجود نیست',
-      noPayments: 'پرداختی یافت نشد'
+      noPayments: 'پرداختی یافت نشد',
+      customPlan: {
+        tab: 'پلن سازمانی',
+        title: 'پلن سازمانی این آکادمی',
+        description:
+          'برای آکادمی‌های بزرگ، یک پلن با محدودیت‌ها و امکانات سفارشی تنظیم کنید — جایگزین پلن استاندارد.',
+        enabledBadge: 'پلن سازمانی فعال است',
+        disabledHint:
+          'این آکادمی هنوز پلن سازمانی ندارد و از پلن استاندارد خود استفاده می‌کند.',
+        nameLabel: 'نام پلن',
+        namePlaceholder: 'مثلاً: سازمانی — آکادمی رها',
+        limitsTitle: 'محدودیت‌ها',
+        managers: 'مدیران',
+        teachers: 'معلمان',
+        courses: 'دوره‌ها',
+        seasonsPerCourse: 'فصل به‌ازای هر دوره',
+        lessonsPerCourse: 'جلسه به‌ازای هر دوره',
+        tutoringStudents: 'دانشجویان تدریس خصوصی',
+        storageGb: 'فضای ذخیره‌سازی (گیگابایت)',
+        liveClassesPerMonth: 'کلاس آنلاین در ماه',
+        videos: 'ویدیو',
+        featuresLabel: 'امکانات (هر خط یک مورد)',
+        featuresPlaceholder: 'مثلاً: پشتیبانی اختصاصی',
+        priceMonthlyLabel: 'قیمت ماهانه (تومان)',
+        priceYearlyLabel: 'قیمت سالانه (تومان)',
+        priceHint:
+          'این قیمت فقط برای یادداشت داخلی است و به‌صورت خودکار از آکادمی دریافت نمی‌شود.',
+        noteLabel: 'یادداشت داخلی',
+        notePlaceholder: 'مرجع قرارداد، جزئیات توافق و غیره...',
+        save: 'ذخیره پلن سازمانی',
+        saving: 'در حال ذخیره...',
+        clear: 'لغو پلن سازمانی',
+        clearConfirmTitle: 'لغو پلن سازمانی',
+        clearConfirmDesc:
+          'آکادمی به محدودیت‌های پلن استاندارد خود بازمی‌گردد. عددهای واردشده حذف نمی‌شوند و در صورت فعال‌سازی دوباره در دسترس‌اند.',
+        clearing: 'در حال لغو...',
+        assignedAt: 'تاریخ تنظیم',
+        saveSuccess: 'پلن سازمانی ذخیره شد',
+        clearSuccess: 'پلن سازمانی لغو شد'
+      }
     }
   },
   bundles: {

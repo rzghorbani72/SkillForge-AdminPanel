@@ -5024,6 +5024,36 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
+  async getAcademyCustomPlan(id: number) {
+    const res = await this.request<any>(`/academies/${id}/custom-plan`);
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async setAcademyCustomPlan(
+    id: number,
+    dto: {
+      name: string;
+      limits: StructuredPlanLimits;
+      features?: string[];
+      price_monthly_toman?: number;
+      price_yearly_toman?: number;
+      note?: string;
+    }
+  ) {
+    const res = await this.request<any>(`/academies/${id}/custom-plan`, {
+      method: 'PUT',
+      body: JSON.stringify(dto)
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async clearAcademyCustomPlan(id: number) {
+    const res = await this.request<any>(`/academies/${id}/custom-plan`, {
+      method: 'DELETE'
+    });
+    return (res.data as any)?.data ?? res.data;
+  }
+
   async getAcademyWallet(academyId: number) {
     const res = await this.request<any>(
       `/financial/academies/${academyId}/wallet`
