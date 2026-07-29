@@ -15,6 +15,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Zap,
@@ -29,7 +30,8 @@ import {
   Eye,
   Pencil,
   Plus,
-  Trash2
+  Trash2,
+  Building2
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
@@ -132,6 +134,10 @@ export default function PlansPage() {
   const [deletingAcademyPlan, setDeletingAcademyPlan] =
     useState<AcademyPlanData | null>(null);
   const [isDeletingAcademyPlan, setIsDeletingAcademyPlan] = useState(false);
+
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [contactMessage, setContactMessage] = useState('');
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
 
   const fetchSubscriptionPlans = useCallback(async () => {
     try {
@@ -543,6 +549,26 @@ export default function PlansPage() {
     }
   }
 
+  // Enterprise has no fixed price or DB-backed plan — it routes the manager
+  // straight to a real sales ticket instead of a dead "contact us" button.
+  async function handleSubmitContactSales() {
+    try {
+      setIsSubmittingContact(true);
+      await apiClient.createPlatformTicket({
+        subject: t('plans.enterpriseContactSubject'),
+        category: 'OTHER',
+        body: contactMessage.trim() || t('plans.enterpriseContactSubject')
+      });
+      toast.success(t('plans.enterpriseContactSuccess'));
+      setIsContactOpen(false);
+      setContactMessage('');
+    } catch (e) {
+      ErrorHandler.handleApiError(e);
+    } finally {
+      setIsSubmittingContact(false);
+    }
+  }
+
   const currentPlanSlug = currentSub?.academy?.subscription_plan ?? null;
   const currentPlan = currentPlanSlug
     ? plans.find(
@@ -827,7 +853,7 @@ export default function PlansPage() {
           ) : (
             <div
               dir="rtl"
-              className="stagger-children grid items-stretch gap-5 pt-3 sm:grid-cols-3"
+              className="stagger-children grid items-stretch gap-5 pt-3 sm:grid-cols-2 lg:grid-cols-4"
             >
               {plans.map((plan, i) => {
                 const isPopular = i === popularIndex && plans.length >= 2;
@@ -868,25 +894,14 @@ export default function PlansPage() {
                   />
                 );
               })}
+              {canManagePlan && (
+                <EnterprisePlanCard
+                  onContact={() => setIsContactOpen(true)}
+                  t={t}
+                />
+              )}
             </div>
           )}
-
-          <div className="rounded-2xl border bg-muted/40 p-7">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-                <Zap className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold">{t('plans.needMoreTitle')}</h3>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  {t('plans.needMoreDesc')}
-                </p>
-              </div>
-              <Button variant="outline" className="shrink-0">
-                {t('plans.contactSales')}
-              </Button>
-            </div>
-          </div>
 
           <div className="rounded-2xl border bg-card p-6">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -1030,6 +1045,37 @@ export default function PlansPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      <Dialog open={isContactOpen} onOpenChange={setIsContactOpen}>
+        <DialogContent className="sm:max-w-md" dir="rtl">
+          <DialogHeader>
+            <DialogTitle>{t('plans.enterpriseContactDialogTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('plans.enterpriseContactDialogDesc')}
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={contactMessage}
+            onChange={(e) => setContactMessage(e.target.value)}
+            placeholder={t('plans.enterpriseContactPlaceholder')}
+            rows={4}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsContactOpen(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              onClick={handleSubmitContactSales}
+              disabled={isSubmittingContact}
+            >
+              {isSubmittingContact && (
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              )}
+              {t('plans.enterpriseContactSubmit')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {sharedDialogs}
     </div>
@@ -1401,6 +1447,71 @@ function SubscriptionPlanCard({
           )}
         </button>
       )}
+    </div>
+  );
+}
+
+// Enterprise has no fixed price or storage cap in the plan catalog — it is a
+// custom deal closed by sales, not a self-serve tier, so this card always
+// routes to "contact us" instead of a price + choose-plan button.
+function EnterprisePlanCard({
+  onContact,
+  t
+}: {
+  onContact: () => void;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}) {
+  const features = [
+    t('plans.enterpriseFeature1'),
+    t('plans.enterpriseFeature2'),
+    t('plans.enterpriseFeature3')
+  ];
+  return (
+    <div
+      dir="rtl"
+      className="relative flex h-full flex-col rounded-2xl border border-dashed border-border bg-muted/20 p-8"
+    >
+      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+        <Building2 className="h-5 w-5 text-primary" />
+      </div>
+
+      <h2 className="mt-4 text-center text-lg font-bold text-foreground">
+        {t('plans.enterprisePlanName')}
+      </h2>
+      <p className="mt-1.5 text-center text-[13px] text-muted-foreground">
+        {t('plans.enterpriseTagline')}
+      </p>
+
+      <p className="mt-6 text-center">
+        <span className="text-[26px] font-black leading-none text-foreground">
+          {t('plans.enterprisePriceLabel')}
+        </span>
+      </p>
+
+      <ul className="mt-7 flex flex-1 flex-col gap-3.5">
+        {features.map((feature, fi) => (
+          <li
+            key={fi}
+            className="flex items-start gap-2.5 text-[13.5px] leading-[1.7] text-foreground/80"
+          >
+            <Check
+              size={15}
+              strokeWidth={3}
+              aria-hidden
+              className="mt-1 shrink-0 text-primary"
+            />
+            {feature}
+          </li>
+        ))}
+      </ul>
+
+      <button
+        type="button"
+        onClick={onContact}
+        className="mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border bg-card text-sm font-bold text-foreground transition-all duration-150 hover:border-primary/40"
+      >
+        {t('plans.contactSales')}
+      </button>
     </div>
   );
 }

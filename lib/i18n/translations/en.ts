@@ -3760,6 +3760,21 @@ export const en = {
     needMoreDesc:
       'Custom plans are available for large academies, organizations and companies. Contact our sales team.',
     contactSales: 'Contact sales',
+    enterprisePlanName: 'Enterprise',
+    enterpriseTagline: 'For large and multi-branch academies',
+    enterprisePriceLabel: 'Custom',
+    enterpriseFeature1: 'Teachers and tutoring students sized to your needs',
+    enterpriseFeature2: 'Dedicated storage capacity',
+    enterpriseFeature3: 'Dedicated support with an SLA',
+    enterpriseContactDialogTitle: 'Request an Enterprise plan',
+    enterpriseContactDialogDesc:
+      'Tell us what your academy needs and our sales team will reach out.',
+    enterpriseContactPlaceholder:
+      'e.g. number of teachers, students, and features you need...',
+    enterpriseContactSubmit: 'Send request',
+    enterpriseContactSubject: 'Enterprise plan request',
+    enterpriseContactSuccess:
+      'Your request was sent. Our sales team will contact you shortly.',
     noPlanConfigured: 'No plans configured yet.',
     createFirstPlan: 'Create First Plan',
     storage: 'Storage',

@@ -3759,6 +3759,21 @@ export const fa = {
     needMoreDesc:
       'پلن سفارشی برای آکادمی‌های بزرگ، سازمان‌ها و شرکت‌ها در دسترس است. با تیم فروش ما در ارتباط باشید.',
     contactSales: 'تماس با فروش',
+    enterprisePlanName: 'سازمانی',
+    enterpriseTagline: 'برای آموزشگاه‌های بزرگ و زنجیره‌ای',
+    enterprisePriceLabel: 'سفارشی',
+    enterpriseFeature1: 'معلم و دانشجوی تدریس خصوصی متناسب با نیاز شما',
+    enterpriseFeature2: 'فضای ذخیره‌سازی اختصاصی',
+    enterpriseFeature3: 'پشتیبانی اختصاصی و توافق سطح سرویس (SLA)',
+    enterpriseContactDialogTitle: 'درخواست پلن سازمانی',
+    enterpriseContactDialogDesc:
+      'نیاز آموزشگاهتان را بنویسید تا تیم فروش با شما تماس بگیرد.',
+    enterpriseContactPlaceholder:
+      'مثلاً: تعداد معلم‌ها، دانشجویان و امکانات مورد نیاز...',
+    enterpriseContactSubmit: 'ارسال درخواست',
+    enterpriseContactSubject: 'درخواست پلن سازمانی',
+    enterpriseContactSuccess:
+      'درخواست شما ارسال شد. تیم فروش به‌زودی با شما تماس می‌گیرد.',
     noPlanConfigured: 'پلنی تنظیم نشده است.',
     createFirstPlan: 'ایجاد اولین پلن',
     storage: 'فضای ذخیره‌سازی',
