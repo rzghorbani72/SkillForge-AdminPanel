@@ -8,6 +8,8 @@ type Fp = ReturnType<typeof useForgetPassword>;
 
 export function PasswordStep({ fp }: { fp: Fp }) {
   const { t } = fp;
+  const allFieldsFilled =
+    fp.formData.password !== '' && fp.formData.confirmed_password !== '';
 
   return (
     <form
@@ -54,7 +56,7 @@ export function PasswordStep({ fp }: { fp: Fp }) {
         </Button>
         <AuthSubmit
           loading={fp.isLoading}
-          disabled={fp.isLoading}
+          disabled={fp.isLoading || !allFieldsFilled}
           className="flex-1"
         >
           {t('forgotPassword.resetPassword')}

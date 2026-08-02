@@ -14,6 +14,9 @@ const CHANNELS = [
 
 export function IdentifierStep({ fp }: { fp: Fp }) {
   const { t } = fp;
+  // Only one identifier field is rendered at a time.
+  const identifier =
+    fp.authMethod === 'email' ? fp.formData.email : fp.formData.phoneNumber;
 
   return (
     <div className="space-y-5">
@@ -72,7 +75,10 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
           disabled={fp.isLoading}
         />
 
-        <AuthSubmit loading={fp.isLoading} disabled={fp.isLoading}>
+        <AuthSubmit
+          loading={fp.isLoading}
+          disabled={fp.isLoading || identifier.trim() === ''}
+        >
           {t('forgotPassword.sendOtp')}
         </AuthSubmit>
       </form>

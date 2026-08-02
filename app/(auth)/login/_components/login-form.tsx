@@ -47,6 +47,10 @@ export function LoginForm({
   const { t } = useTranslation();
   const router = useRouter();
 
+  // The password field only exists in password mode, so OTP mode needs the phone alone.
+  const allFieldsFilled =
+    phone.trim() !== '' && (loginMethod === 'otp' || password !== '');
+
   return (
     <AuthShell activeTab="login" title={t('auth.loginTitle')}>
       {unauthorizedError && (
@@ -127,7 +131,10 @@ export function LoginForm({
           </>
         )}
 
-        <AuthSubmit loading={isLoading} disabled={isLoading}>
+        <AuthSubmit
+          loading={isLoading}
+          disabled={isLoading || !allFieldsFilled}
+        >
           {isLoading
             ? loginMethod === 'otp'
               ? t('auth.sendingCode')

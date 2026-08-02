@@ -12,6 +12,11 @@ type AdminLogin = ReturnType<typeof useAdminLogin>;
 
 export function AdminLoginForm({ login }: { login: AdminLogin }) {
   const { t } = login;
+  // The password field only exists in password mode.
+  const allFieldsFilled =
+    login.formData.email.trim() !== '' &&
+    login.formData.phone.trim() !== '' &&
+    (login.loginMethod === 'otp' || login.formData.password !== '');
 
   return (
     <AuthShell
@@ -101,7 +106,10 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
           </>
         )}
 
-        <AuthSubmit loading={login.isLoading} disabled={login.isLoading}>
+        <AuthSubmit
+          loading={login.isLoading}
+          disabled={login.isLoading || !allFieldsFilled}
+        >
           {login.isLoading
             ? login.loginMethod === 'otp'
               ? t('auth.sendingCode')
