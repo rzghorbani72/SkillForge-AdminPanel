@@ -684,7 +684,7 @@ export const fa = {
     termsOfService: 'شرایط خدمات',
     and: 'و',
     privacyPolicy: 'سیاست حریم خصوصی',
-    agree: 'موافقت می‌کنید.'
+    agree: ' موافقت می‌کنید.'
   },
   dashboard: {
     title: 'داشبورد',

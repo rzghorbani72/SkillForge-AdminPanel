@@ -64,6 +64,20 @@ export function PhoneOtpScreen({
       {t('auth.otpSentToPhone')} <strong>{otpPhone}</strong>
     </>
   );
+  const showsSubtitleText = Boolean(subtitle) || !embedded;
+
+  const header = showsSubtitleText ? (
+    <div className="flex items-start justify-between gap-3 px-4">
+      <p className="text-start text-base text-[#616579]">{resolvedSubtitle}</p>
+      <button
+        type="button"
+        onClick={onBack}
+        className="shrink-0 text-base text-primary hover:underline"
+      >
+        {backLabel ?? t('common.edit')}
+      </button>
+    </div>
+  ) : null;
 
   const form = (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -78,6 +92,26 @@ export function PhoneOtpScreen({
           <p className="text-center text-xs text-destructive">{otpError}</p>
         )}
       </div>
+
+      {onResend && (
+        <div className="flex justify-center text-sm">
+          {timer.canResend ? (
+            <button
+              type="button"
+              className="text-primary hover:underline disabled:opacity-50"
+              disabled={resending}
+              onClick={() => {
+                timer.start();
+                onResend();
+              }}
+            >
+              {resending ? t('auth.resending') : t('auth.resendCode')}
+            </button>
+          ) : (
+            <span className="tabular-nums text-primary">{timer.formatted}</span>
+          )}
+        </div>
+      )}
 
       {verified ? (
         <p className="flex items-center justify-center gap-1.5 text-sm text-emerald-600">
@@ -96,7 +130,7 @@ export function PhoneOtpScreen({
 
       {children}
 
-      <div className="flex items-center justify-between text-sm">
+      {!showsSubtitleText && (
         <button
           type="button"
           className="text-muted-foreground hover:text-foreground"
@@ -104,36 +138,14 @@ export function PhoneOtpScreen({
         >
           ← {backLabel ?? t('auth.backToLogin')}
         </button>
-        {onResend &&
-          (timer.canResend ? (
-            <button
-              type="button"
-              className="text-primary hover:underline disabled:opacity-50"
-              disabled={resending}
-              onClick={() => {
-                timer.start();
-                onResend();
-              }}
-            >
-              {resending ? t('auth.resending') : t('auth.resendCode')}
-            </button>
-          ) : (
-            <span className="text-xs tabular-nums text-muted-foreground">
-              {t('auth.resendIn')} {timer.formatted}
-            </span>
-          ))}
-      </div>
+      )}
     </form>
   );
 
   if (embedded) {
     return (
       <div className="space-y-4">
-        {subtitle && (
-          <p className="px-4 text-start text-base text-[#616579]">
-            {resolvedSubtitle}
-          </p>
-        )}
+        {header}
         {form}
       </div>
     );
@@ -141,9 +153,7 @@ export function PhoneOtpScreen({
 
   return (
     <AuthShell activeTab="login" title={resolvedTitle}>
-      <p className="px-4 text-start text-base text-[#616579]">
-        {resolvedSubtitle}
-      </p>
+      {header}
       {form}
     </AuthShell>
   );

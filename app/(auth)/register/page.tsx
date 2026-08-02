@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Link from '@/components/ui/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
@@ -14,8 +13,6 @@ import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 import { AuthSecondaryButton } from '@/components/auth/auth-fields';
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
   RegisterDetailsForm,
@@ -48,10 +45,8 @@ export default function RegisterPage() {
   const [otpCode, setOtpCode] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
-  const [phoneVerified, setPhoneVerified] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [acceptedLegal, setAcceptedLegal] = useState(true);
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [legalVersions, setLegalVersions] = useState<{
     terms: string | null;
     privacy: string | null;
@@ -84,6 +79,10 @@ export default function RegisterPage() {
   });
 
   async function onDetailsSubmit(values: RegisterValues) {
+    if (!acceptedLegal) {
+      toast.error(t('legal.mustAcceptTerms'));
+      return;
+    }
     setOtpLoading(true);
     try {
       const response = await apiClient.sendPhoneOtp(
@@ -91,7 +90,6 @@ export default function RegisterPage() {
         OtpType.REGISTER_PHONE_VERIFICATION
       );
       setStep('verify');
-      setPhoneVerified(false);
       setOtpCode('');
 
       // TODO: Remove debug OTP display when real SMS provider is integrated
@@ -111,11 +109,12 @@ export default function RegisterPage() {
     }
   }
 
-  async function verifyCode() {
-    const e164Phone = toE164Iran(form.getValues('phone'));
+  async function verifyAndCreateAccount() {
+    const values = form.getValues();
+    const e164Phone = toE164Iran(values.phone);
     setVerifying(true);
     try {
-      const result = (await apiClient.verifyPhoneOtp(
+      const verifyResult = (await apiClient.verifyPhoneOtp(
         e164Phone,
         otpCode,
         OtpType.REGISTER_PHONE_VERIFICATION
@@ -124,28 +123,11 @@ export default function RegisterPage() {
         success?: boolean;
         message?: string;
       };
-      if (!result?.data?.success && !result?.success) {
-        toast.error(result?.data?.message ?? t('common.error'));
+      if (!verifyResult?.data?.success && !verifyResult?.success) {
+        toast.error(verifyResult?.data?.message ?? t('common.error'));
         return;
       }
-      toast.success(result?.data?.message ?? t('auth.verified'));
-      setPhoneVerified(true);
-    } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
-    } finally {
-      setVerifying(false);
-    }
-  }
 
-  async function createAccount() {
-    if (!acceptedLegal) {
-      toast.error(t('legal.mustAcceptTerms'));
-      return;
-    }
-    const values = form.getValues();
-    const e164Phone = toE164Iran(values.phone);
-    setSubmitting(true);
-    try {
       let termsVersion = legalVersions.terms;
       let privacyVersion = legalVersions.privacy;
       try {
@@ -184,14 +166,13 @@ export default function RegisterPage() {
         toastId: 'register-error'
       });
     } finally {
-      setSubmitting(false);
+      setVerifying(false);
     }
   }
 
   async function resendOtp() {
     const phone = toE164Iran(form.getValues('phone'));
     setOtpLoading(true);
-    setPhoneVerified(false);
     setOtpCode('');
     try {
       const response = await apiClient.sendPhoneOtp(
@@ -231,6 +212,8 @@ export default function RegisterPage() {
           <RegisterDetailsForm
             form={form}
             loading={otpLoading}
+            acceptedLegal={acceptedLegal}
+            onAcceptedLegalChange={setAcceptedLegal}
             onSubmit={onDetailsSubmit}
           />
         )}
@@ -250,7 +233,7 @@ export default function RegisterPage() {
                 otpLoading={verifying}
                 onSubmit={(e) => {
                   e.preventDefault();
-                  verifyCode();
+                  verifyAndCreateAccount();
                 }}
                 onBack={() => setStep('details')}
                 title={t('auth.verifyPhoneTitle')}
@@ -265,56 +248,10 @@ export default function RegisterPage() {
                 }
                 inputLabel={t('auth.enterVerificationCode')}
                 submitLabel={t('auth.verifySmsOtp')}
-                backLabel={t('auth.backToLogin')}
-                verified={phoneVerified}
+                backLabel={t('common.edit')}
                 onResend={resendOtp}
                 resending={otpLoading}
-              >
-                {phoneVerified && (
-                  <>
-                    <label className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <input
-                        type="checkbox"
-                        checked={acceptedLegal}
-                        onChange={(e) => setAcceptedLegal(e.target.checked)}
-                        className="mt-0.5 h-4 w-4 shrink-0"
-                      />
-                      <span>
-                        {t('auth.byCreatingAccount')}{' '}
-                        <Link
-                          href="/terms"
-                          className="underline hover:text-foreground"
-                        >
-                          {t('auth.termsOfService')}
-                        </Link>{' '}
-                        {t('auth.and')}{' '}
-                        <Link
-                          href="/privacy"
-                          className="underline hover:text-foreground"
-                        >
-                          {t('auth.privacyPolicy')}
-                        </Link>
-                        {t('auth.agree')}
-                      </span>
-                    </label>
-                    <Button
-                      type="button"
-                      className="w-full"
-                      disabled={submitting || !acceptedLegal}
-                      onClick={createAccount}
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('auth.creatingAccount')}
-                        </>
-                      ) : (
-                        t('auth.createAccount')
-                      )}
-                    </Button>
-                  </>
-                )}
-              </PhoneOtpScreen>
+              />
             );
           })()}
       </div>

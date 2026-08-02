@@ -48,7 +48,7 @@ export function LoginForm({
   const router = useRouter();
 
   return (
-    <AuthShell activeTab="login" title={t('auth.loginTitle')} centerTitle>
+    <AuthShell activeTab="login" title={t('auth.loginTitle')}>
       {unauthorizedError && (
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>{unauthorizedError}</AlertDescription>
@@ -77,10 +77,10 @@ export function LoginForm({
             type="button"
             onClick={() => onLoginMethodChange(m)}
             className={cn(
-              'h-12 flex-1 rounded-2xl text-base transition-colors',
+              'h-12 flex-1 border-b-2 text-base transition-colors',
               loginMethod === m
-                ? 'bg-white/50 font-medium text-[#181C20]'
-                : 'text-[#727272] hover:bg-white/30'
+                ? 'border-[#1B98E0] font-medium text-[#181C20]'
+                : 'border-transparent text-[#727272] hover:text-[#181C20]'
             )}
           >
             {m === 'password'
@@ -96,7 +96,6 @@ export function LoginForm({
           label={t('auth.phoneNumber')}
           type="tel"
           inputMode="tel"
-          dir="ltr"
           autoComplete="tel"
           value={phone}
           onChange={(e) => onPhoneChange(toEnglishDigits(e.target.value))}
@@ -109,7 +108,6 @@ export function LoginForm({
             <AuthField
               label={t('auth.password')}
               type="password"
-              dir="ltr"
               autoComplete="current-password"
               value={password}
               onChange={(e) =>
