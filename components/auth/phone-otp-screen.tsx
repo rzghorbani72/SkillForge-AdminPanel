@@ -139,9 +139,9 @@ export function PhoneOtpScreen({
                 type="button"
                 className="text-primary hover:underline disabled:opacity-50"
                 disabled={resending}
-                onClick={() => {
+                onClick={async () => {
                   timer.start();
-                  onResend();
+                  await onResend();
                 }}
               >
                 {resending ? t('auth.resending') : t('auth.resendCode')}
