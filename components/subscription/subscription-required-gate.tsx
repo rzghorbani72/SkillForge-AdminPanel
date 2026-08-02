@@ -9,7 +9,16 @@ import {
   type SubscriptionRequiredDetail
 } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 
 export function SubscriptionRequiredGate() {
   const { t } = useTranslation();
@@ -37,43 +46,36 @@ export function SubscriptionRequiredGate() {
     router.push('/plans');
   }
 
-  if (!message) return null;
-
   return (
-    <div
-      className="dialog-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4"
-      role="alertdialog"
-      aria-modal="true"
-      aria-labelledby="subscription-required-title"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) dismiss();
+    <AlertDialog
+      open={!!message}
+      onOpenChange={(next) => {
+        if (!next) dismiss();
       }}
     >
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
-        <div className="flex items-center gap-3">
+      <AlertDialogContent className="max-w-md rounded-2xl">
+        <AlertDialogHeader className="flex-row items-center gap-3 space-y-0 text-left sm:text-left">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/15">
             <AlertTriangle className="h-5 w-5" />
           </span>
-          <h2 id="subscription-required-title" className="text-lg font-bold">
+          <AlertDialogTitle className="text-lg font-bold">
             {t('subscription.expiredTitle')}
-          </h2>
-        </div>
+          </AlertDialogTitle>
+        </AlertDialogHeader>
 
-        <p className="mt-4 text-sm text-muted-foreground">{message}</p>
+        <AlertDialogDescription className="mt-4">
+          {message}
+        </AlertDialogDescription>
 
-        <div className="mt-6 flex flex-col gap-2">
-          <Button type="button" className="w-full" onClick={goToPlans}>
+        <AlertDialogFooter className="flex-col gap-2 sm:flex-col sm:justify-start sm:space-x-0">
+          <AlertDialogAction onClick={goToPlans} className="w-full">
             {t('subscription.upgradeCta')}
-          </Button>
-          <button
-            type="button"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            onClick={dismiss}
-          >
+          </AlertDialogAction>
+          <AlertDialogCancel className="mt-0 w-full border-0 bg-transparent p-0 text-sm font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground sm:mt-0">
             {t('subscription.continueViewing')}
-          </button>
-        </div>
-      </div>
-    </div>
+          </AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

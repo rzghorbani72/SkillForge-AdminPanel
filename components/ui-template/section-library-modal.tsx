@@ -5,6 +5,12 @@ import { Check, ImageIcon, LayoutTemplate, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle
+} from '@/components/ui/dialog';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -312,28 +318,38 @@ export function SectionLibraryModal({
     );
   };
 
-  if (!open) return null;
-
   return (
-    <div
-      className="dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) onClose();
       }}
     >
-      <div className="flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border bg-background shadow-xl">
+      <DialogContent
+        hideCloseButton
+        // Once a section is selected, a Cancel/Confirm footer appears —
+        // from then on an accidental backdrop click shouldn't discard the
+        // pick. Browsing with nothing selected can still close normally.
+        onInteractOutside={(e) => {
+          if (selected || isImporting) e.preventDefault();
+        }}
+        onEscapeKeyDown={(e) => {
+          if (isImporting) e.preventDefault();
+        }}
+        className="flex max-h-[85vh] w-full max-w-3xl flex-col gap-0 overflow-hidden p-0"
+      >
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div>
-            <h2 className="text-lg font-semibold">
+            <DialogTitle className="text-lg font-semibold">
               {swapTarget
                 ? t('settings.sectionReplaceTitle')
                 : t('settings.sectionLibraryTitle')}
-            </h2>
-            <p className="text-xs text-muted-foreground">
+            </DialogTitle>
+            <DialogDescription className="text-xs">
               {swapTarget
                 ? t('settings.sectionReplaceDescription')
                 : t('settings.sectionLibraryDescription')}
-            </p>
+            </DialogDescription>
           </div>
           <button
             type="button"
@@ -488,7 +504,7 @@ export function SectionLibraryModal({
             </div>
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 function AffiliateDashPreview({
   formatCurrency,
@@ -222,26 +223,33 @@ export function AffiliateLoginPreview({
   }, [step]);
 
   return (
-    <div
-      className="dialog-backdrop fixed inset-0 z-50 flex items-center justify-center"
-      onClick={onClose}
+    <Dialog
+      open
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
     >
-      <button
-        type="button"
-        aria-label={t('common.close')}
-        onClick={onClose}
-        className="absolute end-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-      >
-        <X className="h-4 w-4" />
-      </button>
-
-      <div
-        onClick={(e) => e.stopPropagation()}
+      <DialogContent
+        hideCloseButton
         className={cn(
-          'flex max-h-[92vh] flex-col overflow-hidden rounded-2xl bg-background shadow-2xl transition-all duration-300',
-          step === 'dash' ? 'w-[920px]' : 'w-[380px]'
+          'flex max-h-[92vh] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl transition-all duration-300',
+          step === 'dash'
+            ? 'w-[920px] max-w-[920px]'
+            : 'w-[380px] max-w-[380px]'
         )}
       >
+        <DialogTitle className="sr-only">
+          {t('affiliates.previewPanelTitle')}
+        </DialogTitle>
+        <button
+          type="button"
+          aria-label={t('common.close')}
+          onClick={onClose}
+          className="absolute end-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
         <div className="flex items-center gap-2.5 border-b px-4 py-3">
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
             M
@@ -360,7 +368,7 @@ export function AffiliateLoginPreview({
             baseUrl={baseUrl}
           />
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

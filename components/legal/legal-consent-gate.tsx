@@ -4,6 +4,14 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from '@/components/ui/link';
 import { Loader2 } from 'lucide-react';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import {
   apiClient,
   LEGAL_CONSENT_REQUIRED_EVENT,
   type LegalConsentRequiredDetail,
@@ -154,26 +162,21 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
           so this is just the frozen last-known UI showing through the glass. */}
       {children}
 
-      <div
-        className="dialog-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="legal-consent-title"
-        onClick={(e) => {
-          // Outside the card means decline — there's no neutral "just close"
-          // state, since requests stay paused until the user accepts or logs out.
-          if (e.target === e.currentTarget) void handleCancel();
-        }}
-      >
-        <div className="w-full max-w-2xl rounded-2xl border-[2px] border-gray-200 bg-white p-6 shadow-xl">
-          <h2 id="legal-consent-title" className="text-xl font-bold">
-            {t('legal.reacceptTitle')}
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t('legal.reacceptSubtitle')}
-          </p>
+      <Dialog open>
+        <DialogContent
+          hideCloseButton
+          // Accept/decline are the only valid actions — there's no neutral
+          // "just close" state, so the backdrop and escape key do nothing.
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          className="max-w-2xl rounded-2xl"
+        >
+          <DialogHeader>
+            <DialogTitle>{t('legal.reacceptTitle')}</DialogTitle>
+            <DialogDescription>{t('legal.reacceptSubtitle')}</DialogDescription>
+          </DialogHeader>
 
-          <ul className="beautiful-scrollbar mt-4 max-h-[50vh] space-y-3 overflow-y-auto text-sm">
+          <ul className="beautiful-scrollbar max-h-[50vh] space-y-3 overflow-y-auto text-sm">
             {pending.map((doc) => {
               const diffEntry = diffs.find((d) => d.type === doc.type);
               const fullDocHref = DOCUMENT_LINKS[doc.type];
@@ -205,7 +208,7 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
             })}
           </ul>
 
-          <p className="mt-5 text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             {t('legal.agreeByClicking')}{' '}
             <Link href="/terms" className="underline hover:text-foreground">
               {t('auth.termsOfService')}
@@ -218,12 +221,12 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
           </p>
 
           {error && (
-            <p className="mt-3 text-sm text-destructive" role="alert">
+            <p className="text-sm text-destructive" role="alert">
               {error}
             </p>
           )}
 
-          <div className="mt-5 flex gap-3">
+          <DialogFooter className="flex-row gap-3 sm:justify-normal sm:space-x-0">
             <button
               type="button"
               disabled={submitting || loggingOut}
@@ -255,9 +258,9 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
                 t('legal.acceptAndContinue')
               )}
             </button>
-          </div>
-        </div>
-      </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

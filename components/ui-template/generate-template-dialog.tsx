@@ -13,6 +13,12 @@ import {
   type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle
+} from '@/components/ui/dialog';
 
 // Mirrors Backend ACADEMY_FIELDS. One short question — "what does your academy
 // teach?" — is the only input generation needs, Zarla-style.
@@ -54,27 +60,30 @@ export function GenerateTemplateDialog({
 }: GenerateTemplateDialogProps) {
   const [field, setField] = useState<AcademyField | null>(null);
 
-  if (!open) return null;
-
   return (
-    <div
-      className="dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
-      dir="rtl"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border bg-background shadow-xl">
+    <Dialog open={open}>
+      <DialogContent
+        hideCloseButton
+        // Cancel/Generate are the active choices here, so an accidental
+        // backdrop click shouldn't discard the picked field mid-flow.
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => {
+          if (isGenerating) e.preventDefault();
+        }}
+        className="max-w-lg gap-0 overflow-hidden p-0"
+      >
         <div className="flex items-start justify-between border-b px-6 py-5">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Sparkles className="h-5 w-5" />
             </span>
             <div>
-              <h2 className="text-lg font-bold">ساخت خودکار سایت</h2>
-              <p className="text-xs text-muted-foreground">
+              <DialogTitle className="text-lg font-bold">
+                ساخت خودکار سایت
+              </DialogTitle>
+              <DialogDescription className="text-xs">
                 برای «{academyName}» یک سایت آماده می‌سازیم
-              </p>
+              </DialogDescription>
             </div>
           </div>
           <button
@@ -151,7 +160,7 @@ export function GenerateTemplateDialog({
             )}
           </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
