@@ -2,7 +2,7 @@
 
 import { UseFormReturn } from 'react-hook-form';
 import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
-import Link from '@/components/ui/link';
+import { LegalConsentCheckbox } from '@/components/auth/legal-consent-checkbox';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toEnglishDigits } from '@/lib/phone-utils';
 
@@ -32,6 +32,19 @@ export function RegisterDetailsForm({
 }: RegisterDetailsFormProps) {
   const { t } = useTranslation();
   const { errors } = form.formState;
+
+  const [name, phone, password, confirmPassword] = form.watch([
+    'name',
+    'phone',
+    'password',
+    'confirmPassword'
+  ]);
+  // Passwords are not trimmed — leading/trailing spaces can be intentional.
+  const allFieldsFilled =
+    name.trim() !== '' &&
+    phone.trim() !== '' &&
+    password !== '' &&
+    confirmPassword !== '';
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -71,27 +84,17 @@ export function RegisterDetailsForm({
         {...form.register('confirmPassword', { setValueAs: toEnglish })}
       />
 
-      <label className="flex items-start gap-2 px-1 text-xs text-muted-foreground">
-        <input
-          type="checkbox"
-          checked={acceptedLegal}
-          onChange={(e) => onAcceptedLegalChange(e.target.checked)}
-          className="mt-0.5 h-4 w-4 shrink-0"
-        />
-        <span>
-          {t('auth.byCreatingAccount')}{' '}
-          <Link href="/terms" className="underline hover:text-foreground">
-            {t('auth.termsOfService')}
-          </Link>{' '}
-          {t('auth.and')}{' '}
-          <Link href="/privacy" className="underline hover:text-foreground">
-            {t('auth.privacyPolicy')}
-          </Link>
-          {t('auth.agree')}
-        </span>
-      </label>
+      <LegalConsentCheckbox
+        lead={t('auth.byCreatingAccount')}
+        checked={acceptedLegal}
+        onChange={onAcceptedLegalChange}
+        disabled={loading}
+      />
 
-      <AuthSubmit loading={loading} disabled={loading || !acceptedLegal}>
+      <AuthSubmit
+        loading={loading}
+        disabled={loading || !acceptedLegal || !allFieldsFilled}
+      >
         {loading ? t('auth.sending') : t('auth.continueBtn')}
       </AuthSubmit>
     </form>
