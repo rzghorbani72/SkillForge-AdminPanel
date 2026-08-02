@@ -316,6 +316,8 @@ export const tr = {
     loginWithOtp: 'Tek kullanımlık kod',
     sendLoginCode: 'Kod gönder',
     accountNotRegisteredForLogin: 'Bu telefon numarasıyla kayıtlı hesap yok.',
+    phoneAlreadyRegistered:
+      'Bu telefon numarası zaten kayıtlı. Lütfen giriş yapın.',
     registerToLoginHint: 'Önce ücretsiz hesap oluşturun, sonra giriş yapın.',
     createAccountToContinue: 'Hesap oluştur',
     sendingCode: 'Kod gönderiliyor...',

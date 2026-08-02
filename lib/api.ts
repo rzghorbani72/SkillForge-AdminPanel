@@ -613,6 +613,14 @@ class ApiClient {
     });
   }
 
+  /** Signup pre-check so an existing account is caught before any SMS is sent. */
+  async checkSignupPhone(phone_number: string) {
+    return this.request<{ taken: boolean }>('/auth/register/check-phone', {
+      method: 'POST',
+      body: JSON.stringify({ phone_number })
+    });
+  }
+
   async getLegalDocuments(lang?: string) {
     return this.request<
       { type: string; version: string; title: string; published_at: string }[]

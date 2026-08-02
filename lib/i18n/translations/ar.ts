@@ -310,6 +310,7 @@ export const ar = {
     loginWithOtp: 'رمز لمرة واحدة',
     sendLoginCode: 'إرسال الرمز',
     accountNotRegisteredForLogin: 'لا يوجد حساب مسجل بهذا الرقم.',
+    phoneAlreadyRegistered: 'رقم الهاتف هذا مسجل بالفعل. الرجاء تسجيل الدخول.',
     registerToLoginHint: 'أنشئ حسابًا مجانيًا أولاً، ثم سجّل الدخول.',
     createAccountToContinue: 'إنشاء حساب',
     sendingCode: 'جاري إرسال الرمز...',

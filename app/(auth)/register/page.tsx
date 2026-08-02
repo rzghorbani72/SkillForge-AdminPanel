@@ -13,6 +13,8 @@ import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 import { AuthSecondaryButton } from '@/components/auth/auth-fields';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import Link from '@/components/ui/link';
 import { toast } from 'react-toastify';
 import {
   RegisterDetailsForm,
@@ -46,6 +48,7 @@ export default function RegisterPage() {
   const [otpLoading, setOtpLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [done, setDone] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [legalVersions, setLegalVersions] = useState<{
     terms: string | null;
@@ -78,13 +81,27 @@ export default function RegisterPage() {
     defaultValues: { name: '', phone: '', password: '', confirmPassword: '' }
   });
 
+  // The notice belongs to the phone that was checked, so editing it clears it.
+  const watchedPhone = form.watch('phone');
+  useEffect(() => {
+    setAlreadyRegistered(false);
+  }, [watchedPhone]);
+
   async function onDetailsSubmit(values: RegisterValues) {
     if (!acceptedLegal) {
       toast.error(t('legal.mustAcceptTerms'));
       return;
     }
     setOtpLoading(true);
+    setAlreadyRegistered(false);
     try {
+      // Stop here rather than sending an SMS the account can never use.
+      const check = await apiClient.checkSignupPhone(toE164Iran(values.phone));
+      if (check?.data?.taken) {
+        setAlreadyRegistered(true);
+        return;
+      }
+
       const response = await apiClient.sendPhoneOtp(
         toE164Iran(values.phone),
         OtpType.REGISTER_PHONE_VERIFICATION
@@ -208,6 +225,20 @@ export default function RegisterPage() {
   return (
     <AuthShell activeTab="register" title={t('auth.registerTitle')}>
       <div>
+        {step === 'details' && alreadyRegistered && (
+          <Alert className="mb-4 border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+            <AlertDescription className="space-y-2">
+              <p>{t('auth.phoneAlreadyRegistered')}</p>
+              <Link
+                href={loginHref}
+                className="inline-block text-sm font-semibold text-primary hover:underline"
+              >
+                {t('auth.signIn')} →
+              </Link>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {step === 'details' && (
           <RegisterDetailsForm
             form={form}

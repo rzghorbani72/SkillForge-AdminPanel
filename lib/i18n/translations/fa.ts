@@ -502,6 +502,8 @@ export const fa = {
     loginWithOtp: 'کد یکبار مصرف',
     sendLoginCode: 'ارسال کد',
     accountNotRegisteredForLogin: 'حسابی با این شماره تلفن ثبت نشده است.',
+    phoneAlreadyRegistered:
+      'این شماره موبایل قبلاً ثبت‌نام کرده است. لطفاً وارد شوید.',
     registerToLoginHint: 'ابتدا حساب رایگان بسازید، سپس وارد شوید.',
     createAccountToContinue: 'ایجاد حساب',
     sendingCode: 'در حال ارسال کد...',
