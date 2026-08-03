@@ -550,7 +550,7 @@ class ApiClient {
   async login(credentials: {
     identifier: string;
     password: string;
-    academy_id?: number;
+    academy_id?: string;
   }) {
     const response = this.request('/auth/staff/login', {
       method: 'POST',
@@ -566,7 +566,7 @@ class ApiClient {
   async publicLogin(credentials: {
     identifier: string;
     password: string;
-    academy_id: number;
+    academy_id: string;
   }) {
     const response = this.request('/auth/public/login', {
       method: 'POST',
@@ -598,7 +598,7 @@ class ApiClient {
     password: string;
     confirmed_password: string;
     role: string;
-    academy_id?: number;
+    academy_id?: string;
     display_name: string;
     bio?: string;
     website?: string;
@@ -769,7 +769,7 @@ class ApiClient {
     phone_number: string;
     password: string;
     role: string;
-    academy_id: number;
+    academy_id: string;
     display_name?: string;
   }) {
     return this.request('/auth/create-user', {
@@ -787,7 +787,7 @@ class ApiClient {
   async loginPhoneByOtp(credentials: {
     phone_number: string;
     otp: string;
-    academy_id?: number;
+    academy_id?: string;
   }) {
     return this.request('/auth/login-by-phone-otp', {
       method: 'POST',
@@ -805,7 +805,7 @@ class ApiClient {
   async loginEmailByOtp(credentials: {
     email: string;
     otp: string;
-    academy_id?: number;
+    academy_id?: string;
   }) {
     return this.request('/auth/login-by-email-otp', {
       method: 'POST',
@@ -813,14 +813,14 @@ class ApiClient {
     });
   }
 
-  async selectAcademy(data: { temp_token: string; academy_id: number }) {
+  async selectAcademy(data: { temp_token: string; academy_id: string }) {
     return this.request('/auth/select-academy', {
       method: 'POST',
       body: JSON.stringify(data)
     });
   }
 
-  async switchAcademy(academy_id: number) {
+  async switchAcademy(academy_id: string) {
     return this.request('/auth/switch-academy', {
       method: 'POST',
       body: JSON.stringify({ academy_id })
@@ -841,7 +841,7 @@ class ApiClient {
   }
 
   async createProfile(profileData: {
-    academy_id: number;
+    academy_id: string;
     role: string;
     display_name: string;
     bio?: string;
@@ -890,7 +890,7 @@ class ApiClient {
     confirmed_password: string;
     otp: string;
     role?: string;
-    academy_id?: number;
+    academy_id?: string;
   }) {
     return this.request('/auth/forget-password', {
       method: 'POST',
@@ -1299,7 +1299,7 @@ class ApiClient {
   }
 
   async updateAcademyById(
-    _id: number,
+    _id: string,
     data: {
       name?: string;
       private_domain?: string;
@@ -1448,7 +1448,7 @@ class ApiClient {
     limit?: number;
     search?: string;
     category_id?: number;
-    academy_id?: number;
+    academy_id?: string;
   }) {
     const queryParams = new URLSearchParams();
     if (params) {
@@ -2654,7 +2654,7 @@ class ApiClient {
     search?: string;
     id?: number;
     uuid?: string;
-    academy_id?: number;
+    academy_id?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
     const queryParams = new URLSearchParams();
@@ -2706,7 +2706,7 @@ class ApiClient {
     id?: number;
     uuid?: string;
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
-    academy_id?: number;
+    academy_id?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
     is_active?: boolean;
     group_by_role?: boolean;
@@ -2746,7 +2746,7 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
-    academy_id?: number;
+    academy_id?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
     const query = this.buildUserQuery(params);
@@ -2758,7 +2758,7 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
-    academy_id?: number;
+    academy_id?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
     const query = this.buildUserQuery(params);
@@ -2770,7 +2770,7 @@ class ApiClient {
     page?: number;
     limit?: number;
     search?: string;
-    academy_id?: number;
+    academy_id?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
   }) {
     const query = this.buildUserQuery(params);
@@ -2781,7 +2781,7 @@ class ApiClient {
   async getTeacherRequests(params?: {
     page?: number;
     limit?: number;
-    academy_id?: number;
+    academy_id?: string;
     status?: 'PENDING' | 'APPROVED' | 'REJECTED';
   }) {
     const queryParams = new URLSearchParams();
@@ -2874,7 +2874,7 @@ class ApiClient {
     });
   }
 
-  async disconnectFromStore(adminId: number, academyId?: number) {
+  async disconnectFromStore(adminId: number, academyId?: string) {
     const queryParams = new URLSearchParams();
     if (academyId !== undefined) {
       queryParams.append('academy_id', academyId.toString());
@@ -3168,7 +3168,7 @@ class ApiClient {
     uuid?: string;
     transaction_ref?: string;
     status?: string;
-    academy_id?: number;
+    academy_id?: string;
     course_id?: string;
     start_date?: string;
     end_date?: string;
@@ -3233,7 +3233,7 @@ class ApiClient {
     status?: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
     course_id?: string;
     user_id?: string;
-    academy_id?: number;
+    academy_id?: string;
   }): Promise<EnrollmentListResponse> {
     const queryParams = new URLSearchParams();
     if (params) {
@@ -3301,7 +3301,7 @@ class ApiClient {
     limit?: number;
     search?: string;
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
-    academy_id?: number;
+    academy_id?: string;
     is_active?: boolean;
   }) {
     const queryParams = new URLSearchParams();
@@ -3680,7 +3680,7 @@ class ApiClient {
     limit?: number;
     search?: string;
     is_active?: boolean;
-    academy_id?: number;
+    academy_id?: string;
   }) {
     const queryParams = new URLSearchParams();
     if (params?.page) queryParams.append('page', params.page.toString());
@@ -3727,7 +3727,7 @@ class ApiClient {
     description?: string;
     discount_type: 'PERCENT' | 'FIXED';
     discount_value: number;
-    academy_id?: number;
+    academy_id?: string;
     usage_limit?: number;
     usage_type: 'ONE_TIME' | 'LIMITED' | 'UNLIMITED' | 'USER_SPECIFIC';
     start_date: string;
@@ -3858,7 +3858,7 @@ class ApiClient {
   }
 
   async getAcademyFinancialRecords(params?: {
-    academy_id?: number;
+    academy_id?: string;
     cost_category_id?: number;
     period_start?: string;
     period_end?: string;
@@ -3884,14 +3884,14 @@ class ApiClient {
     return response.data as any[];
   }
 
-  async getAcademyFinancialSummary(academyId?: number) {
+  async getAcademyFinancialSummary(academyId?: string) {
     const url = `/financial/academy-records/summary${academyId ? `?academy_id=${academyId}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
     return response.data as any;
   }
 
   async getAcademyRevenueFromPayments(
-    academyId?: number,
+    academyId?: string,
     startDate?: string,
     endDate?: string
   ) {
@@ -3906,7 +3906,7 @@ class ApiClient {
   }
 
   async getMonetizationSummary(params?: {
-    academy_id?: number;
+    academy_id?: string;
     start_date?: string;
     end_date?: string;
   }) {
@@ -3927,7 +3927,7 @@ class ApiClient {
   }
 
   async getIranSettlementStatement(params?: {
-    academy_id?: number;
+    academy_id?: string;
     start_date?: string;
     end_date?: string;
   }) {
@@ -3970,7 +3970,7 @@ class ApiClient {
     return response.data as any;
   }
 
-  async getAcademySettlementDetail(academyId: number) {
+  async getAcademySettlementDetail(academyId: string) {
     const response = await this.request<any>(
       `/financial/academies/${academyId}/settlement`,
       { method: 'GET' }
@@ -3980,7 +3980,7 @@ class ApiClient {
   }
 
   async settleAcademy(
-    academyId: number,
+    academyId: string,
     payload: {
       bank_transaction_code: string;
       amount?: number;
@@ -3999,7 +3999,7 @@ class ApiClient {
   }
 
   async getIranSettlementReconciliation(params?: {
-    academy_id?: number;
+    academy_id?: string;
     start_date?: string;
     end_date?: string;
   }) {
@@ -4014,7 +4014,7 @@ class ApiClient {
   }
 
   async lockIranFinancialPeriod(data: {
-    academy_id: number;
+    academy_id: string;
     lock_until: string;
   }) {
     const response = await this.request<any>('/financial/settlement/lock', {
@@ -4025,7 +4025,7 @@ class ApiClient {
   }
 
   async setTeacherRevenueVisibility(data: {
-    academy_id: number;
+    academy_id: string;
     teacher_id: number;
     is_visible: boolean;
   }) {
@@ -4040,7 +4040,7 @@ class ApiClient {
   }
 
   async exportIranSettlementCsv(params?: {
-    academy_id?: number;
+    academy_id?: string;
     start_date?: string;
     end_date?: string;
   }): Promise<Blob> {
@@ -4065,7 +4065,7 @@ class ApiClient {
   }
 
   async getAcademyFinancialOverview(
-    academyId?: number,
+    academyId?: string,
     startDate?: string,
     endDate?: string
   ) {
@@ -4080,7 +4080,7 @@ class ApiClient {
   }
 
   async createAcademyFinancialRecord(data: {
-    academy_id: number;
+    academy_id: string;
     cost_category_id?: number;
     period_start: string;
     period_end: string;
@@ -4099,7 +4099,7 @@ class ApiClient {
   async updateAcademyFinancialRecord(
     id: number,
     data: Partial<{
-      academy_id?: number;
+      academy_id?: string;
       cost_category_id?: number;
       period_start?: string;
       period_end?: string;
@@ -4313,7 +4313,7 @@ class ApiClient {
   // Formula Applications
   async createFormulaApplication(data: {
     formula_id: number;
-    academy_id?: number;
+    academy_id?: string;
     period_start: string;
     period_end: string;
     adjustment_type: 'AUTOMATIC' | 'MANUAL' | 'GIFT' | 'INCENTIVE';
@@ -4333,7 +4333,7 @@ class ApiClient {
   }
 
   async getFormulaApplications(params?: {
-    academy_id?: number;
+    academy_id?: string;
     formula_id?: number;
   }) {
     const queryParams = new URLSearchParams();
@@ -5032,13 +5032,13 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
-  async getAcademyCustomPlan(id: number) {
+  async getAcademyCustomPlan(id: string) {
     const res = await this.request<any>(`/academies/${id}/custom-plan`);
     return (res.data as any)?.data ?? res.data;
   }
 
   async setAcademyCustomPlan(
-    id: number,
+    id: string,
     dto: {
       name: string;
       limits: StructuredPlanLimits;
@@ -5055,14 +5055,14 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
-  async clearAcademyCustomPlan(id: number) {
+  async clearAcademyCustomPlan(id: string) {
     const res = await this.request<any>(`/academies/${id}/custom-plan`, {
       method: 'DELETE'
     });
     return (res.data as any)?.data ?? res.data;
   }
 
-  async getAcademyWallet(academyId: number) {
+  async getAcademyWallet(academyId: string) {
     const res = await this.request<any>(
       `/financial/academies/${academyId}/wallet`
     );
@@ -5073,12 +5073,12 @@ class ApiClient {
   // Store Settings (webhooks)
   // -------------------------------------------------------------------------
 
-  async getStoreSettings(academyId: number) {
+  async getStoreSettings(academyId: string) {
     const res = await this.request<any>(`/academies/${academyId}/settings`);
     return (res.data as any)?.data ?? res.data;
   }
 
-  async setStoreSetting(academyId: number, key: string, value: string) {
+  async setStoreSetting(academyId: string, key: string, value: string) {
     const res = await this.request<any>(`/academies/${academyId}/settings`, {
       method: 'POST',
       body: JSON.stringify({ key, value })
@@ -5158,7 +5158,7 @@ class ApiClient {
   // -------------------------------------------------------------------------
 
   async getWithdrawals(params?: {
-    academy_id?: number;
+    academy_id?: string;
     status?: string;
     page?: number;
     limit?: number;
@@ -5326,7 +5326,7 @@ class ApiClient {
     affiliate_phone?: string;
     code?: string;
     course_id?: number;
-    academy_id: number;
+    academy_id: string;
     commission_rate: number;
     profile_id?: number;
   }) {

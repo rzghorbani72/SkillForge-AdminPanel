@@ -13,6 +13,7 @@ import {
 import type { Academy } from '@/types/api';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { ACADEMY_DOMAIN } from '@/lib/slug';
+import { colorIndexForId } from '@/lib/id-color';
 
 const CARD_COLORS = [
   { bg: 'bg-blue-100', icon: 'bg-blue-200 text-blue-700' },
@@ -25,14 +26,6 @@ const CARD_COLORS = [
   { bg: 'bg-teal-100', icon: 'bg-teal-200 text-teal-700' }
 ];
 
-function colorIndex(id: string | number): number {
-  if (typeof id === 'number') return id % CARD_COLORS.length;
-  let hash = 0;
-  for (let i = 0; i < id.length; i++)
-    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-  return hash % CARD_COLORS.length;
-}
-
 export function AcademyIcon({
   name,
   id,
@@ -40,11 +33,11 @@ export function AcademyIcon({
   size = 40
 }: {
   name: string;
-  id: number;
-  logo?: { id: number; publicUrl: string } | null;
+  id: string;
+  logo?: { id: string; publicUrl: string } | null;
   size?: number;
 }) {
-  const color = CARD_COLORS[colorIndex(id)];
+  const color = CARD_COLORS[colorIndexForId(id, CARD_COLORS.length)];
   const logoUrl = logo?.publicUrl
     ? logo.publicUrl.startsWith('/')
       ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${logo.publicUrl}`
@@ -83,10 +76,10 @@ type AcademyCardProps = {
   };
   isCurrent: boolean;
   userRole?: string;
-  onSwitch: (id: number) => void;
+  onSwitch: (id: string) => void;
   onEdit: (academy: Academy) => void;
   onManageSite: (academy: Academy) => void;
-  switching: number | null;
+  switching: string | null;
   t: (k: string) => string;
 };
 
@@ -100,7 +93,7 @@ export function AcademyCard({
   switching,
   t
 }: AcademyCardProps) {
-  const color = CARD_COLORS[colorIndex(academy.id)];
+  const color = CARD_COLORS[colorIndexForId(academy.id, CARD_COLORS.length)];
   const isSwitch = switching === academy.id;
   const canEnter =
     !isCurrent &&

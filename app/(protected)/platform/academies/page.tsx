@@ -44,7 +44,7 @@ import { AcademyCustomPlanCard } from '@/components/plans/AcademyCustomPlanCard'
 import { canAccessSupportOps } from '@/lib/roles';
 
 type AcademySettlementRow = {
-  academy_id: number;
+  academy_id: string;
   academy_uuid: string;
   academy_name: string;
   academy_slug: string;
@@ -124,17 +124,15 @@ export default function PlatformAcademiesPage() {
 
       try {
         setIsLoadingDetail(true);
-        const storeIdNum = parseInt(academyId, 10);
-
         // Find store from list
-        let store = stores.find((s) => s.id === storeIdNum);
+        let store = stores.find((s) => s.id === academyId);
         if (store) {
           setSelectedStore(store);
         }
 
         // Fetch financial data
         try {
-          const detail = await apiClient.getAcademySettlementDetail(storeIdNum);
+          const detail = await apiClient.getAcademySettlementDetail(academyId);
           setStoreFinancial(detail?.totals || null);
           setStorePayments(detail?.lines || []);
           const totalRevenue = detail?.totals?.academy_revenue_total || 0;
@@ -188,7 +186,7 @@ export default function PlatformAcademiesPage() {
   }, [filteredStores, currentPage]);
 
   const settlementByAcademy = useMemo(() => {
-    const map = new Map<number, AcademySettlementRow>();
+    const map = new Map<string, AcademySettlementRow>();
     settlementRows.forEach((row) => map.set(row.academy_id, row));
     return map;
   }, [settlementRows]);

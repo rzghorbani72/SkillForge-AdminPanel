@@ -49,7 +49,7 @@ type AffiliateLink = {
   commission_rate: number;
   is_active: boolean;
   clicks: number;
-  academy_id: number;
+  academy_id: string;
   course?: { id: number; title: string; price: number } | null;
   Academy?: { id: number; name: string; slug: string } | null;
   Usages: Array<{ commission_amount: number }>;

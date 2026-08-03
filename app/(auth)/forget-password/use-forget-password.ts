@@ -4,9 +4,19 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
+import { toE164Iran } from '@/lib/phone-utils';
 import { OtpType } from '@/constants/data';
-import { isValidEmail, isValidPhone } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { notifyOtpSent } from '@/lib/otp-notify';
+import { apiErrorMessage } from '@/lib/api-error-message';
+import {
+  collectErrors,
+  validateConfirmPassword,
+  validateEmail,
+  validateOtp,
+  validatePassword,
+  validatePhone
+} from '@/lib/auth-validation';
 
 type Step = 'identifier' | 'otp' | 'password' | 'success';
 type AuthMethod = 'email' | 'phone';
@@ -42,7 +52,7 @@ export function useForgetPassword() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState('');
   const [stores, setStores] = useState<
-    Array<{ id: number; name: string; slug: string }>
+    Array<{ id: string; name: string; slug: string }>
   >([]);
   const [autoRedirecting, setAutoRedirecting] = useState(false);
 
@@ -73,35 +83,27 @@ export function useForgetPassword() {
   };
 
   const validateIdentifier = () => {
-    const newErrors: Record<string, string> = {};
-    if (authMethod === 'email') {
-      if (!formData.email.trim())
-        newErrors.email = t('forgotPassword.emailOrPhoneRequired');
-      else if (!isValidEmail(formData.email))
-        newErrors.email = t('forgotPassword.validEmailAddress');
-    } else {
-      if (!formData.phoneNumber.trim())
-        newErrors.phoneNumber = t('forgotPassword.emailOrPhoneRequired');
-      else if (!isValidPhone(formData.phoneNumber))
-        newErrors.phoneNumber = t('forgotPassword.validPhoneNumber');
-    }
-
+    const newErrors = collectErrors(
+      authMethod === 'email'
+        ? { email: validateEmail(formData.email) }
+        : { phoneNumber: validatePhone(formData.phoneNumber) },
+      t
+    );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const validatePassword = () => {
-    const { password, confirmed_password } = formData;
-    const newErrors: Record<string, string> = {};
-    if (!password.trim()) newErrors.password = t('auth.passwordRequired');
-    else if (password.length < 6)
-      newErrors.password = t('auth.passwordTooShort');
-
-    if (!confirmed_password.trim())
-      newErrors.confirmed_password = t('auth.confirmPasswordRequired');
-    else if (password !== confirmed_password)
-      newErrors.confirmed_password = t('auth.passwordsDoNotMatch');
-
+  const validateNewPassword = () => {
+    const newErrors = collectErrors(
+      {
+        password: validatePassword(formData.password),
+        confirmed_password: validateConfirmPassword(
+          formData.password,
+          formData.confirmed_password
+        )
+      },
+      t
+    );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -117,39 +119,30 @@ export function useForgetPassword() {
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
         setMessage(t('forgotPassword.otpSentToEmail'));
-        // TODO: Remove when real SMS/email provider is integrated
-        if (response?.data?.otp) {
-          toast.info(
-            `${t('forgotPassword.otpSentToEmail')}\n\n🔐 Code: ${response.data.otp}`,
-            { autoClose: 8000, style: { whiteSpace: 'pre-wrap' } }
-          );
-        }
+        notifyOtpSent(
+          response,
+          t('forgotPassword.otpSentToEmail'),
+          'forget-password-otp-sent'
+        );
       } else {
-        const phoneToSend = formData.fullPhoneNumber;
-        if (!phoneToSend) {
-          setErrors({ phoneNumber: t('forgotPassword.validPhoneNumber') });
-          setIsLoading(false);
-          return;
-        }
+        const phoneToSend = formData.fullPhoneNumber || formData.phoneNumber;
         const response = await apiClient.sendPhoneOtp(
-          phoneToSend,
+          toE164Iran(phoneToSend),
           OtpType.RESET_PASSWORD_BY_PHONE
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
-        // TODO: Remove when real SMS/email provider is integrated
-        if (response?.data?.otp) {
-          toast.info(
-            `${t('forgotPassword.otpSentToPhone')}\n\n🔐 Code: ${response.data.otp}`,
-            { autoClose: 8000, style: { whiteSpace: 'pre-wrap' } }
-          );
-        }
+        notifyOtpSent(
+          response,
+          t('forgotPassword.otpSentToPhone'),
+          'forget-password-otp-sent'
+        );
       }
       setStep('otp');
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : t('forgotPassword.failedToSendOtp');
+      const errorMessage = apiErrorMessage(
+        error,
+        t('forgotPassword.failedToSendOtp')
+      );
       setErrors({ identifier: errorMessage });
       toast.error(errorMessage, { toastId: 'forget-password-error' });
     } finally {
@@ -158,8 +151,9 @@ export function useForgetPassword() {
   };
 
   const handleVerifyOtp = async () => {
-    if (!formData.otp.trim()) {
-      setErrors({ otp: t('forgotPassword.otpRequired') });
+    const otpErrorKey = validateOtp(formData.otp);
+    if (otpErrorKey) {
+      setErrors({ otp: t(otpErrorKey) });
       return;
     }
     setIsLoading(true);
@@ -173,7 +167,7 @@ export function useForgetPassword() {
         );
       } else {
         await apiClient.verifyPhoneOtp(
-          formData.fullPhoneNumber || formData.phoneNumber,
+          toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
           formData.otp,
           OtpType.RESET_PASSWORD_BY_PHONE
         );
@@ -181,8 +175,10 @@ export function useForgetPassword() {
       setStep('password');
       setMessage(t('forgotPassword.otpVerifiedSuccess'));
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : t('forgotPassword.invalidOtp');
+      const errorMessage = apiErrorMessage(
+        error,
+        t('forgotPassword.invalidOtp')
+      );
       setErrors({ otp: errorMessage });
       toast.error(errorMessage, { toastId: 'forget-password-otp-error' });
     } finally {
@@ -191,7 +187,7 @@ export function useForgetPassword() {
   };
 
   const handleResetPassword = async () => {
-    if (!validatePassword()) return;
+    if (!validateNewPassword()) return;
     setIsLoading(true);
     setErrors({});
     try {
@@ -201,7 +197,7 @@ export function useForgetPassword() {
       await apiClient.forgetPassword({
         identifier:
           authMethod === 'phone'
-            ? formData.fullPhoneNumber || formData.phoneNumber
+            ? toE164Iran(formData.fullPhoneNumber || formData.phoneNumber)
             : formData.email,
         password: formData.password,
         confirmed_password: formData.confirmed_password,
@@ -211,10 +207,10 @@ export function useForgetPassword() {
       setStep('success');
       setMessage(t('forgotPassword.passwordResetSuccess'));
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : t('forgotPassword.passwordResetFailed');
+      const errorMessage = apiErrorMessage(
+        error,
+        t('forgotPassword.passwordResetFailed')
+      );
       setErrors({ password: errorMessage });
       toast.error(errorMessage, { toastId: 'forget-password-reset-error' });
     } finally {

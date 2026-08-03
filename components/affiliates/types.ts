@@ -12,7 +12,7 @@ export type Affiliate = {
   is_active: boolean;
   clicks: number;
   course_id?: number | null;
-  academy_id: number;
+  academy_id: string;
   course?: Course | null;
   Usages?: Array<{ commission_amount: number; created_at?: string }>;
   signups?: number;

@@ -10,20 +10,19 @@ const ACADEMY_STORAGE_KEYS = {
 
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
-export function getSelectedAcademyId(): number | null {
+// Academy ids are cuid strings. Parsing them as integers turned every stored
+// selection into NaN, so "remember my academy" silently fell back to the first
+// academy in the list.
+export function getSelectedAcademyId(): string | null {
   if (typeof window === 'undefined') return null;
 
-  const academyId = localStorage.getItem(
-    ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID
-  );
-  return academyId ? parseInt(academyId, 10) : null;
+  return localStorage.getItem(ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID);
 }
 
-export function setSelectedAcademyId(academyId: number): void {
+export function setSelectedAcademyId(academyId: string): void {
   if (typeof window === 'undefined') return;
-  if (academyId == null) return;
-  const id = academyId.toString();
-  localStorage.setItem(ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID, id);
+  if (!academyId) return;
+  localStorage.setItem(ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID, academyId);
 }
 
 export function getCachedAcademies(): Academy[] {
@@ -96,14 +95,14 @@ export function validateAcademyCurrencyFields(academies: Academy[]): boolean {
 }
 
 export function hasAcademyAccess(
-  academyId: number,
+  academyId: string,
   academies: Academy[]
 ): boolean {
   return academies.some((a) => a.id === academyId);
 }
 
 export function getAcademyById(
-  academyId: number,
+  academyId: string,
   academies: Academy[]
 ): Academy | null {
   return academies.find((a) => a.id === academyId) || null;
@@ -118,7 +117,7 @@ export function validateAcademySelection(academies: Academy[]): boolean {
 
 export function autoSelectAcademy(
   academies: Academy[],
-  preferredAcademyId?: number | null
+  preferredAcademyId?: string | null
 ): Academy | null {
   if (academies.length === 0) return null;
 

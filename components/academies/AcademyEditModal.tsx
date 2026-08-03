@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Upload, Loader2, Check } from 'lucide-react';
+import { Upload, Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { apiClient, type SubscriptionPlanData } from '@/lib/api';
-import { formatStorage } from '@/components/plans/plan-types';
+import { apiClient } from '@/lib/api';
 import { SlugField } from '@/components/academies/slug-field';
 import { toSlug } from '@/lib/slug';
 import {
@@ -22,7 +21,7 @@ import {
 } from '@/hooks/use-slug-availability';
 import type { Academy } from '@/types/api';
 
-const STEPS = ['stepSpecs', 'stepBranding', 'stepPlan'] as const;
+const STEPS = ['stepSpecs', 'stepBranding'] as const;
 
 const BRAND_COLORS: { hex: string; tw: string }[] = [
   { hex: '#6366f1', tw: 'bg-[#6366f1]' },
@@ -50,7 +49,7 @@ type AcademyEditModalProps = {
   academy: Academy | null;
   onClose: () => void;
   onSubmit: (
-    id: number,
+    id: string,
     data: {
       name: string;
       slug: string;
@@ -58,7 +57,6 @@ type AcademyEditModalProps = {
       description: string;
       logoId?: string;
       primaryColor?: string;
-      selectedPlan?: SubscriptionPlanData;
     }
   ) => Promise<void>;
   t: (k: string) => string;
@@ -92,21 +90,11 @@ export function AcademyEditModal({
   const [primaryColor, setPrimaryColor] = useState(BRAND_COLORS[0].hex);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
-  // Step 2 — Plan
-  const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
-  const [loadingPlans, setLoadingPlans] = useState(false);
-  const [period, setPeriod] = useState<'monthly' | 'yearly'>('monthly');
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanData | null>(
-    null
-  );
-
   // Populate all fields when the modal opens
   useEffect(() => {
     if (!academy) return;
     setStep(0);
     setLogoId(null);
-    setPlans([]);
-    setSelectedPlan(null);
     setName(academy.name ?? '');
     const currentSlug =
       academy.domain?.private_address ??
@@ -136,29 +124,6 @@ export function AcademyEditModal({
       })
       .catch(() => {});
   }, [academy, resetSlug]);
-
-  useEffect(() => {
-    if (step !== 2 || plans.length > 0) return;
-    setLoadingPlans(true);
-    apiClient
-      .getActivePlans()
-      .then((data) => {
-        const list = Array.isArray(data) ? data : [];
-        setPlans(list);
-        const match = academy?.subscription_plan
-          ? list.find(
-              (p) =>
-                p.slug === academy.subscription_plan ||
-                p.name === academy.subscription_plan
-            )
-          : undefined;
-        const defaultPlan =
-          match ?? list.find((p) => p.is_most_popular) ?? list[0];
-        if (defaultPlan) setSelectedPlan(defaultPlan);
-      })
-      .catch(() => setPlans([]))
-      .finally(() => setLoadingPlans(false));
-  }, [step, plans.length, academy]);
 
   async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -194,8 +159,7 @@ export function AcademyEditModal({
         publicAddress,
         description,
         logoId: logoId ?? undefined,
-        primaryColor,
-        selectedPlan: selectedPlan ?? undefined
+        primaryColor
       });
       onClose();
     } finally {
@@ -355,117 +319,6 @@ export function AcademyEditModal({
                 {primaryColor}
               </p>
             </div>
-          </div>
-        )}
-
-        {/* Step 2 — Plan */}
-        {step === 2 && (
-          <div className="space-y-4">
-            <div className="flex w-fit rounded-lg border p-1">
-              <button
-                type="button"
-                onClick={() => setPeriod('monthly')}
-                className={cn(
-                  'rounded-md px-4 py-1.5 text-sm font-medium transition-colors',
-                  period === 'monthly'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
-              >
-                {t('plans.monthly')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPeriod('yearly')}
-                className={cn(
-                  'rounded-md px-4 py-1.5 text-sm font-medium transition-colors',
-                  period === 'yearly'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
-              >
-                {t('plans.yearly')}
-              </button>
-            </div>
-
-            {loadingPlans ? (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="h-40 animate-pulse rounded-xl bg-muted"
-                  />
-                ))}
-              </div>
-            ) : plans.length === 0 ? (
-              <div className="flex h-32 items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground">
-                {t('plans.noPlanConfigured')}
-              </div>
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {plans.map((plan) => {
-                  const price =
-                    period === 'yearly' && plan.price_yearly != null
-                      ? plan.price_yearly
-                      : plan.price_monthly;
-                  const selected = selectedPlan?.id === plan.id;
-                  return (
-                    <button
-                      key={plan.id}
-                      type="button"
-                      onClick={() => setSelectedPlan(selected ? null : plan)}
-                      className={cn(
-                        'relative flex flex-col gap-2 rounded-xl border p-4 text-right transition-all duration-150',
-                        selected
-                          ? 'border-primary bg-primary/5 shadow-md ring-1 ring-primary/20'
-                          : 'border-border bg-card hover:border-primary/40 hover:shadow-sm'
-                      )}
-                    >
-                      {plan.is_most_popular && !selected && (
-                        <span className="absolute end-3 top-3 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                          {t('plans.popular')}
-                        </span>
-                      )}
-                      {selected && (
-                        <span className="absolute end-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                          <Check className="h-3 w-3" />
-                        </span>
-                      )}
-                      <p className="text-sm font-semibold">{plan.name}</p>
-                      <p className="text-xl font-bold">
-                        {price.toLocaleString('fa-IR')}
-                        <span className="ms-1 text-xs font-normal text-muted-foreground">
-                          {period === 'monthly'
-                            ? t('plans.pricePerMonth')
-                            : t('plans.pricePerYear')}
-                        </span>
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {t('plans.storage')}:{' '}
-                        {formatStorage(plan.storage_limit_gb)}
-                      </p>
-                      {plan.features && plan.features.length > 0 && (
-                        <ul className="mt-1 space-y-1">
-                          {plan.features.slice(0, 3).map((f, i) => (
-                            <li
-                              key={i}
-                              className="flex items-center gap-1.5 text-xs text-muted-foreground"
-                            >
-                              <Check className="h-3 w-3 shrink-0 text-primary" />
-                              {f}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            <p className="text-center text-xs text-muted-foreground">
-              {t('stores.planStepHint')}
-            </p>
           </div>
         )}
 

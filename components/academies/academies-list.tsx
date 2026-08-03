@@ -16,12 +16,12 @@ interface AcademiesListProps {
   totalCount: number;
   isFiltered: boolean;
   isLoading: boolean;
-  currentAcademyId: number | null;
+  currentAcademyId: string | null;
   canCreate: boolean;
-  switching: number | null;
+  switching: string | null;
   filters: React.ReactNode;
   resolveUserRole: (academy: AcademyRow) => string;
-  onSwitch: (id: number) => void;
+  onSwitch: (id: string) => void;
   onEdit: (academy: Academy) => void;
   onManageSite: (academy: Academy) => void;
   onCreate: () => void;

@@ -145,15 +145,15 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
 export interface AuthUser {
   id: number;
   role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
-  academyId?: number | null;
+  academyId?: string | null;
   isAdminProfile?: boolean;
   platformLevel?: boolean;
   canManageAllAcademies?: boolean;
   canManagePlatform?: boolean;
   profile?: {
     role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT';
-    academy_id?: number | null;
-    academyId?: number | null;
+    academy_id?: string | null;
+    academyId?: string | null;
     academy?: {
       id: number;
       name?: string;

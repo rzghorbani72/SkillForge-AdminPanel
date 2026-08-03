@@ -23,7 +23,7 @@ import Link from 'next/link';
 export default function WebhooksPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const academyId = parseInt(params.id, 10);
+  const academyId = params.id;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -49,7 +49,7 @@ export default function WebhooksPage() {
         setLoading(false);
       }
     }
-    if (!isNaN(academyId)) load();
+    if (academyId) load();
   }, [academyId]);
 
   async function saveSettings() {

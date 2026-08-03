@@ -214,7 +214,7 @@ export type TutoringAttendanceStatus = 'JOINED' | 'PRESENT' | 'ABSENT';
 
 export interface TutoringOffer {
   id: string;
-  academy_id: number;
+  academy_id: string;
   course_id: string;
   tutor_profile_id: string;
   title: string;
@@ -240,7 +240,7 @@ export interface UpdateTutoringOfferPayload {
 
 export interface TutoringEngagement {
   id: string;
-  academy_id: number;
+  academy_id: string;
   course_id: string;
   student_profile_id: string;
   tutor_profile_id: string;

@@ -7,7 +7,7 @@ export interface DiscountCode {
   description?: string;
   discount_type: DiscountType;
   discount_value: number;
-  academy_id?: number;
+  academy_id?: string;
   usage_limit?: number;
   used_count: number;
   usage_type: UsageType;

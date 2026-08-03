@@ -5,6 +5,7 @@ import { AuthLayout } from '@/components/auth/auth-layout';
 import { AuthBrand } from '@/components/auth/auth-brand';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
+import { colorIndexForId } from '@/lib/id-color';
 
 const AVATAR_COLORS = [
   'bg-violet-500',
@@ -14,10 +15,11 @@ const AVATAR_COLORS = [
   'bg-rose-500',
   'bg-cyan-500'
 ];
-const avatarColor = (id: number) => AVATAR_COLORS[id % AVATAR_COLORS.length];
+const avatarColor = (id: string) =>
+  AVATAR_COLORS[colorIndexForId(id, AVATAR_COLORS.length)];
 
 interface Academy {
-  id: number;
+  id: string;
   name: string;
   slug: string;
 }
@@ -25,7 +27,7 @@ interface Academy {
 interface AcademyPickerProps {
   academies: Academy[];
   loading: boolean;
-  onSelect: (id: number) => void;
+  onSelect: (id: string) => void;
   onBack: () => void;
 }
 

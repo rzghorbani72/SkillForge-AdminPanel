@@ -5,9 +5,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { authService } from '@/lib/auth';
 import { apiClient } from '@/lib/api';
 import { toEnglishDigits } from '@/lib/phone-utils';
-import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { toast } from 'react-toastify';
 import { ErrorHandler } from '@/lib/error-handler';
+import { notifyOtpSent } from '@/lib/otp-notify';
+import {
+  collectErrors,
+  validateEmail,
+  validateOtp,
+  validatePassword,
+  validatePhone
+} from '@/lib/auth-validation';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { isPlatformStaff } from '@/lib/roles';
 import type { AuthUser } from '@/lib/auth';
@@ -53,21 +59,16 @@ export function useAdminLogin() {
   }, [searchParams, t]);
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.email) newErrors.email = t('auth.emailRequired');
-    else if (!isValidEmail(formData.email))
-      newErrors.email = t('auth.invalidEmail');
-
-    if (!formData.phone) newErrors.phone = t('auth.phoneRequired');
-    else if (!isValidPhone(formData.phone))
-      newErrors.phone = t('auth.invalidPhone');
-
-    if (loginMethod === 'password') {
-      if (!formData.password) newErrors.password = t('auth.passwordRequired');
-      else if (formData.password.length < 6)
-        newErrors.password = t('auth.passwordTooShort');
-    }
-
+    const newErrors = collectErrors(
+      {
+        email: validateEmail(formData.email),
+        phone: validatePhone(formData.phone),
+        ...(loginMethod === 'password'
+          ? { password: validatePassword(formData.password) }
+          : {})
+      },
+      t
+    );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -112,17 +113,11 @@ export function useAdminLogin() {
         formData.fullPhoneNumber || formData.phone
       );
       setOtpSent(true);
-
-      // TODO: Remove debug OTP display when real SMS provider is integrated
-      const otp = (response?.data as { otp?: string })?.otp;
-      if (otp) {
-        toast.info(`${t('success.otpSent')}\n\n🔐 Code: ${otp}`, {
-          autoClose: 8000,
-          style: { whiteSpace: 'pre-wrap' }
-        });
-      } else {
-        ErrorHandler.showSuccess('success.otpSent', true);
-      }
+      notifyOtpSent(
+        response as { data?: { otp?: string } },
+        t('success.otpSent'),
+        'admin-otp-sent'
+      );
     } catch (error: unknown) {
       ErrorHandler.handleValidationErrors(error);
     } finally {
@@ -131,8 +126,9 @@ export function useAdminLogin() {
   };
 
   const handleVerifyOtp = async () => {
-    if (!otp.trim()) {
-      setErrors((prev) => ({ ...prev, otp: t('auth.otpRequired') }));
+    const otpErrorKey = validateOtp(otp);
+    if (otpErrorKey) {
+      setErrors((prev) => ({ ...prev, otp: t(otpErrorKey) }));
       return;
     }
     setIsLoading(true);

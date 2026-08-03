@@ -439,21 +439,25 @@ export const en = {
       'Legal documents are not available yet. Please try again later or contact support.',
     lastUpdated: 'Last updated',
     version: 'Version',
-    reacceptTitle: 'Updated legal documents',
-    reacceptSubtitle: 'Review the changes below to keep using the panel.',
-    acceptAndContinue: 'Accept and continue',
+    reacceptTitle: 'Heads up!',
+    reacceptSubtitle:
+      'Our terms changed a little since your last visit. Here is a short summary — confirm it to continue.',
+    acceptAndContinue: 'Confirm and continue',
     accepting: 'Saving acceptance...',
-    agreeByClicking: 'By clicking Accept and continue, you agree to our',
+    agreeByClicking: 'By clicking Confirm and continue, you agree to our',
     notTranslatedNotice:
       'This document is not translated into your language yet. Showing the English version.',
-    whatChanged: 'What changed since you last agreed',
-    versionChange: 'Version {{previous}} → {{current}}',
+    whatChanged: 'What changed?',
+    changesAdded: 'Added',
+    changesRemoved: 'Removed',
+    onlyMinorChanges:
+      'Only small wording or formatting fixes — the rules themselves did not change.',
     firstTimeAcceptance:
       'This is the first time you need to accept this document.',
     diffUnavailable:
       'The change summary is not available right now. Please read the full document.',
     viewFullDocument: 'View full document',
-    declineAndSignOut: 'Decline and sign out',
+    declineAndSignOut: 'Cancel and sign out',
     decliningAndSigningOut: 'Signing out...'
   },
   subscription: {
@@ -554,6 +558,7 @@ export const en = {
     phoneNotConfirmed: 'Phone number is not confirmed',
     verifyPhoneToLogin: 'Please verify your phone number to complete login',
     otpSentToPhone: 'Verification code sent to your phone',
+    otpSentTo: 'Verification code sent to',
     verifyAndLogin: 'Verify & Login',
     verifyYourContact: 'Verify Your Contact',
     createStoreAccount: 'Create Academy Account',
@@ -894,7 +899,6 @@ export const en = {
     createModalHeading: 'Create a New Academy',
     stepSpecs: 'Details',
     stepBranding: 'Branding',
-    stepPlan: 'Plan',
     academyName: 'Academy Name',
     academyNamePlaceholder: 'e.g. Mehr Academy',
     subdomain: 'English Address',
@@ -948,8 +952,7 @@ export const en = {
     categoryFinance: 'Finance',
     brandingLogo: 'Academy Logo',
     brandingLogoHint: 'Click to upload · PNG or JPG, max 2 MB',
-    brandingColor: 'Brand Color',
-    planStepHint: 'You can always change or skip your plan later'
+    brandingColor: 'Brand Color'
   },
   courses: {
     title: 'Courses',

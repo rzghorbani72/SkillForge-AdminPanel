@@ -17,6 +17,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
+import { colorIndexForId } from '@/lib/id-color';
 import {
   Popover,
   PopoverContent,
@@ -36,8 +37,8 @@ const AVATAR_COLORS = [
 
 const HIDDEN_ROLES = ['STUDENT', 'USER'];
 
-function academyColor(id: number) {
-  return AVATAR_COLORS[id % AVATAR_COLORS.length];
+function academyColor(id: string) {
+  return AVATAR_COLORS[colorIndexForId(id, AVATAR_COLORS.length)];
 }
 
 function AcademyAvatar({
@@ -46,8 +47,8 @@ function AcademyAvatar({
   logo
 }: {
   name: string;
-  id: number;
-  logo?: { id: number; publicUrl: string } | null;
+  id: string;
+  logo?: { id: string; publicUrl: string } | null;
 }) {
   const logoUrl = logo?.publicUrl
     ? logo.publicUrl.startsWith('/')
@@ -85,8 +86,8 @@ function getAcademyDomain(academy: any): string {
 }
 
 function resolveAcademyRole(
-  academy: { id: number; userRole?: string },
-  currentAcademyId: number | null | undefined,
+  academy: { id: string; userRole?: string },
+  currentAcademyId: string | null | undefined,
   currentRole: string
 ): string {
   if (academy.userRole) return academy.userRole;
@@ -108,7 +109,7 @@ export function AcademySelector() {
 
   if (HIDDEN_ROLES.includes(user?.role ?? '')) return null;
 
-  const handleSelectAcademy = async (academyId: number) => {
+  const handleSelectAcademy = async (academyId: string) => {
     if (academyId === selectedAcademy?.id) {
       setOpen(false);
       return;
@@ -311,7 +312,7 @@ function AdminModeSwitcher() {
     window.location.href = '/platform';
   };
 
-  const enterAcademyMode = (academyId: number) => {
+  const enterAcademyMode = (academyId: string) => {
     setOpen(false);
     setQuery('');
     if (academyId === selectedAcademy?.id) return;

@@ -1,5 +1,4 @@
 import { useTranslation } from '@/lib/i18n/hooks';
-import { cn } from '@/lib/utils';
 import type { LegalPendingDocumentDiff } from '@/lib/api';
 
 type Props = {
@@ -25,31 +24,56 @@ export function LegalDocumentDiff({ entry }: Props) {
     );
   }
 
-  return (
-    <div className="mt-2">
-      <p className="text-xs font-medium text-muted-foreground">
-        {t('legal.whatChanged')} (
-        {t('legal.versionChange', {
-          previous: entry.previousVersion,
-          current: entry.version
-        })}
-        )
+  const added = entry.diff.filter((part) => part.added);
+  const removed = entry.diff.filter((part) => part.removed);
+
+  if (added.length === 0 && removed.length === 0) {
+    return (
+      <p className="mt-2 text-sm text-muted-foreground">
+        {t('legal.onlyMinorChanges')}
       </p>
-      <div className="beautiful-scrollbar mt-2 max-h-56 overflow-y-auto whitespace-pre-wrap rounded-lg border border-border bg-muted/30 p-3 text-sm leading-relaxed">
-        {entry.diff.map((part, i) => (
-          <span
+    );
+  }
+
+  return (
+    <div className="beautiful-scrollbar mt-2 max-h-56 space-y-3 overflow-y-auto text-sm leading-relaxed">
+      <p className="text-xs font-medium text-muted-foreground">
+        {t('legal.whatChanged')}
+      </p>
+      <ChangeList title={t('legal.changesAdded')} lines={added} />
+      <ChangeList title={t('legal.changesRemoved')} lines={removed} muted />
+    </div>
+  );
+}
+
+function ChangeList({
+  title,
+  lines,
+  muted = false
+}: {
+  title: string;
+  lines: { value: string }[];
+  muted?: boolean;
+}) {
+  if (lines.length === 0) return null;
+
+  return (
+    <div>
+      <p className="text-xs font-medium text-muted-foreground">{title}</p>
+      <ul className="mt-1 space-y-1.5">
+        {lines.map((line, i) => (
+          <li
             key={i}
-            className={cn(
-              part.added &&
-                'rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
-              part.removed &&
-                'rounded bg-rose-500/10 text-rose-700 line-through dark:text-rose-400'
-            )}
+            className={
+              muted
+                ? 'text-muted-foreground/80 line-through'
+                : 'text-foreground/90'
+            }
           >
-            {part.value}
-          </span>
+            {line.value}
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

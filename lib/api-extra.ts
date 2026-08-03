@@ -99,7 +99,7 @@ export const academyPlansApi = {
 
 // ---------- Auth: default academy + payment status -----------------------
 export const userPrefsApi = {
-  setDefaultAcademy: (academyId: number | null) =>
+  setDefaultAcademy: (academyId: string | null) =>
     call('/auth/me/default-academy', {
       method: 'PATCH',
       body: JSON.stringify({ academy_id: academyId })

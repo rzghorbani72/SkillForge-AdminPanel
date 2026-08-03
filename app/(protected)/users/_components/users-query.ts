@@ -23,7 +23,7 @@ export interface UsersQuery {
   search?: string;
   role: UserRoleFilter;
   status: UserStatusFilter;
-  academy_id: number | null;
+  academy_id: string | null;
 }
 
 export interface UsersPage {

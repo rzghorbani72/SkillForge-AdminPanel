@@ -60,7 +60,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
   );
   const [selectedStatus, setSelectedStatus] =
     useState<UsersQuery['status']>('all');
-  const [selectedStore, setSelectedStore] = useState<number | null>(null);
+  const [selectedStore, setSelectedStore] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const queryKey = JSON.stringify({
@@ -120,7 +120,7 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
     if (statusParam) {
       setSelectedStatus(statusParam as UsersQuery['status']);
     }
-    setSelectedStore(storeParam ? Number(storeParam) : null);
+    setSelectedStore(storeParam || null);
     setIsInitialized(true);
   }, [categoryConfig.roleLocked, searchParams]);
 

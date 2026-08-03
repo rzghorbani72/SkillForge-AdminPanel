@@ -273,14 +273,17 @@ export const ar = {
       'المستندات القانونية غير متاحة حالياً. يرجى المحاولة لاحقاً أو التواصل مع الدعم.',
     lastUpdated: 'آخر تحديث',
     version: 'الإصدار',
-    reacceptTitle: 'تحديث المستندات القانونية',
-    reacceptSubtitle: 'راجع التغييرات أدناه لمتابعة استخدام اللوحة.',
+    reacceptTitle: 'تنبيه!',
+    reacceptSubtitle:
+      'تغيّرت شروطنا قليلاً منذ زيارتك الأخيرة. إليك ملخصاً قصيراً — أكّده للمتابعة.',
     acceptAndContinue: 'أوافق وأتابع',
     accepting: 'جارٍ حفظ الموافقة...',
     notTranslatedNotice:
       'لم تتم ترجمة هذا المستند إلى لغتك بعد. يتم عرض النسخة الإنجليزية.',
-    whatChanged: 'ما الذي تغيّر منذ آخر موافقة',
-    versionChange: 'الإصدار {{previous}} ← {{current}}',
+    whatChanged: 'ما الذي تغيّر؟',
+    changesAdded: 'ما أُضيف',
+    changesRemoved: 'ما حُذف',
+    onlyMinorChanges: 'تعديلات صياغة بسيطة فقط — لم تتغيّر القواعد نفسها.',
     firstTimeAcceptance: 'هذه أول مرة يجب فيها قبول هذا المستند.',
     diffUnavailable:
       'ملخص التغييرات غير متاح حالياً. يرجى قراءة المستند كاملاً.',

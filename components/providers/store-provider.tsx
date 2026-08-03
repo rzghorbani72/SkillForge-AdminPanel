@@ -31,7 +31,7 @@ interface StoreContextValue {
   isLoading: boolean;
   error: string | null;
   refreshAcademies: () => Promise<void>;
-  selectAcademy: (academyId: number) => void;
+  selectAcademy: (academyId: string) => void;
   clearAcademies: () => void;
 }
 
@@ -91,35 +91,40 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     user?.role === 'ADMIN' ||
     user?.canManagePlatform === true;
 
-  const fetchFreshAcademies = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  const fetchFreshAcademies = useCallback(
+    async (silent = false) => {
+      try {
+        if (!silent) setIsLoading(true);
+        setError(null);
 
-      const list = await requestAcademies();
+        const list = await requestAcademies();
 
-      if (process.env.NODE_ENV === 'development') {
-        list.forEach((a) => {
-          if (!a.currency && !a.currency_symbol) {
-            console.warn(`Academy ${a.id} (${a.name}) missing currency fields`);
-          }
-        });
+        if (process.env.NODE_ENV === 'development') {
+          list.forEach((a) => {
+            if (!a.currency && !a.currency_symbol) {
+              console.warn(
+                `Academy ${a.id} (${a.name}) missing currency fields`
+              );
+            }
+          });
+        }
+
+        setAcademies(list);
+      } catch (err) {
+        console.error('Error fetching academies:', err);
+        setError(resolveApiErrorMessage(err, currentLanguage()));
+
+        if (isApiResponseError(err) && err.error.status === 401) {
+          clearAcademyData();
+          router.push('/login');
+        }
+      } finally {
+        setIsLoading(false);
+        hasFetchedRef.current = true;
       }
-
-      setAcademies(list);
-    } catch (err) {
-      console.error('Error fetching academies:', err);
-      setError(resolveApiErrorMessage(err, currentLanguage()));
-
-      if (isApiResponseError(err) && err.error.status === 401) {
-        clearAcademyData();
-        router.push('/login');
-      }
-    } finally {
-      setIsLoading(false);
-      hasFetchedRef.current = true;
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   const loadAcademies = useCallback(async () => {
     try {
@@ -132,6 +137,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         setAcademies(cached);
         setIsLoading(false);
         hasFetchedRef.current = true;
+        // Paint from cache, then correct it. Serving the cache alone let a newly
+        // created academy stay invisible for the whole cache window.
+        void fetchFreshAcademies(true);
         return;
       }
 
@@ -173,7 +181,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [fetchFreshAcademies]);
 
   const selectAcademy = useCallback(
-    (academyId: number) => {
+    (academyId: string) => {
       const found = academies.find((a) => a.id === academyId);
       if (found) {
         setSelectedAcademyId(academyId);

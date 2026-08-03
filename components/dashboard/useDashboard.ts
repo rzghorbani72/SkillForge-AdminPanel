@@ -71,9 +71,7 @@ const useDashboard = () => {
       user.profile?.academyId ??
       user.profile?.academy_id ??
       null;
-    return (
-      userStoreId === null || userStoreId === undefined || userStoreId === 0
-    );
+    return !userStoreId;
   }, [user]);
 
   // For admins without stores, don't use store context

@@ -2,7 +2,7 @@
 
 import { useStore } from './useStore';
 
-export function useCurrentAcademyId(): number | null {
+export function useCurrentAcademyId(): string | null {
   const { selectedAcademy } = useStore();
   return selectedAcademy?.id ?? null;
 }

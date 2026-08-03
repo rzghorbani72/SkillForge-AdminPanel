@@ -25,7 +25,7 @@ import {
 } from './plan-types';
 
 interface Props {
-  academyId: number;
+  academyId: string;
   t: (key: string, params?: Record<string, string | number>) => string;
 }
 
