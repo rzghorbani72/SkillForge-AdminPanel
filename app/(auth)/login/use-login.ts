@@ -238,6 +238,13 @@ export function useLogin() {
   async function handleAcademySelect(academyId: string) {
     setPickingAcademy(true);
     try {
+      if (otpMode === 'login') {
+        await apiClient.switchAcademy(academyId);
+        toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
+        window.location.assign('/dashboard');
+        return;
+      }
+
       const response = (await authService.login({
         identifier: toE164Iran(phone),
         password,
@@ -270,6 +277,17 @@ export function useLogin() {
           phone_number: otpPhone,
           otp: otp.trim()
         })) as LoginResponse;
+
+        // OTP login always creates the session, so a user with several academies
+        // picks one by switching rather than by logging in again — there is no
+        // password to replay and the OTP is spent.
+        const academies = response.availableAcademies ?? [];
+        if (academies.length > 1) {
+          setAvailableAcademies(academies);
+          setAcademyPickerOpen(true);
+          return;
+        }
+
         toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
         schedulePostLoginRedirect(response);
         return;
