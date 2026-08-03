@@ -17,7 +17,6 @@ import type { PermissionCatalog, PlatformRole } from '@/types/roles';
 import { RolePermissionsDialog } from './role-permissions-dialog';
 import { CreateRoleDialog } from './create-role-dialog';
 import { RoleCard } from './role-card';
-import { buildRoleColumns } from './role-columns';
 
 // A non-owner actor's creation ceiling: the named reference role whose
 // hierarchy_level bounds what they may create (mirrors the backend's
@@ -76,17 +75,6 @@ export function RolesManager() {
     }
   };
 
-  const columns = useMemo(
-    () =>
-      buildRoleColumns({
-        t,
-        formatNumber,
-        onEdit: setEditing,
-        onDelete: setDeleting
-      }),
-    [t, formatNumber]
-  );
-
   const sortedRoles = useMemo(
     () => [...roles].sort((a, b) => b.hierarchy_level - a.hierarchy_level),
     [roles]
@@ -123,9 +111,9 @@ export function RolesManager() {
       >
         <DataList
           items={sortedRoles}
-          columns={columns}
           rowKey={(role) => role.id}
           isLoading={loading}
+          alwaysCards
           renderCard={(role) => (
             <RoleCard role={role} onEdit={setEditing} onDelete={setDeleting} />
           )}

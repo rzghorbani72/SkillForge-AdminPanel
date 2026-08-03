@@ -13,9 +13,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { getAccessLevelLabel, selectableAccessLevels } from './access-levels';
 
 interface Props {
   open: boolean;
@@ -41,7 +49,8 @@ export function CreateRoleDialog({
   const [level, setLevel] = useState(0);
 
   const nameValid = NAME_PATTERN.test(name);
-  const levelValid = level >= 0 && level <= maxLevel;
+  const levelOptions = selectableAccessLevels(maxLevel);
+  const levelValid = levelOptions.some((option) => option.level === level);
 
   const submit = async () => {
     if (!nameValid || !levelValid) return;
@@ -111,17 +120,26 @@ export function CreateRoleDialog({
 
           <div className="space-y-1.5">
             <Label htmlFor="role-level">{t('roles.levelLabel')}</Label>
-            <Input
-              id="role-level"
-              type="number"
-              min={0}
-              max={maxLevel}
-              value={level}
-              onChange={(e) => setLevel(Number(e.target.value))}
-            />
+            <Select
+              value={String(level)}
+              onValueChange={(value) => setLevel(Number(value))}
+            >
+              <SelectTrigger id="role-level">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {levelOptions.map((option) => (
+                  <SelectItem key={option.level} value={String(option.level)}>
+                    {t(option.labelKey)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {!levelValid && (
               <p className="text-xs text-destructive">
-                {t('roles.levelCapHint', { level: maxLevel })}
+                {t('roles.levelCapHint', {
+                  level: getAccessLevelLabel(maxLevel, t)
+                })}
               </p>
             )}
             <p className="text-xs text-muted-foreground">

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { useStore } from '@/hooks/useStore';
 import { Course } from '@/types/api';
+import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'react-toastify';
 
 export type CourseWithRevenue = Course & {
@@ -116,8 +117,9 @@ const useCourses = () => {
       await apiClient.deleteCourse(course.id);
       toast.success('Course deleted');
       fetchCourses();
-    } catch (err: any) {
-      toast.error(err?.message ?? 'Failed to delete course');
+    } catch (err: unknown) {
+      // Localizes COURSE_HAS_ACTIVE_ENROLLMENTS and friends by error code.
+      ErrorHandler.handleApiError(err);
     }
   };
 

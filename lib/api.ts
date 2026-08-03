@@ -5484,11 +5484,10 @@ export interface AcademySiteStatusData {
 }
 
 export interface DisableAcademySitePayload {
-  /** Required: when the academy reopens by itself (ISO string). */
-  disabled_until: string;
+  /** Optional: when enrollment reopens by itself (ISO string). Omit to stay closed. */
+  disabled_until?: string;
   message?: string;
   contact_email?: string;
-  acknowledge_obligations?: boolean;
 }
 
 export interface SubscriptionPlanData {

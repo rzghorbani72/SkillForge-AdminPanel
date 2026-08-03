@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthSubmit } from '@/components/auth/auth-fields';
 import type { AuthTab } from '@/components/auth/auth-tabs';
-import type { AuthTab } from '@/components/auth/auth-tabs';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
@@ -18,9 +17,7 @@ interface PhoneOtpScreenProps {
   setOtp: (v: string) => void;
   otpLoading: boolean;
   onSubmit: () => void;
-  onSubmit: () => void;
   onBack: () => void;
-  activeTab?: AuthTab;
   activeTab?: AuthTab;
   otpError?: string;
   length?: number;
@@ -40,7 +37,6 @@ export function PhoneOtpScreen({
   otpLoading,
   onSubmit,
   onBack,
-  activeTab = 'login',
   activeTab = 'login',
   otpError,
   length = DEFAULT_OTP_LENGTH,
@@ -77,42 +73,7 @@ export function PhoneOtpScreen({
           {backLabel ?? t('common.edit')}
         </button>
       </div>
-  return (
-    <AuthShell
-      activeTab={activeTab}
-      title={title ?? t('auth.verifyYourContact')}
-    >
-      <div className="flex items-start justify-between gap-3 px-4">
-        <p className="text-start text-base text-[#616579]">
-          {t('auth.otpSentTo')} <strong dir="ltr">{otpPhone}</strong>
-        </p>
-        <button
-          type="button"
-          onClick={onBack}
-          className="shrink-0 text-base text-primary hover:underline"
-        >
-          {backLabel ?? t('common.edit')}
-        </button>
-      </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-        className="space-y-4"
-      >
-        <div className="space-y-2">
-          <OtpBoxInput
-            length={length}
-            value={otp}
-            onChange={setOtp}
-            disabled={verified || otpLoading}
-          />
-          {otpError && (
-            <p className="text-center text-xs text-destructive">{otpError}</p>
-          )}
-        </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -168,23 +129,7 @@ export function PhoneOtpScreen({
             {submitLabel ?? t('auth.verifyAndLogin')}
           </AuthSubmit>
         )}
-        {verified ? (
-          <p className="flex items-center justify-center gap-1.5 text-sm text-emerald-600">
-            <CheckCircle2 className="h-4 w-4" />
-            {t('auth.verified')}
-          </p>
-        ) : (
-          <AuthSubmit
-            type="submit"
-            loading={otpLoading}
-            disabled={otpLoading || otp.length < length}
-          >
-            {submitLabel ?? t('auth.verifyAndLogin')}
-          </AuthSubmit>
-        )}
 
-        {children}
-      </form>
         {children}
       </form>
     </AuthShell>

@@ -7,14 +7,12 @@ import {
   ChevronDown,
   GraduationCap,
   Loader2,
-  Plus,
   Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import { colorIndexForId } from '@/lib/id-color';
@@ -97,7 +95,6 @@ function resolveAcademyRole(
 
 export function AcademySelector() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { academies, selectedAcademy, selectAcademy, isLoading } = useStore();
   const { user } = useAuthUser();
   const [open, setOpen] = useState(false);
@@ -278,16 +275,6 @@ export function AcademySelector() {
           {selectorContent}
         </div>
       )}
-
-      {/* Add new academy */}
-      <button
-        type="button"
-        onClick={() => router.push('/onboarding/create-academy')}
-        aria-label={t('stores.createStore')}
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
-      >
-        <Plus className="h-4 w-4" />
-      </button>
     </div>
   );
 }

@@ -23,10 +23,10 @@ type AcademySiteStatusDialogProps = {
 };
 
 /**
- * Turning the public site off is the manager's own kill switch, but students who
- * already paid lose access the moment it flips — so the dialog shows exactly how
- * many are affected and refuses to submit without a contact channel and, when
- * students are affected, an explicit acknowledgement.
+ * Closing the academy stops new enrollments only: students who already paid keep
+ * their access until it expires. The dialog therefore asks for a contact channel
+ * (visitors need someone to ask) and an optional auto-reopen date — nothing to
+ * acknowledge, because nobody loses what they bought.
  */
 export function AcademySiteStatusDialog({
   open,
@@ -44,13 +44,11 @@ export function AcademySiteStatusDialog({
   const [contactEmail, setContactEmail] = useState('');
   const [message, setMessage] = useState('');
   const [reopenAt, setReopenAt] = useState('');
-  const [acknowledged, setAcknowledged] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     setLoading(true);
     setError('');
-    setAcknowledged(false);
     setConfirming(false);
     setReopenAt('');
     apiClient
@@ -64,24 +62,27 @@ export function AcademySiteStatusDialog({
       .finally(() => setLoading(false));
   }, [open]);
 
-  const affectedStudents = status?.open_obligations?.total ?? 0;
-  const needsAcknowledgement = affectedStudents > 0 && !acknowledged;
+  const activeStudents = status?.open_obligations?.total ?? 0;
   const managerPhone = status?.default_contact_phone ?? '';
   const hasContact = Boolean(contactEmail.trim() || managerPhone);
   const reopenDate = reopenAt ? new Date(reopenAt) : null;
-  const reopenValid = Boolean(
-    reopenDate && !Number.isNaN(reopenDate.getTime()) && reopenDate > new Date()
-  );
+  // Empty means "closed until I reopen it"; a date is only valid if it is ahead.
+  const reopenValid =
+    !reopenAt ||
+    Boolean(
+      reopenDate &&
+        !Number.isNaN(reopenDate.getTime()) &&
+        reopenDate > new Date()
+    );
 
   async function handleDisable() {
     setSaving(true);
     setError('');
     try {
       await apiClient.disableAcademySite({
-        disabled_until: new Date(reopenAt).toISOString(),
+        disabled_until: reopenAt ? new Date(reopenAt).toISOString() : undefined,
         contact_email: contactEmail.trim() || undefined,
-        message: message.trim() || undefined,
-        acknowledge_obligations: acknowledged
+        message: message.trim() || undefined
       });
       onChanged(true);
       onClose();
@@ -124,17 +125,17 @@ export function AcademySiteStatusDialog({
           </div>
         ) : confirming ? (
           <div className="space-y-4">
-            <div className="space-y-2 rounded-xl border border-destructive/40 bg-destructive/5 p-4">
-              <p className="flex items-center gap-2 text-sm font-semibold text-destructive">
+            <div className="space-y-2 rounded-xl border border-warning/40 bg-warning/5 p-4">
+              <p className="flex items-center gap-2 text-sm font-semibold text-warning">
                 <AlertTriangle className="h-4 w-4" />
                 {t('stores.siteDisableConfirmTitle')}
               </p>
               <p className="text-xs text-muted-foreground">
                 {t('stores.siteDisableConfirmBody')}
               </p>
-              {affectedStudents > 0 && (
-                <p className="text-xs font-medium text-destructive">
-                  {t('stores.siteDisableConfirmAffected')}: {affectedStudents}
+              {activeStudents > 0 && (
+                <p className="text-xs font-medium text-muted-foreground">
+                  {t('stores.siteDisableConfirmAffected')}: {activeStudents}
                 </p>
               )}
               <p className="text-xs text-muted-foreground" dir="ltr">
@@ -206,11 +207,10 @@ export function AcademySiteStatusDialog({
               </p>
             </div>
 
-            {affectedStudents > 0 && (
-              <div className="space-y-2 rounded-xl border border-destructive/40 bg-destructive/5 p-3">
-                <p className="flex items-center gap-2 text-sm font-semibold text-destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  {t('stores.siteDisableStudentsWarning')}
+            {activeStudents > 0 && (
+              <div className="space-y-1 rounded-xl border bg-muted/40 p-3">
+                <p className="text-sm font-medium">
+                  {t('stores.siteDisableStudentsInfo')}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {t('stores.siteDisableActiveSubscriptions')}:{' '}
@@ -218,15 +218,6 @@ export function AcademySiteStatusDialog({
                   {t('stores.siteDisableActiveEnrollments')}:{' '}
                   {status?.open_obligations?.active_enrollments ?? 0}
                 </p>
-                <label className="flex items-start gap-2 text-xs">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5"
-                    checked={acknowledged}
-                    onChange={(e) => setAcknowledged(e.target.checked)}
-                  />
-                  {t('stores.siteDisableAcknowledge')}
-                </label>
               </div>
             )}
 
@@ -278,9 +269,7 @@ export function AcademySiteStatusDialog({
             <Button
               variant="destructive"
               onClick={() => setConfirming(true)}
-              disabled={
-                saving || !hasContact || !reopenValid || needsAcknowledgement
-              }
+              disabled={saving || !hasContact || !reopenValid}
               className="w-full"
             >
               {t('stores.siteDisableAction')}

@@ -2,9 +2,9 @@
 
 import { Shield, Trash2, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ListChips } from '@/components/shared/data-list';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { getAccessLevelLabel } from './access-levels';
 import { getRoleMeta } from './role-meta';
 import type { PlatformRole } from '@/types/roles';
 
@@ -40,9 +40,11 @@ export function RoleCard({ role, onEdit, onDelete }: RoleCardProps) {
         {meta.hint}
       </p>
 
-      <div className="mt-3">
-        <ListChips labels={meta.resources} max={3} />
-      </div>
+      <p className="mt-3 inline-flex w-fit rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+        {t('roles.cardLevel', {
+          level: getAccessLevelLabel(role.hierarchy_level, t)
+        })}
+      </p>
 
       <div className="mt-auto space-y-3 pt-4">
         <div className="flex items-center gap-3 text-xs text-muted-foreground">

@@ -1,13 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
 import { Filter, GraduationCap, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataList, DataPanel } from '@/components/shared/data-list';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { AcademyCard, AddAcademyCard } from './AcademyCard';
-import { buildAcademyColumns, type AcademyRow } from './academy-columns';
+import type { AcademyRow } from './academy-helpers';
 import type { InterpolationParams } from '@/lib/i18n';
 import type { Academy } from '@/types/api';
 
@@ -46,30 +45,6 @@ export function AcademiesList({
 }: AcademiesListProps) {
   const formatNumber = useNumberFormat();
 
-  const columns = useMemo(
-    () =>
-      buildAcademyColumns({
-        t,
-        formatNumber,
-        currentAcademyId,
-        resolveUserRole,
-        switching,
-        onSwitch,
-        onEdit,
-        onManageSite
-      }),
-    [
-      t,
-      formatNumber,
-      currentAcademyId,
-      resolveUserRole,
-      switching,
-      onSwitch,
-      onEdit,
-      onManageSite
-    ]
-  );
-
   const subtitle = `${formatNumber(academies.length)}${
     totalCount === academies.length ? '' : ` / ${formatNumber(totalCount)}`
   } ${t('stores.title')} · ${t('stores.manageStoresDescription')}`;
@@ -90,9 +65,9 @@ export function AcademiesList({
     >
       <DataList
         items={academies}
-        columns={columns}
         rowKey={(academy) => academy.id}
         isLoading={isLoading}
+        alwaysCards
         renderCard={(academy) => (
           <AcademyCard
             academy={academy}

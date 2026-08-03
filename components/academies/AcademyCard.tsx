@@ -1,19 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { MoreHorizontal, Pencil, Loader2, Power } from 'lucide-react';
+import { Pencil, Loader2, Power } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 import type { Academy } from '@/types/api';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { ACADEMY_DOMAIN } from '@/lib/slug';
 import { colorIndexForId } from '@/lib/id-color';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import {
+  AcademyStatusPill,
+  academyDomain,
+  canEditAcademy,
+  canEnterAcademy,
+  type AcademyRow
+} from './academy-helpers';
 
 const CARD_COLORS = [
   { bg: 'bg-blue-100', icon: 'bg-blue-200 text-blue-700' },
@@ -69,11 +70,7 @@ export function AcademyIcon({
 }
 
 type AcademyCardProps = {
-  academy: Academy & {
-    course_count?: number;
-    student_count?: number;
-    mentor_count?: number;
-  };
+  academy: AcademyRow;
   isCurrent: boolean;
   userRole?: string;
   onSwitch: (id: string) => void;
@@ -93,57 +90,20 @@ export function AcademyCard({
   switching,
   t
 }: AcademyCardProps) {
+  const formatNumber = useNumberFormat();
   const color = CARD_COLORS[colorIndexForId(academy.id, CARD_COLORS.length)];
   const isSwitch = switching === academy.id;
-  const canEnter =
-    !isCurrent &&
-    ['AFFILIATE', 'TEACHER', 'MANAGER', 'ADMIN'].includes(
-      (academy.userRole ?? '').toUpperCase()
-    );
-  const canEdit = ['MANAGER', 'ADMIN'].includes(
-    (academy.userRole ?? '').toUpperCase()
-  );
-  const domain =
-    academy.domain?.private_address ??
-    academy.Domain?.private_address ??
-    academy.slug ??
-    '';
+  const canEnter = canEnterAcademy(academy, isCurrent);
+  const canEdit = canEditAcademy(academy);
+  const domain = academyDomain(academy);
   const plan =
     getPlanDisplayName(academy.subscription_plan) ?? t('stores.planBasic');
-  const isActive = academy.is_active !== false;
-  const siteDisabled = Boolean(academy.site_disabled_at);
 
   return (
     <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
       {/* Colored header band */}
       <div className={cn('relative flex h-24 items-start px-4 pt-3', color.bg)}>
-        {/* Status badge */}
-        <span
-          className={cn(
-            'flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
-            siteDisabled
-              ? 'bg-red-100 text-red-700'
-              : isActive
-                ? 'bg-green-100 text-green-700'
-                : 'bg-yellow-100 text-yellow-700'
-          )}
-        >
-          <span
-            className={cn(
-              'h-1.5 w-1.5 rounded-full',
-              siteDisabled
-                ? 'bg-red-500'
-                : isActive
-                  ? 'bg-green-500'
-                  : 'bg-yellow-500'
-            )}
-          />
-          {siteDisabled
-            ? t('stores.statusSiteDisabled')
-            : isActive
-              ? t('stores.statusActive')
-              : t('stores.statusPaused')}
-        </span>
+        <AcademyStatusPill academy={academy} t={t} />
 
         {/* Icon floats at bottom-right of header */}
         <div className="absolute bottom-[-20px] left-4">
@@ -189,7 +149,9 @@ export function AcademyCard({
         <div className="mt-4 flex items-center justify-between text-sm">
           <div className="flex flex-col items-center gap-0.5">
             <span className="font-semibold text-foreground">
-              {(academy as any).student_count ?? academy.students_count ?? 0}
+              {formatNumber(
+                academy.student_count ?? academy.students_count ?? 0
+              )}
             </span>
             <span className="text-xs text-muted-foreground">
               {t('stores.students')}
@@ -198,7 +160,7 @@ export function AcademyCard({
           <div className="h-8 w-px bg-border" />
           <div className="flex flex-col items-center gap-0.5">
             <span className="font-semibold text-foreground">
-              {(academy as any).course_count ?? 0}
+              {formatNumber(academy.course_count ?? 0)}
             </span>
             <span className="text-xs text-muted-foreground">
               {t('stores.courses')}

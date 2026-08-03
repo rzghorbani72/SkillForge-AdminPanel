@@ -1,18 +1,11 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {
-  Loader2,
-  Globe,
-  ArrowLeft,
-  CheckCircle2,
-  Check,
-  X
-} from 'lucide-react';
+import { Loader2, ArrowLeft, CheckCircle2, Check } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +22,12 @@ import { toast } from 'react-toastify';
 import { useStore } from '@/hooks/useStore';
 import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import { cn } from '@/lib/utils';
+import { toSlug, ACADEMY_DOMAIN } from '@/lib/slug';
+import {
+  isSlugBlocking,
+  useSlugAvailability
+} from '@/hooks/use-slug-availability';
+import { SlugField } from '@/components/academies/slug-field';
 
 // ─── Schema ───────────────────────────────────────────────────────────────
 
@@ -45,10 +44,6 @@ const useAcademySchema = (t: (k: string) => string) =>
 
 type AcademyValues = { name: string; slug: string; description?: string };
 
-type SlugStatus = 'idle' | 'checking' | 'available' | 'taken';
-
-const SLUG_PATTERN = /^[a-z0-9-]{2,40}$/;
-
 const TOTAL_STEPS = 4;
 
 const PRESET_COLORS = [
@@ -61,16 +56,6 @@ const PRESET_COLORS = [
   { hex: '#14B8A6', label: 'Teal' },
   { hex: '#EF4444', label: 'Red' }
 ];
-
-function toSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .slice(0, 40);
-}
 
 // ─── Progress dots ────────────────────────────────────────────────────────
 
@@ -91,45 +76,6 @@ function ProgressDots({ current, total }: { current: number; total: number }) {
         />
       ))}
     </div>
-  );
-}
-
-// ─── Slug availability hint ───────────────────────────────────────────────
-
-function SlugAvailability({
-  status,
-  t
-}: {
-  status: SlugStatus;
-  t: (k: string) => string;
-}) {
-  if (status === 'idle') return null;
-  const config = {
-    checking: {
-      icon: Loader2,
-      key: 'auth.slugChecking',
-      className: 'text-muted-foreground',
-      spin: true
-    },
-    available: {
-      icon: Check,
-      key: 'auth.slugAvailable',
-      className: 'text-emerald-500',
-      spin: false
-    },
-    taken: {
-      icon: X,
-      key: 'auth.slugTaken',
-      className: 'text-destructive',
-      spin: false
-    }
-  }[status];
-  const Icon = config.icon;
-  return (
-    <p className={cn('flex items-center gap-1.5 text-xs', config.className)}>
-      <Icon className={cn('h-3.5 w-3.5', config.spin && 'animate-spin')} />
-      {t(config.key)}
-    </p>
   );
 }
 
@@ -155,41 +101,30 @@ export default function CreateAcademyPage() {
   });
 
   const slug = form.watch('slug');
-  const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
-  const slugCheck = useRef<{
-    timer: ReturnType<typeof setTimeout> | null;
-    token: number;
-  }>({ timer: null, token: 0 });
+  const { status: slugStatus, check: checkSlug } = useSlugAvailability();
 
   function handleSlugChange(raw: string) {
     const next = toSlug(raw);
     form.setValue('slug', next, { shouldValidate: false });
+    checkSlug(next);
+  }
 
-    if (slugCheck.current.timer) clearTimeout(slugCheck.current.timer);
-    setSlugStatus('idle');
-    if (!SLUG_PATTERN.test(next)) return;
-
-    setSlugStatus('checking');
-    const token = ++slugCheck.current.token;
-    slugCheck.current.timer = setTimeout(async () => {
-      try {
-        const { available } = await apiClient.checkSlugAvailability(next);
-        if (token !== slugCheck.current.token) return;
-        setSlugStatus(available ? 'available' : 'taken');
-      } catch {
-        if (token !== slugCheck.current.token) return;
-        setSlugStatus('idle');
-      }
-    }, 400);
+  // Suggest the subdomain from the academy name, but never overwrite one the
+  // manager typed themselves — they can step back and forth freely.
+  function suggestSlugFromName() {
+    if (form.getValues('slug')) return;
+    handleSlugChange(toSlug(form.getValues('name')));
   }
 
   async function goNext() {
     if (step === 1) {
       const valid = await form.trigger('name');
-      if (valid) setStep((s) => s + 1);
+      if (!valid) return;
+      suggestSlugFromName();
+      setStep((s) => s + 1);
     } else if (step === 2) {
       const valid = await form.trigger('slug');
-      if (valid && slugStatus === 'available') setStep((s) => s + 1);
+      if (valid && !isSlugBlocking(slugStatus)) setStep((s) => s + 1);
     } else {
       setStep((s) => s + 1);
     }
@@ -312,27 +247,18 @@ export default function CreateAcademyPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <div className="flex h-14 items-center overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-primary">
-                        <div className="flex h-full select-none items-center gap-1.5 whitespace-nowrap border-r bg-muted/50 px-3 text-sm text-muted-foreground">
-                          <Globe className="h-3.5 w-3.5 shrink-0" />
-                          <span>platform.com.</span>
-                        </div>
-                        <input
-                          className="flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus-within:ring-0"
-                          placeholder="your-academy"
-                          autoFocus
-                          {...field}
-                          onChange={(e) => handleSlugChange(e.target.value)}
-                          aria-label={t('auth.academyUrl')}
-                        />
-                      </div>
+                      <SlugField
+                        value={field.value}
+                        status={slugStatus}
+                        onChange={handleSlugChange}
+                        t={t}
+                      />
                     </FormControl>
                     {slug && (
                       <p className="text-xs text-muted-foreground" dir="ltr">
-                        {`platform.com/${slug}`}
+                        {`${slug}.${ACADEMY_DOMAIN}`}
                       </p>
                     )}
-                    <SlugAvailability status={slugStatus} t={t} />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -399,7 +325,7 @@ export default function CreateAcademyPage() {
                   type="button"
                   size="lg"
                   className="h-12 w-full"
-                  disabled={step === 2 && slugStatus !== 'available'}
+                  disabled={step === 2 && (!slug || isSlugBlocking(slugStatus))}
                   onClick={goNext}
                 >
                   {t('auth.continueBtn')}

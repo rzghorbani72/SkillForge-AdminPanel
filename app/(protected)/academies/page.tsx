@@ -24,7 +24,7 @@ import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
 import { AcademyEditModal } from '@/components/academies/AcademyEditModal';
 import { AcademySiteStatusDialog } from '@/components/academies/academy-site-status-dialog';
 import { AcademiesHealthTable } from '@/components/academies/academies-health-table';
-import type { AcademyRow } from '@/components/academies/academy-columns';
+import type { AcademyRow } from '@/components/academies/academy-helpers';
 import type { Academy } from '@/types/api';
 
 export default function AcademiesPage() {

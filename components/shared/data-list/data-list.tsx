@@ -27,10 +27,13 @@ export interface DataColumn<T> {
 
 interface DataListProps<T> {
   items: readonly T[];
-  columns: readonly DataColumn<T>[];
+  /** Omit when `alwaysCards` is set — the table is then never rendered. */
+  columns?: readonly DataColumn<T>[];
   rowKey: (item: T) => string | number;
   /** Card renderer for short lists. Omit to always render the table. */
   renderCard?: (item: T) => ReactNode;
+  /** Keep the card grid at any item count instead of falling back to the table. */
+  alwaysCards?: boolean;
   /** Extra tile appended to the card grid, e.g. an "add new" placeholder. */
   cardExtra?: ReactNode;
   cardGridClassName?: string;
@@ -48,9 +51,10 @@ const ALIGN_CLASS: Record<ColumnAlign, string> = {
 
 export function DataList<T>({
   items,
-  columns,
+  columns = [],
   rowKey,
   renderCard,
+  alwaysCards = false,
   cardExtra,
   cardGridClassName,
   onRowClick,
@@ -58,15 +62,22 @@ export function DataList<T>({
   isLoading = false,
   loadingRows = 6
 }: DataListProps<T>) {
+  const showCards =
+    Boolean(renderCard) && (alwaysCards || items.length <= CARD_VIEW_MAX_ITEMS);
+
   if (isLoading) {
-    return <DataListSkeleton columns={columns.length} rows={loadingRows} />;
+    return alwaysCards ? (
+      <CardGridSkeleton rows={loadingRows} className={cardGridClassName} />
+    ) : (
+      <DataListSkeleton columns={columns.length} rows={loadingRows} />
+    );
   }
 
   if (items.length === 0) {
     return emptyState ? <>{emptyState}</> : null;
   }
 
-  if (renderCard && items.length <= CARD_VIEW_MAX_ITEMS) {
+  if (renderCard && showCards) {
     return (
       <div
         className={cn(
@@ -126,6 +137,27 @@ export function DataList<T>({
         ))}
       </TableBody>
     </Table>
+  );
+}
+
+function CardGridSkeleton({
+  rows,
+  className
+}: {
+  rows: number;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn('grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3', className)}
+    >
+      {Array.from({ length: rows }).map((_, card) => (
+        <div
+          key={card}
+          className="h-40 animate-pulse rounded-xl border border-border/70 bg-muted"
+        />
+      ))}
+    </div>
   );
 }
 
