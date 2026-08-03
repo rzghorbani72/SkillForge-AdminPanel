@@ -6,7 +6,7 @@ import { Profile } from '@/types/api';
 
 export interface UserState {
   user_id: number;
-  academy_id: number;
+  academy_id: string;
   role: string;
   is_admin: boolean;
   is_manager: boolean;
@@ -311,7 +311,7 @@ export function useAccessControl() {
 
   const canModifyResource = (
     resourceOwnerId: number,
-    resourceStoreId?: number
+    resourceStoreId?: string
   ): boolean => {
     if (!userState) return false;
 
@@ -329,12 +329,12 @@ export function useAccessControl() {
 
   const canDeleteResource = (
     resourceOwnerId: number,
-    resourceStoreId?: number
+    resourceStoreId?: string
   ): boolean => {
     return canModifyResource(resourceOwnerId, resourceStoreId);
   };
 
-  const canViewResource = (resourceStoreId?: number): boolean => {
+  const canViewResource = (resourceStoreId?: string): boolean => {
     if (!userState) return false;
 
     // Admin can view everything
@@ -352,7 +352,7 @@ export function useAccessControl() {
 
   const checkResourceAccess = (resource: {
     owner_id?: number;
-    academy_id?: number;
+    academy_id?: string;
     access_control?: AccessControl;
   }): ResourceAccessControl => {
     if (resource.access_control) {
@@ -368,7 +368,7 @@ export function useAccessControl() {
     }
 
     // Fallback to frontend calculation
-    const ownerId = resource.owner_id || 0;
+    const ownerId = resource.owner_id ?? 0;
     const academyId = resource.academy_id;
 
     return {
@@ -403,7 +403,7 @@ export function useAccessControl() {
   const requireResourceAccess = (
     resource: {
       owner_id?: number;
-      academy_id?: number;
+      academy_id?: string;
       access_control?: AccessControl;
     },
     action: 'view' | 'modify' | 'delete' = 'view',

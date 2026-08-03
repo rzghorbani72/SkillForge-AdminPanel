@@ -11,14 +11,20 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
 import { isPlatformStaff } from '@/lib/roles';
 import { isUserNotRegisteredError } from '@/lib/auth-login-errors';
-import { isApiResponseError, resolveApiErrorMessage } from '@/lib/api-error';
-import { currentLanguage } from '@/lib/current-language';
+import { apiErrorMessage } from '@/lib/api-error-message';
+import { notifyOtpSent } from '@/lib/otp-notify';
+import {
+  collectErrors,
+  validateOtp,
+  validatePassword,
+  validatePhone
+} from '@/lib/auth-validation';
 
-type Academy = { id: number; name: string; slug: string };
+type Academy = { id: string; name: string; slug: string };
 export type LoginMethod = 'password' | 'otp';
 
 type LoginResponse = {
-  currentProfile?: { Role?: { name?: string }; academy_id?: number };
+  currentProfile?: { Role?: { name?: string }; academy_id?: string };
   currentAcademy?: unknown;
   phone_verification_required?: boolean;
   temp_token?: string;
@@ -27,17 +33,6 @@ type LoginResponse = {
   available_academies?: Academy[];
   requires_academy_selection?: boolean;
 };
-
-/**
- * Uses the backend's stable error code when we have one; otherwise the
- * caller's fallback, which is more specific than a generic unknown-error text.
- */
-function getApiErrorMessage(error: unknown, fallback: string): string {
-  if (isApiResponseError(error)) {
-    return resolveApiErrorMessage(error, currentLanguage());
-  }
-  return fallback;
-}
 
 function resolveLoginError(
   error: unknown,
@@ -48,7 +43,7 @@ function resolveLoginError(
   return {
     message: registrationRequired
       ? notRegisteredMessage
-      : getApiErrorMessage(error, fallback),
+      : apiErrorMessage(error, fallback),
     registrationRequired
   };
 }
@@ -92,14 +87,15 @@ export function useLogin() {
   }, [searchParams, t]);
 
   function validate() {
-    const e: Record<string, string> = {};
-    if (!phone) e.phone = t('auth.phoneRequired');
-    else if (phone.replace(/\D/g, '').length < 7)
-      e.phone = t('auth.validPhoneNumber');
-    if (loginMethod === 'password') {
-      if (!password) e.password = t('auth.passwordRequired');
-      else if (password.length < 6) e.password = t('auth.passwordTooShort');
-    }
+    const e = collectErrors(
+      {
+        phone: validatePhone(phone),
+        ...(loginMethod === 'password'
+          ? { password: validatePassword(password) }
+          : {})
+      },
+      t
+    );
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -176,17 +172,7 @@ export function useLogin() {
       setOtpPhone(phoneE164);
       setOtpMode('login');
       setOtpRequired(true);
-
-      // TODO: Remove debug OTP display when real SMS provider is integrated
-      if (response?.data?.otp) {
-        toast.info(`${t('success.otpSent')}\n\n🔐 Code: ${response.data.otp}`, {
-          toastId: 'login-otp-sent',
-          autoClose: 8000,
-          style: { whiteSpace: 'pre-wrap' }
-        });
-      } else {
-        toast.success(t('success.otpSent'), { toastId: 'login-otp-sent' });
-      }
+      notifyOtpSent(response, t('success.otpSent'), 'login-otp-sent');
     } catch (error: unknown) {
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(
@@ -241,7 +227,7 @@ export function useLogin() {
       toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
       schedulePostLoginRedirect(response);
     } catch (error: unknown) {
-      toast.error(getApiErrorMessage(error, t('error.authenticationFailed')), {
+      toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
         toastId: 'login-error'
       });
     } finally {
@@ -249,7 +235,7 @@ export function useLogin() {
     }
   }
 
-  async function handleAcademySelect(academyId: number) {
+  async function handleAcademySelect(academyId: string) {
     setPickingAcademy(true);
     try {
       const response = (await authService.login({
@@ -262,7 +248,7 @@ export function useLogin() {
         schedulePostLoginRedirect(response);
       }
     } catch (error: unknown) {
-      toast.error(getApiErrorMessage(error, t('error.authenticationFailed')), {
+      toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
         toastId: 'login-error'
       });
     } finally {
@@ -270,10 +256,10 @@ export function useLogin() {
     }
   }
 
-  async function handleOtpSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!otp.trim()) {
-      setOtpError(t('auth.enterPhoneOtp'));
+  async function handleOtpSubmit() {
+    const otpErrorKey = validateOtp(otp);
+    if (otpErrorKey) {
+      setOtpError(t(otpErrorKey));
       return;
     }
     setOtpLoading(true);
@@ -323,17 +309,7 @@ export function useLogin() {
         otpPhone,
         OtpType.LOGIN_BY_PHONE
       );
-
-      // TODO: Remove debug OTP display when real SMS provider is integrated
-      if (response?.data?.otp) {
-        toast.info(`${t('success.otpSent')}\n\n🔐 Code: ${response.data.otp}`, {
-          toastId: 'otp-resent',
-          autoClose: 8000,
-          style: { whiteSpace: 'pre-wrap' }
-        });
-      } else {
-        toast.success(t('success.otpSent'), { toastId: 'otp-resent' });
-      }
+      notifyOtpSent(response, t('success.otpSent'), 'otp-resent');
     } catch (error: unknown) {
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(

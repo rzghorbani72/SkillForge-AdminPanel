@@ -10,8 +10,8 @@ import { useStore } from '@/components/providers/store-provider';
  */
 export { useStore };
 
-export function useSelectedAcademyId(): number | null {
-  const [academyId, setAcademyId] = useState<number | null>(null);
+export function useSelectedAcademyId(): string | null {
+  const [academyId, setAcademyId] = useState<string | null>(null);
 
   useEffect(() => {
     setAcademyId(getSelectedAcademyId());

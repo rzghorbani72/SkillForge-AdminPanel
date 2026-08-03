@@ -17,11 +17,32 @@ export default function ForgetPasswordPage() {
   const subtitle =
     step === 'identifier'
       ? t('forgotPassword.enterIdentifier')
-      : step === 'otp'
-        ? t('forgotPassword.enterOtp')
-        : step === 'password'
-          ? t('forgotPassword.enterNewPassword')
-          : t('forgotPassword.canLoginNow');
+      : step === 'password'
+        ? t('forgotPassword.enterNewPassword')
+        : t('forgotPassword.canLoginNow');
+
+  if (step === 'otp') {
+    return (
+      <PhoneOtpScreen
+        activeTab="forgot"
+        otpPhone={
+          fp.authMethod === 'phone'
+            ? fp.formData.fullPhoneNumber || fp.formData.phoneNumber
+            : fp.formData.email
+        }
+        otp={fp.formData.otp}
+        setOtp={(v) => fp.handleInputChange('otp', v)}
+        otpLoading={fp.isLoading}
+        otpError={fp.errors.otp}
+        onSubmit={fp.handleVerifyOtp}
+        onBack={() => fp.setStep('identifier')}
+        title={t('forgotPassword.title')}
+        submitLabel={t('forgotPassword.verifyOtp')}
+        onResend={fp.handleSendOtp}
+        resending={fp.isLoading}
+      />
+    );
+  }
 
   return (
     <AuthShell
@@ -30,31 +51,6 @@ export default function ForgetPasswordPage() {
       subtitle={subtitle}
     >
       {step === 'identifier' && <IdentifierStep fp={fp} />}
-
-      {step === 'otp' && (
-        <PhoneOtpScreen
-          embedded
-          otpPhone={
-            fp.authMethod === 'phone'
-              ? fp.formData.fullPhoneNumber || fp.formData.phoneNumber
-              : fp.formData.email
-          }
-          otp={fp.formData.otp}
-          setOtp={(v) => fp.handleInputChange('otp', v)}
-          otpLoading={fp.isLoading}
-          otpError={fp.errors.otp}
-          onSubmit={(e) => {
-            e.preventDefault();
-            fp.handleVerifyOtp();
-          }}
-          onBack={() => fp.setStep('identifier')}
-          inputLabel={t('forgotPassword.verificationCode')}
-          submitLabel={t('forgotPassword.verifyOtp')}
-          backLabel={t('common.back')}
-          onResend={fp.handleSendOtp}
-          resending={fp.isLoading}
-        />
-      )}
 
       {step === 'password' && <PasswordStep fp={fp} />}
       {step === 'success' && <SuccessStep fp={fp} />}

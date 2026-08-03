@@ -48,7 +48,7 @@ interface EditableProfileRecord {
   phone_number?: string;
   birthday?: string | null;
   is_active?: boolean;
-  academy_id?: number | null;
+  academy_id?: string | null;
   role?: { name?: EditableRole } | null;
   Role?: { name?: EditableRole } | null;
 }

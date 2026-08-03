@@ -15,17 +15,10 @@ export default function AdminLoginPage() {
         setOtp={login.setOtp}
         otpError={login.errors.otp}
         otpLoading={login.isLoading}
-        onSubmit={(e) => {
-          e.preventDefault();
-          login.handleVerifyOtp();
-        }}
+        onSubmit={login.handleVerifyOtp}
         onBack={login.resetOtp}
         onResend={login.handleSendOtp}
         resending={login.isLoading}
-        title={login.t('auth.verifyYourContact')}
-        inputLabel={login.t('auth.enterVerificationCode')}
-        submitLabel={login.t('auth.verifyAndLogin')}
-        backLabel={login.t('auth.backToLogin')}
       />
     );
   }

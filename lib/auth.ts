@@ -20,7 +20,7 @@ export interface AuthUser {
 export interface UserProfile {
   id: number;
   userId: number;
-  academyId: number;
+  academyId: string;
   role: string;
   displayName: string;
   isActive: boolean;
@@ -35,7 +35,7 @@ export interface AuthType {
 export interface LoginCredentials {
   identifier: string;
   password: string;
-  academy_id?: number;
+  academy_id?: string;
 }
 
 export interface RegisterData {
@@ -45,7 +45,7 @@ export interface RegisterData {
   password: string;
   confirmed_password: string;
   role: string;
-  academy_id?: number;
+  academy_id?: string;
   display_name: string;
   bio?: string;
   website?: string;
@@ -241,7 +241,7 @@ class AuthService {
   async loginPhoneByOtp(credentials: {
     phone_number: string;
     otp: string;
-    academy_id?: number;
+    academy_id?: string;
   }): Promise<AuthUser> {
     try {
       const response = await apiClient.loginPhoneByOtp(credentials);
@@ -263,7 +263,7 @@ class AuthService {
   async loginEmailByOtp(credentials: {
     email: string;
     otp: string;
-    academy_id?: number;
+    academy_id?: string;
   }): Promise<AuthUser> {
     try {
       const response = await apiClient.loginEmailByOtp(credentials);
@@ -283,7 +283,7 @@ class AuthService {
 
   async selectAcademy(data: {
     temp_token: string;
-    academy_id: number;
+    academy_id: string;
   }): Promise<AuthUser> {
     try {
       const response = await apiClient.selectAcademy(data);
@@ -447,7 +447,7 @@ class AuthService {
   }
 
   // Get user's role in a specific store
-  async getUserRoleInStore(academyId: number): Promise<string | null> {
+  async getUserRoleInStore(academyId: string): Promise<string | null> {
     const response = await apiClient.getUserProfiles();
     const raw = response?.data as unknown;
     const profiles = Array.isArray(raw)
@@ -464,13 +464,13 @@ class AuthService {
   }
 
   // Check if user can manage a specific store
-  async canManageStoreById(academyId: number): Promise<boolean> {
+  async canManageStoreById(academyId: string): Promise<boolean> {
     const role = await this.getUserRoleInStore(academyId);
     return role === 'ADMIN' || role === 'MANAGER' || role === 'TEACHER';
   }
 
   // Check if user can access admin features in a store
-  async canAccessStoreAdmin(academyId: number): Promise<boolean> {
+  async canAccessStoreAdmin(academyId: string): Promise<boolean> {
     const role = await this.getUserRoleInStore(academyId);
     return role === 'ADMIN' || role === 'MANAGER';
   }

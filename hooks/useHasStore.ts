@@ -32,10 +32,9 @@ export function useHasStore(): boolean | undefined {
       profile?.academy_id ?? profile?.academyId ?? user.academyId ?? null;
     const currentAcademyData = profile?.academy ?? profile?.store ?? null;
 
-    if (academyId === null || academyId === undefined || academyId === 0) {
+    if (!academyId) {
       if (!currentAcademyData) return false;
-    }
-    if (academyId !== null && academyId !== undefined && academyId !== 0) {
+    } else {
       return true;
     }
     if (currentAcademyData && currentAcademyData.id) return true;

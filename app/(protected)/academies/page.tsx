@@ -33,14 +33,14 @@ export default function AcademiesPage() {
     useStore();
   const { user } = useAuthUser();
   const platformStaffView = isPlatformStaff(user);
-  const [switching, setSwitching] = useState<number | null>(null);
+  const [switching, setSwitching] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [editAcademy, setEditAcademy] = useState<Academy | null>(null);
   const [siteAcademy, setSiteAcademy] = useState<Academy | null>(null);
   // Last site on/off this session, so the card flips the moment the manager acts
   // instead of waiting for the academies refetch to come back.
   const [siteDisabledById, setSiteDisabledById] = useState<
-    Record<number, string | null>
+    Record<string, string | null>
   >({});
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<
@@ -54,13 +54,13 @@ export default function AcademiesPage() {
       (user as { isAdminProfile?: boolean })?.isAdminProfile
   );
 
-  function resolveUserRole(academy: { id: number; userRole?: string }): string {
+  function resolveUserRole(academy: { id: string; userRole?: string }): string {
     const raw =
       academy.userRole ?? (academy.id === currentAcademyId ? user?.role : '');
     return raw ? getRoleLabel(raw, t) : '';
   }
 
-  async function handleSwitch(academyId: number) {
+  async function handleSwitch(academyId: string) {
     if (academyId === currentAcademyId) {
       window.location.assign('/dashboard');
       return;
@@ -98,7 +98,6 @@ export default function AcademiesPage() {
     category?: string;
     logoId?: string;
     primaryColor?: string;
-    selectedPlan?: { slug: string; price_monthly: number };
   }) {
     const response = await apiClient.createAcademy({
       name: data.name,
@@ -107,22 +106,11 @@ export default function AcademiesPage() {
       logo_id: data.logoId
     });
 
-    await Promise.all([
-      data.selectedPlan
-        ? apiClient
-            .renewCurrentAcademySubscription({
-              plan_name: data.selectedPlan.slug,
-              months: 1,
-              amount: data.selectedPlan.price_monthly
-            })
-            .catch(() => {})
-        : Promise.resolve(),
-      data.primaryColor
-        ? apiClient
-            .updateCurrentThemeConfig(buildTheme(data.primaryColor))
-            .catch(() => {})
-        : Promise.resolve()
-    ]);
+    if (data.primaryColor) {
+      await apiClient
+        .updateCurrentThemeConfig(buildTheme(data.primaryColor))
+        .catch(() => {});
+    }
 
     const newId =
       (response as any)?.data?.id ??
@@ -131,15 +119,19 @@ export default function AcademiesPage() {
 
     toast.success(t('stores.storeCreated'));
 
+    // The academy now exists on the server, so the cached list is stale no
+    // matter what happens next. Clearing it first means even a failed switch
+    // still shows the new academy instead of hiding it behind old cache.
+    clearAcademyData();
+
     if (newId) {
       await handleSwitch(newId);
-    } else {
-      await refreshAcademies();
     }
+    await refreshAcademies();
   }
 
   async function handleUpdate(
-    id: number,
+    id: string,
     data: {
       name: string;
       slug: string;
@@ -147,7 +139,6 @@ export default function AcademiesPage() {
       description: string;
       logoId?: string;
       primaryColor?: string;
-      selectedPlan?: { slug: string; price_monthly: number };
     }
   ) {
     await apiClient.updateAcademyById(id, {
@@ -158,22 +149,11 @@ export default function AcademiesPage() {
       logo_id: data.logoId
     });
 
-    await Promise.all([
-      data.selectedPlan
-        ? apiClient
-            .renewCurrentAcademySubscription({
-              plan_name: data.selectedPlan.slug,
-              months: 1,
-              amount: data.selectedPlan.price_monthly
-            })
-            .catch(() => {})
-        : Promise.resolve(),
-      data.primaryColor
-        ? apiClient
-            .updateCurrentThemeConfig(buildTheme(data.primaryColor))
-            .catch(() => {})
-        : Promise.resolve()
-    ]);
+    if (data.primaryColor) {
+      await apiClient
+        .updateCurrentThemeConfig(buildTheme(data.primaryColor))
+        .catch(() => {});
+    }
 
     toast.success(t('stores.storeUpdated'));
     await refreshAcademies();

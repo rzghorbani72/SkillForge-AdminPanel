@@ -91,7 +91,7 @@ interface AudioItem {
   is_public?: boolean;
   created_at?: string;
   updated_at?: string;
-  academy_id?: number | null;
+  academy_id?: string | null;
   access_control?: AccessControl;
 }
 

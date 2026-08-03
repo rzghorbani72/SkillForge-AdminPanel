@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-const DURATION = 120;
+/** Matches OTP_COOLDOWN_SECONDS in Backend/src/otp/otp.service.ts. */
+const DURATION = 60;
 
 export function useOtpTimer() {
   const [seconds, setSeconds] = useState(DURATION);

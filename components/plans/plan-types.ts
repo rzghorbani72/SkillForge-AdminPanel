@@ -4,7 +4,7 @@ export type { SubscriptionPlanData, StructuredPlanLimits };
 
 export interface AcademyPlanData {
   id: number;
-  academy_id: number;
+  academy_id: string;
   kind: 'SUBSCRIPTION' | 'PACKAGE';
   name: string;
   description: string | null;

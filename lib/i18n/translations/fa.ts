@@ -431,20 +431,23 @@ export const fa = {
       'اسناد حقوقی هنوز در دسترس نیست. لطفاً بعداً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.',
     lastUpdated: 'آخرین به‌روزرسانی',
     version: 'نسخه',
-    reacceptTitle: 'به‌روزرسانی اسناد حقوقی',
-    reacceptSubtitle: 'برای ادامه، تغییرات زیر را مرور و تأیید کنید.',
-    acceptAndContinue: 'می‌پذیرم و ادامه می‌دهم',
+    reacceptTitle: 'توجه!',
+    reacceptSubtitle:
+      'قوانین ما از آخرین باری که وارد شدید کمی تغییر کرده است. خلاصهٔ تغییرات را ببینید و اگر موافق هستید تأیید کنید.',
+    acceptAndContinue: 'تأیید و ادامه',
     accepting: 'در حال ثبت پذیرش...',
-    agreeByClicking: 'با کلیک روی «می‌پذیرم و ادامه می‌دهم»، با',
+    agreeByClicking: 'با زدن «تأیید و ادامه»، با',
     notTranslatedNotice:
       'این سند هنوز به زبان شما ترجمه نشده است. نسخهٔ انگلیسی نمایش داده می‌شود.',
-    whatChanged: 'تغییرات نسبت به آخرین باری که پذیرفتید',
-    versionChange: 'نسخه {{previous}} ← {{current}}',
+    whatChanged: 'چه چیزی تغییر کرده؟',
+    changesAdded: 'موارد اضافه‌شده',
+    changesRemoved: 'موارد حذف‌شده',
+    onlyMinorChanges: 'فقط تغییرات جزئی نگارشی بوده و متن قوانین عوض نشده است.',
     firstTimeAcceptance: 'این اولین باری است که باید این سند را بپذیرید.',
     diffUnavailable:
       'در حال حاضر نمایش خلاصهٔ تغییرات ممکن نیست. لطفاً سند کامل را مطالعه کنید.',
     viewFullDocument: 'مشاهدهٔ سند کامل',
-    declineAndSignOut: 'رد می‌کنم و خارج می‌شوم',
+    declineAndSignOut: 'انصراف و خروج',
     decliningAndSigningOut: 'در حال خروج...'
   },
   subscription: {
@@ -544,6 +547,7 @@ export const fa = {
     phoneNotConfirmed: 'شماره تلفن تأیید نشده است',
     verifyPhoneToLogin: 'برای ورود، لطفاً شماره تلفن خود را تأیید کنید',
     otpSentToPhone: 'کد تأیید به شماره تلفن ارسال شد',
+    otpSentTo: 'کد تأیید ارسال شد به',
     verifyAndLogin: 'تأیید و ورود',
     verifyYourContact: 'اطلاعات تماس خود را تأیید کنید',
     createStoreAccount: 'ایجاد حساب آکادمی',
@@ -889,7 +893,6 @@ export const fa = {
     createModalHeading: 'یک آکادمی جدید بسازید',
     stepSpecs: 'مشخصات',
     stepBranding: 'برندینگ',
-    stepPlan: 'پلن',
     academyName: 'نام آکادمی',
     academyNamePlaceholder: 'مثلاً آکادمی مهر',
     subdomain: 'آدرس انگلیسی آکادمی',
@@ -944,8 +947,7 @@ export const fa = {
     categoryFinance: 'مالی',
     brandingLogo: 'لوگوی آکادمی',
     brandingLogoHint: 'کلیک کنید · PNG یا JPG، حداکثر ۲ مگابایت',
-    brandingColor: 'رنگ برند',
-    planStepHint: 'می‌توانید بعداً پلن خود را تغییر دهید یا نادیده بگیرید'
+    brandingColor: 'رنگ برند'
   },
   courses: {
     title: 'دوره‌ها',

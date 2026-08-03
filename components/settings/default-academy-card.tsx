@@ -22,7 +22,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 export function DefaultAcademyCard() {
   const { t } = useTranslation();
   const { academies, isLoading } = useStore();
-  const [selected, setSelected] = useState<number | ''>('');
+  const [selected, setSelected] = useState<string>('');
   const [saving, setSaving] = useState(false);
 
   const options = academies.map((a) => ({ id: a.id, name: a.name }));
@@ -66,9 +66,7 @@ export function DefaultAcademyCard() {
               <select
                 className="h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm"
                 value={selected}
-                onChange={(e) =>
-                  setSelected(e.target.value ? Number(e.target.value) : '')
-                }
+                onChange={(e) => setSelected(e.target.value)}
               >
                 <option value="">
                   {t('settings.defaultAcademy.noDefault')}

@@ -278,15 +278,18 @@ export const tr = {
       'Yasal belgeler henüz kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.',
     lastUpdated: 'Son güncelleme',
     version: 'Sürüm',
-    reacceptTitle: 'Güncellenmiş yasal belgeler',
+    reacceptTitle: 'Bilgilendirme!',
     reacceptSubtitle:
-      'Devam etmek için aşağıdaki değişiklikleri inceleyip kabul edin.',
+      'Son ziyaretinizden bu yana koşullarımız biraz değişti. Kısa özeti okuyup onaylayın.',
     acceptAndContinue: 'Kabul et ve devam et',
     accepting: 'Kabul kaydediliyor...',
     notTranslatedNotice:
       'Bu belge henüz dilinize çevrilmedi. İngilizce sürüm gösteriliyor.',
-    whatChanged: 'Son kabulünüzden bu yana neler değişti',
-    versionChange: 'Sürüm {{previous}} → {{current}}',
+    whatChanged: 'Ne değişti?',
+    changesAdded: 'Eklenenler',
+    changesRemoved: 'Çıkarılanlar',
+    onlyMinorChanges:
+      'Yalnızca küçük yazım/biçim düzeltmeleri — kuralların kendisi değişmedi.',
     firstTimeAcceptance: 'Bu belgeyi ilk kez kabul etmeniz gerekiyor.',
     diffUnavailable:
       'Değişiklik özeti şu anda kullanılamıyor. Lütfen belgenin tamamını okuyun.',

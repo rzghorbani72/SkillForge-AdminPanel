@@ -75,7 +75,7 @@ export interface UserProfile {
 export interface Profile {
   id: number;
   user_id: number;
-  academy_id: number | null; // Nullable: Admins can have no store
+  academy_id: string | null; // Nullable: Admins can have no store
   role_id: number;
   display_name: string;
   bio?: string;
@@ -143,11 +143,11 @@ export interface CurrencyConfig {
 }
 
 export interface Academy {
-  id: number;
+  id: string;
   uuid?: string;
   name: string;
   slug: string;
-  domain_id: number;
+  domain_id: string;
   /** Sometimes inlined instead of nested domain */
   private_address?: string;
   students_count?: number;
@@ -155,8 +155,8 @@ export interface Academy {
   managers_count?: number;
   userRole?: string;
   description?: string;
-  logo_id?: number;
-  cover_id?: number;
+  logo_id?: string;
+  cover_id?: string;
   is_active: boolean;
   /** Set while the manager has taken the public site offline. */
   site_disabled_at?: string | null;
@@ -176,7 +176,7 @@ export interface Academy {
   /** Present when API returns Prisma relation casing */
   Domain?: Pick<Domain, 'private_address' | 'public_address' | 'id'> &
     Partial<Domain>;
-  logo?: { id: number; publicUrl: string } | null;
+  logo?: { id: string; publicUrl: string } | null;
   cover?: Media;
   profiles?: Profile[];
   courses?: Course[];
@@ -186,7 +186,7 @@ export interface Academy {
 }
 
 export interface Domain {
-  id: number;
+  id: string;
   private_address: string;
   public_address?: string;
   is_active: boolean;
@@ -210,7 +210,7 @@ export interface Media {
   metadata?: any;
   is_public: boolean;
   owner_id: number;
-  academy_id?: number;
+  academy_id?: string;
   created_at: string;
   updated_at: string;
   deleted_at?: string;
@@ -234,7 +234,7 @@ export interface Course {
   is_certificate?: boolean;
   cover_id?: number;
   author_id: number;
-  academy_id: number;
+  academy_id: string;
   category_id?: number;
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   duration?: number;
@@ -295,7 +295,7 @@ export interface Product {
   is_published: boolean;
   is_featured: boolean;
   author_id: number;
-  academy_id: number;
+  academy_id: string;
   category_id?: number;
   sales_count: number;
   revenue: number;
@@ -642,7 +642,7 @@ export interface Theme {
   background_color: string;
   text_color: string;
   is_active: boolean;
-  academy_id: number;
+  academy_id: string;
   created_at: string;
   updated_at: string;
   academy?: Academy;
@@ -674,7 +674,7 @@ export interface UIBlockConfig {
 
 export interface UITemplate {
   id: number;
-  academy_id: number;
+  academy_id: string;
   blocks: UIBlockConfig[];
   draft_blocks?: UIBlockConfig[];
   template_preset?: string;
@@ -815,7 +815,7 @@ export interface CourseFilters {
   limit?: number;
   search?: string;
   category_id?: number;
-  academy_id?: number;
+  academy_id?: string;
   difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   is_free?: boolean;
   is_published?: boolean;
@@ -868,7 +868,7 @@ export interface CostCategory {
 
 export interface StoreFinancialRecord {
   id: number;
-  academy_id: number;
+  academy_id: string;
   cost_category_id?: number;
   period_start: string;
   period_end: string;
@@ -949,7 +949,7 @@ export interface FinancialFormula {
 export interface FormulaApplication {
   id: number;
   formula_id: number;
-  academy_id?: number;
+  academy_id?: string;
   period_start: string;
   period_end: string;
   adjustment_type: AdjustmentType;

@@ -18,10 +18,10 @@ export interface AcademyRow extends Academy {
 interface BuildAcademyColumnsArgs {
   t: (key: string, params?: InterpolationParams) => string;
   formatNumber: (value: number) => string;
-  currentAcademyId: number | null;
+  currentAcademyId: string | null;
   resolveUserRole: (academy: AcademyRow) => string;
-  switching: number | null;
-  onSwitch: (id: number) => void;
+  switching: string | null;
+  onSwitch: (id: string) => void;
   onEdit: (academy: Academy) => void;
   onManageSite: (academy: Academy) => void;
 }

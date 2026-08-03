@@ -30,7 +30,7 @@ export function SuccessStep({ fp }: { fp: Fp }) {
           type="button"
           variant="outline"
           onClick={fp.resetForm}
-          className="flex-1"
+          className="h-12 flex-1 rounded-[14px] text-[17px] font-medium"
         >
           {t('forgotPassword.resetAnotherPassword')}
         </Button>

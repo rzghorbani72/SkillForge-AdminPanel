@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 
 export interface AcademyProfile {
-  academy_id: number | null;
+  academy_id: string | null;
   role: string;
 }
 
@@ -31,7 +31,7 @@ interface AuthUser {
     | 'TEACHER'
     | 'STUDENT';
   lastLogin?: string | null;
-  academyId?: number | null;
+  academyId?: string | null;
   currentAcademy?: { id?: number; name: string; domain?: string | null } | null;
   isAdminProfile?: boolean;
   platformLevel?: boolean;
@@ -49,8 +49,8 @@ interface AuthUser {
       | 'MANAGER'
       | 'TEACHER'
       | 'STUDENT';
-    academy_id?: number | null;
-    academyId?: number | null;
+    academy_id?: string | null;
+    academyId?: string | null;
     [key: string]: unknown;
   };
 }

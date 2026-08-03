@@ -16,22 +16,41 @@ import { AuthSecondaryButton } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from '@/components/ui/link';
 import { toast } from 'react-toastify';
+import { notifyOtpSent } from '@/lib/otp-notify';
+import { apiErrorMessage } from '@/lib/api-error-message';
+import {
+  authField,
+  validateConfirmPassword,
+  validateFullName,
+  validatePassword,
+  validatePhone,
+  type Translate
+} from '@/lib/auth-validation';
 import {
   RegisterDetailsForm,
   type RegisterValues
 } from './_components/register-details-form';
 
-const useRegisterSchema = (t: (k: string) => string) =>
+const useRegisterSchema = (t: Translate) =>
   z
     .object({
-      name: z.string().min(2, t('auth.fullNameRequired')),
-      phone: z.string().min(7, t('auth.validPhoneNumber')),
-      password: z.string().min(6, t('auth.passwordTooShort')),
-      confirmPassword: z.string().min(1, t('auth.confirmPasswordRequired'))
+      name: authField(validateFullName, t),
+      phone: authField(validatePhone, t),
+      password: authField(validatePassword, t),
+      confirmPassword: z.string()
     })
-    .refine((d) => d.password === d.confirmPassword, {
-      message: t('auth.passwordsDoNotMatch'),
-      path: ['confirmPassword']
+    .superRefine((values, ctx) => {
+      const key = validateConfirmPassword(
+        values.password,
+        values.confirmPassword
+      );
+      if (key) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t(key),
+          path: ['confirmPassword']
+        });
+      }
     });
 
 export default function RegisterPage() {
@@ -108,19 +127,15 @@ export default function RegisterPage() {
       );
       setStep('verify');
       setOtpCode('');
-
-      // TODO: Remove debug OTP display when real SMS provider is integrated
-      const sentMsg = response?.data?.message ?? t('auth.sendVerificationCode');
-      if (response?.data?.otp) {
-        toast.info(`${sentMsg}\n\n🔐 Code: ${response.data.otp}`, {
-          autoClose: 8000,
-          style: { whiteSpace: 'pre-wrap' }
-        });
-      } else {
-        toast.info(sentMsg);
-      }
+      notifyOtpSent(
+        response,
+        response?.data?.message ?? t('auth.sendVerificationCode'),
+        'register-otp-sent'
+      );
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')), {
+        toastId: 'register-otp-error'
+      });
     } finally {
       setOtpLoading(false);
     }
@@ -179,7 +194,7 @@ export default function RegisterPage() {
       });
       setDone(true);
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'), {
+      toast.error(apiErrorMessage(err, t('common.error')), {
         toastId: 'register-error'
       });
     } finally {
@@ -196,18 +211,11 @@ export default function RegisterPage() {
         phone,
         OtpType.REGISTER_PHONE_VERIFICATION
       );
-
-      // TODO: Remove when real SMS provider is integrated
-      if (response?.data?.otp) {
-        toast.info(`${t('auth.resendCode')}\n\n🔐 Code: ${response.data.otp}`, {
-          autoClose: 8000,
-          style: { whiteSpace: 'pre-wrap' }
-        });
-      } else {
-        toast.info(t('auth.resendCode'));
-      }
-    } catch {
-      toast.error(t('common.error'));
+      notifyOtpSent(response, t('auth.resendCode'), 'register-otp-resent');
+    } catch (err: unknown) {
+      toast.error(apiErrorMessage(err, t('common.error')), {
+        toastId: 'register-otp-error'
+      });
     } finally {
       setOtpLoading(false);
     }
@@ -222,10 +230,28 @@ export default function RegisterPage() {
     );
   }
 
+  if (step === 'verify') {
+    return (
+      <PhoneOtpScreen
+        activeTab="register"
+        otpPhone={toE164Iran(form.getValues('phone'))}
+        otp={otpCode}
+        setOtp={setOtpCode}
+        otpLoading={verifying}
+        onSubmit={verifyAndCreateAccount}
+        onBack={() => setStep('details')}
+        title={t('auth.verifyPhoneTitle')}
+        submitLabel={t('auth.verifySmsOtp')}
+        onResend={resendOtp}
+        resending={otpLoading}
+      />
+    );
+  }
+
   return (
     <AuthShell activeTab="register" title={t('auth.registerTitle')}>
       <div>
-        {step === 'details' && alreadyRegistered && (
+        {alreadyRegistered && (
           <Alert className="mb-4 border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
             <AlertDescription className="space-y-2">
               <p>{t('auth.phoneAlreadyRegistered')}</p>
@@ -239,52 +265,13 @@ export default function RegisterPage() {
           </Alert>
         )}
 
-        {step === 'details' && (
-          <RegisterDetailsForm
-            form={form}
-            loading={otpLoading}
-            acceptedLegal={acceptedLegal}
-            onAcceptedLegalChange={setAcceptedLegal}
-            onSubmit={onDetailsSubmit}
-          />
-        )}
-
-        {step === 'verify' &&
-          (() => {
-            const [descBefore, descAfter] = t('auth.verifyPhoneDesc').split(
-              '{phone}'
-            );
-            const normalizedPhone = toE164Iran(form.getValues('phone'));
-            return (
-              <PhoneOtpScreen
-                embedded
-                otpPhone={normalizedPhone}
-                otp={otpCode}
-                setOtp={setOtpCode}
-                otpLoading={verifying}
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  verifyAndCreateAccount();
-                }}
-                onBack={() => setStep('details')}
-                title={t('auth.verifyPhoneTitle')}
-                subtitle={
-                  <>
-                    {descBefore}
-                    <span className="font-semibold" dir="ltr">
-                      {normalizedPhone}
-                    </span>
-                    {descAfter}
-                  </>
-                }
-                inputLabel={t('auth.enterVerificationCode')}
-                submitLabel={t('auth.verifySmsOtp')}
-                backLabel={t('common.edit')}
-                onResend={resendOtp}
-                resending={otpLoading}
-              />
-            );
-          })()}
+        <RegisterDetailsForm
+          form={form}
+          loading={otpLoading}
+          acceptedLegal={acceptedLegal}
+          onAcceptedLegalChange={setAcceptedLegal}
+          onSubmit={onDetailsSubmit}
+        />
       </div>
       <AuthSecondaryButton onClick={() => router.push(loginHref)}>
         {t('auth.signIn')}
