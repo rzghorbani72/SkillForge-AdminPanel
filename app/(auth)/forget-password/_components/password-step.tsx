@@ -49,7 +49,7 @@ export function PasswordStep({ fp }: { fp: Fp }) {
           type="button"
           variant="outline"
           onClick={() => fp.setStep('otp')}
-          className="flex-1"
+          className="h-12 flex-1"
           disabled={fp.isLoading}
         >
           {t('common.back')}
