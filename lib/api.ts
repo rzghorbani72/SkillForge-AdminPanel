@@ -551,6 +551,7 @@ class ApiClient {
     identifier: string;
     password: string;
     academy_id?: string;
+    captcha_token?: string;
   }) {
     const response = this.request('/auth/staff/login', {
       method: 'POST',

@@ -36,6 +36,7 @@ export interface LoginCredentials {
   identifier: string;
   password: string;
   academy_id?: string;
+  captcha_token?: string;
 }
 
 export interface RegisterData {

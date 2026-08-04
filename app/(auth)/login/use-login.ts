@@ -10,7 +10,10 @@ import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
 import { isPlatformStaff } from '@/lib/roles';
-import { isUserNotRegisteredError } from '@/lib/auth-login-errors';
+import {
+  isUserNotRegisteredError,
+  isCaptchaRequiredError
+} from '@/lib/auth-login-errors';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { notifyOtpSent } from '@/lib/otp-notify';
 import {
@@ -76,6 +79,8 @@ export function useLogin() {
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [registrationRequired, setRegistrationRequired] = useState(false);
+  const [captchaRequired, setCaptchaRequired] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState('');
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -199,9 +204,13 @@ export function useLogin() {
     try {
       const response = (await authService.login({
         identifier: toE164Iran(phone),
-        password
+        password,
+        ...(captchaRequired ? { captcha_token: captchaToken } : {})
       })) as LoginResponse | null;
       if (!response) return;
+
+      setCaptchaRequired(false);
+      setCaptchaToken('');
 
       if (response.phone_verification_required) {
         setOtpTempToken(response.temp_token ?? '');
@@ -227,6 +236,14 @@ export function useLogin() {
       toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
       schedulePostLoginRedirect(response);
     } catch (error: unknown) {
+      if (isCaptchaRequiredError(error)) {
+        setCaptchaRequired(true);
+        setCaptchaToken('');
+        toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
+          toastId: 'login-captcha-required'
+        });
+        return;
+      }
       toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
         toastId: 'login-error'
       });
@@ -365,6 +382,9 @@ export function useLogin() {
     unauthorizedError,
     handleSubmit,
     redirectPending,
+
+    captchaRequired,
+    setCaptchaToken,
 
     academyPickerOpen,
     availableAcademies,

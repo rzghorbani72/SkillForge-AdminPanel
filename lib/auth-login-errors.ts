@@ -13,3 +13,11 @@ export function isUserNotRegisteredError(error: unknown): boolean {
     isApiResponseError(error) && error.error.code === 'AUTH_USER_NOT_REGISTERED'
   );
 }
+
+/**
+ * True when the backend is asking for an hCaptcha token before it will
+ * process another login attempt from this IP (repeated failures).
+ */
+export function isCaptchaRequiredError(error: unknown): boolean {
+  return isApiResponseError(error) && error.error.code === 'CAPTCHA_REQUIRED';
+}

@@ -71,6 +71,8 @@ export default function LoginPage() {
       errors={login.errors}
       unauthorizedError={login.unauthorizedError}
       registrationRequired={login.registrationRequired}
+      captchaRequired={login.captchaRequired}
+      onCaptchaVerify={login.setCaptchaToken}
       onPhoneChange={(v) => {
         login.setPhone(v);
         if (login.errors.phone) login.setErrors((p) => ({ ...p, phone: '' }));

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthShell } from '@/components/auth/auth-shell';
 import {
@@ -8,6 +9,7 @@ import {
   AuthSecondaryButton
 } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
 import Link from '@/components/ui/link';
 import { toEnglishDigits } from '@/lib/phone-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -25,6 +27,8 @@ interface LoginFormProps {
   errors: Record<string, string>;
   unauthorizedError: string | null;
   registrationRequired?: boolean;
+  captchaRequired?: boolean;
+  onCaptchaVerify: (token: string) => void;
   onPhoneChange: (v: string) => void;
   onPasswordChange: (v: string) => void;
   onTogglePassword: () => void;
@@ -40,16 +44,26 @@ export function LoginForm({
   errors,
   unauthorizedError,
   registrationRequired = false,
+  captchaRequired = false,
+  onCaptchaVerify,
   onPhoneChange,
   onPasswordChange,
   onSubmit
 }: LoginFormProps) {
   const { t } = useTranslation();
   const router = useRouter();
+  const [hasCaptchaToken, setHasCaptchaToken] = useState(false);
+
+  function handleCaptchaVerify(token: string) {
+    setHasCaptchaToken(token !== '');
+    onCaptchaVerify(token);
+  }
 
   // The password field only exists in password mode, so OTP mode needs the phone alone.
   const allFieldsFilled =
-    phone.trim() !== '' && (loginMethod === 'otp' || password !== '');
+    phone.trim() !== '' &&
+    (loginMethod === 'otp' || password !== '') &&
+    (!captchaRequired || hasCaptchaToken);
 
   return (
     <AuthShell activeTab="login" title={t('auth.loginTitle')}>
@@ -130,6 +144,8 @@ export function LoginForm({
             </div>
           </>
         )}
+
+        {captchaRequired && <HCaptchaWidget onVerify={handleCaptchaVerify} />}
 
         <AuthSubmit
           loading={isLoading}
