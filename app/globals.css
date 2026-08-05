@@ -1,8 +1,16 @@
-/* Vazirmatn (Persian-first) + IBM Plex Mono (numbers/code) */
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 /* Template font-picker preview families — must match the site fonts the
    public store loads (edusphere globals.css) so the picker shows true labels. */
 @import url('https://fonts.googleapis.com/css2?family=Markazi+Text:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Lalezar&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* Vazirmatn — the single font family for the whole panel (fa + en + numbers).
+   Self-hosted variable font: one file covers every weight, no external CDN. */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/vazirmatn.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -106,10 +114,8 @@ body {
     @apply bg-background text-foreground antialiased;
     font-family:
       'Vazirmatn',
-      'Plus Jakarta Sans',
       -apple-system,
       BlinkMacSystemFont,
-      'Segoe UI',
       sans-serif;
     font-size: 14px;
     line-height: 1.5;
@@ -117,20 +123,7 @@ body {
     -webkit-font-smoothing: antialiased;
   }
 
-  [dir='rtl'] body {
-    font-family:
-      'Vazirmatn',
-      -apple-system,
-      sans-serif;
-  }
-
   [dir='ltr'] body {
-    font-family:
-      'Plus Jakarta Sans',
-      -apple-system,
-      BlinkMacSystemFont,
-      'Segoe UI',
-      sans-serif;
     letter-spacing: -0.01em;
   }
 
@@ -143,12 +136,13 @@ body {
     @apply font-semibold tracking-tight;
   }
 
-  /* IBM Plex Mono for numbers/codes (matching design spec) */
+  /* Numbers/codes stay in Vazirmatn; tabular figures keep columns aligned */
   code,
   pre,
   .tabular-nums,
   .font-mono {
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-family: 'Vazirmatn', sans-serif;
+    font-variant-numeric: tabular-nums;
   }
 
   ::selection {

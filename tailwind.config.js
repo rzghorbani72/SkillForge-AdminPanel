@@ -19,14 +19,12 @@ module.exports = {
       fontFamily: {
         sans: [
           'Vazirmatn',
-          'Plus Jakarta Sans',
           '-apple-system',
           'BlinkMacSystemFont',
-          '"Segoe UI"',
           'sans-serif'
         ],
-        vazir: ['Vazirmatn', 'sans-serif'],
-        jakarta: ['"Plus Jakarta Sans"', 'sans-serif']
+        mono: ['Vazirmatn', 'sans-serif'],
+        vazir: ['Vazirmatn', 'sans-serif']
       },
       fontSize: {
         /* Mentoryar density: cozy = 14px base */

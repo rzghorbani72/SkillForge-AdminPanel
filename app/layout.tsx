@@ -43,6 +43,13 @@ export default async function RootLayout({
     >
       <head>
         <meta name="google" content="notranslate" />
+        <link
+          rel="preload"
+          href="/fonts/vazirmatn.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         {irDomain ? (
           <link rel="alternate" hrefLang="fa-IR" href={irDomain} />
         ) : null}
