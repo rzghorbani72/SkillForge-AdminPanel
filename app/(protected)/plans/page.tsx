@@ -49,6 +49,8 @@ import {
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
 import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoices-list';
+import { TrialMoveCard } from '@/components/plans/trial-move-card';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { PlanFormDialog } from '@/components/plans/PlanFormDialog';
 import { AcademyPlanFormDialog } from '@/components/plans/AcademyPlanFormDialog';
 import { AcademyPlansList } from '@/components/plans/AcademyPlansList';
@@ -121,6 +123,8 @@ export default function PlansPage() {
     Array<{ provider: string; display_name: string }>
   >([]);
   const [needsGatewaySelection, setNeedsGatewaySelection] = useState(false);
+
+  const selectedAcademy = useCurrentAcademy();
 
   const [academyPlans, setAcademyPlans] = useState<AcademyPlanData[]>([]);
   const [isAcademyPlansLoading, setIsAcademyPlansLoading] = useState(false);
@@ -826,8 +830,10 @@ export default function PlansPage() {
         </TabsList>
 
         <TabsContent value="subscription" className="space-y-6 pt-4">
+          {/* The plan is bought from the platform but belongs to THIS academy:
+              a sibling academy has its own plan, storage and bill. */}
           <PlansTabScopeHeader
-            scope="platform"
+            scope="academy"
             title={t('plans.platformTabTitle')}
             description={t('plans.platformTabDescription')}
           />
@@ -836,6 +842,14 @@ export default function PlansPage() {
             currentPlan={currentPlan}
             t={t}
           />
+          {selectedAcademy && (
+            <TrialMoveCard
+              academyId={selectedAcademy.id}
+              academyName={selectedAcademy.name}
+              trial={currentSub?.trial}
+              onMoved={() => void fetchSubscriptionPlans()}
+            />
+          )}
 
           <div className="flex justify-center">
             <BillingPeriodToggle period={period} setPeriod={setPeriod} t={t} />

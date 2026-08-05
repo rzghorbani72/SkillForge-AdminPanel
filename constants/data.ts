@@ -378,6 +378,17 @@ export const navItems: NavItem[] = [
     section: 'platform',
     paymentGated: true
   },
+  // Spans academies, so it is platform-scoped: each academy's own page shows
+  // only its own invoices.
+  {
+    title: 'All Subscriptions',
+    href: '/billing',
+    icon: 'billing' as IconType,
+    label: 'allSubscriptions',
+    roles: ['MANAGER'],
+    scope: 'platform',
+    section: 'platform'
+  },
   {
     title: 'Academy Details',
     href: '/settings/academy',

@@ -4,6 +4,8 @@ import { ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ScopeBadge } from '@/components/settings/scope-badge';
+import type { SettingsScope } from '@/lib/settings-scope';
 
 interface PageHeaderProps {
   title: string;
@@ -12,6 +14,11 @@ interface PageHeaderProps {
   badge?: string;
   icon?: ReactNode;
   className?: string;
+  /**
+   * Whose data this page shows. Optional so existing callers are untouched;
+   * pass it where confusing one academy for another would be costly.
+   */
+  scope?: SettingsScope;
 }
 
 export function PageHeader({
@@ -20,7 +27,8 @@ export function PageHeader({
   children,
   badge,
   icon,
-  className
+  className,
+  scope
 }: PageHeaderProps) {
   return (
     <div
@@ -41,6 +49,7 @@ export function PageHeader({
               <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight sm:text-3xl">
                 {title}
               </h1>
+              {scope && <ScopeBadge scope={scope} />}
               {badge && (
                 <Badge
                   variant="secondary"

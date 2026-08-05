@@ -60,6 +60,25 @@ export const tr = {
       'Akademinizi bulamıyorsanız veya yeni bir akademiye kaydolmanız gerekiyorsa, lütfen akademi yöneticinizle iletişime geçin veya',
     contactSupport: 'destek ile iletişime geçin'
   },
+  billing: {
+    title: 'Tüm Abonelikler',
+    description: 'Ödeme yaptığınız her akademi, kendi planıyla',
+    overviewTitle: 'Akademileriniz',
+    overviewSubtitle: 'Her akademinin kendi aboneliği ve depolaması vardır',
+    academyColumn: 'Akademi',
+    planColumn: 'Plan',
+    statusColumn: 'Durum',
+    daysRemainingColumn: 'Kalan gün',
+    storageColumn: 'Depolama',
+    managePlan: 'Planı yönet',
+    emptyTitle: 'Henüz akademi yok',
+    emptyDesc: 'Abonelik başlatmak için ilk akademinizi oluşturun'
+  },
+  scope: {
+    viewingAcademy: 'Görüntülenen akademi:',
+    platformWide: 'Bu sayfa tüm akademilerinizi kapsar',
+    noAcademySelected: 'Akademi seçilmedi'
+  },
   common: {
     loading: 'Yükleniyor...',
     error: 'Bir hata oluştu',
@@ -198,6 +217,7 @@ export const tr = {
     deniedDescription: 'Bu sayfayı görüntüleme izniniz yok.'
   },
   navigation: {
+    allSubscriptions: 'Tüm Abonelikler',
     rolesPermissions: 'Roller ve İzinler',
     dashboard: 'Kontrol Paneli',
     platformOverview: 'Platform Genel Bakış',

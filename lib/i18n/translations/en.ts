@@ -134,6 +134,25 @@ export const en = {
       "If you can't find your academy or need to enroll in a new one, please contact your academy administrator or",
     contactSupport: 'contact support'
   },
+  billing: {
+    title: 'All Subscriptions',
+    description: 'Every academy you pay for, each with its own plan',
+    overviewTitle: 'Your academies',
+    overviewSubtitle: 'Each academy carries its own subscription and storage',
+    academyColumn: 'Academy',
+    planColumn: 'Plan',
+    statusColumn: 'Status',
+    daysRemainingColumn: 'Days left',
+    storageColumn: 'Storage',
+    managePlan: 'Manage plan',
+    emptyTitle: 'No academies yet',
+    emptyDesc: 'Create your first academy to start a subscription'
+  },
+  scope: {
+    viewingAcademy: 'Viewing academy:',
+    platformWide: 'This page covers all your academies',
+    noAcademySelected: 'No academy selected'
+  },
   common: {
     loading: 'Loading...',
     error: 'An error occurred',
@@ -363,6 +382,7 @@ export const en = {
     deniedDescription: 'You do not have permission to view this page.'
   },
   navigation: {
+    allSubscriptions: 'All Subscriptions',
     rolesPermissions: 'Roles & Permissions',
     dashboard: 'Dashboard',
     platformOverview: 'Platform Overview',
@@ -3842,6 +3862,19 @@ export const en = {
     deleteConfirm: 'Delete template "{{name}}"?'
   },
   plans: {
+    trial: {
+      claimTitle: 'Start your free 14-day trial',
+      claimDescription: 'You have one free trial. Use it on this academy.',
+      claimCta: 'Start free trial',
+      claimConfirm:
+        'Your one free trial will start on {academy} and run for 14 days.',
+      moveTitle: 'Move your free trial here',
+      moveDescription:
+        'Your trial is running on {academy} with {days} days left.',
+      moveConfirm:
+        '{from} becomes read-only immediately. You keep {days} days on {to} — no new days are added, and the trial cannot be moved again once it ends.',
+      applied: 'Free trial applied to this academy'
+    },
     title: 'Pricing Plans',
     subtitle:
       'Choose a plan for your academy or build subscriptions for your students',

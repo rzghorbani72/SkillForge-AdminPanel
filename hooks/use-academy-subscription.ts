@@ -8,6 +8,8 @@ import {
   shouldShowUpgradePrompt
 } from '@/lib/settings-scope';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
+import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
+import type { TrialContext } from '@/components/plans/trial-move-card';
 
 export interface AcademySubscriptionInvoice {
   id: number;
@@ -47,12 +49,17 @@ export interface AcademySubscriptionState {
     overage_fee_irr: number;
   };
   invoices?: AcademySubscriptionInvoice[];
+  /** Where the owner's one free-trial credit sits, and whether it can move here. */
+  trial?: TrialContext | null;
 }
 
 export function useAcademySubscription(enabled = true) {
   const [subscription, setSubscription] =
     useState<AcademySubscriptionState | null>(null);
   const [isLoading, setIsLoading] = useState(enabled);
+  // Each academy has its own plan, so switching academies must refetch. Without
+  // this the panel kept showing the previous academy's plan and storage bar.
+  const academyId = useCurrentAcademyId();
 
   const refresh = useCallback(async () => {
     if (!enabled) return;
@@ -65,7 +72,7 @@ export function useAcademySubscription(enabled = true) {
     } finally {
       setIsLoading(false);
     }
-  }, [enabled]);
+  }, [enabled, academyId]);
 
   useEffect(() => {
     void refresh();
@@ -81,6 +88,7 @@ export function useAcademySubscription(enabled = true) {
 
   return {
     subscription,
+    academyId,
     isLoading,
     refresh,
     planSlug,

@@ -124,6 +124,10 @@ export function AcademySelector() {
     }
   };
 
+  // Nothing to switch between, and no academy to name: the header stays clean
+  // while the manager is being sent to create their first one.
+  if (!isLoading && academies.length === 0) return null;
+
   if (isLoading || switching) {
     return (
       <div className="flex h-10 w-48 animate-pulse items-center gap-2.5 rounded-xl bg-muted px-3">

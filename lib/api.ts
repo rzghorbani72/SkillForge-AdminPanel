@@ -92,6 +92,30 @@ export type SubscriptionRequiredDetail = {
   message: string;
 };
 
+export interface AcademySubscriptionOverviewRow {
+  academy_id: string;
+  name: string;
+  slug: string;
+  plan_slug: string | null;
+  custom_plan_name: string | null;
+  status: string;
+  days_remaining: number | null;
+  grace_until: string | null;
+  is_trial: boolean;
+  data_at_risk: boolean;
+  has_paid: boolean;
+  storage_usage_gb: number;
+  included_storage_gb: number;
+  storage_overage_fee_irr: number;
+}
+
+export interface TrialClaimResult {
+  academy_id: string;
+  expires_at: string;
+  days_remaining: number;
+  moved_from_academy_id: string | null;
+}
+
 export interface AcademyFeatureFlags {
   enrollment_enabled: boolean;
   subscription_enabled: boolean;
@@ -1316,6 +1340,25 @@ class ApiClient {
     const response = await this.request('/academies/current/subscription');
     const payload = response.data as any;
     return payload?.data ?? payload;
+  }
+
+  /** Every academy the signed-in owner pays for, each with its own plan. */
+  async getSubscriptionsOverview(): Promise<AcademySubscriptionOverviewRow[]> {
+    const response = await this.request('/academies/subscriptions/overview');
+    const payload = response.data as {
+      data?: AcademySubscriptionOverviewRow[];
+    };
+    return payload?.data ?? [];
+  }
+
+  /** Claim the owner's one free trial for this academy, or move it here. */
+  async claimAcademyTrial(academyId: string): Promise<TrialClaimResult> {
+    const response = await this.request(`/academies/${academyId}/trial`, {
+      method: 'POST'
+    });
+    const payload = response.data as { data?: TrialClaimResult };
+    if (!payload?.data) throw new Error('Unexpected trial response');
+    return payload.data;
   }
 
   async renewCurrentAcademySubscription(data: {

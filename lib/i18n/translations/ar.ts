@@ -58,6 +58,25 @@ export const ar = {
       'إذا لم تجد أكاديميتك أو كنت بحاجة للتسجيل في واحدة جديدة، يرجى الاتصال بمسؤول أكاديميتك أو',
     contactSupport: 'اتصل بالدعم'
   },
+  billing: {
+    title: 'كل الاشتراكات',
+    description: 'كل أكاديمية تدفع لها، ولكل واحدة خطتها الخاصة',
+    overviewTitle: 'أكاديمياتك',
+    overviewSubtitle: 'كل أكاديمية لها اشتراكها ومساحتها المستقلة',
+    academyColumn: 'الأكاديمية',
+    planColumn: 'الخطة',
+    statusColumn: 'الحالة',
+    daysRemainingColumn: 'الأيام المتبقية',
+    storageColumn: 'المساحة',
+    managePlan: 'إدارة الخطة',
+    emptyTitle: 'لا توجد أكاديميات بعد',
+    emptyDesc: 'أنشئ أكاديميتك الأولى لبدء اشتراك'
+  },
+  scope: {
+    viewingAcademy: 'تعرض الأكاديمية:',
+    platformWide: 'هذه الصفحة تشمل جميع أكاديمياتك',
+    noAcademySelected: 'لم يتم اختيار أكاديمية'
+  },
   common: {
     loading: 'جاري التحميل...',
     error: 'حدث خطأ',
@@ -194,6 +213,7 @@ export const ar = {
     deniedDescription: 'ليس لديك صلاحية لعرض هذه الصفحة.'
   },
   navigation: {
+    allSubscriptions: 'كل الاشتراكات',
     rolesPermissions: 'الأدوار والصلاحيات',
     dashboard: 'لوحة التحكم',
     platformOverview: 'نظرة عامة على المنصة',
