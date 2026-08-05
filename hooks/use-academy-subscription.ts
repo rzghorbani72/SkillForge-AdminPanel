@@ -8,7 +8,10 @@ import {
   shouldShowUpgradePrompt
 } from '@/lib/settings-scope';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
-import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
+import {
+  useCurrentAcademyId,
+  useHasAcademyAccess
+} from '@/hooks/useCurrentAcademy';
 import type { TrialContext } from '@/components/plans/trial-move-card';
 
 export interface AcademySubscriptionInvoice {
@@ -54,15 +57,23 @@ export interface AcademySubscriptionState {
 }
 
 export function useAcademySubscription(enabled = true) {
+  // No academy yet (fresh manager, no store created) means there is nothing
+  // to fetch a plan for: /academies/current/subscription 422s without an
+  // X-Academy-ID, so skip the call entirely instead of firing and swallowing.
+  const hasAcademyAccess = useHasAcademyAccess();
+  const canFetch = enabled && hasAcademyAccess;
   const [subscription, setSubscription] =
     useState<AcademySubscriptionState | null>(null);
-  const [isLoading, setIsLoading] = useState(enabled);
+  const [isLoading, setIsLoading] = useState(canFetch);
   // Each academy has its own plan, so switching academies must refetch. Without
   // this the panel kept showing the previous academy's plan and storage bar.
   const academyId = useCurrentAcademyId();
 
   const refresh = useCallback(async () => {
-    if (!enabled) return;
+    if (!canFetch) {
+      setIsLoading(false);
+      return;
+    }
     try {
       setIsLoading(true);
       const data = await apiClient.getCurrentAcademySubscription();
@@ -72,7 +83,7 @@ export function useAcademySubscription(enabled = true) {
     } finally {
       setIsLoading(false);
     }
-  }, [enabled, academyId]);
+  }, [canFetch, academyId]);
 
   useEffect(() => {
     void refresh();
