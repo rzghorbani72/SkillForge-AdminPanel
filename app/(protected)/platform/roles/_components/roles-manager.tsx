@@ -45,12 +45,9 @@ export function RolesManager() {
     return sorted.filter(
       (role) =>
         role.name.toLowerCase().includes(needle) ||
-        getRoleMeta(role, t).label.toLowerCase().includes(needle)
+        getRoleMeta(role, t, formatNumber).label.toLowerCase().includes(needle)
     );
-  }, [roles, query, t]);
-
-  const customRoles = matched.filter((role) => !role.is_system);
-  const systemRoles = matched.filter((role) => role.is_system);
+  }, [roles, query, t, formatNumber]);
 
   const summary = useMemo(() => {
     const system = roles.filter((r) => r.is_system).length;
@@ -65,6 +62,13 @@ export function RolesManager() {
   const viewingAbilities = viewing
     ? getRoleAbilities(viewing, user, capLevel, ownLevel)
     : null;
+
+  // A live search filter could hide the role that was just created, and it is
+  // sorted to the top of the list — so clear the search and let the user see it.
+  const afterCreate = async () => {
+    setQuery('');
+    await reload();
+  };
 
   const confirmDelete = async () => {
     if (!deleting) return;
@@ -92,7 +96,7 @@ export function RolesManager() {
   return (
     <div className="space-y-5">
       <DataPanel
-        title={t('roles.customSectionTitle')}
+        title={t('roles.listTitle')}
         subtitle={loading ? t('roles.listSubtitle') : summary}
         actions={
           canCreate ? (
@@ -119,7 +123,7 @@ export function RolesManager() {
         }
       >
         <DataList
-          items={customRoles}
+          items={matched}
           rowKey={(role) => role.id}
           isLoading={loading}
           alwaysCards
@@ -128,30 +132,10 @@ export function RolesManager() {
             <div className="py-12">
               <EmptyState
                 icon={<Shield className="h-10 w-10" />}
-                title={t('roles.emptyTitle')}
-                description={t('roles.emptyDesc')}
-              />
-            </div>
-          }
-        />
-      </DataPanel>
-
-      <DataPanel
-        title={t('roles.systemSectionTitle')}
-        subtitle={t('roles.systemSectionSubtitle')}
-      >
-        <DataList
-          items={systemRoles}
-          rowKey={(role) => role.id}
-          isLoading={loading}
-          alwaysCards
-          renderCard={renderCard}
-          emptyState={
-            <div className="py-10">
-              <EmptyState
-                icon={<Shield className="h-8 w-8" />}
-                title={t('roles.noMatchTitle')}
-                description={t('roles.noMatchDesc')}
+                title={query ? t('roles.noMatchTitle') : t('roles.emptyTitle')}
+                description={
+                  query ? t('roles.noMatchDesc') : t('roles.emptyDesc')
+                }
               />
             </div>
           }
@@ -162,7 +146,7 @@ export function RolesManager() {
         <CreateRoleDialog
           open={creating}
           onClose={() => setCreating(false)}
-          onCreated={reload}
+          onCreated={afterCreate}
           catalog={catalog}
           maxLevel={capLevel}
         />
@@ -193,7 +177,7 @@ export function RolesManager() {
         open={!!deleting}
         title={t('roles.deleteTitle')}
         description={t('roles.deleteConfirm', {
-          role: deleting ? getRoleMeta(deleting, t).label : ''
+          role: deleting ? getRoleMeta(deleting, t, formatNumber).label : ''
         })}
         onConfirm={confirmDelete}
         onCancel={() => setDeleting(null)}

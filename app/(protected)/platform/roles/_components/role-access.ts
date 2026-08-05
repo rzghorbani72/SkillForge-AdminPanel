@@ -54,7 +54,9 @@ function readOnlyReason(
   if (!canWrite) return 'roles.readOnlyNoPermission';
   if (role.name === user?.role) return 'roles.readOnlyOwnRole';
   if (role.name === OWNER) return 'roles.readOnlyOwner';
-  if (role.is_system && !isOwner) return 'roles.readOnlySystem';
+  // Built-in roles are part of the platform contract: nobody edits them from the
+  // dashboard, not even the platform owner (the server refuses it too).
+  if (role.is_system) return 'roles.readOnlySystem';
   if (!isOwner && role.hierarchy_level > capLevel) return 'roles.readOnlyRank';
   return undefined;
 }

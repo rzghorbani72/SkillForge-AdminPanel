@@ -29,7 +29,7 @@ export function RoleCard({
 }: RoleCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const meta = getRoleMeta(role, t);
+  const meta = getRoleMeta(role, t, formatNumber);
   const inUse = role.user_count > 0;
 
   return (

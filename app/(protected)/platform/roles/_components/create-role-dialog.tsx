@@ -24,6 +24,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { getAccessLevelLabel, selectableAccessLevels } from './access-levels';
+import { defaultsFor } from './level-defaults';
 import { PermissionGrid } from './permission-grid';
 import { usePermissionSelection } from './use-permission-selection';
 import type { PermissionCatalog } from '@/types/roles';
@@ -198,11 +199,5 @@ export function CreateRoleDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function defaultsFor(catalog: PermissionCatalog, level: number) {
-  return (
-    catalog.defaults.find((entry) => entry.level === level)?.permissions ?? []
   );
 }

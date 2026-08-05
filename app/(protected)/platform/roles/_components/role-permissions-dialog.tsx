@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { RotateCcw } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -11,10 +12,14 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { PermissionGrid } from './permission-grid';
+import { PermissionReadonlyList } from './permission-readonly-list';
 import { usePermissionSelection } from './use-permission-selection';
+import { getAccessLevelLabel } from './access-levels';
+import { defaultsFor } from './level-defaults';
 import { getRoleMeta } from './role-meta';
 import type { PermissionCatalog, PlatformRole } from '@/types/roles';
 
@@ -40,12 +45,12 @@ export function RolePermissionsDialog({
   readOnlyReasonKey
 }: Props) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const [saving, setSaving] = useState(false);
-  const { granted, toggle, toggleResource, permissions } =
+  const { granted, toggle, toggleResource, replace, permissions } =
     usePermissionSelection(role.permissions);
 
-  // A read-only viewer sees every resource, not just the ones they could grant.
-  const resources = readOnly ? buildFullGrid(role, catalog) : catalog.resources;
+  const levelLabel = getAccessLevelLabel(role.hierarchy_level, t);
 
   const save = async () => {
     try {
@@ -70,25 +75,42 @@ export function RolePermissionsDialog({
               readOnly
                 ? 'roles.viewPermissionsFor'
                 : 'roles.editPermissionsFor',
-              { role: getRoleMeta(role, t).label }
+              { role: getRoleMeta(role, t, formatNumber).label }
             )}
           </DialogTitle>
           <DialogDescription>
             {readOnly
               ? t(readOnlyReasonKey ?? 'roles.readOnlyNoPermission')
-              : t('roles.permissionsHint')}
+              : t('roles.permissionsHintLevel', { level: levelLabel })}
           </DialogDescription>
         </DialogHeader>
 
-        <PermissionGrid
-          resources={resources}
-          granted={granted}
-          onToggle={toggle}
-          onToggleResource={(resource, grantAll) =>
-            toggleResource(resources, resource, grantAll)
-          }
-          readOnly={readOnly}
-        />
+        {readOnly ? (
+          <PermissionReadonlyList permissions={role.permissions} />
+        ) : (
+          <div className="space-y-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-lg"
+              onClick={() =>
+                replace(defaultsFor(catalog, role.hierarchy_level))
+              }
+            >
+              <RotateCcw className="me-1.5 h-3.5 w-3.5" />
+              {t('roles.applyLevelDefaults', { level: levelLabel })}
+            </Button>
+            <PermissionGrid
+              resources={catalog.resources}
+              granted={granted}
+              onToggle={toggle}
+              onToggleResource={(resource, grantAll) =>
+                toggleResource(catalog.resources, resource, grantAll)
+              }
+            />
+          </div>
+        )}
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={saving}>
@@ -104,26 +126,3 @@ export function RolePermissionsDialog({
     </Dialog>
   );
 }
-
-/**
- * The catalog is trimmed to what the viewer may grant, so a read-only viewer
- * would otherwise not see the grants their own role has outside that set.
- * Merge the role's own permissions back in so the view is the whole truth.
- */
-function buildFullGrid(role: PlatformRole, catalog: PermissionCatalog) {
-  const actionsByResource = new Map<string, Set<string>>();
-  for (const entry of catalog.resources) {
-    actionsByResource.set(entry.resource, new Set(entry.actions));
-  }
-  for (const permission of role.permissions) {
-    const actions = actionsByResource.get(permission.resource) ?? new Set();
-    actions.add(permission.action);
-    actionsByResource.set(permission.resource, actions);
-  }
-  return Array.from(actionsByResource.entries()).map(([resource, actions]) => ({
-    resource,
-    actions: Array.from(actions) as CatalogAction[]
-  }));
-}
-
-type CatalogAction = PermissionCatalog['resources'][number]['actions'][number];
