@@ -2974,7 +2974,7 @@ class ApiClient {
     return response.data as any;
   }
 
-  // ----- Platform roles & permissions (PLATFORM_OWNER only) -----
+  // ----- Platform roles & permissions (PLATFORM_OWNER, ADMIN, MANAGER) -----
 
   async getPermissionCatalog(): Promise<PermissionCatalog> {
     const response = await this.request('/platform/roles/catalog');
@@ -3008,6 +3008,18 @@ class ApiClient {
       body: JSON.stringify({ permissions })
     });
     return response.data as { id: string; permission_count: number };
+  }
+
+  async assignPlatformRole(id: string, profileId: string) {
+    const response = await this.request(`/platform/roles/${id}/assign`, {
+      method: 'POST',
+      body: JSON.stringify({ profile_id: profileId })
+    });
+    return response.data as {
+      profile_id: string;
+      role_id: string;
+      changed: boolean;
+    };
   }
 
   async deletePlatformRole(id: string) {

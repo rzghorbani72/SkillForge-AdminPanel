@@ -13,9 +13,13 @@ export interface RoleMeta {
 export function getRoleMeta(role: PlatformRole, t: TranslateFn): RoleMeta {
   const hintKey = `roles.hint.${role.name.toUpperCase()}`;
   const hint = t(hintKey);
+  // Built-in roles are translated by name; a custom role shows the label its
+  // creator typed, and only falls back to the raw key when there is none.
+  const translated = getRoleLabel(role.name, t);
+  const label = translated === role.name ? role.label || role.name : translated;
 
   return {
-    label: getRoleLabel(role.name, t),
+    label,
     hint: hint === hintKey ? (role.description ?? role.label) : hint
   };
 }

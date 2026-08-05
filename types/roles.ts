@@ -5,8 +5,15 @@ export interface CatalogResource {
   actions: PermissionAction[];
 }
 
+/** Starting grants offered when a role is created at this access level. */
+export interface LevelDefaults {
+  level: number;
+  permissions: RolePermission[];
+}
+
 export interface PermissionCatalog {
   resources: CatalogResource[];
+  defaults: LevelDefaults[];
 }
 
 export interface RolePermission {
@@ -24,6 +31,7 @@ export interface PlatformRole {
   hierarchy_level: number;
   /** null = global/platform-wide role; set = scoped to one academy (MANAGER-created). */
   academy_id: string | null;
+  created_at: string;
   user_count: number;
   permissions: RolePermission[];
 }
@@ -37,6 +45,7 @@ export interface CreateRolePayload {
   label?: string;
   description?: string;
   hierarchy_level: number;
+  permissions?: RolePermission[];
 }
 
 export interface UpdateRolePayload {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,16 +10,13 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { getRoleLabel } from '@/lib/i18n/role-label';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import type {
-  PermissionCatalog,
-  PlatformRole,
-  RolePermission
-} from '@/types/roles';
+import { PermissionGrid } from './permission-grid';
+import { usePermissionSelection } from './use-permission-selection';
+import { getRoleMeta } from './role-meta';
+import type { PermissionCatalog, PlatformRole } from '@/types/roles';
 
 interface Props {
   role: PlatformRole;
@@ -27,43 +24,28 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onSaved: () => void;
+  /** View-only: the server would reject a save from this user for this role. */
+  readOnly?: boolean;
+  /** i18n key telling the user why it is view-only. */
+  readOnlyReasonKey?: string;
 }
-
-const keyOf = (resource: string, action: string) => `${resource}:${action}`;
 
 export function RolePermissionsDialog({
   role,
   catalog,
   open,
   onClose,
-  onSaved
+  onSaved,
+  readOnly = false,
+  readOnlyReasonKey
 }: Props) {
   const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
-  const [granted, setGranted] = useState<Set<string>>(
-    () => new Set(role.permissions.map((p) => keyOf(p.resource, p.action)))
-  );
+  const { granted, toggle, toggleResource, permissions } =
+    usePermissionSelection(role.permissions);
 
-  const locked = role.name === 'PLATFORM_OWNER';
-
-  const toggle = (resource: string, action: string) => {
-    const key = keyOf(resource, action);
-    setGranted((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-
-  const permissions = useMemo<RolePermission[]>(
-    () =>
-      Array.from(granted).map((k) => {
-        const [resource, action] = k.split(':');
-        return { resource, action };
-      }),
-    [granted]
-  );
+  // A read-only viewer sees every resource, not just the ones they could grant.
+  const resources = readOnly ? buildFullGrid(role, catalog) : catalog.resources;
 
   const save = async () => {
     try {
@@ -84,55 +66,64 @@ export function RolePermissionsDialog({
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {t('roles.editPermissionsFor', {
-              role: getRoleLabel(role.name, t)
-            })}
+            {t(
+              readOnly
+                ? 'roles.viewPermissionsFor'
+                : 'roles.editPermissionsFor',
+              { role: getRoleMeta(role, t).label }
+            )}
           </DialogTitle>
           <DialogDescription>
-            {locked ? t('roles.ownerLockedHint') : t('roles.permissionsHint')}
+            {readOnly
+              ? t(readOnlyReasonKey ?? 'roles.readOnlyNoPermission')
+              : t('roles.permissionsHint')}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-2">
-          {catalog.resources.map((entry) => (
-            <div
-              key={entry.resource}
-              className="flex items-center justify-between gap-4 rounded-md border p-3"
-            >
-              <span className="text-sm font-medium">
-                {t(`roles.resource.${entry.resource}`)}
-              </span>
-              <div className="flex items-center gap-4">
-                {entry.actions.map((action) => {
-                  const key = keyOf(entry.resource, action);
-                  return (
-                    <label
-                      key={action}
-                      className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground"
-                    >
-                      <Checkbox
-                        checked={granted.has(key)}
-                        disabled={locked}
-                        onCheckedChange={() => toggle(entry.resource, action)}
-                      />
-                      {t(`roles.action.${action}`)}
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+        <PermissionGrid
+          resources={resources}
+          granted={granted}
+          onToggle={toggle}
+          onToggleResource={(resource, grantAll) =>
+            toggleResource(resources, resource, grantAll)
+          }
+          readOnly={readOnly}
+        />
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={saving}>
-            {t('common.cancel')}
+            {readOnly ? t('common.close') : t('common.cancel')}
           </Button>
-          <Button onClick={save} disabled={saving || locked}>
-            {saving ? t('common.saving') : t('common.save')}
-          </Button>
+          {!readOnly && (
+            <Button onClick={save} disabled={saving}>
+              {saving ? t('common.saving') : t('common.save')}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
+
+/**
+ * The catalog is trimmed to what the viewer may grant, so a read-only viewer
+ * would otherwise not see the grants their own role has outside that set.
+ * Merge the role's own permissions back in so the view is the whole truth.
+ */
+function buildFullGrid(role: PlatformRole, catalog: PermissionCatalog) {
+  const actionsByResource = new Map<string, Set<string>>();
+  for (const entry of catalog.resources) {
+    actionsByResource.set(entry.resource, new Set(entry.actions));
+  }
+  for (const permission of role.permissions) {
+    const actions = actionsByResource.get(permission.resource) ?? new Set();
+    actions.add(permission.action);
+    actionsByResource.set(permission.resource, actions);
+  }
+  return Array.from(actionsByResource.entries()).map(([resource, actions]) => ({
+    resource,
+    actions: Array.from(actions) as CatalogAction[]
+  }));
+}
+
+type CatalogAction = PermissionCatalog['resources'][number]['actions'][number];

@@ -1,6 +1,7 @@
 import { apiClient } from '@/lib/api';
 import type {
   EntitySearchOption,
+  EntitySearchProfilesResponse,
   EntitySearchUsersResponse
 } from '@/types/entity-search';
 
@@ -38,6 +39,30 @@ export async function fetchStudentOptions(
     limit: 20
   });
   return mapUsersResponse(response as EntitySearchUsersResponse);
+}
+
+/**
+ * Anyone in the current academy, tenant-scoped by the server (`GET /users`),
+ * unlike fetchStudentOptions/fetchTeacherOptions which call the wider
+ * /users/students and /users/teachers routes.
+ */
+export async function fetchAcademyUserOptions(
+  query: string
+): Promise<EntitySearchOption[]> {
+  const search = query.trim();
+  const response = (await apiClient.getUsers({
+    ...(search ? { search } : {}),
+    limit: 20
+  })) as EntitySearchProfilesResponse | null;
+
+  return (response?.profiles ?? []).map((profile) => ({
+    value: profile.id,
+    label: profile.display_name ?? profile.full_name ?? profile.id,
+    description:
+      [profile.role_name, profile.email ?? profile.phone_number]
+        .filter(Boolean)
+        .join(' · ') || undefined
+  }));
 }
 
 export async function fetchTeacherOptions(
