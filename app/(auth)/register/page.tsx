@@ -58,6 +58,8 @@ export default function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planParam = searchParams.get('plan');
+  // Login sends the number it could not find, so signup never asks for it twice.
+  const phoneParam = searchParams.get('phone') ?? '';
   const loginHref = planParam
     ? `/login?plan=${encodeURIComponent(planParam)}`
     : '/login';
@@ -97,7 +99,12 @@ export default function RegisterPage() {
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(useRegisterSchema(t)),
-    defaultValues: { name: '', phone: '', password: '', confirmPassword: '' }
+    defaultValues: {
+      name: '',
+      phone: phoneParam,
+      password: '',
+      confirmPassword: ''
+    }
   });
 
   // The notice belongs to the phone that was checked, so editing it clears it.

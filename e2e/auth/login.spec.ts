@@ -1,63 +1,41 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * AdminPanel `/login` is the MANAGER / TEACHER entry (phone + password staff
- * login). `/admin-login` is for ADMIN / SUPPORT and is covered separately.
+ * AdminPanel `/login` is the MANAGER / TEACHER entry and is identifier-first:
+ * step 1 asks for the phone alone and looks the account up, step 2 asks for the
+ * password. `/admin-login` is for ADMIN / SUPPORT and is covered separately.
  *
  * Form components used:
- *  - Phone: <PhoneInputWithCountry> — error adds `border-red-500` to the input
- *    (NOT `has-error`, which is the <AuthField> convention for password inputs).
- *  - Password: <AuthField> — error adds `has-error` class to the input.
+ *  - Phone and password: <AuthField> — error adds `has-error` to the input.
  *  - Submit: <AuthSubmit> — no explicit type, so the last non-type-button in the form.
  */
 const submit = (page: import('@playwright/test').Page) =>
   page.locator('form button:not([type="button"])').last();
 
-test.describe('AdminPanel manager login — validation (no backend)', () => {
-  test('shows field errors when submitting an empty form', async ({ page }) => {
-    await page.goto('/login');
-
-    await submit(page).click();
-
-    // PhoneInputWithCountry flags the phone field with border-red-500.
-    await expect(page.locator('input[type="tel"]')).toHaveClass(
-      /border-red-500/
-    );
-    // AuthField flags the password field with has-error.
-    await expect(page.locator('input[type="password"]')).toHaveClass(
-      /has-error/
-    );
-  });
-
-  test('flags a too-short password', async ({ page }) => {
-    await page.goto('/login');
-
-    await page.locator('input[type="tel"]').fill('9121234567');
-    await page.locator('input[type="password"]').fill('123');
-    await submit(page).click();
-
-    await expect(page.locator('input[type="password"]')).toHaveClass(
-      /has-error/
-    );
-  });
-
-  test('OTP method hides the password field but still requires phone', async ({
+test.describe('AdminPanel manager login — step 1 (no backend)', () => {
+  test('asks for the phone only, never a password up front', async ({
     page
   }) => {
     await page.goto('/login');
 
-    // Password is the default method.
-    await expect(page.locator('input[type="password"]')).toBeVisible();
-
-    // Second toggle button switches to one-time-code login.
-    await page.locator('.bg-muted button').nth(1).click();
+    await expect(page.locator('input[type="tel"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toHaveCount(0);
+  });
 
-    // Submitting with no phone still flags the phone field (client-side).
-    await submit(page).click();
-    await expect(page.locator('input[type="tel"]')).toHaveClass(
-      /border-red-500/
-    );
+  test('cannot continue with an empty phone', async ({ page }) => {
+    await page.goto('/login');
+
+    await expect(submit(page)).toBeDisabled();
+
+    await page.locator('input[type="tel"]').fill('9121234567');
+    await expect(submit(page)).toBeEnabled();
+  });
+
+  test('offers signup from the login screen', async ({ page }) => {
+    await page.goto('/login');
+
+    await page.locator('button', { hasText: /ثبت‌نام|Sign Up/i }).click();
+    await expect(page).toHaveURL(/\/register/);
   });
 });
 
@@ -78,23 +56,46 @@ test.describe('AdminPanel manager login — happy path @backend', () => {
 
     await page.goto('/login');
     await page.locator('input[type="tel"]').fill(phone!);
+    await submit(page).click();
+
+    await expect(page.locator('input[type="password"]')).toBeVisible({
+      timeout: 15_000
+    });
     await page.locator('input[type="password"]').pressSequentially(password!);
     await submit(page).click();
 
     await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
   });
 
-  test('shows an error for wrong credentials', async ({ page }) => {
+  test('an unknown phone is sent to signup, not to a password box', async ({
+    page
+  }) => {
     await page.goto('/login');
-    await page
-      .locator('input[type="tel"]')
-      .fill(process.env.E2E_MANAGER_PHONE || '9120000000');
+    await page.locator('input[type="tel"]').fill('09120000000');
+    await submit(page).click();
+
+    await expect(page.locator('a[href^="/register"]')).toBeVisible({
+      timeout: 15_000
+    });
+    await expect(page.locator('input[type="password"]')).toHaveCount(0);
+  });
+
+  test('shows an error for a wrong password', async ({ page }) => {
+    const phone = process.env.E2E_MANAGER_PHONE;
+    test.skip(!phone, 'E2E_MANAGER_PHONE required');
+
+    await page.goto('/login');
+    await page.locator('input[type="tel"]').fill(phone!);
+    await submit(page).click();
+
+    await expect(page.locator('input[type="password"]')).toBeVisible({
+      timeout: 15_000
+    });
     await page
       .locator('input[type="password"]')
       .pressSequentially('definitely-wrong-pass');
     await submit(page).click();
 
-    // Stays on /login; an error alert surfaces.
     await expect(page).toHaveURL(/\/login/);
   });
 });

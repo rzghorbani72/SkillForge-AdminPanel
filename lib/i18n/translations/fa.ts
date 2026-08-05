@@ -508,6 +508,11 @@ export const fa = {
     loginWithPassword: 'رمز عبور',
     loginWithOtp: 'کد یکبار مصرف',
     sendLoginCode: 'ارسال کد',
+    continueLabel: 'ادامه',
+    noSignInMethodAvailable:
+      'برای این حساب راهی برای ورود تنظیم نشده است. لطفاً با مدیر آکادمی یا پشتیبانی تماس بگیرید.',
+    changeIdentifier: 'تغییر شماره',
+    useOtpInstead: 'ورود با کد یکبارمصرف',
     accountNotRegisteredForLogin: 'حسابی با این شماره تلفن ثبت نشده است.',
     phoneAlreadyRegistered:
       'این شماره موبایل قبلاً ثبت‌نام کرده است. لطفاً وارد شوید.',
@@ -4518,7 +4523,7 @@ export const fa = {
    */
   apiError: {
     AUTH_INVALID_CREDENTIALS:
-      'شماره تلفن/ایمیل یا رمز عبور درست نیست. اگر رمز خود را فراموش کرده‌اید، از گزینهٔ «بازیابی رمز عبور» استفاده کنید.',
+      'شماره تلفن/ایمیل یا رمز عبور درست نیست. اگر رمز خود را فراموش کرده‌اید «بازیابی رمز عبور» و اگر هنوز حساب ندارید «ثبت‌نام» را بزنید.',
     AUTH_USER_NOT_REGISTERED:
       'حسابی با این مشخصات ثبت نشده است. برای ساختن حساب جدید روی «ثبت‌نام» بزنید.',
     AUTH_NO_PASSWORD_SET:

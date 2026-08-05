@@ -16,6 +16,8 @@ import {
 } from '@/lib/auth-login-errors';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { notifyOtpSent } from '@/lib/otp-notify';
+import type { AccountIdentity } from '@/types/auth';
+import { nextStepFor } from '@/lib/auth-identify';
 import {
   collectErrors,
   validateOtp,
@@ -24,7 +26,6 @@ import {
 } from '@/lib/auth-validation';
 
 type Academy = { id: string; name: string; slug: string };
-export type LoginMethod = 'password' | 'otp';
 
 type LoginResponse = {
   currentProfile?: { Role?: { name?: string }; academy_id?: string };
@@ -57,7 +58,7 @@ export function useLogin() {
   const planParam = searchParams.get('plan');
   const { pending: redirectPending, scheduleRedirect } = useDelayedRedirect();
 
-  const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
+  const [identity, setIdentity] = useState<AccountIdentity | null>(null);
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -91,13 +92,11 @@ export function useLogin() {
     }
   }, [searchParams, t]);
 
-  function validate() {
+  function validate(step: 'identify' | 'password') {
     const e = collectErrors(
       {
         phone: validatePhone(phone),
-        ...(loginMethod === 'password'
-          ? { password: validatePassword(password) }
-          : {})
+        ...(step === 'password' ? { password: validatePassword(password) } : {})
       },
       t
     );
@@ -187,6 +186,8 @@ export function useLogin() {
         );
       setRegistrationRequired(needsRegistration);
       if (needsRegistration) {
+        // Fall back to step 1 so the signup hint is visible where it belongs.
+        setIdentity(null);
         setErrors((prev) => ({ ...prev, phone: '' }));
       } else {
         toast.error(message, { toastId: 'login-error' });
@@ -196,10 +197,56 @@ export function useLogin() {
     }
   }
 
+  /**
+   * Step 1 of identifier-first login: look the phone up before asking for a
+   * password, so an unknown number is offered signup instead of a login it
+   * could never pass.
+   */
+  async function handleIdentify() {
+    if (!validate('identify')) return;
+    setIsLoading(true);
+    setRegistrationRequired(false);
+    try {
+      const { data } = await apiClient.identifyStaff(
+        toE164Iran(phone),
+        captchaRequired ? captchaToken : undefined
+      );
+      setCaptchaRequired(data.captcha_required);
+      setCaptchaToken('');
+
+      const next = nextStepFor(data);
+      if (next === 'register') {
+        setRegistrationRequired(true);
+        return;
+      }
+
+      setIdentity(data);
+      if (next === 'otp') {
+        await requestLoginOtp();
+        return;
+      }
+      if (next === 'blocked') {
+        toast.error(t('auth.noSignInMethodAvailable'), {
+          toastId: 'login-no-method'
+        });
+      }
+    } catch (error: unknown) {
+      if (isCaptchaRequiredError(error)) {
+        setCaptchaRequired(true);
+        setCaptchaToken('');
+      }
+      toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
+        toastId: 'login-error'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
-    if (loginMethod === 'otp') return requestLoginOtp();
+    if (!identity) return handleIdentify();
+    if (!validate('password')) return;
     setIsLoading(true);
     try {
       const response = (await authService.login({
@@ -367,9 +414,18 @@ export function useLogin() {
     setErrors((prev) => ({ ...prev, phone: '' }));
   }
 
+  // Carries what the user already typed into signup, so step 1 is never retyped.
+  const registerHref = (() => {
+    const params = new URLSearchParams();
+    if (phone.trim()) params.set('phone', phone.trim());
+    if (planParam) params.set('plan', planParam);
+    const query = params.toString();
+    return query ? `/register?${query}` : '/register';
+  })();
+
   return {
-    loginMethod,
-    setLoginMethod,
+    identity,
+    registerHref,
     phone,
     setPhone,
     password,
@@ -382,6 +438,12 @@ export function useLogin() {
     unauthorizedError,
     handleSubmit,
     redirectPending,
+    useOtpInstead: requestLoginOtp,
+    changeIdentifier: () => {
+      setIdentity(null);
+      setPassword('');
+      setErrors({});
+    },
 
     captchaRequired,
     setCaptchaToken,

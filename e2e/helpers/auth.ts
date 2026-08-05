@@ -16,7 +16,12 @@ async function staffLogin(
   password: string
 ): Promise<void> {
   await page.goto('/login');
+  // Identifier-first: the phone is looked up before any password is asked for.
   await page.locator('input[type="tel"]').fill(phone);
+  await submit(page).click();
+  await expect(page.locator('input[type="password"]')).toBeVisible({
+    timeout: 20_000
+  });
   await page.locator('input[type="password"]').pressSequentially(password);
   await submit(page).click();
   // Lands on /dashboard or /onboarding/create-academy — either way, not /login.

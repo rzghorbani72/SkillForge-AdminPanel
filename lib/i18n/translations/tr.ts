@@ -318,6 +318,11 @@ export const tr = {
     loginWithPassword: 'Parola',
     loginWithOtp: 'Tek kullanımlık kod',
     sendLoginCode: 'Kod gönder',
+    continueLabel: 'Devam',
+    noSignInMethodAvailable:
+      'Bu hesap için henüz bir giriş yöntemi tanımlı değil. Lütfen akademi yöneticinizle veya destekle iletişime geçin.',
+    changeIdentifier: 'Numarayı değiştir',
+    useOtpInstead: 'Tek kullanımlık kodla giriş yap',
     accountNotRegisteredForLogin: 'Bu telefon numarasıyla kayıtlı hesap yok.',
     phoneAlreadyRegistered:
       'Bu telefon numarası zaten kayıtlı. Lütfen giriş yapın.',
@@ -2555,7 +2560,7 @@ export const tr = {
    */
   apiError: {
     AUTH_INVALID_CREDENTIALS:
-      'That phone/email or password is not correct. If you forgot your password, use "Reset password".',
+      'That phone/email or password is not correct. If you forgot your password use "Reset password"; if you do not have an account yet, use "Sign up".',
     AUTH_USER_NOT_REGISTERED:
       'No account is registered with these details. Tap "Sign up" to create one.',
     AUTH_NO_PASSWORD_SET:

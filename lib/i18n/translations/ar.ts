@@ -312,6 +312,11 @@ export const ar = {
     loginWithPassword: 'كلمة المرور',
     loginWithOtp: 'رمز لمرة واحدة',
     sendLoginCode: 'إرسال الرمز',
+    continueLabel: 'متابعة',
+    noSignInMethodAvailable:
+      'لا توجد طريقة لتسجيل الدخول إلى هذا الحساب بعد. يرجى التواصل مع مدير الأكاديمية أو الدعم.',
+    changeIdentifier: 'تغيير الرقم',
+    useOtpInstead: 'تسجيل الدخول برمز لمرة واحدة',
     accountNotRegisteredForLogin: 'لا يوجد حساب مسجل بهذا الرقم.',
     phoneAlreadyRegistered: 'رقم الهاتف هذا مسجل بالفعل. الرجاء تسجيل الدخول.',
     registerToLoginHint: 'أنشئ حسابًا مجانيًا أولاً، ثم سجّل الدخول.',
@@ -2486,7 +2491,7 @@ export const ar = {
    */
   apiError: {
     AUTH_INVALID_CREDENTIALS:
-      'That phone/email or password is not correct. If you forgot your password, use "Reset password".',
+      'That phone/email or password is not correct. If you forgot your password use "Reset password"; if you do not have an account yet, use "Sign up".',
     AUTH_USER_NOT_REGISTERED:
       'No account is registered with these details. Tap "Sign up" to create one.',
     AUTH_NO_PASSWORD_SET:

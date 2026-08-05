@@ -517,6 +517,11 @@ export const en = {
     loginWithPassword: 'Password',
     loginWithOtp: 'One-time code',
     sendLoginCode: 'Send code',
+    continueLabel: 'Continue',
+    noSignInMethodAvailable:
+      'This account has no way to sign in yet. Please contact your academy manager or support.',
+    changeIdentifier: 'Change number',
+    useOtpInstead: 'Sign in with a one-time code',
     accountNotRegisteredForLogin:
       'No account is registered with this phone number.',
     phoneAlreadyRegistered:
@@ -4527,7 +4532,7 @@ export const en = {
    */
   apiError: {
     AUTH_INVALID_CREDENTIALS:
-      'That phone/email or password is not correct. If you forgot your password, use "Reset password".',
+      'That phone/email or password is not correct. If you forgot your password use "Reset password"; if you do not have an account yet, use "Sign up".',
     AUTH_USER_NOT_REGISTERED:
       'No account is registered with these details. Tap "Sign up" to create one.',
     AUTH_NO_PASSWORD_SET:

@@ -31,6 +31,7 @@ import type {
   UpdateLessonDownloadPolicyPayload,
   UpdateTutoringOfferPayload
 } from '@/types/learning-operations';
+import type { AccountIdentity } from '@/types/auth';
 import type {
   CreateRolePayload,
   PermissionCatalog,
@@ -611,6 +612,20 @@ class ApiClient {
     return this.request('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData)
+    });
+  }
+
+  /**
+   * Identifier-first login step 1: ask which sign-in methods this phone/email
+   * has, so an unknown one is sent to signup instead of failing a password.
+   */
+  async identifyStaff(identifier: string, captcha_token?: string) {
+    return this.request<AccountIdentity>('/auth/staff/identify', {
+      method: 'POST',
+      body: JSON.stringify({
+        identifier,
+        ...(captcha_token ? { captcha_token } : {})
+      })
     });
   }
 

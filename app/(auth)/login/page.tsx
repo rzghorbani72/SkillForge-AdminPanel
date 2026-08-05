@@ -1,7 +1,8 @@
 'use client';
 
 import { useLogin } from './use-login';
-import { LoginForm } from './_components/login-form';
+import { IdentifyStep } from '@/components/auth/identify-step';
+import { PasswordStep } from '@/components/auth/password-step';
 import { AcademyPicker } from './_components/academy-picker';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
@@ -38,7 +39,7 @@ export default function LoginPage() {
           <div className="space-y-1 rounded-md border border-amber-200 bg-amber-50 p-3 text-center text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
             <p>{t('auth.registerToLoginHint')}</p>
             <Link
-              href="/register"
+              href={login.registerHref}
               className="font-semibold text-primary hover:underline"
             >
               {t('auth.createAccountToContinue')} →
@@ -60,30 +61,46 @@ export default function LoginPage() {
     );
   }
 
+  if (login.identity) {
+    return (
+      <PasswordStep
+        title={t('auth.loginTitle')}
+        identifier={login.phone}
+        forgotPasswordHref="/forget-password"
+        password={login.password}
+        canUseOtp={login.identity.can_use_otp}
+        isLoading={login.isLoading}
+        error={login.errors.password}
+        captchaRequired={login.captchaRequired}
+        onCaptchaVerify={login.setCaptchaToken}
+        onPasswordChange={(v) => {
+          login.setPassword(v);
+          if (login.errors.password)
+            login.setErrors((p) => ({ ...p, password: '' }));
+        }}
+        onUseOtp={login.useOtpInstead}
+        onChangeIdentifier={login.changeIdentifier}
+        onSubmit={login.handleSubmit}
+      />
+    );
+  }
+
   return (
-    <LoginForm
-      loginMethod={login.loginMethod}
-      onLoginMethodChange={login.setLoginMethod}
-      phone={login.phone}
-      password={login.password}
-      showPassword={login.showPassword}
+    <IdentifyStep
+      title={t('auth.loginTitle')}
+      identifier={login.phone}
       isLoading={login.isLoading}
-      errors={login.errors}
-      unauthorizedError={login.unauthorizedError}
-      registrationRequired={login.registrationRequired}
+      error={login.errors.phone}
+      notice={login.unauthorizedError}
+      notRegistered={login.registrationRequired}
+      registerHref={login.registerHref}
       captchaRequired={login.captchaRequired}
       onCaptchaVerify={login.setCaptchaToken}
-      onPhoneChange={(v) => {
+      onIdentifierChange={(v) => {
         login.setPhone(v);
         if (login.errors.phone) login.setErrors((p) => ({ ...p, phone: '' }));
         if (login.registrationRequired) login.clearRegistrationHint();
       }}
-      onPasswordChange={(v) => {
-        login.setPassword(v);
-        if (login.errors.password)
-          login.setErrors((p) => ({ ...p, password: '' }));
-      }}
-      onTogglePassword={login.toggleShowPassword}
       onSubmit={login.handleSubmit}
     />
   );
