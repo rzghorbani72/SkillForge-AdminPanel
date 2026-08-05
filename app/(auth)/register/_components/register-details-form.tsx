@@ -86,6 +86,7 @@ export function RegisterDetailsForm({
 
       <LegalConsentCheckbox
         lead={t('auth.byCreatingAccount')}
+        includeStaffTerms
         checked={acceptedLegal}
         onChange={onAcceptedLegalChange}
         disabled={loading}

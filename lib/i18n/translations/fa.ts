@@ -733,6 +733,7 @@ export const fa = {
     termsOfService: 'شرایط خدمات',
     and: 'و',
     privacyPolicy: 'سیاست حریم خصوصی',
+    staffTerms: 'شرایط کارکنان و مدیران',
     agree: ' موافقت می‌کنید.'
   },
   dashboard: {

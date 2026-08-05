@@ -1,4 +1,9 @@
-export type LegalDocType = 'TERMS' | 'PRIVACY' | 'REFUND' | 'ACADEMY_AGREEMENT';
+export type LegalDocType =
+  | 'TERMS'
+  | 'PRIVACY'
+  | 'REFUND'
+  | 'ACADEMY_AGREEMENT'
+  | 'STAFF_TERMS';
 
 export type LegalDocument = {
   id: string;

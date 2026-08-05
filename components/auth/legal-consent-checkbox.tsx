@@ -9,13 +9,17 @@ interface LegalConsentCheckboxProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
+  /** Staff signups (manager/teacher) also consent to the staff terms here, so
+   *  the session gate never re-asks for them on the first login. */
+  includeStaffTerms?: boolean;
 }
 
 export function LegalConsentCheckbox({
   lead,
   checked,
   onChange,
-  disabled
+  disabled,
+  includeStaffTerms = false
 }: LegalConsentCheckboxProps) {
   const { t } = useTranslation();
 
@@ -33,10 +37,22 @@ export function LegalConsentCheckbox({
         <Link href="/terms" className="underline hover:text-foreground">
           {t('auth.termsOfService')}
         </Link>{' '}
-        {t('auth.and')}{' '}
+        {includeStaffTerms ? ', ' : `${t('auth.and')} `}
         <Link href="/privacy" className="underline hover:text-foreground">
           {t('auth.privacyPolicy')}
         </Link>
+        {includeStaffTerms && (
+          <>
+            {' '}
+            {t('auth.and')}{' '}
+            <Link
+              href="/staff-terms"
+              className="underline hover:text-foreground"
+            >
+              {t('auth.staffTerms')}
+            </Link>
+          </>
+        )}
         {t('auth.agree')}
       </span>
     </label>

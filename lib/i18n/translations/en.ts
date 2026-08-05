@@ -743,6 +743,7 @@ export const en = {
     termsOfService: 'Terms of Service',
     and: 'and',
     privacyPolicy: 'Privacy Policy',
+    staffTerms: 'Staff Terms',
     agree: '.'
   },
   dashboard: {
