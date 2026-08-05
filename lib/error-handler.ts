@@ -36,8 +36,9 @@ export class ErrorHandler {
   }
 
   /**
-   * 401 and 403 are already handled (redirect + toast) by the API client; this
-   * covers everything else.
+   * 401 ends the session, so it redirects to login. 403 only means "you may not
+   * do this" — we toast and stay on the page. Everything else falls through to
+   * the validation toasts.
    */
   static handleApiError(error: unknown): void {
     const language = currentLanguage();
@@ -56,11 +57,8 @@ export class ErrorHandler {
 
     if (status === 403) {
       if (typeof window === 'undefined') return;
-      toast.error(resolveApiErrorMessage(error, language));
-      const currentPath = window.location.pathname;
-      if (!currentPath.includes('/dashboard') && !isAuthPagePath(currentPath)) {
-        window.location.href = '/dashboard';
-      }
+      const message = resolveApiErrorMessage(error, language);
+      toast.error(message, { toastId: `forbidden:${message}` });
       return;
     }
 

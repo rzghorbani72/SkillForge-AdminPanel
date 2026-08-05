@@ -64,7 +64,7 @@ function unwrapDataEnvelope<T>(payload: T | { data: T }): T {
 }
 
 /** Why the client stopped issuing new API calls (first 401/403 wins). */
-export type ApiPauseReason = 'session' | 'legal' | 'forbidden';
+export type ApiPauseReason = 'session' | 'legal';
 
 export const LEGAL_CONSENT_REQUIRED_EVENT = 'mentoma:legal-consent-required';
 
@@ -219,11 +219,7 @@ class ApiClient {
       throw error;
     }
 
-    if (this.pauseReason === 'session') {
-      throw new Error('Session expired. API calls paused.');
-    }
-
-    throw new Error('Request blocked after forbidden response.');
+    throw new Error('Session expired. API calls paused.');
   }
 
   /**
@@ -274,18 +270,6 @@ class ApiClient {
       const currentPath = window.location.pathname + window.location.search;
       if (!isAuthPagePath(currentPath)) {
         window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
-      }
-    }
-  }
-
-  /**
-   * Redirect to dashboard page (client-side only)
-   */
-  private redirectToDashboard(): void {
-    if (typeof window !== 'undefined') {
-      const currentPath = window.location.pathname;
-      if (!currentPath.includes('/dashboard') && !isAuthPagePath(currentPath)) {
-        window.location.href = '/dashboard';
       }
     }
   }
@@ -491,13 +475,14 @@ class ApiClient {
           currentLanguage()
         );
 
+        // A denied action is not a broken session: tell the user what happened and
+        // leave them on the page. Pages the user may not open at all are blocked by
+        // the route guards, not by this handler.
         if (typeof window !== 'undefined') {
           const onAuthPage = isAuthPagePath(window.location.pathname);
           if (!isAuthFlowEndpoint && !onAuthPage) {
-            // Only pause when we redirect — silent 403s (e.g. role probes) must not lock the app
-            this.enterPause('forbidden');
-            toast.error(errorMessage);
-            this.redirectToDashboard();
+            // Same denial from parallel requests shows one toast, not a stack of them.
+            toast.error(errorMessage, { toastId: `forbidden:${errorMessage}` });
           }
         }
 
