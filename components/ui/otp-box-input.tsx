@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { toEnglishDigits } from '@/lib/phone-utils';
 
 interface OtpBoxInputProps {
   length?: number;
@@ -25,7 +26,7 @@ export function OtpBoxInput({
   const digits = Array.from({ length }, (_, i) => value[i] ?? '');
 
   function handleChange(index: number, raw: string) {
-    const digit = raw.replace(/\D/g, '').slice(-1);
+    const digit = toEnglishDigits(raw).replace(/\D/g, '').slice(-1);
     const next = [...digits];
     next[index] = digit;
     onChange(next.join(''));
@@ -55,8 +56,7 @@ export function OtpBoxInput({
 
   function handlePaste(e: React.ClipboardEvent) {
     e.preventDefault();
-    const text = e.clipboardData
-      .getData('text')
+    const text = toEnglishDigits(e.clipboardData.getData('text'))
       .replace(/\D/g, '')
       .slice(0, length);
     const next = Array.from({ length }, (_, i) => text[i] ?? '');

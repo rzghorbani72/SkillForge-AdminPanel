@@ -1,6 +1,6 @@
 'use client';
 
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn, UseFormRegisterReturn } from 'react-hook-form';
 import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
 import { LegalConsentCheckbox } from '@/components/auth/legal-consent-checkbox';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -22,6 +22,17 @@ interface RegisterDetailsFormProps {
 }
 
 const toEnglish = (value: string) => toEnglishDigits(value);
+
+/** Rewrites Persian/Arabic digits to English while the user is typing. */
+const withEnglishDigits = (
+  field: UseFormRegisterReturn
+): UseFormRegisterReturn => ({
+  ...field,
+  onChange: (event: { target: HTMLInputElement }) => {
+    event.target.value = toEnglishDigits(event.target.value);
+    return field.onChange(event);
+  }
+});
 
 export function RegisterDetailsForm({
   form,
@@ -63,7 +74,9 @@ export function RegisterDetailsForm({
         autoComplete="tel"
         error={errors.phone?.message}
         disabled={loading}
-        {...form.register('phone', { setValueAs: toEnglish })}
+        {...withEnglishDigits(
+          form.register('phone', { setValueAs: toEnglish })
+        )}
       />
 
       <AuthField
@@ -72,7 +85,9 @@ export function RegisterDetailsForm({
         autoComplete="new-password"
         error={errors.password?.message}
         disabled={loading}
-        {...form.register('password', { setValueAs: toEnglish })}
+        {...withEnglishDigits(
+          form.register('password', { setValueAs: toEnglish })
+        )}
       />
 
       <AuthField
@@ -81,7 +96,9 @@ export function RegisterDetailsForm({
         autoComplete="new-password"
         error={errors.confirmPassword?.message}
         disabled={loading}
-        {...form.register('confirmPassword', { setValueAs: toEnglish })}
+        {...withEnglishDigits(
+          form.register('confirmPassword', { setValueAs: toEnglish })
+        )}
       />
 
       <LegalConsentCheckbox
@@ -96,7 +113,7 @@ export function RegisterDetailsForm({
         loading={loading}
         disabled={loading || !acceptedLegal || !allFieldsFilled}
       >
-        {loading ? t('auth.sending') : t('auth.continueBtn')}
+        {loading ? t('auth.sending') : t('auth.registerTitle')}
       </AuthSubmit>
     </form>
   );
