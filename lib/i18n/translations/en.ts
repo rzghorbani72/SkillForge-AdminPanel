@@ -958,6 +958,7 @@ export const en = {
     planProfessional: 'Professional',
     planAdvanced: 'Advanced',
     details: 'Details',
+    viewDetails: 'View details',
     currentPlan: 'Your current plan',
     noActivePlan: 'No active plan',
     planCoversAllAcademies: 'This plan applies to all of your academies.',

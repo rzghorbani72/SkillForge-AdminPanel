@@ -952,6 +952,7 @@ export const fa = {
     planProfessional: 'پرو',
     planAdvanced: 'پیشرفته',
     details: 'جزئیات',
+    viewDetails: 'مشاهده جزئیات',
     currentPlan: 'پلن فعلی شما',
     noActivePlan: 'بدون پلن فعال',
     planCoversAllAcademies: 'این پلن برای همه آکادمی‌های شما اعمال می‌شود.',

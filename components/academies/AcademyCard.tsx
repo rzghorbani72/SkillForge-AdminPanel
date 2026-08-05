@@ -1,8 +1,9 @@
 'use client';
 
-import { Pencil, Loader2, Power } from 'lucide-react';
+import { Pencil, Loader2, Power, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { InfoPopupIcon } from '@/components/icons/info-popup-icon';
 import type { Academy } from '@/types/api';
 import { ACADEMY_DOMAIN } from '@/lib/slug';
 import { colorIndexForId } from '@/lib/id-color';
@@ -125,16 +126,6 @@ export function AcademyCard({
               {userRole}
             </span>
           )}
-          {canEdit && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 rounded-xl p-0"
-              onClick={() => onEdit(academy)}
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
-          )}
         </div>
         <a
           href={`https://${domain}.${ACADEMY_DOMAIN}`}
@@ -167,49 +158,62 @@ export function AcademyCard({
           </div>
         </div>
 
+        {isCurrent && (
+          <div className="mt-4 flex items-center gap-2">
+            <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+              {t('stores.currentAcademy')}
+            </span>
+            {canEdit && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-9 w-9 rounded-xl p-0"
+                title={t('stores.siteStatusTitle')}
+                aria-label={t('stores.siteStatusTitle')}
+                onClick={() => onManageSite(academy)}
+              >
+                <Power className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        )}
+
         {/* Actions */}
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-3 flex items-center gap-2">
           <Button
             size="sm"
             variant="outline"
-            className="flex-1 rounded-xl text-sm font-medium"
+            className="flex-1 gap-1.5 rounded-xl px-2 text-xs font-medium"
+            onClick={() => onSwitch(academy.id)}
+            disabled={!canEnter || isSwitch}
+          >
+            {isSwitch ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <LogIn className="h-3.5 w-3.5" />
+            )}
+            {t('stores.enter')}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1 gap-1.5 rounded-xl px-2 text-xs font-medium"
             onClick={() => onDetails(academy)}
           >
-            {t('stores.details')}
+            <InfoPopupIcon className="h-3.5 w-3.5" />
+            {t('stores.viewDetails')}
           </Button>
-          {isCurrent ? (
-            <>
-              <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">
-                <span className="h-2 w-2 rounded-full bg-green-500" />
-                {t('stores.currentAcademy')}
-              </span>
-              {canEdit && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-9 w-9 rounded-xl p-0"
-                  title={t('stores.siteStatusTitle')}
-                  aria-label={t('stores.siteStatusTitle')}
-                  onClick={() => onManageSite(academy)}
-                >
-                  <Power className="h-4 w-4" />
-                </Button>
-              )}
-            </>
-          ) : canEnter ? (
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 rounded-xl text-sm font-medium"
-              onClick={() => onSwitch(academy.id)}
-              disabled={isSwitch}
-            >
-              {isSwitch ? (
-                <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />
-              ) : null}
-              {t('stores.enter')}
-            </Button>
-          ) : null}
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1 gap-1.5 rounded-xl px-2 text-xs font-medium"
+            onClick={() => onEdit(academy)}
+            disabled={!canEdit}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            {t('common.edit')}
+          </Button>
         </div>
       </div>
     </div>
