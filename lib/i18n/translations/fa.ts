@@ -927,6 +927,11 @@ export const fa = {
     planBasic: 'استارتر',
     planProfessional: 'پرو',
     planAdvanced: 'پیشرفته',
+    details: 'جزئیات',
+    currentPlan: 'پلن فعلی شما',
+    noActivePlan: 'بدون پلن فعال',
+    planCoversAllAcademies: 'این پلن برای همه آکادمی‌های شما اعمال می‌شود.',
+    upgradePlan: 'ارتقای پلن',
     statusActive: 'فعال',
     statusPaused: 'متوقف',
     enter: 'ورود',
@@ -2923,7 +2928,16 @@ export const fa = {
         gateway: 'درگاه',
         paymentCount: '{{count}} تراکنش',
         successfulPayments: 'پرداخت‌های موفق',
-        netProfit: 'سود خالص'
+        netProfit: 'سود خالص',
+        status: 'وضعیت',
+        successTab: 'موفق',
+        failedTab: 'ناموفق',
+        studentPaymentsHint:
+          'پرداخت‌های دانشجویان برای ثبت‌نام در دوره‌های این آکادمی',
+        platformPayments: 'پرداخت‌های اشتراک پلتفرم',
+        platformPaymentsHint:
+          'مبالغی که برای اشتراک پلتفرم پرداخت کرده‌اید. این مبالغ درآمد آکادمی نیستند.',
+        pageOf: 'صفحه {{page}} از {{total}}'
       },
       revenue: {
         title: 'درآمد و مزایا',

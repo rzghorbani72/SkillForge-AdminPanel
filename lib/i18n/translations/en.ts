@@ -933,6 +933,11 @@ export const en = {
     planBasic: 'Basic',
     planProfessional: 'Professional',
     planAdvanced: 'Advanced',
+    details: 'Details',
+    currentPlan: 'Your current plan',
+    noActivePlan: 'No active plan',
+    planCoversAllAcademies: 'This plan applies to all of your academies.',
+    upgradePlan: 'Upgrade plan',
     statusActive: 'Active',
     statusPaused: 'Paused',
     enter: 'Enter',
@@ -2953,7 +2958,16 @@ export const en = {
         gateway: 'Gateway',
         paymentCount: '{{count}} transactions',
         successfulPayments: 'Successful payments',
-        netProfit: 'Net Profit'
+        netProfit: 'Net Profit',
+        status: 'Status',
+        successTab: 'Successful',
+        failedTab: 'Failed',
+        studentPaymentsHint:
+          'Payments students made to enroll in this academy’s courses',
+        platformPayments: 'Platform subscription payments',
+        platformPaymentsHint:
+          'What you pay for your platform subscription. This is a cost, not academy income.',
+        pageOf: 'Page {{page}} of {{total}}'
       },
       revenue: {
         title: 'Revenue & Benefits',

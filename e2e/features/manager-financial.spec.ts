@@ -18,6 +18,21 @@ test.describe('Manager financial pages @backend', () => {
     await managerLogin(page);
   });
 
+  test('academy financial page shows success and failed tabs', async ({
+    page
+  }) => {
+    await page.goto('/financial/academy');
+    await expect(
+      page.getByRole('button', { name: 'موفق', exact: true })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'ناموفق', exact: true })
+    ).toBeVisible();
+    await expect(page.locator('body')).not.toContainText(
+      'Internal Server Error'
+    );
+  });
+
   test('academy payments page loads', async ({ page }) => {
     await page.goto('/financial/academy/payments');
     await expect(page.locator('body')).not.toContainText(

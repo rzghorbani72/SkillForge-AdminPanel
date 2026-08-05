@@ -20,6 +20,7 @@ import { apiClient } from '@/lib/api';
 import { clearAcademyData } from '@/lib/store-utils';
 import { toast } from 'react-toastify';
 import { AcademiesList } from '@/components/academies/academies-list';
+import { CurrentPlanBanner } from '@/components/academies/current-plan-banner';
 import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
 import { AcademyEditModal } from '@/components/academies/AcademyEditModal';
 import { AcademySiteStatusDialog } from '@/components/academies/academy-site-status-dialog';
@@ -60,20 +61,30 @@ export default function AcademiesPage() {
     return raw ? getRoleLabel(raw, t) : '';
   }
 
-  async function handleSwitch(academyId: string) {
+  async function handleSwitch(academyId: string, redirectTo?: string) {
     if (academyId === currentAcademyId) {
-      window.location.assign('/dashboard');
+      window.location.assign(redirectTo ?? '/dashboard');
       return;
     }
     setSwitching(academyId);
     try {
       await apiClient.switchAcademy(academyId);
       clearAcademyData();
-      window.location.reload();
+      // Settings pages read the selected academy from the store, so the switch
+      // has to land before the target page renders.
+      if (redirectTo) {
+        window.location.assign(redirectTo);
+      } else {
+        window.location.reload();
+      }
     } catch (e: unknown) {
       toast.error((e as { message?: string })?.message ?? t('common.error'));
       setSwitching(null);
     }
+  }
+
+  function handleDetails(academy: Academy) {
+    void handleSwitch(academy.id, '/settings/academy');
   }
 
   function buildTheme(hex: string) {
@@ -191,6 +202,8 @@ export default function AcademiesPage() {
         description={t('stores.manageStoresDescription')}
       />
 
+      <CurrentPlanBanner />
+
       {platformStaffView && <AcademiesHealthTable />}
 
       <AcademiesList
@@ -203,6 +216,7 @@ export default function AcademiesPage() {
         switching={switching}
         resolveUserRole={resolveUserRole}
         onSwitch={handleSwitch}
+        onDetails={handleDetails}
         onEdit={setEditAcademy}
         onManageSite={setSiteAcademy}
         onCreate={() => setCreateOpen(true)}

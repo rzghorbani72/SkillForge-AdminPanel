@@ -3,19 +3,14 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, GraduationCap } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { Suspense, useMemo } from 'react';
 import { filterNavItems } from '@/lib/nav-filter';
 import { isPaymentEnabled } from '@/lib/payment';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { getRoleLabel } from '@/lib/i18n/role-label';
-import Link from '@/components/ui/link';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useHasStore } from '@/hooks/useHasStore';
-import { useBrandingStore } from '@/lib/store';
 import { SidebarUpgradeBanner } from '@/components/layout/sidebar-upgrade-banner';
-import { SidebarPlanBadge } from '@/components/layout/sidebar-plan-badge';
 import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
 
 type SidebarProps = {
@@ -26,8 +21,6 @@ export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
   const { user, isLoading } = useAuthUser();
   const { t } = useTranslation();
-  const currentAcademy = useCurrentAcademy();
-  const configLogoUrl = useBrandingStore((s) => s.logoUrl);
 
   const userRole = useMemo(() => {
     if (!user) return null;
@@ -62,7 +55,6 @@ export default function Sidebar({ className }: SidebarProps) {
   }
 
   const isPlatformMode = hasStore === false;
-  const academyName = currentAcademy?.name || getRoleLabel(userRole, t);
 
   return (
     <aside
@@ -72,56 +64,30 @@ export default function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      {/* Brand / Academy header */}
+      {/* Product brand — academy identity lives in the header switcher */}
       <div
         className={cn(
           'flex items-center gap-3 border-b border-[hsl(var(--sidebar-border))] px-4 py-4 transition-all duration-300',
           isMinimized && 'justify-center px-2'
         )}
       >
-        {isPlatformMode ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src="/logo-mark.svg"
-            alt=""
-            aria-hidden
-            className="h-9 w-9 shrink-0"
-          />
-        ) : (
-          (() => {
-            const raw = configLogoUrl ?? currentAcademy?.logo?.publicUrl;
-            const src = raw?.startsWith('/')
-              ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${raw}`
-              : raw;
-            return src ? (
-              <img
-                src={src}
-                alt={academyName}
-                className="h-9 w-9 shrink-0 rounded-xl object-cover"
-              />
-            ) : (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md shadow-primary/25 transition-all duration-200">
-                <GraduationCap className="h-5 w-5 text-white" />
-              </div>
-            );
-          })()
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo-mark.svg"
+          alt=""
+          aria-hidden
+          className="h-9 w-9 shrink-0"
+        />
         {!isMinimized && (
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold leading-tight">
-              {isPlatformMode
-                ? t('sidebar.platformAdmin') || 'Platform Admin'
-                : academyName}
+              {t('auth.brandName')}
             </p>
-            {isPlatformMode ? (
-              <p className="truncate text-xs text-muted-foreground">
-                {t('sidebar.managementConsole') || 'Management Console'}
-              </p>
-            ) : (
-              <div className="mt-1">
-                <SidebarPlanBadge />
-              </div>
-            )}
+            <p className="truncate text-xs text-muted-foreground">
+              {isPlatformMode
+                ? t('sidebar.managementConsole')
+                : t('auth.brandTagline')}
+            </p>
           </div>
         )}
       </div>

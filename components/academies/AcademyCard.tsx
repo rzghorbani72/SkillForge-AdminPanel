@@ -4,7 +4,6 @@ import { Pencil, Loader2, Power } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import type { Academy } from '@/types/api';
-import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { ACADEMY_DOMAIN } from '@/lib/slug';
 import { colorIndexForId } from '@/lib/id-color';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -74,6 +73,7 @@ type AcademyCardProps = {
   isCurrent: boolean;
   userRole?: string;
   onSwitch: (id: string) => void;
+  onDetails: (academy: Academy) => void;
   onEdit: (academy: Academy) => void;
   onManageSite: (academy: Academy) => void;
   switching: string | null;
@@ -85,6 +85,7 @@ export function AcademyCard({
   isCurrent,
   userRole,
   onSwitch,
+  onDetails,
   onEdit,
   onManageSite,
   switching,
@@ -96,8 +97,6 @@ export function AcademyCard({
   const canEnter = canEnterAcademy(academy, isCurrent);
   const canEdit = canEditAcademy(academy);
   const domain = academyDomain(academy);
-  const plan =
-    getPlanDisplayName(academy.subscription_plan) ?? t('stores.planBasic');
 
   return (
     <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
@@ -166,17 +165,18 @@ export function AcademyCard({
               {t('stores.courses')}
             </span>
           </div>
-          <div className="h-8 w-px bg-border" />
-          <div className="flex flex-col items-center gap-0.5">
-            <span className="font-semibold text-foreground">{plan}</span>
-            <span className="text-xs text-muted-foreground">
-              {t('stores.plan')}
-            </span>
-          </div>
         </div>
 
         {/* Actions */}
         <div className="mt-4 flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1 rounded-xl text-sm font-medium"
+            onClick={() => onDetails(academy)}
+          >
+            {t('stores.details')}
+          </Button>
           {isCurrent ? (
             <>
               <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">

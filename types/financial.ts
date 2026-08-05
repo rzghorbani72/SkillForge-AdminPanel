@@ -1,5 +1,35 @@
 export type PaymentStatus = 'PAID' | 'PENDING' | 'FAILED' | 'REFUNDED';
 
+/** The only two outcomes the academy financial page reports on. */
+export type SettledPaymentStatus = Extract<PaymentStatus, 'PAID' | 'FAILED'>;
+
+/** A row of `GET /payments` — student money paid to the academy. */
+export interface AcademyPaymentRow {
+  id: string;
+  amount: number;
+  currency: string;
+  status: PaymentStatus;
+  payment_method?: string | null;
+  gateway?: string | null;
+  created_at: string;
+  Profile?: { display_name?: string | null } | null;
+  Course?: { title?: string | null } | null;
+}
+
+export interface PaymentsPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface AcademyPaymentsResponse {
+  payments: AcademyPaymentRow[];
+  pagination: PaymentsPagination;
+}
+
 export interface PaymentFormulaFactors {
   vat_rate?: number;
   take_rate?: number;

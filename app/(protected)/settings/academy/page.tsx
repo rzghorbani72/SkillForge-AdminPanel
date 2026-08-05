@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Save, Building2, Globe, Info } from 'lucide-react';
-import { AcademySubscriptionSummary } from '@/components/settings/academy-subscription-summary';
 import { SettingsSectionHeader } from '@/components/settings/settings-section-header';
 import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
@@ -192,8 +191,6 @@ export default function AcademySettingsPage() {
               </div>
             </CardContent>
           </Card>
-
-          <AcademySubscriptionSummary />
 
           <Card>
             <CardHeader>

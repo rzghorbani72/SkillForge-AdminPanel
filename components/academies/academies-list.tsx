@@ -1,7 +1,6 @@
 'use client';
 
-import { Filter, GraduationCap, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Filter, GraduationCap } from 'lucide-react';
 import { DataList, DataPanel } from '@/components/shared/data-list';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -21,6 +20,7 @@ interface AcademiesListProps {
   filters: React.ReactNode;
   resolveUserRole: (academy: AcademyRow) => string;
   onSwitch: (id: string) => void;
+  onDetails: (academy: Academy) => void;
   onEdit: (academy: Academy) => void;
   onManageSite: (academy: Academy) => void;
   onCreate: () => void;
@@ -38,6 +38,7 @@ export function AcademiesList({
   filters,
   resolveUserRole,
   onSwitch,
+  onDetails,
   onEdit,
   onManageSite,
   onCreate,
@@ -54,14 +55,6 @@ export function AcademiesList({
       title={t('navigation.stores')}
       subtitle={subtitle}
       filters={filters}
-      actions={
-        canCreate ? (
-          <Button size="sm" className="rounded-lg" onClick={onCreate}>
-            <Plus className="me-1.5 h-4 w-4" />
-            {t('stores.addAcademy')}
-          </Button>
-        ) : null
-      }
     >
       <DataList
         items={academies}
@@ -74,6 +67,7 @@ export function AcademiesList({
             isCurrent={academy.id === currentAcademyId}
             userRole={resolveUserRole(academy)}
             onSwitch={onSwitch}
+            onDetails={onDetails}
             onEdit={onEdit}
             onManageSite={onManageSite}
             switching={switching}

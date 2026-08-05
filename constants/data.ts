@@ -423,8 +423,7 @@ export const navItems: NavItem[] = [
     label: 'financial',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
     scope: 'academy',
-    section: 'students',
-    paymentGated: true
+    section: 'students'
   },
   {
     title: 'My Affiliate',
