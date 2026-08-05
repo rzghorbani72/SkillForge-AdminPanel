@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Filter, GraduationCap } from 'lucide-react';
 import { DataList, DataPanel } from '@/components/shared/data-list';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -8,6 +9,7 @@ import { AcademyCard, AddAcademyCard } from './AcademyCard';
 import type { AcademyRow } from './academy-helpers';
 import type { InterpolationParams } from '@/lib/i18n';
 import type { Academy } from '@/types/api';
+import { CREATE_ACADEMY_PATH } from './academy-required-gate';
 
 interface AcademiesListProps {
   academies: readonly AcademyRow[];
@@ -45,6 +47,7 @@ export function AcademiesList({
   t
 }: AcademiesListProps) {
   const formatNumber = useNumberFormat();
+  const router = useRouter();
 
   const subtitle = `${formatNumber(academies.length)}${
     totalCount === academies.length ? '' : ` / ${formatNumber(totalCount)}`
@@ -94,6 +97,18 @@ export function AcademiesList({
                 isFiltered
                   ? t('common.tryAdjustingFilters')
                   : t('stores.emptyDesc')
+              }
+              // Owning nothing yet is the onboarding wizard's job, not the quick
+              // "add another" modal — the first academy needs the guided flow.
+              actionLabel={
+                !isFiltered && canCreate
+                  ? t('auth.createAcademyBtn')
+                  : undefined
+              }
+              onAction={
+                !isFiltered && canCreate
+                  ? () => router.push(CREATE_ACADEMY_PATH)
+                  : undefined
               }
             />
           </div>

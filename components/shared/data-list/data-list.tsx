@@ -73,25 +73,11 @@ export function DataList<T>({
     );
   }
 
-  // An empty list is exactly when the "add" card matters most, so it renders
-  // alongside the empty state instead of disappearing with the rows.
+  // An empty list gets the empty state alone. A lone "add" card floating in an
+  // otherwise empty grid reads as a stray tile; the empty state carries its own
+  // call to action instead.
   if (items.length === 0) {
-    if (!emptyState && !cardExtra) return null;
-    return (
-      <>
-        {emptyState}
-        {cardExtra && (
-          <div
-            className={cn(
-              'grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3',
-              cardGridClassName
-            )}
-          >
-            {cardExtra}
-          </div>
-        )}
-      </>
-    );
+    return emptyState ? <>{emptyState}</> : null;
   }
 
   if (renderCard && showCards) {
