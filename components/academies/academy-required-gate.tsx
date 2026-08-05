@@ -13,7 +13,11 @@ export const CREATE_ACADEMY_PATH = '/onboarding/create-academy';
  * reads or writes academy-scoped data, so without an academy it renders empty
  * shells and confusing errors — the manager is sent to create one instead.
  */
-const ACADEMY_LESS_PATHS = [CREATE_ACADEMY_PATH, '/profile-passwords'];
+const ACADEMY_LESS_PATHS = [
+  CREATE_ACADEMY_PATH,
+  '/settings/profile',
+  '/settings/security'
+];
 
 function isAcademyLessPath(pathname: string): boolean {
   return ACADEMY_LESS_PATHS.some(

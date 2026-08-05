@@ -21,7 +21,8 @@ import {
   AlertCircle,
   Loader2,
   Mail,
-  Phone
+  Phone,
+  KeyRound
 } from 'lucide-react';
 import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
@@ -39,6 +40,18 @@ interface ProfileFormState {
 }
 
 const DEFAULT_FORM: ProfileFormState = { name: '', email: '', phone: '' };
+
+interface PasswordFormState {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+const DEFAULT_PASSWORD_FORM: PasswordFormState = {
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+};
 
 type OtpStep = 'idle' | 'sending' | 'input' | 'verifying';
 
@@ -138,6 +151,11 @@ export default function ProfileSettingsPage() {
   const [emailOtp, setEmailOtp] = useState<OtpState>(DEFAULT_OTP);
   const [phoneOtp, setPhoneOtp] = useState<OtpState>(DEFAULT_OTP);
 
+  const [passwordForm, setPasswordForm] = useState<PasswordFormState>(
+    DEFAULT_PASSWORD_FORM
+  );
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+
   useEffect(() => {
     if (!user) {
       setForm(DEFAULT_FORM);
@@ -205,6 +223,27 @@ export default function ProfileSettingsPage() {
       ErrorHandler.handleApiError(err);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      ErrorHandler.showWarning(t('settings.newPasswordsDoNotMatch'));
+      return;
+    }
+    try {
+      setIsSavingPassword(true);
+      await apiClient.changeProfilePassword({
+        current_password: passwordForm.currentPassword,
+        new_password: passwordForm.newPassword,
+        confirm_new_password: passwordForm.confirmPassword
+      });
+      ErrorHandler.showSuccess(t('settings.passwordUpdatedSuccess'));
+      setPasswordForm(DEFAULT_PASSWORD_FORM);
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+    } finally {
+      setIsSavingPassword(false);
     }
   };
 
@@ -540,6 +579,78 @@ export default function ProfileSettingsPage() {
               {isSaving ? t('settings.saving') : t('settings.saveChanges')}
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <KeyRound className="h-5 w-5" /> {t('settings.changePassword')}
+          </CardTitle>
+          <CardDescription>
+            {t('settings.changePasswordDescription')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword">
+                {t('settings.currentPassword')}
+              </Label>
+              <Input
+                id="currentPassword"
+                type="password"
+                dir="ltr"
+                value={passwordForm.currentPassword}
+                onChange={(e) =>
+                  setPasswordForm({
+                    ...passwordForm,
+                    currentPassword: e.target.value
+                  })
+                }
+                placeholder={t('settings.currentPasswordPlaceholder')}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">{t('settings.newPassword')}</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                dir="ltr"
+                value={passwordForm.newPassword}
+                onChange={(e) =>
+                  setPasswordForm({
+                    ...passwordForm,
+                    newPassword: e.target.value
+                  })
+                }
+                placeholder={t('settings.newPasswordPlaceholder')}
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="confirmPassword">
+                {t('settings.confirmNewPassword')}
+              </Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                dir="ltr"
+                value={passwordForm.confirmPassword}
+                onChange={(e) =>
+                  setPasswordForm({
+                    ...passwordForm,
+                    confirmPassword: e.target.value
+                  })
+                }
+                placeholder={t('settings.confirmNewPasswordPlaceholder')}
+              />
+            </div>
+          </div>
+          <Button onClick={handlePasswordChange} disabled={isSavingPassword}>
+            {isSavingPassword
+              ? t('settings.updating')
+              : t('settings.updatePassword')}
+          </Button>
         </CardContent>
       </Card>
     </div>
