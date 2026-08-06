@@ -41,7 +41,10 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { cn } from '@/lib/utils';
-import { AcademySubscriptionState } from '@/hooks/use-academy-subscription';
+import {
+  useAcademySubscription,
+  AcademySubscriptionState
+} from '@/hooks/use-academy-subscription';
 import {
   getSubscriptionStatusDisplay,
   SUBSCRIPTION_TONE_CLASSES
@@ -88,10 +91,15 @@ export default function PlansPage() {
 
   const [period, setPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
-  const [currentSub, setCurrentSub] = useState<AcademySubscriptionState | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  // Shared with the sidebar/header via one SWR cache key — avoids firing the
+  // same /academies/current/subscription request three times per page load.
+  const {
+    subscription: currentSub,
+    isLoading: isSubLoading,
+    refresh: refreshSubscription
+  } = useAcademySubscription(!isPlatformAdminUser);
+  const [isPlansLoading, setIsPlansLoading] = useState(true);
+  const isLoading = isPlansLoading || (!isPlatformAdminUser && isSubLoading);
 
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlanData | null>(
     null
@@ -145,25 +153,23 @@ export default function PlansPage() {
 
   const fetchSubscriptionPlans = useCallback(async () => {
     try {
-      setIsLoading(true);
-      const plansPromise = isPlatformAdminUser
-        ? apiClient.getSubscriptionPlans().catch(() => [])
-        : apiClient.getActivePlans().catch(() => []);
-      const subPromise = !isPlatformAdminUser
-        ? apiClient.getCurrentAcademySubscription().catch(() => null)
-        : Promise.resolve(null);
-      const [plansData, subData] = await Promise.all([
-        plansPromise,
-        subPromise
-      ]);
+      setIsPlansLoading(true);
+      const plansData = isPlatformAdminUser
+        ? await apiClient.getSubscriptionPlans().catch(() => [])
+        : await apiClient.getActivePlans().catch(() => []);
       setPlans(Array.isArray(plansData) ? plansData : []);
-      setCurrentSub(subData);
     } catch (e) {
       ErrorHandler.handleApiError(e);
     } finally {
-      setIsLoading(false);
+      setIsPlansLoading(false);
     }
   }, [isPlatformAdminUser]);
+
+  // Plan CRUD only touches the plans list. Buying/upgrading/moving a trial
+  // changes the subscription itself, so those flows must also refresh it.
+  const refreshPlansAndSubscription = useCallback(async () => {
+    await Promise.all([fetchSubscriptionPlans(), refreshSubscription()]);
+  }, [fetchSubscriptionPlans, refreshSubscription]);
 
   const fetchAcademyPlans = useCallback(async () => {
     try {
@@ -365,7 +371,7 @@ export default function PlansPage() {
             setUpgradeQuote(null);
             setNeedsGatewaySelection(false);
             setAvailableGateways([]);
-            await fetchSubscriptionPlans();
+            await refreshPlansAndSubscription();
             return;
           }
         }
@@ -395,7 +401,7 @@ export default function PlansPage() {
         setUpgradeQuote(null);
         setNeedsGatewaySelection(false);
         setAvailableGateways([]);
-        await fetchSubscriptionPlans();
+        await refreshPlansAndSubscription();
       } catch (e) {
         ErrorHandler.handleApiError(e);
       } finally {
@@ -437,7 +443,7 @@ export default function PlansPage() {
           setSelectingPlan(null);
           setNeedsGatewaySelection(false);
           setAvailableGateways([]);
-          await fetchSubscriptionPlans();
+          await refreshPlansAndSubscription();
           return;
         }
       }
@@ -469,7 +475,7 @@ export default function PlansPage() {
       setSelectingPlan(null);
       setNeedsGatewaySelection(false);
       setAvailableGateways([]);
-      await fetchSubscriptionPlans();
+      await refreshPlansAndSubscription();
     } catch (e) {
       ErrorHandler.handleApiError(e);
     } finally {
@@ -847,7 +853,7 @@ export default function PlansPage() {
               academyId={selectedAcademy.id}
               academyName={selectedAcademy.name}
               trial={currentSub?.trial}
-              onMoved={() => void fetchSubscriptionPlans()}
+              onMoved={() => void refreshPlansAndSubscription()}
             />
           )}
 
@@ -916,16 +922,6 @@ export default function PlansPage() {
               )}
             </div>
           )}
-
-          <div className="rounded-2xl border bg-card p-6">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('plans.billingHistory')}
-            </h3>
-            <SubscriptionInvoicesList
-              invoices={currentSub?.invoices ?? []}
-              highlightId={paidParam ? newestPaidInvoiceId : undefined}
-            />
-          </div>
         </TabsContent>
 
         <TabsContent value="academy" className="space-y-6 pt-4">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import useSWR from 'swr';
 import { apiClient, type StructuredPlanLimits } from '@/lib/api';
 import {
   isStarterPlan,
@@ -62,32 +62,23 @@ export function useAcademySubscription(enabled = true) {
   // X-Academy-ID, so skip the call entirely instead of firing and swallowing.
   const hasAcademyAccess = useHasAcademyAccess();
   const canFetch = enabled && hasAcademyAccess;
-  const [subscription, setSubscription] =
-    useState<AcademySubscriptionState | null>(null);
-  const [isLoading, setIsLoading] = useState(canFetch);
   // Each academy has its own plan, so switching academies must refetch. Without
   // this the panel kept showing the previous academy's plan and storage bar.
   const academyId = useCurrentAcademyId();
 
-  const refresh = useCallback(async () => {
-    if (!canFetch) {
-      setIsLoading(false);
-      return;
-    }
-    try {
-      setIsLoading(true);
-      const data = await apiClient.getCurrentAcademySubscription();
-      setSubscription((data as AcademySubscriptionState) ?? null);
-    } catch {
-      setSubscription(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [canFetch, academyId]);
+  // Keyed by academyId so the sidebar, header, and /plans page — all mounted
+  // at once — share one deduped request instead of firing three independently.
+  const { data, isLoading, mutate } = useSWR<AcademySubscriptionState | null>(
+    canFetch ? ['academy-subscription', academyId] : null,
+    () =>
+      apiClient.getCurrentAcademySubscription() as Promise<AcademySubscriptionState>,
+    { revalidateOnFocus: false, dedupingInterval: 2000 }
+  );
+  const subscription = data ?? null;
 
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+  const refresh = async () => {
+    await mutate();
+  };
 
   const planSlug = subscription?.academy?.subscription_plan ?? null;
   const customPlan = subscription?.academy?.custom_plan ?? null;
