@@ -28,7 +28,6 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { MESSAGES } from '@/constants/messages';
 import type { LessonDraft, LessonType, SeasonDraft } from './useCourseForm';
 import { LessonMedia } from './LessonMedia';
 import { InlineConfirm } from './InlineConfirm';
@@ -75,8 +74,12 @@ interface LessonRowProps {
   lesson: LessonDraft;
   index: number;
   seasons: SeasonDraft[];
+  /** false when this is the only lesson left in the season. */
+  canRemove: boolean;
   onUpdate: (patch: Partial<LessonDraft>) => void;
   onRemove: () => void;
+  /** Called instead of onRemove when canRemove is false: wipes it back to blank. */
+  onClear: () => void;
   onAssign: (seasonClientKey: string) => void;
 }
 
@@ -84,8 +87,10 @@ export function SortableLessonRow({
   lesson,
   index,
   seasons,
+  canRemove,
   onUpdate,
   onRemove,
+  onClear,
   onAssign
 }: LessonRowProps) {
   const { t } = useTranslation();
@@ -117,6 +122,22 @@ export function SortableLessonRow({
 
   const TypeIcon = TYPE_ICON_MAP[lesson.lesson_type] ?? Video;
   const complete = isLessonComplete(lesson);
+
+  // A blank lesson is just an empty slot — there's nothing in it to delete.
+  const isBlank = !lesson.title.trim();
+
+  function handleTrashClick() {
+    if (!canRemove) {
+      if (lesson.id) setConfirmDelete(true);
+      else onClear();
+      return;
+    }
+    if (lesson.id) {
+      setConfirmDelete(true);
+    } else {
+      onRemove();
+    }
+  }
 
   return (
     <div
@@ -202,23 +223,31 @@ export function SortableLessonRow({
               <ChevronRight className="h-4 w-4" />
             )}
           </button>
-          <button
-            type="button"
-            onClick={() => (lesson.id ? setConfirmDelete(true) : onRemove())}
-            className="rounded p-0.5 text-muted-foreground hover:text-destructive"
-            aria-label={t('courses.removeLesson')}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+          {!isBlank && (
+            <button
+              type="button"
+              onClick={handleTrashClick}
+              className="rounded p-0.5 text-muted-foreground hover:text-destructive"
+              aria-label={
+                canRemove ? t('courses.removeLesson') : t('courses.clearLesson')
+              }
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
       {/* ── Delete confirm ───────────────────────────────────────────────── */}
       {confirmDelete && (
         <InlineConfirm
-          message={MESSAGES.course.confirmRemoveLesson}
+          message={
+            canRemove
+              ? t('courses.confirmRemoveLesson')
+              : t('courses.confirmClearLesson')
+          }
           onCancel={() => setConfirmDelete(false)}
-          onConfirm={onRemove}
+          onConfirm={canRemove ? onRemove : onClear}
         />
       )}
 

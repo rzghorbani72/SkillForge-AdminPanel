@@ -1306,6 +1306,8 @@ export const fa = {
     uploadAudio: 'آپلود صدا',
     removeAudio: 'حذف صدا',
     confirmDeleteSeason: 'این فصل و تمام درس‌هایش حذف شود؟',
+    lessonsWillBeUnassigned: 'درس‌ها بدون فصل باقی می‌مانند.',
+    confirmRemoveLesson: 'این درس حذف شود؟',
     deletingSeason: 'در حال حذف فصل…',
     deletingLesson: 'در حال حذف درس…',
     lessonType: 'نوع',
@@ -1320,8 +1322,13 @@ export const fa = {
     removeDocument: 'حذف سند',
     lessonComplete: 'آماده',
     lessonIncomplete: 'ناقص',
-    addSeasonBlocked:
-      'ابتدا به فصل آخر یک درس اضافه کنید، سپس فصل جدید بسازید.',
+    clearSeason: 'خالی کردن این فصل',
+    confirmClearSeason:
+      'این تنها فصل دوره است — خالی کردنش درس‌هایش را حذف و عنوانش را پاک می‌کند.',
+    clearLesson: 'خالی کردن این درس',
+    confirmClearLesson:
+      'این تنها درسِ این فصل است — خالی کردنش عنوان و رسانه‌اش را پاک می‌کند.',
+    addSeasonBlocked: 'ابتدا به یک فصل درس اضافه کنید، سپس فصل جدید بسازید.',
     addLessonBlocked:
       'ابتدا عنوان درس بی‌نام را بنویسید، سپس درس جدید اضافه کنید.',
     seasonNumber: 'فصل {{n}}',

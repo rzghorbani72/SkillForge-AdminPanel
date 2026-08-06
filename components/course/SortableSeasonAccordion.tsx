@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import { MESSAGES } from '@/constants/messages';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
 import { LessonList } from './LessonList';
 import { InlineConfirm } from './InlineConfirm';
@@ -34,8 +33,11 @@ interface SeasonAccordionProps {
     patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>
   ) => void;
   onRemove: () => void;
+  /** Called instead of onRemove when this is the last season: wipes it back to blank. */
+  onClear: () => void;
   onAddLesson: (title: string) => void;
   onRemoveLesson: (key: string) => void;
+  onClearLesson: (key: string) => void;
   onUpdateLesson: (key: string, patch: Partial<LessonDraft>) => void;
   onAssignLesson: (key: string, seasonClientKey: string) => void;
   onReorderLessons: (from: number, to: number) => void;
@@ -51,8 +53,10 @@ export function SortableSeasonAccordion({
   onToggle,
   onUpdate,
   onRemove,
+  onClear,
   onAddLesson,
   onRemoveLesson,
+  onClearLesson,
   onUpdateLesson,
   onAssignLesson,
   onReorderLessons
@@ -94,6 +98,23 @@ export function SortableSeasonAccordion({
   const fallbackTitle = t('courses.seasonNumber', {
     n: formatNumber(index + 1)
   });
+
+  // A blank season is just an empty slot — there's nothing in it to delete.
+  const isBlank = !season.title.trim() && total === 0;
+
+  function handleTrashClick() {
+    if (!canRemove) {
+      // Can't drop below one season, so this wipes it instead of removing it.
+      if (season.id || total > 0) setConfirmDelete(true);
+      else onClear();
+      return;
+    }
+    if (season.id) {
+      setConfirmDelete(true);
+    } else {
+      onRemove();
+    }
+  }
 
   return (
     <div
@@ -144,24 +165,29 @@ export function SortableSeasonAccordion({
                 })}
           </span>
         )}
-        <button
-          type="button"
-          onClick={() =>
-            season.id ? setConfirmDelete(true) : canRemove ? onRemove() : null
-          }
-          disabled={!canRemove}
-          className="shrink-0 rounded p-1 text-muted-foreground/50 opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 disabled:opacity-0 group-hover:opacity-100"
-          aria-label={t('courses.removeSeason')}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+        {!isBlank && (
+          <button
+            type="button"
+            onClick={handleTrashClick}
+            className="shrink-0 rounded p-1 text-muted-foreground/50 opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
+            aria-label={
+              canRemove ? t('courses.removeSeason') : t('courses.clearSeason')
+            }
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
       {confirmDelete && (
         <InlineConfirm
-          message={`${t('courses.confirmDeleteSeason')} ${MESSAGES.course.lessonsWillBeUnassigned}`}
+          message={
+            canRemove
+              ? `${t('courses.confirmDeleteSeason')} ${t('courses.lessonsWillBeUnassigned')}`
+              : t('courses.confirmClearSeason')
+          }
           onCancel={() => setConfirmDelete(false)}
-          onConfirm={onRemove}
+          onConfirm={canRemove ? onRemove : onClear}
         />
       )}
 
@@ -172,6 +198,7 @@ export function SortableSeasonAccordion({
             seasons={allSeasons}
             onAddLesson={onAddLesson}
             onRemoveLesson={onRemoveLesson}
+            onClearLesson={onClearLesson}
             onUpdateLesson={onUpdateLesson}
             onAssignLesson={onAssignLesson}
             onReorderLessons={onReorderLessons}

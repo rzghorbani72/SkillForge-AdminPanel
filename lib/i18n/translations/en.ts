@@ -1318,6 +1318,8 @@ export const en = {
     uploadAudio: 'Upload audio',
     removeAudio: 'Remove audio',
     confirmDeleteSeason: 'Delete this season and all its lessons?',
+    lessonsWillBeUnassigned: 'Lessons will become unassigned.',
+    confirmRemoveLesson: 'Remove this lesson?',
     deletingSeason: 'Deleting season…',
     deletingLesson: 'Deleting lesson…',
     lessonType: 'Type',
@@ -1332,6 +1334,12 @@ export const en = {
     removeDocument: 'Remove document',
     lessonComplete: 'Ready',
     lessonIncomplete: 'Incomplete',
+    clearSeason: 'Clear this section',
+    confirmClearSeason:
+      'This is the only section — clearing it removes its lessons and empties the title.',
+    clearLesson: 'Clear this lesson',
+    confirmClearLesson:
+      'This is the only lesson in the section — clearing it empties the title and media.',
     addSeasonBlocked: 'Add a lesson to the last section before adding another.',
     addLessonBlocked: 'Name the untitled lesson before adding another.',
     seasonNumber: 'Section {{n}}',

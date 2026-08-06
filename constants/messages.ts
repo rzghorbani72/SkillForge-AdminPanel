@@ -67,13 +67,6 @@ export const MESSAGES = {
     saveChanges: 'Save Changes'
   },
 
-  course: {
-    confirmRemoveLesson: 'Remove this lesson?',
-    lessonsWillBeUnassigned: 'Lessons will become unassigned.',
-    unassigned: 'Unassigned',
-    seasonUntitled: 'Season (untitled)'
-  },
-
   validation: {
     titleMinLength: 'Title must be at least 3 characters',
     descriptionMinLength: 'Description must be at least 10 characters',
