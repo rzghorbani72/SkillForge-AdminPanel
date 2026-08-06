@@ -213,9 +213,9 @@ export function useCourseForm(courseId: string) {
             deletedLessonIds.length > 0 ? deletedLessonIds : undefined
         });
         clearDeleted();
-        toast.success(
-          t(data.published ? 'courses.updatedToast' : 'courses.draftSavedToast')
-        );
+        // Saving a draft is routine — the button state is enough feedback.
+        // Only publishing, which changes what students see, is worth a toast.
+        if (data.published) toast.success(t('courses.updatedToast'));
       } catch (err) {
         ErrorHandler.handleApiError(err);
       } finally {

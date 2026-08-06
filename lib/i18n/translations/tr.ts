@@ -721,7 +721,6 @@ export const tr = {
       'Bu kurs taslak: yalnızca siz görüyorsunuz. Dersleri ekleyin, hazır olduğunda Yayında seçeneğini açın.',
     builderPublishedHint:
       'Bu kurs yayında ve öğrenciler tarafından görülüyor. Değişiklikler kaydeder kaydetmez yayına girer.',
-    draftSavedToast: 'Taslak olarak kaydedildi',
     updatedToast: 'Kurs güncellendi',
     createdDraftToast:
       'Kurs taslak olarak oluşturuldu — hazır olduğunda yayınlayın',

@@ -1214,7 +1214,6 @@ export const en = {
       'This course is a draft: only you can see it. Add the lessons, then turn on Published when it is ready.',
     builderPublishedHint:
       'This course is published and visible to students. Changes go live as soon as you save.',
-    draftSavedToast: 'Saved as a draft',
     updatedToast: 'Course updated',
     createdDraftToast:
       'Course created as a draft — publish it when it is ready',
