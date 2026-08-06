@@ -202,6 +202,8 @@ export const navItems: NavItem[] = [
   },
 
   // ── Academy mode ───────────────────────────────────────────────────────────
+  // Order matters: a section label is drawn on the first item carrying it, so
+  // items of the same section must stay next to each other.
   {
     title: 'Dashboard',
     href: '/dashboard',
@@ -209,22 +211,7 @@ export const navItems: NavItem[] = [
     label: 'dashboard',
     scope: 'academy'
   },
-  {
-    title: 'My Academies',
-    href: '/academies',
-    icon: 'store' as IconType,
-    label: 'myAcademies',
-    roles: ['MANAGER', 'TEACHER'],
-    scope: 'academy'
-  },
-  {
-    title: 'Roles & Permissions',
-    href: '/platform/roles',
-    icon: 'shield' as IconType,
-    label: 'rolesPermissions',
-    roles: ['MANAGER'],
-    scope: 'academy'
-  },
+  // Teaching — the daily work
   {
     title: 'Courses',
     href: '/courses',
@@ -238,35 +225,8 @@ export const navItems: NavItem[] = [
       'MANAGER',
       'TEACHER'
     ],
-    scope: 'academy'
-  },
-  {
-    title: 'Users',
-    href: '/users',
-    icon: 'users' as IconType,
-    label: 'users',
-    roles: [
-      'PLATFORM_OWNER',
-      'ADMIN',
-      'FINANCE',
-      'SUPPORT',
-      'MANAGER',
-      'TEACHER'
-    ],
     scope: 'academy',
-    children: [
-      {
-        title: 'Users',
-        href: '/users',
-        label: 'users-list'
-      },
-      {
-        title: 'Groups',
-        href: '/users/groups',
-        label: 'groups',
-        disabled: true
-      }
-    ]
+    section: 'learning'
   },
   {
     title: 'Students',
@@ -317,23 +277,6 @@ export const navItems: NavItem[] = [
     requiresLearningCapability: 'assignments'
   },
   {
-    title: 'Ops Queue',
-    href: '/learning/ops-queue',
-    icon: 'trendingUp' as IconType,
-    label: 'opsQueue',
-    roles: [
-      'PLATFORM_OWNER',
-      'ADMIN',
-      'FINANCE',
-      'SUPPORT',
-      'MANAGER',
-      'TEACHER'
-    ],
-    scope: 'academy',
-    section: 'learning',
-    requiresLearningCapability: 'ops_queue'
-  },
-  {
     title: 'Tutoring',
     href: '/tutoring',
     icon: 'userPlus' as IconType,
@@ -351,63 +294,52 @@ export const navItems: NavItem[] = [
     requiresLearningCapability: 'tutoring'
   },
   {
-    title: 'Analytics',
-    href: '/analytics',
-    icon: 'barChart' as IconType,
-    label: 'analytics',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    title: 'Ops Queue',
+    href: '/learning/ops-queue',
+    icon: 'trendingUp' as IconType,
+    label: 'opsQueue',
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
     scope: 'academy',
-    section: 'learning'
+    section: 'learning',
+    requiresLearningCapability: 'ops_queue'
   },
+  // Running the academy
   {
-    title: 'Marketing',
-    href: '/affiliates',
-    icon: 'network' as IconType,
-    label: 'affiliates',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-    scope: 'academy'
-  },
-  // ── Platform scope settings ────────────────────────────────────────────────
-  {
-    title: 'Academy Subscription',
-    href: '/plans',
-    icon: 'layers' as IconType,
-    label: 'platformPlan',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
+    title: 'Users',
+    href: '/users',
+    icon: 'users' as IconType,
+    label: 'users',
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
     scope: 'academy',
-    section: 'platform',
-    paymentGated: true
+    section: 'manage',
+    children: [
+      {
+        title: 'Users',
+        href: '/users',
+        label: 'users-list'
+      },
+      {
+        title: 'Groups',
+        href: '/users/groups',
+        label: 'groups',
+        disabled: true
+      }
+    ]
   },
-  // Spans academies, so it is platform-scoped: each academy's own page shows
-  // only its own invoices.
-  {
-    title: 'All Subscriptions',
-    href: '/billing',
-    icon: 'billing' as IconType,
-    label: 'allSubscriptions',
-    roles: ['MANAGER'],
-    scope: 'platform',
-    section: 'platform'
-  },
-  {
-    title: 'Academy Details',
-    href: '/settings/academy',
-    icon: 'store' as IconType,
-    label: 'academyProfile',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-    scope: 'academy',
-    section: 'platform'
-  },
-  {
-    title: 'Settings',
-    href: '/settings',
-    icon: 'settings' as IconType,
-    label: 'settingsHub',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
-    scope: 'academy',
-    section: 'platform'
-  },
-  // ── Students scope settings ────────────────────────────────────────────────
   {
     title: 'Site Template',
     href: '/settings/ui-template',
@@ -415,7 +347,35 @@ export const navItems: NavItem[] = [
     label: 'siteTemplate',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy',
-    section: 'students'
+    section: 'manage'
+  },
+  {
+    title: 'Marketing',
+    href: '/affiliates',
+    icon: 'network' as IconType,
+    label: 'affiliates',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'manage'
+  },
+  {
+    title: 'Analytics',
+    href: '/analytics',
+    icon: 'barChart' as IconType,
+    label: 'analytics',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'manage'
+  },
+  // Money
+  {
+    title: 'Financial',
+    href: '/financial',
+    icon: 'dollarSign' as IconType,
+    label: 'financial',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
+    scope: 'academy',
+    section: 'finance'
   },
   {
     title: 'Student Plans',
@@ -424,17 +384,46 @@ export const navItems: NavItem[] = [
     label: 'studentPlans',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy',
-    section: 'students',
+    section: 'finance',
+    paymentGated: true
+  },
+  // The owner's own account, not the academy's day-to-day
+  {
+    title: 'My Academies',
+    href: '/academies',
+    icon: 'store' as IconType,
+    label: 'myAcademies',
+    roles: ['MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'account'
+  },
+  {
+    title: 'Academy Subscription',
+    href: '/plans',
+    icon: 'billing' as IconType,
+    label: 'platformPlan',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'account',
     paymentGated: true
   },
   {
-    title: 'Financial',
-    href: '/financial',
-    icon: 'dollarSign' as IconType,
-    label: 'financial',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
+    title: 'Roles & Permissions',
+    href: '/platform/roles',
+    icon: 'shield' as IconType,
+    label: 'rolesPermissions',
+    roles: ['MANAGER'],
     scope: 'academy',
-    section: 'students'
+    section: 'account'
+  },
+  {
+    title: 'Settings',
+    href: '/settings',
+    icon: 'settings' as IconType,
+    label: 'settingsHub',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'account'
   },
   {
     title: 'My Affiliate',

@@ -164,30 +164,24 @@ export function AcademyCard({
           </div>
         </div>
 
-        {/* Actions — enter is the primary one, the other two stay quiet */}
+        {/* Actions — the current academy is already open, so it needs no enter
+            button; details always sits on the far side of the row */}
         <div className="mt-4 flex items-center gap-1.5">
-          <Button
-            size="sm"
-            className={ACTION_BUTTON}
-            onClick={() => onSwitch(academy.id)}
-            disabled={!canEnter || isSwitch}
-          >
-            {isSwitch ? (
-              <Loader2 className={cn(ACTION_ICON, 'animate-spin')} />
-            ) : (
-              <LogIn className={ACTION_ICON} />
-            )}
-            {t('stores.enter')}
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className={ACTION_BUTTON}
-            onClick={() => onDetails(academy)}
-          >
-            <Info className={ACTION_ICON} />
-            {t('stores.details')}
-          </Button>
+          {!isCurrent && (
+            <Button
+              size="sm"
+              className={ACTION_BUTTON}
+              onClick={() => onSwitch(academy.id)}
+              disabled={!canEnter || isSwitch}
+            >
+              {isSwitch ? (
+                <Loader2 className={cn(ACTION_ICON, 'animate-spin')} />
+              ) : (
+                <LogIn className={ACTION_ICON} />
+              )}
+              {t('stores.enter')}
+            </Button>
+          )}
           <Button
             size="sm"
             variant="outline"
@@ -197,6 +191,15 @@ export function AcademyCard({
           >
             <Pencil className={ACTION_ICON} />
             {t('common.edit')}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className={cn(ACTION_BUTTON, 'ms-auto flex-none')}
+            onClick={() => onDetails(academy)}
+          >
+            <Info className={ACTION_ICON} />
+            {t('stores.details')}
           </Button>
         </div>
       </div>

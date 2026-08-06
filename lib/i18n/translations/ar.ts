@@ -281,6 +281,7 @@ export const ar = {
     'cost-categories': 'فئات التكلفة',
     'business-flow': 'تدفق الأعمال',
     section: {
+      account: 'حسابي',
       manage: 'الإدارة',
       learning: 'عمليات التعلم',
       finance: 'المالية',

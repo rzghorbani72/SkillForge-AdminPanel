@@ -478,6 +478,7 @@ export const fa = {
     templatesGallery: 'گالری قالب‌ها',
     templateCovers: 'کاور قالب‌ها',
     section: {
+      account: 'حساب من',
       manage: 'مدیریت',
       learning: 'عملیات آموزشی',
       finance: 'مالی',

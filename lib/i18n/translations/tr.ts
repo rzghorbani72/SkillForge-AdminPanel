@@ -285,6 +285,7 @@ export const tr = {
     'cost-categories': 'Maliyet Kategorileri',
     'business-flow': 'İş Akışı',
     section: {
+      account: 'Hesabım',
       manage: 'Yönetim',
       learning: 'Öğrenme operasyonları',
       finance: 'Finans',

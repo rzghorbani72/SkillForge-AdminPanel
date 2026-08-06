@@ -1,8 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Building2, Globe2 } from 'lucide-react';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { Globe2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { ScopeBadge } from '@/components/settings/scope-badge';
 import { cn } from '@/lib/utils';
@@ -33,21 +32,15 @@ function isPlatformScoped(pathname: string): boolean {
 }
 
 /**
- * Says which academy the page below belongs to. Without it, an owner running
- * several academies cannot tell whose students, payments, or roles they are
- * editing — every page looks identical, and the only clue is a small name in
- * the header dropdown.
+ * Warns that the page below spans academies instead of belonging to one.
+ * Academy-scoped pages need no banner: the header switcher already names the
+ * academy being viewed.
  */
 export function ScopeContextBanner({ className }: { className?: string }) {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const academy = useCurrentAcademy();
 
-  const platformScoped = isPlatformScoped(pathname);
-
-  // Platform mode with a platform-scoped page needs no banner: there is no
-  // academy to confuse it with.
-  if (!academy && !platformScoped) return null;
+  if (!isPlatformScoped(pathname)) return null;
 
   return (
     <div
@@ -56,24 +49,9 @@ export function ScopeContextBanner({ className }: { className?: string }) {
         className
       )}
     >
-      {platformScoped ? (
-        <>
-          <Globe2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <span className="text-muted-foreground">
-            {t('scope.platformWide')}
-          </span>
-          <ScopeBadge scope="platform" className="ms-auto" />
-        </>
-      ) : (
-        <>
-          <Building2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <span className="text-muted-foreground">
-            {t('scope.viewingAcademy')}
-          </span>
-          <span className="truncate font-semibold">{academy?.name}</span>
-          <ScopeBadge scope="academy" className="ms-auto" />
-        </>
-      )}
+      <Globe2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+      <span className="text-muted-foreground">{t('scope.platformWide')}</span>
+      <ScopeBadge scope="platform" className="ms-auto" />
     </div>
   );
 }

@@ -484,6 +484,7 @@ export const en = {
     templatesGallery: 'Templates Gallery',
     templateCovers: 'Template Covers',
     section: {
+      account: 'My account',
       manage: 'Manage',
       learning: 'Learning operations',
       finance: 'Finance',
