@@ -5,6 +5,7 @@ import { Course, Lesson, Season } from '@/types/api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 const useLesson = () => {
@@ -57,7 +58,7 @@ const useLesson = () => {
   const handleDeleteLessonHandler = async (lessonId: string) => {
     try {
       await apiClient.deleteLesson(lessonId);
-      toast.success('Lesson deleted successfully');
+      toast.success(tNow('toasts.lessonDeleted'));
       fetchData(); // Refresh data
     } catch (error) {
       console.error('Error deleting lesson:', error);

@@ -349,7 +349,7 @@ export function useCourseForm(courseId?: string) {
   const save = useCallback(
     async (data: CourseFormData) => {
       if (!selectedAcademy) {
-        toast.error('Select an academy first');
+        toast.error(t('toasts.selectAcademyFirst'));
         return;
       }
       if (isSaving) return;

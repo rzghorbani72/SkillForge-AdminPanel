@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import {
-  VIDEO_CONSTRAINTS,
   formatFileSize,
-  formatDuration,
   validateVideoFile,
   validateVideoDuration
 } from '@/constants/video-constraints';
@@ -49,7 +48,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
         // Validate file using centralized constraints
         const fileValidation = validateVideoFile(file);
         if (!fileValidation.valid) {
-          toast.error(fileValidation.error!);
+          toast.error(tNow(fileValidation.errorKey, fileValidation.params));
           return;
         }
 
@@ -64,7 +63,9 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
               const durationValidation = validateVideoDuration(duration);
 
               if (!durationValidation.valid) {
-                toast.error(durationValidation.error!);
+                toast.error(
+                  tNow(durationValidation.errorKey, durationValidation.params)
+                );
                 resolve(false);
               } else {
                 resolve(true);
@@ -72,9 +73,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
             };
 
             video.onerror = () => {
-              toast.error(
-                'Unable to read video file. Please try a different file.'
-              );
+              toast.error(tNow('toasts.videoUnreadable'));
               resolve(false);
             };
 
@@ -95,7 +94,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
 
         // Show success message with file info
         toast.success(
-          VIDEO_CONSTRAINTS.MESSAGES.FILE_SELECTED(formatFileSize(file.size))
+          tNow('toasts.videoSelected', { size: formatFileSize(file.size) })
         );
       }
     },
@@ -115,9 +114,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
           'image/webp'
         ];
         if (!validTypes.includes(file.type)) {
-          toast.error(
-            'Please select a valid image file (PNG, JPG, JPEG, or WebP)'
-          );
+          toast.error(tNow('toasts.posterInvalidFormat'));
           return;
         }
 
@@ -148,7 +145,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
   // Upload the selected video
   const uploadVideo = useCallback(async () => {
     if (!selectedFile) {
-      toast.error('No video selected');
+      toast.error(tNow('toasts.videoNoneSelected'));
       return;
     }
 
@@ -209,7 +206,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
         setUploadedVideoId(videoId);
         // Ensure progress is at 100% for successful upload
         setUploadProgress(100);
-        toast.success(VIDEO_CONSTRAINTS.MESSAGES.UPLOAD_SUCCESS);
+        toast.success(tNow('toasts.videoUploaded'));
         options.onSuccess?.(videoId);
 
         // Small delay to show 100% progress before completing
@@ -217,16 +214,16 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
           setIsUploading(false);
         }, 500);
       } else {
-        toast.error(VIDEO_CONSTRAINTS.MESSAGES.UPLOAD_ERROR);
+        toast.error(tNow('toasts.videoUploadFailed'));
         options.onError?.(new Error('Upload failed'));
         setIsUploading(false);
       }
     } catch (error: any) {
       if (error.message === 'Upload cancelled') {
-        toast.info('Upload cancelled');
+        toast.info(tNow('toasts.uploadCancelled'));
         options.onCancel?.();
       } else {
-        toast.error('Failed to upload video. Please try again.');
+        toast.error(tNow('toasts.videoUploadFailed'));
         setSelectedFile(null);
         setSelectedPosterFile(null);
         setPreview((prev) => {

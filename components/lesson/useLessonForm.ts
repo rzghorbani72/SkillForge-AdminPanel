@@ -19,6 +19,7 @@ type LessonFormData = {
   lesson_type: 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
 };
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 
 type UseLessonFormReturn = {
   lesson: Lesson | null;
@@ -120,7 +121,7 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
 
   const onSubmitHandler = async (data: LessonFormData) => {
     if (!selectedAcademy) {
-      toast.error('Please select a store first');
+      toast.error(tNow('toasts.selectAcademyFirst'));
       return;
     }
 
@@ -147,13 +148,13 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
 
       if (isEdit && lessonId) {
         await apiClient.updateLesson(lessonId, lessonData);
-        toast.success('Lesson updated successfully!');
+        toast.success(tNow('toasts.lessonUpdated'));
         router.push(
           `/courses/${courseId}/seasons/${seasonId}/lessons/${lessonId}`
         );
       } else {
         await apiClient.createLesson(lessonData);
-        toast.success('Lesson created successfully!');
+        toast.success(tNow('toasts.lessonCreated'));
         router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`);
       }
     } catch (error) {

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +10,8 @@ import VideoSelectionDialog from './VideoSelectionDialog';
 import ProgressBar from './ProgressBar';
 import { cn } from '@/lib/utils';
 import ImageUploadPreview from './ImageUploadPreview';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 
 interface VideoUploadPreviewProps {
   title?: string;
@@ -45,10 +49,10 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
   existingVideoId,
   className = '',
   showPlaceholder = true,
-  placeholderText = 'No video selected',
-  placeholderSubtext = 'Upload a video to preview it here',
-  uploadButtonText = 'Upload Video',
-  selectButtonText = 'Select a video first',
+  placeholderText,
+  placeholderSubtext,
+  uploadButtonText,
+  selectButtonText,
   showVideoSelection = true,
   selectedVideoId,
   disabled = false,
@@ -58,6 +62,8 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
   posterImageUrl,
   onPosterSuccess
 }) => {
+  const { t } = useTranslation();
+  const percentLabel = usePercentLabel();
   const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<{
     id: number;
@@ -106,7 +112,7 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
           disabled={disabled}
         />
         <p className="text-xs text-muted-foreground">
-          Supported formats: MP4, WebM, OGG (Max 500MB)
+          {t('media.videoFormatsHint')}
         </p>
       </div>
 
@@ -121,16 +127,16 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
         >
           {videoUpload.isUploading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading...
+              <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              {t('common.uploading')}
             </>
           ) : videoUpload.hasVideoFile ? (
             <>
               <Upload className="mr-2 h-4 w-4" />
-              {uploadButtonText}
+              {uploadButtonText ?? t('media.uploadVideo')}
             </>
           ) : (
-            selectButtonText
+            (selectButtonText ?? t('media.selectVideoFirst'))
           )}
         </Button>
 
@@ -141,11 +147,11 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
               variant="outline"
               disabled={disabled}
               className="px-4"
-              title="Select from existing videos to avoid duplicates"
+              title={t('media.selectFromLibraryHint')}
               onClick={() => setIsSelectionDialogOpen(true)}
             >
-              <Library className="mr-2 h-4 w-4" />
-              Select from Library
+              <Library className="me-2 h-4 w-4" />
+              {t('media.selectFromLibrary')}
             </Button>
             <VideoSelectionDialog
               onSelect={handleVideoSelect}
@@ -164,8 +170,8 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
             className="px-4"
             disabled={disabled}
           >
-            <X className="mr-2 h-4 w-4" />
-            Cancel
+            <X className="me-2 h-4 w-4" />
+            {t('common.cancel')}
           </Button>
         )}
       </div>
@@ -176,10 +182,12 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">
               {videoUpload.uploadProgress === 100
-                ? 'Processing video...'
-                : 'Uploading video...'}
+                ? t('media.processingVideo')
+                : t('media.uploadingVideo')}
             </span>
-            <span className="font-medium">{videoUpload.uploadProgress}%</span>
+            <span className="font-medium">
+              {percentLabel(videoUpload.uploadProgress)}
+            </span>
           </div>
           <ProgressBar
             progress={videoUpload.uploadProgress}
@@ -206,8 +214,8 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
         existingVideoId={existingVideoId}
         className={className}
         showPlaceholder={showPlaceholder}
-        placeholderText={placeholderText}
-        placeholderSubtext={placeholderSubtext}
+        placeholderText={placeholderText ?? t('media.noVideoSelected')}
+        placeholderSubtext={placeholderSubtext ?? t('media.videoPreviewHint')}
         title={title}
         isUploading={videoUpload.isUploading}
         uploadProgress={videoUpload.uploadProgress}
@@ -219,18 +227,18 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
       {allowPosterUpload && (
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-muted-foreground">
-            Video Poster
+            {t('media.videoPoster')}
           </h4>
           <ImageUploadPreview
-            title={title || 'Video Poster'}
-            description={description || 'Video poster image'}
+            title={title || t('media.videoPoster')}
+            description={description || t('media.videoPoster')}
             onSuccess={(image) => {
               onPosterSuccess?.(image);
             }}
             selectedImageId={posterImageId ? String(posterImageId) : null}
-            alt="Video poster preview"
-            placeholderText="No poster selected"
-            placeholderSubtext="Click to browse or drag a poster image here"
+            alt={t('media.videoPoster')}
+            placeholderText={t('media.noPosterSelected')}
+            placeholderSubtext={t('media.dropImageHint')}
             onError={onError}
             existingImageUrl={posterImageUrl}
             existingImageId={posterImageId}

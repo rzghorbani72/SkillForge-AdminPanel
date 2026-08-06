@@ -29,18 +29,6 @@ export const VIDEO_CONSTRAINTS = {
     '1080p': 8000000 // 8 Mbps for 1080p
   },
 
-  // Error Messages
-  MESSAGES: {
-    INVALID_FORMAT: 'Please select a valid MP4 video file',
-    FILE_TOO_LARGE: (size: string) =>
-      `Video file size (${size}) must be less than 500MB. Consider compressing your video.`,
-    DURATION_TOO_LONG: (duration: string) =>
-      `Video duration (${duration}) must be less than 30 minutes. Consider splitting into shorter segments.`,
-    FILE_SELECTED: (size: string) => `Video selected: ${size}`,
-    UPLOAD_SUCCESS: 'Video uploaded successfully!',
-    UPLOAD_ERROR: 'Failed to upload video. Please try again.'
-  },
-
   // Storage Optimization
   STORAGE_OPTIMIZATION: {
     // Cost per GB per month (example rates)
@@ -84,36 +72,36 @@ export const formatDuration = (seconds: number): string => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
-export const validateVideoFile = (
-  file: File
-): { valid: boolean; error?: string } => {
-  // Check file type
-  if (!VIDEO_CONSTRAINTS.ALLOWED_FORMATS.includes(file.type as any)) {
-    return { valid: false, error: VIDEO_CONSTRAINTS.MESSAGES.INVALID_FORMAT };
+/**
+ * Validators return a translation key (plus its params) instead of a message,
+ * so the text is rendered in the user's language at the call site.
+ */
+export type VideoValidation =
+  | { valid: true }
+  | { valid: false; errorKey: string; params?: Record<string, string> };
+
+export const validateVideoFile = (file: File): VideoValidation => {
+  if (!VIDEO_CONSTRAINTS.ALLOWED_FORMATS.includes(file.type as never)) {
+    return { valid: false, errorKey: 'toasts.videoInvalidFormat' };
   }
 
-  // Check file size
   if (file.size > VIDEO_CONSTRAINTS.MAX_FILE_SIZE) {
     return {
       valid: false,
-      error: VIDEO_CONSTRAINTS.MESSAGES.FILE_TOO_LARGE(
-        formatFileSize(file.size)
-      )
+      errorKey: 'toasts.videoTooLarge',
+      params: { size: formatFileSize(file.size) }
     };
   }
 
   return { valid: true };
 };
 
-export const validateVideoDuration = (
-  duration: number
-): { valid: boolean; error?: string } => {
+export const validateVideoDuration = (duration: number): VideoValidation => {
   if (duration > VIDEO_CONSTRAINTS.MAX_DURATION_SECONDS) {
     return {
       valid: false,
-      error: VIDEO_CONSTRAINTS.MESSAGES.DURATION_TOO_LONG(
-        formatDuration(duration)
-      )
+      errorKey: 'toasts.videoTooLong',
+      params: { duration: formatDuration(duration) }
     };
   }
 

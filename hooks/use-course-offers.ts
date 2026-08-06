@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import type { Offer, OfferInput } from '@/types/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 // Manages the offers that unlock ONE course. A course can be sold several ways
 // at once (one-time / subscription / installments), plus the read-only default
@@ -35,7 +37,7 @@ export function useCourseOffers(courseId: string | undefined) {
         await apiClient.createOffer({ ...input, course_ids: [courseId] });
         await refresh();
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : 'Failed to add offer');
+        toast.error(apiErrorMessage(e, tNow('toasts.offerAddFailed')));
       } finally {
         setIsSaving(false);
       }
@@ -50,7 +52,7 @@ export function useCourseOffers(courseId: string | undefined) {
         await apiClient.updateOffer(offer.id, { is_active: !offer.is_active });
         await refresh();
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : 'Failed to update offer');
+        toast.error(apiErrorMessage(e, tNow('toasts.offerUpdateFailed')));
       } finally {
         setIsSaving(false);
       }
@@ -65,7 +67,7 @@ export function useCourseOffers(courseId: string | undefined) {
         await apiClient.deleteOffer(id);
         await refresh();
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : 'Failed to delete offer');
+        toast.error(apiErrorMessage(e, tNow('toasts.offerDeleteFailed')));
       } finally {
         setIsSaving(false);
       }

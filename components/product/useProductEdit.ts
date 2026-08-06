@@ -8,6 +8,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { Product } from '@/types/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import { ProductCreateFormData } from './useProductCreate';
@@ -105,7 +106,7 @@ export const useProductEdit = () => {
 
   const onSubmitHandler = async (data: ProductEditFormData) => {
     if (!selectedAcademy || !product) {
-      toast.error('Product or store not found');
+      toast.error(tNow('toasts.productOrAcademyMissing'));
       return;
     }
 
@@ -118,7 +119,7 @@ export const useProductEdit = () => {
       setIsSubmitting(true);
 
       if (!data.title.trim() || data.title.trim().length < 5) {
-        toast.error('Title must be at least 5 characters long');
+        toast.error(tNow('toasts.titleMinLength'));
         return;
       }
 
@@ -197,7 +198,7 @@ export const useProductEdit = () => {
       }
 
       await apiClient.updateProduct(product.id, productData);
-      toast.success('Product updated successfully');
+      toast.success(tNow('toasts.productUpdated'));
       router.push('/products');
     } catch (error) {
       console.error('Error updating product:', error);

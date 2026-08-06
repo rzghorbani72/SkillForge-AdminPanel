@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Upload, Loader2, X, FileText } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import { ErrorHandler } from '@/lib/error-handler';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
@@ -84,12 +85,12 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
     const f = e.target.files?.[0];
     if (!f) return;
     setFile(f);
-    toast.success(`Selected: ${f.name}`);
+    toast.success(tNow('toasts.fileSelected', { name: f.name }));
   };
 
   const handleUpload = async () => {
     if (!file) {
-      toast.error('Choose a document file first');
+      toast.error(tNow('toasts.documentChooseFirst'));
       return;
     }
     setIsUploading(true);
@@ -101,7 +102,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
       const doc = parseDocumentFromUploadResponse(res);
       const id = doc?.id;
       if (!id) {
-        toast.error('Upload succeeded but no document id was returned');
+        toast.error(tNow('toasts.documentBadResponse'));
         return;
       }
       onSuccess({ id });
@@ -111,7 +112,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
         mime_type: doc?.mime_type
       });
       setFile(null);
-      toast.success('Document uploaded and linked to this lesson');
+      toast.success(tNow('toasts.documentUploaded'));
     } catch (err) {
       ErrorHandler.handleApiError(err);
       setFile(null);

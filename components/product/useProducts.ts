@@ -5,6 +5,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { Product } from '@/types/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 type UseProductsReturn = {
@@ -112,7 +113,7 @@ const useProducts = (): UseProductsReturn => {
         );
         fetchProducts();
       } else {
-        toast.error('Failed to delete product');
+        toast.error(tNow('toasts.productDeleteFailed'));
       }
     } catch (error) {
       console.error('Error deleting product:', error);

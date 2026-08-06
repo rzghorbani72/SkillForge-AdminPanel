@@ -138,7 +138,7 @@ export default function DocumentsPage() {
   const handleViewDocument = (doc: DocumentItem) => {
     const previewUrl = buildDocumentUrl(doc.preview_url);
     if (!previewUrl) {
-      toast.error('Preview not available for this document.');
+      toast.error(t('toasts.documentPreviewUnavailable'));
       return;
     }
     setPreviewDocument(doc);
@@ -147,7 +147,7 @@ export default function DocumentsPage() {
   const handleDownloadDocument = (doc: DocumentItem) => {
     const downloadUrl = buildDocumentUrl(doc.download_url);
     if (!downloadUrl) {
-      toast.error('Download not available for this document.');
+      toast.error(t('toasts.documentDownloadUnavailable'));
       return;
     }
 

@@ -128,7 +128,7 @@ export default function ImagesPage() {
 
     try {
       await apiClient.updateImage(editImage.id, data);
-      toast.success('Image updated successfully');
+      toast.success(t('toasts.imageUpdated'));
       fetchImages();
       setEditImage(null);
     } catch (error) {
@@ -142,7 +142,7 @@ export default function ImagesPage() {
     try {
       setIsDeleting(true);
       await apiClient.deleteImage(imageId);
-      toast.success('Image deleted successfully');
+      toast.success(t('toasts.imageDeleted'));
       setDeleteImage(null);
       fetchImages();
     } catch (error) {

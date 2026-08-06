@@ -73,7 +73,11 @@ export function WithdrawalsSection({
     setProcessing(id);
     try {
       await apiClient.processAffiliateWithdrawal(id, status);
-      toast.success(`Marked as ${status.toLowerCase()}`);
+      toast.success(
+        t('toasts.withdrawalMarked', {
+          status: t(W_STATUS_LABEL_KEYS[status] ?? status)
+        })
+      );
       load();
     } catch (e: any) {
       toast.error(e?.message ?? t('common.error'));

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -86,7 +88,7 @@ export default function DatabasePage() {
       const data = await apiClient.getDatabaseModels();
       setModels(data);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to load models');
+      toast.error(apiErrorMessage(error, tNow('toasts.modelsLoadFailed')));
     } finally {
       setLoading(false);
     }
@@ -99,7 +101,7 @@ export default function DatabasePage() {
       const data = await apiClient.getModelFields(selectedModel);
       setFields(data.fields || []);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to load model fields');
+      toast.error(apiErrorMessage(error, tNow('toasts.modelFieldsLoadFailed')));
     } finally {
       setLoading(false);
     }
@@ -116,7 +118,7 @@ export default function DatabasePage() {
       setRecords(result.data || []);
       setTotal(result.total || 0);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to load records');
+      toast.error(apiErrorMessage(error, tNow('toasts.recordsLoadFailed')));
       setRecords([]);
     } finally {
       setLoading(false);
@@ -128,12 +130,12 @@ export default function DatabasePage() {
     try {
       setLoading(true);
       await apiClient.createModelRecord(selectedModel, formData);
-      toast.success('Record created successfully');
+      toast.success(tNow('toasts.recordCreated'));
       setIsCreateDialogOpen(false);
       setFormData({});
       loadRecords();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to create record');
+      toast.error(apiErrorMessage(error, tNow('toasts.recordCreateFailed')));
     } finally {
       setLoading(false);
     }
@@ -148,13 +150,13 @@ export default function DatabasePage() {
         selectedRecord.id,
         formData
       );
-      toast.success('Record updated successfully');
+      toast.success(tNow('toasts.recordUpdated'));
       setIsEditDialogOpen(false);
       setSelectedRecord(null);
       setFormData({});
       loadRecords();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to update record');
+      toast.error(apiErrorMessage(error, tNow('toasts.recordUpdateFailed')));
     } finally {
       setLoading(false);
     }
@@ -166,10 +168,10 @@ export default function DatabasePage() {
     try {
       setLoading(true);
       await apiClient.deleteModelRecord(selectedModel, id);
-      toast.success('Record deleted successfully');
+      toast.success(tNow('toasts.recordDeleted'));
       loadRecords();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to delete record');
+      toast.error(apiErrorMessage(error, tNow('toasts.recordDeleteFailed')));
     } finally {
       setLoading(false);
     }
@@ -192,7 +194,7 @@ export default function DatabasePage() {
       setSelectedRecord(fullRecord);
       setIsViewDialogOpen(true);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to load record');
+      toast.error(apiErrorMessage(error, tNow('toasts.recordLoadFailed')));
     } finally {
       setLoading(false);
     }

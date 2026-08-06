@@ -5,6 +5,7 @@ import { useStore } from '@/hooks/useStore';
 import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 
 export type CourseWithRevenue = Course & {
   revenue: number;
@@ -70,7 +71,7 @@ const useCourses = () => {
       );
       setRawCourses(list);
     } catch (err: any) {
-      toast.error('Failed to load courses');
+      toast.error(tNow('toasts.coursesLoadFailed'));
       setRawCourses([]);
     } finally {
       setIsLoading(false);
@@ -115,7 +116,7 @@ const useCourses = () => {
   const handleDeleteCourse = async (course: CourseWithRevenue) => {
     try {
       await apiClient.deleteCourse(course.id);
-      toast.success('Course deleted');
+      toast.success(tNow('toasts.courseDeleted'));
       fetchCourses();
     } catch (err: unknown) {
       // Localizes COURSE_HAS_ACTIVE_ENROLLMENTS and friends by error code.

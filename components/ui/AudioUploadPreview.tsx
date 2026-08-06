@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Upload, Loader2, X } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import { ErrorHandler } from '@/lib/error-handler';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
@@ -92,16 +93,16 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
     const f = e.target.files?.[0];
     if (!f) return;
     if (!f.type.startsWith('audio/')) {
-      toast.error('Please choose an audio file');
+      toast.error(tNow('toasts.audioChooseFile'));
       return;
     }
     setFile(f);
-    toast.success(`Selected: ${f.name}`);
+    toast.success(tNow('toasts.fileSelected', { name: f.name }));
   };
 
   const handleUpload = async () => {
     if (!file) {
-      toast.error('Choose an audio file first');
+      toast.error(tNow('toasts.audioChooseFirst'));
       return;
     }
     setIsUploading(true);
@@ -113,14 +114,14 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
       const audio = parseAudioFromUploadResponse(res);
       const id = audio?.id;
       if (!id) {
-        toast.error('Upload succeeded but no audio id was returned');
+        toast.error(tNow('toasts.audioBadResponse'));
         return;
       }
       const url = audio ? resolvePlayUrl(audio) : '';
       onSuccess({ id, publicUrl: url || null });
       if (url) setPlayUrl(url);
       setFile(null);
-      toast.success('Audio uploaded and linked to this lesson');
+      toast.success(tNow('toasts.audioUploaded'));
     } catch (err) {
       ErrorHandler.handleApiError(err);
       setFile(null);

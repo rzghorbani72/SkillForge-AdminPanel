@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 
 export interface ImageUploadOptions {
   title?: string;
@@ -56,7 +57,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
     async (fileOverride?: File) => {
       const file = fileOverride ?? selectedFile;
       if (!file) {
-        toast.error('No image selected');
+        toast.error(tNow('toasts.imageNoneSelected'));
         return;
       }
 
@@ -89,21 +90,21 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
               ? `${process.env.NEXT_PUBLIC_HOST || ''}${imageUrl}`
               : imageUrl;
           setUploadedImageId(imageId);
-          toast.success('Image uploaded successfully!');
+          toast.success(tNow('toasts.imageUploaded'));
           options.onSuccess?.({ id: imageId, url: fullUrl });
         } else {
           console.error('Upload response structure:', uploadResponse);
-          toast.error('Failed to upload image: Invalid response structure');
+          toast.error(tNow('toasts.imageBadResponse'));
           options.onError?.(
             new Error('Upload failed: Invalid response structure')
           );
         }
       } catch (error: any) {
         if (error.name === 'AbortError') {
-          toast.info('Upload cancelled');
+          toast.info(tNow('toasts.uploadCancelled'));
           options.onCancel?.();
         } else {
-          toast.error('Failed to upload image. Please try again.');
+          toast.error(tNow('toasts.imageUploadFailed'));
           setSelectedFile(null);
           setPreview((prev) => {
             if (prev) URL.revokeObjectURL(prev);

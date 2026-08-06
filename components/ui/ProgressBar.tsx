@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 
 interface ProgressBarProps {
   progress: number; // 0-100
@@ -29,11 +32,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     destructive: 'bg-red-500'
   };
 
-  const clampedProgress = Math.min(Math.max(progress, 0), 100);
+  const clampedProgress = Math.round(Math.min(Math.max(progress, 0), 100));
+  const percentLabel = usePercentLabel();
 
   return (
     <div className={cn('w-full', className)}>
       <div
+        role="progressbar"
+        aria-valuenow={clampedProgress}
+        aria-valuemin={0}
+        aria-valuemax={100}
         className={cn(
           'w-full overflow-hidden rounded-full bg-muted',
           sizeClasses[size]
@@ -49,7 +57,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       </div>
       {showPercentage && (
         <div className="mt-1 text-center text-xs text-muted-foreground">
-          {Math.round(clampedProgress)}%
+          {percentLabel(clampedProgress)}
         </div>
       )}
     </div>

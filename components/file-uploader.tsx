@@ -8,6 +8,7 @@ import Dropzone, {
   type FileRejection
 } from 'react-dropzone';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -115,12 +116,12 @@ export function FileUploader(props: FileUploaderProps) {
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (!multiple && maxFiles === 1 && acceptedFiles.length > 1) {
-        toast.error('Cannot upload more than 1 file at a time');
+        toast.error(tNow('toasts.singleFileOnly'));
         return;
       }
 
       if ((files?.length ?? 0) + acceptedFiles.length > maxFiles) {
-        toast.error(`Cannot upload more than ${maxFiles} files`);
+        toast.error(tNow('toasts.maxFiles', { count: maxFiles }));
         return;
       }
 
@@ -136,7 +137,7 @@ export function FileUploader(props: FileUploaderProps) {
 
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file }) => {
-          toast.error(`File ${file.name} was rejected`);
+          toast.error(tNow('toasts.fileRejected', { name: file.name }));
         });
       }
 

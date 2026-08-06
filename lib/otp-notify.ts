@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+import { tNow } from './i18n/t-now';
 
 type OtpSendResponse = { data?: { otp?: string } } | null | undefined;
 
@@ -13,7 +14,7 @@ export function notifyOtpSent(
 ): void {
   const code = response?.data?.otp;
   if (code) {
-    toast.info(`${message}\n\n🔐 Code: ${code}`, {
+    toast.info(`${message}\n\n🔐 ${tNow('toasts.otpDebugCode', { code })}`, {
       toastId,
       autoClose: 8000,
       style: { whiteSpace: 'pre-wrap' }

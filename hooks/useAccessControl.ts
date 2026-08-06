@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import { authService, AuthUser } from '@/lib/auth';
 import { Profile } from '@/types/api';
 
@@ -386,7 +387,7 @@ export function useAccessControl() {
     redirectTo: string = '/dashboard'
   ) => {
     if (!hasPermission(permission)) {
-      toast.error('You do not have permission to access this resource');
+      toast.error(tNow('toasts.noPermission'));
       return false;
     }
     return true;
@@ -394,7 +395,7 @@ export function useAccessControl() {
 
   const requireRole = (role: string, redirectTo: string = '/dashboard') => {
     if (!hasRole(role)) {
-      toast.error('You do not have the required role to access this resource');
+      toast.error(tNow('toasts.noRole'));
       return false;
     }
     return true;
@@ -425,7 +426,7 @@ export function useAccessControl() {
     }
 
     if (!hasAccess) {
-      toast.error('You do not have permission to access this resource');
+      toast.error(tNow('toasts.noPermission'));
       return false;
     }
     return true;

@@ -14,6 +14,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Video } from 'lucide-react';
 
@@ -65,16 +66,16 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
   const handleSave = async () => {
     const url = meetingUrl.trim();
     if (!url.startsWith('https://')) {
-      toast.error('Meeting link must be an https URL');
+      toast.error(tNow('toasts.liveLinkHttps'));
       return;
     }
     if (!startsAt) {
-      toast.error('Start date and time are required');
+      toast.error(tNow('toasts.liveStartRequired'));
       return;
     }
     const duration = parseInt(durationMinutes, 10);
     if (!duration || duration < 1) {
-      toast.error('Duration must be at least 1 minute');
+      toast.error(tNow('toasts.liveDurationMin'));
       return;
     }
 
@@ -92,7 +93,7 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
         provider_label: label.trim() || null,
         notes: null
       });
-      toast.success('Live session saved');
+      toast.success(tNow('toasts.liveSaved'));
       onSaved?.();
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -108,7 +109,7 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
     setRemoving(true);
     try {
       await apiClient.deleteLiveSession(lessonId);
-      toast.success('Live session removed');
+      toast.success(tNow('toasts.liveRemoved'));
       setMeetingUrl('');
       setLabel('');
       setStartsAt('');

@@ -7,6 +7,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
@@ -88,7 +89,7 @@ export const useProductCreate = () => {
 
   const onSubmitHandler = async (data: ProductCreateFormData) => {
     if (!selectedAcademy) {
-      toast.error('Please select a store first');
+      toast.error(tNow('toasts.selectAcademyFirst'));
       return;
     }
 
@@ -101,7 +102,7 @@ export const useProductCreate = () => {
       setIsLoading(true);
 
       if (!data.title.trim() || data.title.trim().length < 5) {
-        toast.error('Title must be at least 5 characters long');
+        toast.error(tNow('toasts.titleMinLength'));
         return;
       }
 
@@ -180,7 +181,7 @@ export const useProductCreate = () => {
       }
 
       await apiClient.createProduct(productData);
-      toast.success('Product created successfully');
+      toast.success(tNow('toasts.productCreated'));
       router.push('/products');
     } catch (error) {
       console.error('Error creating product:', error);

@@ -1,9 +1,13 @@
+'use client';
+
 import React, { useCallback, useRef, useState } from 'react';
 import { Image as ImageIcon, Loader2, UploadCloud, X } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { langApiVersionPath } from '@/lib/api-lang';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { useTranslation } from '@/lib/i18n/hooks';
+import ProgressBar from './ProgressBar';
 
 interface ImageUploadPreviewProps {
   title?: string;
@@ -32,25 +36,26 @@ function resolveImageSrc(pathOrUrl: string): string {
 }
 
 const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
-  title = 'Image Upload',
-  description = 'Upload an image',
+  title,
+  description,
   onSuccess,
   onError,
   existingImageUrl,
   existingImageId,
-  alt = 'Image preview',
+  alt,
   className = '',
-  placeholderText = 'No image selected',
-  placeholderSubtext = 'Click to browse or drag an image here',
+  placeholderText,
+  placeholderSubtext,
   selectedImageId,
   disabled = false
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const { t } = useTranslation();
 
   const imageUpload = useImageUpload({
-    title,
-    description,
+    title: title ?? t('media.imagePreview'),
+    description: description ?? t('media.imagePreview'),
     onSuccess,
     onError
   });
@@ -117,7 +122,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
         <div className="relative aspect-[5/4] h-64 w-full">
           <Image
             src={currentSrc}
-            alt={alt}
+            alt={alt ?? t('media.imagePreview')}
             fill
             sizes="400px"
             className="object-cover"
@@ -131,7 +136,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
               }}
               disabled={disabled}
               className="absolute end-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
-              aria-label="Remove image"
+              aria-label={t('common.remove')}
             >
               <X className="h-4 w-4" />
             </button>
@@ -141,18 +146,27 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
         <div className="flex aspect-[5/4] h-64 w-full flex-col items-center justify-center gap-2 px-4 text-center">
           <ImageIcon className="h-8 w-8 text-muted-foreground" />
           <p className="text-sm font-medium text-foreground">
-            {placeholderText}
+            {placeholderText ?? t('media.noImageSelected')}
           </p>
-          <p className="text-xs text-muted-foreground">{placeholderSubtext}</p>
+          <p className="text-xs text-muted-foreground">
+            {placeholderSubtext ?? t('media.dropImageHint')}
+          </p>
         </div>
       )}
 
       {imageUpload.isUploading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/80">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <p className="text-xs font-medium text-foreground">
-            {imageUpload.uploadProgress}%
-          </p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/85 px-6">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+            <p className="text-xs font-medium text-foreground">
+              {t('common.uploading')}
+            </p>
+          </div>
+          <ProgressBar
+            progress={imageUpload.uploadProgress}
+            size="sm"
+            className="max-w-[220px]"
+          />
         </div>
       )}
 

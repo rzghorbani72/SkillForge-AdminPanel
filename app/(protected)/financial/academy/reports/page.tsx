@@ -27,6 +27,8 @@ import {
 import { apiClient } from '@/lib/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
@@ -92,7 +94,7 @@ export default function StoreReportsPage() {
       setRecords(recordsData);
     } catch (error: any) {
       console.error('Error loading reports data:', error);
-      toast.error(error?.message || 'Failed to load reports data');
+      toast.error(apiErrorMessage(error, tNow('toasts.reportsLoadFailed')));
     } finally {
       setLoading(false);
     }

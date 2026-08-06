@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 import { apiClient, GatewayConfigData, GatewayRegistryStatus } from '@/lib/api';
 import { toast } from 'react-toastify';
+import { tNow } from '@/lib/i18n/t-now';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 interface GatewayState {
   id: string;
@@ -89,7 +91,7 @@ export default function PaymentGatewaySettingsPage() {
         }))
       );
     } catch (err: any) {
-      toast.error(err?.message ?? 'Failed to load gateway configs');
+      toast.error(apiErrorMessage(err, tNow('toasts.gatewayLoadFailed')));
     } finally {
       setIsLoading(false);
     }
@@ -122,7 +124,7 @@ export default function PaymentGatewaySettingsPage() {
       gw.callbackUrl.trim() === gw.initialCallbackUrl;
 
     if (hasNoChanges) {
-      toast.info('No changes to save');
+      toast.info(tNow('toasts.noChangesToSave'));
       return;
     }
 
@@ -147,11 +149,11 @@ export default function PaymentGatewaySettingsPage() {
             : {})
         }
       });
-      toast.success(`${gw.display_name} updated successfully`);
+      toast.success(tNow('toasts.gatewayUpdated', { name: gw.display_name }));
       // Reload to reflect token_configured status
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? 'Failed to update gateway');
+      toast.error(apiErrorMessage(err, tNow('toasts.gatewayUpdateFailed')));
       setGateways((prev) =>
         prev.map((g) => (g.id === gw.id ? { ...g, isSaving: false } : g))
       );
