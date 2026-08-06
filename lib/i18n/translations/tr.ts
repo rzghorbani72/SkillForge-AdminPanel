@@ -718,6 +718,9 @@ export const tr = {
       'Ad, kapak ve fiyat ile başlayın. Sonraki adımda sezonları ve dersleri ekleyeceksiniz.',
     stepCurriculumHint:
       'Sezonları ve dersleri ekleyin. Kurs taslak olarak oluşturulur; daha sonra kurs sayfasından yayınlayabilirsiniz.',
+    savingCourse: 'Kurs kaydediliyor…',
+    creatingCourse: 'Kurs oluşturuluyor…',
+    draftSavedToast: 'Taslak olarak kaydedildi',
     nextCurriculum: 'Sonraki: Müfredat',
     backBasicInfo: 'Geri: Temel bilgiler',
     fixErrorsBeforeNext: 'Devam etmeden önce işaretli alanları düzeltin.',

@@ -98,7 +98,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     updateLesson,
     assignLesson,
     reorderLessons,
-    save
+    save,
+    saveCoverDraft
   } = useCourseForm(courseId);
 
   // Edit always shows everything on one page; only the create flow steps.
@@ -266,9 +267,9 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                       existingImageUrl={existingCoverUrl}
                       onSuccess={(img) => {
                         form.setValue('cover_id', img.id.toString());
-                        // Editing an existing course: persist the new cover
-                        // right away instead of waiting for a manual save.
-                        if (isEdit) form.handleSubmit(save)();
+                        // The image is already on the server, so persist the
+                        // course it belongs to right away — as a draft.
+                        void saveCoverDraft();
                       }}
                       selectedImageId={form.watch('cover_id')}
                       alt="Course cover"

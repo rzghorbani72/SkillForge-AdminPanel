@@ -1212,6 +1212,9 @@ export const en = {
       'Start with the name, cover and price. Next you will add the seasons and lessons.',
     stepCurriculumHint:
       'Add seasons and lessons. The course is created as a draft — you can publish it later from the course page.',
+    savingCourse: 'Saving course…',
+    creatingCourse: 'Creating course…',
+    draftSavedToast: 'Saved as a draft',
     nextCurriculum: 'Next: Curriculum',
     backBasicInfo: 'Back: Basic info',
     fixErrorsBeforeNext: 'Please fix the highlighted fields before continuing.',

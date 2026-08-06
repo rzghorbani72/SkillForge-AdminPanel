@@ -134,6 +134,9 @@ export function useCourseForm(courseId?: string) {
   const [lessons, setLessons] = useState<LessonDraft[]>([emptyLesson()]);
   const [deletedSeasonIds, setDeletedSeasonIds] = useState<string[]>([]);
   const [deletedLessonIds, setDeletedLessonIds] = useState<string[]>([]);
+  /** Create flow: id of the draft already saved (e.g. after a cover upload). */
+  const [draftCourseId, setDraftCourseId] = useState<string | null>(null);
+  const persistedId = courseId ?? draftCourseId;
   const existingCoverUrl = useRef<string | null>(null);
 
   const form = useForm<CourseFormData>({
@@ -346,8 +349,8 @@ export function useCourseForm(courseId?: string) {
 
   // ── Save ──────────────────────────────────────────────────────────────────
 
-  const save = useCallback(
-    async (data: CourseFormData) => {
+  const persist = useCallback(
+    async (data: CourseFormData, options: { redirect: boolean }) => {
       if (!selectedAcademy) {
         toast.error(t('toasts.selectAcademyFirst'));
         return;
@@ -377,11 +380,11 @@ export function useCourseForm(courseId?: string) {
         };
 
         let courseDbId: string;
-        if (isEdit) {
+        if (persistedId) {
           // One atomic save: course + every season/lesson + deletes in a single
           // backend transaction. No more half-saved course on a mid-save error.
-          setSaveProgress('Saving course…');
-          await apiClient.updateCourseContent(courseId!, {
+          setSaveProgress(t('courses.savingCourse'));
+          await apiClient.updateCourseContent(persistedId, {
             ...coursePayload,
             seasons: seasons
               .filter((s) => s.title.trim())
@@ -412,12 +415,12 @@ export function useCourseForm(courseId?: string) {
             deleted_lesson_ids:
               deletedLessonIds.length > 0 ? deletedLessonIds : undefined
           });
-          courseDbId = courseId!;
+          courseDbId = persistedId;
           setDeletedLessonIds([]);
           setDeletedSeasonIds([]);
         } else {
           // Create: send everything in one atomic request
-          setSaveProgress('Creating course…');
+          setSaveProgress(t('courses.creatingCourse'));
           const seasonsPayload = seasons
             .filter((s) => s.title.trim())
             .map((s) => ({
@@ -467,15 +470,22 @@ export function useCourseForm(courseId?: string) {
           const id = extractId(resp);
           if (!id) throw new Error('Course creation returned no id');
           courseDbId = id;
+          // Remember it so the next save updates this draft instead of
+          // creating a second course.
+          setDraftCourseId(id);
         }
 
-        toast.success(
-          t(isEdit ? 'courses.updatedToast' : 'courses.createdDraftToast')
-        );
-        // Course + curriculum are already saved atomically at this point, so
-        // both flows land on the plain detail view — never back on a form
-        // pre-filled with what was just submitted.
-        router.push(`/courses/${courseDbId}`);
+        if (options.redirect) {
+          toast.success(
+            t(isEdit ? 'courses.updatedToast' : 'courses.createdDraftToast')
+          );
+          // Course + curriculum are already saved atomically at this point, so
+          // both flows land on the plain detail view — never back on a form
+          // pre-filled with what was just submitted.
+          router.push(`/courses/${courseDbId}`);
+        } else {
+          toast.success(t('courses.draftSavedToast'));
+        }
       } catch (err) {
         ErrorHandler.handleApiError(err);
       } finally {
@@ -487,7 +497,7 @@ export function useCourseForm(courseId?: string) {
       selectedAcademy,
       isSaving,
       isEdit,
-      courseId,
+      persistedId,
       seasons,
       lessons,
       deletedSeasonIds,
@@ -496,6 +506,30 @@ export function useCourseForm(courseId?: string) {
       t
     ]
   );
+
+  const save = useCallback(
+    (data: CourseFormData) => persist(data, { redirect: true }),
+    [persist]
+  );
+
+  /**
+   * The cover file already lives on the server, so the course that owns it must
+   * exist too — otherwise a manager who uploads a cover and closes the tab
+   * loses everything and leaves an orphan image behind. Saved as a draft: never
+   * published by an upload, and an already-published course keeps its state.
+   */
+  const saveCoverDraft = useCallback(async () => {
+    const values = form.getValues();
+    // Quiet check: while the basic fields are still incomplete there is nothing
+    // valid to save yet, and firing red errors right after an upload is noise.
+    if (!courseFormSchema.safeParse(values).success) return;
+    await persist(
+      { ...values, published: isEdit && values.published },
+      {
+        redirect: false
+      }
+    );
+  }, [form, isEdit, persist]);
 
   return {
     form,
@@ -519,6 +553,7 @@ export function useCourseForm(courseId?: string) {
     updateLesson,
     assignLesson,
     reorderLessons,
-    save
+    save,
+    saveCoverDraft
   };
 }
