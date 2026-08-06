@@ -45,6 +45,28 @@ export function useCurriculumDraft() {
     });
   }, []);
 
+  /**
+   * The last season can't be removed (a course needs one to hold lessons), so
+   * this is what its trash button does instead: wipe it back to the same
+   * blank state a freshly added season starts in.
+   */
+  const clearSeason = useCallback((seasonKey: string) => {
+    setLessons((prev) => {
+      const idsToDelete = prev
+        .filter((l) => l.seasonClientKey === seasonKey && l.id)
+        .map((l) => l.id!);
+      if (idsToDelete.length) {
+        setDeletedLessonIds((ids) => [...ids, ...idsToDelete]);
+      }
+      return prev.filter((l) => l.seasonClientKey !== seasonKey);
+    });
+    setSeasons((prev) =>
+      prev.map((s) =>
+        s.clientKey === seasonKey ? { ...s, title: '', description: '' } : s
+      )
+    );
+  }, []);
+
   const updateSeason = useCallback(
     (key: string, patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>) =>
       setSeasons((s) =>
@@ -76,6 +98,22 @@ export function useCurriculumDraft() {
       }
       return prev.filter((l) => l.clientKey !== lessonKey);
     });
+  }, []);
+
+  /**
+   * The last lesson in a season can't be removed outright — that would leave
+   * the season empty, which blocks publishing and re-triggers the "add a
+   * season" guard. Instead it resets back to a blank draft in the same spot,
+   * exactly like a lesson never started.
+   */
+  const clearLesson = useCallback((lessonKey: string) => {
+    setLessons((prev) =>
+      prev.map((l) => {
+        if (l.clientKey !== lessonKey) return l;
+        if (l.id) setDeletedLessonIds((ids) => [...ids, l.id!]);
+        return emptyLesson(l.seasonClientKey);
+      })
+    );
   }, []);
 
   const updateLesson = useCallback(
@@ -133,10 +171,12 @@ export function useCurriculumDraft() {
     clearDeleted,
     addSeason,
     removeSeason,
+    clearSeason,
     updateSeason,
     reorderSeasons,
     addLesson,
     removeLesson,
+    clearLesson,
     updateLesson,
     assignLesson,
     reorderLessons

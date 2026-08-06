@@ -27,6 +27,7 @@ interface SeasonsSectionProps {
   lessons: LessonDraft[];
   onAddSeason: () => void;
   onRemoveSeason: (key: string) => void;
+  onClearSeason: (key: string) => void;
   onUpdateSeason: (
     key: string,
     patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>
@@ -34,6 +35,7 @@ interface SeasonsSectionProps {
   onReorderSeasons: (from: number, to: number) => void;
   onAddLesson: (seasonClientKey: string, title: string) => void;
   onRemoveLesson: (lessonKey: string) => void;
+  onClearLesson: (lessonKey: string) => void;
   onUpdateLesson: (lessonKey: string, patch: Partial<LessonDraft>) => void;
   onAssignLesson: (lessonKey: string, seasonClientKey: string) => void;
   onReorderLessons: (
@@ -48,10 +50,12 @@ export function SeasonsSection({
   lessons,
   onAddSeason,
   onRemoveSeason,
+  onClearSeason,
   onUpdateSeason,
   onReorderSeasons,
   onAddLesson,
   onRemoveLesson,
+  onClearLesson,
   onUpdateLesson,
   onAssignLesson,
   onReorderLessons
@@ -181,10 +185,12 @@ export function SeasonsSection({
                         onUpdateSeason(season.clientKey, patch)
                       }
                       onRemove={() => onRemoveSeason(season.clientKey)}
+                      onClear={() => onClearSeason(season.clientKey)}
                       onAddLesson={(title) =>
                         onAddLesson(season.clientKey, title)
                       }
                       onRemoveLesson={onRemoveLesson}
+                      onClearLesson={onClearLesson}
                       onUpdateLesson={onUpdateLesson}
                       onAssignLesson={onAssignLesson}
                       onReorderLessons={(from, to) =>

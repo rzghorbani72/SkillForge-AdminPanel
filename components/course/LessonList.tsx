@@ -23,6 +23,7 @@ interface LessonListProps {
   seasons: SeasonDraft[];
   onAddLesson: (title: string) => void;
   onRemoveLesson: (key: string) => void;
+  onClearLesson: (key: string) => void;
   onUpdateLesson: (key: string, patch: Partial<LessonDraft>) => void;
   onAssignLesson: (key: string, seasonClientKey: string) => void;
   onReorderLessons: (from: number, to: number) => void;
@@ -33,6 +34,7 @@ export function LessonList({
   seasons,
   onAddLesson,
   onRemoveLesson,
+  onClearLesson,
   onUpdateLesson,
   onAssignLesson,
   onReorderLessons
@@ -72,8 +74,10 @@ export function LessonList({
                   lesson={lesson}
                   index={index}
                   seasons={seasons}
+                  canRemove={lessons.length > 1}
                   onUpdate={(patch) => onUpdateLesson(lesson.clientKey, patch)}
                   onRemove={() => onRemoveLesson(lesson.clientKey)}
+                  onClear={() => onClearLesson(lesson.clientKey)}
                   onAssign={(key) => onAssignLesson(lesson.clientKey, key)}
                 />
               ))}

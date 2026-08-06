@@ -1609,6 +1609,7 @@ class ApiClient {
       }>;
       lessons: Array<{
         id?: string;
+        client_key: string;
         title: string;
         description?: string;
         duration?: number;

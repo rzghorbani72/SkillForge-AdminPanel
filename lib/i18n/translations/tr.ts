@@ -804,6 +804,12 @@ export const tr = {
     removeDocument: 'Belgeyi kaldır',
     lessonComplete: 'Hazır',
     lessonIncomplete: 'Eksik',
+    clearSeason: 'Bu bölümü boşalt',
+    confirmClearSeason:
+      'Bu tek bölüm — boşaltmak derslerini siler ve başlığını temizler.',
+    clearLesson: 'Bu dersi boşalt',
+    confirmClearLesson:
+      'Bu, bölümdeki tek ders — boşaltmak başlığını ve medyasını temizler.',
     addSeasonBlocked: 'Yeni bölüm eklemeden önce son bölüme bir ders ekleyin.',
     addLessonBlocked: 'Yeni ders eklemeden önce başlıksız dersi adlandırın.',
     seasonNumber: '{{n}}. Bölüm',

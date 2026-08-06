@@ -41,10 +41,12 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     existingCoverUrl,
     addSeason,
     removeSeason,
+    clearSeason,
     updateSeason,
     reorderSeasons,
     addLesson,
     removeLesson,
+    clearLesson,
     updateLesson,
     assignLesson,
     reorderLessons,
@@ -182,10 +184,12 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
               lessons={lessons}
               onAddSeason={addSeason}
               onRemoveSeason={removeSeason}
+              onClearSeason={clearSeason}
               onUpdateSeason={updateSeason}
               onReorderSeasons={reorderSeasons}
               onAddLesson={addLesson}
               onRemoveLesson={removeLesson}
+              onClearLesson={clearLesson}
               onUpdateLesson={updateLesson}
               onAssignLesson={assignLesson}
               onReorderLessons={reorderLessons}

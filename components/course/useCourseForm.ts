@@ -187,7 +187,7 @@ export function useCourseForm(courseId: string) {
       savingRef.current = true;
       setSaveStatus('saving');
       try {
-        await apiClient.updateCourseContent(courseId, {
+        const response = await apiClient.updateCourseContent(courseId, {
           title: data.title.trim(),
           description: data.description.trim(),
           primary_price: Number(data.primary_price),
@@ -208,6 +208,7 @@ export function useCourseForm(courseId: string) {
             .filter((l) => l.title.trim())
             .map((l) => ({
               id: l.id,
+              client_key: l.clientKey,
               title: l.title.trim(),
               description: l.description.trim() || undefined,
               duration: durationToSeconds(l.duration),
@@ -226,6 +227,36 @@ export function useCourseForm(courseId: string) {
             deletedLessonIds.length > 0 ? deletedLessonIds : undefined
         });
         clearDeleted();
+
+        // The backend never learns a draft's clientKey — it only echoes back
+        // which real id it created for it. Without writing that id back here,
+        // every season/lesson still missing one gets CREATED AGAIN on the
+        // next save instead of updated, since nothing else links them.
+        const saved = (
+          response.data as {
+            data?: {
+              season_ids?: Record<string, string>;
+              lesson_ids?: Record<string, string>;
+            };
+          }
+        )?.data;
+        if (saved?.season_ids) {
+          const ids = saved.season_ids;
+          setSeasons((prev) =>
+            prev.map((s) =>
+              ids[s.clientKey] ? { ...s, id: ids[s.clientKey] } : s
+            )
+          );
+        }
+        if (saved?.lesson_ids) {
+          const ids = saved.lesson_ids;
+          setLessons((prev) =>
+            prev.map((l) =>
+              ids[l.clientKey] ? { ...l, id: ids[l.clientKey] } : l
+            )
+          );
+        }
+
         setSaveStatus('saved');
         // Saving a draft is routine — the status indicator is enough feedback.
         // Only publishing, which changes what students see, is worth a toast.

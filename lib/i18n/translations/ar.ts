@@ -785,6 +785,11 @@ export const ar = {
     removeDocument: 'حذف المستند',
     lessonComplete: 'جاهز',
     lessonIncomplete: 'غير مكتمل',
+    clearSeason: 'إفراغ هذا الفصل',
+    confirmClearSeason: 'هذا هو الفصل الوحيد — إفراغه يحذف دروسه ويمسح عنوانه.',
+    clearLesson: 'إفراغ هذا الدرس',
+    confirmClearLesson:
+      'هذا هو الدرس الوحيد في الفصل — إفراغه يمسح عنوانه ووسائطه.',
     addSeasonBlocked: 'أضف درساً إلى الفصل الأخير قبل إضافة فصل جديد.',
     addLessonBlocked: 'سمِّ الدرس بلا عنوان قبل إضافة درس جديد.',
     seasonNumber: 'الفصل {{n}}',
