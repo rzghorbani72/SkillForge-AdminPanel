@@ -9,6 +9,15 @@ export type AcademyCreateInput = {
   primaryColor?: string;
 };
 
+export type AcademyCreateResult = {
+  /** Null only when the server returned no id — the academy may still exist. */
+  id: string | null;
+  /** False when the session could not be moved onto the new academy. */
+  switched: boolean;
+  /** False when the brand color could not be saved. */
+  branded: boolean;
+};
+
 function buildTheme(hex: string) {
   const shift = (channel: string, amount: number) =>
     Math.min(255, Math.max(0, parseInt(channel, 16) + amount))
@@ -24,20 +33,29 @@ function buildTheme(hex: string) {
   };
 }
 
-function readNewId(response: unknown): string | null {
-  const body = response as { data?: { id?: string; data?: { id?: string } } };
+function readResponse(response: unknown): {
+  id: string | null;
+  switched: boolean;
+} {
+  const body = response as {
+    switched?: boolean;
+    data?: { id?: string; data?: { id?: string } };
+  };
   const id = body?.data?.id ?? body?.data?.data?.id;
-  return id ? String(id) : null;
+  return { id: id ? String(id) : null, switched: body?.switched === true };
 }
 
 /**
- * Creates the academy, switches the session onto it, then paints its brand
- * color — the theme endpoint writes to the *current* academy, so the switch has
- * to land first or a second academy would repaint the first one.
+ * Creates the academy, then moves the session onto it and paints its brand color.
+ *
+ * Only the create call may throw. Once the server has answered, the academy is
+ * committed — a failing switch or theme write is an incomplete setup, never a
+ * failed creation, so reporting either as an error would tell the manager their
+ * academy does not exist while it sits in their list.
  */
 export async function createAcademy(
   data: AcademyCreateInput
-): Promise<string | null> {
+): Promise<AcademyCreateResult> {
   const response = await apiClient.createAcademy({
     name: data.name,
     private_domain: data.slug,
@@ -45,14 +63,29 @@ export async function createAcademy(
     logo_id: data.logoId
   });
 
-  const newId = readNewId(response);
-  if (newId) await apiClient.switchAcademy(newId);
+  const { id, switched: switchedByServer } = readResponse(response);
 
-  if (data.primaryColor) {
-    await apiClient
-      .updateCurrentThemeConfig(buildTheme(data.primaryColor))
-      .catch(() => {});
+  // The create endpoint already switches the session, so this only covers the
+  // case where that server-side switch failed.
+  let switched = switchedByServer;
+  if (id && !switched) {
+    switched = await apiClient
+      .switchAcademy(id)
+      .then(() => true)
+      .catch(() => false);
   }
 
-  return newId;
+  // The theme endpoint writes to the *current* academy, so painting before the
+  // switch lands would repaint the academy the manager came from.
+  let branded = true;
+  if (data.primaryColor && switched) {
+    branded = await apiClient
+      .updateCurrentThemeConfig(buildTheme(data.primaryColor))
+      .then(() => true)
+      .catch(() => false);
+  } else if (data.primaryColor) {
+    branded = false;
+  }
+
+  return { id, switched, branded };
 }

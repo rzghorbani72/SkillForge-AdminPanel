@@ -104,14 +104,14 @@ export default function AcademiesPage() {
   }
 
   async function handleCreate(data: AcademyCreateInput) {
-    const newId = await createAcademy(data);
+    const result = await createAcademy(data);
     toast.success(t('stores.storeCreated'));
 
     // The academy now exists on the server, so the cached list is stale no
     // matter what happens next. Clearing it first means even a failed switch
     // still shows the new academy instead of hiding it behind old cache.
     clearAcademyData();
-    if (newId) setSelectedAcademyId(newId);
+    if (result.id) setSelectedAcademyId(result.id);
     window.location.reload();
   }
 

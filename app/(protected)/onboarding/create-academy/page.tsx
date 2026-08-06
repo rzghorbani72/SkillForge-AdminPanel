@@ -22,18 +22,21 @@ export default function CreateAcademyPage() {
 
   async function handleSubmit(data: AcademyCreateInput) {
     try {
-      const newId = await createAcademy(data);
-      if (newId) {
+      const result = await createAcademy(data);
+      if (result.id) {
         clearAcademyData();
-        setSelectedAcademyId(newId);
+        setSelectedAcademyId(result.id);
       }
-      await refreshAcademies();
+      await refreshAcademies().catch(() => {});
       setCreated(true);
       toast.success(t('auth.academyCreatedTitle'));
       setTimeout(() => {
         window.location.href = postCreateHref;
       }, 1500);
     } catch (err: unknown) {
+      // A legal-consent 403 opens its own modal and pauses every call — a second
+      // toast here would blame the manager for a form that was never submitted.
+      if ((err as { code?: string })?.code === 'LEGAL_CONSENT_REQUIRED') return;
       toast.error((err as { message?: string })?.message ?? t('common.error'));
     }
   }
