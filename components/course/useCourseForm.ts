@@ -128,6 +128,8 @@ export function useCourseForm(courseId?: string) {
   const [isLoading, setIsLoading] = useState(isEdit);
   const [isSaving, setIsSaving] = useState(false);
   const [saveProgress, setSaveProgress] = useState('');
+  /** Create flow only: 1 = basic info, 2 = curriculum. Edit is always step 2. */
+  const [step, setStep] = useState<1 | 2>(1);
   const [seasons, setSeasons] = useState<SeasonDraft[]>([]);
   const [lessons, setLessons] = useState<LessonDraft[]>([emptyLesson()]);
   const [deletedSeasonIds, setDeletedSeasonIds] = useState<string[]>([]);
@@ -136,6 +138,8 @@ export function useCourseForm(courseId?: string) {
 
   const form = useForm<CourseFormData>({
     resolver: zodResolver(courseFormSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       title: '',
       description: '',
@@ -326,6 +330,16 @@ export function useCourseForm(courseId?: string) {
     []
   );
 
+  // ── Create-flow steps ────────────────────────────────────────────────────
+
+  /** Validate step 1 fields, then move to the curriculum step. */
+  const goToCurriculumStep = useCallback(async () => {
+    const valid = await form.trigger();
+    if (valid) setStep(2);
+  }, [form]);
+
+  const goToBasicInfoStep = useCallback(() => setStep(1), []);
+
   // ── Save ──────────────────────────────────────────────────────────────────
 
   const save = useCallback(
@@ -452,11 +466,10 @@ export function useCourseForm(courseId?: string) {
         }
 
         toast.success(isEdit ? 'Course updated' : 'Course created');
-        // Edit stays on the detail view; a fresh course goes straight to the
-        // curriculum step (step 2) so the manager can add seasons & lessons.
-        router.push(
-          isEdit ? `/courses/${courseDbId}` : `/courses/${courseDbId}/edit`
-        );
+        // Course + curriculum are already saved atomically at this point, so
+        // both flows land on the plain detail view — never back on a form
+        // pre-filled with what was just submitted.
+        router.push(`/courses/${courseDbId}`);
       } catch (err) {
         ErrorHandler.handleApiError(err);
       } finally {
@@ -483,6 +496,9 @@ export function useCourseForm(courseId?: string) {
     isLoading,
     isSaving,
     saveProgress,
+    step,
+    goToCurriculumStep,
+    goToBasicInfoStep,
     seasons,
     lessons,
     isEdit,
