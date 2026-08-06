@@ -13,20 +13,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UseFormReturn } from 'react-hook-form';
 import { CourseFormData } from './schema';
 import { Tag, Star } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
   form: UseFormReturn<CourseFormData>;
 };
 
 export default function CreateCoursePricing({ form }: Props) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       {/* Pricing */}
       <Card>
         <CardHeader>
-          <CardTitle>Pricing</CardTitle>
+          <CardTitle>{t('courses.pricing')}</CardTitle>
           <p className="text-xs text-muted-foreground">
-            Enter whole numbers (0 = free)
+            {t('courses.pricingHint')}
           </p>
         </CardHeader>
         <CardContent>
@@ -35,7 +38,9 @@ export default function CreateCoursePricing({ form }: Props) {
             <div className="space-y-3 rounded-lg border p-4">
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium">Sale Price</span>
+                <span className="text-sm font-medium">
+                  {t('courses.primaryPrice')}
+                </span>
               </div>
               <FormField
                 control={form.control}
@@ -43,7 +48,7 @@ export default function CreateCoursePricing({ form }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs text-muted-foreground">
-                      Amount *
+                      {t('courses.amount')} *
                     </FormLabel>
                     <FormControl>
                       <PriceInput
@@ -52,6 +57,7 @@ export default function CreateCoursePricing({ form }: Props) {
                         onChange={field.onChange}
                         onBlur={field.onBlur}
                         name={field.name}
+                        suffix={t('courses.toman')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -64,9 +70,11 @@ export default function CreateCoursePricing({ form }: Props) {
             <div className="space-y-3 rounded-lg border p-4">
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Original Price</span>
+                <span className="text-sm font-medium">
+                  {t('courses.secondaryPrice')}
+                </span>
                 <span className="text-xs text-muted-foreground">
-                  (shown crossed out)
+                  {t('courses.shownCrossedOut')}
                 </span>
               </div>
               <FormField
@@ -75,7 +83,7 @@ export default function CreateCoursePricing({ form }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs text-muted-foreground">
-                      Amount
+                      {t('courses.amount')}
                     </FormLabel>
                     <FormControl>
                       <PriceInput
@@ -84,6 +92,7 @@ export default function CreateCoursePricing({ form }: Props) {
                         onChange={field.onChange}
                         onBlur={field.onBlur}
                         name={field.name}
+                        suffix={t('courses.toman')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -98,7 +107,7 @@ export default function CreateCoursePricing({ form }: Props) {
       {/* Course settings */}
       <Card>
         <CardHeader>
-          <CardTitle>Course Settings</CardTitle>
+          <CardTitle>{t('courses.courseSettings')}</CardTitle>
         </CardHeader>
         <CardContent>
           <FormField
@@ -110,10 +119,10 @@ export default function CreateCoursePricing({ form }: Props) {
                   <Star className="h-4 w-4 text-yellow-500" />
                   <div>
                     <FormLabel className="text-sm font-medium">
-                      Featured
+                      {t('courses.featured')}
                     </FormLabel>
                     <p className="text-xs text-muted-foreground">
-                      Highlighted on the homepage
+                      {t('courses.highlightedOnHomepage')}
                     </p>
                   </div>
                 </div>

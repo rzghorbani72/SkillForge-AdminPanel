@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useCategoriesStore, parseCategoryFromApi } from '@/lib/store';
 import { apiClient } from '@/lib/api';
 import { apiToast } from '@/lib/api-toast';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface Props {
   categoryId: string | undefined;
@@ -21,6 +22,7 @@ export default function CreateCourseAssociations({
   onCategoryChange,
   error
 }: Props) {
+  const { t } = useTranslation();
   const { categories, fetchCategories, addCategory } = useCategoriesStore();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -91,7 +93,7 @@ export default function CreateCourseAssociations({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Category</CardTitle>
+        <CardTitle>{t('courses.category')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -107,7 +109,9 @@ export default function CreateCourseAssociations({
                   type="button"
                   onClick={() => onCategoryChange(undefined)}
                   className="ml-0.5 rounded-full p-0.5 hover:text-destructive"
-                  aria-label={`Remove ${selectedCategory.name}`}
+                  aria-label={t('courses.removeCategoryAria', {
+                    name: selectedCategory.name
+                  })}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -126,7 +130,7 @@ export default function CreateCourseAssociations({
                 className="flex items-center gap-1.5"
               >
                 <Plus className="h-3.5 w-3.5" />
-                Add Category
+                {t('courses.addCategory')}
                 <ChevronDown className="h-3.5 w-3.5 opacity-60" />
               </Button>
 
@@ -135,7 +139,7 @@ export default function CreateCourseAssociations({
                   <Input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search categories..."
+                    placeholder={t('courses.searchCategories')}
                     className="mb-2 h-8 text-sm"
                     autoFocus
                   />
@@ -158,8 +162,8 @@ export default function CreateCourseAssociations({
                     {courseCategories.length === 0 && (
                       <p className="px-2 py-2 text-xs text-muted-foreground">
                         {search
-                          ? `No categories match "${search}"`
-                          : 'No categories yet'}
+                          ? t('courses.noCategoriesMatch', { term: search })
+                          : t('courses.noCategoriesYet')}
                       </p>
                     )}
                   </div>
@@ -176,14 +180,16 @@ export default function CreateCourseAssociations({
                         }}
                       >
                         <Plus className="h-3.5 w-3.5" />
-                        {search ? `Create "${search}"` : 'Create new category'}
+                        {search
+                          ? t('courses.createCategoryNamed', { name: search })
+                          : t('courses.createNewCategory')}
                       </button>
                     ) : (
                       <div className="flex gap-2 pt-1">
                         <Input
                           value={newName}
                           onChange={(e) => setNewName(e.target.value)}
-                          placeholder="Category name"
+                          placeholder={t('courses.categoryNamePlaceholder')}
                           className="h-7 text-sm"
                           autoFocus
                           onKeyDown={(e) => {
@@ -201,7 +207,7 @@ export default function CreateCourseAssociations({
                           {isSaving ? (
                             <Loader2 className="h-3 w-3 animate-spin" />
                           ) : (
-                            'Save'
+                            t('common.save')
                           )}
                         </Button>
                       </div>
@@ -214,7 +220,7 @@ export default function CreateCourseAssociations({
 
           {!selectedCategory && !open && (
             <p className="text-xs text-muted-foreground">
-              Select a category to help students find your course
+              {t('courses.selectCategoryHint')}
             </p>
           )}
 
