@@ -641,6 +641,16 @@ export const tr = {
     basicInformation: 'Temel Bilgiler',
     stepBasicInfo: 'Temel Bilgiler',
     stepCurriculum: 'Müfredat',
+    stepBasicInfoHint:
+      'Ad, kapak ve fiyat ile başlayın. Sonraki adımda sezonları ve dersleri ekleyeceksiniz.',
+    stepCurriculumHint:
+      'Sezonları ve dersleri ekleyin. Kurs taslak olarak oluşturulur; daha sonra kurs sayfasından yayınlayabilirsiniz.',
+    nextCurriculum: 'Sonraki: Müfredat',
+    backBasicInfo: 'Geri: Temel bilgiler',
+    fixErrorsBeforeNext: 'Devam etmeden önce işaretli alanları düzeltin.',
+    updatedToast: 'Kurs güncellendi',
+    createdDraftToast:
+      'Kurs taslak olarak oluşturuldu — hazır olduğunda yayınlayın',
     errors: {
       titleMin: 'Başlık en az 5 karakter olmalıdır',
       titleMax: 'Başlık 80 karakterden az olmalıdır',

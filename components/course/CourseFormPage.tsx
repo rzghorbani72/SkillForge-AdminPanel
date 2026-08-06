@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Check, Loader2, Save } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -198,14 +198,13 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
               </span>
             ) : !isEdit && step === 1 ? (
               <span className="flex items-center gap-2">
-                {t('common.next')}
+                {t('courses.nextCurriculum')}
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
               </span>
             ) : (
               <span className="flex items-center gap-2">
                 <Save className="h-4 w-4" />
-                {isEdit
-                  ? t('courses.saveChanges')
-                  : t('courses.createAndContinue')}
+                {isEdit ? t('courses.saveChanges') : t('courses.createCourse')}
               </span>
             )}
           </Button>
@@ -216,22 +215,31 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
       <div className="p-6">
         {/* Step tabs — create flow only; edit shows everything on one page */}
         {!isEdit && (
-          <div className="mb-6 flex items-center gap-3">
-            <StepTab
-              num={1}
-              label={t('courses.stepBasicInfo')}
-              active={step === 1}
-              done={step > 1}
-              onClick={goToBasicInfoStep}
-            />
-            <div className="h-px flex-1 bg-border" />
-            <StepTab
-              num={2}
-              label={t('courses.stepCurriculum')}
-              active={step === 2}
-              done={false}
-              onClick={step === 2 ? goToCurriculumStep : undefined}
-            />
+          <div className="mb-6 space-y-2">
+            <div className="flex items-center gap-3">
+              <StepTab
+                num={1}
+                label={t('courses.stepBasicInfo')}
+                active={step === 1}
+                done={step > 1}
+                onClick={goToBasicInfoStep}
+              />
+              <div className="h-px flex-1 bg-border" />
+              <StepTab
+                num={2}
+                label={t('courses.stepCurriculum')}
+                active={step === 2}
+                done={false}
+                onClick={step === 2 ? goToCurriculumStep : undefined}
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {t(
+                step === 1
+                  ? 'courses.stepBasicInfoHint'
+                  : 'courses.stepCurriculumHint'
+              )}
+            </p>
           </div>
         )}
 
@@ -311,7 +319,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                   variant="ghost"
                   onClick={goToBasicInfoStep}
                 >
-                  {t('common.previous')}
+                  <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
+                  {t('courses.backBasicInfo')}
                 </Button>
               ) : (
                 <Button
@@ -329,7 +338,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                   disabled={isSaving}
                   onClick={goToCurriculumStep}
                 >
-                  {t('common.next')}
+                  {t('courses.nextCurriculum')}
+                  <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
                 </Button>
               ) : (
                 <Button
@@ -345,7 +355,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                   ) : isEdit ? (
                     t('courses.saveChanges')
                   ) : (
-                    t('courses.createAndContinue')
+                    t('courses.createCourse')
                   )}
                 </Button>
               )}

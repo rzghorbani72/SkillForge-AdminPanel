@@ -1133,6 +1133,16 @@ export const en = {
     basicInformation: 'Basic Information',
     stepBasicInfo: 'Basic Info',
     stepCurriculum: 'Curriculum',
+    stepBasicInfoHint:
+      'Start with the name, cover and price. Next you will add the seasons and lessons.',
+    stepCurriculumHint:
+      'Add seasons and lessons. The course is created as a draft — you can publish it later from the course page.',
+    nextCurriculum: 'Next: Curriculum',
+    backBasicInfo: 'Back: Basic info',
+    fixErrorsBeforeNext: 'Please fix the highlighted fields before continuing.',
+    updatedToast: 'Course updated',
+    createdDraftToast:
+      'Course created as a draft — publish it when it is ready',
     errors: {
       titleMin: 'Title must be at least 5 characters',
       titleMax: 'Title must be less than 80 characters',

@@ -626,6 +626,15 @@ export const ar = {
     basicInformation: 'المعلومات الأساسية',
     stepBasicInfo: 'المعلومات الأساسية',
     stepCurriculum: 'المنهج الدراسي',
+    stepBasicInfoHint:
+      'ابدأ بالاسم والصورة والسعر. في الخطوة التالية ستضيف الفصول والدروس.',
+    stepCurriculumHint:
+      'أضف الفصول والدروس. يتم إنشاء الدورة كمسودة، ويمكنك نشرها لاحقًا من صفحة الدورة.',
+    nextCurriculum: 'التالي: المنهج الدراسي',
+    backBasicInfo: 'رجوع: المعلومات الأساسية',
+    fixErrorsBeforeNext: 'يرجى تصحيح الحقول المحددة قبل المتابعة.',
+    updatedToast: 'تم تحديث الدورة',
+    createdDraftToast: 'تم إنشاء الدورة كمسودة — انشرها عندما تكون جاهزة',
     errors: {
       titleMin: 'يجب أن يكون العنوان 5 أحرف على الأقل',
       titleMax: 'يجب أن يكون العنوان أقل من 80 حرفًا',

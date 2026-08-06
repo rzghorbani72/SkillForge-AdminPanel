@@ -335,8 +335,12 @@ export function useCourseForm(courseId?: string) {
   /** Validate step 1 fields, then move to the curriculum step. */
   const goToCurriculumStep = useCallback(async () => {
     const valid = await form.trigger();
-    if (valid) setStep(2);
-  }, [form]);
+    if (!valid) {
+      toast.error(t('courses.fixErrorsBeforeNext'));
+      return;
+    }
+    setStep(2);
+  }, [form, t]);
 
   const goToBasicInfoStep = useCallback(() => setStep(1), []);
 
@@ -465,7 +469,9 @@ export function useCourseForm(courseId?: string) {
           courseDbId = id;
         }
 
-        toast.success(isEdit ? 'Course updated' : 'Course created');
+        toast.success(
+          t(isEdit ? 'courses.updatedToast' : 'courses.createdDraftToast')
+        );
         // Course + curriculum are already saved atomically at this point, so
         // both flows land on the plain detail view — never back on a form
         // pre-filled with what was just submitted.
