@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { CheckCircle2 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useStore } from '@/hooks/useStore';
@@ -12,7 +12,8 @@ import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
 
 export default function CreateAcademyPage() {
   const { t } = useTranslation();
-  const { refreshAcademies } = useStore();
+  const router = useRouter();
+  const { academies, isLoading, refreshAcademies } = useStore();
   const searchParams = useSearchParams();
   const planParam = searchParams.get('plan');
   const postCreateHref = planParam
@@ -57,13 +58,24 @@ export default function CreateAcademyPage() {
     );
   }
 
-  // The panel shell renders behind the blurred backdrop — the manager sees where
-  // they landed, but the only way forward is finishing this form.
+  // Dismissibility flips on the academy count, so waiting avoids showing a
+  // cancellable dialog to someone who turns out to own nothing.
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // The panel shell renders behind the blurred backdrop. Owning nothing means
+  // there is no panel to go back to, so only a manager who already has an
+  // academy gets a way out of the form.
   return (
     <AcademyCreateModal
       open
-      dismissible={false}
-      onClose={() => {}}
+      dismissible={academies.length > 0}
+      onClose={() => router.push('/academies')}
       onSubmit={handleSubmit}
       t={t}
     />
