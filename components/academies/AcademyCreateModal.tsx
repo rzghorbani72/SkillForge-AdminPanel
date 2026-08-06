@@ -5,10 +5,10 @@ import { Upload, Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
@@ -19,8 +19,7 @@ import {
   isSlugBlocking,
   useSlugAvailability
 } from '@/hooks/use-slug-availability';
-
-const STEPS = ['stepSpecs', 'stepBranding'] as const;
+import type { AcademyCreateInput } from '@/lib/academy-create';
 
 const BRAND_COLORS: { hex: string; tw: string }[] = [
   { hex: '#6366f1', tw: 'bg-[#6366f1]' },
@@ -37,58 +36,57 @@ const BRAND_COLORS: { hex: string; tw: string }[] = [
   { hex: '#1e293b', tw: 'bg-[#1e293b]' }
 ];
 
-type Category = { key: string; label: string };
+const CATEGORY_KEYS = [
+  'programming',
+  'design',
+  'language',
+  'business',
+  'entrance',
+  'art',
+  'finance'
+] as const;
 
 type AcademyCreateModalProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: {
-    name: string;
-    slug: string;
-    description?: string;
-    category?: string;
-    logoId?: string;
-    primaryColor?: string;
-  }) => Promise<void>;
+  onSubmit: (data: AcademyCreateInput) => Promise<void>;
   t: (k: string) => string;
+  /**
+   * The onboarding flow has no panel behind it to go back to — a manager owning
+   * no academy must finish this form, so the dialog cannot be dismissed there.
+   */
+  dismissible?: boolean;
 };
 
 export function AcademyCreateModal({
   open,
   onClose,
   onSubmit,
-  t
+  t,
+  dismissible = true
 }: AcademyCreateModalProps) {
-  const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
-
-  // Step 0 — Details
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
-  const {
-    status: slugStatus,
-    check: checkSlug,
-    reset: resetSlug
-  } = useSlugAvailability();
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-
-  // Step 1 — Branding
   const [logoId, setLogoId] = useState<string | null>(null);
   const [logoPreview, setLogoPreview] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [primaryColor, setPrimaryColor] = useState(BRAND_COLORS[0].hex);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const {
+    status: slugStatus,
+    check: checkSlug,
+    reset: resetSlug
+  } = useSlugAvailability();
 
-  const categories: Category[] = [
-    { key: 'programming', label: t('stores.categoryProgramming') },
-    { key: 'design', label: t('stores.categoryDesign') },
-    { key: 'language', label: t('stores.categoryLanguage') },
-    { key: 'business', label: t('stores.categoryBusiness') },
-    { key: 'entrance', label: t('stores.categoryEntrance') },
-    { key: 'art', label: t('stores.categoryArt') },
-    { key: 'finance', label: t('stores.categoryFinance') }
-  ];
+  const canSubmit =
+    name.trim().length >= 2 &&
+    slug.trim().length >= 2 &&
+    !isSlugBlocking(slugStatus) &&
+    !uploadingLogo &&
+    !saving;
 
   function handleNameChange(value: string) {
     setName(value);
@@ -110,7 +108,7 @@ export function AcademyCreateModal({
     setUploadingLogo(true);
     try {
       const uploaded = await apiClient.uploadImage(file);
-      const imageData = (uploaded as any)?.data ?? uploaded;
+      const imageData = (uploaded as { data?: { id?: string } })?.data;
       if (imageData?.id) setLogoId(String(imageData.id));
     } catch {
       setLogoPreview('');
@@ -122,7 +120,6 @@ export function AcademyCreateModal({
 
   function handleClose() {
     resetSlug();
-    setStep(0);
     setName('');
     setSlug('');
     setDescription('');
@@ -134,7 +131,7 @@ export function AcademyCreateModal({
   }
 
   async function handleSubmit() {
-    if (!name.trim() || !slug.trim() || isSlugBlocking(slugStatus)) return;
+    if (!canSubmit) return;
     setSaving(true);
     try {
       await onSubmit({
@@ -151,11 +148,18 @@ export function AcademyCreateModal({
     }
   }
 
-  const stepKeys = STEPS.map((k) => t(`stores.${k}`));
-
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent className="sm:max-w-[560px]" dir="rtl">
+    <Dialog
+      open={open}
+      onOpenChange={(o) => !o && dismissible && handleClose()}
+    >
+      <DialogContent
+        dir="rtl"
+        hideCloseButton={!dismissible}
+        onInteractOutside={(e) => !dismissible && e.preventDefault()}
+        onEscapeKeyDown={(e) => !dismissible && e.preventDefault()}
+        className="beautiful-scrollbar max-h-[90vh] gap-5 overflow-y-auto rounded-2xl sm:max-w-[560px]"
+      >
         <DialogHeader className="text-right">
           <p className="text-xs text-muted-foreground">
             {t('stores.createModalTitle')}
@@ -165,197 +169,151 @@ export function AcademyCreateModal({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Step tabs */}
-        <div className="flex items-center gap-1 rounded-xl bg-muted p-1">
-          {stepKeys.map((label, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => i < step && setStep(i)}
-              className={cn(
-                'flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
-                i === step
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : i < step
-                    ? 'text-foreground hover:bg-background/50'
-                    : 'cursor-default text-muted-foreground'
-              )}
-            >
-              <span className="bg-current/20 mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full text-xs font-bold">
-                {i + 1}
-              </span>{' '}
-              {label}
-            </button>
-          ))}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              {t('stores.academyName')}
+            </label>
+            <Input
+              value={name}
+              onChange={(e) => handleNameChange(e.target.value)}
+              placeholder={t('stores.academyNamePlaceholder')}
+              autoFocus
+            />
+          </div>
+          <SlugField
+            value={slug}
+            status={slugStatus}
+            onChange={handleSlugChange}
+            t={t}
+          />
         </div>
 
-        {/* Step 0 — Details */}
-        {step === 0 && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-sm font-medium">
-                  {t('stores.academyName')}
-                </label>
-                <Input
-                  value={name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  placeholder={t('stores.academyNamePlaceholder')}
-                  autoFocus
-                />
-              </div>
-              <SlugField
-                value={slug}
-                status={slugStatus}
-                onChange={handleSlugChange}
-                t={t}
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                {t('stores.mainCategory')}
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat.key}
-                    type="button"
-                    onClick={() =>
-                      setCategory(category === cat.key ? '' : cat.key)
-                    }
-                    className={cn(
-                      'rounded-full border px-3 py-1 text-sm transition-colors',
-                      category === cat.key
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border bg-background text-foreground hover:border-primary/50'
-                    )}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium">
-                {t('stores.shortDescription')}
-              </label>
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder={t('stores.shortDescriptionPlaceholder')}
-                rows={3}
-                className="resize-none"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Step 1 — Branding */}
-        {step === 1 && (
-          <div className="space-y-5">
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                {t('stores.brandingLogo')}
-              </label>
+        <div>
+          <label className="mb-2 block text-sm font-medium">
+            {t('stores.mainCategory')}
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {CATEGORY_KEYS.map((key) => (
               <button
+                key={key}
                 type="button"
-                disabled={uploadingLogo}
-                onClick={() => logoInputRef.current?.click()}
-                className="flex h-32 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={() => setCategory(category === key ? '' : key)}
+                className={cn(
+                  'rounded-full border px-3 py-1 text-sm transition-colors',
+                  category === key
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border bg-background text-foreground hover:border-primary/50'
+                )}
               >
-                {uploadingLogo ? (
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                ) : logoPreview ? (
-                  <img
-                    src={logoPreview}
-                    alt="logo preview"
-                    className="h-full w-full object-contain p-2"
-                  />
-                ) : (
-                  <>
-                    <Upload className="h-6 w-6 text-muted-foreground" />
-                    <p className="text-xs text-muted-foreground">
-                      {t('stores.brandingLogoHint')}
-                    </p>
-                  </>
+                {t(
+                  `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`
                 )}
               </button>
-              <input
-                ref={logoInputRef}
-                type="file"
-                accept="image/*"
-                aria-label={t('stores.brandingLogo')}
-                className="hidden"
-                onChange={handleLogoChange}
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                {t('stores.brandingColor')}
-              </label>
-              <div className="flex flex-wrap gap-2.5">
-                {BRAND_COLORS.map(({ hex, tw }) => (
-                  <button
-                    key={hex}
-                    type="button"
-                    aria-label={hex}
-                    onClick={() => setPrimaryColor(hex)}
-                    className={cn(
-                      'h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
-                      tw,
-                      primaryColor === hex
-                        ? 'scale-110 border-foreground shadow-md'
-                        : 'border-transparent'
-                    )}
-                  />
-                ))}
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {primaryColor}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-2">
-          <button
-            type="button"
-            className="text-sm text-muted-foreground hover:text-foreground"
-            onClick={handleClose}
-          >
-            {t('stores.cancel')}
-          </button>
-
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleClose}>
-              {t('stores.draft')}
-            </Button>
-
-            {step < STEPS.length - 1 ? (
-              <Button
-                size="sm"
-                onClick={() => setStep((s) => s + 1)}
-                disabled={
-                  step === 0 &&
-                  (!name.trim() || !slug.trim() || isSlugBlocking(slugStatus))
-                }
-              >
-                {t('stores.nextStep')} &lsaquo;
-              </Button>
-            ) : (
-              <Button size="sm" onClick={handleSubmit} disabled={saving}>
-                {saving && (
-                  <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />
-                )}
-                {t('common.create')}
-              </Button>
-            )}
+            ))}
           </div>
         </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium">
+            {t('stores.shortDescription')}
+          </label>
+          <Textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder={t('stores.shortDescriptionPlaceholder')}
+            rows={3}
+            className="resize-none"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="mb-2 block text-sm font-medium">
+              {t('stores.brandingLogo')}
+            </label>
+            <button
+              type="button"
+              disabled={uploadingLogo}
+              onClick={() => logoInputRef.current?.click()}
+              className="flex h-28 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {uploadingLogo ? (
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              ) : logoPreview ? (
+                <img
+                  src={logoPreview}
+                  alt={t('stores.brandingLogo')}
+                  className="h-full w-full object-contain p-2"
+                />
+              ) : (
+                <>
+                  <Upload className="h-5 w-5 text-muted-foreground" />
+                  <p className="px-2 text-center text-xs text-muted-foreground">
+                    {t('stores.brandingLogoHint')}
+                  </p>
+                </>
+              )}
+            </button>
+            <input
+              ref={logoInputRef}
+              type="file"
+              accept="image/*"
+              aria-label={t('stores.brandingLogo')}
+              className="hidden"
+              onChange={handleLogoChange}
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium">
+              {t('stores.brandingColor')}
+            </label>
+            <div className="flex flex-wrap gap-2.5">
+              {BRAND_COLORS.map(({ hex, tw }) => (
+                <button
+                  key={hex}
+                  type="button"
+                  aria-label={hex}
+                  onClick={() => setPrimaryColor(hex)}
+                  className={cn(
+                    'h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
+                    tw,
+                    primaryColor === hex
+                      ? 'scale-110 border-foreground shadow-md'
+                      : 'border-transparent'
+                  )}
+                />
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground" dir="ltr">
+              {primaryColor}
+            </p>
+          </div>
+        </div>
+
+        <DialogFooter className="flex-row gap-3 pt-1 sm:justify-normal sm:space-x-0">
+          {dismissible && (
+            <button
+              type="button"
+              disabled={saving}
+              onClick={handleClose}
+              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[14px] border border-border text-[15px] font-medium text-muted-foreground transition-colors hover:bg-muted disabled:opacity-60"
+            >
+              {t('stores.cancel')}
+            </button>
+          )}
+
+          <button
+            type="button"
+            disabled={!canSubmit}
+            onClick={handleSubmit}
+            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[14px] bg-primary text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
+          >
+            {saving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {t('common.create')}
+          </button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

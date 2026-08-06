@@ -17,7 +17,8 @@ import { isPlatformStaff, isPlatformAdmin } from '@/lib/roles';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import { apiClient } from '@/lib/api';
-import { clearAcademyData } from '@/lib/store-utils';
+import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
+import { createAcademy, type AcademyCreateInput } from '@/lib/academy-create';
 import { toast } from 'react-toastify';
 import { AcademiesList } from '@/components/academies/academies-list';
 import { CurrentPlanBanner } from '@/components/academies/current-plan-banner';
@@ -102,43 +103,16 @@ export default function AcademiesPage() {
     };
   }
 
-  async function handleCreate(data: {
-    name: string;
-    slug: string;
-    description?: string;
-    category?: string;
-    logoId?: string;
-    primaryColor?: string;
-  }) {
-    const response = await apiClient.createAcademy({
-      name: data.name,
-      private_domain: data.slug,
-      description: data.description || undefined,
-      logo_id: data.logoId
-    });
-
-    if (data.primaryColor) {
-      await apiClient
-        .updateCurrentThemeConfig(buildTheme(data.primaryColor))
-        .catch(() => {});
-    }
-
-    const newId =
-      (response as any)?.data?.id ??
-      (response as any)?.data?.data?.id ??
-      (response as any)?.id;
-
+  async function handleCreate(data: AcademyCreateInput) {
+    const newId = await createAcademy(data);
     toast.success(t('stores.storeCreated'));
 
     // The academy now exists on the server, so the cached list is stale no
     // matter what happens next. Clearing it first means even a failed switch
     // still shows the new academy instead of hiding it behind old cache.
     clearAcademyData();
-
-    if (newId) {
-      await handleSwitch(newId);
-    }
-    await refreshAcademies();
+    if (newId) setSelectedAcademyId(newId);
+    window.location.reload();
   }
 
   async function handleUpdate(
