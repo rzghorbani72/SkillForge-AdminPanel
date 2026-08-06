@@ -8,12 +8,9 @@ export interface AcademyRow extends Academy {
   student_count?: number;
 }
 
-export function canEnterAcademy(academy: Academy, isCurrent: boolean): boolean {
-  return (
-    !isCurrent &&
-    ['AFFILIATE', 'TEACHER', 'MANAGER', 'ADMIN'].includes(
-      (academy.userRole ?? '').toUpperCase()
-    )
+export function canEnterAcademy(academy: Academy): boolean {
+  return ['AFFILIATE', 'TEACHER', 'MANAGER', 'ADMIN'].includes(
+    (academy.userRole ?? '').toUpperCase()
   );
 }
 

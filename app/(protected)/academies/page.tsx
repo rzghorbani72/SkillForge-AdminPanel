@@ -24,7 +24,6 @@ import { AcademiesList } from '@/components/academies/academies-list';
 import { CurrentPlanBanner } from '@/components/academies/current-plan-banner';
 import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
 import { AcademyEditModal } from '@/components/academies/AcademyEditModal';
-import { AcademySiteStatusDialog } from '@/components/academies/academy-site-status-dialog';
 import { AcademiesHealthTable } from '@/components/academies/academies-health-table';
 import type { AcademyRow } from '@/components/academies/academy-helpers';
 import type { Academy } from '@/types/api';
@@ -38,12 +37,6 @@ export default function AcademiesPage() {
   const [switching, setSwitching] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [editAcademy, setEditAcademy] = useState<Academy | null>(null);
-  const [siteAcademy, setSiteAcademy] = useState<Academy | null>(null);
-  // Last site on/off this session, so the card flips the moment the manager acts
-  // instead of waiting for the academies refetch to come back.
-  const [siteDisabledById, setSiteDisabledById] = useState<
-    Record<string, string | null>
-  >({});
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<
     'all' | 'active' | 'inactive'
@@ -158,12 +151,10 @@ export default function AcademiesPage() {
           (statusFilter === 'inactive' && !a.is_active);
         return matchesSearch && matchesStatus;
       })
-      .map((a: AcademyRow) =>
-        a.id in siteDisabledById
-          ? { ...a, site_disabled_at: siteDisabledById[a.id] }
-          : a
+      .sort((a: AcademyRow, b: AcademyRow) =>
+        a.id === currentAcademyId ? -1 : b.id === currentAcademyId ? 1 : 0
       );
-  }, [academies, searchQuery, statusFilter, siteDisabledById]);
+  }, [academies, searchQuery, statusFilter, currentAcademyId]);
 
   const totalCount = academies.length;
   const isFiltered = searchQuery.trim() !== '' || statusFilter !== 'all';
@@ -192,7 +183,6 @@ export default function AcademiesPage() {
         onSwitch={handleSwitch}
         onDetails={handleDetails}
         onEdit={setEditAcademy}
-        onManageSite={setSiteAcademy}
         onCreate={() => setCreateOpen(true)}
         t={t}
         filters={
@@ -240,23 +230,6 @@ export default function AcademiesPage() {
         dismissible={academies.length > 0}
         onClose={() => setCreateOpen(false)}
         onSubmit={handleCreate}
-        t={t}
-      />
-
-      {/* Public site on/off for the current academy */}
-      <AcademySiteStatusDialog
-        open={!!siteAcademy}
-        academyName={siteAcademy?.name ?? ''}
-        onClose={() => setSiteAcademy(null)}
-        onChanged={(disabled) => {
-          if (siteAcademy) {
-            setSiteDisabledById((prev) => ({
-              ...prev,
-              [siteAcademy.id]: disabled ? new Date().toISOString() : null
-            }));
-          }
-          refreshAcademies();
-        }}
         t={t}
       />
 

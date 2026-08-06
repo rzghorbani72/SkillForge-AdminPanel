@@ -21,6 +21,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { AcademyFeaturesCard } from '@/components/settings/academy-features-card';
+import { AcademySiteStatusCard } from '@/components/settings/academy-site-status-card';
 
 interface AcademyFormState {
   name: string;
@@ -160,6 +161,8 @@ export default function AcademySettingsPage() {
           </Card>
 
           <AcademyFeaturesCard />
+
+          <AcademySiteStatusCard academyName={academy?.name ?? ''} />
         </div>
 
         <div className="space-y-4">

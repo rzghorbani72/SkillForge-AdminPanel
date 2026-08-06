@@ -22,7 +22,6 @@ interface AcademiesListProps {
   onSwitch: (id: string) => void;
   onDetails: (academy: Academy) => void;
   onEdit: (academy: Academy) => void;
-  onManageSite: (academy: Academy) => void;
   onCreate: () => void;
   t: (key: string, params?: InterpolationParams) => string;
 }
@@ -40,7 +39,6 @@ export function AcademiesList({
   onSwitch,
   onDetails,
   onEdit,
-  onManageSite,
   onCreate,
   t
 }: AcademiesListProps) {
@@ -69,7 +67,6 @@ export function AcademiesList({
             onSwitch={onSwitch}
             onDetails={onDetails}
             onEdit={onEdit}
-            onManageSite={onManageSite}
             switching={switching}
             t={t}
           />

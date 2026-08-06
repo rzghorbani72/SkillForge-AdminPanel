@@ -1,9 +1,8 @@
 'use client';
 
-import { Pencil, Loader2, Power, LogIn } from 'lucide-react';
+import { Pencil, Loader2, LogIn, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { InfoPopupIcon } from '@/components/icons/info-popup-icon';
 import type { Academy } from '@/types/api';
 import { ACADEMY_DOMAIN } from '@/lib/slug';
 import { colorIndexForId } from '@/lib/id-color';
@@ -26,6 +25,10 @@ const CARD_COLORS = [
   { bg: 'bg-orange-100', icon: 'bg-orange-200 text-orange-700' },
   { bg: 'bg-teal-100', icon: 'bg-teal-200 text-teal-700' }
 ];
+
+const ACTION_BUTTON =
+  'h-9 flex-1 gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-medium';
+const ACTION_ICON = 'h-4 w-4 shrink-0';
 
 export function AcademyIcon({
   name,
@@ -76,7 +79,6 @@ type AcademyCardProps = {
   onSwitch: (id: string) => void;
   onDetails: (academy: Academy) => void;
   onEdit: (academy: Academy) => void;
-  onManageSite: (academy: Academy) => void;
   switching: string | null;
   t: (k: string) => string;
 };
@@ -88,19 +90,23 @@ export function AcademyCard({
   onSwitch,
   onDetails,
   onEdit,
-  onManageSite,
   switching,
   t
 }: AcademyCardProps) {
   const formatNumber = useNumberFormat();
   const color = CARD_COLORS[colorIndexForId(academy.id, CARD_COLORS.length)];
   const isSwitch = switching === academy.id;
-  const canEnter = canEnterAcademy(academy, isCurrent);
+  const canEnter = canEnterAcademy(academy);
   const canEdit = canEditAcademy(academy);
   const domain = academyDomain(academy);
 
   return (
-    <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+    <div
+      className={cn(
+        'overflow-hidden rounded-2xl border bg-card shadow-sm',
+        isCurrent && 'border-2 border-primary shadow-md'
+      )}
+    >
       {/* Colored header band */}
       <div className={cn('relative flex h-24 items-start px-4 pt-3', color.bg)}>
         <AcademyStatusPill academy={academy} t={t} />
@@ -158,60 +164,38 @@ export function AcademyCard({
           </div>
         </div>
 
-        {isCurrent && (
-          <div className="mt-4 flex items-center gap-2">
-            <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">
-              <span className="h-2 w-2 rounded-full bg-green-500" />
-              {t('stores.currentAcademy')}
-            </span>
-            {canEdit && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-9 w-9 rounded-xl p-0"
-                title={t('stores.siteStatusTitle')}
-                aria-label={t('stores.siteStatusTitle')}
-                onClick={() => onManageSite(academy)}
-              >
-                <Power className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="mt-3 flex items-center gap-2">
+        {/* Actions — enter is the primary one, the other two stay quiet */}
+        <div className="mt-4 flex items-center gap-1.5">
           <Button
             size="sm"
-            variant="outline"
-            className="flex-1 gap-1.5 rounded-xl px-2 text-xs font-medium"
+            className={ACTION_BUTTON}
             onClick={() => onSwitch(academy.id)}
             disabled={!canEnter || isSwitch}
           >
             {isSwitch ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className={cn(ACTION_ICON, 'animate-spin')} />
             ) : (
-              <LogIn className="h-3.5 w-3.5" />
+              <LogIn className={ACTION_ICON} />
             )}
             {t('stores.enter')}
           </Button>
           <Button
             size="sm"
             variant="outline"
-            className="flex-1 gap-1.5 rounded-xl px-2 text-xs font-medium"
+            className={ACTION_BUTTON}
             onClick={() => onDetails(academy)}
           >
-            <InfoPopupIcon className="h-3.5 w-3.5" />
-            {t('stores.viewDetails')}
+            <Info className={ACTION_ICON} />
+            {t('stores.details')}
           </Button>
           <Button
             size="sm"
             variant="outline"
-            className="flex-1 gap-1.5 rounded-xl px-2 text-xs font-medium"
+            className={ACTION_BUTTON}
             onClick={() => onEdit(academy)}
             disabled={!canEdit}
           >
-            <Pencil className="h-3.5 w-3.5" />
+            <Pencil className={ACTION_ICON} />
             {t('common.edit')}
           </Button>
         </div>
