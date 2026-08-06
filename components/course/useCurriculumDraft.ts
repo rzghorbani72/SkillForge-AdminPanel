@@ -13,7 +13,7 @@ import {
  */
 export function useCurriculumDraft() {
   const [seasons, setSeasons] = useState<SeasonDraft[]>([]);
-  const [lessons, setLessons] = useState<LessonDraft[]>([emptyLesson()]);
+  const [lessons, setLessons] = useState<LessonDraft[]>([]);
   const [deletedSeasonIds, setDeletedSeasonIds] = useState<string[]>([]);
   const [deletedLessonIds, setDeletedLessonIds] = useState<string[]>([]);
 
@@ -30,14 +30,19 @@ export function useCurriculumDraft() {
       if (toRemove?.id) {
         setDeletedSeasonIds((ids) => [...ids, toRemove.id!]);
       }
-      return prev.filter((x) => x.clientKey !== key);
+      const remaining = prev.filter((x) => x.clientKey !== key);
+      // Move the orphans instead of unassigning them: a lesson with no season
+      // is still saved but is never rendered, so it vanishes from the builder.
+      const fallback = remaining[0]?.clientKey;
+      if (fallback) {
+        setLessons((ls) =>
+          ls.map((l) =>
+            l.seasonClientKey === key ? { ...l, seasonClientKey: fallback } : l
+          )
+        );
+      }
+      return remaining;
     });
-    // Unassign lessons that belonged to this season (they stay in the course)
-    setLessons((prev) =>
-      prev.map((l) =>
-        l.seasonClientKey === key ? { ...l, seasonClientKey: undefined } : l
-      )
-    );
   }, []);
 
   const updateSeason = useCallback(
@@ -59,8 +64,8 @@ export function useCurriculumDraft() {
 
   // ── Lesson mutations ──────────────────────────────────────────────────────
 
-  const addLesson = useCallback((seasonClientKey?: string) => {
-    setLessons((prev) => [...prev, emptyLesson(seasonClientKey)]);
+  const addLesson = useCallback((seasonClientKey: string, title = '') => {
+    setLessons((prev) => [...prev, { ...emptyLesson(seasonClientKey), title }]);
   }, []);
 
   const removeLesson = useCallback((lessonKey: string) => {
@@ -81,9 +86,9 @@ export function useCurriculumDraft() {
     []
   );
 
-  /** Assign or unassign a lesson to/from a season */
+  /** Move a lesson to another season. Every lesson always belongs to one. */
   const assignLesson = useCallback(
-    (lessonKey: string, seasonClientKey: string | undefined) =>
+    (lessonKey: string, seasonClientKey: string) =>
       setLessons((prev) =>
         prev.map((l) =>
           l.clientKey === lessonKey ? { ...l, seasonClientKey } : l

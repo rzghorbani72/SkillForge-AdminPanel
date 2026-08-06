@@ -757,12 +757,9 @@ export const tr = {
     season: 'Sezon',
     seasonTitle: 'Sezon başlığı',
     seasonDescription: 'Sezon açıklaması',
-    enterSeasonTitle: 'Sezon başlığını girin',
     lessonTitle: 'Ders',
     lessonDescription: 'Ders açıklaması',
     lessonDuration: 'Süre (dd:ss)',
-    publishSeasonTitleRequired:
-      'Yayınlamadan önce her sezonun bir başlığı olmalıdır.',
     publishLessonTitleRequired:
       'Yayınlamadan önce her dersin bir başlığı olmalıdır.',
     publishEmptySeason:
@@ -807,6 +804,11 @@ export const tr = {
     removeDocument: 'Belgeyi kaldır',
     lessonComplete: 'Hazır',
     lessonIncomplete: 'Eksik',
+    addSeasonBlocked: 'Yeni bölüm eklemeden önce son bölüme bir ders ekleyin.',
+    addLessonBlocked: 'Yeni ders eklemeden önce başlıksız dersi adlandırın.',
+    seasonNumber: '{{n}}. Bölüm',
+    lessonCount: '{{n}} ders',
+    addLessonHint: 'Ders başlığı, sonra Enter',
     lessonsReady: '{{n}} / {{total}} hazır',
     expandAll: 'Tümünü genişlet',
     collapseAll: 'Tümünü daralt',

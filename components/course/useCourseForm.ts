@@ -13,7 +13,7 @@ import type { Season, Lesson } from '@/types/api';
 import { courseFormSchema, type CourseFormData } from './schema';
 import {
   durationToSeconds,
-  emptyLesson,
+  emptySeason,
   newKey,
   secondsToDuration,
   validateForPublish,
@@ -108,6 +108,10 @@ export function useCourseForm(courseId: string) {
             clientKey: newKey()
           })
         );
+        // Lessons are only ever rendered inside a season, so there must always
+        // be one to hold them.
+        if (loadedSeasons.length === 0) loadedSeasons.push(emptySeason());
+        const defaultSeasonKey = loadedSeasons[0].clientKey;
 
         // Map season DB id → clientKey so lessons can reference their season
         const seasonDbIdToClientKey = new Map<string, string>(
@@ -136,14 +140,14 @@ export function useCourseForm(courseId: string) {
             coverPreviewUrl: l.Image?.publicUrl,
             clientKey: newKey(),
             seasonClientKey:
-              l.season_id != null
+              (l.season_id != null
                 ? seasonDbIdToClientKey.get(l.season_id)
-                : undefined
+                : undefined) ?? defaultSeasonKey
           })
         );
 
         setSeasons(loadedSeasons);
-        setLessons(loadedLessons.length > 0 ? loadedLessons : [emptyLesson()]);
+        setLessons(loadedLessons);
       } catch (err) {
         ErrorHandler.handleApiError(err);
         router.push('/courses');
@@ -192,14 +196,14 @@ export function useCourseForm(courseId: string) {
           cover_id: data.cover_id || undefined,
           published: data.published,
           is_featured: data.is_featured,
-          seasons: seasons
-            .filter((s) => s.title.trim())
-            .map((s) => ({
-              id: s.id,
-              client_key: s.clientKey,
-              title: s.title.trim(),
-              description: s.description.trim() || undefined
-            })),
+          // Untitled seasons are named rather than dropped: the backend skips a
+          // season with no title, which silently orphans every lesson in it.
+          seasons: seasons.map((s, i) => ({
+            id: s.id,
+            client_key: s.clientKey,
+            title: s.title.trim() || t('courses.seasonNumber', { n: i + 1 }),
+            description: s.description.trim() || undefined
+          })),
           lessons: lessons
             .filter((l) => l.title.trim())
             .map((l) => ({

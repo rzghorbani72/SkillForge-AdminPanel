@@ -15,7 +15,6 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,6 +31,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { MESSAGES } from '@/constants/messages';
 import type { LessonDraft, LessonType, SeasonDraft } from './useCourseForm';
 import { LessonMedia } from './LessonMedia';
+import { InlineConfirm } from './InlineConfirm';
 
 // ─── Type chip config ──────────────────────────────────────────────────────────
 
@@ -77,9 +77,7 @@ interface LessonRowProps {
   seasons: SeasonDraft[];
   onUpdate: (patch: Partial<LessonDraft>) => void;
   onRemove: () => void;
-  onAssign: (seasonClientKey: string | undefined) => void;
-  titleInputRef?: React.RefObject<HTMLInputElement | null>;
-  onTitleEnter?: () => void;
+  onAssign: (seasonClientKey: string) => void;
 }
 
 export function SortableLessonRow({
@@ -88,9 +86,7 @@ export function SortableLessonRow({
   seasons,
   onUpdate,
   onRemove,
-  onAssign,
-  titleInputRef,
-  onTitleEnter
+  onAssign
 }: LessonRowProps) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -121,13 +117,6 @@ export function SortableLessonRow({
 
   const TypeIcon = TYPE_ICON_MAP[lesson.lesson_type] ?? Video;
   const complete = isLessonComplete(lesson);
-
-  function handleTitleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      onTitleEnter?.();
-    }
-  }
 
   return (
     <div
@@ -172,10 +161,8 @@ export function SortableLessonRow({
         />
 
         <Input
-          ref={titleInputRef as React.RefObject<HTMLInputElement>}
           value={lesson.title}
           onChange={(e) => onUpdate({ title: e.target.value })}
-          onKeyDown={handleTitleKeyDown}
           placeholder={t('courses.enterLessonTitle')}
           className="h-7 flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
         />
@@ -228,31 +215,11 @@ export function SortableLessonRow({
 
       {/* ── Delete confirm ───────────────────────────────────────────────── */}
       {confirmDelete && (
-        <div className="flex items-center justify-between border-t bg-destructive/5 px-3 py-2 text-sm">
-          <span className="text-destructive">
-            {MESSAGES.course.confirmRemoveLesson}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              className="h-6 px-2 text-xs"
-              onClick={() => setConfirmDelete(false)}
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="destructive"
-              className="h-6 px-2 text-xs"
-              onClick={onRemove}
-            >
-              {t('common.delete')}
-            </Button>
-          </div>
-        </div>
+        <InlineConfirm
+          message={MESSAGES.course.confirmRemoveLesson}
+          onCancel={() => setConfirmDelete(false)}
+          onConfirm={onRemove}
+        />
       )}
 
       {/* ── Expanded panel ───────────────────────────────────────────────── */}
@@ -307,22 +274,19 @@ export function SortableLessonRow({
             {seasons.length > 0 && (
               <div className="space-y-1">
                 <Label className="text-xs">{t('courses.season')}</Label>
+                {/* No "unassigned" option: a lesson outside every season is
+                    saved but never rendered, so it silently disappears. */}
                 <Select
-                  value={lesson.seasonClientKey ?? '__unassigned__'}
-                  onValueChange={(v) =>
-                    onAssign(v === '__unassigned__' ? undefined : v)
-                  }
+                  value={lesson.seasonClientKey}
+                  onValueChange={(value) => onAssign(value)}
                 >
                   <SelectTrigger className="h-8 text-sm">
-                    <SelectValue placeholder={MESSAGES.course.unassigned} />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="__unassigned__">
-                      {MESSAGES.course.unassigned}
-                    </SelectItem>
-                    {seasons.map((s) => (
+                    {seasons.map((s, i) => (
                       <SelectItem key={s.clientKey} value={s.clientKey}>
-                        {s.title || MESSAGES.course.seasonUntitled}
+                        {s.title || t('courses.seasonNumber', { n: i + 1 })}
                       </SelectItem>
                     ))}
                   </SelectContent>

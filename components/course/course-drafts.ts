@@ -72,9 +72,8 @@ export function validateForPublish(
   seasons: SeasonDraft[],
   lessons: LessonDraft[]
 ): string | null {
-  if (seasons.some((s) => !s.title.trim())) {
-    return 'courses.publishSeasonTitleRequired';
-  }
+  // Season titles are not checked: an untitled season is saved under its
+  // number rather than dropped, so it can never block publishing.
   if (lessons.some((l) => !l.title.trim())) {
     return 'courses.publishLessonTitleRequired';
   }

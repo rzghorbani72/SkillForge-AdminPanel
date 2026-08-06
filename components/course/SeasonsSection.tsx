@@ -18,6 +18,7 @@ import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
 import { SortableSeasonAccordion } from './SortableSeasonAccordion';
 
@@ -31,13 +32,10 @@ interface SeasonsSectionProps {
     patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>
   ) => void;
   onReorderSeasons: (from: number, to: number) => void;
-  onAddLesson: (seasonClientKey?: string) => void;
+  onAddLesson: (seasonClientKey: string, title: string) => void;
   onRemoveLesson: (lessonKey: string) => void;
   onUpdateLesson: (lessonKey: string, patch: Partial<LessonDraft>) => void;
-  onAssignLesson: (
-    lessonKey: string,
-    seasonClientKey: string | undefined
-  ) => void;
+  onAssignLesson: (lessonKey: string, seasonClientKey: string) => void;
   onReorderLessons: (
     sectionKey: string | undefined,
     from: number,
@@ -80,6 +78,13 @@ export function SeasonsSection({
     setOpenMap(Object.fromEntries(seasons.map((s) => [s.clientKey, next])));
   }
 
+  // "Empty" means no lessons — the same rule validateForPublish enforces.
+  // Blocking here stops a wall of empty seasons that can never be published.
+  const lastSeason = seasons[seasons.length - 1];
+  const lastSeasonIsEmpty =
+    lastSeason !== undefined &&
+    !lessons.some((l) => l.seasonClientKey === lastSeason.clientKey);
+
   function handleSeasonDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -93,8 +98,15 @@ export function SeasonsSection({
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <div>
           <CardTitle>{t('courses.seasonsAndLessons')}</CardTitle>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            {t('courses.seasonsHint')}
+          <p
+            className={cn(
+              'mt-0.5 text-xs',
+              lastSeasonIsEmpty ? 'text-amber-600' : 'text-muted-foreground'
+            )}
+          >
+            {lastSeasonIsEmpty
+              ? t('courses.addSeasonBlocked')
+              : t('courses.seasonsHint')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -123,9 +135,13 @@ export function SeasonsSection({
             type="button"
             variant="outline"
             size="sm"
+            disabled={lastSeasonIsEmpty}
+            title={
+              lastSeasonIsEmpty ? t('courses.addSeasonBlocked') : undefined
+            }
             onClick={onAddSeason}
           >
-            <Plus className="mr-1.5 h-4 w-4" />
+            <Plus className="me-1.5 h-4 w-4" />
             {t('courses.addSeason')}
           </Button>
         </div>
@@ -165,7 +181,9 @@ export function SeasonsSection({
                         onUpdateSeason(season.clientKey, patch)
                       }
                       onRemove={() => onRemoveSeason(season.clientKey)}
-                      onAddLesson={() => onAddLesson(season.clientKey)}
+                      onAddLesson={(title) =>
+                        onAddLesson(season.clientKey, title)
+                      }
                       onRemoveLesson={onRemoveLesson}
                       onUpdateLesson={onUpdateLesson}
                       onAssignLesson={onAssignLesson}
