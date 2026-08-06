@@ -1201,7 +1201,6 @@ export const fa = {
     courseTitle: 'عنوان دوره',
     courseDescription: 'توضیحات دوره',
     basicInformation: 'اطلاعات پایه',
-    savingCourse: 'در حال ذخیرهٔ دوره…',
     creatingCourse: 'در حال ساخت دوره…',
     quickCreateHint:
       'ابتدا نام دوره را بنویسید — تصویر، قیمت و درس‌ها را در صفحهٔ بعد اضافه می‌کنید.',
@@ -1329,7 +1328,9 @@ export const fa = {
     liveSaveFirst:
       'ابتدا درس را ذخیره کنید، سپس لینک جلسه را در صفحه ویرایش تنظیم کنید.',
     saving: 'در حال ذخیره…',
-    saveChanges: 'ذخیره تغییرات',
+    saved: 'ذخیره شد',
+    saveFailed: 'ذخیره نشد',
+    retry: 'تلاش مجدد',
     backToCourses: 'بازگشت به دوره‌ها',
     course: 'دوره',
     review: 'در بررسی',

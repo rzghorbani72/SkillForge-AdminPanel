@@ -712,7 +712,6 @@ export const tr = {
     courseTitle: 'Kurs Başlığı',
     courseDescription: 'Kurs Açıklaması',
     basicInformation: 'Temel Bilgiler',
-    savingCourse: 'Kurs kaydediliyor…',
     creatingCourse: 'Kurs oluşturuluyor…',
     quickCreateHint:
       'Önce adını yazın — kapak, fiyat ve dersleri sonraki ekranda ekleyeceksiniz.',
@@ -793,7 +792,9 @@ export const tr = {
     seasonsHint:
       'Kursunuzu sezonlara göre düzenleyin, ardından her sezona ders ekleyin',
     saving: 'Kaydediliyor…',
-    saveChanges: 'Değişiklikleri Kaydet',
+    saved: 'Kaydedildi',
+    saveFailed: 'Kaydedilemedi',
+    retry: 'Yeniden dene',
     lessonType: 'Tür',
     lessonTypeVideo: 'Video',
     lessonTypeAudio: 'Ses',

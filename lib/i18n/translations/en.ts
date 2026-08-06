@@ -1206,7 +1206,6 @@ export const en = {
     courseTitle: 'Course Title',
     courseDescription: 'Course Description',
     basicInformation: 'Basic Information',
-    savingCourse: 'Saving course…',
     creatingCourse: 'Creating course…',
     quickCreateHint:
       'Name it first — you will add the cover, price and lessons on the next screen.',
@@ -1302,7 +1301,9 @@ export const en = {
     freePreview: 'Free preview',
     optional: 'Optional',
     saving: 'Saving…',
-    saveChanges: 'Save changes',
+    saved: 'Saved',
+    saveFailed: "Couldn't save",
+    retry: 'Retry',
     backToCourses: 'Back to courses',
     seasonsHint:
       'Organize your course into seasons, then add lessons to each season',

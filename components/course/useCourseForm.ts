@@ -21,6 +21,11 @@ import {
   type SeasonDraft
 } from './course-drafts';
 import { useCurriculumDraft } from './useCurriculumDraft';
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
+
+export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
+const AUTOSAVE_DELAY_MS = 1500;
 
 export type { LessonDraft, LessonType, SeasonDraft } from './course-drafts';
 export { durationToSeconds, secondsToDuration, validateForPublish };
@@ -37,8 +42,9 @@ export function useCourseForm(courseId: string) {
   const { selectedAcademy } = useStore();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveProgress, setSaveProgress] = useState('');
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const isSaving = saveStatus === 'saving';
+  const savingRef = useRef(false);
   const existingCoverUrl = useRef<string | null>(null);
   const curriculum = useCurriculumDraft();
   const {
@@ -154,25 +160,28 @@ export function useCourseForm(courseId: string) {
    * backend transaction, so a mid-save error can never leave half a course.
    * Publishing is just a flag on this same save — a course stays a draft until
    * the manager turns it on.
+   *
+   * `silent` is the autosave path: it reports through `saveStatus` only, because
+   * a toast on every pause in typing would be noise.
    */
   const save = useCallback(
-    async (data: CourseFormData) => {
+    async (data: CourseFormData, { silent = false } = {}) => {
       if (!selectedAcademy) {
-        toast.error(t('toasts.selectAcademyFirst'));
-        return;
+        if (!silent) toast.error(t('toasts.selectAcademyFirst'));
+        return false;
       }
-      if (isSaving) return;
+      if (savingRef.current) return false;
 
       if (data.published) {
         const problem = validateForPublish(seasons, lessons);
         if (problem) {
-          toast.error(t(problem));
-          return;
+          if (!silent) toast.error(t(problem));
+          return false;
         }
       }
 
-      setIsSaving(true);
-      setSaveProgress(t('courses.savingCourse'));
+      savingRef.current = true;
+      setSaveStatus('saving');
       try {
         await apiClient.updateCourseContent(courseId, {
           title: data.title.trim(),
@@ -213,19 +222,21 @@ export function useCourseForm(courseId: string) {
             deletedLessonIds.length > 0 ? deletedLessonIds : undefined
         });
         clearDeleted();
-        // Saving a draft is routine — the button state is enough feedback.
+        setSaveStatus('saved');
+        // Saving a draft is routine — the status indicator is enough feedback.
         // Only publishing, which changes what students see, is worth a toast.
-        if (data.published) toast.success(t('courses.updatedToast'));
+        if (!silent && data.published) toast.success(t('courses.updatedToast'));
+        return true;
       } catch (err) {
-        ErrorHandler.handleApiError(err);
+        setSaveStatus('error');
+        if (!silent) ErrorHandler.handleApiError(err);
+        return false;
       } finally {
-        setIsSaving(false);
-        setSaveProgress('');
+        savingRef.current = false;
       }
     },
     [
       selectedAcademy,
-      isSaving,
       courseId,
       seasons,
       lessons,
@@ -236,28 +247,85 @@ export function useCourseForm(courseId: string) {
     ]
   );
 
+  // ── Autosave ──────────────────────────────────────────────────────────────
+
+  /**
+   * Every edit lands on its own, so closing the tab mid-build can never lose
+   * work. Incomplete forms are skipped quietly rather than shown as errors.
+   */
+  const autosaveRef = useRef<() => void>(() => {});
+  const autosave = useDebouncedCallback(() => {
+    // Edits made during a save would otherwise be dropped — wait it out.
+    if (savingRef.current) {
+      autosaveRef.current();
+      return;
+    }
+    const values = form.getValues();
+    if (!courseFormSchema.safeParse(values).success) return;
+    void save(values, { silent: true });
+  }, AUTOSAVE_DELAY_MS);
+  autosaveRef.current = autosave;
+
+  useEffect(() => {
+    const subscription = form.watch((_values, { name }) => {
+      // Publishing is deliberate: it saves through togglePublish, not silently.
+      if (isLoading || name === 'published') return;
+      autosave();
+    });
+    return () => subscription.unsubscribe();
+  }, [form, autosave, isLoading]);
+
+  const curriculumSettled = useRef(false);
+  useEffect(() => {
+    if (isLoading) return;
+    // The first post-load commit is the loaded curriculum, not an edit.
+    if (!curriculumSettled.current) {
+      curriculumSettled.current = true;
+      return;
+    }
+    autosave();
+  }, [seasons, lessons, isLoading, autosave]);
+
   /**
    * The cover file already lives on the server, so persist it right away
-   * instead of waiting for a manual save. Published state is untouched: an
+   * instead of waiting for the debounce. Published state is untouched: an
    * upload never publishes a course and never unpublishes a live one.
    */
   const saveCover = useCallback(async () => {
     const values = form.getValues();
-    // Quiet check: nothing valid to save yet while fields are incomplete, and
-    // firing red errors right after an upload is noise.
     if (!courseFormSchema.safeParse(values).success) return;
-    await save(values);
+    await save(values, { silent: true });
+  }, [form, save]);
+
+  /**
+   * Publishing changes what students see, so it never rides the silent
+   * debounce: it saves immediately and speaks up on success or failure.
+   */
+  const togglePublish = useCallback(
+    async (next: boolean) => {
+      form.setValue('published', next);
+      const saved = await save({ ...form.getValues(), published: next });
+      // A rejected publish (incomplete curriculum, network error) must not
+      // leave the switch claiming a state the server never accepted.
+      if (!saved) form.setValue('published', !next);
+    },
+    [form, save]
+  );
+
+  const retrySave = useCallback(async () => {
+    await save(form.getValues());
   }, [form, save]);
 
   return {
     form,
     isLoading,
     isSaving,
-    saveProgress,
+    saveStatus,
     ...curriculum,
     selectedAcademy,
     existingCoverUrl: existingCoverUrl.current,
-    save,
+    togglePublish,
+    retrySave,
     saveCover
   };
 }

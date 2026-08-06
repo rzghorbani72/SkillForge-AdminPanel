@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Loader2, Save } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -15,6 +15,7 @@ import CreateCourseAssociations from './CreateCourseAssociations';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
 import { CourseOffersSection } from './CourseOffersSection';
+import { SaveStatusIndicator } from './SaveStatusIndicator';
 
 interface CourseFormPageProps {
   courseId: string;
@@ -33,7 +34,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     form,
     isLoading,
     isSaving,
-    saveProgress,
+    saveStatus,
     seasons,
     lessons,
     selectedAcademy,
@@ -47,7 +48,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     updateLesson,
     assignLesson,
     reorderLessons,
-    save,
+    togglePublish,
+    retrySave,
     saveCover
   } = useCourseForm(courseId);
 
@@ -103,11 +105,14 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          <SaveStatusIndicator status={saveStatus} onRetry={retrySave} />
+
           {/* Publish switch — the only thing that makes a course public */}
           <div className="flex items-center gap-2 rounded-lg border px-3 py-1.5">
             <Switch
               checked={isPublished}
-              onCheckedChange={(v) => form.setValue('published', v)}
+              disabled={isSaving}
+              onCheckedChange={(v) => void togglePublish(v)}
               id="publish-toggle"
             />
             <label
@@ -123,25 +128,6 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
               )}
             </label>
           </div>
-
-          <Button
-            type="button"
-            disabled={isSaving}
-            onClick={form.handleSubmit(save)}
-            className="min-w-[120px]"
-          >
-            {isSaving ? (
-              <span className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {saveProgress || t('courses.saving')}
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                {t('courses.saveChanges')}
-              </span>
-            )}
-          </Button>
         </div>
       </div>
 
@@ -154,7 +140,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(save)}
+            onSubmit={(e) => e.preventDefault()}
             className="w-full space-y-6"
             noValidate
           >
@@ -218,20 +204,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                 {t('courses.viewCourse')}
               </Button>
 
-              <Button
-                type="submit"
-                disabled={isSaving}
-                className="min-w-[140px]"
-              >
-                {isSaving ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {saveProgress || t('courses.saving')}
-                  </span>
-                ) : (
-                  t('courses.saveChanges')
-                )}
-              </Button>
+              <SaveStatusIndicator status={saveStatus} onRetry={retrySave} />
             </div>
           </form>
         </Form>

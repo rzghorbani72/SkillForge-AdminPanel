@@ -697,7 +697,6 @@ export const ar = {
     courseTitle: 'عنوان الدورة',
     courseDescription: 'وصف الدورة',
     basicInformation: 'المعلومات الأساسية',
-    savingCourse: 'جارٍ حفظ الدورة…',
     creatingCourse: 'جارٍ إنشاء الدورة…',
     quickCreateHint:
       'ابدأ بالاسم — ستضيف الصورة والسعر والدروس في الشاشة التالية.',
@@ -773,7 +772,9 @@ export const ar = {
     published: 'منشور',
     seasonsHint: 'نظّم دورتك في فصول، ثم أضف دروساً لكل فصل',
     saving: 'جارٍ الحفظ…',
-    saveChanges: 'حفظ التغييرات',
+    saved: 'تم الحفظ',
+    saveFailed: 'تعذّر الحفظ',
+    retry: 'إعادة المحاولة',
     lessonType: 'النوع',
     lessonTypeVideo: 'فيديو',
     lessonTypeAudio: 'صوت',
