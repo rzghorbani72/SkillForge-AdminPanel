@@ -23,7 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from './ui/tooltip';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -148,6 +148,7 @@ NavItemButton.displayName = 'NavItemButton';
 
 export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const { t } = useTranslation();
+  const { isRTL } = useLanguage();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -292,7 +293,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
             <DropdownMenuContent
               className="w-52 space-y-1 rounded-xl border-border/50 bg-popover/95 p-2 shadow-xl backdrop-blur-xl"
               align="start"
-              side="right"
+              side={isRTL ? 'left' : 'right'}
               sideOffset={8}
               avoidCollisions={true}
             >
@@ -385,6 +386,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
       expandedItems,
       isMinimized,
       isAboveLg,
+      isRTL,
       isPathActive,
       hasActiveChild,
       handleSetOpen,
@@ -426,7 +428,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
                 <TooltipTrigger asChild>{renderNavItem(item)}</TooltipTrigger>
                 <TooltipContent
                   align="center"
-                  side="right"
+                  side={isRTL ? 'left' : 'right'}
                   sideOffset={12}
                   className={cn(
                     'rounded-md border-border/50 bg-popover/95 px-3 py-1.5 text-sm font-medium shadow-lg backdrop-blur-xl',

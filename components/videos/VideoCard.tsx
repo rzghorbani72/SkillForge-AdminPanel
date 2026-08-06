@@ -88,7 +88,7 @@ export function VideoCard({
 
         {/* Welcome Video Badge */}
         {video.is_welcome_video && (
-          <div className="absolute right-2 top-2 z-10">
+          <div className="absolute end-2 top-2 z-10">
             <Badge className="bg-yellow-500 text-white">
               <Star className="mr-1 h-3 w-3" />
               Welcome
@@ -97,7 +97,7 @@ export function VideoCard({
         )}
 
         {/* Access Control Badge */}
-        <div className="absolute left-2 top-2 z-10">
+        <div className="absolute start-2 top-2 z-10">
           {video.access_control ? (
             <AccessControlBadge
               accessControl={video.access_control}

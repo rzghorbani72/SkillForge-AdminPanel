@@ -295,7 +295,7 @@ function SlideshowEditor({ blockId, cfg, onUpdate }: SlideshowEditorProps) {
                       type="button"
                       aria-label="Remove slide image"
                       onClick={() => updateSlide(idx, { image: null })}
-                      className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
+                      className="absolute end-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -632,7 +632,7 @@ export function BlockEditor({
                     title="Remove image"
                     aria-label="Remove image"
                     onClick={() => set('bgImage', '')}
-                    className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
+                    className="absolute end-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -847,7 +847,7 @@ export function BlockEditor({
                   onClick={() =>
                     onUpdate(block.id, { ...cfg, illustration: null })
                   }
-                  className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
+                  className="absolute end-1 top-1 rounded-full bg-black/60 p-0.5 text-white"
                 >
                   <X className="h-3 w-3" />
                 </button>

@@ -238,7 +238,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                       videoPreviewUrl: undefined
                     })
                   }
-                  className="absolute right-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
+                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -291,7 +291,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                       audioPreviewUrl: undefined
                     })
                   }
-                  className="absolute right-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
+                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -343,7 +343,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                       coverPreviewUrl: undefined
                     })
                   }
-                  className="absolute right-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
+                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>

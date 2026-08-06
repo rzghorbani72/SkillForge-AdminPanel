@@ -64,7 +64,7 @@ export function UserNav() {
   }
 
   return (
-    <DropdownMenu dir="rtl">
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           type="button"

@@ -263,7 +263,7 @@ export function PhoneInputWithCountry({
               onChange={(e) => handlePhoneChange(e.target.value)}
               onBlur={onBlur}
               className={cn(
-                'rounded-l-none border-l-0 pl-10 ps-10',
+                'rounded-l-none border-l-0 ps-10',
                 error && 'border-red-500',
                 className
               )}

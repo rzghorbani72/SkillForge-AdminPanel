@@ -258,7 +258,7 @@ function VideoCard({
           </>
         )}
 
-        <div className="pointer-events-none absolute left-3 top-3 flex flex-wrap items-center gap-2">
+        <div className="pointer-events-none absolute start-3 top-3 flex flex-wrap items-center gap-2">
           <span
             className={cn(
               'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium shadow-sm ring-1 ring-inset ring-black/10 backdrop-blur',

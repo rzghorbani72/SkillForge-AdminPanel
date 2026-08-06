@@ -135,7 +135,7 @@ function GalleryCard({
       )}
 
       {/* Dedicated badge + owner delete */}
-      <div className="absolute left-2.5 top-2.5 z-20 flex items-center gap-1.5">
+      <div className="absolute start-2.5 top-2.5 z-20 flex items-center gap-1.5">
         {isDedicated && (
           <span className="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
             <Lock className="h-2.5 w-2.5" />
@@ -220,7 +220,7 @@ function GalleryCard({
         </div>
 
         {isActive && (
-          <span className="absolute right-2.5 top-2.5 z-10 flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
+          <span className="absolute end-2.5 top-2.5 z-10 flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
             فعال
           </span>

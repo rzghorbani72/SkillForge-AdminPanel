@@ -12,12 +12,12 @@ const SearchBar = ({
   return (
     <div className="flex items-center space-x-2">
       <div className="relative max-w-sm flex-1">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search seasons..."
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="pl-8"
+          className="ps-8"
         />
       </div>
     </div>

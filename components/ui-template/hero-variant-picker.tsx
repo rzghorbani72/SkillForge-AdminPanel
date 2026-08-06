@@ -71,7 +71,7 @@ export function HeroVariantPicker({
                   className="h-full w-full"
                 />
                 {isSelected && (
-                  <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-white">
+                  <span className="absolute end-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-white">
                     <Check className="h-3 w-3" />
                   </span>
                 )}

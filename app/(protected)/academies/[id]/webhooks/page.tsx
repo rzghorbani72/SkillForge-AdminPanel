@@ -129,7 +129,7 @@ export default function WebhooksPage() {
                 placeholder={t('webhooks.secretPlaceholder')}
                 value={webhookSecret}
                 onChange={(e) => setWebhookSecret(e.target.value)}
-                className="pr-10"
+                className="pe-10"
               />
               <Button
                 type="button"
@@ -138,7 +138,7 @@ export default function WebhooksPage() {
                 aria-label={
                   showSecret ? t('common.inactive') : t('common.active')
                 }
-                className="absolute right-1 top-1 h-7 w-7"
+                className="absolute end-1 top-1 h-7 w-7"
                 onClick={() => setShowSecret((v) => !v)}
               >
                 {showSecret ? (

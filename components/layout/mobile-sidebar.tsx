@@ -8,11 +8,13 @@ import { filterNavItems } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHasStore } from '@/hooks/useHasStore';
 import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
+import { useLanguage } from '@/lib/i18n/hooks';
 
 // import { Playlist } from "../data/playlists";
 
 export function MobileSidebar() {
   const [open, setOpen] = useState(false);
+  const { isRTL } = useLanguage();
   const { user } = useAuthUser();
   const hasStore = useHasStore();
   const { visibility: learningVisibility } = useLearningNavCapabilities();
@@ -36,7 +38,7 @@ export function MobileSidebar() {
         <SheetTrigger asChild className="focus:outline-none">
           <MenuIcon />
         </SheetTrigger>
-        <SheetContent side="left" className="!px-0">
+        <SheetContent side={isRTL ? 'right' : 'left'} className="!px-0">
           <div className="space-y-4 py-4">
             <div className="px-3 py-2">
               <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">

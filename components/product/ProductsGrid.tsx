@@ -159,13 +159,13 @@ const ProductsGrid = ({
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 {/* Featured badge */}
                 {product.is_featured && (
-                  <Badge className="absolute left-3 top-3 gap-1 rounded-full bg-amber-500/90 text-white backdrop-blur-sm">
+                  <Badge className="absolute start-3 top-3 gap-1 rounded-full bg-amber-500/90 text-white backdrop-blur-sm">
                     <Star className="h-3 w-3 fill-current" />
                     {t('courses.featured')}
                   </Badge>
                 )}
                 {/* Product type badge */}
-                <div className="absolute right-3 top-3">
+                <div className="absolute end-3 top-3">
                   <Badge
                     className={cn(
                       'rounded-full backdrop-blur-sm',
@@ -188,7 +188,7 @@ const ProductsGrid = ({
                   </Badge>
                 </div>
                 {/* Price badge */}
-                <div className="absolute bottom-3 right-3">
+                <div className="absolute bottom-3 end-3">
                   {product.price && product.price > 0 ? (
                     <Badge className="rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-foreground backdrop-blur-sm dark:bg-black/90 dark:text-white">
                       {formatCurrencyWithStore(product.price, currentAcademy)}

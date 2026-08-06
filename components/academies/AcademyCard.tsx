@@ -111,8 +111,8 @@ export function AcademyCard({
       <div className={cn('relative flex h-24 items-start px-4 pt-3', color.bg)}>
         <AcademyStatusPill academy={academy} t={t} />
 
-        {/* Icon floats at bottom-right of header */}
-        <div className="absolute bottom-[-20px] left-4">
+        {/* Icon floats at the bottom-start corner of the header */}
+        <div className="absolute bottom-[-20px] start-4">
           <AcademyIcon
             name={academy.name}
             id={academy.id}

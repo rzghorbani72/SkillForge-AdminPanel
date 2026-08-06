@@ -619,7 +619,7 @@ export default function PlatformAcademiesPage() {
       <Card>
         <CardContent className="pt-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t('platform.stores.searchPlaceholder')}
               value={searchQuery}
@@ -627,7 +627,7 @@ export default function PlatformAcademiesPage() {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10"
+              className="ps-10"
             />
           </div>
         </CardContent>

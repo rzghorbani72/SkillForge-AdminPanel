@@ -374,7 +374,7 @@ function TemplateCard({
       />
 
       {/* Radio indicator + badges */}
-      <div className="absolute right-3 top-3 z-10 flex flex-col items-end gap-1.5">
+      <div className="absolute end-3 top-3 z-10 flex flex-col items-end gap-1.5">
         {isActive && (
           <span className="inline-flex items-center rounded-full bg-emerald-600 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-white">
             فعال

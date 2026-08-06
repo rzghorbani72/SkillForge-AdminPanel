@@ -372,12 +372,12 @@ export function SectionLibraryModal({
 
         <div className="space-y-3 border-b px-5 py-3">
           <div className="relative">
-            <Search className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute start-2.5 top-2 h-4 w-4 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('settings.sectionLibrarySearch')}
-              className="h-8 pl-8 text-sm"
+              className="h-8 ps-8 text-sm"
             />
           </div>
           {!swapTarget && (

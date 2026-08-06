@@ -36,7 +36,7 @@ export default function CampaignBanner({ onDismiss }: CampaignBannerProps) {
           setDismissed(true);
           onDismiss?.();
         }}
-        className="absolute left-3 top-3 rounded-md p-1 text-muted-foreground/50 hover:text-muted-foreground"
+        className="absolute end-3 top-3 rounded-md p-1 text-muted-foreground/50 hover:text-muted-foreground"
       >
         <X className="h-4 w-4" />
       </button>

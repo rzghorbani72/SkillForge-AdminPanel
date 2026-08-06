@@ -22,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from './ui/tooltip';
+import { useLanguage } from '@/lib/i18n/hooks';
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -106,6 +107,7 @@ NavItemButton.displayName = 'NavItemButton';
 
 export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const path = usePathname();
+  const { isRTL } = useLanguage();
   const { isMinimized } = useSidebar();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const { isAboveLg } = useBreakpoint('lg');
@@ -147,7 +149,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
             <DropdownMenuContent
               className="w-48 space-y-1"
               align="start"
-              side="right"
+              side={isRTL ? 'left' : 'right'}
               sideOffset={20}
             >
               <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
@@ -190,7 +192,15 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         </div>
       );
     },
-    [expandedItems, isMinimized, isAboveLg, path, handleSetOpen, toggleExpand]
+    [
+      expandedItems,
+      isMinimized,
+      isAboveLg,
+      isRTL,
+      path,
+      handleSetOpen,
+      toggleExpand
+    ]
   );
 
   const memoizedItems = useMemo(() => items, [items]);
@@ -207,7 +217,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
             <TooltipTrigger asChild>{renderNavItem(item)}</TooltipTrigger>
             <TooltipContent
               align="center"
-              side="right"
+              side={isRTL ? 'left' : 'right'}
               sideOffset={8}
               className={!isMinimized ? 'hidden' : 'inline-block'}
             >
