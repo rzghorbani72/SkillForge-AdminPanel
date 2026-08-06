@@ -130,7 +130,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
                 handleRemove();
               }}
               disabled={disabled}
-              className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
+              className="absolute end-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
               aria-label="Remove image"
             >
               <X className="h-4 w-4" />
@@ -157,7 +157,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
       )}
 
       {!currentSrc && !imageUpload.isUploading && (
-        <div className="pointer-events-none absolute bottom-2 right-2 text-muted-foreground/60">
+        <div className="pointer-events-none absolute bottom-2 end-2 text-muted-foreground/60">
           <UploadCloud className="h-4 w-4" />
         </div>
       )}

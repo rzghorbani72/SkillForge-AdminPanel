@@ -1309,6 +1309,7 @@ export const fa = {
     newCategoryName: 'نام دسته‌بندی جدید',
     categoryNamePlaceholder: 'نام دسته‌بندی',
     addCategory: 'افزودن دسته‌بندی',
+    searchCategories: 'جستجوی دسته‌بندی‌ها...',
     selectCategoryHint:
       'یک دسته‌بندی انتخاب کنید تا دانشجویان دوره شما را راحت‌تر پیدا کنند',
     noCategoriesMatch: 'دسته‌بندی‌ای مطابق با "{{term}}" یافت نشد',

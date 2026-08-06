@@ -1315,6 +1315,7 @@ export const en = {
     newCategoryName: 'New category name',
     categoryNamePlaceholder: 'Category name',
     addCategory: 'Add Category',
+    searchCategories: 'Search categories...',
     selectCategoryHint: 'Select a category to help students find your course',
     noCategoriesMatch: 'No categories match "{{term}}"',
     noCategoriesYet: 'No categories yet',

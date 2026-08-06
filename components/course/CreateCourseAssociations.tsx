@@ -135,7 +135,7 @@ export default function CreateCourseAssociations({
               </Button>
 
               {open && (
-                <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-2 shadow-md">
+                <div className="absolute start-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-2 shadow-md">
                   <Input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
