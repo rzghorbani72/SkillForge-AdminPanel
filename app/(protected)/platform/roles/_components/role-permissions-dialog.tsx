@@ -11,6 +11,9 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { apiClient } from '@/lib/api';
@@ -47,16 +50,24 @@ export function RolePermissionsDialog({
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   const [saving, setSaving] = useState(false);
+  const [label, setLabel] = useState(role.label);
+  const [description, setDescription] = useState(role.description ?? '');
   const { granted, toggle, toggleResource, replace, permissions } =
     usePermissionSelection(role.permissions);
 
   const levelLabel = getAccessLevelLabel(role.hierarchy_level, t);
+  const labelValid = label.trim().length >= 2;
 
   const save = async () => {
+    if (!labelValid) return;
     try {
       setSaving(true);
+      await apiClient.updatePlatformRole(role.id, {
+        label: label.trim(),
+        description: description.trim() || undefined
+      });
       await apiClient.setPlatformRolePermissions(role.id, permissions);
-      ErrorHandler.showSuccess(t('roles.permissionsSaved'));
+      ErrorHandler.showSuccess(t('roles.roleUpdated'));
       onSaved();
       onClose();
     } catch (error) {
@@ -89,6 +100,32 @@ export function RolePermissionsDialog({
           <PermissionReadonlyList permissions={role.permissions} />
         ) : (
           <div className="space-y-3">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="role-edit-label">{t('roles.labelLabel')}</Label>
+                <Input
+                  id="role-edit-label"
+                  value={label}
+                  onChange={(e) => setLabel(e.target.value)}
+                />
+                {label && !labelValid && (
+                  <p className="text-xs text-destructive">
+                    {t('roles.labelInvalid')}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="role-edit-desc">
+                  {t('roles.descriptionLabel')}
+                </Label>
+                <Textarea
+                  id="role-edit-desc"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+            </div>
+
             <Button
               type="button"
               variant="outline"
@@ -117,7 +154,7 @@ export function RolePermissionsDialog({
             {readOnly ? t('common.close') : t('common.cancel')}
           </Button>
           {!readOnly && (
-            <Button onClick={save} disabled={saving}>
+            <Button onClick={save} disabled={saving || !labelValid}>
               {saving ? t('common.saving') : t('common.save')}
             </Button>
           )}

@@ -273,11 +273,11 @@ export const en = {
     ownerLockedHint:
       'The platform owner has full access and cannot be changed.',
     permissionsSaved: 'Permissions saved',
+    roleUpdated: 'Role saved',
     createTitle: 'Create a new role',
-    createHint: 'Create a custom role with a unique key.',
-    nameLabel: 'Role key (UPPERCASE)',
-    nameInvalid: 'Only uppercase letters, digits and underscore are allowed.',
+    createHint: 'Create a custom role and pick what it can access.',
     labelLabel: 'Display label',
+    labelInvalid: 'Enter at least 2 characters.',
     descriptionLabel: 'Description',
     levelLabel: 'Access level',
     levelHint:

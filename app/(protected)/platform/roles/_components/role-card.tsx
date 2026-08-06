@@ -41,9 +41,11 @@ export function RoleCard({
           </span>
           <div className="min-w-0">
             <p className="truncate font-semibold leading-tight">{meta.label}</p>
-            <p className="truncate text-[11px] text-muted-foreground">
-              {role.name}
-            </p>
+            {!role.is_system && (
+              <p className="truncate text-[11px] text-muted-foreground">
+                {role.name}
+              </p>
+            )}
           </div>
         </div>
         <RoleCardBadges role={role} isOwnRole={isOwnRole} />

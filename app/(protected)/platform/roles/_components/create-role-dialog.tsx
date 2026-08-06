@@ -38,8 +38,6 @@ interface Props {
   maxLevel: number;
 }
 
-const NAME_PATTERN = /^[A-Z][A-Z0-9_]*$/;
-
 export function CreateRoleDialog({
   open,
   onClose,
@@ -49,14 +47,13 @@ export function CreateRoleDialog({
 }: Props) {
   const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
-  const [name, setName] = useState('');
   const [label, setLabel] = useState('');
   const [description, setDescription] = useState('');
   const [level, setLevel] = useState(0);
   const { granted, toggle, toggleResource, replace, permissions } =
     usePermissionSelection(defaultsFor(catalog, 0));
 
-  const nameValid = NAME_PATTERN.test(name);
+  const labelValid = label.trim().length >= 2;
   const levelOptions = selectableAccessLevels(maxLevel);
   const levelValid = levelOptions.some((option) => option.level === level);
 
@@ -68,7 +65,6 @@ export function CreateRoleDialog({
   };
 
   const reset = () => {
-    setName('');
     setLabel('');
     setDescription('');
     setLevel(0);
@@ -76,12 +72,11 @@ export function CreateRoleDialog({
   };
 
   const submit = async () => {
-    if (!nameValid || !levelValid) return;
+    if (!labelValid || !levelValid) return;
     try {
       setSaving(true);
       await apiClient.createPlatformRole({
-        name,
-        label: label || undefined,
+        label: label.trim(),
         description: description || undefined,
         hierarchy_level: level,
         permissions
@@ -106,30 +101,18 @@ export function CreateRoleDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="role-name">{t('roles.nameLabel')}</Label>
-              <Input
-                id="role-name"
-                value={name}
-                placeholder="CONTENT_MODERATOR"
-                onChange={(e) => setName(e.target.value.toUpperCase())}
-              />
-              {name && !nameValid && (
-                <p className="text-xs text-destructive">
-                  {t('roles.nameInvalid')}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="role-label">{t('roles.labelLabel')}</Label>
-              <Input
-                id="role-label"
-                value={label}
-                onChange={(e) => setLabel(e.target.value)}
-              />
-            </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="role-label">{t('roles.labelLabel')}</Label>
+            <Input
+              id="role-label"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+            />
+            {label && !labelValid && (
+              <p className="text-xs text-destructive">
+                {t('roles.labelInvalid')}
+              </p>
+            )}
           </div>
 
           <div className="space-y-1.5">
@@ -192,7 +175,7 @@ export function CreateRoleDialog({
           </Button>
           <Button
             onClick={submit}
-            disabled={saving || !nameValid || !levelValid}
+            disabled={saving || !labelValid || !levelValid}
           >
             {saving ? t('common.saving') : t('common.create')}
           </Button>

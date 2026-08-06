@@ -41,8 +41,8 @@ export interface RolesListResponse {
 }
 
 export interface CreateRolePayload {
-  name: string;
-  label?: string;
+  /** No `name`: the server derives the internal key from `hierarchy_level`. */
+  label: string;
   description?: string;
   hierarchy_level: number;
   permissions?: RolePermission[];
