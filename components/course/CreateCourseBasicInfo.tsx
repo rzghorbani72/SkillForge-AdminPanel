@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -12,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 import { CourseFormData } from './schema';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 type Props = {
   form: UseFormReturn<CourseFormData>;
@@ -19,6 +22,7 @@ type Props = {
 
 const CreateCourseBasicInfo = ({ form }: Props) => {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
 
   return (
     <Card>
@@ -39,7 +43,8 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
               <p
                 className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
-                {t('courses.titleLength')} ({field.value?.length || 0}/80)
+                {t('courses.titleLength')} (
+                {formatNumber(field.value?.length || 0)}/{formatNumber(80)})
               </p>
             </FormItem>
           )}
@@ -62,8 +67,8 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
               <p
                 className={`text-sm ${(field.value?.length || 0) >= 350 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
-                {t('courses.descriptionLength')} ({field.value?.length || 0}
-                /400)
+                {t('courses.descriptionLength')} (
+                {formatNumber(field.value?.length || 0)}/{formatNumber(400)})
               </p>
             </FormItem>
           )}

@@ -1206,21 +1206,15 @@ export const en = {
     courseTitle: 'Course Title',
     courseDescription: 'Course Description',
     basicInformation: 'Basic Information',
-    stepBasicInfo: 'Basic Info',
-    stepCurriculum: 'Curriculum',
-    stepBasicInfoHint:
-      'Start with the name, cover and price. Next you will add the seasons and lessons.',
-    stepCurriculumHint:
-      'Add seasons and lessons. The course is created as a draft — you can publish it later from the course page.',
     savingCourse: 'Saving course…',
     creatingCourse: 'Creating course…',
-    saveAsDraft: 'Save as draft',
-    fixErrorsBeforeSave:
-      'Please fix the highlighted fields before saving the draft.',
+    quickCreateHint:
+      'Name it first — you will add the cover, price and lessons on the next screen.',
+    builderDraftHint:
+      'This course is a draft: only you can see it. Add the lessons, then turn on Published when it is ready.',
+    builderPublishedHint:
+      'This course is published and visible to students. Changes go live as soon as you save.',
     draftSavedToast: 'Saved as a draft',
-    nextCurriculum: 'Next: Curriculum',
-    backBasicInfo: 'Back: Basic info',
-    fixErrorsBeforeNext: 'Please fix the highlighted fields before continuing.',
     updatedToast: 'Course updated',
     createdDraftToast:
       'Course created as a draft — publish it when it is ready',

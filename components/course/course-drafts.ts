@@ -1,0 +1,109 @@
+/**
+ * Shapes and pure helpers shared by the course builder: the in-progress season
+ * and lesson drafts, and the rules that turn them into what the API expects.
+ */
+
+// ─── Draft types ──────────────────────────────────────────────────────────────
+
+export type LessonType =
+  | 'VIDEO'
+  | 'AUDIO'
+  | 'TEXT'
+  | 'QUIZ'
+  | 'ASSIGNMENT'
+  | 'LIVE';
+
+export interface LessonDraft {
+  id?: string;
+  title: string;
+  description: string;
+  /** Lesson length as mm:ss (stored on the backend as whole seconds) */
+  duration: string;
+  lesson_type: LessonType;
+  is_free: boolean;
+  published: boolean;
+  video_id?: string;
+  audio_id?: string;
+  cover_id?: string;
+  document_id?: string;
+  videoPreviewUrl?: string;
+  audioPreviewUrl?: string;
+  coverPreviewUrl?: string;
+  documentPreviewName?: string;
+  clientKey: string;
+  /** clientKey of the SeasonDraft this lesson belongs to (undefined = unassigned) */
+  seasonClientKey?: string;
+}
+
+export interface SeasonDraft {
+  id?: string;
+  title: string;
+  description: string;
+  clientKey: string;
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+let _keyCounter = 0;
+export const newKey = () => `k-${++_keyCounter}`;
+
+const DEFAULT_DURATION = '00:00';
+
+/** mm:ss (or hh:mm:ss) → whole seconds. Bad input falls back to 0. */
+export function durationToSeconds(value: string): number {
+  const parts = value.split(':').map((p) => Number(p));
+  if (parts.some((n) => Number.isNaN(n) || n < 0)) return 0;
+  return parts.reduce((acc, n) => acc * 60 + n, 0);
+}
+
+/** Whole seconds → mm:ss (zero-padded). */
+export function secondsToDuration(total?: number | null): string {
+  if (!total || total < 0) return DEFAULT_DURATION;
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+/**
+ * Pre-publish gate. Returns a translation key for the first problem found, or
+ * null when the curriculum is publishable. Kept pure so it is unit-testable.
+ */
+export function validateForPublish(
+  seasons: SeasonDraft[],
+  lessons: LessonDraft[]
+): string | null {
+  if (seasons.some((s) => !s.title.trim())) {
+    return 'courses.publishSeasonTitleRequired';
+  }
+  if (lessons.some((l) => !l.title.trim())) {
+    return 'courses.publishLessonTitleRequired';
+  }
+  const hasEmptySeason = seasons.some(
+    (s) => !lessons.some((l) => l.seasonClientKey === s.clientKey)
+  );
+  if (hasEmptySeason) return 'courses.publishEmptySeason';
+  if (lessons.length === 0) return 'courses.publishNeedsLesson';
+  return null;
+}
+
+export const emptyLesson = (seasonClientKey?: string): LessonDraft => ({
+  title: '',
+  description: '',
+  duration: DEFAULT_DURATION,
+  lesson_type: 'VIDEO',
+  is_free: false,
+  published: false,
+  clientKey: newKey(),
+  seasonClientKey
+});
+
+export const emptySeason = (): SeasonDraft => ({
+  title: '',
+  description: '',
+  clientKey: newKey()
+});
+
+function extractId(resp: unknown): string | undefined {
+  const r = resp as Record<string, unknown>;
+  return (r?.data as any)?.data?.id ?? (r?.data as any)?.id ?? (r as any)?.id;
+}

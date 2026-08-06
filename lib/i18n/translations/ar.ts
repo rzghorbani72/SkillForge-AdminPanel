@@ -697,20 +697,16 @@ export const ar = {
     courseTitle: 'عنوان الدورة',
     courseDescription: 'وصف الدورة',
     basicInformation: 'المعلومات الأساسية',
-    stepBasicInfo: 'المعلومات الأساسية',
-    stepCurriculum: 'المنهج الدراسي',
-    stepBasicInfoHint:
-      'ابدأ بالاسم والصورة والسعر. في الخطوة التالية ستضيف الفصول والدروس.',
-    stepCurriculumHint:
-      'أضف الفصول والدروس. يتم إنشاء الدورة كمسودة، ويمكنك نشرها لاحقًا من صفحة الدورة.',
     savingCourse: 'جارٍ حفظ الدورة…',
     creatingCourse: 'جارٍ إنشاء الدورة…',
-    saveAsDraft: 'حفظ كمسودة',
-    fixErrorsBeforeSave: 'يرجى تصحيح الحقول المحددة قبل حفظ المسودة.',
+    quickCreateHint:
+      'ابدأ بالاسم — ستضيف الصورة والسعر والدروس في الشاشة التالية.',
+    viewCourse: 'عرض صفحة الدورة',
+    builderDraftHint:
+      'هذه الدورة مسودة يراها أنت فقط. أضف الدروس ثم فعّل «منشورة» عندما تكون جاهزة.',
+    builderPublishedHint:
+      'هذه الدورة منشورة ويراها الطلاب. تُطبَّق التغييرات فور الحفظ.',
     draftSavedToast: 'تم الحفظ كمسودة',
-    nextCurriculum: 'التالي: المنهج الدراسي',
-    backBasicInfo: 'رجوع: المعلومات الأساسية',
-    fixErrorsBeforeNext: 'يرجى تصحيح الحقول المحددة قبل المتابعة.',
     updatedToast: 'تم تحديث الدورة',
     createdDraftToast: 'تم إنشاء الدورة كمسودة — انشرها عندما تكون جاهزة',
     errors: {

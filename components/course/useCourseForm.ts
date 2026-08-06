@@ -11,133 +11,45 @@ import { toast } from 'react-toastify';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { Season, Lesson } from '@/types/api';
 import { courseFormSchema, type CourseFormData } from './schema';
+import {
+  durationToSeconds,
+  emptyLesson,
+  newKey,
+  secondsToDuration,
+  validateForPublish,
+  type LessonDraft,
+  type SeasonDraft
+} from './course-drafts';
+import { useCurriculumDraft } from './useCurriculumDraft';
 
-// ─── Draft types ──────────────────────────────────────────────────────────────
-
-export type LessonType =
-  | 'VIDEO'
-  | 'AUDIO'
-  | 'TEXT'
-  | 'QUIZ'
-  | 'ASSIGNMENT'
-  | 'LIVE';
-
-export interface LessonDraft {
-  id?: string;
-  title: string;
-  description: string;
-  /** Lesson length as mm:ss (stored on the backend as whole seconds) */
-  duration: string;
-  lesson_type: LessonType;
-  is_free: boolean;
-  published: boolean;
-  video_id?: string;
-  audio_id?: string;
-  cover_id?: string;
-  document_id?: string;
-  videoPreviewUrl?: string;
-  audioPreviewUrl?: string;
-  coverPreviewUrl?: string;
-  documentPreviewName?: string;
-  clientKey: string;
-  /** clientKey of the SeasonDraft this lesson belongs to (undefined = unassigned) */
-  seasonClientKey?: string;
-}
-
-export interface SeasonDraft {
-  id?: string;
-  title: string;
-  description: string;
-  clientKey: string;
-}
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-let _keyCounter = 0;
-const newKey = () => `k-${++_keyCounter}`;
-
-const DEFAULT_DURATION = '00:00';
-
-/** mm:ss (or hh:mm:ss) → whole seconds. Bad input falls back to 0. */
-export function durationToSeconds(value: string): number {
-  const parts = value.split(':').map((p) => Number(p));
-  if (parts.some((n) => Number.isNaN(n) || n < 0)) return 0;
-  return parts.reduce((acc, n) => acc * 60 + n, 0);
-}
-
-/** Whole seconds → mm:ss (zero-padded). */
-export function secondsToDuration(total?: number | null): string {
-  if (!total || total < 0) return DEFAULT_DURATION;
-  const mins = Math.floor(total / 60);
-  const secs = total % 60;
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-}
-
-/**
- * Pre-publish gate. Returns a translation key for the first problem found, or
- * null when the curriculum is publishable. Kept pure so it is unit-testable.
- */
-export function validateForPublish(
-  seasons: SeasonDraft[],
-  lessons: LessonDraft[]
-): string | null {
-  if (seasons.some((s) => !s.title.trim())) {
-    return 'courses.publishSeasonTitleRequired';
-  }
-  if (lessons.some((l) => !l.title.trim())) {
-    return 'courses.publishLessonTitleRequired';
-  }
-  const hasEmptySeason = seasons.some(
-    (s) => !lessons.some((l) => l.seasonClientKey === s.clientKey)
-  );
-  if (hasEmptySeason) return 'courses.publishEmptySeason';
-  if (lessons.length === 0) return 'courses.publishNeedsLesson';
-  return null;
-}
-
-export const emptyLesson = (seasonClientKey?: string): LessonDraft => ({
-  title: '',
-  description: '',
-  duration: DEFAULT_DURATION,
-  lesson_type: 'VIDEO',
-  is_free: false,
-  published: false,
-  clientKey: newKey(),
-  seasonClientKey
-});
-
-export const emptySeason = (): SeasonDraft => ({
-  title: '',
-  description: '',
-  clientKey: newKey()
-});
-
-function extractId(resp: unknown): string | undefined {
-  const r = resp as Record<string, unknown>;
-  return (r?.data as any)?.data?.id ?? (r?.data as any)?.id ?? (r as any)?.id;
-}
+export type { LessonDraft, LessonType, SeasonDraft } from './course-drafts';
+export { durationToSeconds, secondsToDuration, validateForPublish };
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
-export function useCourseForm(courseId?: string) {
+/**
+ * Drives the course builder: one page that loads a course and saves the whole
+ * of it — details, cover, pricing and curriculum — in a single request.
+ */
+export function useCourseForm(courseId: string) {
   const router = useRouter();
   const { t } = useTranslation();
   const { selectedAcademy } = useStore();
-  const isEdit = courseId !== undefined;
 
-  const [isLoading, setIsLoading] = useState(isEdit);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveProgress, setSaveProgress] = useState('');
-  /** Create flow only: 1 = basic info, 2 = curriculum. Edit is always step 2. */
-  const [step, setStep] = useState<1 | 2>(1);
-  const [seasons, setSeasons] = useState<SeasonDraft[]>([]);
-  const [lessons, setLessons] = useState<LessonDraft[]>([emptyLesson()]);
-  const [deletedSeasonIds, setDeletedSeasonIds] = useState<string[]>([]);
-  const [deletedLessonIds, setDeletedLessonIds] = useState<string[]>([]);
-  /** Create flow: id of the draft already saved (e.g. after a cover upload). */
-  const [draftCourseId, setDraftCourseId] = useState<string | null>(null);
-  const persistedId = courseId ?? draftCourseId;
   const existingCoverUrl = useRef<string | null>(null);
+  const curriculum = useCurriculumDraft();
+  const {
+    seasons,
+    lessons,
+    deletedSeasonIds,
+    deletedLessonIds,
+    setSeasons,
+    setLessons,
+    clearDeleted
+  } = curriculum;
 
   const form = useForm<CourseFormData>({
     resolver: zodResolver(courseFormSchema),
@@ -157,8 +69,6 @@ export function useCourseForm(courseId?: string) {
   // ── Load existing course for edit ─────────────────────────────────────────
 
   useEffect(() => {
-    if (!isEdit) return;
-
     (async () => {
       setIsLoading(true);
       try {
@@ -235,122 +145,18 @@ export function useCourseForm(courseId?: string) {
         setIsLoading(false);
       }
     })();
-  }, [courseId, isEdit]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ── Season mutations ──────────────────────────────────────────────────────
-
-  const addSeason = useCallback(
-    () => setSeasons((s) => [...s, emptySeason()]),
-    []
-  );
-
-  const removeSeason = useCallback((key: string) => {
-    setSeasons((prev) => {
-      const toRemove = prev.find((x) => x.clientKey === key);
-      if (toRemove?.id) {
-        setDeletedSeasonIds((ids) => [...ids, toRemove.id!]);
-      }
-      return prev.filter((x) => x.clientKey !== key);
-    });
-    // Unassign lessons that belonged to this season (they stay in the course)
-    setLessons((prev) =>
-      prev.map((l) =>
-        l.seasonClientKey === key ? { ...l, seasonClientKey: undefined } : l
-      )
-    );
-  }, []);
-
-  const updateSeason = useCallback(
-    (key: string, patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>) =>
-      setSeasons((s) =>
-        s.map((x) => (x.clientKey === key ? { ...x, ...patch } : x))
-      ),
-    []
-  );
-
-  const reorderSeasons = useCallback((from: number, to: number) => {
-    setSeasons((s) => {
-      const next = [...s];
-      const [moved] = next.splice(from, 1);
-      next.splice(to, 0, moved);
-      return next;
-    });
-  }, []);
-
-  // ── Lesson mutations ──────────────────────────────────────────────────────
-
-  const addLesson = useCallback((seasonClientKey?: string) => {
-    setLessons((prev) => [...prev, emptyLesson(seasonClientKey)]);
-  }, []);
-
-  const removeLesson = useCallback((lessonKey: string) => {
-    setLessons((prev) => {
-      const toRemove = prev.find((l) => l.clientKey === lessonKey);
-      if (toRemove?.id) {
-        setDeletedLessonIds((ids) => [...ids, toRemove.id!]);
-      }
-      return prev.filter((l) => l.clientKey !== lessonKey);
-    });
-  }, []);
-
-  const updateLesson = useCallback(
-    (lessonKey: string, patch: Partial<LessonDraft>) =>
-      setLessons((prev) =>
-        prev.map((l) => (l.clientKey === lessonKey ? { ...l, ...patch } : l))
-      ),
-    []
-  );
-
-  /** Assign or unassign a lesson to/from a season */
-  const assignLesson = useCallback(
-    (lessonKey: string, seasonClientKey: string | undefined) =>
-      setLessons((prev) =>
-        prev.map((l) =>
-          l.clientKey === lessonKey ? { ...l, seasonClientKey } : l
-        )
-      ),
-    []
-  );
-
-  /** Reorder lessons within a section (unassigned or a specific season) */
-  const reorderLessons = useCallback(
-    (sectionKey: string | undefined, from: number, to: number) => {
-      setLessons((prev) => {
-        const inSection = prev.filter((l) => l.seasonClientKey === sectionKey);
-        if (from >= inSection.length || to >= inSection.length) return prev;
-
-        const reordered = [...inSection];
-        const [moved] = reordered.splice(from, 1);
-        reordered.splice(to, 0, moved);
-
-        // Rebuild full array: replace section slots in original order
-        let sectionIdx = 0;
-        return prev.map((l) =>
-          l.seasonClientKey === sectionKey ? reordered[sectionIdx++] : l
-        );
-      });
-    },
-    []
-  );
-
-  // ── Create-flow steps ────────────────────────────────────────────────────
-
-  /** Validate step 1 fields, then move to the curriculum step. */
-  const goToCurriculumStep = useCallback(async () => {
-    const valid = await form.trigger();
-    if (!valid) {
-      toast.error(t('courses.fixErrorsBeforeNext'));
-      return;
-    }
-    setStep(2);
-  }, [form, t]);
-
-  const goToBasicInfoStep = useCallback(() => setStep(1), []);
+  }, [courseId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Save ──────────────────────────────────────────────────────────────────
 
-  const persist = useCallback(
-    async (data: CourseFormData, options: { redirect: boolean }) => {
+  /**
+   * One atomic save: course details + every season/lesson + deletes in a single
+   * backend transaction, so a mid-save error can never leave half a course.
+   * Publishing is just a flag on this same save — a course stays a draft until
+   * the manager turns it on.
+   */
+  const save = useCallback(
+    async (data: CourseFormData) => {
       if (!selectedAcademy) {
         toast.error(t('toasts.selectAcademyFirst'));
         return;
@@ -366,9 +172,9 @@ export function useCourseForm(courseId?: string) {
       }
 
       setIsSaving(true);
+      setSaveProgress(t('courses.savingCourse'));
       try {
-        // Create / update course
-        const coursePayload = {
+        await apiClient.updateCourseContent(courseId, {
           title: data.title.trim(),
           description: data.description.trim(),
           primary_price: Number(data.primary_price),
@@ -376,79 +182,19 @@ export function useCourseForm(courseId?: string) {
           category_id: data.category_id || undefined,
           cover_id: data.cover_id || undefined,
           published: data.published,
-          is_featured: data.is_featured
-        };
-
-        let courseDbId: string;
-        if (persistedId) {
-          // One atomic save: course + every season/lesson + deletes in a single
-          // backend transaction. No more half-saved course on a mid-save error.
-          setSaveProgress(t('courses.savingCourse'));
-          await apiClient.updateCourseContent(persistedId, {
-            ...coursePayload,
-            seasons: seasons
-              .filter((s) => s.title.trim())
-              .map((s) => ({
-                id: s.id,
-                client_key: s.clientKey,
-                title: s.title.trim(),
-                description: s.description.trim() || undefined
-              })),
-            lessons: lessons
-              .filter((l) => l.title.trim())
-              .map((l) => ({
-                id: l.id,
-                title: l.title.trim(),
-                description: l.description.trim() || undefined,
-                duration: durationToSeconds(l.duration),
-                lesson_type: l.lesson_type,
-                is_free: l.is_free,
-                published: l.published,
-                video_id: l.video_id,
-                audio_id: l.audio_id,
-                cover_id: l.cover_id,
-                document_id: l.document_id,
-                season_client_key: l.seasonClientKey
-              })),
-            deleted_season_ids:
-              deletedSeasonIds.length > 0 ? deletedSeasonIds : undefined,
-            deleted_lesson_ids:
-              deletedLessonIds.length > 0 ? deletedLessonIds : undefined
-          });
-          courseDbId = persistedId;
-          setDeletedLessonIds([]);
-          setDeletedSeasonIds([]);
-        } else {
-          // Create: send everything in one atomic request
-          setSaveProgress(t('courses.creatingCourse'));
-          const seasonsPayload = seasons
+          is_featured: data.is_featured,
+          seasons: seasons
             .filter((s) => s.title.trim())
             .map((s) => ({
+              id: s.id,
+              client_key: s.clientKey,
               title: s.title.trim(),
-              description: s.description.trim() || undefined,
-              lessons: lessons
-                .filter(
-                  (l) => l.seasonClientKey === s.clientKey && l.title.trim()
-                )
-                .map((l) => ({
-                  title: l.title.trim(),
-                  description: l.description.trim() || undefined,
-                  duration: durationToSeconds(l.duration),
-                  lesson_type: l.lesson_type,
-                  is_free: l.is_free,
-                  published: l.published,
-                  video_id: l.video_id,
-                  audio_id: l.audio_id,
-                  cover_id: l.cover_id,
-                  document_id: l.document_id
-                }))
-            }));
-
-          // Lessons not attached to any season — sent top-level so they are
-          // persisted unassigned instead of being silently dropped.
-          const unassignedLessons = lessons
-            .filter((l) => !l.seasonClientKey && l.title.trim())
+              description: s.description.trim() || undefined
+            })),
+          lessons: lessons
+            .filter((l) => l.title.trim())
             .map((l) => ({
+              id: l.id,
               title: l.title.trim(),
               description: l.description.trim() || undefined,
               duration: durationToSeconds(l.duration),
@@ -458,34 +204,18 @@ export function useCourseForm(courseId?: string) {
               video_id: l.video_id,
               audio_id: l.audio_id,
               cover_id: l.cover_id,
-              document_id: l.document_id
-            }));
-
-          const resp = await apiClient.createCourse({
-            ...coursePayload,
-            seasons: seasonsPayload.length > 0 ? seasonsPayload : undefined,
-            lessons:
-              unassignedLessons.length > 0 ? unassignedLessons : undefined
-          });
-          const id = extractId(resp);
-          if (!id) throw new Error('Course creation returned no id');
-          courseDbId = id;
-          // Remember it so the next save updates this draft instead of
-          // creating a second course.
-          setDraftCourseId(id);
-        }
-
-        if (options.redirect) {
-          toast.success(
-            t(isEdit ? 'courses.updatedToast' : 'courses.createdDraftToast')
-          );
-          // Course + curriculum are already saved atomically at this point, so
-          // both flows land on the plain detail view — never back on a form
-          // pre-filled with what was just submitted.
-          router.push(`/courses/${courseDbId}`);
-        } else {
-          toast.success(t('courses.draftSavedToast'));
-        }
+              document_id: l.document_id,
+              season_client_key: l.seasonClientKey
+            })),
+          deleted_season_ids:
+            deletedSeasonIds.length > 0 ? deletedSeasonIds : undefined,
+          deleted_lesson_ids:
+            deletedLessonIds.length > 0 ? deletedLessonIds : undefined
+        });
+        clearDeleted();
+        toast.success(
+          t(data.published ? 'courses.updatedToast' : 'courses.draftSavedToast')
+        );
       } catch (err) {
         ErrorHandler.handleApiError(err);
       } finally {
@@ -496,83 +226,38 @@ export function useCourseForm(courseId?: string) {
     [
       selectedAcademy,
       isSaving,
-      isEdit,
-      persistedId,
+      courseId,
       seasons,
       lessons,
       deletedSeasonIds,
       deletedLessonIds,
-      router,
+      clearDeleted,
       t
     ]
   );
 
-  const save = useCallback(
-    (data: CourseFormData) => persist(data, { redirect: true }),
-    [persist]
-  );
-
   /**
-   * The cover file already lives on the server, so the course that owns it must
-   * exist too — otherwise a manager who uploads a cover and closes the tab
-   * loses everything and leaves an orphan image behind. Saved as a draft: never
-   * published by an upload, and an already-published course keeps its state.
+   * The cover file already lives on the server, so persist it right away
+   * instead of waiting for a manual save. Published state is untouched: an
+   * upload never publishes a course and never unpublishes a live one.
    */
-  const saveCoverDraft = useCallback(async () => {
+  const saveCover = useCallback(async () => {
     const values = form.getValues();
-    // Quiet check: while the basic fields are still incomplete there is nothing
-    // valid to save yet, and firing red errors right after an upload is noise.
+    // Quiet check: nothing valid to save yet while fields are incomplete, and
+    // firing red errors right after an upload is noise.
     if (!courseFormSchema.safeParse(values).success) return;
-    await persist(
-      { ...values, published: isEdit && values.published },
-      {
-        redirect: false
-      }
-    );
-  }, [form, isEdit, persist]);
-
-  /**
-   * Explicit "save as draft": same persistence as the cover autosave, but the
-   * user asked for it, so missing fields are reported instead of ignored.
-   */
-  const saveDraft = useCallback(async () => {
-    const valid = await form.trigger();
-    if (!valid) {
-      toast.error(t('courses.fixErrorsBeforeSave'));
-      return;
-    }
-    await persist(
-      { ...form.getValues(), published: false },
-      {
-        redirect: false
-      }
-    );
-  }, [form, persist, t]);
+    await save(values);
+  }, [form, save]);
 
   return {
     form,
     isLoading,
     isSaving,
     saveProgress,
-    step,
-    goToCurriculumStep,
-    goToBasicInfoStep,
-    seasons,
-    lessons,
-    isEdit,
+    ...curriculum,
     selectedAcademy,
     existingCoverUrl: existingCoverUrl.current,
-    addSeason,
-    removeSeason,
-    updateSeason,
-    reorderSeasons,
-    addLesson,
-    removeLesson,
-    updateLesson,
-    assignLesson,
-    reorderLessons,
     save,
-    saveCoverDraft,
-    saveDraft
+    saveCover
   };
 }

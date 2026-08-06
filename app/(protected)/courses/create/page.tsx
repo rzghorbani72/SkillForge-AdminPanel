@@ -1,5 +1,5 @@
-import CourseFormPage from '@/components/course/CourseFormPage';
+import CourseQuickCreate from '@/components/course/CourseQuickCreate';
 
 export default function CreateCoursePage() {
-  return <CourseFormPage />;
+  return <CourseQuickCreate />;
 }

@@ -712,20 +712,16 @@ export const tr = {
     courseTitle: 'Kurs Başlığı',
     courseDescription: 'Kurs Açıklaması',
     basicInformation: 'Temel Bilgiler',
-    stepBasicInfo: 'Temel Bilgiler',
-    stepCurriculum: 'Müfredat',
-    stepBasicInfoHint:
-      'Ad, kapak ve fiyat ile başlayın. Sonraki adımda sezonları ve dersleri ekleyeceksiniz.',
-    stepCurriculumHint:
-      'Sezonları ve dersleri ekleyin. Kurs taslak olarak oluşturulur; daha sonra kurs sayfasından yayınlayabilirsiniz.',
     savingCourse: 'Kurs kaydediliyor…',
     creatingCourse: 'Kurs oluşturuluyor…',
-    saveAsDraft: 'Taslak olarak kaydet',
-    fixErrorsBeforeSave: 'Taslağı kaydetmeden önce işaretli alanları düzeltin.',
+    quickCreateHint:
+      'Önce adını yazın — kapak, fiyat ve dersleri sonraki ekranda ekleyeceksiniz.',
+    viewCourse: 'Kurs sayfasını gör',
+    builderDraftHint:
+      'Bu kurs taslak: yalnızca siz görüyorsunuz. Dersleri ekleyin, hazır olduğunda Yayında seçeneğini açın.',
+    builderPublishedHint:
+      'Bu kurs yayında ve öğrenciler tarafından görülüyor. Değişiklikler kaydeder kaydetmez yayına girer.',
     draftSavedToast: 'Taslak olarak kaydedildi',
-    nextCurriculum: 'Sonraki: Müfredat',
-    backBasicInfo: 'Geri: Temel bilgiler',
-    fixErrorsBeforeNext: 'Devam etmeden önce işaretli alanları düzeltin.',
     updatedToast: 'Kurs güncellendi',
     createdDraftToast:
       'Kurs taslak olarak oluşturuldu — hazır olduğunda yayınlayın',

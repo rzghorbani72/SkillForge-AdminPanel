@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  FileText,
-  Loader2,
-  Save
-} from 'lucide-react';
+import { ArrowLeft, Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -15,7 +8,6 @@ import { Form } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
 import { useCourseForm } from './useCourseForm';
 import CreateCourseBasicInfo from './CreateCourseBasicInfo';
 import CreateCoursePricing from './CreateCoursePricing';
@@ -24,74 +16,24 @@ import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
 import { CourseOffersSection } from './CourseOffersSection';
 
-// ─── Props ────────────────────────────────────────────────────────────────────
-
 interface CourseFormPageProps {
-  /** Present when editing an existing course */
-  courseId?: string;
+  courseId: string;
 }
 
-// ─── Step tab (create flow only) ───────────────────────────────────────────────
-
-function StepTab({
-  num,
-  label,
-  active,
-  done,
-  onClick
-}: {
-  num: number;
-  label: string;
-  active: boolean;
-  done: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={!onClick}
-      onClick={onClick}
-      className={cn(
-        'flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors',
-        active
-          ? 'border-primary bg-primary/5 text-primary'
-          : done
-            ? 'border-input text-foreground hover:bg-muted'
-            : 'cursor-default border-transparent text-muted-foreground'
-      )}
-    >
-      <span
-        className={cn(
-          'flex h-5 w-5 items-center justify-center rounded-full text-xs',
-          active
-            ? 'bg-primary text-primary-foreground'
-            : done
-              ? 'bg-foreground text-background'
-              : 'bg-muted text-muted-foreground'
-        )}
-      >
-        {done ? <Check className="h-3 w-3" /> : num}
-      </span>
-      {label}
-    </button>
-  );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
+/**
+ * The course builder: everything about one course on a single page. A course is
+ * created empty elsewhere (quick create) and shaped here, staying a draft until
+ * the publish switch is turned on.
+ */
 export default function CourseFormPage({ courseId }: CourseFormPageProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const isEdit = courseId !== undefined;
 
   const {
     form,
     isLoading,
     isSaving,
     saveProgress,
-    step,
-    goToCurriculumStep,
-    goToBasicInfoStep,
     seasons,
     lessons,
     selectedAcademy,
@@ -106,15 +48,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     assignLesson,
     reorderLessons,
     save,
-    saveCoverDraft,
-    saveDraft
+    saveCover
   } = useCourseForm(courseId);
-
-  // Edit always shows everything on one page; only the create flow steps.
-  const showBasicInfo = isEdit || step === 1;
-  const showCurriculum = isEdit || step === 2;
-
-  // ── Guards ──────────────────────────────────────────────────────────────
 
   if (!selectedAcademy) {
     return (
@@ -141,8 +76,6 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
   }
 
   const isPublished = form.watch('published');
-  const headerAction =
-    !isEdit && step === 1 ? goToCurriculumStep : form.handleSubmit(save);
 
   return (
     <>
@@ -154,14 +87,14 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
             variant="ghost"
             size="icon"
             className="mt-0.5 h-8 w-8 shrink-0"
-            onClick={() => router.back()}
+            onClick={() => router.push('/courses')}
             aria-label={t('common.back')}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
-              {isEdit ? t('courses.editCourse') : t('courses.createCourse')}
+              {t('courses.editCourse')}
             </h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
               {selectedAcademy.name}
@@ -170,34 +103,31 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Publish toggle — only when editing; a brand-new course starts as a
-              draft and is published from the curriculum step. */}
-          {isEdit && (
-            <div className="flex items-center gap-2 rounded-lg border px-3 py-1.5">
-              <Switch
-                checked={isPublished}
-                onCheckedChange={(v) => form.setValue('published', v)}
-                id="publish-toggle"
-              />
-              <label
-                htmlFor="publish-toggle"
-                className="cursor-pointer text-sm font-medium"
-              >
-                {isPublished ? (
-                  <Badge className="text-xs">{t('courses.published')}</Badge>
-                ) : (
-                  <span className="text-muted-foreground">
-                    {t('courses.draft')}
-                  </span>
-                )}
-              </label>
-            </div>
-          )}
+          {/* Publish switch — the only thing that makes a course public */}
+          <div className="flex items-center gap-2 rounded-lg border px-3 py-1.5">
+            <Switch
+              checked={isPublished}
+              onCheckedChange={(v) => form.setValue('published', v)}
+              id="publish-toggle"
+            />
+            <label
+              htmlFor="publish-toggle"
+              className="cursor-pointer text-sm font-medium"
+            >
+              {isPublished ? (
+                <Badge className="text-xs">{t('courses.published')}</Badge>
+              ) : (
+                <span className="text-muted-foreground">
+                  {t('courses.draft')}
+                </span>
+              )}
+            </label>
+          </div>
 
           <Button
             type="button"
             disabled={isSaving}
-            onClick={headerAction}
+            onClick={form.handleSubmit(save)}
             className="min-w-[120px]"
           >
             {isSaving ? (
@@ -205,52 +135,22 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                 <Loader2 className="h-4 w-4 animate-spin" />
                 {saveProgress || t('courses.saving')}
               </span>
-            ) : !isEdit && step === 1 ? (
-              <span className="flex items-center gap-2">
-                {t('courses.nextCurriculum')}
-                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-              </span>
             ) : (
               <span className="flex items-center gap-2">
                 <Save className="h-4 w-4" />
-                {isEdit ? t('courses.saveChanges') : t('courses.createCourse')}
+                {t('courses.saveChanges')}
               </span>
             )}
           </Button>
         </div>
       </div>
 
-      {/* ── Form (flows naturally; scrolls inside the layout container) ───── */}
       <div className="p-6">
-        {/* Step tabs — create flow only; edit shows everything on one page */}
-        {!isEdit && (
-          <div className="mb-6 space-y-2">
-            <div className="flex items-center gap-3">
-              <StepTab
-                num={1}
-                label={t('courses.stepBasicInfo')}
-                active={step === 1}
-                done={step > 1}
-                onClick={goToBasicInfoStep}
-              />
-              <div className="h-px flex-1 bg-border" />
-              <StepTab
-                num={2}
-                label={t('courses.stepCurriculum')}
-                active={step === 2}
-                done={false}
-                onClick={step === 2 ? goToCurriculumStep : undefined}
-              />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {t(
-                step === 1
-                  ? 'courses.stepBasicInfoHint'
-                  : 'courses.stepCurriculumHint'
-              )}
-            </p>
-          </div>
-        )}
+        <p className="mb-6 text-sm text-muted-foreground">
+          {isPublished
+            ? t('courses.builderPublishedHint')
+            : t('courses.builderDraftHint')}
+        </p>
 
         <Form {...form}>
           <form
@@ -258,132 +158,80 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
             className="w-full space-y-6"
             noValidate
           >
-            {showBasicInfo && (
-              <>
-                {/* Basic info: title + description */}
-                <CreateCourseBasicInfo form={form} />
+            <CreateCourseBasicInfo form={form} />
 
-                {/* Cover image */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t('courses.coverImage')}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ImageUploadPreview
-                      title={form.watch('title') || 'Course Cover'}
-                      description={form.watch('description') || ''}
-                      existingImageUrl={existingCoverUrl}
-                      onSuccess={(img) => {
-                        form.setValue('cover_id', img.id.toString());
-                        // The image is already on the server, so persist the
-                        // course it belongs to right away — as a draft.
-                        void saveCoverDraft();
-                      }}
-                      selectedImageId={form.watch('cover_id')}
-                      alt="Course cover"
-                      className="aspect-video w-full max-w-md"
-                      placeholderText={t('courses.noCoverImageSelected')}
-                      placeholderSubtext={t('courses.uploadImageToPreview')}
-                    />
-                  </CardContent>
-                </Card>
-
-                {/* Category */}
-                <CreateCourseAssociations
-                  categoryId={form.watch('category_id')}
-                  onCategoryChange={(id) => form.setValue('category_id', id)}
-                  error={form.formState.errors.category_id?.message}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('courses.coverImage')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ImageUploadPreview
+                  title={form.watch('title')}
+                  description={form.watch('description')}
+                  existingImageUrl={existingCoverUrl}
+                  onSuccess={(img) => {
+                    form.setValue('cover_id', img.id.toString());
+                    // The image is already on the server; persist the course it
+                    // belongs to instead of waiting for a manual save.
+                    void saveCover();
+                  }}
+                  selectedImageId={form.watch('cover_id')}
+                  className="aspect-video w-full max-w-md"
+                  placeholderText={t('courses.noCoverImageSelected')}
+                  placeholderSubtext={t('courses.uploadImageToPreview')}
                 />
+              </CardContent>
+            </Card>
 
-                {/* Pricing */}
-                <CreateCoursePricing form={form} />
-              </>
-            )}
+            <CreateCourseAssociations
+              categoryId={form.watch('category_id')}
+              onCategoryChange={(id) => form.setValue('category_id', id)}
+              error={form.formState.errors.category_id?.message}
+            />
 
-            {showCurriculum && (
-              <SeasonsSection
-                seasons={seasons}
-                lessons={lessons}
-                onAddSeason={addSeason}
-                onRemoveSeason={removeSeason}
-                onUpdateSeason={updateSeason}
-                onReorderSeasons={reorderSeasons}
-                onAddLesson={addLesson}
-                onRemoveLesson={removeLesson}
-                onUpdateLesson={updateLesson}
-                onAssignLesson={assignLesson}
-                onReorderLessons={reorderLessons}
-              />
-            )}
+            <CreateCoursePricing form={form} />
 
-            {/* Pricing offerings — multi-price per course (edit screen only,
-                since it needs a real course id) */}
-            {isEdit && courseId && <CourseOffersSection courseId={courseId} />}
+            <SeasonsSection
+              seasons={seasons}
+              lessons={lessons}
+              onAddSeason={addSeason}
+              onRemoveSeason={removeSeason}
+              onUpdateSeason={updateSeason}
+              onReorderSeasons={reorderSeasons}
+              onAddLesson={addLesson}
+              onRemoveLesson={removeLesson}
+              onUpdateLesson={updateLesson}
+              onAssignLesson={assignLesson}
+              onReorderLessons={reorderLessons}
+            />
+
+            {/* Multi-price offerings */}
+            <CourseOffersSection courseId={courseId} />
 
             {/* Footer actions */}
             <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-4 py-3">
-              {!isEdit && step === 2 ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={goToBasicInfoStep}
-                >
-                  <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
-                  {t('courses.backBasicInfo')}
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => router.back()}
-                >
-                  {t('common.cancel')}
-                </Button>
-              )}
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => router.push(`/courses/${courseId}`)}
+              >
+                {t('courses.viewCourse')}
+              </Button>
 
-              <div className="flex items-center gap-2">
-                {/* Save as draft — available on every step of the create flow,
-                    so work is never lost by leaving the wizard. */}
-                {!isEdit && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={isSaving}
-                    onClick={saveDraft}
-                  >
-                    <FileText className="me-2 h-4 w-4" />
-                    {t('courses.saveAsDraft')}
-                  </Button>
-                )}
-
-                {!isEdit && step === 1 ? (
-                  <Button
-                    type="button"
-                    disabled={isSaving}
-                    onClick={goToCurriculumStep}
-                  >
-                    {t('courses.nextCurriculum')}
-                    <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
-                  </Button>
+              <Button
+                type="submit"
+                disabled={isSaving}
+                className="min-w-[140px]"
+              >
+                {isSaving ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {saveProgress || t('courses.saving')}
+                  </span>
                 ) : (
-                  <Button
-                    type="submit"
-                    disabled={isSaving}
-                    className="min-w-[140px]"
-                  >
-                    {isSaving ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        {saveProgress || t('courses.saving')}
-                      </span>
-                    ) : isEdit ? (
-                      t('courses.saveChanges')
-                    ) : (
-                      t('courses.createCourse')
-                    )}
-                  </Button>
+                  t('courses.saveChanges')
                 )}
-              </div>
+              </Button>
             </div>
           </form>
         </Form>
