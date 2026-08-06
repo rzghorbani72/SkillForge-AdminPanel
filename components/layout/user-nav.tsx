@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -91,36 +91,31 @@ export function UserNav() {
         </button>
       </DropdownMenuTrigger>
 
+      {/* Narrow enough to sit flush under the trigger instead of overhanging
+          it — the trigger already shows the avatar, so it is not repeated. */}
       <DropdownMenuContent
-        className="w-64 bg-popover p-2"
-        align="end"
+        className="w-44 bg-popover p-2"
+        align="start"
         sideOffset={8}
         forceMount
       >
         {/* User info header */}
         <DropdownMenuLabel className="p-3 font-normal">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-11 w-11 shrink-0 ring-2 ring-primary/20">
-              <AvatarFallback className="bg-primary text-sm font-bold text-primary-foreground">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <p className="truncate text-sm font-semibold leading-none text-foreground">
-                {headingName || roleLabel}
-              </p>
-              <p
-                dir="ltr"
-                className="truncate text-right text-xs leading-none text-muted-foreground"
-              >
-                {email || phone}
-              </p>
-              {roleLabel && (
-                <span className="mt-0.5 inline-flex w-fit items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium leading-none text-primary">
-                  {roleLabel}
-                </span>
-              )}
-            </div>
+          <div className="flex min-w-0 flex-col gap-2">
+            <p className="truncate text-sm font-semibold leading-none text-foreground">
+              {headingName || roleLabel}
+            </p>
+            <p
+              dir="ltr"
+              className="truncate text-start text-xs leading-none text-muted-foreground"
+            >
+              {email || phone}
+            </p>
+            {roleLabel && (
+              <span className="mt-0.5 inline-flex w-fit items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium leading-none text-primary">
+                {roleLabel}
+              </span>
+            )}
           </div>
         </DropdownMenuLabel>
 
