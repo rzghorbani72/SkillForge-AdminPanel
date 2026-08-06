@@ -28,11 +28,11 @@ export function AcademySiteStatusCard({
           <Power className="h-4 w-4" />
           {t('stores.siteStatusTitle')}
         </CardTitle>
-        <CardDescription>{t('stores.siteDisableExplain')}</CardDescription>
+        <CardDescription>{t('stores.siteStatusCardDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Button variant="outline" onClick={() => setOpen(true)}>
-          {t('stores.siteStatusTitle')}
+          {t('stores.siteStatusManage')}
         </Button>
       </CardContent>
 

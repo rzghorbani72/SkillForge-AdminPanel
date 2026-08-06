@@ -192,6 +192,18 @@ export function AcademySiteStatusDialog({
               {t('stores.siteDisableExplain')}
             </p>
 
+            <div className="space-y-1 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-emerald-800">
+              <p className="text-xs">{t('stores.siteDisableTimeReserved')}</p>
+              {activeStudents > 0 && (
+                <p className="text-xs font-medium">
+                  {t('stores.siteDisableActiveSubscriptions')}:{' '}
+                  {status?.open_obligations?.active_subscriptions ?? 0} ·{' '}
+                  {t('stores.siteDisableActiveEnrollments')}:{' '}
+                  {status?.open_obligations?.active_enrollments ?? 0}
+                </p>
+              )}
+            </div>
+
             <div>
               <label className="mb-1 block text-sm font-medium">
                 {t('stores.siteReopenAt')}
@@ -207,51 +219,44 @@ export function AcademySiteStatusDialog({
               </p>
             </div>
 
-            {activeStudents > 0 && (
-              <div className="space-y-1 rounded-xl border bg-muted/40 p-3">
+            <div className="space-y-2 rounded-xl border bg-muted/40 p-3">
+              <div>
                 <p className="text-sm font-medium">
-                  {t('stores.siteDisableStudentsInfo')}
+                  {t('stores.siteContactSectionTitle')}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {t('stores.siteDisableActiveSubscriptions')}:{' '}
-                  {status?.open_obligations?.active_subscriptions ?? 0} ·{' '}
-                  {t('stores.siteDisableActiveEnrollments')}:{' '}
-                  {status?.open_obligations?.active_enrollments ?? 0}
+                  {t('stores.siteContactSectionHint')}
                 </p>
               </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-sm font-medium">
-                  {t('stores.siteContactPhone')}
-                </label>
-                <div
-                  className="flex h-9 items-center rounded-md border bg-muted px-3 text-sm text-muted-foreground"
-                  dir="ltr"
-                >
-                  {managerPhone || t('stores.siteContactPhoneMissing')}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1 block text-sm font-medium">
+                    {t('stores.siteContactPhone')}
+                  </label>
+                  <div
+                    className="flex h-9 items-center rounded-md border bg-background px-3 text-sm text-muted-foreground"
+                    dir="ltr"
+                  >
+                    {managerPhone || t('stores.siteContactPhoneMissing')}
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium">
+                    {t('stores.siteContactEmail')}
+                  </label>
+                  <Input
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder="info@academy.com"
+                    className="bg-background"
+                    dir="ltr"
+                  />
                 </div>
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium">
-                  {t('stores.siteContactEmail')}
-                </label>
-                <Input
-                  value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
-                  placeholder="info@academy.com"
-                  dir="ltr"
-                />
-              </div>
+              <p className="text-xs text-muted-foreground">
+                {t('stores.siteContactPhoneHint')}
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t('stores.siteContactPhoneHint')}
-            </p>
-
-            <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800">
-              {t('stores.siteDisableTimeReserved')}
-            </p>
 
             <div>
               <label className="mb-1 block text-sm font-medium">
