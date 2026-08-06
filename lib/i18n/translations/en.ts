@@ -1214,6 +1214,9 @@ export const en = {
       'Add seasons and lessons. The course is created as a draft — you can publish it later from the course page.',
     savingCourse: 'Saving course…',
     creatingCourse: 'Creating course…',
+    saveAsDraft: 'Save as draft',
+    fixErrorsBeforeSave:
+      'Please fix the highlighted fields before saving the draft.',
     draftSavedToast: 'Saved as a draft',
     nextCurriculum: 'Next: Curriculum',
     backBasicInfo: 'Back: Basic info',

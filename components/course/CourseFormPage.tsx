@@ -1,6 +1,13 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Check, Loader2, Save } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  FileText,
+  Loader2,
+  Save
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -99,7 +106,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     assignLesson,
     reorderLessons,
     save,
-    saveCoverDraft
+    saveCoverDraft,
+    saveDraft
   } = useCourseForm(courseId);
 
   // Edit always shows everything on one page; only the create flow steps.
@@ -333,33 +341,49 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                 </Button>
               )}
 
-              {!isEdit && step === 1 ? (
-                <Button
-                  type="button"
-                  disabled={isSaving}
-                  onClick={goToCurriculumStep}
-                >
-                  {t('courses.nextCurriculum')}
-                  <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  disabled={isSaving}
-                  className="min-w-[140px]"
-                >
-                  {isSaving ? (
-                    <span className="flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      {saveProgress || t('courses.saving')}
-                    </span>
-                  ) : isEdit ? (
-                    t('courses.saveChanges')
-                  ) : (
-                    t('courses.createCourse')
-                  )}
-                </Button>
-              )}
+              <div className="flex items-center gap-2">
+                {/* Save as draft — available on every step of the create flow,
+                    so work is never lost by leaving the wizard. */}
+                {!isEdit && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isSaving}
+                    onClick={saveDraft}
+                  >
+                    <FileText className="me-2 h-4 w-4" />
+                    {t('courses.saveAsDraft')}
+                  </Button>
+                )}
+
+                {!isEdit && step === 1 ? (
+                  <Button
+                    type="button"
+                    disabled={isSaving}
+                    onClick={goToCurriculumStep}
+                  >
+                    {t('courses.nextCurriculum')}
+                    <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    disabled={isSaving}
+                    className="min-w-[140px]"
+                  >
+                    {isSaving ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {saveProgress || t('courses.saving')}
+                      </span>
+                    ) : isEdit ? (
+                      t('courses.saveChanges')
+                    ) : (
+                      t('courses.createCourse')
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           </form>
         </Form>

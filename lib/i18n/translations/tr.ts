@@ -720,6 +720,8 @@ export const tr = {
       'Sezonları ve dersleri ekleyin. Kurs taslak olarak oluşturulur; daha sonra kurs sayfasından yayınlayabilirsiniz.',
     savingCourse: 'Kurs kaydediliyor…',
     creatingCourse: 'Kurs oluşturuluyor…',
+    saveAsDraft: 'Taslak olarak kaydet',
+    fixErrorsBeforeSave: 'Taslağı kaydetmeden önce işaretli alanları düzeltin.',
     draftSavedToast: 'Taslak olarak kaydedildi',
     nextCurriculum: 'Sonraki: Müfredat',
     backBasicInfo: 'Geri: Temel bilgiler',

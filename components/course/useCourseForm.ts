@@ -531,6 +531,24 @@ export function useCourseForm(courseId?: string) {
     );
   }, [form, isEdit, persist]);
 
+  /**
+   * Explicit "save as draft": same persistence as the cover autosave, but the
+   * user asked for it, so missing fields are reported instead of ignored.
+   */
+  const saveDraft = useCallback(async () => {
+    const valid = await form.trigger();
+    if (!valid) {
+      toast.error(t('courses.fixErrorsBeforeSave'));
+      return;
+    }
+    await persist(
+      { ...form.getValues(), published: false },
+      {
+        redirect: false
+      }
+    );
+  }, [form, persist, t]);
+
   return {
     form,
     isLoading,
@@ -554,6 +572,7 @@ export function useCourseForm(courseId?: string) {
     assignLesson,
     reorderLessons,
     save,
-    saveCoverDraft
+    saveCoverDraft,
+    saveDraft
   };
 }

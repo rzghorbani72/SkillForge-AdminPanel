@@ -705,6 +705,8 @@ export const ar = {
       'أضف الفصول والدروس. يتم إنشاء الدورة كمسودة، ويمكنك نشرها لاحقًا من صفحة الدورة.',
     savingCourse: 'جارٍ حفظ الدورة…',
     creatingCourse: 'جارٍ إنشاء الدورة…',
+    saveAsDraft: 'حفظ كمسودة',
+    fixErrorsBeforeSave: 'يرجى تصحيح الحقول المحددة قبل حفظ المسودة.',
     draftSavedToast: 'تم الحفظ كمسودة',
     nextCurriculum: 'التالي: المنهج الدراسي',
     backBasicInfo: 'رجوع: المعلومات الأساسية',
