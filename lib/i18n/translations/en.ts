@@ -1121,6 +1121,7 @@ export const en = {
     offeringAccessDays: 'Access (days)',
     offeringAccessDaysHint: 'Leave blank for {{days}} days',
     offeringAccessDaysValue: '{{days}} days',
+    offeringPriceRequired: 'Enter a price for this paid offering',
     noOfferings: 'No offerings yet. Add one so students can buy this course.',
     offeringFREE: 'Free',
     offeringONE_TIME: 'One-time',

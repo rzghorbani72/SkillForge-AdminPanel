@@ -43,8 +43,10 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
   const label = (o: OfferingType) => t(`courses.offering${o}` as never);
   const isFree = type === 'FREE';
   const isCoursePrice = (o: Offer) => o.source_course_id !== null;
+  const priceMissing = !isFree && (!price || Number(price) <= 0);
 
   const handleAdd = async () => {
+    if (priceMissing) return;
     await create({
       type,
       price: isFree ? 0 : Number(price) || 0,
@@ -120,9 +122,9 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
           ))}
         </ul>
 
-        <div className="flex flex-wrap items-end gap-3 border-t pt-4">
+        <div className="flex flex-wrap items-start gap-3 border-t pt-4">
           <div className="min-w-40 space-y-1">
-            <span className="text-xs text-muted-foreground">
+            <span className="block text-xs text-muted-foreground">
               {t('courses.offeringType')}
             </span>
             <Select
@@ -143,7 +145,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
           </div>
           {!isFree && (
             <div className="min-w-32 space-y-1">
-              <span className="text-xs text-muted-foreground">
+              <span className="block text-xs text-muted-foreground">
                 {t('courses.offeringPrice')}
               </span>
               <PriceInput
@@ -151,10 +153,15 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
                 onChange={setPrice}
                 suffix={t('courses.toman' as never)}
               />
+              {priceMissing && (
+                <span className="block text-[11px] text-amber-600">
+                  {t('courses.offeringPriceRequired')}
+                </span>
+              )}
             </div>
           )}
           <div className="min-w-32 space-y-1">
-            <span className="text-xs text-muted-foreground">
+            <span className="block text-xs text-muted-foreground">
               {t('courses.offeringAccessDays')}
             </span>
             <Input
@@ -171,10 +178,22 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
               })}
             </span>
           </div>
-          <Button type="button" onClick={handleAdd} disabled={isSaving}>
-            <Plus className="mr-1 h-4 w-4" />
-            {t('courses.addOffering')}
-          </Button>
+          <div className="space-y-1">
+            <span className="block select-none text-xs text-transparent">
+              {t('courses.offeringType')}
+            </span>
+            <Button
+              type="button"
+              onClick={handleAdd}
+              disabled={isSaving || priceMissing}
+              title={
+                priceMissing ? t('courses.offeringPriceRequired') : undefined
+              }
+            >
+              <Plus className="mr-1 h-4 w-4" />
+              {t('courses.addOffering')}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -1115,6 +1115,7 @@ export const fa = {
     offeringAccessDays: 'مدت دسترسی (روز)',
     offeringAccessDaysHint: 'خالی بگذارید تا {{days}} روز شود',
     offeringAccessDaysValue: '{{days}} روز',
+    offeringPriceRequired: 'برای روش فروش غیررایگان، قیمت را وارد کنید',
     noOfferings:
       'هنوز روش فروش دوره‌ای ندارید. یک روش فروش دوره اضافه کنید تا دانشجو بتواند دوره را بخرد.',
     offeringFREE: 'رایگان',
