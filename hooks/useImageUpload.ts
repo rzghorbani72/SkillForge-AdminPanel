@@ -51,71 +51,86 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
     setUploadedImageId(null);
   }, [preview]);
 
-  // Upload the selected image
-  const uploadImage = useCallback(async () => {
-    if (!selectedFile) {
-      toast.error('No image selected');
-      return;
-    }
-
-    const abortController = new AbortController();
-    setUploadAbortController(abortController);
-    setIsUploading(true);
-    setUploadProgress(0);
-
-    try {
-      const uploadResponse = await apiClient.uploadImage(
-        selectedFile,
-        {
-          title: options.title || selectedFile.name,
-          description: options.description || 'Uploaded image'
-        },
-        setUploadProgress,
-        abortController
-      );
-      // Handle response structure: { message, status, data: { id, url, ... } }
-      // or direct image object: { id, url, ... }
-      const imageData = (uploadResponse as any)?.data || uploadResponse;
-
-      if (imageData && imageData.id) {
-        const imageId = imageData.id.toString();
-        const imageUrl = imageData.publicUrl || '';
-        // Construct full URL if it's a relative path
-        const fullUrl = imageUrl.startsWith('http')
-          ? imageUrl
-          : imageUrl.startsWith('/')
-            ? `${process.env.NEXT_PUBLIC_HOST || ''}${imageUrl}`
-            : imageUrl;
-        setUploadedImageId(imageId);
-        toast.success('Image uploaded successfully!');
-        options.onSuccess?.({ id: imageId, url: fullUrl });
-      } else {
-        console.error('Upload response structure:', uploadResponse);
-        toast.error('Failed to upload image: Invalid response structure');
-        options.onError?.(
-          new Error('Upload failed: Invalid response structure')
-        );
+  // Upload the given file, or the previously selected one
+  const uploadImage = useCallback(
+    async (fileOverride?: File) => {
+      const file = fileOverride ?? selectedFile;
+      if (!file) {
+        toast.error('No image selected');
+        return;
       }
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
-        toast.info('Upload cancelled');
-        options.onCancel?.();
-      } else {
-        toast.error('Failed to upload image. Please try again.');
-        setSelectedFile(null);
-        setPreview((prev) => {
-          if (prev) URL.revokeObjectURL(prev);
-          return null;
-        });
-        setUploadedImageId(null);
-        options.onError?.(error);
-      }
-    } finally {
-      setIsUploading(false);
+
+      const abortController = new AbortController();
+      setUploadAbortController(abortController);
+      setIsUploading(true);
       setUploadProgress(0);
-      setUploadAbortController(null);
-    }
-  }, [selectedFile, options]);
+
+      try {
+        const uploadResponse = await apiClient.uploadImage(
+          file,
+          {
+            title: options.title || file.name,
+            description: options.description || 'Uploaded image'
+          },
+          setUploadProgress,
+          abortController
+        );
+        // Handle response structure: { message, status, data: { id, url, ... } }
+        // or direct image object: { id, url, ... }
+        const imageData = (uploadResponse as any)?.data || uploadResponse;
+
+        if (imageData && imageData.id) {
+          const imageId = imageData.id.toString();
+          const imageUrl = imageData.publicUrl || '';
+          // Construct full URL if it's a relative path
+          const fullUrl = imageUrl.startsWith('http')
+            ? imageUrl
+            : imageUrl.startsWith('/')
+              ? `${process.env.NEXT_PUBLIC_HOST || ''}${imageUrl}`
+              : imageUrl;
+          setUploadedImageId(imageId);
+          toast.success('Image uploaded successfully!');
+          options.onSuccess?.({ id: imageId, url: fullUrl });
+        } else {
+          console.error('Upload response structure:', uploadResponse);
+          toast.error('Failed to upload image: Invalid response structure');
+          options.onError?.(
+            new Error('Upload failed: Invalid response structure')
+          );
+        }
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          toast.info('Upload cancelled');
+          options.onCancel?.();
+        } else {
+          toast.error('Failed to upload image. Please try again.');
+          setSelectedFile(null);
+          setPreview((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return null;
+          });
+          setUploadedImageId(null);
+          options.onError?.(error);
+        }
+      } finally {
+        setIsUploading(false);
+        setUploadProgress(0);
+        setUploadAbortController(null);
+      }
+    },
+    [selectedFile, options]
+  );
+
+  // Select a file and upload it immediately (click-to-browse / drag-drop)
+  const selectAndUpload = useCallback(
+    (file: File) => {
+      setSelectedFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+      uploadImage(file);
+    },
+    [uploadImage]
+  );
 
   // Cancel ongoing upload
   const cancelUpload = useCallback(() => {
@@ -158,6 +173,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
 
     // Actions
     handleFileChange,
+    selectAndUpload,
     removeFile,
     uploadImage,
     cancelUpload,

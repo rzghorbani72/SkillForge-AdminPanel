@@ -256,15 +256,17 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                       title={form.watch('title') || 'Course Cover'}
                       description={form.watch('description') || ''}
                       existingImageUrl={existingCoverUrl}
-                      onSuccess={(img) =>
-                        form.setValue('cover_id', img.id.toString())
-                      }
+                      onSuccess={(img) => {
+                        form.setValue('cover_id', img.id.toString());
+                        // Editing an existing course: persist the new cover
+                        // right away instead of waiting for a manual save.
+                        if (isEdit) form.handleSubmit(save)();
+                      }}
                       selectedImageId={form.watch('cover_id')}
                       alt="Course cover"
                       className="aspect-video w-full max-w-md"
                       placeholderText={t('courses.noCoverImageSelected')}
                       placeholderSubtext={t('courses.uploadImageToPreview')}
-                      uploadButtonText={t('courses.uploadCoverImage')}
                     />
                   </CardContent>
                 </Card>

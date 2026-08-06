@@ -40,8 +40,6 @@ const CreateProductCoverImage = ({ form }: Props) => {
           className="aspect-[5/4] w-full max-w-md"
           placeholderText={t('products.noCoverImageSelected')}
           placeholderSubtext={t('products.uploadImageToPreview')}
-          uploadButtonText={t('products.uploadCoverImage')}
-          selectButtonText={t('products.selectImageFirst')}
         />
       </CardContent>
     </Card>

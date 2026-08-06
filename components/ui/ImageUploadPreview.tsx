@@ -1,182 +1,166 @@
-import React, { useState, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Upload, Loader2, X, Library } from 'lucide-react';
+import React, { useCallback, useRef, useState } from 'react';
+import { Image as ImageIcon, Loader2, UploadCloud, X } from 'lucide-react';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
+import { langApiVersionPath } from '@/lib/api-lang';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import ImagePreview from './ImagePreview';
-import ImageSelectionDialog from './ImageSelectionDialog';
 
 interface ImageUploadPreviewProps {
   title?: string;
   description?: string;
   onSuccess?: (image: { id: string; url: string }) => void;
   onError?: (error: any) => void;
-  onCancel?: () => void;
   existingImageUrl?: string | null;
   existingImageId?: string | number | null;
   alt?: string;
   className?: string;
-  showPlaceholder?: boolean;
   placeholderText?: string;
   placeholderSubtext?: string;
-  uploadButtonText?: string;
-  selectButtonText?: string;
-  showImageSelection?: boolean;
   selectedImageId?: string | null;
   disabled?: boolean;
 }
 
-const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = (props) => {
-  const {
-    title = 'Image Upload',
-    description = 'Upload an image',
-    onSuccess,
-    onError,
-    onCancel,
-    existingImageUrl,
-    existingImageId,
-    alt = 'Image preview',
-    className = '',
-    showPlaceholder = true,
-    placeholderText = 'No image selected',
-    placeholderSubtext = 'Upload an image to preview it here',
-    uploadButtonText = 'Upload Image',
-    selectButtonText = 'Select an image first',
-    showImageSelection = true,
-    selectedImageId,
-    disabled = false
-  } = props;
-  const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<{
-    id: string;
-    publicUrl: string;
-  } | null>(null);
-  const [fileInputKey, setFileInputKey] = useState(0);
+/** Same-origin API image URL (lang-prefixed /v1). Keep relative for the image loader. */
+function fetchImageByIdSrc(id: string | number): string {
+  return `${langApiVersionPath()}/images/fetch-image-by-id/${id}`;
+}
 
-  const handleError = useCallback(
-    (error: any) => {
-      setFileInputKey((k) => k + 1);
-      onError?.(error);
-    },
-    [onError]
-  );
+/** Prefer relative same-origin paths; absolute / blob / data URLs pass through. */
+function resolveImageSrc(pathOrUrl: string): string {
+  if (/^(https?:|blob:|data:)/.test(pathOrUrl)) return pathOrUrl;
+  return pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+}
+
+const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
+  title = 'Image Upload',
+  description = 'Upload an image',
+  onSuccess,
+  onError,
+  existingImageUrl,
+  existingImageId,
+  alt = 'Image preview',
+  className = '',
+  placeholderText = 'No image selected',
+  placeholderSubtext = 'Click to browse or drag an image here',
+  selectedImageId,
+  disabled = false
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const imageUpload = useImageUpload({
     title,
     description,
-    onSuccess: (image) => {
-      setSelectedImage({ id: image.id, publicUrl: image.url });
-      onSuccess?.(image);
-    },
-    onError: handleError,
-    onCancel
+    onSuccess,
+    onError
   });
 
-  const handleImageSelect = (image: { id: string; publicUrl: string }) => {
-    setSelectedImage(image);
-    onSuccess?.({ id: image.id, url: image.publicUrl });
+  const handleFile = useCallback(
+    (file: File | undefined) => {
+      if (file) imageUpload.selectAndUpload(file);
+    },
+    [imageUpload]
+  );
+
+  const currentSrc = imageUpload.preview
+    ? resolveImageSrc(imageUpload.preview)
+    : imageUpload.uploadedImageId
+      ? fetchImageByIdSrc(imageUpload.uploadedImageId)
+      : selectedImageId
+        ? fetchImageByIdSrc(selectedImageId)
+        : existingImageUrl
+          ? resolveImageSrc(existingImageUrl)
+          : existingImageId
+            ? fetchImageByIdSrc(existingImageId)
+            : null;
+
+  const handleRemove = () => {
+    imageUpload.removeFile();
+    // The remove button only renders while an image is showing, so the
+    // parent always needs to be told the cover was cleared.
+    onSuccess?.({ id: '', url: '' });
   };
 
   return (
-    <div className="space-y-4">
-      {/* File Input */}
-      <Input
-        key={fileInputKey}
+    <div
+      className={cn(
+        'relative h-64 w-full max-w-md overflow-hidden rounded-lg border-2 border-dashed transition-colors',
+        isDragging ? 'border-primary bg-primary/5' : 'border-border',
+        !disabled && 'cursor-pointer hover:border-primary/60',
+        className
+      )}
+      onClick={() => !disabled && inputRef.current?.click()}
+      onDragOver={(e) => {
+        e.preventDefault();
+        if (!disabled) setIsDragging(true);
+      }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        if (!disabled) handleFile(e.dataTransfer.files?.[0]);
+      }}
+    >
+      <input
+        ref={inputRef}
         type="file"
         accept="image/*"
-        onChange={imageUpload.handleFileChange}
-        className="cursor-pointer"
+        className="hidden"
         disabled={disabled}
+        onChange={(e) => {
+          handleFile(e.target.files?.[0]);
+          e.target.value = '';
+        }}
       />
 
-      {/* Upload, Select, and Cancel Buttons */}
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={imageUpload.uploadImage}
-          disabled={!imageUpload.canUpload || disabled}
-          className="flex-1"
-        >
-          {imageUpload.isUploading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading... {imageUpload.uploadProgress}%
-            </>
-          ) : imageUpload.hasFile ? (
-            <>
-              <Upload className="mr-2 h-4 w-4" />
-              {uploadButtonText}
-            </>
-          ) : (
-            selectButtonText
+      {currentSrc ? (
+        <div className="relative aspect-[5/4] h-64 w-full">
+          <Image
+            src={currentSrc}
+            alt={alt}
+            fill
+            sizes="400px"
+            className="object-cover"
+          />
+          {!imageUpload.isUploading && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemove();
+              }}
+              disabled={disabled}
+              className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
+              aria-label="Remove image"
+            >
+              <X className="h-4 w-4" />
+            </button>
           )}
-        </Button>
-
-        {showImageSelection && (
-          <ImageSelectionDialog
-            onSelect={handleImageSelect}
-            selectedImageId={selectedImageId}
-            trigger={
-              <Button
-                type="button"
-                variant="outline"
-                disabled={disabled}
-                className="px-4"
-              >
-                <Library className="mr-2 h-4 w-4" />
-                Library
-              </Button>
-            }
-            open={isSelectionDialogOpen}
-            onOpenChange={setIsSelectionDialogOpen}
-          />
-        )}
-
-        {imageUpload.canCancel && (
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={imageUpload.cancelUpload}
-            className="px-4"
-            disabled={disabled}
-          >
-            <X className="mr-2 h-4 w-4" />
-            Cancel
-          </Button>
-        )}
-      </div>
-
-      {/* Upload progress */}
-      {imageUpload.isUploading && (
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full bg-primary transition-all"
-            style={{ width: `${imageUpload.uploadProgress}%` }}
-          />
+        </div>
+      ) : (
+        <div className="flex aspect-[5/4] h-64 w-full flex-col items-center justify-center gap-2 px-4 text-center">
+          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+          <p className="text-sm font-medium text-foreground">
+            {placeholderText}
+          </p>
+          <p className="text-xs text-muted-foreground">{placeholderSubtext}</p>
         </div>
       )}
 
-      {/* Image Preview */}
-      <ImagePreview
-        preview={imageUpload.preview}
-        uploadedImageId={imageUpload.uploadedImageId || selectedImageId}
-        selectedImage={selectedImage}
-        onRemove={() => {
-          imageUpload.removeFile();
-          setSelectedImage(null);
-          if (selectedImageId) {
-            onSuccess?.({ id: '', url: '' });
-          }
-        }}
-        existingImageUrl={existingImageUrl}
-        existingImageId={existingImageId}
-        alt={alt}
-        className={className}
-        showPlaceholder={showPlaceholder}
-        placeholderText={placeholderText}
-        placeholderSubtext={placeholderSubtext}
-      />
+      {imageUpload.isUploading && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/80">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <p className="text-xs font-medium text-foreground">
+            {imageUpload.uploadProgress}%
+          </p>
+        </div>
+      )}
+
+      {!currentSrc && !imageUpload.isUploading && (
+        <div className="pointer-events-none absolute bottom-2 right-2 text-muted-foreground/60">
+          <UploadCloud className="h-4 w-4" />
+        </div>
+      )}
     </div>
   );
 };

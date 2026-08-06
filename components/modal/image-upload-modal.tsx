@@ -31,8 +31,6 @@ interface ImageUploadModalProps {
   modalTitle?: string;
   /** Modal description */
   modalDescription?: string;
-  /** Whether to show image library selection */
-  showImageSelection?: boolean;
   /** Currently selected image ID */
   selectedImageId?: string | null;
   /** Disable the upload functionality */
@@ -48,8 +46,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
   title = 'Image Upload',
   description = 'Upload an image',
   modalTitle = 'Upload Image',
-  modalDescription = 'Upload a new image or select from your library',
-  showImageSelection = true,
+  modalDescription = 'Click to browse or drag an image here',
   selectedImageId,
   disabled = false
 }) => {
@@ -88,7 +85,6 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
             description={description}
             onSuccess={handleSuccess}
             onError={onError}
-            showImageSelection={showImageSelection}
             selectedImageId={selectedImageId}
             disabled={disabled}
           />
