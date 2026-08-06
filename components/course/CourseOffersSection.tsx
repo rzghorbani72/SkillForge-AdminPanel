@@ -5,6 +5,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -145,11 +146,10 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
               <span className="text-xs text-muted-foreground">
                 {t('courses.offeringPrice')}
               </span>
-              <Input
-                type="number"
-                min={0}
+              <PriceInput
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={setPrice}
+                suffix={t('courses.toman' as never)}
               />
             </div>
           )}

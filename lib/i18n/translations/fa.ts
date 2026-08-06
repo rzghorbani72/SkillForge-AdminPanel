@@ -1104,10 +1104,10 @@ export const fa = {
   },
   courses: {
     title: 'دوره‌ها',
-    offeringsTitle: 'پلن‌های قیمت‌گذاری',
+    offeringsTitle: 'روش‌های فروش دوره',
     offeringsHint:
       'این دوره را می‌توانید هم‌زمان با چند روش بفروشید — خرید یک‌باره، اشتراکی، خصوصی یا رایگان.',
-    addOffering: 'افزودن پلن',
+    addOffering: 'افزودن روش فروش دوره',
     offeringType: 'نوع',
     offeringPrice: 'قیمت',
     offeringActive: 'فعال',
@@ -1116,7 +1116,7 @@ export const fa = {
     offeringAccessDaysHint: 'خالی بگذارید تا {{days}} روز شود',
     offeringAccessDaysValue: '{{days}} روز',
     noOfferings:
-      'هنوز پلنی ندارید. یک پلن اضافه کنید تا دانشجو بتواند دوره را بخرد.',
+      'هنوز روش فروش دوره‌ای ندارید. یک روش فروش دوره اضافه کنید تا دانشجو بتواند دوره را بخرد.',
     offeringFREE: 'رایگان',
     offeringONE_TIME: 'خرید یک‌باره',
     offeringSUBSCRIPTION: 'اشتراکی',
