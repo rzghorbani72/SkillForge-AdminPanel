@@ -6,6 +6,7 @@ import { UserAvatar, toneToHsl } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { UserRoleBadge, type RoleConfig } from './user-role-badge';
 import { UserRowActions } from './user-row-actions';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 
 type UserRowProps = {
@@ -34,7 +35,13 @@ function UserRow({
   const { t } = useTranslation();
   const roleConfig = roles.find((r) => r.id === currentRoleId);
   const roleTone = roleConfig?.tone ?? tone;
-  const roleLabel = roleConfig?.label ?? currentRoleId ?? t('common.none');
+  // Same rule as the roles page: a built-in role uses its translation, and a
+  // custom one (no translation key) falls back to its creator-typed label.
+  const translatedRole = getRoleLabel(currentRoleId, t);
+  const roleLabel =
+    currentRoleId && translatedRole === currentRoleId
+      ? user.role_label || currentRoleId
+      : translatedRole;
   const displayName = user.display_name || user.name;
 
   return (
@@ -127,9 +134,13 @@ export function UsersTable({
   const { t } = useTranslation();
   const totalPages = Math.ceil(totalCount / 20);
 
+  // The list endpoints disagree on shape: /users returns a flat role_name,
+  // while /users/{students,teachers,managers} nest it under profiles[0].
   function getUserRoleId(user: User): string | undefined {
     const profile = user.profiles?.[0];
-    return profile?.role?.name ?? profile?.Role?.name ?? undefined;
+    return (
+      profile?.role?.name ?? profile?.Role?.name ?? user.role_name ?? undefined
+    );
   }
 
   function getUserTone(user: User, index: number): number {

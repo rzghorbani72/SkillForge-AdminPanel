@@ -18,6 +18,8 @@ export interface User {
   status?: UserStatus;
   /** Flattened role name returned by the role-scoped list endpoints. */
   role_name?: string;
+  /** Human-readable role name; set for custom roles that have no translation key. */
+  role_label?: string | null;
   full_name?: string;
   created_at: string;
   updated_at: string;
