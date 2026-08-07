@@ -202,18 +202,6 @@ export default function UsersPage() {
     setPage(1);
   }, [tab, search]);
 
-  const handleRoleChange = async (userId: number, newRoleId: string) => {
-    try {
-      await apiClient.changeUserRole(
-        userId,
-        newRoleId as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER'
-      );
-      fetchUsers();
-    } catch (e) {
-      ErrorHandler.handleApiError(e);
-    }
-  };
-
   const teacherCount = users.filter((u) => {
     const roleName = u.profiles?.[0]?.role?.name ?? u.profiles?.[0]?.Role?.name;
     return roleName === 'TEACHER';
@@ -365,8 +353,11 @@ export default function UsersPage() {
               totalCount={totalCount}
               page={page}
               onPageChange={setPage}
-              onRoleChange={handleRoleChange}
+              onRoleClick={() => allowed.includes('roles') && setTab('roles')}
               onCourseAccess={() => {}}
+              callerRole={authUser?.role}
+              callerId={authUser?.id}
+              onChanged={fetchUsers}
             />
           )}
           {tab === 'groups' && <UsersGroupsGrid groups={groups} />}

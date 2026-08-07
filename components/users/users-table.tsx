@@ -1,15 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { BookOpen, Mail, MoreHorizontal } from 'lucide-react';
+import { BookOpen, Mail } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { UserAvatar, toneToHsl } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
-import {
-  UserRoleBadge,
-  UserRoleMenu,
-  type RoleConfig
-} from './user-role-badge';
+import { UserRoleBadge, type RoleConfig } from './user-role-badge';
+import { UserRowActions } from './user-row-actions';
 import type { User } from '@/types/api';
 
 type UserRowProps = {
@@ -17,8 +13,11 @@ type UserRowProps = {
   tone: number;
   roles: RoleConfig[];
   currentRoleId?: string;
-  onRoleChange: (userId: number, newRoleId: string) => void;
+  onRoleClick: () => void;
   onCourseAccess: (user: User) => void;
+  callerRole?: string;
+  callerId?: number;
+  onChanged: () => void;
 };
 
 function UserRow({
@@ -26,11 +25,13 @@ function UserRow({
   tone,
   roles,
   currentRoleId,
-  onRoleChange,
-  onCourseAccess
+  onRoleClick,
+  onCourseAccess,
+  callerRole,
+  callerId,
+  onChanged
 }: UserRowProps) {
   const { t } = useTranslation();
-  const [menuOpen, setMenuOpen] = useState(false);
   const roleConfig = roles.find((r) => r.id === currentRoleId);
   const roleTone = roleConfig?.tone ?? tone;
   const roleLabel = roleConfig?.label ?? currentRoleId ?? t('common.none');
@@ -55,22 +56,7 @@ function UserRow({
         </div>
       </td>
       <td className="px-4 py-3">
-        <div className="relative inline-block">
-          <UserRoleBadge
-            role={roleLabel}
-            tone={roleTone}
-            onClick={() => setMenuOpen((v) => !v)}
-          />
-          {menuOpen && (
-            <UserRoleMenu
-              currentRole={currentRoleId}
-              roles={roles}
-              userId={user.id}
-              onClose={() => setMenuOpen(false)}
-              onChange={onRoleChange}
-            />
-          )}
-        </div>
+        <UserRoleBadge role={roleLabel} tone={roleTone} onClick={onRoleClick} />
       </td>
       <td className="px-4 py-3 font-mono text-[12px] text-muted-foreground">
         {user.phone_number || '—'}
@@ -100,9 +86,13 @@ function UserRow({
           >
             <Mail style={{ width: 13, height: 13 }} />
           </button>
-          <button className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted/60">
-            <MoreHorizontal style={{ width: 14, height: 14 }} />
-          </button>
+          <UserRowActions
+            user={user}
+            targetRoleId={currentRoleId}
+            callerRole={callerRole}
+            isSelf={!!callerId && String(callerId) === String(user.id)}
+            onChanged={onChanged}
+          />
         </div>
       </td>
     </tr>
@@ -115,8 +105,11 @@ type UsersTableProps = {
   totalCount: number;
   page: number;
   onPageChange: (page: number) => void;
-  onRoleChange: (userId: number, newRoleId: string) => void;
+  onRoleClick: () => void;
   onCourseAccess: (user: User) => void;
+  callerRole?: string;
+  callerId?: number;
+  onChanged: () => void;
 };
 
 export function UsersTable({
@@ -125,8 +118,11 @@ export function UsersTable({
   totalCount,
   page,
   onPageChange,
-  onRoleChange,
-  onCourseAccess
+  onRoleClick,
+  onCourseAccess,
+  callerRole,
+  callerId,
+  onChanged
 }: UsersTableProps) {
   const { t } = useTranslation();
   const totalPages = Math.ceil(totalCount / 20);
@@ -186,8 +182,11 @@ export function UsersTable({
                 tone={getUserTone(u, i)}
                 roles={roles}
                 currentRoleId={getUserRoleId(u)}
-                onRoleChange={onRoleChange}
+                onRoleClick={onRoleClick}
                 onCourseAccess={onCourseAccess}
+                callerRole={callerRole}
+                callerId={callerId}
+                onChanged={onChanged}
               />
             ))
           )}

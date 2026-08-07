@@ -1575,6 +1575,13 @@ export const tr = {
     loadingDetails: 'Detaylar yükleniyor...',
     detailName: 'Ad',
     resetPassword: 'Şifreyi Sıfırla',
+    newPasswordTitle: 'Tek kullanımlık şifre oluşturuldu',
+    newPasswordDescription:
+      'Bu şifreyi kullanıcıyla paylaşın. İlk girişte kendi şifresini belirlemesi gerekir.',
+    deleteUserTitle: 'Kullanıcıyı sil',
+    confirmDeleteUser:
+      '{{name}} kullanıcısını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    userDeleted: 'Kullanıcı silindi',
     grantCourse: 'Kurs Ver',
     assignVoucher: 'Kupon Ata',
     rolesInAcademies: 'Enstitülerdeki Roller',

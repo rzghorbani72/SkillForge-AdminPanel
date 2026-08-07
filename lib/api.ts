@@ -2919,6 +2919,12 @@ class ApiClient {
     });
   }
 
+  async deleteUser(id: number) {
+    return this.request(`/users/${id}`, {
+      method: 'DELETE'
+    });
+  }
+
   async disconnectFromStore(adminId: number, academyId?: string) {
     const queryParams = new URLSearchParams();
     if (academyId !== undefined) {

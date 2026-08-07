@@ -2580,6 +2580,13 @@ export const fa = {
     loadingDetails: 'در حال بارگذاری جزئیات...',
     detailName: 'نام',
     resetPassword: 'بازنشانی رمز عبور',
+    newPasswordTitle: 'رمز عبور یک‌بارمصرف ساخته شد',
+    newPasswordDescription:
+      'این رمز را به کاربر بدهید. او باید در اولین ورود، رمز خودش را تنظیم کند.',
+    deleteUserTitle: 'حذف کاربر',
+    confirmDeleteUser:
+      'آیا مطمئن هستید که می‌خواهید {{name}} را حذف کنید؟ این کار قابل بازگشت نیست.',
+    userDeleted: 'کاربر حذف شد',
     grantCourse: 'اعطای دوره',
     assignVoucher: 'تخصیص کوپن',
     rolesInAcademies: 'نقش‌ها در آکادمی‌ها',

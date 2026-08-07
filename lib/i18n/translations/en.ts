@@ -2599,6 +2599,13 @@ export const en = {
     loadingDetails: 'Loading details...',
     detailName: 'Name',
     resetPassword: 'Reset Password',
+    newPasswordTitle: 'One-time password generated',
+    newPasswordDescription:
+      'Share this password with the user. They must set their own password on first login.',
+    deleteUserTitle: 'Delete user',
+    confirmDeleteUser:
+      'Are you sure you want to delete {{name}}? This cannot be undone.',
+    userDeleted: 'User deleted',
     grantCourse: 'Grant Course',
     assignVoucher: 'Assign Voucher',
     rolesInAcademies: 'Roles in Academies',

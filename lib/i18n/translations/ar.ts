@@ -1534,6 +1534,13 @@ export const ar = {
     loadingDetails: 'جارٍ تحميل التفاصيل...',
     detailName: 'الاسم',
     resetPassword: 'إعادة تعيين كلمة المرور',
+    newPasswordTitle: 'تم إنشاء كلمة مرور لمرة واحدة',
+    newPasswordDescription:
+      'شارك كلمة المرور هذه مع المستخدم. يجب عليه تعيين كلمة مروره الخاصة عند أول تسجيل دخول.',
+    deleteUserTitle: 'حذف المستخدم',
+    confirmDeleteUser:
+      'هل أنت متأكد أنك تريد حذف {{name}}؟ لا يمكن التراجع عن هذا الإجراء.',
+    userDeleted: 'تم حذف المستخدم',
     grantCourse: 'منح الدورة',
     assignVoucher: 'تعيين قسيمة',
     rolesInAcademies: 'الأدوار في الأكاديميات',
