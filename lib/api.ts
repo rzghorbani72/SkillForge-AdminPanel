@@ -3031,6 +3031,16 @@ class ApiClient {
     return response.data as PermissionCatalog;
   }
 
+  /** Roles the caller may give a NEW panel user (panel-only, below their rank). */
+  async getAssignableRoles(): Promise<{
+    roles: { name: string; label: string; hierarchy_level: number }[];
+  }> {
+    const response = await this.request('/platform/roles/assignable');
+    return response.data as {
+      roles: { name: string; label: string; hierarchy_level: number }[];
+    };
+  }
+
   async getPlatformRoles(): Promise<RolesListResponse> {
     const response = await this.request('/platform/roles');
     return response.data as RolesListResponse;

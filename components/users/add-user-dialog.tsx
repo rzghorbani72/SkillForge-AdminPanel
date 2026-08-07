@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, Sparkles, Copy, Check } from 'lucide-react';
 import {
   Dialog,
@@ -30,28 +30,11 @@ import { generateTempPassword } from '@/lib/password-utils';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 
-// Only ADMIN can create users directly
-const ADMIN_CREATABLE_ROLES: { value: string; labelKey: string }[] = [
-  { value: 'STUDENT', labelKey: 'users.roleStudent' },
-  { value: 'TEACHER', labelKey: 'users.roleTeacher' },
-  { value: 'MANAGER', labelKey: 'users.roleManager' },
-  { value: 'SUPPORT', labelKey: 'users.roleSupport' },
-  { value: 'AFFILIATE', labelKey: 'users.roleAffiliate' },
-  { value: 'USER', labelKey: 'users.roleUser' },
-  { value: 'ADMIN', labelKey: 'users.roleAdmin' }
-];
-
-// An academy manager can only staff their own academy, and only with
-// non-privileged roles — mirrors AuthController.MANAGER_CREATABLE_ROLES.
-const MANAGER_CREATABLE_ROLES: { value: string; labelKey: string }[] = [
-  { value: 'STUDENT', labelKey: 'users.roleStudent' },
-  { value: 'TEACHER', labelKey: 'users.roleTeacher' },
-  { value: 'AFFILIATE', labelKey: 'users.roleAffiliate' },
-  { value: 'USER', labelKey: 'users.roleUser' }
-];
+type AssignableRole = { name: string; label: string; hierarchy_level: number };
 
 interface AddUserDialogProps {
   open: boolean;
@@ -67,12 +50,7 @@ export function AddUserDialog({
   const { t } = useTranslation();
   const { user: authUser } = useAuthUser();
 
-  const roleOptions =
-    authUser?.role === 'ADMIN'
-      ? ADMIN_CREATABLE_ROLES
-      : authUser?.role === 'MANAGER'
-        ? MANAGER_CREATABLE_ROLES
-        : [];
+  const [roleOptions, setRoleOptions] = useState<AssignableRole[]>([]);
   const academyId = authUser?.academyId ?? null;
 
   const [form, setForm] = useState({
@@ -80,11 +58,32 @@ export function AddUserDialog({
     phone: '',
     password: '',
     confirmPassword: '',
-    role: roleOptions[0]?.value ?? 'STUDENT'
+    role: ''
   });
   const [loading, setLoading] = useState(false);
+  const [rolesLoading, setRolesLoading] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // The server decides which roles are valid here: this panel is staff-only, so
+  // offering a student-rank role would create an account that can never sign in.
+  useEffect(() => {
+    if (!open) return;
+    let active = true;
+    setRolesLoading(true);
+    apiClient
+      .getAssignableRoles()
+      .then(({ roles }) => {
+        if (!active) return;
+        setRoleOptions(roles);
+        setForm((f) => ({ ...f, role: f.role || (roles[0]?.name ?? '') }));
+      })
+      .catch((e) => ErrorHandler.handleApiError(e))
+      .finally(() => active && setRolesLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [open]);
 
   // Derived validity — drives the submit button
   const phoneE164 = toE164Iran(form.phone);
@@ -107,7 +106,7 @@ export function AddUserDialog({
       phone: '',
       password: '',
       confirmPassword: '',
-      role: roleOptions[0]?.value ?? 'STUDENT'
+      role: roleOptions[0]?.name ?? ''
     });
     setPhoneError(null);
   }
@@ -293,15 +292,17 @@ export function AddUserDialog({
               <Select
                 value={form.role}
                 onValueChange={(v) => setForm((f) => ({ ...f, role: v }))}
-                disabled={loading}
+                disabled={loading || rolesLoading}
               >
                 <SelectTrigger dir="rtl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent dir="rtl">
-                  {roleOptions.map((r: { value: string; labelKey: string }) => (
-                    <SelectItem key={r.value} value={r.value}>
-                      {t(r.labelKey)}
+                  {roleOptions.map((r) => (
+                    <SelectItem key={r.name} value={r.name}>
+                      {getRoleLabel(r.name, t) === r.name
+                        ? r.label
+                        : getRoleLabel(r.name, t)}
                     </SelectItem>
                   ))}
                 </SelectContent>
