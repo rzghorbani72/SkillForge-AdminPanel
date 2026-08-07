@@ -435,9 +435,15 @@ export function useLogin() {
     setOtpError('');
     setRegistrationRequired(false);
     try {
+      // The screen serves two flows and they do NOT share an OTP type. In
+      // 'verify' the account's phone is unconfirmed by definition, so asking for
+      // a LOGIN_BY_PHONE code is rejected as "not registered" — and even if it
+      // were sent, confirm-phone only ever matches REGISTER_PHONE_VERIFICATION.
       const response = await apiClient.sendPhoneOtp(
         otpPhone,
-        OtpType.LOGIN_BY_PHONE
+        otpMode === 'verify'
+          ? OtpType.REGISTER_PHONE_VERIFICATION
+          : OtpType.LOGIN_BY_PHONE
       );
       notifyOtpSent(response, t('success.otpSent'), 'otp-resent');
     } catch (error: unknown) {
