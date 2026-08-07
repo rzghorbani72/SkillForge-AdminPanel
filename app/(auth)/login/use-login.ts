@@ -33,7 +33,12 @@ type LoginResponse = {
   phone_verification_required?: boolean;
   password_reset_required?: boolean;
   temp_token?: string;
+  /** Masked, for display only. */
   phone?: string;
+  /** Real E.164 — what the OTP endpoints must be called with. */
+  full_phone?: string;
+  /** Debug code, only while no real SMS provider is delivering it. */
+  otp?: string;
   availableAcademies?: Academy[];
   available_academies?: Academy[];
   requires_academy_selection?: boolean;
@@ -77,6 +82,8 @@ export function useLogin() {
   const [otpMode, setOtpMode] = useState<'verify' | 'login'>('verify');
   const [otpTempToken, setOtpTempToken] = useState('');
   const [otpPhone, setOtpPhone] = useState('');
+  // `otpPhone` is masked in the verify flow, so it can never be sent to an API.
+  const [otpFullPhone, setOtpFullPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
@@ -182,6 +189,7 @@ export function useLogin() {
         OtpType.LOGIN_BY_PHONE
       );
       setOtpPhone(phoneE164);
+      setOtpFullPhone(phoneE164);
       setOtpMode('login');
       setOtpRequired(true);
       notifyOtpSent(response, t('success.otpSent'), 'login-otp-sent');
@@ -292,7 +300,15 @@ export function useLogin() {
       if (response.phone_verification_required) {
         setOtpTempToken(response.temp_token ?? '');
         setOtpPhone(response.phone ?? '');
+        setOtpFullPhone(response.full_phone ?? '');
         setOtpRequired(true);
+        // Login already sent the code server-side, so no OTP request shows up
+        // in the network tab — surface it the same way every other OTP screen does.
+        notifyOtpSent(
+          { data: { otp: response.otp } },
+          t('success.otpSent'),
+          'login-otp-gate'
+        );
         return;
       }
 
@@ -359,7 +375,7 @@ export function useLogin() {
     try {
       if (otpMode === 'login') {
         const response = (await authService.loginPhoneByOtp({
-          phone_number: otpPhone,
+          phone_number: otpFullPhone || otpPhone,
           otp: otp.trim()
         })) as LoginResponse;
 
@@ -440,7 +456,7 @@ export function useLogin() {
       // a LOGIN_BY_PHONE code is rejected as "not registered" — and even if it
       // were sent, confirm-phone only ever matches REGISTER_PHONE_VERIFICATION.
       const response = await apiClient.sendPhoneOtp(
-        otpPhone,
+        otpFullPhone || otpPhone,
         otpMode === 'verify'
           ? OtpType.REGISTER_PHONE_VERIFICATION
           : OtpType.LOGIN_BY_PHONE
