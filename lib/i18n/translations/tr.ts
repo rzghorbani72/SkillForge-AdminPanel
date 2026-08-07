@@ -397,6 +397,7 @@ export const tr = {
     logout: 'Çıkış Yap',
     email: 'E-posta',
     password: 'Şifre',
+    newPassword: 'Yeni şifre',
     confirmPassword: 'Şifreyi Onayla',
     forgotPassword: 'Şifrenizi mi unuttunuz?',
     rememberMe: 'Beni hatırla',

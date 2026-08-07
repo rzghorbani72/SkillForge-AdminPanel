@@ -391,6 +391,7 @@ export const ar = {
     logout: 'تسجيل الخروج',
     email: 'البريد الإلكتروني',
     password: 'كلمة المرور',
+    newPassword: 'كلمة المرور الجديدة',
     confirmPassword: 'تأكيد كلمة المرور',
     forgotPassword: 'نسيت كلمة المرور؟',
     rememberMe: 'تذكرني',

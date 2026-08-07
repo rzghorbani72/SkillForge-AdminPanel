@@ -636,6 +636,7 @@ export const en = {
     logout: 'Logout',
     email: 'Email',
     password: 'Password',
+    newPassword: 'New password',
     confirmPassword: 'Confirm Password',
     forgotPassword: 'Forgot Password?',
     rememberMe: 'Remember me',

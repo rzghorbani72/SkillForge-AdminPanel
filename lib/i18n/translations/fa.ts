@@ -626,6 +626,7 @@ export const fa = {
     logout: 'خروج',
     email: 'ایمیل',
     password: 'رمز عبور',
+    newPassword: 'رمز عبور جدید',
     confirmPassword: 'تکرار رمزعبور',
     forgotPassword: 'رمز عبور را فراموش کرده‌اید؟',
     rememberMe: 'مرا به خاطر بسپار',
