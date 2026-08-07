@@ -2719,6 +2719,7 @@ export const en = {
     suspendUser: 'Suspend User',
     banUser: 'Ban User',
     accountInformation: 'Account Information',
+    academy: 'Academy',
     userId: 'User ID',
     created: 'Created',
     lastUpdated: 'Last Updated'

@@ -68,7 +68,7 @@ export default function AdminsPage() {
   const [showCreateAdminDialog, setShowCreateAdminDialog] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [updatingConfirmation, setUpdatingConfirmation] = useState<{
-    id: number;
+    id: string;
     type: 'email' | 'phone';
   } | null>(null);
   const [currentUserProfile, setCurrentUserProfile] = useState<{
@@ -180,7 +180,7 @@ export default function AdminsPage() {
   };
 
   const handleConfirmationToggle = async (
-    adminId: number,
+    adminId: string,
     type: 'email' | 'phone',
     currentValue: boolean
   ) => {

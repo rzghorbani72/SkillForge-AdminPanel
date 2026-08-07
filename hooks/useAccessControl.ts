@@ -6,7 +6,7 @@ import { authService, AuthUser } from '@/lib/auth';
 import { Profile } from '@/types/api';
 
 export interface UserState {
-  user_id: number;
+  user_id: string;
   academy_id: string;
   role: string;
   is_admin: boolean;
@@ -311,7 +311,7 @@ export function useAccessControl() {
   };
 
   const canModifyResource = (
-    resourceOwnerId: number,
+    resourceOwnerId: string,
     resourceStoreId?: string
   ): boolean => {
     if (!userState) return false;
@@ -329,7 +329,7 @@ export function useAccessControl() {
   };
 
   const canDeleteResource = (
-    resourceOwnerId: number,
+    resourceOwnerId: string,
     resourceStoreId?: string
   ): boolean => {
     return canModifyResource(resourceOwnerId, resourceStoreId);
@@ -352,7 +352,7 @@ export function useAccessControl() {
   };
 
   const checkResourceAccess = (resource: {
-    owner_id?: number;
+    owner_id?: string;
     academy_id?: string;
     access_control?: AccessControl;
   }): ResourceAccessControl => {
@@ -369,7 +369,7 @@ export function useAccessControl() {
     }
 
     // Fallback to frontend calculation
-    const ownerId = resource.owner_id ?? 0;
+    const ownerId = resource.owner_id ?? '';
     const academyId = resource.academy_id;
 
     return {
@@ -403,7 +403,7 @@ export function useAccessControl() {
 
   const requireResourceAccess = (
     resource: {
-      owner_id?: number;
+      owner_id?: string;
       academy_id?: string;
       access_control?: AccessControl;
     },

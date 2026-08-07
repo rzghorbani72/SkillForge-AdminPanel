@@ -53,7 +53,7 @@ export function UserDetailsSheet({
   const [isLoading, setIsLoading] = useState(false);
 
   const load = useCallback(
-    async (userId: number) => {
+    async (userId: string) => {
       setIsLoading(true);
       try {
         const response = await apiClient.getUserDetails(userId);

@@ -39,8 +39,7 @@ export default function StudentWorkspacePage() {
   const [loading, setLoading] = useState(true);
 
   const loadWorkspace = useCallback(async () => {
-    const numericId = Number(studentId);
-    if (!Number.isInteger(numericId)) {
+    if (!studentId) {
       setLoading(false);
       return;
     }
@@ -48,7 +47,7 @@ export default function StudentWorkspacePage() {
     setLoading(true);
     try {
       const [user, enrollmentResponse] = await Promise.all([
-        apiClient.getUser(numericId),
+        apiClient.getUser(studentId),
         apiClient.getEnrollments({ user_id: studentId, page: 1, limit: 100 })
       ]);
       const studentEnrollments = enrollmentResponse.enrollments ?? [];

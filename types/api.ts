@@ -3,7 +3,8 @@ export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 
 // User and Authentication Types
 export interface User {
-  id: number;
+  /** cuid, never numeric — parsing it with Number() yields NaN. */
+  id: string;
   uuid?: string;
   user_uuid?: string;
   email?: string;
@@ -28,7 +29,7 @@ export interface User {
 
 // User Profile (embedded in User response from /users endpoints)
 export interface UserProfile {
-  id: number;
+  id: string;
   display_name: string;
   bio?: string;
   avatar_id?: number;

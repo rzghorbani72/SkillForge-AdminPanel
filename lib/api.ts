@@ -2902,24 +2902,24 @@ class ApiClient {
     return response.data as any;
   }
 
-  async getUser(id: number): Promise<UserType> {
+  async getUser(id: string): Promise<UserType> {
     const response = await this.request<UserType>(`/users/${id}`);
     return response.data;
   }
 
-  async getUserDetails(id: number) {
+  async getUserDetails(id: string) {
     const response = await this.request(`/users/${id}/details`);
     return response.data as any;
   }
 
-  async updateUser(id: number, userData: unknown) {
+  async updateUser(id: string, userData: unknown) {
     return this.request(`/users/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(userData)
     });
   }
 
-  async deleteUser(id: number) {
+  async deleteUser(id: string) {
     return this.request(`/users/${id}`, {
       method: 'DELETE'
     });
@@ -3006,7 +3006,7 @@ class ApiClient {
   }
 
   async changeUserRole(
-    id: number,
+    id: string,
     role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER'
   ) {
     const response = await this.request(`/users/${id}/role`, {
@@ -3016,7 +3016,7 @@ class ApiClient {
     return response.data as any;
   }
 
-  async resetUserPassword(id: number, newPassword: string) {
+  async resetUserPassword(id: string, newPassword: string) {
     const response = await this.request(`/users/${id}/reset-password`, {
       method: 'POST',
       body: JSON.stringify({ new_password: newPassword })
@@ -3080,7 +3080,7 @@ class ApiClient {
   }
 
   async grantCourseAccess(
-    id: number,
+    id: string,
     payload: { course_id: number; note?: string }
   ) {
     const response = await this.request(`/users/${id}/grant-course`, {
@@ -3091,7 +3091,7 @@ class ApiClient {
   }
 
   async assignVoucher(
-    id: number,
+    id: string,
     payload: {
       code_prefix: string;
       discount_type: 'PERCENT' | 'FIXED';
@@ -3389,7 +3389,7 @@ class ApiClient {
     return payload;
   }
 
-  async getProfile(id: number) {
+  async getProfile(id: string) {
     const response = await this.request(`/profiles/${id}`);
 
     // Return the profile data directly

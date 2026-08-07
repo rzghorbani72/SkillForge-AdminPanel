@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleLabel } from '@/lib/i18n/role-label';
 import { ErrorHandler } from '@/lib/error-handler';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -35,22 +36,23 @@ interface UserEditFormState {
   display_name: string;
   email: string;
   phone_number: string;
-  birthday: string;
   is_active: boolean;
-  role: EditableRole;
+  /** Not EditableRole: an academy's custom role (TEACHER_1, ...) is valid here. */
+  role: string;
 }
 
 interface EditableProfileRecord {
-  id: number;
+  id: string;
   display_name?: string;
   name?: string;
   email?: string | null;
   phone_number?: string;
-  birthday?: string | null;
   is_active?: boolean;
   academy_id?: string | null;
-  role?: { name?: EditableRole } | null;
-  Role?: { name?: EditableRole } | null;
+  role?: { name?: string } | null;
+  Role?: { name?: string } | null;
+  role_name?: string | null;
+  role_label?: string | null;
 }
 
 const ADMIN_EDITABLE_ROLES: EditableRole[] = [
@@ -62,10 +64,10 @@ const ADMIN_EDITABLE_ROLES: EditableRole[] = [
 ];
 const MANAGER_EDITABLE_ROLES: EditableRole[] = ['TEACHER', 'STUDENT'];
 
-function getPrimaryRole(user: EditableProfileRecord | null): EditableRole {
+/** /profiles/:id returns role_name flat; the list endpoints nest it. */
+function getPrimaryRoleName(user: EditableProfileRecord | null): string {
   if (!user) return 'USER';
-  const roleName = (user as any)?.role?.name || (user as any)?.Role?.name;
-  return (roleName as EditableRole) || 'USER';
+  return user.role_name || user.role?.name || user.Role?.name || 'USER';
 }
 
 export default function UserEditPage() {
@@ -74,32 +76,31 @@ export default function UserEditPage() {
   const router = useRouter();
   const { user: authUser, isLoading: isAuthLoading } = useAuthUser();
 
-  const userId = Number(params.id);
+  const userId = typeof params.id === 'string' ? params.id : '';
   const [targetUser, setTargetUser] = useState<EditableProfileRecord | null>(
     null
   );
   const [form, setForm] = useState<UserEditFormState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const fetchedUserIdRef = useRef<number | null>(null);
+  const fetchedUserIdRef = useRef<string | null>(null);
 
-  const currentRole = useMemo(() => getPrimaryRole(targetUser), [targetUser]);
+  const currentRole = useMemo(
+    () => getPrimaryRoleName(targetUser),
+    [targetUser]
+  );
 
   const managerAcademyId =
     authUser?.academyId ??
-    (authUser?.currentAcademy as { id?: number } | null)?.id ??
+    (authUser?.currentAcademy as { id?: string } | null)?.id ??
     null;
-
-  const canManagerEditTarget = useMemo(() => {
-    return false;
-  }, []);
 
   const canManagerEditDirectProfile = useMemo(() => {
     if (!targetUser || authUser?.role !== 'MANAGER' || !managerAcademyId) {
       return false;
     }
 
-    const directRole = getPrimaryRole(targetUser);
+    const directRole = getPrimaryRoleName(targetUser);
     const directAcademyId = targetUser.academy_id;
     return (
       directAcademyId === managerAcademyId &&
@@ -109,18 +110,20 @@ export default function UserEditPage() {
 
   const canEdit =
     authUser?.role === 'ADMIN' ||
-    (authUser?.role === 'MANAGER' &&
-      (canManagerEditTarget || canManagerEditDirectProfile));
+    (authUser?.role === 'MANAGER' && canManagerEditDirectProfile);
 
-  const editableRoles =
+  const baseRoles =
     authUser?.role === 'ADMIN' ? ADMIN_EDITABLE_ROLES : MANAGER_EDITABLE_ROLES;
+  // A custom role is not in the built-in list, so add it or the select renders empty.
+  const editableRoles: string[] = baseRoles.includes(
+    currentRole as EditableRole
+  )
+    ? [...baseRoles]
+    : [currentRole, ...baseRoles];
 
   useEffect(() => {
-    if (
-      !userId ||
-      Number.isNaN(userId) ||
-      fetchedUserIdRef.current === userId
-    ) {
+    if (!userId || fetchedUserIdRef.current === userId) {
+      setIsLoading(false);
       return;
     }
 
@@ -132,7 +135,7 @@ export default function UserEditPage() {
         const response = await apiClient.getProfile(userId);
         const userData = (response as any)?.data || response;
         const normalizedUser = userData as EditableProfileRecord;
-        const role = getPrimaryRole(normalizedUser);
+        const role = getPrimaryRoleName(normalizedUser);
 
         setTargetUser(normalizedUser);
         setForm({
@@ -140,9 +143,6 @@ export default function UserEditPage() {
             normalizedUser.display_name || normalizedUser.name || '',
           email: normalizedUser.email || '',
           phone_number: normalizedUser.phone_number || '',
-          birthday: normalizedUser.birthday
-            ? new Date(normalizedUser.birthday).toISOString().split('T')[0]
-            : '',
           is_active: normalizedUser.is_active ?? false,
           role
         });
@@ -168,12 +168,14 @@ export default function UserEditPage() {
         display_name: form.display_name.trim(),
         email: form.email.trim() || null,
         phone_number: form.phone_number.trim(),
-        birthday: form.birthday || null,
         is_active: form.is_active
       });
 
       if (form.role !== currentRole) {
-        await apiClient.changeUserRole(targetUser.id, form.role);
+        await apiClient.changeUserRole(
+          targetUser.id,
+          form.role as EditableRole
+        );
       }
 
       toast.success(t('success.updated'));
@@ -250,9 +252,7 @@ export default function UserEditPage() {
                 <Select
                   value={form.role}
                   onValueChange={(value) =>
-                    setForm((prev) =>
-                      prev ? { ...prev, role: value as EditableRole } : prev
-                    )
+                    setForm((prev) => (prev ? { ...prev, role: value } : prev))
                   }
                   disabled={isSaving}
                 >
@@ -262,7 +262,11 @@ export default function UserEditPage() {
                   <SelectContent>
                     {editableRoles.map((role) => (
                       <SelectItem key={role} value={role}>
-                        {role}
+                        {role === currentRole && targetUser?.role_label
+                          ? getRoleLabel(role, t) === role
+                            ? targetUser.role_label
+                            : getRoleLabel(role, t)
+                          : getRoleLabel(role, t)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -295,20 +299,6 @@ export default function UserEditPage() {
                     )
                   }
                   required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="birthday">{t('userEdit.birthday')}</Label>
-                <Input
-                  id="birthday"
-                  type="date"
-                  value={form.birthday}
-                  onChange={(e) =>
-                    setForm((prev) =>
-                      prev ? { ...prev, birthday: e.target.value } : prev
-                    )
-                  }
                 />
               </div>
 

@@ -23,7 +23,11 @@ export function getUserStatus(user: User): string {
 
 /** Stable per-user hue so the same person keeps the same avatar colour. */
 export function userTone(user: User): number {
-  return (user.id * 47) % 360;
+  const id = String(user.id);
+  let hash = 0;
+  for (let i = 0; i < id.length; i++)
+    hash = (hash * 31 + id.charCodeAt(i)) % 360;
+  return hash;
 }
 
 interface UserCardProps {

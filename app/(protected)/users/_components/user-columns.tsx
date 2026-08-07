@@ -43,7 +43,7 @@ export function buildUserColumns({
           />
           <div className="min-w-0">
             <p className="truncate font-semibold leading-tight">
-              {user.display_name || user.name || `#${formatNumber(user.id)}`}
+              {user.display_name || user.name || `#${user.id}`}
             </p>
             <p className="truncate text-[11px] text-muted-foreground">
               {user.email || user.phone_number || '—'}

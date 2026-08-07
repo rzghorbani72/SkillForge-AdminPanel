@@ -2700,6 +2700,7 @@ export const fa = {
     suspendUser: 'تعلیق کاربر',
     banUser: 'مسدود کردن کاربر',
     accountInformation: 'اطلاعات حساب',
+    academy: 'آکادمی',
     userId: 'شناسه کاربر',
     created: 'ایجاد شده',
     lastUpdated: 'آخرین به‌روزرسانی'

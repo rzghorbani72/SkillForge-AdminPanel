@@ -7,7 +7,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 
 /** Support one-offs that act on a single user from the detail sheet. */
-export function UserSupportActions({ userId }: { userId: number }) {
+export function UserSupportActions({ userId }: { userId: string }) {
   const { t } = useTranslation();
 
   const resetPassword = async () => {

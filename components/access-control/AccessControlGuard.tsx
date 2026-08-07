@@ -13,7 +13,7 @@ interface AccessControlGuardProps {
   requiredPermission?: string;
   requiredRole?: string;
   resource?: {
-    owner_id?: number;
+    owner_id?: string;
     academy_id?: string;
     access_control?: {
       can_modify: boolean;
@@ -86,7 +86,7 @@ export default function AccessControlGuard({
       const isOwner =
         resourceAccess?.isOwner ||
         (ownerIdFromResource !== null &&
-          userState?.user_id === Number(ownerIdFromResource)) ||
+          userState?.user_id === String(ownerIdFromResource)) ||
         false;
 
       // Normalize role to uppercase for comparison
