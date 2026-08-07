@@ -448,6 +448,11 @@ export const ar = {
     selectStore: 'الرجاء اختيار معهد',
     backToLogin: 'العودة إلى تسجيل الدخول',
     verifyYourContact: 'تحقق من معلومات الاتصال الخاصة بك',
+    setNewPasswordTitle: 'تعيين كلمة مرور جديدة',
+    setNewPasswordDescription:
+      'قام المسؤول بتعيين كلمة مرور مؤقتة لك. اختر كلمة المرور الخاصة بك للمتابعة.',
+    settingPassword: 'جارٍ تعيين كلمة المرور...',
+    setPasswordAndContinue: 'تعيين كلمة المرور والمتابعة',
     createStoreAccount: 'إنشاء حساب معهد',
     verifyContactDescription:
       'تحقق من الهاتف (والبريد الإلكتروني إن وجد) أولاً. ثم املأ البيانات الأساسية.',

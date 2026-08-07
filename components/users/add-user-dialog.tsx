@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles, Copy, Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ import {
   isPasswordValid
 } from '@/components/ui/password-strength';
 import { toE164Iran } from '@/lib/phone-utils';
+import { generateTempPassword } from '@/lib/password-utils';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -43,6 +44,15 @@ const ADMIN_CREATABLE_ROLES: { value: string; labelKey: string }[] = [
   { value: 'ADMIN', labelKey: 'users.roleAdmin' }
 ];
 
+// An academy manager can only staff their own academy, and only with
+// non-privileged roles — mirrors AuthController.MANAGER_CREATABLE_ROLES.
+const MANAGER_CREATABLE_ROLES: { value: string; labelKey: string }[] = [
+  { value: 'STUDENT', labelKey: 'users.roleStudent' },
+  { value: 'TEACHER', labelKey: 'users.roleTeacher' },
+  { value: 'AFFILIATE', labelKey: 'users.roleAffiliate' },
+  { value: 'USER', labelKey: 'users.roleUser' }
+];
+
 interface AddUserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -57,7 +67,12 @@ export function AddUserDialog({
   const { t } = useTranslation();
   const { user: authUser } = useAuthUser();
 
-  const roleOptions = authUser?.role === 'ADMIN' ? ADMIN_CREATABLE_ROLES : [];
+  const roleOptions =
+    authUser?.role === 'ADMIN'
+      ? ADMIN_CREATABLE_ROLES
+      : authUser?.role === 'MANAGER'
+        ? MANAGER_CREATABLE_ROLES
+        : [];
   const academyId = authUser?.academyId ?? null;
 
   const [form, setForm] = useState({
@@ -69,6 +84,7 @@ export function AddUserDialog({
   });
   const [loading, setLoading] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // Derived validity — drives the submit button
   const phoneE164 = toE164Iran(form.phone);
@@ -120,6 +136,23 @@ export function AddUserDialog({
   function handleClose(open: boolean) {
     if (!open) reset();
     onOpenChange(open);
+  }
+
+  function handleGeneratePassword() {
+    const generated = generateTempPassword();
+    setForm((f) => ({
+      ...f,
+      password: generated,
+      confirmPassword: generated
+    }));
+    setCopied(false);
+  }
+
+  async function handleCopyPassword() {
+    if (!form.password) return;
+    await navigator.clipboard.writeText(form.password);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -183,18 +216,47 @@ export function AddUserDialog({
           />
 
           <div className="space-y-1.5">
-            <Label htmlFor="password">{t('auth.password')} *</Label>
-            <Input
-              id="password"
-              type="password"
-              dir="ltr"
-              value={form.password}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, password: e.target.value }))
-              }
-              placeholder="••••••••"
-              disabled={loading}
-            />
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">{t('auth.password')} *</Label>
+              <button
+                type="button"
+                onClick={handleGeneratePassword}
+                disabled={loading}
+                className="flex items-center gap-1 text-xs font-medium text-primary hover:underline disabled:opacity-50"
+              >
+                <Sparkles className="h-3 w-3" />
+                {t('users.generatePassword')}
+              </button>
+            </div>
+            <div className="relative" dir="ltr">
+              <Input
+                id="password"
+                type="text"
+                dir="ltr"
+                value={form.password}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, password: e.target.value }));
+                  setCopied(false);
+                }}
+                placeholder="••••••••"
+                disabled={loading}
+                className="pe-9"
+              />
+              {form.password && (
+                <button
+                  type="button"
+                  onClick={handleCopyPassword}
+                  className="absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  title={t('common.copy')}
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4 text-emerald-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              )}
+            </div>
             <PasswordStrength password={form.password} />
           </div>
 

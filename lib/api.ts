@@ -5330,6 +5330,14 @@ class ApiClient {
     return res.data;
   }
 
+  async setNewPassword(temp_token: string, new_password: string) {
+    const res = await this.request<any>('/auth/set-new-password', {
+      method: 'POST',
+      body: JSON.stringify({ temp_token, new_password })
+    });
+    return res.data;
+  }
+
   async deactivateAffiliate(id: number) {
     const res = await this.request<any>(`/affiliates/${id}/deactivate`, {
       method: 'PATCH',

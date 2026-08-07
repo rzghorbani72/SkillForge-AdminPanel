@@ -692,6 +692,11 @@ export const fa = {
     otpSentTo: 'کد تأیید ارسال شد به',
     verifyAndLogin: 'تأیید و ورود',
     verifyYourContact: 'اطلاعات تماس خود را تأیید کنید',
+    setNewPasswordTitle: 'تعیین رمز عبور جدید',
+    setNewPasswordDescription:
+      'مدیر برای شما یک رمز عبور موقت تنظیم کرده است. برای ادامه، رمز عبور خودتان را انتخاب کنید.',
+    settingPassword: 'در حال ثبت رمز عبور...',
+    setPasswordAndContinue: 'ثبت رمز عبور و ادامه',
     createStoreAccount: 'ایجاد حساب آکادمی',
     verifyContactDescription:
       'ابتدا تلفن (و ایمیل در صورت وجود) را تأیید کنید. سپس اطلاعات پایه را پر کنید.',
@@ -2652,7 +2657,9 @@ export const fa = {
     displayNamePlaceholder: 'نام نمایشی را وارد کنید',
     selectRole: 'انتخاب نقش',
     userAddedSuccess: 'کاربر با موفقیت اضافه شد',
-    unconfirmedNote: 'کاربر در اولین ورود باید شماره تلفن خود را تأیید کند',
+    unconfirmedNote:
+      'این رمز عبور یک‌بارمصرف است. کاربر در اولین ورود باید شماره تلفن خود را تأیید و سپس رمز عبور خودش را تعیین کند.',
+    generatePassword: 'ساخت رمز عبور',
     phoneAlreadyRegistered: 'این شماره تلفن قبلاً ثبت‌نام شده است',
     roleAdmin: 'ادمین',
     roleSuperAdmin: 'سوپر ادمین',

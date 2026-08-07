@@ -5,6 +5,7 @@ import { IdentifyStep } from '@/components/auth/identify-step';
 import { PasswordStep } from '@/components/auth/password-step';
 import { AcademyPicker } from './_components/academy-picker';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
+import { SetNewPasswordScreen } from '@/components/auth/set-new-password-screen';
 import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -18,6 +19,16 @@ export default function LoginPage() {
       <AuthStatusScreen
         title={login.redirectPending.title}
         message={login.redirectPending.message}
+      />
+    );
+  }
+
+  if (login.passwordResetRequired) {
+    return (
+      <SetNewPasswordScreen
+        loading={login.resetLoading}
+        error={login.resetError}
+        onSubmit={login.handleSetNewPasswordSubmit}
       />
     );
   }

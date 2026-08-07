@@ -455,6 +455,11 @@ export const tr = {
     selectStore: 'Lütfen bir enstitü seçin',
     backToLogin: 'Girişe Dön',
     verifyYourContact: 'İletişim Bilgilerinizi Doğrulayın',
+    setNewPasswordTitle: 'Yeni bir şifre belirleyin',
+    setNewPasswordDescription:
+      'Bir yönetici sizin için geçici bir şifre belirledi. Devam etmek için kendi şifrenizi seçin.',
+    settingPassword: 'Şifre ayarlanıyor...',
+    setPasswordAndContinue: 'Şifreyi ayarla ve devam et',
     createStoreAccount: 'Enstitü Hesabı Oluştur',
     verifyContactDescription:
       'Önce telefonu (ve varsa e-postayı) doğrulayın. Ardından temel verileri doldurun.',

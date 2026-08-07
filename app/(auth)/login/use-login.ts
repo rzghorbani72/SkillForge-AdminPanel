@@ -31,6 +31,7 @@ type LoginResponse = {
   currentProfile?: { Role?: { name?: string }; academy_id?: string };
   currentAcademy?: unknown;
   phone_verification_required?: boolean;
+  password_reset_required?: boolean;
   temp_token?: string;
   phone?: string;
   availableAcademies?: Academy[];
@@ -82,6 +83,13 @@ export function useLogin() {
   const [registrationRequired, setRegistrationRequired] = useState(false);
   const [captchaRequired, setCaptchaRequired] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
+
+  // Admin created this account with a one-time password — the user must pick
+  // their own before a real session is granted.
+  const [passwordResetRequired, setPasswordResetRequired] = useState(false);
+  const [resetTempToken, setResetTempToken] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState('');
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -243,6 +251,28 @@ export function useLogin() {
     }
   }
 
+  // Shared "what to do with a login response" — used after a normal password
+  // login and after the OTP/reset gates finish, so all three paths land the
+  // user the same way (single academy, academy picker, or straight in).
+  async function finishLogin(response: LoginResponse) {
+    const academies =
+      response.availableAcademies || response.available_academies || [];
+
+    if (academies.length === 1) {
+      await handleAcademySelect(academies[0].id);
+      return;
+    }
+
+    if (response.requires_academy_selection || academies.length > 0) {
+      setAvailableAcademies(academies);
+      setAcademyPickerOpen(true);
+      return;
+    }
+
+    toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
+    schedulePostLoginRedirect(response);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!identity) return handleIdentify();
@@ -266,22 +296,13 @@ export function useLogin() {
         return;
       }
 
-      const academies =
-        response.availableAcademies || response.available_academies || [];
-
-      if (academies.length === 1) {
-        await handleAcademySelect(academies[0].id);
+      if (response.password_reset_required) {
+        setResetTempToken(response.temp_token ?? '');
+        setPasswordResetRequired(true);
         return;
       }
 
-      if (response.requires_academy_selection || academies.length > 0) {
-        setAvailableAcademies(academies);
-        setAcademyPickerOpen(true);
-        return;
-      }
-
-      toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
-      schedulePostLoginRedirect(response);
+      await finishLogin(response);
     } catch (error: unknown) {
       if (isCaptchaRequiredError(error)) {
         setCaptchaRequired(true);
@@ -357,11 +378,21 @@ export function useLogin() {
         return;
       }
 
-      const result = await apiClient.confirmPhoneOtp(otpTempToken, otp.trim());
+      const result = (await apiClient.confirmPhoneOtp(
+        otpTempToken,
+        otp.trim()
+      )) as LoginResponse & { redirect_to?: string };
+
+      if (result.password_reset_required) {
+        setOtpRequired(false);
+        setResetTempToken(result.temp_token ?? '');
+        setPasswordResetRequired(true);
+        return;
+      }
+
       toast.success(t('success.otpVerified'), { toastId: 'login-success' });
       scheduleRedirect({
-        href:
-          (result as { redirect_to?: string })?.redirect_to ?? '/my-affiliate',
+        href: result.redirect_to ?? '/my-affiliate',
         title: t('success.otpVerified'),
         message: t('auth.redirectingToAffiliate')
       });
@@ -379,6 +410,23 @@ export function useLogin() {
       }
     } finally {
       setOtpLoading(false);
+    }
+  }
+
+  async function handleSetNewPasswordSubmit(newPassword: string) {
+    setResetLoading(true);
+    setResetError('');
+    try {
+      const response = (await apiClient.setNewPassword(
+        resetTempToken,
+        newPassword
+      )) as LoginResponse;
+      setPasswordResetRequired(false);
+      await finishLogin(response);
+    } catch (error: unknown) {
+      setResetError(apiErrorMessage(error, t('error.authenticationFailed')));
+    } finally {
+      setResetLoading(false);
     }
   }
 
@@ -470,6 +518,11 @@ export function useLogin() {
       setOtp('');
       setOtpError('');
       setRegistrationRequired(false);
-    }
+    },
+
+    passwordResetRequired,
+    resetLoading,
+    resetError,
+    handleSetNewPasswordSubmit
   };
 }

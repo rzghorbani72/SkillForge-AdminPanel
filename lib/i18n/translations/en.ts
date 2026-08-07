@@ -702,6 +702,11 @@ export const en = {
     otpSentToPhone: 'Verification code sent to your phone',
     otpSentTo: 'Verification code sent to',
     verifyAndLogin: 'Verify & Login',
+    setNewPasswordTitle: 'Set a new password',
+    setNewPasswordDescription:
+      'An admin set a temporary password for you. Choose your own password to continue.',
+    settingPassword: 'Setting password...',
+    setPasswordAndContinue: 'Set password & continue',
     verifyYourContact: 'Verify Your Contact',
     createStoreAccount: 'Create Academy Account',
     verifyContactDescription:
@@ -2671,7 +2676,9 @@ export const en = {
     displayNamePlaceholder: 'Enter display name',
     selectRole: 'Select Role',
     userAddedSuccess: 'User added successfully',
-    unconfirmedNote: 'User must verify their phone on first login',
+    unconfirmedNote:
+      'This password is one-time only. On first login, the user must verify their phone number and then set their own password.',
+    generatePassword: 'Generate password',
     phoneAlreadyRegistered: 'This phone number is already registered',
     roleAdmin: 'Admin',
     roleSuperAdmin: 'Super Admin',

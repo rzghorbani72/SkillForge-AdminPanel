@@ -2,6 +2,7 @@
 
 import { Check, X } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { toEnglishDigits } from '@/lib/phone-utils';
 
 export interface PasswordChecks {
   minLength: boolean;
@@ -9,11 +10,17 @@ export interface PasswordChecks {
   hasNumber: boolean;
 }
 
+const ANY_DIGIT = /[0-9۰-۹٠-٩]/g;
+// After stripping every digit (Western + Persian + Arabic-Indic), anything left in the
+// Latin or Arabic/Persian Unicode block is a real letter — this avoids the ES6-only
+// \p{L} unicode property escape, which the project's es5 tsconfig target rejects.
+const LETTER_RANGE = /[a-zA-Z؀-ۿ]/;
+
 export function getPasswordChecks(password: string): PasswordChecks {
   return {
     minLength: password.length >= 6,
-    hasLetter: /[a-zA-Z]/.test(password),
-    hasNumber: /[0-9]/.test(password)
+    hasLetter: LETTER_RANGE.test(password.replace(ANY_DIGIT, '')),
+    hasNumber: /[0-9]/.test(toEnglishDigits(password))
   };
 }
 
