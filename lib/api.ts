@@ -3091,9 +3091,10 @@ class ApiClient {
     return response.data as { id: string };
   }
 
+  /** course_id is a cuid STRING — Number() on it yields NaN and the call 400s. */
   async grantCourseAccess(
     id: string,
-    payload: { course_id: number; note?: string }
+    payload: { course_id: string; note?: string }
   ) {
     const response = await this.request(`/users/${id}/grant-course`, {
       method: 'POST',

@@ -180,6 +180,7 @@ export default function UserDetailPage() {
             {t('common.back')}
           </Button>
           <UserContactActions
+            profileId={user.id}
             email={user.email}
             phoneNumber={user.phone_number}
           />

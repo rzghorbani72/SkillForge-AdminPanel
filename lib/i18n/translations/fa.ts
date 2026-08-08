@@ -2549,6 +2549,25 @@ export const fa = {
     privateSubRequired:
       'حداقل یک دوره باید تدریس خصوصی فعال داشته باشد و پیگیری آموزشی در آکادمی روشن باشد.'
   },
+  messages: {
+    sendMessage: 'ارسال پیام',
+    sendMessageDescription: 'پیام خود را برای دانشجویان انتخاب‌شده بفرستید.',
+    send: 'ارسال',
+    title: 'عنوان',
+    body: 'متن پیام',
+    channels: 'کانال‌های ارسال',
+    channelSms: 'پیامک',
+    channelInApp: 'درون‌برنامه',
+    channelEmail: 'ایمیل',
+    channelTelegram: 'تلگرام',
+    channelBale: 'بله',
+    recipientCount: 'ارسال به {{count}} نفر',
+    sentCount: 'پیام به {{sent}} نفر ارسال شد',
+    sentWithSkipped:
+      'پیام به {{sent}} نفر ارسال شد؛ {{skipped}} نفر قابل دسترسی نبودند',
+    messengerHint:
+      'تلگرام و بله فقط برای دانشجویانی کار می‌کند که ربات را استارت کرده باشند.'
+  },
   users: {
     allUsers: 'همه کاربران',
     loadUserDetailsFailed: 'بارگذاری جزئیات کاربر ناموفق بود',

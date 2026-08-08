@@ -97,6 +97,35 @@ export const studentGroupsApi = {
     call(`/student-groups/${id}/lessons/${lessonId}`, { method: 'DELETE' })
 };
 
+// ---------- Manager → student messaging -----------------------------------
+export type MessageChannel = 'IN_APP' | 'SMS' | 'EMAIL' | 'TELEGRAM' | 'BALE';
+
+export interface SendMessageResult {
+  id: string;
+  uuid: string;
+  recipient_count: number;
+  sent: number;
+  failed: number;
+  skipped: number;
+}
+
+export const academyMessagesApi = {
+  send: (body: {
+    group_id?: string;
+    profile_ids?: string[];
+    title: string;
+    body: string;
+    channels: MessageChannel[];
+  }) =>
+    call<{ status: string; data: SendMessageResult }>('/academy-messages', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    }),
+  list: () => call<{ status: string; data: unknown[] }>('/academy-messages'),
+  get: (id: string) =>
+    call<{ status: string; data: unknown }>(`/academy-messages/${id}`)
+};
+
 // ---------- Academy plans (Mig 4) -----------------------------------------
 export type AcademyPlanKind = 'SUBSCRIPTION' | 'PACKAGE';
 

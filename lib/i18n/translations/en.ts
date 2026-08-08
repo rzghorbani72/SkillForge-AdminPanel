@@ -2568,6 +2568,24 @@ export const en = {
     privateSubRequired:
       'Private tutoring must be active on at least one course, and learning follow-up must be enabled.'
   },
+  messages: {
+    sendMessage: 'Send message',
+    sendMessageDescription: 'Send a message to the selected students.',
+    send: 'Send',
+    title: 'Title',
+    body: 'Message',
+    channels: 'Channels',
+    channelSms: 'SMS',
+    channelInApp: 'In-app',
+    channelEmail: 'Email',
+    channelTelegram: 'Telegram',
+    channelBale: 'Bale',
+    recipientCount: 'Sending to {{count}} people',
+    sentCount: 'Message sent to {{sent}} people',
+    sentWithSkipped: 'Sent to {{sent}}; {{skipped}} were unreachable',
+    messengerHint:
+      'Telegram and Bale only reach students who have started the bot.'
+  },
   users: {
     allUsers: 'All Users',
     loadUserDetailsFailed: 'Failed to load user details',

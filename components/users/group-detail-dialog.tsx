@@ -2,7 +2,15 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, GraduationCap, Loader2, Plus, Users, X } from 'lucide-react';
+import {
+  BookOpen,
+  GraduationCap,
+  Loader2,
+  Plus,
+  Send,
+  Users,
+  X
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +27,8 @@ import { UserAvatar } from './user-avatar';
 import { GroupStatCards } from './group-stat-cards';
 import { GroupGrantDialog, type GrantMode } from './group-grant-dialog';
 import { GroupAddMembersDialog } from './group-add-members-dialog';
+import { SendMessageDialog } from './send-message-dialog';
+import { Button } from '@/components/ui/button';
 
 type GroupDetailDialogProps = {
   groupId: string | null;
@@ -120,6 +130,7 @@ export function GroupDetailDialog({
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [grantMode, setGrantMode] = useState<GrantMode | null>(null);
   const [addMembersOpen, setAddMembersOpen] = useState(false);
+  const [sendMessageOpen, setSendMessageOpen] = useState(false);
 
   const load = useCallback(async (id: string) => {
     setIsLoading(true);
@@ -198,6 +209,16 @@ export function GroupDetailDialog({
                   courses={group.CourseGrants.length}
                   lessons={group.LessonGrants.length}
                 />
+
+                <Button
+                  type="button"
+                  className="w-full"
+                  disabled={group.Members.length === 0}
+                  onClick={() => setSendMessageOpen(true)}
+                >
+                  <Send className="me-2 h-4 w-4" />
+                  {t('messages.sendMessage')}
+                </Button>
 
                 <p className="text-[11.5px] text-muted-foreground">
                   {t('users.groupCreatedAt')} {formatDate(group.created_at)}
@@ -338,6 +359,12 @@ export function GroupDetailDialog({
         mode={grantMode ?? 'course'}
         onOpenChange={(open) => !open && setGrantMode(null)}
         onGranted={reloadAfterDialog}
+      />
+      <SendMessageDialog
+        open={sendMessageOpen && !!group}
+        onOpenChange={setSendMessageOpen}
+        groupId={group?.id}
+        recipientCount={group?.Members.length}
       />
       <GroupAddMembersDialog
         groupId={addMembersOpen && group ? group.id : null}
