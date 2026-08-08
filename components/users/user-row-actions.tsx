@@ -43,12 +43,13 @@ import { generateTempPassword } from '@/lib/password-utils';
 import type { User } from '@/types/api';
 
 // Mirrors the server-side scope in UsersService.update/remove/resetUserPassword —
-// a manager may only manage students/teachers in their own academy.
-const MANAGER_SCOPED_ROLES = ['STUDENT', 'TEACHER'];
+// a manager may only manage profiles BELOW their own rank. Compared by rank, not
+// by role name, so academy-defined custom roles are covered too.
+const MANAGER_HIERARCHY_LEVEL = 3;
 
 type UserRowActionsProps = {
   user: User;
-  targetRoleId?: string;
+  targetLevel?: number | null;
   callerRole?: string;
   isSelf: boolean;
   onChanged: () => void;
@@ -56,7 +57,7 @@ type UserRowActionsProps = {
 
 export function UserRowActions({
   user,
-  targetRoleId,
+  targetLevel,
   callerRole,
   isSelf,
   onChanged
@@ -70,7 +71,8 @@ export function UserRowActions({
   const canManage =
     callerRole === 'ADMIN' ||
     (callerRole === 'MANAGER' &&
-      MANAGER_SCOPED_ROLES.includes(targetRoleId ?? ''));
+      targetLevel != null &&
+      targetLevel < MANAGER_HIERARCHY_LEVEL);
 
   async function handleToggleActive() {
     setBusy(true);

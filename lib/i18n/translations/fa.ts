@@ -220,6 +220,7 @@ export const fa = {
   },
   common: {
     uploading: 'در حال بارگذاری…',
+    toman: 'تومان',
     percentValue: '{{value}}٪',
     remove: 'حذف',
     loading: 'در حال بارگذاری...',
@@ -2561,6 +2562,7 @@ export const fa = {
     voucherCreated: 'کوپن ایجاد شد: {{code}}',
     assignVoucherFailed: 'تخصیص کوپن ناموفق بود',
     allRoles: 'همه نقش‌ها',
+    filterByRole: 'فیلتر بر اساس نقش',
     allStatuses: 'همه وضعیت‌ها',
     status: {
       ACTIVE: 'فعال',
@@ -2704,7 +2706,16 @@ export const fa = {
     academy: 'آکادمی',
     userId: 'شناسه کاربر',
     created: 'ایجاد شده',
-    lastUpdated: 'آخرین به‌روزرسانی'
+    lastUpdated: 'آخرین به‌روزرسانی',
+    enrollments: 'ثبت‌نام‌ها',
+    enrollmentsDescription: 'دوره‌هایی که این کاربر در آن‌ها ثبت‌نام کرده است',
+    noEnrollments: 'هنوز در هیچ دوره‌ای ثبت‌نام نکرده است',
+    enrolledOn: 'ثبت‌نام در',
+    purchases: 'پرداخت‌ها',
+    purchasesDescription: 'سابقهٔ خرید و پرداخت این کاربر',
+    noPurchases: 'هنوز پرداختی ثبت نشده است',
+    sendEmail: 'ارسال ایمیل',
+    sendSms: 'ارسال پیامک'
   },
   userEdit: {
     title: 'ویرایش کاربر',

@@ -18,10 +18,16 @@ import { Separator } from '@/components/ui/separator';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { UserRowActions } from '@/components/users/user-row-actions';
+import { UserContactActions } from '@/components/users/user-contact-actions';
+import {
+  UserEnrollmentsCard,
+  UserPaymentsCard
+} from '@/components/users/user-activity-panel';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
+import type { UserDetailsResponse } from '@/types/user-details';
 import {
   ArrowLeft,
   Edit,
@@ -85,6 +91,7 @@ export default function UserDetailPage() {
   const userId = typeof params.id === 'string' ? params.id : '';
 
   const [user, setUser] = useState<ProfileDetail | null>(null);
+  const [details, setDetails] = useState<UserDetailsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const lastFetchedRef = useRef<string | null>(null);
 
@@ -108,6 +115,14 @@ export default function UserDetailPage() {
         return;
       }
       setUser(payload);
+
+      // Enrollments/purchases are a second, heavier call: a failure here must
+      // leave the profile card usable rather than blanking the whole page.
+      try {
+        setDetails(await apiClient.getUserDetails(userId));
+      } catch {
+        setDetails(null);
+      }
     } catch (error) {
       ErrorHandler.handleApiError(error);
       setUser(null);
@@ -159,18 +174,22 @@ export default function UserDetailPage() {
         title={t('userDetails.title')}
         description={t('userDetails.description')}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" onClick={() => router.back()}>
             <ArrowLeft className="me-2 h-4 w-4" />
             {t('common.back')}
           </Button>
+          <UserContactActions
+            email={user.email}
+            phoneNumber={user.phone_number}
+          />
           <Button onClick={() => router.push(`/user/${userId}/edit`)}>
             <Edit className="me-2 h-4 w-4" />
             {t('userDetails.editUser')}
           </Button>
           <UserRowActions
             user={user}
-            targetRoleId={roleName || undefined}
+            targetLevel={user.role_hierarchy_level}
             callerRole={authUser?.role}
             isSelf={String(authUser?.id) === String(user.id)}
             onChanged={fetchUser}
@@ -281,6 +300,11 @@ export default function UserDetailPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <UserEnrollmentsCard enrollments={details?.enrollments ?? []} />
+        <UserPaymentsCard payments={details?.purchase_history ?? []} />
       </div>
     </div>
   );

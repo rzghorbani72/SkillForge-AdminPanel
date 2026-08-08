@@ -113,11 +113,19 @@ function filterItem(
   if (!item.children?.length) return item;
 
   const children = item.children
+    .filter((child) => !child.disabled)
     .map((child) => filterItem(child, options, platformMode))
     .filter((child): child is NavItem => child !== null);
 
   if (item.requiresLearningCapability && children.length === 0) {
     return null;
+  }
+
+  // A single remaining child collapses into its parent: no submenu,
+  // the parent link itself is the default page (e.g. Users -> /users).
+  if (children.length <= 1) {
+    const { children: _omit, ...itemWithoutChildren } = item;
+    return itemWithoutChildren;
   }
 
   return { ...item, children };

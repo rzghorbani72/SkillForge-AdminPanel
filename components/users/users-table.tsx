@@ -1,11 +1,10 @@
 'use client';
 
-import { BookOpen, Mail } from 'lucide-react';
+import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { UserAvatar, toneToHsl } from './user-avatar';
+import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { UserRoleBadge, type RoleConfig } from './user-role-badge';
-import { UserRowActions } from './user-row-actions';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 
@@ -15,10 +14,6 @@ type UserRowProps = {
   roles: RoleConfig[];
   currentRoleId?: string;
   onRoleClick: () => void;
-  onCourseAccess: (user: User) => void;
-  callerRole?: string;
-  callerId?: number;
-  onChanged: () => void;
 };
 
 function UserRow({
@@ -26,11 +21,7 @@ function UserRow({
   tone,
   roles,
   currentRoleId,
-  onRoleClick,
-  onCourseAccess,
-  callerRole,
-  callerId,
-  onChanged
+  onRoleClick
 }: UserRowProps) {
   const { t } = useTranslation();
   const roleConfig = roles.find((r) => r.id === currentRoleId);
@@ -65,7 +56,10 @@ function UserRow({
       <td className="px-4 py-3">
         <UserRoleBadge role={roleLabel} tone={roleTone} onClick={onRoleClick} />
       </td>
-      <td className="px-4 py-3 font-mono text-[12px] text-muted-foreground">
+      <td
+        dir="ltr"
+        className="px-4 py-3 text-right font-mono text-[12px] text-muted-foreground"
+      >
         {user.phone_number || '—'}
       </td>
       <td className="px-4 py-3 font-mono text-[11.5px] text-muted-foreground">
@@ -79,27 +73,21 @@ function UserRow({
         />
       </td>
       <td className="px-4 py-3">
-        <div className="flex items-center justify-end gap-1">
-          <button
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted/60"
-            title={t('users.courses')}
-            onClick={() => onCourseAccess(user)}
+        {/* Two plain-text links only: everything else about this person lives on
+            the details page, so the row never needs an icon legend or a menu. */}
+        <div className="flex items-center justify-end gap-3 text-[12.5px]">
+          <Link
+            href={`/user/${user.id}`}
+            className="font-medium text-primary hover:underline"
           >
-            <BookOpen style={{ width: 14, height: 14 }} />
-          </button>
-          <button
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted/60"
-            title={t('users.sendMessage')}
+            {t('stores.details')}
+          </Link>
+          <Link
+            href={`/user/${user.id}/edit`}
+            className="font-medium text-muted-foreground hover:text-foreground hover:underline"
           >
-            <Mail style={{ width: 13, height: 13 }} />
-          </button>
-          <UserRowActions
-            user={user}
-            targetRoleId={currentRoleId}
-            callerRole={callerRole}
-            isSelf={!!callerId && String(callerId) === String(user.id)}
-            onChanged={onChanged}
-          />
+            {t('common.edit')}
+          </Link>
         </div>
       </td>
     </tr>
@@ -113,10 +101,6 @@ type UsersTableProps = {
   page: number;
   onPageChange: (page: number) => void;
   onRoleClick: () => void;
-  onCourseAccess: (user: User) => void;
-  callerRole?: string;
-  callerId?: number;
-  onChanged: () => void;
 };
 
 export function UsersTable({
@@ -125,11 +109,7 @@ export function UsersTable({
   totalCount,
   page,
   onPageChange,
-  onRoleClick,
-  onCourseAccess,
-  callerRole,
-  callerId,
-  onChanged
+  onRoleClick
 }: UsersTableProps) {
   const { t } = useTranslation();
   const totalPages = Math.ceil(totalCount / 20);
@@ -194,10 +174,6 @@ export function UsersTable({
                 roles={roles}
                 currentRoleId={getUserRoleId(u)}
                 onRoleClick={onRoleClick}
-                onCourseAccess={onCourseAccess}
-                callerRole={callerRole}
-                callerId={callerId}
-                onChanged={onChanged}
               />
             ))
           )}

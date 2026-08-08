@@ -227,6 +227,7 @@ export const en = {
   },
   common: {
     uploading: 'Uploading…',
+    toman: 'Toman',
     percentValue: '{{value}}%',
     remove: 'Remove',
     loading: 'Loading...',
@@ -2580,6 +2581,7 @@ export const en = {
     voucherCreated: 'Voucher created: {{code}}',
     assignVoucherFailed: 'Failed to assign voucher',
     allRoles: 'All roles',
+    filterByRole: 'Filter by role',
     allStatuses: 'All statuses',
     status: {
       ACTIVE: 'Active',
@@ -2723,7 +2725,16 @@ export const en = {
     academy: 'Academy',
     userId: 'User ID',
     created: 'Created',
-    lastUpdated: 'Last Updated'
+    lastUpdated: 'Last Updated',
+    enrollments: 'Enrollments',
+    enrollmentsDescription: 'Courses this user is enrolled in',
+    noEnrollments: 'Not enrolled in any course yet',
+    enrolledOn: 'Enrolled on',
+    purchases: 'Payments',
+    purchasesDescription: "This user's purchase and payment history",
+    noPurchases: 'No payments recorded yet',
+    sendEmail: 'Send email',
+    sendSms: 'Send SMS'
   },
   userEdit: {
     title: 'Edit User',

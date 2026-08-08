@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Search, Plus, Upload, ChevronDown, AlertTriangle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Plus, ChevronDown, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -16,21 +17,23 @@ import {
   type StudentGroup
 } from '@/components/users/users-groups-grid';
 import { UsersRequestsView } from '@/components/users/users-requests-view';
-import { UsersRolesGrid } from '@/components/users/users-roles-grid';
+import {
+  UsersRoleFilter,
+  ALL_ROLES
+} from '@/components/users/users-role-filter';
 import { AddUserDialog } from '@/components/users/add-user-dialog';
 import type { RoleConfig } from '@/components/users/user-role-badge';
 import type { User } from '@/types/api';
+import type { PlatformRole } from '@/types/roles';
 
 const PAGE_SIZE = 20;
 
-type TabType =
-  | 'all'
-  | 'students'
-  | 'teachers'
-  | 'managers'
-  | 'groups'
-  | 'requests'
-  | 'roles';
+/**
+ * Three tabs only. The old per-role tabs (students/teachers/managers) are gone:
+ * they could never show an academy's custom roles, so filtering by role is a
+ * dropdown over the real role list instead.
+ */
+type TabType = 'all' | 'groups' | 'requests';
 
 // System role definitions — static configuration, not mock data
 function useSystemRoles(): RoleConfig[] {
@@ -74,17 +77,9 @@ function useSystemRoles(): RoleConfig[] {
 
 // Which tabs each role may access
 const TAB_ACCESS: Record<string, TabType[]> = {
-  ADMIN: [
-    'all',
-    'students',
-    'teachers',
-    'managers',
-    'groups',
-    'requests',
-    'roles'
-  ],
-  MANAGER: ['all', 'students', 'teachers', 'groups', 'requests', 'roles'],
-  TEACHER: ['all', 'students', 'groups']
+  ADMIN: ['all', 'groups', 'requests'],
+  MANAGER: ['all', 'groups', 'requests'],
+  TEACHER: ['all', 'groups']
 };
 
 function allowedTabs(role?: string): TabType[] {
@@ -93,6 +88,7 @@ function allowedTabs(role?: string): TabType[] {
 
 export default function UsersPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { user: authUser } = useAuthUser();
   const systemRoles = useSystemRoles();
 
@@ -106,45 +102,24 @@ export default function UsersPage() {
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string>(ALL_ROLES);
+  const [availableRoles, setAvailableRoles] = useState<PlatformRole[]>([]);
   const [addUserOpen, setAddUserOpen] = useState(false);
 
-  const isUserTab =
-    tab === 'all' ||
-    tab === 'students' ||
-    tab === 'teachers' ||
-    tab === 'managers';
+  const isUserTab = tab === 'all';
 
   const fetchUsers = useCallback(async () => {
     if (!isUserTab) return;
     setLoading(true);
     try {
-      let data: any;
-
-      if (tab === 'students') {
-        data = await apiClient.getStudentUsers({
-          page,
-          limit: PAGE_SIZE,
-          search: search || undefined
-        });
-      } else if (tab === 'teachers') {
-        data = await apiClient.getTeacherUsers({
-          page,
-          limit: PAGE_SIZE,
-          search: search || undefined
-        });
-      } else if (tab === 'managers' && allowed.includes('managers')) {
-        data = await apiClient.getManagerUsers({
-          page,
-          limit: PAGE_SIZE,
-          search: search || undefined
-        });
-      } else {
-        data = await apiClient.getUsers({
-          page,
-          limit: PAGE_SIZE,
-          search: search || undefined
-        });
-      }
+      // One paginated endpoint for every case: the role dropdown just adds a
+      // filter, so custom roles page exactly like the built-in ones.
+      const data = await apiClient.getUsers({
+        page,
+        limit: PAGE_SIZE,
+        search: search || undefined,
+        role: roleFilter === ALL_ROLES ? undefined : roleFilter
+      });
 
       const list: User[] = data?.users ?? data?.profiles ?? [];
       setUsers(list);
@@ -155,7 +130,16 @@ export default function UsersPage() {
     } finally {
       setLoading(false);
     }
-  }, [tab, page, search, isUserTab]);
+  }, [page, search, roleFilter, isUserTab]);
+
+  const fetchRoles = useCallback(async () => {
+    try {
+      const result = await apiClient.getPlatformRoles();
+      setAvailableRoles(result.roles.filter((role) => role.is_active));
+    } catch {
+      // Non-critical: without it the dropdown is empty but the list still works.
+    }
+  }, []);
 
   const fetchGroups = useCallback(async () => {
     try {
@@ -197,10 +181,14 @@ export default function UsersPage() {
     fetchPendingCount();
   }, [fetchPendingCount]);
 
-  // Reset page on tab/search change
+  useEffect(() => {
+    fetchRoles();
+  }, [fetchRoles]);
+
+  // Reset page whenever the result set changes shape
   useEffect(() => {
     setPage(1);
-  }, [tab, search]);
+  }, [tab, search, roleFilter]);
 
   const teacherCount = users.filter((u) => {
     const roleName = u.profiles?.[0]?.role?.name ?? u.profiles?.[0]?.Role?.name;
@@ -216,12 +204,8 @@ export default function UsersPage() {
 
   const allTabs: { v: TabType; label: string; count?: number }[] = [
     { v: 'all', label: t('common.all'), count: totalCount },
-    { v: 'students', label: t('users.students') },
-    { v: 'teachers', label: t('users.teachers') },
-    { v: 'managers', label: t('users.managers') },
     { v: 'groups', label: t('users.groups'), count: groups.length },
-    { v: 'requests', label: t('users.requests'), count: pendingRequestsCount },
-    { v: 'roles', label: t('users.rolesTab'), count: systemRoles.length }
+    { v: 'requests', label: t('users.requests'), count: pendingRequestsCount }
   ];
   const tabs = allTabs.filter((t) => allowed.includes(t.v));
 
@@ -246,19 +230,13 @@ export default function UsersPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {tab === 'roles' ? (
-            <Button size="sm" className="gap-1.5">
-              <Plus className="h-3.5 w-3.5" /> {t('users.addRole')}
-            </Button>
-          ) : (
-            <Button
-              size="sm"
-              className="gap-1.5"
-              onClick={() => setAddUserOpen(true)}
-            >
-              <Plus className="h-3.5 w-3.5" /> {t('users.addUser')}
-            </Button>
-          )}
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setAddUserOpen(true)}
+          >
+            <Plus className="h-3.5 w-3.5" /> {t('users.addUser')}
+          </Button>
         </div>
       </div>
 
@@ -329,12 +307,11 @@ export default function UsersPage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <button
-              type="button"
-              className="flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-[12.5px] transition-colors hover:bg-muted/40"
-            >
-              {t('common.filter')}
-            </button>
+            <UsersRoleFilter
+              roles={availableRoles}
+              value={roleFilter}
+              onChange={setRoleFilter}
+            />
           </div>
         )}
       </div>
@@ -353,19 +330,12 @@ export default function UsersPage() {
               totalCount={totalCount}
               page={page}
               onPageChange={setPage}
-              onRoleClick={() => allowed.includes('roles') && setTab('roles')}
-              onCourseAccess={() => {}}
-              callerRole={authUser?.role}
-              callerId={authUser?.id}
-              onChanged={fetchUsers}
+              onRoleClick={() => router.push('/platform/roles')}
             />
           )}
           {tab === 'groups' && <UsersGroupsGrid groups={groups} />}
           {tab === 'requests' && (
             <UsersRequestsView onPendingCountChange={setPendingRequestsCount} />
-          )}
-          {tab === 'roles' && (
-            <UsersRolesGrid roles={systemRoles} onAdd={() => {}} />
           )}
         </>
       )}

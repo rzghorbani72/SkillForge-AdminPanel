@@ -32,6 +32,7 @@ import type {
   UpdateTutoringOfferPayload
 } from '@/types/learning-operations';
 import type { AccountIdentity } from '@/types/auth';
+import type { UserDetailsResponse } from '@/types/user-details';
 import type {
   CreateRolePayload,
   PermissionCatalog,
@@ -2750,7 +2751,8 @@ class ApiClient {
     search?: string;
     id?: number;
     uuid?: string;
-    role?: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
+    /** Role NAME — built-in or academy-defined (TEACHER_1, ...), never a fixed union. */
+    role?: string;
     academy_id?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
     is_active?: boolean;
@@ -2907,9 +2909,9 @@ class ApiClient {
     return response.data;
   }
 
-  async getUserDetails(id: string) {
+  async getUserDetails(id: string): Promise<UserDetailsResponse> {
     const response = await this.request(`/users/${id}/details`);
-    return response.data as any;
+    return response.data as UserDetailsResponse;
   }
 
   async updateUser(id: string, userData: unknown) {

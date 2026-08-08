@@ -57,7 +57,7 @@ export function UserDetailsSheet({
       setIsLoading(true);
       try {
         const response = await apiClient.getUserDetails(userId);
-        setDetails((response?.data ?? response) as UserDetails);
+        setDetails(response as unknown as UserDetails);
       } catch {
         toast.error(t('users.loadUserDetailsFailed'));
         setDetails(null);

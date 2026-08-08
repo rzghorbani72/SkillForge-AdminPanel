@@ -53,7 +53,11 @@ interface EditableProfileRecord {
   Role?: { name?: string } | null;
   role_name?: string | null;
   role_label?: string | null;
+  role_hierarchy_level?: number | null;
 }
+
+// Mirrors MANAGER_HIERARCHY_LEVEL in Backend/src/users/users.service.ts.
+const MANAGER_HIERARCHY_LEVEL = 3;
 
 const ADMIN_EDITABLE_ROLES: EditableRole[] = [
   'ADMIN',
@@ -100,11 +104,16 @@ export default function UserEditPage() {
       return false;
     }
 
-    const directRole = getPrimaryRoleName(targetUser);
+    // Gated by rank, not by role name, so a manager-created custom role
+    // (e.g. a "Producer" role at teacher level) is editable too — matches
+    // the backend check in UsersService.update.
     const directAcademyId = targetUser.academy_id;
+    const directHierarchyLevel = targetUser.role_hierarchy_level;
     return (
       directAcademyId === managerAcademyId &&
-      (directRole === 'STUDENT' || directRole === 'TEACHER')
+      directHierarchyLevel !== null &&
+      directHierarchyLevel !== undefined &&
+      directHierarchyLevel < MANAGER_HIERARCHY_LEVEL
     );
   }, [authUser?.role, managerAcademyId, targetUser]);
 

@@ -21,6 +21,8 @@ export interface User {
   role_name?: string;
   /** Human-readable role name; set for custom roles that have no translation key. */
   role_label?: string | null;
+  /** Rank of the role (MANAGER=3, TEACHER=2, STUDENT=1); custom roles inherit their creator-picked rank. */
+  role_hierarchy_level?: number | null;
   full_name?: string;
   created_at: string;
   updated_at: string;
@@ -57,6 +59,7 @@ export interface UserProfile {
       | 'STUDENT'
       | 'USER';
     description?: string;
+    hierarchy_level?: number | null;
   };
   /** Prisma-style casing variant */
   Role?: {
@@ -71,6 +74,7 @@ export interface UserProfile {
       | 'STUDENT'
       | 'USER';
     description?: string;
+    hierarchy_level?: number | null;
   };
   avatar?: Media;
 }
