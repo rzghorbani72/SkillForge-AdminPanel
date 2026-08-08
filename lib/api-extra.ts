@@ -22,35 +22,79 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 // ---------- Student groups (Mig 3) ----------------------------------------
+// Every id here is a cuid STRING. Typing them as `number` (as this file once
+// did) makes callers run parseInt/Number() and send NaN to the server.
+export interface StudentGroupRecord {
+  id: string;
+  name: string;
+  description: string | null;
+  is_active: boolean;
+  created_at: string;
+  _count?: { Members: number; CourseGrants: number; LessonGrants: number };
+}
+
+/** GET /student-groups/:id — the list row plus its members and grants. */
+export interface StudentGroupDetail extends StudentGroupRecord {
+  Members: {
+    id: string;
+    profile_id: string;
+    added_at: string;
+    Profile: { id: string; display_name: string | null } | null;
+  }[];
+  CourseGrants: {
+    id: string;
+    course_id: string;
+    granted_at: string;
+    Course: { id: string; title: string | null } | null;
+  }[];
+  LessonGrants: {
+    id: string;
+    lesson_id: string;
+    granted_at: string;
+    Lesson: { id: string; title: string | null } | null;
+  }[];
+}
+
 export const studentGroupsApi = {
-  list: () => call<{ status: string; data: any[] }>('/student-groups'),
-  get: (id: number) =>
-    call<{ status: string; data: any }>(`/student-groups/${id}`),
+  list: () =>
+    call<{ status: string; data: StudentGroupRecord[] }>('/student-groups'),
+  get: (id: string) =>
+    call<{ status: string; data: StudentGroupDetail }>(`/student-groups/${id}`),
   create: (body: { name: string; description?: string }) =>
-    call('/student-groups', { method: 'POST', body: JSON.stringify(body) }),
+    call<{ status: string; data: StudentGroupRecord }>('/student-groups', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    }),
   update: (
-    id: number,
+    id: string,
     body: { name?: string; description?: string; is_active?: boolean }
   ) =>
     call(`/student-groups/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(body)
     }),
-  remove: (id: number) => call(`/student-groups/${id}`, { method: 'DELETE' }),
-  addMembers: (id: number, profile_ids: number[]) =>
+  remove: (id: string) => call(`/student-groups/${id}`, { method: 'DELETE' }),
+  addMembers: (id: string, profile_ids: string[]) =>
     call(`/student-groups/${id}/members`, {
       method: 'POST',
       body: JSON.stringify({ profile_ids })
     }),
-  removeMember: (id: number, profileId: number) =>
+  removeMember: (id: string, profileId: string) =>
     call(`/student-groups/${id}/members/${profileId}`, { method: 'DELETE' }),
-  grantCourses: (id: number, course_ids: number[]) =>
+  grantCourses: (id: string, course_ids: string[]) =>
     call(`/student-groups/${id}/courses`, {
       method: 'POST',
       body: JSON.stringify({ course_ids })
     }),
-  revokeCourse: (id: number, courseId: number) =>
-    call(`/student-groups/${id}/courses/${courseId}`, { method: 'DELETE' })
+  revokeCourse: (id: string, courseId: string) =>
+    call(`/student-groups/${id}/courses/${courseId}`, { method: 'DELETE' }),
+  grantLessons: (id: string, lesson_ids: string[]) =>
+    call(`/student-groups/${id}/lessons`, {
+      method: 'POST',
+      body: JSON.stringify({ lesson_ids })
+    }),
+  revokeLesson: (id: string, lessonId: string) =>
+    call(`/student-groups/${id}/lessons/${lessonId}`, { method: 'DELETE' })
 };
 
 // ---------- Academy plans (Mig 4) -----------------------------------------

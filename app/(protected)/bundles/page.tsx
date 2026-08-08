@@ -7,19 +7,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Plus,
   Package,
-  Search,
-  X,
-  Check,
   BookOpen,
   Tag,
   Loader2,
   ToggleLeft,
   ToggleRight,
-  Pencil,
-  ChevronDown
+  Pencil
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
+import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
 import { apiClient } from '@/lib/api';
 import type { Offer } from '@/types/api';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
@@ -89,122 +86,27 @@ function CourseMultiSelect({
   t: (k: string) => string;
   formatCurrency: (n: number) => string;
 }) {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
-
-  const filtered = query
-    ? courses.filter((c) => c.title.toLowerCase().includes(query.toLowerCase()))
-    : courses;
-
   const selectedCourses = courses.filter((c) => selected.includes(c.id));
   const originalTotal = selectedCourses.reduce((s, c) => s + (c.price ?? 0), 0);
 
-  function toggle(id: string) {
-    onChange(
-      selected.includes(id)
-        ? selected.filter((x) => x !== id)
-        : [...selected, id]
-    );
-  }
-
   return (
     <div className="space-y-2">
-      {/* Trigger */}
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className={cn(
-          'flex w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm transition-colors hover:bg-muted/40',
-          open && 'ring-2 ring-primary'
-        )}
-      >
-        <span className="text-muted-foreground">
-          {selected.length === 0
-            ? t('bundles.selectCourses')
-            : t('bundles.selectedCourses') + ` (${selected.length})`}
-        </span>
-        <ChevronDown
-          className={cn(
-            'h-4 w-4 text-muted-foreground transition-transform',
-            open && 'rotate-180'
-          )}
-        />
-      </button>
+      <EntityMultiSelect
+        items={courses.map((c) => ({ id: c.id, title: c.title }))}
+        selected={selected}
+        onChange={onChange}
+        renderMeta={(item) =>
+          formatCurrency(courses.find((c) => c.id === item.id)?.price ?? 0)
+        }
+        labels={{
+          placeholder: t('bundles.selectCourses'),
+          selected: t('bundles.selectedCourses'),
+          search: t('bundles.searchCourses'),
+          empty: t('bundles.noCourses'),
+          remove: t('bundles.removeCourse')
+        }}
+      />
 
-      {/* Dropdown */}
-      {open && (
-        <div className="rounded-md border bg-popover shadow-md">
-          <div className="flex items-center gap-2 border-b px-3 py-2">
-            <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <input
-              autoFocus
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t('bundles.searchCourses')}
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-            />
-          </div>
-          <div className="max-h-52 overflow-y-auto py-1">
-            {filtered.length === 0 ? (
-              <p className="px-3 py-4 text-center text-sm text-muted-foreground">
-                {t('bundles.noCourses')}
-              </p>
-            ) : (
-              filtered.map((c) => {
-                const isChecked = selected.includes(c.id);
-                return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={() => toggle(c.id)}
-                    className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-accent"
-                  >
-                    <div
-                      className={cn(
-                        'flex h-4 w-4 shrink-0 items-center justify-center rounded border',
-                        isChecked
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-input'
-                      )}
-                    >
-                      {isChecked && <Check className="h-3 w-3" />}
-                    </div>
-                    <span className="min-w-0 flex-1 truncate">{c.title}</span>
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {formatCurrency(c.price ?? 0)}
-                    </span>
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Selected chips */}
-      {selectedCourses.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 rounded-md border bg-muted/30 p-2">
-          {selectedCourses.map((c) => (
-            <span
-              key={c.id}
-              className="flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs font-medium shadow-sm"
-            >
-              <BookOpen className="h-3 w-3 text-muted-foreground" />
-              {c.title}
-              <button
-                type="button"
-                aria-label={t('bundles.removeCourse')}
-                onClick={() => toggle(c.id)}
-                className="ms-0.5 text-muted-foreground hover:text-destructive"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Savings hint */}
       {selectedCourses.length > 0 && (
         <p className="text-xs text-muted-foreground">
           {t('bundles.originalTotal')}:{' '}

@@ -302,6 +302,7 @@ export default function UserEditPage() {
                 <Input
                   id="phone_number"
                   value={form.phone_number}
+                  dir="ltr"
                   onChange={(e) =>
                     setForm((prev) =>
                       prev ? { ...prev, phone_number: e.target.value } : prev

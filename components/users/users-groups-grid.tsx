@@ -1,19 +1,30 @@
 'use client';
 
-import { Plus, ChevronDown, MoreHorizontal } from 'lucide-react';
+import { Plus, ChevronDown, Users, BookOpen } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { UserAvatar, toneToHsl } from './user-avatar';
+import { toneToHsl } from './user-avatar';
 
 export type StudentGroup = {
-  id: number;
+  /** cuid, never numeric — parsing it with Number() yields NaN. */
+  id: string;
   name: string;
-  description?: string;
+  description?: string | null;
   is_active: boolean;
   tone?: number;
   _count?: { Members: number; CourseGrants: number };
 };
 
-export function UsersGroupsGrid({ groups }: { groups: StudentGroup[] }) {
+type UsersGroupsGridProps = {
+  groups: StudentGroup[];
+  onCreate: () => void;
+  onOpen: (groupId: string) => void;
+};
+
+export function UsersGroupsGrid({
+  groups,
+  onCreate,
+  onOpen
+}: UsersGroupsGridProps) {
   const { t } = useTranslation();
 
   return (
@@ -25,9 +36,11 @@ export function UsersGroupsGrid({ groups }: { groups: StudentGroup[] }) {
         const tone = g.tone ?? 22;
         const colors = toneToHsl(tone);
         return (
-          <div
+          <button
             key={g.id}
-            className="cursor-pointer overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-border/80"
+            type="button"
+            onClick={() => onOpen(g.id)}
+            className="overflow-hidden rounded-xl border border-border bg-card text-start transition-colors hover:border-primary/40"
           >
             <div
               style={{
@@ -35,8 +48,7 @@ export function UsersGroupsGrid({ groups }: { groups: StudentGroup[] }) {
                 background: `linear-gradient(135deg, ${colors.bg}, hsl(var(--card)))`,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative'
+                justifyContent: 'center'
               }}
             >
               <span
@@ -44,9 +56,6 @@ export function UsersGroupsGrid({ groups }: { groups: StudentGroup[] }) {
               >
                 {g.name.slice(0, 1)}
               </span>
-              <button className="absolute end-2 top-2 rounded-md bg-white/70 p-1.5 transition-colors hover:bg-white/90">
-                <MoreHorizontal style={{ width: 14, height: 14 }} />
-              </button>
             </div>
             <div className="p-4">
               <div className="mb-1 text-[15px] font-semibold">{g.name}</div>
@@ -54,30 +63,21 @@ export function UsersGroupsGrid({ groups }: { groups: StudentGroup[] }) {
                 {g.description ||
                   `${g._count?.CourseGrants ?? 0} ${t('users.courses')}`}
               </div>
+              {/* Real counts from the list endpoint — the avatar row that used
+                  to sit here rendered four hardcoded placeholders. */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  {[0, 1, 2, 3].map((i) => (
-                    <span
-                      key={i}
-                      style={{
-                        marginInlineStart: i === 0 ? 0 : -8,
-                        border: '2px solid hsl(var(--card))',
-                        borderRadius: '50%'
-                      }}
-                    >
-                      <UserAvatar
-                        name={`${i + 1}`}
-                        tone={(tone + i * 40) % 360}
-                        size={24}
-                      />
-                    </span>
-                  ))}
-                  <span className="ms-2 font-mono text-[12px] text-muted-foreground">
-                    +{(g._count?.Members ?? 0).toLocaleString('fa-IR')}
+                <div className="flex items-center gap-3 text-[12px] text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Users style={{ width: 13, height: 13 }} />
+                    {(g._count?.Members ?? 0).toLocaleString('fa-IR')}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <BookOpen style={{ width: 13, height: 13 }} />
+                    {(g._count?.CourseGrants ?? 0).toLocaleString('fa-IR')}
                   </span>
                 </div>
-                <button className="flex items-center gap-1 rounded-md px-3 py-1.5 text-[12px] text-muted-foreground transition-colors hover:bg-muted/60">
-                  {t('common.view')}{' '}
+                <span className="flex items-center gap-1 text-[12px] text-primary">
+                  {t('common.view')}
                   <ChevronDown
                     style={{
                       width: 12,
@@ -85,13 +85,17 @@ export function UsersGroupsGrid({ groups }: { groups: StudentGroup[] }) {
                       transform: 'rotate(-90deg)'
                     }}
                   />
-                </button>
+                </span>
               </div>
             </div>
-          </div>
+          </button>
         );
       })}
-      <button className="flex min-h-[200px] flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-border/70 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary">
+      <button
+        type="button"
+        onClick={onCreate}
+        className="flex min-h-[200px] flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-border/70 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+      >
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Plus style={{ width: 18, height: 18 }} />
         </span>

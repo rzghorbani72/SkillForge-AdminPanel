@@ -22,6 +22,8 @@ import {
   ALL_ROLES
 } from '@/components/users/users-role-filter';
 import { AddUserDialog } from '@/components/users/add-user-dialog';
+import { CreateGroupDialog } from '@/components/users/create-group-dialog';
+import { GroupDetailDialog } from '@/components/users/group-detail-dialog';
 import type { RoleConfig } from '@/components/users/user-role-badge';
 import type { User } from '@/types/api';
 import type { PlatformRole } from '@/types/roles';
@@ -105,6 +107,8 @@ export default function UsersPage() {
   const [roleFilter, setRoleFilter] = useState<string>(ALL_ROLES);
   const [availableRoles, setAvailableRoles] = useState<PlatformRole[]>([]);
   const [addUserOpen, setAddUserOpen] = useState(false);
+  const [createGroupOpen, setCreateGroupOpen] = useState(false);
+  const [openGroupId, setOpenGroupId] = useState<string | null>(null);
 
   const isUserTab = tab === 'all';
 
@@ -215,6 +219,16 @@ export default function UsersPage() {
         open={addUserOpen}
         onOpenChange={setAddUserOpen}
         onSuccess={fetchUsers}
+      />
+      <CreateGroupDialog
+        open={createGroupOpen}
+        onOpenChange={setCreateGroupOpen}
+        onCreated={fetchGroups}
+      />
+      <GroupDetailDialog
+        groupId={openGroupId}
+        onOpenChange={(open) => !open && setOpenGroupId(null)}
+        onChanged={fetchGroups}
       />
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
@@ -333,7 +347,13 @@ export default function UsersPage() {
               onRoleClick={() => router.push('/platform/roles')}
             />
           )}
-          {tab === 'groups' && <UsersGroupsGrid groups={groups} />}
+          {tab === 'groups' && (
+            <UsersGroupsGrid
+              groups={groups}
+              onCreate={() => setCreateGroupOpen(true)}
+              onOpen={setOpenGroupId}
+            />
+          )}
           {tab === 'requests' && (
             <UsersRequestsView onPendingCountChange={setPendingRequestsCount} />
           )}
