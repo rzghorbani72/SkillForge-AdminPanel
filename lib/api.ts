@@ -853,6 +853,10 @@ class ApiClient {
     });
   }
 
+  async markOnboardingSeen() {
+    return this.request('/auth/me/onboarding-seen', { method: 'PATCH' });
+  }
+
   // Note: These enhanced auth endpoints have been removed
   // Use the standard auth endpoints instead
   async switchProfile() {

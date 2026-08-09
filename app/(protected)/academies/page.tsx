@@ -224,10 +224,9 @@ export default function AcademiesPage() {
         }
       />
 
-      {/* Create modal — cancelling is only an option with an academy to fall back on */}
+      {/* Create modal — always cancellable: the manager opened it deliberately */}
       <AcademyCreateModal
         open={createOpen}
-        dismissible={academies.length > 0}
         onClose={() => setCreateOpen(false)}
         onSubmit={handleCreate}
         t={t}

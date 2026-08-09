@@ -16,7 +16,7 @@ export interface AcademyProfile {
   role: string;
 }
 
-interface AuthUser {
+export interface AuthUser {
   id: number;
   displayName: string;
   userDisplayName?: string | null;
@@ -39,6 +39,10 @@ interface AuthUser {
   canManagePlatform?: boolean;
   /** "resource:action" grants from the roles/permissions engine (empty for PLATFORM_OWNER — it bypasses the grid). */
   granularPermissions: string[];
+  /** True only for someone who signed up themselves (a MANAGER profile with no academy), never for an account a manager created. */
+  isSelfRegisteredManager: boolean;
+  /** True once the create-academy dialog has been shown, so it never opens a second time. */
+  onboardingSeen: boolean;
   profiles: AcademyProfile[];
   profile?: {
     role?:
@@ -146,6 +150,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         canManageAllAcademies: canManageAllAcademies,
         canManagePlatform: canManagePlatform,
         granularPermissions: granularPermissions,
+        // Defaulting both to the "nothing to show" side keeps an older API payload
+        // from popping the onboarding dialog at someone who never signed up.
+        isSelfRegisteredManager: currentUser?.isSelfRegisteredManager === true,
+        onboardingSeen: currentUser?.onboardingSeen !== false,
         profiles: rawProfiles,
         profile: {
           academy_id: academyId,

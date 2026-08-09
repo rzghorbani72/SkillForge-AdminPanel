@@ -121,8 +121,6 @@ export function useLogin() {
 
   function schedulePostLoginRedirect(response: LoginResponse) {
     const userRole = response.currentProfile?.Role?.name;
-    const hasNoAcademy =
-      !response.currentAcademy && !response.currentProfile?.academy_id;
 
     if (userRole === 'AFFILIATE') {
       scheduleRedirect({
@@ -157,19 +155,15 @@ export function useLogin() {
       userRole === 'MANAGER' ||
       userRole === 'TEACHER'
     ) {
+      // Everyone lands on the dashboard: whether an academy-less manager is
+      // invited to create one is decided there, not by the login redirect.
       const planQuery = planParam
         ? `?plan=${encodeURIComponent(planParam)}`
         : '';
       scheduleRedirect({
-        href: hasNoAcademy
-          ? `/onboarding/create-academy${planQuery}`
-          : planParam
-            ? `/plans${planQuery}`
-            : '/dashboard',
+        href: planParam ? `/plans${planQuery}` : '/dashboard',
         title: t('success.loginSuccess'),
-        message: hasNoAcademy
-          ? t('auth.redirectingToOnboarding')
-          : t('auth.redirectingToDashboard')
+        message: t('auth.redirectingToDashboard')
       });
       return;
     }

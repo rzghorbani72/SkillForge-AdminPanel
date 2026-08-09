@@ -239,11 +239,16 @@ const useDashboard = () => {
       }
     };
 
-    // Only fetch when user data is loaded
-    if (user) {
-      fetchDashboardData();
+    // Without an academy the requests carry no X-Academy-ID header and the
+    // backend rejects them all, so an academy-less user gets the empty state
+    // straight away instead of five failed calls.
+    if (!user) return;
+    if (!isAdminWithoutStore && !effectiveAcademy) {
+      setIsLoading(false);
+      return;
     }
-  }, [user, currentAcademy, isAdminWithoutStore]);
+    fetchDashboardData();
+  }, [user, currentAcademy, isAdminWithoutStore, effectiveAcademy]);
 
   // Generate monthly chart data from real payments and enrollments
   const monthlyChartData: ChartDataPoint[] = useMemo(() => {

@@ -16,6 +16,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useInitializeStores } from '@/hooks/useInitializeStores';
 import CampaignBanner from '@/components/dashboard/CampaignBanner';
 import { SubscriptionStatusCard } from '@/components/dashboard/subscription-status-card';
+import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { cn } from '@/lib/utils';
 
@@ -33,7 +34,7 @@ export default function DashboardPage() {
   const isFa = language === 'fa';
   const { user } = useAuthUser();
   const router = useRouter();
-  const { selectedAcademy, isLoading: storeLoading } = useStore();
+  const { academies, selectedAcademy, isLoading: storeLoading } = useStore();
   const [period, setPeriod] = useState<Period>('30d');
 
   useInitializeStores();
@@ -79,6 +80,19 @@ export default function DashboardPage() {
   }
 
   const activePeriod = PERIODS.find((p) => p.key === period)!;
+
+  // Nothing on this dashboard can be computed without an academy, so the
+  // onboarding surface replaces the metric grid rather than sitting above
+  // rows of zeros.
+  if (!storeLoading && !isPlatformAdmin && academies.length === 0) {
+    return (
+      <div className="dashboard-shell flex-1">
+        <div className="relative space-y-5 p-6">
+          <AcademyOnboarding />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-shell flex-1">

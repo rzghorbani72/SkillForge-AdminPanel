@@ -51,19 +51,13 @@ type AcademyCreateModalProps = {
   onClose: () => void;
   onSubmit: (data: AcademyCreateInput) => Promise<void>;
   t: (k: string) => string;
-  /**
-   * The onboarding flow has no panel behind it to go back to — a manager owning
-   * no academy must finish this form, so the dialog cannot be dismissed there.
-   */
-  dismissible?: boolean;
 };
 
 export function AcademyCreateModal({
   open,
   onClose,
   onSubmit,
-  t,
-  dismissible = true
+  t
 }: AcademyCreateModalProps) {
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState('');
@@ -149,15 +143,9 @@ export function AcademyCreateModal({
   }
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => !o && dismissible && handleClose()}
-    >
+    <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
       <DialogContent
         dir="rtl"
-        hideCloseButton={!dismissible}
-        onInteractOutside={(e) => !dismissible && e.preventDefault()}
-        onEscapeKeyDown={(e) => !dismissible && e.preventDefault()}
         className="beautiful-scrollbar max-h-[90vh] gap-5 overflow-y-auto rounded-2xl sm:max-w-[560px]"
       >
         <DialogHeader className="text-right">
@@ -293,16 +281,14 @@ export function AcademyCreateModal({
         </div>
 
         <DialogFooter className="flex-row gap-3 pt-1 sm:justify-normal sm:space-x-0">
-          {dismissible && (
-            <button
-              type="button"
-              disabled={saving}
-              onClick={handleClose}
-              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[14px] border border-border text-[15px] font-medium text-muted-foreground transition-colors hover:bg-muted disabled:opacity-60"
-            >
-              {t('stores.cancel')}
-            </button>
-          )}
+          <button
+            type="button"
+            disabled={saving}
+            onClick={handleClose}
+            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[14px] border border-border text-[15px] font-medium text-muted-foreground transition-colors hover:bg-muted disabled:opacity-60"
+          >
+            {t('stores.cancel')}
+          </button>
 
           <button
             type="button"

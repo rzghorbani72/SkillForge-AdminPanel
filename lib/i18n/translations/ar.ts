@@ -385,6 +385,16 @@ export const ar = {
     declineAndSignOut: 'أرفض وأخرج',
     decliningAndSigningOut: 'جارٍ تسجيل الخروج...'
   },
+  onboarding: {
+    bannerTitle: 'أنشئ أكاديميتك الأولى',
+    bannerDescription:
+      'تحتاج إلى أكاديمية قبل إضافة المدرّسين وإنشاء الدورات وتسجيل الطلاب.',
+    bannerAction: 'إنشاء أكاديمية',
+    noAcademyTitle: 'لم يتم ربطك بأي أكاديمية بعد',
+    noAcademyDescription:
+      'تم إنشاء حسابك بواسطة مدير أكاديمية. لن يظهر شيء هنا حتى يضيفك إلى أكاديميته.'
+  },
+
   auth: {
     login: 'تسجيل الدخول',
     register: 'التسجيل',

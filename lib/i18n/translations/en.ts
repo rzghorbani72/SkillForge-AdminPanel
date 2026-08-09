@@ -632,6 +632,16 @@ export const en = {
       ACADEMY_AGREEMENT: 'Platform–Academy Agreement'
     }
   },
+  onboarding: {
+    bannerTitle: 'Create your first academy',
+    bannerDescription:
+      'You need an academy before you can add teachers, build courses and enroll students.',
+    bannerAction: 'Create academy',
+    noAcademyTitle: 'You are not linked to an academy yet',
+    noAcademyDescription:
+      'Your account was created by an academy manager. Nothing shows here until they add you to their academy.'
+  },
+
   auth: {
     login: 'Login',
     register: 'Register',

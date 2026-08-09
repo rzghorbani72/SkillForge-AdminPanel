@@ -391,6 +391,16 @@ export const tr = {
     declineAndSignOut: 'Reddet ve çıkış yap',
     decliningAndSigningOut: 'Çıkış yapılıyor...'
   },
+  onboarding: {
+    bannerTitle: 'İlk akademinizi oluşturun',
+    bannerDescription:
+      'Öğretmen eklemek, kurs oluşturmak ve öğrenci kaydetmek için önce bir akademiye ihtiyacınız var.',
+    bannerAction: 'Akademi oluştur',
+    noAcademyTitle: 'Henüz bir akademiye bağlı değilsiniz',
+    noAcademyDescription:
+      'Hesabınız bir akademi yöneticisi tarafından oluşturuldu. Sizi akademisine ekleyene kadar burada bir şey görünmez.'
+  },
+
   auth: {
     login: 'Giriş Yap',
     register: 'Kayıt Ol',
