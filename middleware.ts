@@ -6,6 +6,12 @@ import {
   enforceApiRateLimit,
   enforceTrustedHost
 } from '@/lib/security/request-guards';
+import {
+  canOpenRoute,
+  homeRouteFor,
+  NO_HOME_ROUTE,
+  resolveSessionRole
+} from '@/lib/auth-routing';
 
 const publicRoutes = [
   '/',
@@ -29,15 +35,6 @@ const authRoutes = [
   '/register',
   '/forget-password',
   '/admin-forget-password'
-] as const;
-
-const ALLOWED_PANEL_ROLES = [
-  'PLATFORM_OWNER',
-  'ADMIN',
-  'FINANCE',
-  'SUPPORT',
-  'MANAGER',
-  'TEACHER'
 ] as const;
 
 const SKIP_AUTH_PREFIXES = [
@@ -101,14 +98,6 @@ function isAuthRoute(pathname: string): boolean {
   );
 }
 
-function getUserRole(payload: Record<string, unknown> | null): string | null {
-  if (!payload) return null;
-  const roles = payload.roles;
-  if (Array.isArray(roles) && typeof roles[0] === 'string') return roles[0];
-  if (typeof payload.role === 'string') return payload.role;
-  return null;
-}
-
 async function handlePageAuth(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
@@ -122,30 +111,34 @@ async function handlePageAuth(request: NextRequest): Promise<NextResponse> {
     decoded = result.payload;
   }
 
-  const userRole = getUserRole(decoded);
-  const panelRoles = ALLOWED_PANEL_ROLES;
+  // The JWT payload carries `roles: [name]`, the same shape the login response
+  // uses — so both sides resolve the role through one helper.
+  const userRole = resolveSessionRole(decoded);
+  // Where this session belongs. Login uses the same helper, so the two can never
+  // send the user to a route the other one bounces.
+  const home = isAuthenticated
+    ? (homeRouteFor(userRole) ?? NO_HOME_ROUTE)
+    : null;
 
+  const redirectHome = (): NextResponse => {
+    // Never redirect onto the current path — that is an infinite loop.
+    if (!home || home === pathname) return NextResponse.next();
+    return NextResponse.redirect(new URL(home, request.url));
+  };
+
+  if (isAuthenticated && (isAuthRoute(pathname) || pathname === '/')) {
+    return redirectHome();
+  }
+
+  // A role opening a page it has no business on is sent to its own home — the
+  // session cookie is never destroyed for merely visiting the wrong URL.
   if (
-    userRole &&
-    !panelRoles.includes(userRole as (typeof panelRoles)[number])
+    isAuthenticated &&
+    pathname !== NO_HOME_ROUTE &&
+    !isPublicRoute(pathname) &&
+    !canOpenRoute(userRole, pathname)
   ) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('error', 'unauthorized_role');
-    loginUrl.searchParams.set(
-      'message',
-      'You do not have permission to access the admin dashboard.'
-    );
-    const response = NextResponse.redirect(loginUrl);
-    response.cookies.delete('jwt');
-    return response;
-  }
-
-  if (isAuthenticated && isAuthRoute(pathname)) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  if (isAuthenticated && pathname === '/') {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return redirectHome();
   }
 
   if (!isAuthenticated && !isPublicRoute(pathname)) {

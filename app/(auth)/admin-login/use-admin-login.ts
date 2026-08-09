@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { authService } from '@/lib/auth';
 import { apiClient } from '@/lib/api';
 import { toEnglishDigits } from '@/lib/phone-utils';
@@ -16,6 +16,11 @@ import {
 } from '@/lib/auth-validation';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { isPlatformStaff } from '@/lib/roles';
+import {
+  homeRouteFor,
+  NO_HOME_ROUTE,
+  resolveSessionRole
+} from '@/lib/auth-routing';
 import type { AuthUser } from '@/lib/auth';
 
 type LoginMethod = 'password' | 'otp';
@@ -29,7 +34,6 @@ interface AdminLoginFields {
 
 export function useAdminLogin() {
   const { t } = useTranslation();
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -75,17 +79,20 @@ export function useAdminLogin() {
 
   const routeAfterLogin = (response: AuthUser) => {
     ErrorHandler.showSuccess('success.loginSuccess', true);
-    const authData = response as AuthUser & { role?: string };
-    const userRole =
-      authData.role ??
-      response.currentProfile?.Role?.name ??
-      response.currentProfile?.role?.name;
+    // Platform staff sign in as an AdminProfile, which carries no Role relation —
+    // reading `currentProfile.Role.name` returned undefined and bounced a valid
+    // admin session straight back to /login.
+    const userRole = resolveSessionRole(response);
+
     if (isPlatformStaff({ role: userRole })) {
       window.location.href = '/platform';
-    } else {
-      ErrorHandler.showWarning(t('auth.staffRouteOnly'));
-      router.push('/login');
+      return;
     }
+
+    // Non-staff still have a valid session: send them to their own home rather
+    // than to /login, which only loops.
+    ErrorHandler.showWarning(t('auth.staffRouteOnly'));
+    window.location.href = homeRouteFor(userRole) ?? NO_HOME_ROUTE;
   };
 
   const handlePasswordLogin = async () => {

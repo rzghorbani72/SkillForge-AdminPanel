@@ -8,18 +8,21 @@ export type PendingRedirect = {
   message: string;
 };
 
-export function useDelayedRedirect(delayMs = 2200) {
+/**
+ * Navigates as soon as a redirect is scheduled; `pending` is what the caller
+ * renders while the browser is on its way.
+ *
+ * It used to wait 2.2s on a success screen first, which left a window where a
+ * background 401 could redirect to /login and win — a successful login that
+ * ended back on the login page.
+ */
+export function useDelayedRedirect() {
   const [pending, setPending] = useState<PendingRedirect | null>(null);
 
   useEffect(() => {
     if (!pending) return;
-
-    const timer = window.setTimeout(() => {
-      window.location.href = pending.href;
-    }, delayMs);
-
-    return () => window.clearTimeout(timer);
-  }, [pending, delayMs]);
+    window.location.href = pending.href;
+  }, [pending]);
 
   return {
     pending,

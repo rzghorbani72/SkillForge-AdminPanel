@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { toE164Iran } from '@/lib/phone-utils';
 import { authService } from '@/lib/auth';
 import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
-import { ErrorHandler } from '@/lib/error-handler';
-import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
-import { isPlatformStaff } from '@/lib/roles';
+import {
+  homeRouteFor,
+  NO_HOME_ROUTE,
+  resolveSessionRole
+} from '@/lib/auth-routing';
 import {
   isUserNotRegisteredError,
   isCaptchaRequiredError
@@ -28,6 +30,8 @@ import {
 type Academy = { id: string; name: string; slug: string };
 
 type LoginResponse = {
+  /** The role the backend put in the JWT — the only one middleware agrees with. */
+  roles?: string[];
   currentProfile?: { Role?: { name?: string }; academy_id?: string };
   currentAcademy?: unknown;
   phone_verification_required?: boolean;
@@ -78,6 +82,11 @@ export function useLogin() {
   const [availableAcademies, setAvailableAcademies] = useState<Academy[]>([]);
   const [pickingAcademy, setPickingAcademy] = useState(false);
 
+  // True once the backend has created a real session, so the academy picker must
+  // switch academies instead of logging in again. A ref, not state: `finishLogin`
+  // reads it in the same tick it is set, when state would still be stale.
+  const sessionReadyRef = useRef(false);
+
   const [otpRequired, setOtpRequired] = useState(false);
   const [otpMode, setOtpMode] = useState<'verify' | 'login'>('verify');
   const [otpTempToken, setOtpTempToken] = useState('');
@@ -119,58 +128,21 @@ export function useLogin() {
     return Object.keys(e).length === 0;
   }
 
+  // Always schedules a redirect. A role we cannot place goes to /unauthorized —
+  // leaving the user on the login screen after a session was created reads as a
+  // failed login and is what stranded custom-role and platform-staff accounts.
   function schedulePostLoginRedirect(response: LoginResponse) {
-    const userRole = response.currentProfile?.Role?.name;
+    const planQuery = planParam ? `?plan=${encodeURIComponent(planParam)}` : '';
+    const role = resolveSessionRole(response);
+    const href = homeRouteFor(role, { planQuery }) ?? NO_HOME_ROUTE;
 
-    if (userRole === 'AFFILIATE') {
-      scheduleRedirect({
-        href: '/my-affiliate',
-        title: t('success.loginSuccess'),
-        message: t('auth.redirectingToAffiliate')
-      });
-      return;
-    }
-
-    if (userRole === 'STUDENT') {
-      if (isDevelopmentMode()) logDevInfo('Student → dashboard (dev)');
-      scheduleRedirect({
-        href: isDevelopmentMode() ? '/dashboard' : '/student-dashboard',
-        title: t('success.loginSuccess'),
-        message: t('auth.redirectingToDashboard')
-      });
-      return;
-    }
-
-    if (isPlatformStaff({ role: userRole })) {
-      scheduleRedirect({
-        href: '/admin-login',
-        title: t('success.loginSuccess'),
-        message: t('auth.redirectingToAdminLogin')
-      });
-      return;
-    }
-
-    if (
-      userRole === 'USER' ||
-      userRole === 'MANAGER' ||
-      userRole === 'TEACHER'
-    ) {
-      // Everyone lands on the dashboard: whether an academy-less manager is
-      // invited to create one is decided there, not by the login redirect.
-      const planQuery = planParam
-        ? `?plan=${encodeURIComponent(planParam)}`
-        : '';
-      scheduleRedirect({
-        href: planParam ? `/plans${planQuery}` : '/dashboard',
-        title: t('success.loginSuccess'),
-        message: t('auth.redirectingToDashboard')
-      });
-      return;
-    }
-
-    ErrorHandler.showWarning(
-      t('auth.panelForStaff') + ' ' + t('auth.teachersManagersAdmins')
-    );
+    scheduleRedirect({
+      href,
+      title: t('success.loginSuccess'),
+      message: href.startsWith('/my-affiliate')
+        ? t('auth.redirectingToAffiliate')
+        : t('auth.redirectingToDashboard')
+    });
   }
 
   async function requestLoginOtp() {
@@ -333,10 +305,24 @@ export function useLogin() {
   async function handleAcademySelect(academyId: string) {
     setPickingAcademy(true);
     try {
-      if (otpMode === 'login') {
-        await apiClient.switchAcademy(academyId);
+      // When a session already exists (OTP login, phone-verify gate, or a fresh
+      // password), pick the academy by switching. Logging in again would replay a
+      // password that is spent or already replaced, failing on a valid session.
+      if (sessionReadyRef.current) {
+        const switched = (await apiClient.switchAcademy(academyId)) as {
+          data?: LoginResponse & { data?: LoginResponse };
+        };
         toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
-        window.location.assign('/dashboard');
+
+        // Someone who just picked an academy is academy staff by definition, so
+        // an unreadable response falls back to the dashboard — never to
+        // /unauthorized, and never to no redirect at all.
+        const session = switched?.data?.data ?? switched?.data ?? {};
+        scheduleRedirect({
+          href: homeRouteFor(resolveSessionRole(session)) ?? '/dashboard',
+          title: t('success.loginSuccess'),
+          message: t('auth.redirectingToDashboard')
+        });
         return;
       }
 
@@ -376,6 +362,7 @@ export function useLogin() {
         // OTP login always creates the session, so a user with several academies
         // picks one by switching rather than by logging in again — there is no
         // password to replay and the OTP is spent.
+        sessionReadyRef.current = true;
         const academies = response.availableAcademies ?? [];
         if (academies.length > 1) {
           setAvailableAcademies(academies);
@@ -400,6 +387,7 @@ export function useLogin() {
         return;
       }
 
+      sessionReadyRef.current = true;
       toast.success(t('success.otpVerified'), { toastId: 'login-success' });
       scheduleRedirect({
         href: result.redirect_to ?? '/my-affiliate',
@@ -431,6 +419,9 @@ export function useLogin() {
         resetTempToken,
         newPassword
       )) as LoginResponse;
+      // The new password created a session; the one still in state is the spent
+      // one-time password and must never be replayed by the academy picker.
+      sessionReadyRef.current = true;
       setPasswordResetRequired(false);
       await finishLogin(response);
     } catch (error: unknown) {
