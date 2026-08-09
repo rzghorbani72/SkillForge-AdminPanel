@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AlertTriangle, Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -22,62 +23,68 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
-import { Loader2 } from 'lucide-react';
+import {
+  MANAGER_HIERARCHY_LEVEL,
+  useAssignableRoles
+} from '@/hooks/use-assignable-roles';
 import { User } from '@/types/api';
 
 interface ChangeUserRoleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: User | null;
-  currentRole:
-    | 'PLATFORM_OWNER'
-    | 'ADMIN'
-    | 'FINANCE'
-    | 'SUPPORT'
-    | 'MANAGER'
-    | 'TEACHER'
-    | 'STUDENT'
-    | 'USER'
-    | null;
   onSuccess?: () => void;
 }
 
+/**
+ * Gives a user any role valid in the academy — the built-in roles up to the
+ * caller's own rank plus the academy's custom roles. The list comes from the
+ * server, which scopes it to the caller's academy and rank.
+ */
 export function ChangeUserRoleDialog({
   open,
   onOpenChange,
   user,
-  currentRole,
   onSuccess
 }: ChangeUserRoleDialogProps) {
   const { t } = useTranslation();
-  const [selectedRole, setSelectedRole] = useState<'TEACHER' | 'MANAGER'>(
-    'TEACHER'
-  );
-  const [isLoading, setIsLoading] = useState(false);
+  const { roles, loading } = useAssignableRoles(open);
+  const [selectedRoleId, setSelectedRoleId] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const currentRoleName = user?.role_name ?? user?.profiles?.[0]?.role?.name;
+
+  useEffect(() => {
+    if (!open) setSelectedRoleId('');
+  }, [open]);
+
+  const selectedRole = roles.find((role) => role.id === selectedRoleId);
+  const usesSeat =
+    (selectedRole?.hierarchy_level ?? 0) >= MANAGER_HIERARCHY_LEVEL;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !selectedRole) return;
 
     try {
-      setIsLoading(true);
-      await apiClient.changeUserRole(user.id, selectedRole);
+      setIsSaving(true);
+      const result = await apiClient.assignPlatformRole(
+        selectedRole.id,
+        user.id
+      );
       ErrorHandler.showSuccess(
-        t('changeUserRole.userRoleChangedSuccess', { role: selectedRole })
+        t(result.changed ? 'roles.roleAssigned' : 'roles.roleAlreadyAssigned')
       );
       onOpenChange(false);
       onSuccess?.();
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
   if (!user) return null;
-
-  const userProfile = user.profiles?.[0];
-  const isStudent = userProfile?.role?.name === 'STUDENT';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -85,9 +92,7 @@ export function ChangeUserRoleDialog({
         <DialogHeader>
           <DialogTitle>{t('changeUserRole.title')}</DialogTitle>
           <DialogDescription>
-            {isStudent
-              ? t('changeUserRole.description')
-              : t('changeUserRole.onlyStudentsCanChange')}
+            {t('changeUserRole.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -95,39 +100,41 @@ export function ChangeUserRoleDialog({
           <div className="space-y-2">
             <Label>{t('changeUserRole.currentRole')}</Label>
             <div className="text-sm text-muted-foreground">
-              {getRoleLabel(userProfile?.role?.name, t)}
+              {user.role_label || getRoleLabel(currentRoleName, t)}
             </div>
           </div>
 
-          {isStudent && (
-            <div className="space-y-2">
-              <Label htmlFor="role">{t('changeUserRole.newRole')} *</Label>
-              <Select
-                value={selectedRole}
-                onValueChange={(value) =>
-                  setSelectedRole(value as 'TEACHER' | 'MANAGER')
-                }
-                disabled={isLoading}
-              >
-                <SelectTrigger id="role">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="TEACHER">
-                    {t('changeUserRole.teacher')}
+          <div className="space-y-2">
+            <Label htmlFor="role">{t('changeUserRole.newRole')} *</Label>
+            <Select
+              value={selectedRoleId}
+              onValueChange={setSelectedRoleId}
+              disabled={isSaving || loading}
+            >
+              <SelectTrigger id="role">
+                <SelectValue
+                  placeholder={
+                    loading
+                      ? t('common.loading')
+                      : t('changeUserRole.selectRole')
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {roles.map((role) => (
+                  <SelectItem key={role.id} value={role.id}>
+                    {role.label}
                   </SelectItem>
-                  <SelectItem value="MANAGER">
-                    {t('changeUserRole.manager')}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          {!isStudent && (
-            <div className="text-sm text-muted-foreground">
-              {t('changeUserRole.onlyStudentsCanChange')}
-            </div>
+          {usesSeat && (
+            <p className="flex items-start gap-2 rounded-md bg-muted p-3 text-xs text-muted-foreground">
+              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              {t('roles.assignSeatWarning')}
+            </p>
           )}
 
           <DialogFooter>
@@ -135,12 +142,12 @@ export function ChangeUserRoleDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isLoading}
+              disabled={isSaving}
             >
               {t('common.cancel')}
             </Button>
-            <Button type="submit" disabled={isLoading || !isStudent}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={isSaving || !selectedRole}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t('changeUserRole.changeRole')}
             </Button>
           </DialogFooter>

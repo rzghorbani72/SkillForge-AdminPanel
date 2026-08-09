@@ -36,6 +36,17 @@ interface PaginationInfo {
 
 const PAGE_SIZE = 20;
 
+/**
+ * Rank of the roles allowed to hand out roles, mirroring `hierarchy_level` in
+ * Backend/src/roles/permission-catalog.ts. FINANCE/SUPPORT are absent on
+ * purpose: they sit above a manager but hold no `roles:write` grant.
+ */
+const ACTOR_RANK: Record<string, number> = {
+  PLATFORM_OWNER: 6,
+  ADMIN: 5,
+  MANAGER: 3
+};
+
 interface UsersPageContentProps {
   category: UserCategory;
 }
@@ -124,7 +135,24 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
     setIsInitialized(true);
   }, [categoryConfig.roleLocked, searchParams]);
 
-  const canChangeRole = authUser?.role === 'MANAGER' && category === 'students';
+  // Mirrors the server rule: a role may only be changed on someone ranked below
+  // the caller, so a manager never touches a peer manager (or themselves).
+  const canChangeRole = useCallback(
+    (user: User) => {
+      const actorLevel = ACTOR_RANK[authUser?.role ?? ''];
+      const targetLevel = user.role_hierarchy_level;
+      if (
+        actorLevel === undefined ||
+        targetLevel === null ||
+        targetLevel === undefined
+      ) {
+        return false;
+      }
+      return targetLevel < actorLevel;
+    },
+    [authUser?.role]
+  );
+
   const canManageUser =
     authUser?.role === 'ADMIN' || authUser?.role === 'MANAGER';
 
@@ -252,6 +280,16 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
                   >
                     {t('common.edit')}
                   </Button>
+                  {canChangeRole(user) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 rounded-lg"
+                      onClick={() => setRoleChangeUser(user)}
+                    >
+                      {t('changeUserRole.changeRole')}
+                    </Button>
+                  )}
                 </>
               }
             />
@@ -276,7 +314,6 @@ export function UsersPageContent({ category }: UsersPageContentProps) {
         open={!!roleChangeUser}
         onOpenChange={(open) => !open && setRoleChangeUser(null)}
         user={roleChangeUser}
-        currentRole={authUser?.role || null}
         onSuccess={fetchUsers}
       />
 

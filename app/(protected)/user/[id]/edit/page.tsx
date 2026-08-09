@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { useAssignableRoles } from '@/hooks/use-assignable-roles';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -29,8 +30,6 @@ import {
 } from '@/components/ui/select';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
-
-type EditableRole = 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER';
 
 interface UserEditFormState {
   display_name: string;
@@ -58,15 +57,6 @@ interface EditableProfileRecord {
 
 // Mirrors MANAGER_HIERARCHY_LEVEL in Backend/src/users/users.service.ts.
 const MANAGER_HIERARCHY_LEVEL = 3;
-
-const ADMIN_EDITABLE_ROLES: EditableRole[] = [
-  'ADMIN',
-  'MANAGER',
-  'TEACHER',
-  'STUDENT',
-  'USER'
-];
-const MANAGER_EDITABLE_ROLES: EditableRole[] = ['TEACHER', 'STUDENT'];
 
 /** /profiles/:id returns role_name flat; the list endpoints nest it. */
 function getPrimaryRoleName(user: EditableProfileRecord | null): string {
@@ -121,14 +111,24 @@ export default function UserEditPage() {
     authUser?.role === 'ADMIN' ||
     (authUser?.role === 'MANAGER' && canManagerEditDirectProfile);
 
-  const baseRoles =
-    authUser?.role === 'ADMIN' ? ADMIN_EDITABLE_ROLES : MANAGER_EDITABLE_ROLES;
-  // A custom role is not in the built-in list, so add it or the select renders empty.
-  const editableRoles: string[] = baseRoles.includes(
-    currentRole as EditableRole
-  )
-    ? [...baseRoles]
-    : [currentRole, ...baseRoles];
+  const { roles: assignableRoles } = useAssignableRoles(canEdit);
+
+  // The current role can sit outside the assignable list (a peer manager seen by
+  // an admin), so it is added back or the select would render empty.
+  const roleOptions = useMemo(() => {
+    if (assignableRoles.some((role) => role.name === currentRole)) {
+      return assignableRoles;
+    }
+    return [
+      {
+        id: currentRole,
+        name: currentRole,
+        label: targetUser?.role_label || getRoleLabel(currentRole, t),
+        hierarchy_level: targetUser?.role_hierarchy_level ?? 0
+      },
+      ...assignableRoles
+    ];
+  }, [assignableRoles, currentRole, targetUser, t]);
 
   useEffect(() => {
     if (!userId || fetchedUserIdRef.current === userId) {
@@ -180,11 +180,9 @@ export default function UserEditPage() {
         is_active: form.is_active
       });
 
-      if (form.role !== currentRole) {
-        await apiClient.changeUserRole(
-          targetUser.id,
-          form.role as EditableRole
-        );
+      const nextRole = assignableRoles.find((role) => role.name === form.role);
+      if (nextRole && form.role !== currentRole) {
+        await apiClient.assignPlatformRole(nextRole.id, targetUser.id);
       }
 
       toast.success(t('success.updated'));
@@ -269,13 +267,9 @@ export default function UserEditPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {editableRoles.map((role) => (
-                      <SelectItem key={role} value={role}>
-                        {role === currentRole && targetUser?.role_label
-                          ? getRoleLabel(role, t) === role
-                            ? targetUser.role_label
-                            : getRoleLabel(role, t)
-                          : getRoleLabel(role, t)}
+                    {roleOptions.map((role) => (
+                      <SelectItem key={role.id} value={role.name}>
+                        {role.label}
                       </SelectItem>
                     ))}
                   </SelectContent>

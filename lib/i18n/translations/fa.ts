@@ -2879,15 +2879,12 @@ export const fa = {
   },
   changeUserRole: {
     title: 'تغییر نقش کاربر',
-    description: 'نقش این دانشجو را به معلم یا مدیر تغییر دهید.',
-    onlyStudentsCanChange: 'فقط دانشجویان می‌توانند نقش خود را تغییر دهند.',
+    description: 'یکی از نقش‌های آکادمی را به این کاربر بدهید.',
     currentRole: 'نقش فعلی',
     newRole: 'نقش جدید',
+    selectRole: 'انتخاب نقش',
     noRole: 'بدون نقش',
-    changeRole: 'تغییر نقش',
-    userRoleChangedSuccess: 'نقش کاربر با موفقیت به {{role}} تغییر یافت',
-    teacher: 'معلم',
-    manager: 'مدیر'
+    changeRole: 'تغییر نقش'
   },
   teacherRequests: {
     title: 'درخواست‌های معلم',

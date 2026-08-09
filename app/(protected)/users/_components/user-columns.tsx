@@ -17,7 +17,7 @@ import type { User } from '@/types/api';
 interface BuildUserColumnsArgs {
   t: (key: string, params?: InterpolationParams) => string;
   formatNumber: (value: number) => string;
-  canChangeRole: boolean;
+  canChangeRole: (user: User) => boolean;
   onView: (user: User) => void;
   onEdit: (user: User) => void;
   onRoleChange: (user: User) => void;
@@ -105,7 +105,7 @@ export function buildUserColumns({
           >
             <Pencil className="h-3.5 w-3.5" />
           </Button>
-          {canChangeRole && (
+          {canChangeRole(user) && (
             <Button
               variant="ghost"
               size="icon"

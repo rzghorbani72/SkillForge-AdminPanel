@@ -3011,17 +3011,6 @@ class ApiClient {
     return response.data as any;
   }
 
-  async changeUserRole(
-    id: string,
-    role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT' | 'USER'
-  ) {
-    const response = await this.request(`/users/${id}/role`, {
-      method: 'PATCH',
-      body: JSON.stringify({ role })
-    });
-    return response.data as any;
-  }
-
   async resetUserPassword(id: string, newPassword: string) {
     const response = await this.request(`/users/${id}/reset-password`, {
       method: 'POST',

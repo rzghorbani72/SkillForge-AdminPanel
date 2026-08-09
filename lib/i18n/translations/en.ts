@@ -2895,15 +2895,12 @@ export const en = {
   },
   changeUserRole: {
     title: 'Change User Role',
-    description: "Change this student's role to teacher or manager.",
-    onlyStudentsCanChange: 'Only students can have their roles changed.',
+    description: 'Give this user any role available in the academy.',
     currentRole: 'Current Role',
     newRole: 'New Role',
+    selectRole: 'Select a role',
     noRole: 'No role',
-    changeRole: 'Change Role',
-    userRoleChangedSuccess: 'User role changed to {{role}} successfully',
-    teacher: 'Teacher',
-    manager: 'Manager'
+    changeRole: 'Change Role'
   },
   teacherRequests: {
     title: 'Teacher Requests',

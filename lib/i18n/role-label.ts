@@ -17,3 +17,15 @@ export function getRoleLabel(
   const label = t(key);
   return label === key ? roleName : label;
 }
+
+/**
+ * Same rule for a loaded role record: a built-in role is translated by name, a
+ * custom role shows the label its creator typed.
+ */
+export function getRoleDisplayLabel(
+  role: { name: string; label?: string | null },
+  t: TranslateFn
+) {
+  const translated = getRoleLabel(role.name, t);
+  return translated === role.name ? role.label || role.name : translated;
+}

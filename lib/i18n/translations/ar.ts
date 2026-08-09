@@ -1643,15 +1643,12 @@ export const ar = {
   },
   changeUserRole: {
     title: 'تغيير دور المستخدم',
-    description: 'تغيير دور هذا الطالب إلى معلم أو مدير.',
-    onlyStudentsCanChange: 'يمكن فقط للطلاب تغيير أدوارهم.',
+    description: 'امنح هذا المستخدم أي دور متاح في الأكاديمية.',
     currentRole: 'الدور الحالي',
     newRole: 'الدور الجديد',
+    selectRole: 'اختر دورًا',
     noRole: 'بدون دور',
-    changeRole: 'تغيير الدور',
-    userRoleChangedSuccess: 'تم تغيير دور المستخدم بنجاح إلى {{role}}',
-    teacher: 'معلم',
-    manager: 'مدير'
+    changeRole: 'تغيير الدور'
   },
   teacherRequests: {
     title: 'طلبات المعلمين',

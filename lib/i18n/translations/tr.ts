@@ -1683,17 +1683,12 @@ export const tr = {
   },
   changeUserRole: {
     title: 'Kullanıcı Rolünü Değiştir',
-    description:
-      'Bu öğrencinin rolünü öğretmen veya yönetici olarak değiştirin.',
-    onlyStudentsCanChange: 'Sadece öğrenciler rollerini değiştirebilir.',
+    description: 'Bu kullanıcıya akademideki herhangi bir rolü verin.',
     currentRole: 'Mevcut Rol',
     newRole: 'Yeni Rol',
+    selectRole: 'Bir rol seçin',
     noRole: 'Rol yok',
-    changeRole: 'Rolü Değiştir',
-    userRoleChangedSuccess:
-      'Kullanıcı rolü başarıyla {{role}} olarak değiştirildi',
-    teacher: 'Öğretmen',
-    manager: 'Yönetici'
+    changeRole: 'Rolü Değiştir'
   },
   teacherRequests: {
     title: 'Öğretmen Talepleri',
