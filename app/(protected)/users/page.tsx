@@ -25,6 +25,7 @@ import { AddUserDialog } from '@/components/users/add-user-dialog';
 import { CreateGroupDialog } from '@/components/users/create-group-dialog';
 import { GroupDetailDialog } from '@/components/users/group-detail-dialog';
 import type { RoleConfig } from '@/components/users/user-role-badge';
+import { useUserStats } from './_components/use-user-stats';
 import type { User } from '@/types/api';
 import type { PlatformRole } from '@/types/roles';
 
@@ -101,7 +102,8 @@ export default function UsersPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
   const [groups, setGroups] = useState<StudentGroup[]>([]);
-  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
+  const { stats: userStats, refresh: refreshStats } = useUserStats();
+  const pendingRequestsCount = userStats.pendingRequests;
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>(ALL_ROLES);
@@ -160,19 +162,6 @@ export default function UsersPage() {
     }
   }, []);
 
-  // Fetch pending requests count for badge
-  const fetchPendingCount = useCallback(async () => {
-    try {
-      const data = await apiClient.getTeacherRequests({
-        status: 'PENDING',
-        limit: 1
-      });
-      setPendingRequestsCount((data as any)?.pagination?.total ?? 0);
-    } catch {
-      // non-critical, ignore
-    }
-  }, []);
-
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
@@ -180,10 +169,6 @@ export default function UsersPage() {
   useEffect(() => {
     if (tab === 'groups') fetchGroups();
   }, [tab, fetchGroups]);
-
-  useEffect(() => {
-    fetchPendingCount();
-  }, [fetchPendingCount]);
 
   useEffect(() => {
     fetchRoles();
@@ -194,16 +179,14 @@ export default function UsersPage() {
     setPage(1);
   }, [tab, search, roleFilter]);
 
-  const teacherCount = users.filter((u) => {
-    const roleName = u.profiles?.[0]?.role?.name ?? u.profiles?.[0]?.Role?.name;
-    return roleName === 'TEACHER';
-  }).length;
-
+  // Every number here is a server-side total for its own filter — see
+  // useUserStats. Deriving them from the loaded page counted one page of
+  // teachers as "all teachers", and invented the active figure outright.
   const stats = [
-    { labelKey: 'users.totalUsers', value: totalCount },
-    { labelKey: 'users.activeThisWeek', value: Math.round(totalCount * 0.7) },
-    { labelKey: 'users.teachers', value: teacherCount },
-    { labelKey: 'users.pendingApproval', value: pendingRequestsCount }
+    { labelKey: 'users.totalUsers', value: userStats.total },
+    { labelKey: 'users.activeUsers', value: userStats.active },
+    { labelKey: 'users.teachers', value: userStats.teachers },
+    { labelKey: 'users.pendingApproval', value: userStats.pendingRequests }
   ];
 
   const allTabs: { v: TabType; label: string; count?: number }[] = [
@@ -218,7 +201,10 @@ export default function UsersPage() {
       <AddUserDialog
         open={addUserOpen}
         onOpenChange={setAddUserOpen}
-        onSuccess={fetchUsers}
+        onSuccess={() => {
+          fetchUsers();
+          refreshStats();
+        }}
       />
       <CreateGroupDialog
         open={createGroupOpen}
@@ -355,7 +341,7 @@ export default function UsersPage() {
             />
           )}
           {tab === 'requests' && (
-            <UsersRequestsView onPendingCountChange={setPendingRequestsCount} />
+            <UsersRequestsView onPendingCountChange={refreshStats} />
           )}
         </>
       )}

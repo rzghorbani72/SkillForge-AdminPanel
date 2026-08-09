@@ -2746,7 +2746,8 @@ export const en = {
     addMembersDescription: 'Add academy users to this group.',
     membersAdded: 'Members added successfully',
     sendMessage: 'Send Message',
-    activeThisWeek: 'Active This Week',
+    you: 'You',
+    activeUsers: 'Active Users',
     pendingApproval: 'Pending Approval',
     pendingBannerTitle: '{{count}} teacher approval request(s) awaiting review',
     pendingBannerDesc:

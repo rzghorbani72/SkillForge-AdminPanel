@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { UserRoleBadge, type RoleConfig } from './user-role-badge';
@@ -13,6 +14,7 @@ type UserRowProps = {
   tone: number;
   roles: RoleConfig[];
   currentRoleId?: string;
+  isSelf: boolean;
   onRoleClick: () => void;
 };
 
@@ -21,6 +23,7 @@ function UserRow({
   tone,
   roles,
   currentRoleId,
+  isSelf,
   onRoleClick
 }: UserRowProps) {
   const { t } = useTranslation();
@@ -38,14 +41,16 @@ function UserRow({
   return (
     <tr className="border-b border-border/50 transition-colors hover:bg-muted/30">
       <td className="px-4 py-3">
-        <input type="checkbox" className="rounded border-border" />
-      </td>
-      <td className="px-4 py-3">
         <div className="flex items-center gap-2.5">
           <UserAvatar name={displayName} tone={roleTone} size={32} />
           <div>
-            <div className="text-[13.5px] font-semibold leading-tight">
+            <div className="flex items-center gap-1.5 text-[13.5px] font-semibold leading-tight">
               {displayName || t('users.userWithId', { id: user.id })}
+              {isSelf && (
+                <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                  {t('users.you')}
+                </span>
+              )}
             </div>
             <div className="text-[11.5px] text-muted-foreground">
               {user.email || '—'}
@@ -112,6 +117,9 @@ export function UsersTable({
   onRoleClick
 }: UsersTableProps) {
   const { t } = useTranslation();
+  const { user: authUser } = useAuthUser();
+  // Profile ids are cuids; authUser.id is typed as a number but holds one.
+  const selfId = String(authUser?.id ?? '');
   const totalPages = Math.ceil(totalCount / 20);
 
   // The list endpoints disagree on shape: /users returns a flat role_name,
@@ -134,9 +142,6 @@ export function UsersTable({
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-border bg-muted/50">
-            <th className="w-8 px-4 py-3 text-start">
-              <input type="checkbox" className="rounded border-border" />
-            </th>
             <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
               {t('common.name')}
             </th>
@@ -159,7 +164,7 @@ export function UsersTable({
           {users.length === 0 ? (
             <tr>
               <td
-                colSpan={7}
+                colSpan={6}
                 className="py-12 text-center text-sm text-muted-foreground"
               >
                 {t('users.noUsersFound')}
@@ -173,6 +178,7 @@ export function UsersTable({
                 tone={getUserTone(u, i)}
                 roles={roles}
                 currentRoleId={getUserRoleId(u)}
+                isSelf={String(u.id) === selfId}
                 onRoleClick={onRoleClick}
               />
             ))

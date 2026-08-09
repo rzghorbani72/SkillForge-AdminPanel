@@ -2727,7 +2727,8 @@ export const fa = {
     addMembersDescription: 'کاربران آکادمی را به این گروه اضافه کنید.',
     membersAdded: 'اعضا با موفقیت اضافه شدند',
     sendMessage: 'ارسال پیام',
-    activeThisWeek: 'فعال این هفته',
+    you: 'شما',
+    activeUsers: 'کاربران فعال',
     pendingApproval: 'در انتظار تأیید',
     pendingBannerTitle: '{{count}} درخواست تأیید مدرسی در انتظار بررسی',
     pendingBannerDesc:

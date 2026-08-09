@@ -2830,7 +2830,11 @@ class ApiClient {
 
   /** Rename yourself. `updateUser` cannot do this: it only reaches profiles
    *  below the caller's own rank, so it never matches the caller. */
-  async updateMe(data: { full_name: string }) {
+  async updateMe(data: {
+    full_name?: string;
+    email?: string;
+    phone_number?: string;
+  }) {
     return this.request('/users/me', {
       method: 'PATCH',
       body: JSON.stringify(data)

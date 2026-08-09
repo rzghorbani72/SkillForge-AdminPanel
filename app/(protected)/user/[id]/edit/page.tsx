@@ -107,7 +107,13 @@ export default function UserEditPage() {
     );
   }, [authUser?.role, managerAcademyId, targetUser]);
 
+  // Your own record is always yours to edit. The rank rules govern managing
+  // OTHER people, and they used to lock a manager out of their own profile.
+  // authUser.id is a cuid at runtime, so compare as strings.
+  const isSelf = String(authUser?.id ?? '') === userId;
+
   const canEdit =
+    isSelf ||
     authUser?.role === 'ADMIN' ||
     (authUser?.role === 'MANAGER' && canManagerEditDirectProfile);
 
@@ -175,13 +181,15 @@ export default function UserEditPage() {
 
       await apiClient.updateUser(targetUser.id, {
         display_name: form.display_name.trim(),
-        email: form.email.trim() || null,
+        email: form.email.trim() || undefined,
         phone_number: form.phone_number.trim(),
-        is_active: form.is_active
+        // Changing your own status or role is a lockout / privilege change, so
+        // it is never sent — the backend rejects it too.
+        ...(isSelf ? {} : { is_active: form.is_active })
       });
 
       const nextRole = assignableRoles.find((role) => role.name === form.role);
-      if (nextRole && form.role !== currentRole) {
+      if (!isSelf && nextRole && form.role !== currentRole) {
         await apiClient.assignPlatformRole(nextRole.id, targetUser.id);
       }
 
@@ -261,7 +269,7 @@ export default function UserEditPage() {
                   onValueChange={(value) =>
                     setForm((prev) => (prev ? { ...prev, role: value } : prev))
                   }
-                  disabled={isSaving}
+                  disabled={isSaving || isSelf}
                 >
                   <SelectTrigger id="role">
                     <SelectValue />
@@ -316,7 +324,7 @@ export default function UserEditPage() {
                         prev ? { ...prev, is_active: checked } : prev
                       )
                     }
-                    disabled={isSaving}
+                    disabled={isSaving || isSelf}
                   />
                   <span className="text-sm">
                     {form.is_active ? t('common.active') : t('common.inactive')}
