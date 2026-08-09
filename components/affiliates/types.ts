@@ -22,10 +22,14 @@ export type Affiliate = {
 };
 
 export const addAffiliateSchema = z.object({
-  affiliate_name: z.string().min(2, 'Name required'),
-  phone: z.string().min(7, 'Phone required'),
+  affiliate_name: z.string().min(2, 'validation.nameRequired'),
+  phone: z.string().min(7, 'validation.phoneRequired'),
   code: z.string().optional(),
-  password: z.string().min(6, 'Min 6 characters').optional().or(z.literal('')),
+  password: z
+    .string()
+    .min(6, 'validation.passwordMin6')
+    .optional()
+    .or(z.literal('')),
   commission_pct: z.coerce.number().min(1).max(100)
 });
 

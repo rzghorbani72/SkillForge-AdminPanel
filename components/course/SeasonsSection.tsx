@@ -30,7 +30,7 @@ interface SeasonsSectionProps {
   onClearSeason: (key: string) => void;
   onUpdateSeason: (
     key: string,
-    patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>
+    patch: Partial<Pick<SeasonDraft, 'title'>>
   ) => void;
   onReorderSeasons: (from: number, to: number) => void;
   onAddLesson: (seasonClientKey: string, title: string) => void;

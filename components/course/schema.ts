@@ -1,14 +1,19 @@
 import * as z from 'zod';
 
+// Single source of truth for the limits shown in the counter, enforced by the
+// schema and validated again by the backend DTOs — they must never drift.
+export const COURSE_TITLE_MAX = 80;
+export const COURSE_DESCRIPTION_MAX = 4000;
+
 export const courseFormSchema = z.object({
   title: z
     .string()
     .min(5, 'courses.errors.titleMin')
-    .max(80, 'courses.errors.titleMax'),
+    .max(COURSE_TITLE_MAX, 'courses.errors.titleMax'),
   description: z
     .string()
     .min(1, 'courses.errors.descriptionRequired')
-    .max(400, 'courses.errors.descriptionMax'),
+    .max(COURSE_DESCRIPTION_MAX, 'courses.errors.descriptionMax'),
   primary_price: z
     .string()
     .min(1, 'courses.errors.primaryPriceRequired')

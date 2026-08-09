@@ -10,9 +10,13 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { UseFormReturn } from 'react-hook-form';
-import { CourseFormData } from './schema';
+import {
+  COURSE_DESCRIPTION_MAX,
+  COURSE_TITLE_MAX,
+  CourseFormData
+} from './schema';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
@@ -41,10 +45,11 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
               </FormControl>
               <FormMessage />
               <p
-                className={`text-sm ${(field.value?.length || 0) >= 70 ? 'text-orange-600' : 'text-muted-foreground'}`}
+                className={`text-sm ${(field.value?.length || 0) >= COURSE_TITLE_MAX - 10 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
                 {t('courses.titleLength')} (
-                {formatNumber(field.value?.length || 0)}/{formatNumber(80)})
+                {formatNumber(field.value?.length || 0)}/
+                {formatNumber(COURSE_TITLE_MAX)})
               </p>
             </FormItem>
           )}
@@ -57,19 +62,15 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
             <FormItem>
               <FormLabel>{t('courses.description')} *</FormLabel>
               <FormControl>
-                <Textarea
+                <MarkdownEditor
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
                   placeholder={t('courses.enterDescription')}
-                  {...field}
-                  rows={4}
+                  maxLength={COURSE_DESCRIPTION_MAX}
                 />
               </FormControl>
               <FormMessage />
-              <p
-                className={`text-sm ${(field.value?.length || 0) >= 350 ? 'text-orange-600' : 'text-muted-foreground'}`}
-              >
-                {t('courses.descriptionLength')} (
-                {formatNumber(field.value?.length || 0)}/{formatNumber(400)})
-              </p>
             </FormItem>
           )}
         />

@@ -41,6 +41,11 @@ import type {
   UpdateRolePayload
 } from '@/types/roles';
 
+import {
+  uploadFileParts,
+  type DirectUploadTicket
+} from '@/lib/uploads/video-direct-upload';
+
 export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
@@ -315,6 +320,42 @@ class ApiClient {
     );
   }
 
+  /**
+   * Cookie-auth needs two extra headers on every state-changing browser call:
+   * the CSRF token (double-submit) and the selected academy id. They are built
+   * here so `fetch` calls and XHR uploads cannot drift apart — a missing CSRF
+   * header on an upload is rejected before the body is read, which the browser
+   * surfaces as ERR_CONNECTION_RESET instead of 403.
+   */
+  private browserContextHeaders(
+    endpoint: string,
+    method: string
+  ): Record<string, string> {
+    if (typeof window === 'undefined') return {};
+
+    const headers: Record<string, string> = {};
+
+    if (!['GET', 'HEAD'].includes(method.toUpperCase())) {
+      const csrfToken = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('csrf-token='))
+        ?.split('=')[1];
+      if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+    }
+
+    if (this.isAuthFlowEndpoint(endpoint)) return headers;
+
+    const academyId = window.localStorage.getItem(
+      'skillforge_selected_academy_id'
+    );
+    const hasSelectedAcademy =
+      !!academyId && academyId !== 'null' && academyId !== '';
+    // Platform mode (admin with no academy selected) clears the id, so an
+    // absent selection means "do not scope this request to an academy".
+    if (hasSelectedAcademy) headers['X-Academy-ID'] = academyId;
+    return headers;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
@@ -341,65 +382,12 @@ class ApiClient {
     // SECURITY: JWT is automatically sent via HttpOnly cookie with credentials: 'include'
     // No need to manually add Authorization header for cookie-based auth
 
-    // Add CSRF token for state-changing requests (POST, PUT, PATCH, DELETE)
-    if (
-      typeof window !== 'undefined' &&
-      options.method &&
-      !['GET', 'HEAD'].includes(options.method)
-    ) {
-      const csrfToken = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('csrf-token='))
-        ?.split('=')[1];
-
-      if (csrfToken && !headersObj['X-CSRF-Token']) {
-        headersObj['X-CSRF-Token'] = csrfToken;
-      }
-    }
-
     const isAuthFlowEndpoint = this.isAuthFlowEndpoint(endpoint);
 
-    // Add store ID header if available (from localStorage - non-sensitive context data)
-    // But don't add it for admins without stores or auth flows (login/register use profile pick)
-    if (typeof window !== 'undefined' && !isAuthFlowEndpoint) {
-      // Use the same key as store-utils.ts
-      const academyId = window.localStorage.getItem(
-        'skillforge_selected_academy_id'
-      );
-      const hasSelectedAcademy =
-        !!academyId && academyId !== 'null' && academyId !== '';
-
-      // Admin without a store: suppress the header only in Platform mode (no
-      // academy selected). An explicit selection (Academy mode) must scope
-      // requests via X-Academy-ID — entering Platform mode clears that id.
-      let shouldAddStoreHeader = true;
-      try {
-        const userStateStr = window.localStorage.getItem('user_state');
-        if (userStateStr) {
-          const userState = JSON.parse(userStateStr);
-          if (
-            userState?.role === 'ADMIN' &&
-            !hasSelectedAcademy &&
-            (userState?.academy_id === null ||
-              userState?.academy_id === undefined)
-          ) {
-            shouldAddStoreHeader = false;
-          }
-        }
-      } catch (e) {
-        // If parsing fails, continue with default behavior
-      }
-
-      if (
-        shouldAddStoreHeader &&
-        hasSelectedAcademy &&
-        !headersObj['X-Academy-ID']
-      ) {
-        headersObj['X-Academy-ID'] = academyId as string;
-      }
-    }
-
-    const headers: HeadersInit = headersObj;
+    const headers: HeadersInit = {
+      ...this.browserContextHeaders(endpoint, options.method ?? 'GET'),
+      ...headersObj
+    };
 
     const config: RequestInit = {
       headers,
@@ -2256,6 +2244,11 @@ class ApiClient {
 
       xhr.open('POST', `${this.baseURL}${endpoint}`);
       xhr.withCredentials = true;
+      for (const [key, value] of Object.entries(
+        this.browserContextHeaders(endpoint, 'POST')
+      )) {
+        xhr.setRequestHeader(key, value);
+      }
       xhr.timeout = 300000; // 5 minutes
       xhr.send(formData);
     });
@@ -2280,7 +2273,28 @@ class ApiClient {
     return (response.data ?? null) as any;
   }
 
-  // Alternative upload method with better progress tracking
+  private buildVideoFormData(
+    file: File,
+    metadata?: { title?: string; description?: string },
+    posterFile?: File
+  ): FormData {
+    const formData = new FormData();
+    formData.append('videofile', file); // Backend expects 'videofile'
+    if (posterFile) {
+      formData.append('posterfile', posterFile); // Backend expects 'posterfile'
+    }
+    if (metadata) {
+      formData.append('title', metadata.title || file.name);
+      formData.append('description', metadata.description || '');
+    }
+    return formData;
+  }
+
+  /**
+   * Sends the file straight to object storage in chunks, then asks the API to
+   * register it. Falls back to the through-the-server route when storage
+   * cannot presign (local development), so both setups keep working.
+   */
   async uploadVideoWithProgress(
     file: File,
     metadata?: { title?: string; description?: string },
@@ -2288,81 +2302,88 @@ class ApiClient {
     onProgress?: (progress: number) => void,
     abortController?: AbortController
   ) {
-    const formData = new FormData();
-    formData.append('videofile', file);
+    const title = metadata?.title || file.name;
+    const ticket = (
+      await this.request<DirectUploadTicket>('/videos/upload/init', {
+        method: 'POST',
+        body: JSON.stringify({
+          filename: file.name,
+          size_bytes: file.size,
+          mime_type: file.type || 'video/mp4'
+        })
+      })
+    ).data;
 
-    if (posterFile) {
-      formData.append('posterfile', posterFile);
-    }
-
-    if (metadata) {
-      formData.append('title', metadata.title || file.name);
-      formData.append('description', metadata.description || '');
-    }
-
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      let lastProgress = 0;
-
-      // Handle abort controller
-      if (abortController) {
-        abortController.signal.addEventListener('abort', () => {
-          xhr.abort();
-        });
-      }
-
-      // Progress tracking with throttling
-      xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable && onProgress) {
-          const progress = Math.round((event.loaded / event.total) * 100);
-
-          // Only update if progress has actually changed
-          if (progress !== lastProgress) {
-            lastProgress = progress;
-
-            onProgress(progress);
-          }
-        }
-      });
-
-      // Event handlers
-      xhr.upload.addEventListener('loadstart', () => {
-        if (onProgress) onProgress(0);
-      });
-
-      xhr.upload.addEventListener('loadend', () => {
-        console.log('Upload ended');
-        // Don't set progress to 100% here - let the response handler do it
-      });
-
-      xhr.addEventListener('load', () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            // Set progress to 100% when upload is successful
-            if (onProgress) onProgress(100);
-            resolve(response.data || response);
-          } catch (error) {
-            reject(new Error('Failed to parse response'));
-          }
-        } else {
-          reject(new Error(`Upload failed with status: ${xhr.status}`));
-        }
-      });
-
-      xhr.addEventListener('error', () => reject(new Error('Upload failed')));
-      xhr.addEventListener('abort', () =>
-        reject(new Error('Upload cancelled'))
+    if (ticket?.mode !== 'direct' || !ticket.part_urls || !ticket.part_size) {
+      return this.uploadVideoThroughServer(
+        file,
+        metadata,
+        posterFile,
+        onProgress,
+        abortController
       );
-      xhr.ontimeout = () => reject(new Error('Upload timeout'));
+    }
 
-      xhr.open('POST', `${this.baseURL}/videos/upload`);
-      xhr.withCredentials = true;
-      xhr.timeout = 300000; // 5 minutes
+    onProgress?.(0);
+    let parts;
+    try {
+      parts = await uploadFileParts(
+        file,
+        { part_size: ticket.part_size, part_urls: ticket.part_urls },
+        onProgress,
+        abortController?.signal
+      );
+    } catch (error) {
+      // Fire-and-forget: the user already failed or cancelled, so releasing the
+      // unfinished chunks must not delay or mask the original error.
+      void this.request('/videos/upload/abort', {
+        method: 'POST',
+        body: JSON.stringify({ key: ticket.key, upload_id: ticket.upload_id })
+      }).catch(() => undefined);
+      throw error;
+    }
 
-      console.log(`Starting upload: ${file.name} (${file.size} bytes)`);
-      xhr.send(formData);
-    });
+    const video = (
+      await this.request<{ id: string }>('/videos/upload/complete', {
+        method: 'POST',
+        body: JSON.stringify({
+          key: ticket.key,
+          upload_id: ticket.upload_id,
+          parts,
+          title,
+          description: metadata?.description
+        })
+      })
+    ).data;
+
+    if (posterFile && video?.id) {
+      const posterForm = new FormData();
+      posterForm.append('posterfile', posterFile);
+      await this.uploadFileWithProgress(
+        `/videos/${video.id}/poster`,
+        posterForm
+      );
+    }
+
+    onProgress?.(100);
+    return video;
+  }
+
+  /** Legacy path: the file travels through the API server (local dev only). */
+  private async uploadVideoThroughServer(
+    file: File,
+    metadata?: { title?: string; description?: string },
+    posterFile?: File,
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
+  ) {
+    const response = await this.uploadFileWithProgress(
+      '/videos/upload',
+      this.buildVideoFormData(file, metadata, posterFile),
+      onProgress,
+      abortController
+    );
+    return response.data ?? response;
   }
 
   async uploadVideo(
@@ -2372,109 +2393,13 @@ class ApiClient {
     onProgress?: (progress: number) => void,
     abortController?: AbortController
   ) {
-    const formData = new FormData();
-    formData.append('videofile', file); // Backend expects 'videofile'
-
-    if (posterFile) {
-      formData.append('posterfile', posterFile); // Backend expects 'posterfile'
-    }
-
-    if (metadata) {
-      formData.append('title', metadata.title || file.name);
-      formData.append('description', metadata.description || '');
-    }
-
-    // Create XMLHttpRequest for progress tracking
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-
-      // Handle abort controller
-      if (abortController) {
-        abortController.signal.addEventListener('abort', () => {
-          xhr.abort();
-        });
-      }
-
-      // Track upload progress with more detailed logging
-      xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable && onProgress) {
-          const progress = Math.round((event.loaded / event.total) * 100);
-          console.log(
-            `Upload progress: ${event.loaded}/${event.total} bytes (${progress}%)`
-          );
-          onProgress(progress);
-        } else {
-          console.log('Progress event not computable:', {
-            lengthComputable: event.lengthComputable,
-            loaded: event.loaded,
-            total: event.total
-          });
-        }
-      });
-
-      // Track loadstart
-      xhr.upload.addEventListener('loadstart', () => {
-        console.log('Upload started');
-        if (onProgress) onProgress(0);
-      });
-
-      // Track loadend - don't set progress to 100% here as it happens before response processing
-      xhr.upload.addEventListener('loadend', () => {
-        console.log('Upload ended');
-        // Don't set progress to 100% here - let the response handler do it
-      });
-
-      // Track error events
-      xhr.upload.addEventListener('error', (event) => {
-        console.error('Upload error:', event);
-      });
-
-      // Track abort events
-      xhr.upload.addEventListener('abort', (event) => {
-        console.log('Upload aborted:', event);
-      });
-
-      // Handle response
-      xhr.addEventListener('load', () => {
-        console.log('Response received:', xhr.status);
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            // Set progress to 100% when upload is successful
-            if (onProgress) onProgress(100);
-
-            resolve(response);
-          } catch (error) {
-            reject(new Error('Failed to parse response'));
-          }
-        } else {
-          reject(new Error(`Upload failed with status: ${xhr.status}`));
-        }
-      });
-
-      // Handle errors
-      xhr.addEventListener('error', () => {
-        reject(new Error('Upload failed'));
-      });
-
-      // Handle abort
-      xhr.addEventListener('abort', () => {
-        reject(new Error('Upload cancelled'));
-      });
-
-      // Open and send request
-      xhr.open('POST', `${this.baseURL}/videos/upload`);
-      xhr.withCredentials = true; // Include credentials
-
-      // Set timeout for better error handling
-      xhr.timeout = 300000; // 5 minutes
-      xhr.ontimeout = () => {
-        reject(new Error('Upload timeout'));
-      };
-
-      console.log(`Starting upload: ${file.name} (${file.size} bytes)`);
-      xhr.send(formData);
-    });
+    return this.uploadVideoWithProgress(
+      file,
+      metadata,
+      posterFile,
+      onProgress,
+      abortController
+    );
   }
 
   async uploadAudio(

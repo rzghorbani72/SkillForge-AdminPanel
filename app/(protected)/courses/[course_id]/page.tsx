@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { markdownToPlainText } from '@/lib/markdown';
 import { useParams, useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -322,7 +323,7 @@ export default function CourseDetailPage() {
             </div>
             {course.description && (
               <p className="line-clamp-1 max-w-xl text-sm text-muted-foreground">
-                {course.description}
+                {markdownToPlainText(course.description)}
               </p>
             )}
           </div>

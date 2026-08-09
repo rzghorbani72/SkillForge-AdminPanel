@@ -61,14 +61,12 @@ export function useCurriculumDraft() {
       return prev.filter((l) => l.seasonClientKey !== seasonKey);
     });
     setSeasons((prev) =>
-      prev.map((s) =>
-        s.clientKey === seasonKey ? { ...s, title: '', description: '' } : s
-      )
+      prev.map((s) => (s.clientKey === seasonKey ? { ...s, title: '' } : s))
     );
   }, []);
 
   const updateSeason = useCallback(
-    (key: string, patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>) =>
+    (key: string, patch: Partial<Pick<SeasonDraft, 'title'>>) =>
       setSeasons((s) =>
         s.map((x) => (x.clientKey === key ? { ...x, ...patch } : x))
       ),

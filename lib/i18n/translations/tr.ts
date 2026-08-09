@@ -2,6 +2,41 @@
  * Turkish translations for Admin Panel - LTR
  */
 export const tr = {
+  validation: {
+    titleMin3: 'Başlık en az 3 karakter olmalıdır',
+    titleMin5: 'Başlık en az 5 karakter olmalıdır',
+    titleMax80: 'Başlık 80 karakterden az olmalıdır',
+    descriptionRequired: 'Açıklama gereklidir',
+    descriptionMin10: 'Açıklama en az 10 karakter olmalıdır',
+    descriptionMax400: 'Açıklama 400 karakterden az olmalıdır',
+    descriptionMax2000: 'Açıklama 2.000 karakterden az olmalıdır',
+    shortDescriptionMax400: 'Kısa açıklama 400 karakterden az olmalıdır',
+    seasonRequired: 'Sezon seçimi gereklidir',
+    courseRequired: 'Kurs seçimi gereklidir',
+    durationPositive: 'Süre pozitif bir sayı olmalıdır',
+    priceRequired: 'Fiyat gereklidir',
+    priceWholeNumber: 'Fiyat tam sayı olmalıdır',
+    priceRange: 'Fiyat 0 ile 999.999.999 arasında olmalıdır',
+    originalPriceWholeNumber: 'Orijinal fiyat tam sayı olmalıdır',
+    nameRequired: 'Ad gereklidir',
+    phoneRequired: 'Telefon numarası gereklidir',
+    passwordMin6: 'Şifre en az 6 karakter olmalıdır'
+  },
+  editor: {
+    bold: 'Kalın',
+    italic: 'İtalik',
+    underline: 'Altı çizili',
+    strikethrough: 'Üstü çizili',
+    heading: 'Başlık',
+    bulletList: 'Madde işaretli liste',
+    numberedList: 'Numaralı liste',
+    link: 'Bağlantı',
+    preview: 'Önizleme',
+    write: 'Yaz',
+    emptyPreview: 'Henüz önizlenecek bir şey yok',
+    formattingHint:
+      'Biçimlendirme: **kalın**, _italik_, listeler ve bağlantılar'
+  },
   toasts: {
     otpDebugCode: 'Kod: {{code}}',
     imageNoneSelected: 'Görsel seçilmedi',
@@ -150,6 +185,7 @@ export const tr = {
     noAcademySelected: 'Akademi seçilmedi'
   },
   common: {
+    saveChanges: 'Değişiklikleri kaydet',
     uploading: 'Yükleniyor…',
     percentValue: '%{{value}}',
     remove: 'Kaldır',
@@ -737,13 +773,14 @@ export const tr = {
     builderPublishedHint:
       'Bu kurs yayında ve öğrenciler tarafından görülüyor. Değişiklikler kaydeder kaydetmez yayına girer.',
     updatedToast: 'Kurs güncellendi',
+    fixErrorsBeforeSaving: 'Kaydetmeden önce işaretli alanları düzeltin',
     createdDraftToast:
       'Kurs taslak olarak oluşturuldu — hazır olduğunda yayınlayın',
     errors: {
       titleMin: 'Başlık en az 5 karakter olmalıdır',
       titleMax: 'Başlık 80 karakterden az olmalıdır',
       descriptionRequired: 'Açıklama gereklidir',
-      descriptionMax: 'Açıklama 400 karakterden az olmalıdır',
+      descriptionMax: 'Açıklama 4000 karakterden az olmalıdır',
       primaryPriceRequired: 'Ana fiyat gereklidir',
       primaryPriceWholeNumber: 'Ana fiyat tam sayı olmalıdır',
       primaryPriceRange: 'Ana fiyat 0 ile 999.999.999 arasında olmalıdır',
@@ -754,7 +791,7 @@ export const tr = {
     enterCourseTitle: 'Kurs başlığını girin (en az 5 karakter)',
     titleLength: 'Başlık 5 ile 80 karakter arasında olmalıdır',
     enterDescription: 'Kurs açıklamasını girin',
-    descriptionLength: 'Açıklama 400 karakterden az olmalıdır',
+    descriptionLength: 'Açıklama 4000 karakterden az olmalıdır',
     noCourses: 'Kurs bulunamadı',
     createFirstCourse: 'İlk kursunuzu oluşturun',
     courseDetails: 'Kurs Detayları',

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -52,6 +52,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     reorderLessons,
     togglePublish,
     retrySave,
+    saveNow,
     saveCover
   } = useCourseForm(courseId);
 
@@ -108,6 +109,16 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
 
         <div className="flex items-center gap-3">
           <SaveStatusIndicator status={saveStatus} onRetry={retrySave} />
+
+          <Button
+            type="button"
+            disabled={isSaving}
+            onClick={() => void saveNow()}
+            className="gap-2"
+          >
+            <Save className="h-4 w-4" />
+            {t('common.saveChanges')}
+          </Button>
 
           {/* Publish switch — the only thing that makes a course public */}
           <div className="flex items-center gap-2 rounded-lg border px-3 py-1.5">
@@ -208,7 +219,18 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                 {t('courses.viewCourse')}
               </Button>
 
-              <SaveStatusIndicator status={saveStatus} onRetry={retrySave} />
+              <div className="flex items-center gap-3">
+                <SaveStatusIndicator status={saveStatus} onRetry={retrySave} />
+                <Button
+                  type="button"
+                  disabled={isSaving}
+                  onClick={() => void saveNow()}
+                  className="gap-2"
+                >
+                  <Save className="h-4 w-4" />
+                  {t('common.saveChanges')}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>

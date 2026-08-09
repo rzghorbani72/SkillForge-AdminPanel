@@ -38,7 +38,6 @@ export interface LessonDraft {
 export interface SeasonDraft {
   id?: string;
   title: string;
-  description: string;
   clientKey: string;
 }
 
@@ -98,7 +97,6 @@ export const emptyLesson = (seasonClientKey?: string): LessonDraft => ({
 
 export const emptySeason = (): SeasonDraft => ({
   title: '',
-  description: '',
   clientKey: newKey()
 });
 

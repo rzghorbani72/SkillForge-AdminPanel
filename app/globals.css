@@ -577,3 +577,76 @@ html.transitioning *::after {
   cursor: not-allowed;
   opacity: 0.5;
 }
+
+/* Rendered Markdown descriptions (course, season, lesson). Kept small and
+   local so no typography plugin is needed. */
+.prose-description > *:first-child {
+  margin-top: 0;
+}
+.prose-description > *:last-child {
+  margin-bottom: 0;
+}
+.prose-description p,
+.prose-description ul,
+.prose-description ol,
+.prose-description blockquote,
+.prose-description pre {
+  margin: 0.5em 0;
+}
+.prose-description h1,
+.prose-description h2,
+.prose-description h3,
+.prose-description h4 {
+  margin: 1em 0 0.5em;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.prose-description h1 {
+  font-size: 1.35em;
+}
+.prose-description h2 {
+  font-size: 1.2em;
+}
+.prose-description h3 {
+  font-size: 1.1em;
+}
+.prose-description ul,
+.prose-description ol {
+  padding-inline-start: 1.5em;
+}
+.prose-description ul {
+  list-style: disc;
+}
+.prose-description ol {
+  list-style: decimal;
+}
+.prose-description a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-description blockquote {
+  border-inline-start: 3px solid currentColor;
+  opacity: 0.85;
+  padding-inline-start: 0.75em;
+}
+.prose-description code {
+  border-radius: 0.25rem;
+  background: rgb(0 0 0 / 0.06);
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+}
+.prose-description pre {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background: rgb(0 0 0 / 0.06);
+  padding: 0.75em;
+}
+.prose-description pre code {
+  background: transparent;
+  padding: 0;
+}
+.prose-description hr {
+  margin: 1em 0;
+  border-top: 1px solid currentColor;
+  opacity: 0.2;
+}

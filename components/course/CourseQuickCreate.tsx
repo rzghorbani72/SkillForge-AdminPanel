@@ -22,8 +22,8 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { courseFormSchema } from './schema';
+import { MarkdownEditor } from '@/components/ui/markdown-editor';
+import { COURSE_DESCRIPTION_MAX, courseFormSchema } from './schema';
 
 const quickCreateSchema = courseFormSchema.pick({
   title: true,
@@ -148,10 +148,13 @@ export default function CourseQuickCreate() {
                   <FormItem>
                     <FormLabel>{t('courses.description')} *</FormLabel>
                     <FormControl>
-                      <Textarea
-                        rows={3}
+                      <MarkdownEditor
+                        value={field.value ?? ''}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        minRows={3}
                         placeholder={t('courses.enterDescription')}
-                        {...field}
+                        maxLength={COURSE_DESCRIPTION_MAX}
                       />
                     </FormControl>
                     <FormMessage />

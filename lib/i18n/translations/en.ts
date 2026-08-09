@@ -2,6 +2,41 @@
  * English translations for Admin Panel
  */
 export const en = {
+  validation: {
+    titleMin3: 'Title must be at least 3 characters',
+    titleMin5: 'Title must be at least 5 characters',
+    titleMax80: 'Title must be less than 80 characters',
+    descriptionRequired: 'Description is required',
+    descriptionMin10: 'Description must be at least 10 characters',
+    descriptionMax400: 'Description must be less than 400 characters',
+    descriptionMax2000: 'Description must be less than 2,000 characters',
+    shortDescriptionMax400:
+      'Short description must be less than 400 characters',
+    seasonRequired: 'Season is required',
+    courseRequired: 'Course is required',
+    durationPositive: 'Duration must be a positive number',
+    priceRequired: 'Price is required',
+    priceWholeNumber: 'Price must be a whole number',
+    priceRange: 'Price must be between 0 and 999,999,999',
+    originalPriceWholeNumber: 'Original price must be a whole number',
+    nameRequired: 'Name is required',
+    phoneRequired: 'Phone number is required',
+    passwordMin6: 'Password must be at least 6 characters'
+  },
+  editor: {
+    bold: 'Bold',
+    italic: 'Italic',
+    underline: 'Underline',
+    strikethrough: 'Strikethrough',
+    heading: 'Heading',
+    bulletList: 'Bulleted list',
+    numberedList: 'Numbered list',
+    link: 'Link',
+    preview: 'Preview',
+    write: 'Write',
+    emptyPreview: 'Nothing to preview yet',
+    formattingHint: 'Formatting: **bold**, _italic_, lists and links'
+  },
   toasts: {
     otpDebugCode: 'Code: {{code}}',
     imageNoneSelected: 'No image selected',
@@ -226,6 +261,7 @@ export const en = {
     noAcademySelected: 'No academy selected'
   },
   common: {
+    saveChanges: 'Save changes',
     uploading: 'Uploading…',
     toman: 'Toman',
     percentValue: '{{value}}%',
@@ -1233,13 +1269,14 @@ export const en = {
     builderPublishedHint:
       'This course is published and visible to students. Changes go live as soon as you save.',
     updatedToast: 'Course updated',
+    fixErrorsBeforeSaving: 'Please fix the highlighted fields before saving',
     createdDraftToast:
       'Course created as a draft — publish it when it is ready',
     errors: {
       titleMin: 'Title must be at least 5 characters',
       titleMax: 'Title must be less than 80 characters',
       descriptionRequired: 'Description is required',
-      descriptionMax: 'Description must be less than 400 characters',
+      descriptionMax: 'Description must be less than 4,000 characters',
       primaryPriceRequired: 'Primary price is required',
       primaryPriceWholeNumber: 'Primary price must be a whole number',
       primaryPriceRange: 'Primary price must be between 0 and 999,999,999',
@@ -1250,7 +1287,7 @@ export const en = {
     enterCourseTitle: 'Enter course title (min 5 characters)',
     titleLength: 'Title must be between 5 and 80 characters',
     enterDescription: 'Enter course description',
-    descriptionLength: 'Description must be less than 400 characters',
+    descriptionLength: 'Description must be less than 4,000 characters',
     noCourses: 'No courses found',
     createFirstCourse: 'Create your first course',
     courseDetails: 'Course Details',

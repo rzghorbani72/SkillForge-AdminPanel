@@ -40,8 +40,8 @@ import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 
 const videoFormSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  title: z.string().min(3, 'validation.titleMin3'),
+  description: z.string().min(10, 'validation.descriptionMin10'),
   video_file: z
     .any()
     .refine((files) => files?.length > 0, 'Video file is required'),

@@ -25,7 +25,9 @@ import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
-const AUTOSAVE_DELAY_MS = 1500;
+// Autosave is a safety net, not a keystroke logger: it waits for a real pause
+// in typing, and an unchanged payload is never sent at all (see lastSavedRef).
+const AUTOSAVE_DELAY_MS = 5000;
 
 export type { LessonDraft, LessonType, SeasonDraft } from './course-drafts';
 export { durationToSeconds, secondsToDuration, validateForPublish };
@@ -45,6 +47,8 @@ export function useCourseForm(courseId: string) {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const isSaving = saveStatus === 'saving';
   const savingRef = useRef(false);
+  // Fingerprint of the last payload the server accepted — see `save`.
+  const lastSavedRef = useRef<string | null>(null);
   const existingCoverUrl = useRef<string | null>(null);
   const curriculum = useCurriculumDraft();
   const {
@@ -104,7 +108,6 @@ export function useCourseForm(courseId: string) {
           (s) => ({
             id: s.id,
             title: s.title,
-            description: s.description ?? '',
             clientKey: newKey()
           })
         );
@@ -184,49 +187,62 @@ export function useCourseForm(courseId: string) {
         }
       }
 
+      const payload = {
+        title: data.title.trim(),
+        description: data.description.trim(),
+        primary_price: Number(data.primary_price),
+        secondary_price: Number(data.secondary_price),
+        category_id: data.category_id || undefined,
+        cover_id: data.cover_id || undefined,
+        published: data.published,
+        is_featured: data.is_featured,
+        // Untitled seasons are named rather than dropped: the backend skips a
+        // season with no title, which silently orphans every lesson in it.
+        seasons: seasons.map((s, i) => ({
+          id: s.id,
+          client_key: s.clientKey,
+          title: s.title.trim() || t('courses.seasonNumber', { n: i + 1 })
+        })),
+        lessons: lessons
+          .filter((l) => l.title.trim())
+          .map((l) => ({
+            id: l.id,
+            client_key: l.clientKey,
+            title: l.title.trim(),
+            description: l.description.trim() || undefined,
+            duration: durationToSeconds(l.duration),
+            lesson_type: l.lesson_type,
+            is_free: l.is_free,
+            published: l.published,
+            video_id: l.video_id,
+            audio_id: l.audio_id,
+            cover_id: l.cover_id,
+            document_id: l.document_id,
+            season_client_key: l.seasonClientKey
+          })),
+        deleted_season_ids:
+          deletedSeasonIds.length > 0 ? deletedSeasonIds : undefined,
+        deleted_lesson_ids:
+          deletedLessonIds.length > 0 ? deletedLessonIds : undefined
+      };
+
+      // Nothing changed since the last successful save, so there is nothing to
+      // send. This is what keeps autosave from firing a request per keystroke.
+      const fingerprint = JSON.stringify(payload);
+      const hasDeletes =
+        deletedSeasonIds.length > 0 || deletedLessonIds.length > 0;
+      if (!hasDeletes && fingerprint === lastSavedRef.current) {
+        setSaveStatus('saved');
+        if (!silent) toast.success(t('courses.updatedToast'));
+        return true;
+      }
+
       savingRef.current = true;
       setSaveStatus('saving');
       try {
-        const response = await apiClient.updateCourseContent(courseId, {
-          title: data.title.trim(),
-          description: data.description.trim(),
-          primary_price: Number(data.primary_price),
-          secondary_price: Number(data.secondary_price),
-          category_id: data.category_id || undefined,
-          cover_id: data.cover_id || undefined,
-          published: data.published,
-          is_featured: data.is_featured,
-          // Untitled seasons are named rather than dropped: the backend skips a
-          // season with no title, which silently orphans every lesson in it.
-          seasons: seasons.map((s, i) => ({
-            id: s.id,
-            client_key: s.clientKey,
-            title: s.title.trim() || t('courses.seasonNumber', { n: i + 1 }),
-            description: s.description.trim() || undefined
-          })),
-          lessons: lessons
-            .filter((l) => l.title.trim())
-            .map((l) => ({
-              id: l.id,
-              client_key: l.clientKey,
-              title: l.title.trim(),
-              description: l.description.trim() || undefined,
-              duration: durationToSeconds(l.duration),
-              lesson_type: l.lesson_type,
-              is_free: l.is_free,
-              published: l.published,
-              video_id: l.video_id,
-              audio_id: l.audio_id,
-              cover_id: l.cover_id,
-              document_id: l.document_id,
-              season_client_key: l.seasonClientKey
-            })),
-          deleted_season_ids:
-            deletedSeasonIds.length > 0 ? deletedSeasonIds : undefined,
-          deleted_lesson_ids:
-            deletedLessonIds.length > 0 ? deletedLessonIds : undefined
-        });
+        const response = await apiClient.updateCourseContent(courseId, payload);
         clearDeleted();
+        lastSavedRef.current = fingerprint;
 
         // The backend never learns a draft's clientKey — it only echoes back
         // which real id it created for it. Without writing that id back here,
@@ -258,9 +274,9 @@ export function useCourseForm(courseId: string) {
         }
 
         setSaveStatus('saved');
-        // Saving a draft is routine — the status indicator is enough feedback.
-        // Only publishing, which changes what students see, is worth a toast.
-        if (!silent && data.published) toast.success(t('courses.updatedToast'));
+        // Autosave stays quiet (the status indicator is feedback enough); a
+        // save the manager asked for always confirms itself.
+        if (!silent) toast.success(t('courses.updatedToast'));
         return true;
       } catch (err) {
         setSaveStatus('error');
@@ -351,6 +367,20 @@ export function useCourseForm(courseId: string) {
     await save(form.getValues());
   }, [form, save]);
 
+  /**
+   * The explicit Save button. Autosave already covers the normal case, but a
+   * manager should never have to trust an invisible mechanism: this validates,
+   * saves immediately and confirms with a toast.
+   */
+  const saveNow = useCallback(async () => {
+    const valid = await form.trigger();
+    if (!valid) {
+      toast.error(t('courses.fixErrorsBeforeSaving'));
+      return false;
+    }
+    return save(form.getValues());
+  }, [form, save, t]);
+
   return {
     form,
     isLoading,
@@ -361,6 +391,7 @@ export function useCourseForm(courseId: string) {
     existingCoverUrl: existingCoverUrl.current,
     togglePublish,
     retrySave,
+    saveNow,
     saveCover
   };
 }

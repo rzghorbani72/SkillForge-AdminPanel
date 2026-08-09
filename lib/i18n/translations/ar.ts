@@ -2,6 +2,40 @@
  * Arabic translations for Admin Panel - RTL
  */
 export const ar = {
+  validation: {
+    titleMin3: 'يجب أن يكون العنوان 3 أحرف على الأقل',
+    titleMin5: 'يجب أن يكون العنوان 5 أحرف على الأقل',
+    titleMax80: 'يجب أن يكون العنوان أقل من 80 حرفًا',
+    descriptionRequired: 'الوصف مطلوب',
+    descriptionMin10: 'يجب أن يكون الوصف 10 أحرف على الأقل',
+    descriptionMax400: 'يجب أن يكون الوصف أقل من 400 حرف',
+    descriptionMax2000: 'يجب أن يكون الوصف أقل من 2000 حرف',
+    shortDescriptionMax400: 'يجب أن يكون الوصف المختصر أقل من 400 حرف',
+    seasonRequired: 'اختيار الفصل مطلوب',
+    courseRequired: 'اختيار الدورة مطلوب',
+    durationPositive: 'يجب أن تكون المدة رقمًا موجبًا',
+    priceRequired: 'السعر مطلوب',
+    priceWholeNumber: 'يجب أن يكون السعر رقمًا صحيحًا',
+    priceRange: 'يجب أن يكون السعر بين 0 و999,999,999',
+    originalPriceWholeNumber: 'يجب أن يكون السعر الأصلي رقمًا صحيحًا',
+    nameRequired: 'الاسم مطلوب',
+    phoneRequired: 'رقم الهاتف مطلوب',
+    passwordMin6: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل'
+  },
+  editor: {
+    bold: 'عريض',
+    italic: 'مائل',
+    underline: 'تسطير',
+    strikethrough: 'يتوسطه خط',
+    heading: 'عنوان',
+    bulletList: 'قائمة نقطية',
+    numberedList: 'قائمة مرقمة',
+    link: 'رابط',
+    preview: 'معاينة',
+    write: 'كتابة',
+    emptyPreview: 'لا يوجد شيء للمعاينة بعد',
+    formattingHint: 'التنسيق: **عريض**، _مائل_، قوائم وروابط'
+  },
   toasts: {
     otpDebugCode: 'الرمز: {{code}}',
     imageNoneSelected: 'لم يتم اختيار صورة',
@@ -148,6 +182,7 @@ export const ar = {
     noAcademySelected: 'لم يتم اختيار أكاديمية'
   },
   common: {
+    saveChanges: 'حفظ التغييرات',
     uploading: 'جارٍ الرفع…',
     percentValue: '{{value}}٪',
     remove: 'إزالة',
@@ -722,12 +757,13 @@ export const ar = {
     builderPublishedHint:
       'هذه الدورة منشورة ويراها الطلاب. تُطبَّق التغييرات فور الحفظ.',
     updatedToast: 'تم تحديث الدورة',
+    fixErrorsBeforeSaving: 'يرجى تصحيح الحقول المميزة قبل الحفظ',
     createdDraftToast: 'تم إنشاء الدورة كمسودة — انشرها عندما تكون جاهزة',
     errors: {
       titleMin: 'يجب أن يكون العنوان 5 أحرف على الأقل',
       titleMax: 'يجب أن يكون العنوان أقل من 80 حرفًا',
       descriptionRequired: 'الوصف مطلوب',
-      descriptionMax: 'يجب أن يكون الوصف أقل من 400 حرف',
+      descriptionMax: 'يجب أن يكون الوصف أقل من 4000 حرف',
       primaryPriceRequired: 'السعر الأساسي مطلوب',
       primaryPriceWholeNumber: 'يجب أن يكون السعر الأساسي رقمًا صحيحًا',
       primaryPriceRange: 'يجب أن يكون السعر الأساسي بين 0 و 999,999,999',
@@ -738,7 +774,7 @@ export const ar = {
     enterCourseTitle: 'أدخل عنوان الدورة (5 أحرف على الأقل)',
     titleLength: 'يجب أن يكون العنوان بين 5 و 80 حرفاً',
     enterDescription: 'أدخل وصف الدورة',
-    descriptionLength: 'يجب أن يكون الوصف أقل من 400 حرف',
+    descriptionLength: 'يجب أن يكون الوصف أقل من 4000 حرف',
     noCourses: 'لم يتم العثور على دورات',
     createFirstCourse: 'أنشئ دورتك الأولى',
     courseDetails: 'تفاصيل الدورة',

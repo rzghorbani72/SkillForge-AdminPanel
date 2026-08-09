@@ -29,9 +29,7 @@ interface SeasonAccordionProps {
   allSeasons: SeasonDraft[];
   open: boolean;
   onToggle: () => void;
-  onUpdate: (
-    patch: Partial<Pick<SeasonDraft, 'title' | 'description'>>
-  ) => void;
+  onUpdate: (patch: Partial<Pick<SeasonDraft, 'title'>>) => void;
   onRemove: () => void;
   /** Called instead of onRemove when this is the last season: wipes it back to blank. */
   onClear: () => void;
@@ -64,9 +62,6 @@ export function SortableSeasonAccordion({
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [showDescription, setShowDescription] = useState(
-    () => season.description.length > 0
-  );
 
   const {
     attributes,
@@ -203,26 +198,6 @@ export function SortableSeasonAccordion({
             onAssignLesson={onAssignLesson}
             onReorderLessons={onReorderLessons}
           />
-
-          {showDescription ? (
-            <Input
-              value={season.description}
-              autoFocus={!season.description}
-              onChange={(event) =>
-                onUpdate({ description: event.target.value })
-              }
-              placeholder={t('courses.seasonDescription')}
-              className="h-8 text-xs"
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowDescription(true)}
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              + {t('courses.seasonDescription')}
-            </button>
-          )}
         </div>
       )}
     </div>

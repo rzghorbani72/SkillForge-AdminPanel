@@ -2,6 +2,40 @@
  * Persian (Farsi) translations for Admin Panel - RTL
  */
 export const fa = {
+  validation: {
+    titleMin3: 'عنوان باید حداقل ۳ کاراکتر باشد',
+    titleMin5: 'عنوان باید حداقل ۵ کاراکتر باشد',
+    titleMax80: 'عنوان باید کمتر از ۸۰ کاراکتر باشد',
+    descriptionRequired: 'توضیحات الزامی است',
+    descriptionMin10: 'توضیحات باید حداقل ۱۰ کاراکتر باشد',
+    descriptionMax400: 'توضیحات باید کمتر از ۴۰۰ کاراکتر باشد',
+    descriptionMax2000: 'توضیحات باید کمتر از ۲۰۰۰ کاراکتر باشد',
+    shortDescriptionMax400: 'توضیحات کوتاه باید کمتر از ۴۰۰ کاراکتر باشد',
+    seasonRequired: 'انتخاب فصل الزامی است',
+    courseRequired: 'انتخاب دوره الزامی است',
+    durationPositive: 'مدت زمان باید عددی مثبت باشد',
+    priceRequired: 'قیمت الزامی است',
+    priceWholeNumber: 'قیمت باید عدد صحیح باشد',
+    priceRange: 'قیمت باید بین ۰ تا ۹۹۹٬۹۹۹٬۹۹۹ باشد',
+    originalPriceWholeNumber: 'قیمت اصلی باید عدد صحیح باشد',
+    nameRequired: 'نام الزامی است',
+    phoneRequired: 'شماره تماس الزامی است',
+    passwordMin6: 'رمز عبور باید حداقل ۶ کاراکتر باشد'
+  },
+  editor: {
+    bold: 'پررنگ',
+    italic: 'مورب',
+    underline: 'زیرخط',
+    strikethrough: 'خط‌خورده',
+    heading: 'سرتیتر',
+    bulletList: 'فهرست نقطه‌ای',
+    numberedList: 'فهرست شماره‌دار',
+    link: 'پیوند',
+    preview: 'پیش‌نمایش',
+    write: 'نوشتن',
+    emptyPreview: 'هنوز چیزی برای پیش‌نمایش نیست',
+    formattingHint: 'قالب‌بندی: **پررنگ**، _مورب_، فهرست و پیوند'
+  },
   toasts: {
     otpDebugCode: 'کد: {{code}}',
     imageNoneSelected: 'تصویری انتخاب نشده است',
@@ -219,6 +253,7 @@ export const fa = {
     noAcademySelected: 'آکادمی‌ای انتخاب نشده است'
   },
   common: {
+    saveChanges: 'ذخیره تغییرات',
     uploading: 'در حال بارگذاری…',
     toman: 'تومان',
     percentValue: '{{value}}٪',
@@ -1228,13 +1263,14 @@ export const fa = {
     builderPublishedHint:
       'این دوره منتشر شده و برای دانشجویان قابل مشاهده است. تغییرات به‌محض ذخیره اعمال می‌شود.',
     updatedToast: 'دوره به‌روزرسانی شد',
+    fixErrorsBeforeSaving: 'قبل از ذخیره، خطاهای مشخص‌شده را برطرف کنید',
     createdDraftToast:
       'دوره به‌صورت پیش‌نویس ساخته شد — هر وقت آماده بود آن را منتشر کنید',
     errors: {
       titleMin: 'عنوان باید حداقل ۵ کاراکتر باشد',
       titleMax: 'عنوان باید کمتر از ۸۰ کاراکتر باشد',
       descriptionRequired: 'توضیحات الزامی است',
-      descriptionMax: 'توضیحات باید کمتر از ۴۰۰ کاراکتر باشد',
+      descriptionMax: 'توضیحات باید کمتر از ۴۰۰۰ کاراکتر باشد',
       primaryPriceRequired: 'قیمت اصلی الزامی است',
       primaryPriceWholeNumber: 'قیمت اصلی باید عدد صحیح باشد',
       primaryPriceRange: 'قیمت اصلی باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد',
@@ -1245,7 +1281,7 @@ export const fa = {
     enterCourseTitle: 'عنوان دوره را وارد کنید (حداقل ۵ کاراکتر)',
     titleLength: 'عنوان باید بین ۵ تا ۸۰ کاراکتر باشد',
     enterDescription: 'توضیحات دوره را وارد کنید',
-    descriptionLength: 'توضیحات باید کمتر از ۴۰۰ کاراکتر باشد',
+    descriptionLength: 'توضیحات باید کمتر از ۴۰۰۰ کاراکتر باشد',
     noCourses: 'دوره‌ای یافت نشد',
     createFirstCourse: 'اولین دوره خود را ایجاد کنید',
     courseDetails: 'جزئیات دوره',

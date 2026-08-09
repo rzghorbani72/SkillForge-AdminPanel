@@ -3,13 +3,10 @@ import * as z from 'zod';
 export const lessonFormSchema = z.object({
   title: z
     .string()
-    .min(5, 'Title must be at least 5 characters')
-    .max(80, 'Title must be less than 80 characters'),
-  description: z
-    .string()
-    .max(400, 'Description must be less than 400 characters')
-    .optional(),
-  season_id: z.string().min(1, 'Season is required'),
+    .min(5, 'validation.titleMin5')
+    .max(80, 'validation.titleMax80'),
+  description: z.string().max(400, 'validation.descriptionMax400').optional(),
+  season_id: z.string().min(1, 'validation.seasonRequired'),
   audio_id: z.string().optional(),
   video_id: z.string().optional(),
   cover_id: z.string().optional(),

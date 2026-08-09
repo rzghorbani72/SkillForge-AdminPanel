@@ -40,15 +40,15 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 const lessonFormSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  title: z.string().min(3, 'validation.titleMin3'),
+  description: z.string().min(10, 'validation.descriptionMin10'),
   content: z.string().optional(),
   duration: z
     .string()
     .refine((val) => !isNaN(parseInt(val)) && parseInt(val) > 0, {
-      message: 'Duration must be a positive number'
+      message: 'validation.durationPositive'
     }),
-  course_id: z.string().min(1, 'Course is required'),
+  course_id: z.string().min(1, 'validation.courseRequired'),
   season_id: z.string().optional(),
   media_file: z.any().optional()
 });

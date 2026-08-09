@@ -14,30 +14,30 @@ import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 export const productFormSchema = z.object({
   title: z
     .string()
-    .min(5, 'Title must be at least 5 characters')
-    .max(80, 'Title must be less than 80 characters'),
+    .min(5, 'validation.titleMin5')
+    .max(80, 'validation.titleMax80'),
   description: z
     .string()
-    .min(1, 'Description is required')
-    .max(2000, 'Description must be less than 2000 characters'),
+    .min(1, 'validation.descriptionRequired')
+    .max(2000, 'validation.descriptionMax2000'),
   short_description: z
     .string()
-    .max(400, 'Short description must be less than 400 characters')
+    .max(400, 'validation.shortDescriptionMax400')
     .optional(),
   price: z
     .string()
-    .min(1, 'Price is required')
-    .refine((val) => /^\d+$/.test(val.trim()), 'Price must be a whole number')
+    .min(1, 'validation.priceRequired')
+    .refine((val) => /^\d+$/.test(val.trim()), 'validation.priceWholeNumber')
     .refine((val) => {
       const num = Number(val);
       return !isNaN(num) && num >= 0 && num <= 999999999;
-    }, 'Price must be between 0 and 999,999,999'),
+    }, 'validation.priceRange'),
   original_price: z
     .string()
     .optional()
     .refine(
       (val) => !val || /^\d+$/.test(val.trim()),
-      'Original price must be a whole number'
+      'validation.originalPriceWholeNumber'
     ),
   product_type: z.enum(['DIGITAL', 'PHYSICAL']),
   stock_quantity: z.string().optional(),
