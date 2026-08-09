@@ -13,7 +13,6 @@ import ConversionFunnel from '@/components/dashboard/ConversionFunnel';
 import WeekdayEnrollmentChart from '@/components/dashboard/WeekdayEnrollmentChart';
 import CompletionDonut from '@/components/dashboard/CompletionDonut';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useInitializeStores } from '@/hooks/useInitializeStores';
 import CampaignBanner from '@/components/dashboard/CampaignBanner';
 import { SubscriptionStatusCard } from '@/components/dashboard/subscription-status-card';
 import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
@@ -36,8 +35,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const { academies, selectedAcademy, isLoading: storeLoading } = useStore();
   const [period, setPeriod] = useState<Period>('30d');
-
-  useInitializeStores();
 
   // Platform admins with no academy selected belong in Platform mode; the
   // academy dashboard has no tenant context to render.

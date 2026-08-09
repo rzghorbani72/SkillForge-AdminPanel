@@ -7,7 +7,7 @@ import {
   formatCurrencyWithStore,
   formatRelativeTime
 } from '@/lib/utils';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
@@ -36,7 +36,8 @@ export type CoursePerformance = {
 
 const useDashboard = () => {
   const { t, language } = useTranslation();
-  const currentAcademy = useCurrentAcademy();
+  const { selectedAcademy: currentAcademy, isLoading: storeLoading } =
+    useStore();
   const { user } = useAuthUser();
   const [recentCourses, setRecentCourses] = useState<Course[]>([]);
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
@@ -77,6 +78,11 @@ const useDashboard = () => {
   // For admins without stores, don't use store context
   // For managers/admins with stores, use the selected store
   const effectiveAcademy = isAdminWithoutStore ? null : currentAcademy;
+  // The academies list is re-fetched in the background, which hands back a new
+  // academy object with the same id. Keying the fetch on the id keeps that
+  // refresh from replaying all five dashboard requests.
+  const effectiveAcademyId = effectiveAcademy?.id ?? null;
+  const userId = user?.id ?? null;
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -87,25 +93,25 @@ const useDashboard = () => {
         // For managers/admins with stores, fetch store-specific data
         const coursesParams = isAdminWithoutStore
           ? { page: 1, limit: 10, filter: 'none' as const } // Platform-wide for admins
-          : effectiveAcademy
-            ? { page: 1, limit: 10, academy_id: effectiveAcademy.id } // Store-specific for managers
+          : effectiveAcademyId
+            ? { page: 1, limit: 10, academy_id: effectiveAcademyId } // Store-specific for managers
             : { page: 1, limit: 10 }; // Default
 
         const enrollmentsParams = isAdminWithoutStore
           ? { status: 'ACTIVE' as const, page: 1, limit: 1 }
-          : effectiveAcademy
+          : effectiveAcademyId
             ? {
                 status: 'ACTIVE' as const,
                 page: 1,
                 limit: 1,
-                academy_id: effectiveAcademy.id
+                academy_id: effectiveAcademyId
               }
             : { status: 'ACTIVE' as const, page: 1, limit: 1 };
 
         const studentsParams = isAdminWithoutStore
           ? { page: 1, limit: 1, filter: 'none' as const }
-          : effectiveAcademy
-            ? { page: 1, limit: 1, academy_id: effectiveAcademy.id }
+          : effectiveAcademyId
+            ? { page: 1, limit: 1, academy_id: effectiveAcademyId }
             : { page: 1, limit: 1 };
 
         const [
@@ -242,13 +248,15 @@ const useDashboard = () => {
     // Without an academy the requests carry no X-Academy-ID header and the
     // backend rejects them all, so an academy-less user gets the empty state
     // straight away instead of five failed calls.
-    if (!user) return;
-    if (!isAdminWithoutStore && !effectiveAcademy) {
-      setIsLoading(false);
+    if (!userId) return;
+    if (!isAdminWithoutStore && !effectiveAcademyId) {
+      // Still resolving which academy is selected — stay in the loading state
+      // instead of flashing the empty dashboard for one render.
+      if (!storeLoading) setIsLoading(false);
       return;
     }
-    fetchDashboardData();
-  }, [user, currentAcademy, isAdminWithoutStore, effectiveAcademy]);
+    void fetchDashboardData();
+  }, [userId, isAdminWithoutStore, effectiveAcademyId, storeLoading]);
 
   // Generate monthly chart data from real payments and enrollments
   const monthlyChartData: ChartDataPoint[] = useMemo(() => {

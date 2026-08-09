@@ -61,10 +61,12 @@ export function useAcademySubscription(enabled = true) {
   // to fetch a plan for: /academies/current/subscription 422s without an
   // X-Academy-ID, so skip the call entirely instead of firing and swallowing.
   const hasAcademyAccess = useHasAcademyAccess();
-  const canFetch = enabled && hasAcademyAccess;
   // Each academy has its own plan, so switching academies must refetch. Without
   // this the panel kept showing the previous academy's plan and storage bar.
   const academyId = useCurrentAcademyId();
+  // The academy list arrives one render before the selected academy, so waiting
+  // for the id keeps that first render from firing a second, throwaway request.
+  const canFetch = enabled && hasAcademyAccess && !!academyId;
 
   // Keyed by academyId so the sidebar, header, and /plans page — all mounted
   // at once — share one deduped request instead of firing three independently.

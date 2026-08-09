@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import useSWR from 'swr';
 import { apiClient, type LearningNavCapabilities } from '@/lib/api';
 import {
   shouldApplyLearningNavGating,
@@ -32,65 +33,28 @@ const DEFAULT_ACADEMY_FEATURES: AcademyFeatures = {
 export function useLearningNavCapabilities() {
   const { user } = useAuthUser();
   const hasStore = useHasStore();
-  const [visibility, setVisibility] =
-    useState<LearningNavVisibility>(DEFAULT_VISIBILITY);
-  const [sellingTypes, setSellingTypes] = useState<SellingTypes>(
-    DEFAULT_SELLING_TYPES
-  );
-  const [academyFeatures, setAcademyFeatures] = useState<AcademyFeatures>(
-    DEFAULT_ACADEMY_FEATURES
-  );
-  const [isLoading, setIsLoading] = useState(true);
 
   const shouldResolve = useMemo(() => {
     if (!user?.role) return false;
     return shouldApplyLearningNavGating(user.role, hasStore);
   }, [user?.role, hasStore]);
 
-  useEffect(() => {
-    if (!shouldResolve) {
-      setVisibility(DEFAULT_VISIBILITY);
-      setSellingTypes(DEFAULT_SELLING_TYPES);
-      setAcademyFeatures(DEFAULT_ACADEMY_FEATURES);
-      setIsLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-
-    const load = async () => {
-      try {
-        setIsLoading(true);
-        const data = await apiClient.getLearningNavCapabilities();
-        if (!cancelled) {
-          setVisibility(data.visibility);
-          setSellingTypes(data.selling_types);
-          setAcademyFeatures(data.academy_features);
-        }
-      } catch {
-        if (!cancelled) {
-          setVisibility(DEFAULT_VISIBILITY);
-          setSellingTypes(DEFAULT_SELLING_TYPES);
-          setAcademyFeatures(DEFAULT_ACADEMY_FEATURES);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [shouldResolve, user?.role]);
+  // Sidebar, mobile sidebar and the nav gate all mount together; a shared SWR
+  // key makes them read one request instead of firing one each.
+  const { data, isLoading } = useSWR<LearningNavCapabilities>(
+    shouldResolve ? 'learning-nav-capabilities' : null,
+    () => apiClient.getLearningNavCapabilities(),
+    { revalidateOnFocus: false, dedupingInterval: 2000 }
+  );
 
   return {
-    visibility: shouldResolve ? visibility : null,
-    sellingTypes: shouldResolve ? sellingTypes : null,
-    academyFeatures: shouldResolve ? academyFeatures : null,
+    visibility: shouldResolve ? (data?.visibility ?? DEFAULT_VISIBILITY) : null,
+    sellingTypes: shouldResolve
+      ? (data?.selling_types ?? DEFAULT_SELLING_TYPES)
+      : null,
+    academyFeatures: shouldResolve
+      ? (data?.academy_features ?? DEFAULT_ACADEMY_FEATURES)
+      : null,
     isLoading: shouldResolve ? isLoading : false,
     shouldResolve
   };
