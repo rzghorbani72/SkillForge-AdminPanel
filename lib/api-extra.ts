@@ -3,15 +3,18 @@
 // All calls use httpOnly cookie auth via credentials: 'include'.
 
 import { getBrowserApiBaseUrl } from './api-base-url';
+import { browserRequestHeaders } from './browser-request-headers';
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
+  const method = init?.method ?? 'GET';
   const res = await fetch(`${getBrowserApiBaseUrl()}${path}`, {
     credentials: 'include',
+    ...init,
     headers: {
       'Content-Type': 'application/json',
+      ...browserRequestHeaders(method),
       ...(init?.headers ?? {})
-    },
-    ...init
+    }
   });
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;

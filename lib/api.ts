@@ -2,6 +2,7 @@ import { OtpType } from '@/constants/data';
 import { Enrollment, User as UserType, Offer, OfferInput } from '@/types/api';
 import { toast } from 'react-toastify';
 import { getBrowserApiBaseUrl } from './api-base-url';
+import { csrfHeader, selectedAcademyHeader } from './browser-request-headers';
 import {
   ApiResponseError,
   parseApiError,
@@ -333,27 +334,11 @@ class ApiClient {
   ): Record<string, string> {
     if (typeof window === 'undefined') return {};
 
-    const headers: Record<string, string> = {};
-
-    if (!['GET', 'HEAD'].includes(method.toUpperCase())) {
-      const csrfToken = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('csrf-token='))
-        ?.split('=')[1];
-      if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
-    }
+    const headers = csrfHeader(method);
 
     if (this.isAuthFlowEndpoint(endpoint)) return headers;
 
-    const academyId = window.localStorage.getItem(
-      'skillforge_selected_academy_id'
-    );
-    const hasSelectedAcademy =
-      !!academyId && academyId !== 'null' && academyId !== '';
-    // Platform mode (admin with no academy selected) clears the id, so an
-    // absent selection means "do not scope this request to an academy".
-    if (hasSelectedAcademy) headers['X-Academy-ID'] = academyId;
-    return headers;
+    return { ...headers, ...selectedAcademyHeader() };
   }
 
   private async request<T>(
