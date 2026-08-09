@@ -44,14 +44,13 @@ export function UserNav() {
   const { t } = useTranslation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const userDisplayName = user?.userDisplayName ?? '';
   const email = user?.email ?? '';
   const phone = user?.phone ?? '';
   const roleName = user?.role ?? '';
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
   const lastLogin = user?.lastLogin ?? null;
   const currentAcademy = user?.currentAcademy ?? null;
-  const headingName = userDisplayName;
+  const headingName = user?.displayName ?? '';
   const initials = headingName
     ? getInitials(headingName)
     : (roleName?.[0]?.toUpperCase() ?? 'U');

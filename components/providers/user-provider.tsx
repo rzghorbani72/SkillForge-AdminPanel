@@ -19,7 +19,6 @@ export interface AcademyProfile {
 export interface AuthUser {
   id: number;
   displayName: string;
-  userDisplayName?: string | null;
   email: string;
   phone: string;
   role:
@@ -137,8 +136,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
       setUser({
         id: (currentUser as any)?.id || 0,
-        displayName: currentUser?.display_name ?? currentUser?.name ?? '',
-        userDisplayName: currentUser?.user_display_name ?? null,
+        displayName: currentUser?.full_name ?? currentUser?.display_name ?? '',
         email: currentUser?.email ?? '',
         phone: currentUser?.phone_number ?? '',
         role: role as AuthUser['role'],

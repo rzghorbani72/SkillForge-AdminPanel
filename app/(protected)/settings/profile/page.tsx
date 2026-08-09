@@ -161,11 +161,8 @@ export default function ProfileSettingsPage() {
       setForm(DEFAULT_FORM);
       return;
     }
-    // user_display_name is the real personal name from the base profile;
-    // display_name may be the academy name for store-specific profiles.
-    const realName = (user as any).user_display_name ?? user.display_name ?? '';
     setForm({
-      name: realName,
+      name: user.full_name ?? user.display_name ?? '',
       email: user.email ?? '',
       phone: user.phone_number ?? ''
     });
@@ -173,8 +170,7 @@ export default function ProfileSettingsPage() {
     if (avatar) setAvatarUrl(avatar);
   }, [user]);
 
-  const displayName =
-    (user as any)?.user_display_name ?? user?.display_name ?? '';
+  const displayName = user?.full_name ?? user?.display_name ?? '';
 
   const initials = useMemo(() => {
     if (!displayName) return 'U';
@@ -212,11 +208,7 @@ export default function ProfileSettingsPage() {
     if (!user) return;
     try {
       setIsSaving(true);
-      await apiClient.updateUser(user.id, {
-        name: form.name,
-        email: form.email,
-        phone_number: form.phone
-      });
+      await apiClient.updateMe({ full_name: form.name });
       ErrorHandler.showSuccess(t('settings.profileUpdatedSuccess'));
       refresh();
     } catch (err) {

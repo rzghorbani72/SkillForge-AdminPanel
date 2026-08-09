@@ -2828,6 +2828,15 @@ class ApiClient {
     return response.data as UserDetailsResponse;
   }
 
+  /** Rename yourself. `updateUser` cannot do this: it only reaches profiles
+   *  below the caller's own rank, so it never matches the caller. */
+  async updateMe(data: { full_name: string }) {
+    return this.request('/users/me', {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+  }
+
   async updateUser(id: string, userData: unknown) {
     return this.request(`/users/${id}`, {
       method: 'PATCH',
