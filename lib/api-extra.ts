@@ -199,12 +199,27 @@ export type AccessDuration =
   | { mode: 'until'; until: string }
   | { mode: 'forever' };
 
+export type GrantPricing =
+  | { mode: 'FREE' }
+  | { mode: 'FULL'; method: GrantPaymentMethod; reference?: string }
+  | {
+      mode: 'DISCOUNT';
+      discount_type: 'PERCENT' | 'AMOUNT';
+      discount_value: number;
+      method: GrantPaymentMethod;
+      reference?: string;
+    };
+
+export type GrantPaymentMethod = 'CASH' | 'BANK_TRANSFER' | 'POS' | 'ONLINE';
+
 export interface CreateAccessGrantBody {
   course_ids?: string[];
   offer_id?: string;
   profile_ids?: string[];
   group_ids?: string[];
   duration: AccessDuration;
+  pricing?: GrantPricing;
+  idempotency_key?: string;
   note?: string;
 }
 
@@ -215,6 +230,9 @@ export interface AccessGrantSummary {
   student_grants: number;
   group_grants: number;
   expires_at: string | null;
+  list_amount: number;
+  charged_amount: number;
+  payment_id: string | null;
 }
 
 export interface StudentAccessGrant {

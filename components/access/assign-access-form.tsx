@@ -7,14 +7,16 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
 import { useTranslation } from '@/lib/i18n/hooks';
-import type { AccessDuration } from '@/lib/api-extra';
+import type { AccessDuration, GrantPricing } from '@/lib/api-extra';
 import { AccessDurationPicker } from './access-duration-picker';
+import { AccessPricingPicker } from './access-pricing-picker';
 import { useAccessTargets } from './use-access-targets';
 
 export type AssignAccessSelection = {
   profile_ids: string[];
   group_ids: string[];
   duration: AccessDuration;
+  pricing: GrantPricing;
   note?: string;
 };
 
@@ -49,6 +51,7 @@ export function AssignAccessForm({
     mode: 'days',
     days: 365
   });
+  const [pricing, setPricing] = useState<GrantPricing>({ mode: 'FREE' });
   const [note, setNote] = useState('');
 
   const hasTarget =
@@ -61,10 +64,12 @@ export function AssignAccessForm({
       profile_ids: profileIds,
       group_ids: groupIds,
       duration,
+      pricing,
       note: note.trim() || undefined
     });
     setProfileIds([]);
     setGroupIds([]);
+    setPricing({ mode: 'FREE' });
     setNote('');
   }
 
@@ -114,6 +119,18 @@ export function AssignAccessForm({
         onChange={setDuration}
         disabled={isSaving}
       />
+
+      <AccessPricingPicker
+        value={pricing}
+        onChange={setPricing}
+        disabled={isSaving}
+      />
+
+      {pricing.mode !== 'FREE' && groupIds.length > 0 && (
+        <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-700 dark:text-amber-400">
+          {t('accessGrants.paidGroupWarning')}
+        </p>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="access-grant-note">{t('accessGrants.note')}</Label>
