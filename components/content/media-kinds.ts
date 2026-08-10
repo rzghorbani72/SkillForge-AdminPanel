@@ -10,11 +10,20 @@ interface MediaKindConfig {
   fileHintKey: string;
   titlePlaceholderKey: string;
   descriptionPlaceholderKey: string;
+  successKey: string;
   maxSizeBytes: number;
+  /**
+   * Must stay in step with the API's `ALLOWED_EXTENSIONS` /
+   * `ALLOWED_MIME_TYPES` (Backend/src/common/validators/file-validator.ts).
+   * Offering a format the API rejects means the user only finds out after
+   * waiting through the whole upload.
+   */
   accept: Accept;
   upload: (
     file: File,
-    metadata: { title: string; description: string }
+    metadata: { title: string; description: string },
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
   ) => Promise<unknown>;
 }
 
@@ -28,11 +37,23 @@ export const MEDIA_KINDS: Record<MediaKind, MediaKindConfig> = {
     fileHintKey: 'media.videoFileHint',
     titlePlaceholderKey: 'media.videoTitlePlaceholder',
     descriptionPlaceholderKey: 'media.videoDescriptionPlaceholder',
+    successKey: 'media.videoUploaded',
     maxSizeBytes: 500 * MB,
     accept: {
-      'video/*': ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv']
+      'video/mp4': ['.mp4'],
+      'video/webm': ['.webm'],
+      'video/quicktime': ['.mov'],
+      'video/x-msvideo': ['.avi'],
+      'video/mpeg': ['.mpeg', '.mpg']
     },
-    upload: (file, metadata) => apiClient.uploadVideo(file, metadata)
+    upload: (file, metadata, onProgress, abortController) =>
+      apiClient.uploadVideoWithProgress(
+        file,
+        metadata,
+        undefined,
+        onProgress,
+        abortController
+      )
   },
   audio: {
     triggerKey: 'media.uploadAudio',
@@ -41,11 +62,16 @@ export const MEDIA_KINDS: Record<MediaKind, MediaKindConfig> = {
     fileHintKey: 'media.audioFileHint',
     titlePlaceholderKey: 'media.audioTitlePlaceholder',
     descriptionPlaceholderKey: 'media.audioDescriptionPlaceholder',
+    successKey: 'media.audioUploaded',
     maxSizeBytes: 50 * MB,
     accept: {
-      'audio/*': ['.mp3', '.wav', '.aac', '.ogg', '.m4a', '.flac']
+      'audio/mpeg': ['.mp3'],
+      'audio/wav': ['.wav'],
+      'audio/ogg': ['.ogg'],
+      'audio/webm': ['.weba', '.webm']
     },
-    upload: (file, metadata) => apiClient.uploadAudio(file, metadata)
+    upload: (file, metadata, onProgress, abortController) =>
+      apiClient.uploadAudio(file, metadata, onProgress, abortController)
   },
   document: {
     triggerKey: 'media.uploadDocument',
@@ -54,6 +80,7 @@ export const MEDIA_KINDS: Record<MediaKind, MediaKindConfig> = {
     fileHintKey: 'media.documentFileHint',
     titlePlaceholderKey: 'media.documentTitlePlaceholder',
     descriptionPlaceholderKey: 'media.documentDescriptionPlaceholder',
+    successKey: 'media.documentUploaded',
     maxSizeBytes: 20 * MB,
     accept: {
       'application/pdf': ['.pdf'],
@@ -70,6 +97,7 @@ export const MEDIA_KINDS: Record<MediaKind, MediaKindConfig> = {
       'text/plain': ['.txt'],
       'text/markdown': ['.md']
     },
-    upload: (file, metadata) => apiClient.uploadDocument(file, metadata)
+    upload: (file, metadata, onProgress, abortController) =>
+      apiClient.uploadDocument(file, metadata, onProgress, abortController)
   }
 };

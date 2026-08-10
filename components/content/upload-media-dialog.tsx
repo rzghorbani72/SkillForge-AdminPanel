@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -26,9 +26,11 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
 import { FileUploader } from '@/components/file-uploader';
-import { apiClient } from '@/lib/api';
+import { toast } from 'react-toastify';
 import { ErrorHandler } from '@/lib/error-handler';
+import { formatNumber } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { MEDIA_KINDS, type MediaKind } from './media-kinds';
 
@@ -55,8 +57,10 @@ export function UploadMediaDialog({
 }: UploadMediaDialogProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState<number | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const config = MEDIA_KINDS[kind];
+  const isUploading = progress !== null;
 
   const form = useForm<MediaFormData>({
     resolver: zodResolver(formSchema),
@@ -64,24 +68,39 @@ export function UploadMediaDialog({
   });
 
   const onSubmit = async (data: MediaFormData) => {
+    const abortController = new AbortController();
+    abortRef.current = abortController;
+
     try {
-      setIsUploading(true);
-      await config.upload(data.file[0], {
-        title: data.title,
-        description: data.description
-      });
+      setProgress(0);
+      await config.upload(
+        data.file[0],
+        { title: data.title, description: data.description },
+        setProgress,
+        abortController
+      );
+      toast.success(t(config.successKey));
       form.reset();
       setIsOpen(false);
       onUploaded?.();
     } catch (error) {
-      ErrorHandler.handleApiError(error);
+      if (!abortController.signal.aborted) {
+        ErrorHandler.handleApiError(error);
+      }
     } finally {
-      setIsUploading(false);
+      abortRef.current = null;
+      setProgress(null);
     }
   };
 
+  /** Closing mid-upload must stop the transfer, not leave it running unseen. */
+  const handleOpenChange = (open: boolean) => {
+    if (!open) abortRef.current?.abort();
+    setIsOpen(open);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="gap-2 rounded-xl shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30">
           <Plus className="h-4 w-4" />
@@ -152,14 +171,25 @@ export function UploadMediaDialog({
               )}
             />
 
+            {isUploading && (
+              <div className="space-y-2 rounded-xl border border-border/60 bg-muted/40 p-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium">{t('media.uploading')}</span>
+                  <span className="text-muted-foreground">
+                    {formatNumber(Math.round(progress))}%
+                  </span>
+                </div>
+                <Progress value={progress} className="h-2" />
+              </div>
+            )}
+
             <DialogFooter className="gap-2 sm:gap-2">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsOpen(false)}
-                disabled={isUploading}
+                onClick={() => handleOpenChange(false)}
               >
-                {t('media.cancel')}
+                {isUploading ? t('media.cancelUpload') : t('media.cancel')}
               </Button>
               <Button type="submit" disabled={isUploading}>
                 {isUploading ? t('media.uploading') : t(config.triggerKey)}

@@ -3,7 +3,11 @@
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { LessonFormData, lessonFormSchema } from './schema';
+import {
+  LESSON_DESCRIPTION_MAX,
+  LessonFormData,
+  lessonFormSchema
+} from './schema';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -16,6 +20,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { CharacterCounter } from '@/components/ui/character-counter';
 import {
   Select,
   SelectContent,
@@ -129,12 +134,19 @@ const LessonForm = ({
                         'courses.lessonForm.descriptionPlaceholder'
                       )}
                       className="min-h-[100px]"
+                      maxLength={LESSON_DESCRIPTION_MAX}
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    {t('courses.lessonForm.descriptionHint')}
-                  </FormDescription>
+                  <div className="flex items-center justify-between gap-2">
+                    <FormDescription>
+                      {t('courses.lessonForm.descriptionHint')}
+                    </FormDescription>
+                    <CharacterCounter
+                      length={field.value?.length ?? 0}
+                      maxLength={LESSON_DESCRIPTION_MAX}
+                    />
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}

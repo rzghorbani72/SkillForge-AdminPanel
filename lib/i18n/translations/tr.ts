@@ -8,7 +8,7 @@ export const tr = {
     titleMax80: 'Başlık 80 karakterden az olmalıdır',
     descriptionRequired: 'Açıklama gereklidir',
     descriptionMin10: 'Açıklama en az 10 karakter olmalıdır',
-    descriptionMax400: 'Açıklama 400 karakterden az olmalıdır',
+    descriptionMax: 'Açıklama izin verilen sınırdan uzun',
     descriptionMax2000: 'Açıklama 2.000 karakterden az olmalıdır',
     shortDescriptionMax400: 'Kısa açıklama 400 karakterden az olmalıdır',
     seasonRequired: 'Sezon seçimi gereklidir',
@@ -35,7 +35,8 @@ export const tr = {
     write: 'Yaz',
     emptyPreview: 'Henüz önizlenecek bir şey yok',
     formattingHint:
-      'Biçimlendirme: **kalın**, _italik_, listeler ve bağlantılar'
+      'Biçimlendirme: **kalın**, _italik_, listeler ve bağlantılar',
+    charactersRemaining: '{{count}} karakter kaldı'
   },
   toasts: {
     otpDebugCode: 'Kod: {{code}}',

@@ -2518,6 +2518,10 @@ export const fa = {
     limitMultiple: 'تا {{count}} فایل، هرکدام حداکثر {{size}}'
   },
   media: {
+    cancelUpload: 'لغو بارگذاری',
+    videoUploaded: 'ویدیو با موفقیت بارگذاری شد',
+    audioUploaded: 'فایل صوتی با موفقیت بارگذاری شد',
+    documentUploaded: 'سند با موفقیت بارگذاری شد',
     uploadAudio: 'بارگذاری فایل صوتی',
     imagePreview: 'پیش‌نمایش تصویر',
     noImageSelected: 'تصویری انتخاب نشده است',
@@ -2648,8 +2652,7 @@ export const fa = {
     courseContentVideos: 'ویدیوهای محتوای دوره',
     combinedVideoLength: 'مجموع طول ویدیوها',
     uploadAudioDescription: 'بارگذاری فایل صوتی برای دوره‌ها و درس‌های آکادمی',
-    audioFileHint:
-      'فرمت‌های MP3، WAV، AAC، OGG، M4A و FLAC — حداکثر ۵۰ مگابایت',
+    audioFileHint: 'فرمت‌های MP3، WAV، OGG و WebM — حداکثر ۵۰ مگابایت',
     audioTitlePlaceholder: 'عنوان فایل صوتی را وارد کنید',
     audioDescriptionPlaceholder: 'محتوای فایل صوتی و هدف آن را توضیح دهید',
     uploadDocumentDescription:
@@ -2682,8 +2685,7 @@ export const fa = {
     videoType: 'ویدیو',
     uploadVideoDescription: 'بارگذاری ویدیو برای دوره‌ها و درس‌های آکادمی',
     videoFile: 'فایل ویدیو',
-    videoFileHint:
-      'فرمت‌های MP4، AVI، MOV، WMV، FLV، WebM و MKV — حداکثر ۵۰۰ مگابایت',
+    videoFileHint: 'فرمت‌های MP4، WebM، MOV، AVI و MPEG — حداکثر ۵۰۰ مگابایت',
     videoTitle: 'عنوان ویدیو',
     videoTitlePlaceholder: 'عنوان ویدیو را وارد کنید',
     videoDescriptionPlaceholder: 'محتوای ویدیو و هدف آن را توضیح دهید',

@@ -18,6 +18,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { CharacterCounter } from '@/components/ui/character-counter';
 import { Switch } from '@/components/ui/switch';
 import {
   Select,
@@ -28,6 +29,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { LESSON_DESCRIPTION_MAX } from '@/components/lesson/schema';
 import type { LessonDraft, LessonType, SeasonDraft } from './useCourseForm';
 import { LessonMedia } from './LessonMedia';
 import { InlineConfirm } from './InlineConfirm';
@@ -284,7 +286,13 @@ export function SortableLessonRow({
               onChange={(e) => onUpdate({ description: e.target.value })}
               placeholder={t('courses.optional')}
               rows={3}
+              maxLength={LESSON_DESCRIPTION_MAX}
               className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+            <CharacterCounter
+              length={lesson.description?.length ?? 0}
+              maxLength={LESSON_DESCRIPTION_MAX}
+              className="text-end text-xs"
             />
           </div>
 

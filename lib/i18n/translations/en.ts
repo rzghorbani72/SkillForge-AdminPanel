@@ -2531,6 +2531,10 @@ export const en = {
     limitMultiple: 'Up to {{count}} files, {{size}} each'
   },
   media: {
+    cancelUpload: 'Cancel upload',
+    videoUploaded: 'Video uploaded successfully',
+    audioUploaded: 'Audio uploaded successfully',
+    documentUploaded: 'Document uploaded successfully',
     uploadAudio: 'Upload audio',
     imagePreview: 'Image preview',
     noImageSelected: 'No image selected',
@@ -2667,7 +2671,7 @@ export const en = {
     courseContentVideos: 'Course content videos',
     combinedVideoLength: 'Combined video length',
     uploadAudioDescription: 'Upload audio content for your courses and lessons',
-    audioFileHint: 'MP3, WAV, AAC, OGG, M4A, FLAC — max 50MB',
+    audioFileHint: 'MP3, WAV, OGG, WebM — max 50MB',
     audioTitlePlaceholder: 'Enter audio title',
     audioDescriptionPlaceholder: 'Describe the audio content and its purpose',
     uploadDocumentDescription:
@@ -2701,7 +2705,7 @@ export const en = {
     videoType: 'Video',
     uploadVideoDescription: 'Upload video content for your courses and lessons',
     videoFile: 'Video file',
-    videoFileHint: 'MP4, AVI, MOV, WMV, FLV, WebM, MKV — max 500MB',
+    videoFileHint: 'MP4, WebM, MOV, AVI, MPEG — max 500MB',
     videoTitle: 'Video title',
     videoTitlePlaceholder: 'Enter video title',
     videoDescriptionPlaceholder: 'Describe the video content and its purpose',

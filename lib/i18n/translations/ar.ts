@@ -8,7 +8,7 @@ export const ar = {
     titleMax80: 'يجب أن يكون العنوان أقل من 80 حرفًا',
     descriptionRequired: 'الوصف مطلوب',
     descriptionMin10: 'يجب أن يكون الوصف 10 أحرف على الأقل',
-    descriptionMax400: 'يجب أن يكون الوصف أقل من 400 حرف',
+    descriptionMax: 'الوصف أطول من الحد المسموح به',
     descriptionMax2000: 'يجب أن يكون الوصف أقل من 2000 حرف',
     shortDescriptionMax400: 'يجب أن يكون الوصف المختصر أقل من 400 حرف',
     seasonRequired: 'اختيار الفصل مطلوب',
@@ -34,7 +34,8 @@ export const ar = {
     preview: 'معاينة',
     write: 'كتابة',
     emptyPreview: 'لا يوجد شيء للمعاينة بعد',
-    formattingHint: 'التنسيق: **عريض**، _مائل_، قوائم وروابط'
+    formattingHint: 'التنسيق: **عريض**، _مائل_، قوائم وروابط',
+    charactersRemaining: 'بقي {{count}} حرف'
   },
   toasts: {
     otpDebugCode: 'الرمز: {{code}}',
