@@ -268,7 +268,8 @@ export default function ManualEnrollPage() {
                             <div className="flex items-center gap-1 text-xs">
                               <CreditCard className="h-3 w-3" />
                               <span>
-                                {(e.Payment.amount / 10).toLocaleString()} T
+                                {(e.Payment.amount / 10).toLocaleString()}{' '}
+                                {t('common.toman')}
                               </span>
                               <Badge variant="outline" className="text-xs">
                                 {getPaymentMethodLabel(

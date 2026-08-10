@@ -54,7 +54,7 @@ export function CourseFactsCard({
             <span className="text-emerald-600">{t('courses.free')}</span>
           ) : (
             <span className="text-emerald-600">
-              {formatNumber(course.price)} T
+              {formatNumber(course.price)} {t('common.toman')}
             </span>
           )}
         </Fact>
@@ -62,7 +62,7 @@ export function CourseFactsCard({
         {hasDiscount && (
           <Fact label={t('courseDetail.comparePrice')}>
             <span className="text-muted-foreground line-through">
-              {formatNumber(course.original_price)} T
+              {formatNumber(course.original_price)} {t('common.toman')}
             </span>
           </Fact>
         )}

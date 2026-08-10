@@ -73,6 +73,7 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
   );
 
   const rangeLabel = t(range.labelKey);
+  const toman = t('common.toman');
   const avgSale =
     payments.length > 0 ? Math.round(grossAllTime / payments.length) : null;
 
@@ -118,14 +119,14 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
           <StatTile
             icon={<DollarSign className="h-4 w-4" />}
             label={t('courseDetail.grossAllTime')}
-            value={loading ? null : `${formatNumber(grossAllTime)} T`}
+            value={loading ? null : `${formatNumber(grossAllTime)} ${toman}`}
             sub={t('courseDetail.grossAllTimeHint')}
             color="emerald"
           />
           <StatTile
             icon={<TrendingUp className="h-4 w-4" />}
             label={t('courseDetail.revenuePeriod', { period: rangeLabel })}
-            value={loading ? null : `${formatNumber(grossPeriod)} T`}
+            value={loading ? null : `${formatNumber(grossPeriod)} ${toman}`}
             sub={t('courseDetail.sales', {
               count: formatNumber(periodPayments.length)
             })}
@@ -142,7 +143,11 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
             icon={<BarChart3 className="h-4 w-4" />}
             label={t('courseDetail.avgSalePrice')}
             value={
-              loading ? null : avgSale ? `${formatNumber(avgSale)} T` : '—'
+              loading
+                ? null
+                : avgSale
+                  ? `${formatNumber(avgSale)} ${toman}`
+                  : '—'
             }
             sub={t('courseDetail.perPayment')}
             color="amber"
@@ -199,7 +204,7 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
               />
               <Tooltip
                 formatter={(value: number) => [
-                  `${formatNumber(value)} T`,
+                  `${formatNumber(value)} ${toman}`,
                   t('dashboard.revenue')
                 ]}
                 contentStyle={{
