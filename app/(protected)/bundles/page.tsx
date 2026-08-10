@@ -12,11 +12,13 @@ import {
   Loader2,
   ToggleLeft,
   ToggleRight,
-  Pencil
+  Pencil,
+  KeyRound
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
+import { AssignAccessDialog } from '@/components/access/assign-access-dialog';
 import { apiClient } from '@/lib/api';
 import type { Offer } from '@/types/api';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
@@ -123,12 +125,14 @@ function BundleCard({
   bundle,
   onEdit,
   onToggle,
+  onAssign,
   formatCurrency,
   t
 }: {
   bundle: Bundle;
   onEdit: () => void;
   onToggle: () => void;
+  onAssign: () => void;
   formatCurrency: (n: number) => string;
   t: (k: string) => string;
 }) {
@@ -151,6 +155,14 @@ function BundleCard({
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            aria-label={t('accessGrants.title')}
+            onClick={onAssign}
+            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <KeyRound className="h-4 w-4" />
+          </button>
           <button
             type="button"
             aria-label={t('bundles.editBundle')}
@@ -235,6 +247,7 @@ export default function BundlesPage() {
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Bundle | null>(null);
+  const [assignTarget, setAssignTarget] = useState<string | null>(null);
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -428,12 +441,19 @@ export default function BundlesPage() {
               bundle={b}
               onEdit={() => openEdit(b)}
               onToggle={() => toggleActive(b)}
+              onAssign={() => setAssignTarget(b.id)}
               formatCurrency={formatCurrency}
               t={t}
             />
           ))}
         </div>
       )}
+
+      <AssignAccessDialog
+        open={assignTarget !== null}
+        onOpenChange={(open) => setAssignTarget(open ? assignTarget : null)}
+        scope={assignTarget ? { offer_id: assignTarget } : undefined}
+      />
 
       {/* Create / Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

@@ -189,3 +189,68 @@ export const paymentsExtraApi = {
       data: { id: number; status: string; amount: number };
     }>(`/payments/${id}/status`)
 };
+
+// ---------- Access grants --------------------------------------------------
+// One canonical writer for "a manager handed this access out": many courses (or
+// a bundle) to many students and groups, for one duration.
+
+export type AccessDuration =
+  | { mode: 'days'; days: number }
+  | { mode: 'until'; until: string }
+  | { mode: 'forever' };
+
+export interface CreateAccessGrantBody {
+  course_ids?: string[];
+  offer_id?: string;
+  profile_ids?: string[];
+  group_ids?: string[];
+  duration: AccessDuration;
+  note?: string;
+}
+
+export interface AccessGrantSummary {
+  courses: number;
+  students: number;
+  groups: number;
+  student_grants: number;
+  group_grants: number;
+  expires_at: string | null;
+}
+
+export interface StudentAccessGrant {
+  enrollment_id: string;
+  profile_id: string;
+  name: string;
+  phone: string | null;
+  granted_at: string;
+  expires_at: string | null;
+  note: string | null;
+}
+
+export interface GroupAccessGrant {
+  grant_id: string;
+  group_id: string;
+  name: string;
+  members: number;
+  granted_at: string;
+  expires_at: string | null;
+  note: string | null;
+}
+
+export const accessGrantsApi = {
+  create: (body: CreateAccessGrantBody) =>
+    call<AccessGrantSummary>('/access-grants', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    }),
+  list: (courseId: string) =>
+    call<{
+      status: string;
+      data: { students: StudentAccessGrant[]; groups: GroupAccessGrant[] };
+    }>(`/access-grants?course_id=${encodeURIComponent(courseId)}`),
+  revoke: (body: {
+    course_id: string;
+    profile_id?: string;
+    group_id?: string;
+  }) => call('/access-grants', { method: 'DELETE', body: JSON.stringify(body) })
+};

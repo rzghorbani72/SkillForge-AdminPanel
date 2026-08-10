@@ -3651,6 +3651,48 @@ export const fa = {
       }
     }
   },
+  accessGrants: {
+    title: 'دادن دسترسی به دانشجویان',
+    description:
+      'این دوره را بدون خرید، به دانشجویان یا گروه‌ها بدهید؛ به هر مدتی که بخواهید.',
+    stagedDescription:
+      'انتخاب کنید چه کسی این دوره را بگیرد. دسترسی بلافاصله پس از ساخت دوره داده می‌شود.',
+    giveAccess: 'دادن دسترسی',
+    addToList: 'افزودن به فهرست',
+    courses: 'دوره‌ها',
+    selectCourses: 'انتخاب دوره‌ها',
+    noCourses: 'دوره‌ای پیدا نشد',
+    students: 'دانشجویان',
+    selectStudents: 'انتخاب دانشجویان',
+    noStudents: 'دانشجویی پیدا نشد',
+    groups: 'گروه‌ها',
+    selectGroups: 'انتخاب گروه‌ها',
+    noGroups: 'گروهی پیدا نشد',
+    groupsHint:
+      'دسترسی گروهی همیشه هماهنگ می‌ماند: هر کس به گروه اضافه شود آن را می‌گیرد و هر کس حذف شود از دست می‌دهد.',
+    duration: 'مدت دسترسی',
+    durationDays: 'برای چند روز',
+    durationUntil: 'تا یک تاریخ',
+    durationForever: 'بدون انقضا',
+    dayCount: '{{count}} روز',
+    foreverWarning:
+      'این دسترسی هیچ‌وقت منقضی نمی‌شود. میزبانی این محتوا برای این افراد پایانی نخواهد داشت.',
+    note: 'یادداشت',
+    notePlaceholder: 'چرا این دسترسی داده می‌شود؟ (اختیاری)',
+    granted: 'دسترسی داده شد ({{count}})',
+    grantFailed: 'دادن دسترسی انجام نشد',
+    revoke: 'حذف دسترسی',
+    revoked: 'دسترسی حذف شد',
+    revokeFailed: 'حذف دسترسی انجام نشد',
+    noGrants: 'هنوز به کسی دسترسی این دوره داده نشده است',
+    memberCount: '{{count}} عضو',
+    until: 'تا {{date}}',
+    expired: 'منقضی شده',
+    unknownStudent: 'دانشجوی نامشخص',
+    stagedRow: '{{students}} دانشجو، {{groups}} گروه',
+    stagedFailed:
+      'دوره ساخته شد اما دسترسی داده نشد. از صفحهٔ دوره دوباره تلاش کنید.'
+  },
   bundles: {
     title: 'بسته‌ها',
     titlePlaceholder: 'مثلاً بسته جامع فول‌استک',

@@ -3658,6 +3658,48 @@ export const en = {
       }
     }
   },
+  accessGrants: {
+    title: 'Give access to students',
+    description:
+      'Hand this course to students or groups without a purchase, for as long as you choose.',
+    stagedDescription:
+      'Choose who gets this course. Access is granted as soon as the course is created.',
+    giveAccess: 'Give access',
+    addToList: 'Add to list',
+    courses: 'Courses',
+    selectCourses: 'Select courses',
+    noCourses: 'No courses found',
+    students: 'Students',
+    selectStudents: 'Select students',
+    noStudents: 'No students found',
+    groups: 'Groups',
+    selectGroups: 'Select groups',
+    noGroups: 'No groups found',
+    groupsHint:
+      'Group access stays in sync: anyone added to the group gets it, anyone removed loses it.',
+    duration: 'How long',
+    durationDays: 'For a number of days',
+    durationUntil: 'Until a date',
+    durationForever: 'Never expires',
+    dayCount: '{{count}} days',
+    foreverWarning:
+      'This access never expires. You keep hosting this content for them with no end date.',
+    note: 'Note',
+    notePlaceholder: 'Why is this access being given? (optional)',
+    granted: 'Access given ({{count}})',
+    grantFailed: 'Could not give access',
+    revoke: 'Remove access',
+    revoked: 'Access removed',
+    revokeFailed: 'Could not remove access',
+    noGrants: 'Nobody has been given access to this course yet',
+    memberCount: '{{count}} members',
+    until: 'Until {{date}}',
+    expired: 'Expired',
+    unknownStudent: 'Unknown student',
+    stagedRow: '{{students}} students, {{groups}} groups',
+    stagedFailed:
+      'The course was created but access could not be given. Try again from the course page.'
+  },
   bundles: {
     title: 'Bundles',
     titlePlaceholder: 'e.g. Full Stack Mastery Pack',

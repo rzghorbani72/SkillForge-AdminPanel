@@ -2,10 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Plus, ChevronDown, AlertTriangle } from 'lucide-react';
+import {
+  Search,
+  Plus,
+  ChevronDown,
+  AlertTriangle,
+  KeyRound
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { AssignAccessDialog } from '@/components/access/assign-access-dialog';
 import { studentGroupsApi } from '@/lib/api-extra';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -109,6 +116,7 @@ export default function UsersPage() {
   const [roleFilter, setRoleFilter] = useState<string>(ALL_ROLES);
   const [availableRoles, setAvailableRoles] = useState<PlatformRole[]>([]);
   const [addUserOpen, setAddUserOpen] = useState(false);
+  const [assignAccessOpen, setAssignAccessOpen] = useState(false);
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   const [openGroupId, setOpenGroupId] = useState<string | null>(null);
 
@@ -216,6 +224,10 @@ export default function UsersPage() {
         onOpenChange={(open) => !open && setOpenGroupId(null)}
         onChanged={fetchGroups}
       />
+      <AssignAccessDialog
+        open={assignAccessOpen}
+        onOpenChange={setAssignAccessOpen}
+      />
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -230,6 +242,14 @@ export default function UsersPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5"
+            onClick={() => setAssignAccessOpen(true)}
+          >
+            <KeyRound className="h-3.5 w-3.5" /> {t('accessGrants.giveAccess')}
+          </Button>
           <Button
             size="sm"
             className="gap-1.5"

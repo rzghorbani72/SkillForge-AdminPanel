@@ -24,6 +24,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { COURSE_DESCRIPTION_MAX, courseFormSchema } from './schema';
+import {
+  StagedAccessSection,
+  applyStagedGrants
+} from '@/components/access/staged-access-section';
+import type { AssignAccessSelection } from '@/components/access/assign-access-form';
 
 const quickCreateSchema = courseFormSchema.pick({
   title: true,
@@ -47,6 +52,7 @@ export default function CourseQuickCreate() {
   const router = useRouter();
   const { selectedAcademy } = useStore();
   const [isSaving, setIsSaving] = useState(false);
+  const [stagedGrants, setStagedGrants] = useState<AssignAccessSelection[]>([]);
 
   const form = useForm<QuickCreateData>({
     resolver: zodResolver(quickCreateSchema),
@@ -72,6 +78,10 @@ export default function CourseQuickCreate() {
       });
       const id = extractId(resp);
       if (!id) throw new Error('Course creation returned no id');
+
+      // The course exists now, so the grants staged above can finally be
+      // written. A failure here is reported without losing the new course.
+      await applyStagedGrants(id, stagedGrants);
 
       toast.success(t('courses.createdDraftToast'));
       router.push(`/courses/${id}/edit`);
@@ -192,6 +202,11 @@ export default function CourseQuickCreate() {
           </Form>
         </CardContent>
       </Card>
+
+      {/* Its own <form>, so it sits beside the create card, never inside it. */}
+      <div className="mt-6">
+        <StagedAccessSection staged={stagedGrants} onChange={setStagedGrants} />
+      </div>
     </div>
   );
 }

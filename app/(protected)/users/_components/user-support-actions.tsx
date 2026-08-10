@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import { GrantCourseDialog } from '@/components/users/grant-course-dialog';
+import { AssignAccessDialog } from '@/components/access/assign-access-dialog';
 
 /** Support one-offs that act on a single user from the detail sheet. */
 export function UserSupportActions({ userId }: { userId: string }) {
@@ -60,10 +60,10 @@ export function UserSupportActions({ userId }: { userId: string }) {
         </Button>
       </div>
 
-      <GrantCourseDialog
-        profileId={grantCourseOpen ? userId : null}
+      <AssignAccessDialog
+        open={grantCourseOpen}
         onOpenChange={setGrantCourseOpen}
-        onGranted={() => undefined}
+        initialProfileIds={[userId]}
       />
     </>
   );

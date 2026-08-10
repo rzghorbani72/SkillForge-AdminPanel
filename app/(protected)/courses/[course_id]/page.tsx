@@ -29,6 +29,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { apiClient } from '@/lib/api';
+import { CourseAccessSection } from '@/components/access/course-access-section';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -511,6 +512,9 @@ export default function CourseDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Hand this course to students/groups without a purchase */}
+      <CourseAccessSection courseId={courseId} />
 
       {/* Two-column: recent students + sidebar */}
       <div className="grid gap-6 lg:grid-cols-3">

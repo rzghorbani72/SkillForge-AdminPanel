@@ -15,6 +15,7 @@ import CreateCourseAssociations from './CreateCourseAssociations';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
 import { CourseOffersSection } from './CourseOffersSection';
+import { CourseAccessSection } from '@/components/access/course-access-section';
 import { SaveStatusIndicator } from './SaveStatusIndicator';
 
 interface CourseFormPageProps {
@@ -208,6 +209,9 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
 
             {/* Multi-price offerings */}
             <CourseOffersSection courseId={courseId} />
+
+            {/* Hand the course to students/groups without a purchase */}
+            <CourseAccessSection courseId={courseId} />
 
             {/* Footer actions */}
             <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-4 py-3">
