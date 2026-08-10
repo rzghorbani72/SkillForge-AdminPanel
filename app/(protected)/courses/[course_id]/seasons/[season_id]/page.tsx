@@ -86,7 +86,7 @@ export default function SeasonViewPage() {
               className="mt-4"
               onClick={() => router.push(`/courses/${courseId}/seasons`)}
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
               {t('courses.backToSeasons')}
             </Button>
           </div>
@@ -141,7 +141,7 @@ export default function SeasonViewPage() {
             size="sm"
             onClick={() => router.push(`/courses/${courseId}/seasons`)}
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
             {t('courses.backToSeasons')}
           </Button>
           <div>

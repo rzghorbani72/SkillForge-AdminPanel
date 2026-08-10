@@ -37,7 +37,6 @@ import type { LiveSession } from '@/types/api';
 
 type Props = {
   initialValues: Partial<LessonFormData> & { season_id: string };
-  categories: Array<{ id: number; name: string }>;
   isSubmitting: boolean;
   onSubmit: (data: LessonFormData) => void;
   onCancel: () => void;
@@ -59,7 +58,6 @@ const LESSON_TYPE_OPTIONS = [
 
 const LessonForm = ({
   initialValues,
-  categories,
   isSubmitting,
   onSubmit,
   onCancel,
@@ -80,11 +78,9 @@ const LessonForm = ({
       video_id: initialValues.video_id ?? '',
       cover_id: initialValues.cover_id ?? '',
       document_id: initialValues.document_id ?? '',
-      category_id: initialValues.category_id ?? '',
       published: initialValues.published ?? false,
       is_free: initialValues.is_free ?? false,
-      lesson_type:
-        (initialValues.lesson_type as LessonFormData['lesson_type']) ?? 'VIDEO'
+      lesson_type: initialValues.lesson_type ?? 'VIDEO'
     }
   });
 
@@ -192,39 +188,6 @@ const LessonForm = ({
                 onLiveSessionSaved={onLiveSessionSaved}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="category_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('courses.category')}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={t('courses.selectCategory')}
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem
-                          key={category.id}
-                          value={category.id.toString()}
-                        >
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    {t('courses.lessonForm.categoryHint')}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="grid gap-4 md:grid-cols-2">
               <FormField

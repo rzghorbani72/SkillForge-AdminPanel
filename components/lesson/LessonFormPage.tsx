@@ -12,7 +12,6 @@ import type { Course, Lesson, Season } from '@/types/api';
 
 type Props = {
   initialValues: LessonFormData;
-  categories: Array<{ id: number; name: string }>;
   isSubmitting: boolean;
   onSubmit: (data: LessonFormData) => void;
   onCancel: () => void;
@@ -26,7 +25,6 @@ type Props = {
 
 const LessonFormPage = ({
   initialValues,
-  categories,
   isSubmitting,
   onSubmit,
   onCancel,
@@ -82,16 +80,7 @@ const LessonFormPage = ({
         </span>
       </nav>
 
-      <div className="flex min-w-0 items-start gap-3">
-        <Button
-          variant="outline"
-          size="sm"
-          className="shrink-0"
-          onClick={onCancel}
-        >
-          <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
-          {t('courses.backToLessons')}
-        </Button>
+      <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
           <h1 className="truncate text-2xl font-bold tracking-tight">
             {isEdit
@@ -104,13 +93,21 @@ const LessonFormPage = ({
               : t('courses.lessonForm.createSubtitle', subtitleParams)}
           </p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="shrink-0"
+          onClick={onCancel}
+        >
+          <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
+          {t('courses.backToLessons')}
+        </Button>
       </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <LessonForm
             initialValues={initialValues}
-            categories={categories}
             isSubmitting={isSubmitting}
             onSubmit={onSubmit}
             onCancel={onCancel}

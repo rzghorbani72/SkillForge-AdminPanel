@@ -1,7 +1,6 @@
 'use client';
 
 import { useStore } from '@/hooks/useStore';
-import { useCategoriesStore } from '@/lib/store';
 import useLessonForm from '@/components/lesson/useLessonForm';
 import LessonFormPage from '@/components/lesson/LessonFormPage';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -11,7 +10,6 @@ import { LessonDownloadPolicyEditor } from '@/components/lesson/lesson-download-
 export default function EditLessonPage() {
   const { t } = useTranslation();
   const { selectedAcademy } = useStore();
-  const { categories } = useCategoriesStore();
   const {
     lesson,
     season,
@@ -71,7 +69,6 @@ export default function EditLessonPage() {
   return (
     <LessonFormPage
       initialValues={initialValues}
-      categories={categories}
       isSubmitting={isSubmitting}
       onSubmit={onSubmit}
       onCancel={() => window.history.back()}

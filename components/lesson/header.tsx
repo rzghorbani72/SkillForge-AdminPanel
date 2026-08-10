@@ -26,7 +26,7 @@ const LessonHeader = ({
             router.push(`/courses/${courseId}/seasons/${seasonId}`)
           }
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
           Back to Season
         </Button>
         <div>

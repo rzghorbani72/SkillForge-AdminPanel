@@ -89,13 +89,9 @@ const useLessonForm = (isEdit: boolean = false): UseLessonFormReturn => {
           document_id: lessonData.document_id
             ? String(lessonData.document_id)
             : '',
-          published: Boolean(
-            (lessonData as any).published ??
-              (lessonData as any).is_active ??
-              lessonData.is_published
-          ),
+          published: Boolean(lessonData.is_published),
           is_free: Boolean(lessonData.is_free),
-          lesson_type: (lessonData.lesson_type as any) ?? 'VIDEO'
+          lesson_type: lessonData.lesson_type ?? 'VIDEO'
         });
       } else if (!isEdit) {
         setInitialValues({

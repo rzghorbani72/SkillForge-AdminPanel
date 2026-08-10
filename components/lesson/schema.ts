@@ -18,7 +18,6 @@ export const lessonFormSchema = z.object({
   video_id: z.string().optional(),
   cover_id: z.string().optional(),
   document_id: z.string().optional(),
-  category_id: z.string().optional(),
   published: z.boolean().default(false),
   is_free: z.boolean().default(false),
   lesson_type: z
