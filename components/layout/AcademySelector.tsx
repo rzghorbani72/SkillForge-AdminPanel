@@ -34,7 +34,7 @@ const AVATAR_COLORS = [
 ];
 
 const HIDDEN_ROLES = ['STUDENT', 'USER'];
-const SELECTOR_NAME_MAX_CHARS = 8;
+const SELECTOR_NAME_MAX_CHARS = 16;
 
 function truncateName(name: string): string {
   return name.length > SELECTOR_NAME_MAX_CHARS
