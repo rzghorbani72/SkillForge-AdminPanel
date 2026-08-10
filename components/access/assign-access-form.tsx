@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import type { AccessDuration, GrantPricing } from '@/lib/api-extra';
 import { AccessDurationPicker } from './access-duration-picker';
 import { AccessPricingPicker } from './access-pricing-picker';
@@ -44,6 +45,11 @@ export function AssignAccessForm({
   hasExternalTarget = false
 }: AssignAccessFormProps) {
   const { t } = useTranslation();
+  const { user } = useAuthUser();
+  // Mirrors the server fence in AccessGrantsService: a teacher grants their own
+  // courses to their own students, free, one student at a time — no groups and
+  // no money. Hiding it here keeps the form from offering a guaranteed 403.
+  const isTeacher = user?.role === 'TEACHER';
   const { students, groups, isLoading } = useAccessTargets(enabled);
   const [profileIds, setProfileIds] = useState<string[]>([]);
   const [groupIds, setGroupIds] = useState<string[]>([]);
@@ -93,7 +99,7 @@ export function AssignAccessForm({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className={isTeacher ? 'hidden' : 'space-y-2'}>
           <Label>{t('accessGrants.groups')}</Label>
           <EntityMultiSelect
             items={groups}
@@ -120,11 +126,13 @@ export function AssignAccessForm({
         disabled={isSaving}
       />
 
-      <AccessPricingPicker
-        value={pricing}
-        onChange={setPricing}
-        disabled={isSaving}
-      />
+      {!isTeacher && (
+        <AccessPricingPicker
+          value={pricing}
+          onChange={setPricing}
+          disabled={isSaving}
+        />
+      )}
 
       {pricing.mode !== 'FREE' && groupIds.length > 0 && (
         <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-700 dark:text-amber-400">

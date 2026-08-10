@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Users,
   GraduationCap,
-  Plus,
   Search,
   Filter,
   CheckCircle
@@ -19,6 +18,7 @@ import { apiClient } from '@/lib/api';
 import { User, Enrollment } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { UserTable } from '@/components/students/UserTable';
+import { AddMemberDialog } from '@/components/members/add-member-dialog';
 import { DataPanel } from '@/components/shared/data-list';
 import { EnrollmentsList } from '@/components/students/enrollments-list';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -235,10 +235,7 @@ export default function StudentsPage() {
           title={t('students.allUsers')}
           description={t('students.manageAllUsers')}
         >
-          <Button size="sm" className="rounded-lg">
-            <Plus className="me-1.5 h-4 w-4" />
-            {t('students.addUser')}
-          </Button>
+          <AddMemberDialog onAdded={fetchStudents} />
         </PageHeader>
 
         <div className="flex flex-col gap-3 md:flex-row md:items-center">

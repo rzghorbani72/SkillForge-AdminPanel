@@ -777,6 +777,47 @@ class ApiClient {
     });
   }
 
+  /**
+   * Find a person by their full phone number. Returns their role in YOUR
+   * academy only — never where else on the platform they belong.
+   */
+  async lookupPersonByPhone(phone: string) {
+    const res = await this.request<{
+      found: boolean;
+      user_id: string | null;
+      name: string | null;
+      membership: { role: string; is_active: boolean } | null;
+    }>(`/users/lookup?phone=${encodeURIComponent(phone)}`);
+    return res.data;
+  }
+
+  /**
+   * Add a person to your academy. An existing account gains a membership here;
+   * an unknown number gets a new account. The backend stamps the caller as the
+   * creator, which is what later lets a teacher hand their own courses to this
+   * person.
+   */
+  async addAcademyMember(data: {
+    phone_number: string;
+    role: string;
+    name?: string;
+    email?: string;
+    password?: string;
+  }) {
+    return this.request('/users/members', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  /** Roles the signed-in staff member may hand out inside their academy. */
+  async getAssignableAcademyRoles() {
+    const res = await this.request<{
+      roles: Array<{ name: string; label: string; hierarchy_level: number }>;
+    }>('/users/assignable-roles');
+    return res.data;
+  }
+
   async logout() {
     return this.request('/auth/logout', {
       method: 'POST'

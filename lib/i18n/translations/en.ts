@@ -1510,6 +1510,22 @@ export const en = {
     deleteCourseConfirm:
       'Are you sure you want to delete "{{title}}"? This action cannot be undone.'
   },
+  members: {
+    addMember: 'Add Person',
+    addMemberDescription:
+      'The phone number identifies the person. Someone who already has an account keeps it and gains a role in your academy.',
+    phone: 'Phone number',
+    phoneHint: 'Enter the full number, then search.',
+    personFound: 'This person already has an account',
+    personNotFound: 'No account with this number — a new one will be created.',
+    alreadyMember:
+      'This person is already in your academy. Change their role instead of adding them again.',
+    roleInAcademy: 'Role in your academy',
+    optionalPassword: 'New password for your academy (optional)',
+    smsNotice:
+      'We text them that they were added to your academy, with the password when you set one.',
+    memberAdded: 'Person added to your academy'
+  },
   students: {
     title: 'Students',
     studentName: 'Student Name',
@@ -1529,6 +1545,12 @@ export const en = {
     manageDescription:
       'Manage your students, track enrollments, and monitor progress',
     addStudent: 'Add Student',
+    addStudentDescription:
+      'Create the account yourself. The student signs in with this one-time password and must replace it.',
+    studentPhone: 'Phone number',
+    studentEmail: 'Email (optional)',
+    oneTimePassword: 'One-time password',
+    studentAdded: 'Student added',
     searchStudents: 'Search students...',
     totalStudents: 'Total Students',
     registeredStudents: 'Registered students',
