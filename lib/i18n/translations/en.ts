@@ -38,7 +38,8 @@ export const en = {
     preview: 'Preview',
     write: 'Write',
     emptyPreview: 'Nothing to preview yet',
-    formattingHint: 'Formatting: **bold**, _italic_, lists and links'
+    formattingHint: 'Formatting: **bold**, _italic_, lists and links',
+    charactersRemaining: '{{count}} characters remaining'
   },
   toasts: {
     otpDebugCode: 'Code: {{code}}',

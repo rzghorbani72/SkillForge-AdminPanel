@@ -37,7 +37,8 @@ export const fa = {
     preview: 'پیش‌نمایش',
     write: 'نوشتن',
     emptyPreview: 'هنوز چیزی برای پیش‌نمایش نیست',
-    formattingHint: 'قالب‌بندی: **پررنگ**، _مورب_، فهرست و پیوند'
+    formattingHint: 'قالب‌بندی: **پررنگ**، _مورب_، فهرست و پیوند',
+    charactersRemaining: '{{count}} کاراکتر باقی مانده'
   },
   toasts: {
     otpDebugCode: 'کد: {{code}}',
