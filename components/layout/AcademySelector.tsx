@@ -81,23 +81,41 @@ function AcademyAvatar({
   );
 }
 
-function AcademyStatusBadge({ isActive }: { isActive: boolean }) {
+function AcademyStatusBadge({
+  isActive,
+  dotOnly = false
+}: {
+  isActive: boolean;
+  dotOnly?: boolean;
+}) {
   const { t } = useTranslation();
+  const dot = (
+    <span
+      className={cn(
+        'h-1.5 w-1.5 shrink-0 rounded-full',
+        isActive ? 'bg-emerald-500' : 'bg-orange-500'
+      )}
+    />
+  );
+
+  if (dotOnly) {
+    return (
+      <span title={isActive ? t('stores.active') : t('stores.inactive')}>
+        {dot}
+      </span>
+    );
+  }
+
   return (
     <span
       className={cn(
         'inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium',
         isActive
           ? 'bg-emerald-50 text-emerald-700'
-          : 'bg-muted text-muted-foreground'
+          : 'bg-orange-50 text-orange-700'
       )}
     >
-      <span
-        className={cn(
-          'h-1.5 w-1.5 rounded-full',
-          isActive ? 'bg-emerald-500' : 'bg-muted-foreground'
-        )}
-      />
+      {dot}
       {isActive ? t('stores.active') : t('stores.inactive')}
     </span>
   );
@@ -198,7 +216,7 @@ export function AcademySelector() {
         <p className="text-sm font-semibold leading-tight" title={current.name}>
           {truncateName(current.name)}
         </p>
-        <AcademyStatusBadge isActive={current.is_active} />
+        <AcademyStatusBadge isActive={current.is_active} dotOnly />
       </div>
       {hasMultiple && (
         <ChevronDown
@@ -358,7 +376,7 @@ function AdminModeSwitcher() {
         >
           {truncateName(selectedAcademy.name)}
         </p>
-        <AcademyStatusBadge isActive={selectedAcademy.is_active} />
+        <AcademyStatusBadge isActive={selectedAcademy.is_active} dotOnly />
       </div>
       <ChevronDown
         className={cn(
