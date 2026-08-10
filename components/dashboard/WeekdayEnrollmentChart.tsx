@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import {
   ChartContainer,
   ChartTooltip,
@@ -38,6 +40,8 @@ const chartConfig: ChartConfig = {
 
 export default function WeekdayEnrollmentChart() {
   const { language } = useTranslation();
+  const percentLabel = usePercentLabel();
+  const formatNumber = useNumberFormat();
   const t = language === 'fa';
   const data = t ? DATA_FA : DATA_EN;
 
@@ -57,8 +61,7 @@ export default function WeekdayEnrollmentChart() {
             variant="outline"
             className="gap-1 border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400"
           >
-            <TrendingUp className="h-3 w-3" />
-            +18%
+            <TrendingUp className="h-3 w-3" />+{percentLabel(18)}
           </Badge>
         </div>
       </CardHeader>
@@ -80,6 +83,7 @@ export default function WeekdayEnrollmentChart() {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                tickFormatter={(value: number) => formatNumber(value)}
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Bar

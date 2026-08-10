@@ -81,13 +81,15 @@ export function formatCurrency(
   } = options || {};
 
   const numericValue = amount / divideBy;
+  // Digits must follow the UI language, so a Persian user never sees "1,000".
+  const locale = getLocaleForLanguage(language ?? DEFAULT_LANGUAGE);
 
   // If custom symbol is provided, format manually
   if (currency_symbol) {
     // Translate currency symbol based on language
     const translatedSymbol = translateCurrencySymbol(currency_symbol, language);
 
-    const formattedNumber = new Intl.NumberFormat('en-US', {
+    const formattedNumber = new Intl.NumberFormat(locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     }).format(numericValue);
@@ -98,7 +100,7 @@ export function formatCurrency(
   }
 
   // Use Intl.NumberFormat for standard currencies
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency || 'USD'
   }).format(numericValue);

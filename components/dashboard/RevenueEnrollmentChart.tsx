@@ -18,6 +18,7 @@ import {
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartDataPoint } from './useDashboard';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore } from '@/lib/utils';
 
@@ -25,6 +26,7 @@ type Props = { data: ChartDataPoint[] };
 
 export default function RevenueEnrollmentChart({ data }: Props) {
   const { t, language } = useTranslation();
+  const formatNumber = useNumberFormat();
   const currentAcademy = useCurrentAcademy();
 
   const chartConfig: ChartConfig = {
@@ -70,7 +72,9 @@ export default function RevenueEnrollmentChart({ data }: Props) {
             <p className="text-xs text-muted-foreground">
               {t('dashboard.totalEnrollments')}
             </p>
-            <p className="text-lg font-bold">{totalEnrollments}</p>
+            <p className="text-lg font-bold">
+              {formatNumber(totalEnrollments)}
+            </p>
           </div>
         </div>
       </CardHeader>
@@ -124,6 +128,7 @@ export default function RevenueEnrollmentChart({ data }: Props) {
               tickMargin={8}
               className="text-xs"
               width={40}
+              tickFormatter={(value: number) => formatNumber(value)}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />

@@ -6,6 +6,7 @@ import { ArrowUpRight, ArrowUp, ArrowDown, ChevronRight } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { Course } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore, formatNumber } from '@/lib/utils';
 
@@ -13,6 +14,7 @@ type Props = { courses: Course[] };
 
 export default function TopCoursesTable({ courses }: Props) {
   const { t, language } = useTranslation();
+  const percentLabel = usePercentLabel();
   const currentAcademy = useCurrentAcademy();
   const isFa = language === 'fa';
 
@@ -64,10 +66,10 @@ export default function TopCoursesTable({ courses }: Props) {
                   <td className="px-6 py-3">
                     <span className="font-medium">{course.title}</span>
                   </td>
-                  <td className="px-3 py-3 font-mono text-xs">
+                  <td className="px-3 py-3 text-xs">
                     {formatNumber(course.students_count ?? 0)}
                   </td>
-                  <td className="px-3 py-3 font-mono text-xs font-semibold">
+                  <td className="px-3 py-3 text-xs font-semibold">
                     {course.is_free
                       ? t('common.free')
                       : formatCurrencyWithStore(
@@ -91,7 +93,7 @@ export default function TopCoursesTable({ courses }: Props) {
                       ) : (
                         <ArrowDown className="h-2.5 w-2.5" />
                       )}
-                      {Math.abs(change)}%
+                      {percentLabel(Math.abs(change))}
                     </Badge>
                   </td>
                 </tr>

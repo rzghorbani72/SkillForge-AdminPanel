@@ -15,10 +15,12 @@ import { ScopeBadge } from '@/components/settings/scope-badge';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { shouldHideUpgradeCard } from '@/lib/settings-scope';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
 export function SubscriptionStatusCard() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const { user } = useAuthUser();
   const isManager = user?.role === 'MANAGER';
   const {
@@ -73,7 +75,7 @@ export function SubscriptionStatusCard() {
             {daysRemaining != null ? (
               <span>
                 {' '}
-                · {t('settings.daysRemaining')}: {daysRemaining}
+                · {t('settings.daysRemaining')}: {formatNumber(daysRemaining)}
               </span>
             ) : null}
           </div>
