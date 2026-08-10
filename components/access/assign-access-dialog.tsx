@@ -74,28 +74,34 @@ export function AssignAccessDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
-        <DialogHeader>
+      {/* Header pinned, only the body scrolls — overflow-y-auto on
+          DialogContent itself would scroll the header too, so the native
+          scrollbar runs the dialog's full height and reads as a stray bar
+          instead of marking where the actual overflow is. */}
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl">
+        <DialogHeader className="shrink-0 border-b px-6 pb-4 pt-6">
           <DialogTitle>{t('accessGrants.title')}</DialogTitle>
           <DialogDescription>{t('accessGrants.description')}</DialogDescription>
         </DialogHeader>
 
-        {needsCoursePicker && (
-          <CourseTargetPicker
-            selected={courseIds}
-            onChange={setCourseIds}
-            disabled={isSaving}
-            enabled={open}
-          />
-        )}
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-4">
+          {needsCoursePicker && (
+            <CourseTargetPicker
+              selected={courseIds}
+              onChange={setCourseIds}
+              disabled={isSaving}
+              enabled={open}
+            />
+          )}
 
-        <AssignAccessForm
-          onSubmit={handleSubmit}
-          isSaving={isSaving}
-          disabled={!canSubmit}
-          enabled={open}
-          hasExternalTarget={(initialProfileIds?.length ?? 0) > 0}
-        />
+          <AssignAccessForm
+            onSubmit={handleSubmit}
+            isSaving={isSaving}
+            disabled={!canSubmit}
+            enabled={open}
+            hasExternalTarget={(initialProfileIds?.length ?? 0) > 0}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

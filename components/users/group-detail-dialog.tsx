@@ -182,14 +182,18 @@ export function GroupDetailDialog({
           dialog puts them under its focus trap, where closing the inner one can
           take the outer one down with it. */}
       <Dialog open={!!groupId} onOpenChange={onOpenChange}>
-        <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
+        {/* The header stays put and only the body scrolls: putting
+            overflow-y-auto on DialogContent itself scrolls the header along
+            with everything else, so the native scrollbar runs the full height
+            of the dialog and reads as a stray bar down the edge. */}
+        <DialogContent className="flex max-h-[85vh] max-w-lg flex-col gap-0 overflow-hidden p-0">
           {isLoading || !group ? (
             <div className="flex h-40 items-center justify-center">
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           ) : (
             <>
-              <DialogHeader className="text-start">
+              <DialogHeader className="shrink-0 border-b px-6 pb-4 pt-6 text-start">
                 <div className="flex items-center gap-2">
                   <DialogTitle>{group.name}</DialogTitle>
                   <Badge variant={group.is_active ? 'default' : 'outline'}>
@@ -203,7 +207,7 @@ export function GroupDetailDialog({
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="mt-5 space-y-6">
+              <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
                 <GroupStatCards
                   members={group.Members.length}
                   courses={group.CourseGrants.length}
