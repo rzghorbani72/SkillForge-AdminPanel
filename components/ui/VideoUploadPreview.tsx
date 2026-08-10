@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Library, Video, X } from 'lucide-react';
+import { Video, X } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useVideoUpload } from '@/hooks/useVideoUpload';
-import VideoSelectionDialog from './VideoSelectionDialog';
 import MediaDropzone from './media-dropzone';
 import ImageUploadPreview from './ImageUploadPreview';
 import { cn } from '@/lib/utils';
@@ -39,8 +38,6 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
   onPosterSuccess
 }) => {
   const { t } = useTranslation();
-  const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
-  const [libraryVideoUrl, setLibraryVideoUrl] = useState<string | null>(null);
 
   const videoUpload = useVideoUpload({
     title: title ?? t('media.videoFile'),
@@ -52,12 +49,10 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
   const attachedId = videoUpload.uploadedVideoId ?? selectedVideoId ?? null;
   const playableUrl =
     videoUpload.preview ??
-    libraryVideoUrl ??
     (attachedId ? apiClient.getVideoStreamUrl(String(attachedId)) : null);
 
   const handleRemove = () => {
     videoUpload.removeFiles();
-    setLibraryVideoUrl(null);
     onSuccess?.({ id: 0, url: '' });
   };
 
@@ -93,45 +88,17 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
         {t('media.videoFormatsHint')}
       </p>
 
-      <div className="flex flex-wrap gap-2">
+      {videoUpload.canCancel && (
         <Button
           type="button"
-          variant="outline"
+          variant="destructive"
           size="sm"
-          disabled={disabled}
-          title={t('media.selectFromLibraryHint')}
-          onClick={() => setIsSelectionDialogOpen(true)}
+          onClick={videoUpload.cancelUpload}
         >
-          <Library className="me-2 h-4 w-4" />
-          {t('media.selectFromLibrary')}
+          <X className="me-2 h-4 w-4" />
+          {t('common.cancel')}
         </Button>
-
-        {videoUpload.canCancel && (
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            onClick={videoUpload.cancelUpload}
-          >
-            <X className="me-2 h-4 w-4" />
-            {t('common.cancel')}
-          </Button>
-        )}
-      </div>
-
-      <VideoSelectionDialog
-        onSelect={(video) => {
-          setLibraryVideoUrl(video.publicUrl);
-          onSuccess?.({
-            id: video.id,
-            url: video.publicUrl,
-            title: video.title
-          });
-        }}
-        selectedVideoId={selectedVideoId}
-        open={isSelectionDialogOpen}
-        onOpenChange={setIsSelectionDialogOpen}
-      />
+      )}
 
       {allowPosterUpload && (
         <div className="space-y-2">
