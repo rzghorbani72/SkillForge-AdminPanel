@@ -1,49 +1,45 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Video, Star, Play, Clock, Sparkles, Film } from 'lucide-react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { Video, Film } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import UploadVideoDialog from '@/components/content/upload-video-dialog';
+import { UploadMediaDialog } from '@/components/content/upload-media-dialog';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { VideoStats } from '@/components/videos/VideoStats';
 import { VideoGrid } from '@/components/videos/VideoGrid';
-import { formatDuration, formatFileSize } from '@/components/shared/utils';
-import { cn } from '@/lib/utils';
+import type { VideoItem } from '@/components/videos/video-types';
+import { formatNumber } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useStore } from '@/hooks/useStore';
 
-interface VideoWithMetadata extends Media {
-  lesson_type?: 'WELCOME' | 'LESSON' | 'INTRO' | 'CONCLUSION';
-  is_welcome_video?: boolean;
-  duration?: number;
-  tags?: string[];
-  course_id?: number;
-  poster_url?: string | null;
-  streaming_url?: string;
-  Owner?: { id: number; name: string };
-  access_control?: {
-    can_modify: boolean;
-    can_delete: boolean;
-    can_view: boolean;
-    is_owner: boolean;
-    user_role: string;
-    user_permissions: string[];
-  };
-}
+const FILTER_OPTIONS = [
+  { value: 'all', labelKey: 'media.allVideos' },
+  { value: 'attached', labelKey: 'media.attachedToLessons' },
+  { value: 'standalone', labelKey: 'media.standaloneVideos' }
+] as const;
+
+type FilterValue = (typeof FILTER_OPTIONS)[number]['value'];
+
+const isAttached = (video: VideoItem) => (video.Lesson?.length ?? 0) > 0;
 
 export default function VideosPage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const { selectedAcademy } = useStore();
-  const [videos, setVideos] = useState<VideoWithMetadata[]>([]);
+  const [videos, setVideos] = useState<VideoItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<string>('all');
+  const [filter, setFilter] = useState<FilterValue>('all');
 
   const fetchData = useCallback(async () => {
     if (!selectedAcademy) return;
@@ -51,16 +47,13 @@ export default function VideosPage() {
     try {
       setIsLoading(true);
       const response = await apiClient.getVideos();
-
-      if (response && response.data && Array.isArray(response.data)) {
-        setVideos(response.data);
-      } else if (Array.isArray(response)) {
-        setVideos(response);
-      } else {
-        setVideos([]);
-      }
+      const list: VideoItem[] = Array.isArray(response?.data)
+        ? response.data
+        : Array.isArray(response)
+          ? response
+          : [];
+      setVideos(list);
     } catch (error) {
-      console.error('Error fetching data:', error);
       ErrorHandler.handleApiError(error);
     } finally {
       setIsLoading(false);
@@ -68,67 +61,35 @@ export default function VideosPage() {
   }, [selectedAcademy]);
 
   useEffect(() => {
-    if (selectedAcademy) {
-      fetchData();
-    }
+    if (selectedAcademy) fetchData();
   }, [selectedAcademy, fetchData]);
 
-  const filteredVideos = videos.filter((video) => {
-    const matchesSearch =
-      video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      video.description?.toLowerCase().includes(searchTerm.toLowerCase());
+  const visibleVideos = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return videos.filter((video) => {
+      const matchesSearch =
+        !term ||
+        video.title.toLowerCase().includes(term) ||
+        (video.description ?? '').toLowerCase().includes(term);
+      const matchesFilter =
+        filter === 'all' ||
+        (filter === 'attached' ? isAttached(video) : !isAttached(video));
+      return matchesSearch && matchesFilter;
+    });
+  }, [videos, searchTerm, filter]);
 
-    const matchesFilter =
-      filterType === 'all' ||
-      video.lesson_type === filterType ||
-      (filterType === 'welcome' && video.is_welcome_video);
-
-    return matchesSearch && matchesFilter;
-  });
-  const welcomeVideos = videos.filter((video) => video.is_welcome_video);
-  const lessonVideos = videos.filter((video) => video.lesson_type === 'LESSON');
-  const introVideos = videos.filter((video) => video.lesson_type === 'INTRO');
-  const conclusionVideos = videos.filter(
-    (video) => video.lesson_type === 'CONCLUSION'
+  const totals = useMemo(
+    () =>
+      videos.reduce(
+        (acc, video) => ({
+          attached: acc.attached + (isAttached(video) ? 1 : 0),
+          size: acc.size + (video.size ?? 0),
+          duration: acc.duration + (video.duration ?? 0)
+        }),
+        { attached: 0, size: 0, duration: 0 }
+      ),
+    [videos]
   );
-
-  const getVideoIcon = (type?: string) => {
-    switch (type) {
-      case 'WELCOME':
-        return <Star className="h-4 w-4 text-yellow-500" />;
-      case 'INTRO':
-        return <Play className="h-4 w-4 text-blue-500" />;
-      case 'CONCLUSION':
-        return <Clock className="h-4 w-4 text-green-500" />;
-      default:
-        return <Video className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
-
-  const getVideoTypeColor = (type?: string) => {
-    switch (type) {
-      case 'WELCOME':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'INTRO':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-      case 'CONCLUSION':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      default:
-        return 'bg-muted text-muted-foreground ';
-    }
-  };
-
-  const getPosterUrl = (
-    posterUrl: string | null | undefined
-  ): string | null => {
-    if (!posterUrl) return null;
-    if (posterUrl.startsWith('http')) return posterUrl;
-    return `${process.env.NEXT_PUBLIC_HOST || ''}${posterUrl}`;
-  };
-
-  const isOwnMedia = (video: VideoWithMetadata) => {
-    return video.access_control?.is_owner || false;
-  };
 
   if (!selectedAcademy) {
     return (
@@ -147,172 +108,58 @@ export default function VideosPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6" dir={'rtl'}>
-      {/* Header */}
-      <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="icon-container-destructive">
-            <Film className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                {t('media.videoManagement')}
-              </h1>
-              <Badge
-                variant="secondary"
-                className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
-              >
-                <Sparkles className="me-1 h-3 w-3" />
-                {videos.length} {t('media.videos')}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageVideos')}
-            </p>
-          </div>
-        </div>
-        <UploadVideoDialog onVideoUploaded={fetchData} />
-      </div>
+    <div className="page-wrapper flex-1 space-y-6 p-6">
+      <PageHeader
+        icon={<Film className="h-5 w-5" />}
+        title={t('media.videoManagement')}
+        description={t('media.manageVideos')}
+        badge={`${formatNumber(videos.length)} ${t('media.videos')}`}
+      >
+        <UploadMediaDialog kind="video" onUploaded={fetchData} />
+      </PageHeader>
 
-      {/* Stats */}
       <div className="fade-in-up" style={{ animationDelay: '0.1s' }}>
         <VideoStats
           totalVideos={videos.length}
-          welcomeVideos={welcomeVideos.length}
-          lessonVideos={lessonVideos.length}
-          totalDuration={videos.reduce(
-            (total, video) => total + (video.metadata?.duration || 0),
-            0
-          )}
+          attachedToLessons={totals.attached}
+          totalSizeBytes={totals.size}
+          totalDurationSeconds={totals.duration}
         />
       </div>
 
-      {/* Search and Filter */}
       <div
-        className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center"
+        className="fade-in-up flex flex-col gap-3 sm:flex-row sm:items-center"
         style={{ animationDelay: '0.15s' }}
       >
         <SearchBar
           placeholder={t('media.searchVideos')}
           value={searchTerm}
           onChange={setSearchTerm}
-          className="flex-1"
+          className="w-full max-w-none flex-1"
         />
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          className="h-10 rounded-xl border border-border/50 bg-background/50 px-4 text-sm transition-all duration-200 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+        <Select
+          value={filter}
+          onValueChange={(value) => setFilter(value as FilterValue)}
         >
-          <option value="all">{t('media.allVideos')}</option>
-          <option value="welcome">{t('media.welcomeVideos')}</option>
-          <option value="WELCOME">{t('media.welcomeType')}</option>
-          <option value="LESSON">{t('media.lessonContent')}</option>
-          <option value="INTRO">{t('media.introduction')}</option>
-          <option value="CONCLUSION">{t('media.conclusion')}</option>
-        </select>
+          <SelectTrigger className="h-10 w-full rounded-xl border-border/50 bg-background/50 sm:w-56">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {FILTER_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {t(option.labelKey)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Video Tabs */}
-      <Tabs
-        defaultValue="all"
-        className="fade-in-up space-y-6"
-        style={{ animationDelay: '0.2s' }}
-        dir={'rtl'}
-      >
-        <TabsList className="grid w-full grid-cols-5 rounded-xl bg-muted/50 p-1">
-          <TabsTrigger
-            value="all"
-            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            {t('media.allVideos')} ({videos.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="welcome"
-            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            {t('media.welcomeVideos')} ({welcomeVideos.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="lessons"
-            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            {t('media.lessonVideos')} ({lessonVideos.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="intro"
-            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            {t('media.introVideos')} ({introVideos.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="conclusion"
-            className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            {t('media.conclusionVideos')} ({conclusionVideos.length})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="space-y-4">
-          <VideoGrid
-            videos={filteredVideos}
-            getVideoIcon={getVideoIcon}
-            getVideoTypeColor={getVideoTypeColor}
-            formatDuration={formatDuration}
-            formatFileSize={formatFileSize}
-            getPosterUrl={getPosterUrl}
-            isOwnMedia={isOwnMedia}
-          />
-        </TabsContent>
-
-        <TabsContent value="welcome" className="space-y-4">
-          <VideoGrid
-            videos={welcomeVideos}
-            getVideoIcon={getVideoIcon}
-            getVideoTypeColor={getVideoTypeColor}
-            formatDuration={formatDuration}
-            formatFileSize={formatFileSize}
-            getPosterUrl={getPosterUrl}
-            isOwnMedia={isOwnMedia}
-          />
-        </TabsContent>
-
-        <TabsContent value="lessons" className="space-y-4">
-          <VideoGrid
-            videos={lessonVideos}
-            getVideoIcon={getVideoIcon}
-            getVideoTypeColor={getVideoTypeColor}
-            formatDuration={formatDuration}
-            formatFileSize={formatFileSize}
-            getPosterUrl={getPosterUrl}
-            isOwnMedia={isOwnMedia}
-          />
-        </TabsContent>
-
-        <TabsContent value="intro" className="space-y-4">
-          <VideoGrid
-            videos={introVideos}
-            getVideoIcon={getVideoIcon}
-            getVideoTypeColor={getVideoTypeColor}
-            formatDuration={formatDuration}
-            formatFileSize={formatFileSize}
-            getPosterUrl={getPosterUrl}
-            isOwnMedia={isOwnMedia}
-          />
-        </TabsContent>
-
-        <TabsContent value="conclusion" className="space-y-4">
-          <VideoGrid
-            videos={conclusionVideos}
-            getVideoIcon={getVideoIcon}
-            getVideoTypeColor={getVideoTypeColor}
-            formatDuration={formatDuration}
-            formatFileSize={formatFileSize}
-            getPosterUrl={getPosterUrl}
-            isOwnMedia={isOwnMedia}
-          />
-        </TabsContent>
-      </Tabs>
+      <div className="fade-in-up" style={{ animationDelay: '0.2s' }}>
+        <VideoGrid
+          videos={visibleVideos}
+          hasSearch={searchTerm.trim().length > 0 || filter !== 'all'}
+        />
+      </div>
     </div>
   );
 }

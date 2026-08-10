@@ -1,5 +1,6 @@
+'use client';
+
 import React from 'react';
-import Link from '@/components/ui/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { LessonFormData, lessonFormSchema } from './schema';
@@ -25,10 +26,8 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen } from 'lucide-react';
-import VideoUploadPreview from '@/components/ui/VideoUploadPreview';
-import AudioUploadPreview from '@/components/ui/AudioUploadPreview';
-import DocumentUploadPreview from '@/components/ui/DocumentUploadPreview';
-import LiveSessionEditor from './LiveSessionEditor';
+import { useTranslation } from '@/lib/i18n/hooks';
+import LessonContentFields from './lesson-content-fields';
 import type { LiveSession } from '@/types/api';
 
 type Props = {
@@ -44,18 +43,28 @@ type Props = {
   onLiveSessionSaved?: () => void;
 };
 
+const LESSON_TYPE_OPTIONS = [
+  { value: 'VIDEO', labelKey: 'courses.lessonTypeVideo' },
+  { value: 'AUDIO', labelKey: 'courses.lessonTypeAudio' },
+  { value: 'TEXT', labelKey: 'courses.lessonTypeText' },
+  { value: 'QUIZ', labelKey: 'courses.lessonTypeQuiz' },
+  { value: 'ASSIGNMENT', labelKey: 'courses.lessonTypeAssignment' },
+  { value: 'LIVE', labelKey: 'courses.lessonTypeLive' }
+] as const;
+
 const LessonForm = ({
   initialValues,
   categories,
   isSubmitting,
   onSubmit,
   onCancel,
-  submitLabel = 'Save',
+  submitLabel,
   liveSessionLessonId,
   serverLessonType,
   liveSessionInitial,
   onLiveSessionSaved
 }: Props) => {
+  const { t } = useTranslation();
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonFormSchema),
     defaultValues: {
@@ -74,14 +83,12 @@ const LessonForm = ({
     }
   });
 
-  const lessonType = form.watch('lesson_type');
-
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <BookOpen className="mr-2 h-5 w-5" />
-          Lesson Information
+        <CardTitle className="flex items-center gap-2 text-base">
+          <BookOpen className="h-4 w-4" />
+          {t('courses.lessonInformation')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -92,12 +99,18 @@ const LessonForm = ({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title *</FormLabel>
+                  <FormLabel>
+                    {t('courses.lessonForm.titleLabel')}{' '}
+                    <span className="text-destructive">*</span>
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter lesson title" {...field} />
+                    <Input
+                      placeholder={t('courses.lessonForm.titlePlaceholder')}
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
-                    The title of your lesson (5-80 characters)
+                    {t('courses.lessonForm.titleHint')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -109,16 +122,18 @@ const LessonForm = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('common.description')}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter lesson description"
+                      placeholder={t(
+                        'courses.lessonForm.descriptionPlaceholder'
+                      )}
                       className="min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    A brief description of your lesson (max 400 characters)
+                    {t('courses.lessonForm.descriptionHint')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -130,307 +145,40 @@ const LessonForm = ({
               name="lesson_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Lesson Type</FormLabel>
+                  <FormLabel>{t('courses.lessonType')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select lesson type" />
+                        <SelectValue />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="VIDEO">Video</SelectItem>
-                      <SelectItem value="AUDIO">Audio</SelectItem>
-                      <SelectItem value="TEXT">Text (document)</SelectItem>
-                      <SelectItem value="QUIZ">Quiz (document)</SelectItem>
-                      <SelectItem value="ASSIGNMENT">
-                        Assignment (document)
-                      </SelectItem>
-                      <SelectItem value="LIVE">Live session</SelectItem>
+                      {LESSON_TYPE_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {t(option.labelKey)}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Content fields below follow this type
+                    {t('courses.lessonForm.typeHint')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="space-y-2 border-t pt-6">
+            <div className="space-y-4 border-t pt-6">
               <h3 className="text-sm font-semibold text-foreground">
-                Lesson content
+                {t('courses.lessonForm.contentSection')}
               </h3>
-
-              {lessonType === 'VIDEO' ? (
-                <div className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="video_id"
-                    render={() => (
-                      <FormItem>
-                        <FormLabel>Video</FormLabel>
-                        <FormControl>
-                          <VideoUploadPreview
-                            title={form.watch('title') || 'Lesson Video'}
-                            description={
-                              form.watch('description') ||
-                              'Lesson video content'
-                            }
-                            onSuccess={(video) => {
-                              form.setValue('video_id', video.id.toString());
-                            }}
-                            selectedVideoId={form.watch('video_id')}
-                            alt="Lesson video preview"
-                            placeholderText="No video selected"
-                            placeholderSubtext="Upload a video to preview it here"
-                            uploadButtonText="Upload Video"
-                            selectButtonText="Select a video first"
-                            allowPosterUpload={true}
-                            posterImageId={form.watch('cover_id')}
-                            onPosterSuccess={(image) => {
-                              form.setValue('cover_id', image.id.toString());
-                            }}
-                            onPosterRemove={() => {
-                              form.setValue('cover_id', '');
-                            }}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Main video for this lesson (optional cover / poster
-                          via upload above)
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <FormField
-                      control={form.control}
-                      name="audio_id"
-                      render={() => (
-                        <FormItem>
-                          <FormLabel>Extra: Audio</FormLabel>
-                          <FormControl>
-                            <AudioUploadPreview
-                              lessonTitle={form.watch('title')}
-                              descriptionFallback={
-                                form.watch('description') ||
-                                'Supplementary audio for this video lesson'
-                              }
-                              selectedAudioId={form.watch('audio_id')}
-                              onSuccess={(audio) =>
-                                form.setValue('audio_id', String(audio.id))
-                              }
-                              onClear={() => form.setValue('audio_id', '')}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Optional — upload or remove supplementary audio
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="document_id"
-                      render={() => (
-                        <FormItem>
-                          <FormLabel>Extra: Document</FormLabel>
-                          <FormControl>
-                            <DocumentUploadPreview
-                              lessonTitle={form.watch('title')}
-                              descriptionFallback={
-                                form.watch('description') ||
-                                'Optional attachment for this video lesson'
-                              }
-                              selectedDocumentId={form.watch('document_id')}
-                              onSuccess={(doc) =>
-                                form.setValue('document_id', String(doc.id))
-                              }
-                              onClear={() => form.setValue('document_id', '')}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Optional — attach a document to this video lesson
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              ) : null}
-
-              {lessonType === 'AUDIO' ? (
-                <FormField
-                  control={form.control}
-                  name="audio_id"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Audio</FormLabel>
-                      <FormControl>
-                        <AudioUploadPreview
-                          lessonTitle={form.watch('title')}
-                          descriptionFallback={
-                            form.watch('description') || 'Lesson audio'
-                          }
-                          selectedAudioId={form.watch('audio_id')}
-                          onSuccess={(audio) =>
-                            form.setValue('audio_id', String(audio.id))
-                          }
-                          onClear={() => form.setValue('audio_id', '')}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Upload a file to attach it automatically, or manage
-                        files in{' '}
-                        <Link
-                          href="/audios"
-                          className="font-medium text-primary underline"
-                        >
-                          Audios
-                        </Link>
-                        .
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
-
-              {lessonType === 'TEXT' ? (
-                <FormField
-                  control={form.control}
-                  name="document_id"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Document</FormLabel>
-                      <FormControl>
-                        <DocumentUploadPreview
-                          lessonTitle={form.watch('title')}
-                          descriptionFallback={
-                            form.watch('description') || 'Text lesson document'
-                          }
-                          selectedDocumentId={form.watch('document_id')}
-                          onSuccess={(doc) =>
-                            form.setValue('document_id', String(doc.id))
-                          }
-                          onClear={() => form.setValue('document_id', '')}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Main file for this lesson. Manage all files in{' '}
-                        <Link
-                          href="/documents"
-                          className="font-medium text-primary underline"
-                        >
-                          Documents
-                        </Link>
-                        .
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
-
-              {lessonType === 'QUIZ' ? (
-                <FormField
-                  control={form.control}
-                  name="document_id"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Document</FormLabel>
-                      <FormControl>
-                        <DocumentUploadPreview
-                          lessonTitle={form.watch('title')}
-                          descriptionFallback={
-                            form.watch('description') ||
-                            'Quiz instructions or question sheet'
-                          }
-                          selectedDocumentId={form.watch('document_id')}
-                          onSuccess={(doc) =>
-                            form.setValue('document_id', String(doc.id))
-                          }
-                          onClear={() => form.setValue('document_id', '')}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Quiz handout or instructions as a document. Library:{' '}
-                        <Link
-                          href="/documents"
-                          className="font-medium text-primary underline"
-                        >
-                          Documents
-                        </Link>
-                        .
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
-
-              {lessonType === 'ASSIGNMENT' ? (
-                <FormField
-                  control={form.control}
-                  name="document_id"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Document</FormLabel>
-                      <FormControl>
-                        <DocumentUploadPreview
-                          lessonTitle={form.watch('title')}
-                          descriptionFallback={
-                            form.watch('description') ||
-                            'Assignment brief or worksheet'
-                          }
-                          selectedDocumentId={form.watch('document_id')}
-                          onSuccess={(doc) =>
-                            form.setValue('document_id', String(doc.id))
-                          }
-                          onClear={() => form.setValue('document_id', '')}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Assignment learners submit or follow. Library:{' '}
-                        <Link
-                          href="/documents"
-                          className="font-medium text-primary underline"
-                        >
-                          Documents
-                        </Link>
-                        .
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
-
-              {lessonType === 'LIVE' &&
-              serverLessonType === 'LIVE' &&
-              liveSessionLessonId != null &&
-              onLiveSessionSaved != null ? (
-                <LiveSessionEditor
-                  lessonId={liveSessionLessonId}
-                  initial={liveSessionInitial ?? null}
-                  onSaved={onLiveSessionSaved}
-                />
-              ) : lessonType === 'LIVE' && !liveSessionLessonId ? (
-                <p className="text-sm text-muted-foreground">
-                  Save this lesson once, then open edit again to add the meeting
-                  link and schedule (lesson needs an id).
-                </p>
-              ) : lessonType === 'LIVE' &&
-                liveSessionLessonId &&
-                serverLessonType !== 'LIVE' ? (
-                <p className="text-sm text-muted-foreground">
-                  Update the lesson (Save) with type &quot;Live session&quot;
-                  first, then you can add the meeting link here.
-                </p>
-              ) : null}
+              <LessonContentFields
+                form={form}
+                liveSessionLessonId={liveSessionLessonId}
+                serverLessonType={serverLessonType}
+                liveSessionInitial={liveSessionInitial}
+                onLiveSessionSaved={onLiveSessionSaved}
+              />
             </div>
 
             <FormField
@@ -438,11 +186,13 @@ const LessonForm = ({
               name="category_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>{t('courses.category')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue
+                          placeholder={t('courses.selectCategory')}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -457,7 +207,7 @@ const LessonForm = ({
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Choose a category for this lesson
+                    {t('courses.lessonForm.categoryHint')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -469,11 +219,13 @@ const LessonForm = ({
                 control={form.control}
                 name="published"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between gap-4 rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Published</FormLabel>
+                      <FormLabel className="text-base">
+                        {t('courses.published')}
+                      </FormLabel>
                       <FormDescription>
-                        Make this lesson visible to students
+                        {t('courses.lessonForm.publishedHint')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -489,11 +241,13 @@ const LessonForm = ({
                 control={form.control}
                 name="is_free"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between gap-4 rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Free Lesson</FormLabel>
+                      <FormLabel className="text-base">
+                        {t('courses.lessonForm.freeLabel')}
+                      </FormLabel>
                       <FormDescription>
-                        Make this lesson free for all students
+                        {t('courses.lessonForm.freeHint')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -507,12 +261,14 @@ const LessonForm = ({
               />
             </div>
 
-            <div className="flex items-center space-x-4">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? submitLabel + '...' : submitLabel}
-              </Button>
+            <div className="flex flex-wrap items-center justify-end gap-3 border-t pt-6">
               <Button type="button" variant="outline" onClick={onCancel}>
-                Cancel
+                {t('common.cancel')}
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? t('common.saving')
+                  : (submitLabel ?? t('common.save'))}
               </Button>
             </div>
           </form>

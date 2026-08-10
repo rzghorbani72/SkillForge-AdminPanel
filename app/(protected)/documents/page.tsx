@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -10,31 +10,24 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import {
-  FileText,
-  Plus,
-  Search,
-  Edit,
-  Trash2,
-  Eye,
-  Download,
-  File,
-  Clock,
-  X,
-  SlidersHorizontal,
-  Sparkles,
-  Files
-} from 'lucide-react';
+import { FileText, Eye, Download, File, Files, HardDrive } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { Media, Course } from '@/types/api';
+import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
-import UploadDocumentDialog from '@/components/content/upload-document-dialog';
-import { AccessControlBadge } from '@/components/ui/access-control-badge';
+import { UploadMediaDialog } from '@/components/content/upload-media-dialog';
+import {
+  AccessControlBadge,
+  type AccessControl
+} from '@/components/ui/access-control-badge';
 import { toast } from 'react-toastify';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { SearchBar } from '@/components/shared/SearchBar';
+import { StatsCard } from '@/components/shared/stats-card';
+import { formatFileSize } from '@/components/shared/utils';
+import { formatNumber } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -50,18 +43,8 @@ import { useTranslation } from '@/lib/i18n/hooks';
 interface DocumentItem extends Media {
   download_url?: string;
   preview_url?: string;
+  access_control?: AccessControl;
 }
-
-const formatFileSize = (bytes?: number | null) => {
-  if (!bytes || bytes <= 0) return 'N/A';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const exponent = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(1024)),
-    units.length - 1
-  );
-  const value = bytes / Math.pow(1024, exponent);
-  return `${value.toFixed(exponent === 0 ? 0 : 1)} ${units[exponent]}`;
-};
 
 const buildDocumentUrl = (path?: string | null) => {
   if (!path) return '';
@@ -71,68 +54,52 @@ const buildDocumentUrl = (path?: string | null) => {
 };
 
 export default function DocumentsPage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const { selectedAcademy } = useStore();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [previewDocument, setPreviewDocument] = useState<DocumentItem | null>(
     null
   );
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
-  useEffect(() => {
-    if (selectedAcademy) {
-      fetchData();
-    }
-  }, [selectedAcademy]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!selectedAcademy) return;
 
     try {
       setIsLoading(true);
-      const [documentsResponse, coursesResponse] = await Promise.all([
-        apiClient.getDocuments(),
-        apiClient.getCourses({ academy_id: selectedAcademy.id })
-      ]);
-
-      if (documentsResponse?.data && Array.isArray(documentsResponse.data)) {
-        setDocuments(documentsResponse.data as DocumentItem[]);
-      } else if (Array.isArray(documentsResponse)) {
-        setDocuments(documentsResponse as DocumentItem[]);
-      } else {
-        setDocuments([]);
-      }
-
-      if (coursesResponse?.courses) {
-        setCourses(coursesResponse.courses);
-      } else {
-        setCourses([]);
-      }
+      const response = await apiClient.getDocuments();
+      const list: DocumentItem[] = Array.isArray(response?.data)
+        ? response.data
+        : Array.isArray(response)
+          ? response
+          : [];
+      setDocuments(list);
     } catch (error) {
-      console.error('Error fetching data:', error);
       ErrorHandler.handleApiError(error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedAcademy]);
 
-  const handleDocumentUploaded = () => {
-    setIsCreateDialogOpen(false);
-    fetchData();
-  };
+  useEffect(() => {
+    if (selectedAcademy) fetchData();
+  }, [selectedAcademy, fetchData]);
 
-  const filteredDocuments = useMemo(
-    () =>
-      documents.filter(
-        (doc) =>
-          doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          doc.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    [documents, searchTerm]
+  const filteredDocuments = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return documents;
+    return documents.filter(
+      (doc) =>
+        doc.title.toLowerCase().includes(term) ||
+        (doc.description ?? '').toLowerCase().includes(term)
+    );
+  }, [documents, searchTerm]);
+
+  const totalSize = useMemo(
+    () => documents.reduce((total, doc) => total + (doc.size ?? 0), 0),
+    [documents]
   );
 
   const handleViewDocument = (doc: DocumentItem) => {
@@ -205,119 +172,58 @@ export default function DocumentsPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6" dir={'rtl'}>
-      {/* Header */}
-      <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="icon-container-info">
-            <Files className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                {t('media.documents')}
-              </h1>
-              <Badge
-                variant="secondary"
-                className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
-              >
-                <Sparkles className="me-1 h-3 w-3" />
-                {documents.length} {t('media.files')}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageDocuments')} - {selectedAcademy.name}
-            </p>
-          </div>
-        </div>
-        <Button
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
-        >
-          <Plus className="h-4 w-4" />
-          {t('media.uploadDocument')}
-        </Button>
+    <div className="page-wrapper flex-1 space-y-6 p-6">
+      <PageHeader
+        icon={<Files className="h-5 w-5" />}
+        title={t('media.documents')}
+        description={`${t('media.manageDocuments')} — ${selectedAcademy.name}`}
+        badge={`${formatNumber(documents.length)} ${t('media.files')}`}
+      >
+        <UploadMediaDialog kind="document" onUploaded={fetchData} />
+      </PageHeader>
+
+      {/* Stats */}
+      <div
+        className="fade-in-up grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        style={{ animationDelay: '0.1s' }}
+      >
+        <StatsCard
+          icon={FileText}
+          title={t('media.totalDocuments')}
+          value={formatNumber(documents.length)}
+          description={`${t('media.documentsIn')} ${selectedAcademy.name}`}
+        />
+        <StatsCard
+          icon={HardDrive}
+          title={t('media.totalSize')}
+          value={formatFileSize(totalSize)}
+          description={t('media.storageUsedByDocuments')}
+          iconColor="text-amber-600"
+        />
       </div>
 
       {/* Search */}
-      <div
-        className="fade-in-up flex items-center gap-3"
-        style={{ animationDelay: '0.1s' }}
-      >
-        <div className="relative max-w-md flex-1">
-          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={t('media.searchDocuments')}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-10 rounded-xl border-border/50 bg-background/50 pe-10 ps-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
-          />
-          {searchTerm && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute end-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              onClick={() => setSearchTerm('')}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-10 w-10 shrink-0 rounded-xl border-border/50"
-        >
-          <SlidersHorizontal className="h-4 w-4" />
-        </Button>
+      <div className="fade-in-up" style={{ animationDelay: '0.15s' }}>
+        <SearchBar
+          placeholder={t('media.searchDocuments')}
+          value={searchTerm}
+          onChange={setSearchTerm}
+          className="max-w-md"
+        />
       </div>
-
-      {/* Stats Card */}
-      <Card
-        className="fade-in-up stat-card"
-        style={{ animationDelay: '0.15s' }}
-      >
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">
-                {t('media.totalDocuments')}
-              </p>
-              <p className="text-2xl font-bold">{documents.length}</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t('media.documentsIn')} {selectedAcademy.name}
-              </p>
-            </div>
-            <div className="icon-container-primary">
-              <FileText className="h-5 w-5" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Documents Grid */}
       {filteredDocuments.length === 0 ? (
-        <div
-          className="fade-in-up flex flex-1 items-center justify-center p-6"
-          style={{ animationDelay: '0.2s' }}
-        >
-          <div className="text-center">
-            <div className="relative mx-auto mb-6">
-              <div className="absolute inset-0 -z-10 mx-auto h-32 w-32 rounded-full bg-gradient-to-br from-blue-500/10 via-primary/5 to-transparent blur-2xl" />
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/50 text-muted-foreground shadow-sm">
-                <FileText className="h-10 w-10" />
-              </div>
-            </div>
-            <h3 className="text-xl font-semibold tracking-tight">
-              {t('media.noDocumentsFound')}
-            </h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-              {searchTerm
-                ? t('media.noDocumentsMatch')
-                : t('media.uploadFirstDocument')}
-            </p>
-          </div>
-        </div>
+        <EmptyState
+          className="fade-in-up"
+          icon={<FileText className="h-10 w-10" />}
+          title={t('media.noDocumentsFound')}
+          description={
+            searchTerm
+              ? t('media.noDocumentsMatch')
+              : t('media.uploadFirstDocument')
+          }
+        />
       ) : (
         <div className="stagger-children grid gap-5 sm:grid-cols-2">
           {filteredDocuments.map((doc, index) => (
@@ -339,10 +245,10 @@ export default function DocumentsPage() {
                       {doc.description}
                     </CardDescription>
                   </div>
-                  {(doc as any).access_control && (
+                  {doc.access_control && (
                     <AccessControlBadge
-                      accessControl={(doc as any).access_control}
-                      className="ml-2 text-[10px]"
+                      accessControl={doc.access_control}
+                      className="ms-2 text-[10px]"
                     />
                   )}
                 </div>
@@ -369,8 +275,8 @@ export default function DocumentsPage() {
                     onClick={() => handleViewDocument(doc)}
                     disabled={!doc.preview_url}
                   >
-                    <Eye className="mr-1.5 h-3.5 w-3.5" />
-                    View
+                    <Eye className="me-1.5 h-3.5 w-3.5" />
+                    {t('media.view')}
                   </Button>
                   <Button
                     variant="outline"
@@ -379,36 +285,14 @@ export default function DocumentsPage() {
                     onClick={() => handleDownloadDocument(doc)}
                     disabled={!doc.download_url}
                   >
-                    <Download className="mr-1.5 h-3.5 w-3.5" />
-                    Download
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
-                  >
-                    <Edit className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 rounded-lg border-border/50 text-muted-foreground hover:border-destructive/50 hover:bg-destructive/5 hover:text-destructive"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Download className="me-1.5 h-3.5 w-3.5" />
+                    {t('media.download')}
                   </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
-      )}
-
-      {/* Upload Document Dialog */}
-      {isCreateDialogOpen && (
-        <UploadDocumentDialog
-          onDocumentUploaded={handleDocumentUploaded}
-          courses={courses}
-        />
       )}
 
       {/* Preview Modal */}
@@ -418,10 +302,11 @@ export default function DocumentsPage() {
           onOpenChange={(open) => (!open ? handleClosePreview() : null)}
         >
           <DialogContent className="max-w-5xl">
-            <DialogHeader>
+            <DialogHeader className="text-start">
               <DialogTitle>{previewDocument.title}</DialogTitle>
               <DialogDescription>
-                {previewDocument.description || 'Document preview'}
+                {previewDocument.description ||
+                  t('media.documentPreviewFallback')}
               </DialogDescription>
             </DialogHeader>
             <div className="mt-4 space-y-3">
@@ -442,22 +327,19 @@ export default function DocumentsPage() {
                 ) : (
                   <div className="flex h-64 flex-col items-center justify-center space-y-3 p-6 text-center text-sm text-muted-foreground">
                     <File className="h-12 w-12" />
-                    <p>
-                      Preview is not available for this document type. Please
-                      download to view the contents.
-                    </p>
+                    <p className="max-w-sm">{t('media.previewNotAvailable')}</p>
                     <Button
                       onClick={() => handleDownloadDocument(previewDocument)}
                       className="rounded-xl"
                     >
-                      <Download className="mr-2 h-4 w-4" />
-                      Download
+                      <Download className="me-2 h-4 w-4" />
+                      {t('media.download')}
                     </Button>
                   </div>
                 )}
                 {isPreviewLoading && canPreviewInline(previewDocument) && (
                   <div className="flex h-[70vh] items-center justify-center bg-background/80 text-sm text-muted-foreground">
-                    Loading preview...
+                    {t('media.loadingPreview')}
                   </div>
                 )}
               </div>
@@ -468,14 +350,14 @@ export default function DocumentsPage() {
                 onClick={handleClosePreview}
                 className="rounded-xl"
               >
-                Close
+                {t('media.close')}
               </Button>
               <Button
                 onClick={() => handleDownloadDocument(previewDocument)}
                 className="rounded-xl"
               >
-                <Download className="mr-2 h-4 w-4" />
-                Download
+                <Download className="me-2 h-4 w-4" />
+                {t('media.download')}
               </Button>
             </DialogFooter>
           </DialogContent>

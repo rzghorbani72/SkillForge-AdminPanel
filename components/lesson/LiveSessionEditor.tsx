@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/card';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Video } from 'lucide-react';
 
@@ -42,6 +43,7 @@ const defaultTimezone = () =>
   Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
 const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
+  const { t } = useTranslation();
   const [meetingUrl, setMeetingUrl] = useState(initial?.meeting_url ?? '');
   const [label, setLabel] = useState(initial?.provider_label ?? '');
   const [startsAt, setStartsAt] = useState(
@@ -128,44 +130,58 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <Video className="h-4 w-4" />
-          Meeting link & schedule
+          {t('courses.liveSession.title')}
         </CardTitle>
         <CardDescription>
-          Link opens for enrolled students. Timezone uses your browser (
-          {defaultTimezone()}).
+          {t('courses.liveSession.description', {
+            timezone: defaultTimezone()
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="live-meeting-url">Meeting link (https) *</Label>
+          <Label htmlFor="live-meeting-url">
+            {t('courses.liveSession.urlLabel')}{' '}
+            <span className="text-destructive">*</span>
+          </Label>
           <Input
             id="live-meeting-url"
+            dir="ltr"
             value={meetingUrl}
             onChange={(e) => setMeetingUrl(e.target.value)}
             placeholder="https://meet.google.com/..."
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="live-label">Label</Label>
+          <Label htmlFor="live-label">
+            {t('courses.liveSession.labelLabel')}
+          </Label>
           <Input
             id="live-label"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            placeholder="e.g. Week 1 kickoff — Google Meet"
+            placeholder={t('courses.liveSession.labelPlaceholder')}
           />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="live-starts">Starts *</Label>
+            <Label htmlFor="live-starts">
+              {t('courses.liveSession.startsLabel')}{' '}
+              <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="live-starts"
               type="datetime-local"
+              dir="ltr"
               value={startsAt}
               onChange={(e) => setStartsAt(e.target.value)}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="live-duration">Duration (minutes) *</Label>
+            <Label htmlFor="live-duration">
+              {t('courses.liveSession.durationLabel')}{' '}
+              <span className="text-destructive">*</span>
+            </Label>
             <NumberInput
               id="live-duration"
               value={durationMinutes}
@@ -175,7 +191,7 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button type="button" onClick={handleSave} disabled={saving}>
-            {saving ? 'Saving…' : 'Save meeting'}
+            {saving ? t('common.saving') : t('courses.liveSession.save')}
           </Button>
           {initial?.id ? (
             <Button
@@ -184,7 +200,9 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
               onClick={handleRemove}
               disabled={removing}
             >
-              {removing ? 'Removing…' : 'Clear meeting'}
+              {removing
+                ? t('courses.liveSession.removing')
+                : t('courses.liveSession.remove')}
             </Button>
           ) : null}
         </div>

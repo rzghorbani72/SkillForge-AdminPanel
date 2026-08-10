@@ -1,5 +1,7 @@
 // Common utility functions for role and status handling
 
+import { DEFAULT_LANGUAGE, getLocaleForLanguage } from '@/lib/i18n/config';
+
 export const getRoleIcon = (role: string) => {
   switch (role) {
     case 'ADMIN':
@@ -51,15 +53,35 @@ export const getStatusColor = (status: string) => {
   }
 };
 
-export const formatFileSize = (bytes?: number) => {
-  if (!bytes) return 'Unknown';
-  const mb = bytes / (1024 * 1024);
-  return `${mb.toFixed(1)} MB`;
+const localeDigits = (value: number, minimumIntegerDigits = 1) =>
+  new Intl.NumberFormat(getLocaleForLanguage(DEFAULT_LANGUAGE), {
+    minimumIntegerDigits,
+    maximumFractionDigits: 1,
+    useGrouping: false
+  }).format(value);
+
+const SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+/** Returns an empty string when unknown, so callers can simply hide the field. */
+export const formatFileSize = (bytes?: number | null) => {
+  if (bytes == null || bytes <= 0) return '';
+  const exponent = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    SIZE_UNITS.length - 1
+  );
+  const value = bytes / Math.pow(1024, exponent);
+  return `${localeDigits(Number(value.toFixed(exponent === 0 ? 0 : 1)))} ${SIZE_UNITS[exponent]}`;
 };
 
-export const formatDuration = (seconds?: number) => {
-  if (!seconds) return 'Unknown';
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+/** `mm:ss`, or `h:mm` once past an hour. Empty when the duration is unknown. */
+export const formatDuration = (seconds?: number | null) => {
+  if (seconds == null || Number.isNaN(seconds) || seconds < 0) return '';
+  const totalSeconds = Math.floor(seconds);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  if (hours > 0) {
+    return `${localeDigits(hours)}:${localeDigits(minutes, 2)}`;
+  }
+  return `${localeDigits(minutes)}:${localeDigits(totalSeconds % 60, 2)}`;
 };

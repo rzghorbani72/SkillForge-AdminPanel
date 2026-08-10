@@ -22,7 +22,8 @@ export const fa = {
     originalPriceWholeNumber: 'قیمت اصلی باید عدد صحیح باشد',
     nameRequired: 'نام الزامی است',
     phoneRequired: 'شماره تماس الزامی است',
-    passwordMin6: 'رمز عبور باید حداقل ۶ کاراکتر باشد'
+    passwordMin6: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
+    fileRequired: 'انتخاب فایل الزامی است'
   },
   editor: {
     bold: 'پررنگ',
@@ -1395,7 +1396,7 @@ export const fa = {
     lessonTypeAssignment: 'تکلیف',
     lessonTypeLive: 'زنده',
     lessonDocument: 'سند',
-    uploadDocument: 'آپلود سند',
+    uploadDocument: 'بارگذاری سند',
     removeDocument: 'حذف سند',
     lessonComplete: 'آماده',
     lessonIncomplete: 'ناقص',
@@ -1524,7 +1525,61 @@ export const fa = {
     userWithId: 'کاربر {{id}}',
     deleteCourse: 'حذف دوره',
     deleteCourseConfirm:
-      'آیا مطمئن هستید که می‌خواهید "{{title}}" را حذف کنید؟ این عمل قابل بازگشت نیست.'
+      'آیا مطمئن هستید که می‌خواهید "{{title}}" را حذف کنید؟ این عمل قابل بازگشت نیست.',
+    lessonForm: {
+      createTitle: 'ساخت درس',
+      editTitle: 'ویرایش درس',
+      createSubtitle:
+        'افزودن درس تازه به فصل «{{season}}» از دورهٔ «{{course}}»',
+      editSubtitle: 'به‌روزرسانی درس فصل «{{season}}» از دورهٔ «{{course}}»',
+      createAction: 'ساخت درس',
+      updateAction: 'ذخیرهٔ تغییرات',
+      titleLabel: 'عنوان درس',
+      titlePlaceholder: 'عنوان درس را بنویسید',
+      titleHint: 'بین ۵ تا ۸۰ کاراکتر',
+      descriptionPlaceholder: 'به‌کوتاهی توضیح دهید این درس دربارهٔ چیست',
+      descriptionHint: 'اختیاری — حداکثر ۴۰۰ کاراکتر',
+      typeHint: 'فیلدهای محتوا بر اساس همین نوع تغییر می‌کنند',
+      contentSection: 'محتوای درس',
+      videoHint: 'ویدیوی اصلی این درس — تصویر شاخص اختیاری است',
+      extraAudio: 'صوت تکمیلی',
+      extraAudioHint: 'اختیاری — افزودن یا حذف فایل صوتی مکمل',
+      extraDocument: 'سند تکمیلی',
+      extraDocumentHint: 'اختیاری — پیوست یک فایل به این درس ویدیویی',
+      audioMainHint: 'فایل صوتی اصلی این درس. مدیریت همهٔ فایل‌ها در',
+      documentMainHint: 'فایل اصلی این درس. مدیریت همهٔ فایل‌ها در',
+      quizDocumentHint: 'برگهٔ سؤال یا راهنمای آزمون. کتابخانه:',
+      assignmentDocumentHint:
+        'تکلیفی که دانشجو انجام یا ارسال می‌کند. کتابخانه:',
+      categoryHint: 'یک دسته‌بندی برای این درس انتخاب کنید',
+      publishedHint: 'این درس برای دانشجویان نمایش داده شود',
+      freeLabel: 'درس رایگان',
+      freeHint: 'این درس برای همه رایگان باشد',
+      liveNeedsSave:
+        'یک‌بار درس را ذخیره کنید، سپس دوباره وارد ویرایش شوید تا لینک و زمان جلسه را اضافه کنید.',
+      liveNeedsType:
+        'ابتدا درس را با نوع «جلسهٔ زنده» ذخیره کنید، بعد لینک جلسه را اینجا اضافه کنید.',
+      sidebarTitle: 'دوره و فصل',
+      tipsTitle: 'راهنما',
+      tip1: 'عنوان روشن و گویا بنویسید.',
+      tip2: 'ویدیو، صوت، تصویر یا سند را به درس پیوست کنید.',
+      tip3: 'نوع درس را متناسب با محتوایتان انتخاب کنید.',
+      tip4: 'برای کلاس زنده «جلسهٔ زنده» را انتخاب و ذخیره کنید، سپس لینک و زمان را بگذارید.',
+      tip5: 'درس رایگان برای همهٔ دانشجویان قابل مشاهده است.'
+    },
+    liveSession: {
+      title: 'لینک و زمان جلسه',
+      description:
+        'لینک برای دانشجویان ثبت‌نام‌شده باز می‌شود. زمان‌ها بر اساس منطقهٔ زمانی مرورگر شما ({{timezone}}) است.',
+      urlLabel: 'لینک جلسه (https)',
+      labelLabel: 'برچسب',
+      labelPlaceholder: 'مثال: جلسهٔ اول — Google Meet',
+      startsLabel: 'زمان شروع',
+      durationLabel: 'مدت (دقیقه)',
+      save: 'ذخیرهٔ جلسه',
+      remove: 'حذف جلسه',
+      removing: 'در حال حذف…'
+    }
   },
   members: {
     addMember: 'افزودن شخص',
@@ -2454,7 +2509,14 @@ export const fa = {
     resetAnotherPassword: 'بازنشانی رمز عبور دیگر',
     goToLogin: 'رفتن به ورود'
   },
+  fileUploader: {
+    dropHere: 'فایل‌ها را اینجا رها کنید',
+    dragOrClick: 'فایل را اینجا بکشید و رها کنید، یا برای انتخاب کلیک کنید',
+    limitSingle: 'حداکثر حجم مجاز: {{size}}',
+    limitMultiple: 'تا {{count}} فایل، هرکدام حداکثر {{size}}'
+  },
   media: {
+    uploadAudio: 'بارگذاری فایل صوتی',
     imagePreview: 'پیش‌نمایش تصویر',
     noImageSelected: 'تصویری انتخاب نشده است',
     videoPoster: 'تصویر شاخص ویدیو',
@@ -2523,12 +2585,13 @@ export const fa = {
     uploadFirstImage: 'اولین تصویر خود را آپلود کنید تا شروع کنید.',
     somethingWentWrong: 'مشکلی پیش آمد',
     imageUpdated: 'تصویر با موفقیت به‌روزرسانی شد',
+    audioUpdated: 'فایل صوتی با موفقیت به‌روزرسانی شد',
     imageDeleted: 'تصویر با موفقیت حذف شد',
     documents: 'اسناد',
     manageDocuments: 'مدیریت اسناد و مواد آموزشی',
     loadingDocuments: 'در حال بارگذاری اسناد...',
     searchDocuments: 'جستجوی اسناد...',
-    uploadDocument: 'آپلود سند',
+    uploadDocument: 'بارگذاری سند',
     totalDocuments: 'کل اسناد',
     documentsIn: 'اسناد در',
     noDocumentsFound: 'سندی یافت نشد',
@@ -2582,6 +2645,23 @@ export const fa = {
     defaultCourseVideos: 'ویدیوهای پیش‌فرض دوره',
     courseContentVideos: 'ویدیوهای محتوای دوره',
     combinedVideoLength: 'مجموع طول ویدیوها',
+    uploadAudioDescription: 'بارگذاری فایل صوتی برای دوره‌ها و درس‌های آکادمی',
+    audioFileHint:
+      'فرمت‌های MP3، WAV، AAC، OGG، M4A و FLAC — حداکثر ۵۰ مگابایت',
+    audioTitlePlaceholder: 'عنوان فایل صوتی را وارد کنید',
+    audioDescriptionPlaceholder: 'محتوای فایل صوتی و هدف آن را توضیح دهید',
+    uploadDocumentDescription:
+      'بارگذاری سند، PDF، ارائه و سایر فایل‌های دوره‌ها',
+    documentFile: 'فایل سند',
+    documentFileHint:
+      'فرمت‌های PDF، DOC، DOCX، PPT، PPTX، XLS، XLSX، TXT و MD — حداکثر ۲۰ مگابایت',
+    documentTitlePlaceholder: 'عنوان سند را وارد کنید',
+    documentDescriptionPlaceholder: 'محتوای سند و هدف آن را توضیح دهید',
+    documentPreviewFallback: 'پیش‌نمایش سند',
+    attachedToLessons: 'متصل به درس',
+    standaloneVideos: 'بدون درس',
+    storageUsedByVideos: 'فضای اشغال‌شده توسط ویدیوها',
+    storageUsedByDocuments: 'فضای اشغال‌شده توسط اسناد',
     noVideosFound: 'ویدیویی یافت نشد',
     noVideosMatch: 'هیچ ویدیویی با جستجوی شما مطابقت ندارد.',
     uploadFirstVideo: 'اولین ویدیوی خود را بارگذاری کنید تا شروع کنید.',

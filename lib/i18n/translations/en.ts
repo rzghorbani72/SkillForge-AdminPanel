@@ -23,7 +23,8 @@ export const en = {
     originalPriceWholeNumber: 'Original price must be a whole number',
     nameRequired: 'Name is required',
     phoneRequired: 'Phone number is required',
-    passwordMin6: 'Password must be at least 6 characters'
+    passwordMin6: 'Password must be at least 6 characters',
+    fileRequired: 'A file is required'
   },
   editor: {
     bold: 'Bold',
@@ -1531,7 +1532,60 @@ export const en = {
     userWithId: 'User {{id}}',
     deleteCourse: 'Delete Course',
     deleteCourseConfirm:
-      'Are you sure you want to delete "{{title}}"? This action cannot be undone.'
+      'Are you sure you want to delete "{{title}}"? This action cannot be undone.',
+    lessonForm: {
+      createTitle: 'Create lesson',
+      editTitle: 'Edit lesson',
+      createSubtitle: 'Add a new lesson to "{{season}}" in "{{course}}"',
+      editSubtitle: 'Update this lesson of "{{season}}" in "{{course}}"',
+      createAction: 'Create lesson',
+      updateAction: 'Update lesson',
+      titleLabel: 'Lesson title',
+      titlePlaceholder: 'Enter the lesson title',
+      titleHint: 'Between 5 and 80 characters',
+      descriptionPlaceholder: 'Briefly describe this lesson',
+      descriptionHint: 'Optional — up to 400 characters',
+      typeHint: 'The content fields below change with this type',
+      contentSection: 'Lesson content',
+      videoHint: 'Main video of this lesson — the poster image is optional',
+      extraAudio: 'Extra audio',
+      extraAudioHint: 'Optional — attach or remove supplementary audio',
+      extraDocument: 'Extra document',
+      extraDocumentHint: 'Optional — attach a file to this video lesson',
+      audioMainHint: 'Main audio file of this lesson. Manage all files in',
+      documentMainHint: 'Main file of this lesson. Manage all files in',
+      quizDocumentHint: 'Quiz handout or instructions. Library:',
+      assignmentDocumentHint:
+        'The assignment students follow or submit. Library:',
+      categoryHint: 'Choose a category for this lesson',
+      publishedHint: 'Show this lesson to students',
+      freeLabel: 'Free lesson',
+      freeHint: 'Make this lesson free for everyone',
+      liveNeedsSave:
+        'Save the lesson once, then reopen edit to add the meeting link and schedule.',
+      liveNeedsType:
+        'Save the lesson with type "Live session" first, then add the meeting link here.',
+      sidebarTitle: 'Course & season',
+      tipsTitle: 'Tips',
+      tip1: 'Use a clear, descriptive title.',
+      tip2: 'Attach video, audio, image, or document to the lesson.',
+      tip3: 'Choose the lesson type that matches your content.',
+      tip4: 'For a live class pick "Live session", save, then add the link and time.',
+      tip5: 'A free lesson is visible to every student.'
+    },
+    liveSession: {
+      title: 'Meeting link & schedule',
+      description:
+        'The link opens for enrolled students. Times use your browser timezone ({{timezone}}).',
+      urlLabel: 'Meeting link (https)',
+      labelLabel: 'Label',
+      labelPlaceholder: 'e.g. Week 1 kickoff — Google Meet',
+      startsLabel: 'Starts at',
+      durationLabel: 'Duration (minutes)',
+      save: 'Save meeting',
+      remove: 'Clear meeting',
+      removing: 'Clearing…'
+    }
   },
   members: {
     addMember: 'Add Person',
@@ -2468,7 +2522,14 @@ export const en = {
     slideshowModeLabel: 'Slideshow',
     slideshowSpeed: 'Slide Speed'
   },
+  fileUploader: {
+    dropHere: 'Drop the files here',
+    dragOrClick: 'Drag and drop a file here, or click to select',
+    limitSingle: 'Maximum size: {{size}}',
+    limitMultiple: 'Up to {{count}} files, {{size}} each'
+  },
   media: {
+    uploadAudio: 'Upload audio',
     imagePreview: 'Image preview',
     noImageSelected: 'No image selected',
     videoPoster: 'Video poster',
@@ -2532,6 +2593,7 @@ export const en = {
     uploadFirstImage: 'Upload your first image to get started.',
     somethingWentWrong: 'Something went wrong',
     imageUpdated: 'Image updated successfully',
+    audioUpdated: 'Audio updated successfully',
     imageDeleted: 'Image deleted successfully',
     // Documents
     documents: 'Documents',
@@ -2602,6 +2664,23 @@ export const en = {
     defaultCourseVideos: 'Default course videos',
     courseContentVideos: 'Course content videos',
     combinedVideoLength: 'Combined video length',
+    uploadAudioDescription: 'Upload audio content for your courses and lessons',
+    audioFileHint: 'MP3, WAV, AAC, OGG, M4A, FLAC — max 50MB',
+    audioTitlePlaceholder: 'Enter audio title',
+    audioDescriptionPlaceholder: 'Describe the audio content and its purpose',
+    uploadDocumentDescription:
+      'Upload documents, PDFs, presentations and other course files',
+    documentFile: 'Document file',
+    documentFileHint:
+      'PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, MD — max 20MB',
+    documentTitlePlaceholder: 'Enter document title',
+    documentDescriptionPlaceholder:
+      'Describe the document content and its purpose',
+    documentPreviewFallback: 'Document preview',
+    attachedToLessons: 'Attached to lessons',
+    standaloneVideos: 'Standalone',
+    storageUsedByVideos: 'Storage used by videos',
+    storageUsedByDocuments: 'Storage used by documents',
     noVideosFound: 'No videos found',
     noVideosMatch: 'No video matches your search.',
     uploadFirstVideo: 'Upload your first video to get started.',

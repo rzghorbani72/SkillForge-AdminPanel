@@ -1,199 +1,169 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Video, Star, Play, Clock, Eye, Download, Edit } from 'lucide-react';
-import {
-  AccessControlBadge,
-  AccessControlActions
-} from '@/components/ui/access-control-badge';
-import { formatDuration, formatFileSize } from '@/components/shared/utils';
+'use client';
 
-interface VideoWithMetadata {
-  id: number;
-  title: string;
-  description?: string;
-  lesson_type?: 'WELCOME' | 'LESSON' | 'INTRO' | 'CONCLUSION';
-  is_welcome_video?: boolean;
-  duration?: number;
-  tags?: string[];
-  course_id?: number;
-  poster_url?: string | null;
-  streaming_url?: string;
-  Owner?: { id: number; name: string };
-  access_control?: {
-    can_modify: boolean;
-    can_delete: boolean;
-    can_view: boolean;
-    is_owner: boolean;
-    user_role: string;
-    user_permissions: string[];
-  };
-  metadata?: { duration?: number };
-  size?: number;
-}
+import { useEffect, useRef } from 'react';
+import { Play, BookOpen } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { getLocaleForLanguage } from '@/lib/i18n/config';
+import { formatDuration, formatFileSize } from '@/components/shared/utils';
+import type { VideoItem } from './video-types';
+
+const DEFAULT_POSTER = '/images/video-placeholder.svg';
+
+const resolvePosterUrl = (posterUrl?: string | null): string => {
+  if (!posterUrl) return DEFAULT_POSTER;
+  if (posterUrl.startsWith('http')) return posterUrl;
+  return `${getBrowserApiBaseUrl()}${posterUrl}`;
+};
 
 interface VideoCardProps {
-  video: VideoWithMetadata;
-  onVideoSelect: (video: VideoWithMetadata) => void;
-  getVideoIcon: (type?: string) => React.ReactNode;
-  getVideoTypeColor: (type?: string) => string;
-  getPosterUrl: (posterUrl: string | null | undefined) => string | null;
-  isOwnMedia: (video: VideoWithMetadata) => boolean;
+  video: VideoItem;
+  isActive: boolean;
+  onToggle: () => void;
+  onDeactivate: () => void;
 }
 
 export function VideoCard({
   video,
-  onVideoSelect,
-  getVideoIcon,
-  getVideoTypeColor,
-  getPosterUrl,
-  isOwnMedia
+  isActive,
+  onToggle,
+  onDeactivate
 }: VideoCardProps) {
+  const { t, language } = useTranslation();
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const element = videoRef.current;
+    if (!element) return;
+
+    if (isActive) {
+      void element.play().catch(() => {
+        // Autoplay may be blocked by the browser; ignore silently.
+      });
+    } else {
+      element.pause();
+      element.currentTime = 0;
+    }
+  }, [isActive]);
+
+  const posterUrl = resolvePosterUrl(video.poster_url);
+  const ownerName = video.Profile?.display_name ?? t('media.unknownCreator');
+  const ownerInitials = ownerName.trim().slice(0, 2).toUpperCase();
+  const publishedDate = video.created_at ? new Date(video.created_at) : null;
+  const hasPublishedDate =
+    !!publishedDate && !Number.isNaN(publishedDate.getTime());
+
+  const duration = formatDuration(video.duration ?? undefined);
+  const fileSize = formatFileSize(video.size ?? undefined);
+  const lessonTitle = video.Lesson?.[0]?.title;
+  const canPlay = Boolean(video.streaming_url);
+
   return (
-    <Card
-      className={`relative cursor-pointer transition-shadow hover:shadow-md ${
-        video.is_welcome_video ? 'ring-2 ring-yellow-400' : ''
-      }`}
-      onClick={() => onVideoSelect(video)}
-    >
-      {/* Video Poster Preview */}
-      <div className="relative aspect-video w-full overflow-hidden rounded-t-lg bg-muted">
-        {getPosterUrl(video.poster_url) ? (
-          <img
-            src={getPosterUrl(video.poster_url)!}
-            alt={`${video.title} poster`}
-            className="h-full w-full object-cover transition-transform hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-muted">
-            <div className="flex flex-col items-center space-y-2 text-muted-foreground">
-              <Video className="h-8 w-8" />
-              <span className="text-sm">No Poster</span>
-            </div>
-          </div>
-        )}
-
-        {/* Play Button Overlay */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity hover:opacity-100">
-          <div className="rounded-full bg-white/90 p-3">
-            <Play className="h-6 w-6 text-black" />
-          </div>
-        </div>
-
-        {/* Welcome Video Badge */}
-        {video.is_welcome_video && (
-          <div className="absolute end-2 top-2 z-10">
-            <Badge className="bg-yellow-500 text-white">
-              <Star className="mr-1 h-3 w-3" />
-              Welcome
-            </Badge>
-          </div>
-        )}
-
-        {/* Access Control Badge */}
-        <div className="absolute start-2 top-2 z-10">
-          {video.access_control ? (
-            <AccessControlBadge
-              accessControl={video.access_control}
-              className="text-xs"
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card text-start shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5">
+      <div className="relative aspect-video w-full overflow-hidden bg-muted">
+        {isActive && canPlay ? (
+          <video
+            ref={videoRef}
+            className="h-full w-full bg-black object-contain"
+            poster={posterUrl}
+            controls
+            autoPlay
+            onEnded={onDeactivate}
+          >
+            <source
+              src={getBrowserApiBaseUrl() + video.streaming_url}
+              type={video.mime_type ?? 'video/mp4'}
             />
-          ) : (
-            <Badge
-              variant={isOwnMedia(video) ? 'default' : 'secondary'}
-              className="text-xs"
+            {t('media.browserNoVideoSupport')}
+          </video>
+        ) : (
+          <>
+            <img
+              src={posterUrl}
+              alt={t('media.videoThumbnail')}
+              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
+            <button
+              type="button"
+              onClick={canPlay ? onToggle : undefined}
+              disabled={!canPlay}
+              className={cn(
+                'absolute inset-0 flex items-center justify-center text-white transition',
+                canPlay ? 'hover:bg-black/20' : 'cursor-not-allowed opacity-70'
+              )}
+              aria-label={
+                canPlay
+                  ? t('media.playVideo')
+                  : t('media.videoSourceUnavailable')
+              }
             >
-              {isOwnMedia(video) ? 'Yours' : 'Other Teacher'}
+              {canPlay ? (
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-black/60 shadow-lg transition group-hover:bg-primary">
+                  <Play className="h-6 w-6 translate-x-px" />
+                </span>
+              ) : (
+                <span className="rounded-full bg-black/70 px-3 py-1.5 text-xs font-semibold">
+                  {t('media.unavailable')}
+                </span>
+              )}
+            </button>
+
+            {(duration || fileSize) && (
+              <div className="pointer-events-none absolute bottom-3 end-3 flex items-center gap-2 rounded-full bg-black/65 px-2.5 py-1 text-xs font-medium text-white">
+                {duration && <span>{duration}</span>}
+                {duration && fileSize && (
+                  <span className="h-1 w-1 rounded-full bg-white/70" />
+                )}
+                {fileSize && <span>{fileSize}</span>}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <div className="flex gap-3 p-4">
+        <Avatar className="h-10 w-10 shrink-0">
+          <AvatarFallback>{ownerInitials}</AvatarFallback>
+        </Avatar>
+
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <h3 className="line-clamp-2 text-base font-semibold text-foreground transition group-hover:text-primary">
+            {video.title || t('media.untitledVideo')}
+          </h3>
+          <p className="text-sm text-muted-foreground">{ownerName}</p>
+          {hasPublishedDate && publishedDate && (
+            <span className="text-xs text-muted-foreground/80">
+              {publishedDate.toLocaleDateString(
+                getLocaleForLanguage(language),
+                {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                }
+              )}
+            </span>
+          )}
+          {video.description && (
+            <p className="line-clamp-2 pt-1 text-sm text-muted-foreground">
+              {video.description}
+            </p>
+          )}
+          {lessonTitle && (
+            <Badge
+              variant="secondary"
+              className="mt-2 w-fit gap-1 rounded-full text-[11px] font-medium"
+            >
+              <BookOpen className="h-3 w-3" />
+              {lessonTitle}
             </Badge>
           )}
         </div>
       </div>
-
-      <CardHeader className="pb-3">
-        <div className="flex items-center space-x-2">
-          {getVideoIcon(video.lesson_type)}
-          <CardTitle className="truncate text-lg">{video.title}</CardTitle>
-        </div>
-        <CardDescription className="line-clamp-2">
-          {video.description}
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="space-y-3">
-        {/* Video Type Badge */}
-        <div className="flex items-center space-x-2">
-          <Badge className={getVideoTypeColor(video.lesson_type)}>
-            {video.lesson_type || 'VIDEO'}
-          </Badge>
-          {video.is_welcome_video && (
-            <Badge
-              variant="outline"
-              className="border-yellow-600 text-yellow-600"
-            >
-              Default
-            </Badge>
-          )}
-        </div>
-
-        {/* Video Details */}
-        <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-          <div className="flex items-center space-x-1">
-            <Clock className="h-3 w-3" />
-            <span>{formatDuration(video.metadata?.duration)}</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <Eye className="h-3 w-3" />
-            <span>{formatFileSize(video.size)}</span>
-          </div>
-        </div>
-
-        {/* Tags */}
-        {video.tags && video.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {video.tags.slice(0, 3).map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-            {video.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs">
-                +{video.tags.length - 3}
-              </Badge>
-            )}
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex items-center space-x-2 pt-2">
-          <Button size="sm" variant="outline" className="flex-1">
-            <Play className="mr-1 h-3 w-3" />
-            Play
-          </Button>
-
-          {video.access_control ? (
-            <AccessControlActions
-              accessControl={video.access_control}
-              onEdit={() => console.log('Edit video', video.id)}
-              onDelete={() => console.log('Delete video', video.id)}
-              onView={() => console.log('View video', video.id)}
-            />
-          ) : (
-            <>
-              <Button size="sm" variant="outline">
-                <Edit className="h-3 w-3" />
-              </Button>
-              <Button size="sm" variant="outline">
-                <Download className="h-3 w-3" />
-              </Button>
-            </>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+    </article>
   );
 }
