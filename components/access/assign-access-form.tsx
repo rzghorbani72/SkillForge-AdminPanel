@@ -63,8 +63,8 @@ export function AssignAccessForm({
   const hasTarget =
     hasExternalTarget || profileIds.length > 0 || groupIds.length > 0;
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  async function handleSubmit(event?: React.FormEvent) {
+    event?.preventDefault();
     if (!hasTarget) return;
     await onSubmit({
       profile_ids: profileIds,
@@ -80,7 +80,7 @@ export function AssignAccessForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label>{t('accessGrants.students')}</Label>
@@ -152,7 +152,11 @@ export function AssignAccessForm({
         />
       </div>
 
-      <Button type="submit" disabled={!hasTarget || isSaving || disabled}>
+      <Button
+        type="button"
+        onClick={() => handleSubmit()}
+        disabled={!hasTarget || isSaving || disabled}
+      >
         {isSaving ? (
           <Loader2 className="me-2 h-4 w-4 animate-spin" />
         ) : (
@@ -160,6 +164,6 @@ export function AssignAccessForm({
         )}
         {submitLabel ?? t('accessGrants.giveAccess')}
       </Button>
-    </form>
+    </div>
   );
 }
