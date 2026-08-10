@@ -50,7 +50,7 @@ export function CourseCard({
 
   return (
     <div
-      className={`overflow-hidden rounded-xl border border-border bg-card transition-all duration-200 hover:border-border/80${onClick ? ' cursor-pointer' : ''}`}
+      className={`flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-200 hover:border-border/80${onClick ? ' cursor-pointer' : ''}`}
       onClick={onClick}
     >
       <div
@@ -75,9 +75,9 @@ export function CourseCard({
             />
           </div>
         )}
-        <div className="absolute end-3 top-3 flex gap-1.5">
+        <div className="absolute end-3 top-3 flex max-w-[70%] gap-1.5">
           <span
-            className="rounded-full px-2 py-0.5 text-[11px] font-medium backdrop-blur-sm"
+            className="truncate rounded-full px-2 py-0.5 text-[11px] font-medium backdrop-blur-sm"
             style={{
               background: 'rgba(255,255,255,0.85)',
               color: 'hsl(var(--foreground))'
@@ -98,13 +98,13 @@ export function CourseCard({
         </div>
       </div>
 
-      <div className="p-4">
-        <div className="mb-2 text-[14.5px] font-semibold leading-snug">
+      <div className="flex flex-1 flex-col p-4">
+        <div className="mb-2 line-clamp-2 min-h-[2.5rem] text-[14.5px] font-semibold leading-snug">
           {course.title}
         </div>
-        <div className="mb-3 flex items-center gap-1.5">
+        <div className="mb-3 flex min-w-0 items-center gap-1.5">
           <span
-            className="flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold"
+            className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[9px] font-bold"
             style={{
               background: `hsl(${hue} 80% 90%)`,
               color: `hsl(${hue} 60% 38%)`
@@ -112,64 +112,69 @@ export function CourseCard({
           >
             {teacher.charAt(0)}
           </span>
-          <span className="text-[12px] text-muted-foreground">{teacher}</span>
+          <span className="truncate text-[12px] text-muted-foreground">
+            {teacher}
+          </span>
           {rating > 0 && (
-            <span className="ms-auto flex items-center gap-0.5 text-[11.5px] text-amber-600">
+            <span className="ms-auto flex shrink-0 items-center gap-0.5 text-[11.5px] text-amber-600">
               <Star className="h-3 w-3 fill-current" />
               {rating}
             </span>
           )}
         </div>
-        <div className="flex items-center justify-between border-t border-border/50 pt-3">
-          <div>
-            <div className="mb-0.5 text-[10.5px] uppercase tracking-wider text-muted-foreground">
-              {t('courses.student')}
-            </div>
-            <div className="text-[13px] font-semibold">
-              {formatNumber(studentsCount)}
-            </div>
-          </div>
-          <div className="text-end">
-            <div className="mb-0.5 text-[10.5px] uppercase tracking-wider text-muted-foreground">
-              {t('courses.price')}
-            </div>
-            <div className="text-[13px] font-semibold text-primary">
-              {pricingType === 'FREE'
-                ? t('courses.free')
-                : priceVal > 0
-                  ? formatNumber(priceVal)
-                  : '—'}
-            </div>
-          </div>
-        </div>
 
-        {(onEdit || onDelete) && (
-          <div
-            className="mt-3 flex gap-2 border-t border-border/50 pt-3"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {onEdit && (
-              <button
-                type="button"
-                onClick={onEdit}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-[12px] font-medium text-foreground transition-colors hover:bg-muted/50"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-                {t('common.edit')}
-              </button>
-            )}
-            {onDelete && (
-              <button
-                type="button"
-                onClick={onDelete}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-destructive/40 px-3 py-1.5 text-[12px] font-medium text-destructive transition-colors hover:bg-destructive/10"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                {t('common.delete')}
-              </button>
-            )}
+        <div className="mt-auto">
+          <div className="flex items-center justify-between border-t border-border/50 pt-3">
+            <div className="min-w-0">
+              <div className="mb-0.5 truncate text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                {t('courses.student')}
+              </div>
+              <div className="truncate text-[13px] font-semibold">
+                {formatNumber(studentsCount)}
+              </div>
+            </div>
+            <div className="min-w-0 text-end">
+              <div className="mb-0.5 truncate text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                {t('courses.price')}
+              </div>
+              <div className="truncate text-[13px] font-semibold text-primary">
+                {pricingType === 'FREE'
+                  ? t('courses.free')
+                  : priceVal > 0
+                    ? formatNumber(priceVal)
+                    : '—'}
+              </div>
+            </div>
           </div>
-        )}
+
+          {(onEdit || onDelete) && (
+            <div
+              className="mt-3 flex gap-2 border-t border-border/50 pt-3"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {onEdit && (
+                <button
+                  type="button"
+                  onClick={onEdit}
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-[12px] font-medium text-foreground transition-colors hover:bg-muted/50"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  {t('common.edit')}
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  type="button"
+                  onClick={onDelete}
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-destructive/40 px-3 py-1.5 text-[12px] font-medium text-destructive transition-colors hover:bg-destructive/10"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  {t('common.delete')}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
