@@ -15,11 +15,10 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { CharacterCounter } from '@/components/ui/character-counter';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
 import { renderMarkdown } from '@/lib/markdown';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import {
   applyMarkdownAction,
   type MarkdownAction
@@ -69,7 +68,6 @@ export function MarkdownEditor({
   minRows = 4
 }: MarkdownEditorProps) {
   const { t } = useTranslation();
-  const formatNumber = useNumberFormat();
   const ref = React.useRef<HTMLTextAreaElement>(null);
   const [isPreview, setIsPreview] = React.useState(false);
 
@@ -82,6 +80,7 @@ export function MarkdownEditor({
       el.selectionStart,
       el.selectionEnd
     );
+    if (maxLength != null && result.value.length > maxLength) return;
     onChange(result.value);
     requestAnimationFrame(() => {
       el.focus();
@@ -90,7 +89,6 @@ export function MarkdownEditor({
   };
 
   const length = value?.length ?? 0;
-  const isNearLimit = maxLength != null && length >= maxLength * 0.9;
 
   return (
     <div className="space-y-2">
@@ -143,6 +141,7 @@ export function MarkdownEditor({
           value={value}
           rows={minRows}
           disabled={disabled}
+          maxLength={maxLength}
           placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
           onBlur={onBlur}
@@ -152,14 +151,7 @@ export function MarkdownEditor({
       <div className="flex items-center justify-between gap-2 text-sm">
         <p className="text-muted-foreground">{t('editor.formattingHint')}</p>
         {maxLength != null && (
-          <p
-            className={cn(
-              'shrink-0',
-              isNearLimit ? 'text-orange-600' : 'text-muted-foreground'
-            )}
-          >
-            {formatNumber(length)}/{formatNumber(maxLength)}
-          </p>
+          <CharacterCounter length={length} maxLength={maxLength} />
         )}
       </div>
     </div>

@@ -1,11 +1,18 @@
 import * as z from 'zod';
 
+// Single source of truth for the lesson description limit shown in the counter
+// — must stay equal to the backend lesson DTOs.
+export const LESSON_DESCRIPTION_MAX = 4000;
+
 export const lessonFormSchema = z.object({
   title: z
     .string()
     .min(5, 'validation.titleMin5')
     .max(80, 'validation.titleMax80'),
-  description: z.string().max(400, 'validation.descriptionMax400').optional(),
+  description: z
+    .string()
+    .max(LESSON_DESCRIPTION_MAX, 'validation.descriptionMax')
+    .optional(),
   season_id: z.string().min(1, 'validation.seasonRequired'),
   audio_id: z.string().optional(),
   video_id: z.string().optional(),
