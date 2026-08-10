@@ -5,8 +5,10 @@ import { GraduationCap } from 'lucide-react';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { DataList, type DataColumn } from '@/components/shared/data-list';
 import { UserAvatar } from '@/components/users/user-avatar';
+import { toneFromId } from '@/components/users/user-card';
 import { Progress } from '@/components/ui/progress';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { cn } from '@/lib/utils';
 import type { InterpolationParams } from '@/lib/i18n';
 import type { Enrollment } from '@/types/api';
@@ -72,6 +74,7 @@ export function EnrollmentsList({
   variant = 'enrollments'
 }: EnrollmentsListProps) {
   const formatNumber = useNumberFormat();
+  const formatDate = useDateFormat();
 
   const columns = useMemo<DataColumn<Enrollment>[]>(() => {
     const student: DataColumn<Enrollment> = {
@@ -81,7 +84,7 @@ export function EnrollmentsList({
         <div className="flex items-center gap-2.5">
           <UserAvatar
             name={enrollment.user?.name}
-            tone={(Number(enrollment.user_id) * 47) % 360}
+            tone={toneFromId(enrollment.user_id)}
           />
           <div className="min-w-0">
             <p className="truncate font-semibold leading-tight">
@@ -133,14 +136,14 @@ export function EnrollmentsList({
         className: 'hidden md:table-cell',
         cell: (enrollment) => (
           <span className="text-muted-foreground">
-            {new Date(enrollment.enrolled_at).toLocaleDateString()}
+            {formatDate(enrollment.enrolled_at)}
           </span>
         )
       },
       progress,
       status
     ];
-  }, [t, formatNumber, variant]);
+  }, [t, formatNumber, formatDate, variant]);
 
   return (
     <DataList

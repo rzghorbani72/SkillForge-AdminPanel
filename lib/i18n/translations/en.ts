@@ -1711,6 +1711,7 @@ export const en = {
     loadingUsersData: 'Loading users data...',
     allManagers: 'All Managers',
     storeManagersAndAdmins: 'Academy managers and administrators',
+    noUsersFound: 'No users found',
     noManagersFound: 'No managers found in the system',
     allTeachers: 'All Teachers',
     courseInstructorsAndEducators: 'Course instructors and educators',

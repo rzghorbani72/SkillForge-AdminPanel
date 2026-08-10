@@ -915,6 +915,7 @@ export const ar = {
     loadingUsersData: 'جاري تحميل بيانات المستخدمين...',
     allManagers: 'جميع المديرين',
     storeManagersAndAdmins: 'مديرو المعهد والإداريون',
+    noUsersFound: 'لم يتم العثور على مستخدمين',
     noManagersFound: 'لم يتم العثور على مديرين في النظام',
     allTeachers: 'جميع المعلمين',
     courseInstructorsAndEducators: 'مدربو الدورات والمعلمون',

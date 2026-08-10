@@ -5,7 +5,7 @@ import { Mail, Phone } from 'lucide-react';
 import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { getRoleLabel } from '@/lib/i18n/role-label';
+import { getRoleDisplayLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 
 export function getUserRoleName(user: User): string {
@@ -17,17 +17,32 @@ export function getUserRoleName(user: User): string {
   );
 }
 
+/** Custom roles carry the label their creator typed; built-ins are translated. */
+export function getUserRoleLabel(user: User): {
+  name: string;
+  label?: string | null;
+} {
+  return {
+    name: getUserRoleName(user),
+    label: user.role_label ?? user.profiles?.[0]?.role?.label ?? null
+  };
+}
+
 export function getUserStatus(user: User): string {
   return user.status ?? (user.is_active ? 'ACTIVE' : 'INACTIVE');
 }
 
+/** Stable hue for an id. Ids are cuid strings, so never do maths on them. */
+export function toneFromId(id: string | null | undefined): number {
+  let hash = 0;
+  for (let i = 0; i < (id?.length ?? 0); i++)
+    hash = (hash * 31 + (id as string).charCodeAt(i)) % 360;
+  return hash;
+}
+
 /** Stable per-user hue so the same person keeps the same avatar colour. */
 export function userTone(user: User): number {
-  const id = String(user.id);
-  let hash = 0;
-  for (let i = 0; i < id.length; i++)
-    hash = (hash * 31 + id.charCodeAt(i)) % 360;
-  return hash;
+  return toneFromId(String(user.id));
 }
 
 interface UserCardProps {
@@ -38,6 +53,7 @@ interface UserCardProps {
 export function UserCard({ user, actions }: UserCardProps) {
   const { t } = useTranslation();
   const role = getUserRoleName(user);
+  const roleLabel = getUserRoleLabel(user);
 
   return (
     <div className="flex h-full flex-col rounded-xl border border-border/70 bg-card p-4">
@@ -54,7 +70,7 @@ export function UserCard({ user, actions }: UserCardProps) {
             </p>
             {role && (
               <p className="truncate text-[11px] text-muted-foreground">
-                {getRoleLabel(role, t)}
+                {getRoleDisplayLabel(roleLabel, t)}
               </p>
             )}
           </div>

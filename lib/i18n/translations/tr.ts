@@ -936,6 +936,7 @@ export const tr = {
     loadingUsersData: 'Kullanıcı verileri yükleniyor...',
     allManagers: 'Tüm Yöneticiler',
     storeManagersAndAdmins: 'Enstitü yöneticileri ve adminler',
+    noUsersFound: 'Kullanıcı bulunamadı',
     noManagersFound: 'Sistemde yönetici bulunamadı',
     allTeachers: 'Tüm Öğretmenler',
     courseInstructorsAndEducators: 'Kurs eğitmenleri ve öğretmenler',

@@ -59,6 +59,8 @@ export interface UserProfile {
       | 'STUDENT'
       | 'USER';
     description?: string;
+    /** Set on academy-defined roles, whose `name` is an internal code. */
+    label?: string | null;
     hierarchy_level?: number | null;
   };
   /** Prisma-style casing variant */

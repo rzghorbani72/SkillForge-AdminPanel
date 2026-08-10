@@ -1703,6 +1703,7 @@ export const fa = {
     loadingUsersData: 'در حال بارگذاری داده‌های کاربران...',
     allManagers: 'همه مدیران',
     storeManagersAndAdmins: 'مدیران آکادمی و ادمین‌ها',
+    noUsersFound: 'کاربری یافت نشد',
     noManagersFound: 'مدیری در سیستم یافت نشد',
     allTeachers: 'همه معلمان',
     courseInstructorsAndEducators: 'مدرسان و آموزگاران دوره',
