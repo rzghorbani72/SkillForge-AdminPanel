@@ -381,6 +381,16 @@ export function useCourseForm(courseId: string) {
     return save(form.getValues());
   }, [form, save, t]);
 
+  /**
+   * Save and exit to the courses list — used by the explicit Save button.
+   */
+  const saveAndExit = useCallback(async () => {
+    const saved = await saveNow();
+    if (saved) {
+      router.push('/courses');
+    }
+  }, [saveNow, router]);
+
   return {
     form,
     isLoading,
@@ -392,6 +402,7 @@ export function useCourseForm(courseId: string) {
     togglePublish,
     retrySave,
     saveNow,
+    saveAndExit,
     saveCover
   };
 }

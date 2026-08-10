@@ -53,7 +53,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     reorderLessons,
     togglePublish,
     retrySave,
-    saveNow,
+    saveAndExit,
     saveCover
   } = useCourseForm(courseId);
 
@@ -114,7 +114,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
           <Button
             type="button"
             disabled={isSaving}
-            onClick={() => void saveNow()}
+            onClick={() => void saveAndExit()}
             className="gap-2"
           >
             <Save className="h-4 w-4" />
@@ -228,7 +228,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                 <Button
                   type="button"
                   disabled={isSaving}
-                  onClick={() => void saveNow()}
+                  onClick={() => void saveAndExit()}
                   className="gap-2"
                 >
                   <Save className="h-4 w-4" />
