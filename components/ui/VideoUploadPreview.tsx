@@ -2,173 +2,116 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Upload, Loader2, X, Library } from 'lucide-react';
+import { Library, Video, X } from 'lucide-react';
+import { apiClient } from '@/lib/api';
 import { useVideoUpload } from '@/hooks/useVideoUpload';
-import VideoPreview from './VideoPreview';
 import VideoSelectionDialog from './VideoSelectionDialog';
-import ProgressBar from './ProgressBar';
-import { cn } from '@/lib/utils';
+import MediaDropzone from './media-dropzone';
 import ImageUploadPreview from './ImageUploadPreview';
+import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { usePercentLabel } from '@/lib/i18n/use-percent-label';
+
+const VIDEO_ACCEPT = 'video/mp4,video/webm,video/ogg';
 
 interface VideoUploadPreviewProps {
   title?: string;
   description?: string;
   onSuccess?: (video: { id: number; url: string; title?: string }) => void;
   onError?: (error: Error) => void;
-  onCancel?: () => void;
-  existingVideoUrl?: string | null;
-  existingVideoId?: string | number | null;
-  alt?: string;
-  className?: string;
-  showPlaceholder?: boolean;
-  placeholderText?: string;
-  placeholderSubtext?: string;
-  uploadButtonText?: string;
-  selectButtonText?: string;
-  showVideoSelection?: boolean;
   selectedVideoId?: string | null;
   disabled?: boolean;
+  className?: string;
   allowPosterUpload?: boolean;
-  // Poster/cover image props
   posterImageId?: string | number | null;
-  posterImageUrl?: string | null;
   onPosterSuccess?: (image: { id: string; url: string }) => void;
-  onPosterRemove?: () => void;
 }
 
 const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
-  title = 'Video Upload',
-  description = 'Upload a video file',
+  title,
+  description,
   onSuccess,
   onError,
-  onCancel,
-  existingVideoUrl,
-  existingVideoId,
-  className = '',
-  showPlaceholder = true,
-  placeholderText,
-  placeholderSubtext,
-  uploadButtonText,
-  selectButtonText,
-  showVideoSelection = true,
   selectedVideoId,
   disabled = false,
+  className,
   allowPosterUpload = false,
-  // Poster props
   posterImageId,
-  posterImageUrl,
   onPosterSuccess
 }) => {
   const { t } = useTranslation();
-  const percentLabel = usePercentLabel();
   const [isSelectionDialogOpen, setIsSelectionDialogOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<{
-    id: number;
-    publicUrl: string;
-    title?: string;
-  } | null>(null);
-  const [fileInputKey, setFileInputKey] = useState(0);
+  const [libraryVideoUrl, setLibraryVideoUrl] = useState<string | null>(null);
 
   const videoUpload = useVideoUpload({
-    title,
-    description,
-    onSuccess: (videoId) => {
-      onSuccess?.({ id: parseInt(videoId), url: '' });
-    },
-    onError: (error) => {
-      setFileInputKey((k) => k + 1);
-      onError?.(error);
-    },
-    onCancel
+    title: title ?? t('media.videoFile'),
+    description: description ?? t('media.videoFile'),
+    onSuccess: (videoId) => onSuccess?.({ id: parseInt(videoId, 10), url: '' }),
+    onError
   });
 
-  const handleVideoSelect = (video: {
-    id: number;
-    publicUrl: string;
-    title?: string;
-  }) => {
-    setSelectedVideo(video);
-    onSuccess?.({
-      id: video.id,
-      url: video.publicUrl,
-      title: video.title
-    });
+  const attachedId = videoUpload.uploadedVideoId ?? selectedVideoId ?? null;
+  const playableUrl =
+    videoUpload.preview ??
+    libraryVideoUrl ??
+    (attachedId ? apiClient.getVideoStreamUrl(String(attachedId)) : null);
+
+  const handleRemove = () => {
+    videoUpload.removeFiles();
+    setLibraryVideoUrl(null);
+    onSuccess?.({ id: 0, url: '' });
   };
 
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Video File Input */}
-      <div className="space-y-2">
-        <Input
-          key={fileInputKey}
-          id="video-upload"
-          type="file"
-          accept="video/mp4,video/webm,video/ogg"
-          onChange={videoUpload.handleVideoFileChange}
-          className="cursor-pointer"
-          disabled={disabled}
-        />
-        <p className="text-xs text-muted-foreground">
-          {t('media.videoFormatsHint')}
-        </p>
-      </div>
+      <MediaDropzone
+        accept={VIDEO_ACCEPT}
+        icon={<Video className="h-8 w-8 text-muted-foreground" />}
+        placeholderText={t('media.noVideoSelected')}
+        placeholderSubtext={t('media.dropVideoHint')}
+        isUploading={videoUpload.isUploading}
+        uploadProgress={videoUpload.uploadProgress}
+        uploadingLabel={
+          videoUpload.uploadProgress === 100
+            ? t('media.processingVideo')
+            : t('media.uploadingVideo')
+        }
+        disabled={disabled}
+        onFile={(file) => void videoUpload.selectAndUpload(file)}
+        onRemove={handleRemove}
+        filled={
+          playableUrl ? (
+            <video
+              src={playableUrl}
+              controls
+              className="aspect-video w-full rounded-md bg-black"
+            />
+          ) : null
+        }
+      />
 
-      {/* Upload, Select, and Cancel Buttons */}
-      <div className="flex gap-2">
+      <p className="text-xs text-muted-foreground">
+        {t('media.videoFormatsHint')}
+      </p>
+
+      <div className="flex flex-wrap gap-2">
         <Button
           type="button"
           variant="outline"
-          onClick={videoUpload.uploadVideo}
-          disabled={!videoUpload.canUpload || disabled}
-          className="flex-1"
+          size="sm"
+          disabled={disabled}
+          title={t('media.selectFromLibraryHint')}
+          onClick={() => setIsSelectionDialogOpen(true)}
         >
-          {videoUpload.isUploading ? (
-            <>
-              <Loader2 className="me-2 h-4 w-4 animate-spin" />
-              {t('common.uploading')}
-            </>
-          ) : videoUpload.hasVideoFile ? (
-            <>
-              <Upload className="mr-2 h-4 w-4" />
-              {uploadButtonText ?? t('media.uploadVideo')}
-            </>
-          ) : (
-            (selectButtonText ?? t('media.selectVideoFirst'))
-          )}
+          <Library className="me-2 h-4 w-4" />
+          {t('media.selectFromLibrary')}
         </Button>
-
-        {showVideoSelection && (
-          <>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={disabled}
-              className="px-4"
-              title={t('media.selectFromLibraryHint')}
-              onClick={() => setIsSelectionDialogOpen(true)}
-            >
-              <Library className="me-2 h-4 w-4" />
-              {t('media.selectFromLibrary')}
-            </Button>
-            <VideoSelectionDialog
-              onSelect={handleVideoSelect}
-              selectedVideoId={selectedVideoId}
-              open={isSelectionDialogOpen}
-              onOpenChange={setIsSelectionDialogOpen}
-            />
-          </>
-        )}
 
         {videoUpload.canCancel && (
           <Button
             type="button"
             variant="destructive"
+            size="sm"
             onClick={videoUpload.cancelUpload}
-            className="px-4"
-            disabled={disabled}
           >
             <X className="me-2 h-4 w-4" />
             {t('common.cancel')}
@@ -176,72 +119,34 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
         )}
       </div>
 
-      {/* Progress Bar */}
-      {videoUpload.isUploading && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              {videoUpload.uploadProgress === 100
-                ? t('media.processingVideo')
-                : t('media.uploadingVideo')}
-            </span>
-            <span className="font-medium">
-              {percentLabel(videoUpload.uploadProgress)}
-            </span>
-          </div>
-          <ProgressBar
-            progress={videoUpload.uploadProgress}
-            size="md"
-            variant={videoUpload.uploadProgress === 100 ? 'success' : 'default'}
-            showPercentage={false}
-          />
-        </div>
-      )}
-
-      {/* Video Preview */}
-      <VideoPreview
-        preview={videoUpload.preview}
-        uploadedVideoId={videoUpload.uploadedVideoId || selectedVideoId}
-        selectedVideo={selectedVideo}
-        onRemove={() => {
-          videoUpload.removeFiles();
-          setSelectedVideo(null);
-          if (selectedVideoId) {
-            onSuccess?.({ id: 0, url: '' });
-          }
+      <VideoSelectionDialog
+        onSelect={(video) => {
+          setLibraryVideoUrl(video.publicUrl);
+          onSuccess?.({
+            id: video.id,
+            url: video.publicUrl,
+            title: video.title
+          });
         }}
-        existingVideoUrl={existingVideoUrl}
-        existingVideoId={existingVideoId}
-        className={className}
-        showPlaceholder={showPlaceholder}
-        placeholderText={placeholderText ?? t('media.noVideoSelected')}
-        placeholderSubtext={placeholderSubtext ?? t('media.videoPreviewHint')}
-        title={title}
-        isUploading={videoUpload.isUploading}
-        uploadProgress={videoUpload.uploadProgress}
-        posterImageUrl={posterImageUrl}
-        posterImageId={posterImageId}
+        selectedVideoId={selectedVideoId}
+        open={isSelectionDialogOpen}
+        onOpenChange={setIsSelectionDialogOpen}
       />
 
-      {/* Poster Image Preview */}
       {allowPosterUpload && (
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-muted-foreground">
             {t('media.videoPoster')}
           </h4>
           <ImageUploadPreview
-            title={title || t('media.videoPoster')}
-            description={description || t('media.videoPoster')}
-            onSuccess={(image) => {
-              onPosterSuccess?.(image);
-            }}
+            title={title ?? t('media.videoPoster')}
+            description={description ?? t('media.videoPoster')}
+            onSuccess={onPosterSuccess}
             selectedImageId={posterImageId ? String(posterImageId) : null}
             alt={t('media.videoPoster')}
             placeholderText={t('media.noPosterSelected')}
             placeholderSubtext={t('media.dropImageHint')}
             onError={onError}
-            existingImageUrl={posterImageUrl}
-            existingImageId={posterImageId}
             disabled={disabled}
           />
         </div>

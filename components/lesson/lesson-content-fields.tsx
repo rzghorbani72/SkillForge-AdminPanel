@@ -117,13 +117,11 @@ const LessonContentFields = ({
                     form.setValue('video_id', video.id.toString())
                   }
                   selectedVideoId={form.watch('video_id')}
-                  alt={t('courses.lessonVideoTitle')}
                   allowPosterUpload
                   posterImageId={form.watch('cover_id')}
                   onPosterSuccess={(image) =>
                     form.setValue('cover_id', image.id.toString())
                   }
-                  onPosterRemove={() => form.setValue('cover_id', '')}
                 />
               </FormControl>
               <FormDescription>

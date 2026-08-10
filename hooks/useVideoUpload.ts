@@ -40,66 +40,46 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
   const [uploadedVideoId, setUploadedVideoId] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  // Handle video file selection
-  const handleVideoFileChange = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        // Validate file using centralized constraints
-        const fileValidation = validateVideoFile(file);
-        if (!fileValidation.valid) {
-          toast.error(tNow(fileValidation.errorKey, fileValidation.params));
-          return;
+  // Accept a picked file only when it passes size/format and duration limits
+  const acceptVideoFile = useCallback(async (file: File): Promise<boolean> => {
+    const fileValidation = validateVideoFile(file);
+    if (!fileValidation.valid) {
+      toast.error(tNow(fileValidation.errorKey, fileValidation.params));
+      return false;
+    }
+
+    const isValidDuration = await new Promise<boolean>((resolve) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+
+      video.onloadedmetadata = () => {
+        const durationValidation = validateVideoDuration(video.duration);
+        if (!durationValidation.valid) {
+          toast.error(
+            tNow(durationValidation.errorKey, durationValidation.params)
+          );
+          resolve(false);
+        } else {
+          resolve(true);
         }
+      };
 
-        // Validate video duration (max 15 minutes)
-        const validateVideoDurationAsync = (file: File): Promise<boolean> => {
-          return new Promise((resolve) => {
-            const video = document.createElement('video');
-            video.preload = 'metadata';
+      video.onerror = () => {
+        toast.error(tNow('toasts.videoUnreadable'));
+        resolve(false);
+      };
 
-            video.onloadedmetadata = () => {
-              const duration = video.duration;
-              const durationValidation = validateVideoDuration(duration);
+      video.src = URL.createObjectURL(file);
+    });
+    if (!isValidDuration) return false;
 
-              if (!durationValidation.valid) {
-                toast.error(
-                  tNow(durationValidation.errorKey, durationValidation.params)
-                );
-                resolve(false);
-              } else {
-                resolve(true);
-              }
-            };
-
-            video.onerror = () => {
-              toast.error(tNow('toasts.videoUnreadable'));
-              resolve(false);
-            };
-
-            video.src = URL.createObjectURL(file);
-          });
-        };
-
-        // Validate duration before proceeding
-        const isValidDuration = await validateVideoDurationAsync(file);
-        if (!isValidDuration) {
-          return;
-        }
-
-        setSelectedFile(file);
-        // Create preview URL
-        const previewUrl = URL.createObjectURL(file);
-        setPreview(previewUrl);
-
-        // Show success message with file info
-        toast.success(
-          tNow('toasts.videoSelected', { size: formatFileSize(file.size) })
-        );
-      }
-    },
-    []
-  );
+    setSelectedFile(file);
+    setPreview(URL.createObjectURL(file));
+    toast.success(
+      tNow('toasts.videoSelected', { size: formatFileSize(file.size) })
+    );
+    return true;
+  }, []);
 
   // Handle poster file selection
   const handlePosterFileChange = useCallback(
@@ -142,111 +122,123 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
     setUploadedVideoId(null);
   }, [preview, posterPreview]);
 
-  // Upload the selected video
-  const uploadVideo = useCallback(async () => {
-    if (!selectedFile) {
-      toast.error(tNow('toasts.videoNoneSelected'));
-      return;
-    }
-
-    const abortController = new AbortController();
-    setUploadAbortController(abortController);
-    setIsUploading(true);
-    setUploadProgress(0);
-    // Fallback progress simulation in case XMLHttpRequest progress events don't work
-    let progressSimulation: NodeJS.Timeout | null = null;
-    let simulatedProgress = 0;
-
-    const startProgressSimulation = () => {
-      progressSimulation = setInterval(() => {
-        if (simulatedProgress < 90) {
-          simulatedProgress += Math.random() * 10;
-          setUploadProgress(Math.min(simulatedProgress, 90));
-        }
-      }, 500);
-    };
-
-    const stopProgressSimulation = () => {
-      if (progressSimulation) {
-        clearInterval(progressSimulation);
-        progressSimulation = null;
+  // Upload the given video, or the previously selected one
+  const uploadVideo = useCallback(
+    async (fileOverride?: File) => {
+      const file = fileOverride ?? selectedFile;
+      if (!file) {
+        toast.error(tNow('toasts.videoNoneSelected'));
+        return;
       }
-    };
 
-    try {
-      // Start fallback progress simulation
-      startProgressSimulation();
+      const abortController = new AbortController();
+      setUploadAbortController(abortController);
+      setIsUploading(true);
+      setUploadProgress(0);
+      // Fallback progress simulation in case XMLHttpRequest progress events don't work
+      let progressSimulation: NodeJS.Timeout | null = null;
+      let simulatedProgress = 0;
 
-      const uploadResponse = await apiClient.uploadVideoWithProgress(
-        selectedFile,
-        {
-          title: options.title || selectedFile.name,
-          description: options.description || 'Uploaded video'
-        },
-        selectedPosterFile || undefined,
-        (progress) => {
-          console.log(`Progress callback received: ${progress}%`);
-          // Stop simulation when real progress is received
-          stopProgressSimulation();
-          // Use requestAnimationFrame to ensure smooth UI updates
-          requestAnimationFrame(() => {
-            setUploadProgress(progress);
-          });
-
-          // If progress reaches 100%, the upload is complete
-          if (progress >= 100) {
-            console.log('Upload progress reached 100% - upload complete');
+      const startProgressSimulation = () => {
+        progressSimulation = setInterval(() => {
+          if (simulatedProgress < 90) {
+            simulatedProgress += Math.random() * 10;
+            setUploadProgress(Math.min(simulatedProgress, 90));
           }
-        },
-        abortController
-      );
-
-      if (uploadResponse && (uploadResponse as any).id) {
-        const videoId = (uploadResponse as any).id.toString();
-        setUploadedVideoId(videoId);
-        // Ensure progress is at 100% for successful upload
-        setUploadProgress(100);
-        toast.success(tNow('toasts.videoUploaded'));
-        options.onSuccess?.(videoId);
-
-        // Small delay to show 100% progress before completing
-        setTimeout(() => {
-          setIsUploading(false);
         }, 500);
-      } else {
-        toast.error(tNow('toasts.videoUploadFailed'));
-        options.onError?.(new Error('Upload failed'));
+      };
+
+      const stopProgressSimulation = () => {
+        if (progressSimulation) {
+          clearInterval(progressSimulation);
+          progressSimulation = null;
+        }
+      };
+
+      try {
+        // Start fallback progress simulation
+        startProgressSimulation();
+
+        const uploadResponse = await apiClient.uploadVideoWithProgress(
+          file,
+          {
+            title: options.title || file.name,
+            description: options.description || 'Uploaded video'
+          },
+          selectedPosterFile || undefined,
+          (progress) => {
+            console.log(`Progress callback received: ${progress}%`);
+            // Stop simulation when real progress is received
+            stopProgressSimulation();
+            // Use requestAnimationFrame to ensure smooth UI updates
+            requestAnimationFrame(() => {
+              setUploadProgress(progress);
+            });
+
+            // If progress reaches 100%, the upload is complete
+            if (progress >= 100) {
+              console.log('Upload progress reached 100% - upload complete');
+            }
+          },
+          abortController
+        );
+
+        if (uploadResponse && (uploadResponse as any).id) {
+          const videoId = (uploadResponse as any).id.toString();
+          setUploadedVideoId(videoId);
+          // Ensure progress is at 100% for successful upload
+          setUploadProgress(100);
+          toast.success(tNow('toasts.videoUploaded'));
+          options.onSuccess?.(videoId);
+
+          // Small delay to show 100% progress before completing
+          setTimeout(() => {
+            setIsUploading(false);
+          }, 500);
+        } else {
+          toast.error(tNow('toasts.videoUploadFailed'));
+          options.onError?.(new Error('Upload failed'));
+          setIsUploading(false);
+        }
+      } catch (error: any) {
+        if (error.message === 'Upload cancelled') {
+          toast.info(tNow('toasts.uploadCancelled'));
+          options.onCancel?.();
+        } else {
+          toast.error(tNow('toasts.videoUploadFailed'));
+          setSelectedFile(null);
+          setSelectedPosterFile(null);
+          setPreview((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return null;
+          });
+          setPosterPreview((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return null;
+          });
+          setUploadedVideoId(null);
+          setUploadProgress(0);
+          options.onError?.(error);
+        }
         setIsUploading(false);
+      } finally {
+        // Stop progress simulation
+        stopProgressSimulation();
+        setUploadAbortController(null);
+        // Reset progress after a delay (only if not already handled in success case)
+        setTimeout(() => setUploadProgress(0), 1000);
       }
-    } catch (error: any) {
-      if (error.message === 'Upload cancelled') {
-        toast.info(tNow('toasts.uploadCancelled'));
-        options.onCancel?.();
-      } else {
-        toast.error(tNow('toasts.videoUploadFailed'));
-        setSelectedFile(null);
-        setSelectedPosterFile(null);
-        setPreview((prev) => {
-          if (prev) URL.revokeObjectURL(prev);
-          return null;
-        });
-        setPosterPreview((prev) => {
-          if (prev) URL.revokeObjectURL(prev);
-          return null;
-        });
-        setUploadedVideoId(null);
-        setUploadProgress(0);
-        options.onError?.(error);
-      }
-      setIsUploading(false);
-    } finally {
-      // Stop progress simulation
-      stopProgressSimulation();
-      setUploadAbortController(null);
-      // Reset progress after a delay (only if not already handled in success case)
-      setTimeout(() => setUploadProgress(0), 1000);
-    }
-  }, [selectedFile, selectedPosterFile, options]);
+    },
+    [selectedFile, selectedPosterFile, options]
+  );
+
+  // Pick a file and upload it immediately (click-to-browse / drag-drop)
+  const selectAndUpload = useCallback(
+    async (file: File) => {
+      if (await acceptVideoFile(file)) await uploadVideo(file);
+    },
+    [acceptVideoFile, uploadVideo]
+  );
 
   // Cancel ongoing upload
   const cancelUpload = useCallback(() => {
@@ -294,7 +286,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
     uploadProgress,
 
     // Actions
-    handleVideoFileChange,
+    selectAndUpload,
     handlePosterFileChange,
     removeFiles,
     uploadVideo,

@@ -2,15 +2,15 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from '@/components/ui/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Upload, Loader2, X, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { ErrorHandler } from '@/lib/error-handler';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import MediaDropzone from './media-dropzone';
 
 type DocMeta = {
   id?: number;
@@ -18,7 +18,7 @@ type DocMeta = {
   mime_type?: string | null;
 };
 
-const ACCEPT =
+const DOCUMENT_ACCEPT =
   '.pdf,.epub,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.zip,.rar,.tar,.gz,.7z';
 
 function previewUrlForDocumentId(id: number): string {
@@ -27,10 +27,9 @@ function previewUrlForDocumentId(id: number): string {
 
 function parseDocumentFromUploadResponse(res: unknown): DocMeta | null {
   const body = (res as { data?: { status?: string; data?: DocMeta } })?.data;
-  if (!body) return null;
-  const row = body.data;
+  const row = body?.data;
   if (row && typeof row === 'object' && 'id' in row) {
-    return row as DocMeta;
+    return row;
   }
   return null;
 }
@@ -47,17 +46,16 @@ export interface DocumentUploadPreviewProps {
 
 const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
   lessonTitle,
-  descriptionFallback = 'Lesson document',
+  descriptionFallback,
   selectedDocumentId,
   onSuccess,
   onClear,
   disabled = false,
-  className = ''
+  className
 }) => {
-  const [file, setFile] = useState<File | null>(null);
+  const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
   const [meta, setMeta] = useState<DocMeta | null>(null);
-  const [fileInputKey, setFileInputKey] = useState(0);
 
   const loadExisting = useCallback(async (id: string) => {
     const n = parseInt(id, 10);
@@ -81,23 +79,12 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
     }
   }, [selectedDocumentId, loadExisting]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setFile(f);
-    toast.success(tNow('toasts.fileSelected', { name: f.name }));
-  };
-
-  const handleUpload = async () => {
-    if (!file) {
-      toast.error(tNow('toasts.documentChooseFirst'));
-      return;
-    }
+  const handleFile = async (file: File) => {
     setIsUploading(true);
     try {
       const res = await apiClient.uploadDocument(file, {
         title: lessonTitle?.trim() || file.name,
-        description: descriptionFallback
+        description: descriptionFallback ?? file.name
       });
       const doc = parseDocumentFromUploadResponse(res);
       const id = doc?.id;
@@ -111,19 +98,15 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
         title: doc?.title ?? file.name,
         mime_type: doc?.mime_type
       });
-      setFile(null);
       toast.success(tNow('toasts.documentUploaded'));
     } catch (err) {
       ErrorHandler.handleApiError(err);
-      setFile(null);
-      setFileInputKey((k) => k + 1);
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleClear = () => {
-    setFile(null);
+  const handleRemove = () => {
     setMeta(null);
     onClear?.();
   };
@@ -135,73 +118,41 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
   const hasDoc = !Number.isNaN(idNum) && idNum > 0;
 
   return (
-    <div className={cn('space-y-4', className)}>
-      <div className="space-y-2">
-        <Input
-          key={fileInputKey}
-          type="file"
-          accept={ACCEPT}
-          onChange={handleFileChange}
-          className="cursor-pointer"
-          disabled={disabled}
-        />
-        <p className="text-xs text-muted-foreground">
-          PDF, Office, EPUB, archives — same rules as Documents (max 5MB on
-          server)
-        </p>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => void handleUpload()}
-          disabled={!file || isUploading || disabled}
-        >
-          {isUploading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading…
-            </>
-          ) : (
-            <>
-              <Upload className="mr-2 h-4 w-4" />
-              Upload & attach
-            </>
-          )}
-        </Button>
-        {hasDoc ? (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleClear}
-            disabled={disabled || isUploading}
-          >
-            <X className="mr-2 h-4 w-4" />
-            Remove document
-          </Button>
-        ) : null}
-      </div>
-
-      {hasDoc ? (
-        <div className="flex flex-col gap-2 rounded-md border bg-muted/30 p-3 text-sm">
-          <div className="flex items-center gap-2 font-medium">
-            <FileText className="h-4 w-4 shrink-0" />
-            <span className="truncate">
-              {meta?.title ?? `Document #${idNum}`}
-            </span>
+    <MediaDropzone
+      className={cn(className)}
+      accept={DOCUMENT_ACCEPT}
+      icon={<FileText className="h-8 w-8 text-muted-foreground" />}
+      placeholderText={t('media.noDocumentSelected')}
+      placeholderSubtext={t('media.dropDocumentHint')}
+      isUploading={isUploading}
+      disabled={disabled}
+      onFile={(file) => void handleFile(file)}
+      onRemove={handleRemove}
+      filled={
+        hasDoc ? (
+          <div className="flex flex-col gap-2 text-sm">
+            <div className="flex items-center gap-2 font-medium">
+              <FileText className="h-4 w-4 shrink-0" />
+              <span className="truncate">
+                {meta?.title ?? t('media.documentPreviewFallback')}
+              </span>
+            </div>
+            <Link
+              href={previewUrlForDocumentId(idNum)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-fit text-primary underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {t('media.openPreview')}
+            </Link>
+            <p className="text-xs text-muted-foreground">
+              {t('media.documentFileHint')}
+            </p>
           </div>
-          <Link
-            href={previewUrlForDocumentId(idNum)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-fit text-primary underline"
-          >
-            Open / preview
-          </Link>
-        </div>
-      ) : null}
-    </div>
+        ) : null
+      }
+    />
   );
 };
 

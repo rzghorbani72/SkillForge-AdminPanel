@@ -1,15 +1,17 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Upload, Loader2, X } from 'lucide-react';
+import { Music } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { ErrorHandler } from '@/lib/error-handler';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import MediaDropzone from './media-dropzone';
+
+const AUDIO_ACCEPT = 'audio/*,.mp3,.wav,.aac,.ogg,.m4a,.flac';
 
 type AudioLike = {
   id?: number;
@@ -29,10 +31,9 @@ function resolvePlayUrl(audio: AudioLike): string {
 
 function parseAudioFromUploadResponse(res: unknown): AudioLike | null {
   const body = (res as { data?: { status?: string; data?: AudioLike } })?.data;
-  if (!body) return null;
-  const row = body.data;
+  const row = body?.data;
   if (row && typeof row === 'object' && 'id' in row) {
-    return row as AudioLike;
+    return row;
   }
   return null;
 }
@@ -49,17 +50,16 @@ export interface AudioUploadPreviewProps {
 
 const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
   lessonTitle,
-  descriptionFallback = 'Lesson audio',
+  descriptionFallback,
   selectedAudioId,
   onSuccess,
   onClear,
   disabled = false,
-  className = ''
+  className
 }) => {
-  const [file, setFile] = useState<File | null>(null);
+  const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
   const [playUrl, setPlayUrl] = useState<string | null>(null);
-  const [fileInputKey, setFileInputKey] = useState(0);
 
   const loadExisting = useCallback(async (id: string) => {
     const n = parseInt(id, 10);
@@ -68,14 +68,8 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
       return;
     }
     try {
-      const data = await apiClient.getAudio(n);
-      const a = data as AudioLike | null;
-      if (a) {
-        const url = resolvePlayUrl(a);
-        setPlayUrl(url || null);
-      } else {
-        setPlayUrl(null);
-      }
+      const audio = (await apiClient.getAudio(n)) as AudioLike | null;
+      setPlayUrl(audio ? resolvePlayUrl(audio) || null : null);
     } catch {
       setPlayUrl(null);
     }
@@ -89,27 +83,16 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
     }
   }, [selectedAudioId, loadExisting]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    if (!f.type.startsWith('audio/')) {
+  const handleFile = async (file: File) => {
+    if (!file.type.startsWith('audio/')) {
       toast.error(tNow('toasts.audioChooseFile'));
-      return;
-    }
-    setFile(f);
-    toast.success(tNow('toasts.fileSelected', { name: f.name }));
-  };
-
-  const handleUpload = async () => {
-    if (!file) {
-      toast.error(tNow('toasts.audioChooseFirst'));
       return;
     }
     setIsUploading(true);
     try {
       const res = await apiClient.uploadAudio(file, {
         title: lessonTitle?.trim() || file.name,
-        description: descriptionFallback
+        description: descriptionFallback ?? file.name
       });
       const audio = parseAudioFromUploadResponse(res);
       const id = audio?.id;
@@ -117,84 +100,54 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
         toast.error(tNow('toasts.audioBadResponse'));
         return;
       }
-      const url = audio ? resolvePlayUrl(audio) : '';
+      const url = resolvePlayUrl(audio);
       onSuccess({ id, publicUrl: url || null });
-      if (url) setPlayUrl(url);
-      setFile(null);
+      setPlayUrl(url || null);
       toast.success(tNow('toasts.audioUploaded'));
     } catch (err) {
       ErrorHandler.handleApiError(err);
-      setFile(null);
-      setFileInputKey((k) => k + 1);
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleClear = () => {
-    setFile(null);
+  const handleRemove = () => {
     setPlayUrl(null);
     onClear?.();
   };
 
-  const hasSelection =
+  const hasAudio =
     Boolean(selectedAudioId && String(selectedAudioId).trim() !== '') ||
     Boolean(playUrl);
 
   return (
-    <div className={cn('space-y-4', className)}>
-      <div className="space-y-2">
-        <Input
-          key={fileInputKey}
-          type="file"
-          accept="audio/*,.mp3,.wav,.aac,.ogg,.m4a,.flac"
-          onChange={handleFileChange}
-          className="cursor-pointer"
-          disabled={disabled}
-        />
-        <p className="text-xs text-muted-foreground">
-          MP3, WAV, AAC, OGG, M4A, FLAC (max 50MB on server)
-        </p>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => void handleUpload()}
-          disabled={!file || isUploading || disabled}
-        >
-          {isUploading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading…
-            </>
-          ) : (
-            <>
-              <Upload className="mr-2 h-4 w-4" />
-              Upload & attach
-            </>
-          )}
-        </Button>
-        {hasSelection ? (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleClear}
-            disabled={disabled || isUploading}
-          >
-            <X className="mr-2 h-4 w-4" />
-            Remove audio
-          </Button>
-        ) : null}
-      </div>
-
-      {playUrl ? (
-        <audio key={playUrl} controls className="w-full max-w-md" src={playUrl}>
-          Your browser does not support audio playback.
-        </audio>
-      ) : null}
-    </div>
+    <MediaDropzone
+      className={cn(className)}
+      accept={AUDIO_ACCEPT}
+      icon={<Music className="h-8 w-8 text-muted-foreground" />}
+      placeholderText={t('media.noAudioSelected')}
+      placeholderSubtext={t('media.dropAudioHint')}
+      isUploading={isUploading}
+      disabled={disabled}
+      onFile={(file) => void handleFile(file)}
+      onRemove={handleRemove}
+      filled={
+        hasAudio ? (
+          <div className="space-y-2">
+            {playUrl ? (
+              <audio key={playUrl} controls className="w-full" src={playUrl} />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                {t('media.audioFile')}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {t('media.audioFileHint')}
+            </p>
+          </div>
+        ) : null
+      }
+    />
   );
 };
 
