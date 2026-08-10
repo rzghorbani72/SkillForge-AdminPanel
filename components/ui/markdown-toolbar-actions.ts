@@ -44,17 +44,21 @@ export function applyMarkdownAction(
 ): ApplyResult {
   const wrap = WRAPS[action];
   if (wrap) {
-    const selected = value.slice(start, end);
+    const raw = value.slice(start, end);
+    const leadingSpace = raw.length - raw.trimStart().length;
+    const trailingSpace = raw.length - raw.trimEnd().length;
+    const selected = raw.trim();
+    const innerStart = start + leadingSpace;
     const next =
-      value.slice(0, start) +
+      value.slice(0, innerStart) +
       wrap.before +
       selected +
       wrap.after +
-      value.slice(end);
+      value.slice(end - trailingSpace);
     return {
       value: next,
-      selectionStart: start + wrap.before.length,
-      selectionEnd: start + wrap.before.length + selected.length
+      selectionStart: innerStart + wrap.before.length,
+      selectionEnd: innerStart + wrap.before.length + selected.length
     };
   }
 

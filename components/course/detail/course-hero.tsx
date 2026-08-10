@@ -60,7 +60,7 @@ export function CourseHero({
     <Card className="overflow-hidden">
       <div className="flex flex-col gap-5 p-5 md:flex-row">
         <div
-          className="relative aspect-video w-full shrink-0 overflow-hidden rounded-xl md:w-64 lg:w-72"
+          className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl md:w-64 lg:w-72"
           style={{
             background: cover
               ? undefined
@@ -132,7 +132,7 @@ export function CourseHero({
               <div
                 className={cn(
                   'prose-description text-sm text-muted-foreground',
-                  !expanded && 'line-clamp-3'
+                  expanded ? 'max-h-[500px] overflow-y-auto' : 'line-clamp-3'
                 )}
                 dangerouslySetInnerHTML={{
                   __html: renderMarkdown(description)

@@ -49,8 +49,21 @@ function stripUnsafeHrefs(html: string): string {
   );
 }
 
+/**
+ * Markdown ignores `**text **` because the closing marker touches a space.
+ * Older descriptions were saved that way, so the spaces are pushed outside the
+ * markers before parsing instead of showing raw asterisks to the reader.
+ */
+function healPaddedEmphasis(markdown: string): string {
+  return markdown.replace(
+    /(\*\*|~~)(\s+)?([^\s*~][^*~\n]*?)(\s+)?\1/g,
+    (_match, marker: string, lead = '', text: string, trail = '') =>
+      `${lead}${marker}${text}${marker}${trail}`
+  );
+}
+
 function toHtml(markdown: string): string {
-  const html = marked.parse(escapeRawHtml(markdown), {
+  const html = marked.parse(escapeRawHtml(healPaddedEmphasis(markdown)), {
     async: false,
     breaks: true
   });
