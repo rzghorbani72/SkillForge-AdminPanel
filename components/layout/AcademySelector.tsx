@@ -74,6 +74,28 @@ function AcademyAvatar({
   );
 }
 
+function AcademyStatusBadge({ isActive }: { isActive: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <span
+      className={cn(
+        'inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium',
+        isActive
+          ? 'bg-emerald-50 text-emerald-700'
+          : 'bg-muted text-muted-foreground'
+      )}
+    >
+      <span
+        className={cn(
+          'h-1.5 w-1.5 rounded-full',
+          isActive ? 'bg-emerald-500' : 'bg-muted-foreground'
+        )}
+      />
+      {isActive ? t('stores.active') : t('stores.inactive')}
+    </span>
+  );
+}
+
 function getAcademyDomain(academy: any): string {
   return (
     academy?.domain?.private_address ??
@@ -262,6 +284,7 @@ export function AcademySelector() {
                               {roleLabel}
                             </span>
                           )}
+                          <AcademyStatusBadge isActive={academy.is_active} />
                         </div>
                       </div>
                       {isActive && (
@@ -445,9 +468,12 @@ function AdminModeSwitcher() {
                     >
                       {academy.name}
                     </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {getAcademyDomain(academy)}
-                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="truncate text-xs text-muted-foreground">
+                        {getAcademyDomain(academy)}
+                      </p>
+                      <AcademyStatusBadge isActive={academy.is_active} />
+                    </div>
                   </div>
                   {isActive && (
                     <Check className="h-4 w-4 shrink-0 text-primary" />
