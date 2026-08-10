@@ -39,19 +39,19 @@ import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { isApiResponseError } from '@/lib/api-error';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
-import { MESSAGES } from '@/constants/messages';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const seasonFormSchema = z.object({
-  title: z.string().min(3, MESSAGES.validation.titleMinLength),
+  title: z.string().min(3, 'validation.titleMin3'),
   description: z.string().optional(),
   order: z
     .string()
-    .min(1, MESSAGES.validation.orderRequired)
+    .min(1, 'validation.orderRequired')
     .refine((val) => {
       const num = Number(val);
       return !isNaN(num) && num > 0 && Number.isInteger(num);
-    }, MESSAGES.validation.orderPositiveInteger),
-  course_id: z.string().min(1, MESSAGES.validation.courseRequired)
+    }, 'validation.orderPositiveInteger'),
+  course_id: z.string().min(1, 'validation.courseRequired')
 });
 
 type SeasonFormData = z.infer<typeof seasonFormSchema>;
@@ -67,6 +67,7 @@ export default function CreateSeasonDialog({
   courses,
   courseId
 }: CreateSeasonDialogProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -111,7 +112,7 @@ export default function CreateSeasonDialog({
         isApiResponseError(error) &&
         error.error.code === 'CONFLICT_DUPLICATE'
       ) {
-        ErrorHandler.showError(MESSAGES.season.orderingConflict);
+        ErrorHandler.showError(t('courses.seasonOrderConflict'));
       } else {
         ErrorHandler.handleApiError(error);
       }
@@ -127,15 +128,15 @@ export default function CreateSeasonDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <Plus className="mr-2 h-4 w-4" />
-          {MESSAGES.season.createSeason}
+          <Plus className="me-2 h-4 w-4" />
+          {t('courses.createSeason')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{MESSAGES.season.createNewSeason}</DialogTitle>
+          <DialogTitle>{t('courses.createNewSeason')}</DialogTitle>
           <DialogDescription>
-            {MESSAGES.season.organizeContent}
+            {t('courses.createSeasonSubtitle')}
           </DialogDescription>
         </DialogHeader>
 
@@ -147,12 +148,12 @@ export default function CreateSeasonDialog({
                 name="course_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{MESSAGES.season.courseRequired} *</FormLabel>
+                    <FormLabel>{t('courses.course')} *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue
-                            placeholder={MESSAGES.season.selectCourse}
+                            placeholder={t('courses.selectCourse')}
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -178,10 +179,10 @@ export default function CreateSeasonDialog({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{MESSAGES.season.seasonTitle} *</FormLabel>
+                  <FormLabel>{t('courses.seasonTitle')} *</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="e.g., Module 1: Introduction"
+                      placeholder={t('courses.seasonTitlePlaceholder')}
                       {...field}
                     />
                   </FormControl>
@@ -195,10 +196,10 @@ export default function CreateSeasonDialog({
               name="order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{MESSAGES.season.order} *</FormLabel>
+                  <FormLabel>{t('courses.orderLabel')} *</FormLabel>
                   <FormControl>
                     <NumberInput
-                      placeholder="e.g., 1"
+                      placeholder={t('courses.seasonOrderPlaceholder')}
                       name={field.name}
                       ref={field.ref}
                       value={field.value}
@@ -206,7 +207,7 @@ export default function CreateSeasonDialog({
                     />
                   </FormControl>
                   <FormDescription>
-                    {MESSAGES.season.orderDescription}
+                    {t('courses.seasonOrderHint')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -218,16 +219,18 @@ export default function CreateSeasonDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{MESSAGES.season.description}</FormLabel>
+                  <FormLabel>
+                    {t('courses.seasonDescriptionOptional')}
+                  </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe what this season covers and its learning objectives"
+                      placeholder={t('courses.seasonDescriptionPlaceholder')}
                       className="min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    {MESSAGES.season.descriptionHint}
+                    {t('courses.seasonDescriptionHint')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -241,12 +244,10 @@ export default function CreateSeasonDialog({
                 onClick={() => setIsOpen(false)}
                 disabled={isLoading}
               >
-                {MESSAGES.common.cancel}
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading
-                  ? MESSAGES.common.creating
-                  : MESSAGES.season.createSeason}
+                {isLoading ? t('common.creating') : t('courses.createSeason')}
               </Button>
             </DialogFooter>
           </form>

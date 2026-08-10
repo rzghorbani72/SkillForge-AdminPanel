@@ -35,30 +35,36 @@ import {
   Search,
   Calendar,
   BookOpen,
-  Eye,
   Edit,
   Trash2,
-  Clock,
-  Play,
-  Video
+  Play
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Season, Course, Lesson } from '@/types/api';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import CreateSeasonDialog from '@/components/content/create-season-dialog';
+import { SeasonLessonRow } from '@/components/content/season-lesson-row';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { toast } from 'react-toastify';
+
+type SeasonWithLessons = Season & { lessons?: Lesson[] };
+
+function matches(text: string | null | undefined, term: string): boolean {
+  return (text ?? '').toLowerCase().includes(term);
+}
 
 export default function SeasonsPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const params = useParams();
   const router = useRouter();
   const { selectedAcademy } = useStore();
   const courseId = params.course_id as string;
 
   const [course, setCourse] = useState<Course | null>(null);
-  const [seasons, setSeasons] = useState<Season[]>([]);
+  const [seasons, setSeasons] = useState<SeasonWithLessons[]>([]);
   const [orphanedLessons, setOrphanedLessons] = useState<Lesson[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -85,51 +91,37 @@ export default function SeasonsPage() {
         setCourse(courseResponse);
       }
 
-      const seasonsData = Array.isArray(seasonsResponse)
+      const seasonsData: Season[] = Array.isArray(seasonsResponse)
         ? seasonsResponse
-        : Array.isArray(seasonsResponse as any)
-          ? (seasonsResponse as any)
-          : [];
+        : [];
 
       if (seasonsData.length > 0) {
-        // Get all lessons for the course
-        const lessonsData = Array.isArray(lessonsResponse)
-          ? lessonsResponse
-          : Array.isArray((lessonsResponse as any)?.lessons)
-            ? (lessonsResponse as any).lessons
-            : Array.isArray(lessonsResponse as any)
-              ? (lessonsResponse as any)
-              : [];
+        const lessonsPayload = lessonsResponse as
+          | Lesson[]
+          | { lessons?: Lesson[] };
+        const allLessons: Lesson[] = Array.isArray(lessonsPayload)
+          ? lessonsPayload
+          : (lessonsPayload?.lessons ?? []);
 
-        const allLessons = lessonsData as Lesson[];
-
-        // Group lessons by season_id
         const lessonsBySeason = allLessons.reduce(
           (acc: Record<string, Lesson[]>, lesson: Lesson) => {
             const seasonId = lesson.season_id || 'unassigned';
-            if (!acc[seasonId]) {
-              acc[seasonId] = [];
-            }
+            acc[seasonId] = acc[seasonId] ?? [];
             acc[seasonId].push(lesson);
             return acc;
           },
           {}
         );
 
-        // Attach lessons to their respective seasons
-        const seasonsWithLessons = seasonsData.map((season: any) => ({
-          ...season,
-          lessons: lessonsBySeason[season.id] || []
-        }));
-
-        setSeasons(seasonsWithLessons);
-
-        // Handle lessons without season (orphaned lessons)
-        const orphanedLessons = lessonsBySeason[0] || [];
-        setOrphanedLessons(orphanedLessons);
+        setSeasons(
+          seasonsData.map((season) => ({
+            ...season,
+            lessons: lessonsBySeason[season.id] ?? []
+          }))
+        );
+        setOrphanedLessons(lessonsBySeason['unassigned'] ?? []);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
       ErrorHandler.handleApiError(error);
     } finally {
       setIsLoading(false);
@@ -141,9 +133,8 @@ export default function SeasonsPage() {
       setIsDeleting(seasonId);
       await apiClient.deleteSeason(seasonId);
       toast.success(t('courses.seasonDeleted'));
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error) {
-      console.error('Error deleting season:', error);
       ErrorHandler.handleApiError(error);
     } finally {
       setIsDeleting(null);
@@ -154,47 +145,42 @@ export default function SeasonsPage() {
     try {
       await apiClient.deleteLesson(lessonId);
       toast.success(t('courses.lessonDeleted'));
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error) {
-      console.error('Error deleting lesson:', error);
       ErrorHandler.handleApiError(error);
     }
   };
 
-  // Filter seasons and lessons based on search term
-  const filteredSeasons = seasons.filter((season) => {
-    const matchesSeason =
-      season.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (season.description &&
-        season.description.toLowerCase().includes(searchTerm.toLowerCase()));
+  const term = searchTerm.trim().toLowerCase();
 
-    const matchesLessons = season.lessons?.some(
-      (lesson: Lesson) =>
-        lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (lesson.description &&
-          lesson.description.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-
-    return matchesSeason || matchesLessons;
-  });
+  const filteredSeasons = seasons.filter(
+    (season) =>
+      matches(season.title, term) ||
+      matches(season.description, term) ||
+      season.lessons?.some(
+        (lesson) =>
+          matches(lesson.title, term) || matches(lesson.description, term)
+      )
+  );
 
   const filteredOrphanedLessons = orphanedLessons.filter(
-    (lesson) =>
-      lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (lesson.description &&
-        lesson.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    (lesson) => matches(lesson.title, term) || matches(lesson.description, term)
   );
+
+  const lessonsTotal = seasons.reduce(
+    (acc, season) => acc + (season.lessons?.length ?? 0),
+    0
+  );
+
+  const lessonPath = (seasonId: string, lessonId: string, suffix = '') =>
+    `/courses/${courseId}/seasons/${seasonId}/lessons/${lessonId}${suffix}`;
 
   if (isLoading) {
     return (
       <div className="container mx-auto py-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="text-muted-foreground">
-              {t('courses.loadingSeasons')}
-            </p>
-          </div>
+        <div className="flex h-64 flex-col items-center justify-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+          <p className="text-muted-foreground">{t('courses.loadingSeasons')}</p>
         </div>
       </div>
     );
@@ -203,23 +189,15 @@ export default function SeasonsPage() {
   if (!course) {
     return (
       <div className="container mx-auto py-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <h2 className="mb-4 text-2xl font-bold">
-              {t('courses.courseNotFound')}
-            </h2>
-            <p className="mb-4 text-muted-foreground">
-              {t('courses.courseNotFoundDesc')}
-            </p>
-            <Button
-              variant="outline"
-              className="mt-4"
-              onClick={() => router.push('/courses')}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t('courses.backToCourses')}
-            </Button>
-          </div>
+        <div className="flex h-64 flex-col items-center justify-center gap-4 text-center">
+          <h2 className="text-2xl font-bold">{t('courses.courseNotFound')}</h2>
+          <p className="text-muted-foreground">
+            {t('courses.courseNotFoundDesc')}
+          </p>
+          <Button variant="outline" onClick={() => router.push('/courses')}>
+            <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
+            {t('courses.backToCourses')}
+          </Button>
         </div>
       </div>
     );
@@ -227,43 +205,42 @@ export default function SeasonsPage() {
 
   return (
     <div className="container mx-auto space-y-6 py-6">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+      <nav className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <button
           onClick={() => router.push('/courses')}
           className="transition-colors hover:text-foreground"
         >
           {t('courses.title')}
         </button>
-        <span>/</span>
+        <span aria-hidden>/</span>
         <button
           onClick={() => router.push(`/courses/${courseId}`)}
           className="transition-colors hover:text-foreground"
         >
           {course.title}
         </button>
-        <span>/</span>
+        <span aria-hidden>/</span>
         <span className="font-medium text-foreground">
           {t('courses.seasons')}
         </span>
-      </div>
+      </nav>
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 items-start gap-3">
           <Button
             variant="outline"
             size="sm"
+            className="shrink-0"
             onClick={() => router.push(`/courses/${courseId}`)}
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
             {t('courses.backToCourse')}
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold tracking-tight">
               {t('courses.seasonsManagement')}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {t('courses.seasonsManagementSubtitle', { title: course.title })}
             </p>
           </div>
@@ -271,53 +248,47 @@ export default function SeasonsPage() {
         <CreateSeasonDialog courseId={courseId} onSeasonCreated={fetchData} />
       </div>
 
-      {/* Search and Stats */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+      <Card>
+        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-sm">
+            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t('courses.searchSeasonsLessons')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-80 ps-10"
+              className="ps-10"
             />
           </div>
-        </div>
-        <Card>
-          <CardContent className="py-4">
-            <div className="flex items-center space-x-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold">{seasons.length}</div>
-                <div className="text-sm text-muted-foreground">
-                  {t('courses.totalSeasons')}
-                </div>
+          <div className="flex items-center gap-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold leading-none">
+                {formatNumber(seasons.length)}
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">
-                  {seasons.reduce(
-                    (acc, season) => acc + (season.lessons?.length || 0),
-                    0
-                  )}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {t('courses.totalLessons')}
-                </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                {t('courses.totalSeasons')}
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="h-8 w-px bg-border" />
+            <div className="text-center">
+              <div className="text-2xl font-bold leading-none">
+                {formatNumber(lessonsTotal)}
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                {t('courses.totalLessons')}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Seasons Accordion */}
       {filteredSeasons.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-2 text-lg font-semibold">
+          <CardContent className="flex flex-col items-center justify-center gap-3 py-12">
+            <Calendar className="h-12 w-12 text-muted-foreground" />
+            <h3 className="text-lg font-semibold">
               {t('courses.noSeasonsFound')}
             </h3>
-            <p className="mb-4 text-center text-muted-foreground">
+            <p className="text-center text-muted-foreground">
               {searchTerm
                 ? t('courses.noSeasonsMatchSearch')
                 : t('courses.noSeasonsYet')}
@@ -331,59 +302,56 @@ export default function SeasonsPage() {
           </CardContent>
         </Card>
       ) : (
-        <Accordion type="multiple" className="w-full">
+        <Accordion type="multiple" className="w-full space-y-3">
           {filteredSeasons.map((season) => (
             <AccordionItem
               key={season.id}
               value={`season-${season.id}`}
-              //  onClick={() =>
-              //       router.push(`/courses/${courseId}/seasons/${season.id}`)
-              //     }
+              className="rounded-lg border px-4"
             >
               <AccordionTrigger className="hover:no-underline">
-                <div className="mr-4 flex w-full items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div>
-                      <h3 className="text-start text-lg font-semibold">
+                <div className="flex w-full flex-col gap-2 pe-3 text-start sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="min-w-0">
+                      <h3 className="truncate text-base font-semibold">
                         {season.title}
                       </h3>
-                      <p className="text-start text-sm text-muted-foreground">
+                      <p className="truncate text-sm font-normal text-muted-foreground">
                         {season.description ||
                           t('common.noDescriptionProvided')}
                       </p>
                     </div>
-                    <Badge variant="outline">{t('courses.season')}</Badge>
+                    <Badge variant="outline" className="shrink-0">
+                      {t('courses.season')}
+                    </Badge>
                   </div>
-                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                    <span className="flex items-center">
-                      <BookOpen className="mr-1 h-4 w-4" />
+                  <div className="flex shrink-0 items-center gap-4 text-sm font-normal text-muted-foreground">
+                    <span className="inline-flex items-center gap-1">
+                      <BookOpen className="h-4 w-4" />
                       {t('courses.lessonsCount', {
-                        count: season.lessons?.length || 0
+                        count: season.lessons?.length ?? 0
                       })}
                     </span>
-                    <span className="flex items-center">
-                      <Play className="mr-1 h-4 w-4" />
-                      {t('courses.orderLabel')}: {season.order}
+                    <span className="inline-flex items-center gap-1">
+                      <Play className="h-4 w-4" />
+                      {t('courses.orderLabel')}: {formatNumber(season.order)}
                     </span>
                   </div>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-4">
-                  {/* Season Actions */}
-                  <div className="flex items-center space-x-2 border-b pb-4">
+                  <div className="flex flex-wrap items-center gap-2 border-b pb-4">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation;
+                      onClick={() =>
                         router.push(
                           `/courses/${courseId}/seasons/${season.id}/edit`
-                        );
-                      }}
+                        )
+                      }
                     >
-                      <Edit className="mr-1 h-4 w-4" />
+                      <Edit className="me-1 h-4 w-4" />
                       {t('courses.editSeason')}
                     </Button>
                     <Button
@@ -395,13 +363,13 @@ export default function SeasonsPage() {
                         )
                       }
                     >
-                      <Plus className="mr-1 h-4 w-4" />
+                      <Plus className="me-1 h-4 w-4" />
                       {t('courses.addLesson')}
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="outline" size="sm">
-                          <Trash2 className="mr-1 h-4 w-4" />
+                          <Trash2 className="me-1 h-4 w-4" />
                           {t('courses.deleteSeason')}
                         </Button>
                       </AlertDialogTrigger>
@@ -433,137 +401,38 @@ export default function SeasonsPage() {
                     </AlertDialog>
                   </div>
 
-                  {/* Lessons List */}
                   {season.lessons && season.lessons.length > 0 ? (
                     <div className="grid gap-3">
-                      {season.lessons.map((lesson: Lesson) => (
-                        <Card
+                      {season.lessons.map((lesson) => (
+                        <SeasonLessonRow
                           key={lesson.id}
-                          className="transition-shadow hover:shadow-md"
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="mb-2 flex items-center space-x-3">
-                                  <h4 className="font-medium">
-                                    {lesson.title}
-                                  </h4>
-                                  <Badge
-                                    variant={
-                                      lesson.is_published
-                                        ? 'default'
-                                        : 'secondary'
-                                    }
-                                  >
-                                    {lesson.is_published
-                                      ? t('courses.published')
-                                      : t('courses.draft')}
-                                  </Badge>
-                                </div>
-                                <p className="mb-2 text-sm text-muted-foreground">
-                                  {lesson.description ||
-                                    t('common.noDescriptionProvided')}
-                                </p>
-                                <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                                  <span className="flex items-center">
-                                    <Clock className="mr-1 h-3 w-3" />
-                                    {lesson.duration || 'N/A'}
-                                  </span>
-                                  <span className="flex items-center">
-                                    <Play className="mr-1 h-3 w-3" />
-                                    {t('courses.orderLabel')}:{' '}
-                                    {lesson.order || 'N/A'}
-                                  </span>
-                                  <span className="flex items-center">
-                                    <Video className="mr-1 h-3 w-3" />
-                                    {lesson.video_id ||
-                                    lesson.audio_id ||
-                                    lesson.document_id ||
-                                    lesson.image_id
-                                      ? t('courses.hasMedia')
-                                      : t('courses.noMedia')}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="ml-4 flex items-center space-x-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() =>
-                                    router.push(
-                                      `/courses/${courseId}/seasons/${season.id}/lessons/${lesson.id}`
-                                    )
-                                  }
-                                >
-                                  <Eye className="mr-1 h-3 w-3" />
-                                  {t('common.view')}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() =>
-                                    router.push(
-                                      `/courses/${courseId}/seasons/${season.id}/lessons/${lesson.id}/edit`
-                                    )
-                                  }
-                                >
-                                  <Edit className="mr-1 h-3 w-3" />
-                                  {t('common.edit')}
-                                </Button>
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm">
-                                      <Trash2 className="mr-1 h-3 w-3" />
-                                      {t('common.delete')}
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>
-                                        {t('common.areYouSure')}
-                                      </AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        {t('courses.deleteLessonDesc', {
-                                          title: lesson.title
-                                        })}
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>
-                                        {t('common.cancel')}
-                                      </AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() =>
-                                          handleDeleteLesson(lesson.id)
-                                        }
-                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                      >
-                                        {t('common.delete')}
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
+                          lesson={lesson}
+                          onView={() =>
+                            router.push(lessonPath(season.id, lesson.id))
+                          }
+                          onEdit={() =>
+                            router.push(
+                              lessonPath(season.id, lesson.id, '/edit')
+                            )
+                          }
+                          onDelete={() => handleDeleteLesson(lesson.id)}
+                        />
                       ))}
                     </div>
                   ) : (
-                    <div className="py-8 text-center text-muted-foreground">
-                      <BookOpen className="mx-auto mb-2 h-8 w-8" />
+                    <div className="flex flex-col items-center gap-2 py-8 text-center text-muted-foreground">
+                      <BookOpen className="h-8 w-8" />
                       <p>{t('courses.noLessonsInSeason')}</p>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="mt-2"
                         onClick={() =>
                           router.push(
                             `/courses/${courseId}/seasons/${season.id}/lessons/create`
                           )
                         }
                       >
-                        <Plus className="mr-1 h-3 w-3" />
+                        <Plus className="me-1 h-3 w-3" />
                         {t('courses.addFirstLesson')}
                       </Button>
                     </div>
@@ -575,12 +444,11 @@ export default function SeasonsPage() {
         </Accordion>
       )}
 
-      {/* Orphaned Lessons Section */}
       {filteredOrphanedLessons.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <BookOpen className="mr-2 h-5 w-5" />
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5" />
               {t('courses.lessonsWithoutSeason')}
             </CardTitle>
             <CardDescription>
@@ -589,110 +457,16 @@ export default function SeasonsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-3">
-              {filteredOrphanedLessons.map((lesson: Lesson) => (
-                <Card
+              {filteredOrphanedLessons.map((lesson) => (
+                <SeasonLessonRow
                   key={lesson.id}
-                  className="transition-shadow hover:shadow-md"
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="mb-2 flex items-center space-x-3">
-                          <h4 className="font-medium">{lesson.title}</h4>
-                          <Badge
-                            variant={
-                              lesson.is_published ? 'default' : 'secondary'
-                            }
-                          >
-                            {lesson.is_published
-                              ? t('courses.published')
-                              : t('courses.draft')}
-                          </Badge>
-                        </div>
-                        <p className="mb-2 text-sm text-muted-foreground">
-                          {lesson.description ||
-                            t('common.noDescriptionProvided')}
-                        </p>
-                        <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                          <span className="flex items-center">
-                            <Clock className="mr-1 h-3 w-3" />
-                            {lesson.duration || 'N/A'}
-                          </span>
-                          <span className="flex items-center">
-                            <Play className="mr-1 h-3 w-3" />
-                            {t('courses.orderLabel')}: {lesson.order || 'N/A'}
-                          </span>
-                          <span className="flex items-center">
-                            <Video className="mr-1 h-3 w-3" />
-                            {lesson.video_id ||
-                            lesson.audio_id ||
-                            lesson.document_id ||
-                            lesson.image_id
-                              ? t('courses.hasMedia')
-                              : t('courses.noMedia')}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="ml-4 flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            router.push(
-                              `/courses/${courseId}/seasons/0/lessons/${lesson.id}`
-                            )
-                          }
-                        >
-                          <Eye className="mr-1 h-3 w-3" />
-                          {t('common.view')}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            router.push(
-                              `/courses/${courseId}/seasons/0/lessons/${lesson.id}/edit`
-                            )
-                          }
-                        >
-                          <Edit className="mr-1 h-3 w-3" />
-                          {t('common.edit')}
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Trash2 className="mr-1 h-3 w-3" />
-                              {t('common.delete')}
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                {t('common.areYouSure')}
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                {t('courses.deleteLessonDesc', {
-                                  title: lesson.title
-                                })}
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>
-                                {t('common.cancel')}
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDeleteLesson(lesson.id)}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                {t('common.delete')}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  lesson={lesson}
+                  onView={() => router.push(lessonPath('0', lesson.id))}
+                  onEdit={() =>
+                    router.push(lessonPath('0', lesson.id, '/edit'))
+                  }
+                  onDelete={() => handleDeleteLesson(lesson.id)}
+                />
               ))}
             </div>
           </CardContent>
