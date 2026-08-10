@@ -37,7 +37,7 @@ const DEFAULT_FORM: AcademyFormState = {
 
 export default function AcademySettingsPage() {
   const { t } = useTranslation();
-  const { academy, isLoading } = useSettingsData();
+  const { academy, isLoading, refresh } = useSettingsData();
   const [form, setForm] = useState<AcademyFormState>(DEFAULT_FORM);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
@@ -76,6 +76,7 @@ export default function AcademySettingsPage() {
       }
 
       await apiClient.updateAcademy(updateData);
+      refresh();
       ErrorHandler.showSuccess(t('settings.storeSettingsUpdatedSuccess'));
     } catch (error) {
       console.error('Error updating store settings', error);

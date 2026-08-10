@@ -34,6 +34,13 @@ const AVATAR_COLORS = [
 ];
 
 const HIDDEN_ROLES = ['STUDENT', 'USER'];
+const SELECTOR_NAME_MAX_CHARS = 8;
+
+function truncateName(name: string): string {
+  return name.length > SELECTOR_NAME_MAX_CHARS
+    ? `${name.slice(0, SELECTOR_NAME_MAX_CHARS)}…`
+    : name;
+}
 
 function academyColor(id: string) {
   return AVATAR_COLORS[colorIndexForId(id, AVATAR_COLORS.length)];
@@ -187,10 +194,11 @@ export function AcademySelector() {
   const selectorContent = current ? (
     <div className="flex items-center gap-2.5">
       <AcademyAvatar name={current.name} id={current.id} logo={current.logo} />
-      <div className="min-w-0 text-start">
-        <p className="max-w-[130px] truncate text-sm font-semibold leading-tight">
-          {current.name}
+      <div className="flex min-w-0 items-center gap-1.5 text-start">
+        <p className="text-sm font-semibold leading-tight" title={current.name}>
+          {truncateName(current.name)}
         </p>
+        <AcademyStatusBadge isActive={current.is_active} />
       </div>
       {hasMultiple && (
         <ChevronDown
@@ -343,9 +351,15 @@ function AdminModeSwitcher() {
         id={selectedAcademy.id}
         logo={selectedAcademy.logo}
       />
-      <p className="max-w-[130px] truncate text-sm font-semibold leading-tight">
-        {selectedAcademy.name}
-      </p>
+      <div className="flex min-w-0 items-center gap-1.5 text-start">
+        <p
+          className="text-sm font-semibold leading-tight"
+          title={selectedAcademy.name}
+        >
+          {truncateName(selectedAcademy.name)}
+        </p>
+        <AcademyStatusBadge isActive={selectedAcademy.is_active} />
+      </div>
       <ChevronDown
         className={cn(
           'ms-1 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200',
