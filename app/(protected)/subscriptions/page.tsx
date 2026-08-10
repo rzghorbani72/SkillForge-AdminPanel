@@ -24,9 +24,11 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 export default function SubscriptionsPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const [plans, setPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [ticking, setTicking] = useState(false);
@@ -158,7 +160,9 @@ export default function SubscriptionsPage() {
                         {plan.kind ?? plan.type ?? '—'}
                       </Badge>
                     </TableCell>
-                    <TableCell>{plan.price?.toLocaleString() ?? '—'}</TableCell>
+                    <TableCell>
+                      {plan.price != null ? formatNumber(plan.price) : '—'}
+                    </TableCell>
                     <TableCell>
                       {plan.duration_days ? `${plan.duration_days}d` : '—'}
                     </TableCell>

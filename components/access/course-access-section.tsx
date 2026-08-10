@@ -62,7 +62,7 @@ export function CourseAccessSection({ courseId }: CourseAccessSectionProps) {
       });
       toast.success(
         t('accessGrants.granted', {
-          count: String(summary.student_grants + summary.group_grants)
+          count: summary.student_grants + summary.group_grants
         })
       );
       await refresh();

@@ -43,6 +43,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import Link from 'next/link';
 
 const planSchema = z.object({
@@ -54,6 +55,7 @@ type PlanValues = z.infer<typeof planSchema>;
 
 export default function PaymentPlansPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const params = useParams<{ course_id: string }>();
   const courseId = params.course_id;
 
@@ -175,16 +177,22 @@ export default function PaymentPlansPage() {
               <TableBody>
                 {plans.map((plan) => (
                   <TableRow key={plan.id}>
-                    <TableCell>{plan.installment_count}x</TableCell>
                     <TableCell>
-                      {plan.amount_per_installment?.toLocaleString()}
+                      {formatNumber(plan.installment_count ?? 0)}x
                     </TableCell>
-                    <TableCell>{plan.interval_days}d</TableCell>
+                    <TableCell>
+                      {plan.amount_per_installment != null
+                        ? formatNumber(plan.amount_per_installment)
+                        : ''}
+                    </TableCell>
+                    <TableCell>
+                      {formatNumber(plan.interval_days ?? 0)}d
+                    </TableCell>
                     <TableCell className="font-medium">
-                      {(
+                      {formatNumber(
                         (plan.installment_count ?? 1) *
-                        (plan.amount_per_installment ?? 0)
-                      ).toLocaleString()}
+                          (plan.amount_per_installment ?? 0)
+                      )}
                     </TableCell>
                     <TableCell>
                       <StatusBadge

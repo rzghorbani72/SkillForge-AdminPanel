@@ -40,7 +40,7 @@ export function AccessGrantList({
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{grant.name}</p>
             <p className="text-xs text-muted-foreground">
-              {t('accessGrants.memberCount', { count: String(grant.members) })}
+              {t('accessGrants.memberCount', { count: grant.members })}
             </p>
           </div>
           <ExpiryBadge expiresAt={grant.expires_at} />

@@ -7,6 +7,7 @@ import { DEFAULT_LANGUAGE, type LanguageCode } from './config';
 import {
   getLanguageConfig,
   getDefaultLanguageForCountry,
+  getLocaleForLanguage,
   isRTL,
   getTextDirection
 } from './config';
@@ -43,12 +44,17 @@ export type InterpolationParams = Record<string, string | number>;
  * Interpolate values into a string template
  * Replaces {{key}} with the corresponding value from params
  */
-function interpolate(template: string, params?: InterpolationParams): string {
+function interpolate(
+  template: string,
+  params?: InterpolationParams,
+  locale?: string
+): string {
   if (!params) return template;
 
   return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
     const value = params[key];
-    return value !== undefined ? String(value) : match;
+    if (value === undefined) return match;
+    return typeof value === 'number' ? value.toLocaleString(locale) : value;
   });
 }
 
@@ -75,14 +81,16 @@ export function t(
     return typeof value === 'string' ? value : null;
   };
 
+  const locale = getLocaleForLanguage(language);
+
   const localizedValue = resolveFromPack(translationPack(language) as any);
   if (localizedValue !== null) {
-    return interpolate(localizedValue, params);
+    return interpolate(localizedValue, params, locale);
   }
 
   const englishValue = resolveFromPack(translations.en as any);
   if (englishValue !== null) {
-    return interpolate(englishValue, params);
+    return interpolate(englishValue, params, locale);
   }
 
   return key;

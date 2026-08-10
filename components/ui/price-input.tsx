@@ -2,13 +2,15 @@
 
 import * as React from 'react';
 import { cn } from '@/lib/utils';
-import { toEnglishDigits } from '@/lib/phone-utils';
+import { toEnglishDigits, toPersianDigits } from '@/lib/phone-utils';
+import { useLanguage } from '@/lib/i18n/hooks';
 import { Input } from './input';
 
 /** Group a raw digit string into thousands: "1234567" → "1,234,567" */
-function groupDigits(raw: string): string {
+function groupDigits(raw: string, isFa: boolean): string {
   if (!raw) return '';
-  return raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const grouped = raw.replace(/\B(?=(\d{3})+(?!\d))/g, isFa ? '٬' : ',');
+  return isFa ? toPersianDigits(grouped) : grouped;
 }
 
 export interface PriceInputProps
@@ -30,7 +32,9 @@ export interface PriceInputProps
  */
 export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
   ({ value, onChange, suffix, className, ...props }, ref) => {
-    const raw = String(value ?? '').replace(/\D/g, '');
+    const { language } = useLanguage();
+    const isFa = language === 'fa';
+    const raw = toEnglishDigits(String(value ?? '')).replace(/\D/g, '');
 
     if (!suffix) {
       return (
@@ -38,7 +42,7 @@ export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
           ref={ref}
           type="text"
           inputMode="numeric"
-          value={groupDigits(raw)}
+          value={groupDigits(raw, isFa)}
           onChange={(e) =>
             onChange(toEnglishDigits(e.target.value).replace(/\D/g, ''))
           }
@@ -54,7 +58,7 @@ export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
           ref={ref}
           type="text"
           inputMode="numeric"
-          value={groupDigits(raw)}
+          value={groupDigits(raw, isFa)}
           onChange={(e) =>
             onChange(toEnglishDigits(e.target.value).replace(/\D/g, ''))
           }

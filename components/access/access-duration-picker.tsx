@@ -83,7 +83,7 @@ export function AccessDurationPicker({
                     : 'hover:bg-muted/40'
                 )}
               >
-                {t('accessGrants.dayCount', { count: String(preset) })}
+                {t('accessGrants.dayCount', { count: preset })}
               </button>
             ))}
           </div>

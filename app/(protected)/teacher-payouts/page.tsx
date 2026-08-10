@@ -41,12 +41,14 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 const rejectSchema = z.object({ notes: z.string().optional() });
 type RejectValues = z.infer<typeof rejectSchema>;
 
 export default function TeacherPayoutsPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const STATUS_FILTERS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED'];
 
   const [payouts, setPayouts] = useState<any[]>([]);
@@ -170,7 +172,9 @@ export default function TeacherPayoutsPage() {
                     <TableCell>
                       {p.academy?.name ?? p.academy_id ?? '—'}
                     </TableCell>
-                    <TableCell>{p.amount?.toLocaleString()}</TableCell>
+                    <TableCell>
+                      {p.amount != null ? formatNumber(p.amount) : ''}
+                    </TableCell>
                     <TableCell className="max-w-[140px] truncate text-xs">
                       {p.bank_info ?? '—'}
                     </TableCell>

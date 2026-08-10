@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
 
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n/hooks';
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const;
@@ -131,6 +132,7 @@ const ChartTooltipContent = React.forwardRef<
     ref
   ) => {
     const { config } = useChart();
+    const { locale } = useLanguage();
 
     const tooltipLabel = React.useMemo(() => {
       if (hideLabel || !payload?.length) {
@@ -238,8 +240,13 @@ const ChartTooltipContent = React.forwardRef<
                         </span>
                       </div>
                       {item.value && (
-                        <span className="font-mono font-medium tabular-nums text-foreground">
-                          {item.value.toLocaleString()}
+                        <span
+                          className={cn(
+                            'font-medium tabular-nums text-foreground',
+                            locale === 'fa-IR' ? undefined : 'font-mono'
+                          )}
+                        >
+                          {item.value.toLocaleString(locale)}
                         </span>
                       )}
                     </div>

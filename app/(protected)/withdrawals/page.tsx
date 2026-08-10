@@ -42,6 +42,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 const approveSchema = z.object({
   bank_transaction_code: z.string().min(1),
@@ -61,6 +62,7 @@ const STATUS_FILTER_LABEL_KEYS: Record<string, string> = {
 
 export default function WithdrawalsPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const STATUS_FILTERS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'PAID'];
 
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
@@ -190,7 +192,9 @@ export default function WithdrawalsPage() {
                     <TableCell>
                       {w.academy?.name ?? w.academy_id ?? '—'}
                     </TableCell>
-                    <TableCell>{w.amount?.toLocaleString()}</TableCell>
+                    <TableCell>
+                      {w.amount != null ? formatNumber(w.amount) : ''}
+                    </TableCell>
                     <TableCell>
                       <StatusBadge
                         status={w.status?.toLowerCase() ?? 'pending'}
@@ -257,7 +261,11 @@ export default function WithdrawalsPage() {
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
             {t('withdrawals.amount')}:{' '}
-            <strong>{approveDialog?.amount?.toLocaleString()}</strong>
+            <strong>
+              {approveDialog?.amount != null
+                ? formatNumber(approveDialog.amount)
+                : ''}
+            </strong>
           </p>
           <Form {...approveForm}>
             <form

@@ -53,6 +53,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 const COUPON_TYPES = [
   'PERCENT',
@@ -86,6 +87,7 @@ const TYPE_BADGE_MAP: Record<string, string> = {
 
 export default function CouponsPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -254,12 +256,12 @@ export default function CouponsPage() {
                     </TableCell>
                     <TableCell>
                       {c.coupon_type === 'FREE_TRIAL'
-                        ? `${c.free_trial_days ?? 0}d`
+                        ? `${formatNumber(c.free_trial_days ?? 0)}d`
                         : c.coupon_type === 'FULL_DISCOUNT'
-                          ? '100%'
+                          ? `${formatNumber(100)}%`
                           : c.coupon_type === 'PERCENT'
-                            ? `${c.discount_value ?? 0}%`
-                            : (c.discount_value ?? 0).toLocaleString()}
+                            ? `${formatNumber(c.discount_value ?? 0)}%`
+                            : formatNumber(c.discount_value ?? 0)}
                     </TableCell>
                     <TableCell>
                       {c.academy?.name ?? c.academy_id ?? '—'}

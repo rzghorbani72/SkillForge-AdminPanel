@@ -10,6 +10,13 @@ export function toEnglishDigits(str: string): string {
     );
 }
 
+/** Converts ASCII digits (0-9) to Persian digits (۰-۹) for display. */
+export function toPersianDigits(str: string): string {
+  return str.replace(/\d/g, (d) =>
+    String.fromCharCode(d.charCodeAt(0) + 0x06f0 - 48)
+  );
+}
+
 /**
  * Cleans a phone number by removing country codes, leading zeros, and invalid characters
  * @param phoneNumber - The raw phone number input

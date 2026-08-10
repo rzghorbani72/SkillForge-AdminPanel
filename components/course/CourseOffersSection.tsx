@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { Offer, OfferingType } from '@/types/api';
 import { useCourseOffers } from '@/hooks/use-course-offers';
 import {
@@ -35,6 +36,7 @@ const OFFER_TYPES: OfferingType[] = ['ONE_TIME', 'SUBSCRIPTION', 'FREE'];
 // the course form instead, so it is listed read-only.
 export function CourseOffersSection({ courseId }: { courseId: string }) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const { offers, isLoading, isSaving, create, toggleActive, remove } =
     useCourseOffers(courseId);
   const [type, setType] = useState<OfferingType>('ONE_TIME');
@@ -84,7 +86,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
                   {o.title ?? label(o.type)}
                 </Badge>
                 <span className="text-sm tabular-nums">
-                  {o.type === 'FREE' ? '—' : o.price.toLocaleString()}
+                  {o.type === 'FREE' ? '—' : formatNumber(o.price)}
                 </span>
                 <span className="text-xs tabular-nums text-muted-foreground">
                   {t('courses.offeringAccessDaysValue', {
@@ -168,7 +170,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
               {t('courses.offeringAccessDays')}
             </span>
             <NumberInput
-              placeholder={String(DEFAULT_ACCESS_DAYS)}
+              placeholder={formatNumber(DEFAULT_ACCESS_DAYS)}
               value={accessDays}
               onChange={setAccessDays}
             />

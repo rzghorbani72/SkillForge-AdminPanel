@@ -39,6 +39,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 const refundSchema = z.object({
   refund_amount: z.coerce.number().optional(),
@@ -49,6 +50,7 @@ type RefundValues = z.infer<typeof refundSchema>;
 
 export default function RefundsPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -194,7 +196,9 @@ export default function RefundsPage() {
                     <TableCell>
                       {p.course?.title ?? p.Course?.title ?? '—'}
                     </TableCell>
-                    <TableCell>{p.amount?.toLocaleString()}</TableCell>
+                    <TableCell>
+                      {p.amount != null ? formatNumber(p.amount) : ''}
+                    </TableCell>
                     <TableCell>
                       <StatusBadge
                         status={p.status?.toLowerCase() ?? 'unknown'}
@@ -237,7 +241,11 @@ export default function RefundsPage() {
             <div className="space-y-1 rounded-md bg-muted px-4 py-2 text-sm">
               <p>
                 {t('refunds.maxRefundable')}:{' '}
-                <strong>{eligibility.max_refundable?.toLocaleString()}</strong>
+                <strong>
+                  {eligibility.max_refundable != null
+                    ? formatNumber(eligibility.max_refundable)
+                    : ''}
+                </strong>
               </p>
               {eligibility.reason && (
                 <p className="text-muted-foreground">{eligibility.reason}</p>

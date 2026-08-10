@@ -30,6 +30,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { CheckCircle, CreditCard, UserPlus } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { ApiPagination } from '@/types/learning-operations';
 
 interface Enrollment {
@@ -49,6 +50,7 @@ interface Enrollment {
 
 export default function ManualEnrollPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [pagination, setPagination] = useState<ApiPagination | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -268,7 +270,7 @@ export default function ManualEnrollPage() {
                             <div className="flex items-center gap-1 text-xs">
                               <CreditCard className="h-3 w-3" />
                               <span>
-                                {(e.Payment.amount / 10).toLocaleString()}{' '}
+                                {formatNumber(e.Payment.amount / 10)}{' '}
                                 {t('common.toman')}
                               </span>
                               <Badge variant="outline" className="text-xs">

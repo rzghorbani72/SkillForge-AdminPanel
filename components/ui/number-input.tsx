@@ -2,15 +2,18 @@
 
 import * as React from 'react';
 import { cn } from '@/lib/utils';
-import { toEnglishDigits } from '@/lib/phone-utils';
+import { toEnglishDigits, toPersianDigits } from '@/lib/phone-utils';
+import { useLanguage } from '@/lib/i18n/hooks';
 import { Input } from './input';
 
 /** Group the integer part of a raw digit string into thousands, keeping any decimal part untouched. */
-function groupDigits(raw: string): string {
+function groupDigits(raw: string, isFa: boolean): string {
   if (!raw) return '';
   const [intPart, decPart] = raw.split('.');
-  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return decPart !== undefined ? `${grouped}.${decPart}` : grouped;
+  const separator = isFa ? '٬' : ',';
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+  const display = decPart !== undefined ? `${grouped}.${decPart}` : grouped;
+  return isFa ? toPersianDigits(display) : display;
 }
 
 export interface NumberInputProps
@@ -35,8 +38,10 @@ export interface NumberInputProps
  */
 export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   ({ value, onChange, allowDecimal, suffix, className, ...props }, ref) => {
+    const { language } = useLanguage();
+    const isFa = language === 'fa';
     const stripPattern = allowDecimal ? /[^\d.]/g : /\D/g;
-    const raw = String(value ?? '').replace(stripPattern, '');
+    const raw = toEnglishDigits(String(value ?? '')).replace(stripPattern, '');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       let cleaned = toEnglishDigits(e.target.value).replace(stripPattern, '');
@@ -56,7 +61,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         ref={ref}
         type="text"
         inputMode={allowDecimal ? 'decimal' : 'numeric'}
-        value={groupDigits(raw)}
+        value={groupDigits(raw, isFa)}
         onChange={handleChange}
         className={suffix ? cn('pe-14', className) : className}
         {...props}
