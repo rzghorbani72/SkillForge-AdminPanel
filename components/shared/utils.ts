@@ -1,6 +1,7 @@
 // Common utility functions for role and status handling
 
 import { DEFAULT_LANGUAGE, getLocaleForLanguage } from '@/lib/i18n/config';
+import { tNow } from '@/lib/i18n/t-now';
 
 export const getRoleIcon = (role: string) => {
   switch (role) {
@@ -60,17 +61,24 @@ const localeDigits = (value: number, minimumIntegerDigits = 1) =>
     useGrouping: false
   }).format(value);
 
-const SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB'];
+const SIZE_UNIT_KEYS = [
+  'media.unitByte',
+  'media.unitKb',
+  'media.unitMb',
+  'media.unitGb',
+  'media.unitTb'
+];
 
 /** Returns an empty string when unknown, so callers can simply hide the field. */
 export const formatFileSize = (bytes?: number | null) => {
   if (bytes == null || bytes <= 0) return '';
   const exponent = Math.min(
     Math.floor(Math.log(bytes) / Math.log(1024)),
-    SIZE_UNITS.length - 1
+    SIZE_UNIT_KEYS.length - 1
   );
   const value = bytes / Math.pow(1024, exponent);
-  return `${localeDigits(Number(value.toFixed(exponent === 0 ? 0 : 1)))} ${SIZE_UNITS[exponent]}`;
+  const amount = localeDigits(Number(value.toFixed(exponent === 0 ? 0 : 1)));
+  return `${amount} ${tNow(SIZE_UNIT_KEYS[exponent])}`;
 };
 
 /** `mm:ss`, or `h:mm` once past an hour. Empty when the duration is unknown. */
