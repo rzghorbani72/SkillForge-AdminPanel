@@ -9,7 +9,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 export default function CreateLessonPage() {
   const { t } = useTranslation();
   const { selectedAcademy } = useStore();
-  const { categories, isLoading: categoriesLoading } = useCategoriesStore();
+  const { categories } = useCategoriesStore();
   const {
     season,
     course,

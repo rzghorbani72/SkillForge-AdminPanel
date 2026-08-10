@@ -13,31 +13,33 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
   Music,
-  Search,
   Edit,
   Trash2,
   Play,
   Pause,
   FileText,
   Clock,
-  X,
-  SlidersHorizontal,
-  Sparkles,
+  HardDrive,
   Music2,
   Volume2
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
-import UploadAudioDialog from '@/components/content/upload-audio-dialog';
+import { UploadMediaDialog } from '@/components/content/upload-media-dialog';
 import {
   AccessControlBadge,
-  AccessControlActions
+  AccessControlActions,
+  type AccessControl
 } from '@/components/ui/access-control-badge';
 import { toast } from 'react-toastify';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { SearchBar } from '@/components/shared/SearchBar';
+import { StatsCard } from '@/components/shared/stats-card';
+import { formatDuration, formatFileSize } from '@/components/shared/utils';
+import { formatNumber } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -53,15 +55,7 @@ import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
-
-interface AccessControl {
-  can_modify: boolean;
-  can_delete: boolean;
-  can_view: boolean;
-  is_owner: boolean;
-  user_role: string;
-  user_permissions: string[];
-}
+import { getLocaleForLanguage } from '@/lib/i18n/config';
 
 const DEFAULT_AUDIO_BITRATES_KBPS: Record<string, number> = {
   'audio/mpeg': 128,
@@ -95,48 +89,10 @@ interface AudioItem {
   access_control?: AccessControl;
 }
 
-const formatFileSize = (bytes?: number | null) => {
-  if (!bytes || bytes <= 0) return 'N/A';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const exponent = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(1024)),
-    units.length - 1
-  );
-  const value = bytes / Math.pow(1024, exponent);
-  return `${value.toFixed(exponent === 0 ? 0 : 1)} ${units[exponent]}`;
-};
-
-const formatDuration = (seconds?: number | null) => {
-  if (!seconds || seconds <= 0) return '--:--';
-  const totalSeconds = Math.round(seconds);
-  const mins = Math.floor(totalSeconds / 60);
-  const hrs = Math.floor(mins / 60);
-  const remainingMins = mins % 60;
-  const remainingSeconds = totalSeconds % 60;
-
-  if (hrs > 0) {
-    return `${hrs}h ${remainingMins}m`;
-  }
-
-  return `${mins}:${String(remainingSeconds).padStart(2, '0')}`;
-};
-
-const formatTimecode = (seconds?: number) => {
-  if (seconds === undefined || seconds === null || Number.isNaN(seconds)) {
-    return '0:00';
-  }
-
-  const totalSeconds = Math.max(0, Math.floor(seconds));
-  const minutes = Math.floor(totalSeconds / 60);
-  const remainingSeconds = totalSeconds % 60;
-
-  return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
-};
-
-const formatDate = (isoDate?: string, locale = 'en-US') => {
-  if (!isoDate) return 'N/A';
+const formatDate = (isoDate: string | undefined, locale: string) => {
+  if (!isoDate) return '';
   const date = new Date(isoDate);
-  if (Number.isNaN(date.getTime())) return 'N/A';
+  if (Number.isNaN(date.getTime())) return '';
   return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
@@ -154,11 +110,10 @@ const getAudioUrl = (audio: AudioItem) => {
 
 export default function AudiosPage() {
   const { t, language } = useTranslation();
-  const locale = 'fa-IR';
+  const locale = getLocaleForLanguage(language);
   const { selectedAcademy } = useStore();
   const [audios, setAudios] = useState<AudioItem[]>([]);
   const [filteredAudios, setFilteredAudios] = useState<AudioItem[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -178,7 +133,6 @@ export default function AudiosPage() {
   const fetchAudios = useCallback(async () => {
     if (!selectedAcademy) {
       setAudios([]);
-      setCourses([]);
       return;
     }
 
@@ -186,10 +140,7 @@ export default function AudiosPage() {
       setIsLoading(true);
       setError(null);
 
-      const [audiosResponse, coursesResponse] = await Promise.all([
-        apiClient.getAudios(),
-        apiClient.getCourses({ academy_id: selectedAcademy.id })
-      ]);
+      const audiosResponse = await apiClient.getAudios();
 
       const rawAudios: AudioItem[] = Array.isArray(audiosResponse)
         ? audiosResponse
@@ -228,14 +179,7 @@ export default function AudiosPage() {
         });
         return next;
       });
-
-      const availableCourses = coursesResponse?.courses ?? [];
-      const storeCourses = availableCourses.filter(
-        (course: Course) => course.academy_id === selectedAcademy.id
-      );
-      setCourses(storeCourses);
     } catch (err) {
-      console.error('Error fetching audios:', err);
       setError(t('media.failedToLoadAudioFiles'));
       ErrorHandler.handleApiError(err);
     } finally {
@@ -327,8 +271,11 @@ export default function AudiosPage() {
     if (!node) return;
 
     const rect = event.currentTarget.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const percent = Math.min(Math.max(clickX / rect.width, 0), 1);
+    const isRtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const offsetX = isRtl
+      ? rect.right - event.clientX
+      : event.clientX - rect.left;
+    const percent = Math.min(Math.max(offsetX / rect.width, 0), 1);
     const durationSeconds = getDurationSeconds(audio);
     const newTime = durationSeconds * percent;
 
@@ -442,91 +389,38 @@ export default function AudiosPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6" dir={'rtl'}>
-      {/* Header */}
-      <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="icon-container-success">
-            <Music2 className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                {t('media.audioLibrary')}
-              </h1>
-              <Badge
-                variant="secondary"
-                className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
-              >
-                <Sparkles className="me-1 h-3 w-3" />
-                {audios.length} {t('media.files')}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageAudio')} - {selectedAcademy.name}
-            </p>
-          </div>
-        </div>
-        <UploadAudioDialog
-          onAudioUploaded={handleAudioUploaded}
-          courses={courses}
-        />
-      </div>
+    <div className="page-wrapper flex-1 space-y-6 p-6">
+      <PageHeader
+        icon={<Music2 className="h-5 w-5" />}
+        title={t('media.audioLibrary')}
+        description={`${t('media.manageAudio')} — ${selectedAcademy.name}`}
+        badge={`${formatNumber(audios.length)} ${t('media.files')}`}
+      >
+        <UploadMediaDialog kind="audio" onUploaded={handleAudioUploaded} />
+      </PageHeader>
 
-      {/* Stats Card */}
+      {/* Stats */}
       <div
         className="fade-in-up grid gap-4 sm:grid-cols-3"
         style={{ animationDelay: '0.1s' }}
       >
-        <Card className="stat-card">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  {t('media.totalFiles')}
-                </p>
-                <p className="text-2xl font-bold">{audios.length}</p>
-              </div>
-              <div className="icon-container-primary">
-                <Music className="h-5 w-5" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="stat-card">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  {t('media.totalSize')}
-                </p>
-                <p className="text-2xl font-bold">
-                  {formatFileSize(totalSize)}
-                </p>
-              </div>
-              <div className="icon-container-info">
-                <FileText className="h-5 w-5" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="stat-card">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  {t('media.totalDuration')}
-                </p>
-                <p className="text-2xl font-bold">
-                  {formatDuration(totalDurationSeconds)}
-                </p>
-              </div>
-              <div className="icon-container-warning">
-                <Clock className="h-5 w-5" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <StatsCard
+          icon={Music}
+          title={t('media.totalFiles')}
+          value={formatNumber(audios.length)}
+        />
+        <StatsCard
+          icon={HardDrive}
+          title={t('media.totalSize')}
+          value={formatFileSize(totalSize)}
+          iconColor="text-amber-600"
+        />
+        <StatsCard
+          icon={Clock}
+          title={t('media.totalDuration')}
+          value={formatDuration(totalDurationSeconds)}
+          iconColor="text-sky-600"
+        />
       </div>
 
       {/* Search */}
@@ -534,29 +428,16 @@ export default function AudiosPage() {
         className="fade-in-up flex items-center gap-3"
         style={{ animationDelay: '0.15s' }}
       >
-        <div className="relative max-w-md flex-1">
-          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={t('media.searchAudio')}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-10 rounded-xl border-border/50 bg-background/50 pe-10 ps-10 backdrop-blur-sm transition-all duration-200 focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/20"
-          />
-          {searchTerm && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute end-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              onClick={() => setSearchTerm('')}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
+        <SearchBar
+          placeholder={t('media.searchAudio')}
+          value={searchTerm}
+          onChange={setSearchTerm}
+          className="max-w-md flex-1"
+        />
         <Button
           variant="outline"
           onClick={fetchAudios}
-          className="rounded-xl border-border/50"
+          className="h-10 shrink-0 rounded-xl border-border/50"
         >
           {t('media.refresh')}
         </Button>
@@ -581,27 +462,14 @@ export default function AudiosPage() {
 
       {/* Audio Grid */}
       {filteredAudios.length === 0 && !error ? (
-        <div
-          className="fade-in-up flex flex-1 items-center justify-center p-6"
-          style={{ animationDelay: '0.2s' }}
-        >
-          <div className="text-center">
-            <div className="relative mx-auto mb-6">
-              <div className="absolute inset-0 -z-10 mx-auto h-32 w-32 rounded-full bg-gradient-to-br from-emerald-500/10 via-primary/5 to-transparent blur-2xl" />
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/50 text-muted-foreground shadow-sm">
-                <Music className="h-10 w-10" />
-              </div>
-            </div>
-            <h3 className="text-xl font-semibold tracking-tight">
-              {t('media.noAudioFound')}
-            </h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-              {searchTerm
-                ? t('media.noAudioMatch')
-                : t('media.uploadFirstAudio')}
-            </p>
-          </div>
-        </div>
+        <EmptyState
+          className="fade-in-up"
+          icon={<Music className="h-10 w-10" />}
+          title={t('media.noAudioFound')}
+          description={
+            searchTerm ? t('media.noAudioMatch') : t('media.uploadFirstAudio')
+          }
+        />
       ) : (
         <div className="stagger-children grid gap-5 sm:grid-cols-2">
           {filteredAudios.map((audio, index) => {
@@ -638,7 +506,7 @@ export default function AudiosPage() {
                     {audio.access_control && (
                       <AccessControlBadge
                         accessControl={audio.access_control}
-                        className="ml-2 text-[10px]"
+                        className="ms-2 text-[10px]"
                       />
                     )}
                   </div>
@@ -668,7 +536,7 @@ export default function AudiosPage() {
                         {isPlaying ? (
                           <Pause className="h-4 w-4" />
                         ) : (
-                          <Play className="ml-0.5 h-4 w-4" />
+                          <Play className="h-4 w-4 translate-x-px" />
                         )}
                       </Button>
                       <div className="flex-1 space-y-1">
@@ -677,15 +545,15 @@ export default function AudiosPage() {
                           onClick={(event) => handleSeek(audio, event)}
                         >
                           <div
-                            className="absolute inset-y-0 left-0 rounded-full bg-primary transition-all group-hover/progress:bg-primary/90"
+                            className="absolute inset-y-0 start-0 rounded-full bg-primary transition-all group-hover/progress:bg-primary/90"
                             style={{
                               width: `${Math.min(100, progressPercent)}%`
                             }}
                           />
                         </div>
                         <div className="flex items-center justify-between text-[10px] font-medium text-muted-foreground">
-                          <span>{formatTimecode(playedSeconds)}</span>
-                          <span>{formatTimecode(totalDurationSeconds)}</span>
+                          <span>{formatDuration(playedSeconds)}</span>
+                          <span>{formatDuration(totalDurationSeconds)}</span>
                         </div>
                       </div>
                     </div>
@@ -701,7 +569,8 @@ export default function AudiosPage() {
                       variant="secondary"
                       className="rounded-full px-2 py-0 text-[10px] font-semibold"
                     >
-                      {audio.mime_type?.split('/')[1]?.toUpperCase() || 'AUDIO'}
+                      {audio.mime_type?.split('/')[1]?.toUpperCase() ||
+                        t('media.audioType')}
                     </Badge>
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
@@ -727,7 +596,7 @@ export default function AudiosPage() {
                           className="flex-1 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
                           onClick={() => setViewAudio(audio)}
                         >
-                          <Volume2 className="mr-1.5 h-3.5 w-3.5" />
+                          <Volume2 className="me-1.5 h-3.5 w-3.5" />
                           {t('media.details')}
                         </Button>
                         <Button

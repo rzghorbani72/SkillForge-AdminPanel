@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { User, Shield, Eye, Edit, Trash2, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface AccessControl {
+export interface AccessControl {
   can_modify: boolean;
   can_delete: boolean;
   can_view: boolean;

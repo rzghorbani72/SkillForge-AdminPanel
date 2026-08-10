@@ -29,7 +29,7 @@ export function StatsCard({
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-2xl font-bold tracking-tight">{value}</p>
+            <p className="text-2xl font-bold tracking-tight">{value || '—'}</p>
             {change && (
               <p
                 className={cn('text-xs font-medium', {
@@ -46,15 +46,7 @@ export function StatsCard({
               <p className="text-xs text-muted-foreground">{description}</p>
             )}
           </div>
-          <div
-            className={cn(
-              'rounded-xl bg-muted p-2.5',
-              iconColor
-                .replace('text-', 'bg-')
-                .replace('-600', '-500/10')
-                .replace('-400', '-500/10')
-            )}
-          >
+          <div className="rounded-xl bg-muted p-2.5">
             <Icon className={cn('h-5 w-5', iconColor)} />
           </div>
         </div>
