@@ -2676,6 +2676,7 @@ export const fa = {
     browserNoVideoSupport: 'مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.',
     hoursShort: 'ساعت',
     minutesShort: 'دقیقه',
+    secondsShort: 'ثانیه',
     videoType: 'ویدیو',
     uploadVideoDescription: 'بارگذاری ویدیو برای دوره‌ها و درس‌های آکادمی',
     videoFile: 'فایل ویدیو',

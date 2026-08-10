@@ -2695,6 +2695,7 @@ export const en = {
     browserNoVideoSupport: 'Your browser does not support the video tag.',
     hoursShort: 'h',
     minutesShort: 'm',
+    secondsShort: 's',
     videoType: 'Video',
     uploadVideoDescription: 'Upload video content for your courses and lessons',
     videoFile: 'Video file',

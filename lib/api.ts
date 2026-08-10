@@ -46,6 +46,7 @@ import {
   uploadFileParts,
   type DirectUploadTicket
 } from '@/lib/uploads/video-direct-upload';
+import { readVideoDurationSeconds } from '@/lib/video-duration';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -2302,7 +2303,8 @@ class ApiClient {
   private buildVideoFormData(
     file: File,
     metadata?: { title?: string; description?: string },
-    posterFile?: File
+    posterFile?: File,
+    durationSeconds?: number
   ): FormData {
     const formData = new FormData();
     formData.append('videofile', file); // Backend expects 'videofile'
@@ -2312,6 +2314,9 @@ class ApiClient {
     if (metadata) {
       formData.append('title', metadata.title || file.name);
       formData.append('description', metadata.description || '');
+    }
+    if (durationSeconds) {
+      formData.append('duration_seconds', String(durationSeconds));
     }
     return formData;
   }
@@ -2329,6 +2334,7 @@ class ApiClient {
     abortController?: AbortController
   ) {
     const title = metadata?.title || file.name;
+    const durationSeconds = await readVideoDurationSeconds(file);
     const ticket = (
       await this.request<DirectUploadTicket>('/videos/upload/init', {
         method: 'POST',
@@ -2346,7 +2352,8 @@ class ApiClient {
         metadata,
         posterFile,
         onProgress,
-        abortController
+        abortController,
+        durationSeconds
       );
     }
 
@@ -2377,7 +2384,8 @@ class ApiClient {
           upload_id: ticket.upload_id,
           parts,
           title,
-          description: metadata?.description
+          description: metadata?.description,
+          duration_seconds: durationSeconds
         })
       })
     ).data;
@@ -2401,11 +2409,12 @@ class ApiClient {
     metadata?: { title?: string; description?: string },
     posterFile?: File,
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
+    durationSeconds?: number
   ) {
     const response = await this.uploadFileWithProgress(
       '/videos/upload',
-      this.buildVideoFormData(file, metadata, posterFile),
+      this.buildVideoFormData(file, metadata, posterFile, durationSeconds),
       onProgress,
       abortController
     );

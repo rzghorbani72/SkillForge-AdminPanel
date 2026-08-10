@@ -25,7 +25,11 @@ export function VideoStats({
   const minutes = Math.floor((totalDurationSeconds % 3600) / 60);
   const durationLabel = hours
     ? `${formatNumber(hours)} ${t('media.hoursShort')}`
-    : `${formatNumber(minutes)} ${t('media.minutesShort')}`;
+    : minutes
+      ? `${formatNumber(minutes)} ${t('media.minutesShort')}`
+      : totalDurationSeconds
+        ? `${formatNumber(Math.round(totalDurationSeconds))} ${t('media.secondsShort')}`
+        : '';
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
