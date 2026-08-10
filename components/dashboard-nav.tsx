@@ -94,7 +94,7 @@ const NavItemContent = React.memo(
           <ChevronRight
             className={cn(
               'h-3.5 w-3.5 shrink-0 text-muted-foreground/60 transition-transform duration-150',
-              isExpanded && 'rotate-90 text-primary'
+              isExpanded ? 'rotate-90 text-primary' : 'rotate-180'
             )}
           />
         )}
