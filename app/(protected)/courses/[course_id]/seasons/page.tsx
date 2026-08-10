@@ -35,7 +35,6 @@ import {
   Search,
   Calendar,
   BookOpen,
-  Edit,
   Trash2,
   Play
 } from 'lucide-react';
@@ -44,6 +43,7 @@ import { Season, Course, Lesson } from '@/types/api';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 import CreateSeasonDialog from '@/components/content/create-season-dialog';
+import EditSeasonDialog from '@/components/content/edit-season-dialog';
 import { SeasonLessonRow } from '@/components/content/season-lesson-row';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -205,45 +205,14 @@ export default function SeasonsPage() {
 
   return (
     <div className="container mx-auto space-y-6 py-6">
-      <nav className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <button
-          onClick={() => router.push('/courses')}
-          className="transition-colors hover:text-foreground"
-        >
-          {t('courses.title')}
-        </button>
-        <span aria-hidden>/</span>
-        <button
-          onClick={() => router.push(`/courses/${courseId}`)}
-          className="transition-colors hover:text-foreground"
-        >
-          {course.title}
-        </button>
-        <span aria-hidden>/</span>
-        <span className="font-medium text-foreground">
-          {t('courses.seasons')}
-        </span>
-      </nav>
-
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex min-w-0 items-start gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="shrink-0"
-            onClick={() => router.push(`/courses/${courseId}`)}
-          >
-            <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
-            {t('courses.backToCourse')}
-          </Button>
-          <div className="min-w-0">
-            <h1 className="text-2xl font-bold tracking-tight">
-              {t('courses.seasonsManagement')}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {t('courses.seasonsManagementSubtitle', { title: course.title })}
-            </p>
-          </div>
+        <div className="min-w-0">
+          <h2 className="text-xl font-bold tracking-tight">
+            {t('courses.seasonsManagement')}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t('courses.seasonsManagementSubtitle', { title: course.title })}
+          </p>
         </div>
         <CreateSeasonDialog courseId={courseId} onSeasonCreated={fetchData} />
       </div>
@@ -342,18 +311,10 @@ export default function SeasonsPage() {
               <AccordionContent>
                 <div className="space-y-4">
                   <div className="flex flex-wrap items-center gap-2 border-b pb-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        router.push(
-                          `/courses/${courseId}/seasons/${season.id}/edit`
-                        )
-                      }
-                    >
-                      <Edit className="me-1 h-4 w-4" />
-                      {t('courses.editSeason')}
-                    </Button>
+                    <EditSeasonDialog
+                      season={season}
+                      onSeasonUpdated={fetchData}
+                    />
                     <Button
                       variant="outline"
                       size="sm"

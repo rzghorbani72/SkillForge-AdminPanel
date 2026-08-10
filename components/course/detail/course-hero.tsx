@@ -2,21 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import {
-  ArrowLeft,
-  BookOpen,
-  Edit,
-  ExternalLink,
-  EyeOff,
-  Globe,
-  Layers,
-  Star,
-  Tag,
-  User
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { BookOpen, Star, Tag, User } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { StatusPill } from '@/components/course/StatusPill';
 import { courseHue } from '@/components/course/courseUtils';
 import { renderMarkdown } from '@/lib/markdown';
 import { langApiVersionPath } from '@/lib/api-lang';
@@ -26,11 +13,6 @@ import type { CourseDetail } from './types';
 
 type CourseHeroProps = {
   course: CourseDetail;
-  publishing: boolean;
-  onBack: () => void;
-  onEdit: () => void;
-  onCurriculum: () => void;
-  onTogglePublish: () => void;
 };
 
 function coverUrl(course: CourseDetail): string | null {
@@ -40,14 +22,7 @@ function coverUrl(course: CourseDetail): string | null {
   return `${langApiVersionPath()}/images/fetch-image-by-id/${image.id}`;
 }
 
-export function CourseHero({
-  course,
-  publishing,
-  onBack,
-  onEdit,
-  onCurriculum,
-  onTogglePublish
-}: CourseHeroProps) {
+export function CourseHero({ course }: CourseHeroProps) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const hue = courseHue(course.id);
@@ -88,23 +63,8 @@ export function CourseHero({
 
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           <div className="flex items-start gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="-ms-2 mt-0.5 h-8 w-8 shrink-0"
-              onClick={onBack}
-              aria-label={t('courseDetail.backToCourses')}
-            >
-              <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
-            </Button>
             <div className="min-w-0 flex-1 space-y-2">
-              <h1 className="text-xl font-bold leading-tight tracking-tight sm:text-2xl">
-                {course.title}
-              </h1>
               <div className="flex flex-wrap items-center gap-1.5">
-                <StatusPill
-                  status={course.is_published ? 'PUBLISHED' : 'DRAFT'}
-                />
                 {course.is_featured && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">
                     <Star className="h-3 w-3" />
@@ -155,47 +115,6 @@ export function CourseHero({
               {t('courseDetail.noDescription')}
             </p>
           )}
-
-          <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
-            <Button variant="outline" size="sm" onClick={onEdit}>
-              <Edit className="me-1.5 h-3.5 w-3.5" />
-              {t('common.edit')}
-            </Button>
-            <Button variant="outline" size="sm" onClick={onCurriculum}>
-              <Layers className="me-1.5 h-3.5 w-3.5" />
-              {t('courseDetail.curriculum')}
-            </Button>
-            <Button
-              size="sm"
-              variant={course.is_published ? 'secondary' : 'default'}
-              disabled={publishing}
-              onClick={onTogglePublish}
-            >
-              {course.is_published ? (
-                <>
-                  <EyeOff className="me-1.5 h-3.5 w-3.5" />
-                  {t('courseDetail.unpublish')}
-                </>
-              ) : (
-                <>
-                  <Globe className="me-1.5 h-3.5 w-3.5" />
-                  {t('courseDetail.publish')}
-                </>
-              )}
-            </Button>
-            {course.is_published && course.slug && (
-              <Button variant="ghost" size="sm" asChild>
-                <a
-                  href={`/courses/${course.slug}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <ExternalLink className="me-1.5 h-3.5 w-3.5" />
-                  {t('courseDetail.viewPublicPage')}
-                </a>
-              </Button>
-            )}
-          </div>
         </div>
       </div>
     </Card>

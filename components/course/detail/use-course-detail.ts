@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
-import type { CourseDetail, CourseEnrollment, CoursePayment } from './types';
+import type { CourseEnrollment, CoursePayment } from './types';
 
 function unwrapList<T>(data: unknown, key: string): T[] {
   if (Array.isArray(data)) return data as T[];
@@ -14,27 +14,14 @@ function unwrapList<T>(data: unknown, key: string): T[] {
   return [];
 }
 
+/**
+ * Overview-only data. The course itself comes from the course layout via
+ * `useCourseWorkspace`, so it is not refetched on every tab switch.
+ */
 export function useCourseDetail(courseId: string) {
-  const [course, setCourse] = useState<CourseDetail | null>(null);
-  const [courseLoading, setCourseLoading] = useState(true);
   const [payments, setPayments] = useState<CoursePayment[]>([]);
   const [paymentsLoading, setPaymentsLoading] = useState(true);
   const [enrollments, setEnrollments] = useState<CourseEnrollment[]>([]);
-
-  const loadCourse = useCallback(async () => {
-    try {
-      const data = (await apiClient.getCourse(courseId)) as CourseDetail | null;
-      setCourse(data);
-    } catch {
-      setCourse(null);
-    } finally {
-      setCourseLoading(false);
-    }
-  }, [courseId]);
-
-  useEffect(() => {
-    if (courseId) void loadCourse();
-  }, [courseId, loadCourse]);
 
   useEffect(() => {
     if (!courseId) return;
@@ -72,12 +59,5 @@ export function useCourseDetail(courseId: string) {
     void load();
   }, [courseId]);
 
-  return {
-    course,
-    courseLoading,
-    payments,
-    paymentsLoading,
-    enrollments,
-    refreshCourse: loadCourse
-  };
+  return { payments, paymentsLoading, enrollments };
 }

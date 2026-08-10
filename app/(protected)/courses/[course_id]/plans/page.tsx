@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import {
-  Plus,
-  CreditCard,
-  ToggleLeft,
-  ToggleRight,
-  ChevronLeft
-} from 'lucide-react';
+import { Plus, CreditCard, ToggleLeft, ToggleRight } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -44,7 +38,6 @@ import {
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import Link from 'next/link';
 
 const planSchema = z.object({
   installment_count: z.coerce.number().int().min(1),
@@ -117,15 +110,10 @@ export default function PaymentPlansPage() {
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="flex items-center gap-3">
-        <Link href={`/courses/${courseId}`}>
-          <Button variant="ghost" size="icon">
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-        </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h2 className="text-xl font-bold tracking-tight">
             {t('paymentPlans.title')}
-          </h1>
+          </h2>
           <p className="text-sm text-muted-foreground">
             {t('paymentPlans.description', { id: courseId })}
           </p>
