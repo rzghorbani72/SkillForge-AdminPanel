@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -164,13 +164,10 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
             <span className="block text-xs text-muted-foreground">
               {t('courses.offeringAccessDays')}
             </span>
-            <Input
-              type="number"
-              min={1}
-              max={PLATFORM_MAX_ACCESS_DAYS}
+            <NumberInput
               placeholder={String(DEFAULT_ACCESS_DAYS)}
               value={accessDays}
-              onChange={(e) => setAccessDays(e.target.value)}
+              onChange={setAccessDays}
             />
             <span className="block text-[11px] text-muted-foreground">
               {t('courses.offeringAccessDaysHint', {

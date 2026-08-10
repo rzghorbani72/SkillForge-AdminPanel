@@ -11,6 +11,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -78,11 +79,9 @@ export function AcademyPlanFormDialog({
             </div>
             <div className="space-y-1.5">
               <Label>{t('plans.durationDays')}</Label>
-              <Input
-                type="number"
-                min="1"
+              <NumberInput
                 value={form.duration_days}
-                onChange={(e) => onChange('duration_days', e.target.value)}
+                onChange={(raw) => onChange('duration_days', raw)}
                 placeholder={t('plans.durationPlaceholder')}
               />
             </div>

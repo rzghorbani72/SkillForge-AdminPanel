@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import {
   CourseSearchCombobox,
@@ -63,28 +64,20 @@ export function CreateOfferCard({
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
             <Label htmlFor="offerPrice">{t('tutoring.offerPrice')}</Label>
-            <Input
+            <NumberInput
               id="offerPrice"
-              type="number"
-              min={0}
               value={form.price}
-              onChange={(event) =>
-                onChange({ ...form, price: event.target.value })
-              }
+              onChange={(raw) => onChange({ ...form, price: raw })}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="offerDuration">
               {t('tutoring.offerDurationDays')}
             </Label>
-            <Input
+            <NumberInput
               id="offerDuration"
-              type="number"
-              min={1}
               value={form.duration_days}
-              onChange={(event) =>
-                onChange({ ...form, duration_days: event.target.value })
-              }
+              onChange={(raw) => onChange({ ...form, duration_days: raw })}
             />
           </div>
         </div>
@@ -92,14 +85,10 @@ export function CreateOfferCard({
           <Label htmlFor="offerSessions">
             {t('tutoring.offerSessionsOptional')}
           </Label>
-          <Input
+          <NumberInput
             id="offerSessions"
-            type="number"
-            min={1}
             value={form.sessions_included}
-            onChange={(event) =>
-              onChange({ ...form, sessions_included: event.target.value })
-            }
+            onChange={(raw) => onChange({ ...form, sessions_included: raw })}
           />
         </div>
         <Button

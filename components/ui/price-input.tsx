@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '@/lib/utils';
+import { toEnglishDigits } from '@/lib/phone-utils';
 import { Input } from './input';
 
 /** Group a raw digit string into thousands: "1234567" → "1,234,567" */
@@ -38,7 +39,9 @@ export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
           type="text"
           inputMode="numeric"
           value={groupDigits(raw)}
-          onChange={(e) => onChange(e.target.value.replace(/\D/g, ''))}
+          onChange={(e) =>
+            onChange(toEnglishDigits(e.target.value).replace(/\D/g, ''))
+          }
           className={className}
           {...props}
         />
@@ -52,7 +55,9 @@ export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
           type="text"
           inputMode="numeric"
           value={groupDigits(raw)}
-          onChange={(e) => onChange(e.target.value.replace(/\D/g, ''))}
+          onChange={(e) =>
+            onChange(toEnglishDigits(e.target.value).replace(/\D/g, ''))
+          }
           className={cn('pe-14', className)}
           {...props}
         />

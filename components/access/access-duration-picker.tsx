@@ -2,6 +2,7 @@
 
 import { Infinity as InfinityIcon, CalendarDays, Timer } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -86,13 +87,11 @@ export function AccessDurationPicker({
               </button>
             ))}
           </div>
-          <Input
-            type="number"
-            min={1}
+          <NumberInput
             disabled={disabled}
             value={value.days}
-            onChange={(event) =>
-              onChange({ mode: 'days', days: Number(event.target.value) || 0 })
+            onChange={(raw) =>
+              onChange({ mode: 'days', days: raw === '' ? 0 : Number(raw) })
             }
             aria-label={t('accessGrants.durationDays')}
           />

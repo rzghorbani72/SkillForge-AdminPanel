@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import {
   Dialog,
@@ -127,16 +128,13 @@ export function VoucherFormDialog({
             </div>
             <div>
               <Label>Discount Value *</Label>
-              <Input
-                type="number"
+              <NumberInput
                 value={form.discount_value || ''}
-                onChange={(e) =>
-                  onChange({ discount_value: Number(e.target.value) || 0 })
+                onChange={(raw) =>
+                  onChange({ discount_value: raw === '' ? 0 : Number(raw) })
                 }
                 placeholder={form.discount_type === 'PERCENT' ? '20' : '1000'}
                 required
-                min={0}
-                max={form.discount_type === 'PERCENT' ? 100 : undefined}
                 className="placeholder:text-muted-foreground"
               />
               {errors.discount_value && (
@@ -172,19 +170,15 @@ export function VoucherFormDialog({
           {form.usage_type === 'LIMITED' && (
             <div>
               <Label>Usage Limit *</Label>
-              <Input
-                type="number"
+              <NumberInput
                 value={form.usage_limit ?? ''}
-                onChange={(e) =>
+                onChange={(raw) =>
                   onChange({
-                    usage_limit: e.target.value
-                      ? Number(e.target.value)
-                      : undefined
+                    usage_limit: raw === '' ? undefined : Number(raw)
                   })
                 }
                 placeholder="100"
                 required
-                min={1}
                 className="placeholder:text-muted-foreground"
               />
               {errors.usage_limit && (
@@ -229,36 +223,28 @@ export function VoucherFormDialog({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Min Purchase Amount (optional)</Label>
-              <Input
-                type="number"
+              <NumberInput
                 value={form.min_purchase_amount ?? ''}
-                onChange={(e) =>
+                onChange={(raw) =>
                   onChange({
-                    min_purchase_amount: e.target.value
-                      ? Number(e.target.value)
-                      : undefined
+                    min_purchase_amount: raw === '' ? undefined : Number(raw)
                   })
                 }
                 placeholder="0"
-                min={0}
                 className="placeholder:text-muted-foreground"
               />
             </div>
             {form.discount_type === 'PERCENT' && (
               <div>
                 <Label>Max Discount Amount (optional)</Label>
-                <Input
-                  type="number"
+                <NumberInput
                   value={form.max_discount_amount ?? ''}
-                  onChange={(e) =>
+                  onChange={(raw) =>
                     onChange({
-                      max_discount_amount: e.target.value
-                        ? Number(e.target.value)
-                        : undefined
+                      max_discount_amount: raw === '' ? undefined : Number(raw)
                     })
                   }
                   placeholder="0"
-                  min={0}
                   className="placeholder:text-muted-foreground"
                 />
               </div>

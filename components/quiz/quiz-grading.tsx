@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api';
@@ -179,16 +180,13 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
                           max: a.Question?.points ?? 0
                         })}
                       </span>
-                      <Input
-                        type="number"
-                        min={0}
-                        max={a.Question?.points}
+                      <NumberInput
                         className="w-24"
                         value={scores[a.id] ?? 0}
-                        onChange={(e) =>
+                        onChange={(raw) =>
                           setScores((prev) => ({
                             ...prev,
-                            [a.id]: Number(e.target.value)
+                            [a.id]: raw === '' ? 0 : Number(raw)
                           }))
                         }
                       />

@@ -17,6 +17,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -568,13 +569,10 @@ export default function AssignmentsPage() {
                         t('assignmentsPage.notAvailable')
                     })}
                   </Label>
-                  <Input
+                  <NumberInput
                     id="score"
-                    type="number"
-                    min={0}
-                    max={gradeDialog.submission?.Assignment?.max_score}
                     value={gradeScore}
-                    onChange={(e) => setGradeScore(e.target.value)}
+                    onChange={(raw) => setGradeScore(raw)}
                     className="mt-1"
                   />
                 </div>

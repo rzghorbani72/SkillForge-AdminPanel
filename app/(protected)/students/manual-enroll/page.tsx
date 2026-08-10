@@ -17,6 +17,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
@@ -172,11 +173,10 @@ export default function ManualEnrollPage() {
                 <Label htmlFor="paidAmount">
                   {t('students.manualEnroll.amountPaid')}
                 </Label>
-                <Input
+                <NumberInput
                   id="paidAmount"
-                  type="number"
                   value={paidAmount}
-                  onChange={(e) => setPaidAmount(e.target.value)}
+                  onChange={(raw) => setPaidAmount(raw)}
                   placeholder={t('students.manualEnroll.leaveEmptyIfFree')}
                   className="mt-1"
                 />

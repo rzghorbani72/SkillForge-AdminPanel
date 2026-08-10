@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -97,13 +97,11 @@ export function OpsQueueFiltersCard({
           appliesTo={t('opsQueue.inactivity')}
           hint={t('opsQueue.inactiveDaysHint')}
         >
-          <Input
+          <NumberInput
             id="inactiveDays"
-            type="number"
-            min={1}
             value={inactiveDays}
             aria-describedby="inactiveDays-hint"
-            onChange={(event) => onInactiveDaysChange(event.target.value)}
+            onChange={onInactiveDaysChange}
           />
         </OpsQueueFilterField>
 
@@ -113,13 +111,11 @@ export function OpsQueueFiltersCard({
           appliesTo={t('opsQueue.lowScores')}
           hint={t('opsQueue.lowScoreThresholdHint')}
         >
-          <Input
+          <NumberInput
             id="lowScore"
-            type="number"
-            min={0}
             value={lowScoreThreshold}
             aria-describedby="lowScore-hint"
-            onChange={(event) => onLowScoreThresholdChange(event.target.value)}
+            onChange={onLowScoreThresholdChange}
           />
         </OpsQueueFilterField>
 

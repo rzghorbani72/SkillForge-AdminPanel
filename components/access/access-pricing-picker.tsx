@@ -2,6 +2,7 @@
 
 import { Banknote, CreditCard, Gift, Globe, Landmark } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -93,15 +94,13 @@ export function AccessPricingPicker({
             <option value="PERCENT">{t('accessGrants.discountPercent')}</option>
             <option value="AMOUNT">{t('accessGrants.discountAmount')}</option>
           </select>
-          <Input
-            type="number"
-            min={0}
+          <NumberInput
             disabled={disabled}
             value={value.discount_value}
-            onChange={(event) =>
+            onChange={(raw) =>
               onChange({
                 ...value,
-                discount_value: Number(event.target.value) || 0
+                discount_value: raw === '' ? 0 : Number(raw)
               })
             }
             aria-label={t('accessGrants.discountValue')}

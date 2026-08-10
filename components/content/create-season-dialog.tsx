@@ -24,6 +24,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -196,11 +197,12 @@ export default function CreateSeasonDialog({
                 <FormItem>
                   <FormLabel>{MESSAGES.season.order} *</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      min="1"
+                    <NumberInput
                       placeholder="e.g., 1"
-                      {...field}
+                      name={field.name}
+                      ref={field.ref}
+                      value={field.value}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormDescription>

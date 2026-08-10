@@ -15,7 +15,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -226,7 +226,12 @@ export default function PaymentPlansPage() {
                   <FormItem>
                     <FormLabel>{t('paymentPlans.installments')}</FormLabel>
                     <FormControl>
-                      <Input type="number" min="1" {...field} />
+                      <NumberInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -259,7 +264,12 @@ export default function PaymentPlansPage() {
                   <FormItem>
                     <FormLabel>{t('paymentPlans.intervalDays')}</FormLabel>
                     <FormControl>
-                      <Input type="number" min="1" {...field} />
+                      <NumberInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

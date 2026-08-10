@@ -1,6 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { PriceInput } from '@/components/ui/price-input';
@@ -91,30 +92,25 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
           <Label className="text-xs">
             {t('pricing.planLimits.storageLimitGb')}
           </Label>
-          <Input
-            type="number"
-            min={0}
+          <NumberInput
             value={form.storage_limit_gb}
-            onChange={(e) => set({ storage_limit_gb: e.target.value })}
+            onChange={(raw) => set({ storage_limit_gb: raw })}
           />
         </div>
         <div className="space-y-1">
           <Label className="text-xs">
             {t('pricing.planLimits.annualMonthsIncluded')}
           </Label>
-          <Input
-            type="number"
-            min={0}
+          <NumberInput
             value={form.annual_months_included}
-            onChange={(e) => set({ annual_months_included: e.target.value })}
+            onChange={(raw) => set({ annual_months_included: raw })}
           />
         </div>
         <div className="space-y-1">
           <Label className="text-xs">{t('pricing.planLimits.sortOrder')}</Label>
-          <Input
-            type="number"
+          <NumberInput
             value={form.sort_order}
-            onChange={(e) => set({ sort_order: e.target.value })}
+            onChange={(raw) => set({ sort_order: raw })}
           />
         </div>
       </div>
@@ -144,11 +140,9 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
               <Label className="text-[11px]">
                 {t(`pricing.planLimits.keys.${key}`)}
               </Label>
-              <Input
-                type="number"
-                min={0}
+              <NumberInput
                 value={String(form.limits[key])}
-                onChange={(e) => setLimit(key, e.target.value)}
+                onChange={(raw) => setLimit(key, raw)}
               />
             </div>
           ))}

@@ -5,6 +5,7 @@ import { Loader2, Save, Trash2, Building2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -203,11 +204,9 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
                 <Label className="text-xs text-muted-foreground">
                   {t(`platform.stores.customPlan.${labelKey}`)}
                 </Label>
-                <Input
-                  type="number"
-                  min={0}
+                <NumberInput
                   value={form.limits[key]}
-                  onChange={(e) => onLimitChange(key, e.target.value)}
+                  onChange={(raw) => onLimitChange(key, raw)}
                 />
               </div>
             ))}

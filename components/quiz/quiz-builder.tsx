@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -143,11 +144,9 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
           </div>
           <div className="space-y-2">
             <Label>{t('quiz.passingScore')}</Label>
-            <Input
-              type="number"
-              min={0}
+            <NumberInput
               value={passingScore}
-              onChange={(e) => setPassingScore(Number(e.target.value))}
+              onChange={(raw) => setPassingScore(raw === '' ? 0 : Number(raw))}
             />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -260,11 +259,9 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
             </div>
             <div className="space-y-2">
               <Label>{t('quiz.points')}</Label>
-              <Input
-                type="number"
-                min={1}
+              <NumberInput
                 value={points}
-                onChange={(e) => setPoints(Number(e.target.value))}
+                onChange={(raw) => setPoints(raw === '' ? 1 : Number(raw))}
               />
             </div>
           </div>

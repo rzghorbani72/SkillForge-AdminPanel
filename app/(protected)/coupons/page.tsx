@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
@@ -358,7 +359,14 @@ export default function CouponsPage() {
                             : t('coupons.fixedAmount')}
                         </FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <NumberInput
+                            name={field.name}
+                            ref={field.ref}
+                            value={field.value ?? ''}
+                            onChange={(raw) =>
+                              field.onChange(raw === '' ? '' : Number(raw))
+                            }
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -371,13 +379,13 @@ export default function CouponsPage() {
                       <FormItem>
                         <FormLabel>{t('coupons.maxDiscount')}</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
+                          <NumberInput
+                            name={field.name}
+                            ref={field.ref}
                             value={field.value ?? ''}
-                            onChange={(e) =>
+                            onChange={(raw) =>
                               field.onChange(
-                                e.target.value ? +e.target.value : undefined
+                                raw === '' ? undefined : Number(raw)
                               )
                             }
                           />
@@ -396,7 +404,14 @@ export default function CouponsPage() {
                     <FormItem>
                       <FormLabel>{t('coupons.freeTrialDays')}</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <NumberInput
+                          name={field.name}
+                          ref={field.ref}
+                          value={field.value ?? ''}
+                          onChange={(raw) =>
+                            field.onChange(raw === '' ? '' : Number(raw))
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -468,7 +483,14 @@ export default function CouponsPage() {
                       <FormItem>
                         <FormLabel>{t('coupons.usageLimit')}</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <NumberInput
+                            name={field.name}
+                            ref={field.ref}
+                            value={field.value ?? ''}
+                            onChange={(raw) =>
+                              field.onChange(raw === '' ? '' : Number(raw))
+                            }
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -484,7 +506,14 @@ export default function CouponsPage() {
                   <FormItem>
                     <FormLabel>{t('coupons.academyId')}</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <NumberInput
+                        name={field.name}
+                        ref={field.ref}
+                        value={field.value ?? ''}
+                        onChange={(raw) =>
+                          field.onChange(raw === '' ? '' : Number(raw))
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

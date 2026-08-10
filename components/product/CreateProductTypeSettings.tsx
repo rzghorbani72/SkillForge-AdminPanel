@@ -10,6 +10,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import {
   Select,
   SelectContent,
@@ -72,13 +73,12 @@ const CreateProductTypeSettings = ({ form }: Props) => {
                 <FormItem>
                   <FormLabel>{t('products.stockQuantity')}</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      inputMode="numeric"
+                    <NumberInput
                       placeholder={t('products.enterAvailableStock')}
-                      {...field}
-                      min="0"
-                      step="1"
+                      name={field.name}
+                      ref={field.ref}
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />
@@ -96,13 +96,13 @@ const CreateProductTypeSettings = ({ form }: Props) => {
                 <FormItem>
                   <FormLabel>{t('products.weight')} (kg)</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      inputMode="numeric"
+                    <NumberInput
+                      allowDecimal
                       placeholder={t('products.enterWeightInKg')}
-                      {...field}
-                      min="0"
-                      step="0.01"
+                      name={field.name}
+                      ref={field.ref}
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />

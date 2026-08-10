@@ -22,6 +22,7 @@ import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -489,12 +490,9 @@ export default function MyAffiliatePage() {
                 {t('affiliates.amount')}
               </label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  min={1}
-                  max={dialogLink?.available_balance}
+                <NumberInput
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(raw) => setAmount(raw)}
                   dir="rtl"
                 />
                 <Button

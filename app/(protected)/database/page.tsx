@@ -23,6 +23,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -237,16 +238,18 @@ export default function DatabasePage() {
 
     if (fieldType === 'int' || fieldType === 'float') {
       return (
-        <Input
-          type="number"
+        <NumberInput
+          allowDecimal={fieldType === 'float'}
           value={value}
-          onChange={(e) =>
+          onChange={(raw) =>
             setFormData({
               ...formData,
               [field.name]:
-                fieldType === 'int'
-                  ? parseInt(e.target.value) || 0
-                  : parseFloat(e.target.value) || 0
+                raw === ''
+                  ? 0
+                  : fieldType === 'int'
+                    ? parseInt(raw) || 0
+                    : parseFloat(raw) || 0
             })
           }
         />

@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import {
   Card,
   CardContent,
@@ -143,12 +144,14 @@ export default function PlatformSettingsPage() {
                   <FormItem>
                     <FormLabel>{t('platformSettings.vatRate')}</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
+                      <NumberInput
+                        allowDecimal
+                        name={field.name}
+                        ref={field.ref}
+                        value={field.value ?? ''}
+                        onChange={(raw) =>
+                          field.onChange(raw === '' ? '' : Number(raw))
+                        }
                       />
                     </FormControl>
                     <FormDescription>
@@ -167,12 +170,14 @@ export default function PlatformSettingsPage() {
                       {t('platformSettings.teacherShareRate')}
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
+                      <NumberInput
+                        allowDecimal
+                        name={field.name}
+                        ref={field.ref}
+                        value={field.value ?? ''}
+                        onChange={(raw) =>
+                          field.onChange(raw === '' ? '' : Number(raw))
+                        }
                       />
                     </FormControl>
                     <FormDescription>
@@ -200,7 +205,14 @@ export default function PlatformSettingsPage() {
                   <FormItem>
                     <FormLabel>{t('platformSettings.graceDays')}</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" {...field} />
+                      <NumberInput
+                        name={field.name}
+                        ref={field.ref}
+                        value={field.value ?? ''}
+                        onChange={(raw) =>
+                          field.onChange(raw === '' ? '' : Number(raw))
+                        }
+                      />
                     </FormControl>
                     <FormDescription>
                       {t('platformSettings.graceDaysHint')}
@@ -216,7 +228,14 @@ export default function PlatformSettingsPage() {
                   <FormItem>
                     <FormLabel>{t('platformSettings.reminderDays')}</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" {...field} />
+                      <NumberInput
+                        name={field.name}
+                        ref={field.ref}
+                        value={field.value ?? ''}
+                        onChange={(raw) =>
+                          field.onChange(raw === '' ? '' : Number(raw))
+                        }
+                      />
                     </FormControl>
                     <FormDescription>
                       {t('platformSettings.reminderDaysHint')}

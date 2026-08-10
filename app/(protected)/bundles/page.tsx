@@ -26,6 +26,7 @@ import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -520,7 +521,14 @@ export default function BundlesPage() {
                   <FormItem>
                     <FormLabel>{t('bundles.price')}</FormLabel>
                     <FormControl>
-                      <Input type="number" min={0} {...field} />
+                      <NumberInput
+                        name={field.name}
+                        ref={field.ref}
+                        value={field.value ?? ''}
+                        onChange={(raw) =>
+                          field.onChange(raw === '' ? '' : Number(raw))
+                        }
+                      />
                     </FormControl>
                     <p className="text-xs text-muted-foreground">
                       {t('bundles.priceHelp')}

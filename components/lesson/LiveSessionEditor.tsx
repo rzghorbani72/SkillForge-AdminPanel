@@ -5,6 +5,7 @@ import { apiClient } from '@/lib/api';
 import type { LiveSession } from '@/types/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import {
   Card,
@@ -165,13 +166,10 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
           </div>
           <div className="space-y-2">
             <Label htmlFor="live-duration">Duration (minutes) *</Label>
-            <Input
+            <NumberInput
               id="live-duration"
-              type="number"
-              min={1}
-              max={24 * 60}
               value={durationMinutes}
-              onChange={(e) => setDurationMinutes(e.target.value)}
+              onChange={(raw) => setDurationMinutes(raw)}
             />
           </div>
         </div>

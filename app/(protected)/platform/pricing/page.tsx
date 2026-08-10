@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import {
@@ -338,14 +339,11 @@ export default function PlatformPricingPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label>{t('pricing.platform.vatRate')}</Label>
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                step={0.01}
+              <NumberInput
+                allowDecimal
                 value={settingsForm.vat_rate}
-                onChange={(e) =>
-                  setSettingsForm({ ...settingsForm, vat_rate: e.target.value })
+                onChange={(raw) =>
+                  setSettingsForm({ ...settingsForm, vat_rate: raw })
                 }
               />
               <p className="text-xs text-muted-foreground">
@@ -354,16 +352,13 @@ export default function PlatformPricingPage() {
             </div>
             <div className="space-y-2">
               <Label>{t('pricing.platform.teacherShare')}</Label>
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                step={0.01}
+              <NumberInput
+                allowDecimal
                 value={settingsForm.teacher_share_rate}
-                onChange={(e) =>
+                onChange={(raw) =>
                   setSettingsForm({
                     ...settingsForm,
-                    teacher_share_rate: e.target.value
+                    teacher_share_rate: raw
                   })
                 }
               />
@@ -388,28 +383,24 @@ export default function PlatformPricingPage() {
             </div>
             <div className="space-y-2">
               <Label>{t('pricing.platform.graceDays')}</Label>
-              <Input
-                type="number"
-                min={0}
+              <NumberInput
                 value={settingsForm.subscription_grace_days}
-                onChange={(e) =>
+                onChange={(raw) =>
                   setSettingsForm({
                     ...settingsForm,
-                    subscription_grace_days: e.target.value
+                    subscription_grace_days: raw
                   })
                 }
               />
             </div>
             <div className="space-y-2">
               <Label>{t('pricing.platform.reminderDays')}</Label>
-              <Input
-                type="number"
-                min={0}
+              <NumberInput
                 value={settingsForm.subscription_reminder_days}
-                onChange={(e) =>
+                onChange={(raw) =>
                   setSettingsForm({
                     ...settingsForm,
-                    subscription_reminder_days: e.target.value
+                    subscription_reminder_days: raw
                   })
                 }
               />

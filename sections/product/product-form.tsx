@@ -15,6 +15,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -166,11 +167,13 @@ export default function ProductForm() {
                   <FormItem>
                     <FormLabel>Price</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
+                      <NumberInput
+                        allowDecimal
                         placeholder="Enter price"
-                        {...field}
+                        name={field.name}
+                        ref={field.ref}
+                        value={field.value ?? ''}
+                        onChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />

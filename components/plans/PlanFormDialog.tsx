@@ -11,6 +11,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -96,18 +97,16 @@ export function PlanFormDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>{MESSAGES.planForm.storageGb}</Label>
-              <Input
-                type="number"
+              <NumberInput
                 value={form.storage_limit_gb}
-                onChange={(e) => onChange('storage_limit_gb', e.target.value)}
+                onChange={(raw) => onChange('storage_limit_gb', raw)}
               />
             </div>
             <div className="space-y-1.5">
               <Label>{t('plans.sortOrder')}</Label>
-              <Input
-                type="number"
+              <NumberInput
                 value={form.sort_order}
-                onChange={(e) => onChange('sort_order', e.target.value)}
+                onChange={(raw) => onChange('sort_order', raw)}
               />
             </div>
           </div>
