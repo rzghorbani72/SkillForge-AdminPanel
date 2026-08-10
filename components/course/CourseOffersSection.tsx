@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { Offer, OfferingType } from '@/types/api';
 import { useCourseOffers } from '@/hooks/use-course-offers';
@@ -100,6 +101,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
                 <div className="flex items-center gap-3">
                   <label className="flex items-center gap-2 text-xs text-muted-foreground">
                     {t('courses.offeringActive')}
+                    <InfoTooltip text={t('courses.offeringActiveHint')} />
                     <Switch
                       checked={o.is_active}
                       disabled={isSaving}
@@ -124,8 +126,9 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
 
         <div className="flex flex-wrap items-start gap-3 border-t pt-4">
           <div className="min-w-40 space-y-1">
-            <span className="block text-xs text-muted-foreground">
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
               {t('courses.offeringType')}
+              <InfoTooltip text={t('courses.offeringTypeHint')} />
             </span>
             <Select
               value={type}

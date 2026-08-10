@@ -1169,8 +1169,12 @@ export const en = {
       'Sell this course through one or more offerings at once — one-time, subscription, private, or free.',
     addOffering: 'Add offering',
     offeringType: 'Type',
+    offeringTypeHint:
+      'One-time: pays once, keeps access forever. Subscription: recurring payment to keep access. Free: enrolls with no payment.',
     offeringPrice: 'Price',
     offeringActive: 'Active',
+    offeringActiveHint:
+      'When off, this offering is hidden from students but not deleted — turn it back on anytime.',
     offerFromCoursePrice: 'The course own price',
     offeringAccessDays: 'Access (days)',
     offeringAccessDaysHint: 'Leave blank for {{days}} days',
