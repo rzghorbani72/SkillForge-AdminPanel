@@ -19,11 +19,8 @@ import {
 import type { UserStat } from './users-stats-bar';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
-import {
-  useDebouncedValue,
-  useEnrollments,
-  type EnrollmentStatusFilter
-} from './use-enrollments';
+import { useEnrollments, type EnrollmentStatusFilter } from './use-enrollments';
+import { useDebouncedValue } from '@/lib/use-debounced-value';
 
 const PAGE_SIZE = 20;
 

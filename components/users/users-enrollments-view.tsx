@@ -19,11 +19,11 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { UserStat } from './users-stats-bar';
 import {
-  useDebouncedValue,
   useEnrollments,
   useEnrollmentTotals,
   type EnrollmentStatusFilter
 } from './use-enrollments';
+import { useDebouncedValue } from '@/lib/use-debounced-value';
 
 const PAGE_SIZE = 20;
 

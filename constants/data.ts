@@ -298,6 +298,15 @@ export const navItems: NavItem[] = [
     scope: 'academy',
     section: 'manage',
     children: [
+      // Students lead: they are the bulk of an academy's people and what a
+      // manager or teacher opens this section for. Ungated on purpose — a
+      // student added by hand exists before the academy has a sellable course,
+      // which is what the `students` capability actually measures.
+      {
+        title: 'Students',
+        href: '/users?role=STUDENT',
+        label: 'all-students'
+      },
       {
         title: 'Users',
         href: '/users',

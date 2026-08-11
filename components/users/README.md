@@ -1,5 +1,8 @@
 # Adding people to an academy
 
+`add-user-dialog.tsx` is the only way to add a person. There is no second
+"add existing member" dialog: the lookup below makes one form cover both cases.
+
 ## Why this is phone-first
 
 A role belongs to a **person inside one academy**, not to an account. The same
@@ -8,18 +11,29 @@ student with us — three `Profile` rows, one `User`.
 
 So the dialog asks for a phone number before anything else. The number
 identifies the person; only then do we know whether we are creating an account
-or attaching a role to one that already exists.
+or attaching a role to one that already exists. Nothing else is shown until the
+lookup answers, which is why a phone already on the platform is a normal
+outcome here rather than a "number already taken" error.
 
 ## The three outcomes of the lookup
 
-`usePersonLookup` calls `GET /users/lookup` and the dialog branches on the
-result:
+Typing a complete number runs the search — no button, no blur. `usePersonLookup`
+calls `GET /users/lookup` (debounced) and the dialog branches on the result:
 
 | Result                       | What the dialog shows                                                     |
 | ---------------------------- | ------------------------------------------------------------------------- |
 | Not found                    | Name + email fields; a password is **required**                           |
 | Found, not a member here     | Their name, role picker; password is **optional** (they already have one) |
 | Found, already a member here | A warning — adding again is blocked; change their role instead            |
+
+Submitting always calls `POST /users/members`, which creates the account when
+the number is unknown and attaches the role when it is not.
+
+## Which role it starts on
+
+`defaultAssignableRole` picks the student-rank role rather than the first one
+returned. The API sorts highest-rank first, so the default used to be
+"teacher" — yet nearly everyone added to an academy is a student.
 
 ## What the lookup deliberately does not tell you
 

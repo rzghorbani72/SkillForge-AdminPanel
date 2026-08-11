@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { KeyRound, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AssignAccessDialog } from '@/components/access/assign-access-dialog';
-import { AddMemberDialog } from '@/components/members/add-member-dialog';
 import { AddUserDialog } from '@/components/users/add-user-dialog';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -43,9 +42,6 @@ export function UsersPageHeader({ onChanged }: UsersPageHeaderProps) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Two different jobs: "add member" attaches a person who already has
-              an account to this academy, "add user" creates a new account. */}
-          <AddMemberDialog onAdded={onChanged} />
           <Button
             size="sm"
             variant="outline"
