@@ -200,10 +200,6 @@ export const navItems: NavItem[] = [
     scope: 'platform',
     section: 'configuration'
   },
-
-  // ── Academy mode ───────────────────────────────────────────────────────────
-  // Order matters: a section label is drawn on the first item carrying it, so
-  // items of the same section must stay next to each other.
   {
     title: 'Dashboard',
     href: '/dashboard',
@@ -279,9 +275,6 @@ export const navItems: NavItem[] = [
     section: 'learning',
     requiresLearningCapability: 'ops_queue'
   },
-  // Running the academy. Everyone in the academy — students included — lives
-  // under this one entry: /users filters by role, so a separate "Students" item
-  // would just be a second door to the same page.
   {
     title: 'Users',
     href: '/users',
@@ -298,10 +291,6 @@ export const navItems: NavItem[] = [
     scope: 'academy',
     section: 'manage',
     children: [
-      // Students lead: they are the bulk of an academy's people and what a
-      // manager or teacher opens this section for. Ungated on purpose — a
-      // student added by hand exists before the academy has a sellable course,
-      // which is what the `students` capability actually measures.
       {
         title: 'Students',
         href: '/users?role=STUDENT',
