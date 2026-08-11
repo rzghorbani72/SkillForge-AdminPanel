@@ -41,7 +41,7 @@ export function PlanFormDialog({
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
             {editingPlan
@@ -55,73 +55,67 @@ export function PlanFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label>{MESSAGES.planForm.name}</Label>
-              <Input
-                value={form.name}
-                onChange={(e) => onChange('name', e.target.value)}
-                placeholder="Pro"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{MESSAGES.planForm.slug}</Label>
-              <Input
-                value={form.slug}
-                onChange={(e) => onChange('slug', e.target.value)}
-                placeholder="pro"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label>{MESSAGES.planForm.monthlyPrice}</Label>
-              <PriceInput
-                value={form.price_monthly}
-                onChange={(raw) => onChange('price_monthly', raw)}
-                placeholder="0"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{MESSAGES.planForm.yearlyPrice}</Label>
-              <PriceInput
-                value={form.price_yearly}
-                onChange={(raw) => onChange('price_yearly', raw)}
-                placeholder={t('common.optional')}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label>{MESSAGES.planForm.storageGb}</Label>
-              <NumberInput
-                value={form.storage_limit_gb}
-                onChange={(raw) => onChange('storage_limit_gb', raw)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{t('plans.sortOrder')}</Label>
-              <NumberInput
-                value={form.sort_order}
-                onChange={(raw) => onChange('sort_order', raw)}
-              />
-            </div>
-          </div>
-
+        {/* Three columns fit the six short fields in two rows, which is what
+            keeps this panel off a scrollbar. */}
+        <div className="grid gap-4 py-2 sm:grid-cols-3">
           <div className="space-y-1.5">
+            <Label>{MESSAGES.planForm.name}</Label>
+            <Input
+              value={form.name}
+              onChange={(e) => onChange('name', e.target.value)}
+              placeholder="Pro"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>{MESSAGES.planForm.slug}</Label>
+            <Input
+              value={form.slug}
+              onChange={(e) => onChange('slug', e.target.value)}
+              placeholder="pro"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>{MESSAGES.planForm.monthlyPrice}</Label>
+            <PriceInput
+              value={form.price_monthly}
+              onChange={(raw) => onChange('price_monthly', raw)}
+              placeholder="0"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>{MESSAGES.planForm.yearlyPrice}</Label>
+            <PriceInput
+              value={form.price_yearly}
+              onChange={(raw) => onChange('price_yearly', raw)}
+              placeholder={t('common.optional')}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>{MESSAGES.planForm.storageGb}</Label>
+            <NumberInput
+              value={form.storage_limit_gb}
+              onChange={(raw) => onChange('storage_limit_gb', raw)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>{t('plans.sortOrder')}</Label>
+            <NumberInput
+              value={form.sort_order}
+              onChange={(raw) => onChange('sort_order', raw)}
+            />
+          </div>
+
+          <div className="space-y-1.5 sm:col-span-2">
             <Label>{MESSAGES.planForm.featuresPerLine}</Label>
             <textarea
-              className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="min-h-[92px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={form.features}
               onChange={(e) => onChange('features', e.target.value)}
               placeholder={'Unlimited courses\nPriority support\nCustom domain'}
             />
           </div>
 
-          <div className="flex items-center gap-3 rounded-lg border p-3">
+          <div className="flex items-start gap-3 self-end rounded-lg border p-3">
             <Switch
               checked={form.is_active}
               onCheckedChange={(v) => onChange('is_active', v)}

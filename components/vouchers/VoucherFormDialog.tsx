@@ -69,7 +69,7 @@ export function VoucherFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
             {isEditing
@@ -83,8 +83,10 @@ export function VoucherFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div>
+        {/* One flowing grid: conditional fields simply take the next cell,
+            so the panel never grows a scrollbar as options change. */}
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="space-y-1.5">
             <Label>Code {!isEditing && '*'}</Label>
             <Input
               value={form.code}
@@ -99,7 +101,7 @@ export function VoucherFormDialog({
             />
           </div>
 
-          <div>
+          <div className="space-y-1.5">
             <Label>Description</Label>
             <Input
               value={form.description}
@@ -109,43 +111,41 @@ export function VoucherFormDialog({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Discount Type *</Label>
-              <select
-                value={form.discount_type}
-                onChange={(e) =>
-                  onChange({
-                    discount_type: e.target.value as 'PERCENT' | 'FIXED'
-                  })
-                }
-                required
-                className="w-full rounded-md border border-input bg-background px-3 py-2"
-              >
-                <option value="PERCENT">Percent</option>
-                <option value="FIXED">Fixed Amount</option>
-              </select>
-            </div>
-            <div>
-              <Label>Discount Value *</Label>
-              <NumberInput
-                value={form.discount_value || ''}
-                onChange={(raw) =>
-                  onChange({ discount_value: raw === '' ? 0 : Number(raw) })
-                }
-                placeholder={form.discount_type === 'PERCENT' ? '20' : '1000'}
-                required
-                className="placeholder:text-muted-foreground"
-              />
-              {errors.discount_value && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.discount_value}
-                </p>
-              )}
-            </div>
+          <div className="space-y-1.5">
+            <Label>Discount Type *</Label>
+            <select
+              value={form.discount_type}
+              onChange={(e) =>
+                onChange({
+                  discount_type: e.target.value as 'PERCENT' | 'FIXED'
+                })
+              }
+              required
+              className="w-full rounded-md border border-input bg-background px-3 py-2"
+            >
+              <option value="PERCENT">Percent</option>
+              <option value="FIXED">Fixed Amount</option>
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Discount Value *</Label>
+            <NumberInput
+              value={form.discount_value || ''}
+              onChange={(raw) =>
+                onChange({ discount_value: raw === '' ? 0 : Number(raw) })
+              }
+              placeholder={form.discount_type === 'PERCENT' ? '20' : '1000'}
+              required
+              className="placeholder:text-muted-foreground"
+            />
+            {errors.discount_value && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.discount_value}
+              </p>
+            )}
           </div>
 
-          <div>
+          <div className="space-y-1.5">
             <Label>Usage Type *</Label>
             <select
               value={form.usage_type}
@@ -168,7 +168,7 @@ export function VoucherFormDialog({
           </div>
 
           {form.usage_type === 'LIMITED' && (
-            <div>
+            <div className="space-y-1.5">
               <Label>Usage Limit *</Label>
               <NumberInput
                 value={form.usage_limit ?? ''}
@@ -189,69 +189,65 @@ export function VoucherFormDialog({
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Start Date *</Label>
-              <Input
-                type="datetime-local"
-                value={form.start_date}
-                onChange={(e) => handleStartDateChange(e.target.value)}
-                required
-                max={form.end_date || undefined}
-                className={`placeholder:text-muted-foreground ${errors.start_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-              />
-              {errors.start_date && (
-                <p className="mt-1 text-sm text-red-500">{errors.start_date}</p>
-              )}
-            </div>
-            <div>
-              <Label>End Date *</Label>
-              <Input
-                type="datetime-local"
-                value={form.end_date}
-                min={form.start_date || undefined}
-                onChange={(e) => handleEndDateChange(e.target.value)}
-                required
-                className={`placeholder:text-muted-foreground ${errors.end_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-              />
-              {errors.end_date && (
-                <p className="mt-1 text-sm text-red-500">{errors.end_date}</p>
-              )}
-            </div>
+          <div className="space-y-1.5">
+            <Label>Start Date *</Label>
+            <Input
+              type="datetime-local"
+              value={form.start_date}
+              onChange={(e) => handleStartDateChange(e.target.value)}
+              required
+              max={form.end_date || undefined}
+              className={`placeholder:text-muted-foreground ${errors.start_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+            />
+            {errors.start_date && (
+              <p className="mt-1 text-sm text-red-500">{errors.start_date}</p>
+            )}
+          </div>
+          <div className="space-y-1.5">
+            <Label>End Date *</Label>
+            <Input
+              type="datetime-local"
+              value={form.end_date}
+              min={form.start_date || undefined}
+              onChange={(e) => handleEndDateChange(e.target.value)}
+              required
+              className={`placeholder:text-muted-foreground ${errors.end_date ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+            />
+            {errors.end_date && (
+              <p className="mt-1 text-sm text-red-500">{errors.end_date}</p>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Min Purchase Amount (optional)</Label>
+          <div className="space-y-1.5">
+            <Label>Min Purchase Amount (optional)</Label>
+            <NumberInput
+              value={form.min_purchase_amount ?? ''}
+              onChange={(raw) =>
+                onChange({
+                  min_purchase_amount: raw === '' ? undefined : Number(raw)
+                })
+              }
+              placeholder="0"
+              className="placeholder:text-muted-foreground"
+            />
+          </div>
+          {form.discount_type === 'PERCENT' && (
+            <div className="space-y-1.5">
+              <Label>Max Discount Amount (optional)</Label>
               <NumberInput
-                value={form.min_purchase_amount ?? ''}
+                value={form.max_discount_amount ?? ''}
                 onChange={(raw) =>
                   onChange({
-                    min_purchase_amount: raw === '' ? undefined : Number(raw)
+                    max_discount_amount: raw === '' ? undefined : Number(raw)
                   })
                 }
                 placeholder="0"
                 className="placeholder:text-muted-foreground"
               />
             </div>
-            {form.discount_type === 'PERCENT' && (
-              <div>
-                <Label>Max Discount Amount (optional)</Label>
-                <NumberInput
-                  value={form.max_discount_amount ?? ''}
-                  onChange={(raw) =>
-                    onChange({
-                      max_discount_amount: raw === '' ? undefined : Number(raw)
-                    })
-                  }
-                  placeholder="0"
-                  className="placeholder:text-muted-foreground"
-                />
-              </div>
-            )}
-          </div>
+          )}
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:col-span-3">
             <input
               type="checkbox"
               id="voucher_is_active"

@@ -185,7 +185,7 @@ export default function CreateLessonDialog({
           Create Lesson
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>Create New Lesson</DialogTitle>
           <DialogDescription>
@@ -194,61 +194,60 @@ export default function CreateLessonDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lesson Title *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter lesson title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            {/* Two columns, and the long fields sit side by side, so the whole
+                lesson form is visible without a scrollbar. */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lesson Title *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter lesson title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description *</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Brief description of what this lesson covers"
-                      className="min-h-[80px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description *</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Brief description of what this lesson covers"
+                        className="min-h-[110px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lesson Content</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Detailed lesson content, instructions, or notes"
-                      className="min-h-[120px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Add detailed content, instructions, or notes for this lesson
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lesson Content</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Detailed lesson content, instructions, or notes"
+                        className="min-h-[110px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="course_id"
@@ -296,72 +295,72 @@ export default function CreateLessonDialog({
                   </FormItem>
                 )}
               />
-            </div>
 
-            {seasons.length > 0 && (
+              {seasons.length > 0 && (
+                <FormField
+                  control={form.control}
+                  name="season_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Season (Optional)</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a season" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {seasons.map((season) => (
+                            <SelectItem
+                              key={season.id}
+                              value={season.id.toString()}
+                            >
+                              {season.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
-                name="season_id"
+                name="media_file"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Season (Optional)</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a season" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {seasons.map((season) => (
-                          <SelectItem
-                            key={season.id}
-                            value={season.id.toString()}
-                          >
-                            {season.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Media File</FormLabel>
+                    <FormControl>
+                      <div className="space-y-4">
+                        <FileUploader
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          maxFiles={1}
+                          maxSize={100 * 1024 * 1024} // 100MB
+                          accept={{
+                            'video/*': ['.mp4', '.avi', '.mov', '.wmv'],
+                            'audio/*': ['.mp3', '.wav', '.aac', '.ogg'],
+                            'application/pdf': ['.pdf'],
+                            'application/msword': ['.doc'],
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                              ['.docx']
+                          }}
+                        />
+                      </div>
+                    </FormControl>
                     <FormDescription>
-                      Organize lessons into seasons for better structure
+                      Upload video, audio, or document files (max 100MB)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            )}
-
-            <FormField
-              control={form.control}
-              name="media_file"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Media File</FormLabel>
-                  <FormControl>
-                    <div className="space-y-4">
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        maxFiles={1}
-                        maxSize={100 * 1024 * 1024} // 100MB
-                        accept={{
-                          'video/*': ['.mp4', '.avi', '.mov', '.wmv'],
-                          'audio/*': ['.mp3', '.wav', '.aac', '.ogg'],
-                          'application/pdf': ['.pdf'],
-                          'application/msword': ['.doc'],
-                          'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-                            ['.docx']
-                        }}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormDescription>
-                    Upload video, audio, or document files (max 100MB)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            </div>
 
             <DialogFooter>
               <Button

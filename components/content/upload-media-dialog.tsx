@@ -107,7 +107,7 @@ export function UploadMediaDialog({
           {t(config.triggerKey)}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader className="text-start">
           <DialogTitle>{t(config.triggerKey)}</DialogTitle>
           <DialogDescription>{t(config.descriptionKey)}</DialogDescription>
@@ -115,73 +115,77 @@ export function UploadMediaDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            <FormField
-              control={form.control}
-              name="file"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t(config.fileLabelKey)}</FormLabel>
-                  <FormControl>
-                    <FileUploader
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      maxFiles={1}
-                      maxSize={config.maxSizeBytes}
-                      accept={config.accept}
-                    />
-                  </FormControl>
-                  <FormDescription>{t(config.fileHintKey)}</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Uploader across the top, the two text fields beside each other:
+                no scrollbar at any step of the upload. */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="file"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>{t(config.fileLabelKey)}</FormLabel>
+                    <FormControl>
+                      <FileUploader
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        maxFiles={1}
+                        maxSize={config.maxSizeBytes}
+                        accept={config.accept}
+                      />
+                    </FormControl>
+                    <FormDescription>{t(config.fileHintKey)}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('media.title')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={t(config.titlePlaceholderKey)}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('media.title')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t(config.titlePlaceholderKey)}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('media.description')}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={t(config.descriptionPlaceholderKey)}
-                      className="min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('media.description')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={t(config.descriptionPlaceholderKey)}
+                        className="min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {isUploading && (
-              <div className="space-y-2 rounded-xl border border-border/60 bg-muted/40 p-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium">{t('media.uploading')}</span>
-                  <span className="text-muted-foreground">
-                    {formatNumber(Math.round(progress))}%
-                  </span>
+              {isUploading && (
+                <div className="space-y-2 rounded-xl border border-border/60 bg-muted/40 p-3 md:col-span-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">{t('media.uploading')}</span>
+                    <span className="text-muted-foreground">
+                      {formatNumber(Math.round(progress))}%
+                    </span>
+                  </div>
+                  <Progress value={progress} className="h-2" />
                 </div>
-                <Progress value={progress} className="h-2" />
-              </div>
-            )}
+              )}
+            </div>
 
             <DialogFooter className="gap-2 sm:gap-2">
               <Button

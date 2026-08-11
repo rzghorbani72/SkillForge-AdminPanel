@@ -94,78 +94,85 @@ export function CreateRoleDialog({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>{t('roles.createTitle')}</DialogTitle>
           <DialogDescription>{t('roles.createHint')}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="role-label">{t('roles.labelLabel')}</Label>
-            <Input
-              id="role-label"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-            />
-            {label && !labelValid && (
-              <p className="text-xs text-destructive">
-                {t('roles.labelInvalid')}
-              </p>
-            )}
-          </div>
+          {/* The three settings share one row so the permission matrix — the
+              part that actually needs room — gets the rest of the panel. */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="role-label">{t('roles.labelLabel')}</Label>
+              <Input
+                id="role-label"
+                value={label}
+                onChange={(e) => setLabel(e.target.value)}
+              />
+              {label && !labelValid && (
+                <p className="text-xs text-destructive">
+                  {t('roles.labelInvalid')}
+                </p>
+              )}
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="role-desc">{t('roles.descriptionLabel')}</Label>
-            <Textarea
-              id="role-desc"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="role-level">{t('roles.levelLabel')}</Label>
+              <Select
+                value={String(level)}
+                onValueChange={(value) => changeLevel(Number(value))}
+              >
+                <SelectTrigger id="role-level">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {levelOptions.map((option) => (
+                    <SelectItem key={option.level} value={String(option.level)}>
+                      {t(option.labelKey)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {!levelValid && (
+                <p className="text-xs text-destructive">
+                  {t('roles.levelCapHint', {
+                    level: getAccessLevelLabel(maxLevel, t)
+                  })}
+                </p>
+              )}
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="role-level">{t('roles.levelLabel')}</Label>
-            <Select
-              value={String(level)}
-              onValueChange={(value) => changeLevel(Number(value))}
-            >
-              <SelectTrigger id="role-level">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {levelOptions.map((option) => (
-                  <SelectItem key={option.level} value={String(option.level)}>
-                    {t(option.labelKey)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {!levelValid && (
-              <p className="text-xs text-destructive">
-                {t('roles.levelCapHint', {
-                  level: getAccessLevelLabel(maxLevel, t)
-                })}
-              </p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              {t('roles.levelHint')}
-            </p>
+            <div className="space-y-1.5">
+              <Label htmlFor="role-desc">{t('roles.descriptionLabel')}</Label>
+              <Textarea
+                id="role-desc"
+                className="min-h-[38px]"
+                rows={1}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="space-y-1.5">
             <Label>{t('roles.permissionsLabel')}</Label>
             <p className="text-xs text-muted-foreground">
-              {t('roles.defaultsHint')}
+              {t('roles.levelHint')} {t('roles.defaultsHint')}
             </p>
-            <PermissionGrid
-              resources={catalog.resources}
-              granted={granted}
-              onToggle={toggle}
-              onToggleResource={(resource, grantAll) =>
-                toggleResource(catalog.resources, resource, grantAll)
-              }
-            />
+            {/* A matrix of every resource has no natural size, so it scrolls
+                inside its own box rather than making the dialog scroll. */}
+            <div className="max-h-[42vh] overflow-y-auto rounded-lg border border-border/70 p-3">
+              <PermissionGrid
+                resources={catalog.resources}
+                granted={granted}
+                onToggle={toggle}
+                onToggleResource={(resource, grantAll) =>
+                  toggleResource(catalog.resources, resource, grantAll)
+                }
+              />
+            </div>
           </div>
         </div>
 

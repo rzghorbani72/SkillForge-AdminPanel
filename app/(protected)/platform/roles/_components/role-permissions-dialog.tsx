@@ -79,7 +79,7 @@ export function RolePermissionsDialog({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>
             {t(
@@ -97,7 +97,10 @@ export function RolePermissionsDialog({
         </DialogHeader>
 
         {readOnly ? (
-          <PermissionReadonlyList permissions={role.permissions} />
+          /* An unbounded list gets a bounded box; the dialog itself never scrolls. */
+          <div className="max-h-[52vh] overflow-y-auto rounded-lg border border-border/70 p-3">
+            <PermissionReadonlyList permissions={role.permissions} />
+          </div>
         ) : (
           <div className="space-y-3">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -120,6 +123,8 @@ export function RolePermissionsDialog({
                 </Label>
                 <Textarea
                   id="role-edit-desc"
+                  className="min-h-[38px]"
+                  rows={1}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
@@ -138,14 +143,18 @@ export function RolePermissionsDialog({
               <RotateCcw className="me-1.5 h-3.5 w-3.5" />
               {t('roles.applyLevelDefaults', { level: levelLabel })}
             </Button>
-            <PermissionGrid
-              resources={catalog.resources}
-              granted={granted}
-              onToggle={toggle}
-              onToggleResource={(resource, grantAll) =>
-                toggleResource(catalog.resources, resource, grantAll)
-              }
-            />
+            {/* A matrix of every resource has no natural size, so it scrolls
+                inside its own box rather than making the dialog scroll. */}
+            <div className="max-h-[42vh] overflow-y-auto rounded-lg border border-border/70 p-3">
+              <PermissionGrid
+                resources={catalog.resources}
+                granted={granted}
+                onToggle={toggle}
+                onToggleResource={(resource, grantAll) =>
+                  toggleResource(catalog.resources, resource, grantAll)
+                }
+              />
+            </div>
           </div>
         )}
 
