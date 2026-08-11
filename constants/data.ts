@@ -229,43 +229,6 @@ export const navItems: NavItem[] = [
     section: 'learning'
   },
   {
-    title: 'Students',
-    href: '/users?role=STUDENT',
-    icon: 'graduationCap' as IconType,
-    label: 'students',
-    roles: [
-      'PLATFORM_OWNER',
-      'ADMIN',
-      'FINANCE',
-      'SUPPORT',
-      'MANAGER',
-      'TEACHER'
-    ],
-    scope: 'academy',
-    section: 'learning',
-    requiresLearningCapability: 'students',
-    children: [
-      {
-        title: 'Students',
-        href: '/users?role=STUDENT',
-        label: 'all-students',
-        requiresLearningCapability: 'students'
-      },
-      {
-        title: 'Enrollments',
-        href: '/users?tab=enrollments',
-        label: 'enrollments',
-        requiresLearningCapability: 'students'
-      },
-      {
-        title: 'Progress',
-        href: '/users?tab=progress',
-        label: 'progress',
-        requiresLearningCapability: 'students'
-      }
-    ]
-  },
-  {
     title: 'Assignments',
     href: '/assignments',
     icon: 'bookOpen' as IconType,
@@ -316,7 +279,9 @@ export const navItems: NavItem[] = [
     section: 'learning',
     requiresLearningCapability: 'ops_queue'
   },
-  // Running the academy
+  // Running the academy. Everyone in the academy — students included — lives
+  // under this one entry: /users filters by role, so a separate "Students" item
+  // would just be a second door to the same page.
   {
     title: 'Users',
     href: '/users',
@@ -347,6 +312,18 @@ export const navItems: NavItem[] = [
         title: 'Requests',
         href: '/users?tab=requests',
         label: 'requests'
+      },
+      {
+        title: 'Enrollments',
+        href: '/users?tab=enrollments',
+        label: 'enrollments',
+        requiresLearningCapability: 'students'
+      },
+      {
+        title: 'Progress',
+        href: '/users?tab=progress',
+        label: 'progress',
+        requiresLearningCapability: 'students'
       }
     ]
   },
