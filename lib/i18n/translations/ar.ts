@@ -353,6 +353,8 @@ export const ar = {
     payments: 'المدفوعات',
     vouchers: 'القسائم',
     'all-students': 'جميع الطلاب',
+    groups: 'المجموعات',
+    requests: 'الطلبات',
     enrollments: 'التسجيلات',
     assignments: 'الواجبات',
     progress: 'التقدم',

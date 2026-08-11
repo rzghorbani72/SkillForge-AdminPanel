@@ -71,7 +71,7 @@ export function StudentWorkspace({
       aria-labelledby="student-workspace-title"
     >
       <Button asChild variant="ghost" className="w-fit">
-        <Link href="/students?role=STUDENT">
+        <Link href="/users?role=STUDENT">
           <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
           {t('learningOperations.backToStudents')}
         </Link>

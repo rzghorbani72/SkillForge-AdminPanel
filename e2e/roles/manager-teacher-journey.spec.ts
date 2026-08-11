@@ -21,8 +21,8 @@ test.describe('Manager & Teacher journeys @backend', () => {
     page
   }) => {
     await managerLogin(page);
-    await page.goto('/students');
-    await expect(page).toHaveURL(/\/students/);
+    await page.goto('/users?role=STUDENT');
+    await expect(page).toHaveURL(/\/users/);
     const body = page.locator('body');
     await expect(body).not.toContainText('Internal Server Error');
     // The legal-consent 403 surfaces as a consent prompt / access error — assert absent.

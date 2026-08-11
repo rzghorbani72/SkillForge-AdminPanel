@@ -6,6 +6,7 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { UserRoleBadge, type RoleConfig } from './user-role-badge';
+import { UserRowActions } from './user-row-actions';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 
@@ -15,7 +16,9 @@ type UserRowProps = {
   roles: RoleConfig[];
   currentRoleId?: string;
   isSelf: boolean;
+  callerRole?: string;
   onRoleClick: () => void;
+  onChanged: () => void;
 };
 
 function UserRow({
@@ -24,7 +27,9 @@ function UserRow({
   roles,
   currentRoleId,
   isSelf,
-  onRoleClick
+  callerRole,
+  onRoleClick,
+  onChanged
 }: UserRowProps) {
   const { t } = useTranslation();
   const roleConfig = roles.find((r) => r.id === currentRoleId);
@@ -78,8 +83,8 @@ function UserRow({
         />
       </td>
       <td className="px-4 py-3">
-        {/* Two plain-text links only: everything else about this person lives on
-            the details page, so the row never needs an icon legend or a menu. */}
+        {/* Plain-text links for the two common moves; the rest (reset password,
+            deactivate, delete) sits in the menu so the row stays readable. */}
         <div className="flex items-center justify-end gap-3 text-[12.5px]">
           <Link
             href={`/user/${user.id}`}
@@ -88,11 +93,18 @@ function UserRow({
             {t('stores.details')}
           </Link>
           <Link
-            href={`/user/${user.id}/edit`}
+            href={`/user/${user.id}/learning`}
             className="font-medium text-muted-foreground hover:text-foreground hover:underline"
           >
-            {t('common.edit')}
+            {t('learningOperations.openWorkspace')}
           </Link>
+          <UserRowActions
+            user={user}
+            targetLevel={user.role_hierarchy_level}
+            callerRole={callerRole}
+            isSelf={isSelf}
+            onChanged={onChanged}
+          />
         </div>
       </td>
     </tr>
@@ -106,6 +118,7 @@ type UsersTableProps = {
   page: number;
   onPageChange: (page: number) => void;
   onRoleClick: () => void;
+  onChanged: () => void;
 };
 
 export function UsersTable({
@@ -114,7 +127,8 @@ export function UsersTable({
   totalCount,
   page,
   onPageChange,
-  onRoleClick
+  onRoleClick,
+  onChanged
 }: UsersTableProps) {
   const { t } = useTranslation();
   const { user: authUser } = useAuthUser();
@@ -179,7 +193,9 @@ export function UsersTable({
                 roles={roles}
                 currentRoleId={getUserRoleId(u)}
                 isSelf={String(u.id) === selfId}
+                callerRole={authUser?.role}
                 onRoleClick={onRoleClick}
+                onChanged={onChanged}
               />
             ))
           )}

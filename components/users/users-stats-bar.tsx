@@ -2,11 +2,23 @@
 
 import { TrendingUp } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
-type Stat = { labelKey: string; value: number; delta?: number };
+/**
+ * One row of four numbers, shown on every tab of the people hub. The tab only
+ * swaps the contents, so the page never shifts under the reader.
+ */
+export type UserStat = {
+  labelKey: string;
+  value: number;
+  delta?: number;
+  /** Pre-formatted text shown instead of the raw number, e.g. a percentage. */
+  display?: string;
+};
 
-export function UsersStatsBar({ stats }: { stats: Stat[] }) {
+export function UsersStatsBar({ stats }: { stats: readonly UserStat[] }) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
 
   return (
     <div className="mb-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -29,8 +41,8 @@ export function UsersStatsBar({ stats }: { stats: Stat[] }) {
               </span>
             )}
           </div>
-          <div className="font-mono text-[26px] font-bold tracking-tight">
-            {s.value.toLocaleString('fa-IR')}
+          <div className="text-[26px] font-bold tracking-tight">
+            {s.display ?? formatNumber(s.value)}
           </div>
         </div>
       ))}

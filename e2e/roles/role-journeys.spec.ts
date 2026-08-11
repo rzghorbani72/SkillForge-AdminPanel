@@ -51,8 +51,8 @@ test.describe('AdminPanel role journeys @backend', () => {
     test.skip(!phone || !password, 'E2E_MANAGER_PHONE/PASSWORD required');
 
     await staffLogin(page, phone!, password!);
-    await page.goto('/students');
-    await expect(page).toHaveURL(/\/students/);
+    await page.goto('/users?role=STUDENT');
+    await expect(page).toHaveURL(/\/users/);
     await expect(page.locator('body')).not.toContainText(
       'Internal Server Error'
     );

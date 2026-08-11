@@ -65,14 +65,16 @@ export function AddUserDialog({
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // The server decides which roles are valid here: this panel is staff-only, so
-  // offering a student-rank role would create an account that can never sign in.
+  // The server decides which roles are valid — every role below the caller's
+  // rank, students included. A student cannot sign in to this panel; they sign
+  // in to the academy site, and the one-time password set here forces them to
+  // choose their own on that first login.
   useEffect(() => {
     if (!open) return;
     let active = true;
     setRolesLoading(true);
     apiClient
-      .getAssignableRoles()
+      .getAssignableAcademyRoles()
       .then(({ roles }) => {
         if (!active) return;
         setRoleOptions(roles);
@@ -99,6 +101,11 @@ export function AddUserDialog({
     isPasswordReady &&
     isConfirmReady &&
     !!form.role;
+
+  // Rank 1 and below is a learner, not staff — see SYSTEM_ROLE_DEFINITIONS.
+  const isStudentRank =
+    (roleOptions.find((role) => role.name === form.role)?.hierarchy_level ??
+      99) <= 1;
 
   function reset() {
     setForm({
@@ -313,6 +320,12 @@ export function AddUserDialog({
           <p className="rounded-lg bg-muted/50 px-3 py-2 text-[12px] text-muted-foreground">
             {t('users.unconfirmedNote')}
           </p>
+
+          {isStudentRank && (
+            <p className="rounded-lg bg-muted/50 px-3 py-2 text-[12px] text-muted-foreground">
+              {t('users.studentSignsInOnSiteNote')}
+            </p>
+          )}
 
           <DialogFooter className="gap-2">
             <Button

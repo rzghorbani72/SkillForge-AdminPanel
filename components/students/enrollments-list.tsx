@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import Link from 'next/link';
 import { GraduationCap } from 'lucide-react';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { DataList, type DataColumn } from '@/components/shared/data-list';
@@ -80,22 +81,33 @@ export function EnrollmentsList({
     const student: DataColumn<Enrollment> = {
       id: 'student',
       header: t('students.studentName'),
-      cell: (enrollment) => (
-        <div className="flex items-center gap-2.5">
-          <UserAvatar
-            name={enrollment.user?.name}
-            tone={toneFromId(enrollment.user_id)}
-          />
-          <div className="min-w-0">
-            <p className="truncate font-semibold leading-tight">
-              {enrollment.user?.name || t('students.unknownStudent')}
-            </p>
-            <p className="truncate text-[11px] text-muted-foreground">
-              {enrollment.course?.title || t('students.unknownCourse')}
-            </p>
+      cell: (enrollment) => {
+        const name = enrollment.user?.name || t('students.unknownStudent');
+        const studentId = enrollment.user?.id;
+        return (
+          <div className="flex items-center gap-2.5">
+            <UserAvatar
+              name={enrollment.user?.name}
+              tone={toneFromId(enrollment.user_id)}
+            />
+            <div className="min-w-0">
+              {studentId ? (
+                <Link
+                  href={`/user/${studentId}/learning`}
+                  className="truncate font-semibold leading-tight hover:text-primary hover:underline"
+                >
+                  {name}
+                </Link>
+              ) : (
+                <p className="truncate font-semibold leading-tight">{name}</p>
+              )}
+              <p className="truncate text-[11px] text-muted-foreground">
+                {enrollment.course?.title || t('students.unknownCourse')}
+              </p>
+            </div>
           </div>
-        </div>
-      )
+        );
+      }
     };
 
     const progress: DataColumn<Enrollment> = {

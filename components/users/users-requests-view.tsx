@@ -7,6 +7,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { UserAvatar, toneToHsl } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
+import type { UserStat } from './users-stats-bar';
 
 type TeacherRequest = {
   id: number;
@@ -33,9 +34,12 @@ function requestTone(id: number) {
 }
 
 export function UsersRequestsView({
-  onPendingCountChange
+  onPendingCountChange,
+  onStats
 }: {
   onPendingCountChange?: (count: number) => void;
+  /** Feeds the page-level stats row so it stays in place across tabs. */
+  onStats?: (stats: UserStat[]) => void;
 }) {
   const { t } = useTranslation();
   const [requests, setRequests] = useState<TeacherRequest[]>([]);
@@ -47,14 +51,21 @@ export function UsersRequestsView({
       const data = await apiClient.getTeacherRequests({ limit: 50 });
       const list: TeacherRequest[] = (data as any)?.requests ?? [];
       setRequests(list);
-      const pending = list.filter((r) => r.status === 'PENDING').length;
-      onPendingCountChange?.(pending);
+      const countOf = (status: TeacherRequest['status']) =>
+        list.filter((request) => request.status === status).length;
+      onPendingCountChange?.(countOf('PENDING'));
+      onStats?.([
+        { labelKey: 'users.requests', value: list.length },
+        { labelKey: 'users.pendingApproval', value: countOf('PENDING') },
+        { labelKey: 'teacherRequests.approved', value: countOf('APPROVED') },
+        { labelKey: 'teacherRequests.rejected', value: countOf('REJECTED') }
+      ]);
     } catch (e) {
       ErrorHandler.handleApiError(e);
     } finally {
       setLoading(false);
     }
-  }, [onPendingCountChange]);
+  }, [onPendingCountChange, onStats]);
 
   useEffect(() => {
     fetchRequests();

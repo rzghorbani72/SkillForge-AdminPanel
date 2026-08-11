@@ -25,7 +25,7 @@ function resolveStudentProfileId(user: User): string | null {
 }
 
 export default function StudentWorkspacePage() {
-  const { student_id: studentId } = useParams<{ student_id: string }>();
+  const { id: studentId } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const [student, setStudent] = useState<User | null>(null);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);

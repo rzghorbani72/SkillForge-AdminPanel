@@ -568,6 +568,7 @@ export const fa = {
     academies: 'آکادمی‌های من',
     'users-list': 'کاربران',
     groups: 'گروه‌ها',
+    requests: 'درخواست‌ها',
     siteTemplate: 'قالب سایت',
     financial: 'مالی',
     plans: 'پلن‌ها',
@@ -2946,6 +2947,8 @@ export const fa = {
     userAddedSuccess: 'کاربر با موفقیت اضافه شد',
     unconfirmedNote:
       'این رمز عبور یک‌بارمصرف است. کاربر در اولین ورود باید شماره تلفن خود را تأیید و سپس رمز عبور خودش را تعیین کند.',
+    studentSignsInOnSiteNote:
+      'دانشجو وارد این پنل نمی‌شود. او با همین شماره تلفن و رمز عبور یک‌بارمصرف وارد وب‌سایت آکادمی می‌شود.',
     generatePassword: 'ساخت رمز عبور',
     phoneAlreadyRegistered: 'این شماره تلفن قبلاً ثبت‌نام شده است',
     roleAdmin: 'ادمین',

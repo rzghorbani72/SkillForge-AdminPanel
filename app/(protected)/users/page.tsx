@@ -1,219 +1,192 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  Search,
-  Plus,
-  ChevronDown,
-  AlertTriangle,
-  KeyRound
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Search } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
-import { AssignAccessDialog } from '@/components/access/assign-access-dialog';
 import { studentGroupsApi } from '@/lib/api-extra';
-import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import PageContainer from '@/components/layout/page-container';
-import { UsersStatsBar } from '@/components/users/users-stats-bar';
+import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
+import {
+  UsersStatsBar,
+  type UserStat
+} from '@/components/users/users-stats-bar';
 import { UsersTable } from '@/components/users/users-table';
 import {
   UsersGroupsGrid,
   type StudentGroup
 } from '@/components/users/users-groups-grid';
 import { UsersRequestsView } from '@/components/users/users-requests-view';
+import { UsersEnrollmentsView } from '@/components/users/users-enrollments-view';
+import { UsersProgressView } from '@/components/users/users-progress-view';
+import { UsersPendingBanner } from '@/components/users/users-pending-banner';
+import {
+  UsersTabBar,
+  type UsersTab,
+  type UsersTabItem
+} from '@/components/users/users-tab-bar';
 import {
   UsersRoleFilter,
   ALL_ROLES
 } from '@/components/users/users-role-filter';
-import { AddUserDialog } from '@/components/users/add-user-dialog';
+import { UsersPageHeader } from '@/components/users/users-page-header';
 import { CreateGroupDialog } from '@/components/users/create-group-dialog';
 import { GroupDetailDialog } from '@/components/users/group-detail-dialog';
-import type { RoleConfig } from '@/components/users/user-role-badge';
 import { useUserStats } from './_components/use-user-stats';
-import type { User } from '@/types/api';
-import type { PlatformRole } from '@/types/roles';
+import { useSystemRoles } from './_components/use-system-roles';
+import { useAvailableRoles, useUsersList } from './_components/use-users-list';
 
 const PAGE_SIZE = 20;
 
 /**
- * Three tabs only. The old per-role tabs (students/teachers/managers) are gone:
- * they could never show an academy's custom roles, so filtering by role is a
- * dropdown over the real role list instead.
+ * One people hub: roles are a dropdown filter (so academy-defined roles work
+ * like built-in ones), and everything a manager does with people — groups,
+ * join requests, enrolments and progress — lives in a tab next to the list.
  */
-type TabType = 'all' | 'groups' | 'requests';
-
-// System role definitions — static configuration, not mock data
-function useSystemRoles(): RoleConfig[] {
-  const { t } = useTranslation();
-  return [
-    {
-      id: 'STUDENT',
-      label: t('users.roleStudent'),
-      tone: 240,
-      system: true,
-      permissions: [
-        t('users.permViewCourses'),
-        t('users.permAccessContent'),
-        t('users.permSubmitQuestion')
-      ]
-    },
-    {
-      id: 'TEACHER',
-      label: t('users.roleTeacher'),
-      tone: 165,
-      system: true,
-      permissions: [
-        t('users.permAddEditCourse'),
-        t('users.permAnswerQuestions'),
-        t('users.permWithdrawEarnings')
-      ]
-    },
-    {
-      id: 'MANAGER',
-      label: t('users.roleManager'),
-      tone: 22,
-      system: true,
-      permissions: [
-        t('users.permManageUsers'),
-        t('users.permFinancialReports'),
-        t('users.permManagePlans')
-      ]
-    }
-  ];
-}
-
-// Which tabs each role may access
-const TAB_ACCESS: Record<string, TabType[]> = {
-  ADMIN: ['all', 'groups', 'requests'],
-  MANAGER: ['all', 'groups', 'requests'],
-  TEACHER: ['all', 'groups']
+const TAB_ACCESS: Record<string, UsersTab[]> = {
+  PLATFORM_OWNER: ['all', 'groups', 'requests', 'enrollments', 'progress'],
+  ADMIN: ['all', 'groups', 'requests', 'enrollments', 'progress'],
+  MANAGER: ['all', 'groups', 'requests', 'enrollments', 'progress'],
+  TEACHER: ['all', 'groups', 'enrollments', 'progress']
 };
 
-function allowedTabs(role?: string): TabType[] {
+function allowedTabs(role?: string): UsersTab[] {
   return TAB_ACCESS[role ?? ''] ?? ['all'];
 }
+
+/** Holds the row's height while a tab loads its own numbers. */
+const PLACEHOLDER_STATS: UserStat[] = [
+  { labelKey: 'common.loading', value: 0 },
+  { labelKey: 'common.loading', value: 0 },
+  { labelKey: 'common.loading', value: 0 },
+  { labelKey: 'common.loading', value: 0 }
+];
 
 export default function UsersPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user: authUser } = useAuthUser();
   const systemRoles = useSystemRoles();
+  const availableRoles = useAvailableRoles();
+  const allowed = useMemo(() => allowedTabs(authUser?.role), [authUser?.role]);
 
-  const allowed = allowedTabs(authUser?.role);
-
-  const [tab, setTab] = useState<TabType>('all');
-  const [users, setUsers] = useState<User[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
+  const [tab, setTab] = useState<UsersTab>('all');
   const [page, setPage] = useState(1);
-  const [groups, setGroups] = useState<StudentGroup[]>([]);
-  const { stats: userStats, refresh: refreshStats } = useUserStats();
-  const pendingRequestsCount = userStats.pendingRequests;
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>(ALL_ROLES);
-  const [availableRoles, setAvailableRoles] = useState<PlatformRole[]>([]);
-  const [addUserOpen, setAddUserOpen] = useState(false);
-  const [assignAccessOpen, setAssignAccessOpen] = useState(false);
+  const [groups, setGroups] = useState<StudentGroup[]>([]);
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   const [openGroupId, setOpenGroupId] = useState<string | null>(null);
 
+  const { stats: userStats, refresh: refreshStats } = useUserStats();
+  const pendingRequestsCount = userStats.pendingRequests;
   const isUserTab = tab === 'all';
 
-  const fetchUsers = useCallback(async () => {
-    if (!isUserTab) return;
-    setLoading(true);
-    try {
-      // One paginated endpoint for every case: the role dropdown just adds a
-      // filter, so custom roles page exactly like the built-in ones.
-      const data = await apiClient.getUsers({
-        page,
-        limit: PAGE_SIZE,
-        search: search || undefined,
-        role: roleFilter === ALL_ROLES ? undefined : roleFilter
-      });
+  const { users, totalCount, isLoading, refresh } = useUsersList({
+    page,
+    limit: PAGE_SIZE,
+    search,
+    role: roleFilter,
+    enabled: isUserTab
+  });
 
-      const list: User[] = data?.users ?? data?.profiles ?? [];
-      setUsers(list);
-      setTotalCount(data?.pagination?.total ?? list.length);
-    } catch (e) {
-      ErrorHandler.handleApiError(e);
-      setUsers([]);
-    } finally {
-      setLoading(false);
+  // The sidebar links straight to a filtered view (e.g. /users?role=STUDENT),
+  // so the URL opens the right tab and filter. It only re-applies when the URL
+  // itself changes, otherwise it would undo the user's own dropdown choice.
+  const roleParam = searchParams.get('role');
+  const tabParam = searchParams.get('tab');
+  useEffect(() => {
+    if (roleParam) setRoleFilter(roleParam.toUpperCase());
+    if (
+      tabParam &&
+      allowedTabs(authUser?.role).includes(tabParam as UsersTab)
+    ) {
+      setTab(tabParam as UsersTab);
     }
-  }, [page, search, roleFilter, isUserTab]);
+  }, [roleParam, tabParam, authUser?.role]);
 
-  const fetchRoles = useCallback(async () => {
-    try {
-      const result = await apiClient.getPlatformRoles();
-      setAvailableRoles(result.roles.filter((role) => role.is_active));
-    } catch {
-      // Non-critical: without it the dropdown is empty but the list still works.
-    }
-  }, []);
+  const refreshAll = useCallback(() => {
+    void refresh();
+    void refreshStats();
+  }, [refresh, refreshStats]);
 
   const fetchGroups = useCallback(async () => {
     try {
       const result = await studentGroupsApi.list();
-      const raw = result?.data ?? [];
-      setGroups(
-        (raw as StudentGroup[]).map((g, i) => ({
-          ...g,
-          tone: (22 + i * 80) % 360
-        }))
-      );
-    } catch (e) {
-      ErrorHandler.handleApiError(e);
+      const raw = (result?.data ?? []) as StudentGroup[];
+      setGroups(raw.map((g, i) => ({ ...g, tone: (22 + i * 80) % 360 })));
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
     }
   }, []);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-
-  useEffect(() => {
-    if (tab === 'groups') fetchGroups();
+    if (tab === 'groups') void fetchGroups();
   }, [tab, fetchGroups]);
 
-  useEffect(() => {
-    fetchRoles();
-  }, [fetchRoles]);
-
-  // Reset page whenever the result set changes shape
   useEffect(() => {
     setPage(1);
   }, [tab, search, roleFilter]);
 
+  // The stats row is always four tiles, on every tab, so switching tabs never
+  // moves the content under the reader. Tabs that own their own data report it
+  // through onStats; the list and groups tabs are computed here.
+  const [reportedStats, setReportedStats] = useState<UserStat[] | null>(null);
+  useEffect(() => {
+    setReportedStats(null);
+  }, [tab]);
+
   // Every number here is a server-side total for its own filter — see
   // useUserStats. Deriving them from the loaded page counted one page of
   // teachers as "all teachers", and invented the active figure outright.
-  const stats = [
+  const userTabStats: UserStat[] = [
     { labelKey: 'users.totalUsers', value: userStats.total },
     { labelKey: 'users.activeUsers', value: userStats.active },
     { labelKey: 'users.teachers', value: userStats.teachers },
     { labelKey: 'users.pendingApproval', value: userStats.pendingRequests }
   ];
 
-  const allTabs: { v: TabType; label: string; count?: number }[] = [
-    { v: 'all', label: t('common.all'), count: totalCount },
-    { v: 'groups', label: t('users.groups'), count: groups.length },
-    { v: 'requests', label: t('users.requests'), count: pendingRequestsCount }
+  const groupTabStats: UserStat[] = [
+    { labelKey: 'users.groups', value: groups.length },
+    {
+      labelKey: 'common.active',
+      value: groups.filter((group) => group.is_active).length
+    },
+    {
+      labelKey: 'users.groupMembers',
+      value: groups.reduce((sum, g) => sum + (g._count?.Members ?? 0), 0)
+    },
+    {
+      labelKey: 'users.groupCourseAccess',
+      value: groups.reduce((sum, g) => sum + (g._count?.CourseGrants ?? 0), 0)
+    }
   ];
-  const tabs = allTabs.filter((t) => allowed.includes(t.v));
+
+  const statsForTab = (): UserStat[] => {
+    if (tab === 'all') return userTabStats;
+    if (tab === 'groups') return groupTabStats;
+    return reportedStats ?? PLACEHOLDER_STATS;
+  };
+
+  const allTabs: UsersTabItem[] = [
+    { value: 'all', label: t('users.users'), count: totalCount },
+    { value: 'groups', label: t('users.groups'), count: groups.length },
+    {
+      value: 'requests',
+      label: t('users.requests'),
+      count: pendingRequestsCount,
+      urgent: true
+    },
+    { value: 'enrollments', label: t('students.enrollments') },
+    { value: 'progress', label: t('students.progressTracking') }
+  ];
+  const tabs = allTabs.filter((item) => allowed.includes(item.value));
 
   return (
     <PageContainer>
-      <AddUserDialog
-        open={addUserOpen}
-        onOpenChange={setAddUserOpen}
-        onSuccess={() => {
-          fetchUsers();
-          refreshStats();
-        }}
-      />
       <CreateGroupDialog
         open={createGroupOpen}
         onOpenChange={setCreateGroupOpen}
@@ -224,98 +197,21 @@ export default function UsersPage() {
         onOpenChange={(open) => !open && setOpenGroupId(null)}
         onChanged={fetchGroups}
       />
-      <AssignAccessDialog
-        open={assignAccessOpen}
-        onOpenChange={setAssignAccessOpen}
-      />
-      {/* Header */}
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <div className="mb-1.5 text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
-            {t('users.people')}
-          </div>
-          <h1 className="text-[24px] font-bold leading-none tracking-tight">
-            {t('users.users')}
-          </h1>
-          <p className="mt-1 text-[14px] text-muted-foreground">
-            {t('users.pageDescription')}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="gap-1.5"
-            onClick={() => setAssignAccessOpen(true)}
-          >
-            <KeyRound className="h-3.5 w-3.5" /> {t('accessGrants.giveAccess')}
-          </Button>
-          <Button
-            size="sm"
-            className="gap-1.5"
-            onClick={() => setAddUserOpen(true)}
-          >
-            <Plus className="h-3.5 w-3.5" /> {t('users.addUser')}
-          </Button>
-        </div>
-      </div>
+      <UsersPageHeader onChanged={refreshAll} />
 
-      {/* Pending requests banner */}
-      {pendingRequestsCount > 0 && tab !== 'requests' && (
-        <div className="mb-4 flex items-center gap-3.5 rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-white">
-            <AlertTriangle className="h-[18px] w-[18px]" />
-          </span>
-          <div className="flex-1">
-            <div className="text-[13.5px] font-semibold">
-              {t('users.pendingBannerTitle', { count: pendingRequestsCount })}
-            </div>
-            <div className="text-[12px] text-muted-foreground">
-              {t('users.pendingBannerDesc')}
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setTab('requests')}
-            className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-[12.5px] font-medium transition-colors hover:bg-muted/50"
-          >
-            {t('users.reviewRequests')}
-            <ChevronDown className="h-3 w-3 -rotate-90" />
-          </button>
-        </div>
-      )}
+      {pendingRequestsCount > 0 &&
+        tab !== 'requests' &&
+        allowed.includes('requests') && (
+          <UsersPendingBanner
+            count={pendingRequestsCount}
+            onReview={() => setTab('requests')}
+          />
+        )}
 
-      {/* Stats */}
-      {isUserTab && <UsersStatsBar stats={stats} />}
+      <UsersStatsBar stats={statsForTab()} />
 
-      {/* Tabs + search */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex gap-0.5 rounded-full bg-muted/60 p-1">
-          {tabs.map(({ v, label, count }) => (
-            <button
-              key={v}
-              onClick={() => setTab(v)}
-              className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-medium transition-all ${
-                tab === v
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {label}
-              {count != null && (
-                <span
-                  className={`ms-1.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${
-                    v === 'requests' && pendingRequestsCount > 0
-                      ? 'bg-amber-500 text-white'
-                      : 'opacity-50'
-                  }`}
-                >
-                  {count.toLocaleString('fa-IR')}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+        <UsersTabBar tabs={tabs} value={tab} onChange={setTab} />
         {isUserTab && (
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -336,34 +232,44 @@ export default function UsersPage() {
         )}
       </div>
 
-      {/* Content */}
-      {loading && isUserTab ? (
-        <div className="flex h-48 items-center justify-center text-muted-foreground">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-        </div>
-      ) : (
-        <>
-          {isUserTab && (
-            <UsersTable
-              users={users}
-              roles={systemRoles}
-              totalCount={totalCount}
-              page={page}
-              onPageChange={setPage}
-              onRoleClick={() => router.push('/platform/roles')}
-            />
-          )}
-          {tab === 'groups' && (
-            <UsersGroupsGrid
-              groups={groups}
-              onCreate={() => setCreateGroupOpen(true)}
-              onOpen={setOpenGroupId}
-            />
-          )}
-          {tab === 'requests' && (
-            <UsersRequestsView onPendingCountChange={refreshStats} />
-          )}
-        </>
+      {isUserTab &&
+        (isLoading ? (
+          <div className="flex h-48 items-center justify-center text-muted-foreground">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          </div>
+        ) : (
+          <UsersTable
+            users={users}
+            roles={systemRoles}
+            totalCount={totalCount}
+            page={page}
+            onPageChange={setPage}
+            onRoleClick={() => router.push('/platform/roles')}
+            onChanged={refresh}
+          />
+        ))}
+      {tab === 'groups' && (
+        <UsersGroupsGrid
+          groups={groups}
+          onCreate={() => setCreateGroupOpen(true)}
+          onOpen={setOpenGroupId}
+        />
+      )}
+      {tab === 'requests' && (
+        <UsersRequestsView
+          onPendingCountChange={refreshStats}
+          onStats={setReportedStats}
+        />
+      )}
+      {tab === 'enrollments' && (
+        <LearningNavGate requiredCapability="students">
+          <UsersEnrollmentsView onStats={setReportedStats} />
+        </LearningNavGate>
+      )}
+      {tab === 'progress' && (
+        <LearningNavGate requiredCapability="students">
+          <UsersProgressView onStats={setReportedStats} />
+        </LearningNavGate>
       )}
     </PageContainer>
   );

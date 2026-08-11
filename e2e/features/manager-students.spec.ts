@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 import { managerLogin } from '../helpers/auth';
 
 /**
- * Manager students management @backend.
- * Covers: list view, tabs (managers/teachers/students/users/enrollments/progress),
- * search input, and student-only auth guard on protected sub-routes.
+ * Manager people management @backend.
+ * Students, teachers, managers, groups, requests, enrolments and progress all
+ * live on /users now; roles are a filter, not separate pages.
  *
  * Run: E2E_BACKEND=1 pnpm test:e2e e2e/features/manager-students.spec.ts
  */
-test.describe('Manager students management @backend', () => {
+test.describe('Manager people management @backend', () => {
   test.skip(
     !process.env.E2E_BACKEND,
     'set E2E_BACKEND=1 to run against the API'
@@ -18,85 +18,57 @@ test.describe('Manager students management @backend', () => {
     await managerLogin(page);
   });
 
-  test('students page loads with all tabs', async ({ page }) => {
-    await page.goto('/students');
-    await expect(page).toHaveURL(/\/students/);
+  async function expectNoServerError(page: import('@playwright/test').Page) {
     await expect(page.locator('body')).not.toContainText(
       'Internal Server Error'
     );
-    // All role tabs should be present
-    await expect(page.getByRole('tab', { name: /manager/i })).toBeVisible();
-    await expect(page.getByRole('tab', { name: /teacher/i })).toBeVisible();
-    await expect(page.getByRole('tab', { name: /student/i })).toBeVisible();
-    await expect(page.getByRole('tab', { name: /user/i })).toBeVisible();
+  }
+
+  test('old students routes redirect into the users hub', async ({ page }) => {
+    await page.goto('/students');
+    await expect(page).toHaveURL(/\/users/);
+    await expectNoServerError(page);
+  });
+
+  test('users page loads with every people tab', async ({ page }) => {
+    await page.goto('/users');
+    await expectNoServerError(page);
+    for (const name of [/group/i, /request/i, /enrol/i, /progress/i]) {
+      await expect(page.getByRole('button', { name })).toBeVisible();
+    }
   });
 
   test('search input filters without crashing', async ({ page }) => {
-    await page.goto('/students');
-    const search = page.getByPlaceholder(/search/i);
+    await page.goto('/users');
+    const search = page.getByPlaceholder(/search/i).first();
     await expect(search).toBeVisible({ timeout: 10_000 });
     await search.fill('test');
-    // Debounce fires; page should not crash
     await page.waitForTimeout(600);
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
+    await expectNoServerError(page);
     await search.clear();
   });
 
-  test('teachers tab loads content without errors', async ({ page }) => {
-    await page.goto('/students?role=TEACHER');
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
-    await expect(page.getByRole('tab', { name: /teacher/i })).toHaveAttribute(
-      'data-state',
-      'active'
-    );
+  test('role filter deep links load', async ({ page }) => {
+    for (const role of ['STUDENT', 'TEACHER', 'MANAGER']) {
+      await page.goto(`/users?role=${role}`);
+      await expectNoServerError(page);
+    }
   });
 
-  test('students tab loads content without errors', async ({ page }) => {
-    await page.goto('/students?role=STUDENT');
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
-    await expect(page.getByRole('tab', { name: /student/i })).toHaveAttribute(
-      'data-state',
-      'active'
-    );
-  });
-
-  test('enrollments tab loads', async ({ page }) => {
-    await page.goto('/students');
-    const enrollTab = page.getByRole('tab', { name: /enrollment/i });
-    await expect(enrollTab).toBeVisible();
-    await enrollTab.click();
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
-  });
-
-  test('progress tab loads', async ({ page }) => {
-    await page.goto('/students');
-    const progressTab = page.getByRole('tab', { name: /progress/i });
-    await expect(progressTab).toBeVisible();
-    await progressTab.click();
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
+  test('enrollments and progress tabs load', async ({ page }) => {
+    for (const tab of ['enrollments', 'progress']) {
+      await page.goto(`/users?tab=${tab}`);
+      await expectNoServerError(page);
+    }
   });
 
   test('manual enroll page is accessible', async ({ page }) => {
-    await page.goto('/students/manual-enroll');
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
+    await page.goto('/users/manual-enroll');
+    await expectNoServerError(page);
   });
 
   test('lesson access page is accessible', async ({ page }) => {
-    await page.goto('/students/lesson-access');
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
+    await page.goto('/users/lesson-access');
+    await expectNoServerError(page);
   });
 });

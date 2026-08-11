@@ -579,6 +579,7 @@ export const en = {
     'business-flow': 'Business Flow',
     'users-list': 'Users',
     groups: 'Groups',
+    requests: 'Requests',
     siteTemplate: 'Site Template',
     financial: 'Financial',
     plans: 'Plans',
@@ -2965,6 +2966,8 @@ export const en = {
     userAddedSuccess: 'User added successfully',
     unconfirmedNote:
       'This password is one-time only. On first login, the user must verify their phone number and then set their own password.',
+    studentSignsInOnSiteNote:
+      'A student does not sign in to this panel. They sign in to the academy website with this phone number and one-time password.',
     generatePassword: 'Generate password',
     phoneAlreadyRegistered: 'This phone number is already registered',
     roleAdmin: 'Admin',

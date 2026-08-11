@@ -230,7 +230,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Students',
-    href: '/students',
+    href: '/users?role=STUDENT',
     icon: 'graduationCap' as IconType,
     label: 'students',
     roles: [
@@ -247,13 +247,19 @@ export const navItems: NavItem[] = [
     children: [
       {
         title: 'Students',
-        href: '/students?role=STUDENT',
+        href: '/users?role=STUDENT',
         label: 'all-students',
         requiresLearningCapability: 'students'
       },
       {
+        title: 'Enrollments',
+        href: '/users?tab=enrollments',
+        label: 'enrollments',
+        requiresLearningCapability: 'students'
+      },
+      {
         title: 'Progress',
-        href: '/students/progress',
+        href: '/users?tab=progress',
         label: 'progress',
         requiresLearningCapability: 'students'
       }
@@ -334,9 +340,13 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Groups',
-        href: '/users/groups',
-        label: 'groups',
-        disabled: true
+        href: '/users?tab=groups',
+        label: 'groups'
+      },
+      {
+        title: 'Requests',
+        href: '/users?tab=requests',
+        label: 'requests'
       }
     ]
   },

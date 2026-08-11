@@ -358,6 +358,8 @@ export const tr = {
     payments: 'Ödemeler',
     vouchers: 'Kuponlar',
     'all-students': 'Tüm Öğrenciler',
+    groups: 'Gruplar',
+    requests: 'İstekler',
     enrollments: 'Kayıtlar',
     assignments: 'Ödevler',
     progress: 'İlerleme',
