@@ -82,21 +82,21 @@ function UserRow({
           status={user.status || (user.is_active ? 'active' : 'inactive')}
         />
       </td>
-      <td className="px-4 py-3">
+      <td className="w-px whitespace-nowrap px-4 py-3">
         {/* Plain-text links for the two common moves; the rest (reset password,
             deactivate, delete) sits in the menu so the row stays readable. */}
         <div className="flex items-center justify-end gap-3 text-[12.5px]">
           <Link
             href={`/user/${user.id}`}
-            className="font-medium text-primary hover:underline"
+            className="whitespace-nowrap font-medium text-primary hover:underline"
           >
             {t('stores.details')}
           </Link>
           <Link
             href={`/user/${user.id}/learning`}
-            className="font-medium text-muted-foreground hover:text-foreground hover:underline"
+            className="whitespace-nowrap font-medium text-muted-foreground hover:text-foreground hover:underline"
           >
-            {t('learningOperations.openWorkspace')}
+            {t('learningOperations.workspace')}
           </Link>
           <UserRowActions
             user={user}
@@ -152,7 +152,7 @@ export function UsersTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
+    <div className="overflow-x-auto rounded-xl border border-border bg-card">
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-border bg-muted/50">
