@@ -351,7 +351,7 @@ export default function DatabasePage() {
                   Create Record
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+              <DialogContent className="sm:max-w-3xl">
                 <DialogHeader>
                   <DialogTitle>Create New Record</DialogTitle>
                   <DialogDescription>
@@ -359,27 +359,29 @@ export default function DatabasePage() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="mt-4 space-y-4">
-                  {fields
-                    .filter(
-                      (f) =>
-                        f.name !== 'id' &&
-                        f.name !== 'created_at' &&
-                        f.name !== 'updated_at'
-                    )
-                    .map((field) => (
-                      <div key={field.name} className="space-y-2">
-                        <Label htmlFor={field.name}>
-                          {field.name}
-                          {!field.nullable && (
-                            <span className="ml-1 text-red-500">*</span>
-                          )}
-                          <Badge variant="outline" className="ml-2 text-xs">
-                            {field.type}
-                          </Badge>
-                        </Label>
-                        {renderFieldInput(field)}
-                      </div>
-                    ))}
+                  <div className="grid max-h-[55vh] gap-4 overflow-y-auto sm:grid-cols-2">
+                    {fields
+                      .filter(
+                        (f) =>
+                          f.name !== 'id' &&
+                          f.name !== 'created_at' &&
+                          f.name !== 'updated_at'
+                      )
+                      .map((field) => (
+                        <div key={field.name} className="space-y-2">
+                          <Label htmlFor={field.name}>
+                            {field.name}
+                            {!field.nullable && (
+                              <span className="ml-1 text-red-500">*</span>
+                            )}
+                            <Badge variant="outline" className="ml-2 text-xs">
+                              {field.type}
+                            </Badge>
+                          </Label>
+                          {renderFieldInput(field)}
+                        </div>
+                      ))}
+                  </div>
                   <div className="flex justify-end gap-2 pt-4">
                     <Button
                       variant="outline"
@@ -501,7 +503,7 @@ export default function DatabasePage() {
           )}
 
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+            <DialogContent className="sm:max-w-3xl">
               <DialogHeader>
                 <DialogTitle>Edit Record</DialogTitle>
                 <DialogDescription>
@@ -509,19 +511,21 @@ export default function DatabasePage() {
                 </DialogDescription>
               </DialogHeader>
               <div className="mt-4 space-y-4">
-                {fields
-                  .filter((f) => f.name !== 'id' && f.name !== 'created_at')
-                  .map((field) => (
-                    <div key={field.name} className="space-y-2">
-                      <Label htmlFor={field.name}>
-                        {field.name}
-                        <Badge variant="outline" className="ml-2 text-xs">
-                          {field.type}
-                        </Badge>
-                      </Label>
-                      {renderFieldInput(field)}
-                    </div>
-                  ))}
+                <div className="grid max-h-[55vh] gap-4 overflow-y-auto sm:grid-cols-2">
+                  {fields
+                    .filter((f) => f.name !== 'id' && f.name !== 'created_at')
+                    .map((field) => (
+                      <div key={field.name} className="space-y-2">
+                        <Label htmlFor={field.name}>
+                          {field.name}
+                          <Badge variant="outline" className="ml-2 text-xs">
+                            {field.type}
+                          </Badge>
+                        </Label>
+                        {renderFieldInput(field)}
+                      </div>
+                    ))}
+                </div>
                 <div className="flex justify-end gap-2 pt-4">
                   <Button
                     variant="outline"
@@ -538,7 +542,7 @@ export default function DatabasePage() {
           </Dialog>
 
           <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-            <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+            <DialogContent className="sm:max-w-3xl">
               <DialogHeader>
                 <DialogTitle>View Record</DialogTitle>
                 <DialogDescription>

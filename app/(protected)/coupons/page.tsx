@@ -298,7 +298,7 @@ export default function CouponsPage() {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+        <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>
               {editTarget ? t('coupons.editCoupon') : t('coupons.createCoupon')}
@@ -306,7 +306,9 @@ export default function CouponsPage() {
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              {/* Flat grid: conditional fields take the next free cell instead
+                  of adding a row, which keeps the panel off a scrollbar. */}
+              <div className="grid gap-4 sm:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="code"
@@ -346,20 +348,64 @@ export default function CouponsPage() {
                     </FormItem>
                   )}
                 />
-              </div>
 
-              {(couponType === 'PERCENT' || couponType === 'FIXED') && (
-                <div className="grid grid-cols-2 gap-4">
+                {(couponType === 'PERCENT' || couponType === 'FIXED') && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="discount_value"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {couponType === 'PERCENT'
+                              ? t('coupons.discountPercent')
+                              : t('coupons.fixedAmount')}
+                          </FormLabel>
+                          <FormControl>
+                            <NumberInput
+                              name={field.name}
+                              ref={field.ref}
+                              value={field.value ?? ''}
+                              onChange={(raw) =>
+                                field.onChange(raw === '' ? '' : Number(raw))
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="max_discount_amount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('coupons.maxDiscount')}</FormLabel>
+                          <FormControl>
+                            <NumberInput
+                              name={field.name}
+                              ref={field.ref}
+                              value={field.value ?? ''}
+                              onChange={(raw) =>
+                                field.onChange(
+                                  raw === '' ? undefined : Number(raw)
+                                )
+                              }
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
+
+                {couponType === 'FREE_TRIAL' && (
                   <FormField
                     control={form.control}
-                    name="discount_value"
+                    name="free_trial_days"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          {couponType === 'PERCENT'
-                            ? t('coupons.discountPercent')
-                            : t('coupons.fixedAmount')}
-                        </FormLabel>
+                        <FormLabel>{t('coupons.freeTrialDays')}</FormLabel>
                         <FormControl>
                           <NumberInput
                             name={field.name}
@@ -374,54 +420,8 @@ export default function CouponsPage() {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="max_discount_amount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('coupons.maxDiscount')}</FormLabel>
-                        <FormControl>
-                          <NumberInput
-                            name={field.name}
-                            ref={field.ref}
-                            value={field.value ?? ''}
-                            onChange={(raw) =>
-                              field.onChange(
-                                raw === '' ? undefined : Number(raw)
-                              )
-                            }
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
+                )}
 
-              {couponType === 'FREE_TRIAL' && (
-                <FormField
-                  control={form.control}
-                  name="free_trial_days"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('coupons.freeTrialDays')}</FormLabel>
-                      <FormControl>
-                        <NumberInput
-                          name={field.name}
-                          ref={field.ref}
-                          value={field.value ?? ''}
-                          onChange={(raw) =>
-                            field.onChange(raw === '' ? '' : Number(raw))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="start_date"
@@ -448,9 +448,7 @@ export default function CouponsPage() {
                     </FormItem>
                   )}
                 />
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="usage_type"
@@ -499,28 +497,28 @@ export default function CouponsPage() {
                     )}
                   />
                 )}
-              </div>
 
-              <FormField
-                control={form.control}
-                name="academy_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('coupons.academyId')}</FormLabel>
-                    <FormControl>
-                      <NumberInput
-                        name={field.name}
-                        ref={field.ref}
-                        value={field.value ?? ''}
-                        onChange={(raw) =>
-                          field.onChange(raw === '' ? '' : Number(raw))
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="academy_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('coupons.academyId')}</FormLabel>
+                      <FormControl>
+                        <NumberInput
+                          name={field.name}
+                          ref={field.ref}
+                          value={field.value ?? ''}
+                          onChange={(raw) =>
+                            field.onChange(raw === '' ? '' : Number(raw))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div className="flex justify-end gap-2 pt-2">
                 <Button

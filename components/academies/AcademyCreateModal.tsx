@@ -144,10 +144,7 @@ export function AcademyCreateModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent
-        dir="rtl"
-        className="beautiful-scrollbar max-h-[90vh] gap-5 overflow-y-auto rounded-2xl sm:max-w-[560px]"
-      >
+      <DialogContent dir="rtl" className="gap-5 rounded-2xl sm:max-w-3xl">
         <DialogHeader className="text-right">
           <p className="text-xs text-muted-foreground">
             {t('stores.createModalTitle')}
@@ -157,7 +154,9 @@ export function AcademyCreateModal({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-3">
+        {/* Three columns: the short settings share the top row so branding and
+            description fit without a scrollbar. */}
+        <div className="grid gap-4 sm:grid-cols-3">
           <div>
             <label className="mb-1 block text-sm font-medium">
               {t('stores.academyName')}
@@ -175,47 +174,68 @@ export function AcademyCreateModal({
             onChange={handleSlugChange}
             t={t}
           />
-        </div>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium">
-            {t('stores.mainCategory')}
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {CATEGORY_KEYS.map((key) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setCategory(category === key ? '' : key)}
-                className={cn(
-                  'rounded-full border px-3 py-1 text-sm transition-colors',
-                  category === key
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-background text-foreground hover:border-primary/50'
-                )}
-              >
-                {t(
-                  `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`
-                )}
-              </button>
-            ))}
+          <div>
+            <label className="mb-2 block text-sm font-medium">
+              {t('stores.brandingColor')}
+            </label>
+            <div className="flex flex-wrap gap-2.5">
+              {BRAND_COLORS.map(({ hex, tw }) => (
+                <button
+                  key={hex}
+                  type="button"
+                  aria-label={hex}
+                  onClick={() => setPrimaryColor(hex)}
+                  className={cn(
+                    'h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
+                    tw,
+                    primaryColor === hex
+                      ? 'scale-110 border-foreground shadow-md'
+                      : 'border-transparent'
+                  )}
+                />
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            {t('stores.shortDescription')}
-          </label>
-          <Textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder={t('stores.shortDescriptionPlaceholder')}
-            rows={3}
-            className="resize-none"
-          />
-        </div>
+          <div className="sm:col-span-3">
+            <label className="mb-2 block text-sm font-medium">
+              {t('stores.mainCategory')}
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORY_KEYS.map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setCategory(category === key ? '' : key)}
+                  className={cn(
+                    'rounded-full border px-3 py-1 text-sm transition-colors',
+                    category === key
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border bg-background text-foreground hover:border-primary/50'
+                  )}
+                >
+                  {t(
+                    `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <div className="grid grid-cols-2 gap-4">
+          <div className="sm:col-span-2">
+            <label className="mb-1 block text-sm font-medium">
+              {t('stores.shortDescription')}
+            </label>
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={t('stores.shortDescriptionPlaceholder')}
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+
           <div>
             <label className="mb-2 block text-sm font-medium">
               {t('stores.brandingLogo')}
@@ -251,32 +271,6 @@ export function AcademyCreateModal({
               className="hidden"
               onChange={handleLogoChange}
             />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              {t('stores.brandingColor')}
-            </label>
-            <div className="flex flex-wrap gap-2.5">
-              {BRAND_COLORS.map(({ hex, tw }) => (
-                <button
-                  key={hex}
-                  type="button"
-                  aria-label={hex}
-                  onClick={() => setPrimaryColor(hex)}
-                  className={cn(
-                    'h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
-                    tw,
-                    primaryColor === hex
-                      ? 'scale-110 border-foreground shadow-md'
-                      : 'border-transparent'
-                  )}
-                />
-              ))}
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground" dir="ltr">
-              {primaryColor}
-            </p>
           </div>
         </div>
 
