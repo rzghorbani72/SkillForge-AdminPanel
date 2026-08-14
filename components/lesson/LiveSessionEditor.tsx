@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api';
 import type { LiveSession } from '@/types/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,11 +12,10 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { toast } from 'react-toastify';
-import { tNow } from '@/lib/i18n/t-now';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { ErrorHandler } from '@/lib/error-handler';
 import { Video } from 'lucide-react';
+import LiveSessionRecurrence from './LiveSessionRecurrence';
+import { defaultTimezone, useLiveSessionForm } from './use-live-session-form';
 
 type Props = {
   lessonId: string;
@@ -26,104 +23,9 @@ type Props = {
   onSaved?: () => void;
 };
 
-function toDatetimeLocalValue(iso: string | undefined): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function fromDatetimeLocal(value: string): string {
-  if (!value) return '';
-  return new Date(value).toISOString();
-}
-
-const defaultTimezone = () =>
-  Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-
 const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
   const { t } = useTranslation();
-  const [meetingUrl, setMeetingUrl] = useState(initial?.meeting_url ?? '');
-  const [label, setLabel] = useState(initial?.provider_label ?? '');
-  const [startsAt, setStartsAt] = useState(
-    toDatetimeLocalValue(initial?.starts_at)
-  );
-  const [durationMinutes, setDurationMinutes] = useState(
-    initial?.duration_minutes != null ? String(initial.duration_minutes) : '60'
-  );
-  const [saving, setSaving] = useState(false);
-  const [removing, setRemoving] = useState(false);
-
-  useEffect(() => {
-    setMeetingUrl(initial?.meeting_url ?? '');
-    setLabel(initial?.provider_label ?? '');
-    setStartsAt(toDatetimeLocalValue(initial?.starts_at));
-    setDurationMinutes(
-      initial?.duration_minutes != null
-        ? String(initial.duration_minutes)
-        : '60'
-    );
-  }, [initial]);
-
-  const handleSave = async () => {
-    const url = meetingUrl.trim();
-    if (!url.startsWith('https://')) {
-      toast.error(tNow('toasts.liveLinkHttps'));
-      return;
-    }
-    if (!startsAt) {
-      toast.error(tNow('toasts.liveStartRequired'));
-      return;
-    }
-    const duration = parseInt(durationMinutes, 10);
-    if (!duration || duration < 1) {
-      toast.error(tNow('toasts.liveDurationMin'));
-      return;
-    }
-
-    setSaving(true);
-    try {
-      await apiClient.upsertLiveSession(lessonId, {
-        meeting_url: url,
-        playback_url: null,
-        starts_at: fromDatetimeLocal(startsAt),
-        ends_at: null,
-        duration_minutes: duration,
-        timezone: defaultTimezone(),
-        recurrence_rule: null,
-        recurrence_until: null,
-        provider_label: label.trim() || null,
-        notes: null
-      });
-      toast.success(tNow('toasts.liveSaved'));
-      onSaved?.();
-    } catch (e) {
-      ErrorHandler.handleApiError(e);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleRemove = async () => {
-    if (!initial?.id) {
-      return;
-    }
-    setRemoving(true);
-    try {
-      await apiClient.deleteLiveSession(lessonId);
-      toast.success(tNow('toasts.liveRemoved'));
-      setMeetingUrl('');
-      setLabel('');
-      setStartsAt('');
-      setDurationMinutes('60');
-      onSaved?.();
-    } catch (e) {
-      ErrorHandler.handleApiError(e);
-    } finally {
-      setRemoving(false);
-    }
-  };
+  const form = useLiveSessionForm({ lessonId, initial, onSaved });
 
   return (
     <Card className="border-dashed">
@@ -147,8 +49,8 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
           <Input
             id="live-meeting-url"
             dir="ltr"
-            value={meetingUrl}
-            onChange={(e) => setMeetingUrl(e.target.value)}
+            value={form.meetingUrl}
+            onChange={(e) => form.setMeetingUrl(e.target.value)}
             placeholder="https://meet.google.com/..."
           />
         </div>
@@ -158,8 +60,8 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
           </Label>
           <Input
             id="live-label"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
+            value={form.label}
+            onChange={(e) => form.setLabel(e.target.value)}
             placeholder={t('courses.liveSession.labelPlaceholder')}
           />
         </div>
@@ -173,8 +75,8 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
               id="live-starts"
               type="datetime-local"
               dir="ltr"
-              value={startsAt}
-              onChange={(e) => setStartsAt(e.target.value)}
+              value={form.startsAt}
+              onChange={(e) => form.setStartsAt(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -184,23 +86,31 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
             </Label>
             <NumberInput
               id="live-duration"
-              value={durationMinutes}
-              onChange={(raw) => setDurationMinutes(raw)}
+              value={form.durationMinutes}
+              onChange={(raw) => form.setDurationMinutes(raw)}
             />
           </div>
         </div>
+        <LiveSessionRecurrence
+          repeats={form.repeats}
+          days={form.repeatDays}
+          until={form.repeatUntil}
+          onRepeatsChange={form.enableRepeats}
+          onDaysChange={form.setRepeatDays}
+          onUntilChange={form.setRepeatUntil}
+        />
         <div className="flex flex-wrap gap-2">
-          <Button type="button" onClick={handleSave} disabled={saving}>
-            {saving ? t('common.saving') : t('courses.liveSession.save')}
+          <Button type="button" onClick={form.save} disabled={form.saving}>
+            {form.saving ? t('common.saving') : t('courses.liveSession.save')}
           </Button>
           {initial?.id ? (
             <Button
               type="button"
               variant="outline"
-              onClick={handleRemove}
-              disabled={removing}
+              onClick={form.remove}
+              disabled={form.removing}
             >
-              {removing
+              {form.removing
                 ? t('courses.liveSession.removing')
                 : t('courses.liveSession.remove')}
             </Button>

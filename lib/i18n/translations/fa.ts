@@ -2,6 +2,15 @@
  * Persian (Farsi) translations for Admin Panel - RTL
  */
 export const fa = {
+  weekdays: {
+    saturday: 'شنبه',
+    sunday: 'یکشنبه',
+    monday: 'دوشنبه',
+    tuesday: 'سه‌شنبه',
+    wednesday: 'چهارشنبه',
+    thursday: 'پنجشنبه',
+    friday: 'جمعه'
+  },
   validation: {
     titleMin3: 'عنوان باید حداقل ۳ کاراکتر باشد',
     titleMin5: 'عنوان باید حداقل ۵ کاراکتر باشد',
@@ -82,6 +91,7 @@ export const fa = {
     liveLinkHttps: 'لینک جلسه باید با https شروع شود',
     liveStartRequired: 'تاریخ و ساعت شروع الزامی است',
     liveDurationMin: 'مدت جلسه باید حداقل ۱ دقیقه باشد',
+    liveRepeatUntilAfterStart: 'تاریخ پایان تکرار باید بعد از زمان شروع باشد',
     liveSaved: 'جلسهٔ زنده ذخیره شد',
     liveRemoved: 'جلسهٔ زنده حذف شد',
     coursesLoadFailed: 'بارگذاری دوره‌ها انجام نشد',
@@ -1580,6 +1590,10 @@ export const fa = {
       labelPlaceholder: 'مثال: جلسهٔ اول — Google Meet',
       startsLabel: 'زمان شروع',
       durationLabel: 'مدت (دقیقه)',
+      repeatLabel: 'تکرار هفتگی',
+      repeatHint: 'برای کلاس گروهی که هر هفته در همان روزها برگزار می‌شود.',
+      repeatUntilLabel: 'تکرار تا تاریخ',
+      repeatUntilHint: 'معمولاً آخرین روز ترم. خالی بگذارید تا ادامه پیدا کند.',
       save: 'ذخیرهٔ جلسه',
       remove: 'حذف جلسه',
       removing: 'در حال حذف…'

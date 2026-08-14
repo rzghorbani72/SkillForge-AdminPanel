@@ -2,6 +2,15 @@
  * English translations for Admin Panel
  */
 export const en = {
+  weekdays: {
+    saturday: 'Saturday',
+    sunday: 'Sunday',
+    monday: 'Monday',
+    tuesday: 'Tuesday',
+    wednesday: 'Wednesday',
+    thursday: 'Thursday',
+    friday: 'Friday'
+  },
   validation: {
     titleMin3: 'Title must be at least 3 characters',
     titleMin5: 'Title must be at least 5 characters',
@@ -84,6 +93,7 @@ export const en = {
     liveLinkHttps: 'The meeting link must start with https',
     liveStartRequired: 'Start date and time are required',
     liveDurationMin: 'Duration must be at least 1 minute',
+    liveRepeatUntilAfterStart: 'The repeat end date must be after the start',
     liveSaved: 'Live session saved',
     liveRemoved: 'Live session removed',
     coursesLoadFailed: 'Could not load the courses',
@@ -1586,6 +1596,11 @@ export const en = {
       labelPlaceholder: 'e.g. Week 1 kickoff — Google Meet',
       startsLabel: 'Starts at',
       durationLabel: 'Duration (minutes)',
+      repeatLabel: 'Repeat every week',
+      repeatHint: 'For a group class that runs on the same weekdays each week.',
+      repeatUntilLabel: 'Repeat until',
+      repeatUntilHint:
+        'Usually the last day of the term. Leave empty to keep going.',
       save: 'Save meeting',
       remove: 'Clear meeting',
       removing: 'Clearing…'
