@@ -177,11 +177,15 @@ export function useCourseForm(courseId: string) {
         if (!silent) toast.error(t('toasts.selectAcademyFirst'));
         return false;
       }
+      // Lock immediately so a second autosave/manual save cannot race past the
+      // fingerprint check and double-create seasons/lessons (409 duplicate).
       if (savingRef.current) return false;
+      savingRef.current = true;
 
       if (data.published) {
         const problem = validateForPublish(seasons, lessons);
         if (problem) {
+          savingRef.current = false;
           if (!silent) toast.error(t(problem));
           return false;
         }
@@ -232,17 +236,16 @@ export function useCourseForm(courseId: string) {
       const hasDeletes =
         deletedSeasonIds.length > 0 || deletedLessonIds.length > 0;
       if (!hasDeletes && fingerprint === lastSavedRef.current) {
+        savingRef.current = false;
         setSaveStatus('saved');
         if (!silent) toast.success(t('courses.updatedToast'));
         return true;
       }
 
-      savingRef.current = true;
       setSaveStatus('saving');
       try {
         const response = await apiClient.updateCourseContent(courseId, payload);
         clearDeleted();
-        lastSavedRef.current = fingerprint;
 
         // The backend never learns a draft's clientKey — it only echoes back
         // which real id it created for it. Without writing that id back here,
@@ -256,22 +259,37 @@ export function useCourseForm(courseId: string) {
             };
           }
         )?.data;
-        if (saved?.season_ids) {
-          const ids = saved.season_ids;
+
+        const seasonIds = saved?.season_ids;
+        const lessonIds = saved?.lesson_ids;
+        if (seasonIds) {
           setSeasons((prev) =>
             prev.map((s) =>
-              ids[s.clientKey] ? { ...s, id: ids[s.clientKey] } : s
+              seasonIds[s.clientKey] ? { ...s, id: seasonIds[s.clientKey] } : s
             )
           );
         }
-        if (saved?.lesson_ids) {
-          const ids = saved.lesson_ids;
+        if (lessonIds) {
           setLessons((prev) =>
             prev.map((l) =>
-              ids[l.clientKey] ? { ...l, id: ids[l.clientKey] } : l
+              lessonIds[l.clientKey] ? { ...l, id: lessonIds[l.clientKey] } : l
             )
           );
         }
+
+        // Fingerprint must include the ids we just received, otherwise the next
+        // autosave looks "changed" only because ids appeared and re-POSTs creates.
+        lastSavedRef.current = JSON.stringify({
+          ...payload,
+          seasons: payload.seasons.map((s) => ({
+            ...s,
+            id: s.id ?? seasonIds?.[s.client_key]
+          })),
+          lessons: payload.lessons.map((l) => ({
+            ...l,
+            id: l.id ?? lessonIds?.[l.client_key]
+          }))
+        });
 
         setSaveStatus('saved');
         // Autosave stays quiet (the status indicator is feedback enough); a

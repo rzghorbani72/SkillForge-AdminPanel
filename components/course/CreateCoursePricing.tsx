@@ -33,9 +33,9 @@ export default function CreateCoursePricing({ form }: Props) {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* Sale price */}
-            <div className="w-full max-w-[17rem] space-y-3 rounded-lg border p-4">
+            <div className="min-w-0 space-y-3 rounded-lg border p-4">
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4 shrink-0 text-primary" />
                 <span className="text-sm font-medium">
@@ -68,7 +68,7 @@ export default function CreateCoursePricing({ form }: Props) {
             </div>
 
             {/* Original / crossed-out price */}
-            <div className="w-full max-w-[17rem] space-y-3 rounded-lg border p-4">
+            <div className="min-w-0 space-y-3 rounded-lg border p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <Tag className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="text-sm font-medium">
