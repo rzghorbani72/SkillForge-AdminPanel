@@ -502,6 +502,9 @@ export const tr = {
     phoneRequired: 'Telefon numarası gereklidir',
     emailRequired: 'E-posta gereklidir',
     passwordTooShort: 'Şifre en az 6 karakter olmalıdır',
+    passwordAsciiOnly:
+      'Şifre yalnızca İngilizce harf, rakam ve sembol içerebilir',
+    passwordAsciiOnlyHint: 'Yalnızca İngilizce harf, rakam ve sembol',
     selectStore: 'Lütfen bir enstitü seçin',
     backToLogin: 'Girişe Dön',
     verifyYourContact: 'İletişim Bilgilerinizi Doğrulayın',

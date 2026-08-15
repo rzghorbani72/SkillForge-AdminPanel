@@ -744,6 +744,9 @@ export const fa = {
     phoneRequired: 'شماره تلفن الزامی است',
     emailRequired: 'ایمیل الزامی است',
     passwordTooShort: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
+    passwordAsciiOnly:
+      'رمز عبور فقط می‌تواند شامل حروف انگلیسی، عدد و نماد باشد',
+    passwordAsciiOnlyHint: 'فقط حروف انگلیسی، عدد و نماد',
     passwordMinLength: 'حداقل ۶ کاراکتر',
     passwordHasLetter: 'شامل حرف باشد',
     passwordHasNumber: 'شامل عدد باشد',
@@ -5239,6 +5242,8 @@ export const fa = {
       '{field} یک شماره تلفن معتبر نیست. شماره را همراه با کد کشور وارد کنید.',
     VALIDATION_PATTERN:
       'قالب {field} درست نیست. لطفاً آن را مطابق راهنمای فیلد وارد کنید.',
+    VALIDATION_PASSWORD_ASCII:
+      '{field} فقط می‌تواند شامل حروف انگلیسی، عدد و نماد باشد. ارقام فارسی به انگلیسی تبدیل می‌شوند.',
     VALIDATION_STRING: '{field} باید متن باشد.',
     VALIDATION_NUMBER: '{field} باید عدد باشد.',
     VALIDATION_MIN: '{field} نباید کمتر از {min} باشد.',

@@ -9,7 +9,7 @@ import {
 } from '@/components/auth/auth-fields';
 import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
 import Link from '@/components/ui/link';
-import { toEnglishDigits } from '@/lib/phone-utils';
+import { sanitizePasswordInput } from '@/lib/password-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface PasswordStepProps {
@@ -80,7 +80,9 @@ export function PasswordStep({
           autoComplete="current-password"
           autoFocus
           value={password}
-          onChange={(e) => onPasswordChange(toEnglishDigits(e.target.value))}
+          onChange={(e) =>
+            onPasswordChange(sanitizePasswordInput(e.target.value))
+          }
           error={error}
           disabled={isLoading}
         />

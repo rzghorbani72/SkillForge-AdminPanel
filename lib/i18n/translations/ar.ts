@@ -494,6 +494,9 @@ export const ar = {
     phoneRequired: 'رقم الهاتف مطلوب',
     emailRequired: 'البريد الإلكتروني مطلوب',
     passwordTooShort: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
+    passwordAsciiOnly:
+      'كلمة المرور قد تحتوي فقط على أحرف إنجليزية وأرقام ورموز',
+    passwordAsciiOnlyHint: 'أحرف إنجليزية وأرقام ورموز فقط',
     selectStore: 'الرجاء اختيار معهد',
     backToLogin: 'العودة إلى تسجيل الدخول',
     verifyYourContact: 'تحقق من معلومات الاتصال الخاصة بك',

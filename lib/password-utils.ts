@@ -1,7 +1,24 @@
+import { toEnglishDigits } from '@/lib/phone-utils';
+
 const LOWER = 'abcdefghjkmnpqrstuvwxyz'; // no i/l/o — avoid look-alikes
 const UPPER = 'ABCDEFGHJKMNPQRSTUVWXYZ';
 const DIGITS = '23456789'; // no 0/1 — avoid look-alikes
 const ALL = LOWER + UPPER + DIGITS;
+
+/** Printable ASCII (English letters, digits, symbols). */
+const NON_ASCII_PRINTABLE = /[^\x20-\x7E]/g;
+
+/**
+ * Convert Persian/Arabic digits to English and drop any non-English character
+ * so the password field never accepts Persian letters or other scripts.
+ */
+export function sanitizePasswordInput(value: string): string {
+  return toEnglishDigits(value).replace(NON_ASCII_PRINTABLE, '');
+}
+
+export function isAsciiPassword(value: string): boolean {
+  return !/[^\x20-\x7E]/.test(value);
+}
 
 function randomChar(pool: string): string {
   const bytes = new Uint32Array(1);

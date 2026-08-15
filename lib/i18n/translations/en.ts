@@ -756,6 +756,9 @@ export const en = {
     phoneRequired: 'Phone number is required',
     emailRequired: 'Email is required',
     passwordTooShort: 'Password must be at least 6 characters',
+    passwordAsciiOnly:
+      'Password may only contain English letters, numbers, and symbols',
+    passwordAsciiOnlyHint: 'English letters, numbers, and symbols only',
     passwordMinLength: 'At least 6 characters',
     passwordHasLetter: 'Contains a letter',
     passwordHasNumber: 'Contains a number',
@@ -5250,6 +5253,8 @@ export const en = {
       '{field} is not a valid phone number. Enter it with the country code.',
     VALIDATION_PATTERN:
       'The format of {field} is not correct. Please enter it as the field describes.',
+    VALIDATION_PASSWORD_ASCII:
+      '{field} may only contain English letters, numbers, and symbols. Persian digits are converted to English.',
     VALIDATION_STRING: '{field} must be text.',
     VALIDATION_NUMBER: '{field} must be a number.',
     VALIDATION_MIN: '{field} must not be less than {min}.',

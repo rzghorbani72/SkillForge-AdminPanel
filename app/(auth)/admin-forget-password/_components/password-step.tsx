@@ -2,6 +2,7 @@
 
 import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
 import { Button } from '@/components/ui/button';
+import { sanitizePasswordInput } from '@/lib/password-utils';
 import type { useAdminForgetPassword } from '../use-admin-forget-password';
 
 type Fp = ReturnType<typeof useAdminForgetPassword>;
@@ -26,7 +27,12 @@ export function PasswordStep({ fp }: { fp: Fp }) {
         dir="ltr"
         autoComplete="new-password"
         value={fp.formData.password}
-        onChange={(e) => fp.handleInputChange('password', e.target.value)}
+        onChange={(e) =>
+          fp.handleInputChange(
+            'password',
+            sanitizePasswordInput(e.target.value)
+          )
+        }
         error={fp.errors.password}
         disabled={fp.isLoading}
       />
@@ -38,7 +44,10 @@ export function PasswordStep({ fp }: { fp: Fp }) {
         autoComplete="new-password"
         value={fp.formData.confirmed_password}
         onChange={(e) =>
-          fp.handleInputChange('confirmed_password', e.target.value)
+          fp.handleInputChange(
+            'confirmed_password',
+            sanitizePasswordInput(e.target.value)
+          )
         }
         error={fp.errors.confirmed_password}
         disabled={fp.isLoading}

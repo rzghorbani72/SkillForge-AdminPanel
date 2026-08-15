@@ -24,7 +24,9 @@ export function validateEmail(value: string): ValidationKey {
 
 export function validatePassword(value: string): ValidationKey {
   if (!value) return 'auth.passwordRequired';
-  return value.length < MIN_PASSWORD_LENGTH ? 'auth.passwordTooShort' : null;
+  if (value.length < MIN_PASSWORD_LENGTH) return 'auth.passwordTooShort';
+  if (!/^[\x20-\x7E]+$/.test(value)) return 'auth.passwordAsciiOnly';
+  return null;
 }
 
 export function validateConfirmPassword(

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { authService } from '@/lib/auth';
 import { apiClient } from '@/lib/api';
 import { toEnglishDigits } from '@/lib/phone-utils';
+import { sanitizePasswordInput } from '@/lib/password-utils';
 import { ErrorHandler } from '@/lib/error-handler';
 import { notifyOtpSent } from '@/lib/otp-notify';
 import {
@@ -161,7 +162,11 @@ export function useAdminLogin() {
   };
 
   const handleInputChange = (field: keyof AdminLoginFields, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: toEnglishDigits(value) }));
+    const next =
+      field === 'password'
+        ? sanitizePasswordInput(value)
+        : toEnglishDigits(value);
+    setFormData((prev) => ({ ...prev, [field]: next }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 

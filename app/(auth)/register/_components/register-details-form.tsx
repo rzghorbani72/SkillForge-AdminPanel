@@ -5,6 +5,7 @@ import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
 import { LegalConsentCheckbox } from '@/components/auth/legal-consent-checkbox';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toEnglishDigits } from '@/lib/phone-utils';
+import { sanitizePasswordInput } from '@/lib/password-utils';
 
 export type RegisterValues = {
   name: string;
@@ -22,6 +23,7 @@ interface RegisterDetailsFormProps {
 }
 
 const toEnglish = (value: string) => toEnglishDigits(value);
+const toPassword = (value: string) => sanitizePasswordInput(value);
 
 /** Rewrites Persian/Arabic digits to English while the user is typing. */
 const withEnglishDigits = (
@@ -30,6 +32,17 @@ const withEnglishDigits = (
   ...field,
   onChange: (event: { target: HTMLInputElement }) => {
     event.target.value = toEnglishDigits(event.target.value);
+    return field.onChange(event);
+  }
+});
+
+/** Converts Persian digits and strips non-English password characters. */
+const withAsciiPassword = (
+  field: UseFormRegisterReturn
+): UseFormRegisterReturn => ({
+  ...field,
+  onChange: (event: { target: HTMLInputElement }) => {
+    event.target.value = sanitizePasswordInput(event.target.value);
     return field.onChange(event);
   }
 });
@@ -85,8 +98,8 @@ export function RegisterDetailsForm({
         autoComplete="new-password"
         error={errors.password?.message}
         disabled={loading}
-        {...withEnglishDigits(
-          form.register('password', { setValueAs: toEnglish })
+        {...withAsciiPassword(
+          form.register('password', { setValueAs: toPassword })
         )}
       />
 
@@ -96,8 +109,8 @@ export function RegisterDetailsForm({
         autoComplete="new-password"
         error={errors.confirmPassword?.message}
         disabled={loading}
-        {...withEnglishDigits(
-          form.register('confirmPassword', { setValueAs: toEnglish })
+        {...withAsciiPassword(
+          form.register('confirmPassword', { setValueAs: toPassword })
         )}
       />
 

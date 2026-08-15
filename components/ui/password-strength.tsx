@@ -8,25 +8,22 @@ export interface PasswordChecks {
   minLength: boolean;
   hasLetter: boolean;
   hasNumber: boolean;
+  asciiOnly: boolean;
 }
 
-const ANY_DIGIT = /[0-9۰-۹٠-٩]/g;
-// After stripping every digit (Western + Persian + Arabic-Indic), anything left in the
-// Latin or Arabic/Persian Unicode block is a real letter — this avoids the ES6-only
-// \p{L} unicode property escape, which the project's es5 tsconfig target rejects.
-const LETTER_RANGE = /[a-zA-Z؀-ۿ]/;
-
 export function getPasswordChecks(password: string): PasswordChecks {
+  const normalized = toEnglishDigits(password);
   return {
-    minLength: password.length >= 6,
-    hasLetter: LETTER_RANGE.test(password.replace(ANY_DIGIT, '')),
-    hasNumber: /[0-9]/.test(toEnglishDigits(password))
+    minLength: normalized.length >= 6,
+    hasLetter: /[a-zA-Z]/.test(normalized),
+    hasNumber: /[0-9]/.test(normalized),
+    asciiOnly: /^[\x20-\x7E]*$/.test(normalized)
   };
 }
 
 export function isPasswordValid(password: string): boolean {
   const c = getPasswordChecks(password);
-  return c.minLength && c.hasLetter && c.hasNumber;
+  return c.minLength && c.hasLetter && c.hasNumber && c.asciiOnly;
 }
 
 interface PasswordStrengthProps {
@@ -41,7 +38,8 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
   const items: { key: keyof PasswordChecks; label: string }[] = [
     { key: 'minLength', label: t('auth.passwordMinLength') },
     { key: 'hasLetter', label: t('auth.passwordHasLetter') },
-    { key: 'hasNumber', label: t('auth.passwordHasNumber') }
+    { key: 'hasNumber', label: t('auth.passwordHasNumber') },
+    { key: 'asciiOnly', label: t('auth.passwordAsciiOnlyHint') }
   ];
 
   return (

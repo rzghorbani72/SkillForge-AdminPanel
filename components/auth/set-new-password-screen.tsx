@@ -7,7 +7,7 @@ import {
   PasswordStrength,
   isPasswordValid
 } from '@/components/ui/password-strength';
-import { toEnglishDigits } from '@/lib/phone-utils';
+import { sanitizePasswordInput } from '@/lib/password-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface SetNewPasswordScreenProps {
@@ -55,7 +55,7 @@ export function SetNewPasswordScreen({
             autoComplete="new-password"
             autoFocus
             value={password}
-            onChange={(e) => setPassword(toEnglishDigits(e.target.value))}
+            onChange={(e) => setPassword(sanitizePasswordInput(e.target.value))}
             disabled={loading}
           />
           <PasswordStrength password={password} />
@@ -67,7 +67,7 @@ export function SetNewPasswordScreen({
           autoComplete="new-password"
           value={confirmPassword}
           onChange={(e) =>
-            setConfirmPassword(toEnglishDigits(e.target.value))
+            setConfirmPassword(sanitizePasswordInput(e.target.value))
           }
           error={
             confirmPassword && !isConfirmReady
@@ -77,10 +77,14 @@ export function SetNewPasswordScreen({
           disabled={loading}
         />
 
-        {error && <p className="text-center text-sm text-destructive">{error}</p>}
+        {error && (
+          <p className="text-center text-sm text-destructive">{error}</p>
+        )}
 
         <AuthSubmit loading={loading} disabled={!canSubmit}>
-          {loading ? t('auth.settingPassword') : t('auth.setPasswordAndContinue')}
+          {loading
+            ? t('auth.settingPassword')
+            : t('auth.setPasswordAndContinue')}
         </AuthSubmit>
       </form>
     </AuthShell>
