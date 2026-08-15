@@ -77,7 +77,7 @@ export function AccessPricingPicker({
       </div>
 
       {value.mode === 'DISCOUNT' && (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-wrap gap-2">
           <select
             disabled={disabled}
             value={value.discount_type}
@@ -88,7 +88,7 @@ export function AccessPricingPicker({
                   event.target.value === 'AMOUNT' ? 'AMOUNT' : 'PERCENT'
               })
             }
-            className="h-10 rounded-md border bg-background px-3 text-sm"
+            className="h-10 w-[9.5rem] rounded-md border bg-background px-3 text-sm"
             aria-label={t('accessGrants.discountType')}
           >
             <option value="PERCENT">{t('accessGrants.discountPercent')}</option>
@@ -104,6 +104,7 @@ export function AccessPricingPicker({
               })
             }
             aria-label={t('accessGrants.discountValue')}
+            className="h-10 w-[8.5rem]"
           />
         </div>
       )}
