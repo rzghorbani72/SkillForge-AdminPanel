@@ -292,11 +292,6 @@ export const navItems: NavItem[] = [
     section: 'manage',
     children: [
       {
-        title: 'Students',
-        href: '/users?role=STUDENT',
-        label: 'all-students'
-      },
-      {
         title: 'Users',
         href: '/users',
         label: 'users-list'
@@ -310,18 +305,6 @@ export const navItems: NavItem[] = [
         title: 'Requests',
         href: '/users?tab=requests',
         label: 'requests'
-      },
-      {
-        title: 'Enrollments',
-        href: '/users?tab=enrollments',
-        label: 'enrollments',
-        requiresLearningCapability: 'students'
-      },
-      {
-        title: 'Progress',
-        href: '/users?tab=progress',
-        label: 'progress',
-        requiresLearningCapability: 'students'
       }
     ]
   },
