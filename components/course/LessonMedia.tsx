@@ -1,30 +1,52 @@
 'use client';
 
-import { FileText, Loader2, Mic, Video, X } from 'lucide-react';
+import {
+  FileText,
+  Loader2,
+  Mic,
+  Video,
+  X,
+  type LucideIcon
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { pickFile } from '@/lib/file-picker';
-import type { LessonDraft } from './useCourseForm';
+import type { LessonDraft, LessonType } from './useCourseForm';
+import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
 
 type SlotKey = 'video' | 'audio' | 'document';
+
+/** Compact, type-shaped upload frames — never stretch full lesson width. */
+type SlotShape = 'video' | 'audio' | 'document';
+
+const SHAPE_CLASS: Record<SlotShape, string> = {
+  // Mini player poster
+  video: 'w-full max-w-[220px] aspect-video justify-center',
+  // Compact horizontal strip
+  audio: 'w-full max-w-[280px] h-14 flex-row justify-start gap-3 px-4',
+  // Paper card
+  document: 'w-full max-w-[168px] aspect-[3/4] flex-col justify-center'
+};
 
 function ProgressBar({ value }: { value: number }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (ref.current) ref.current.style.width = `${value}%`;
   }, [value]);
-  return <div ref={ref} className="h-full bg-primary transition-all" />;
+  return <div ref={ref} className="h-full bg-current transition-all" />;
 }
 
 interface UploadSlotProps {
   label: string;
-  icon: React.ReactNode;
+  Icon: LucideIcon;
   uploadLabel: string;
   accept: string;
-  /** Preview node when a file is attached, otherwise null */
+  shape: SlotShape;
+  toneClass: string;
   filled: React.ReactNode | null;
   uploading: boolean;
   progress: number;
@@ -34,9 +56,11 @@ interface UploadSlotProps {
 
 function UploadSlot({
   label,
-  icon,
+  Icon,
   uploadLabel,
   accept,
+  shape,
+  toneClass,
   filled,
   uploading,
   progress,
@@ -47,40 +71,41 @@ function UploadSlot({
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleActivate(e: React.MouseEvent<HTMLLabelElement>) {
-    // Try the async File System Access picker first — the classic
-    // <input>.click() path freezes the tab's paint while Chromium's native
-    // file dialog is open. Cancel the label's default (which would also
-    // fire the hidden input's click) so we don't open two pickers.
     e.preventDefault();
     const picked = await pickFile(accept);
     if (picked === undefined) {
-      // Unsupported browser or the picker threw — fall back to the input.
       inputRef.current?.click();
       return;
     }
     if (picked) onSelect(picked);
   }
 
+  const frameClass = cn(
+    'flex items-center rounded-lg border border-dashed transition-colors',
+    SHAPE_CLASS[shape],
+    toneClass
+  );
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <Label className="text-xs font-medium text-muted-foreground">
         {label}
       </Label>
       {filled ? (
         filled
       ) : uploading ? (
-        <div className="flex flex-col items-center gap-2 rounded-md border border-dashed p-4">
-          <div className="flex items-center gap-2 text-sm font-medium text-primary">
+        <div className={cn(frameClass, 'flex-col justify-center gap-2 p-3')}>
+          <div className="flex items-center gap-2 text-sm font-medium">
             <Loader2 className="h-4 w-4 animate-spin" />
             <span>{progress}%</span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          <div className="bg-current/15 h-1.5 w-full max-w-[140px] overflow-hidden rounded-full">
             <ProgressBar value={progress} />
           </div>
           {onCancel && (
             <button
               type="button"
-              className="text-xs text-muted-foreground hover:text-destructive"
+              className="text-xs opacity-70 hover:text-destructive hover:opacity-100"
               onClick={onCancel}
             >
               {t('courses.cancelUpload')}
@@ -90,10 +115,23 @@ function UploadSlot({
       ) : (
         <label
           onClick={handleActivate}
-          className="flex cursor-pointer flex-col items-center gap-1.5 rounded-md border border-dashed p-4 transition-colors hover:bg-muted/40"
+          className={cn(frameClass, 'cursor-pointer')}
         >
-          {icon}
-          <span className="text-xs text-muted-foreground">{uploadLabel}</span>
+          {shape === 'audio' ? (
+            <>
+              <span className="bg-current/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                <Icon className="h-4 w-4" />
+              </span>
+              <span className="min-w-0 text-xs font-medium">{uploadLabel}</span>
+            </>
+          ) : (
+            <span className="flex flex-col items-center gap-1.5 px-3 text-center">
+              <Icon className={shape === 'video' ? 'h-6 w-6' : 'h-7 w-7'} />
+              <span className="text-[11px] font-medium leading-tight">
+                {uploadLabel}
+              </span>
+            </span>
+          )}
           <input
             ref={inputRef}
             type="file"
@@ -128,6 +166,13 @@ const FALSE: Record<SlotKey, boolean> = {
   document: false
 };
 
+function toneFor(type: LessonType): string {
+  return (
+    LESSON_TYPE_BY_KEY[type]?.dropzoneClass ??
+    LESSON_TYPE_BY_KEY.VIDEO.dropzoneClass
+  );
+}
+
 export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   const { t } = useTranslation();
   const [progress, setProgress] = useState<Record<SlotKey, number>>(ZERO);
@@ -138,12 +183,13 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     document: null
   });
 
-  // One upload slot per lesson type — never mix media kinds in the same lesson.
   const type = lesson.lesson_type;
   const showVideo = type === 'VIDEO';
   const showAudio = type === 'AUDIO';
   const showDocument =
     type === 'TEXT' || type === 'QUIZ' || type === 'ASSIGNMENT';
+  const tone = toneFor(type);
+  const DocIcon = LESSON_TYPE_BY_KEY[type]?.Icon ?? FileText;
 
   async function runUpload(
     key: SlotKey,
@@ -175,13 +221,15 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-3">
       {showVideo && (
         <UploadSlot
           label={t('courses.lessonVideo')}
-          icon={<Video className="h-5 w-5 text-muted-foreground" />}
+          Icon={Video}
           uploadLabel={t('courses.uploadVideo')}
           accept="video/*"
+          shape="video"
+          toneClass={tone}
           uploading={uploading.video}
           progress={progress.video}
           onCancel={() => abortRefs.current.video?.abort()}
@@ -205,14 +253,14 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           }
           filled={
             lesson.videoPreviewUrl ? (
-              <div className="relative overflow-hidden rounded-md border bg-black/5">
+              <div className="relative w-full max-w-[220px] overflow-hidden rounded-lg border bg-black/5">
                 <video
                   src={lesson.videoPreviewUrl}
-                  className="aspect-video w-full rounded-md object-cover"
+                  className="aspect-video w-full object-cover"
                   controls={false}
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Video className="h-8 w-8 text-white/80 drop-shadow" />
+                  <Video className="h-7 w-7 text-white/80 drop-shadow" />
                 </div>
                 <button
                   type="button"
@@ -236,9 +284,11 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
       {showAudio && (
         <UploadSlot
           label={t('courses.lessonAudio')}
-          icon={<Mic className="h-5 w-5 text-muted-foreground" />}
+          Icon={Mic}
           uploadLabel={t('courses.uploadAudio')}
           accept="audio/*"
+          shape="audio"
+          toneClass={tone}
           uploading={uploading.audio}
           progress={progress.audio}
           onCancel={() => abortRefs.current.audio?.abort()}
@@ -261,7 +311,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           }
           filled={
             lesson.audioPreviewUrl ? (
-              <div className="relative rounded-md border px-3 py-2">
+              <div className="relative w-full max-w-[280px] rounded-lg border px-3 py-2">
                 <audio
                   src={lesson.audioPreviewUrl}
                   controls
@@ -289,9 +339,11 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
       {showDocument && (
         <UploadSlot
           label={t('courses.lessonDocument')}
-          icon={<FileText className="h-5 w-5 text-muted-foreground" />}
+          Icon={DocIcon}
           uploadLabel={t('courses.uploadDocument')}
           accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+          shape="document"
+          toneClass={tone}
           uploading={uploading.document}
           progress={progress.document}
           onCancel={() => abortRefs.current.document?.abort()}
@@ -314,9 +366,14 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           }
           filled={
             lesson.documentPreviewName ? (
-              <div className="relative flex items-center gap-2 rounded-md border px-3 py-3">
-                <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
-                <span className="flex-1 truncate text-xs">
+              <div
+                className={cn(
+                  'relative flex aspect-[3/4] w-full max-w-[168px] flex-col items-center justify-center gap-2 rounded-lg border px-3 py-3 text-center',
+                  tone
+                )}
+              >
+                <DocIcon className="h-7 w-7 shrink-0 opacity-80" />
+                <span className="line-clamp-3 w-full break-all text-[11px] font-medium leading-snug">
                   {lesson.documentPreviewName}
                 </span>
                 <button
@@ -328,7 +385,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                       documentPreviewName: undefined
                     })
                   }
-                  className="rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
+                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
