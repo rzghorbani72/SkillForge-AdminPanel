@@ -2798,6 +2798,14 @@ export const ar = {
       'This file type is not allowed. Please choose a supported format.',
     EXTERNAL_SERVICE_FAILED:
       'We could not reach an external service. Please try again in a moment.',
+    SUBSCRIPTION_EXPIRED:
+      'Your academy subscription has expired. Renew to restore access — your data is safe.',
+    TRIAL_EXPIRED:
+      'Your free trial has ended. Choose a plan to reactivate your academy — your data is kept for a few more days.',
+    ACADEMY_FROZEN:
+      'Your academy is locked because the subscription lapsed. Renew to restore access — your data is kept.',
+    PAYMENT_GATEWAY_DISABLED:
+      'No payment gateway is currently enabled. Contact the platform administrator.',
     HTTP_400:
       'The information sent was incomplete or invalid. Please check the form and try again.',
     BAD_REQUEST:

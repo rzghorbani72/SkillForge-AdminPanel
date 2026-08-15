@@ -534,8 +534,8 @@ class ApiClient {
 
       // Handle payment required (402) - subscription expired/inactive.
       // A lapsed academy stays read-only (GETs still work); only writes 402 here.
-      // Surface a dismissible warning + Upgrade CTA and leave the panel usable,
-      // instead of throwing (freezes the panel) or force-redirecting.
+      // Surface a toast + dismissible warning + Upgrade CTA and leave the panel
+      // usable, instead of throwing (freezes the panel) or force-redirecting.
       if (response.status === 402) {
         const subscriptionError = new ApiResponseError(
           parseApiError(response.status, data)
@@ -549,6 +549,9 @@ class ApiClient {
           !isAuthFlowEndpoint &&
           !isAuthPagePath(window.location.pathname)
         ) {
+          toast.error(errorMessage, {
+            toastId: `subscription:${errorMessage}`
+          });
           this.notifySubscriptionRequired(errorMessage);
           // The blocked write is intentionally left unresolved: the caller keeps
           // its pending state while the gate prompts the manager to upgrade.

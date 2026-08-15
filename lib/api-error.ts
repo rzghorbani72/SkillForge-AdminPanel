@@ -172,6 +172,35 @@ export function resolveFieldMessage(
 }
 
 /**
+ * Status-family fallbacks (e.g. 402 → BAD_REQUEST before a dedicated code existed)
+ * must not hide the backend's specific localized sentence.
+ */
+const STATUS_FAMILY_CODES: Readonly<Record<number, string>> = {
+  400: 'BAD_REQUEST',
+  401: 'UNAUTHENTICATED',
+  403: 'FORBIDDEN',
+  404: 'NOT_FOUND',
+  409: 'CONFLICT',
+  413: 'PAYLOAD_TOO_LARGE',
+  415: 'UNSUPPORTED_MEDIA_TYPE',
+  422: 'UNPROCESSABLE',
+  429: 'RATE_LIMITED',
+  500: 'INTERNAL_ERROR',
+  502: 'UPSTREAM_ERROR',
+  503: 'SERVICE_UNAVAILABLE',
+  504: 'UPSTREAM_TIMEOUT'
+};
+
+function isMismatchedFamilyCode(code: string, status: number): boolean {
+  const expected = STATUS_FAMILY_CODES[status];
+  if (!expected) {
+    // Unknown status that was collapsed into a family code (e.g. old 402→BAD_REQUEST).
+    return Object.values(STATUS_FAMILY_CODES).includes(code);
+  }
+  return code !== expected && Object.values(STATUS_FAMILY_CODES).includes(code);
+}
+
+/**
  * The one function the UI should call to turn an error into display text.
  *
  * Order: our own translation of the code -> the backend's localized message ->
@@ -187,7 +216,9 @@ export function resolveApiErrorMessage(
 
   if (apiError) {
     const byCode = lookupWithFallback(language, `apiError.${apiError.code}`);
-    if (byCode) return interpolate(byCode, apiError.params, language);
+    if (byCode && !isMismatchedFamilyCode(apiError.code, apiError.status)) {
+      return interpolate(byCode, apiError.params, language);
+    }
 
     // The backend localizes against the language in the URL prefix. Trust it
     // only when the text really is in this language.

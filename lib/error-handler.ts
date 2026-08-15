@@ -62,6 +62,13 @@ export class ErrorHandler {
       return;
     }
 
+    if (status === 402) {
+      if (typeof window === 'undefined') return;
+      const message = resolveApiErrorMessage(error, language);
+      toast.error(message, { toastId: `subscription:${message}` });
+      return;
+    }
+
     this.handleValidationErrors(error);
   }
 
