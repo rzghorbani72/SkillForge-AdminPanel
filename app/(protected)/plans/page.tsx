@@ -78,6 +78,9 @@ export default function PlansPage() {
   const tabParam = searchParams.get('tab');
   const paidParam = searchParams.get('paid');
   const planParam = searchParams.get('plan');
+  // Guard against double toast: React Strict Mode remounts and `t` identity
+  // changes both re-run the effect while `?paid=1` is still in the URL.
+  const paidToastShownRef = useRef(false);
   const [managerTab, setManagerTab] = useState<'subscription' | 'academy'>(
     tabParam === 'academy' ? 'academy' : 'subscription'
   );
@@ -195,9 +198,15 @@ export default function PlansPage() {
   }, [fetchSubscriptionPlans]);
 
   useEffect(() => {
-    if (paidParam) {
-      toast.success(t('plans.paymentSuccess'));
-    }
+    if (!paidParam || paidToastShownRef.current) return;
+    paidToastShownRef.current = true;
+    toast.success(t('plans.paymentSuccess'), {
+      toastId: 'plans-payment-success'
+    });
+    // Drop ?paid without router deps (keeps this effect's dep array size stable).
+    const url = new URL(window.location.href);
+    url.searchParams.delete('paid');
+    window.history.replaceState(null, '', `${url.pathname}${url.search}`);
   }, [paidParam, t]);
 
   // Coming from the landing page's "enroll" link: open the confirm dialog
