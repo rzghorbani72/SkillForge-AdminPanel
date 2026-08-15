@@ -1,7 +1,6 @@
 'use client';
 
-import { BookOpen, Receipt } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Receipt } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -10,10 +9,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
-import type {
-  UserDetailsEnrollment,
-  UserDetailsPayment
-} from '@/types/user-details';
+import type { UserDetailsPayment } from '@/types/user-details';
 
 function formatDate(value?: string | null): string {
   if (!value) return '—';
@@ -30,54 +26,6 @@ function EmptyRow({ label }: { label: string }) {
     <p className="py-6 text-center text-[13px] text-muted-foreground">
       {label}
     </p>
-  );
-}
-
-export function UserEnrollmentsCard({
-  enrollments
-}: {
-  enrollments: UserDetailsEnrollment[];
-}) {
-  const { t } = useTranslation();
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-[15px]">
-          <BookOpen className="h-4 w-4 text-muted-foreground" />
-          {t('userDetails.enrollments')}
-        </CardTitle>
-        <CardDescription>
-          {t('userDetails.enrollmentsDescription')}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {enrollments.length === 0 ? (
-          <EmptyRow label={t('userDetails.noEnrollments')} />
-        ) : (
-          <ul className="divide-y divide-border/60">
-            {enrollments.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between gap-3 py-2.5"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-[13.5px] font-medium">
-                    {item.Course?.title || '—'}
-                  </p>
-                  <p className="text-[11.5px] text-muted-foreground">
-                    {t('userDetails.enrolledOn')} {formatDate(item.enrolled_at)}
-                  </p>
-                </div>
-                <Badge variant="secondary" className="shrink-0">
-                  {item.status || '—'}
-                </Badge>
-              </li>
-            ))}
-          </ul>
-        )}
-      </CardContent>
-    </Card>
   );
 }
 

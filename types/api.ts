@@ -553,6 +553,8 @@ export interface Enrollment {
   progress_percent?: number;
   user?: User;
   course?: Course;
+  /** Prisma include casing from some list endpoints. */
+  Course?: Course;
   progress?: Progress[];
   payments?: Payment[];
 }

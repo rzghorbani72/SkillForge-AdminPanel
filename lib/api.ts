@@ -310,6 +310,8 @@ class ApiClient {
     return (
       endpoint.includes('/auth/login') ||
       endpoint.includes('/auth/public/login') ||
+      endpoint.includes('/auth/public/identify') ||
+      endpoint.includes('/auth/staff/identify') ||
       endpoint.includes('/auth/staff/login') ||
       endpoint.includes('/auth/admin/login') ||
       endpoint.includes('/auth/forget-password') ||
@@ -318,7 +320,10 @@ class ApiClient {
       endpoint.includes('/auth/login-by-email-otp') ||
       endpoint.includes('/auth/register') ||
       endpoint.includes('/auth/otp/') ||
-      endpoint.includes('/auth/refresh')
+      endpoint.includes('/auth/refresh') ||
+      endpoint.includes('/auth/confirm-phone') ||
+      endpoint.includes('/auth/set-new-password') ||
+      endpoint.includes('/auth/select-academy')
     );
   }
 
@@ -2869,13 +2874,35 @@ class ApiClient {
   }
 
   async getUser(id: string): Promise<UserType> {
-    const response = await this.request<UserType>(`/users/${id}`);
-    return response.data;
+    const response = await this.request<
+      UserType | { status?: string; data?: UserType | string; message?: string }
+    >(`/users/${id}`);
+    const body = response.data;
+    // findOne answers HTTP 200 with {status:'fail'} instead of a 4xx.
+    if (
+      body &&
+      typeof body === 'object' &&
+      'status' in body &&
+      body.status === 'fail'
+    ) {
+      throw new Error(
+        typeof body.data === 'string'
+          ? body.data
+          : body.message || 'Failed to retrieve user'
+      );
+    }
+    const profile = unwrapDataEnvelope(body as UserType | { data: UserType });
+    if (!profile || typeof profile !== 'object' || !('id' in profile)) {
+      throw new Error('Failed to retrieve user');
+    }
+    return profile;
   }
 
   async getUserDetails(id: string): Promise<UserDetailsResponse> {
-    const response = await this.request(`/users/${id}/details`);
-    return response.data as UserDetailsResponse;
+    const response = await this.request<
+      UserDetailsResponse | { data: UserDetailsResponse }
+    >(`/users/${id}/details`);
+    return unwrapDataEnvelope(response.data);
   }
 
   /** Rename yourself. `updateUser` cannot do this: it only reaches profiles
@@ -3274,6 +3301,8 @@ class ApiClient {
     search?: string;
     status?: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
     course_id?: string;
+    /** Enrollment rows are keyed by profile, not platform user. */
+    profile_id?: string;
     user_id?: string;
     academy_id?: string;
   }): Promise<EnrollmentListResponse> {

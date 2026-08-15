@@ -19,10 +19,8 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { UserRowActions } from '@/components/users/user-row-actions';
 import { UserContactActions } from '@/components/users/user-contact-actions';
-import {
-  UserEnrollmentsCard,
-  UserPaymentsCard
-} from '@/components/users/user-activity-panel';
+import { UserPaymentsCard } from '@/components/users/user-activity-panel';
+import { StudentLearningSection } from '@/components/students/student-learning-section';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
@@ -102,15 +100,9 @@ export default function UserDetailPage() {
     }
     try {
       setIsLoading(true);
-      const response = (await apiClient.getUser(userId)) as unknown as {
-        status?: string;
-        data?: ProfileDetail;
-      } | null;
-
-      // This endpoint answers 200 with {status:'fail'} instead of throwing, so
-      // a missing or out-of-scope profile has to be detected, not caught.
-      const payload = (response?.data ?? response) as ProfileDetail | undefined;
-      if (!response || response.status === 'fail' || !payload?.id) {
+      // getUser unwraps the envelope and throws when findOne returns status:fail.
+      const payload = (await apiClient.getUser(userId)) as ProfileDetail;
+      if (!payload?.id) {
         setUser(null);
         return;
       }
@@ -303,10 +295,9 @@ export default function UserDetailPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <UserEnrollmentsCard enrollments={details?.enrollments ?? []} />
-        <UserPaymentsCard payments={details?.purchase_history ?? []} />
-      </div>
+      <UserPaymentsCard payments={details?.purchase_history ?? []} />
+
+      <StudentLearningSection profileId={user.id} />
     </div>
   );
 }

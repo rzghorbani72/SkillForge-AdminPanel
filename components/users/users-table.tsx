@@ -90,20 +90,13 @@ function UserRow({
         />
       </td>
       <td className="w-px whitespace-nowrap px-4 py-3">
-        {/* Plain-text links for the two common moves; the rest (reset password,
-            deactivate, delete) sits in the menu so the row stays readable. */}
+        {/* Details is the primary open; reset/deactivate/delete stay in the menu. */}
         <div className="flex items-center justify-end gap-3 text-[12.5px]">
           <Link
             href={`/user/${user.id}`}
             className="whitespace-nowrap font-medium text-primary hover:underline"
           >
             {t('stores.details')}
-          </Link>
-          <Link
-            href={`/user/${user.id}/learning`}
-            className="whitespace-nowrap font-medium text-muted-foreground hover:text-foreground hover:underline"
-          >
-            {t('learningOperations.workspace')}
           </Link>
           <UserRowActions
             user={user}

@@ -38,10 +38,10 @@ interface Enrollment {
   status: string;
   enrolled_at: string;
   progress_percent?: number;
-  Course?: { id: number; title: string };
-  Profile?: { id: number; display_name: string };
+  Course?: { id: string | number; title: string };
+  Profile?: { id: string | number; display_name: string };
   Payment?: {
-    id: number;
+    id: string | number;
     amount: number;
     status: string;
     payment_method: string;

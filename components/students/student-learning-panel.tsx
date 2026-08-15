@@ -1,17 +1,14 @@
 'use client';
 
-import { ArrowLeft, ClipboardList, UserRound } from 'lucide-react';
-import Link from '@/components/ui/link';
+import { ClipboardList, UserRound } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-import type { Enrollment, User } from '@/types/api';
+import type { Enrollment } from '@/types/api';
 import type {
   AssignmentSubmission,
   LearningActivity,
   LearningSummaryEnrollment
 } from '@/types/learning-operations';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -23,20 +20,22 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
 
-interface StudentWorkspaceProps {
-  student: User;
+export type StudentLearningPanelProps = {
   enrollments: Enrollment[];
   submissions: AssignmentSubmission[];
   summaryEnrollments: LearningSummaryEnrollment[];
   timeline: LearningActivity[];
-  profileId: string | null;
   learningUnavailable: boolean;
-}
+};
 
 function progressValue(enrollment: Enrollment): number | null {
   return typeof enrollment.progress_percent === 'number'
     ? Math.round(enrollment.progress_percent)
     : null;
+}
+
+function enrollmentCourseTitle(enrollment: Enrollment): string | undefined {
+  return enrollment.course?.title ?? enrollment.Course?.title;
 }
 
 function formatDate(
@@ -47,17 +46,15 @@ function formatDate(
   return new Date(value).toLocaleString(language);
 }
 
-export function StudentWorkspace({
-  student,
+/** Progress / timeline / assignments tabs — no identity chrome (details page owns that). */
+export function StudentLearningPanel({
   enrollments,
   submissions,
   summaryEnrollments,
   timeline,
-  profileId,
   learningUnavailable
-}: StudentWorkspaceProps) {
+}: StudentLearningPanelProps) {
   const { t, language } = useTranslation();
-  const isRtl = language === 'fa' || language === 'ar';
   const completedCount = enrollments.filter(
     (item) => item.status === 'COMPLETED'
   ).length;
@@ -65,51 +62,17 @@ export function StudentWorkspace({
     summaryEnrollments.length > 0 ? 'summary' : 'enrollments';
 
   return (
-    <main
-      className="space-y-6 p-4 sm:p-6"
-      dir={isRtl ? 'rtl' : 'ltr'}
-      aria-labelledby="student-workspace-title"
-    >
-      <Button asChild variant="ghost" className="w-fit">
-        <Link href="/users?role=STUDENT">
-          <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
-          {t('learningOperations.backToStudents')}
-        </Link>
-      </Button>
-
-      <section className="flex flex-col gap-4 rounded-xl border bg-card p-4 sm:flex-row sm:items-center">
-        <Avatar className="h-14 w-14">
-          <AvatarFallback>
-            {(student.display_name || student.name || 'S').slice(0, 2)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="min-w-0 flex-1">
-          <h1
-            id="student-workspace-title"
-            className="truncate text-2xl font-bold"
-          >
-            {student.display_name || student.name}
-          </h1>
-          <p className="truncate text-sm text-muted-foreground">
-            {student.email || student.phone_number}
-          </p>
-          {profileId && (
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t('learningOperations.profileId')}: {profileId}
-            </p>
-          )}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="outline">
-            {t('learningOperations.enrollmentCount', {
-              count: enrollments.length
-            })}
-          </Badge>
-          <Badge variant="secondary">
-            {t('learningOperations.completedCount', { count: completedCount })}
-          </Badge>
-        </div>
-      </section>
+    <section className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge variant="outline">
+          {t('learningOperations.enrollmentCount', {
+            count: enrollments.length
+          })}
+        </Badge>
+        <Badge variant="secondary">
+          {t('learningOperations.completedCount', { count: completedCount })}
+        </Badge>
+      </div>
 
       <Tabs defaultValue="progress">
         <TabsList className="h-auto w-full justify-start overflow-x-auto">
@@ -172,7 +135,8 @@ export function StudentWorkspace({
                 <Card key={enrollment.id}>
                   <CardHeader>
                     <CardTitle className="text-base">
-                      {enrollment.course?.title ?? t('students.unknownCourse')}
+                      {enrollmentCourseTitle(enrollment) ??
+                        t('students.unknownCourse')}
                     </CardTitle>
                     <CardDescription>{enrollment.status}</CardDescription>
                   </CardHeader>
@@ -278,7 +242,7 @@ export function StudentWorkspace({
           )}
         </TabsContent>
       </Tabs>
-    </main>
+    </section>
   );
 }
 

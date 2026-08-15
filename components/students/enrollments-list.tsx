@@ -93,7 +93,7 @@ export function EnrollmentsList({
             <div className="min-w-0">
               {studentId ? (
                 <Link
-                  href={`/user/${studentId}/learning`}
+                  href={`/user/${studentId}`}
                   className="truncate font-semibold leading-tight hover:text-primary hover:underline"
                 >
                   {name}
