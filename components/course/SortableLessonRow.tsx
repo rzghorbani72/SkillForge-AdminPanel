@@ -114,7 +114,7 @@ export function SortableLessonRow({
       )}
     >
       {/* Compact row */}
-      <div className="flex items-center gap-2 px-3 py-2.5">
+      <div className="flex items-center justify-between gap-2 px-3 py-2.5">
         <button
           type="button"
           {...attributes}
@@ -150,7 +150,7 @@ export function SortableLessonRow({
           value={lesson.title}
           onChange={(e) => onUpdate({ title: e.target.value })}
           placeholder={t('courses.enterLessonTitle')}
-          className="h-7 min-w-0 max-w-xl flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
+          className="h-7 min-w-0 max-w-lg flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
         />
 
         <div className="flex shrink-0 items-center gap-2">
@@ -181,7 +181,7 @@ export function SortableLessonRow({
             )}
           </div>
 
-          <div className="flex items-center gap-0.5 border-s border-border/60 ps-2">
+          <div className="flex items-center gap-1 border-s border-border/60 ps-2">
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
@@ -285,7 +285,7 @@ export function SortableLessonRow({
           )}
 
           {/* 3. Description */}
-          <div className="max-w-2xl space-y-1">
+          <div className="space-y-1">
             <Label className="text-xs">{t('courses.lessonDescription')}</Label>
             <textarea
               value={lesson.description}
