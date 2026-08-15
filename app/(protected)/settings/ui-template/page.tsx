@@ -1129,6 +1129,7 @@ export default function UITemplateSettingsPage() {
               onClose={() => setShowCustomizer(false)}
               onCloseSection={() => setSelectedBlockId(null)}
               selectedBlockId={selectedBlockId}
+              onSelectBlock={setSelectedBlockId}
               preview={heroPreview}
             />
           )}

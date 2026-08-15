@@ -1,8 +1,8 @@
 'use client';
 
-import { Plus } from 'lucide-react';
 import type { UIBlockConfig } from '@/types/api';
 import { SectionEditor } from './section-customization-panel';
+import { SidebarSectionList } from './sidebar-section-list';
 import type { HeroPreviewContext } from './hero-variant-picker';
 
 export interface SidebarSectionsTabProps {
@@ -10,6 +10,7 @@ export interface SidebarSectionsTabProps {
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
   selectedBlockId?: string | null;
+  onSelectBlock: (blockId: string) => void;
   onUpdateBlock: (blockId: string, config: Record<string, unknown>) => void;
   onToggleVisibleBlock: (id: string, visible: boolean) => void;
   onDeleteBlock: (id: string) => void;
@@ -29,6 +30,7 @@ export function SidebarSectionsTab({
   onBlocksChange,
   onOpenPicker,
   selectedBlockId,
+  onSelectBlock,
   onUpdateBlock,
   onToggleVisibleBlock,
   onDeleteBlock,
@@ -83,15 +85,16 @@ export function SidebarSectionsTab({
   }
 
   return (
-    <div className="p-3">
-      <button
-        type="button"
-        onClick={() => onOpenPicker()}
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-zinc-300 py-2 text-xs text-zinc-600 transition-colors hover:border-blue-500 hover:text-blue-400"
-      >
-        <Plus className="h-3.5 w-3.5" />
-        افزودن بخش
-      </button>
-    </div>
+    <SidebarSectionList
+      header={header}
+      middle={middle}
+      footer={footer}
+      selectedBlockId={selectedBlockId}
+      onSelect={onSelectBlock}
+      onReorderMiddle={reorder}
+      onToggleVisible={onToggleVisibleBlock}
+      onDelete={onDeleteBlock}
+      onOpenPicker={onOpenPicker}
+    />
   );
 }

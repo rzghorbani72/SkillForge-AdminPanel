@@ -56,6 +56,7 @@ export interface TemplateCustomizationSidebarProps {
   onClose: () => void;
   onCloseSection: () => void;
   selectedBlockId?: string | null;
+  onSelectBlock: (blockId: string) => void;
   preview?: HeroPreviewContext | null;
 }
 
@@ -90,6 +91,7 @@ export function TemplateCustomizationSidebar({
   onClose,
   onCloseSection,
   selectedBlockId,
+  onSelectBlock,
   preview
 }: TemplateCustomizationSidebarProps) {
   const [tab, setTab] = useState<Tab>('sections');
@@ -172,6 +174,7 @@ export function TemplateCustomizationSidebar({
             onBlocksChange={onBlocksChange}
             onOpenPicker={onOpenPicker}
             selectedBlockId={selectedBlockId}
+            onSelectBlock={onSelectBlock}
             onUpdateBlock={onUpdateBlock}
             onToggleVisibleBlock={onToggleVisibleBlock}
             onDeleteBlock={onDeleteBlock}

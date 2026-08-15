@@ -2448,6 +2448,7 @@ export const ar = {
     cornerLow: 'منخفض',
     cornerNormal: 'عادي',
     cornerRound: 'مدور',
+    cornerExtraRound: 'دائري جداً',
     cornerPill: 'بيضاوي',
     themeMode: 'وضع الثيم',
     themeModeLight: 'فاتح',
@@ -2477,6 +2478,9 @@ export const ar = {
     bannerSamples: 'صور نموذجية',
     bannerSampleN: 'صورة نموذجية {{n}}',
     sectionOrder: 'ترتيب وتركيب الأقسام',
+    sectionChangeDesign: 'تغيير تصميم هذا القسم',
+    sectionHide: 'إخفاء القسم',
+    sectionShow: 'إظهار القسم',
     sectionDrag: 'السحب لإعادة الترتيب'
   },
   learningOperations: {

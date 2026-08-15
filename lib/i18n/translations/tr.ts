@@ -2512,6 +2512,7 @@ export const tr = {
     cornerLow: 'Düşük',
     cornerNormal: 'Normal',
     cornerRound: 'Yuvarlak',
+    cornerExtraRound: 'Çok yuvarlak',
     cornerPill: 'Hap',
     themeMode: 'Tema Modu',
     themeModeLight: 'Açık',
@@ -2541,6 +2542,9 @@ export const tr = {
     bannerSamples: 'Örnek Görseller',
     bannerSampleN: 'Örnek Görsel {{n}}',
     sectionOrder: 'Bölüm Sırası ve Düzeni',
+    sectionChangeDesign: 'Bu bölümün tasarımını değiştir',
+    sectionHide: 'Bölümü gizle',
+    sectionShow: 'Bölümü göster',
     sectionDrag: 'Yeniden sıralamak için sürükle'
   },
   learningOperations: {
