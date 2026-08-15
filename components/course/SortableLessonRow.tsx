@@ -21,7 +21,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { LESSON_DESCRIPTION_MAX } from '@/components/lesson/schema';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
 import { clearIncompatibleMedia } from './course-drafts';
-import { LessonMedia } from './LessonMedia';
+import { LessonMedia, LESSON_MEDIA_SLOT_CLASS } from './LessonMedia';
 import { InlineConfirm } from './InlineConfirm';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
 
@@ -258,9 +258,19 @@ export function SortableLessonRow({
 
           {/* 2. Upload / live content — directly under type */}
           {lesson.lesson_type === 'LIVE' ? (
-            <p className="rounded-md border border-dashed border-rose-200 bg-rose-50/60 px-3 py-2.5 text-xs text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200">
-              {t('courses.liveSaveFirst')}
-            </p>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">
+                {t(LESSON_TYPE_BY_KEY.LIVE.labelKey)}
+              </Label>
+              <p
+                className={cn(
+                  'flex shrink-0 items-center rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-3 text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
+                  LESSON_MEDIA_SLOT_CLASS
+                )}
+              >
+                {t('courses.liveSaveFirst')}
+              </p>
+            </div>
           ) : (
             <LessonMedia lesson={lesson} onUpdate={onUpdate} />
           )}

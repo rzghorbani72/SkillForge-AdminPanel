@@ -20,16 +20,15 @@ import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
 
 type SlotKey = 'video' | 'audio' | 'document';
 
-/** Compact, type-shaped upload frames — never stretch full lesson width. */
+/** Shared outer size for every type — prevents layout jump on type change. */
+export const LESSON_MEDIA_SLOT_CLASS = 'h-[7.75rem] w-[13.75rem]';
+
 type SlotShape = 'video' | 'audio' | 'document';
 
-const SHAPE_CLASS: Record<SlotShape, string> = {
-  // Mini player poster
-  video: 'w-full max-w-[220px] aspect-video justify-center',
-  // Compact horizontal strip
-  audio: 'w-full max-w-[280px] h-14 flex-row justify-start gap-3 px-4',
-  // Paper card
-  document: 'w-full max-w-[168px] aspect-[3/4] flex-col justify-center'
+const INNER_CLASS: Record<SlotShape, string> = {
+  video: 'flex-col justify-center gap-1.5',
+  audio: 'flex-row justify-center gap-3 px-4',
+  document: 'flex-col justify-center gap-1.5'
 };
 
 function ProgressBar({ value }: { value: number }) {
@@ -81,8 +80,9 @@ function UploadSlot({
   }
 
   const frameClass = cn(
-    'flex items-center rounded-lg border border-dashed transition-colors',
-    SHAPE_CLASS[shape],
+    'flex shrink-0 items-center overflow-hidden rounded-lg border border-dashed transition-colors',
+    LESSON_MEDIA_SLOT_CLASS,
+    INNER_CLASS[shape],
     toneClass
   );
 
@@ -94,7 +94,7 @@ function UploadSlot({
       {filled ? (
         filled
       ) : uploading ? (
-        <div className={cn(frameClass, 'flex-col justify-center gap-2 p-3')}>
+        <div className={cn(frameClass, 'flex-col gap-2 p-3')}>
           <div className="flex items-center gap-2 text-sm font-medium">
             <Loader2 className="h-4 w-4 animate-spin" />
             <span>{progress}%</span>
@@ -119,14 +119,16 @@ function UploadSlot({
         >
           {shape === 'audio' ? (
             <>
-              <span className="bg-current/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+              <span className="bg-current/10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
                 <Icon className="h-4 w-4" />
               </span>
-              <span className="min-w-0 text-xs font-medium">{uploadLabel}</span>
+              <span className="min-w-0 text-xs font-medium leading-snug">
+                {uploadLabel}
+              </span>
             </>
           ) : (
             <span className="flex flex-col items-center gap-1.5 px-3 text-center">
-              <Icon className={shape === 'video' ? 'h-6 w-6' : 'h-7 w-7'} />
+              <Icon className="h-6 w-6" />
               <span className="text-[11px] font-medium leading-tight">
                 {uploadLabel}
               </span>
@@ -253,10 +255,15 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           }
           filled={
             lesson.videoPreviewUrl ? (
-              <div className="relative w-full max-w-[220px] overflow-hidden rounded-lg border bg-black/5">
+              <div
+                className={cn(
+                  'relative shrink-0 overflow-hidden rounded-lg border bg-black/5',
+                  LESSON_MEDIA_SLOT_CLASS
+                )}
+              >
                 <video
                   src={lesson.videoPreviewUrl}
-                  className="aspect-video w-full object-cover"
+                  className="h-full w-full object-cover"
                   controls={false}
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -311,7 +318,12 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           }
           filled={
             lesson.audioPreviewUrl ? (
-              <div className="relative w-full max-w-[280px] rounded-lg border px-3 py-2">
+              <div
+                className={cn(
+                  'relative flex shrink-0 items-center rounded-lg border px-3',
+                  LESSON_MEDIA_SLOT_CLASS
+                )}
+              >
                 <audio
                   src={lesson.audioPreviewUrl}
                   controls
@@ -368,11 +380,12 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
             lesson.documentPreviewName ? (
               <div
                 className={cn(
-                  'relative flex aspect-[3/4] w-full max-w-[168px] flex-col items-center justify-center gap-2 rounded-lg border px-3 py-3 text-center',
+                  'relative flex shrink-0 flex-col items-center justify-center gap-2 rounded-lg border px-3 text-center',
+                  LESSON_MEDIA_SLOT_CLASS,
                   tone
                 )}
               >
-                <DocIcon className="h-7 w-7 shrink-0 opacity-80" />
+                <DocIcon className="h-6 w-6 shrink-0 opacity-80" />
                 <span className="line-clamp-3 w-full break-all text-[11px] font-medium leading-snug">
                   {lesson.documentPreviewName}
                 </span>
