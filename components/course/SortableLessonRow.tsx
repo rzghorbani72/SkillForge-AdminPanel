@@ -264,7 +264,7 @@ export function SortableLessonRow({
               </Label>
               <p
                 className={cn(
-                  'flex shrink-0 items-center rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-3 text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
+                  'flex shrink-0 items-center justify-center rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-4 text-center text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
                   LESSON_MEDIA_SLOT_CLASS
                 )}
               >
