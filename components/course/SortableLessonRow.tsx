@@ -153,55 +153,62 @@ export function SortableLessonRow({
           className="h-7 min-w-0 max-w-xl flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
         />
 
-        <div className="flex shrink-0 items-center gap-1.5">
-          {/* Read-only type badge: full label + color, never looks clickable */}
-          <span
-            className={cn(
-              'pointer-events-none inline-flex h-5 cursor-default select-none items-center gap-1 rounded-md border px-1.5 text-[10px] font-medium',
-              typeOption.badgeClass
-            )}
-            aria-label={typeLabel}
-          >
-            <TypeIcon className="h-2.5 w-2.5 shrink-0" aria-hidden />
-            {typeLabel}
-          </span>
-          {lesson.is_free && (
-            <Badge
-              variant="outline"
-              className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] text-emerald-600 hover:bg-transparent"
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="flex items-center gap-1">
+            {/* Read-only type badge: full label + color, never looks clickable */}
+            <span
+              className={cn(
+                'pointer-events-none inline-flex h-5 cursor-default select-none items-center gap-1 rounded-md border px-1.5 text-[10px] font-medium',
+                typeOption.badgeClass
+              )}
+              aria-label={typeLabel}
             >
-              {t('courses.free')}
-            </Badge>
-          )}
-          {lesson.published && (
-            <Badge className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] hover:bg-primary">
-              {t('courses.published')}
-            </Badge>
-          )}
-          <button
-            type="button"
-            onClick={() => setExpanded((v) => !v)}
-            className="rounded p-0.5 text-muted-foreground hover:text-foreground"
-            aria-label={expanded ? t('common.close') : t('common.edit')}
-          >
-            {expanded ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+              <TypeIcon className="h-2.5 w-2.5 shrink-0" aria-hidden />
+              {typeLabel}
+            </span>
+            {lesson.is_free && (
+              <Badge
+                variant="outline"
+                className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] text-emerald-600 hover:bg-transparent"
+              >
+                {t('courses.free')}
+              </Badge>
             )}
-          </button>
-          {!isBlank && (
+            {lesson.published && (
+              <Badge className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] hover:bg-primary">
+                {t('courses.published')}
+              </Badge>
+            )}
+          </div>
+
+          <div className="flex items-center gap-0.5 border-s border-border/60 ps-2">
             <button
               type="button"
-              onClick={handleTrashClick}
-              className="rounded p-0.5 text-muted-foreground hover:text-destructive"
-              aria-label={
-                canRemove ? t('courses.removeLesson') : t('courses.clearLesson')
-              }
+              onClick={() => setExpanded((v) => !v)}
+              className="rounded p-0.5 text-muted-foreground hover:text-foreground"
+              aria-label={expanded ? t('common.close') : t('common.edit')}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              {expanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+              )}
             </button>
-          )}
+            {!isBlank && (
+              <button
+                type="button"
+                onClick={handleTrashClick}
+                className="rounded p-0.5 text-muted-foreground hover:text-destructive"
+                aria-label={
+                  canRemove
+                    ? t('courses.removeLesson')
+                    : t('courses.clearLesson')
+                }
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -297,7 +304,7 @@ export function SortableLessonRow({
 
           {/* 4. Duration + season — compact controls, not full-bleed */}
           <div className="flex flex-wrap items-end gap-4">
-            <div className="w-[5.75rem] space-y-1">
+            <div className="w-[8.75rem] space-y-1">
               <Label className="text-xs">{t('courses.lessonDuration')}</Label>
               <Input
                 value={
