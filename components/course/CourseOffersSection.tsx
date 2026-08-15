@@ -127,7 +127,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
         </ul>
 
         <div className="flex flex-wrap items-start gap-3 border-t pt-4">
-          <div className="min-w-40 space-y-1">
+          <div className="w-[11rem] space-y-1">
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               {t('courses.offeringType')}
               <InfoTooltip text={t('courses.offeringTypeHint')} />
@@ -136,7 +136,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
               value={type}
               onValueChange={(v) => setType(v as OfferingType)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -149,7 +149,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
             </Select>
           </div>
           {!isFree && (
-            <div className="min-w-32 space-y-1">
+            <div className="w-[10.5rem] space-y-1">
               <span className="block text-xs text-muted-foreground">
                 {t('courses.offeringPrice')}
               </span>
@@ -157,6 +157,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
                 value={price}
                 onChange={setPrice}
                 suffix={t('courses.toman' as never)}
+                className="h-9"
               />
               {priceMissing && (
                 <span className="block text-[11px] text-amber-600">
@@ -165,7 +166,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
               )}
             </div>
           )}
-          <div className="min-w-32 space-y-1">
+          <div className="w-[8.5rem] space-y-1">
             <span className="block text-xs text-muted-foreground">
               {t('courses.offeringAccessDays')}
             </span>
@@ -173,6 +174,7 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
               placeholder={formatNumber(DEFAULT_ACCESS_DAYS)}
               value={accessDays}
               onChange={setAccessDays}
+              className="h-9"
             />
             <span className="block text-[11px] text-muted-foreground">
               {t('courses.offeringAccessDaysHint', {
@@ -186,13 +188,14 @@ export function CourseOffersSection({ courseId }: { courseId: string }) {
             </span>
             <Button
               type="button"
+              className="h-9"
               onClick={handleAdd}
               disabled={isSaving || priceMissing}
               title={
                 priceMissing ? t('courses.offeringPriceRequired') : undefined
               }
             >
-              <Plus className="mr-1 h-4 w-4" />
+              <Plus className="me-1 h-4 w-4" />
               {t('courses.addOffering')}
             </Button>
           </div>

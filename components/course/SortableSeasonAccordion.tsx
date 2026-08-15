@@ -147,7 +147,7 @@ export function SortableSeasonAccordion({
           onChange={(event) => onUpdate({ title: event.target.value })}
           placeholder={fallbackTitle}
           aria-label={t('courses.seasonTitle')}
-          className="h-7 flex-1 border-transparent bg-transparent px-1 text-sm font-semibold shadow-none focus-visible:border-input focus-visible:bg-background"
+          className="h-7 min-w-0 max-w-xl flex-1 border-transparent bg-transparent px-1 text-sm font-semibold shadow-none focus-visible:border-input focus-visible:bg-background"
         />
 
         {total > 0 && (

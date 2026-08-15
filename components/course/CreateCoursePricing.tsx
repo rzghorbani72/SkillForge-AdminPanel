@@ -33,11 +33,11 @@ export default function CreateCoursePricing({ form }: Props) {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-wrap gap-4">
             {/* Sale price */}
-            <div className="space-y-3 rounded-lg border p-4">
+            <div className="w-full max-w-[17rem] space-y-3 rounded-lg border p-4">
               <div className="flex items-center gap-2">
-                <Tag className="h-4 w-4 text-primary" />
+                <Tag className="h-4 w-4 shrink-0 text-primary" />
                 <span className="text-sm font-medium">
                   {t('courses.primaryPrice')}
                 </span>
@@ -58,6 +58,7 @@ export default function CreateCoursePricing({ form }: Props) {
                         onBlur={field.onBlur}
                         name={field.name}
                         suffix={t('courses.toman')}
+                        className="h-9"
                       />
                     </FormControl>
                     <FormMessage />
@@ -67,9 +68,9 @@ export default function CreateCoursePricing({ form }: Props) {
             </div>
 
             {/* Original / crossed-out price */}
-            <div className="space-y-3 rounded-lg border p-4">
-              <div className="flex items-center gap-2">
-                <Tag className="h-4 w-4 text-muted-foreground" />
+            <div className="w-full max-w-[17rem] space-y-3 rounded-lg border p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <Tag className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="text-sm font-medium">
                   {t('courses.secondaryPrice')}
                 </span>
@@ -93,6 +94,7 @@ export default function CreateCoursePricing({ form }: Props) {
                         onBlur={field.onBlur}
                         name={field.name}
                         suffix={t('courses.toman')}
+                        className="h-9"
                       />
                     </FormControl>
                     <FormMessage />
@@ -114,7 +116,7 @@ export default function CreateCoursePricing({ form }: Props) {
             control={form.control}
             name="is_featured"
             render={({ field }) => (
-              <FormItem className="flex items-center justify-between rounded-lg border px-4 py-3">
+              <FormItem className="flex max-w-md items-center justify-between rounded-lg border px-4 py-3">
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 text-yellow-500" />
                   <div>

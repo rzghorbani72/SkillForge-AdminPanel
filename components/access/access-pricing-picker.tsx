@@ -142,6 +142,7 @@ export function AccessPricingPicker({
               onChange({ ...value, reference: event.target.value })
             }
             placeholder={t('accessGrants.referencePlaceholder')}
+            className="h-9 max-w-md"
           />
         </div>
       )}

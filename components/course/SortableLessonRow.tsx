@@ -150,7 +150,7 @@ export function SortableLessonRow({
           value={lesson.title}
           onChange={(e) => onUpdate({ title: e.target.value })}
           placeholder={t('courses.enterLessonTitle')}
-          className="h-7 min-w-0 flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
+          className="h-7 min-w-0 max-w-xl flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
         />
 
         <div className="flex shrink-0 items-center gap-1.5">
@@ -278,7 +278,7 @@ export function SortableLessonRow({
           )}
 
           {/* 3. Description */}
-          <div className="space-y-1">
+          <div className="max-w-2xl space-y-1">
             <Label className="text-xs">{t('courses.lessonDescription')}</Label>
             <textarea
               value={lesson.description}
@@ -295,9 +295,9 @@ export function SortableLessonRow({
             />
           </div>
 
-          {/* 4. Duration + season */}
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1">
+          {/* 4. Duration + season — compact controls, not full-bleed */}
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="w-[5.75rem] space-y-1">
               <Label className="text-xs">{t('courses.lessonDuration')}</Label>
               <Input
                 value={
@@ -313,12 +313,12 @@ export function SortableLessonRow({
                 }
                 placeholder={isFa ? toPersianDigits('00:00') : '00:00'}
                 inputMode="numeric"
-                className="h-8 text-sm"
+                className="h-8 text-center text-sm tabular-nums"
               />
             </div>
 
             {seasons.length > 0 && (
-              <div className="space-y-1">
+              <div className="w-full max-w-[14rem] space-y-1">
                 <Label className="text-xs">{t('courses.season')}</Label>
                 <Select
                   value={lesson.seasonClientKey}

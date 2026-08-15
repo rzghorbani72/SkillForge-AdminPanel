@@ -94,6 +94,7 @@ export function AccessDurationPicker({
               onChange({ mode: 'days', days: raw === '' ? 0 : Number(raw) })
             }
             aria-label={t('accessGrants.durationDays')}
+            className="h-9 max-w-[8.5rem]"
           />
         </div>
       )}
@@ -110,6 +111,7 @@ export function AccessDurationPicker({
             })
           }
           aria-label={t('accessGrants.durationUntil')}
+          className="h-9 max-w-[12rem]"
         />
       )}
 

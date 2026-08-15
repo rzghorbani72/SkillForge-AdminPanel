@@ -44,7 +44,7 @@ export function QuickAddRow({
   return (
     <div
       className={cn(
-        'flex items-center gap-2 rounded-md border border-dashed px-3 py-2',
+        'flex max-w-xl items-center gap-2 rounded-md border border-dashed px-3 py-2',
         'transition-colors',
         blocked
           ? 'cursor-not-allowed opacity-60'
