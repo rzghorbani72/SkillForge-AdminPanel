@@ -116,7 +116,7 @@ export function SortableLessonRow({
       {/* Compact row: badges/actions on the left, title on the right */}
       <div className="flex items-center gap-3 px-3 py-2.5" dir="ltr">
         <div className="flex shrink-0 items-center gap-2">
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
