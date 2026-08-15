@@ -1,4 +1,5 @@
 import type { ThemeConfigPayload } from '@/types/api';
+import { getTemplateIdentity } from '@/constants/template-names';
 
 export interface DesignSystem {
   name: string;
@@ -42,10 +43,12 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
   darkMode: null
 };
 
-export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
+type DesignSystemVisuals = Omit<DesignSystem, 'name' | 'tagline'>;
+
+// Visual tokens only — the manager-facing name/tagline live in the central
+// template catalog and are merged in by getDesignSystem.
+export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
   sohail: {
-    name: 'کهکشان',
-    tagline: 'علمی · رصدی · تیره',
     colors: {
       primary: '#0e7f76',
       secondary: '#0d1322',
@@ -60,8 +63,6 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   setigh: {
-    name: 'اوج',
-    tagline: 'پرانرژی · مهارتی · داده‌محور',
     colors: {
       primary: '#9bd213',
       secondary: '#0a0f0d',
@@ -76,8 +77,6 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   havan: {
-    name: 'زعفران',
-    tagline: 'گرم · کارگاهی · کلاسیک',
     colors: {
       primary: '#b4441c',
       secondary: '#2e1a10',
@@ -92,8 +91,6 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   tondak: {
-    name: 'شکوفا',
-    tagline: 'شاد · کودک و نوجوان · رنگی',
     colors: {
       primary: '#ff5a1f',
       secondary: '#0f3138',
@@ -108,8 +105,6 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   momas: {
-    name: 'پیشرو',
-    tagline: 'درسی · کنکور · دقیق',
     colors: {
       primary: '#1e4fa3',
       secondary: '#12161b',
@@ -124,8 +119,6 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   goftavard: {
-    name: 'هم‌کلام',
-    tagline: 'زبان · گفت‌وگومحور · روشن',
     colors: {
       primary: '#1b3fd1',
       secondary: '#07101e',
@@ -140,8 +133,6 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
     darkMode: null
   },
   rasadaneh: {
-    name: 'سپهر',
-    tagline: 'نجوم · اطلس‌گونه · کاغذی',
     colors: {
       primary: '#b5601f',
       secondary: '#0e1a20',
@@ -158,7 +149,10 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
 };
 
 export function getDesignSystem(presetId: string): DesignSystem {
-  return DESIGN_SYSTEMS[presetId] ?? DEFAULT_DESIGN_SYSTEM;
+  const visuals = DESIGN_SYSTEMS[presetId];
+  if (!visuals) return DEFAULT_DESIGN_SYSTEM;
+  const identity = getTemplateIdentity(presetId);
+  return { ...visuals, name: identity.name, tagline: identity.tagline };
 }
 
 export function buildThemePayload(ds: DesignSystem): ThemeConfigPayload {

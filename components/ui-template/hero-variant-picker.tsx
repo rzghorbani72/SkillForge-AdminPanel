@@ -2,18 +2,15 @@
 
 import { Check } from 'lucide-react';
 import { SectionPreviewFrame } from './section-preview-frame';
+import { TEMPLATE_KEYS, getTemplateLabel } from '@/constants/template-names';
 
 // Visible design options for the hero. Each value maps to a `style` the
-// edusphere HeroBlock renders; the labels are role-based (what the manager sees),
-// never the internal slug.
+// edusphere renderer understands; the labels are role-based (what the manager
+// sees), never the internal slug. Gallery template names come from the central
+// catalog so a rename lands in one place; the legacy styles below are older
+// variants kept for academies still published on them.
 const HERO_VARIANTS: { value: string; label: string }[] = [
-  { value: 'sohail', label: 'سُهیل — رصدخانه' },
-  { value: 'setigh', label: 'سِتیغ — اجرا و قدرت' },
-  { value: 'havan', label: 'هاون — کارگاه' },
-  { value: 'tondak', label: 'تندک — کودک و نوجوان' },
-  { value: 'momas', label: 'مماس — درسی و کنکور' },
-  { value: 'goftavard', label: 'گفتاورد — زبان' },
-  { value: 'rasadaneh', label: 'رصدانه — اطلس' },
+  ...TEMPLATE_KEYS.map((key) => ({ value: key, label: getTemplateLabel(key) })),
   { value: 'default', label: 'کلاسیک' },
   { value: 'expert', label: 'آکادمی تخصصی' },
   { value: 'creator', label: 'سازنده' },
