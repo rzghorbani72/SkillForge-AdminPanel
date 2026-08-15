@@ -283,6 +283,65 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
       'دوره‌ها به‌صورت زنده از کاتالوگ دوره‌های آکادمی شما نمایش داده می‌شوند.'
   },
 
+  teachers: {
+    name: 'مدرسان',
+    content: [
+      {
+        key: 'eyebrow',
+        label: 'برچسب بالای عنوان',
+        kind: 'text',
+        advanced: true,
+        placeholder: 'مثلاً: تیم مدرسان'
+      },
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'مدرسان ما'
+      },
+      {
+        key: 'subtitle',
+        label: 'توضیحات زیر عنوان',
+        kind: 'textarea',
+        placeholder: 'یک جمله دربارهٔ تیم مدرسان'
+      }
+    ],
+    hasColumns: true,
+    dynamicContentNote:
+      'کارت مدرسان از محتوای پیش‌فرض قالب نمایش داده می‌شود. تا زمانی که عکسی بارگذاری نشود، حرف اول نام مدرس نمایش داده می‌شود.'
+  },
+
+  showcase: {
+    name: 'بخش ویژهٔ قالب',
+    content: [
+      {
+        key: 'eyebrow',
+        label: 'برچسب بالای عنوان',
+        kind: 'text',
+        advanced: true,
+        placeholder: 'مثلاً: تقویم برنامه‌ها'
+      },
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'برنامهٔ پیش‌رو'
+      },
+      {
+        key: 'subtitle',
+        label: 'توضیحات زیر عنوان',
+        kind: 'textarea',
+        placeholder: 'توضیح کوتاه دربارهٔ این بخش'
+      }
+    ],
+    dynamicContentNote:
+      'هر قالب یک بخش ویژه دارد: جدول تقویم، مسیر سطح‌بندی، نردبان پیشرفت یا نمونه‌سؤال. ساختار آن با قالب تعیین می‌شود و متن‌های بالا قابل ویرایش‌اند.'
+  },
+
   footer: { name: 'فوتر', content: [] },
   slideshow: { name: 'اسلایدشو / بنر', content: [] },
   marquee: { name: 'عناوین متحرک', content: [] },

@@ -7,10 +7,14 @@ import { SectionPreviewFrame } from './section-preview-frame';
 // edusphere HeroBlock renders; the labels are role-based (what the manager sees),
 // never the internal slug.
 const HERO_VARIANTS: { value: string; label: string }[] = [
+  { value: 'sohail', label: 'سُهیل — رصدخانه' },
+  { value: 'setigh', label: 'سِتیغ — اجرا و قدرت' },
+  { value: 'havan', label: 'هاون — کارگاه' },
+  { value: 'tondak', label: 'تندک — کودک و نوجوان' },
+  { value: 'momas', label: 'مماس — درسی و کنکور' },
+  { value: 'goftavard', label: 'گفتاورد — زبان' },
+  { value: 'rasadaneh', label: 'رصدانه — اطلس' },
   { value: 'default', label: 'کلاسیک' },
-  { value: 'flow', label: 'جریان' },
-  { value: 'code', label: 'برنامه‌نویسی' },
-  { value: 'creative', label: 'خلاقانه' },
   { value: 'expert', label: 'آکادمی تخصصی' },
   { value: 'creator', label: 'سازنده' },
   { value: 'social', label: 'اجتماعی' },
