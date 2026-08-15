@@ -1167,7 +1167,7 @@ export default function UITemplateSettingsPage() {
   const activePreset = presets.find((p) => p.id === activePresetId) ?? null;
 
   return (
-    <div className="min-h-full bg-[#f2ece4] p-8" dir="rtl">
+    <div className="min-h-full bg-[#f7faf9] p-8" dir="rtl">
       {confirmDialog}
 
       <div className="mb-6 flex items-start justify-between">
