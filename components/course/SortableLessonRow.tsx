@@ -116,33 +116,7 @@ export function SortableLessonRow({
       {/* Compact row: badges/actions on the left, title on the right */}
       <div className="flex items-center gap-3 px-3 py-2.5" dir="ltr">
         <div className="flex shrink-0 items-center gap-2">
-          <div className="flex items-center gap-1">
-            <span
-              className={cn(
-                'pointer-events-none inline-flex h-5 cursor-default select-none items-center gap-1 rounded-md border px-1.5 text-[10px] font-medium',
-                typeOption.badgeClass
-              )}
-              aria-label={typeLabel}
-            >
-              <TypeIcon className="h-2.5 w-2.5 shrink-0" aria-hidden />
-              {typeLabel}
-            </span>
-            {lesson.is_free && (
-              <Badge
-                variant="outline"
-                className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] text-emerald-600 hover:bg-transparent"
-              >
-                {t('courses.free')}
-              </Badge>
-            )}
-            {lesson.published && (
-              <Badge className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] hover:bg-primary">
-                {t('courses.published')}
-              </Badge>
-            )}
-          </div>
-
-          <div className="flex items-center gap-0.5 border-s border-border/60 ps-2">
+          <div className="flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
@@ -168,6 +142,32 @@ export function SortableLessonRow({
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1 border-s border-border/60 ps-2">
+            <span
+              className={cn(
+                'pointer-events-none inline-flex h-5 cursor-default select-none items-center gap-1 rounded-md border px-1.5 text-[10px] font-medium',
+                typeOption.badgeClass
+              )}
+              aria-label={typeLabel}
+            >
+              <TypeIcon className="h-2.5 w-2.5 shrink-0" aria-hidden />
+              {typeLabel}
+            </span>
+            {lesson.is_free && (
+              <Badge
+                variant="outline"
+                className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] text-emerald-600 hover:bg-transparent"
+              >
+                {t('courses.free')}
+              </Badge>
+            )}
+            {lesson.published && (
+              <Badge className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] hover:bg-primary">
+                {t('courses.published')}
+              </Badge>
             )}
           </div>
         </div>
@@ -289,7 +289,7 @@ export function SortableLessonRow({
           )}
 
           {/* 3. Description */}
-          <div className="space-y-1">
+          <div className="max-w-2xl space-y-1">
             <Label className="text-xs">{t('courses.lessonDescription')}</Label>
             <textarea
               value={lesson.description}
