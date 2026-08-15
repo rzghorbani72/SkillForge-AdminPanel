@@ -119,59 +119,65 @@ export function SortableSeasonAccordion({
         isDragging && 'opacity-50 shadow-xl ring-1 ring-primary/40'
       )}
     >
-      <div className="group flex items-center gap-1.5 px-3 py-2.5">
-        <button
-          type="button"
-          {...attributes}
-          {...listeners}
-          className="cursor-grab touch-none text-muted-foreground/50 hover:text-foreground"
-          aria-label={t('courses.dragSeason')}
-        >
-          <GripVertical className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={onToggle}
-          className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground"
-          aria-label={open ? t('courses.collapseAll') : t('courses.expandAll')}
-        >
-          {open ? (
-            <ChevronDown className="h-4 w-4" />
-          ) : (
-            <ChevronRight className="h-4 w-4 rtl:rotate-180" />
-          )}
-        </button>
-
-        <Input
-          value={season.title}
-          onChange={(event) => onUpdate({ title: event.target.value })}
-          placeholder={fallbackTitle}
-          aria-label={t('courses.seasonTitle')}
-          className="h-7 min-w-0 max-w-xl flex-1 border-transparent bg-transparent px-1 text-sm font-semibold shadow-none focus-visible:border-input focus-visible:bg-background"
-        />
-
-        {total > 0 && (
-          <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-            {ready === total
-              ? t('courses.lessonCount', { n: formatNumber(total) })
-              : t('courses.lessonsReady', {
-                  n: formatNumber(ready),
-                  total: formatNumber(total)
-                })}
-          </span>
-        )}
-        {!isBlank && (
+      <div className="group flex items-center gap-3 px-3 py-2.5">
+        <div className="flex min-w-0 flex-1 items-center gap-1.5">
           <button
             type="button"
-            onClick={handleTrashClick}
-            className="shrink-0 rounded p-1 text-muted-foreground/50 opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
+            {...attributes}
+            {...listeners}
+            className="shrink-0 cursor-grab touch-none text-muted-foreground/50 hover:text-foreground"
+            aria-label={t('courses.dragSeason')}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={onToggle}
+            className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground"
             aria-label={
-              canRemove ? t('courses.removeSeason') : t('courses.clearSeason')
+              open ? t('courses.collapseAll') : t('courses.expandAll')
             }
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            {open ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+            )}
           </button>
-        )}
+
+          <Input
+            value={season.title}
+            onChange={(event) => onUpdate({ title: event.target.value })}
+            placeholder={fallbackTitle}
+            aria-label={t('courses.seasonTitle')}
+            className="h-7 min-w-0 flex-1 border-transparent bg-transparent px-1 text-sm font-semibold shadow-none focus-visible:border-input focus-visible:bg-background"
+          />
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          {total > 0 && (
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {ready === total
+                ? t('courses.lessonCount', { n: formatNumber(total) })
+                : t('courses.lessonsReady', {
+                    n: formatNumber(ready),
+                    total: formatNumber(total)
+                  })}
+            </span>
+          )}
+          {!isBlank && (
+            <button
+              type="button"
+              onClick={handleTrashClick}
+              className="rounded p-1 text-muted-foreground/50 opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
+              aria-label={
+                canRemove ? t('courses.removeSeason') : t('courses.clearSeason')
+              }
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
       {confirmDelete && (
