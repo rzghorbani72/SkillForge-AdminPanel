@@ -24,6 +24,7 @@ import { clearIncompatibleMedia } from './course-drafts';
 import { LessonMedia, LESSON_MEDIA_SLOT_CLASS } from './LessonMedia';
 import { InlineConfirm } from './InlineConfirm';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
+import { toEnglishDigits, toPersianDigits } from '@/lib/phone-utils';
 
 function isLessonComplete(lesson: LessonDraft): boolean | null {
   if (!lesson.title.trim()) return null;
@@ -56,7 +57,8 @@ export function SortableLessonRow({
   onClear,
   onAssign
 }: LessonRowProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const isFa = language === 'fa';
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -298,9 +300,18 @@ export function SortableLessonRow({
             <div className="space-y-1">
               <Label className="text-xs">{t('courses.lessonDuration')}</Label>
               <Input
-                value={lesson.duration}
-                onChange={(e) => onUpdate({ duration: e.target.value })}
-                placeholder="00:00"
+                value={
+                  isFa ? toPersianDigits(lesson.duration) : lesson.duration
+                }
+                onChange={(e) =>
+                  onUpdate({
+                    duration: toEnglishDigits(e.target.value).replace(
+                      /[^\d:]/g,
+                      ''
+                    )
+                  })
+                }
+                placeholder={isFa ? toPersianDigits('00:00') : '00:00'}
                 inputMode="numeric"
                 className="h-8 text-sm"
               />

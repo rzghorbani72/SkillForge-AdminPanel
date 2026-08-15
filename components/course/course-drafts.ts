@@ -3,6 +3,8 @@
  * and lesson drafts, and the rules that turn them into what the API expects.
  */
 
+import { toEnglishDigits } from '@/lib/phone-utils';
+
 // ─── Draft types ──────────────────────────────────────────────────────────────
 
 export type LessonType =
@@ -50,7 +52,9 @@ const DEFAULT_DURATION = '00:00';
 
 /** mm:ss (or hh:mm:ss) → whole seconds. Bad input falls back to 0. */
 export function durationToSeconds(value: string): number {
-  const parts = value.split(':').map((p) => Number(p));
+  const parts = toEnglishDigits(value)
+    .split(':')
+    .map((p) => Number(p));
   if (parts.some((n) => Number.isNaN(n) || n < 0)) return 0;
   return parts.reduce((acc, n) => acc * 60 + n, 0);
 }
