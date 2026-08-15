@@ -17,6 +17,15 @@ const DEFAULT_BACKEND_HOSTS = [
   ...LOCAL_HOSTS
 ] as const;
 
+/**
+ * Object-storage hosts the browser PUTs video parts to (presigned direct
+ * upload). Mentoma uses Hamravesh S3 (`*.hs3.ir`). Without these in
+ * connect-src, Chrome reports the request as blocked:csp while API calls
+ * still succeed. Override with SECURITY_ALLOWED_STORAGE_HOSTS if the
+ * STORAGE_HAMRAVESH_ENDPOINT host changes.
+ */
+const DEFAULT_STORAGE_HOSTS = ['hs3.ir', '*.hs3.ir'] as const;
+
 const DEFAULT_MENTOMA_BASE_DOMAINS = [
   'mentoma.ir',
   'mentoma.ir',
@@ -51,6 +60,13 @@ export function getAllowedBackendHosts(): string[] {
   return parseEnvHosts(
     process.env.SECURITY_ALLOWED_BACKEND_HOSTS,
     DEFAULT_BACKEND_HOSTS
+  );
+}
+
+export function getAllowedStorageHosts(): string[] {
+  return parseEnvHosts(
+    process.env.SECURITY_ALLOWED_STORAGE_HOSTS,
+    DEFAULT_STORAGE_HOSTS
   );
 }
 
@@ -140,10 +156,19 @@ export function getAllowedImageRemotePatterns(): RemotePattern[] {
   ]);
 }
 
+function hostToCspOrigin(hostname: string): string {
+  // Wildcard entries stay as https://*.example.com; bare hosts become https://host.
+  if (hostname.startsWith('*.')) {
+    return `https://${hostname}`;
+  }
+  return `https://${hostname}`;
+}
+
 export function buildProductionCspConnectSrc(): string {
   const hosts = [
     "'self'",
-    ...getAllowedBackendHosts().map((h) => `https://${h}`),
+    ...getAllowedBackendHosts().map(hostToCspOrigin),
+    ...getAllowedStorageHosts().map(hostToCspOrigin),
     ...getMentomaBaseDomains().flatMap((d) => [
       `https://*.${d}`,
       `wss://*.${d}`

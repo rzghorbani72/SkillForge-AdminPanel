@@ -16,6 +16,7 @@ Hardening for SSRF, CSRF, host abuse, and Next.js server resource limits.
 ```env
 SECURITY_ALLOWED_PANEL_HOSTS=admin.mentoma.ir,admin.mentoma.ir,panel-academy.darkube.ir
 SECURITY_ALLOWED_BACKEND_HOSTS=api.mentoma.ir,api.mentoma.ir,api-academy.darkube.ir
+SECURITY_ALLOWED_STORAGE_HOSTS=hs3.ir,*.hs3.ir
 SECURITY_MENTOMA_BASE_DOMAINS=mentoma.ir,mentoma.ir,darkube.ir
 SECURITY_SERVER_ACTION_ORIGINS=https://admin.mentoma.ir,https://admin.mentoma.ir
 ```
@@ -24,6 +25,7 @@ SECURITY_SERVER_ACTION_ORIGINS=https://admin.mentoma.ir,https://admin.mentoma.ir
 
 - **Panel hosts:** `admin.mentoma.ir`, `admin.mentoma.ir`, `panel-academy.darkube.ir`
 - **Backend hosts:** `api.mentoma.ir`, `api.mentoma.ir`, `api-academy.darkube.ir`
+- **Storage hosts (CSP connect-src):** `hs3.ir`, `*.hs3.ir` (Hamravesh). Required for browser **direct video upload** to `STORAGE_HAMRAVESH_ENDPOINT`. If Network shows `blocked:csp` on another storage host, set `SECURITY_ALLOWED_STORAGE_HOSTS`.
 - **Server actions:** 1 MB body limit, origin allowlist
 - **API rate limits:** `/api/payment/*` 20/min, `/api/geolocation` 30/min, other `/api/*` 120/min per IP
 - **CSRF (Next API routes):** mutating `/api/*` requires trusted `Origin`/`Referer` (webhooks like `/payment/saman-callback` are excluded)
