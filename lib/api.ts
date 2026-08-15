@@ -3,6 +3,7 @@ import { Enrollment, User as UserType, Offer, OfferInput } from '@/types/api';
 import { toast } from 'react-toastify';
 import { getBrowserApiBaseUrl } from './api-base-url';
 import { csrfHeader, selectedAcademyHeader } from './browser-request-headers';
+import { ensureCsrfToken, isCsrfRequiredError } from './csrf';
 import {
   ApiResponseError,
   parseApiError,
@@ -323,7 +324,8 @@ class ApiClient {
       endpoint.includes('/auth/refresh') ||
       endpoint.includes('/auth/confirm-phone') ||
       endpoint.includes('/auth/set-new-password') ||
-      endpoint.includes('/auth/select-academy')
+      endpoint.includes('/auth/select-academy') ||
+      endpoint.includes('/auth/csrf')
     );
   }
 
@@ -336,11 +338,12 @@ class ApiClient {
    */
   private browserContextHeaders(
     endpoint: string,
-    method: string
+    method: string,
+    csrfToken?: string | null
   ): Record<string, string> {
     if (typeof window === 'undefined') return {};
 
-    const headers = csrfHeader(method);
+    const headers = csrfHeader(method, csrfToken);
 
     if (this.isAuthFlowEndpoint(endpoint)) return headers;
 
@@ -351,7 +354,8 @@ class ApiClient {
     endpoint: string,
     options: RequestInit = {},
     retryAfterRefresh: boolean = true,
-    lang?: string | null
+    lang?: string | null,
+    retryAfterCsrf: boolean = true
   ): Promise<ApiResponse<T>> {
     this.throwIfPaused(endpoint);
 
@@ -374,9 +378,17 @@ class ApiClient {
     // No need to manually add Authorization header for cookie-based auth
 
     const isAuthFlowEndpoint = this.isAuthFlowEndpoint(endpoint);
+    const method = (options.method ?? 'GET').toUpperCase();
+    const needsCsrf =
+      typeof window !== 'undefined' &&
+      !['GET', 'HEAD', 'OPTIONS'].includes(method);
+
+    // Fresh / incognito tabs have no csrf cookie yet — bootstrap quietly so
+    // the first write does not 403 with a scary toast.
+    const csrfToken = needsCsrf ? await ensureCsrfToken(!retryAfterCsrf) : null;
 
     const headers: HeadersInit = {
-      ...this.browserContextHeaders(endpoint, options.method ?? 'GET'),
+      ...this.browserContextHeaders(endpoint, method, csrfToken),
       ...headersObj
     };
 
@@ -415,7 +427,13 @@ class ApiClient {
 
           if (refreshSuccess) {
             // Retry the original request with the new token
-            return this.request<T>(endpoint, options, false);
+            return this.request<T>(
+              endpoint,
+              options,
+              false,
+              lang,
+              retryAfterCsrf
+            );
           }
         }
 
@@ -442,6 +460,22 @@ class ApiClient {
         }
 
         throw sessionError;
+      }
+
+      // Stale / missing CSRF after a new tab — mint once and retry silently.
+      if (
+        retryAfterCsrf &&
+        needsCsrf &&
+        isCsrfRequiredError(data, response.status)
+      ) {
+        await ensureCsrfToken(true);
+        return this.request<T>(
+          endpoint,
+          options,
+          retryAfterRefresh,
+          lang,
+          false
+        );
       }
 
       // Handle forbidden responses (403) - legal consent modal or redirect to dashboard
@@ -482,7 +516,12 @@ class ApiClient {
         // A denied action is not a broken session: tell the user what happened and
         // leave them on the page. Pages the user may not open at all are blocked by
         // the route guards, not by this handler.
-        if (typeof window !== 'undefined') {
+        // CSRF_REQUIRED should already have been retried above — if it still
+        // lands here, skip the scary toast so a race does not annoy the user.
+        if (
+          typeof window !== 'undefined' &&
+          !isCsrfRequiredError(data, response.status)
+        ) {
           const onAuthPage = isAuthPagePath(window.location.pathname);
           if (!isAuthFlowEndpoint && !onAuthPage) {
             // Same denial from parallel requests shows one toast, not a stack of them.
@@ -2230,12 +2269,14 @@ class ApiClient {
   // Media endpoints
   // Shared XHR uploader so every asset type (image/audio/document/video)
   // reports upload progress through one code path instead of duplicating it.
-  private uploadFileWithProgress(
+  private async uploadFileWithProgress(
     endpoint: string,
     formData: FormData,
     onProgress?: (progress: number) => void,
     abortController?: AbortController
   ): Promise<{ data?: unknown } & Record<string, unknown>> {
+    const csrfToken = await ensureCsrfToken();
+
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       let lastProgress = 0;
@@ -2277,7 +2318,7 @@ class ApiClient {
       xhr.open('POST', `${this.baseURL}${endpoint}`);
       xhr.withCredentials = true;
       for (const [key, value] of Object.entries(
-        this.browserContextHeaders(endpoint, 'POST')
+        this.browserContextHeaders(endpoint, 'POST', csrfToken)
       )) {
         xhr.setRequestHeader(key, value);
       }

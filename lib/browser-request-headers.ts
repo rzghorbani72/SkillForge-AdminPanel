@@ -6,14 +6,22 @@ const SELECTED_ACADEMY_STORAGE_KEY = 'skillforge_selected_academy_id';
 
 const SAFE_METHODS = ['GET', 'HEAD'];
 
-export function csrfHeader(method: string = 'GET'): Record<string, string> {
-  if (typeof document === 'undefined') return {};
-  if (SAFE_METHODS.includes(method.toUpperCase())) return {};
-
-  const csrfToken = document.cookie
+export function readCsrfTokenFromDocument(): string | undefined {
+  if (typeof document === 'undefined') return undefined;
+  return document.cookie
     .split('; ')
     .find((row) => row.startsWith('csrf-token='))
     ?.split('=')[1];
+}
+
+export function csrfHeader(
+  method: string = 'GET',
+  tokenOverride?: string | null
+): Record<string, string> {
+  if (typeof document === 'undefined') return {};
+  if (SAFE_METHODS.includes(method.toUpperCase())) return {};
+
+  const csrfToken = tokenOverride || readCsrfTokenFromDocument();
 
   return csrfToken ? { 'X-CSRF-Token': csrfToken } : {};
 }
@@ -31,7 +39,8 @@ export function selectedAcademyHeader(): Record<string, string> {
 }
 
 export function browserRequestHeaders(
-  method: string = 'GET'
+  method: string = 'GET',
+  csrfToken?: string | null
 ): Record<string, string> {
-  return { ...csrfHeader(method), ...selectedAcademyHeader() };
+  return { ...csrfHeader(method, csrfToken), ...selectedAcademyHeader() };
 }
