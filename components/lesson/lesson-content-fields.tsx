@@ -102,46 +102,34 @@ const LessonContentFields = ({
 
   if (lessonType === 'VIDEO') {
     return (
-      <div className="space-y-6">
-        <FormField
-          control={form.control}
-          name="video_id"
-          render={() => (
-            <FormItem>
-              <FormLabel>{t('courses.lessonVideo')}</FormLabel>
-              <FormControl>
-                <VideoUploadPreview
-                  title={title || t('courses.lessonVideoTitle')}
-                  description={description || t('courses.lessonVideoTitle')}
-                  onSuccess={(video) =>
-                    form.setValue('video_id', video.id.toString())
-                  }
-                  selectedVideoId={form.watch('video_id')}
-                  allowPosterUpload
-                  posterImageId={form.watch('cover_id')}
-                  onPosterSuccess={(image) =>
-                    form.setValue('cover_id', image.id.toString())
-                  }
-                />
-              </FormControl>
-              <FormDescription>
-                {t('courses.lessonForm.videoHint')}
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="grid gap-4 md:grid-cols-2">
-          {audioField(
-            t('courses.lessonForm.extraAudio'),
-            t('courses.lessonForm.extraAudioHint')
-          )}
-          {documentFieldNode(
-            t('courses.lessonForm.extraDocument'),
-            t('courses.lessonForm.extraDocumentHint')
-          )}
-        </div>
-      </div>
+      <FormField
+        control={form.control}
+        name="video_id"
+        render={() => (
+          <FormItem>
+            <FormLabel>{t('courses.lessonVideo')}</FormLabel>
+            <FormControl>
+              <VideoUploadPreview
+                title={title || t('courses.lessonVideoTitle')}
+                description={description || t('courses.lessonVideoTitle')}
+                onSuccess={(video) =>
+                  form.setValue('video_id', video.id.toString())
+                }
+                selectedVideoId={form.watch('video_id')}
+                allowPosterUpload
+                posterImageId={form.watch('cover_id')}
+                onPosterSuccess={(image) =>
+                  form.setValue('cover_id', image.id.toString())
+                }
+              />
+            </FormControl>
+            <FormDescription>
+              {t('courses.lessonForm.videoHint')}
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     );
   }
 

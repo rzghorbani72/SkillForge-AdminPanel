@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { LESSON_DESCRIPTION_MAX } from '@/components/lesson/schema';
 import type { LessonDraft, LessonType, SeasonDraft } from './useCourseForm';
+import { clearIncompatibleMedia } from './course-drafts';
 import { LessonMedia } from './LessonMedia';
 import { InlineConfirm } from './InlineConfirm';
 
@@ -264,7 +265,12 @@ export function SortableLessonRow({
                 <button
                   key={type}
                   type="button"
-                  onClick={() => onUpdate({ lesson_type: type })}
+                  onClick={() =>
+                    onUpdate({
+                      lesson_type: type,
+                      ...clearIncompatibleMedia(type)
+                    })
+                  }
                   className={cn(
                     'flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors',
                     lesson.lesson_type === type

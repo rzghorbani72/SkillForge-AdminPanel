@@ -84,6 +84,53 @@ export function validateForPublish(
   return null;
 }
 
+/** Drop media fields that do not belong to the selected lesson type. */
+export function clearIncompatibleMedia(type: LessonType): Partial<LessonDraft> {
+  const clearAll: Partial<LessonDraft> = {
+    video_id: undefined,
+    audio_id: undefined,
+    cover_id: undefined,
+    document_id: undefined,
+    videoPreviewUrl: undefined,
+    audioPreviewUrl: undefined,
+    coverPreviewUrl: undefined,
+    documentPreviewName: undefined
+  };
+
+  if (type === 'VIDEO') {
+    return {
+      audio_id: undefined,
+      audioPreviewUrl: undefined,
+      cover_id: undefined,
+      coverPreviewUrl: undefined,
+      document_id: undefined,
+      documentPreviewName: undefined
+    };
+  }
+  if (type === 'AUDIO') {
+    return {
+      video_id: undefined,
+      videoPreviewUrl: undefined,
+      cover_id: undefined,
+      coverPreviewUrl: undefined,
+      document_id: undefined,
+      documentPreviewName: undefined
+    };
+  }
+  if (type === 'TEXT' || type === 'QUIZ' || type === 'ASSIGNMENT') {
+    return {
+      video_id: undefined,
+      videoPreviewUrl: undefined,
+      audio_id: undefined,
+      audioPreviewUrl: undefined,
+      cover_id: undefined,
+      coverPreviewUrl: undefined
+    };
+  }
+  // LIVE — no media upload
+  return clearAll;
+}
+
 export const emptyLesson = (seasonClientKey?: string): LessonDraft => ({
   title: '',
   description: '',

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Check, X, BookOpen } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
+import { toPersianDigits } from '@/lib/phone-utils';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { UserAvatar, toneToHsl } from './user-avatar';
@@ -42,6 +43,7 @@ export function UsersRequestsView({
   onStats?: (stats: UserStat[]) => void;
 }) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const [requests, setRequests] = useState<TeacherRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -110,6 +112,8 @@ export function UsersRequestsView({
           r.profile?.user?.name || r.profile?.display_name || t('common.none');
         const email = r.profile?.user?.email;
         const phone = r.profile?.user?.phone_number;
+        const phoneDisplay =
+          phone && language === 'fa' ? toPersianDigits(phone) : phone;
         const submittedAt = new Date(r.created_at).toLocaleDateString('fa-IR');
 
         return (
@@ -127,9 +131,9 @@ export function UsersRequestsView({
                     {submittedAt}
                   </span>
                 </div>
-                {(email || phone) && (
+                {(email || phoneDisplay) && (
                   <div className="mb-3 text-[12px] text-muted-foreground">
-                    {[email, phone].filter(Boolean).join(' · ')}
+                    {[email, phoneDisplay].filter(Boolean).join(' · ')}
                   </div>
                 )}
                 {r.reason && (

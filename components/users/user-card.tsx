@@ -4,7 +4,8 @@ import type { ReactNode } from 'react';
 import { Mail, Phone } from 'lucide-react';
 import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
+import { toPersianDigits } from '@/lib/phone-utils';
 import { getRoleDisplayLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 
@@ -52,8 +53,14 @@ interface UserCardProps {
 
 export function UserCard({ user, actions }: UserCardProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const role = getUserRoleName(user);
   const roleLabel = getUserRoleLabel(user);
+  const phoneDisplay = user.phone_number
+    ? language === 'fa'
+      ? toPersianDigits(user.phone_number)
+      : user.phone_number
+    : '—';
 
   return (
     <div className="flex h-full flex-col rounded-xl border border-border/70 bg-card p-4">
@@ -85,7 +92,7 @@ export function UserCard({ user, actions }: UserCardProps) {
         </p>
         <p className="flex items-center gap-1.5">
           <Phone className="h-3.5 w-3.5 shrink-0" />
-          <span dir="ltr">{user.phone_number || '—'}</span>
+          <span dir="ltr">{phoneDisplay}</span>
         </p>
       </div>
 

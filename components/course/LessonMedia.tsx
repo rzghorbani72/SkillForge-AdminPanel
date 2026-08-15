@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, ImageIcon, Loader2, Mic, Video, X } from 'lucide-react';
+import { FileText, Loader2, Mic, Video, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -9,7 +9,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { pickFile } from '@/lib/file-picker';
 import type { LessonDraft } from './useCourseForm';
 
-type SlotKey = 'video' | 'audio' | 'image' | 'document';
+type SlotKey = 'video' | 'audio' | 'document';
 
 function ProgressBar({ value }: { value: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -120,13 +120,11 @@ interface LessonMediaProps {
 const ZERO: Record<SlotKey, number> = {
   video: 0,
   audio: 0,
-  image: 0,
   document: 0
 };
 const FALSE: Record<SlotKey, boolean> = {
   video: false,
   audio: false,
-  image: false,
   document: false
 };
 
@@ -137,14 +135,13 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   const abortRefs = useRef<Record<SlotKey, AbortController | null>>({
     video: null,
     audio: null,
-    image: null,
     document: null
   });
 
+  // One upload slot per lesson type — never mix media kinds in the same lesson.
   const type = lesson.lesson_type;
   const showVideo = type === 'VIDEO';
-  const showAudio = type === 'VIDEO' || type === 'AUDIO';
-  const showCover = type === 'VIDEO';
+  const showAudio = type === 'AUDIO';
   const showDocument =
     type === 'TEXT' || type === 'QUIZ' || type === 'ASSIGNMENT';
 
@@ -177,20 +174,8 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     }
   }
 
-  const colCount =
-    (showVideo ? 1 : 0) +
-    (showAudio ? 1 : 0) +
-    (showCover ? 1 : 0) +
-    (showDocument ? 1 : 0);
-  const gridClass =
-    colCount === 1
-      ? 'grid gap-4'
-      : colCount === 2
-        ? 'grid gap-4 sm:grid-cols-2'
-        : 'grid gap-4 sm:grid-cols-3';
-
   return (
-    <div className={gridClass}>
+    <div className="grid gap-4">
       {showVideo && (
         <UploadSlot
           label={t('courses.lessonVideo')}
@@ -289,58 +274,6 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                     onUpdate({
                       audio_id: undefined,
                       audioPreviewUrl: undefined
-                    })
-                  }
-                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ) : null
-          }
-        />
-      )}
-
-      {showCover && (
-        <UploadSlot
-          label={t('courses.lessonCover')}
-          icon={<ImageIcon className="h-5 w-5 text-muted-foreground" />}
-          uploadLabel={t('courses.uploadImage')}
-          accept="image/*"
-          uploading={uploading.image}
-          progress={progress.image}
-          onSelect={(file) =>
-            runUpload(
-              'image',
-              (abort, onP) =>
-                apiClient.uploadImage(
-                  file,
-                  { title: lesson.title || file.name },
-                  onP,
-                  abort
-                ),
-              (data) =>
-                onUpdate({
-                  cover_id: String(data.id),
-                  coverPreviewUrl: (data.publicUrl as string) ?? ''
-                })
-            )
-          }
-          filled={
-            lesson.coverPreviewUrl ? (
-              <div className="relative overflow-hidden rounded-md border">
-                <img
-                  src={lesson.coverPreviewUrl}
-                  alt={lesson.title}
-                  className="aspect-video w-full object-cover"
-                />
-                <button
-                  type="button"
-                  aria-label={t('courses.removeCover')}
-                  onClick={() =>
-                    onUpdate({
-                      cover_id: undefined,
-                      coverPreviewUrl: undefined
                     })
                   }
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"

@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { toPersianDigits } from '@/lib/phone-utils';
 import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { UserRoleBadge, type RoleConfig } from './user-role-badge';
@@ -32,6 +33,7 @@ function UserRow({
   onChanged
 }: UserRowProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const roleConfig = roles.find((r) => r.id === currentRoleId);
   const roleTone = roleConfig?.tone ?? tone;
   // Same rule as the roles page: a built-in role uses its translation, and a
@@ -42,6 +44,11 @@ function UserRow({
       ? user.role_label || currentRoleId
       : translatedRole;
   const displayName = user.display_name || user.name;
+  const phoneDisplay = user.phone_number
+    ? language === 'fa'
+      ? toPersianDigits(user.phone_number)
+      : user.phone_number
+    : '—';
 
   return (
     <tr className="border-b border-border/50 transition-colors hover:bg-muted/30">
@@ -70,7 +77,7 @@ function UserRow({
         dir="ltr"
         className="px-4 py-3 text-right font-mono text-[12px] text-muted-foreground"
       >
-        {user.phone_number || '—'}
+        {phoneDisplay}
       </td>
       <td className="px-4 py-3 font-mono text-[11.5px] text-muted-foreground">
         {user.created_at

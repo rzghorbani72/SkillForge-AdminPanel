@@ -56,6 +56,31 @@ const LESSON_TYPE_OPTIONS = [
   { value: 'LIVE', labelKey: 'courses.lessonTypeLive' }
 ] as const;
 
+type LessonTypeValue = (typeof LESSON_TYPE_OPTIONS)[number]['value'];
+
+/** Clear media ids that do not match the newly selected lesson type. */
+function clearFormMediaForType(
+  form: ReturnType<typeof useForm<LessonFormData>>,
+  type: LessonTypeValue
+) {
+  if (type !== 'VIDEO') {
+    form.setValue('video_id', '');
+    form.setValue('cover_id', '');
+  }
+  if (type !== 'AUDIO') {
+    form.setValue('audio_id', '');
+  }
+  if (type !== 'TEXT' && type !== 'QUIZ' && type !== 'ASSIGNMENT') {
+    form.setValue('document_id', '');
+  }
+  if (type === 'LIVE') {
+    form.setValue('video_id', '');
+    form.setValue('audio_id', '');
+    form.setValue('cover_id', '');
+    form.setValue('document_id', '');
+  }
+}
+
 const LessonForm = ({
   initialValues,
   isSubmitting,
@@ -154,7 +179,14 @@ const LessonForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('courses.lessonType')}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    onValueChange={(value) => {
+                      const next = value as LessonTypeValue;
+                      field.onChange(next);
+                      clearFormMediaForType(form, next);
+                    }}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
