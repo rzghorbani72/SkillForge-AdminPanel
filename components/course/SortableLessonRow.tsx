@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  ChevronDown,
-  ChevronRight,
-  ClipboardCheck,
-  ClipboardList,
-  FileText,
-  GripVertical,
-  Mic,
-  Radio,
-  Trash2,
-  Video
-} from 'lucide-react';
+import { ChevronDown, ChevronRight, GripVertical, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
@@ -30,40 +19,11 @@ import {
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { LESSON_DESCRIPTION_MAX } from '@/components/lesson/schema';
-import type { LessonDraft, LessonType, SeasonDraft } from './useCourseForm';
+import type { LessonDraft, SeasonDraft } from './useCourseForm';
 import { clearIncompatibleMedia } from './course-drafts';
 import { LessonMedia } from './LessonMedia';
 import { InlineConfirm } from './InlineConfirm';
-
-// ─── Type chip config ──────────────────────────────────────────────────────────
-
-const LESSON_TYPES: {
-  type: LessonType;
-  labelKey: string;
-  Icon: React.ElementType;
-}[] = [
-  { type: 'VIDEO', labelKey: 'courses.lessonTypeVideo', Icon: Video },
-  { type: 'AUDIO', labelKey: 'courses.lessonTypeAudio', Icon: Mic },
-  { type: 'TEXT', labelKey: 'courses.lessonTypeText', Icon: FileText },
-  { type: 'QUIZ', labelKey: 'courses.lessonTypeQuiz', Icon: ClipboardList },
-  {
-    type: 'ASSIGNMENT',
-    labelKey: 'courses.lessonTypeAssignment',
-    Icon: ClipboardCheck
-  },
-  { type: 'LIVE', labelKey: 'courses.lessonTypeLive', Icon: Radio }
-];
-
-const TYPE_ICON_MAP: Record<LessonType, React.ElementType> = {
-  VIDEO: Video,
-  AUDIO: Mic,
-  TEXT: FileText,
-  QUIZ: ClipboardList,
-  ASSIGNMENT: ClipboardCheck,
-  LIVE: Radio
-};
-
-// ─── Completeness ──────────────────────────────────────────────────────────────
+import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
 
 function isLessonComplete(lesson: LessonDraft): boolean | null {
   if (!lesson.title.trim()) return null;
@@ -123,10 +83,11 @@ export function SortableLessonRow({
     nodeRef.current.style.transition = transition ?? '';
   }, [transform, transition]);
 
-  const TypeIcon = TYPE_ICON_MAP[lesson.lesson_type] ?? Video;
+  const typeOption =
+    LESSON_TYPE_BY_KEY[lesson.lesson_type] ?? LESSON_TYPE_BY_KEY.VIDEO;
+  const TypeIcon = typeOption.Icon;
+  const typeLabel = t(typeOption.labelKey);
   const complete = isLessonComplete(lesson);
-
-  // A blank lesson is just an empty slot — there's nothing in it to delete.
   const isBlank = !lesson.title.trim();
 
   function handleTrashClick() {
@@ -150,7 +111,7 @@ export function SortableLessonRow({
         isDragging && 'opacity-50 shadow-lg ring-1 ring-primary/30'
       )}
     >
-      {/* ── Compact row ─────────────────────────────────────────────────── */}
+      {/* Compact row */}
       <div className="flex items-center gap-2 px-3 py-2.5">
         <button
           type="button"
@@ -165,7 +126,6 @@ export function SortableLessonRow({
           {index + 1}
         </span>
 
-        {/* Completeness dot */}
         <span
           className={cn(
             'h-2 w-2 shrink-0 rounded-full',
@@ -188,29 +148,31 @@ export function SortableLessonRow({
           value={lesson.title}
           onChange={(e) => onUpdate({ title: e.target.value })}
           placeholder={t('courses.enterLessonTitle')}
-          className="h-7 flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
+          className="h-7 min-w-0 flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
         />
 
-        <div className="flex shrink-0 items-center gap-1">
-          <Badge
-            variant="secondary"
-            className="h-5 gap-1 px-1.5 text-[10px]"
-            title={t(
-              `courses.lessonType${lesson.lesson_type.charAt(0) + lesson.lesson_type.slice(1).toLowerCase()}`
+        <div className="flex shrink-0 items-center gap-1.5">
+          {/* Read-only type badge: full label + color, never looks clickable */}
+          <span
+            className={cn(
+              'pointer-events-none inline-flex h-5 cursor-default select-none items-center gap-1 rounded-md border px-1.5 text-[10px] font-medium',
+              typeOption.badgeClass
             )}
+            aria-label={typeLabel}
           >
-            <TypeIcon className="h-2.5 w-2.5" />
-          </Badge>
+            <TypeIcon className="h-2.5 w-2.5 shrink-0" aria-hidden />
+            {typeLabel}
+          </span>
           {lesson.is_free && (
             <Badge
               variant="outline"
-              className="h-5 px-1.5 text-[10px] text-emerald-600"
+              className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] text-emerald-600 hover:bg-transparent"
             >
               {t('courses.free')}
             </Badge>
           )}
           {lesson.published && (
-            <Badge className="h-5 px-1.5 text-[10px]">
+            <Badge className="pointer-events-none h-5 cursor-default px-1.5 text-[10px] hover:bg-primary">
               {t('courses.published')}
             </Badge>
           )}
@@ -241,7 +203,6 @@ export function SortableLessonRow({
         </div>
       </div>
 
-      {/* ── Delete confirm ───────────────────────────────────────────────── */}
       {confirmDelete && (
         <InlineConfirm
           message={
@@ -254,37 +215,57 @@ export function SortableLessonRow({
         />
       )}
 
-      {/* ── Expanded panel ───────────────────────────────────────────────── */}
       {expanded && (
         <div className="space-y-4 border-t px-3 py-3">
-          {/* Lesson type chips */}
+          {/* 1. Pick content type */}
           <div className="space-y-1.5">
             <Label className="text-xs">{t('courses.lessonType')}</Label>
-            <div className="flex flex-wrap gap-1.5">
-              {LESSON_TYPES.map(({ type, labelKey, Icon }) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() =>
-                    onUpdate({
-                      lesson_type: type,
-                      ...clearIncompatibleMedia(type)
-                    })
-                  }
-                  className={cn(
-                    'flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors',
-                    lesson.lesson_type === type
-                      ? 'border-primary bg-primary text-primary-foreground'
-                      : 'border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
-                  )}
-                >
-                  <Icon className="h-3 w-3" />
-                  {t(labelKey)}
-                </button>
-              ))}
+            <div
+              className="flex flex-wrap gap-1.5"
+              role="radiogroup"
+              aria-label={t('courses.lessonType')}
+            >
+              {LESSON_TYPE_OPTIONS.map(
+                ({ type, labelKey, Icon, chipActiveClass }) => {
+                  const selected = lesson.lesson_type === type;
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() =>
+                        onUpdate({
+                          lesson_type: type,
+                          ...clearIncompatibleMedia(type)
+                        })
+                      }
+                      className={cn(
+                        'flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors',
+                        selected
+                          ? chipActiveClass
+                          : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground'
+                      )}
+                    >
+                      <Icon className="h-3 w-3" />
+                      {t(labelKey)}
+                    </button>
+                  );
+                }
+              )}
             </div>
           </div>
 
+          {/* 2. Upload / live content — directly under type */}
+          {lesson.lesson_type === 'LIVE' ? (
+            <p className="rounded-md border border-dashed border-rose-200 bg-rose-50/60 px-3 py-2.5 text-xs text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200">
+              {t('courses.liveSaveFirst')}
+            </p>
+          ) : (
+            <LessonMedia lesson={lesson} onUpdate={onUpdate} />
+          )}
+
+          {/* 3. Description */}
           <div className="space-y-1">
             <Label className="text-xs">{t('courses.lessonDescription')}</Label>
             <textarea
@@ -302,6 +283,7 @@ export function SortableLessonRow({
             />
           </div>
 
+          {/* 4. Duration + season */}
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
               <Label className="text-xs">{t('courses.lessonDuration')}</Label>
@@ -317,8 +299,6 @@ export function SortableLessonRow({
             {seasons.length > 0 && (
               <div className="space-y-1">
                 <Label className="text-xs">{t('courses.season')}</Label>
-                {/* No "unassigned" option: a lesson outside every season is
-                    saved but never rendered, so it silently disappears. */}
                 <Select
                   value={lesson.seasonClientKey}
                   onValueChange={(value) => onAssign(value)}
@@ -338,14 +318,8 @@ export function SortableLessonRow({
             )}
           </div>
 
-          <div className="flex flex-wrap gap-4">
-            <label className="flex cursor-pointer items-center gap-2">
-              <Switch
-                checked={lesson.is_free}
-                onCheckedChange={(v) => onUpdate({ is_free: v })}
-              />
-              <span className="text-sm">{t('courses.freePreview')}</span>
-            </label>
+          {/* 5. Visibility toggles */}
+          <div className="flex flex-wrap gap-4 border-t pt-3">
             <label className="flex cursor-pointer items-center gap-2">
               <Switch
                 checked={lesson.published}
@@ -353,16 +327,14 @@ export function SortableLessonRow({
               />
               <span className="text-sm">{t('courses.published')}</span>
             </label>
+            <label className="flex cursor-pointer items-center gap-2">
+              <Switch
+                checked={lesson.is_free}
+                onCheckedChange={(v) => onUpdate({ is_free: v })}
+              />
+              <span className="text-sm">{t('courses.freePreview')}</span>
+            </label>
           </div>
-
-          {/* Live lesson notice */}
-          {lesson.lesson_type === 'LIVE' ? (
-            <p className="rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-              {t('courses.liveSaveFirst')}
-            </p>
-          ) : (
-            <LessonMedia lesson={lesson} onUpdate={onUpdate} />
-          )}
         </div>
       )}
     </div>
