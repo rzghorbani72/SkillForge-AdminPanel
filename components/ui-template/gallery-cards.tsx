@@ -25,9 +25,13 @@ export function resolveTemplateColors(preset: TemplatePreset) {
 export type TemplateCategory = 'minimal' | 'creative' | 'professional' | 'dark';
 
 const CATEGORY_BY_ID: Record<string, TemplateCategory> = {
-  flow: 'minimal',
-  creative: 'creative',
-  code: 'professional'
+  sohail: 'dark',
+  setigh: 'dark',
+  havan: 'creative',
+  tondak: 'creative',
+  momas: 'minimal',
+  goftavard: 'minimal',
+  rasadaneh: 'professional'
 };
 
 // PUBLIC presets map to a known catalog category; until the API returns one,
@@ -124,10 +128,10 @@ function GalleryCard({
   return (
     <div
       style={{ animationDelay: `${index * 55}ms` }}
-      className={`group relative overflow-hidden rounded-2xl border text-right duration-300 animate-in fade-in slide-in-from-bottom-3 hover:-translate-y-1 ${
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-card text-right transition-[transform,box-shadow,border-color] duration-200 animate-in fade-in slide-in-from-bottom-3 hover:-translate-y-1 ${
         isActive
-          ? 'border-emerald-400/80 bg-background shadow-[0_0_0_1px_#34d39966,0_8px_32px_rgba(16,185,129,0.18)] hover:shadow-[0_16px_40px_rgba(16,185,129,0.22)]'
-          : 'border-border/50 bg-background shadow-sm hover:border-border hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.13)]'
+          ? 'border-emerald-500/70 shadow-[0_0_0_1px_rgba(16,185,129,0.35),0_10px_30px_-12px_rgba(16,185,129,0.35)]'
+          : 'border-border/60 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:border-border hover:shadow-[0_14px_32px_-14px_rgba(0,0,0,0.22)]'
       }`}
     >
       {isActive && (
@@ -162,7 +166,7 @@ function GalleryCard({
       <button
         type="button"
         onClick={onClick}
-        className="relative block aspect-[4/3] w-full overflow-hidden bg-muted/40"
+        className="relative block aspect-[16/10] w-full overflow-hidden border-b border-border/50 bg-muted/30"
       >
         <div
           className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-500 ${
@@ -228,38 +232,44 @@ function GalleryCard({
       </button>
 
       {/* Footer */}
-      <div className="px-4 pb-4 pt-3.5">
-        <div className="mb-1.5 flex items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[15px] font-bold text-foreground">
-              {preset.name}
-            </span>
-            {!isDedicated && ds.tagline && (
-              <span
-                className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                style={{
-                  background: `${colors.primary}1a`,
-                  color: colors.primary
-                }}
-              >
-                {ds.tagline}
-              </span>
-            )}
-          </div>
-          <div className="flex flex-shrink-0 gap-1">
+      <div className="flex flex-1 flex-col gap-2.5 p-4">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-[15px] font-bold leading-tight text-foreground">
+            {preset.name}
+          </h3>
+          {/* Palette strip doubles as the at-a-glance identity of the template. */}
+          <div className="flex flex-shrink-0 gap-1 rounded-full border border-border/60 bg-muted/40 p-1">
             {swatches.map((c, i) => (
               <span
                 key={i}
-                className="h-3 w-3 flex-shrink-0 rounded-[3px] border border-black/[0.09]"
+                className="h-3 w-3 flex-shrink-0 rounded-full border border-black/10"
                 style={{ background: c }}
               />
             ))}
           </div>
         </div>
+
         {preset.description && (
           <p className="m-0 line-clamp-2 text-[12.5px] leading-relaxed text-muted-foreground">
             {preset.description}
           </p>
+        )}
+
+        {!isDedicated && ds.tagline && (
+          <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
+            {ds.tagline.split('·').map((tag) => (
+              <span
+                key={tag}
+                className="whitespace-nowrap rounded-md px-2 py-1 text-[10.5px] font-semibold"
+                style={{
+                  background: `${colors.primary}14`,
+                  color: colors.primary
+                }}
+              >
+                {tag.trim()}
+              </span>
+            ))}
+          </div>
         )}
       </div>
     </div>

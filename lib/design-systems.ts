@@ -43,57 +43,116 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
 };
 
 export const DESIGN_SYSTEMS: Record<string, DesignSystem> = {
-  flow: {
-    name: 'منتوما فلو',
-    tagline: 'یادگیری · مسیرمحور · مینیمال',
+  sohail: {
+    name: 'کهکشان',
+    tagline: 'علمی · رصدی · تیره',
     colors: {
-      primary: '#00b388',
-      primaryDark: '#00b388',
-      secondary: '#0b1c2c',
-      secondaryDark: '#e2e8f0',
-      accent: '#f59e0b',
-      background: '#fafbfc',
-      backgroundDark: '#0f172a',
-      surface: '#ffffff'
-    },
-    typography: { fontFamily: 'vazirmatn', displayWeight: '900' },
-    shape: { borderRadius: 'rounded', shadow: 'medium' },
-    darkMode: null
-  },
-  code: {
-    name: 'کدیار',
-    tagline: 'آموزش · حرفه‌ای · فارسی',
-    colors: {
-      primary: '#3b82f6',
-      primaryDark: '#3b82f6',
-      secondary: '#0f172a',
-      secondaryDark: '#e2e8f0',
-      accent: '#f59e0b',
-      background: '#ffffff',
-      backgroundDark: '#0f1117',
+      primary: '#0e7f76',
+      secondary: '#0d1322',
+      secondaryDark: '#e6ebf5',
+      accent: '#c1521c',
+      background: '#ededE6',
+      backgroundDark: '#05070d',
       surface: '#ffffff'
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    darkMode: null
+  },
+  setigh: {
+    name: 'اوج',
+    tagline: 'پرانرژی · مهارتی · داده‌محور',
+    colors: {
+      primary: '#9bd213',
+      secondary: '#0a0f0d',
+      secondaryDark: '#edf1ea',
+      accent: '#ff5b22',
+      background: '#eff0eb',
+      backgroundDark: '#0a0e0d',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
+    shape: { borderRadius: 'sharp', shadow: 'medium' },
+    darkMode: null
+  },
+  havan: {
+    name: 'زعفران',
+    tagline: 'گرم · کارگاهی · کلاسیک',
+    colors: {
+      primary: '#b4441c',
+      secondary: '#2e1a10',
+      secondaryDark: '#f2e8da',
+      accent: '#e0a32e',
+      background: '#fbf6ec',
+      backgroundDark: '#17110c',
+      surface: '#fffdf8'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    darkMode: null
+  },
+  tondak: {
+    name: 'شکوفا',
+    tagline: 'شاد · کودک و نوجوان · رنگی',
+    colors: {
+      primary: '#ff5a1f',
+      secondary: '#0f3138',
+      secondaryDark: '#eef7f4',
+      accent: '#ffc02e',
+      background: '#fff7ee',
+      backgroundDark: '#0c1518',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     darkMode: null
   },
-  creative: {
-    name: 'استودیوی خلاق',
-    tagline: 'تصویرسازی · طراحی · جامعه خلاق',
+  momas: {
+    name: 'پیشرو',
+    tagline: 'درسی · کنکور · دقیق',
     colors: {
-      primary: '#00aa4d',
-      primaryDark: '#00aa4d',
-      // Navy stays dark in both modes so always-dark panels (hero, teachers,
-      // cta button, footer) keep their navy background when the theme flips.
-      secondary: '#002333',
-      secondaryDark: '#002333',
-      accent: '#d97706',
-      background: '#faf9f7',
-      backgroundDark: '#0f172a',
+      primary: '#1e4fa3',
+      secondary: '#12161b',
+      secondaryDark: '#e9ece8',
+      accent: '#ce3526',
+      background: '#f7f6f1',
+      backgroundDark: '#0d1013',
       surface: '#ffffff'
     },
-    typography: { fontFamily: 'vazirmatn', displayWeight: '900' },
-    shape: { borderRadius: 'rounded', shadow: 'medium' },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    darkMode: null
+  },
+  goftavard: {
+    name: 'هم‌کلام',
+    tagline: 'زبان · گفت‌وگومحور · روشن',
+    colors: {
+      primary: '#1b3fd1',
+      secondary: '#07101e',
+      secondaryDark: '#e9eef7',
+      accent: '#cfe81c',
+      background: '#eef1f6',
+      backgroundDark: '#080f1b',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'soft', shadow: 'subtle' },
+    darkMode: null
+  },
+  rasadaneh: {
+    name: 'سپهر',
+    tagline: 'نجوم · اطلس‌گونه · کاغذی',
+    colors: {
+      primary: '#b5601f',
+      secondary: '#0e1a20',
+      secondaryDark: '#f1ebdd',
+      accent: '#2e6e6a',
+      background: '#f4efe4',
+      backgroundDark: '#0b1316',
+      surface: '#fbf8f1'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'sharp', shadow: 'subtle' },
     darkMode: null
   }
 };
