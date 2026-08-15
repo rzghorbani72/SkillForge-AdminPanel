@@ -113,48 +113,8 @@ export function SortableLessonRow({
         isDragging && 'opacity-50 shadow-lg ring-1 ring-primary/30'
       )}
     >
-      {/* Compact row — title on one side, badges/actions on the other */}
-      <div className="flex items-center gap-3 px-3 py-2.5">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <button
-            type="button"
-            {...attributes}
-            {...listeners}
-            className="shrink-0 cursor-grab touch-none text-muted-foreground hover:text-foreground"
-            aria-label={t('courses.dragLesson')}
-          >
-            <GripVertical className="h-4 w-4" />
-          </button>
-          <span className="w-5 shrink-0 text-center text-xs text-muted-foreground">
-            {index + 1}
-          </span>
-
-          <span
-            className={cn(
-              'h-2 w-2 shrink-0 rounded-full',
-              complete === null
-                ? 'bg-muted-foreground/40'
-                : complete
-                  ? 'bg-emerald-500'
-                  : 'bg-amber-400'
-            )}
-            title={
-              complete === null
-                ? ''
-                : complete
-                  ? t('courses.lessonComplete')
-                  : t('courses.lessonIncomplete')
-            }
-          />
-
-          <Input
-            value={lesson.title}
-            onChange={(e) => onUpdate({ title: e.target.value })}
-            placeholder={t('courses.enterLessonTitle')}
-            className="h-7 min-w-0 flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
-          />
-        </div>
-
+      {/* Compact row: badges/actions on the left, title on the right */}
+      <div className="flex items-center gap-3 px-3 py-2.5" dir="ltr">
         <div className="flex shrink-0 items-center gap-2">
           <div className="flex items-center gap-1">
             <span
@@ -210,6 +170,49 @@ export function SortableLessonRow({
               </button>
             )}
           </div>
+        </div>
+
+        <div
+          className="flex min-w-0 flex-1 items-center gap-2"
+          dir={isFa ? 'rtl' : 'ltr'}
+        >
+          <button
+            type="button"
+            {...attributes}
+            {...listeners}
+            className="shrink-0 cursor-grab touch-none text-muted-foreground hover:text-foreground"
+            aria-label={t('courses.dragLesson')}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+          <span className="w-5 shrink-0 text-center text-xs text-muted-foreground">
+            {index + 1}
+          </span>
+
+          <span
+            className={cn(
+              'h-2 w-2 shrink-0 rounded-full',
+              complete === null
+                ? 'bg-muted-foreground/40'
+                : complete
+                  ? 'bg-emerald-500'
+                  : 'bg-amber-400'
+            )}
+            title={
+              complete === null
+                ? ''
+                : complete
+                  ? t('courses.lessonComplete')
+                  : t('courses.lessonIncomplete')
+            }
+          />
+
+          <Input
+            value={lesson.title}
+            onChange={(e) => onUpdate({ title: e.target.value })}
+            placeholder={t('courses.enterLessonTitle')}
+            className="h-7 min-w-0 flex-1 border-transparent bg-transparent px-1 text-sm shadow-none focus-visible:border-input focus-visible:bg-background"
+          />
         </div>
       </div>
 
