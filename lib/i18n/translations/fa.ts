@@ -4255,7 +4255,8 @@ export const fa = {
   },
   paymentPlans: {
     title: 'پلن‌های پرداخت',
-    description: 'گزینه‌های اقساط دوره #{{id}}',
+    description: 'گزینه‌های اقساط دورهٔ «{{course}}»',
+    descriptionFallback: 'گزینه‌های اقساط این دوره',
     newPlan: 'پلن جدید',
     noPlanDesc: 'یک پلن اقساطی برای این دوره ایجاد کنید',
     installments: 'تعداد اقساط',

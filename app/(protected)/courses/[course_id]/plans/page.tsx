@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useCourseWorkspace } from '@/components/course/detail/course-workspace-context';
 
 const planSchema = z.object({
   installment_count: z.coerce.number().int().min(1),
@@ -51,6 +52,7 @@ export default function PaymentPlansPage() {
   const formatNumber = useNumberFormat();
   const params = useParams<{ course_id: string }>();
   const courseId = params.course_id;
+  const { course } = useCourseWorkspace();
 
   const [plans, setPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -115,7 +117,9 @@ export default function PaymentPlansPage() {
             {t('paymentPlans.title')}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {t('paymentPlans.description', { id: courseId })}
+            {course?.title
+              ? t('paymentPlans.description', { course: course.title })
+              : t('paymentPlans.descriptionFallback')}
           </p>
         </div>
         <Button

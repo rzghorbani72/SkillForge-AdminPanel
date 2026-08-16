@@ -4261,7 +4261,8 @@ export const en = {
   },
   paymentPlans: {
     title: 'Payment Plans',
-    description: 'Course #{{id}} installment options',
+    description: 'Installment options for “{{course}}”',
+    descriptionFallback: 'Installment options for this course',
     newPlan: 'New Plan',
     noPlanDesc: 'Create an installment plan for this course',
     installments: 'Number of Installments',
