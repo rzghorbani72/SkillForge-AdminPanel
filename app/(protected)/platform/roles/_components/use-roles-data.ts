@@ -76,11 +76,18 @@ export function useRolesData(currentRole?: string): UseRolesDataResult {
 }
 
 /**
- * Custom roles first, newest first — those are the ones a manager works with.
- * The built-in platform roles come after, ranked high to low.
+ * The viewer's own role first, then custom roles (newest first) — those are the
+ * ones a manager works with. The built-in platform roles come after, ranked high
+ * to low.
  */
-export function sortRoles(roles: PlatformRole[]): PlatformRole[] {
+export function sortRoles(
+  roles: PlatformRole[],
+  currentRole?: string
+): PlatformRole[] {
   return [...roles].sort((a, b) => {
+    const aIsOwn = a.name === currentRole;
+    const bIsOwn = b.name === currentRole;
+    if (aIsOwn !== bIsOwn) return aIsOwn ? -1 : 1;
     if (a.is_system !== b.is_system) return a.is_system ? 1 : -1;
     if (!a.is_system) {
       return (

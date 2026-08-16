@@ -40,14 +40,14 @@ export function RolesManager() {
 
   const matched = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    const sorted = sortRoles(roles);
+    const sorted = sortRoles(roles, user?.role);
     if (!needle) return sorted;
     return sorted.filter(
       (role) =>
         role.name.toLowerCase().includes(needle) ||
         getRoleMeta(role, t, formatNumber).label.toLowerCase().includes(needle)
     );
-  }, [roles, query, t, formatNumber]);
+  }, [roles, query, t, formatNumber, user?.role]);
 
   const summary = useMemo(() => {
     const system = roles.filter((r) => r.is_system).length;
