@@ -13,6 +13,7 @@ import type {
   TextDirection,
   SaveMode
 } from './sidebar-types';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { SidebarStyleTab } from './sidebar-style-tab';
 import { SidebarSectionsTab } from './sidebar-sections-tab';
 import type { HeroPreviewContext } from './hero-variant-picker';
@@ -94,8 +95,22 @@ export function TemplateCustomizationSidebar({
   onSelectBlock,
   preview
 }: TemplateCustomizationSidebarProps) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('sections');
   const isAdminEditing = saveMode === 'both' || saveMode === 'admin-override';
+
+  // One save button whose label and handler follow the mode — the four modes
+  // differ only in wording, so they share a single control.
+  const saveAction =
+    saveMode === 'copy' && onSaveAsCopy
+      ? { label: t('sitePreview.saveSiteChanges'), run: onSaveAsCopy }
+      : saveMode === 'override' && onSaveOverride
+        ? { label: t('sitePreview.saveTemplate'), run: onSaveOverride }
+        : saveMode === 'admin-override' && onSaveOverride
+          ? { label: t('sitePreview.saveAndPublish'), run: onSaveOverride }
+          : saveMode === 'both' && onSaveOverride
+            ? { label: t('common.save'), run: onSaveOverride }
+            : null;
 
   // Selecting a section in the preview should reveal its editor, which lives in
   // the Sections tab.
@@ -104,8 +119,8 @@ export function TemplateCustomizationSidebar({
   }, [selectedBlockId]);
 
   const TABS: { id: Tab; label: string; icon: typeof Layers }[] = [
-    { id: 'sections', label: 'بخش‌ها', icon: Layers },
-    { id: 'style', label: 'ظاهر', icon: Palette }
+    { id: 'sections', label: t('sitePreview.tabSections'), icon: Layers },
+    { id: 'style', label: t('sitePreview.panelTabStyle'), icon: Palette }
   ];
 
   return (
@@ -118,12 +133,14 @@ export function TemplateCustomizationSidebar({
         <div className="flex items-center gap-2">
           <span className="text-base">{isAdminEditing ? '🌐' : '🤖'}</span>
           <span className="text-sm font-semibold text-zinc-900">
-            {isAdminEditing ? 'ویرایش قالب عمومی' : 'سفارشی‌سازی قالب'}
+            {isAdminEditing
+              ? t('sitePreview.sidebarTitleAdmin')
+              : t('sitePreview.sidebarTitle')}
           </span>
         </div>
         <button
           type="button"
-          title="بستن"
+          title={t('common.close')}
           onClick={onClose}
           className="rounded-lg p-1 text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
         >
@@ -133,9 +150,9 @@ export function TemplateCustomizationSidebar({
 
       {/* Master-template notice */}
       {saveMode === 'both' && (
-        <div className="flex items-start gap-2 border-b border-amber-500/20 bg-amber-500/10 px-4 py-2 text-[11px] leading-relaxed text-amber-300">
+        <div className="flex items-start gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-[11px] leading-relaxed text-amber-800">
           <Globe className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-          این قالب اصلی است؛ ذخیره، نسخهٔ پایه همه مدیران را به‌روز می‌کند
+          {t('sitePreview.sidebarMasterNotice')}
         </div>
       )}
 
@@ -160,9 +177,9 @@ export function TemplateCustomizationSidebar({
 
       {/* Saving indicator */}
       {isSaving && (
-        <div className="flex items-center gap-2 bg-blue-900/40 px-4 py-1.5 text-xs text-blue-300">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" />
-          در حال ذخیره...
+        <div className="flex items-center gap-2 border-b border-blue-100 bg-blue-50 px-4 py-1.5 text-xs text-blue-700">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500" />
+          {t('sitePreview.sidebarSaving')}
         </div>
       )}
 
@@ -205,57 +222,25 @@ export function TemplateCustomizationSidebar({
 
       {/* Footer – save buttons + reset */}
       <div className="flex-shrink-0 space-y-2 border-t border-zinc-200 p-4">
-        {saveMode === 'copy' && onSaveAsCopy && (
+        {saveAction && (
           <button
             type="button"
-            onClick={onSaveAsCopy}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-600/10 py-2.5 text-sm font-medium text-indigo-300 transition-colors hover:bg-indigo-600/20"
+            onClick={saveAction.run}
+            disabled={isSaving}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
           >
             <Save className="h-4 w-4" />
-            ذخیره تغییرات سایت من
-          </button>
-        )}
-
-        {saveMode === 'override' && onSaveOverride && (
-          <button
-            type="button"
-            onClick={onSaveOverride}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-600/10 py-2.5 text-sm font-medium text-emerald-300 transition-colors hover:bg-emerald-600/20"
-          >
-            <Save className="h-4 w-4" />
-            ذخیره قالب
-          </button>
-        )}
-
-        {saveMode === 'admin-override' && onSaveOverride && (
-          <button
-            type="button"
-            onClick={onSaveOverride}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
-          >
-            <Save className="h-4 w-4" />
-            ذخیره و انتشار
-          </button>
-        )}
-
-        {saveMode === 'both' && onSaveOverride && (
-          <button
-            type="button"
-            onClick={onSaveOverride}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
-          >
-            <Save className="h-4 w-4" />
-            ذخیره
+            {saveAction.label}
           </button>
         )}
 
         <button
           type="button"
           onClick={onReset}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-600/10 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-600/20"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
         >
           <RotateCcw className="h-4 w-4" />
-          بازگشت به حالت اولیه
+          {t('sitePreview.resetToOriginal')}
         </button>
       </div>
     </div>

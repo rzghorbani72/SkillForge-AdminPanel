@@ -442,12 +442,23 @@ export default function UITemplateSettingsPage() {
       : 'admin-override'
     : 'copy';
 
+  // Committing (fork/override) snapshots whatever the draft holds server-side.
+  // Colour edits are debounced by 800ms, so a save clicked right after picking a
+  // colour would snapshot the OLD one. Writing the full current style state here
+  // makes the commit authoritative — a late debounce then writes the same values.
   const flushStyleDraft = async () => {
     await apiClient.saveThemeDraft({
-      border_radius_style: borderRadius,
-      shadow_style: shadow,
+      ...buildThemeDraftFromPrimary(primaryColor, {
+        borderRadius,
+        shadow,
+        backgroundSvgPattern: ''
+      }),
       dark_mode: darkMode,
-      font_family: fontFamily
+      font_family: fontFamily,
+      text_direction: textDirection,
+      section_spacing: sectionSpacing,
+      container_width: containerWidth,
+      heading_scale: headingScale
     });
   };
 

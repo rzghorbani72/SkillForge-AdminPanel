@@ -81,6 +81,14 @@ function SectionRow({
       }}
       onDragEnd={onDragEnd}
       onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+      role="button"
+      tabIndex={0}
       className={`group flex items-center gap-1.5 rounded-lg border px-2 py-2 transition-colors ${
         dropBefore ? 'border-t-2 border-t-blue-500' : ''
       } ${
@@ -99,8 +107,7 @@ function SectionRow({
         {index}
       </span>
 
-      <button
-        type="button"
+      <span
         className={`flex min-w-0 flex-1 items-center gap-1.5 text-right text-xs font-medium ${
           visible ? 'text-zinc-800' : 'text-zinc-400 line-through'
         }`}
@@ -112,7 +119,7 @@ function SectionRow({
             className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-500"
           />
         )}
-      </button>
+      </span>
 
       <div className="flex flex-shrink-0 items-center gap-0.5 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
         {swappable && (

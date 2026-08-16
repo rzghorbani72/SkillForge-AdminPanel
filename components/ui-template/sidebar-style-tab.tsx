@@ -8,6 +8,7 @@ import type { UIBlockConfig } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import { useTranslation } from '@/lib/i18n/hooks';
 import type {
   BorderRadius,
   SectionSpacing,
@@ -22,29 +23,31 @@ import { AccordionSection } from './sidebar-primitives';
 // Named palettes expose ONLY a primary color. Every other shade (accent,
 // background, contrast text) is derived by derivePaletteFromPrimary, so a
 // manager can never pick an unreadable primary/background combination.
-const COLOR_PALETTES: { name: string; primary: string }[] = [
-  { name: 'اقیانوسی', primary: '#3b82f6' },
-  { name: 'بنفش', primary: '#8b5cf6' },
-  { name: 'سبز', primary: '#22c55e' },
-  { name: 'نارنجی', primary: '#f97316' },
-  { name: 'قرمز', primary: '#ef4444' },
-  { name: 'صورتی', primary: '#ec4899' },
-  { name: 'فیروزه‌ای', primary: '#14b8a6' },
-  { name: 'طلایی', primary: '#f59e0b' },
-  { name: 'مشکی مدرن', primary: '#27272a' }
+const COLOR_PALETTES: { nameKey: string; primary: string }[] = [
+  { nameKey: 'sitePreview.paletteOcean', primary: '#3b82f6' },
+  { nameKey: 'sitePreview.palettePurple', primary: '#8b5cf6' },
+  { nameKey: 'sitePreview.paletteGreen', primary: '#22c55e' },
+  { nameKey: 'sitePreview.paletteOrange', primary: '#f97316' },
+  { nameKey: 'sitePreview.paletteRed', primary: '#ef4444' },
+  { nameKey: 'sitePreview.palettePink', primary: '#ec4899' },
+  { nameKey: 'sitePreview.paletteTeal', primary: '#14b8a6' },
+  { nameKey: 'sitePreview.paletteGold', primary: '#f59e0b' },
+  { nameKey: 'sitePreview.paletteBlack', primary: '#27272a' }
 ];
 
-const RADIUS_PRESETS: { label: string; value: BorderRadius }[] = [
-  { label: 'تیز', value: 'sharp' },
-  { label: 'معمول', value: 'soft' },
-  { label: 'گرد', value: 'rounded' }
+// Ordered by how round each option actually renders. The px values are the
+// single source of truth shared with Backend theme-css.util.ts and edusphere
+// theme-apply.ts — if those maps change, change these together or the sidebar
+// preview stops matching the published site.
+const RADIUS_PRESETS: {
+  labelKey: string;
+  value: BorderRadius;
+  px: number;
+}[] = [
+  { labelKey: 'sitePreview.cornerSharp', value: 'sharp', px: 4 },
+  { labelKey: 'sitePreview.cornerRound', value: 'rounded', px: 16 },
+  { labelKey: 'sitePreview.cornerExtraRound', value: 'soft', px: 24 }
 ];
-
-const RADIUS_PX: Record<BorderRadius, number> = {
-  sharp: 2,
-  soft: 8,
-  rounded: 16
-};
 
 const SAMPLE_BANNER_IMAGES = [
   'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400&q=70',
@@ -69,15 +72,19 @@ function readableText(hex: string): string {
 }
 
 const SCHEME_ROLES = [
-  { label: 'اصلی', key: 'primary' as const },
-  { label: 'تأکید', key: 'accent' as const },
-  { label: 'پس‌زمینه', key: 'backgroundLight' as const }
+  { labelKey: 'sitePreview.colorRolePrimary', key: 'primary' as const },
+  { labelKey: 'sitePreview.colorRoleAccent', key: 'accent' as const },
+  {
+    labelKey: 'sitePreview.colorRoleBackground',
+    key: 'backgroundLight' as const
+  }
 ];
 
 // Wix/Zarla-style color-theme preview: a mini storefront swatch rendered with
 // the FULL derived scheme (background, text, primary, accent) plus a labelled
 // role strip, so the manager sees the whole palette they're applying.
 function ColorPreview({ color }: { color: string }) {
+  const { t } = useTranslation();
   const p = derivePaletteFromPrimary(color);
   return (
     <div className="overflow-hidden rounded-lg border border-zinc-200">
@@ -87,17 +94,17 @@ function ColorPreview({ color }: { color: string }) {
         dir="rtl"
       >
         <p className="truncate text-sm font-bold" style={{ color: '#18181b' }}>
-          عنوان نمونه
+          {t('sitePreview.colorPreviewTitle')}
         </p>
         <p className="mb-2 truncate text-[11px]" style={{ color: '#52525b' }}>
-          متن توضیحی کوچک‌تر
+          {t('sitePreview.colorPreviewBody')}
         </p>
         <div className="flex items-center gap-2">
           <span
             className="rounded-md px-3 py-1 text-[11px] font-semibold"
             style={{ background: p.primary, color: readableText(p.primary) }}
           >
-            دکمه
+            {t('sitePreview.colorPreviewButton')}
           </span>
           <span
             className="h-4 w-4 rounded-full"
@@ -106,14 +113,14 @@ function ColorPreview({ color }: { color: string }) {
         </div>
       </div>
       <div className="flex border-t border-zinc-200">
-        {SCHEME_ROLES.map(({ label, key }) => (
+        {SCHEME_ROLES.map(({ labelKey, key }) => (
           <div
             key={key}
             className="flex-1 border-r border-zinc-200 last:border-r-0"
           >
             <div className="h-4" style={{ backgroundColor: p[key] }} />
             <p className="py-0.5 text-center text-[8px] text-zinc-500">
-              {label}
+              {t(labelKey)}
             </p>
           </div>
         ))}
@@ -164,6 +171,7 @@ function BrandColorSection({
   primaryColor: string;
   onColorChange: (c: string) => void;
 }) {
+  const { t } = useTranslation();
   const [hexInput, setHexInput] = useState(primaryColor);
   const [showCustom, setShowCustom] = useState(false);
 
@@ -180,7 +188,7 @@ function BrandColorSection({
   );
 
   return (
-    <AccordionSection title="رنگ برند" defaultOpen>
+    <AccordionSection title={t('sitePreview.colorBrand')} defaultOpen>
       <div className="space-y-3">
         <ColorPreview color={primaryColor} />
 
@@ -188,7 +196,7 @@ function BrandColorSection({
           {COLOR_PALETTES.map((p) => (
             <PaletteCard
               key={p.primary}
-              name={p.name}
+              name={t(p.nameKey)}
               primary={p.primary}
               selected={primaryColor.toLowerCase() === p.primary.toLowerCase()}
               onSelect={() => {
@@ -204,15 +212,17 @@ function BrandColorSection({
           onClick={() => setShowCustom((v) => !v)}
           className="text-[11px] font-medium text-zinc-600 transition-colors hover:text-zinc-900"
         >
-          {showCustom ? 'بستن رنگ سفارشی' : 'رنگ سفارشی +'}
+          {showCustom
+            ? t('sitePreview.colorCustomClose')
+            : t('sitePreview.colorCustomOpen')}
         </button>
 
         {(showCustom || !isPreset) && (
           <div className="flex items-center gap-2">
             <button
               type="button"
-              aria-label="پیش‌نمایش رنگ سفارشی"
-              title="رنگ سفارشی"
+              aria-label={t('sitePreview.colorCustomPreview')}
+              title={t('sitePreview.colorCustom')}
               className="h-8 w-9 flex-shrink-0 rounded-lg border border-zinc-300"
               style={{ backgroundColor: primaryColor }}
             />
@@ -233,20 +243,25 @@ function BrandColorSection({
 
 // ── Font Family ───────────────────────────────────────────────────────────────
 
-const SCRIPT_GROUPS: { script: 'arabic' | 'latin'; label: string }[] = [
-  { script: 'arabic', label: 'مناسب برای محتوای فارسی' },
-  { script: 'latin', label: 'مناسب برای محتوای لاتین' }
+const SCRIPT_GROUPS: { script: 'arabic' | 'latin'; labelKey: string }[] = [
+  { script: 'arabic', labelKey: 'sitePreview.fontScriptArabic' },
+  { script: 'latin', labelKey: 'sitePreview.fontScriptLatin' }
 ];
 
 function FontPreview({ fontFamily }: { fontFamily: FontFamily }) {
+  const { t } = useTranslation();
   const css = FONT_OPTIONS.find((f) => f.slug === fontFamily)?.preview;
   return (
     <div
       className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center"
       style={{ fontFamily: css }}
     >
-      <p className="text-lg font-bold text-zinc-900">یادگیری حرفه‌ای</p>
-      <p className="text-sm text-zinc-600">Professional Academy</p>
+      <p className="text-lg font-bold text-zinc-900">
+        {t('sitePreview.fontPreviewTitle')}
+      </p>
+      <p className="text-sm text-zinc-600">
+        {t('sitePreview.fontPreviewSubtitle')}
+      </p>
     </div>
   );
 }
@@ -258,16 +273,17 @@ function FontFamilySection({
   fontFamily: FontFamily;
   onFontFamilyChange: (f: FontFamily) => void;
 }) {
+  const { t } = useTranslation();
   return (
-    <AccordionSection title="فونت">
+    <AccordionSection title={t('sitePreview.fontFamilyTitle')}>
       <div className="space-y-3">
         <FontPreview fontFamily={fontFamily} />
-        {SCRIPT_GROUPS.map(({ script, label }) => {
+        {SCRIPT_GROUPS.map(({ script, labelKey }) => {
           const group = FONT_OPTIONS.filter((f) => f.script === script);
           return (
             <div key={script}>
               <p className="mb-1.5 text-[10px] font-semibold text-zinc-500">
-                {label}
+                {t(labelKey)}
               </p>
               <div className="grid grid-cols-2 gap-1.5">
                 {group.map((font) => (
@@ -303,46 +319,34 @@ function RoundedCornersSection({
   borderRadius: BorderRadius;
   onBorderRadiusChange: (r: BorderRadius) => void;
 }) {
-  const cardPx = RADIUS_PX[borderRadius];
-  const cardToRadius = (px: number): BorderRadius =>
-    px <= 3 ? 'sharp' : px <= 12 ? 'soft' : 'rounded';
+  const { t } = useTranslation();
 
   return (
-    <AccordionSection title="گوشه‌های گرد">
-      <div className="space-y-4">
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-600">شعاع کارت‌ها</span>
-            <span className="font-mono text-xs text-zinc-700">{cardPx}px</span>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={24}
-            value={cardPx}
-            title="شعاع کارت‌ها"
-            onChange={(e) =>
-              onBorderRadiusChange(cardToRadius(Number(e.target.value)))
-            }
-            className="w-full accent-blue-500"
-          />
-        </div>
-        <div className="flex gap-1">
-          {RADIUS_PRESETS.map(({ label, value }) => (
+    <AccordionSection title={t('sitePreview.cornerRadius')}>
+      <div className="grid grid-cols-3 gap-1.5">
+        {RADIUS_PRESETS.map(({ labelKey, value, px }) => {
+          const selected = borderRadius === value;
+          return (
             <button
               key={value}
               type="button"
               onClick={() => onBorderRadiusChange(value)}
-              className={`flex-1 rounded py-1.5 text-[11px] font-medium transition-colors ${
-                borderRadius === value
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+              className={`flex flex-col items-center gap-1.5 rounded-lg border-2 px-2 py-2.5 transition-colors ${
+                selected
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-zinc-200 hover:border-zinc-400'
               }`}
             >
-              {label}
+              <span
+                className="h-8 w-full border-2 border-zinc-400 bg-white"
+                style={{ borderRadius: `${px}px` }}
+              />
+              <span className="text-[11px] font-medium text-zinc-700">
+                {t(labelKey)}
+              </span>
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </AccordionSection>
   );
@@ -357,6 +361,7 @@ function ThemeModeSection({
   darkMode: boolean | null;
   onDarkModeChange: (m: boolean | null) => void;
 }) {
+  const { t } = useTranslation();
   const modes: {
     label: string;
     desc: string;
@@ -364,22 +369,27 @@ function ThemeModeSection({
     value: boolean | null;
   }[] = [
     {
-      label: 'روشن',
-      desc: 'تم روشن به‌عنوان پیش‌فرض',
+      label: t('sitePreview.themeModeLight'),
+      desc: t('sitePreview.themeModeLightDesc'),
       icon: '☀️',
       value: false
     },
     {
-      label: 'تاریک',
-      desc: 'تم تاریک به‌عنوان پیش‌فرض',
+      label: t('sitePreview.themeModeDark'),
+      desc: t('sitePreview.themeModeDarkDesc'),
       icon: '🌙',
       value: true
     },
-    { label: 'هر دو', desc: 'کاربر انتخاب می‌کند', icon: '🌗', value: null }
+    {
+      label: t('sitePreview.themeModeBoth'),
+      desc: t('sitePreview.themeModeBothDesc'),
+      icon: '🌗',
+      value: null
+    }
   ];
 
   return (
-    <AccordionSection title="حالت تم">
+    <AccordionSection title={t('sitePreview.themeMode')}>
       <div className="space-y-2">
         {modes.map((mode) => (
           <button
@@ -409,21 +419,21 @@ function ThemeModeSection({
 
 // ── Design Sizes ──────────────────────────────────────────────────────────────
 
-const SPACING_OPTIONS: { label: string; value: SectionSpacing }[] = [
-  { label: 'فشرده', value: 'compact' },
-  { label: 'معمول', value: 'comfortable' },
-  { label: 'باز', value: 'spacious' }
+const SPACING_OPTIONS: { labelKey: string; value: SectionSpacing }[] = [
+  { labelKey: 'sitePreview.designSpacingCompact', value: 'compact' },
+  { labelKey: 'sitePreview.designSpacingNormal', value: 'comfortable' },
+  { labelKey: 'sitePreview.designSpacingSpacious', value: 'spacious' }
 ];
-const WIDTH_OPTIONS: { label: string; value: ContainerWidth }[] = [
-  { label: 'باریک', value: 'narrow' },
-  { label: 'معمول', value: 'standard' },
-  { label: 'عریض', value: 'wide' },
-  { label: 'تمام', value: 'full' }
+const WIDTH_OPTIONS: { labelKey: string; value: ContainerWidth }[] = [
+  { labelKey: 'sitePreview.designWidthNarrow', value: 'narrow' },
+  { labelKey: 'sitePreview.designWidthNormal', value: 'standard' },
+  { labelKey: 'sitePreview.designWidthWide', value: 'wide' },
+  { labelKey: 'sitePreview.designWidthFull', value: 'full' }
 ];
-const HEADING_OPTIONS: { label: string; value: HeadingScale }[] = [
-  { label: 'کوچک', value: 'compact' },
-  { label: 'معمول', value: 'standard' },
-  { label: 'بزرگ', value: 'large' }
+const HEADING_OPTIONS: { labelKey: string; value: HeadingScale }[] = [
+  { labelKey: 'sitePreview.designHeadingSmall', value: 'compact' },
+  { labelKey: 'sitePreview.designHeadingNormal', value: 'standard' },
+  { labelKey: 'sitePreview.designHeadingLarge', value: 'large' }
 ];
 
 function SizeRow<T extends string>({
@@ -433,10 +443,11 @@ function SizeRow<T extends string>({
   onChange
 }: {
   title: string;
-  options: { label: string; value: T }[];
+  options: { labelKey: string; value: T }[];
   value: T;
   onChange: (v: T) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-1.5">
       <span className="text-xs text-zinc-600">{title}</span>
@@ -452,7 +463,7 @@ function SizeRow<T extends string>({
                 : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
             }`}
           >
-            {o.label}
+            {t(o.labelKey)}
           </button>
         ))}
       </div>
@@ -475,23 +486,24 @@ function DesignSizeSection({
     heading_scale?: HeadingScale;
   }) => void;
 }) {
+  const { t } = useTranslation();
   return (
-    <AccordionSection title="تنظیمات پیشرفته">
+    <AccordionSection title={t('sitePreview.designSizes')}>
       <div className="space-y-4">
         <SizeRow
-          title="فاصله بخش‌ها"
+          title={t('sitePreview.designSpacing')}
           options={SPACING_OPTIONS}
           value={sectionSpacing}
           onChange={(v) => onChange({ section_spacing: v })}
         />
         <SizeRow
-          title="عرض محتوا"
+          title={t('sitePreview.designWidth')}
           options={WIDTH_OPTIONS}
           value={containerWidth}
           onChange={(v) => onChange({ container_width: v })}
         />
         <SizeRow
-          title="اندازه عناوین"
+          title={t('sitePreview.designHeading')}
           options={HEADING_OPTIONS}
           value={headingScale}
           onChange={(v) => onChange({ heading_scale: v })}
@@ -510,6 +522,7 @@ function DirectionSection({
   textDirection: TextDirection;
   onTextDirectionChange: (d: TextDirection) => void;
 }) {
+  const { t } = useTranslation();
   const options: {
     label: string;
     desc: string;
@@ -517,21 +530,21 @@ function DirectionSection({
     value: TextDirection;
   }[] = [
     {
-      label: 'راست به چپ',
-      desc: 'مناسب برای فارسی و عربی',
+      label: t('sitePreview.textDirectionRtl'),
+      desc: t('sitePreview.textDirectionRtlDesc'),
       icon: '←',
       value: 'rtl'
     },
     {
-      label: 'چپ به راست',
-      desc: 'مناسب برای انگلیسی و لاتین',
+      label: t('sitePreview.textDirectionLtr'),
+      desc: t('sitePreview.textDirectionLtrDesc'),
       icon: '→',
       value: 'ltr'
     }
   ];
 
   return (
-    <AccordionSection title="جهت نوشتار">
+    <AccordionSection title={t('sitePreview.textDirectionTitle')}>
       <div className="space-y-2">
         {options.map((opt) => (
           <button
@@ -570,6 +583,7 @@ function BannerImageSection({
   blocks: UIBlockConfig[];
   onBannerImageChange: (url: string) => void;
 }) {
+  const { t } = useTranslation();
   const [urlInput, setUrlInput] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -613,7 +627,7 @@ function BannerImageSection({
   };
 
   return (
-    <AccordionSection title="تصویر بنر">
+    <AccordionSection title={t('sitePreview.bannerImage')}>
       <div className="space-y-3">
         {currentImage && (
           <div className="overflow-hidden rounded-lg border border-zinc-200">
@@ -630,13 +644,15 @@ function BannerImageSection({
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-300 py-2.5 text-xs text-zinc-600 transition-colors hover:border-blue-500 hover:text-blue-400"
         >
           <Upload className="h-3.5 w-3.5" />
-          {isUploading ? 'در حال آپلود...' : 'آپلود تصویر از دستگاه'}
+          {isUploading
+            ? t('sitePreview.bannerUploading')
+            : t('sitePreview.bannerUpload')}
         </button>
         <input
           ref={fileRef}
           type="file"
           accept="image/*"
-          title="آپلود تصویر بنر"
+          title={t('sitePreview.bannerUpload')}
           className="hidden"
           onChange={handleUpload}
           disabled={isUploading}
@@ -655,17 +671,19 @@ function BannerImageSection({
             onClick={applyUrl}
             className="rounded-lg bg-blue-600 px-3 text-xs font-medium text-white transition-colors hover:bg-blue-700"
           >
-            اعمال
+            {t('sitePreview.bannerApply')}
           </button>
         </div>
         <div className="space-y-1.5">
-          <p className="text-[10px] text-zinc-500">تصاویر نمونه</p>
+          <p className="text-[10px] text-zinc-500">
+            {t('sitePreview.bannerSamples')}
+          </p>
           <div className="grid grid-cols-3 gap-1.5">
             {SAMPLE_BANNER_IMAGES.map((src, i) => (
               <button
                 key={src}
                 type="button"
-                title={`تصویر نمونه ${i + 1}`}
+                title={t('sitePreview.bannerSampleN', { n: i + 1 })}
                 onClick={() => onBannerImageChange(src)}
                 className="overflow-hidden rounded-lg border border-zinc-200 transition-all hover:scale-[1.03] hover:border-blue-500"
               >
