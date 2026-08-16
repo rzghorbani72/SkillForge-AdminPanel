@@ -98,6 +98,7 @@ export function AssignAccessDialog({
             onSubmit={handleSubmit}
             isSaving={isSaving}
             disabled={!canSubmit}
+            disabledHint={t('accessGrants.pickCourseHint')}
             enabled={open}
             hasExternalTarget={(initialProfileIds?.length ?? 0) > 0}
           />
