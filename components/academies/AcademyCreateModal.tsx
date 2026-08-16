@@ -126,83 +126,86 @@ export function AcademyCreateModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent dir="rtl" className="gap-5 rounded-2xl sm:max-w-3xl">
+      <DialogContent dir="rtl" className="gap-4 rounded-2xl sm:max-w-4xl">
         <DialogHeader className="text-right">
           <p className="text-xs text-muted-foreground">
             {t('stores.createModalTitle')}
           </p>
-          <DialogTitle className="text-xl">
+          <DialogTitle className="text-lg">
             {t('stores.createModalHeading')}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5">
-          {/* Identity — name and address stay on one row so the address is read
-              as a consequence of the name it is generated from. */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium">
-                {t('stores.academyName')}
-              </label>
-              <Input
-                value={name}
-                onChange={(e) => handleNameChange(e.target.value)}
-                placeholder={t('stores.academyNamePlaceholder')}
-                autoFocus
+        {/* Two columns keep the dialog short: what the academy is on one side,
+            how it looks on the other. */}
+        <div className="grid gap-x-6 gap-y-4 sm:grid-cols-12">
+          <div className="space-y-4 sm:col-span-7">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  {t('stores.academyName')}
+                </label>
+                <Input
+                  value={name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  placeholder={t('stores.academyNamePlaceholder')}
+                  autoFocus
+                />
+              </div>
+              <SlugField
+                value={slug}
+                status={slugStatus}
+                onChange={handleSlugChange}
+                t={t}
               />
             </div>
-            <SlugField
-              value={slug}
-              status={slugStatus}
-              onChange={handleSlugChange}
-              t={t}
-            />
-          </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              {t('stores.mainCategory')}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {CATEGORY_KEYS.map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  aria-pressed={category === key}
-                  onClick={() => setCategory(category === key ? '' : key)}
-                  className={cn(
-                    'rounded-full border px-3 py-1.5 text-sm transition-colors',
-                    category === key
-                      ? 'border-primary bg-primary text-primary-foreground'
-                      : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground'
-                  )}
-                >
-                  {t(
-                    `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`
-                  )}
-                </button>
-              ))}
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                {t('stores.mainCategory')}
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {CATEGORY_KEYS.map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={category === key}
+                    onClick={() => setCategory(category === key ? '' : key)}
+                    className={cn(
+                      'rounded-full border px-2.5 py-1 text-xs transition-colors',
+                      category === key
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                    )}
+                  >
+                    {t(
+                      `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              {t('stores.shortDescription')}
-            </label>
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={t('stores.shortDescriptionPlaceholder')}
-              rows={2}
-              className="resize-none"
-            />
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                {t('stores.shortDescription')}
+              </label>
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={t('stores.shortDescriptionPlaceholder')}
+                rows={2}
+                className="resize-none"
+              />
+            </div>
           </div>
 
           {/* Branding — the two uploads share one row and one height so they
               read as a pair. */}
-          <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
-            <div className="grid items-stretch gap-4 sm:grid-cols-2">
+          <div className="space-y-3 rounded-2xl border border-border/70 bg-muted/20 p-3 sm:col-span-5">
+            <div className="grid items-stretch gap-3 sm:grid-cols-2">
               <ImageUploadField
+                size="sm"
                 label={t('stores.brandingLogo')}
                 hint={t('stores.brandingLogoHint')}
                 replaceHint={t('stores.brandingReplaceHint')}
@@ -212,6 +215,7 @@ export function AcademyCreateModal({
               />
 
               <ImageUploadField
+                size="sm"
                 label={t('stores.brandingFavicon')}
                 hint={t('stores.brandingFaviconHint')}
                 replaceHint={t('stores.brandingReplaceHint')}
@@ -221,7 +225,7 @@ export function AcademyCreateModal({
               />
             </div>
 
-            <div className="mt-4 border-t border-border/70 pt-4">
+            <div className="border-t border-border/70 pt-3">
               <BrandColorPicker
                 value={primaryColor}
                 onChange={setPrimaryColor}
@@ -232,12 +236,12 @@ export function AcademyCreateModal({
           </div>
         </div>
 
-        <DialogFooter className="flex-row gap-3 pt-1 sm:justify-normal sm:space-x-0">
+        <DialogFooter className="flex-row gap-3 sm:justify-normal sm:space-x-0">
           <button
             type="button"
             disabled={saving}
             onClick={handleClose}
-            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[14px] border border-border text-[15px] font-medium text-muted-foreground transition-colors hover:bg-muted disabled:opacity-60"
+            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-[14px] border border-border text-sm font-medium text-muted-foreground transition-colors hover:bg-muted disabled:opacity-60"
           >
             {t('stores.cancel')}
           </button>
@@ -246,7 +250,7 @@ export function AcademyCreateModal({
             type="button"
             disabled={!canSubmit}
             onClick={handleSubmit}
-            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[14px] bg-primary text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
+            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-[14px] bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
           >
             {saving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {t('common.create')}

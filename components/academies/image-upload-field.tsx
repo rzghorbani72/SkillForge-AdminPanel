@@ -31,14 +31,18 @@ export function ImageUploadField({
 
   return (
     <div className="flex h-full flex-col">
-      <label className="mb-2 block text-sm font-medium">{label}</label>
+      {/* One fixed-height line: a label that wrapped would push its own box
+          out of line with the box beside it. */}
+      <label className="mb-2 block h-5 truncate text-sm font-medium leading-5">
+        {label}
+      </label>
       <button
         type="button"
         disabled={uploading}
         onClick={() => inputRef.current?.click()}
         className={cn(
-          'group flex w-full flex-1 flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 transition-colors hover:border-primary/60 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60',
-          size === 'md' ? 'min-h-32' : 'min-h-20'
+          'group flex w-full flex-1 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 px-2 transition-colors hover:border-primary/60 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60',
+          size === 'md' ? 'min-h-32' : 'min-h-24'
         )}
       >
         {uploading ? (
@@ -56,10 +60,10 @@ export function ImageUploadField({
           </span>
         ) : (
           <>
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-background shadow-sm transition-colors group-hover:bg-primary/10">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-background shadow-sm transition-colors group-hover:bg-primary/10">
               <Upload className="h-4 w-4 text-muted-foreground" />
             </span>
-            <p className="px-3 text-center text-xs leading-5 text-muted-foreground">
+            <p className="text-center text-[11px] leading-4 text-muted-foreground">
               {hint}
             </p>
           </>

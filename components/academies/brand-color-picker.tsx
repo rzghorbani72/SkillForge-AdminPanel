@@ -40,8 +40,19 @@ export function BrandColorPicker({
 
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium">{label}</label>
-      <div className="flex flex-wrap items-center gap-2.5">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <label className="text-sm font-medium">{label}</label>
+        <span
+          dir="ltr"
+          className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
+        >
+          {value.toUpperCase()}
+        </span>
+      </div>
+
+      {/* A fixed grid, not a wrapping row: the swatches must land in the same
+          two tidy rows at every dialog width. */}
+      <div className="grid grid-cols-7 justify-items-center gap-2">
         {BRAND_COLORS.map((hex) => (
           <button
             key={hex}
@@ -51,7 +62,7 @@ export function BrandColorPicker({
             onClick={() => onChange(hex)}
             style={{ backgroundColor: hex }}
             className={cn(
-              'h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
+              'h-7 w-7 rounded-full border-2 transition-transform hover:scale-110',
               value === hex
                 ? 'scale-110 border-foreground shadow-md'
                 : 'border-transparent'
@@ -70,19 +81,12 @@ export function BrandColorPicker({
               : { backgroundColor: value, backgroundImage: 'none' }
           }
           className={cn(
-            'h-8 w-8 rounded-full border-2 bg-[conic-gradient(#ef4444,#eab308,#22c55e,#06b6d4,#3b82f6,#8b5cf6,#ec4899,#ef4444)] transition-transform hover:scale-110',
+            'h-7 w-7 rounded-full border-2 bg-[conic-gradient(#ef4444,#eab308,#22c55e,#06b6d4,#3b82f6,#8b5cf6,#ec4899,#ef4444)] transition-transform hover:scale-110',
             !isPreset
               ? 'scale-110 border-foreground shadow-md'
               : 'border-transparent'
           )}
         />
-
-        <span
-          dir="ltr"
-          className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
-        >
-          {value.toUpperCase()}
-        </span>
       </div>
 
       <input

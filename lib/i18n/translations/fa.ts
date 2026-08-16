@@ -1209,9 +1209,9 @@ export const fa = {
     categoryOther: 'سایر',
     categoryFinance: 'مالی',
     brandingLogo: 'لوگوی آکادمی',
-    brandingLogoHint: 'کلیک کنید · PNG یا JPG، حداکثر ۲ مگابایت',
-    brandingFavicon: 'فاوآیکون (آیکون تب مرورگر)',
-    brandingFaviconHint: 'مربعی و کوچک · PNG، حداقل ۶۴×۶۴ پیکسل',
+    brandingLogoHint: 'PNG یا JPG · حداکثر ۲ مگابایت',
+    brandingFavicon: 'آیکون تب مرورگر',
+    brandingFaviconHint: 'PNG مربعی · حداقل ۶۴×۶۴',
     brandingReplaceHint: 'برای تغییر کلیک کنید',
     brandingColor: 'رنگ برند',
     brandingColorCustom: 'رنگ دلخواه'

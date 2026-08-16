@@ -1218,9 +1218,9 @@ export const en = {
     categoryOther: 'Other',
     categoryFinance: 'Finance',
     brandingLogo: 'Academy Logo',
-    brandingLogoHint: 'Click to upload · PNG or JPG, max 2 MB',
-    brandingFavicon: 'Favicon (browser tab icon)',
-    brandingFaviconHint: 'Small and square · PNG, at least 64×64 px',
+    brandingLogoHint: 'PNG or JPG · max 2 MB',
+    brandingFavicon: 'Browser tab icon',
+    brandingFaviconHint: 'Square PNG · min 64×64',
     brandingReplaceHint: 'Click to replace',
     brandingColor: 'Brand Color',
     brandingColorCustom: 'Custom color'
