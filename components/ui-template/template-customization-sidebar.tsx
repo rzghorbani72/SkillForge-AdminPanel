@@ -50,7 +50,6 @@ export interface TemplateCustomizationSidebarProps {
   }) => void;
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
   onUpdateBlock: (blockId: string, config: Record<string, unknown>) => void;
-  onBannerImageChange: (url: string) => void;
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
   onToggleVisibleBlock: (id: string, visible: boolean) => void;
   onDeleteBlock: (id: string) => void;
@@ -90,7 +89,6 @@ export function TemplateCustomizationSidebar({
   onDesignSizeChange,
   onBlocksChange,
   onUpdateBlock,
-  onBannerImageChange,
   onOpenPicker,
   onToggleVisibleBlock,
   onDeleteBlock,
@@ -221,8 +219,6 @@ export function TemplateCustomizationSidebar({
             sectionSpacing={sectionSpacing}
             containerWidth={containerWidth}
             headingScale={headingScale}
-            blocks={blocks}
-            selectedBlockId={selectedBlockId}
             onColorChange={onColorChange}
             onFontFamilyChange={onFontFamilyChange}
             onBorderRadiusChange={onBorderRadiusChange}
@@ -231,7 +227,6 @@ export function TemplateCustomizationSidebar({
             onDarkModeChange={onDarkModeChange}
             onTextDirectionChange={onTextDirectionChange}
             onDesignSizeChange={onDesignSizeChange}
-            onBannerImageChange={onBannerImageChange}
           />
         )}
       </div>

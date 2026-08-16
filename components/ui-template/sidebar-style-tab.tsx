@@ -1,15 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { Upload } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { derivePaletteFromPrimary } from '@/lib/design-system-palette';
-import type { UIBlockConfig } from '@/types/api';
-import { apiClient } from '@/lib/api';
-import { ErrorHandler } from '@/lib/error-handler';
-import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { TEMPLATE_KEYS } from '@/constants/template-names';
 import type {
   BorderRadius,
   ElementAnimation,
@@ -22,13 +17,6 @@ import type {
 } from './sidebar-types';
 import { FONT_OPTIONS } from './sidebar-types';
 import { AccordionSection } from './sidebar-primitives';
-
-function isGalleryHeroStyle(style: unknown): boolean {
-  return (
-    typeof style === 'string' &&
-    (TEMPLATE_KEYS as readonly string[]).includes(style)
-  );
-}
 
 // Named palettes expose ONLY a primary color. Every other shade (accent,
 // background, contrast text) is derived by derivePaletteFromPrimary, so a
@@ -57,15 +45,6 @@ const RADIUS_PRESETS: {
   { labelKey: 'sitePreview.cornerSharp', value: 'sharp', px: 4 },
   { labelKey: 'sitePreview.cornerRound', value: 'rounded', px: 16 },
   { labelKey: 'sitePreview.cornerExtraRound', value: 'soft', px: 24 }
-];
-
-const SAMPLE_BANNER_IMAGES = [
-  'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400&q=70',
-  'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400&q=70',
-  'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&q=70',
-  'https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=400&q=70',
-  'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&q=70',
-  'https://images.unsplash.com/photo-1544256718-3bcf237f3974?w=400&q=70'
 ];
 
 // ── Brand Color ───────────────────────────────────────────────────────────────
@@ -683,145 +662,6 @@ function DirectionSection({
   );
 }
 
-// ── Banner Image ──────────────────────────────────────────────────────────────
-
-function BannerImageSection({
-  blocks,
-  selectedBlockId,
-  onBannerImageChange
-}: {
-  blocks: UIBlockConfig[];
-  selectedBlockId?: string | null;
-  onBannerImageChange: (url: string) => void;
-}) {
-  const { t } = useTranslation();
-  const [urlInput, setUrlInput] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const heroBlocks = blocks.filter(
-    (b) => b.type === 'hero' || b.type === 'slideshow'
-  );
-  const heroBlock =
-    (selectedBlockId
-      ? heroBlocks.find((b) => b.id === selectedBlockId)
-      : undefined) ?? heroBlocks[0];
-  const currentImage =
-    (heroBlock?.config?.bgImage as string | undefined) ?? null;
-
-  // Gallery heroes own media in the section Style tab — do not offer the
-  // global banner list here (upload must stay on the selected design only).
-  if (heroBlock && isGalleryHeroStyle(heroBlock.config?.style)) {
-    return null;
-  }
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setIsUploading(true);
-      const result = await apiClient.uploadImage(file, {
-        title: 'Banner Image'
-      });
-      const raw = result as unknown as Record<string, unknown>;
-      const id =
-        (raw?.id as number | undefined) ??
-        ((raw?.data as Record<string, unknown>)?.id as number | undefined);
-      if (id) {
-        onBannerImageChange(
-          `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`
-        );
-      }
-    } catch (error) {
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setIsUploading(false);
-      e.target.value = '';
-    }
-  };
-
-  const applyUrl = () => {
-    if (urlInput.trim()) {
-      onBannerImageChange(urlInput.trim());
-      setUrlInput('');
-    }
-  };
-
-  return (
-    <AccordionSection title={t('sitePreview.bannerImage')}>
-      <div className="space-y-3">
-        {currentImage && (
-          <div className="overflow-hidden rounded-lg border border-zinc-200">
-            <img
-              src={currentImage}
-              alt="Banner"
-              className="h-20 w-full object-cover"
-            />
-          </div>
-        )}
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-300 py-2.5 text-xs text-zinc-600 transition-colors hover:border-blue-500 hover:text-blue-400"
-        >
-          <Upload className="h-3.5 w-3.5" />
-          {isUploading
-            ? t('sitePreview.bannerUploading')
-            : t('sitePreview.bannerUpload')}
-        </button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          title={t('sitePreview.bannerUpload')}
-          className="hidden"
-          onChange={handleUpload}
-          disabled={isUploading}
-        />
-        <div className="flex gap-2">
-          <Input
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && applyUrl()}
-            placeholder="...//https"
-            className="h-8 flex-1 border-zinc-300 bg-zinc-100 text-right text-xs text-zinc-800 placeholder:text-zinc-600"
-            dir="ltr"
-          />
-          <button
-            type="button"
-            onClick={applyUrl}
-            className="rounded-lg bg-blue-600 px-3 text-xs font-medium text-white transition-colors hover:bg-blue-700"
-          >
-            {t('sitePreview.bannerApply')}
-          </button>
-        </div>
-        <div className="space-y-1.5">
-          <p className="text-[10px] text-zinc-500">
-            {t('sitePreview.bannerSamples')}
-          </p>
-          <div className="grid grid-cols-3 gap-1.5">
-            {SAMPLE_BANNER_IMAGES.map((src, i) => (
-              <button
-                key={src}
-                type="button"
-                title={t('sitePreview.bannerSampleN', { n: i + 1 })}
-                onClick={() => onBannerImageChange(src)}
-                className="overflow-hidden rounded-lg border border-zinc-200 transition-all hover:scale-[1.03] hover:border-blue-500"
-              >
-                <img
-                  src={src}
-                  alt="sample banner"
-                  className="h-12 w-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </AccordionSection>
-  );
-}
-
 // ── Main Style Tab ────────────────────────────────────────────────────────────
 
 export interface SidebarStyleTabProps {
@@ -835,7 +675,6 @@ export interface SidebarStyleTabProps {
   sectionSpacing: SectionSpacing;
   containerWidth: ContainerWidth;
   headingScale: HeadingScale;
-  blocks: UIBlockConfig[];
   onColorChange: (color: string) => void;
   onFontFamilyChange: (f: FontFamily) => void;
   onBorderRadiusChange: (r: BorderRadius) => void;
@@ -848,8 +687,6 @@ export interface SidebarStyleTabProps {
     container_width?: ContainerWidth;
     heading_scale?: HeadingScale;
   }) => void;
-  onBannerImageChange: (url: string) => void;
-  selectedBlockId?: string | null;
 }
 
 export function SidebarStyleTab({
@@ -863,7 +700,6 @@ export function SidebarStyleTab({
   sectionSpacing,
   containerWidth,
   headingScale,
-  blocks,
   onColorChange,
   onFontFamilyChange,
   onBorderRadiusChange,
@@ -871,10 +707,11 @@ export function SidebarStyleTab({
   onElementAnimationChange,
   onDarkModeChange,
   onTextDirectionChange,
-  onDesignSizeChange,
-  onBannerImageChange,
-  selectedBlockId
+  onDesignSizeChange
 }: SidebarStyleTabProps) {
+  const { t } = useTranslation();
+  const [showMore, setShowMore] = useState(false);
+
   return (
     <div>
       <BrandColorSection
@@ -885,34 +722,45 @@ export function SidebarStyleTab({
         fontFamily={fontFamily}
         onFontFamilyChange={onFontFamilyChange}
       />
-      <DirectionSection
-        textDirection={textDirection}
-        onTextDirectionChange={onTextDirectionChange}
-      />
-      <RoundedCornersSection
-        borderRadius={borderRadius}
-        onBorderRadiusChange={onBorderRadiusChange}
-      />
-      <ShadowSection shadow={shadow} onShadowChange={onShadowChange} />
-      <MotionSection
-        elementAnimation={elementAnimation}
-        onElementAnimationChange={onElementAnimationChange}
-      />
-      <DesignSizeSection
-        sectionSpacing={sectionSpacing}
-        containerWidth={containerWidth}
-        headingScale={headingScale}
-        onChange={onDesignSizeChange}
-      />
       <ThemeModeSection
         darkMode={darkMode}
         onDarkModeChange={onDarkModeChange}
       />
-      <BannerImageSection
-        blocks={blocks}
-        selectedBlockId={selectedBlockId}
-        onBannerImageChange={onBannerImageChange}
-      />
+
+      <button
+        type="button"
+        onClick={() => setShowMore((v) => !v)}
+        className="flex w-full items-center justify-between border-b border-zinc-200 px-4 py-3 text-xs font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+      >
+        <span>{t('sitePreview.moreAppearance')}</span>
+        <ChevronDown
+          className={`h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {showMore && (
+        <>
+          <DirectionSection
+            textDirection={textDirection}
+            onTextDirectionChange={onTextDirectionChange}
+          />
+          <RoundedCornersSection
+            borderRadius={borderRadius}
+            onBorderRadiusChange={onBorderRadiusChange}
+          />
+          <ShadowSection shadow={shadow} onShadowChange={onShadowChange} />
+          <MotionSection
+            elementAnimation={elementAnimation}
+            onElementAnimationChange={onElementAnimationChange}
+          />
+          <DesignSizeSection
+            sectionSpacing={sectionSpacing}
+            containerWidth={containerWidth}
+            headingScale={headingScale}
+            onChange={onDesignSizeChange}
+          />
+        </>
+      )}
     </div>
   );
 }

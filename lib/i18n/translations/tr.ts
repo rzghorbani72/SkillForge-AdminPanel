@@ -2495,6 +2495,12 @@ export const tr = {
     panelReplaceImage: 'Görseli Değiştir',
     panelUploading: 'Yükleniyor...',
     panelUploadImage: 'Görsel Yükle',
+    heroIllustration: 'Banner görseli',
+    heroUploadImage: 'Görsel yükle',
+    heroUploading: 'Yükleniyor…',
+    heroNoIllustration: 'Görseli kaldır',
+    heroIllustrationHint:
+      'Yalnızca görsel alanını değiştirir — bu tasarım korunur',
     panelOverlayOpacity: 'Katman Opaklığı',
     panelTextAlignment: 'Metin Hizalaması',
     panelAlignCenter: 'Orta',

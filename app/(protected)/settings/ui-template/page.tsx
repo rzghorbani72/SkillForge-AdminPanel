@@ -29,6 +29,7 @@ import {
   appendPreviewCacheBuster,
   resolveStorefrontBaseUrl
 } from '@/lib/ui-template/preview-url';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import type { HeroPreviewContext } from '@/components/ui-template/hero-variant-picker';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
 import {
@@ -47,6 +48,10 @@ import {
 } from '@/components/ui-template/generate-template-dialog';
 import { TemplateConfirmDialog } from '@/components/ui-template/template-confirm-dialog';
 import { EditorPreview } from '@/components/ui-template/editor-preview';
+import {
+  TemplateMediaPicker,
+  type TemplateMediaPickerHandle
+} from '@/components/ui-template/template-media-picker';
 import {
   TemplateSection,
   resolveTemplateColors,
@@ -139,6 +144,7 @@ export default function UITemplateSettingsPage() {
   // history only after the user pauses, so undo jumps per edit, not per key.
   const pendingHistoryRef = useRef<UIBlockConfig[] | null>(null);
   const previewIframeRef = useRef<HTMLIFrameElement | null>(null);
+  const mediaPickerRef = useRef<TemplateMediaPickerHandle>(null);
   // Stable ref so the message handler always sees the latest blocks without
   // re-registering the listener on every keystroke.
   const draftBlocksRef = useRef(draftBlocks);
@@ -152,6 +158,13 @@ export default function UITemplateSettingsPage() {
   >(() => {
     /* patched after declaration */
   });
+  const handleBlockDeleteRef = useRef<(blockId: string) => void>(() => {});
+  const handleBlockToggleVisibleRef = useRef<
+    (blockId: string, visible: boolean) => void
+  >(() => {});
+  const handleBlockMoveRef = useRef<
+    (blockId: string, dir: 'up' | 'down') => void
+  >(() => {});
   // Same pattern: the message listener is registered before the debounced
   // rebuild exists, so it reaches it through a ref.
   const debouncedRebuildPreviewRef = useRef<() => void>(() => {
@@ -187,6 +200,10 @@ export default function UITemplateSettingsPage() {
         blockId?: string;
         fieldKey?: string;
         value?: string;
+        action?: string;
+        fileName?: string;
+        mimeType?: string;
+        buffer?: ArrayBuffer;
       };
       if (data?.source !== 'template-editor') return;
 
@@ -211,6 +228,88 @@ export default function UITemplateSettingsPage() {
         handleBlockConfigChangeRef.current(data.blockId, {
           [data.fieldKey]: data.value ?? ''
         });
+      }
+
+      if (data.type === 'open-media-picker' && data.blockId && data.fieldKey) {
+        mediaPickerRef.current?.open({
+          blockId: data.blockId,
+          fieldKey: data.fieldKey
+        });
+      }
+
+      if (
+        data.type === 'media-file-selected' &&
+        data.blockId &&
+        data.fieldKey &&
+        data.buffer instanceof ArrayBuffer
+      ) {
+        const fileName =
+          typeof data.fileName === 'string'
+            ? data.fileName
+            : 'section-media.jpg';
+        const mimeType =
+          typeof data.mimeType === 'string' ? data.mimeType : 'image/jpeg';
+        const file = new File([data.buffer], fileName, { type: mimeType });
+        void (async () => {
+          try {
+            const result = await apiClient.uploadImage(file, {
+              title: 'Section Media'
+            });
+            const raw = result as unknown as Record<string, unknown>;
+            const id =
+              (raw?.id as number | undefined) ??
+              ((raw?.data as Record<string, unknown>)?.id as
+                | number
+                | undefined);
+            if (!id) return;
+            const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
+            const patch: Record<string, unknown> = {
+              [data.fieldKey!]: url
+            };
+            if (data.fieldKey === 'bgImage') {
+              patch.illustration = url;
+            }
+            handleBlockConfigChangeRef.current(data.blockId!, patch);
+          } catch (error) {
+            ErrorHandler.handleApiError(error);
+          }
+        })();
+      }
+
+      if (
+        data.type === 'accent-color-update' &&
+        data.blockId &&
+        data.fieldKey &&
+        data.value
+      ) {
+        handleBlockConfigChangeRef.current(data.blockId, {
+          [data.fieldKey]: data.value
+        });
+      }
+
+      if (data.type === 'toggle-removable' && data.blockId && data.fieldKey) {
+        handleBlockConfigChangeRef.current(data.blockId, {
+          [data.fieldKey]: false
+        });
+      }
+
+      if (data.type === 'block-action' && data.blockId && data.action) {
+        switch (data.action) {
+          case 'hide':
+            handleBlockToggleVisibleRef.current(data.blockId, false);
+            break;
+          case 'delete':
+            handleBlockDeleteRef.current(data.blockId);
+            break;
+          case 'move-up':
+            handleBlockMoveRef.current(data.blockId, 'up');
+            break;
+          case 'move-down':
+            handleBlockMoveRef.current(data.blockId, 'down');
+            break;
+          default:
+            break;
+        }
       }
     };
     window.addEventListener('message', onMessage);
@@ -848,7 +947,8 @@ export default function UITemplateSettingsPage() {
     if (
       'bgImage' in patch ||
       'illustration' in patch ||
-      'backgroundImage' in patch
+      'backgroundImage' in patch ||
+      Object.keys(patch).some((k) => k.startsWith('show'))
     ) {
       void (async () => {
         await saveBlocksDraft(next);
@@ -886,6 +986,45 @@ export default function UITemplateSettingsPage() {
     );
   };
 
+  const handleBlockMove = (blockId: string, dir: 'up' | 'down') => {
+    const sorted = [...draftBlocks].sort((a, b) => a.order - b.order);
+    const header = sorted.find((b) => b.type === 'header') ?? null;
+    const footer = sorted.find((b) => b.type === 'footer') ?? null;
+    const middle = sorted.filter(
+      (b) => b.type !== 'header' && b.type !== 'footer'
+    );
+    const midIndex = middle.findIndex((b) => b.id === blockId);
+    if (midIndex === -1) return;
+    const target = midIndex + (dir === 'up' ? -1 : 1);
+    if (target < 0 || target >= middle.length) return;
+    const nextMiddle = middle.slice();
+    const [item] = nextMiddle.splice(midIndex, 1);
+    nextMiddle.splice(target, 0, item);
+    const ordered = [
+      ...(header ? [header] : []),
+      ...nextMiddle,
+      ...(footer ? [footer] : [])
+    ].map((block, index) => ({ ...block, order: index + 1 }));
+    postOrder(ordered);
+    commitBlocks(ordered);
+  };
+
+  handleBlockDeleteRef.current = handleBlockDelete;
+  handleBlockToggleVisibleRef.current = handleBlockToggleVisible;
+  handleBlockMoveRef.current = handleBlockMove;
+
+  const handleMediaUploaded = (
+    blockId: string,
+    fieldKey: string,
+    url: string
+  ) => {
+    const patch: Record<string, unknown> = { [fieldKey]: url };
+    if (fieldKey === 'bgImage') {
+      patch.illustration = url;
+    }
+    handleBlockConfigChange(blockId, patch);
+  };
+
   const handleOpenPicker = (target?: { blockId: string; type: string }) => {
     setPickerTarget(target ?? null);
     setPickerOpen(true);
@@ -905,41 +1044,6 @@ export default function UITemplateSettingsPage() {
     } catch (error) {
       ErrorHandler.handleApiError(error);
     }
-  };
-
-  const handleBannerImageChange = (url: string) => {
-    // Apply only to the selected hero/slideshow — never broadcast to every
-    // banner on the page (that made uploads look like they joined a "list").
-    const targetId =
-      selectedBlockId &&
-      draftBlocks.some(
-        (b) =>
-          b.id === selectedBlockId &&
-          (b.type === 'hero' || b.type === 'slideshow')
-      )
-        ? selectedBlockId
-        : draftBlocks.find((b) => b.type === 'hero' || b.type === 'slideshow')
-            ?.id;
-
-    if (!targetId) return;
-
-    commitBlocks(
-      draftBlocks.map((b) =>
-        b.id === targetId
-          ? {
-              ...b,
-              config: {
-                ...(b.config ?? {}),
-                backgroundImage: url,
-                bgImage: url,
-                bgType: 'image'
-              }
-            }
-          : b
-      )
-    );
-    // Background images are rendered server-side, not through sync-field.
-    setRefreshKey((k) => k + 1);
   };
 
   const handleReset = async () => {
@@ -1287,7 +1391,6 @@ export default function UITemplateSettingsPage() {
               onDesignSizeChange={handleDesignSizeChange}
               onBlocksChange={handleBlocksChange}
               onUpdateBlock={handleBlockConfigChange}
-              onBannerImageChange={handleBannerImageChange}
               onOpenPicker={handleOpenPicker}
               onToggleVisibleBlock={handleBlockToggleVisible}
               onDeleteBlock={handleBlockDelete}
@@ -1309,6 +1412,11 @@ export default function UITemplateSettingsPage() {
             swapTarget={pickerTarget}
             onClose={() => setPickerOpen(false)}
             onImported={handleSectionPicked}
+          />
+
+          <TemplateMediaPicker
+            ref={mediaPickerRef}
+            onUploaded={handleMediaUploaded}
           />
 
           <EditorPreview
