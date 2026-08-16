@@ -1,8 +1,8 @@
 'use client';
 
 import { CheckCircle } from 'lucide-react';
-import { AuthSubmit } from '@/components/auth/auth-fields';
 import { Button } from '@/components/ui/button';
+import Link from '@/components/ui/link';
 import type { useAdminForgetPassword } from '../use-admin-forget-password';
 
 type Fp = ReturnType<typeof useAdminForgetPassword>;
@@ -28,12 +28,12 @@ export function SuccessStep({ fp }: { fp: Fp }) {
         >
           {t('forgotPassword.resetAnotherPassword')}
         </Button>
-        <AuthSubmit
-          className="flex-1"
-          onClick={() => fp.router.push('/admin-login')}
+        <Link
+          href="/admin-login"
+          className="btn-brand inline-flex h-12 flex-1 items-center justify-center rounded-[14px] text-[17px] font-medium"
         >
           {t('forgotPassword.goToLogin')}
-        </AuthSubmit>
+        </Link>
       </div>
     </div>
   );

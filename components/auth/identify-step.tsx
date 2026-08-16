@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { AuthShell } from '@/components/auth/auth-shell';
 import {
   AuthField,
   AuthSubmit,
-  AuthSecondaryButton
+  AuthSecondaryLink
 } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
@@ -51,7 +50,6 @@ export function IdentifyStep({
   children
 }: IdentifyStepProps) {
   const { t } = useTranslation();
-  const router = useRouter();
   const [hasCaptchaToken, setHasCaptchaToken] = useState(false);
 
   function handleCaptchaVerify(token: string) {
@@ -109,9 +107,9 @@ export function IdentifyStep({
       </form>
 
       {registerHref && (
-        <AuthSecondaryButton onClick={() => router.push(registerHref)}>
+        <AuthSecondaryLink href={registerHref}>
           {t('auth.signUp')}
-        </AuthSecondaryButton>
+        </AuthSecondaryLink>
       )}
     </AuthShell>
   );

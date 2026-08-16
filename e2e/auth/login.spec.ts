@@ -34,7 +34,9 @@ test.describe('AdminPanel manager login — step 1 (no backend)', () => {
   test('offers signup from the login screen', async ({ page }) => {
     await page.goto('/login');
 
-    await page.locator('button', { hasText: /ثبت‌نام|Sign Up/i }).click();
+    await page
+      .locator('a[href^="/register"]', { hasText: /ثبت‌نام|Sign Up/i })
+      .click();
     await expect(page).toHaveURL(/\/register/);
   });
 });

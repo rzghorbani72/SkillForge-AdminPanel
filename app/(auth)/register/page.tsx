@@ -12,7 +12,7 @@ import { toE164Iran } from '@/lib/phone-utils';
 import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
-import { AuthSecondaryButton } from '@/components/auth/auth-fields';
+import { AuthSecondaryLink } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from '@/components/ui/link';
 import { toast } from 'react-toastify';
@@ -280,9 +280,7 @@ export default function RegisterPage() {
           onSubmit={onDetailsSubmit}
         />
       </div>
-      <AuthSecondaryButton onClick={() => router.push(loginHref)}>
-        {t('auth.signIn')}
-      </AuthSecondaryButton>
+      <AuthSecondaryLink href={loginHref}>{t('auth.signIn')}</AuthSecondaryLink>
     </AuthShell>
   );
 }

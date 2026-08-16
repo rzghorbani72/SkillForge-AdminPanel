@@ -2,7 +2,11 @@
 
 import * as React from 'react';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import Link from '@/components/ui/link';
 import { cn } from '@/lib/utils';
+
+const AUTH_SECONDARY_CLASS =
+  'inline-flex h-12 w-full items-center justify-center rounded-2xl text-base text-[#181C20] transition-colors hover:bg-white/40';
 
 interface AuthFieldProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'> {
@@ -92,12 +96,27 @@ export function AuthSecondaryButton({
     <button
       type="button"
       {...props}
-      className={cn(
-        'inline-flex h-12 w-full items-center justify-center rounded-2xl text-base text-[#181C20] transition-colors hover:bg-white/40',
-        className
-      )}
+      className={cn(AUTH_SECONDARY_CLASS, className)}
     >
       {children}
     </button>
+  );
+}
+
+/** Same look as AuthSecondaryButton, but a real link — never submits a form. */
+export function AuthSecondaryLink({
+  className,
+  children,
+  href,
+  ...props
+}: React.ComponentProps<typeof Link>) {
+  return (
+    <Link
+      href={href}
+      className={cn(AUTH_SECONDARY_CLASS, className)}
+      {...props}
+    >
+      {children}
+    </Link>
   );
 }
