@@ -25,7 +25,10 @@ import { CurrentPlanBanner } from '@/components/academies/current-plan-banner';
 import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
 import { AcademyEditModal } from '@/components/academies/AcademyEditModal';
 import { AcademiesHealthTable } from '@/components/academies/academies-health-table';
-import type { AcademyRow } from '@/components/academies/academy-helpers';
+import {
+  academyStatus,
+  type AcademyRow
+} from '@/components/academies/academy-helpers';
 import type { Academy } from '@/types/api';
 
 export default function AcademiesPage() {
@@ -147,10 +150,11 @@ export default function AcademiesPage() {
           !q ||
           a.name.toLowerCase().includes(q) ||
           a.slug.toLowerCase().includes(q);
+        const isActive = academyStatus(a) === 'active';
         const matchesStatus =
           statusFilter === 'all' ||
-          (statusFilter === 'active' && a.is_active) ||
-          (statusFilter === 'inactive' && !a.is_active);
+          (statusFilter === 'active' && isActive) ||
+          (statusFilter === 'inactive' && !isActive);
         return matchesSearch && matchesStatus;
       })
       .sort((a: AcademyRow, b: AcademyRow) =>

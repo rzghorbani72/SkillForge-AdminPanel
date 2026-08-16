@@ -14,6 +14,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { AcademySiteStatusDialog } from '@/components/academies/academy-site-status-dialog';
 import { apiClient } from '@/lib/api';
+import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 
 export function AcademySiteStatusCard({
@@ -23,6 +24,7 @@ export function AcademySiteStatusCard({
 }) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
+  const { refreshAcademies } = useStore();
   const [open, setOpen] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [disabledAt, setDisabledAt] = useState<string | null>(null);
@@ -83,6 +85,9 @@ export function AcademySiteStatusCard({
             )
           );
           void loadStatus();
+          // The switcher badge reads the cached academy list, so it stays on the
+          // old status until the list is refetched.
+          void refreshAcademies();
         }}
         t={t}
       />

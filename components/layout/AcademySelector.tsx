@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/hooks/useStore';
+import { AcademyStatusPill } from '@/components/academies/academy-helpers';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
@@ -21,6 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
+import type { Academy } from '@/types/api';
 
 const AVATAR_COLORS = [
   'bg-violet-500',
@@ -82,43 +84,14 @@ function AcademyAvatar({
 }
 
 function AcademyStatusBadge({
-  isActive,
+  academy,
   dotOnly = false
 }: {
-  isActive: boolean;
+  academy: Academy;
   dotOnly?: boolean;
 }) {
   const { t } = useTranslation();
-  const dot = (
-    <span
-      className={cn(
-        'h-1.5 w-1.5 shrink-0 rounded-full',
-        isActive ? 'bg-emerald-500' : 'bg-orange-500'
-      )}
-    />
-  );
-
-  if (dotOnly) {
-    return (
-      <span title={isActive ? t('stores.active') : t('stores.inactive')}>
-        {dot}
-      </span>
-    );
-  }
-
-  return (
-    <span
-      className={cn(
-        'inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium',
-        isActive
-          ? 'bg-emerald-50 text-emerald-700'
-          : 'bg-orange-50 text-orange-700'
-      )}
-    >
-      {dot}
-      {isActive ? t('stores.active') : t('stores.inactive')}
-    </span>
-  );
+  return <AcademyStatusPill academy={academy} dotOnly={dotOnly} t={t} />;
 }
 
 function getAcademyDomain(academy: any): string {
@@ -216,7 +189,7 @@ export function AcademySelector() {
         <p className="text-sm font-semibold leading-tight" title={current.name}>
           {truncateName(current.name)}
         </p>
-        <AcademyStatusBadge isActive={current.is_active} dotOnly />
+        <AcademyStatusBadge academy={current} dotOnly />
       </div>
       {hasMultiple && (
         <ChevronDown
@@ -310,7 +283,7 @@ export function AcademySelector() {
                               {roleLabel}
                             </span>
                           )}
-                          <AcademyStatusBadge isActive={academy.is_active} />
+                          <AcademyStatusBadge academy={academy} />
                         </div>
                       </div>
                       {isActive && (
@@ -376,7 +349,7 @@ function AdminModeSwitcher() {
         >
           {truncateName(selectedAcademy.name)}
         </p>
-        <AcademyStatusBadge isActive={selectedAcademy.is_active} dotOnly />
+        <AcademyStatusBadge academy={selectedAcademy} dotOnly />
       </div>
       <ChevronDown
         className={cn(
@@ -504,7 +477,7 @@ function AdminModeSwitcher() {
                       <p className="truncate text-xs text-muted-foreground">
                         {getAcademyDomain(academy)}
                       </p>
-                      <AcademyStatusBadge isActive={academy.is_active} />
+                      <AcademyStatusBadge academy={academy} />
                     </div>
                   </div>
                   {isActive && (
