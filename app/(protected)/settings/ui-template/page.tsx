@@ -708,11 +708,17 @@ export default function UITemplateSettingsPage() {
     return payload;
   };
 
-  const persistStyle = (patch: Partial<ThemeSyncState>) => {
-    const payload = applyStyle(patch);
+  // The preview needs the whole theme to derive its variables, but the API only
+  // needs what changed — sending everything would let one rejected field fail a
+  // save that has nothing to do with it.
+  const persistStyle = (
+    patch: Partial<ThemeSyncState>,
+    apiPatch: Record<string, unknown>
+  ) => {
+    applyStyle(patch);
     setIsSaving(true);
     apiClient
-      .saveThemeDraft(payload)
+      .saveThemeDraft(apiPatch)
       .then(() => setLastSavedAt(Date.now()))
       .catch((error) => ErrorHandler.handleApiError(error))
       .finally(() => setIsSaving(false));
@@ -738,7 +744,7 @@ export default function UITemplateSettingsPage() {
 
   const handleElementAnimationChange = (a: ElementAnimation) => {
     setElementAnimation(a);
-    persistStyle({ elementAnimation: a });
+    persistStyle({ elementAnimation: a }, { element_animation_style: a });
   };
 
   const handleDarkModeChange = (dm: boolean | null) => {
@@ -749,12 +755,12 @@ export default function UITemplateSettingsPage() {
 
   const handleFontFamilyChange = (f: FontFamily) => {
     setFontFamily(f);
-    persistStyle({ fontFamily: f });
+    persistStyle({ fontFamily: f }, { font_family: f });
   };
 
   const handleTextDirectionChange = (d: TextDirection) => {
     setTextDirection(d);
-    persistStyle({ textDirection: d });
+    persistStyle({ textDirection: d }, { text_direction: d });
   };
 
   const handleDesignSizeChange = (patch: {
@@ -765,15 +771,18 @@ export default function UITemplateSettingsPage() {
     if (patch.section_spacing) setSectionSpacing(patch.section_spacing);
     if (patch.container_width) setContainerWidth(patch.container_width);
     if (patch.heading_scale) setHeadingScale(patch.heading_scale);
-    persistStyle({
-      ...(patch.section_spacing
-        ? { sectionSpacing: patch.section_spacing }
-        : {}),
-      ...(patch.container_width
-        ? { containerWidth: patch.container_width }
-        : {}),
-      ...(patch.heading_scale ? { headingScale: patch.heading_scale } : {})
-    });
+    persistStyle(
+      {
+        ...(patch.section_spacing
+          ? { sectionSpacing: patch.section_spacing }
+          : {}),
+        ...(patch.container_width
+          ? { containerWidth: patch.container_width }
+          : {}),
+        ...(patch.heading_scale ? { headingScale: patch.heading_scale } : {})
+      },
+      patch
+    );
   };
 
   // Reorder / remove sections in the live document. The nodes are already
@@ -967,7 +976,7 @@ export default function UITemplateSettingsPage() {
           <TemplateConfirmDialog
             open
             title="ساخت نسخهٔ اختصاصی"
-            description="یک نسخه اختصاصی با نام آکادمی شما ساخته می‌شود؛ در صورت نیاز نام را تغییر دهید."
+            description="یک نسخهٔ اختصاصی برای آکادمی شما با این نام ساخته می‌شود."
             confirmLabel="ساخت نسخهٔ اختصاصی"
             defaultName={defaultForkName}
             onConfirm={(name) => {
@@ -1246,6 +1255,7 @@ export default function UITemplateSettingsPage() {
               selectedBlockId={selectedBlockId}
               onSelectBlock={setSelectedBlockId}
               preview={heroPreview}
+              academyName={academyName}
             />
           )}
 

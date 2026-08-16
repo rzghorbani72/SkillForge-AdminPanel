@@ -49,6 +49,8 @@ export interface SectionEditorProps {
   onBack: () => void;
   // Live-preview context for the hero design picker (null = picker hidden).
   preview?: HeroPreviewContext | null;
+  /** Real academy name, used as the live default for brand fields. */
+  academyName?: string;
 }
 
 // Section-specific editor embedded inside the main sidebar's Sections tab when a
@@ -63,7 +65,8 @@ export function SectionEditor({
   onDelete,
   onToggleVisible,
   onBack,
-  preview
+  preview,
+  academyName
 }: SectionEditorProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('content');
@@ -140,6 +143,7 @@ export function SectionEditor({
             set={set}
             schema={schema}
             preview={preview}
+            academyName={academyName}
           />
         )}
         {tab === 'style' && (
@@ -177,13 +181,15 @@ function ContentTab({
   cfg,
   set,
   schema,
-  preview
+  preview,
+  academyName
 }: {
   block: UIBlockConfig;
   cfg: Record<string, unknown>;
   set: (key: string, value: unknown) => void;
   schema: ReturnType<typeof getSectionSchema>;
   preview?: HeroPreviewContext | null;
+  academyName?: string;
 }) {
   const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -216,7 +222,13 @@ function ContentTab({
         </div>
       )}
       {primary.map((field) => (
-        <Field key={field.key} field={field} cfg={cfg} set={set} />
+        <Field
+          key={field.key}
+          field={field}
+          cfg={cfg}
+          set={set}
+          academyName={academyName}
+        />
       ))}
 
       {advanced.length > 0 && (
@@ -236,7 +248,13 @@ function ContentTab({
           {showAdvanced && (
             <div className="mt-3 space-y-4">
               {advanced.map((field) => (
-                <Field key={field.key} field={field} cfg={cfg} set={set} />
+                <Field
+                  key={field.key}
+                  field={field}
+                  cfg={cfg}
+                  set={set}
+                  academyName={academyName}
+                />
               ))}
             </div>
           )}
@@ -273,11 +291,13 @@ function ContentTab({
 function Field({
   field,
   cfg,
-  set
+  set,
+  academyName
 }: {
   field: ContentFieldSchema;
   cfg: Record<string, unknown>;
   set: (key: string, value: unknown) => void;
+  academyName?: string;
 }) {
   const { t } = useTranslation();
 
@@ -302,10 +322,14 @@ function Field({
 
   // text / textarea — editing happens directly in the preview canvas
   const rawValue = cfg[field.key];
-  const value =
-    rawValue !== undefined && rawValue !== null
-      ? String(rawValue)
+  // An unset field must show what the preview renders, not a generic constant —
+  // otherwise the manager sees (and can save) the wrong value.
+  const fallback =
+    field.defaultFrom === 'academyName' && academyName
+      ? academyName
       : (field.defaultValue ?? '');
+  const value =
+    rawValue !== undefined && rawValue !== null ? String(rawValue) : fallback;
   const empty = field.required && !value.trim();
 
   // Strip HTML tags for the preview snippet (subtitle may contain <b> etc.)

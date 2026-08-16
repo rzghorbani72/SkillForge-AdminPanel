@@ -63,6 +63,8 @@ export interface TemplateCustomizationSidebarProps {
   selectedBlockId?: string | null;
   onSelectBlock: (blockId: string) => void;
   preview?: HeroPreviewContext | null;
+  /** Real academy name, used as the live default for brand fields. */
+  academyName?: string;
 }
 
 export function TemplateCustomizationSidebar({
@@ -100,7 +102,8 @@ export function TemplateCustomizationSidebar({
   onCloseSection,
   selectedBlockId,
   onSelectBlock,
-  preview
+  preview,
+  academyName
 }: TemplateCustomizationSidebarProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('sections');
@@ -204,6 +207,7 @@ export function TemplateCustomizationSidebar({
             onDeleteBlock={onDeleteBlock}
             onCloseSection={onCloseSection}
             preview={preview}
+            academyName={academyName}
           />
         ) : (
           <SidebarStyleTab

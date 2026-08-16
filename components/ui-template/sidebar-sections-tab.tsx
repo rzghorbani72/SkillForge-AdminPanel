@@ -16,6 +16,8 @@ export interface SidebarSectionsTabProps {
   onDeleteBlock: (id: string) => void;
   onCloseSection: () => void;
   preview?: HeroPreviewContext | null;
+  /** Real academy name, used as the live default for brand fields. */
+  academyName?: string;
 }
 
 function moveItem<T>(arr: T[], from: number, to: number): T[] {
@@ -35,7 +37,8 @@ export function SidebarSectionsTab({
   onToggleVisibleBlock,
   onDeleteBlock,
   onCloseSection,
-  preview
+  preview,
+  academyName
 }: SidebarSectionsTabProps) {
   const sorted = [...blocks].sort((a, b) => a.order - b.order);
   const header = sorted.find((b) => b.type === 'header') ?? null;
@@ -80,6 +83,7 @@ export function SidebarSectionsTab({
         onToggleVisible={onToggleVisibleBlock}
         onBack={onCloseSection}
         preview={preview}
+        academyName={academyName}
       />
     );
   }

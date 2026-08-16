@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +10,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import { Input } from '@/components/ui/input';
 
 export interface TemplateConfirmDialogProps {
   open: boolean;
@@ -19,8 +17,9 @@ export interface TemplateConfirmDialogProps {
   description: string;
   confirmLabel: string;
   destructive?: boolean;
-  // When set, shows an editable template-name field seeded with this value,
-  // so a manager fork commits with the academy name without a blocking prompt.
+  // When set, the fork commits under this name. The platform owns it — one
+  // template per academy, named "<academy> - <preset>" — so it is shown for
+  // confirmation but never editable.
   defaultName?: string;
   onConfirm: (name?: string) => void;
   onCancel: () => void;
@@ -37,11 +36,7 @@ export function TemplateConfirmDialog({
   onCancel
 }: TemplateConfirmDialogProps) {
   const hasNameField = defaultName !== undefined;
-  const [name, setName] = useState(defaultName ?? '');
-
-  useEffect(() => {
-    if (open) setName(defaultName ?? '');
-  }, [open, defaultName]);
+  const name = defaultName ?? '';
 
   return (
     <AlertDialog open={open} onOpenChange={(v) => !v && onCancel()}>
@@ -56,11 +51,9 @@ export function TemplateConfirmDialog({
             <span className="text-xs text-muted-foreground">
               نام قالب اختصاصی
             </span>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              aria-label="نام قالب اختصاصی"
-            />
+            <p className="rounded-lg border bg-muted/40 px-3 py-2 text-sm font-semibold">
+              {name}
+            </p>
           </div>
         )}
 

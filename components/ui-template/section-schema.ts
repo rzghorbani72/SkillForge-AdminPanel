@@ -18,6 +18,10 @@ export interface ContentFieldSchema {
   // Pre-fills the input when block.config has no value for this key yet —
   // shown so the manager sees what the preview is displaying, not an empty box.
   defaultValue?: string;
+  // Field whose empty-state default comes from live academy data instead of a
+  // constant. Without this the panel would show a generic placeholder while the
+  // preview renders the real value, and saving would overwrite the real one.
+  defaultFrom?: 'academyName';
   // For toggle fields: the value when unset (defaults to true when omitted).
   defaultOn?: boolean;
   // Optional one-line explanation shown under the field.
@@ -54,6 +58,8 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'نام آکادمی خود را وارد کنید',
+        // Mirrors the renderer, which falls back to the academy's own name.
+        defaultFrom: 'academyName',
         defaultValue: 'آکادمی من'
       }
     ]
