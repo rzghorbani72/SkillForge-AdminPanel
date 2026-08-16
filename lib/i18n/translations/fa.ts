@@ -39,14 +39,17 @@ export const fa = {
     italic: 'مورب',
     underline: 'زیرخط',
     strikethrough: 'خط‌خورده',
-    heading: 'سرتیتر',
+    textSize: 'اندازهٔ متن',
+    sizeNormal: 'متن عادی',
+    sizeLarge: 'تیتر بزرگ',
+    sizeMedium: 'تیتر متوسط',
+    sizeSmall: 'تیتر کوچک',
     bulletList: 'فهرست نقطه‌ای',
     numberedList: 'فهرست شماره‌دار',
     link: 'پیوند',
-    preview: 'پیش‌نمایش',
-    write: 'نوشتن',
-    emptyPreview: 'هنوز چیزی برای پیش‌نمایش نیست',
-    formattingHint: 'قالب‌بندی: **پررنگ**، _مورب_، فهرست و پیوند',
+    linkPrompt: 'نشانی پیوند را وارد کنید',
+    formattingHint:
+      'همان‌طور که می‌نویسید قالب‌بندی اعمال می‌شود؛ جهت هر خط خودکار است.',
     charactersRemaining: '{{count}} کاراکتر باقی مانده'
   },
   toasts: {

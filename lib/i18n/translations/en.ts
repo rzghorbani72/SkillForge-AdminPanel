@@ -40,14 +40,17 @@ export const en = {
     italic: 'Italic',
     underline: 'Underline',
     strikethrough: 'Strikethrough',
-    heading: 'Heading',
+    textSize: 'Text size',
+    sizeNormal: 'Normal text',
+    sizeLarge: 'Large heading',
+    sizeMedium: 'Medium heading',
+    sizeSmall: 'Small heading',
     bulletList: 'Bulleted list',
     numberedList: 'Numbered list',
     link: 'Link',
-    preview: 'Preview',
-    write: 'Write',
-    emptyPreview: 'Nothing to preview yet',
-    formattingHint: 'Formatting: **bold**, _italic_, lists and links',
+    linkPrompt: 'Enter the link address',
+    formattingHint:
+      'Formatting applies as you type; each line picks its own direction.',
     charactersRemaining: '{{count}} characters remaining'
   },
   toasts: {

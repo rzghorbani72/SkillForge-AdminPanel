@@ -27,15 +27,17 @@ export const tr = {
     italic: 'İtalik',
     underline: 'Altı çizili',
     strikethrough: 'Üstü çizili',
-    heading: 'Başlık',
+    textSize: 'Metin boyutu',
+    sizeNormal: 'Normal metin',
+    sizeLarge: 'Büyük başlık',
+    sizeMedium: 'Orta başlık',
+    sizeSmall: 'Küçük başlık',
     bulletList: 'Madde işaretli liste',
     numberedList: 'Numaralı liste',
     link: 'Bağlantı',
-    preview: 'Önizleme',
-    write: 'Yaz',
-    emptyPreview: 'Henüz önizlenecek bir şey yok',
+    linkPrompt: 'Bağlantı adresini girin',
     formattingHint:
-      'Biçimlendirme: **kalın**, _italik_, listeler ve bağlantılar',
+      'Biçimlendirme yazarken uygulanır; her satır yönünü kendi seçer.',
     charactersRemaining: '{{count}} karakter kaldı'
   },
   toasts: {

@@ -602,6 +602,9 @@ html.transitioning *::after {
 
 /* Rendered Markdown descriptions (course, season, lesson). Kept small and
    local so no typography plugin is needed. */
+.prose-description > * {
+  unicode-bidi: plaintext;
+}
 .prose-description > *:first-child {
   margin-top: 0;
 }
@@ -671,4 +674,19 @@ html.transitioning *::after {
   margin: 1em 0;
   border-top: 1px solid currentColor;
   opacity: 0.2;
+}
+
+/* Editable surface of the visual editor: same look as the rendered output,
+   plus an empty-state hint. */
+.rich-editor:empty::before {
+  content: attr(data-placeholder);
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
+}
+.rich-editor u {
+  text-decoration: underline;
+}
+.rich-editor s,
+.rich-editor del {
+  text-decoration: line-through;
 }
