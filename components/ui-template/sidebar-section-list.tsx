@@ -64,6 +64,7 @@ function SectionRow({
   const schema = getSectionSchema(block.type);
   const visible = block.isVisible !== false;
   const incomplete = isSectionIncomplete(block.type, block.config);
+  const isPlaceholder = block.type === 'placeholder';
 
   return (
     <div
@@ -94,7 +95,9 @@ function SectionRow({
       } ${
         selected
           ? 'border-blue-500 bg-blue-50'
-          : 'border-transparent hover:border-zinc-200 hover:bg-zinc-50'
+          : isPlaceholder
+            ? 'border-dashed border-zinc-300 bg-zinc-50/80 hover:border-blue-400'
+            : 'border-transparent hover:border-zinc-200 hover:bg-zinc-50'
       } ${structural ? '' : 'cursor-grab active:cursor-grabbing'}`}
     >
       {structural ? (
@@ -113,6 +116,11 @@ function SectionRow({
         }`}
       >
         <span className="truncate">{schema.name}</span>
+        {isPlaceholder && (
+          <span className="flex-shrink-0 text-[9px] font-medium text-blue-600">
+            +
+          </span>
+        )}
         {incomplete && (
           <span
             title={t('sitePreview.panelIncomplete')}

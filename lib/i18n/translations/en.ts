@@ -4824,6 +4824,10 @@ export const en = {
     sidebarTitle: 'Template Customization',
     canvasEditHint:
       'Click text or images on the preview to edit. Pick a banner design below.',
+    emptySlotHint:
+      'Choose a section type below, then pick a design from the library.',
+    chooseBlockType: 'Section type',
+    removeEmptySlot: 'Remove empty slot',
     moreAppearance: 'More appearance',
     toolbarHide: 'Hide',
     toolbarDelete: 'Delete',

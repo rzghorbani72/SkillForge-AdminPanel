@@ -51,6 +51,7 @@ export interface TemplateCustomizationSidebarProps {
   onBlocksChange: (blocks: UIBlockConfig[]) => void;
   onUpdateBlock: (blockId: string, config: Record<string, unknown>) => void;
   onOpenPicker: (target?: { blockId: string; type: string }) => void;
+  onPickBlockType?: (blockId: string, type: string) => void;
   onToggleVisibleBlock: (id: string, visible: boolean) => void;
   onDeleteBlock: (id: string) => void;
   onReset: () => void;
@@ -90,6 +91,7 @@ export function TemplateCustomizationSidebar({
   onBlocksChange,
   onUpdateBlock,
   onOpenPicker,
+  onPickBlockType,
   onToggleVisibleBlock,
   onDeleteBlock,
   onReset,
@@ -204,6 +206,7 @@ export function TemplateCustomizationSidebar({
             onToggleVisibleBlock={onToggleVisibleBlock}
             onDeleteBlock={onDeleteBlock}
             onCloseSection={onCloseSection}
+            onPickBlockType={onPickBlockType}
             preview={preview}
             academyName={academyName}
           />

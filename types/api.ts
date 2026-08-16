@@ -678,7 +678,8 @@ export interface UIBlockConfig {
     | 'pricing'
     | 'cta'
     | 'categories'
-    | 'projects';
+    | 'projects'
+    | 'placeholder';
   order: number;
   isVisible: boolean;
   config?: Record<string, any>;

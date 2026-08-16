@@ -28,6 +28,7 @@ import {
   HeroVariantPicker,
   type HeroPreviewContext
 } from './hero-variant-picker';
+import { BlockTypePicker } from './block-type-picker';
 import { TEMPLATE_KEYS } from '@/constants/template-names';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
@@ -49,6 +50,7 @@ export interface SectionEditorProps {
   onDelete: (blockId: string) => void;
   onToggleVisible: (blockId: string, visible: boolean) => void;
   onBack: () => void;
+  onPickBlockType?: (blockId: string, type: string) => void;
   // Live-preview context for the hero design picker (null = picker hidden).
   preview?: HeroPreviewContext | null;
   /** Real academy name, used as the live default for brand fields. */
@@ -67,6 +69,7 @@ export function SectionEditor({
   onDelete,
   onToggleVisible,
   onBack,
+  onPickBlockType,
   preview,
   academyName
 }: SectionEditorProps) {
@@ -74,6 +77,8 @@ export function SectionEditor({
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   if (!block) return null;
+
+  const isPlaceholder = block.type === 'placeholder';
 
   const schema = getSectionSchema(block.type);
   const cfg = block.config ?? {};
@@ -107,35 +112,103 @@ export function SectionEditor({
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
-        <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5">
-          <MousePointerClick className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
-          <p className="text-[11px] leading-relaxed text-blue-700">
-            {t('sitePreview.canvasEditHint')}
-          </p>
-        </div>
+        {isPlaceholder ? (
+          <>
+            <p className="text-xs leading-relaxed text-zinc-600">
+              {t('sitePreview.emptySlotHint')}
+            </p>
+            {onPickBlockType && (
+              <BlockTypePicker
+                onSelect={(type) => onPickBlockType(block.id, type)}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5">
+              <MousePointerClick className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
+              <p className="text-[11px] leading-relaxed text-blue-700">
+                {t('sitePreview.canvasEditHint')}
+              </p>
+            </div>
 
-        {block.type === 'hero' && preview && (
-          <div className="mt-4 border-b border-zinc-200/70 pb-4">
-            <HeroVariantPicker
-              heroBlockId={block.id}
-              value={(cfg.style as string) ?? TEMPLATE_KEYS[0]}
-              onChange={(style) => set('style', style)}
-              preview={preview}
-            />
-          </div>
-        )}
+            {block.type === 'hero' && preview && (
+              <div className="mt-4 border-b border-zinc-200/70 pb-4">
+                <HeroVariantPicker
+                  heroBlockId={block.id}
+                  value={(cfg.style as string) ?? TEMPLATE_KEYS[0]}
+                  onChange={(style) => set('style', style)}
+                  preview={preview}
+                />
+              </div>
+            )}
 
-        {canDelete && (
-          <div className="mt-4 flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
-            <span className="flex items-center gap-2 text-xs text-zinc-700">
-              <Eye className="h-3.5 w-3.5" />
-              {t('sitePreview.panelSectionVisible')}
-            </span>
-            <Switch
-              checked={isVisible}
-              onCheckedChange={(v) => onToggleVisible(block.id, v)}
-            />
-          </div>
+            {canDelete && (
+              <div className="mt-4 flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
+                <span className="flex items-center gap-2 text-xs text-zinc-700">
+                  <Eye className="h-3.5 w-3.5" />
+                  {t('sitePreview.panelSectionVisible')}
+                </span>
+                <Switch
+                  checked={isVisible}
+                  onCheckedChange={(v) => onToggleVisible(block.id, v)}
+                />
+              </div>
+            )}
+
+            {isGridSection(block.type) && (
+              <div className="mt-4 border-t border-zinc-200/70 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced((v) => !v)}
+                  className="flex w-full items-center justify-between text-xs font-medium text-zinc-600 hover:text-zinc-900"
+                >
+                  <span>{t('sitePreview.panelAdvanced')}</span>
+                  {showAdvanced ? (
+                    <ChevronUp className="h-3.5 w-3.5" />
+                  ) : (
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  )}
+                </button>
+                {showAdvanced && (
+                  <div className="mt-3 space-y-4">
+                    <TextOverridesEditor
+                      blockType={block.type}
+                      cfg={cfg}
+                      set={set}
+                    />
+                    <SectionSlotEditor
+                      blockType={block.type}
+                      cfg={cfg}
+                      set={set}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!isGalleryHero &&
+              schema.hasBackground &&
+              block.type !== 'hero' && (
+                <div className="mt-4 border-t border-zinc-200/70 pt-4">
+                  <HeroBackground
+                    block={block}
+                    cfg={cfg}
+                    set={set}
+                    onUpdate={onUpdate}
+                  />
+                </div>
+              )}
+
+            {schema.dynamicContentNote && (
+              <div className="mt-4 flex items-start gap-2 rounded-lg border border-blue-400/20 bg-blue-400/5 px-3 py-2.5">
+                <Info className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-blue-400" />
+                <p className="text-[11px] leading-relaxed text-zinc-500">
+                  {schema.dynamicContentNote}
+                </p>
+              </div>
+            )}
+          </>
         )}
 
         <div className="mt-3 space-y-1.5">
@@ -166,57 +239,12 @@ export function SectionEditor({
               className="flex w-full items-center justify-center gap-1.5 rounded border border-red-500/30 bg-red-600/10 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-600/20"
             >
               <Trash2 className="h-3.5 w-3.5" />
-              {t('sitePreview.panelDeleteSection')}
+              {isPlaceholder
+                ? t('sitePreview.removeEmptySlot')
+                : t('sitePreview.panelDeleteSection')}
             </button>
           )}
         </div>
-
-        {isGridSection(block.type) && (
-          <div className="mt-4 border-t border-zinc-200/70 pt-3">
-            <button
-              type="button"
-              onClick={() => setShowAdvanced((v) => !v)}
-              className="flex w-full items-center justify-between text-xs font-medium text-zinc-600 hover:text-zinc-900"
-            >
-              <span>{t('sitePreview.panelAdvanced')}</span>
-              {showAdvanced ? (
-                <ChevronUp className="h-3.5 w-3.5" />
-              ) : (
-                <ChevronDown className="h-3.5 w-3.5" />
-              )}
-            </button>
-            {showAdvanced && (
-              <div className="mt-3 space-y-4">
-                <TextOverridesEditor
-                  blockType={block.type}
-                  cfg={cfg}
-                  set={set}
-                />
-                <SectionSlotEditor blockType={block.type} cfg={cfg} set={set} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {!isGalleryHero && schema.hasBackground && block.type !== 'hero' && (
-          <div className="mt-4 border-t border-zinc-200/70 pt-4">
-            <HeroBackground
-              block={block}
-              cfg={cfg}
-              set={set}
-              onUpdate={onUpdate}
-            />
-          </div>
-        )}
-
-        {schema.dynamicContentNote && (
-          <div className="mt-4 flex items-start gap-2 rounded-lg border border-blue-400/20 bg-blue-400/5 px-3 py-2.5">
-            <Info className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-blue-400" />
-            <p className="text-[11px] leading-relaxed text-zinc-500">
-              {schema.dynamicContentNote}
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

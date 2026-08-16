@@ -4814,6 +4814,9 @@ export const fa = {
     sidebarTitle: 'سفارشی‌سازی قالب',
     canvasEditHint:
       'روی متن یا تصویر در پیش‌نمایش کلیک کنید. طرح بنر را از پایین انتخاب کنید.',
+    emptySlotHint: 'نوع بخش را انتخاب کنید، سپس طرح را از کتابخانه برگزینید.',
+    chooseBlockType: 'نوع بخش',
+    removeEmptySlot: 'حذف جایگاه خالی',
     moreAppearance: 'ظاهر پیشرفته',
     toolbarHide: 'پنهان',
     toolbarDelete: 'حذف',

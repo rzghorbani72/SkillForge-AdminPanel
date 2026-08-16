@@ -350,7 +350,8 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
   footer: { name: 'فوتر', content: [] },
   slideshow: { name: 'اسلایدشو / بنر', content: [] },
   marquee: { name: 'عناوین متحرک', content: [] },
-  membership: { name: 'اشتراک', content: [] }
+  membership: { name: 'اشتراک', content: [] },
+  placeholder: { name: 'جایگاه خالی', content: [] }
 };
 
 export function getSectionSchema(type: string): SectionSchema {

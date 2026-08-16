@@ -15,6 +15,7 @@ export interface SidebarSectionsTabProps {
   onToggleVisibleBlock: (id: string, visible: boolean) => void;
   onDeleteBlock: (id: string) => void;
   onCloseSection: () => void;
+  onPickBlockType?: (blockId: string, type: string) => void;
   preview?: HeroPreviewContext | null;
   /** Real academy name, used as the live default for brand fields. */
   academyName?: string;
@@ -37,6 +38,7 @@ export function SidebarSectionsTab({
   onToggleVisibleBlock,
   onDeleteBlock,
   onCloseSection,
+  onPickBlockType,
   preview,
   academyName
 }: SidebarSectionsTabProps) {
@@ -82,6 +84,7 @@ export function SidebarSectionsTab({
         onDelete={onDeleteBlock}
         onToggleVisible={onToggleVisibleBlock}
         onBack={onCloseSection}
+        onPickBlockType={onPickBlockType}
         preview={preview}
         academyName={academyName}
       />

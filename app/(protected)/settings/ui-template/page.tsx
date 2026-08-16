@@ -959,15 +959,39 @@ export default function UITemplateSettingsPage() {
   const handleBlockDelete = (blockId: string) => {
     const block = draftBlocks.find((b) => b.id === blockId);
     if (!block || block.type === 'header' || block.type === 'footer') return;
-    const next = draftBlocks
-      .filter((b) => b.id !== blockId)
-      .sort((a, b) => a.order - b.order)
-      .map((b, index) => ({ ...b, order: index + 1 }));
-    setSelectedBlockId(null);
+
+    if (block.type === 'placeholder') {
+      const next = draftBlocks
+        .filter((b) => b.id !== blockId)
+        .sort((a, b) => a.order - b.order)
+        .map((b, index) => ({ ...b, order: index + 1 }));
+      setSelectedBlockId(null);
+      postOrder(next);
+      commitBlocks(next);
+      setRefreshKey((k) => k + 1);
+      return;
+    }
+
+    const next = draftBlocks.map((b) =>
+      b.id === blockId
+        ? {
+            id: blockId,
+            type: 'placeholder' as const,
+            order: b.order,
+            isVisible: true,
+            config: { previousType: b.type }
+          }
+        : b
+    );
+    setSelectedBlockId(blockId);
+    setShowCustomizer(true);
     postOrder(next);
     commitBlocks(next);
     setRefreshKey((k) => k + 1);
-    setPickerTarget(null);
+  };
+
+  const handlePickBlockType = (blockId: string, type: string) => {
+    setPickerTarget({ blockId, type });
     setPickerOpen(true);
   };
 
@@ -1387,6 +1411,7 @@ export default function UITemplateSettingsPage() {
               onBlocksChange={handleBlocksChange}
               onUpdateBlock={handleBlockConfigChange}
               onOpenPicker={handleOpenPicker}
+              onPickBlockType={handlePickBlockType}
               onToggleVisibleBlock={handleBlockToggleVisible}
               onDeleteBlock={handleBlockDelete}
               onReset={handleReset}
