@@ -64,9 +64,6 @@ function UserRow({
                 </span>
               )}
             </div>
-            <div className="text-[11.5px] text-muted-foreground">
-              {user.email || '—'}
-            </div>
           </div>
         </div>
       </td>
