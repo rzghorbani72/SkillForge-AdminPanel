@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { pickFile } from '@/lib/file-picker';
@@ -59,6 +60,7 @@ function UploadSlot({
   onCancel
 }: UploadSlotProps) {
   const { t } = useTranslation();
+  const percentLabel = usePercentLabel();
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleActivate(e: React.MouseEvent<HTMLLabelElement>) {
@@ -88,7 +90,7 @@ function UploadSlot({
         <div className={frameClass} role="status" aria-live="polite">
           <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
           <span className="text-sm font-semibold tabular-nums">
-            {progress}%
+            {percentLabel(progress)}
           </span>
           <div className="bg-current/15 h-1.5 w-24 overflow-hidden rounded-full">
             <ProgressBar value={progress} />
