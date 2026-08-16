@@ -15,6 +15,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -134,6 +135,7 @@ export default function PlansPage() {
     Array<{ provider: string; display_name: string }>
   >([]);
   const [needsGatewaySelection, setNeedsGatewaySelection] = useState(false);
+  const [voucherCode, setVoucherCode] = useState('');
 
   const selectedAcademy = useCurrentAcademy();
 
@@ -308,6 +310,7 @@ export default function PlansPage() {
     setAvailableGateways([]);
     setNeedsGatewaySelection(false);
     setUpgradeQuote(null);
+    setVoucherCode('');
 
     // Upgrading from an active paid plan to a higher tier is a prorated diff,
     // not a full purchase — fetch the quote so the dialog can show it.
@@ -339,6 +342,8 @@ export default function PlansPage() {
   async function handleChangePlan() {
     if (!selectingPlan) return;
 
+    const coupon_code = voucherCode.trim() || undefined;
+
     // Upgrade path: charge only the prorated diff, keeping the current
     // expiry. When money is owed this goes through the same gateway checkout
     // as a renewal below — the plan only switches once that payment verifies,
@@ -351,7 +356,10 @@ export default function PlansPage() {
         if (!provider) {
           const probe = await apiClient.upgradeCurrentAcademyPlan(
             selectingPlan.slug,
-            { callback_url: `${window.location.origin}/payment/saman-callback` }
+            {
+              callback_url: `${window.location.origin}/payment/saman-callback`,
+              coupon_code
+            }
           );
 
           if (probe.redirect_url) {
@@ -374,12 +382,13 @@ export default function PlansPage() {
               return;
             }
           } else {
-            // Zero-cost plan change (downgrade, or fully absorbed by storage
-            // credit) — nothing to pay, already applied.
+            // Zero-cost plan change (downgrade, voucher, or storage credit)
+            toast.success(t('plans.paymentSuccess'));
             setSelectingPlan(null);
             setUpgradeQuote(null);
             setNeedsGatewaySelection(false);
             setAvailableGateways([]);
+            setVoucherCode('');
             await refreshPlansAndSubscription();
             return;
           }
@@ -392,7 +401,11 @@ export default function PlansPage() {
 
         const result = await apiClient.upgradeCurrentAcademyPlan(
           selectingPlan.slug,
-          { provider, callback_url: callbackUrlForProvider(provider) }
+          {
+            provider,
+            callback_url: callbackUrlForProvider(provider),
+            coupon_code
+          }
         );
 
         if (result.needs_gateway_selection && result.available_gateways) {
@@ -406,10 +419,12 @@ export default function PlansPage() {
           return;
         }
 
+        toast.success(t('plans.paymentSuccess'));
         setSelectingPlan(null);
         setUpgradeQuote(null);
         setNeedsGatewaySelection(false);
         setAvailableGateways([]);
+        setVoucherCode('');
         await refreshPlansAndSubscription();
       } catch (e) {
         ErrorHandler.handleApiError(e);
@@ -428,7 +443,8 @@ export default function PlansPage() {
           plan_name: selectingPlan.slug,
           months: selectedMonths,
           amount: selectingPlan.price_monthly * selectedMonths,
-          callback_url: `${window.location.origin}/payment/saman-callback`
+          callback_url: `${window.location.origin}/payment/saman-callback`,
+          coupon_code
         });
 
         if (probe.redirect_url) {
@@ -449,9 +465,11 @@ export default function PlansPage() {
           }
         } else {
           // Manual / zero-amount renew — already activated
+          toast.success(t('plans.paymentSuccess'));
           setSelectingPlan(null);
           setNeedsGatewaySelection(false);
           setAvailableGateways([]);
+          setVoucherCode('');
           await refreshPlansAndSubscription();
           return;
         }
@@ -467,7 +485,8 @@ export default function PlansPage() {
         months: selectedMonths,
         amount: selectingPlan.price_monthly * selectedMonths,
         provider,
-        callback_url: callbackUrlForProvider(provider)
+        callback_url: callbackUrlForProvider(provider),
+        coupon_code
       });
 
       if (result.needs_gateway_selection && result.available_gateways) {
@@ -481,9 +500,11 @@ export default function PlansPage() {
         return;
       }
 
+      toast.success(t('plans.paymentSuccess'));
       setSelectingPlan(null);
       setNeedsGatewaySelection(false);
       setAvailableGateways([]);
+      setVoucherCode('');
       await refreshPlansAndSubscription();
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -1038,6 +1059,22 @@ export default function PlansPage() {
                   </div>
                 </div>
               )}
+              <div className="space-y-2">
+                <Label htmlFor="plan-voucher-code">
+                  {t('plans.voucherCode')}
+                </Label>
+                <Input
+                  id="plan-voucher-code"
+                  value={voucherCode}
+                  onChange={(e) => setVoucherCode(e.target.value)}
+                  placeholder={t('plans.voucherCodePlaceholder')}
+                  autoComplete="off"
+                  disabled={isChanging}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t('plans.voucherCodeHint')}
+                </p>
+              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setSelectingPlan(null)}>

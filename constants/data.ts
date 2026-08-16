@@ -161,6 +161,16 @@ export const navItems: NavItem[] = [
     section: 'configuration'
   },
   {
+    title: 'Platform Vouchers',
+    href: '/coupons',
+    icon: 'percent' as IconType,
+    label: 'platformVouchers',
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'configuration'
+  },
+  {
     title: 'Broadcasts',
     href: '/platform/broadcasts',
     icon: 'megaphone' as IconType,

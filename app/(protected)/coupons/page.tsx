@@ -54,6 +54,8 @@ import {
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin } from '@/lib/roles';
 
 const COUPON_TYPES = [
   'PERCENT',
@@ -72,7 +74,8 @@ const couponSchema = z.object({
   end_date: z.string().min(1),
   usage_type: z.enum(USAGE_TYPES),
   usage_limit: z.coerce.number().int().min(1).optional(),
-  academy_id: z.coerce.number().min(1),
+  // Empty = Mentoma platform plan voucher (owner/admin only).
+  academy_id: z.string().optional(),
   max_discount_amount: z.coerce.number().optional(),
   min_purchase_amount: z.coerce.number().optional()
 });
@@ -88,6 +91,8 @@ const TYPE_BADGE_MAP: Record<string, string> = {
 export default function CouponsPage() {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
+  const { user } = useAuthUser();
+  const canManagePlatformVouchers = isPlatformAdmin(user);
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -104,7 +109,7 @@ export default function CouponsPage() {
       start_date: '',
       end_date: '',
       usage_type: 'UNLIMITED',
-      academy_id: 0
+      academy_id: ''
     }
   });
 
@@ -114,7 +119,7 @@ export default function CouponsPage() {
   async function load() {
     setLoading(true);
     try {
-      const data = await apiClient.getDiscounts();
+      const data = await apiClient.getDiscounts({ academy_id: 'platform' });
       const list =
         (data as any)?.discounts ?? (Array.isArray(data) ? data : []);
       setCoupons(list);
@@ -126,8 +131,9 @@ export default function CouponsPage() {
   }
 
   useEffect(() => {
-    load();
-  }, []);
+    if (canManagePlatformVouchers) load();
+    else setLoading(false);
+  }, [canManagePlatformVouchers]);
 
   function openCreate() {
     setEditTarget(null);
@@ -138,7 +144,7 @@ export default function CouponsPage() {
       start_date: '',
       end_date: '',
       usage_type: 'UNLIMITED',
-      academy_id: 0
+      academy_id: ''
     });
     setDialogOpen(true);
   }
@@ -154,7 +160,7 @@ export default function CouponsPage() {
       end_date: coupon.end_date?.slice(0, 10) ?? '',
       usage_type: coupon.usage_type ?? 'UNLIMITED',
       usage_limit: coupon.usage_limit ?? undefined,
-      academy_id: coupon.academy_id ?? 0,
+      academy_id: coupon.academy_id ?? '',
       max_discount_amount: coupon.max_discount_amount ?? undefined,
       min_purchase_amount: coupon.min_purchase_amount ?? undefined
     });
@@ -164,17 +170,35 @@ export default function CouponsPage() {
   async function onSubmit(values: CouponValues) {
     setSaving(true);
     try {
-      const payload: any = { ...values, discount_type: values.coupon_type };
+      const academyId = values.academy_id?.trim();
+      const payload: Record<string, unknown> = {
+        code: values.code,
+        coupon_type: values.coupon_type,
+        discount_type: values.coupon_type === 'FIXED' ? 'FIXED' : 'PERCENT',
+        discount_value: values.discount_value ?? 0,
+        free_trial_days: values.free_trial_days,
+        start_date: new Date(values.start_date).toISOString(),
+        end_date: new Date(values.end_date).toISOString(),
+        usage_type: values.usage_type,
+        usage_limit: values.usage_limit,
+        max_discount_amount: values.max_discount_amount,
+        min_purchase_amount: values.min_purchase_amount
+      };
+      // Omit academy_id for Mentoma platform plan vouchers.
+      if (academyId) payload.academy_id = academyId;
+
       if (editTarget) {
         await apiClient.updateDiscount(editTarget.id, payload);
       } else {
-        await apiClient.createDiscount(payload);
+        await apiClient.createDiscount(
+          payload as Parameters<typeof apiClient.createDiscount>[0]
+        );
       }
       toast.success(t('common.success'));
       setDialogOpen(false);
       load();
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err: unknown) {
+      toast.error((err as Error)?.message ?? t('common.error'));
     } finally {
       setSaving(false);
     }
@@ -192,6 +216,17 @@ export default function CouponsPage() {
     }
   }
 
+  if (!canManagePlatformVouchers) {
+    return (
+      <div className="flex-1 space-y-4 p-6">
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t('coupons.title')}
+        </h1>
+        <p className="text-muted-foreground">{t('coupons.platformOnly')}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="flex items-center justify-between">
@@ -199,12 +234,10 @@ export default function CouponsPage() {
           <h1 className="text-2xl font-bold tracking-tight">
             {t('coupons.title')}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {t('coupons.description')}
-          </p>
+          <p className="text-muted-foreground">{t('coupons.description')}</p>
         </div>
         <Button onClick={openCreate}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="me-2 h-4 w-4" />
           {t('coupons.newCoupon')}
         </Button>
       </div>
@@ -215,14 +248,10 @@ export default function CouponsPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="space-y-2">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))}
-            </div>
+            <Skeleton className="h-40 w-full" />
           ) : coupons.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <Percent className="mb-3 h-10 w-10" />
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Percent className="mb-3 h-10 w-10 text-muted-foreground" />
               <p className="font-medium">{t('coupons.noCoupons')}</p>
             </div>
           ) : (
@@ -235,58 +264,57 @@ export default function CouponsPage() {
                   <TableHead>{t('coupons.academy')}</TableHead>
                   <TableHead>{t('coupons.uses')}</TableHead>
                   <TableHead>{t('coupons.validity')}</TableHead>
-                  <TableHead className="text-right">
-                    {t('common.actions')}
-                  </TableHead>
+                  <TableHead />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {coupons.map((c) => (
                   <TableRow key={c.id}>
-                    <TableCell className="font-mono text-sm font-semibold">
+                    <TableCell className="font-mono font-medium">
                       {c.code}
                     </TableCell>
                     <TableCell>
                       <StatusBadge
                         status={
                           TYPE_BADGE_MAP[c.coupon_type ?? c.discount_type] ??
-                          'percent'
+                          'default'
                         }
                       />
                     </TableCell>
                     <TableCell>
                       {c.coupon_type === 'FREE_TRIAL'
-                        ? `${formatNumber(c.free_trial_days ?? 0)}d`
+                        ? `${c.free_trial_days ?? '—'}d`
                         : c.coupon_type === 'FULL_DISCOUNT'
-                          ? `${formatNumber(100)}%`
+                          ? '100%'
                           : c.coupon_type === 'PERCENT'
-                            ? `${formatNumber(c.discount_value ?? 0)}%`
+                            ? `${c.discount_value}%`
                             : formatNumber(c.discount_value ?? 0)}
                     </TableCell>
                     <TableCell>
-                      {c.academy?.name ?? c.academy_id ?? '—'}
+                      {c.Academy?.name ?? t('coupons.platformScope')}
                     </TableCell>
                     <TableCell>
-                      {c.used_count ?? 0}
-                      {c.usage_limit ? `/${c.usage_limit}` : ''}
+                      {c.usage_limit
+                        ? `${c.used_count ?? 0}/${c.usage_limit}`
+                        : (c.used_count ?? 0)}
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
+                    <TableCell className="text-sm text-muted-foreground">
                       {c.start_date?.slice(0, 10)} → {c.end_date?.slice(0, 10)}
                     </TableCell>
-                    <TableCell className="space-x-2 text-right">
+                    <TableCell className="text-end">
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => openEdit(c)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => setDeleteTarget(c)}
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -298,7 +326,7 @@ export default function CouponsPage() {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-3xl">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>
               {editTarget ? t('coupons.editCoupon') : t('coupons.createCoupon')}
@@ -306,9 +334,7 @@ export default function CouponsPage() {
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Flat grid: conditional fields take the next free cell instead
-                  of adding a row, which keeps the panel off a scrollbar. */}
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-4">
                 <FormField
                   control={form.control}
                   name="code"
@@ -316,12 +342,13 @@ export default function CouponsPage() {
                     <FormItem>
                       <FormLabel>{t('coupons.code')}</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} disabled={!!editTarget} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="coupon_type"
@@ -329,8 +356,8 @@ export default function CouponsPage() {
                     <FormItem>
                       <FormLabel>{t('coupons.type')}</FormLabel>
                       <Select
-                        value={field.value}
                         onValueChange={field.onChange}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger aria-label={t('coupons.type')}>
@@ -338,13 +365,14 @@ export default function CouponsPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {COUPON_TYPES.map((tt) => (
-                            <SelectItem key={tt} value={tt}>
-                              {tt}
+                          {COUPON_TYPES.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -387,12 +415,11 @@ export default function CouponsPage() {
                               ref={field.ref}
                               value={field.value ?? ''}
                               onChange={(raw) =>
-                                field.onChange(
-                                  raw === '' ? undefined : Number(raw)
-                                )
+                                field.onChange(raw === '' ? '' : Number(raw))
                               }
                             />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -435,6 +462,7 @@ export default function CouponsPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="end_date"
@@ -456,8 +484,8 @@ export default function CouponsPage() {
                     <FormItem>
                       <FormLabel>{t('coupons.usageType')}</FormLabel>
                       <Select
-                        value={field.value}
                         onValueChange={field.onChange}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger aria-label={t('coupons.usageType')}>
@@ -465,16 +493,18 @@ export default function CouponsPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {USAGE_TYPES.map((ut) => (
-                            <SelectItem key={ut} value={ut}>
-                              {ut}
+                          {USAGE_TYPES.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 {usageType === 'LIMITED' && (
                   <FormField
                     control={form.control}
@@ -498,26 +528,9 @@ export default function CouponsPage() {
                   />
                 )}
 
-                <FormField
-                  control={form.control}
-                  name="academy_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('coupons.academyId')}</FormLabel>
-                      <FormControl>
-                        <NumberInput
-                          name={field.name}
-                          ref={field.ref}
-                          value={field.value ?? ''}
-                          onChange={(raw) =>
-                            field.onChange(raw === '' ? '' : Number(raw))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <p className="text-xs text-muted-foreground">
+                  {t('coupons.platformScopeHint')}
+                </p>
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
