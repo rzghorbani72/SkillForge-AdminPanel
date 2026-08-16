@@ -1,6 +1,7 @@
 // Common utility functions for role and status handling
 
-import { DEFAULT_LANGUAGE, getLocaleForLanguage } from '@/lib/i18n/config';
+import { getLocaleForLanguage } from '@/lib/i18n/config';
+import { currentLanguage } from '@/lib/current-language';
 import { tNow } from '@/lib/i18n/t-now';
 
 export const getRoleIcon = (role: string) => {
@@ -55,7 +56,7 @@ export const getStatusColor = (status: string) => {
 };
 
 const localeDigits = (value: number, minimumIntegerDigits = 1) =>
-  new Intl.NumberFormat(getLocaleForLanguage(DEFAULT_LANGUAGE), {
+  new Intl.NumberFormat(getLocaleForLanguage(currentLanguage()), {
     minimumIntegerDigits,
     maximumFractionDigits: 1,
     useGrouping: false

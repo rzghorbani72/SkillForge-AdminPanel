@@ -3,14 +3,22 @@
  * Optimized for cost efficiency and storage management
  */
 
+import {
+  formatDuration,
+  formatFileSize
+} from '@/components/shared/utils';
+
+// Locale-aware size/duration labels (Persian digits + مگابایت when language is fa)
+export { formatFileSize, formatDuration };
+
 export const VIDEO_CONSTRAINTS = {
   // File Format
   ALLOWED_FORMATS: ['video/mp4'],
   ALLOWED_EXTENSIONS: ['.mp4'],
 
   // File Size Limits - Market Competitive
-  MAX_FILE_SIZE: 500 * 1024 * 1024, // 500MB (competitive with Udemy)
-  MAX_FILE_SIZE_MB: 500,
+  MAX_FILE_SIZE: 700 * 1024 * 1024, // 700MB (0.7 GB)
+  MAX_FILE_SIZE_MB: 700,
 
   // Duration Limits - Market Competitive
   MAX_DURATION_SECONDS: 30 * 60, // 30 minutes (optimal for engagement)
@@ -57,21 +65,6 @@ export const VIDEO_CONSTRAINTS = {
   }
 } as const;
 
-// Helper functions
-export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-};
-
-export const formatDuration = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-};
-
 /**
  * Validators return a translation key (plus its params) instead of a message,
  * so the text is rendered in the user's language at the call site.
@@ -89,7 +82,11 @@ export const validateVideoFile = (file: File): VideoValidation => {
     return {
       valid: false,
       errorKey: 'toasts.videoTooLarge',
-      params: { size: formatFileSize(file.size) }
+      params: {
+        size:
+          formatFileSize(file.size) ||
+          `${VIDEO_CONSTRAINTS.MAX_FILE_SIZE_MB}`
+      }
     };
   }
 

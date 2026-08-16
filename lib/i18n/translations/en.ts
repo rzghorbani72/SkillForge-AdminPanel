@@ -68,7 +68,7 @@ export const en = {
     videoUnreadable: 'This video file cannot be read. Please try another file.',
     videoInvalidFormat: 'Please select an MP4 video file',
     videoTooLarge:
-      'The video ({{size}}) is larger than 500MB. Please compress it first.',
+      'The video ({{size}}) is larger than 700MB. Please compress it first.',
     videoTooLong:
       'The video ({{duration}}) is longer than 30 minutes. Please split it into shorter parts.',
     videoSelected: 'Video selected: {{size}}',
@@ -77,6 +77,8 @@ export const en = {
     singleFileOnly: 'You can upload only one file at a time',
     maxFiles: 'You can upload at most {{count}} files',
     fileRejected: 'The file {{name}} was rejected',
+    fileTooLarge:
+      'This file is larger than the {{size}} limit. Please choose a smaller file.',
     audioChooseFile: 'Please choose an audio file',
     audioChooseFirst: 'Choose an audio file first',
     audioBadResponse: 'The audio was uploaded but the server sent no audio id',
@@ -2621,7 +2623,7 @@ export const en = {
     openPreview: 'Open / preview',
     uploadingVideo: 'Uploading video…',
     processingVideo: 'Processing video…',
-    videoFormatsHint: 'Supported formats: MP4, WebM, OGG (max 500MB)',
+    videoFormatsHint: 'Supported formats: MP4, WebM, OGG (max 700MB)',
     selectFromLibrary: 'Select from library',
     selectFromLibraryHint: 'Pick an existing video instead of uploading a copy',
     uploadVideo: 'Upload video',
@@ -2783,7 +2785,7 @@ export const en = {
     videoType: 'Video',
     uploadVideoDescription: 'Upload video content for your courses and lessons',
     videoFile: 'Video file',
-    videoFileHint: 'MP4, WebM, MOV, AVI, MPEG — max 500MB',
+    videoFileHint: 'MP4, WebM, MOV, AVI, MPEG — max 700MB',
     videoTitle: 'Video title',
     videoTitlePlaceholder: 'Enter video title',
     videoDescriptionPlaceholder: 'Describe the video content and its purpose',

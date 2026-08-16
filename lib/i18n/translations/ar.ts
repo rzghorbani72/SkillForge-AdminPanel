@@ -53,7 +53,7 @@ export const ar = {
     videoUploadFailed: 'تعذّر رفع الفيديو. حاول مرة أخرى.',
     videoUnreadable: 'تعذّرت قراءة ملف الفيديو. جرّب ملفًا آخر.',
     videoInvalidFormat: 'يرجى اختيار ملف فيديو بصيغة MP4',
-    videoTooLarge: 'حجم الفيديو ({{size}}) أكبر من 500 ميغابايت. اضغطه أولًا.',
+    videoTooLarge: 'حجم الفيديو ({{size}}) أكبر من 700 ميغابايت. اضغطه أولًا.',
     videoTooLong:
       'مدة الفيديو ({{duration}}) أطول من 30 دقيقة. قسّمه إلى أجزاء أقصر.',
     videoSelected: 'تم اختيار الفيديو: {{size}}',
@@ -62,6 +62,8 @@ export const ar = {
     singleFileOnly: 'يمكنك رفع ملف واحد فقط في كل مرة',
     maxFiles: 'يمكنك رفع {{count}} ملفات كحد أقصى',
     fileRejected: 'تم رفض الملف {{name}}',
+    fileTooLarge:
+      'حجم هذا الملف أكبر من الحد المسموح ({{size}}). يرجى اختيار ملف أصغر.',
     audioChooseFile: 'يرجى اختيار ملف صوتي',
     audioChooseFirst: 'اختر ملفًا صوتيًا أولًا',
     audioBadResponse: 'تم رفع الملف الصوتي لكن الخادم لم يُرجع معرفًا',
@@ -1468,7 +1470,7 @@ export const ar = {
     openPreview: 'فتح / معاينة',
     uploadingVideo: 'جارٍ رفع الفيديو…',
     processingVideo: 'جارٍ معالجة الفيديو…',
-    videoFormatsHint: 'الصيغ المدعومة: MP4، WebM، OGG (بحد أقصى 500 ميغابايت)',
+    videoFormatsHint: 'الصيغ المدعومة: MP4، WebM، OGG (بحد أقصى 700 ميغابايت)',
     selectFromLibrary: 'اختر من المكتبة',
     selectFromLibraryHint: 'اختر فيديو موجودًا بدل رفع نسخة مكررة',
     uploadVideo: 'رفع فيديو',

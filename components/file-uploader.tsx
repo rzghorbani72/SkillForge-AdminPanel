@@ -14,7 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useControllableState } from '@/hooks/use-controllable-state';
-import { cn, formatBytes } from '@/lib/utils';
+import { formatFileSize } from '@/components/shared/utils';
+import { cn } from '@/lib/utils';
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -136,7 +137,16 @@ export function FileUploader(props: FileUploaderProps) {
       setFiles(updatedFiles);
 
       if (rejectedFiles.length > 0) {
-        rejectedFiles.forEach(({ file }) => {
+        rejectedFiles.forEach(({ file, errors }) => {
+          const tooLarge = errors.some((e) => e.code === 'file-too-large');
+          if (tooLarge) {
+            toast.error(
+              tNow('toasts.fileTooLarge', {
+                size: formatFileSize(maxSize)
+              })
+            );
+            return;
+          }
           toast.error(tNow('toasts.fileRejected', { name: file.name }));
         });
       }
@@ -162,7 +172,7 @@ export function FileUploader(props: FileUploaderProps) {
       }
     },
 
-    [files, maxFiles, multiple, onUpload, setFiles]
+    [files, maxFiles, maxSize, multiple, onUpload, setFiles]
   );
 
   function onRemove(index: number) {
@@ -238,10 +248,10 @@ export function FileUploader(props: FileUploaderProps) {
                     {maxFiles > 1
                       ? tNow('fileUploader.limitMultiple', {
                           count: maxFiles === Infinity ? '' : maxFiles,
-                          size: formatBytes(maxSize)
+                          size: formatFileSize(maxSize)
                         })
                       : tNow('fileUploader.limitSingle', {
-                          size: formatBytes(maxSize)
+                          size: formatFileSize(maxSize)
                         })}
                   </p>
                 </div>
@@ -294,7 +304,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
               {file.name}
             </p>
             <p className="text-xs text-muted-foreground">
-              {formatBytes(file.size)}
+              {formatFileSize(file.size)}
             </p>
           </div>
           {progress ? <Progress value={progress} /> : null}

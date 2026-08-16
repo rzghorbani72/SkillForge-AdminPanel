@@ -54,7 +54,7 @@ export const tr = {
     videoUploadFailed: 'Video yüklenemedi. Lütfen tekrar deneyin.',
     videoUnreadable: 'Bu video dosyası okunamıyor. Başka bir dosya deneyin.',
     videoInvalidFormat: 'Lütfen MP4 biçiminde bir video seçin',
-    videoTooLarge: "Video ({{size}}) 500MB'tan büyük. Lütfen önce sıkıştırın.",
+    videoTooLarge: "Video ({{size}}) 700MB'tan büyük. Lütfen önce sıkıştırın.",
     videoTooLong:
       'Video ({{duration}}) 30 dakikadan uzun. Lütfen daha kısa parçalara bölün.',
     videoSelected: 'Video seçildi: {{size}}',
@@ -63,6 +63,8 @@ export const tr = {
     singleFileOnly: 'Aynı anda yalnızca bir dosya yükleyebilirsiniz',
     maxFiles: 'En fazla {{count}} dosya yükleyebilirsiniz',
     fileRejected: '{{name}} dosyası reddedildi',
+    fileTooLarge:
+      'Bu dosya {{size}} sınırından büyük. Lütfen daha küçük bir dosya seçin.',
     audioChooseFile: 'Lütfen bir ses dosyası seçin',
     audioChooseFirst: 'Önce bir ses dosyası seçin',
     audioBadResponse: 'Ses yüklendi ancak sunucu bir kimlik döndürmedi',
@@ -1510,7 +1512,7 @@ export const tr = {
     openPreview: 'Aç / önizle',
     uploadingVideo: 'Video yükleniyor…',
     processingVideo: 'Video işleniyor…',
-    videoFormatsHint: 'Desteklenen biçimler: MP4, WebM, OGG (en fazla 500MB)',
+    videoFormatsHint: 'Desteklenen biçimler: MP4, WebM, OGG (en fazla 700MB)',
     selectFromLibrary: 'Kitaplıktan seç',
     selectFromLibraryHint: 'Kopya yüklemek yerine mevcut bir videoyu seçin',
     uploadVideo: 'Video yükle',

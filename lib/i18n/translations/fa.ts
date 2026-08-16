@@ -67,7 +67,7 @@ export const fa = {
     videoUnreadable: 'این فایل ویدیویی خوانده نمی‌شود. فایل دیگری انتخاب کنید.',
     videoInvalidFormat: 'لطفاً یک فایل ویدیویی MP4 انتخاب کنید',
     videoTooLarge:
-      'حجم ویدیو ({{size}}) بیشتر از ۵۰۰ مگابایت است. ابتدا آن را فشرده کنید.',
+      'حجم ویدیو ({{size}}) بیشتر از ۷۰۰ مگابایت است. ابتدا آن را فشرده کنید.',
     videoTooLong:
       'مدت ویدیو ({{duration}}) بیشتر از ۳۰ دقیقه است. آن را به بخش‌های کوتاه‌تر تقسیم کنید.',
     videoSelected: 'ویدیو انتخاب شد: {{size}}',
@@ -76,6 +76,8 @@ export const fa = {
     singleFileOnly: 'هر بار فقط یک فایل می‌توانید بارگذاری کنید',
     maxFiles: 'حداکثر {{count}} فایل می‌توانید بارگذاری کنید',
     fileRejected: 'فایل {{name}} پذیرفته نشد',
+    fileTooLarge:
+      'حجم این فایل بیشتر از حد مجاز ({{size}}) است. فایل کوچک‌تری انتخاب کنید.',
     audioChooseFile: 'لطفاً یک فایل صوتی انتخاب کنید',
     audioChooseFirst: 'ابتدا یک فایل صوتی انتخاب کنید',
     audioBadResponse: 'فایل صوتی بارگذاری شد اما سرور شناسه‌ای برنگرداند',
@@ -2605,7 +2607,7 @@ export const fa = {
     openPreview: 'باز کردن پیش‌نمایش',
     uploadingVideo: 'در حال بارگذاری ویدیو…',
     processingVideo: 'در حال پردازش ویدیو…',
-    videoFormatsHint: 'فرمت‌های مجاز: MP4، WebM، OGG (حداکثر ۵۰۰ مگابایت)',
+    videoFormatsHint: 'فرمت‌های مجاز: MP4، WebM، OGG (حداکثر ۷۰۰ مگابایت)',
     selectFromLibrary: 'انتخاب از کتابخانه',
     selectFromLibraryHint:
       'به‌جای بارگذاری نسخهٔ تکراری، یک ویدیوی موجود را انتخاب کنید',
@@ -2760,7 +2762,7 @@ export const fa = {
     videoType: 'ویدیو',
     uploadVideoDescription: 'بارگذاری ویدیو برای دوره‌ها و درس‌های آکادمی',
     videoFile: 'فایل ویدیو',
-    videoFileHint: 'فرمت‌های MP4، WebM، MOV، AVI و MPEG — حداکثر ۵۰۰ مگابایت',
+    videoFileHint: 'فرمت‌های MP4، WebM، MOV، AVI و MPEG — حداکثر ۷۰۰ مگابایت',
     videoTitle: 'عنوان ویدیو',
     videoTitlePlaceholder: 'عنوان ویدیو را وارد کنید',
     videoDescriptionPlaceholder: 'محتوای ویدیو و هدف آن را توضیح دهید',

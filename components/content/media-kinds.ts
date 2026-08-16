@@ -38,7 +38,7 @@ export const MEDIA_KINDS: Record<MediaKind, MediaKindConfig> = {
     titlePlaceholderKey: 'media.videoTitlePlaceholder',
     descriptionPlaceholderKey: 'media.videoDescriptionPlaceholder',
     successKey: 'media.videoUploaded',
-    maxSizeBytes: 500 * MB,
+    maxSizeBytes: 700 * MB,
     accept: {
       'video/mp4': ['.mp4'],
       'video/webm': ['.webm'],
