@@ -161,7 +161,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl p-6">
+      <div className="w-full max-w-5xl p-6">
         <p className="mb-6 text-sm text-muted-foreground">
           {isPublished
             ? t('courses.builderPublishedHint')
