@@ -356,6 +356,15 @@ export const navItems: NavItem[] = [
     section: 'finance'
   },
   {
+    title: 'Discounts',
+    href: '/coupons',
+    icon: 'percent' as IconType,
+    label: 'discounts',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'finance'
+  },
+  {
     title: 'Student Plans',
     href: '/plans?tab=academy',
     icon: 'layers' as IconType,
