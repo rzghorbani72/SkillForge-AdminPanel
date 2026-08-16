@@ -19,13 +19,15 @@ function successMessage(response: unknown, fallback?: string): string {
 
 export const apiToast = {
   success(response: unknown, fallback?: string) {
-    toast.success(successMessage(response, fallback));
+    const message = successMessage(response, fallback);
+    toast.success(message, { toastId: `success:${message}` });
   },
 
   error(err: unknown, fallback?: string) {
-    const message = resolveApiErrorMessage(err, currentLanguage());
-    toast.error(
-      message || fallback || t('error.unexpected', currentLanguage())
-    );
+    const message =
+      resolveApiErrorMessage(err, currentLanguage()) ||
+      fallback ||
+      t('error.unexpected', currentLanguage());
+    toast.error(message, { toastId: `error:${message}` });
   }
 };

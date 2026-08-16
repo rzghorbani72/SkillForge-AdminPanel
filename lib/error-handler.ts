@@ -27,12 +27,14 @@ export class ErrorHandler {
 
     if (fields.length > 0) {
       for (const fieldError of fields) {
-        toast.error(resolveFieldMessage(fieldError, language));
+        const message = resolveFieldMessage(fieldError, language);
+        toast.error(message, { toastId: `error:${message}` });
       }
       return;
     }
 
-    toast.error(resolveApiErrorMessage(error, language));
+    const message = resolveApiErrorMessage(error, language);
+    toast.error(message, { toastId: `error:${message}` });
   }
 
   /**
@@ -46,7 +48,8 @@ export class ErrorHandler {
 
     if (status === 401) {
       if (typeof window === 'undefined') return;
-      toast.error(resolveApiErrorMessage(error, language));
+      const message = resolveApiErrorMessage(error, language);
+      toast.error(message, { toastId: `error:${message}` });
       const currentPath = window.location.pathname;
       if (!isAuthPagePath(currentPath)) {
         const target = currentPath + window.location.search;
@@ -91,7 +94,8 @@ export class ErrorHandler {
     }
 
     if (Object.keys(fieldErrors).length === 0) {
-      toast.error(resolveApiErrorMessage(error, language));
+      const message = resolveApiErrorMessage(error, language);
+      toast.error(message, { toastId: `error:${message}` });
     }
 
     return fieldErrors;
@@ -123,18 +127,19 @@ export class ErrorHandler {
    * Accepts either a translation key (e.g. 'success.loginSuccess') or ready text.
    */
   static showSuccess(message: string, useTranslation: boolean = false): void {
-    toast.success(useTranslation ? t(message, currentLanguage()) : message);
+    const text = useTranslation ? t(message, currentLanguage()) : message;
+    toast.success(text, { toastId: `success:${text}` });
   }
 
   static showInfo(message: string): void {
-    toast.info(message);
+    toast.info(message, { toastId: `info:${message}` });
   }
 
   static showWarning(message: string): void {
-    toast.warning(message);
+    toast.warning(message, { toastId: `warning:${message}` });
   }
 
   static showError(message: string): void {
-    toast.error(message);
+    toast.error(message, { toastId: `error:${message}` });
   }
 }
