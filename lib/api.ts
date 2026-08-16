@@ -33,7 +33,7 @@ import type {
   UpdateLessonDownloadPolicyPayload,
   UpdateTutoringOfferPayload
 } from '@/types/learning-operations';
-import type { AccountIdentity } from '@/types/auth';
+import type { AccountIdentity, MemberAcademy } from '@/types/auth';
 import type { UserDetailsResponse } from '@/types/user-details';
 import type {
   CreateRolePayload,
@@ -325,6 +325,7 @@ class ApiClient {
       endpoint.includes('/auth/confirm-phone') ||
       endpoint.includes('/auth/set-new-password') ||
       endpoint.includes('/auth/select-academy') ||
+      endpoint.includes('/auth/academies/lookup') ||
       endpoint.includes('/auth/csrf')
     );
   }
@@ -657,6 +658,26 @@ class ApiClient {
         identifier,
         ...(captcha_token ? { captcha_token } : {})
       })
+    });
+  }
+
+  /**
+   * Step 2 for a phone that has no panel account but belongs to an academy:
+   * send the one-time code that unlocks the academy list. Membership is
+   * private, so only the person holding the phone may see it.
+   */
+  async sendAcademyLookupOtp(phone_number: string) {
+    return this.request<{ otp?: string }>('/auth/academies/lookup/send-otp', {
+      method: 'POST',
+      body: JSON.stringify({ phone_number })
+    });
+  }
+
+  /** The academies this phone belongs to, once its one-time code checks out. */
+  async lookupMyAcademies(phone_number: string, otp: string) {
+    return this.request<MemberAcademy[]>('/auth/academies/lookup', {
+      method: 'POST',
+      body: JSON.stringify({ phone_number, otp })
     });
   }
 

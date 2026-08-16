@@ -711,6 +711,19 @@ export const fa = {
     changeIdentifier: 'تغییر شماره',
     useOtpInstead: 'ورود با کد یکبارمصرف',
     accountNotRegisteredForLogin: 'حسابی با این شماره تلفن ثبت نشده است.',
+    memberAcademiesTitle: 'شما دانشجوی یک آکادمی هستید',
+    memberAcademiesSubtitle:
+      'این پنل مخصوص مدیران و مدرسان است. ورود دانشجو از سایت خود آکادمی انجام می‌شود.',
+    memberAcademiesHint:
+      'برای دیدن آکادمی‌هایی که عضو آن هستید، یک کد تأیید به شماره شما می‌فرستیم.',
+    memberAcademiesSendCode: 'ارسال کد و نمایش آکادمی‌های من',
+    memberAcademiesOtpTitle: 'کد تأیید را وارد کنید',
+    memberAcademiesShowList: 'نمایش آکادمی‌های من',
+    memberAcademiesListTitle: 'آکادمی‌های شما',
+    memberAcademiesListSubtitle: 'برای ورود، روی آکادمی خود بزنید.',
+    memberAcademiesEmpty: 'در حال حاضر عضو هیچ آکادمی فعالی نیستید.',
+    memberAcademiesBecomeManager: 'می‌خواهم آکادمی خودم را بسازم',
+    useAnotherNumber: 'ورود با شماره دیگر',
     phoneAlreadyRegistered:
       'این شماره موبایل قبلاً ثبت‌نام کرده است. لطفاً وارد شوید.',
     registerToLoginHint: 'ابتدا حساب رایگان بسازید، سپس وارد شوید.',

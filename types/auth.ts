@@ -5,4 +5,19 @@ export interface AccountIdentity {
   can_use_password: boolean;
   can_use_otp: boolean;
   captcha_required: boolean;
+  /**
+   * No panel account, but the person is a member of at least one academy —
+   * a student added by a manager. Which academy stays hidden until they verify
+   * the phone with a one-time code (`GET`ting it needs `MemberAcademy` below).
+   */
+  member_elsewhere?: boolean;
+}
+
+/** One academy the verified phone belongs to (`POST /auth/academies/lookup`). */
+export interface MemberAcademy {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+  login_url: string;
 }

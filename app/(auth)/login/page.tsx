@@ -4,6 +4,7 @@ import { useLogin } from './use-login';
 import { IdentifyStep } from '@/components/auth/identify-step';
 import { PasswordStep } from '@/components/auth/password-step';
 import { AcademyPicker } from './_components/academy-picker';
+import { MemberAcademiesScreen } from './_components/member-academies-screen';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 import { SetNewPasswordScreen } from '@/components/auth/set-new-password-screen';
 import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
@@ -58,6 +59,16 @@ export default function LoginPage() {
           </div>
         )}
       </PhoneOtpScreen>
+    );
+  }
+
+  if (login.memberElsewhere) {
+    return (
+      <MemberAcademiesScreen
+        phoneE164={login.phoneE164}
+        registerHref={login.registerHref}
+        onChangeIdentifier={login.changeIdentifier}
+      />
     );
   }
 

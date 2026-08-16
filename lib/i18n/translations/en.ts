@@ -723,6 +723,20 @@ export const en = {
     useOtpInstead: 'Sign in with a one-time code',
     accountNotRegisteredForLogin:
       'No account is registered with this phone number.',
+    memberAcademiesTitle: 'You are a student of an academy',
+    memberAcademiesSubtitle:
+      'This panel is for managers and teachers. Students sign in on their own academy site.',
+    memberAcademiesHint:
+      'To see the academies you belong to, we will send a verification code to your phone.',
+    memberAcademiesSendCode: 'Send code and show my academies',
+    memberAcademiesOtpTitle: 'Enter the verification code',
+    memberAcademiesShowList: 'Show my academies',
+    memberAcademiesListTitle: 'Your academies',
+    memberAcademiesListSubtitle: 'Tap your academy to sign in.',
+    memberAcademiesEmpty:
+      'You are not a member of any active academy right now.',
+    memberAcademiesBecomeManager: 'I want to create my own academy',
+    useAnotherNumber: 'Sign in with another number',
     phoneAlreadyRegistered:
       'This phone number is already registered. Please sign in.',
     registerToLoginHint: 'Create a free account first, then sign in.',

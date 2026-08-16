@@ -97,6 +97,9 @@ export function useLogin() {
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [registrationRequired, setRegistrationRequired] = useState(false);
+  // The phone has an academy membership but no panel role — a student who came
+  // to the wrong door. They are routed to their academy, not to signup.
+  const [memberElsewhere, setMemberElsewhere] = useState(false);
   const [captchaRequired, setCaptchaRequired] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
 
@@ -199,6 +202,10 @@ export function useLogin() {
       const next = nextStepFor(data);
       if (next === 'register') {
         setRegistrationRequired(true);
+        return;
+      }
+      if (next === 'member_elsewhere') {
+        setMemberElsewhere(true);
         return;
       }
 
@@ -466,6 +473,7 @@ export function useLogin() {
 
   function clearRegistrationHint() {
     setRegistrationRequired(false);
+    setMemberElsewhere(false);
     setErrors((prev) => ({ ...prev, phone: '' }));
   }
 
@@ -498,7 +506,11 @@ export function useLogin() {
       setIdentity(null);
       setPassword('');
       setErrors({});
+      setMemberElsewhere(false);
     },
+
+    memberElsewhere,
+    phoneE164: phone.trim() ? toE164Iran(phone) : '',
 
     captchaRequired,
     setCaptchaToken,
