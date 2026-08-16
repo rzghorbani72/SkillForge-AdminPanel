@@ -263,13 +263,9 @@ export default function UITemplateSettingsPage() {
                 | undefined);
             if (!id) return;
             const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
-            const patch: Record<string, unknown> = {
+            handleBlockConfigChangeRef.current(data.blockId!, {
               [data.fieldKey!]: url
-            };
-            if (data.fieldKey === 'bgImage') {
-              patch.illustration = url;
-            }
-            handleBlockConfigChangeRef.current(data.blockId!, patch);
+            });
           } catch (error) {
             ErrorHandler.handleApiError(error);
           }
@@ -970,6 +966,9 @@ export default function UITemplateSettingsPage() {
     setSelectedBlockId(null);
     postOrder(next);
     commitBlocks(next);
+    setRefreshKey((k) => k + 1);
+    setPickerTarget(null);
+    setPickerOpen(true);
   };
 
   const handleBlockToggleVisible = (blockId: string, visible: boolean) => {
@@ -1018,11 +1017,7 @@ export default function UITemplateSettingsPage() {
     fieldKey: string,
     url: string
   ) => {
-    const patch: Record<string, unknown> = { [fieldKey]: url };
-    if (fieldKey === 'bgImage') {
-      patch.illustration = url;
-    }
-    handleBlockConfigChange(blockId, patch);
+    handleBlockConfigChange(blockId, { [fieldKey]: url });
   };
 
   const handleOpenPicker = (target?: { blockId: string; type: string }) => {
