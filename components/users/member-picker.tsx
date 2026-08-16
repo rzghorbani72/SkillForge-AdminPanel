@@ -5,11 +5,13 @@ import { Loader2, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { useDebounce } from '@/hooks/use-debounce';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { UserAvatar } from './user-avatar';
 import type { User } from '@/types/api';
 
 const MEMBER_PAGE_SIZE = 50;
+const SEARCH_DEBOUNCE_MS = 350;
 
 type MemberPickerProps = {
   /** Reload candidates when this flips true (i.e. the host dialog opened). */
@@ -34,6 +36,7 @@ export function MemberPicker({
 }: MemberPickerProps) {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, SEARCH_DEBOUNCE_MS);
   const [candidates, setCandidates] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,7 +46,7 @@ export function MemberPicker({
       const data = await apiClient.getUsers({
         page: 1,
         limit: MEMBER_PAGE_SIZE,
-        search: search || undefined
+        search: debouncedSearch || undefined
       });
       setCandidates(data?.users ?? data?.profiles ?? []);
     } catch (error) {
@@ -52,7 +55,7 @@ export function MemberPicker({
     } finally {
       setIsLoading(false);
     }
-  }, [search]);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     if (!active) return;
