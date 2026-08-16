@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, CheckCircle, Clock } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 interface AssignmentsStatsProps {
   totalAssignments: number;
@@ -16,6 +17,7 @@ export function AssignmentsStats({
   gradedCount
 }: AssignmentsStatsProps) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -27,7 +29,9 @@ export function AssignmentsStats({
           <BookOpen className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{totalAssignments}</div>
+          <div className="text-2xl font-bold">
+            {formatNumber(totalAssignments)}
+          </div>
         </CardContent>
       </Card>
       <Card>
@@ -38,7 +42,9 @@ export function AssignmentsStats({
           <Clock className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{pendingReview}</div>
+          <div className="text-2xl font-bold">
+            {formatNumber(pendingReview)}
+          </div>
           <p className="text-xs text-muted-foreground">
             {t('assignmentsPage.awaitingGrade')}
           </p>
@@ -52,7 +58,7 @@ export function AssignmentsStats({
           <CheckCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{gradedCount}</div>
+          <div className="text-2xl font-bold">{formatNumber(gradedCount)}</div>
         </CardContent>
       </Card>
     </div>

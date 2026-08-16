@@ -34,6 +34,8 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { PenLine, Search, Star } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { getLocaleForLanguage } from '@/lib/i18n/config';
 import type {
   ApiPagination,
   AssignmentSubmission,
@@ -55,6 +57,8 @@ function parseCourseId(value: string): number | undefined {
 export default function AssignmentsPage() {
   const { t, language } = useTranslation();
   const isRtl = language === 'fa' || language === 'ar';
+  const formatNumber = useNumberFormat();
+  const locale = getLocaleForLanguage(language);
 
   const [assignments, setAssignments] = useState<LearningAssignment[]>([]);
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
@@ -362,18 +366,18 @@ export default function AssignmentsPage() {
                             <TableCell className="text-sm text-muted-foreground">
                               {a.due_date
                                 ? new Date(a.due_date).toLocaleDateString(
-                                    language
+                                    locale
                                   )
                                 : t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline">
                                 <Star className="me-1 h-3 w-3" />
-                                {a.max_score}
+                                {formatNumber(a.max_score)}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-sm">
-                              {a._count?.Submission ?? 0}
+                              {formatNumber(a._count?.Submission ?? 0)}
                             </TableCell>
                             <TableCell>
                               <Badge
@@ -468,14 +472,15 @@ export default function AssignmentsPage() {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-sm">
-                              {sub.score != null
-                                ? `${sub.score} / ${sub.Assignment?.max_score}`
+                              {sub.score != null &&
+                              sub.Assignment?.max_score != null
+                                ? `${formatNumber(sub.score)} / ${formatNumber(sub.Assignment.max_score)}`
                                 : t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
                               {sub.submitted_at
                                 ? new Date(sub.submitted_at).toLocaleDateString(
-                                    language
+                                    locale
                                   )
                                 : t('assignmentsPage.notAvailable')}
                             </TableCell>
@@ -565,8 +570,11 @@ export default function AssignmentsPage() {
                   <Label htmlFor="score">
                     {t('assignmentsPage.scoreMax', {
                       max:
-                        gradeDialog.submission?.Assignment?.max_score ??
-                        t('assignmentsPage.notAvailable')
+                        gradeDialog.submission?.Assignment?.max_score != null
+                          ? formatNumber(
+                              gradeDialog.submission.Assignment.max_score
+                            )
+                          : t('assignmentsPage.notAvailable')
                     })}
                   </Label>
                   <NumberInput
