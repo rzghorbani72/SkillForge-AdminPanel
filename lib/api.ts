@@ -3652,7 +3652,11 @@ class ApiClient {
     const response = await this.request('/ui-template/preview-token', {
       method: 'POST'
     });
-    return response.data as { token: string; expiresIn: string };
+    return response.data as {
+      token: string;
+      expiresIn: string;
+      storefrontBaseUrl: string | null;
+    };
   }
 
   async getTemplatePreviewSession() {

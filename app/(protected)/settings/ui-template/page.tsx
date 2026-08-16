@@ -123,6 +123,7 @@ export default function UITemplateSettingsPage() {
   } | null>(null);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [previewToken, setPreviewToken] = useState<string | null>(null);
+  const [storefrontBase, setStorefrontBase] = useState<string | null>(null);
   const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
   // Preview data source: false = placeholder/sample design, true = the academy's
   // real backend records (courses, stats) so the manager sees the live site view.
@@ -251,7 +252,13 @@ export default function UITemplateSettingsPage() {
 
   const handleCardClick = async (
     preset: TemplatePreset,
-    opts?: { seededBlocks?: UIBlockConfig[]; draftPreviewToken?: string }
+    opts?: {
+      seededBlocks?: UIBlockConfig[];
+      draftPreviewSession?: {
+        token: string;
+        storefrontBaseUrl: string | null;
+      } | null;
+    }
   ) => {
     setSelectedPreset(preset);
     setBaseIframeSrc(null);
@@ -324,19 +331,24 @@ export default function UITemplateSettingsPage() {
       // The editor always previews the academy's DRAFT (not the catalog preset)
       // so swaps, text, colors and layout edits show live, and sections become
       // click-to-select (edit=1). A preview token scopes it to this academy.
-      const token =
-        opts?.draftPreviewToken ??
-        (await apiClient.createTemplatePreviewToken().catch(() => null))?.token;
+      // The storefront lives on a different domain than the panel, so the
+      // backend tells us where it is — a relative URL would 404 on the panel.
+      const session =
+        opts?.draftPreviewSession ??
+        (await apiClient.createTemplatePreviewToken().catch(() => null));
+      const token = session?.token;
+      const storefront = session?.storefrontBaseUrl ?? null;
       setPreviewToken(token ?? null);
+      setStorefrontBase(storefront);
       setBaseIframeSrc(
         token
-          ? buildTemplatePreviewUrl(preset.id, null, {
+          ? buildTemplatePreviewUrl(preset.id, storefront, {
               draft: true,
               edit: true,
               token,
               realData: useRealData
             })
-          : buildTemplatePreviewUrl(preset.id, null, {
+          : buildTemplatePreviewUrl(preset.id, storefront, {
               sample: !isDedicated,
               realData: useRealData
             })
@@ -399,7 +411,7 @@ export default function UITemplateSettingsPage() {
       if (preset) {
         await handleCardClick(preset, {
           seededBlocks,
-          draftPreviewToken: tokenRes?.token
+          draftPreviewSession: tokenRes
         });
         ErrorHandler.showSuccess('سایت شما ساخته شد');
       }
@@ -441,13 +453,13 @@ export default function UITemplateSettingsPage() {
     const isDedicated = selectedPreset.visibility === 'DEDICATED';
     setBaseIframeSrc(
       previewToken
-        ? buildTemplatePreviewUrl(selectedPreset.id, null, {
+        ? buildTemplatePreviewUrl(selectedPreset.id, storefrontBase, {
             draft: true,
             edit: true,
             token: previewToken,
             realData: next
           })
-        : buildTemplatePreviewUrl(selectedPreset.id, null, {
+        : buildTemplatePreviewUrl(selectedPreset.id, storefrontBase, {
             sample: !isDedicated,
             realData: next
           })
@@ -1036,7 +1048,7 @@ export default function UITemplateSettingsPage() {
 
     // Live-preview context for the hero design picker — needs a storefront URL
     // and an academy-scoped token to render real, themed hero thumbnails.
-    const storefrontBaseUrl = resolveStorefrontBaseUrl();
+    const storefrontBaseUrl = resolveStorefrontBaseUrl(storefrontBase);
     const heroPreview: HeroPreviewContext | null =
       previewToken && storefrontBaseUrl
         ? {
