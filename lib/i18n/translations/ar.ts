@@ -496,7 +496,11 @@ export const ar = {
     passwordTooShort: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
     passwordAsciiOnly:
       'كلمة المرور قد تحتوي فقط على أحرف إنجليزية وأرقام ورموز',
-    passwordAsciiOnlyHint: 'أحرف إنجليزية وأرقام ورموز فقط',
+    passwordHasSymbol: 'يحتوي على رمز',
+    passwordTooWeak: 'يجب أن تحتوي كلمة المرور على حرف إنجليزي ورقم ورمز',
+    passwordMinLength: 'ما لا يقل عن 6 أحرف',
+    passwordHasLetter: 'يحتوي على حرف إنجليزي',
+    passwordHasNumber: 'يحتوي على رقم',
     selectStore: 'الرجاء اختيار معهد',
     backToLogin: 'العودة إلى تسجيل الدخول',
     verifyYourContact: 'تحقق من معلومات الاتصال الخاصة بك',

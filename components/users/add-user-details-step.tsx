@@ -170,7 +170,7 @@ export function AddUserDetailsStep({
               </button>
             )}
           </div>
-          {form.password && <PasswordStrength password={form.password} />}
+          <PasswordStrength password={form.password} />
         </div>
 
         <div className="space-y-1.5">

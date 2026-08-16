@@ -1,30 +1,8 @@
 'use client';
 
-import { Check, X } from 'lucide-react';
+import { Check, Circle, X } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { toEnglishDigits } from '@/lib/phone-utils';
-
-export interface PasswordChecks {
-  minLength: boolean;
-  hasLetter: boolean;
-  hasNumber: boolean;
-  asciiOnly: boolean;
-}
-
-export function getPasswordChecks(password: string): PasswordChecks {
-  const normalized = toEnglishDigits(password);
-  return {
-    minLength: normalized.length >= 6,
-    hasLetter: /[a-zA-Z]/.test(normalized),
-    hasNumber: /[0-9]/.test(normalized),
-    asciiOnly: /^[\x20-\x7E]*$/.test(normalized)
-  };
-}
-
-export function isPasswordValid(password: string): boolean {
-  const c = getPasswordChecks(password);
-  return c.minLength && c.hasLetter && c.hasNumber && c.asciiOnly;
-}
+import { getPasswordChecks, type PasswordChecks } from '@/lib/password-utils';
 
 interface PasswordStrengthProps {
   password: string;
@@ -32,28 +10,33 @@ interface PasswordStrengthProps {
 
 export function PasswordStrength({ password }: PasswordStrengthProps) {
   const { t } = useTranslation();
-  if (!password) return null;
-
   const checks = getPasswordChecks(password);
+  const untouched = password === '';
   const items: { key: keyof PasswordChecks; label: string }[] = [
     { key: 'minLength', label: t('auth.passwordMinLength') },
     { key: 'hasLetter', label: t('auth.passwordHasLetter') },
     { key: 'hasNumber', label: t('auth.passwordHasNumber') },
-    { key: 'asciiOnly', label: t('auth.passwordAsciiOnlyHint') }
+    { key: 'hasSymbol', label: t('auth.passwordHasSymbol') }
   ];
 
   return (
-    <div className="space-y-1">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
       {items.map(({ key, label }) => (
-        <div key={key} className="flex items-center gap-1.5 text-xs">
-          {checks[key] ? (
-            <Check className="h-3 w-3 text-emerald-500" />
-          ) : (
-            <X className="h-3 w-3 text-destructive" />
-          )}
+        <div key={key} className="flex items-center gap-1 text-[11px]">
+          <span className="grid h-3 w-3 shrink-0 place-items-center">
+            {untouched ? (
+              <Circle className="h-2 w-2 text-muted-foreground/60" />
+            ) : checks[key] ? (
+              <Check className="h-3 w-3 text-emerald-500" />
+            ) : (
+              <X className="h-3 w-3 text-destructive" />
+            )}
+          </span>
           <span
             className={
-              checks[key] ? 'text-emerald-600' : 'text-muted-foreground'
+              !untouched && checks[key]
+                ? 'text-emerald-600'
+                : 'text-muted-foreground'
             }
           >
             {label}

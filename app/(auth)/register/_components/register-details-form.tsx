@@ -3,6 +3,7 @@
 import { UseFormReturn, UseFormRegisterReturn } from 'react-hook-form';
 import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
 import { LegalConsentCheckbox } from '@/components/auth/legal-consent-checkbox';
+import { PasswordStrength } from '@/components/ui/password-strength';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toEnglishDigits } from '@/lib/phone-utils';
 import { sanitizePasswordInput } from '@/lib/password-utils';
@@ -92,16 +93,19 @@ export function RegisterDetailsForm({
         )}
       />
 
-      <AuthField
-        label={t('auth.password')}
-        type="password"
-        autoComplete="new-password"
-        error={errors.password?.message}
-        disabled={loading}
-        {...withAsciiPassword(
-          form.register('password', { setValueAs: toPassword })
-        )}
-      />
+      <div className="space-y-1.5">
+        <AuthField
+          label={t('auth.password')}
+          type="password"
+          autoComplete="new-password"
+          error={errors.password?.message}
+          disabled={loading}
+          {...withAsciiPassword(
+            form.register('password', { setValueAs: toPassword })
+          )}
+        />
+        <PasswordStrength password={password} />
+      </div>
 
       <AuthField
         label={t('auth.confirmPassword')}

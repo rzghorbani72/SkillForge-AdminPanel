@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { isValidEmail } from '@/lib/utils';
 import { toE164Iran } from '@/lib/phone-utils';
+import { isPasswordValid, MIN_PASSWORD_LENGTH } from '@/lib/password-utils';
 
-export const MIN_PASSWORD_LENGTH = 6;
+export { MIN_PASSWORD_LENGTH };
 export const MIN_NAME_LENGTH = 2;
 export const OTP_LENGTH = 5;
 
@@ -27,6 +28,16 @@ export function validatePassword(value: string): ValidationKey {
   if (value.length < MIN_PASSWORD_LENGTH) return 'auth.passwordTooShort';
   if (!/^[\x20-\x7E]+$/.test(value)) return 'auth.passwordAsciiOnly';
   return null;
+}
+
+/**
+ * Stricter rule for a password the user is *choosing* (register / reset).
+ * Login keeps `validatePassword` so existing weaker passwords still work.
+ */
+export function validateNewPassword(value: string): ValidationKey {
+  const basic = validatePassword(value);
+  if (basic) return basic;
+  return isPasswordValid(value) ? null : 'auth.passwordTooWeak';
 }
 
 export function validateConfirmPassword(

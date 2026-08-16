@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { isPasswordValid } from '@/components/ui/password-strength';
+import { isPasswordValid } from '@/lib/password-utils';
 import { toE164Iran } from '@/lib/phone-utils';
 import { defaultAssignableRole } from '@/lib/assignable-roles';
 import { useDebouncedValue } from '@/lib/use-debounced-value';

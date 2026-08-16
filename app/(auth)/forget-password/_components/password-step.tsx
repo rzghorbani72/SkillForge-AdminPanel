@@ -2,6 +2,7 @@
 
 import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
 import { Button } from '@/components/ui/button';
+import { PasswordStrength } from '@/components/ui/password-strength';
 import { sanitizePasswordInput } from '@/lib/password-utils';
 import type { useForgetPassword } from '../use-forget-password';
 
@@ -21,21 +22,24 @@ export function PasswordStep({ fp }: { fp: Fp }) {
       className="space-y-5"
       noValidate
     >
-      <AuthField
-        label={t('forgotPassword.newPassword')}
-        type="password"
-        dir="ltr"
-        autoComplete="new-password"
-        value={fp.formData.password}
-        onChange={(e) =>
-          fp.handleInputChange(
-            'password',
-            sanitizePasswordInput(e.target.value)
-          )
-        }
-        error={fp.errors.password}
-        disabled={fp.isLoading}
-      />
+      <div className="space-y-1.5">
+        <AuthField
+          label={t('forgotPassword.newPassword')}
+          type="password"
+          dir="ltr"
+          autoComplete="new-password"
+          value={fp.formData.password}
+          onChange={(e) =>
+            fp.handleInputChange(
+              'password',
+              sanitizePasswordInput(e.target.value)
+            )
+          }
+          error={fp.errors.password}
+          disabled={fp.isLoading}
+        />
+        <PasswordStrength password={fp.formData.password} />
+      </div>
 
       <AuthField
         label={t('auth.confirmPassword')}

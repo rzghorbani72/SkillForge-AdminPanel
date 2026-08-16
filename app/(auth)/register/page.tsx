@@ -22,7 +22,7 @@ import {
   authField,
   validateConfirmPassword,
   validateFullName,
-  validatePassword,
+  validateNewPassword,
   validatePhone,
   type Translate
 } from '@/lib/auth-validation';
@@ -36,7 +36,7 @@ const useRegisterSchema = (t: Translate) =>
     .object({
       name: authField(validateFullName, t),
       phone: authField(validatePhone, t),
-      password: authField(validatePassword, t),
+      password: authField(validateNewPassword, t),
       confirmPassword: z.string()
     })
     .superRefine((values, ctx) => {

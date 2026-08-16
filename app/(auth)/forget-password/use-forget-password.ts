@@ -14,7 +14,7 @@ import {
   validateConfirmPassword,
   validateEmail,
   validateOtp,
-  validatePassword,
+  validateNewPassword as validateChosenPassword,
   validatePhone
 } from '@/lib/auth-validation';
 
@@ -96,7 +96,7 @@ export function useForgetPassword() {
   const validateNewPassword = () => {
     const newErrors = collectErrors(
       {
-        password: validatePassword(formData.password),
+        password: validateChosenPassword(formData.password),
         confirmed_password: validateConfirmPassword(
           formData.password,
           formData.confirmed_password

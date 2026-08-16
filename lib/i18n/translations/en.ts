@@ -773,9 +773,11 @@ export const en = {
     passwordTooShort: 'Password must be at least 6 characters',
     passwordAsciiOnly:
       'Password may only contain English letters, numbers, and symbols',
-    passwordAsciiOnlyHint: 'English letters, numbers, and symbols only',
+    passwordHasSymbol: 'Contains a symbol',
+    passwordTooWeak:
+      'Password must contain an English letter, a number, and a symbol',
     passwordMinLength: 'At least 6 characters',
-    passwordHasLetter: 'Contains a letter',
+    passwordHasLetter: 'Contains an English letter',
     passwordHasNumber: 'Contains a number',
     selectStore: 'Please select an academy',
     backToLogin: 'Back to Login',

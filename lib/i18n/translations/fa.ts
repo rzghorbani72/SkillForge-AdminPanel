@@ -760,9 +760,10 @@ export const fa = {
     passwordTooShort: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
     passwordAsciiOnly:
       'رمز عبور فقط می‌تواند شامل حروف انگلیسی، عدد و نماد باشد',
-    passwordAsciiOnlyHint: 'فقط حروف انگلیسی، عدد و نماد',
+    passwordHasSymbol: 'شامل نماد باشد',
+    passwordTooWeak: 'رمز عبور باید شامل حروف انگلیسی، عدد و نماد باشد',
     passwordMinLength: 'حداقل ۶ کاراکتر',
-    passwordHasLetter: 'شامل حرف باشد',
+    passwordHasLetter: 'شامل حروف انگلیسی باشد',
     passwordHasNumber: 'شامل عدد باشد',
     selectStore: 'لطفاً یک آکادمی انتخاب کنید',
     backToLogin: 'بازگشت به ورود',

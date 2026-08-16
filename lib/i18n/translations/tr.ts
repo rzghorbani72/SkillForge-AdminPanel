@@ -504,7 +504,12 @@ export const tr = {
     passwordTooShort: 'Şifre en az 6 karakter olmalıdır',
     passwordAsciiOnly:
       'Şifre yalnızca İngilizce harf, rakam ve sembol içerebilir',
-    passwordAsciiOnlyHint: 'Yalnızca İngilizce harf, rakam ve sembol',
+    passwordHasSymbol: 'Bir sembol içerir',
+    passwordTooWeak:
+      'Şifre bir İngilizce harf, bir rakam ve bir sembol içermelidir',
+    passwordMinLength: 'En az 6 karakter',
+    passwordHasLetter: 'Bir İngilizce harf içerir',
+    passwordHasNumber: 'Bir rakam içerir',
     selectStore: 'Lütfen bir enstitü seçin',
     backToLogin: 'Girişe Dön',
     verifyYourContact: 'İletişim Bilgilerinizi Doğrulayın',

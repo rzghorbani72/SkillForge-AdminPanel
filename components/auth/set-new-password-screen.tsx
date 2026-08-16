@@ -3,11 +3,8 @@
 import { useState } from 'react';
 import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
-import {
-  PasswordStrength,
-  isPasswordValid
-} from '@/components/ui/password-strength';
-import { sanitizePasswordInput } from '@/lib/password-utils';
+import { PasswordStrength } from '@/components/ui/password-strength';
+import { isPasswordValid, sanitizePasswordInput } from '@/lib/password-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface SetNewPasswordScreenProps {
