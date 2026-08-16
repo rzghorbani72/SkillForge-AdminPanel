@@ -5279,7 +5279,8 @@ export const en = {
     noResults: 'No matches found.',
     loading: 'Searching…',
     clear: 'Clear selection',
-    selectCourseFirst: 'Select a course first'
+    selectCourseFirst: 'Select a course first',
+    unnamedUser: 'Unnamed user'
   },
   userNav: {
     profile: 'Profile',

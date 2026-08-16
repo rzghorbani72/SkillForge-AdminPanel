@@ -5268,7 +5268,8 @@ export const fa = {
     noResults: 'موردی یافت نشد.',
     loading: 'در حال جستجو…',
     clear: 'پاک کردن انتخاب',
-    selectCourseFirst: 'ابتدا یک دوره انتخاب کنید'
+    selectCourseFirst: 'ابتدا یک دوره انتخاب کنید',
+    unnamedUser: 'کاربر بدون نام'
   },
   userNav: {
     profile: 'پروفایل',

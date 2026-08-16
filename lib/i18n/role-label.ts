@@ -1,6 +1,6 @@
 import type { InterpolationParams } from './index';
 
-type TranslateFn = (key: string, params?: InterpolationParams) => string;
+export type TranslateFn = (key: string, params?: InterpolationParams) => string;
 
 /**
  * Custom roles are created at runtime, so a missing translation is expected:

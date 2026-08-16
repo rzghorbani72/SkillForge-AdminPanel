@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api';
+import { getRoleLabel, type TranslateFn } from '@/lib/i18n/role-label';
 import type {
   EntitySearchOption,
   EntitySearchProfilesResponse,
@@ -45,24 +46,33 @@ export async function fetchStudentOptions(
  * Anyone in the current academy, tenant-scoped by the server (`GET /users`),
  * unlike fetchStudentOptions/fetchTeacherOptions which call the wider
  * /users/students and /users/teachers routes.
+ *
+ * Curried on `t` so the role shows its translated label instead of the raw
+ * role code stored in the database.
  */
-export async function fetchAcademyUserOptions(
-  query: string
-): Promise<EntitySearchOption[]> {
-  const search = query.trim();
-  const response = (await apiClient.getUsers({
-    ...(search ? { search } : {}),
-    limit: 20
-  })) as EntitySearchProfilesResponse | null;
+export function createAcademyUserOptionsFetcher(t: TranslateFn) {
+  return async (query: string): Promise<EntitySearchOption[]> => {
+    const search = query.trim();
+    const response = (await apiClient.getUsers({
+      ...(search ? { search } : {}),
+      limit: 20
+    })) as EntitySearchProfilesResponse | null;
 
-  return (response?.profiles ?? []).map((profile) => ({
-    value: profile.id,
-    label: profile.display_name ?? profile.full_name ?? profile.id,
-    description:
-      [profile.role_name, profile.email ?? profile.phone_number]
-        .filter(Boolean)
-        .join(' · ') || undefined
-  }));
+    return (response?.profiles ?? []).map((profile) => ({
+      value: profile.id,
+      label:
+        profile.display_name ??
+        profile.full_name ??
+        t('entitySearch.unnamedUser'),
+      description:
+        [
+          profile.role_name ? getRoleLabel(profile.role_name, t) : null,
+          profile.email ?? profile.phone_number
+        ]
+          .filter(Boolean)
+          .join(' · ') || undefined
+    }));
+  };
 }
 
 export async function fetchTeacherOptions(

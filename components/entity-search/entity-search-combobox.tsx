@@ -133,23 +133,12 @@ export function EntitySearchCombobox({
           disabled={disabled}
           className={cn(
             'h-10 w-full justify-between font-normal',
-            !value && 'text-muted-foreground',
+            !selected && 'text-muted-foreground',
             className
           )}
         >
           <span className="truncate text-start">
-            {selected ? (
-              <>
-                {selected.label}
-                <span className="ms-2 text-xs text-muted-foreground">
-                  {selected.value}
-                </span>
-              </>
-            ) : value ? (
-              value
-            ) : (
-              resolvedPlaceholder
-            )}
+            {selected?.label ?? resolvedPlaceholder}
           </span>
           <span className="ms-2 flex shrink-0 items-center gap-1">
             {clearable && value ? (
@@ -177,6 +166,7 @@ export function EntitySearchCombobox({
       <PopoverContent
         className="w-[var(--radix-popover-trigger-width)] p-0"
         align="start"
+        collisionPadding={16}
       >
         <Command shouldFilter={false}>
           <CommandInput
@@ -184,7 +174,7 @@ export function EntitySearchCombobox({
             value={query}
             onValueChange={setQuery}
           />
-          <CommandList>
+          <CommandList className="max-h-[min(300px,calc(var(--radix-popover-content-available-height)-3rem))]">
             {loading ? (
               <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />

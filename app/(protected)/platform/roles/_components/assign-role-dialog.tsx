@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import {
   Dialog,
@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { EntitySearchCombobox } from '@/components/entity-search';
-import { fetchAcademyUserOptions } from '@/components/entity-search/entity-search-utils';
+import { createAcademyUserOptionsFetcher } from '@/components/entity-search/entity-search-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -36,6 +36,7 @@ export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
   const [saving, setSaving] = useState(false);
 
   const usesSeat = role.hierarchy_level >= MANAGER_LEVEL;
+  const fetchUsers = useMemo(() => createAcademyUserOptionsFetcher(t), [t]);
 
   const submit = async () => {
     if (!profileId) return;
@@ -71,7 +72,7 @@ export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
             id="assign-user"
             value={profileId}
             onValueChange={setProfileId}
-            fetchOptions={fetchAcademyUserOptions}
+            fetchOptions={fetchUsers}
             placeholder={t('roles.assignUserPlaceholder')}
             clearable
           />
