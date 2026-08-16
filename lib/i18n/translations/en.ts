@@ -596,6 +596,7 @@ export const en = {
     plans: 'Plans',
     platformPlan: 'Academy Subscription',
     academyProfile: 'Academy Details',
+    discounts: 'Discounts',
     studentPlans: 'Student Plans',
     studentPricing: 'Student Pricing',
     settingsHub: 'Settings',
@@ -4214,7 +4215,12 @@ export const en = {
       'Only the platform owner or admins can create vouchers for manager plan payments.',
     platformScope: 'Platform (plan pay)',
     platformScopeHint:
-      'Codes created here apply to academy manager plan pay/upgrade — not student checkout.'
+      'Codes created here apply to academy manager plan pay/upgrade — not student checkout.',
+    academyTitle: 'Discount codes',
+    academyDescription:
+      'Codes your students enter at checkout. Pick FULL_DISCOUNT for a free (100% off) code.',
+    academyScopeHint:
+      'Codes created here belong to your academy and apply to student checkout only.'
   },
   subscriptions: {
     title: 'Subscriptions',

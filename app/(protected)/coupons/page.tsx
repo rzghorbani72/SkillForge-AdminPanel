@@ -93,6 +93,9 @@ export default function CouponsPage() {
   const formatNumber = useNumberFormat();
   const { user } = useAuthUser();
   const canManagePlatformVouchers = isPlatformAdmin(user);
+  // Managers mint academy coupons; the backend forces their own academy_id.
+  const canManageCoupons =
+    canManagePlatformVouchers || user?.role === 'MANAGER';
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -119,7 +122,9 @@ export default function CouponsPage() {
   async function load() {
     setLoading(true);
     try {
-      const data = await apiClient.getDiscounts({ academy_id: 'platform' });
+      const data = await apiClient.getDiscounts(
+        canManagePlatformVouchers ? { academy_id: 'platform' } : {}
+      );
       const list =
         (data as any)?.discounts ?? (Array.isArray(data) ? data : []);
       setCoupons(list);
@@ -131,9 +136,9 @@ export default function CouponsPage() {
   }
 
   useEffect(() => {
-    if (canManagePlatformVouchers) load();
+    if (canManageCoupons) load();
     else setLoading(false);
-  }, [canManagePlatformVouchers]);
+  }, [canManageCoupons]);
 
   function openCreate() {
     setEditTarget(null);
@@ -216,7 +221,7 @@ export default function CouponsPage() {
     }
   }
 
-  if (!canManagePlatformVouchers) {
+  if (!canManageCoupons) {
     return (
       <div className="flex-1 space-y-4 p-6">
         <h1 className="text-2xl font-bold tracking-tight">
@@ -232,9 +237,19 @@ export default function CouponsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            {t('coupons.title')}
+            {t(
+              canManagePlatformVouchers
+                ? 'coupons.title'
+                : 'coupons.academyTitle'
+            )}
           </h1>
-          <p className="text-muted-foreground">{t('coupons.description')}</p>
+          <p className="text-muted-foreground">
+            {t(
+              canManagePlatformVouchers
+                ? 'coupons.description'
+                : 'coupons.academyDescription'
+            )}
+          </p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="me-2 h-4 w-4" />
@@ -261,7 +276,9 @@ export default function CouponsPage() {
                   <TableHead>{t('coupons.code')}</TableHead>
                   <TableHead>{t('coupons.type')}</TableHead>
                   <TableHead>{t('coupons.value')}</TableHead>
-                  <TableHead>{t('coupons.academy')}</TableHead>
+                  {canManagePlatformVouchers && (
+                    <TableHead>{t('coupons.academy')}</TableHead>
+                  )}
                   <TableHead>{t('coupons.uses')}</TableHead>
                   <TableHead>{t('coupons.validity')}</TableHead>
                   <TableHead />
@@ -290,9 +307,11 @@ export default function CouponsPage() {
                             ? `${c.discount_value}%`
                             : formatNumber(c.discount_value ?? 0)}
                     </TableCell>
-                    <TableCell>
-                      {c.Academy?.name ?? t('coupons.platformScope')}
-                    </TableCell>
+                    {canManagePlatformVouchers && (
+                      <TableCell>
+                        {c.Academy?.name ?? t('coupons.platformScope')}
+                      </TableCell>
+                    )}
                     <TableCell>
                       {c.usage_limit
                         ? `${c.used_count ?? 0}/${c.usage_limit}`
@@ -529,7 +548,11 @@ export default function CouponsPage() {
                 )}
 
                 <p className="text-xs text-muted-foreground">
-                  {t('coupons.platformScopeHint')}
+                  {t(
+                    canManagePlatformVouchers
+                      ? 'coupons.platformScopeHint'
+                      : 'coupons.academyScopeHint'
+                  )}
                 </p>
               </div>
 
