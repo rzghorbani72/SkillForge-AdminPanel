@@ -277,6 +277,9 @@ export const en = {
     platformWide: 'This page covers all your academies',
     noAcademySelected: 'No academy selected'
   },
+  academy: {
+    visitSite: 'Visit site'
+  },
   common: {
     saveChanges: 'Save changes',
     uploading: 'Uploading…',

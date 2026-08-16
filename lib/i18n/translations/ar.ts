@@ -184,6 +184,9 @@ export const ar = {
     platformWide: 'هذه الصفحة تشمل جميع أكاديمياتك',
     noAcademySelected: 'لم يتم اختيار أكاديمية'
   },
+  academy: {
+    visitSite: 'زيارة الموقع'
+  },
   common: {
     saveChanges: 'حفظ التغييرات',
     uploading: 'جارٍ الرفع…',

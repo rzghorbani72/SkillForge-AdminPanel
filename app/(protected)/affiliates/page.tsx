@@ -17,6 +17,8 @@ import { AffiliatesTable } from '@/components/affiliates/affiliates-table';
 import { WithdrawalsSection } from '@/components/affiliates/withdrawals-section';
 import { AffiliateLoginPreview } from '@/components/affiliates/login-preview';
 import { AffiliateDialog } from '@/components/affiliates/affiliate-dialog';
+import { academySiteUrl } from '@/lib/academy-site-url';
+import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
 
 export default function AffiliatesPage() {
   const { t } = useTranslation();
@@ -74,11 +76,7 @@ export default function AffiliatesPage() {
     }
   }
 
-  const baseUrl = academy
-    ? (academy as any).domain?.public_address
-      ? `https://${(academy as any).domain.public_address}`
-      : `https://${(academy as any).slug}.Mentoma.ir`
-    : 'https://Mentoma.ir';
+  const baseUrl = academySiteUrl(academy) ?? resolveStorefrontBaseUrl() ?? '';
 
   return (
     <div className="flex-1 space-y-6 p-6" dir="rtl">

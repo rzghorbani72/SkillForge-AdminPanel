@@ -22,6 +22,7 @@ import { extractDomainPart, formatDomain } from '@/lib/store-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { AcademyFeaturesCard } from '@/components/settings/academy-features-card';
 import { AcademySiteStatusCard } from '@/components/settings/academy-site-status-card';
+import { VisitSiteLink } from '@/components/shared/visit-site-link';
 
 interface AcademyFormState {
   name: string;
@@ -136,6 +137,7 @@ export default function AcademySettingsPage() {
                     }
                     placeholder={t('settings.customDomainPlaceholder')}
                   />
+                  <VisitSiteLink academy={academy} variant="ghost" />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="description">

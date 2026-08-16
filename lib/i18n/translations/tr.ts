@@ -187,6 +187,9 @@ export const tr = {
     platformWide: 'Bu sayfa tüm akademilerinizi kapsar',
     noAcademySelected: 'Akademi seçilmedi'
   },
+  academy: {
+    visitSite: 'Siteyi ziyaret et'
+  },
   common: {
     saveChanges: 'Değişiklikleri kaydet',
     uploading: 'Yükleniyor…',

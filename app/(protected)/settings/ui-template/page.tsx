@@ -20,6 +20,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import type { TemplatePreset, UIBlockConfig } from '@/types/api';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import {
@@ -77,6 +79,7 @@ const HISTORY_LIMIT = 30;
 
 export default function UITemplateSettingsPage() {
   const { user } = useAuthUser();
+  const currentAcademy = useCurrentAcademy();
 
   const [presets, setPresets] = useState<TemplatePreset[]>([]);
   const [activePresetId, setActivePresetId] = useState('');
@@ -1225,6 +1228,8 @@ export default function UITemplateSettingsPage() {
                 'انتشار در سایت'
               )}
             </Button>
+
+            <VisitSiteLink academy={currentAcademy} variant="ghost" />
           </div>
         </div>
 

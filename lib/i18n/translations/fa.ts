@@ -269,6 +269,9 @@ export const fa = {
     platformWide: 'این صفحه مربوط به همهٔ آکادمی‌های شماست',
     noAcademySelected: 'آکادمی‌ای انتخاب نشده است'
   },
+  academy: {
+    visitSite: 'مشاهده سایت'
+  },
   common: {
     saveChanges: 'ذخیره تغییرات',
     uploading: 'در حال بارگذاری…',
