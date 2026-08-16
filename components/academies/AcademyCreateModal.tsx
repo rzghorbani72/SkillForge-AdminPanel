@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { Upload, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -12,8 +12,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { apiClient } from '@/lib/api';
 import { SlugField } from '@/components/academies/slug-field';
+import { ImageUploadField } from '@/components/academies/image-upload-field';
+import { useImageUpload } from '@/hooks/use-image-upload';
 import { toSlug } from '@/lib/slug';
 import {
   isSlugBlocking,
@@ -64,11 +65,9 @@ export function AcademyCreateModal({
   const [slug, setSlug] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [logoId, setLogoId] = useState<string | null>(null);
-  const [logoPreview, setLogoPreview] = useState('');
-  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const logo = useImageUpload();
+  const favicon = useImageUpload();
   const [primaryColor, setPrimaryColor] = useState(BRAND_COLORS[0].hex);
-  const logoInputRef = useRef<HTMLInputElement>(null);
   const {
     status: slugStatus,
     check: checkSlug,
@@ -79,7 +78,8 @@ export function AcademyCreateModal({
     name.trim().length >= 2 &&
     slug.trim().length >= 2 &&
     !isSlugBlocking(slugStatus) &&
-    !uploadingLogo &&
+    !logo.uploading &&
+    !favicon.uploading &&
     !saving;
 
   function handleNameChange(value: string) {
@@ -95,31 +95,14 @@ export function AcademyCreateModal({
     checkSlug(normalized);
   }
 
-  async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setLogoPreview(URL.createObjectURL(file));
-    setUploadingLogo(true);
-    try {
-      const uploaded = await apiClient.uploadImage(file);
-      const imageData = (uploaded as { data?: { id?: string } })?.data;
-      if (imageData?.id) setLogoId(String(imageData.id));
-    } catch {
-      setLogoPreview('');
-      setLogoId(null);
-    } finally {
-      setUploadingLogo(false);
-    }
-  }
-
   function handleClose() {
     resetSlug();
     setName('');
     setSlug('');
     setDescription('');
     setCategory('');
-    setLogoId(null);
-    setLogoPreview('');
+    logo.reset();
+    favicon.reset();
     setPrimaryColor(BRAND_COLORS[0].hex);
     onClose();
   }
@@ -133,7 +116,8 @@ export function AcademyCreateModal({
         slug,
         description,
         category,
-        logoId: logoId ?? undefined,
+        logoId: logo.id ?? undefined,
+        faviconId: favicon.id ?? undefined,
         primaryColor
       });
       handleClose();
@@ -236,42 +220,22 @@ export function AcademyCreateModal({
             />
           </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              {t('stores.brandingLogo')}
-            </label>
-            <button
-              type="button"
-              disabled={uploadingLogo}
-              onClick={() => logoInputRef.current?.click()}
-              className="flex h-28 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {uploadingLogo ? (
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              ) : logoPreview ? (
-                <img
-                  src={logoPreview}
-                  alt={t('stores.brandingLogo')}
-                  className="h-full w-full object-contain p-2"
-                />
-              ) : (
-                <>
-                  <Upload className="h-5 w-5 text-muted-foreground" />
-                  <p className="px-2 text-center text-xs text-muted-foreground">
-                    {t('stores.brandingLogoHint')}
-                  </p>
-                </>
-              )}
-            </button>
-            <input
-              ref={logoInputRef}
-              type="file"
-              accept="image/*"
-              aria-label={t('stores.brandingLogo')}
-              className="hidden"
-              onChange={handleLogoChange}
-            />
-          </div>
+          <ImageUploadField
+            label={t('stores.brandingLogo')}
+            hint={t('stores.brandingLogoHint')}
+            previewUrl={logo.preview}
+            uploading={logo.uploading}
+            onFile={logo.upload}
+          />
+
+          <ImageUploadField
+            size="sm"
+            label={t('stores.brandingFavicon')}
+            hint={t('stores.brandingFaviconHint')}
+            previewUrl={favicon.preview}
+            uploading={favicon.uploading}
+            onFile={favicon.upload}
+          />
         </div>
 
         <DialogFooter className="flex-row gap-3 pt-1 sm:justify-normal sm:space-x-0">

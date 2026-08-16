@@ -186,6 +186,7 @@ export interface Academy {
   Domain?: Pick<Domain, 'private_address' | 'public_address' | 'id'> &
     Partial<Domain>;
   logo?: { id: string; publicUrl: string } | null;
+  favicon?: { id: string; publicUrl: string } | null;
   cover?: Media;
   profiles?: Profile[];
   courses?: Course[];

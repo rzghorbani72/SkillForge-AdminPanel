@@ -6,6 +6,7 @@ export type AcademyCreateInput = {
   description?: string;
   category?: string;
   logoId?: string;
+  faviconId?: string;
   primaryColor?: string;
 };
 
@@ -60,7 +61,8 @@ export async function createAcademy(
     name: data.name,
     private_domain: data.slug,
     description: data.description || undefined,
-    logo_id: data.logoId
+    logo_id: data.logoId,
+    favicon_id: data.faviconId
   });
 
   const { id, switched: switchedByServer } = readResponse(response);

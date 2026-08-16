@@ -116,6 +116,7 @@ export default function AcademiesPage() {
       publicAddress: string;
       description: string;
       logoId?: string;
+      faviconId?: string;
       primaryColor?: string;
     }
   ) {
@@ -124,7 +125,8 @@ export default function AcademiesPage() {
       private_domain: data.slug,
       public_address: data.publicAddress || null,
       description: data.description || undefined,
-      logo_id: data.logoId
+      logo_id: data.logoId,
+      favicon_id: data.faviconId
     });
 
     if (data.primaryColor) {

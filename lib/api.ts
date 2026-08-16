@@ -1344,6 +1344,7 @@ class ApiClient {
     private_domain: string;
     description?: string;
     logo_id?: string;
+    favicon_id?: string;
   }) {
     return this.request('/academies', {
       method: 'POST',
@@ -1357,6 +1358,7 @@ class ApiClient {
     public_address?: string | null;
     description?: string;
     logo_id?: string;
+    favicon_id?: string;
   }) {
     return this.request('/academies/current', {
       method: 'PATCH',
@@ -1398,6 +1400,7 @@ class ApiClient {
       public_address?: string | null;
       description?: string;
       logo_id?: string;
+      favicon_id?: string;
     }
   ) {
     return this.updateAcademy(data);
@@ -1435,6 +1438,7 @@ class ApiClient {
     note?: string;
     callback_url?: string;
     provider?: 'SAMAN_SEP' | 'MELLAT_BP';
+    coupon_code?: string;
   }): Promise<{
     academy?: unknown;
     payment_id?: string;
@@ -1451,6 +1455,7 @@ class ApiClient {
       upload_overage_fee_irr: number;
       total_amount_irr: number;
       storage_usage_gb: number;
+      discount_amount_irr?: number;
     };
     [key: string]: unknown;
   }> {
@@ -1511,6 +1516,7 @@ class ApiClient {
     options?: {
       callback_url?: string;
       provider?: 'SAMAN_SEP' | 'MELLAT_BP';
+      coupon_code?: string;
     }
   ): Promise<{
     academy?: unknown;
@@ -3841,6 +3847,7 @@ class ApiClient {
     code: string;
     description?: string;
     discount_type: 'PERCENT' | 'FIXED';
+    coupon_type?: 'PERCENT' | 'FIXED' | 'FREE_TRIAL' | 'FULL_DISCOUNT';
     discount_value: number;
     academy_id?: string;
     usage_limit?: number;

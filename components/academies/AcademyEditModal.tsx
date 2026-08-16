@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Upload, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
 import { SlugField } from '@/components/academies/slug-field';
+import { ImageUploadField } from '@/components/academies/image-upload-field';
+import { useImageUpload } from '@/hooks/use-image-upload';
 import { toSlug } from '@/lib/slug';
 import {
   isSlugBlocking,
@@ -56,6 +58,7 @@ type AcademyEditModalProps = {
       publicAddress: string;
       description: string;
       logoId?: string;
+      faviconId?: string;
       primaryColor?: string;
     }
   ) => Promise<void>;
@@ -84,17 +87,14 @@ export function AcademyEditModal({
   } = useSlugAvailability({ ownSlug });
 
   // Step 1 — Branding
-  const [logoId, setLogoId] = useState<string | null>(null);
-  const [logoPreview, setLogoPreview] = useState('');
-  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const logo = useImageUpload();
+  const favicon = useImageUpload();
   const [primaryColor, setPrimaryColor] = useState(BRAND_COLORS[0].hex);
-  const logoInputRef = useRef<HTMLInputElement>(null);
 
   // Populate all fields when the modal opens
   useEffect(() => {
     if (!academy) return;
     setStep(0);
-    setLogoId(null);
     setName(academy.name ?? '');
     const currentSlug =
       academy.domain?.private_address ??
@@ -108,7 +108,8 @@ export function AcademyEditModal({
       academy.domain?.public_address ?? academy.Domain?.public_address ?? ''
     );
     setDescription(academy.description ?? '');
-    setLogoPreview(resolveLogoUrl(academy.logo?.publicUrl));
+    logo.reset(resolveLogoUrl(academy.logo?.publicUrl));
+    favicon.reset(resolveLogoUrl(academy.favicon?.publicUrl));
     setPrimaryColor(BRAND_COLORS[0].hex);
 
     // Fetch saved theme color
@@ -124,23 +125,6 @@ export function AcademyEditModal({
       })
       .catch(() => {});
   }, [academy, resetSlug]);
-
-  async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setLogoPreview(URL.createObjectURL(file));
-    setUploadingLogo(true);
-    try {
-      const uploaded = await apiClient.uploadImage(file);
-      const imageData = (uploaded as any)?.data ?? uploaded;
-      if (imageData?.id) setLogoId(String(imageData.id));
-    } catch {
-      setLogoPreview(resolveLogoUrl(academy?.logo?.publicUrl));
-      setLogoId(null);
-    } finally {
-      setUploadingLogo(false);
-    }
-  }
 
   function handleSlugChange(value: string) {
     const normalized = toSlug(value);
@@ -158,7 +142,8 @@ export function AcademyEditModal({
         slug,
         publicAddress,
         description,
-        logoId: logoId ?? undefined,
+        logoId: logo.id ?? undefined,
+        faviconId: favicon.id ?? undefined,
         primaryColor
       });
       onClose();
@@ -257,42 +242,22 @@ export function AcademyEditModal({
         {/* Step 1 — Branding */}
         {step === 1 && (
           <div className="space-y-5">
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                {t('stores.brandingLogo')}
-              </label>
-              <button
-                type="button"
-                disabled={uploadingLogo}
-                onClick={() => logoInputRef.current?.click()}
-                className="flex h-32 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {uploadingLogo ? (
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                ) : logoPreview ? (
-                  <img
-                    src={logoPreview}
-                    alt="logo preview"
-                    className="h-full w-full object-contain p-2"
-                  />
-                ) : (
-                  <>
-                    <Upload className="h-6 w-6 text-muted-foreground" />
-                    <p className="text-xs text-muted-foreground">
-                      {t('stores.brandingLogoHint')}
-                    </p>
-                  </>
-                )}
-              </button>
-              <input
-                ref={logoInputRef}
-                type="file"
-                accept="image/*"
-                aria-label={t('stores.brandingLogo')}
-                className="hidden"
-                onChange={handleLogoChange}
-              />
-            </div>
+            <ImageUploadField
+              label={t('stores.brandingLogo')}
+              hint={t('stores.brandingLogoHint')}
+              previewUrl={logo.preview}
+              uploading={logo.uploading}
+              onFile={logo.upload}
+            />
+
+            <ImageUploadField
+              size="sm"
+              label={t('stores.brandingFavicon')}
+              hint={t('stores.brandingFaviconHint')}
+              previewUrl={favicon.preview}
+              uploading={favicon.uploading}
+              onFile={favicon.upload}
+            />
 
             <div>
               <label className="mb-2 block text-sm font-medium">
