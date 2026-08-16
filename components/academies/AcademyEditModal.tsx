@@ -15,6 +15,10 @@ import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
 import { SlugField } from '@/components/academies/slug-field';
 import { ImageUploadField } from '@/components/academies/image-upload-field';
+import {
+  BrandColorPicker,
+  DEFAULT_BRAND_COLOR
+} from '@/components/academies/brand-color-picker';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { toSlug } from '@/lib/slug';
 import {
@@ -24,21 +28,6 @@ import {
 import type { Academy } from '@/types/api';
 
 const STEPS = ['stepSpecs', 'stepBranding'] as const;
-
-const BRAND_COLORS: { hex: string; tw: string }[] = [
-  { hex: '#6366f1', tw: 'bg-[#6366f1]' },
-  { hex: '#8b5cf6', tw: 'bg-[#8b5cf6]' },
-  { hex: '#ec4899', tw: 'bg-[#ec4899]' },
-  { hex: '#ef4444', tw: 'bg-[#ef4444]' },
-  { hex: '#f97316', tw: 'bg-[#f97316]' },
-  { hex: '#eab308', tw: 'bg-[#eab308]' },
-  { hex: '#22c55e', tw: 'bg-[#22c55e]' },
-  { hex: '#14b8a6', tw: 'bg-[#14b8a6]' },
-  { hex: '#06b6d4', tw: 'bg-[#06b6d4]' },
-  { hex: '#3b82f6', tw: 'bg-[#3b82f6]' },
-  { hex: '#64748b', tw: 'bg-[#64748b]' },
-  { hex: '#1e293b', tw: 'bg-[#1e293b]' }
-];
 
 function resolveLogoUrl(url: string | undefined): string {
   if (!url) return '';
@@ -89,7 +78,7 @@ export function AcademyEditModal({
   // Step 1 — Branding
   const logo = useImageUpload();
   const favicon = useImageUpload();
-  const [primaryColor, setPrimaryColor] = useState(BRAND_COLORS[0].hex);
+  const [primaryColor, setPrimaryColor] = useState<string>(DEFAULT_BRAND_COLOR);
 
   // Populate all fields when the modal opens
   useEffect(() => {
@@ -110,7 +99,7 @@ export function AcademyEditModal({
     setDescription(academy.description ?? '');
     logo.reset(resolveLogoUrl(academy.logo?.publicUrl));
     favicon.reset(resolveLogoUrl(academy.favicon?.publicUrl));
-    setPrimaryColor(BRAND_COLORS[0].hex);
+    setPrimaryColor(DEFAULT_BRAND_COLOR);
 
     // Fetch saved theme color
     apiClient
@@ -118,10 +107,7 @@ export function AcademyEditModal({
       .then((themeConfig) => {
         const saved = (themeConfig as { primary_color?: string })
           ?.primary_color;
-        if (saved) {
-          const match = BRAND_COLORS.find((c) => c.hex === saved);
-          setPrimaryColor(match ? match.hex : saved);
-        }
+        if (saved) setPrimaryColor(saved);
       })
       .catch(() => {});
   }, [academy, resetSlug]);
@@ -242,48 +228,32 @@ export function AcademyEditModal({
         {/* Step 1 — Branding */}
         {step === 1 && (
           <div className="space-y-5">
-            <ImageUploadField
-              label={t('stores.brandingLogo')}
-              hint={t('stores.brandingLogoHint')}
-              previewUrl={logo.preview}
-              uploading={logo.uploading}
-              onFile={logo.upload}
-            />
+            <div className="grid items-stretch gap-4 sm:grid-cols-2">
+              <ImageUploadField
+                label={t('stores.brandingLogo')}
+                hint={t('stores.brandingLogoHint')}
+                replaceHint={t('stores.brandingReplaceHint')}
+                previewUrl={logo.preview}
+                uploading={logo.uploading}
+                onFile={logo.upload}
+              />
 
-            <ImageUploadField
-              size="sm"
-              label={t('stores.brandingFavicon')}
-              hint={t('stores.brandingFaviconHint')}
-              previewUrl={favicon.preview}
-              uploading={favicon.uploading}
-              onFile={favicon.upload}
-            />
-
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                {t('stores.brandingColor')}
-              </label>
-              <div className="flex flex-wrap gap-2.5">
-                {BRAND_COLORS.map(({ hex, tw }) => (
-                  <button
-                    key={hex}
-                    type="button"
-                    aria-label={hex}
-                    onClick={() => setPrimaryColor(hex)}
-                    className={cn(
-                      'h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
-                      tw,
-                      primaryColor === hex
-                        ? 'scale-110 border-foreground shadow-md'
-                        : 'border-transparent'
-                    )}
-                  />
-                ))}
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {primaryColor}
-              </p>
+              <ImageUploadField
+                label={t('stores.brandingFavicon')}
+                hint={t('stores.brandingFaviconHint')}
+                replaceHint={t('stores.brandingReplaceHint')}
+                previewUrl={favicon.preview}
+                uploading={favicon.uploading}
+                onFile={favicon.upload}
+              />
             </div>
+
+            <BrandColorPicker
+              value={primaryColor}
+              onChange={setPrimaryColor}
+              label={t('stores.brandingColor')}
+              customLabel={t('stores.brandingColorCustom')}
+            />
           </div>
         )}
 

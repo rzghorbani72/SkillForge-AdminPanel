@@ -12,6 +12,8 @@ export interface ImageUploadFieldProps {
   onFile: (file: File) => void;
   /** Drop-zone height — logos get a tall box, favicons a small square one. */
   size?: 'md' | 'sm';
+  /** Replaces the hint once a file is picked, e.g. "click to replace". */
+  replaceHint?: string;
 }
 
 // Shared branding drop-zone used by the academy create and edit modals for both
@@ -22,34 +24,42 @@ export function ImageUploadField({
   previewUrl,
   uploading,
   onFile,
-  size = 'md'
+  size = 'md',
+  replaceHint
 }: ImageUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div>
+    <div className="flex h-full flex-col">
       <label className="mb-2 block text-sm font-medium">{label}</label>
       <button
         type="button"
         disabled={uploading}
         onClick={() => inputRef.current?.click()}
         className={cn(
-          'flex w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed transition-colors hover:border-primary/50 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60',
-          size === 'md' ? 'h-32' : 'h-20'
+          'group flex w-full flex-1 flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 transition-colors hover:border-primary/60 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60',
+          size === 'md' ? 'min-h-32' : 'min-h-20'
         )}
       >
         {uploading ? (
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         ) : previewUrl ? (
-          <img
-            src={previewUrl}
-            alt={label}
-            className="h-full w-full object-contain p-2"
-          />
+          <span className="flex h-full w-full flex-col items-center justify-center gap-1 p-2">
+            <img
+              src={previewUrl}
+              alt={label}
+              className="max-h-16 w-full object-contain"
+            />
+            <span className="text-[11px] text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
+              {replaceHint ?? hint}
+            </span>
+          </span>
         ) : (
           <>
-            <Upload className="h-6 w-6 text-muted-foreground" />
-            <p className="px-3 text-center text-xs text-muted-foreground">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-background shadow-sm transition-colors group-hover:bg-primary/10">
+              <Upload className="h-4 w-4 text-muted-foreground" />
+            </span>
+            <p className="px-3 text-center text-xs leading-5 text-muted-foreground">
               {hint}
             </p>
           </>

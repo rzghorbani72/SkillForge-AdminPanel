@@ -14,6 +14,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { SlugField } from '@/components/academies/slug-field';
 import { ImageUploadField } from '@/components/academies/image-upload-field';
+import {
+  BrandColorPicker,
+  DEFAULT_BRAND_COLOR
+} from '@/components/academies/brand-color-picker';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { toSlug } from '@/lib/slug';
 import {
@@ -22,29 +26,23 @@ import {
 } from '@/hooks/use-slug-availability';
 import type { AcademyCreateInput } from '@/lib/academy-create';
 
-const BRAND_COLORS: { hex: string; tw: string }[] = [
-  { hex: '#6366f1', tw: 'bg-[#6366f1]' },
-  { hex: '#8b5cf6', tw: 'bg-[#8b5cf6]' },
-  { hex: '#ec4899', tw: 'bg-[#ec4899]' },
-  { hex: '#ef4444', tw: 'bg-[#ef4444]' },
-  { hex: '#f97316', tw: 'bg-[#f97316]' },
-  { hex: '#eab308', tw: 'bg-[#eab308]' },
-  { hex: '#22c55e', tw: 'bg-[#22c55e]' },
-  { hex: '#14b8a6', tw: 'bg-[#14b8a6]' },
-  { hex: '#06b6d4', tw: 'bg-[#06b6d4]' },
-  { hex: '#3b82f6', tw: 'bg-[#3b82f6]' },
-  { hex: '#64748b', tw: 'bg-[#64748b]' },
-  { hex: '#1e293b', tw: 'bg-[#1e293b]' }
-];
-
 const CATEGORY_KEYS = [
+  'language',
+  'entrance',
   'programming',
   'design',
-  'language',
   'business',
-  'entrance',
+  'marketing',
+  'finance',
   'art',
-  'finance'
+  'music',
+  'math',
+  'science',
+  'medical',
+  'sport',
+  'photography',
+  'kids',
+  'other'
 ] as const;
 
 type AcademyCreateModalProps = {
@@ -67,7 +65,7 @@ export function AcademyCreateModal({
   const [category, setCategory] = useState('');
   const logo = useImageUpload();
   const favicon = useImageUpload();
-  const [primaryColor, setPrimaryColor] = useState(BRAND_COLORS[0].hex);
+  const [primaryColor, setPrimaryColor] = useState<string>(DEFAULT_BRAND_COLOR);
   const {
     status: slugStatus,
     check: checkSlug,
@@ -103,7 +101,7 @@ export function AcademyCreateModal({
     setCategory('');
     logo.reset();
     favicon.reset();
-    setPrimaryColor(BRAND_COLORS[0].hex);
+    setPrimaryColor(DEFAULT_BRAND_COLOR);
     onClose();
   }
 
@@ -138,51 +136,30 @@ export function AcademyCreateModal({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Three columns: the short settings share the top row so branding and
-            description fit without a scrollbar. */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              {t('stores.academyName')}
-            </label>
-            <Input
-              value={name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              placeholder={t('stores.academyNamePlaceholder')}
-              autoFocus
+        <div className="space-y-5">
+          {/* Identity — name and address stay on one row so the address is read
+              as a consequence of the name it is generated from. */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                {t('stores.academyName')}
+              </label>
+              <Input
+                value={name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder={t('stores.academyNamePlaceholder')}
+                autoFocus
+              />
+            </div>
+            <SlugField
+              value={slug}
+              status={slugStatus}
+              onChange={handleSlugChange}
+              t={t}
             />
           </div>
-          <SlugField
-            value={slug}
-            status={slugStatus}
-            onChange={handleSlugChange}
-            t={t}
-          />
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              {t('stores.brandingColor')}
-            </label>
-            <div className="flex flex-wrap gap-2.5">
-              {BRAND_COLORS.map(({ hex, tw }) => (
-                <button
-                  key={hex}
-                  type="button"
-                  aria-label={hex}
-                  onClick={() => setPrimaryColor(hex)}
-                  className={cn(
-                    'h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
-                    tw,
-                    primaryColor === hex
-                      ? 'scale-110 border-foreground shadow-md'
-                      : 'border-transparent'
-                  )}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="sm:col-span-3">
             <label className="mb-2 block text-sm font-medium">
               {t('stores.mainCategory')}
             </label>
@@ -191,12 +168,13 @@ export function AcademyCreateModal({
                 <button
                   key={key}
                   type="button"
+                  aria-pressed={category === key}
                   onClick={() => setCategory(category === key ? '' : key)}
                   className={cn(
-                    'rounded-full border px-3 py-1 text-sm transition-colors',
+                    'rounded-full border px-3 py-1.5 text-sm transition-colors',
                     category === key
                       ? 'border-primary bg-primary text-primary-foreground'
-                      : 'border-border bg-background text-foreground hover:border-primary/50'
+                      : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground'
                   )}
                 >
                   {t(
@@ -207,7 +185,7 @@ export function AcademyCreateModal({
             </div>
           </div>
 
-          <div className="sm:col-span-2">
+          <div>
             <label className="mb-1 block text-sm font-medium">
               {t('stores.shortDescription')}
             </label>
@@ -215,27 +193,43 @@ export function AcademyCreateModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t('stores.shortDescriptionPlaceholder')}
-              rows={3}
+              rows={2}
               className="resize-none"
             />
           </div>
 
-          <ImageUploadField
-            label={t('stores.brandingLogo')}
-            hint={t('stores.brandingLogoHint')}
-            previewUrl={logo.preview}
-            uploading={logo.uploading}
-            onFile={logo.upload}
-          />
+          {/* Branding — the two uploads share one row and one height so they
+              read as a pair. */}
+          <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+            <div className="grid items-stretch gap-4 sm:grid-cols-2">
+              <ImageUploadField
+                label={t('stores.brandingLogo')}
+                hint={t('stores.brandingLogoHint')}
+                replaceHint={t('stores.brandingReplaceHint')}
+                previewUrl={logo.preview}
+                uploading={logo.uploading}
+                onFile={logo.upload}
+              />
 
-          <ImageUploadField
-            size="sm"
-            label={t('stores.brandingFavicon')}
-            hint={t('stores.brandingFaviconHint')}
-            previewUrl={favicon.preview}
-            uploading={favicon.uploading}
-            onFile={favicon.upload}
-          />
+              <ImageUploadField
+                label={t('stores.brandingFavicon')}
+                hint={t('stores.brandingFaviconHint')}
+                replaceHint={t('stores.brandingReplaceHint')}
+                previewUrl={favicon.preview}
+                uploading={favicon.uploading}
+                onFile={favicon.upload}
+              />
+            </div>
+
+            <div className="mt-4 border-t border-border/70 pt-4">
+              <BrandColorPicker
+                value={primaryColor}
+                onChange={setPrimaryColor}
+                label={t('stores.brandingColor')}
+                customLabel={t('stores.brandingColorCustom')}
+              />
+            </div>
+          </div>
         </div>
 
         <DialogFooter className="flex-row gap-3 pt-1 sm:justify-normal sm:space-x-0">
