@@ -21,6 +21,27 @@ export function formatNumber(n: number, lang = 'fa-IR') {
   return n.toLocaleString(lang);
 }
 
+/**
+ * Course length in whole minutes → "۲ ساعت", "۴۵ دقیقه", or "۱ ساعت ۳۰ دقیقه".
+ * Omits a trailing zero-minute part so badges never show "۲ ساعت ۰ دقیقه".
+ */
+export function formatCourseDurationMinutes(
+  minutes: number | null | undefined,
+  formatNum: (n: number) => string,
+  t: (key: string) => string
+): string | null {
+  if (minutes == null || !Number.isFinite(minutes) || minutes <= 0) return null;
+  const total = Math.round(minutes);
+  if (total < 60) {
+    return `${formatNum(total)} ${t('courses.minutesShort')}`;
+  }
+  const hours = Math.floor(total / 60);
+  const rest = total % 60;
+  const hoursLabel = `${formatNum(hours)} ${t('courses.hoursShort')}`;
+  if (rest === 0) return hoursLabel;
+  return `${hoursLabel} ${formatNum(rest)} ${t('courses.minutesShort')}`;
+}
+
 export function pricingTypeLabel(
   type: string,
   t: (key: string) => string

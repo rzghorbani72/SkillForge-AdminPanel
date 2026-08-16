@@ -1,10 +1,15 @@
 'use client';
 
-import { BookOpen, Clock, Star, Pencil, Trash2 } from 'lucide-react';
+import { BookOpen, Clock, Pencil, Trash2 } from 'lucide-react';
 import { langApiVersionPath } from '@/lib/api-lang';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { StatusPill } from './StatusPill';
-import { courseHue, formatNumber, pricingTypeLabel } from './courseUtils';
+import {
+  courseHue,
+  formatCourseDurationMinutes,
+  pricingTypeLabel
+} from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
 
 export function CourseCard({
@@ -19,6 +24,7 @@ export function CourseCard({
   onClick?: () => void;
 }) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const hue = courseHue(course.id);
   const priceVal = course.price ?? (course as any).primary_price ?? 0;
   const isFree = course.is_free ?? (course as any).pricing_type === 'FREE';
@@ -43,10 +49,21 @@ export function CourseCard({
     '—';
   const categoryName =
     (course as any).Category?.name ?? (course as any).category ?? null;
-  const rating = course.rating ?? 0;
   const status = course.is_published
     ? 'PUBLISHED'
     : ((course as any).status ?? 'DRAFT');
+  const rawDuration = (course as any).duration;
+  const durationMinutes =
+    typeof rawDuration === 'number'
+      ? rawDuration
+      : typeof rawDuration === 'string' && /^\d+$/.test(rawDuration.trim())
+        ? Number(rawDuration)
+        : null;
+  const durationLabel = formatCourseDurationMinutes(
+    durationMinutes,
+    formatNumber,
+    t
+  );
 
   return (
     <div
@@ -89,13 +106,15 @@ export function CourseCard({
         <div className="absolute start-3 top-3">
           <StatusPill status={status} />
         </div>
-        <div
-          className="absolute bottom-3 end-3 flex items-center gap-1 rounded-md px-2 py-0.5 font-mono text-[11px] text-white backdrop-blur-sm"
-          style={{ background: 'rgba(0,0,0,0.55)' }}
-        >
-          <Clock className="h-2.5 w-2.5" />
-          {(course as any).duration ?? '—'}
-        </div>
+        {durationLabel ? (
+          <div
+            className="absolute bottom-3 end-3 flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] text-white backdrop-blur-sm"
+            style={{ background: 'rgba(0,0,0,0.55)' }}
+          >
+            <Clock className="h-2.5 w-2.5" />
+            {durationLabel}
+          </div>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col p-4">
@@ -115,12 +134,6 @@ export function CourseCard({
           <span className="truncate text-[12px] text-muted-foreground">
             {teacher}
           </span>
-          {rating > 0 && (
-            <span className="ms-auto flex shrink-0 items-center gap-0.5 text-[11.5px] text-amber-600">
-              <Star className="h-3 w-3 fill-current" />
-              {rating}
-            </span>
-          )}
         </div>
 
         <div className="mt-auto">
@@ -130,7 +143,9 @@ export function CourseCard({
                 {t('courses.student')}
               </div>
               <div className="truncate text-[13px] font-semibold">
-                {formatNumber(studentsCount)}
+                {studentsCount > 0
+                  ? formatNumber(studentsCount)
+                  : t('courses.beFirstStudent')}
               </div>
             </div>
             <div className="min-w-0 text-end">

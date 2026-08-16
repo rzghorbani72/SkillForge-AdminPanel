@@ -2,8 +2,9 @@
 
 import { Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { StatusPill } from './StatusPill';
-import { courseHue, formatNumber } from './courseUtils';
+import { courseHue } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
 
 export function CourseRow({
@@ -18,6 +19,7 @@ export function CourseRow({
   onClick?: () => void;
 }) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const hue = courseHue(course.id);
   const priceVal = course.price ?? (course as any).primary_price ?? 0;
   const isFree = course.is_free ?? (course as any).pricing_type === 'FREE';
@@ -78,8 +80,10 @@ export function CourseRow({
           <span className="text-[13px]">{teacher}</span>
         </div>
       </td>
-      <td className="px-4 py-3 font-mono text-[13px]">
-        {formatNumber(studentsCount)}
+      <td className="px-4 py-3 text-[13px]">
+        {studentsCount > 0
+          ? formatNumber(studentsCount)
+          : t('courses.beFirstStudent')}
       </td>
       <td className="px-4 py-3 font-mono text-[13px] text-primary">
         {pricingType === 'FREE'
