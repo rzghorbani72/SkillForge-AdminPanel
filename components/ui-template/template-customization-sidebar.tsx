@@ -5,6 +5,7 @@ import { X, RotateCcw, Save, Globe, Palette, Layers } from 'lucide-react';
 import type { UIBlockConfig } from '@/types/api';
 import type {
   BorderRadius,
+  ElementAnimation,
   Shadow,
   SectionSpacing,
   ContainerWidth,
@@ -27,6 +28,7 @@ export interface TemplateCustomizationSidebarProps {
   fontFamily: FontFamily;
   borderRadius: BorderRadius;
   shadow: Shadow;
+  elementAnimation: ElementAnimation;
   darkMode: boolean | null;
   textDirection: TextDirection;
   sectionSpacing: SectionSpacing;
@@ -37,6 +39,8 @@ export interface TemplateCustomizationSidebarProps {
   onColorChange: (color: string) => void;
   onFontFamilyChange: (f: FontFamily) => void;
   onBorderRadiusChange: (r: BorderRadius) => void;
+  onShadowChange: (s: Shadow) => void;
+  onElementAnimationChange: (a: ElementAnimation) => void;
   onDarkModeChange: (mode: boolean | null) => void;
   onTextDirectionChange: (d: TextDirection) => void;
   onDesignSizeChange: (patch: {
@@ -65,7 +69,8 @@ export function TemplateCustomizationSidebar({
   primaryColor,
   fontFamily,
   borderRadius,
-  shadow: _shadow,
+  shadow,
+  elementAnimation,
   darkMode,
   textDirection,
   sectionSpacing,
@@ -76,6 +81,8 @@ export function TemplateCustomizationSidebar({
   onColorChange,
   onFontFamilyChange,
   onBorderRadiusChange,
+  onShadowChange,
+  onElementAnimationChange,
   onDarkModeChange,
   onTextDirectionChange,
   onDesignSizeChange,
@@ -203,6 +210,8 @@ export function TemplateCustomizationSidebar({
             primaryColor={primaryColor}
             fontFamily={fontFamily}
             borderRadius={borderRadius}
+            shadow={shadow}
+            elementAnimation={elementAnimation}
             darkMode={darkMode}
             textDirection={textDirection}
             sectionSpacing={sectionSpacing}
@@ -212,6 +221,8 @@ export function TemplateCustomizationSidebar({
             onColorChange={onColorChange}
             onFontFamilyChange={onFontFamilyChange}
             onBorderRadiusChange={onBorderRadiusChange}
+            onShadowChange={onShadowChange}
+            onElementAnimationChange={onElementAnimationChange}
             onDarkModeChange={onDarkModeChange}
             onTextDirectionChange={onTextDirectionChange}
             onDesignSizeChange={onDesignSizeChange}

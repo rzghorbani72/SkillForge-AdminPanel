@@ -34,7 +34,10 @@ export interface SectionSchema {
   hasAlignment?: boolean;
   // Layout tab: section height chips.
   hasHeight?: boolean;
-  // Layout tab: grid column chips (2/3/4).
+  // Layout tab: grid column chips (2/3/4). Only set this where the renderer
+  // actually reads config.gridColumns — features and courses do. The mosaic
+  // (projects), the pill row (categories) and the multi-variant course-grid
+  // have fixed layouts, so chips there would move nothing.
   hasColumns?: boolean;
   // Shown in the Content tab to explain which parts come from live academy data
   // (not editable here) vs static text (editable in the fields above).
@@ -246,7 +249,6 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         defaultValue: 'دسته‌بندی‌های آموزشی'
       }
     ],
-    hasColumns: true,
     dynamicContentNote:
       'دسته‌بندی‌ها به‌صورت زنده از دسته‌بندی‌های دوره‌های آکادمی شما بارگذاری می‌شوند.'
   },
@@ -262,8 +264,7 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         placeholder: 'عنوان این بخش',
         defaultValue: 'نمونه‌کارهای برگزیده'
       }
-    ],
-    hasColumns: true
+    ]
   },
 
   'course-grid': {
@@ -278,7 +279,6 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         defaultValue: 'همه دوره‌ها'
       }
     ],
-    hasColumns: true,
     dynamicContentNote:
       'دوره‌ها به‌صورت زنده از کاتالوگ دوره‌های آکادمی شما نمایش داده می‌شوند.'
   },
@@ -308,7 +308,6 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         placeholder: 'یک جمله دربارهٔ تیم مدرسان'
       }
     ],
-    hasColumns: true,
     dynamicContentNote:
       'کارت مدرسان از محتوای پیش‌فرض قالب نمایش داده می‌شود. تا زمانی که عکسی بارگذاری نشود، حرف اول نام مدرس نمایش داده می‌شود.'
   },

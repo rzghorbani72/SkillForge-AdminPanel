@@ -1,6 +1,7 @@
 export type TextDirection = 'ltr' | 'rtl';
 export type BorderRadius = 'sharp' | 'soft' | 'rounded';
 export type Shadow = 'none' | 'subtle' | 'medium' | 'strong';
+export type ElementAnimation = 'none' | 'subtle' | 'moderate' | 'dynamic';
 export type SectionSpacing = 'compact' | 'comfortable' | 'spacious';
 export type ContainerWidth = 'narrow' | 'standard' | 'wide' | 'full';
 export type HeadingScale = 'compact' | 'standard' | 'large';

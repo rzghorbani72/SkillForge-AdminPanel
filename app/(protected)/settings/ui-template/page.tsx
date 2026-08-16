@@ -50,6 +50,7 @@ import {
 } from '@/components/ui-template/gallery-cards';
 import type {
   BorderRadius,
+  ElementAnimation,
   Shadow,
   SectionSpacing,
   ContainerWidth,
@@ -96,6 +97,8 @@ export default function UITemplateSettingsPage() {
   const [fontFamily, setFontFamily] = useState<FontFamily>('vazirmatn');
   const [borderRadius, setBorderRadius] = useState<BorderRadius>('soft');
   const [shadow, setShadow] = useState<Shadow>('medium');
+  const [elementAnimation, setElementAnimation] =
+    useState<ElementAnimation>('subtle');
   const [darkMode, setDarkMode] = useState<boolean | null>(null);
   const [textDirection, setTextDirection] = useState<TextDirection>('rtl');
   const [sectionSpacing, setSectionSpacing] =
@@ -277,6 +280,8 @@ export default function UITemplateSettingsPage() {
         );
       }
       if (cfg.font_family) setFontFamily(cfg.font_family as FontFamily);
+      if (cfg.element_animation_style)
+        setElementAnimation(cfg.element_animation_style as ElementAnimation);
       if (cfg.section_spacing)
         setSectionSpacing(cfg.section_spacing as SectionSpacing);
       if (cfg.container_width)
@@ -454,6 +459,7 @@ export default function UITemplateSettingsPage() {
         backgroundSvgPattern: ''
       }),
       dark_mode: darkMode,
+      element_animation_style: elementAnimation,
       font_family: fontFamily,
       text_direction: textDirection,
       section_spacing: sectionSpacing,
@@ -647,6 +653,24 @@ export default function UITemplateSettingsPage() {
     debouncedSaveTheme(primaryColor, br, shadow, darkMode);
   };
 
+  const handleShadowChange = (sh: Shadow) => {
+    setShadow(sh);
+    debouncedSaveTheme(primaryColor, borderRadius, sh, darkMode);
+  };
+
+  const handleElementAnimationChange = (a: ElementAnimation) => {
+    setElementAnimation(a);
+    setIsSaving(true);
+    apiClient
+      .saveThemeDraft({ element_animation_style: a })
+      .then(() => {
+        setRefreshKey((k) => k + 1);
+        setLastSavedAt(Date.now());
+      })
+      .catch((error) => ErrorHandler.handleApiError(error))
+      .finally(() => setIsSaving(false));
+  };
+
   const handleDarkModeChange = (dm: boolean | null) => {
     setDarkMode(dm);
     debouncedSaveTheme(primaryColor, borderRadius, shadow, dm);
@@ -801,6 +825,7 @@ export default function UITemplateSettingsPage() {
       setShadow(ds.shape.shadow);
       setDarkMode(ds.darkMode);
       setFontFamily(ds.typography.fontFamily as FontFamily);
+      setElementAnimation('subtle');
       await saveThemeDraft(
         ds.colors.primary,
         ds.shape.borderRadius,
@@ -1114,6 +1139,7 @@ export default function UITemplateSettingsPage() {
               fontFamily={fontFamily}
               borderRadius={borderRadius}
               shadow={shadow}
+              elementAnimation={elementAnimation}
               darkMode={darkMode}
               textDirection={textDirection}
               sectionSpacing={sectionSpacing}
@@ -1124,6 +1150,8 @@ export default function UITemplateSettingsPage() {
               onColorChange={handleColorChange}
               onFontFamilyChange={handleFontFamilyChange}
               onBorderRadiusChange={handleBorderRadiusChange}
+              onShadowChange={handleShadowChange}
+              onElementAnimationChange={handleElementAnimationChange}
               onDarkModeChange={handleDarkModeChange}
               onTextDirectionChange={handleTextDirectionChange}
               onDesignSizeChange={handleDesignSizeChange}
