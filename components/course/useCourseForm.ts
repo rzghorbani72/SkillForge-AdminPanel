@@ -15,6 +15,7 @@ import {
   durationToSeconds,
   emptySeason,
   newKey,
+  prepareCurriculumForSave,
   secondsToDuration,
   validateForPublish,
   type LessonDraft,
@@ -49,7 +50,7 @@ export function useCourseForm(courseId: string) {
   const savingRef = useRef(false);
   // Fingerprint of the last payload the server accepted — see `save`.
   const lastSavedRef = useRef<string | null>(null);
-  const existingCoverUrl = useRef<string | null>(null);
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
   const curriculum = useCurriculumDraft();
   const {
     seasons,
@@ -71,10 +72,66 @@ export function useCourseForm(courseId: string) {
       primary_price: '0',
       secondary_price: '0',
       category_id: '',
+      cover_id: '',
       published: false,
       is_featured: false
     }
   });
+
+  const buildPayload = useCallback(
+    (
+      data: CourseFormData,
+      seasonList: SeasonDraft[],
+      lessonList: LessonDraft[],
+      removedSeasonIds: string[],
+      removedLessonIds: string[]
+    ) => {
+      const curriculum = prepareCurriculumForSave(
+        seasonList,
+        lessonList,
+        removedSeasonIds
+      );
+      const coverId = data.cover_id?.trim();
+
+      return {
+        title: data.title.trim(),
+        description: data.description.trim(),
+        primary_price: Number(data.primary_price),
+        secondary_price: Number(data.secondary_price),
+        category_id: data.category_id || undefined,
+        cover_id: coverId ? coverId : null,
+        published: data.published,
+        is_featured: data.is_featured,
+        seasons: curriculum.seasons.map((s, i) => ({
+          id: s.id,
+          client_key: s.clientKey,
+          title: s.title.trim() || t('courses.seasonNumber', { n: i + 1 })
+        })),
+        lessons: curriculum.lessons.map((l) => ({
+          id: l.id,
+          client_key: l.clientKey,
+          title: l.title.trim(),
+          description: l.description.trim() || undefined,
+          duration: durationToSeconds(l.duration),
+          lesson_type: l.lesson_type,
+          is_free: l.is_free,
+          published: l.published,
+          video_id: l.video_id,
+          audio_id: l.audio_id,
+          cover_id: l.cover_id,
+          document_id: l.document_id,
+          season_client_key: l.seasonClientKey
+        })),
+        deleted_season_ids:
+          curriculum.deletedSeasonIds.length > 0
+            ? curriculum.deletedSeasonIds
+            : undefined,
+        deleted_lesson_ids:
+          removedLessonIds.length > 0 ? removedLessonIds : undefined
+      };
+    },
+    [t]
+  );
 
   // ── Load existing course for edit ─────────────────────────────────────────
 
@@ -91,9 +148,9 @@ export function useCourseForm(courseId: string) {
         const cover = (course as any).Image ?? course.cover;
         const categoryId =
           (course as any).Category?.id ?? course.category?.id ?? '';
-        existingCoverUrl.current = cover?.publicUrl ?? null;
+        setCoverPreviewUrl(cover?.publicUrl ?? null);
 
-        form.reset({
+        const loadedForm: CourseFormData = {
           title: course.title ?? '',
           description: course.description ?? '',
           primary_price: Math.trunc(course.price ?? 0).toString(),
@@ -102,7 +159,8 @@ export function useCourseForm(courseId: string) {
           cover_id: cover?.id ?? '',
           published: course.is_published ?? false,
           is_featured: course.is_featured ?? false
-        });
+        };
+        form.reset(loadedForm);
 
         const loadedSeasons: SeasonDraft[] = (rawSeasons as Season[]).map(
           (s) => ({
@@ -152,6 +210,9 @@ export function useCourseForm(courseId: string) {
 
         setSeasons(loadedSeasons);
         setLessons(loadedLessons);
+        lastSavedRef.current = JSON.stringify(
+          buildPayload(loadedForm, loadedSeasons, loadedLessons, [], [])
+        );
       } catch (err) {
         ErrorHandler.handleApiError(err);
         router.push('/courses');
@@ -192,50 +253,20 @@ export function useCourseForm(courseId: string) {
         }
       }
 
-      const payload = {
-        title: data.title.trim(),
-        description: data.description.trim(),
-        primary_price: Number(data.primary_price),
-        secondary_price: Number(data.secondary_price),
-        category_id: data.category_id || undefined,
-        cover_id: data.cover_id || undefined,
-        published: data.published,
-        is_featured: data.is_featured,
-        // Untitled seasons are named rather than dropped: the backend skips a
-        // season with no title, which silently orphans every lesson in it.
-        seasons: seasons.map((s, i) => ({
-          id: s.id,
-          client_key: s.clientKey,
-          title: s.title.trim() || t('courses.seasonNumber', { n: i + 1 })
-        })),
-        lessons: lessons
-          .filter((l) => l.title.trim())
-          .map((l) => ({
-            id: l.id,
-            client_key: l.clientKey,
-            title: l.title.trim(),
-            description: l.description.trim() || undefined,
-            duration: durationToSeconds(l.duration),
-            lesson_type: l.lesson_type,
-            is_free: l.is_free,
-            published: l.published,
-            video_id: l.video_id,
-            audio_id: l.audio_id,
-            cover_id: l.cover_id,
-            document_id: l.document_id,
-            season_client_key: l.seasonClientKey
-          })),
-        deleted_season_ids:
-          deletedSeasonIds.length > 0 ? deletedSeasonIds : undefined,
-        deleted_lesson_ids:
-          deletedLessonIds.length > 0 ? deletedLessonIds : undefined
-      };
+      const payload = buildPayload(
+        data,
+        seasons,
+        lessons,
+        deletedSeasonIds,
+        deletedLessonIds
+      );
 
       // Nothing changed since the last successful save, so there is nothing to
       // send. This is what keeps autosave from firing a request per keystroke.
       const fingerprint = JSON.stringify(payload);
       const hasDeletes =
-        deletedSeasonIds.length > 0 || deletedLessonIds.length > 0;
+        (payload.deleted_season_ids?.length ?? 0) > 0 ||
+        (payload.deleted_lesson_ids?.length ?? 0) > 0;
       if (!hasDeletes && fingerprint === lastSavedRef.current) {
         savingRef.current = false;
         setSaveStatus('saved');
@@ -263,13 +294,24 @@ export function useCourseForm(courseId: string) {
 
         const seasonIds = saved?.season_ids;
         const lessonIds = saved?.lesson_ids;
-        if (seasonIds) {
-          setSeasons((prev) =>
-            prev.map((s) =>
-              seasonIds[s.clientKey] ? { ...s, id: seasonIds[s.clientKey] } : s
-            )
+        const seasonKeysWithLessons = new Set(
+          payload.lessons
+            .map((l) => l.season_client_key)
+            .filter((key): key is string => !!key)
+        );
+        setSeasons((prev) => {
+          const withIds = seasonIds
+            ? prev.map((s) =>
+                seasonIds[s.clientKey]
+                  ? { ...s, id: seasonIds[s.clientKey] }
+                  : s
+              )
+            : prev;
+          const next = withIds.map((s) =>
+            seasonKeysWithLessons.has(s.clientKey) ? s : { ...s, id: undefined }
           );
-        }
+          return next.length > 0 ? next : [emptySeason()];
+        });
         if (lessonIds) {
           setLessons((prev) =>
             prev.map((l) =>
@@ -313,6 +355,7 @@ export function useCourseForm(courseId: string) {
       deletedSeasonIds,
       deletedLessonIds,
       clearDeleted,
+      buildPayload,
       t
     ]
   );
@@ -367,6 +410,23 @@ export function useCourseForm(courseId: string) {
     await save(values, { silent: true });
   }, [form, save]);
 
+  const handleCoverImageChange = useCallback(
+    (image: { id: string; url: string }) => {
+      if (image.id) {
+        form.setValue('cover_id', image.id, {
+          shouldDirty: true,
+          shouldTouch: true
+        });
+        setCoverPreviewUrl(image.url || null);
+      } else {
+        form.setValue('cover_id', '', { shouldDirty: true, shouldTouch: true });
+        setCoverPreviewUrl(null);
+      }
+      void saveCover();
+    },
+    [form, saveCover]
+  );
+
   /**
    * Publishing changes what students see, so it never rides the silent
    * debounce: it saves immediately and speaks up on success or failure.
@@ -417,7 +477,8 @@ export function useCourseForm(courseId: string) {
     saveStatus,
     ...curriculum,
     selectedAcademy,
-    existingCoverUrl: existingCoverUrl.current,
+    coverPreviewUrl,
+    handleCoverImageChange,
     togglePublish,
     retrySave,
     saveNow,

@@ -42,7 +42,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     seasons,
     lessons,
     selectedAcademy,
-    existingCoverUrl,
+    coverPreviewUrl,
     addSeason,
     removeSeason,
     clearSeason,
@@ -57,7 +57,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     togglePublish,
     retrySave,
     saveNow,
-    saveCover
+    handleCoverImageChange
   } = useCourseForm(courseId);
 
   const [pendingAccess, setPendingAccess] =
@@ -186,13 +186,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                 <ImageUploadPreview
                   title={form.watch('title')}
                   description={form.watch('description')}
-                  existingImageUrl={existingCoverUrl}
-                  onSuccess={(img) => {
-                    form.setValue('cover_id', img.id.toString());
-                    // The image is already on the server; persist the course it
-                    // belongs to instead of waiting for a manual save.
-                    void saveCover();
-                  }}
+                  existingImageUrl={coverPreviewUrl}
+                  onSuccess={handleCoverImageChange}
                   selectedImageId={form.watch('cover_id')}
                   className="aspect-video w-full max-w-md"
                   placeholderText={t('courses.noCoverImageSelected')}
@@ -203,7 +198,12 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
 
             <CreateCourseAssociations
               categoryId={form.watch('category_id')}
-              onCategoryChange={(id) => form.setValue('category_id', id)}
+              onCategoryChange={(id) =>
+                form.setValue('category_id', id ?? '', {
+                  shouldDirty: true,
+                  shouldTouch: true
+                })
+              }
               error={form.formState.errors.category_id?.message}
             />
 

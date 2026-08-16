@@ -53,8 +53,10 @@ export default function CreateCoursePricing({ form }: Props) {
                     <FormControl>
                       <PriceInput
                         placeholder="0"
-                        value={field.value}
-                        onChange={field.onChange}
+                        value={field.value ?? ''}
+                        onChange={(value) => {
+                          field.onChange(value);
+                        }}
                         onBlur={field.onBlur}
                         name={field.name}
                         suffix={t('courses.toman')}
@@ -89,8 +91,10 @@ export default function CreateCoursePricing({ form }: Props) {
                     <FormControl>
                       <PriceInput
                         placeholder="0"
-                        value={field.value}
-                        onChange={field.onChange}
+                        value={field.value ?? ''}
+                        onChange={(value) => {
+                          field.onChange(value);
+                        }}
                         onBlur={field.onBlur}
                         name={field.name}
                         suffix={t('courses.toman')}

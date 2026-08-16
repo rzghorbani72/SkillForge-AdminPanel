@@ -71,6 +71,39 @@ export function secondsToDuration(total?: number | null): string {
  * Pre-publish gate. Returns a translation key for the first problem found, or
  * null when the curriculum is publishable. Kept pure so it is unit-testable.
  */
+/**
+ * Seasons with no titled lessons are UI placeholders only — they must not be
+ * written to the API (and any existing DB row should be deleted).
+ */
+export function prepareCurriculumForSave(
+  seasons: SeasonDraft[],
+  lessons: LessonDraft[],
+  deletedSeasonIds: string[]
+): {
+  seasons: SeasonDraft[];
+  lessons: LessonDraft[];
+  deletedSeasonIds: string[];
+} {
+  const lessonsToSave = lessons.filter((l) => l.title.trim());
+  const seasonKeysWithLessons = new Set(
+    lessonsToSave
+      .map((l) => l.seasonClientKey)
+      .filter((key): key is string => !!key)
+  );
+
+  const orphanSeasonIds = seasons
+    .filter((s) => s.id && !seasonKeysWithLessons.has(s.clientKey))
+    .map((s) => s.id!);
+
+  return {
+    seasons: seasons.filter((s) => seasonKeysWithLessons.has(s.clientKey)),
+    lessons: lessonsToSave,
+    deletedSeasonIds: Array.from(
+      new Set([...deletedSeasonIds, ...orphanSeasonIds])
+    )
+  };
+}
+
 export function validateForPublish(
   seasons: SeasonDraft[],
   lessons: LessonDraft[]

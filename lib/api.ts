@@ -1654,7 +1654,7 @@ class ApiClient {
         published?: boolean;
         video_id?: string;
         audio_id?: string;
-        cover_id?: string;
+        cover_id?: string | null;
       }>;
     }>;
     lessons?: Array<{
@@ -1665,7 +1665,7 @@ class ApiClient {
       published?: boolean;
       video_id?: string;
       audio_id?: string;
-      cover_id?: string;
+      cover_id?: string | null;
     }>;
   }) {
     return this.request('/courses', {
@@ -1691,7 +1691,7 @@ class ApiClient {
       primary_price?: number;
       secondary_price?: number;
       category_id?: string;
-      cover_id?: string;
+      cover_id?: string | null;
       published?: boolean;
       is_featured?: boolean;
       access_duration_days?: number;
@@ -1711,7 +1711,7 @@ class ApiClient {
         published?: boolean;
         video_id?: string;
         audio_id?: string;
-        cover_id?: string;
+        cover_id?: string | null;
         season_id?: string;
         season_client_key?: string;
       }>;
