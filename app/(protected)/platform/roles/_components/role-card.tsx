@@ -74,6 +74,12 @@ export function RoleCard({
           </span>
         </div>
 
+        {!abilities.canEdit && abilities.readOnlyReasonKey && (
+          <p className="text-[11px] text-muted-foreground">
+            {t(abilities.readOnlyReasonKey)}
+          </p>
+        )}
+
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -120,12 +126,6 @@ export function RoleCard({
             </Button>
           )}
         </div>
-
-        {!abilities.canEdit && abilities.readOnlyReasonKey && (
-          <p className="text-[11px] text-muted-foreground">
-            {t(abilities.readOnlyReasonKey)}
-          </p>
-        )}
       </div>
     </div>
   );
