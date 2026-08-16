@@ -31,15 +31,29 @@ export function mapUsersResponse(
   return (response?.users ?? []).map(mapUserToEntityOption);
 }
 
+/** Drop the logged-in profile from pickers (group / role / access / enroll). */
+export function withoutSelfProfile(
+  options: EntitySearchOption[],
+  selfProfileId?: string | number | null
+): EntitySearchOption[] {
+  if (selfProfileId == null || selfProfileId === '') return options;
+  const selfId = String(selfProfileId);
+  return options.filter((option) => option.value !== selfId);
+}
+
 export async function fetchStudentOptions(
-  query: string
+  query: string,
+  selfProfileId?: string | number | null
 ): Promise<EntitySearchOption[]> {
   const search = query.trim();
   const response = await apiClient.getStudentUsers({
     ...(search ? { search } : {}),
     limit: 20
   });
-  return mapUsersResponse(response as EntitySearchUsersResponse);
+  return withoutSelfProfile(
+    mapUsersResponse(response as EntitySearchUsersResponse),
+    selfProfileId
+  );
 }
 
 /**
@@ -48,9 +62,13 @@ export async function fetchStudentOptions(
  * /users/students and /users/teachers routes.
  *
  * Curried on `t` so the role shows its translated label instead of the raw
- * role code stored in the database.
+ * role code stored in the database. Pass `selfProfileId` so the actor cannot
+ * pick themselves for role upgrades / assignments.
  */
-export function createAcademyUserOptionsFetcher(t: TranslateFn) {
+export function createAcademyUserOptionsFetcher(
+  t: TranslateFn,
+  selfProfileId?: string | number | null
+) {
   return async (query: string): Promise<EntitySearchOption[]> => {
     const search = query.trim();
     const response = (await apiClient.getUsers({
@@ -58,7 +76,7 @@ export function createAcademyUserOptionsFetcher(t: TranslateFn) {
       limit: 20
     })) as EntitySearchProfilesResponse | null;
 
-    return (response?.profiles ?? []).map((profile) => ({
+    const options = (response?.profiles ?? []).map((profile) => ({
       value: profile.id,
       label:
         profile.display_name ??
@@ -72,18 +90,24 @@ export function createAcademyUserOptionsFetcher(t: TranslateFn) {
           .filter(Boolean)
           .join(' · ') || undefined
     }));
+
+    return withoutSelfProfile(options, selfProfileId);
   };
 }
 
 export async function fetchTeacherOptions(
-  query: string
+  query: string,
+  selfProfileId?: string | number | null
 ): Promise<EntitySearchOption[]> {
   const search = query.trim();
   const response = await apiClient.getTeacherUsers({
     ...(search ? { search } : {}),
     limit: 20
   });
-  return mapUsersResponse(response as EntitySearchUsersResponse);
+  return withoutSelfProfile(
+    mapUsersResponse(response as EntitySearchUsersResponse),
+    selfProfileId
+  );
 }
 
 export async function resolveUserOption(
@@ -92,6 +116,7 @@ export async function resolveUserOption(
 ): Promise<EntitySearchOption | null> {
   const fetcher =
     role === 'student' ? fetchStudentOptions : fetchTeacherOptions;
+  // Resolve without excluding self so existing selections still label correctly.
   const options = await fetcher(id);
   return options.find((option) => option.value === id) ?? null;
 }

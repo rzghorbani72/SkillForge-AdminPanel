@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import {
   EntitySearchCombobox,
   type EntitySearchComboboxProps
@@ -8,6 +9,7 @@ import {
   fetchStudentOptions,
   resolveUserOption
 } from '@/components/entity-search/entity-search-utils';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 type StudentProfileSearchComboboxProps = Omit<
   EntitySearchComboboxProps,
@@ -17,10 +19,18 @@ type StudentProfileSearchComboboxProps = Omit<
 export function StudentProfileSearchCombobox(
   props: StudentProfileSearchComboboxProps
 ) {
+  const { user } = useAuthUser();
+  const selfId = user?.id;
+
+  const fetchOptions = useCallback(
+    (query: string) => fetchStudentOptions(query, selfId),
+    [selfId]
+  );
+
   return (
     <EntitySearchCombobox
       {...props}
-      fetchOptions={fetchStudentOptions}
+      fetchOptions={fetchOptions}
       resolveOption={(id) => resolveUserOption(id, 'student')}
     />
   );

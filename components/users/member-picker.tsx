@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useDebounce } from '@/hooks/use-debounce';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { UserAvatar } from './user-avatar';
 import type { User } from '@/types/api';
@@ -35,6 +36,8 @@ export function MemberPicker({
   disabled = false
 }: MemberPickerProps) {
   const { t } = useTranslation();
+  const { user: authUser } = useAuthUser();
+  const selfId = authUser?.id != null ? String(authUser.id) : '';
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, SEARCH_DEBOUNCE_MS);
   const [candidates, setCandidates] = useState<User[]>([]);
@@ -67,9 +70,13 @@ export function MemberPicker({
     setSearch('');
   }, [active]);
 
-  const visible = excludeIds
-    ? candidates.filter((candidate) => !excludeIds.has(candidate.id))
-    : candidates;
+  const hiddenIds = useMemo(() => {
+    const ids = new Set(excludeIds);
+    if (selfId) ids.add(selfId);
+    return ids;
+  }, [excludeIds, selfId]);
+
+  const visible = candidates.filter((candidate) => !hiddenIds.has(candidate.id));
 
   return (
     <div className="space-y-2">

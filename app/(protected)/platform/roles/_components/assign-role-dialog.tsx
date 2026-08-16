@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { EntitySearchCombobox } from '@/components/entity-search';
 import { createAcademyUserOptionsFetcher } from '@/components/entity-search/entity-search-utils';
+import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -32,11 +33,15 @@ const MANAGER_LEVEL = 3;
 
 export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
   const { t } = useTranslation();
+  const { user } = useAuthUser();
   const [profileId, setProfileId] = useState('');
   const [saving, setSaving] = useState(false);
 
   const usesSeat = role.hierarchy_level >= MANAGER_LEVEL;
-  const fetchUsers = useMemo(() => createAcademyUserOptionsFetcher(t), [t]);
+  const fetchUsers = useMemo(
+    () => createAcademyUserOptionsFetcher(t, user?.id),
+    [t, user?.id]
+  );
 
   const submit = async () => {
     if (!profileId) return;
