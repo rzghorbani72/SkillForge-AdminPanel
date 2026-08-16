@@ -3842,30 +3842,22 @@ class ApiClient {
       `/discounts${query ? `?${query}` : ''}`
     );
 
-    // Backend returns { message, status, data: { discounts, pagination } }
-    // API client wraps it in { data: { message, status, data } }
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data;
-    }
-    return response.data as any;
+    // Backend returns { message, status, data: { discounts, pagination } };
+    // unwrap to the payload so callers read `.discounts` directly.
+    return unwrapDataEnvelope<any>(response.data);
   }
 
-  async getDiscountById(id: number) {
+  /** Platform plan vouchers the signed-in manager may redeem (read-only). */
+  async getRedeemablePlanVouchers() {
+    const response = await this.request<any>('/discounts/plan-vouchers');
+
+    return unwrapDataEnvelope<any>(response.data);
+  }
+
+  async getDiscountById(id: string) {
     const response = await this.request<any>(`/discounts/${id}`);
 
-    // Backend returns { message, status, data }
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data;
-    }
-    return response.data as any;
+    return unwrapDataEnvelope<any>(response.data);
   }
 
   async createDiscount(discountData: {
@@ -3874,6 +3866,7 @@ class ApiClient {
     discount_type: 'PERCENT' | 'FIXED';
     coupon_type?: 'PERCENT' | 'FIXED' | 'FREE_TRIAL' | 'FULL_DISCOUNT';
     discount_value: number;
+    free_trial_days?: number;
     academy_id?: string;
     usage_limit?: number;
     usage_type: 'ONE_TIME' | 'LIMITED' | 'UNLIMITED' | 'USER_SPECIFIC';
@@ -3888,23 +3881,17 @@ class ApiClient {
       body: JSON.stringify(discountData)
     });
 
-    // Backend returns { message, status, data }
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data;
-    }
-    return response.data as any;
+    return unwrapDataEnvelope<any>(response.data);
   }
 
   async updateDiscount(
-    id: number,
+    id: string,
     discountData: {
       description?: string;
       discount_type?: 'PERCENT' | 'FIXED';
+      coupon_type?: 'PERCENT' | 'FIXED' | 'FREE_TRIAL' | 'FULL_DISCOUNT';
       discount_value?: number;
+      free_trial_days?: number;
       usage_limit?: number;
       usage_type?: 'ONE_TIME' | 'LIMITED' | 'UNLIMITED' | 'USER_SPECIFIC';
       start_date?: string;
@@ -3919,18 +3906,10 @@ class ApiClient {
       body: JSON.stringify(discountData)
     });
 
-    // Backend returns { message, status, data }
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data;
-    }
-    return response.data as any;
+    return unwrapDataEnvelope<any>(response.data);
   }
 
-  async deleteDiscount(id: number) {
+  async deleteDiscount(id: string) {
     const response = await this.request<any>(`/discounts/${id}`, {
       method: 'DELETE'
     });

@@ -56,37 +56,43 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
+import { PlanVouchersCard } from '@/components/coupons/plan-vouchers-card';
+import {
+  COUPON_TYPES,
+  COUPON_TYPE_BADGE,
+  COUPON_TYPE_LABEL_KEY,
+  USAGE_TYPES,
+  USAGE_TYPE_LABEL_KEY,
+  couponTypeOf,
+  type CouponType
+} from '@/lib/coupons';
 
-const COUPON_TYPES = [
-  'PERCENT',
-  'FIXED',
-  'FREE_TRIAL',
-  'FULL_DISCOUNT'
-] as const;
-const USAGE_TYPES = ['UNLIMITED', 'LIMITED', 'ONE_TIME'] as const;
-
-const couponSchema = z.object({
-  code: z.string().min(1),
-  coupon_type: z.enum(COUPON_TYPES),
-  discount_value: z.coerce.number().min(0).optional(),
-  free_trial_days: z.coerce.number().int().min(1).optional(),
-  start_date: z.string().min(1),
-  end_date: z.string().min(1),
-  usage_type: z.enum(USAGE_TYPES),
-  usage_limit: z.coerce.number().int().min(1).optional(),
-  // Empty = Mentoma platform plan voucher (owner/admin only).
-  academy_id: z.string().optional(),
-  max_discount_amount: z.coerce.number().optional(),
-  min_purchase_amount: z.coerce.number().optional()
-});
+const couponSchema = z
+  .object({
+    code: z.string().min(1),
+    coupon_type: z.enum(COUPON_TYPES),
+    discount_value: z.coerce.number().min(0).optional(),
+    free_trial_days: z.coerce.number().int().min(1).optional(),
+    start_date: z.string().min(1),
+    end_date: z.string().min(1),
+    usage_type: z.enum(USAGE_TYPES),
+    usage_limit: z.coerce.number().int().min(1).optional(),
+    // Empty = Mentoma platform plan voucher (owner/admin only).
+    academy_id: z.string().optional(),
+    max_discount_amount: z.coerce.number().optional(),
+    min_purchase_amount: z.coerce.number().optional()
+  })
+  .refine(
+    (values) =>
+      values.coupon_type !== 'FREE_TRIAL' || (values.free_trial_days ?? 0) >= 1,
+    { path: ['free_trial_days'], message: 'required' }
+  )
+  .refine(
+    (values) =>
+      values.usage_type !== 'LIMITED' || (values.usage_limit ?? 0) >= 1,
+    { path: ['usage_limit'], message: 'required' }
+  );
 type CouponValues = z.infer<typeof couponSchema>;
-
-const TYPE_BADGE_MAP: Record<string, string> = {
-  PERCENT: 'percent',
-  FIXED: 'fixed',
-  FREE_TRIAL: 'free_trial',
-  FULL_DISCOUNT: 'full_discount'
-};
 
 export default function CouponsPage() {
   const { t } = useTranslation();
@@ -292,19 +298,19 @@ export default function CouponsPage() {
                     </TableCell>
                     <TableCell>
                       <StatusBadge
-                        status={
-                          TYPE_BADGE_MAP[c.coupon_type ?? c.discount_type] ??
-                          'default'
-                        }
+                        status={COUPON_TYPE_BADGE[couponTypeOf(c)]}
+                        label={t(COUPON_TYPE_LABEL_KEY[couponTypeOf(c)])}
                       />
                     </TableCell>
                     <TableCell>
                       {c.coupon_type === 'FREE_TRIAL'
-                        ? `${c.free_trial_days ?? '—'}d`
+                        ? t('coupons.daysValue', {
+                            count: formatNumber(c.free_trial_days ?? 0)
+                          })
                         : c.coupon_type === 'FULL_DISCOUNT'
                           ? '100%'
                           : c.coupon_type === 'PERCENT'
-                            ? `${c.discount_value}%`
+                            ? `${formatNumber(c.discount_value ?? 0)}٪`
                             : formatNumber(c.discount_value ?? 0)}
                     </TableCell>
                     {canManagePlatformVouchers && (
@@ -344,8 +350,10 @@ export default function CouponsPage() {
         </CardContent>
       </Card>
 
+      {!canManagePlatformVouchers && <PlanVouchersCard />}
+
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+        <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>
               {editTarget ? t('coupons.editCoupon') : t('coupons.createCoupon')}
@@ -353,7 +361,7 @@ export default function CouponsPage() {
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="code"
@@ -386,7 +394,7 @@ export default function CouponsPage() {
                         <SelectContent>
                           {COUPON_TYPES.map((type) => (
                             <SelectItem key={type} value={type}>
-                              {type}
+                              {t(COUPON_TYPE_LABEL_KEY[type])}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -422,26 +430,28 @@ export default function CouponsPage() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="max_discount_amount"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('coupons.maxDiscount')}</FormLabel>
-                          <FormControl>
-                            <NumberInput
-                              name={field.name}
-                              ref={field.ref}
-                              value={field.value ?? ''}
-                              onChange={(raw) =>
-                                field.onChange(raw === '' ? '' : Number(raw))
-                              }
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {couponType === 'PERCENT' && (
+                      <FormField
+                        control={form.control}
+                        name="max_discount_amount"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t('coupons.maxDiscount')}</FormLabel>
+                            <FormControl>
+                              <NumberInput
+                                name={field.name}
+                                ref={field.ref}
+                                value={field.value ?? ''}
+                                onChange={(raw) =>
+                                  field.onChange(raw === '' ? '' : Number(raw))
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </>
                 )}
 
@@ -514,7 +524,7 @@ export default function CouponsPage() {
                         <SelectContent>
                           {USAGE_TYPES.map((type) => (
                             <SelectItem key={type} value={type}>
-                              {type}
+                              {t(USAGE_TYPE_LABEL_KEY[type])}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -546,15 +556,15 @@ export default function CouponsPage() {
                     )}
                   />
                 )}
-
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    canManagePlatformVouchers
-                      ? 'coupons.platformScopeHint'
-                      : 'coupons.academyScopeHint'
-                  )}
-                </p>
               </div>
+
+              <p className="text-xs text-muted-foreground">
+                {t(
+                  canManagePlatformVouchers
+                    ? 'coupons.platformScopeHint'
+                    : 'coupons.academyScopeHint'
+                )}
+              </p>
 
               <div className="flex justify-end gap-2 pt-2">
                 <Button
