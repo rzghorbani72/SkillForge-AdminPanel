@@ -101,67 +101,69 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
 
   return (
     <>
-      {/* ── Header (sticky; pinned while the layout container scrolls) ────── */}
-      <div className="sticky top-0 z-10 flex flex-wrap items-start justify-between gap-4 border-b bg-background px-6 py-4">
-        <div className="flex items-start gap-3">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="mt-0.5 h-8 w-8 shrink-0"
-            onClick={() => router.push('/courses')}
-            aria-label={t('common.back')}
-          >
-            <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              {t('courses.editCourse')}
-            </h1>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {selectedAcademy.name}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <SaveStatusIndicator status={saveStatus} onRetry={retrySave} />
-
-          <Button
-            type="button"
-            disabled={isSaving}
-            onClick={() => void saveAll()}
-            className="gap-2"
-          >
-            <Save className="h-4 w-4" />
-            {t('common.saveChanges')}
-          </Button>
-
-          {/* Publish switch — the only thing that makes a course public */}
-          <div className="flex items-center gap-2 rounded-lg border px-3 py-1.5">
-            <Switch
-              checked={isPublished}
-              disabled={isSaving}
-              onCheckedChange={(v) => void togglePublish(v)}
-              id="publish-toggle"
-            />
-            <label
-              htmlFor="publish-toggle"
-              className="cursor-pointer text-sm font-medium"
+      {/* Sticky bar is full-bleed; title + actions share the form column */}
+      <div className="sticky top-0 z-10 border-b bg-background">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-6 py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0"
+              onClick={() => router.push('/courses')}
+              aria-label={t('common.back')}
             >
-              {isPublished ? (
-                <Badge className="text-xs">{t('courses.published')}</Badge>
-              ) : (
-                <span className="text-muted-foreground">
-                  {t('courses.draft')}
-                </span>
-              )}
-            </label>
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+            </Button>
+            <div className="min-w-0">
+              <h1 className="truncate text-2xl font-bold tracking-tight">
+                {t('courses.editCourse')}
+              </h1>
+              <p className="mt-0.5 truncate text-sm text-muted-foreground">
+                {selectedAcademy.name}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex shrink-0 flex-wrap items-center gap-3">
+            <SaveStatusIndicator status={saveStatus} onRetry={retrySave} />
+
+            <Button
+              type="button"
+              disabled={isSaving}
+              onClick={() => void saveAll()}
+              className="gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {t('common.saveChanges')}
+            </Button>
+
+            {/* Publish switch — the only thing that makes a course public */}
+            <div className="flex items-center gap-2 rounded-lg border px-3 py-1.5">
+              <Switch
+                checked={isPublished}
+                disabled={isSaving}
+                onCheckedChange={(v) => void togglePublish(v)}
+                id="publish-toggle"
+              />
+              <label
+                htmlFor="publish-toggle"
+                className="cursor-pointer text-sm font-medium"
+              >
+                {isPublished ? (
+                  <Badge className="text-xs">{t('courses.published')}</Badge>
+                ) : (
+                  <span className="text-muted-foreground">
+                    {t('courses.draft')}
+                  </span>
+                )}
+              </label>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full max-w-5xl p-6">
+      <div className="mx-auto w-full max-w-5xl p-6">
         <p className="mb-6 text-sm text-muted-foreground">
           {isPublished
             ? t('courses.builderPublishedHint')
