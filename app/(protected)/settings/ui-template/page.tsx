@@ -200,6 +200,7 @@ export default function UITemplateSettingsPage() {
         blockId?: string;
         fieldKey?: string;
         value?: string;
+        restore?: boolean;
         action?: string;
         fileName?: string;
         mimeType?: string;
@@ -285,7 +286,7 @@ export default function UITemplateSettingsPage() {
 
       if (data.type === 'toggle-removable' && data.blockId && data.fieldKey) {
         handleBlockConfigChangeRef.current(data.blockId, {
-          [data.fieldKey]: false
+          [data.fieldKey]: data.restore === true
         });
       }
 
