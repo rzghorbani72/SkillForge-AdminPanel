@@ -1,20 +1,34 @@
-export type LessonType = 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'TEXT' | 'LIVE';
+export type LessonType =
+  | 'VIDEO'
+  | 'AUDIO'
+  | 'DOCUMENT'
+  | 'TEXT'
+  | 'QUIZ'
+  | 'ASSIGNMENT'
+  | 'LIVE';
 
 export type CourseMedia = {
   id: string;
   publicUrl?: string | null;
+  title?: string | null;
   alt?: string | null;
+  mime_type?: string | null;
 };
 
 export type CourseDetailLesson = {
   id: string;
   title: string;
   description: string | null;
+  content?: string | null;
   duration: number;
   is_free: boolean;
   is_published: boolean;
   lesson_type: LessonType;
   order: number;
+  video_id?: string | null;
+  audio_id?: string | null;
+  document_id?: string | null;
+  image_id?: string | null;
   Video: CourseMedia | null;
   Audio: CourseMedia | null;
   Document: CourseMedia | null;

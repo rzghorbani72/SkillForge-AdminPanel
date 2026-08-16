@@ -141,6 +141,7 @@ export function useCourseForm(courseId: string) {
                 : undefined),
             audioPreviewUrl: l.Audio?.publicUrl,
             coverPreviewUrl: l.Image?.publicUrl,
+            documentPreviewName: l.Document?.title ?? undefined,
             clientKey: newKey(),
             seasonClientKey:
               (l.season_id != null

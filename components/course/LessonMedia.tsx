@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ExternalLink,
   FileText,
   Loader2,
   Mic,
@@ -9,11 +10,13 @@ import {
   type LucideIcon
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import Link from '@/components/ui/link';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { apiClient } from '@/lib/api';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { ErrorHandler } from '@/lib/error-handler';
 import { pickFile } from '@/lib/file-picker';
 import type { LessonDraft, LessonType } from './useCourseForm';
@@ -157,8 +160,13 @@ function toneFor(type: LessonType): string {
   );
 }
 
+function revokeIfBlob(url: string | undefined) {
+  if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
+}
+
 export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   const { t } = useTranslation();
+  const percentLabel = usePercentLabel();
   const [progress, setProgress] = useState<Record<SlotKey, number>>(ZERO);
   const [uploading, setUploading] = useState<Record<SlotKey, boolean>>(FALSE);
   const abortRefs = useRef<Record<SlotKey, AbortController | null>>({
@@ -166,6 +174,19 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     audio: null,
     document: null
   });
+  // Keep blob URLs so we can revoke them after the server URL replaces them.
+  const blobRefs = useRef<Record<SlotKey, string | null>>({
+    video: null,
+    audio: null,
+    document: null
+  });
+
+  useEffect(() => {
+    return () => {
+      revokeIfBlob(blobRefs.current.video ?? undefined);
+      revokeIfBlob(blobRefs.current.audio ?? undefined);
+    };
+  }, []);
 
   const type = lesson.lesson_type;
   const showVideo = type === 'VIDEO';
@@ -204,6 +225,32 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     }
   }
 
+  function startLocalPreview(key: 'video' | 'audio', file: File) {
+    revokeIfBlob(blobRefs.current[key] ?? undefined);
+    const blobUrl = URL.createObjectURL(file);
+    blobRefs.current[key] = blobUrl;
+    if (key === 'video') {
+      onUpdate({ videoPreviewUrl: blobUrl });
+    } else {
+      onUpdate({ audioPreviewUrl: blobUrl });
+    }
+    return blobUrl;
+  }
+
+  function replacePreview(key: 'video' | 'audio', patch: Partial<LessonDraft>) {
+    const prevBlob = blobRefs.current[key];
+    blobRefs.current[key] = null;
+    onUpdate(patch);
+    // Revoke after React swaps the src so playback does not break mid-frame.
+    if (prevBlob) {
+      requestAnimationFrame(() => URL.revokeObjectURL(prevBlob));
+    }
+  }
+
+  const documentPreviewUrl = lesson.document_id
+    ? `${getBrowserApiBaseUrl()}/files/preview/${lesson.document_id}`
+    : null;
+
   return (
     <div className="grid gap-3">
       {showVideo && (
@@ -213,11 +260,12 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           uploadLabel={t('courses.uploadVideo')}
           accept="video/*"
           toneClass={tone}
-          uploading={uploading.video}
+          uploading={uploading.video && !lesson.videoPreviewUrl}
           progress={progress.video}
           onCancel={() => abortRefs.current.video?.abort()}
-          onSelect={(file) =>
-            runUpload(
+          onSelect={(file) => {
+            startLocalPreview('video', file);
+            void runUpload(
               'video',
               (abort, onP) =>
                 apiClient.uploadVideoWithProgress(
@@ -228,39 +276,43 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   abort
                 ),
               (data) =>
-                onUpdate({
+                replacePreview('video', {
                   video_id: String(data.id),
                   videoPreviewUrl: apiClient.getVideoStreamUrl(String(data.id))
                 })
-            )
-          }
+            );
+          }}
           filled={
             lesson.videoPreviewUrl ? (
               <div
                 className={cn(
-                  'relative shrink-0 overflow-hidden rounded-lg border bg-black/5',
+                  'relative shrink-0 overflow-hidden rounded-lg border bg-black',
                   LESSON_MEDIA_SLOT_CLASS
                 )}
               >
                 <video
+                  key={lesson.videoPreviewUrl}
                   src={lesson.videoPreviewUrl}
-                  className="h-full w-full object-cover"
-                  controls={false}
+                  className="h-full w-full object-contain"
+                  controls
+                  preload="metadata"
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-sky-700 shadow-sm">
-                    <Video className="h-5 w-5" aria-hidden />
-                  </span>
-                </div>
+                {uploading.video && (
+                  <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-center text-[10px] text-white">
+                    {percentLabel(progress.video)}
+                  </div>
+                )}
                 <button
                   type="button"
                   aria-label={t('courses.removeVideo')}
-                  onClick={() =>
+                  onClick={() => {
+                    revokeIfBlob(blobRefs.current.video ?? undefined);
+                    blobRefs.current.video = null;
                     onUpdate({
                       video_id: undefined,
                       videoPreviewUrl: undefined
-                    })
-                  }
+                    });
+                  }}
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -278,11 +330,12 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           uploadLabel={t('courses.uploadAudio')}
           accept="audio/*"
           toneClass={tone}
-          uploading={uploading.audio}
+          uploading={uploading.audio && !lesson.audioPreviewUrl}
           progress={progress.audio}
           onCancel={() => abortRefs.current.audio?.abort()}
-          onSelect={(file) =>
-            runUpload(
+          onSelect={(file) => {
+            startLocalPreview('audio', file);
+            void runUpload(
               'audio',
               (abort, onP) =>
                 apiClient.uploadAudio(
@@ -291,13 +344,17 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   onP,
                   abort
                 ),
-              (data) =>
-                onUpdate({
+              (data) => {
+                const url =
+                  (data.publicUrl as string) ||
+                  `${getBrowserApiBaseUrl()}/audios/fetch-audio-by-id/${data.id}`;
+                replacePreview('audio', {
                   audio_id: String(data.id),
-                  audioPreviewUrl: (data.publicUrl as string) ?? ''
-                })
-            )
-          }
+                  audioPreviewUrl: url
+                });
+              }
+            );
+          }}
           filled={
             lesson.audioPreviewUrl ? (
               <div
@@ -311,19 +368,27 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   <Mic className="h-4 w-4" aria-hidden />
                 </span>
                 <audio
+                  key={lesson.audioPreviewUrl}
                   src={lesson.audioPreviewUrl}
                   controls
                   className="h-8 w-full max-w-[11.5rem]"
                 />
+                {uploading.audio && (
+                  <span className="text-[10px] opacity-70">
+                    {percentLabel(progress.audio)}
+                  </span>
+                )}
                 <button
                   type="button"
                   aria-label={t('courses.removeAudio')}
-                  onClick={() =>
+                  onClick={() => {
+                    revokeIfBlob(blobRefs.current.audio ?? undefined);
+                    blobRefs.current.audio = null;
                     onUpdate({
                       audio_id: undefined,
                       audioPreviewUrl: undefined
-                    })
-                  }
+                    });
+                  }}
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -341,11 +406,12 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           uploadLabel={t('courses.uploadDocument')}
           accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
           toneClass={tone}
-          uploading={uploading.document}
+          uploading={uploading.document && !lesson.documentPreviewName}
           progress={progress.document}
           onCancel={() => abortRefs.current.document?.abort()}
-          onSelect={(file) =>
-            runUpload(
+          onSelect={(file) => {
+            onUpdate({ documentPreviewName: file.name });
+            void runUpload(
               'document',
               (abort, onP) =>
                 apiClient.uploadDocument(
@@ -357,25 +423,42 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
               (data) =>
                 onUpdate({
                   document_id: String(data.id),
-                  documentPreviewName: file.name
+                  documentPreviewName: (data.title as string) || file.name
                 })
-            )
-          }
+            );
+          }}
           filled={
-            lesson.documentPreviewName ? (
+            lesson.documentPreviewName || lesson.document_id ? (
               <div
                 className={cn(
-                  'relative flex shrink-0 flex-col items-center justify-center gap-2 rounded-lg border px-3 text-center',
+                  'relative flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border px-3 text-center',
                   LESSON_MEDIA_SLOT_CLASS,
                   tone
                 )}
               >
-                <span className="bg-current/10 flex h-10 w-10 items-center justify-center rounded-full">
-                  <DocIcon className="h-5 w-5" aria-hidden />
+                <span className="bg-current/10 flex h-9 w-9 items-center justify-center rounded-full">
+                  <DocIcon className="h-4 w-4" aria-hidden />
                 </span>
                 <span className="line-clamp-2 max-w-[11rem] break-all text-xs font-medium leading-snug">
-                  {lesson.documentPreviewName}
+                  {lesson.documentPreviewName ?? t('courses.lessonDocument')}
                 </span>
+                {documentPreviewUrl && (
+                  <Link
+                    href={documentPreviewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-primary underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ExternalLink className="h-3 w-3" aria-hidden />
+                    {t('media.openPreview')}
+                  </Link>
+                )}
+                {uploading.document && (
+                  <span className="text-[10px] opacity-70">
+                    {percentLabel(progress.document)}
+                  </span>
+                )}
                 <button
                   type="button"
                   aria-label={t('courses.removeDocument')}
