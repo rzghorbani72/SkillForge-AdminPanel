@@ -146,13 +146,22 @@ export default function UITemplateSettingsPage() {
   });
 
   // Tell the in-canvas preview which section is selected, so it shows the dashed
-  // outline and scrolls to it. Re-sent on iframe (re)load to survive refreshes.
-  const postHighlight = useCallback((blockId: string | null) => {
-    previewIframeRef.current?.contentWindow?.postMessage(
-      { source: 'template-admin', type: 'highlight', blockId },
-      '*'
-    );
-  }, []);
+  // outline. `scroll` is true only when the user picked a section — a reload
+  // re-paints the ring in place so the canvas never jumps.
+  const postHighlight = useCallback(
+    (blockId: string | null, scroll: boolean) => {
+      previewIframeRef.current?.contentWindow?.postMessage(
+        { source: 'template-admin', type: 'highlight', blockId, scroll },
+        '*'
+      );
+    },
+    []
+  );
+  // Read by the 'ready' handshake, which fires outside React's render cycle.
+  const selectedBlockIdRef = useRef(selectedBlockId);
+  useEffect(() => {
+    selectedBlockIdRef.current = selectedBlockId;
+  }, [selectedBlockId]);
 
   // Receive messages from the preview canvas:
   // - 'select'      → click-to-select a section, opens its edit panel
@@ -167,6 +176,12 @@ export default function UITemplateSettingsPage() {
         value?: string;
       };
       if (data?.source !== 'template-editor') return;
+
+      // Preview finished (re)hydrating — restore the selection ring without
+      // scrolling, so a save-triggered reload keeps the manager in place.
+      if (data.type === 'ready') {
+        postHighlight(selectedBlockIdRef.current, false);
+      }
 
       if (data.type === 'select' && data.blockId) {
         setSelectedBlockId(data.blockId);
@@ -185,10 +200,11 @@ export default function UITemplateSettingsPage() {
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
-  }, []);
+  }, [postHighlight]);
 
+  // The user picked a section — bring it into view.
   useEffect(() => {
-    postHighlight(selectedBlockId);
+    postHighlight(selectedBlockId, true);
   }, [selectedBlockId, postHighlight]);
 
   const savedAgo = useRelativeTime(lastSavedAt);
@@ -1187,7 +1203,7 @@ export default function UITemplateSettingsPage() {
             isSaving={isSaving}
             title={`Preview: ${selectedPreset.name}`}
             iframeRef={previewIframeRef}
-            onIframeLoad={() => postHighlight(selectedBlockId)}
+            onIframeLoad={() => postHighlight(selectedBlockId, false)}
           />
         </div>
       </div>
