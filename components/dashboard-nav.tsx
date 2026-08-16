@@ -37,12 +37,14 @@ const NavItemContent = React.memo(
     isMinimized,
     isExpanded,
     isActive,
+    isChildItem,
     translatedTitle
   }: {
     item: NavItem;
     isMinimized: boolean;
     isExpanded: boolean;
     isActive: boolean;
+    isChildItem: boolean;
     translatedTitle: string;
   }) => {
     const Icon =
@@ -55,7 +57,7 @@ const NavItemContent = React.memo(
       <div
         className={cn(
           'sidebar-item group',
-          isActive && 'active',
+          isActive && (isChildItem ? 'active-child' : 'active'),
           item.disabled && 'cursor-not-allowed opacity-60'
         )}
       >
@@ -273,7 +275,10 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         item.children.length > 0;
       const isExpanded = expandedItems.has(item.title);
 
-      const isActive = isPathActive(item.href) || hasActiveChild(item);
+      const isActive = hasChildren
+        ? isPathActive(item.href) || hasActiveChild(item)
+        : isPathActive(item.href);
+      const isChildItem = depth > 0 && !hasChildren;
 
       const translatedTitle = translateNavTitle(item.label || '', item.title);
 
@@ -283,6 +288,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
           isMinimized={isMinimized}
           isExpanded={isExpanded}
           isActive={isActive}
+          isChildItem={isChildItem}
           translatedTitle={translatedTitle}
         />
       );

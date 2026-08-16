@@ -219,6 +219,19 @@ body {
     border-radius: 3px 0 0 3px;
   }
 
+  /* Active child — no box, just brand color + a trailing bar mark */
+  .sidebar-item.active-child::after {
+    content: '';
+    position: absolute;
+    inset-inline-end: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 14px;
+    background: hsl(var(--primary));
+    border-radius: 2px;
+  }
+
   /* Nav section label */
   .nav-section-label {
     @apply mb-1 mt-5 px-3 text-[10px] font-semibold uppercase tracking-widest;
