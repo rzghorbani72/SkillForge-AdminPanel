@@ -18,9 +18,6 @@ export function LastSessionCard({ session }: LastSessionCardProps) {
       </CardHeader>
       <CardContent className="space-y-1 text-sm">
         <p>
-          {t('tutoring.sessionId')}: {session.id}
-        </p>
-        <p>
           {t('common.status')}: {session.status}
         </p>
         <p>

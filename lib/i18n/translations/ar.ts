@@ -1784,7 +1784,7 @@ export const ar = {
     colStatus: 'الحالة',
     colGatewayRef: 'مرجع البوابة',
     colDate: 'التاريخ',
-    detailTitle: 'المعاملة #{{id}}',
+    detailTitle: 'معاملة {{student}}',
     detailDescription: 'تفاصيل الدفع وتتبع المعاملة',
     detailAuthority: 'Authority',
     detailPlatformCommission: 'عمولة المنصة',

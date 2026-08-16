@@ -5130,7 +5130,7 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
-  async getStore(id: number) {
+  async getStore(id: string) {
     const res = await this.request<any>(`/academies/${id}`);
     return (res.data as any)?.data ?? res.data;
   }

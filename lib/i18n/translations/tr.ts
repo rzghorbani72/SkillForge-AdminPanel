@@ -1833,7 +1833,7 @@ export const tr = {
     colStatus: 'Durum',
     colGatewayRef: 'Ağ Geçidi Ref',
     colDate: 'Tarih',
-    detailTitle: 'İşlem #{{id}}',
+    detailTitle: 'İşlem — {{student}}',
     detailDescription: 'Ödeme ve işlem takip detayları',
     detailAuthority: 'Authority',
     detailPlatformCommission: 'Platform Komisyonu',

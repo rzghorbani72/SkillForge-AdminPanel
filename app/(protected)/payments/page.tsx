@@ -328,7 +328,6 @@ export default function PaymentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('payments.colId')}</TableHead>
                   <TableHead>{t('payments.colUuid')}</TableHead>
                   <TableHead>{t('payments.colStudent')}</TableHead>
                   <TableHead>{t('payments.colCourse')}</TableHead>
@@ -355,7 +354,6 @@ export default function PaymentsPage() {
                       }
                     }}
                   >
-                    <TableCell>{payment.id}</TableCell>
                     <TableCell className="max-w-[180px] truncate">
                       {(payment as any).uuid || '-'}
                     </TableCell>
@@ -425,7 +423,12 @@ export default function PaymentsPage() {
         <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
           <SheetHeader>
             <SheetTitle>
-              {t('payments.detailTitle', { id: selectedPayment?.id ?? '' })}
+              {t('payments.detailTitle', {
+                student:
+                  selectedPayment?.user?.display_name ??
+                  selectedPayment?.Profile?.display_name ??
+                  t('payments.unknownStudent')
+              })}
             </SheetTitle>
             <SheetDescription>
               {t('payments.detailDescription')}

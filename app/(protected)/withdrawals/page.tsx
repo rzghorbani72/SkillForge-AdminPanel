@@ -174,7 +174,6 @@ export default function WithdrawalsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('withdrawals.id')}</TableHead>
                   <TableHead>{t('withdrawals.academy')}</TableHead>
                   <TableHead>{t('withdrawals.amount')}</TableHead>
                   <TableHead>{t('common.status')}</TableHead>
@@ -188,10 +187,7 @@ export default function WithdrawalsPage() {
               <TableBody>
                 {withdrawals.map((w) => (
                   <TableRow key={w.id}>
-                    <TableCell className="font-mono text-xs">#{w.id}</TableCell>
-                    <TableCell>
-                      {w.academy?.name ?? w.academy_id ?? '—'}
-                    </TableCell>
+                    <TableCell>{w.academy?.name ?? '—'}</TableCell>
                     <TableCell>
                       {w.amount != null ? formatNumber(w.amount) : ''}
                     </TableCell>
@@ -256,7 +252,9 @@ export default function WithdrawalsPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {t('withdrawals.approveWithdrawal', { id: approveDialog?.id })}
+              {t('withdrawals.approveWithdrawal', {
+                academy: approveDialog?.academy?.name ?? '—'
+              })}
             </DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
@@ -322,7 +320,9 @@ export default function WithdrawalsPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {t('withdrawals.rejectWithdrawal', { id: rejectDialog?.id })}
+              {t('withdrawals.rejectWithdrawal', {
+                academy: rejectDialog?.academy?.name ?? '—'
+              })}
             </DialogTitle>
           </DialogHeader>
           <Form {...rejectForm}>

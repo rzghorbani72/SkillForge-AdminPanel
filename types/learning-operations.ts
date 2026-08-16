@@ -141,6 +141,7 @@ export interface OpsOverdueGradingItem {
   id: string | number;
   submitted_at: string | null;
   profile_id: string;
+  Profile: { display_name: string | null } | null;
   Assignment: { id: string | number; title: string } | null;
 }
 
@@ -150,12 +151,15 @@ export interface OpsInactivityItem {
   course_id: string;
   last_accessed: string | null;
   progress_percent: number | null;
+  Profile: { display_name: string | null } | null;
+  Course: { title: string } | null;
 }
 
 export interface OpsLowScoreItem {
   id: string | number;
   score: number | null;
   profile_id: string;
+  Profile: { display_name: string | null } | null;
   Assignment: {
     id: string | number;
     title: string;
@@ -168,12 +172,15 @@ export interface OpsMissedClassItem {
   profile_id: string;
   tutoring_session_id: string;
   created_at: string;
+  Profile: { display_name: string | null } | null;
+  Session: { starts_at: string } | null;
 }
 
 export interface OpsUnansweredThreadItem {
   id: string;
   context_type: string;
   profile_id: string;
+  profile_name: string;
   last_message_at: string;
 }
 

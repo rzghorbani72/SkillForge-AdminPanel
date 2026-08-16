@@ -175,7 +175,6 @@ export default function RefundsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
                   <TableHead>{t('refunds.student')}</TableHead>
                   <TableHead>{t('refunds.course')}</TableHead>
                   <TableHead>{t('refunds.amount')}</TableHead>
@@ -189,7 +188,6 @@ export default function RefundsPage() {
               <TableBody>
                 {filtered.map((p) => (
                   <TableRow key={p.id}>
-                    <TableCell className="font-mono text-xs">#{p.id}</TableCell>
                     <TableCell>
                       {p.user?.display_name ?? p.Profile?.display_name ?? '—'}
                     </TableCell>
@@ -234,7 +232,12 @@ export default function RefundsPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {t('refunds.refundPayment', { id: selectedPayment?.id })}
+              {t('refunds.refundPayment', {
+                student:
+                  selectedPayment?.user?.display_name ??
+                  selectedPayment?.Profile?.display_name ??
+                  t('users.unnamedUser')
+              })}
             </DialogTitle>
           </DialogHeader>
           {eligibility && (

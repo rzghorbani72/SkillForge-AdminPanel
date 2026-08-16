@@ -23,7 +23,7 @@ export function OverdueGradingItem({
         {item.Assignment?.title ?? t('assignmentsPage.notAvailable')}
       </p>
       <p className="text-muted-foreground">
-        {t('opsQueue.profile')}: {item.profile_id}
+        {item.Profile?.display_name || t('users.unnamedUser')}
       </p>
       <p className="text-muted-foreground">
         {item.submitted_at

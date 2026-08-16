@@ -57,7 +57,7 @@ export function SubscriptionInvoicesList({
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <p className="truncate text-xs font-medium text-foreground">
-                  #{invoice.id} - {getPlanDisplayName(invoice.plan_name)}
+                  {getPlanDisplayName(invoice.plan_name)}
                 </p>
                 <Badge variant={meta.variant}>{t(meta.labelKey)}</Badge>
               </div>

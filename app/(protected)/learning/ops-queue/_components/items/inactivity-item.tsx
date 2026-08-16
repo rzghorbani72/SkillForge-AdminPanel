@@ -21,11 +21,9 @@ export function InactivityItem({
   return (
     <div className="rounded-lg border p-3 text-sm">
       <p className="font-medium">
-        {t('opsQueue.profile')}: {item.profile_id}
+        {item.Profile?.display_name || t('users.unnamedUser')}
       </p>
-      <p className="text-muted-foreground">
-        {t('opsQueue.courseId')}: {item.course_id}
-      </p>
+      <p className="text-muted-foreground">{item.Course?.title ?? '—'}</p>
       <p className="text-muted-foreground">
         {t('learningOperations.lastAccessed')}:{' '}
         {item.last_accessed

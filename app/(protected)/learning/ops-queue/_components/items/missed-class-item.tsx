@@ -20,10 +20,13 @@ export function MissedClassItem({
   return (
     <div className="rounded-lg border p-3 text-sm">
       <p className="font-medium">
-        {t('opsQueue.profile')}: {item.profile_id}
+        {item.Profile?.display_name || t('users.unnamedUser')}
       </p>
       <p className="text-muted-foreground">
-        {t('opsQueue.sessionId')}: {item.tutoring_session_id}
+        {t('opsQueue.missedSessionAt')}:{' '}
+        {item.Session
+          ? new Date(item.Session.starts_at).toLocaleString(language)
+          : '—'}
       </p>
       <p className="text-muted-foreground">
         {new Date(item.created_at).toLocaleString(language)}

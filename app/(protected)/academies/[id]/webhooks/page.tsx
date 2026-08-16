@@ -30,6 +30,19 @@ export default function WebhooksPage() {
   const [showSecret, setShowSecret] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
   const [webhookSecret, setWebhookSecret] = useState('');
+  const [academyName, setAcademyName] = useState('');
+
+  useEffect(() => {
+    async function loadAcademyName() {
+      try {
+        const academy = await apiClient.getStore(academyId);
+        setAcademyName(typeof academy?.name === 'string' ? academy.name : '');
+      } catch {
+        /* the description falls back to a name-less label */
+      }
+    }
+    if (academyId) loadAcademyName();
+  }, [academyId]);
 
   useEffect(() => {
     async function load() {
@@ -95,7 +108,9 @@ export default function WebhooksPage() {
             {t('webhooks.title')}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {t('webhooks.description', { id: academyId })}
+            {academyName
+              ? t('webhooks.description', { academy: academyName })
+              : t('webhooks.descriptionFallback')}
           </p>
         </div>
       </div>

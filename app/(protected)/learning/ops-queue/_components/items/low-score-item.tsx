@@ -19,7 +19,7 @@ export function LowScoreItem({ item, onUseForNote }: LowScoreItemProps) {
         {item.Assignment?.title ?? t('assignmentsPage.notAvailable')}
       </p>
       <p className="text-muted-foreground">
-        {t('opsQueue.profile')}: {item.profile_id}
+        {item.Profile?.display_name || t('users.unnamedUser')}
       </p>
       <Badge variant="secondary">
         {item.score ?? '—'} / {item.Assignment?.max_score ?? '—'}

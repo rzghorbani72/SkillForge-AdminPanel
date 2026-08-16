@@ -150,7 +150,6 @@ export default function TeacherPayoutsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
                   <TableHead>{t('teacherPayouts.teacher')}</TableHead>
                   <TableHead>{t('teacherPayouts.academy')}</TableHead>
                   <TableHead>{t('teacherPayouts.amount')}</TableHead>
@@ -165,13 +164,10 @@ export default function TeacherPayoutsPage() {
               <TableBody>
                 {payouts.map((p) => (
                   <TableRow key={p.id}>
-                    <TableCell className="font-mono text-xs">#{p.id}</TableCell>
                     <TableCell>
                       {p.profile?.display_name ?? p.teacher?.name ?? '—'}
                     </TableCell>
-                    <TableCell>
-                      {p.academy?.name ?? p.academy_id ?? '—'}
-                    </TableCell>
+                    <TableCell>{p.academy?.name ?? '—'}</TableCell>
                     <TableCell>
                       {p.amount != null ? formatNumber(p.amount) : ''}
                     </TableCell>
@@ -230,7 +226,12 @@ export default function TeacherPayoutsPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {t('teacherPayouts.rejectPayout', { id: rejectDialog?.id })}
+              {t('teacherPayouts.rejectPayout', {
+                teacher:
+                  rejectDialog?.profile?.display_name ??
+                  rejectDialog?.teacher?.name ??
+                  t('users.unnamedUser')
+              })}
             </DialogTitle>
           </DialogHeader>
           <Form {...rejectForm}>

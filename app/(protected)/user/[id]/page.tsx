@@ -271,14 +271,6 @@ export default function UserDetailPage() {
               <div className="mt-2 space-y-2 text-sm">
                 <div className="flex justify-between gap-4">
                   <span className="text-muted-foreground">
-                    {t('userDetails.userId')}
-                  </span>
-                  <span className="truncate font-mono text-xs" dir="ltr">
-                    {user.id}
-                  </span>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">
                     {t('userDetails.created')}
                   </span>
                   <span>{formatDate(user.created_at, true)}</span>

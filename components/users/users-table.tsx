@@ -57,7 +57,7 @@ function UserRow({
           <UserAvatar name={displayName} tone={roleTone} size={32} />
           <div>
             <div className="flex items-center gap-1.5 text-[13.5px] font-semibold leading-tight">
-              {displayName || t('users.userWithId', { id: user.id })}
+              {displayName || t('users.unnamedUser')}
               {isSelf && (
                 <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
                   {t('users.you')}

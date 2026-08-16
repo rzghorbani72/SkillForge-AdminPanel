@@ -72,17 +72,13 @@ export function TutoringEngagementsCard({
               >
                 <div>
                   <p className="font-medium">
-                    {engagement.Course?.title ?? engagement.course_id}
+                    {engagement.Course?.title ??
+                      t('assignmentsPage.notAvailable')}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {engagement.Student?.display_name ??
-                      engagement.student_profile_id}{' '}
+                    {engagement.Student?.display_name ?? t('users.unnamedUser')}{' '}
                     ↔{' '}
-                    {engagement.Tutor?.display_name ??
-                      engagement.tutor_profile_id}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {engagement.id}
+                    {engagement.Tutor?.display_name ?? t('users.unnamedUser')}
                   </p>
                 </div>
                 <Badge variant="outline">{engagement.status}</Badge>

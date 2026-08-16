@@ -21,10 +21,7 @@ export function UnansweredThreadItem({
     <div className="rounded-lg border p-3 text-sm">
       <p className="font-medium">{item.context_type}</p>
       <p className="text-muted-foreground">
-        {t('opsQueue.profile')}: {item.profile_id}
-      </p>
-      <p className="text-muted-foreground">
-        {t('opsQueue.threadId')}: {item.id}
+        {t('opsQueue.profile')}: {item.profile_name || t('users.unnamedUser')}
       </p>
       <p className="text-muted-foreground">
         {new Date(item.last_message_at).toLocaleString(language)}
