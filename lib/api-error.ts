@@ -203,10 +203,11 @@ function isMismatchedFamilyCode(code: string, status: number): boolean {
 /**
  * The one function the UI should call to turn an error into display text.
  *
- * Order: our own translation of the code -> the backend's localized message ->
- * the per-status message -> a detailed unknown-error message. Steps 3 and 4
- * always exist in `fa`, so the chain can never end in English for a Persian
- * user.
+ * Order: the backend's localized `message` -> our own translation of the code
+ * -> the per-status message -> a detailed unknown-error message. The backend
+ * owns the wording because it knows exactly what failed; the later steps only
+ * cover responses with no usable message. Steps 3 and 4 always exist in `fa`,
+ * so the chain can never end in English for a Persian user.
  */
 export function resolveApiErrorMessage(
   error: unknown,
@@ -215,11 +216,6 @@ export function resolveApiErrorMessage(
   const apiError = isApiResponseError(error) ? error.error : null;
 
   if (apiError) {
-    const byCode = lookupWithFallback(language, `apiError.${apiError.code}`);
-    if (byCode && !isMismatchedFamilyCode(apiError.code, apiError.status)) {
-      return interpolate(byCode, apiError.params, language);
-    }
-
     // The backend localizes against the language in the URL prefix. Trust it
     // only when the text really is in this language.
     if (
@@ -227,6 +223,11 @@ export function resolveApiErrorMessage(
       (language !== 'fa' || PERSIAN_SCRIPT.test(apiError.message))
     ) {
       return apiError.message;
+    }
+
+    const byCode = lookupWithFallback(language, `apiError.${apiError.code}`);
+    if (byCode && !isMismatchedFamilyCode(apiError.code, apiError.status)) {
+      return interpolate(byCode, apiError.params, language);
     }
 
     const byStatus = lookupWithFallback(
