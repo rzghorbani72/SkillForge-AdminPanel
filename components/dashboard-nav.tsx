@@ -65,7 +65,7 @@ const NavItemContent = React.memo(
             'h-[18px] w-[18px] shrink-0 transition-colors duration-150',
             isActive
               ? 'text-primary'
-              : 'text-muted-foreground group-hover:text-foreground'
+              : 'text-muted-foreground group-hover:text-primary'
           )}
         />
         {!isMinimized && (
@@ -75,7 +75,7 @@ const NavItemContent = React.memo(
                 'truncate text-sm transition-colors duration-150',
                 isActive
                   ? 'font-semibold text-primary'
-                  : 'font-medium text-foreground/75 group-hover:text-foreground'
+                  : 'font-medium text-foreground/75 group-hover:text-primary'
               )}
             >
               {translatedTitle}
@@ -83,7 +83,12 @@ const NavItemContent = React.memo(
             {item.badge !== undefined && (
               <Badge
                 variant="secondary"
-                className="h-5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary"
+                className={cn(
+                  'h-5 rounded-full px-2 py-0.5 text-[10px] font-semibold',
+                  isActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-primary/10 text-primary'
+                )}
               >
                 {item.badge}
               </Badge>
@@ -268,9 +273,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         item.children.length > 0;
       const isExpanded = expandedItems.has(item.title);
 
-      const isChildActive = depth > 0 && isPathActive(item.href);
-      const isParentActive = depth === 0 && hasActiveChild(item);
-      const isActive = isChildActive || isParentActive;
+      const isActive = isPathActive(item.href) || hasActiveChild(item);
 
       const translatedTitle = translateNavTitle(item.label || '', item.title);
 
