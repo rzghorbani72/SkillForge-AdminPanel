@@ -1,3 +1,5 @@
+import { API_PRODUCTION_DEFAULTS } from '../api-config';
+
 export interface TemplatePreviewSession {
   token: string;
   expiresIn: string;
@@ -7,6 +9,11 @@ export interface TemplatePreviewSession {
 
 const DEV_STOREFRONT_URL = 'http://localhost:5000';
 
+/**
+ * Gallery thumbnails render before any preview token exists, so there is no
+ * backend-supplied URL to fall back on. Without a production default the cards
+ * silently degrade to plain gradients whenever the build env is missing.
+ */
 export function resolveStorefrontBaseUrl(
   storefrontBaseUrl?: string | null
 ): string | undefined {
@@ -17,7 +24,10 @@ export function resolveStorefrontBaseUrl(
     return DEV_STOREFRONT_URL;
   }
 
-  return storefrontBaseUrl?.replace(/\/$/, '') || undefined;
+  return (
+    storefrontBaseUrl?.replace(/\/$/, '') ||
+    API_PRODUCTION_DEFAULTS.storefrontUrl
+  );
 }
 
 export function buildEmbedPreviewUrl(

@@ -9,7 +9,8 @@ export const API_PRODUCTION_DEFAULTS = {
   browserApiUrl: API_VERSION_PATH,
   backendApiUrl: 'https://api.mentoma.ir/v1',
   backendOrigin: 'https://api.mentoma.ir',
-  panelHost: 'https://admin.mentoma.ir'
+  panelHost: 'https://admin.mentoma.ir',
+  storefrontUrl: 'https://mentoma.ir'
 } as const;
 
 export const API_DEVELOPMENT_DEFAULTS = {
