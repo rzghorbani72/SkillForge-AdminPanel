@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { apiClient, type AcademySiteStatusData } from '@/lib/api';
+import { ErrorHandler } from '@/lib/error-handler';
 
 type AcademySiteStatusDialogProps = {
   open: boolean;
@@ -39,7 +40,6 @@ export function AcademySiteStatusDialog({
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const [error, setError] = useState('');
 
   const [contactEmail, setContactEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -48,7 +48,6 @@ export function AcademySiteStatusDialog({
   useEffect(() => {
     if (!open) return;
     setLoading(true);
-    setError('');
     setConfirming(false);
     setReopenAt('');
     apiClient
@@ -58,7 +57,10 @@ export function AcademySiteStatusDialog({
         setContactEmail(data.contact_email ?? '');
         setMessage(data.message ?? '');
       })
-      .catch(() => setStatus(null))
+      .catch((e: unknown) => {
+        setStatus(null);
+        ErrorHandler.handleApiError(e);
+      })
       .finally(() => setLoading(false));
   }, [open]);
 
@@ -77,7 +79,6 @@ export function AcademySiteStatusDialog({
 
   async function handleDisable() {
     setSaving(true);
-    setError('');
     try {
       await apiClient.disableAcademySite({
         disabled_until: reopenAt ? new Date(reopenAt).toISOString() : undefined,
@@ -88,7 +89,7 @@ export function AcademySiteStatusDialog({
       onClose();
     } catch (e: unknown) {
       setConfirming(false);
-      setError((e as { message?: string })?.message ?? t('common.error'));
+      ErrorHandler.handleApiError(e);
     } finally {
       setSaving(false);
     }
@@ -96,13 +97,12 @@ export function AcademySiteStatusDialog({
 
   async function handleEnable() {
     setSaving(true);
-    setError('');
     try {
       await apiClient.enableAcademySite();
       onChanged(false);
       onClose();
     } catch (e: unknown) {
-      setError((e as { message?: string })?.message ?? t('common.error'));
+      ErrorHandler.handleApiError(e);
     } finally {
       setSaving(false);
     }
@@ -283,8 +283,6 @@ export function AcademySiteStatusDialog({
             </Button>
           </div>
         )}
-
-        {error && <p className="text-xs text-destructive">{error}</p>}
       </DialogContent>
     </Dialog>
   );
