@@ -1156,6 +1156,14 @@ export const en = {
     siteStatusCardDesc:
       'Temporarily close the academy so it takes no new students. The site and courses stay online — only the buy and enroll buttons turn off.',
     siteStatusManage: 'Deactivate academy',
+    siteStatusTitleEnable: 'Activate academy',
+    siteStatusCardDescDisabled:
+      'This academy was deactivated on {{date}} and takes no new students.',
+    siteStatusCardDescDisabledNoDate:
+      'This academy is deactivated and takes no new students.',
+    siteStatusEnableShort: 'Reactivate',
+    siteDisabledToast: 'Academy deactivated — students have been notified.',
+    siteEnabledToast: 'Academy reactivated — students have been notified.',
     siteStatusOpenNow: 'Academy is active',
     siteCurrentlyDisabled:
       'This academy is deactivated and takes no new students. Current students keep their access, and visitors see your message and contact details.',

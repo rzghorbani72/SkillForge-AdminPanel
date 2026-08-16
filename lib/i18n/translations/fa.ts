@@ -1147,6 +1147,14 @@ export const fa = {
     siteStatusCardDesc:
       'آکادمی را موقتاً ببندید تا دانشجوی جدید نگیرد. سایت و دوره‌ها سر جای خود می‌مانند و فقط دکمه خرید و ثبت‌نام خاموش می‌شود.',
     siteStatusManage: 'غیرفعال کردن آکادمی',
+    siteStatusTitleEnable: 'فعال کردن آکادمی',
+    siteStatusCardDescDisabled:
+      'آکادمی در تاریخ {{date}} غیرفعال شده است و دانشجوی جدید نمی‌گیرد.',
+    siteStatusCardDescDisabledNoDate:
+      'آکادمی غیرفعال است و دانشجوی جدید نمی‌گیرد.',
+    siteStatusEnableShort: 'فعال‌سازی مجدد',
+    siteDisabledToast: 'آکادمی غیرفعال شد و به دانشجویان اطلاع داده شد.',
+    siteEnabledToast: 'آکادمی فعال شد و به دانشجویان اطلاع داده شد.',
     siteStatusOpenNow: 'آکادمی فعال است',
     siteCurrentlyDisabled:
       'آکادمی غیرفعال است و دانشجوی جدید نمی‌گیرد. دانشجویان فعلی دسترسی دارند و بازدیدکنندگان پیام و راه تماس شما را می‌بینند.',

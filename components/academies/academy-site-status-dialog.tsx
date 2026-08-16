@@ -115,7 +115,9 @@ export function AcademySiteStatusDialog({
           <p className="text-xs text-muted-foreground">{academyName}</p>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Power className="h-5 w-5" />
-            {t('stores.siteStatusTitle')}
+            {status?.disabled
+              ? t('stores.siteStatusTitleEnable')
+              : t('stores.siteStatusTitle')}
           </DialogTitle>
         </DialogHeader>
 
