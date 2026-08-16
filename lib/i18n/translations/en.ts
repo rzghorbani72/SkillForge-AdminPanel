@@ -68,7 +68,7 @@ export const en = {
     videoUnreadable: 'This video file cannot be read. Please try another file.',
     videoInvalidFormat: 'Please select an MP4 video file',
     videoTooLarge:
-      'The video ({{size}}) is larger than 700MB. Please compress it first.',
+      'This video is about {{size}} — the maximum is 700 MB. Please compress it first.',
     videoTooLong:
       'The video ({{duration}}) is longer than 30 minutes. Please split it into shorter parts.',
     videoSelected: 'Video selected: {{size}}',
@@ -1455,6 +1455,7 @@ export const en = {
     removeCover: 'Remove cover image',
     cancelUpload: 'Cancel',
     uploadVideo: 'Upload video',
+    videoUploadSizeLimit: '700 MB upload size limit',
     uploadImage: 'Upload image',
     noLessonsYet: 'No lessons yet. Click "Add Lesson" to start.',
     addSeasonFirst: 'Add a season first, then add lessons inside it.',

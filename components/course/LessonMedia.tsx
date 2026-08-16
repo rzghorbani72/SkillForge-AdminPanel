@@ -19,6 +19,8 @@ import { apiClient } from '@/lib/api';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { ErrorHandler } from '@/lib/error-handler';
 import { pickFile } from '@/lib/file-picker';
+import { isVideoFileAcceptable } from '@/lib/validate-video-upload';
+import { VIDEO_CONSTRAINTS } from '@/constants/video-constraints';
 import type { LessonDraft, LessonType } from './useCourseForm';
 import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
 
@@ -46,6 +48,7 @@ interface UploadSlotProps {
   filled: React.ReactNode | null;
   uploading: boolean;
   progress: number;
+  hint?: string;
   onSelect: (file: File) => void;
   onCancel?: () => void;
 }
@@ -59,6 +62,7 @@ function UploadSlot({
   filled,
   uploading,
   progress,
+  hint,
   onSelect,
   onCancel
 }: UploadSlotProps) {
@@ -133,6 +137,11 @@ function UploadSlot({
           />
         </label>
       )}
+      {hint ? (
+        <p className="max-w-[13.75rem] text-[11px] leading-snug text-muted-foreground">
+          {hint}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -258,29 +267,34 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           label={t('courses.lessonVideo')}
           Icon={Video}
           uploadLabel={t('courses.uploadVideo')}
-          accept="video/*"
+          accept={VIDEO_CONSTRAINTS.ALLOWED_FORMATS.join(',')}
+          hint={t('courses.videoUploadSizeLimit')}
           toneClass={tone}
           uploading={uploading.video && !lesson.videoPreviewUrl}
           progress={progress.video}
           onCancel={() => abortRefs.current.video?.abort()}
           onSelect={(file) => {
-            startLocalPreview('video', file);
-            void runUpload(
-              'video',
-              (abort, onP) =>
-                apiClient.uploadVideoWithProgress(
-                  file,
-                  { title: lesson.title || file.name },
-                  undefined,
-                  onP,
-                  abort
-                ),
-              (data) =>
-                replacePreview('video', {
-                  video_id: String(data.id),
-                  videoPreviewUrl: apiClient.getVideoStreamUrl(String(data.id))
-                })
-            );
+            void (async () => {
+              if (!(await isVideoFileAcceptable(file))) return;
+
+              startLocalPreview('video', file);
+              await runUpload(
+                'video',
+                (abort, onP) =>
+                  apiClient.uploadVideoWithProgress(
+                    file,
+                    { title: lesson.title || file.name },
+                    undefined,
+                    onP,
+                    abort
+                  ),
+                (data) =>
+                  replacePreview('video', {
+                    video_id: String(data.id),
+                    videoPreviewUrl: apiClient.getVideoStreamUrl(String(data.id))
+                  })
+              );
+            })();
           }}
           filled={
             lesson.videoPreviewUrl ? (

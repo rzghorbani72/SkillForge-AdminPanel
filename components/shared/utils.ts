@@ -82,6 +82,18 @@ export const formatFileSize = (bytes?: number | null) => {
   return `${amount} ${tNow(SIZE_UNIT_KEYS[exponent])}`;
 };
 
+/** Rounded-down size for limits and error messages (no fractional units). */
+export const formatFileSizeFloor = (bytes?: number | null) => {
+  if (bytes == null || bytes <= 0) return '';
+  const exponent = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    SIZE_UNIT_KEYS.length - 1
+  );
+  const value = Math.floor(bytes / Math.pow(1024, exponent));
+  const amount = localeDigits(value);
+  return `${amount} ${tNow(SIZE_UNIT_KEYS[exponent])}`;
+};
+
 /** `mm:ss`, or `h:mm` once past an hour. Empty when the duration is unknown. */
 export const formatDuration = (seconds?: number | null) => {
   if (seconds == null || Number.isNaN(seconds) || seconds < 0) return '';

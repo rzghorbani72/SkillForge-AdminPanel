@@ -5,11 +5,12 @@
 
 import {
   formatDuration,
-  formatFileSize
+  formatFileSize,
+  formatFileSizeFloor
 } from '@/components/shared/utils';
 
 // Locale-aware size/duration labels (Persian digits + مگابایت when language is fa)
-export { formatFileSize, formatDuration };
+export { formatFileSize, formatFileSizeFloor, formatDuration };
 
 export const VIDEO_CONSTRAINTS = {
   // File Format
@@ -84,7 +85,7 @@ export const validateVideoFile = (file: File): VideoValidation => {
       errorKey: 'toasts.videoTooLarge',
       params: {
         size:
-          formatFileSize(file.size) ||
+          formatFileSizeFloor(file.size) ||
           `${VIDEO_CONSTRAINTS.MAX_FILE_SIZE_MB}`
       }
     };

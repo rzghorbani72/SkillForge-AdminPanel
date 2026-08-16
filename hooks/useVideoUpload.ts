@@ -2,11 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
-import {
-  formatFileSize,
-  validateVideoFile,
-  validateVideoDuration
-} from '@/constants/video-constraints';
+import { formatFileSize } from '@/constants/video-constraints';
+import { isVideoFileAcceptable } from '@/lib/validate-video-upload';
 
 export interface VideoUploadOptions {
   title?: string;
@@ -42,36 +39,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
 
   // Accept a picked file only when it passes size/format and duration limits
   const acceptVideoFile = useCallback(async (file: File): Promise<boolean> => {
-    const fileValidation = validateVideoFile(file);
-    if (!fileValidation.valid) {
-      toast.error(tNow(fileValidation.errorKey, fileValidation.params));
-      return false;
-    }
-
-    const isValidDuration = await new Promise<boolean>((resolve) => {
-      const video = document.createElement('video');
-      video.preload = 'metadata';
-
-      video.onloadedmetadata = () => {
-        const durationValidation = validateVideoDuration(video.duration);
-        if (!durationValidation.valid) {
-          toast.error(
-            tNow(durationValidation.errorKey, durationValidation.params)
-          );
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      };
-
-      video.onerror = () => {
-        toast.error(tNow('toasts.videoUnreadable'));
-        resolve(false);
-      };
-
-      video.src = URL.createObjectURL(file);
-    });
-    if (!isValidDuration) return false;
+    if (!(await isVideoFileAcceptable(file))) return false;
 
     setSelectedFile(file);
     setPreview(URL.createObjectURL(file));
