@@ -1,5 +1,6 @@
 import {
   buildProductionCspConnectSrc,
+  buildProductionCspFrameSrc,
   buildProductionCspImgSrc
 } from './config';
 
@@ -13,6 +14,7 @@ export function buildContentSecurityPolicy(isDevelopment: boolean): string {
       "font-src 'self' data: http://localhost:* https:",
       "connect-src 'self' http://localhost:* ws://localhost:* ws: wss: https:",
       "media-src 'self' http://localhost:* https: blob: data:",
+      "frame-src 'self' http://localhost:* https:",
       "frame-ancestors 'none'"
     ].join('; ');
   }
@@ -25,6 +27,7 @@ export function buildContentSecurityPolicy(isDevelopment: boolean): string {
     "font-src 'self' data:",
     `connect-src ${buildProductionCspConnectSrc()}`,
     "media-src 'self' https: blob: data:",
+    `frame-src ${buildProductionCspFrameSrc()}`,
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'"

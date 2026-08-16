@@ -164,15 +164,24 @@ function hostToCspOrigin(hostname: string): string {
   return `https://${hostname}`;
 }
 
+/**
+ * `https://*.example.com` does not match the bare `https://example.com`, and the
+ * storefront is served from the bare domain — so every directive needs both.
+ */
+function baseDomainOrigins(): string[] {
+  return getMentomaBaseDomains().flatMap((d) => [
+    `https://${d}`,
+    `https://*.${d}`
+  ]);
+}
+
 export function buildProductionCspConnectSrc(): string {
   const hosts = [
     "'self'",
     ...getAllowedBackendHosts().map(hostToCspOrigin),
     ...getAllowedStorageHosts().map(hostToCspOrigin),
-    ...getMentomaBaseDomains().flatMap((d) => [
-      `https://*.${d}`,
-      `wss://*.${d}`
-    ]),
+    ...baseDomainOrigins(),
+    ...getMentomaBaseDomains().map((d) => `wss://*.${d}`),
     'wss:'
   ];
   return Array.from(new Set(hosts)).join(' ');
@@ -184,7 +193,16 @@ export function buildProductionCspImgSrc(): string {
     'data:',
     'blob:',
     ...getAllowedBackendHosts().map((h) => `https://${h}`),
-    ...getMentomaBaseDomains().map((d) => `https://*.${d}`)
+    ...baseDomainOrigins()
   ];
   return Array.from(new Set(hosts)).join(' ');
+}
+
+/**
+ * The template editor embeds the storefront's /preview/blocks page in an iframe.
+ * Without frame-src the panel falls back to `default-src 'self'` and the browser
+ * shows "This content is blocked" instead of the preview.
+ */
+export function buildProductionCspFrameSrc(): string {
+  return Array.from(new Set(["'self'", ...baseDomainOrigins()])).join(' ');
 }
