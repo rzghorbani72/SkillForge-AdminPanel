@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
@@ -22,7 +22,12 @@ export type AssignAccessSelection = {
 };
 
 type AssignAccessFormProps = {
-  onSubmit: (selection: AssignAccessSelection) => Promise<void> | void;
+  onSubmit?: (selection: AssignAccessSelection) => Promise<void> | void;
+  /**
+   * Reports the current selection instead of submitting it. Given this, the
+   * form drops its own button and the page's save owns the grant.
+   */
+  onSelectionChange?: (selection: AssignAccessSelection | null) => void;
   isSaving?: boolean;
   submitLabel?: string;
   enabled?: boolean;
@@ -40,6 +45,7 @@ type AssignAccessFormProps = {
  */
 export function AssignAccessForm({
   onSubmit,
+  onSelectionChange,
   isSaving = false,
   submitLabel,
   enabled = true,
@@ -66,9 +72,27 @@ export function AssignAccessForm({
   const hasTarget =
     hasExternalTarget || profileIds.length > 0 || groupIds.length > 0;
 
+  // Held in a ref so an inline callback cannot re-fire the effect every render.
+  const emitRef = useRef(onSelectionChange);
+  emitRef.current = onSelectionChange;
+
+  useEffect(() => {
+    emitRef.current?.(
+      hasTarget
+        ? {
+            profile_ids: profileIds,
+            group_ids: groupIds,
+            duration,
+            pricing,
+            note: note.trim() || undefined
+          }
+        : null
+    );
+  }, [hasTarget, profileIds, groupIds, duration, pricing, note]);
+
   async function handleSubmit(event?: React.FormEvent) {
     event?.preventDefault();
-    if (!hasTarget) return;
+    if (!hasTarget || !onSubmit) return;
     await onSubmit({
       profile_ids: profileIds,
       group_ids: groupIds,
@@ -184,20 +208,31 @@ export function AssignAccessForm({
         />
       </div>
 
-      <AssignAccessSubmit
-        label={submitLabel ?? t('accessGrants.giveAccess')}
-        blockedHint={blockedHint}
-        readyHint={
-          selectedCount > 0
-            ? t('accessGrants.readyHint', {
-                students: String(profileIds.length),
-                groups: String(groupIds.length)
-              })
-            : undefined
-        }
-        isSaving={isSaving}
-        onSubmit={() => void handleSubmit()}
-      />
+      {onSelectionChange ? (
+        selectedCount > 0 ? (
+          <p className="text-xs text-muted-foreground">
+            {t('accessGrants.savedWithCourseHint', {
+              students: String(profileIds.length),
+              groups: String(groupIds.length)
+            })}
+          </p>
+        ) : null
+      ) : (
+        <AssignAccessSubmit
+          label={submitLabel ?? t('accessGrants.giveAccess')}
+          blockedHint={blockedHint}
+          readyHint={
+            selectedCount > 0
+              ? t('accessGrants.readyHint', {
+                  students: String(profileIds.length),
+                  groups: String(groupIds.length)
+                })
+              : undefined
+          }
+          isSaving={isSaving}
+          onSubmit={() => void handleSubmit()}
+        />
+      )}
     </div>
   );
 }

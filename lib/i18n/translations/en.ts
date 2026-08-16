@@ -3885,9 +3885,10 @@ export const en = {
     description:
       'Hand this course to students or groups without a purchase, for as long as you choose.',
     stagedDescription:
-      'Choose who gets this course. Access is granted as soon as the course is created.',
+      'Choose who gets this course. Access is granted when you save the course.',
+    savedWithCourseHint:
+      '{{students}} students, {{groups}} groups get access when you save the course.',
     giveAccess: 'Give access',
-    addToList: 'Add to list',
     stepTargets: 'Who gets this course?',
     stepTargetsHint: 'Pick one or more students, or a whole group.',
     stepTargetsTeacherHint: 'Pick one or more of your own students.',
@@ -3947,7 +3948,6 @@ export const en = {
     until: 'Until {{date}}',
     expired: 'Expired',
     unknownStudent: 'Unknown student',
-    stagedRow: '{{students}} students, {{groups}} groups',
     stagedFailed:
       'The course was created but access could not be given. Try again from the course page.'
   },

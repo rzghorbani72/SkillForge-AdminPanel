@@ -26,13 +26,21 @@ import {
 
 type CourseAccessSectionProps = {
   courseId: string;
+  /**
+   * Given this, the box stops granting on its own: the selection is reported
+   * upward and written when the page's own save runs.
+   */
+  onPendingChange?: (selection: AssignAccessSelection | null) => void;
 };
 
 /**
  * The "give access to students" box on a saved course: hand the course to
  * students or groups for a chosen term, and see/undo who already holds it.
  */
-export function CourseAccessSection({ courseId }: CourseAccessSectionProps) {
+export function CourseAccessSection({
+  courseId,
+  onPendingChange
+}: CourseAccessSectionProps) {
   const { t } = useTranslation();
   const [students, setStudents] = useState<StudentAccessGrant[]>([]);
   const [groups, setGroups] = useState<GroupAccessGrant[]>([]);
@@ -96,10 +104,18 @@ export function CourseAccessSection({ courseId }: CourseAccessSectionProps) {
           <KeyRound className="h-4 w-4" />
           {t('accessGrants.title')}
         </CardTitle>
-        <CardDescription>{t('accessGrants.description')}</CardDescription>
+        <CardDescription>
+          {onPendingChange
+            ? t('accessGrants.stagedDescription')
+            : t('accessGrants.description')}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
-        <AssignAccessForm onSubmit={handleGrant} isSaving={isSaving} />
+        {onPendingChange ? (
+          <AssignAccessForm onSelectionChange={onPendingChange} />
+        ) : (
+          <AssignAccessForm onSubmit={handleGrant} isSaving={isSaving} />
+        )}
         <Separator />
         <AccessGrantList
           students={students}

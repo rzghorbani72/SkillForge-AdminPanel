@@ -1,6 +1,6 @@
 'use client';
 
-import { KeyRound, X } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -8,8 +8,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'react-toastify';
 import { accessGrantsApi } from '@/lib/api-extra';
 import { apiErrorMessage } from '@/lib/api-error-message';
@@ -21,19 +19,15 @@ import {
 } from './assign-access-form';
 
 type StagedAccessSectionProps = {
-  staged: AssignAccessSelection[];
-  onChange: (staged: AssignAccessSelection[]) => void;
+  onChange: (selection: AssignAccessSelection | null) => void;
 };
 
 /**
  * The same box on the create page, where there is no course to grant against
- * yet. Selections are held here and written by `applyStagedGrants` once the
- * course exists.
+ * yet. The selection is reported upward and written by `applyAccessSelection`
+ * once the course exists.
  */
-export function StagedAccessSection({
-  staged,
-  onChange
-}: StagedAccessSectionProps) {
+export function StagedAccessSection({ onChange }: StagedAccessSectionProps) {
   const { t } = useTranslation();
 
   return (
@@ -45,67 +39,24 @@ export function StagedAccessSection({
         </CardTitle>
         <CardDescription>{t('accessGrants.stagedDescription')}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <AssignAccessForm
-          onSubmit={(selection) => onChange([...staged, selection])}
-          submitLabel={t('accessGrants.addToList')}
-        />
-
-        {staged.length > 0 && (
-          <ul className="divide-y rounded-md border">
-            {staged.map((entry, index) => (
-              <li
-                key={`${index}-${entry.profile_ids.length}-${entry.group_ids.length}`}
-                className="flex items-center gap-3 p-3 text-sm"
-              >
-                <div className="min-w-0 flex-1">
-                  {t('accessGrants.stagedRow', {
-                    students: String(entry.profile_ids.length),
-                    groups: String(entry.group_ids.length)
-                  })}
-                </div>
-                <Badge variant="outline">
-                  {entry.duration.mode === 'forever'
-                    ? t('accessGrants.durationForever')
-                    : entry.duration.mode === 'days'
-                      ? t('accessGrants.dayCount', {
-                          count: String(entry.duration.days)
-                        })
-                      : t('accessGrants.durationUntil')}
-                </Badge>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  aria-label={t('common.remove')}
-                  onClick={() =>
-                    onChange(staged.filter((_, position) => position !== index))
-                  }
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
+      <CardContent>
+        <AssignAccessForm onSelectionChange={onChange} />
       </CardContent>
     </Card>
   );
 }
 
 /**
- * Writes the staged grants now that the course has an id. The course is already
- * saved at this point, so a failure here is reported without losing the course.
+ * Writes the chosen access now that the course is saved. The course itself is
+ * already stored at this point, so a failure here is reported without losing it.
  */
-export async function applyStagedGrants(
+export async function applyAccessSelection(
   courseId: string,
-  staged: AssignAccessSelection[]
+  selection: AssignAccessSelection | null
 ): Promise<void> {
-  if (staged.length === 0) return;
+  if (!selection) return;
   try {
-    for (const selection of staged) {
-      await accessGrantsApi.create({ course_ids: [courseId], ...selection });
-    }
+    await accessGrantsApi.create({ course_ids: [courseId], ...selection });
   } catch (error) {
     toast.error(apiErrorMessage(error, tNow('accessGrants.stagedFailed')));
   }

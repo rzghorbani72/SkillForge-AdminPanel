@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { ArrowLeft, Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,8 @@ import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
 import { CourseOffersSection } from './CourseOffersSection';
 import { CourseAccessSection } from '@/components/access/course-access-section';
+import { applyAccessSelection } from '@/components/access/staged-access-section';
+import type { AssignAccessSelection } from '@/components/access/assign-access-form';
 import { SaveStatusIndicator } from './SaveStatusIndicator';
 
 interface CourseFormPageProps {
@@ -53,9 +56,22 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     reorderLessons,
     togglePublish,
     retrySave,
-    saveAndExit,
+    saveNow,
     saveCover
   } = useCourseForm(courseId);
+
+  const [pendingAccess, setPendingAccess] =
+    useState<AssignAccessSelection | null>(null);
+
+  /**
+   * One Save for the whole page: the course first, then the access chosen in
+   * the box below, so the manager never has to submit that separately.
+   */
+  const saveAll = async () => {
+    if (!(await saveNow())) return;
+    await applyAccessSelection(courseId, pendingAccess);
+    router.push('/courses');
+  };
 
   if (!selectedAcademy) {
     return (
@@ -114,7 +130,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
           <Button
             type="button"
             disabled={isSaving}
-            onClick={() => void saveAndExit()}
+            onClick={() => void saveAll()}
             className="gap-2"
           >
             <Save className="h-4 w-4" />
@@ -211,7 +227,10 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
             <CourseOffersSection courseId={courseId} />
 
             {/* Hand the course to students/groups without a purchase */}
-            <CourseAccessSection courseId={courseId} />
+            <CourseAccessSection
+              courseId={courseId}
+              onPendingChange={setPendingAccess}
+            />
 
             {/* Footer actions */}
             <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-4 py-3">
@@ -228,7 +247,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
                 <Button
                   type="button"
                   disabled={isSaving}
-                  onClick={() => void saveAndExit()}
+                  onClick={() => void saveAll()}
                   className="gap-2"
                 >
                   <Save className="h-4 w-4" />
