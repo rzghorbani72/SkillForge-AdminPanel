@@ -29,6 +29,10 @@ import {
 } from '@/lib/ui-template/preview-url';
 import type { HeroPreviewContext } from '@/components/ui-template/hero-variant-picker';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
+import {
+  buildFullThemePayload,
+  type ThemeSyncState
+} from '@/lib/ui-template/theme-sync';
 import { useRelativeTime } from '@/lib/ui-template/use-relative-time';
 import {
   TemplateCustomizationSidebar,
@@ -144,6 +148,11 @@ export default function UITemplateSettingsPage() {
   >(() => {
     /* patched after declaration */
   });
+  // Same pattern: the message listener is registered before the debounced
+  // rebuild exists, so it reaches it through a ref.
+  const debouncedRebuildPreviewRef = useRef<() => void>(() => {
+    /* patched after declaration */
+  });
 
   // Tell the in-canvas preview which section is selected, so it shows the dashed
   // outline. `scroll` is true only when the user picked a section — a reload
@@ -181,6 +190,12 @@ export default function UITemplateSettingsPage() {
       // scrolling, so a save-triggered reload keeps the manager in place.
       if (data.type === 'ready') {
         postHighlight(selectedBlockIdRef.current, false);
+      }
+
+      // The preview could not patch an edit in place — rebuild it. Scroll and
+      // selection are preserved across the rebuild, so this stays unobtrusive.
+      if (data.type === 'needs-reload') {
+        debouncedRebuildPreviewRef.current();
       }
 
       if (data.type === 'select' && data.blockId) {
@@ -467,21 +482,21 @@ export default function UITemplateSettingsPage() {
   // Colour edits are debounced by 800ms, so a save clicked right after picking a
   // colour would snapshot the OLD one. Writing the full current style state here
   // makes the commit authoritative — a late debounce then writes the same values.
+  const themeState: ThemeSyncState = {
+    primaryColor,
+    fontFamily,
+    borderRadius,
+    shadow,
+    elementAnimation,
+    darkMode,
+    textDirection,
+    sectionSpacing,
+    containerWidth,
+    headingScale
+  };
+
   const flushStyleDraft = async () => {
-    await apiClient.saveThemeDraft({
-      ...buildThemeDraftFromPrimary(primaryColor, {
-        borderRadius,
-        shadow,
-        backgroundSvgPattern: ''
-      }),
-      dark_mode: darkMode,
-      element_animation_style: elementAnimation,
-      font_family: fontFamily,
-      text_direction: textDirection,
-      section_spacing: sectionSpacing,
-      container_width: containerWidth,
-      heading_scale: headingScale
-    });
+    await apiClient.saveThemeDraft(buildFullThemePayload(themeState));
   };
 
   const doSaveAsCopy = async (name: string) => {
@@ -541,7 +556,6 @@ export default function UITemplateSettingsPage() {
           backgroundSvgPattern: ''
         });
         await apiClient.saveThemeDraft({ ...payload, dark_mode: dm });
-        setRefreshKey((k) => k + 1);
         setLastSavedAt(Date.now());
       } catch (error) {
         ErrorHandler.handleApiError(error);
@@ -552,11 +566,13 @@ export default function UITemplateSettingsPage() {
     []
   );
 
+  // Content and ordering are already mirrored into the live preview by the
+  // sync-field / sync-order messages, so persisting must not reload the iframe.
+  // Only structural additions (a brand-new section) still need server HTML.
   const saveBlocksDraft = useCallback(async (blocks: UIBlockConfig[]) => {
     setIsSaving(true);
     try {
       await apiClient.saveUITemplateDraft({ blocks });
-      setRefreshKey((k) => k + 1);
       setLastSavedAt(Date.now());
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -564,6 +580,12 @@ export default function UITemplateSettingsPage() {
       setIsSaving(false);
     }
   }, []);
+
+  // The preview asks for this when an edit cannot be patched into the live DOM.
+  // Debounced so a burst of un-patchable fields costs one rebuild, not many.
+  const rebuildPreview = useCallback(() => setRefreshKey((k) => k + 1), []);
+  const debouncedRebuildPreview = useDebouncedCallback(rebuildPreview, 500);
+  debouncedRebuildPreviewRef.current = debouncedRebuildPreview;
 
   const debouncedSaveTheme = useDebouncedCallback(saveThemeDraft, 800);
   // 400ms gives fast preview refresh for discrete style/layout clicks while
@@ -613,32 +635,40 @@ export default function UITemplateSettingsPage() {
     [draftBlocks, debouncedSaveBlocks, debouncedFlushHistory]
   );
 
+  // Undo/redo can reverse any kind of edit at once, so the preview is rebuilt
+  // rather than patched — the one place a jump is still the honest behaviour.
+  const restoreBlocks = useCallback(
+    async (blocks: UIBlockConfig[]) => {
+      setDraftBlocks(blocks);
+      await saveBlocksDraft(blocks);
+      setRefreshKey((k) => k + 1);
+    },
+    [saveBlocksDraft]
+  );
+
   const undo = useCallback(() => {
     // An unfinished typing burst is the most recent step to reverse.
     if (pendingHistoryRef.current) {
       const prev = pendingHistoryRef.current;
       pendingHistoryRef.current = null;
       setFuture((f) => [...f, draftBlocks]);
-      setDraftBlocks(prev);
-      void saveBlocksDraft(prev);
+      void restoreBlocks(prev);
       return;
     }
     if (history.length === 0) return;
     const prev = history[history.length - 1];
     setHistory((h) => h.slice(0, -1));
     setFuture((f) => [...f, draftBlocks]);
-    setDraftBlocks(prev);
-    void saveBlocksDraft(prev);
-  }, [history, draftBlocks, saveBlocksDraft]);
+    void restoreBlocks(prev);
+  }, [history, draftBlocks, restoreBlocks]);
 
   const redo = useCallback(() => {
     if (future.length === 0) return;
     const nextState = future[future.length - 1];
     setFuture((f) => f.slice(0, -1));
     setHistory((h) => [...h, draftBlocks]);
-    setDraftBlocks(nextState);
-    void saveBlocksDraft(nextState);
-  }, [future, draftBlocks, saveBlocksDraft]);
+    void restoreBlocks(nextState);
+  }, [future, draftBlocks, restoreBlocks]);
 
   useEffect(() => {
     if (!selectedPreset) return;
@@ -659,63 +689,72 @@ export default function UITemplateSettingsPage() {
 
   // ── Customizer handlers ─────────────────────────────────────────────────────
 
+  // Every style control repaints the preview through this one path: push the
+  // full theme into the live document (CSS variables only — no navigation),
+  // then persist in the background. The preview derives the variables with the
+  // same function the server uses, so live and reloaded output are identical.
+  const applyStyle = (patch: Partial<ThemeSyncState>) => {
+    const next = { ...themeState, ...patch };
+    const payload = buildFullThemePayload(next);
+    previewIframeRef.current?.contentWindow?.postMessage(
+      {
+        source: 'template-admin',
+        type: 'sync-theme',
+        theme: payload,
+        direction: next.textDirection
+      },
+      '*'
+    );
+    return payload;
+  };
+
+  const persistStyle = (patch: Partial<ThemeSyncState>) => {
+    const payload = applyStyle(patch);
+    setIsSaving(true);
+    apiClient
+      .saveThemeDraft(payload)
+      .then(() => setLastSavedAt(Date.now()))
+      .catch((error) => ErrorHandler.handleApiError(error))
+      .finally(() => setIsSaving(false));
+  };
+
   const handleColorChange = (color: string) => {
     setPrimaryColor(color);
+    applyStyle({ primaryColor: color });
     debouncedSaveTheme(color, borderRadius, shadow, darkMode);
   };
 
   const handleBorderRadiusChange = (br: BorderRadius) => {
     setBorderRadius(br);
+    applyStyle({ borderRadius: br });
     debouncedSaveTheme(primaryColor, br, shadow, darkMode);
   };
 
   const handleShadowChange = (sh: Shadow) => {
     setShadow(sh);
+    applyStyle({ shadow: sh });
     debouncedSaveTheme(primaryColor, borderRadius, sh, darkMode);
   };
 
   const handleElementAnimationChange = (a: ElementAnimation) => {
     setElementAnimation(a);
-    setIsSaving(true);
-    apiClient
-      .saveThemeDraft({ element_animation_style: a })
-      .then(() => {
-        setRefreshKey((k) => k + 1);
-        setLastSavedAt(Date.now());
-      })
-      .catch((error) => ErrorHandler.handleApiError(error))
-      .finally(() => setIsSaving(false));
+    persistStyle({ elementAnimation: a });
   };
 
   const handleDarkModeChange = (dm: boolean | null) => {
     setDarkMode(dm);
+    applyStyle({ darkMode: dm });
     debouncedSaveTheme(primaryColor, borderRadius, shadow, dm);
   };
 
   const handleFontFamilyChange = (f: FontFamily) => {
     setFontFamily(f);
-    setIsSaving(true);
-    apiClient
-      .saveThemeDraft({ font_family: f })
-      .then(() => {
-        setRefreshKey((k) => k + 1);
-        setLastSavedAt(Date.now());
-      })
-      .catch((error) => ErrorHandler.handleApiError(error))
-      .finally(() => setIsSaving(false));
+    persistStyle({ fontFamily: f });
   };
 
   const handleTextDirectionChange = (d: TextDirection) => {
     setTextDirection(d);
-    setIsSaving(true);
-    apiClient
-      .saveThemeDraft({ text_direction: d })
-      .then(() => {
-        setRefreshKey((k) => k + 1);
-        setLastSavedAt(Date.now());
-      })
-      .catch((error) => ErrorHandler.handleApiError(error))
-      .finally(() => setIsSaving(false));
+    persistStyle({ textDirection: d });
   };
 
   const handleDesignSizeChange = (patch: {
@@ -726,18 +765,34 @@ export default function UITemplateSettingsPage() {
     if (patch.section_spacing) setSectionSpacing(patch.section_spacing);
     if (patch.container_width) setContainerWidth(patch.container_width);
     if (patch.heading_scale) setHeadingScale(patch.heading_scale);
-    setIsSaving(true);
-    apiClient
-      .saveThemeDraft(patch)
-      .then(() => {
-        setRefreshKey((k) => k + 1);
-        setLastSavedAt(Date.now());
-      })
-      .catch((error) => ErrorHandler.handleApiError(error))
-      .finally(() => setIsSaving(false));
+    persistStyle({
+      ...(patch.section_spacing
+        ? { sectionSpacing: patch.section_spacing }
+        : {}),
+      ...(patch.container_width
+        ? { containerWidth: patch.container_width }
+        : {}),
+      ...(patch.heading_scale ? { headingScale: patch.heading_scale } : {})
+    });
   };
 
-  const handleBlocksChange = (blocks: UIBlockConfig[]) => commitBlocks(blocks);
+  // Reorder / remove sections in the live document. The nodes are already
+  // rendered, so moving them beats re-fetching identical HTML.
+  const postOrder = (blocks: UIBlockConfig[]) => {
+    previewIframeRef.current?.contentWindow?.postMessage(
+      {
+        source: 'template-admin',
+        type: 'sync-order',
+        order: [...blocks].sort((a, b) => a.order - b.order).map((b) => b.id)
+      },
+      '*'
+    );
+  };
+
+  const handleBlocksChange = (blocks: UIBlockConfig[]) => {
+    postOrder(blocks);
+    commitBlocks(blocks);
+  };
 
   const handleBlockConfigChange = (
     blockId: string,
@@ -776,6 +831,7 @@ export default function UITemplateSettingsPage() {
       .sort((a, b) => a.order - b.order)
       .map((b, index) => ({ ...b, order: index + 1 }));
     setSelectedBlockId(null);
+    postOrder(next);
     commitBlocks(next);
   };
 
@@ -830,6 +886,8 @@ export default function UITemplateSettingsPage() {
           : b
       )
     );
+    // Background images are rendered server-side, not through sync-field.
+    setRefreshKey((k) => k + 1);
   };
 
   const handleReset = async () => {
@@ -854,6 +912,8 @@ export default function UITemplateSettingsPage() {
     setFuture([]);
     pendingHistoryRef.current = null;
     await saveBlocksDraft(selectedPreset.blocks);
+    // Reset restores the preset wholesale — too broad to patch node by node.
+    setRefreshKey((k) => k + 1);
   };
 
   // ── Save confirmation ───────────────────────────────────────────────────────
