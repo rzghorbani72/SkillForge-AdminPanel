@@ -208,13 +208,9 @@ export default function UITemplateSettingsPage() {
       }
 
       if (data.type === 'field-update' && data.blockId && data.fieldKey) {
-        const block = draftBlocksRef.current.find((b) => b.id === data.blockId);
-        if (block) {
-          handleBlockConfigChangeRef.current(data.blockId, {
-            ...(block.config ?? {}),
-            [data.fieldKey]: data.value ?? ''
-          });
-        }
+        handleBlockConfigChangeRef.current(data.blockId, {
+          [data.fieldKey]: data.value ?? ''
+        });
       }
     };
     window.addEventListener('message', onMessage);
@@ -820,15 +816,19 @@ export default function UITemplateSettingsPage() {
 
   const handleBlockConfigChange = (
     blockId: string,
-    config: Record<string, unknown>
+    patch: Record<string, unknown>
   ) => {
-    commitContent(
-      draftBlocks.map((b) => (b.id === blockId ? { ...b, config } : b))
-    );
+    // Merge onto the latest draft config so a stale sidebar snapshot cannot
+    // wipe `style` (gallery → classic fallback) or other concurrent edits.
+    const latest = draftBlocksRef.current;
+    const prev = latest.find((b) => b.id === blockId)?.config ?? {};
+    const config = { ...prev, ...patch };
+    const next = latest.map((b) => (b.id === blockId ? { ...b, config } : b));
+    commitContent(next);
+
     // Push each changed field to the preview instantly so the live text updates
     // without waiting for the full debounced save + iframe reload cycle.
-    const prev = draftBlocks.find((b) => b.id === blockId)?.config ?? {};
-    for (const [fieldKey, value] of Object.entries(config)) {
+    for (const [fieldKey, value] of Object.entries(patch)) {
       if (prev[fieldKey] !== value) {
         previewIframeRef.current?.contentWindow?.postMessage(
           {
@@ -841,6 +841,19 @@ export default function UITemplateSettingsPage() {
           '*'
         );
       }
+    }
+
+    // Media is server-rendered — persist then rebuild so the iframe never
+    // loads a draft that still lacks the new URL.
+    if (
+      'bgImage' in patch ||
+      'illustration' in patch ||
+      'backgroundImage' in patch
+    ) {
+      void (async () => {
+        await saveBlocksDraft(next);
+        setRefreshKey((k) => k + 1);
+      })();
     }
   };
   // Keep the ref in sync so the message handler (registered once) always calls
@@ -895,9 +908,24 @@ export default function UITemplateSettingsPage() {
   };
 
   const handleBannerImageChange = (url: string) => {
+    // Apply only to the selected hero/slideshow — never broadcast to every
+    // banner on the page (that made uploads look like they joined a "list").
+    const targetId =
+      selectedBlockId &&
+      draftBlocks.some(
+        (b) =>
+          b.id === selectedBlockId &&
+          (b.type === 'hero' || b.type === 'slideshow')
+      )
+        ? selectedBlockId
+        : draftBlocks.find((b) => b.type === 'hero' || b.type === 'slideshow')
+            ?.id;
+
+    if (!targetId) return;
+
     commitBlocks(
       draftBlocks.map((b) =>
-        b.type === 'hero' || b.type === 'slideshow'
+        b.id === targetId
           ? {
               ...b,
               config: {

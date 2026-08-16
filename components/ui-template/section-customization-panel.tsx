@@ -33,9 +33,17 @@ import {
   HeroVariantPicker,
   type HeroPreviewContext
 } from './hero-variant-picker';
+import { TEMPLATE_KEYS } from '@/constants/template-names';
 
 type Tab = 'content' | 'style' | 'layout';
 type HeroBgType = 'gradient' | 'solid' | 'image';
+
+function isGalleryHeroStyle(style: unknown): boolean {
+  return (
+    typeof style === 'string' &&
+    (TEMPLATE_KEYS as readonly string[]).includes(style)
+  );
+}
 
 export interface SectionEditorProps {
   block: UIBlockConfig | null;
@@ -81,8 +89,9 @@ export function SectionEditor({
 
   const schema = getSectionSchema(block.type);
   const cfg = block.config ?? {};
-  const set = (key: string, value: unknown) =>
-    onUpdate(block.id, { ...cfg, [key]: value });
+  // Patch only the changed keys — the page merges onto the latest draft config
+  // so a stale sidebar snapshot cannot wipe `style` (and fall back to classic).
+  const set = (key: string, value: unknown) => onUpdate(block.id, { [key]: value });
 
   const incomplete = isSectionIncomplete(block.type, cfg);
 
@@ -385,8 +394,122 @@ function StyleTab({
       </p>
     );
   }
+
+  // Gallery templates keep their own layout — only the visual slot is swappable.
+  // Classic bgType controls rewrite the hero into DefaultHero (full-bleed image).
+  if (block.type === 'hero' && isGalleryHeroStyle(cfg.style)) {
+    return (
+      <GalleryHeroMedia block={block} cfg={cfg} onUpdate={onUpdate} />
+    );
+  }
+
   return (
     <HeroBackground block={block} cfg={cfg} set={set} onUpdate={onUpdate} />
+  );
+}
+
+function GalleryHeroMedia({
+  block,
+  cfg,
+  onUpdate
+}: {
+  block: UIBlockConfig;
+  cfg: Record<string, unknown>;
+  onUpdate: (blockId: string, config: Record<string, unknown>) => void;
+}) {
+  const { t } = useTranslation();
+  const [isUploading, setIsUploading] = useState(false);
+  const current =
+    (typeof cfg.bgImage === 'string' && cfg.bgImage) ||
+    (typeof cfg.illustration === 'string' && cfg.illustration) ||
+    null;
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setIsUploading(true);
+      const result = await apiClient.uploadImage(file, {
+        title: 'Hero Media'
+      });
+      const raw = result as unknown as Record<string, unknown>;
+      const id =
+        (raw?.id as number | undefined) ??
+        ((raw?.data as Record<string, unknown>)?.id as number | undefined);
+      if (id) {
+        const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
+        // Only the media keys — never touch style / bgType (classic contract).
+        onUpdate(block.id, { bgImage: url, illustration: url });
+      }
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const clearMedia = () =>
+    onUpdate(block.id, { bgImage: null, illustration: null });
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-1">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+          {t('sitePreview.heroIllustration')}
+        </span>
+        <p className="text-[11px] leading-relaxed text-zinc-500">
+          {t('sitePreview.heroIllustrationHint')}
+        </p>
+      </div>
+
+      {current ? (
+        <div className="group relative overflow-hidden rounded-md border border-zinc-200">
+          <img
+            src={current}
+            alt=""
+            className="h-28 w-full object-cover"
+          />
+          <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+            <Upload className="ml-1 h-3.5 w-3.5" />
+            {isUploading
+              ? t('sitePreview.heroUploading')
+              : t('sitePreview.panelReplaceImage')}
+            <input
+              type="file"
+              accept="image/*,image/gif,image/webp"
+              className="hidden"
+              onChange={handleUpload}
+              disabled={isUploading}
+            />
+          </label>
+        </div>
+      ) : (
+        <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-zinc-300 py-6 text-xs text-zinc-600 transition-colors hover:border-blue-500 hover:text-blue-400">
+          <Upload className="h-4 w-4" />
+          {isUploading
+            ? t('sitePreview.heroUploading')
+            : t('sitePreview.heroUploadImage')}
+          <input
+            type="file"
+            accept="image/*,image/gif,image/webp"
+            className="hidden"
+            onChange={handleUpload}
+            disabled={isUploading}
+          />
+        </label>
+      )}
+
+      {current && (
+        <button
+          type="button"
+          onClick={clearMedia}
+          className="text-[11px] text-zinc-500 underline-offset-2 hover:text-zinc-800 hover:underline"
+        >
+          {t('sitePreview.heroNoIllustration')}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -419,7 +542,11 @@ function HeroBackground({
         ((raw?.data as Record<string, unknown>)?.id as number | undefined);
       if (id) {
         const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
-        onUpdate(block.id, { ...cfg, bgImage: url, bgType: 'image' });
+        onUpdate(block.id, {
+          bgImage: url,
+          backgroundImage: url,
+          bgType: 'image'
+        });
       }
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -451,7 +578,6 @@ function HeroBackground({
                 // to the primary blue so the preview immediately shows solid.
                 if (type === 'solid' && !cfg.bgColor) {
                   onUpdate(block.id, {
-                    ...cfg,
                     bgType: 'solid',
                     bgColor: '#3b82f6'
                   });

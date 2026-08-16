@@ -2280,7 +2280,7 @@ export const fa = {
     heroNoIllustrationLabel: 'هیچ',
     heroUploadCustom: 'آپلود تصویر سفارشی',
     heroIllustrationHint:
-      'PNG با پس‌زمینه شفاف توصیه می‌شود — آپلود جایگزین پیش‌تنظیم می‌شود',
+      'فقط تصویر همین طراحی را عوض می‌کند — طرح بنر به کلاسیک تغییر نمی‌کند',
     slideshowBanner: 'بنر (تک تصویر)',
     brandColorLabel: 'رنگ برند',
     brandColorHelper:

@@ -2537,7 +2537,7 @@ export const en = {
     heroNoIllustrationLabel: 'None',
     heroUploadCustom: 'Upload custom image',
     heroIllustrationHint:
-      'PNG with transparent background recommended — upload overrides preset',
+      'Replaces only the hero visual slot — keeps this design (does not switch to classic)',
     slideshowBanner: 'Banner (single image)',
     brandColorLabel: 'Brand Color',
     brandColorHelper:

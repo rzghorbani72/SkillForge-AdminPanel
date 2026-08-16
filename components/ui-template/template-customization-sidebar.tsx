@@ -222,6 +222,7 @@ export function TemplateCustomizationSidebar({
             containerWidth={containerWidth}
             headingScale={headingScale}
             blocks={blocks}
+            selectedBlockId={selectedBlockId}
             onColorChange={onColorChange}
             onFontFamilyChange={onFontFamilyChange}
             onBorderRadiusChange={onBorderRadiusChange}

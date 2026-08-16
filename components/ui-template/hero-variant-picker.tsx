@@ -4,21 +4,12 @@ import { Check } from 'lucide-react';
 import { SectionPreviewFrame } from './section-preview-frame';
 import { TEMPLATE_KEYS, getTemplateLabel } from '@/constants/template-names';
 
-// Visible design options for the hero. Each value maps to a `style` the
-// edusphere renderer understands; the labels are role-based (what the manager
-// sees), never the internal slug. Gallery template names come from the central
-// catalog so a rename lands in one place; the legacy styles below are older
-// variants kept for academies still published on them.
-const HERO_VARIANTS: { value: string; label: string }[] = [
-  ...TEMPLATE_KEYS.map((key) => ({ value: key, label: getTemplateLabel(key) })),
-  { value: 'default', label: 'کلاسیک' },
-  { value: 'expert', label: 'آکادمی تخصصی' },
-  { value: 'creator', label: 'سازنده' },
-  { value: 'social', label: 'اجتماعی' },
-  { value: 'community', label: 'انجمن' },
-  { value: 'studio', label: 'استودیو' },
-  { value: 'dark-programmer', label: 'تیره' }
-];
+// Exactly the seven platform gallery templates — nothing else belongs in the
+// sidebar banners list. Legacy HeroBlock styles still render if an old draft
+// has them, but managers can only pick from this catalog.
+const HERO_VARIANTS: { value: string; label: string }[] = TEMPLATE_KEYS.map(
+  (key) => ({ value: key, label: getTemplateLabel(key) })
+);
 
 export interface HeroPreviewContext {
   baseUrl: string;
@@ -33,16 +24,15 @@ interface HeroVariantPickerProps {
   preview: HeroPreviewContext;
 }
 
-// Zarla-style live design picker: a grid of real hero renders (the academy's
-// own theme + content, each forced into a different style). Clicking a card
-// applies that design instantly.
+// Live design picker: seven real hero renders (academy theme + content, each
+// forced into one platform template). Clicking a card applies that design.
 export function HeroVariantPicker({
   heroBlockId,
   value,
   onChange,
   preview
 }: HeroVariantPickerProps) {
-  const current = value || 'default';
+  const current = value;
 
   return (
     <div className="space-y-2">

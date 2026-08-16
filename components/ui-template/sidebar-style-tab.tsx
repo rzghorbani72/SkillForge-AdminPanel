@@ -9,6 +9,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { TEMPLATE_KEYS } from '@/constants/template-names';
 import type {
   BorderRadius,
   ElementAnimation,
@@ -21,6 +22,13 @@ import type {
 } from './sidebar-types';
 import { FONT_OPTIONS } from './sidebar-types';
 import { AccordionSection } from './sidebar-primitives';
+
+function isGalleryHeroStyle(style: unknown): boolean {
+  return (
+    typeof style === 'string' &&
+    (TEMPLATE_KEYS as readonly string[]).includes(style)
+  );
+}
 
 // Named palettes expose ONLY a primary color. Every other shade (accent,
 // background, contrast text) is derived by derivePaletteFromPrimary, so a
@@ -679,9 +687,11 @@ function DirectionSection({
 
 function BannerImageSection({
   blocks,
+  selectedBlockId,
   onBannerImageChange
 }: {
   blocks: UIBlockConfig[];
+  selectedBlockId?: string | null;
   onBannerImageChange: (url: string) => void;
 }) {
   const { t } = useTranslation();
@@ -689,11 +699,21 @@ function BannerImageSection({
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const heroBlock = blocks.find(
+  const heroBlocks = blocks.filter(
     (b) => b.type === 'hero' || b.type === 'slideshow'
   );
+  const heroBlock =
+    (selectedBlockId
+      ? heroBlocks.find((b) => b.id === selectedBlockId)
+      : undefined) ?? heroBlocks[0];
   const currentImage =
     (heroBlock?.config?.bgImage as string | undefined) ?? null;
+
+  // Gallery heroes own media in the section Style tab — do not offer the
+  // global banner list here (upload must stay on the selected design only).
+  if (heroBlock && isGalleryHeroStyle(heroBlock.config?.style)) {
+    return null;
+  }
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -829,6 +849,7 @@ export interface SidebarStyleTabProps {
     heading_scale?: HeadingScale;
   }) => void;
   onBannerImageChange: (url: string) => void;
+  selectedBlockId?: string | null;
 }
 
 export function SidebarStyleTab({
@@ -851,7 +872,8 @@ export function SidebarStyleTab({
   onDarkModeChange,
   onTextDirectionChange,
   onDesignSizeChange,
-  onBannerImageChange
+  onBannerImageChange,
+  selectedBlockId
 }: SidebarStyleTabProps) {
   return (
     <div>
@@ -888,6 +910,7 @@ export function SidebarStyleTab({
       />
       <BannerImageSection
         blocks={blocks}
+        selectedBlockId={selectedBlockId}
         onBannerImageChange={onBannerImageChange}
       />
     </div>
