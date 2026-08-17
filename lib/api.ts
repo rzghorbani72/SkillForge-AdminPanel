@@ -47,7 +47,10 @@ import {
   uploadFileParts,
   type DirectUploadTicket
 } from '@/lib/uploads/video-direct-upload';
-import { readVideoDurationSeconds } from '@/lib/video-duration';
+import {
+  readMediaDurationSeconds,
+  readVideoDurationSeconds
+} from '@/lib/media-duration';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -2525,6 +2528,11 @@ class ApiClient {
     if (metadata) {
       formData.append('title', metadata.title || file.name);
       formData.append('description', metadata.description || '');
+    }
+    // Measured here for the same reason video is: only the browser has the file.
+    const durationSeconds = await readMediaDurationSeconds(file, 'audio');
+    if (durationSeconds) {
+      formData.append('duration_seconds', String(durationSeconds));
     }
 
     return this.uploadFileWithProgress(

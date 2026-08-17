@@ -189,7 +189,11 @@ export function useCourseForm(courseId: string) {
             id: l.id,
             title: l.title,
             description: l.description ?? '',
-            duration: secondsToDuration(l.duration),
+            // The file's own stored length wins whenever the lesson never got
+            // one, so an old row shows the truth without re-measuring anything.
+            duration: secondsToDuration(
+              l.duration || l.Video?.duration || l.Audio?.duration
+            ),
             lesson_type: l.lesson_type ?? 'VIDEO',
             is_free: l.is_free,
             published: l.is_published,
