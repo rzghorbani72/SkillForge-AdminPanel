@@ -21,7 +21,9 @@ export const TEMPLATE_KEYS = [
   'rasadaneh',
   'raushan',
   'shabtab',
-  'sepid'
+  'sepid',
+  'hamrang',
+  'baran'
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -85,6 +87,16 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
     name: 'سپید',
     vertical: 'عمومی و چندمنظوره',
     tagline: 'ساده · متمرکز · بی‌آلایش'
+  },
+  hamrang: {
+    name: 'هم‌رنگ',
+    vertical: 'عمومی و چندمنظوره',
+    tagline: 'رنگی · پرانرژی · شاد'
+  },
+  baran: {
+    name: 'باران',
+    vertical: 'عمومی و چندمنظوره',
+    tagline: 'ملایم · آرام · مینیمال'
   }
 };
 
