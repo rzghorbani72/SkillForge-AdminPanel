@@ -1,6 +1,12 @@
 'use client';
 
-import { ChevronDown, ChevronRight, GripVertical, Trash2 } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  GripVertical,
+  Trash2
+} from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
@@ -8,7 +14,9 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { toPersianDigits } from '@/lib/phone-utils';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
+import { secondsToDuration, sumDurationSeconds } from './course-drafts';
 import { LessonList } from './LessonList';
 import { InlineConfirm } from './InlineConfirm';
 
@@ -88,6 +96,9 @@ export function SortableSeasonAccordion({
 
   const total = lessons.length;
   const ready = lessons.filter(isLessonComplete).length;
+  // Season length is never typed: it is the sum of what its lessons actually play.
+  const seasonSeconds = sumDurationSeconds(lessons);
+  const seasonLength = secondsToDuration(seasonSeconds);
   // The placeholder doubles as the season's name until one is typed, so the
   // heading never shows a number and an empty field saying the same thing.
   const fallbackTitle = t('courses.seasonNumber', {
@@ -121,6 +132,15 @@ export function SortableSeasonAccordion({
     >
       <div className="group flex items-center gap-3 px-3 py-2.5" dir="ltr">
         <div className="flex shrink-0 items-center gap-2">
+          {seasonSeconds > 0 && (
+            <span
+              className="inline-flex items-center gap-1 rounded-md border border-border/60 px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground"
+              title={t('courses.seasonLength')}
+            >
+              <Clock className="h-3 w-3" aria-hidden />
+              {language === 'fa' ? toPersianDigits(seasonLength) : seasonLength}
+            </span>
+          )}
           {total > 0 && (
             <span className="text-xs tabular-nums text-muted-foreground">
               {ready === total

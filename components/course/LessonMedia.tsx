@@ -22,6 +22,7 @@ import { pickFile } from '@/lib/file-picker';
 import { isVideoFileAcceptable } from '@/lib/validate-video-upload';
 import { VIDEO_CONSTRAINTS } from '@/constants/video-constraints';
 import type { LessonDraft, LessonType } from './useCourseForm';
+import { DEFAULT_DURATION, secondsToDuration } from './course-drafts';
 import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
 
 type SlotKey = 'video' | 'audio' | 'document';
@@ -256,6 +257,18 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     }
   }
 
+  /**
+   * The file itself is the only trustworthy source for how long a lesson runs,
+   * so the player reports its length as soon as the metadata is decoded — for a
+   * fresh upload (blob preview) and for an already-saved lesson alike.
+   */
+  function handleMediaMetadata(event: React.SyntheticEvent<HTMLMediaElement>) {
+    const seconds = event.currentTarget.duration;
+    if (!Number.isFinite(seconds) || seconds <= 0) return;
+    const measured = secondsToDuration(seconds);
+    if (measured !== lesson.duration) onUpdate({ duration: measured });
+  }
+
   const documentPreviewUrl = lesson.document_id
     ? `${getBrowserApiBaseUrl()}/files/preview/${lesson.document_id}`
     : null;
@@ -291,7 +304,9 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                 (data) =>
                   replacePreview('video', {
                     video_id: String(data.id),
-                    videoPreviewUrl: apiClient.getVideoStreamUrl(String(data.id))
+                    videoPreviewUrl: apiClient.getVideoStreamUrl(
+                      String(data.id)
+                    )
                   })
               );
             })();
@@ -310,6 +325,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   className="h-full w-full object-contain"
                   controls
                   preload="metadata"
+                  onLoadedMetadata={handleMediaMetadata}
                 />
                 {uploading.video && (
                   <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-center text-[10px] text-white">
@@ -324,7 +340,8 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                     blobRefs.current.video = null;
                     onUpdate({
                       video_id: undefined,
-                      videoPreviewUrl: undefined
+                      videoPreviewUrl: undefined,
+                      duration: DEFAULT_DURATION
                     });
                   }}
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
@@ -385,6 +402,8 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   key={lesson.audioPreviewUrl}
                   src={lesson.audioPreviewUrl}
                   controls
+                  preload="metadata"
+                  onLoadedMetadata={handleMediaMetadata}
                   className="h-8 w-full max-w-[11.5rem]"
                 />
                 {uploading.audio && (
@@ -400,7 +419,8 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                     blobRefs.current.audio = null;
                     onUpdate({
                       audio_id: undefined,
-                      audioPreviewUrl: undefined
+                      audioPreviewUrl: undefined,
+                      duration: DEFAULT_DURATION
                     });
                   }}
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"

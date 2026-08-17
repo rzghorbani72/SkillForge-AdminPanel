@@ -48,7 +48,7 @@ export interface SeasonDraft {
 let _keyCounter = 0;
 export const newKey = () => `k-${++_keyCounter}`;
 
-const DEFAULT_DURATION = '00:00';
+export const DEFAULT_DURATION = '00:00';
 
 /** mm:ss (or hh:mm:ss) → whole seconds. Bad input falls back to 0. */
 export function durationToSeconds(value: string): number {
@@ -59,12 +59,29 @@ export function durationToSeconds(value: string): number {
   return parts.reduce((acc, n) => acc * 60 + n, 0);
 }
 
-/** Whole seconds → mm:ss (zero-padded). */
+/** Whole seconds → mm:ss, or hh:mm:ss once it passes an hour (zero-padded). */
 export function secondsToDuration(total?: number | null): string {
   if (!total || total < 0) return DEFAULT_DURATION;
-  const mins = Math.floor(total / 60);
-  const secs = total % 60;
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  const whole = Math.round(total);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const hours = Math.floor(whole / 3600);
+  const mins = Math.floor((whole % 3600) / 60);
+  const secs = whole % 60;
+  return hours > 0
+    ? `${pad(hours)}:${pad(mins)}:${pad(secs)}`
+    : `${pad(mins)}:${pad(secs)}`;
+}
+
+/** Total playtime of a set of lessons, in whole seconds. */
+export function sumDurationSeconds(lessons: LessonDraft[]): number {
+  return lessons.reduce((total, l) => total + durationToSeconds(l.duration), 0);
+}
+
+/** True when the lesson's length is measured from a file instead of typed. */
+export function hasTimedMedia(lesson: LessonDraft): boolean {
+  if (lesson.lesson_type === 'VIDEO') return !!lesson.videoPreviewUrl;
+  if (lesson.lesson_type === 'AUDIO') return !!lesson.audioPreviewUrl;
+  return false;
 }
 
 /**

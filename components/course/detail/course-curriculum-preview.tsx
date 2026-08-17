@@ -36,7 +36,8 @@ const DOCUMENT_TYPE_FALLBACK: LessonTypeOption = {
     'border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300',
   chipActiveClass:
     'border-slate-600 bg-slate-600 text-white dark:border-slate-400 dark:bg-slate-500',
-  dropzoneClass: ''
+  dropzoneClass: '',
+  accentClass: ''
 };
 
 /**

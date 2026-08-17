@@ -1456,6 +1456,11 @@ export const en = {
     lessonTitle: 'Lesson',
     lessonDescription: 'Lesson description',
     lessonDuration: 'Duration (mm:ss)',
+    lessonDurationAuto: 'Measured automatically from the file',
+    lessonSectionContent: 'Lesson content',
+    lessonSectionDetails: 'Lesson details',
+    seasonLength: 'Season length',
+    courseLength: 'Total length',
     publishLessonTitleRequired: 'Every lesson needs a title before publishing.',
     publishEmptySeason:
       'Each season must have at least one lesson before publishing.',

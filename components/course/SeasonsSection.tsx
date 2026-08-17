@@ -13,13 +13,15 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { ChevronsDownUp, ChevronsUpDown, Plus } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { ChevronsDownUp, ChevronsUpDown, Clock, Plus } from 'lucide-react';
+import { useMemo, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
+import { toPersianDigits } from '@/lib/phone-utils';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
+import { secondsToDuration, sumDurationSeconds } from './course-drafts';
 import { SortableSeasonAccordion } from './SortableSeasonAccordion';
 
 interface SeasonsSectionProps {
@@ -60,8 +62,9 @@ export function SeasonsSection({
   onAssignLesson,
   onReorderLessons
 }: SeasonsSectionProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const seasonSensors = useSensors(useSensor(PointerSensor));
+  const courseSeconds = useMemo(() => sumDurationSeconds(lessons), [lessons]);
 
   // Track open state for every season by clientKey (true = open)
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
@@ -114,6 +117,16 @@ export function SeasonsSection({
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {courseSeconds > 0 && (
+            <span className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs tabular-nums text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" aria-hidden />
+              {t('courses.courseLength')}
+              {': '}
+              {language === 'fa'
+                ? toPersianDigits(secondsToDuration(courseSeconds))
+                : secondsToDuration(courseSeconds)}
+            </span>
+          )}
           {seasons.length > 1 && (
             <Button
               type="button"
