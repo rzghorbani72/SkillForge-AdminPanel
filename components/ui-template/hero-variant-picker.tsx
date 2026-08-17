@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 import { SectionPreviewFrame } from './section-preview-frame';
 import { TEMPLATE_KEYS, getTemplateLabel } from '@/constants/template-names';
 
-// Exactly the seven platform gallery templates — nothing else belongs in the
+// Exactly the platform gallery templates — nothing else belongs in the
 // sidebar banners list. Legacy HeroBlock styles still render if an old draft
 // has them, but managers can only pick from this catalog.
 const HERO_VARIANTS: { value: string; label: string }[] = TEMPLATE_KEYS.map(
@@ -24,7 +24,7 @@ interface HeroVariantPickerProps {
   preview: HeroPreviewContext;
 }
 
-// Live design picker: seven real hero renders (academy theme + content, each
+// Live design picker: real hero renders (academy theme + content, each
 // forced into one platform template). Clicking a card applies that design.
 export function HeroVariantPicker({
   heroBlockId,

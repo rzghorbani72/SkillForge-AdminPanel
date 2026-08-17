@@ -18,7 +18,10 @@ export const TEMPLATE_KEYS = [
   'tondak',
   'momas',
   'goftavard',
-  'rasadaneh'
+  'rasadaneh',
+  'raushan',
+  'shabtab',
+  'sepid'
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -67,6 +70,21 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
     name: 'سپهر',
     vertical: 'نجوم و علوم',
     tagline: 'نجوم · اطلس‌گونه · کاغذی'
+  },
+  raushan: {
+    name: 'روشن',
+    vertical: 'عمومی و چندمنظوره',
+    tagline: 'روشن · مینیمال · حرفه‌ای'
+  },
+  shabtab: {
+    name: 'شب‌تاب',
+    vertical: 'عمومی و چندمنظوره',
+    tagline: 'تیره · درخشان · مدرن'
+  },
+  sepid: {
+    name: 'سپید',
+    vertical: 'عمومی و چندمنظوره',
+    tagline: 'ساده · متمرکز · بی‌آلایش'
   }
 };
 
