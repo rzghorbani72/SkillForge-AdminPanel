@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
+import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
 import type { TutoringOffer } from '@/types/learning-operations';
 
 /**
@@ -10,9 +11,18 @@ import type { TutoringOffer } from '@/types/learning-operations';
  */
 export function useCourseTutoringOffers(courseId: string | undefined) {
   const [offers, setOffers] = useState<TutoringOffer[]>([]);
+  const { academyFeatures } = useLearningNavCapabilities();
+
+  // The endpoint 403s when the academy turned tutor-led learning off, so the
+  // call is skipped instead of firing a request that can only fail.
+  const tutorLedEnabled =
+    academyFeatures === null || academyFeatures.tutor_led_learning_enabled;
 
   useEffect(() => {
-    if (!courseId) return;
+    if (!courseId || !tutorLedEnabled) {
+      setOffers([]);
+      return;
+    }
     let cancelled = false;
     void apiClient
       .getTutoringOffers({ course_id: courseId })
@@ -25,7 +35,7 @@ export function useCourseTutoringOffers(courseId: string | undefined) {
     return () => {
       cancelled = true;
     };
-  }, [courseId]);
+  }, [courseId, tutorLedEnabled]);
 
   return offers;
 }
