@@ -24,7 +24,8 @@ export const TEMPLATE_KEYS = [
   'sepid',
   'hamrang',
   'baran',
-  'negatif'
+  'shafagh',
+  'nabz'
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -99,10 +100,15 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
     vertical: 'عمومی و چندمنظوره',
     tagline: 'ملایم · آرام · مینیمال'
   },
-  negatif: {
-    name: 'نگاتیو',
-    vertical: 'عکاسی و فیلم‌برداری',
-    tagline: 'آنالوگ · تاریک‌خانه‌ای · قاب‌بندی‌شده'
+  shafagh: {
+    name: 'شفق',
+    vertical: 'عکاسی و رسانهٔ بصری',
+    tagline: 'رنگی · گرم · گالری‌گونه'
+  },
+  nabz: {
+    name: 'نبض',
+    vertical: 'دیجیتال، رسانه و طراحی',
+    tagline: 'رنگی · مدرن · پرانرژی'
   }
 };
 
