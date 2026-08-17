@@ -237,6 +237,8 @@ export interface Course {
   short_description?: string;
   price: number;
   original_price?: number;
+  /** False = the course is not sold at its own price. */
+  base_price_active?: boolean;
   discount_percent?: number;
   is_free: boolean;
   is_published: boolean;
@@ -1032,8 +1034,12 @@ export interface Offer {
   slug: string | null;
   description: string | null;
   price: number;
+  /** Price before discount, shown struck through. Null = no discount shown. */
+  compare_at_price: number | null;
   currency: string;
   access_duration_days: number | null;
+  /** False sells the recorded course only — the buyer never sees the live link. */
+  includes_live: boolean;
   is_active: boolean;
   /** Set only on a PAYMENT_PLAN offer — the installment plan it charges through. */
   payment_plan_id: string | null;
@@ -1047,10 +1053,12 @@ export interface OfferInput {
   course_ids: string[];
   type: OfferingType;
   price?: number;
+  compare_at_price?: number | null;
   title?: string;
   slug?: string;
   description?: string;
   access_duration_days?: number | null;
+  includes_live?: boolean;
   is_active?: boolean;
   payment_plan_id?: string | null;
 }

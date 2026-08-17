@@ -70,11 +70,12 @@ export function useCourseForm(courseId: string) {
       title: '',
       description: '',
       primary_price: '0',
-      secondary_price: '0',
+      secondary_price: '',
       category_id: '',
       cover_id: '',
       published: false,
-      is_featured: false
+      is_featured: false,
+      base_price_active: true
     }
   });
 
@@ -97,11 +98,12 @@ export function useCourseForm(courseId: string) {
         title: data.title.trim(),
         description: data.description.trim(),
         primary_price: Number(data.primary_price),
-        secondary_price: Number(data.secondary_price),
+        secondary_price: Number(data.secondary_price) || 0,
         category_id: data.category_id || undefined,
         cover_id: coverId ? coverId : null,
         published: data.published,
         is_featured: data.is_featured,
+        base_price_active: data.base_price_active,
         seasons: curriculum.seasons.map((s, i) => ({
           id: s.id,
           client_key: s.clientKey,
@@ -154,11 +156,14 @@ export function useCourseForm(courseId: string) {
           title: course.title ?? '',
           description: course.description ?? '',
           primary_price: Math.trunc(course.price ?? 0).toString(),
-          secondary_price: Math.trunc(course.original_price ?? 0).toString(),
+          secondary_price: course.original_price
+            ? Math.trunc(course.original_price).toString()
+            : '',
           category_id: categoryId,
           cover_id: cover?.id ?? '',
           published: course.is_published ?? false,
-          is_featured: course.is_featured ?? false
+          is_featured: course.is_featured ?? false,
+          base_price_active: course.base_price_active ?? true
         };
         form.reset(loadedForm);
 

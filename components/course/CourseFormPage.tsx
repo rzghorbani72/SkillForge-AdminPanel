@@ -11,11 +11,11 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useRouter } from 'next/navigation';
 import { useCourseForm } from './useCourseForm';
 import CreateCourseBasicInfo from './CreateCourseBasicInfo';
-import CreateCoursePricing from './CreateCoursePricing';
+import CourseSettingsCard from './CourseSettingsCard';
 import CreateCourseAssociations from './CreateCourseAssociations';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
-import { CourseOffersSection } from './CourseOffersSection';
+import { CoursePricingSection } from './pricing/course-pricing-section';
 import { CourseAccessSection } from '@/components/access/course-access-section';
 import { applyAccessSelection } from '@/components/access/staged-access-section';
 import type { AssignAccessSelection } from '@/components/access/assign-access-form';
@@ -207,7 +207,9 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
               error={form.formState.errors.category_id?.message}
             />
 
-            <CreateCoursePricing form={form} />
+            <CoursePricingSection courseId={courseId} form={form} />
+
+            <CourseSettingsCard form={form} />
 
             <SeasonsSection
               seasons={seasons}
@@ -224,9 +226,6 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
               onAssignLesson={assignLesson}
               onReorderLessons={reorderLessons}
             />
-
-            {/* Multi-price offerings */}
-            <CourseOffersSection courseId={courseId} />
 
             {/* Hand the course to students/groups without a purchase */}
             <CourseAccessSection

@@ -1220,24 +1220,44 @@ export const fa = {
   },
   courses: {
     title: 'دوره‌ها',
-    offeringsTitle: 'روش‌های فروش دوره',
-    offeringsHint:
-      'این دوره را می‌توانید هم‌زمان با چند روش بفروشید — خرید یک‌باره، اشتراکی، خصوصی یا رایگان.',
+    pricingTitle: 'قیمت‌گذاری و روش‌های فروش',
+    pricingSectionHint:
+      'این دوره را می‌توانید هم‌زمان با چند روش بفروشید و برای هر روش قیمت جداگانه بگذارید.',
+    editSellingWay: 'ویرایش روش فروش',
+    sellingWayDialogHint: 'نوع فروش، قیمت و مدت دسترسی این روش را مشخص کنید.',
+    editBasePrice: 'ویرایش قیمت پایه دوره',
+    basePriceDialogHint:
+      'این قیمت روی خود دوره ذخیره می‌شود و با ذخیرهٔ صفحه اعمال می‌گردد.',
+    tutoringPricedElsewhere:
+      'تدریس خصوصی — از صفحهٔ تدریس خصوصی قیمت‌گذاری می‌شود',
+    openTutoringPage: 'رفتن به تدریس خصوصی',
+    includesLive: 'شامل کلاس آنلاین زنده',
+    includesLiveOnHint: 'خریدار به لینک کلاس زنده هم دسترسی دارد',
+    includesLiveOffHint: 'فقط ویدیوهای ضبط‌شده؛ لینک کلاس زنده داده نمی‌شود',
+    recordedOnly: 'فقط ضبط‌شده',
+    lastSellingWayLocked:
+      'این تنها راه ثبت‌نام است؛ برای حذف یا خاموش کردن آن، اول راه دیگری اضافه کنید یا دوره را از انتشار خارج کنید.',
+    accessAcademyLifetime: 'به مدت فعالیت آکادمی',
+    accessAcademyLifetimeHint:
+      'خالی بگذارید تا دسترسی به مدت فعالیت آکادمی باشد',
+    basePriceNotRemovable:
+      'قیمت پایه روی خود دوره ذخیره شده و حذف نمی‌شود؛ برای فروخته‌نشدن آن را خاموش کنید.',
+    allSellingWaysUsed: 'همهٔ روش‌های فروش برای این دوره تعریف شده‌اند',
+    salePrice: 'قیمت فروش',
+    priceBeforeDiscount: 'قیمت پیش از تخفیف',
+    priceBeforeDiscountHint: 'اختیاری — خط‌خورده نمایش داده می‌شود',
+    priceBeforeDiscountInvalid:
+      'قیمت پیش از تخفیف باید بیشتر از قیمت فروش باشد',
+    discountBadge: '{{percent}}٪ تخفیف',
     addOffering: 'افزودن روش فروش دوره',
     offeringType: 'نوع',
     offeringTypeHint:
       'خرید یک‌باره: یک‌بار پرداخت می‌کند و همیشه دسترسی دارد. اشتراکی: پرداخت دوره‌ای برای ادامه دسترسی. رایگان: بدون پرداخت ثبت‌نام می‌شود.',
-    offeringPrice: 'قیمت',
     offeringActive: 'فعال',
-    offeringActiveHint:
-      'وقتی خاموش باشد، این روش فروش از دید دانشجو مخفی می‌شود اما حذف نمی‌شود؛ هر زمان بخواهید می‌توانید دوباره روشنش کنید.',
     offerFromCoursePrice: 'قیمت خود دوره',
     offeringAccessDays: 'مدت دسترسی (روز)',
-    offeringAccessDaysHint: 'خالی بگذارید تا {{days}} روز شود',
     offeringAccessDaysValue: '{{days}} روز',
     offeringPriceRequired: 'برای روش فروش غیررایگان، قیمت را وارد کنید',
-    noOfferings:
-      'هنوز روش فروش دوره‌ای ندارید. یک روش فروش دوره اضافه کنید تا دانشجو بتواند دوره را بخرد.',
     offeringFREE: 'رایگان',
     offeringONE_TIME: 'خرید یک‌باره',
     offeringSUBSCRIPTION: 'اشتراکی',
@@ -1356,12 +1376,12 @@ export const fa = {
       titleMax: 'عنوان باید کمتر از ۸۰ کاراکتر باشد',
       descriptionRequired: 'توضیحات الزامی است',
       descriptionMax: 'توضیحات باید کمتر از ۴۰۰۰ کاراکتر باشد',
-      primaryPriceRequired: 'قیمت اصلی الزامی است',
-      primaryPriceWholeNumber: 'قیمت اصلی باید عدد صحیح باشد',
-      primaryPriceRange: 'قیمت اصلی باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد',
-      secondaryPriceRequired: 'قیمت دوم الزامی است',
-      secondaryPriceWholeNumber: 'قیمت دوم باید عدد صحیح باشد',
-      secondaryPriceRange: 'قیمت دوم باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد'
+      primaryPriceRequired: 'قیمت فروش الزامی است',
+      primaryPriceWholeNumber: 'قیمت فروش باید عدد صحیح باشد',
+      primaryPriceRange: 'قیمت فروش باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد',
+      beforeDiscountWholeNumber: 'قیمت پیش از تخفیف باید عدد صحیح باشد',
+      beforeDiscountRange: 'قیمت پیش از تخفیف باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد',
+      beforeDiscountTooLow: 'قیمت پیش از تخفیف باید بیشتر از قیمت فروش باشد'
     },
     enterCourseTitle: 'عنوان دوره را وارد کنید (حداقل ۵ کاراکتر)',
     titleLength: 'عنوان باید بین ۵ تا ۸۰ کاراکتر باشد',
@@ -1396,9 +1416,6 @@ export const fa = {
     uploadImageToPreview: 'برای انتخاب کلیک کنید یا تصویر را بکشید و رها کنید',
     uploadCoverImage: 'آپلود تصویر کاور',
     selectImageFirst: 'ابتدا یک تصویر انتخاب کنید',
-    pricing: 'قیمت‌گذاری',
-    primaryPrice: 'قیمت اصلی',
-    secondaryPrice: 'قیمت ثانویه',
     pricePlaceholder: '۰ (۰-۹۹۹،۹۹۹،۹۹۹)',
     enterWholeNumbers: 'اعداد صحیح بین ۰ تا ۹۹۹،۹۹۹،۹۹۹ وارد کنید',
     contentAssociations: 'ارتباطات محتوا',
@@ -1555,10 +1572,7 @@ export const fa = {
     noCategoriesMatch: 'دسته‌بندی‌ای مطابق با "{{term}}" یافت نشد',
     noCategoriesYet: 'هنوز دسته‌بندی‌ای ثبت نشده',
     removeCategoryAria: 'حذف {{name}}',
-    pricingHint: 'اعداد صحیح وارد کنید (۰ = رایگان)',
-    amount: 'مبلغ',
     toman: 'تومان',
-    shownCrossedOut: '(به‌صورت خط‌خورده نمایش داده می‌شود)',
     courseSettings: 'تنظیمات دوره',
     highlightedOnHomepage: 'در صفحه اصلی برجسته نمایش داده می‌شود',
     level: 'سطح',
@@ -4469,7 +4483,7 @@ export const fa = {
     certificate: 'گواهی پایان دوره',
     accessDuration: 'مدت دسترسی',
     daysCount: '{{count}} روز',
-    lifetimeAccess: 'دائمی',
+    lifetimeAccess: 'به مدت فعالیت آکادمی',
     createdAt: 'تاریخ ساخت',
     updatedAt: 'آخرین ویرایش'
   },

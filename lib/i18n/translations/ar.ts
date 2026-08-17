@@ -784,9 +784,9 @@ export const ar = {
       primaryPriceRequired: 'السعر الأساسي مطلوب',
       primaryPriceWholeNumber: 'يجب أن يكون السعر الأساسي رقمًا صحيحًا',
       primaryPriceRange: 'يجب أن يكون السعر الأساسي بين 0 و 999,999,999',
-      secondaryPriceRequired: 'السعر الثانوي مطلوب',
-      secondaryPriceWholeNumber: 'يجب أن يكون السعر الثانوي رقمًا صحيحًا',
-      secondaryPriceRange: 'يجب أن يكون السعر الثانوي بين 0 و 999,999,999'
+      beforeDiscountWholeNumber: 'يجب أن يكون السعر قبل الخصم رقمًا صحيحًا',
+      beforeDiscountRange: 'يجب أن يكون السعر قبل الخصم بين 0 و 999,999,999',
+      beforeDiscountTooLow: 'يجب أن يكون السعر قبل الخصم أعلى من سعر البيع'
     },
     enterCourseTitle: 'أدخل عنوان الدورة (5 أحرف على الأقل)',
     titleLength: 'يجب أن يكون العنوان بين 5 و 80 حرفاً',

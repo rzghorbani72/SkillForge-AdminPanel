@@ -1229,23 +1229,45 @@ export const en = {
   },
   courses: {
     title: 'Courses',
-    offeringsTitle: 'Pricing offerings',
-    offeringsHint:
-      'Sell this course through one or more offerings at once — one-time, subscription, private, or free.',
+    pricingTitle: 'Pricing & ways to sell',
+    pricingSectionHint:
+      'Sell this course several ways at once, each with its own price.',
+    editSellingWay: 'Edit selling way',
+    sellingWayDialogHint:
+      'Set how this way is sold, its price and its access term.',
+    editBasePrice: 'Edit base course price',
+    basePriceDialogHint:
+      'This price is stored on the course itself and applies when you save the page.',
+    tutoringPricedElsewhere: 'Private tutoring — priced on the tutoring page',
+    openTutoringPage: 'Open tutoring page',
+    includesLive: 'Includes the live class',
+    includesLiveOnHint: 'The buyer also gets the live class link',
+    includesLiveOffHint: 'Recorded videos only — no live class link',
+    recordedOnly: 'Recorded only',
+    lastSellingWayLocked:
+      'This is the only way to enrol. Add another way, or unpublish the course, before removing it.',
+    accessAcademyLifetime: 'As long as the academy is active',
+    accessAcademyLifetimeHint:
+      'Leave empty for access as long as the academy is active',
+    basePriceNotRemovable:
+      'The base price is stored on the course itself and cannot be deleted — switch it off to stop selling it.',
+    allSellingWaysUsed:
+      'Every way of selling is already set up for this course',
+    salePrice: 'Sale price',
+    priceBeforeDiscount: 'Price before discount',
+    priceBeforeDiscountHint: 'Optional — shown crossed out',
+    priceBeforeDiscountInvalid:
+      'Price before discount must be higher than the sale price',
+    discountBadge: '{{percent}}% off',
     addOffering: 'Add offering',
     offeringType: 'Type',
     offeringTypeHint:
       'One-time: pays once, keeps access forever. Subscription: recurring payment to keep access. Free: enrolls with no payment.',
-    offeringPrice: 'Price',
     offeringActive: 'Active',
-    offeringActiveHint:
-      'When off, this offering is hidden from students but not deleted — turn it back on anytime.',
     offerFromCoursePrice: 'The course own price',
     offeringAccessDays: 'Access (days)',
-    offeringAccessDaysHint: 'Leave blank for {{days}} days',
     offeringAccessDaysValue: '{{days}} days',
     offeringPriceRequired: 'Enter a price for this paid offering',
-    noOfferings: 'No offerings yet. Add one so students can buy this course.',
     offeringFREE: 'Free',
     offeringONE_TIME: 'One-time',
     offeringSUBSCRIPTION: 'Subscription',
@@ -1365,12 +1387,14 @@ export const en = {
       titleMax: 'Title must be less than 80 characters',
       descriptionRequired: 'Description is required',
       descriptionMax: 'Description must be less than 4,000 characters',
-      primaryPriceRequired: 'Primary price is required',
-      primaryPriceWholeNumber: 'Primary price must be a whole number',
-      primaryPriceRange: 'Primary price must be between 0 and 999,999,999',
-      secondaryPriceRequired: 'Secondary price is required',
-      secondaryPriceWholeNumber: 'Secondary price must be a whole number',
-      secondaryPriceRange: 'Secondary price must be between 0 and 999,999,999'
+      primaryPriceRequired: 'Sale price is required',
+      primaryPriceWholeNumber: 'Sale price must be a whole number',
+      primaryPriceRange: 'Sale price must be between 0 and 999,999,999',
+      beforeDiscountWholeNumber: 'Price before discount must be a whole number',
+      beforeDiscountRange:
+        'Price before discount must be between 0 and 999,999,999',
+      beforeDiscountTooLow:
+        'Price before discount must be higher than the sale price'
     },
     enterCourseTitle: 'Enter course title (min 5 characters)',
     titleLength: 'Title must be between 5 and 80 characters',
@@ -1404,9 +1428,6 @@ export const en = {
     uploadImageToPreview: 'Click to browse or drag an image here',
     uploadCoverImage: 'Upload Cover Image',
     selectImageFirst: 'Select an image first',
-    pricing: 'Pricing',
-    primaryPrice: 'Primary Price',
-    secondaryPrice: 'Secondary Price',
     pricePlaceholder: '0 (0-999,999,999)',
     enterWholeNumbers: 'Enter whole numbers between 0 and 999,999,999',
     contentAssociations: 'Content Associations',
@@ -1564,10 +1585,7 @@ export const en = {
     noCategoriesMatch: 'No categories match "{{term}}"',
     noCategoriesYet: 'No categories yet',
     removeCategoryAria: 'Remove {{name}}',
-    pricingHint: 'Enter whole numbers (0 = free)',
-    amount: 'Amount',
     toman: 'Toman',
-    shownCrossedOut: '(shown crossed out)',
     courseSettings: 'Course Settings',
     highlightedOnHomepage: 'Highlighted on the homepage',
     level: 'Level',
@@ -4471,12 +4489,12 @@ export const en = {
     videoNotSupported: 'Your browser does not support video playback',
     showLessonContent: 'Show content for {{title}}',
     hideLessonContent: 'Hide content for {{title}}',
-    comparePrice: 'Compare-at price',
+    comparePrice: 'Price before discount',
     discount: 'Discount',
     certificate: 'Certificate',
     accessDuration: 'Access duration',
     daysCount: '{{count}} days',
-    lifetimeAccess: 'Lifetime',
+    lifetimeAccess: 'As long as the academy is active',
     createdAt: 'Created',
     updatedAt: 'Last updated'
   },

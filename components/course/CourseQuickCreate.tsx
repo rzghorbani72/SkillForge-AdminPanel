@@ -23,14 +23,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
-import { COURSE_DESCRIPTION_MAX, courseFormSchema } from './schema';
+import { COURSE_DESCRIPTION_MAX, courseFormFields } from './schema';
 import {
   StagedAccessSection,
   applyAccessSelection
 } from '@/components/access/staged-access-section';
 import type { AssignAccessSelection } from '@/components/access/assign-access-form';
 
-const quickCreateSchema = courseFormSchema.pick({
+const quickCreateSchema = courseFormFields.pick({
   title: true,
   description: true
 });

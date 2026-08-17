@@ -802,9 +802,11 @@ export const tr = {
       primaryPriceRequired: 'Ana fiyat gereklidir',
       primaryPriceWholeNumber: 'Ana fiyat tam sayı olmalıdır',
       primaryPriceRange: 'Ana fiyat 0 ile 999.999.999 arasında olmalıdır',
-      secondaryPriceRequired: 'İkincil fiyat gereklidir',
-      secondaryPriceWholeNumber: 'İkincil fiyat tam sayı olmalıdır',
-      secondaryPriceRange: 'İkincil fiyat 0 ile 999.999.999 arasında olmalıdır'
+      beforeDiscountWholeNumber: 'İndirim öncesi fiyat tam sayı olmalıdır',
+      beforeDiscountRange:
+        'İndirim öncesi fiyat 0 ile 999.999.999 arasında olmalıdır',
+      beforeDiscountTooLow:
+        'İndirim öncesi fiyat, satış fiyatından yüksek olmalıdır'
     },
     enterCourseTitle: 'Kurs başlığını girin (en az 5 karakter)',
     titleLength: 'Başlık 5 ile 80 karakter arasında olmalıdır',

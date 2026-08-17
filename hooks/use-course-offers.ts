@@ -45,11 +45,11 @@ export function useCourseOffers(courseId: string | undefined) {
     [courseId, refresh]
   );
 
-  const toggleActive = useCallback(
-    async (offer: Offer) => {
+  const update = useCallback(
+    async (id: string, patch: Partial<OfferInput>) => {
       setIsSaving(true);
       try {
-        await apiClient.updateOffer(offer.id, { is_active: !offer.is_active });
+        await apiClient.updateOffer(id, patch);
         await refresh();
       } catch (e) {
         toast.error(apiErrorMessage(e, tNow('toasts.offerUpdateFailed')));
@@ -58,6 +58,11 @@ export function useCourseOffers(courseId: string | undefined) {
       }
     },
     [refresh]
+  );
+
+  const toggleActive = useCallback(
+    async (offer: Offer) => update(offer.id, { is_active: !offer.is_active }),
+    [update]
   );
 
   const remove = useCallback(
@@ -75,5 +80,14 @@ export function useCourseOffers(courseId: string | undefined) {
     [refresh]
   );
 
-  return { offers, isLoading, isSaving, refresh, create, toggleActive, remove };
+  return {
+    offers,
+    isLoading,
+    isSaving,
+    refresh,
+    create,
+    update,
+    toggleActive,
+    remove
+  };
 }

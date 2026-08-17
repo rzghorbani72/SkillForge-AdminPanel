@@ -1694,6 +1694,7 @@ class ApiClient {
       cover_id?: string | null;
       published?: boolean;
       is_featured?: boolean;
+      base_price_active?: boolean;
       access_duration_days?: number;
       seasons: Array<{
         id?: string;

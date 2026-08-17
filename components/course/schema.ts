@@ -5,7 +5,7 @@ import * as z from 'zod';
 export const COURSE_TITLE_MAX = 80;
 export const COURSE_DESCRIPTION_MAX = 4000;
 
-export const courseFormSchema = z.object({
+export const courseFormFields = z.object({
   title: z
     .string()
     .min(5, 'courses.errors.titleMin')
@@ -25,24 +25,42 @@ export const courseFormSchema = z.object({
       const num = Number(val);
       return !isNaN(num) && num >= 0 && num <= 999999999;
     }, 'courses.errors.primaryPriceRange'),
+  // Optional: empty means the course is not advertised as discounted.
   secondary_price: z
     .string()
-    .min(1, 'courses.errors.secondaryPriceRequired')
     .refine(
-      (val) => /^\d+$/.test(val.trim()),
-      'courses.errors.secondaryPriceWholeNumber'
+      (val) => val.trim() === '' || /^\d+$/.test(val.trim()),
+      'courses.errors.beforeDiscountWholeNumber'
     )
     .refine((val) => {
+      if (val.trim() === '') return true;
       const num = Number(val);
       return !isNaN(num) && num >= 0 && num <= 999999999;
-    }, 'courses.errors.secondaryPriceRange'),
+    }, 'courses.errors.beforeDiscountRange'),
   category_id: z.string().optional(),
   season_id: z.string().optional(),
   audio_id: z.string().optional(),
   video_id: z.string().optional(),
   cover_id: z.string().optional(),
   published: z.boolean().default(false),
-  is_featured: z.boolean().default(false)
+  is_featured: z.boolean().default(false),
+  // False = the course is not sold at its own price; another selling way carries it.
+  base_price_active: z.boolean().default(true)
 });
 
-export type CourseFormData = z.infer<typeof courseFormSchema>;
+// A "before discount" price must sit above the price actually charged, or it
+// would advertise a discount that is not real.
+export const courseFormSchema = courseFormFields.superRefine((data, ctx) => {
+  if (
+    data.secondary_price.trim() !== '' &&
+    Number(data.secondary_price) <= Number(data.primary_price)
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['secondary_price'],
+      message: 'courses.errors.beforeDiscountTooLow'
+    });
+  }
+});
+
+export type CourseFormData = z.infer<typeof courseFormFields>;
