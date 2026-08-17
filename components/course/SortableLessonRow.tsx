@@ -20,7 +20,11 @@ import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { LESSON_DESCRIPTION_MAX } from '@/components/lesson/schema';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
-import { DEFAULT_DURATION, clearIncompatibleMedia } from './course-drafts';
+import {
+  DEFAULT_DURATION,
+  clearIncompatibleMedia,
+  isTimedLessonType
+} from './course-drafts';
 import { LessonMedia, LESSON_MEDIA_SLOT_CLASS } from './LessonMedia';
 import { InlineConfirm } from './InlineConfirm';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
@@ -42,14 +46,12 @@ function patchForType(
   lesson: LessonDraft,
   type: LessonDraft['lesson_type']
 ): Partial<LessonDraft> {
-  const hadMeasuredLength =
-    lesson.lesson_type === 'VIDEO' || lesson.lesson_type === 'AUDIO';
+  const losesItsLength =
+    isTimedLessonType(lesson.lesson_type) && type !== lesson.lesson_type;
   return {
     lesson_type: type,
     ...clearIncompatibleMedia(type),
-    ...(hadMeasuredLength && type !== lesson.lesson_type
-      ? { duration: DEFAULT_DURATION }
-      : {})
+    ...(losesItsLength ? { duration: DEFAULT_DURATION } : {})
   };
 }
 
@@ -343,10 +345,12 @@ export function SortableLessonRow({
 
             {/* Length + season — compact controls, not full-bleed */}
             <div className="flex flex-wrap items-start gap-4">
-              <LessonDurationField
-                lesson={lesson}
-                onChange={(duration) => onUpdate({ duration })}
-              />
+              {isTimedLessonType(lesson.lesson_type) && (
+                <LessonDurationField
+                  lesson={lesson}
+                  onChange={(duration) => onUpdate({ duration })}
+                />
+              )}
 
               {seasons.length > 0 && (
                 <div className="w-full max-w-[14rem] space-y-1">

@@ -77,6 +77,11 @@ export function sumDurationSeconds(lessons: LessonDraft[]): number {
   return lessons.reduce((total, l) => total + durationToSeconds(l.duration), 0);
 }
 
+/** Only lessons that play have a length — a text or quiz lesson has none. */
+export function isTimedLessonType(type: LessonType): boolean {
+  return type === 'VIDEO' || type === 'AUDIO';
+}
+
 /** True when the lesson's length is measured from a file instead of typed. */
 export function hasTimedMedia(lesson: LessonDraft): boolean {
   if (lesson.lesson_type === 'VIDEO') return !!lesson.videoPreviewUrl;
