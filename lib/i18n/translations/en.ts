@@ -4829,6 +4829,7 @@ export const en = {
       'Choose a section type below, then pick a design from the library.',
     chooseBlockType: 'Section type',
     removeEmptySlot: 'Remove empty slot',
+    revertToPrevious: 'Restore "{{type}}"',
     moreAppearance: 'More appearance',
     toolbarHide: 'Hide',
     toolbarDelete: 'Delete',

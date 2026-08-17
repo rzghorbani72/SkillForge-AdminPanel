@@ -201,12 +201,18 @@ export default function UITemplateSettingsPage() {
         fieldKey?: string;
         value?: string;
         restore?: boolean;
+        restoreKey?: string;
         action?: string;
         fileName?: string;
         mimeType?: string;
         buffer?: ArrayBuffer;
+        message?: string;
       };
       if (data?.source !== 'template-editor') return;
+
+      if (data.type === 'media-error' && data.message) {
+        ErrorHandler.showError(data.message);
+      }
 
       // Preview finished (re)hydrating — restore the selection ring without
       // scrolling, so a save-triggered reload keeps the manager in place.
@@ -264,8 +270,11 @@ export default function UITemplateSettingsPage() {
                 | undefined);
             if (!id) return;
             const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
+            // "Restore with photo": land the visibility flag and the uploaded
+            // URL in the same patch, so this is the slot's only reload.
             handleBlockConfigChangeRef.current(data.blockId!, {
-              [data.fieldKey!]: url
+              [data.fieldKey!]: url,
+              ...(data.restoreKey ? { [data.restoreKey]: true } : {})
             });
           } catch (error) {
             ErrorHandler.handleApiError(error);

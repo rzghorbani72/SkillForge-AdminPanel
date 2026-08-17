@@ -11,7 +11,8 @@ import {
   Eye,
   Upload,
   MousePointerClick,
-  Info
+  Info,
+  Undo2
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -28,7 +29,8 @@ import {
   HeroVariantPicker,
   type HeroPreviewContext
 } from './hero-variant-picker';
-import { BlockTypePicker } from './block-type-picker';
+import { BlockTypePicker, blockTypeLabelKey } from './block-type-picker';
+import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
 import { TEMPLATE_KEYS } from '@/constants/template-names';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
@@ -79,11 +81,18 @@ export function SectionEditor({
   if (!block) return null;
 
   const isPlaceholder = block.type === 'placeholder';
-
   const schema = getSectionSchema(block.type);
   const cfg = block.config ?? {};
   const set = (key: string, value: unknown) =>
     onUpdate(block.id, { [key]: value });
+  // Set by handleBlockDelete: what this slot used to be, so a shortcut can
+  // skip straight to that type's design library instead of the full grid.
+  const previousType =
+    isPlaceholder &&
+    typeof cfg.previousType === 'string' &&
+    (ADDABLE_SECTION_TYPES as readonly string[]).includes(cfg.previousType)
+      ? (cfg.previousType as string)
+      : null;
   const incomplete = isSectionIncomplete(block.type, cfg);
   const isVisible = block.isVisible !== false;
   const isGalleryHero = block.type === 'hero' && isGalleryHeroStyle(cfg.style);
@@ -117,6 +126,18 @@ export function SectionEditor({
             <p className="text-xs leading-relaxed text-zinc-600">
               {t('sitePreview.emptySlotHint')}
             </p>
+            {onPickBlockType && previousType && (
+              <button
+                type="button"
+                onClick={() => onPickBlockType(block.id, previousType)}
+                className="mt-3 flex w-full items-center gap-2 rounded-lg border border-blue-300 bg-blue-50 px-3 py-2.5 text-right text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
+              >
+                <Undo2 className="h-3.5 w-3.5 shrink-0" />
+                {t('sitePreview.revertToPrevious', {
+                  type: t(blockTypeLabelKey(previousType)) || previousType
+                })}
+              </button>
+            )}
             {onPickBlockType && (
               <BlockTypePicker
                 onSelect={(type) => onPickBlockType(block.id, type)}

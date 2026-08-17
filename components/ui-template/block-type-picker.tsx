@@ -33,19 +33,22 @@ interface BlockTypePickerProps {
   onSelect: (type: string) => void;
 }
 
+/** Translation key for a block type's display name, e.g. 'hero' -> 'sitePreview.blockHero'. */
+export function blockTypeLabelKey(type: string): string {
+  return (
+    'sitePreview.block' +
+    type
+      .split('-')
+      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+      .join('')
+  );
+}
+
 /** Grid of section types shown when an empty placeholder slot is selected. */
 export function BlockTypePicker({ onSelect }: BlockTypePickerProps) {
   const { t } = useTranslation();
 
-  const blockLabel = (type: string) => {
-    const key =
-      'sitePreview.block' +
-      type
-        .split('-')
-        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-        .join('');
-    return t(key) || type;
-  };
+  const blockLabel = (type: string) => t(blockTypeLabelKey(type)) || type;
 
   return (
     <div className="mt-4 space-y-3">
