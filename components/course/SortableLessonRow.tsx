@@ -23,6 +23,7 @@ import type { LessonDraft, SeasonDraft } from './useCourseForm';
 import {
   DEFAULT_DURATION,
   clearIncompatibleMedia,
+  hasTimedMedia,
   isTimedLessonType
 } from './course-drafts';
 import { LessonMedia, LESSON_MEDIA_SLOT_CLASS } from './LessonMedia';
@@ -345,7 +346,7 @@ export function SortableLessonRow({
 
             {/* Length + season — compact controls, not full-bleed */}
             <div className="flex flex-wrap items-start gap-4">
-              {isTimedLessonType(lesson.lesson_type) && (
+              {hasTimedMedia(lesson) && (
                 <LessonDurationField
                   lesson={lesson}
                   onChange={(duration) => onUpdate({ duration })}

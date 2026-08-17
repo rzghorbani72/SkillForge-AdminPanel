@@ -82,10 +82,13 @@ export function isTimedLessonType(type: LessonType): boolean {
   return type === 'VIDEO' || type === 'AUDIO';
 }
 
-/** True when the lesson's length is measured from a file instead of typed. */
+/**
+ * True once a playable file is really attached — the id only exists after the
+ * upload finished, so a lesson mid-upload (or with none) has no length to show.
+ */
 export function hasTimedMedia(lesson: LessonDraft): boolean {
-  if (lesson.lesson_type === 'VIDEO') return !!lesson.videoPreviewUrl;
-  if (lesson.lesson_type === 'AUDIO') return !!lesson.audioPreviewUrl;
+  if (lesson.lesson_type === 'VIDEO') return !!lesson.video_id;
+  if (lesson.lesson_type === 'AUDIO') return !!lesson.audio_id;
   return false;
 }
 
