@@ -487,12 +487,12 @@ export default function UITemplateSettingsPage() {
 
   // Field → recommended preset, mirrors Backend FIELD_CONTENT.recommendedPreset.
   const FIELD_PRESET: Record<AcademyField, string> = {
-    language: 'goftavard',
-    exam: 'momas',
-    coding: 'sohail',
-    arts: 'havan',
-    business: 'setigh',
-    general: 'rasadaneh'
+    language: 'zabaneh',
+    exam: 'nokhbeh',
+    coding: 'keyhan',
+    arts: 'dastan',
+    business: 'tavan',
+    general: 'bikaran'
   };
 
   const handleGenerate = async (field: AcademyField) => {

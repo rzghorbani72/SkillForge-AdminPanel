@@ -25,13 +25,13 @@ export function resolveTemplateColors(preset: TemplatePreset) {
 export type TemplateCategory = 'minimal' | 'creative' | 'professional' | 'dark';
 
 const CATEGORY_BY_ID: Record<string, TemplateCategory> = {
-  sohail: 'dark',
-  setigh: 'dark',
-  havan: 'creative',
-  tondak: 'creative',
-  momas: 'minimal',
-  goftavard: 'minimal',
-  rasadaneh: 'professional'
+  keyhan: 'dark',
+  tavan: 'dark',
+  dastan: 'creative',
+  parastoo: 'creative',
+  nokhbeh: 'minimal',
+  zabaneh: 'minimal',
+  bikaran: 'professional'
 };
 
 // PUBLIC presets map to a known catalog category; until the API returns one,

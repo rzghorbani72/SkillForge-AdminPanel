@@ -48,7 +48,7 @@ type DesignSystemVisuals = Omit<DesignSystem, 'name' | 'tagline'>;
 // Visual tokens only — the manager-facing name/tagline live in the central
 // template catalog and are merged in by getDesignSystem.
 export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
-  sohail: {
+  keyhan: {
     colors: {
       primary: '#0e7f76',
       secondary: '#0d1322',
@@ -62,7 +62,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     darkMode: null
   },
-  setigh: {
+  tavan: {
     colors: {
       primary: '#9bd213',
       secondary: '#0a0f0d',
@@ -76,7 +76,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     shape: { borderRadius: 'sharp', shadow: 'medium' },
     darkMode: null
   },
-  havan: {
+  dastan: {
     colors: {
       primary: '#b4441c',
       secondary: '#2e1a10',
@@ -90,7 +90,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     darkMode: null
   },
-  tondak: {
+  parastoo: {
     colors: {
       primary: '#ff5a1f',
       secondary: '#0f3138',
@@ -104,7 +104,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     darkMode: null
   },
-  momas: {
+  nokhbeh: {
     colors: {
       primary: '#1e4fa3',
       secondary: '#12161b',
@@ -118,7 +118,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     darkMode: null
   },
-  goftavard: {
+  zabaneh: {
     colors: {
       primary: '#1b3fd1',
       secondary: '#07101e',
@@ -132,7 +132,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     shape: { borderRadius: 'soft', shadow: 'subtle' },
     darkMode: null
   },
-  rasadaneh: {
+  bikaran: {
     colors: {
       primary: '#b5601f',
       secondary: '#0e1a20',

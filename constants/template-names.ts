@@ -12,20 +12,20 @@
  */
 
 export const TEMPLATE_KEYS = [
-  'sohail',
-  'setigh',
-  'havan',
-  'tondak',
-  'momas',
-  'goftavard',
-  'rasadaneh',
+  'keyhan',
+  'tavan',
+  'dastan',
+  'parastoo',
+  'nokhbeh',
+  'zabaneh',
+  'bikaran',
   'raushan',
   'shabtab',
   'sepid',
   'hamrang',
   'baran',
   'shafagh',
-  'nabz'
+  'elektron'
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -40,38 +40,38 @@ export interface TemplateIdentity {
 }
 
 export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
-  sohail: {
-    name: 'کهکشان',
+  keyhan: {
+    name: 'کیهان',
     vertical: 'علمی و فنی',
     tagline: 'علمی · رصدی · تیره'
   },
-  setigh: {
-    name: 'اوج',
+  tavan: {
+    name: 'توان',
     vertical: 'ورزشی و مهارتی',
     tagline: 'پرانرژی · مهارتی · داده‌محور'
   },
-  havan: {
-    name: 'زعفران',
+  dastan: {
+    name: 'دستان',
     vertical: 'کارگاهی و هنری',
     tagline: 'گرم · کارگاهی · کلاسیک'
   },
-  tondak: {
-    name: 'شکوفا',
+  parastoo: {
+    name: 'پرستو',
     vertical: 'کودک و نوجوان',
     tagline: 'شاد · کودک‌پسند · رنگی'
   },
-  momas: {
-    name: 'پیشرو',
+  nokhbeh: {
+    name: 'نخبه',
     vertical: 'درسی و کنکور',
     tagline: 'درسی · کنکور · دقیق'
   },
-  goftavard: {
-    name: 'هم‌کلام',
+  zabaneh: {
+    name: 'زبانه',
     vertical: 'آموزش زبان',
     tagline: 'زبان · گفت‌وگومحور · روشن'
   },
-  rasadaneh: {
-    name: 'سپهر',
+  bikaran: {
+    name: 'بی‌کران',
     vertical: 'نجوم و علوم',
     tagline: 'نجوم · اطلس‌گونه · کاغذی'
   },
@@ -105,8 +105,8 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
     vertical: 'عکاسی و رسانهٔ بصری',
     tagline: 'رنگی · گرم · گالری‌گونه'
   },
-  nabz: {
-    name: 'نبض',
+  elektron: {
+    name: 'الکترون',
     vertical: 'دیجیتال، رسانه و طراحی',
     tagline: 'رنگی · مدرن · پرانرژی'
   }
