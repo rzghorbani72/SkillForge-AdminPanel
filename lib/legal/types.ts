@@ -3,7 +3,8 @@ export type LegalDocType =
   | 'PRIVACY'
   | 'REFUND'
   | 'ACADEMY_AGREEMENT'
-  | 'STAFF_TERMS';
+  | 'STAFF_TERMS'
+  | 'ACCEPTABLE_USE';
 
 export type LegalDocument = {
   id: string;
