@@ -9,6 +9,7 @@ import { isPlatformStaff } from '@/lib/roles';
 import { apiClient } from '@/lib/api';
 import { logger } from '@/lib/logging/app-logger';
 import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
+import { useLegalConsentPending } from '@/components/legal/legal-consent-gate';
 import { CreateAcademyBanner } from './create-academy-banner';
 import { useCreateFirstAcademy } from './use-create-first-academy';
 
@@ -25,6 +26,7 @@ export function AcademyOnboarding() {
   const { academies, isLoading } = useStore();
   const { user } = useAuthUser();
   const { submit } = useCreateFirstAcademy();
+  const legalConsentPending = useLegalConsentPending();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogHandled, setDialogHandled] = useState(false);
 
@@ -32,7 +34,10 @@ export function AcademyOnboarding() {
   const isStaff = isPlatformStaff(user);
   const canOpenAcademy =
     hasNoAcademy && !isStaff && user?.isSelfRegisteredManager === true;
-  const showFirstTimeDialog = canOpenAcademy && !user?.onboardingSeen;
+  // The legal modal wins: while it is open the API is paused anyway, so opening
+  // the onboarding dialog would only stack a second modal and burn the one shot.
+  const showFirstTimeDialog =
+    canOpenAcademy && !user?.onboardingSeen && !legalConsentPending;
 
   useEffect(() => {
     if (!showFirstTimeDialog || dialogHandled) return;
@@ -54,7 +59,7 @@ export function AcademyOnboarding() {
   return (
     <>
       <CreateAcademyBanner onCreate={() => setDialogOpen(true)} t={t} />
-      {dialogOpen && (
+      {dialogOpen && !legalConsentPending && (
         <AcademyCreateModal
           open
           onClose={() => setDialogOpen(false)}

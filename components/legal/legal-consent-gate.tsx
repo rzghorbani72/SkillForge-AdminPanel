@@ -1,6 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import Link from '@/components/ui/link';
 import { Loader2 } from 'lucide-react';
 import {
@@ -45,6 +51,16 @@ function isPendingList(value: unknown): value is PendingLegalDocument[] {
         typeof (item as PendingLegalDocument).version === 'string'
     )
   );
+}
+
+const LegalConsentPendingContext = createContext(false);
+
+/**
+ * True while the legal re-consent modal is on screen. Anything that opens its
+ * own dialog must wait, so the user never faces two stacked modals.
+ */
+export function useLegalConsentPending(): boolean {
+  return useContext(LegalConsentPendingContext);
 }
 
 export function LegalConsentGate({ children }: { children: React.ReactNode }) {
@@ -153,14 +169,20 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
   }
 
   if (!user || pending === null || pending.length === 0) {
-    return <>{children}</>;
+    return (
+      <LegalConsentPendingContext.Provider value={false}>
+        {children}
+      </LegalConsentPendingContext.Provider>
+    );
   }
 
   return (
     <>
       {/* Dashboard renders behind the gate — API calls stay paused until acceptance,
           so this is just the frozen last-known UI showing through the glass. */}
-      {children}
+      <LegalConsentPendingContext.Provider value>
+        {children}
+      </LegalConsentPendingContext.Provider>
 
       <Dialog open>
         <DialogContent
