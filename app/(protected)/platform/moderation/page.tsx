@@ -23,6 +23,7 @@ import { ReviewQueueTable } from '@/components/compliance/review-queue-table';
 import { ReviewActionDialog } from '@/components/compliance/review-action-dialog';
 import { ModerationDefaultsCard } from '@/components/compliance/moderation-defaults-card';
 import { ContentQueueCard } from '@/components/compliance/content-queue-card';
+import { AbuseReportsCard } from '@/components/compliance/abuse-reports-card';
 import { AcademyComplianceDialog } from '@/components/compliance/academy-compliance-dialog';
 import {
   CONTENT_REVIEW_STATUS,
@@ -200,6 +201,8 @@ export default function PlatformModerationPage() {
         onClose={() => setManaging(null)}
         onChanged={load}
       />
+
+      <AbuseReportsCard />
 
       <ContentQueueCard />
 

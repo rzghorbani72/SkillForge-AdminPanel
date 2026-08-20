@@ -92,3 +92,27 @@ export type ContentQueueItem = {
   created_at: string;
   keyword_hits: string[];
 };
+
+export const ABUSE_STATUS = {
+  OPEN: 'OPEN',
+  REVIEWING: 'REVIEWING',
+  ACTIONED: 'ACTIONED',
+  DISMISSED: 'DISMISSED'
+} as const;
+
+export type AbuseStatus = (typeof ABUSE_STATUS)[keyof typeof ABUSE_STATUS];
+
+export type AbuseReport = {
+  id: string;
+  academy_id: string | null;
+  reported_url: string;
+  reason: string;
+  reporter_email: string | null;
+  status: AbuseStatus;
+  due_at: string;
+  /** Past its policy deadline and still open. */
+  overdue: boolean;
+  resolved_at: string | null;
+  resolution_note: string | null;
+  created_at: string;
+};

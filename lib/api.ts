@@ -1,6 +1,7 @@
 import { OtpType } from '@/constants/data';
 import { Enrollment, User as UserType, Offer, OfferInput } from '@/types/api';
 import type {
+  AbuseReport,
   ContentKind,
   ContentQueueItem,
   EnamadState,
@@ -3740,6 +3741,26 @@ class ApiClient {
       }
     );
     return response.data as ReviewQueueItem;
+  }
+
+  async getAbuseReports(status?: string) {
+    const suffix = status ? `?status=${status}` : '';
+    const response = await this.request(`/compliance/abuse-reports${suffix}`);
+    return response.data as {
+      items: AbuseReport[];
+      overdue: number;
+    };
+  }
+
+  async resolveAbuseReport(
+    id: string,
+    body: { status: string; note?: string }
+  ) {
+    const response = await this.request(`/compliance/abuse-reports/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    });
+    return response.data as AbuseReport;
   }
 
   async getModerationDefaults() {

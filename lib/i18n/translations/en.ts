@@ -2172,6 +2172,19 @@ export const en = {
       SUSPENDED: { title: 'Suspend academy site', short: 'Suspend' },
       PENDING: { title: 'Return to review queue', short: 'Reopen' }
     },
+    abuse: {
+      title: 'Abuse reports',
+      description:
+        'Reports filed by visitors and students, soonest deadline first.',
+      overdue: '{{count}} report(s) past the 72 business-hour deadline.',
+      empty: 'No open reports.',
+      pastDue: 'Past due',
+      dueBy: 'Due {{date}}',
+      anonymous: 'Anonymous report',
+      dismiss: 'Dismiss',
+      actioned: 'Actioned',
+      dismissReason: 'Explain why this report is dismissed:'
+    },
     manage: {
       title: 'Manage academy compliance'
     },
