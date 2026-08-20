@@ -10,6 +10,7 @@ import React, {
   useState
 } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Academy } from '@/types/api';
 import { apiClient } from '@/lib/api';
 import {
@@ -75,6 +76,7 @@ async function requestAcademies(): Promise<Academy[]> {
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user } = useAuthUser();
   const [academies, setAcademies] = useState<Academy[]>([]);
   const [selectedAcademy, setSelectedAcademy] = useState<Academy | null>(null);
@@ -184,20 +186,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     (academyId: string) => {
       const found = academies.find((a) => a.id === academyId);
       if (found) {
+        // Drop the previous academy's cached responses before the new one
+        // renders, so no view can read another tenant's data from the cache.
+        queryClient.clear();
         setSelectedAcademyId(academyId);
         setSelectedAcademy(found);
       }
     },
-    [academies]
+    [academies, queryClient]
   );
 
   const clearAcademies = useCallback(() => {
+    queryClient.clear();
     clearAcademyData();
     setAcademies([]);
     setSelectedAcademy(null);
     setError(null);
     hasFetchedRef.current = false;
-  }, []);
+  }, [queryClient]);
 
   const value = useMemo<StoreContextValue>(
     () => ({

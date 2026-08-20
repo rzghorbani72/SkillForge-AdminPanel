@@ -24,7 +24,10 @@ import type { EntitySearchOption } from '@/types/entity-search';
 export interface EntitySearchComboboxProps {
   value: string;
   onValueChange: (value: string) => void;
-  fetchOptions: (query: string) => Promise<EntitySearchOption[]>;
+  fetchOptions: (
+    query: string,
+    signal?: AbortSignal
+  ) => Promise<EntitySearchOption[]>;
   resolveOption?: (id: string) => Promise<EntitySearchOption | null>;
   placeholder?: string;
   emptyMessage?: string;

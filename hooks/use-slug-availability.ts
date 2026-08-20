@@ -17,10 +17,15 @@ export function useSlugAvailability({
   const [status, setStatus] = useState<SlugStatus>('idle');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const requestRef = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
 
+  // Aborts the in-flight check instead of merely ignoring its answer, so a fast
+  // typist does not leave a trail of open requests behind.
   const cancelPending = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = null;
+    abortRef.current?.abort();
+    abortRef.current = null;
     requestRef.current += 1;
   }, []);
 
@@ -46,8 +51,12 @@ export function useSlugAvailability({
 
       setStatus('checking');
       timerRef.current = setTimeout(async () => {
+        const controller = new AbortController();
+        abortRef.current = controller;
         try {
-          const result = await apiClient.checkSlugAvailability(slug);
+          const result = await apiClient.checkSlugAvailability(slug, {
+            signal: controller.signal
+          });
           if (request !== requestRef.current) return;
           setStatus(result.available ? 'available' : 'taken');
         } catch {

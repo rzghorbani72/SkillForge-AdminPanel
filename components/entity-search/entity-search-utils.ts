@@ -43,13 +43,17 @@ export function withoutSelfProfile(
 
 export async function fetchStudentOptions(
   query: string,
-  selfProfileId?: string | number | null
+  selfProfileId?: string | number | null,
+  signal?: AbortSignal
 ): Promise<EntitySearchOption[]> {
   const search = query.trim();
-  const response = await apiClient.getStudentUsers({
-    ...(search ? { search } : {}),
-    limit: 20
-  });
+  const response = await apiClient.getStudentUsers(
+    {
+      ...(search ? { search } : {}),
+      limit: 20
+    },
+    { signal }
+  );
   return withoutSelfProfile(
     mapUsersResponse(response as EntitySearchUsersResponse),
     selfProfileId
@@ -69,12 +73,18 @@ export function createAcademyUserOptionsFetcher(
   t: TranslateFn,
   selfProfileId?: string | number | null
 ) {
-  return async (query: string): Promise<EntitySearchOption[]> => {
+  return async (
+    query: string,
+    signal?: AbortSignal
+  ): Promise<EntitySearchOption[]> => {
     const search = query.trim();
-    const response = (await apiClient.getUsers({
-      ...(search ? { search } : {}),
-      limit: 20
-    })) as EntitySearchProfilesResponse | null;
+    const response = (await apiClient.getUsers(
+      {
+        ...(search ? { search } : {}),
+        limit: 20
+      },
+      { signal }
+    )) as EntitySearchProfilesResponse | null;
 
     const options = (response?.profiles ?? []).map((profile) => ({
       value: profile.id,
@@ -97,17 +107,17 @@ export function createAcademyUserOptionsFetcher(
 
 export async function fetchTeacherOptions(
   query: string,
-  selfProfileId?: string | number | null
+  signal?: AbortSignal
 ): Promise<EntitySearchOption[]> {
   const search = query.trim();
-  const response = await apiClient.getTeacherUsers({
-    ...(search ? { search } : {}),
-    limit: 20
-  });
-  return withoutSelfProfile(
-    mapUsersResponse(response as EntitySearchUsersResponse),
-    selfProfileId
+  const response = await apiClient.getTeacherUsers(
+    {
+      ...(search ? { search } : {}),
+      limit: 20
+    },
+    { signal }
   );
+  return mapUsersResponse(response as EntitySearchUsersResponse);
 }
 
 export async function resolveUserOption(
@@ -122,13 +132,17 @@ export async function resolveUserOption(
 }
 
 export async function fetchCourseOptions(
-  query: string
+  query: string,
+  signal?: AbortSignal
 ): Promise<EntitySearchOption[]> {
   const search = query.trim();
-  const response = await apiClient.getCourses({
-    ...(search ? { search } : {}),
-    limit: 20
-  });
+  const response = await apiClient.getCourses(
+    {
+      ...(search ? { search } : {}),
+      limit: 20
+    },
+    { signal }
+  );
   return (response.courses ?? []).map((course) => ({
     value: String(course.id),
     label: course.title,

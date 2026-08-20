@@ -3,8 +3,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { EntitySearchOption } from '@/types/entity-search';
 
+const DEBOUNCE_MS = 300;
+
 interface UseEntitySearchParams {
-  fetchOptions: (query: string) => Promise<EntitySearchOption[]>;
+  /**
+   * The signal is aborted when the query changes, the popover closes, or the
+   * component unmounts. Fetchers that ignore it still work, they just keep
+   * running to completion.
+   */
+  fetchOptions: (
+    query: string,
+    signal?: AbortSignal
+  ) => Promise<EntitySearchOption[]>;
   enabled?: boolean;
 }
 
@@ -15,30 +25,29 @@ export function useEntitySearch({
   const [options, setOptions] = useState<EntitySearchOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
-  const requestIdRef = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
 
   const runFetch = useCallback(
     async (searchQuery: string) => {
+      abortRef.current?.abort();
+
       if (!enabled) {
+        abortRef.current = null;
         setOptions([]);
         return;
       }
 
-      const requestId = ++requestIdRef.current;
+      const controller = new AbortController();
+      abortRef.current = controller;
       setLoading(true);
       try {
-        const results = await fetchOptions(searchQuery);
-        if (requestId === requestIdRef.current) {
-          setOptions(results);
-        }
+        const results = await fetchOptions(searchQuery, controller.signal);
+        if (!controller.signal.aborted) setOptions(results);
       } catch {
-        if (requestId === requestIdRef.current) {
-          setOptions([]);
-        }
+        if (!controller.signal.aborted) setOptions([]);
       } finally {
-        if (requestId === requestIdRef.current) {
-          setLoading(false);
-        }
+        // A superseded request must not clear the spinner the new one owns.
+        if (!controller.signal.aborted) setLoading(false);
       }
     },
     [enabled, fetchOptions]
@@ -46,6 +55,8 @@ export function useEntitySearch({
 
   useEffect(() => {
     if (!enabled) {
+      abortRef.current?.abort();
+      abortRef.current = null;
       setOptions([]);
       setLoading(false);
       return;
@@ -53,10 +64,12 @@ export function useEntitySearch({
 
     const timer = setTimeout(() => {
       void runFetch(query);
-    }, 300);
+    }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
   }, [enabled, query, runFetch]);
+
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const refresh = useCallback(() => {
     void runFetch(query);

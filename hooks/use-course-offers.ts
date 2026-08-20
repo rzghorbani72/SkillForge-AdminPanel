@@ -1,63 +1,76 @@
-import { useCallback, useEffect, useState } from 'react';
+'use client';
+
+import { useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import type { Offer, OfferInput } from '@/types/api';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
 import { apiErrorMessage } from '@/lib/api-error-message';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
+import { queryKeys } from '@/lib/query/keys';
+
+const EMPTY_OFFERS: Offer[] = [];
 
 // Manages the offers that unlock ONE course. A course can be sold several ways
 // at once (one-time / subscription / installments), plus the read-only default
 // offer that carries the course's own price.
 export function useCourseOffers(courseId: string | undefined) {
-  const [offers, setOffers] = useState<Offer[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const academyId = useCurrentAcademyId();
+  const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
 
-  const refresh = useCallback(async () => {
-    if (!courseId) return;
-    setIsLoading(true);
-    try {
-      setOffers(await apiClient.getCourseOffers(courseId));
-    } catch {
-      setOffers([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [courseId]);
+  const queryKey = queryKeys.courseOffers(academyId, courseId);
 
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+  const { data, isLoading } = useApiQuery<Offer[]>({
+    queryKey,
+    queryFn: (signal) => apiClient.getCourseOffers(courseId ?? '', { signal }),
+    enabled: Boolean(courseId)
+  });
 
-  const create = useCallback(
-    async (input: Omit<OfferInput, 'course_ids'>) => {
-      if (!courseId) return;
-      setIsSaving(true);
-      try {
-        await apiClient.createOffer({ ...input, course_ids: [courseId] });
-        await refresh();
-      } catch (e) {
-        toast.error(apiErrorMessage(e, tNow('toasts.offerAddFailed')));
-      } finally {
-        setIsSaving(false);
-      }
+  const refresh = useCallback(
+    async () => {
+      await queryClient.invalidateQueries({ queryKey });
     },
-    [courseId, refresh]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [queryClient, academyId, courseId]
   );
 
-  const update = useCallback(
-    async (id: string, patch: Partial<OfferInput>) => {
+  const runMutation = useCallback(
+    async (action: () => Promise<unknown>, failureKey: string) => {
       setIsSaving(true);
       try {
-        await apiClient.updateOffer(id, patch);
+        await action();
         await refresh();
       } catch (e) {
-        toast.error(apiErrorMessage(e, tNow('toasts.offerUpdateFailed')));
+        toast.error(apiErrorMessage(e, tNow(failureKey)));
       } finally {
         setIsSaving(false);
       }
     },
     [refresh]
+  );
+
+  const create = useCallback(
+    async (input: Omit<OfferInput, 'course_ids'>) => {
+      if (!courseId) return;
+      await runMutation(
+        () => apiClient.createOffer({ ...input, course_ids: [courseId] }),
+        'toasts.offerAddFailed'
+      );
+    },
+    [courseId, runMutation]
+  );
+
+  const update = useCallback(
+    async (id: string, patch: Partial<OfferInput>) => {
+      await runMutation(
+        () => apiClient.updateOffer(id, patch),
+        'toasts.offerUpdateFailed'
+      );
+    },
+    [runMutation]
   );
 
   const toggleActive = useCallback(
@@ -67,21 +80,16 @@ export function useCourseOffers(courseId: string | undefined) {
 
   const remove = useCallback(
     async (id: string) => {
-      setIsSaving(true);
-      try {
-        await apiClient.deleteOffer(id);
-        await refresh();
-      } catch (e) {
-        toast.error(apiErrorMessage(e, tNow('toasts.offerDeleteFailed')));
-      } finally {
-        setIsSaving(false);
-      }
+      await runMutation(
+        () => apiClient.deleteOffer(id),
+        'toasts.offerDeleteFailed'
+      );
     },
-    [refresh]
+    [runMutation]
   );
 
   return {
-    offers,
+    offers: data ?? EMPTY_OFFERS,
     isLoading,
     isSaving,
     refresh,

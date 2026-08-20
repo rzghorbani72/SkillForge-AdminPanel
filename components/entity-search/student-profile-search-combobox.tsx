@@ -23,7 +23,8 @@ export function StudentProfileSearchCombobox(
   const selfId = user?.id;
 
   const fetchOptions = useCallback(
-    (query: string) => fetchStudentOptions(query, selfId),
+    (query: string, signal?: AbortSignal) =>
+      fetchStudentOptions(query, selfId, signal),
     [selfId]
   );
 

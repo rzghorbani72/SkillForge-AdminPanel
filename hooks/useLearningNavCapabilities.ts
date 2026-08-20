@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import useSWR from 'swr';
 import { apiClient, type LearningNavCapabilities } from '@/lib/api';
 import {
   shouldApplyLearningNavGating,
@@ -9,6 +8,9 @@ import {
 } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHasStore } from '@/hooks/useHasStore';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
+import { queryKeys } from '@/lib/query/keys';
 
 const DEFAULT_VISIBILITY: LearningNavVisibility = {
   students: false,
@@ -39,13 +41,14 @@ export function useLearningNavCapabilities() {
     return shouldApplyLearningNavGating(user.role, hasStore);
   }, [user?.role, hasStore]);
 
-  // Sidebar, mobile sidebar and the nav gate all mount together; a shared SWR
+  // Sidebar, mobile sidebar and the nav gate all mount together; a shared query
   // key makes them read one request instead of firing one each.
-  const { data, isLoading } = useSWR<LearningNavCapabilities>(
-    shouldResolve ? 'learning-nav-capabilities' : null,
-    () => apiClient.getLearningNavCapabilities(),
-    { revalidateOnFocus: false, dedupingInterval: 2000 }
-  );
+  const academyId = useCurrentAcademyId();
+  const { data, isLoading } = useApiQuery<LearningNavCapabilities>({
+    queryKey: queryKeys.learningNavCapabilities(academyId),
+    queryFn: (signal) => apiClient.getLearningNavCapabilities({ signal }),
+    enabled: shouldResolve
+  });
 
   return {
     visibility: shouldResolve ? (data?.visibility ?? DEFAULT_VISIBILITY) : null,

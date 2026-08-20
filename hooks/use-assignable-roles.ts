@@ -1,11 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { apiClient } from '@/lib/api';
-import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleDisplayLabel } from '@/lib/i18n/role-label';
 import type { PlatformRole } from '@/types/roles';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
+import { queryKeys } from '@/lib/query/keys';
+
+/** Roles change rarely; a long stale window keeps dialogs from refetching. */
+const ROLES_STALE_TIME_MS = 5 * 60_000;
+
+const EMPTY_ROLES: PlatformRole[] = [];
 
 /** Manager rank: a role at this level or above consumes a plan seat. */
 export const MANAGER_HIERARCHY_LEVEL = 3;
@@ -36,26 +43,23 @@ interface UseAssignableRolesResult {
  */
 export function useAssignableRoles(enabled = true): UseAssignableRolesResult {
   const { t } = useTranslation();
-  const [roles, setRoles] = useState<AssignableRole[]>([]);
-  const [loading, setLoading] = useState(false);
+  const academyId = useCurrentAcademyId();
 
-  const load = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { roles: fetched } = await apiClient.getPlatformRoles();
-      setRoles(toAssignable(fetched, t));
-    } catch (error) {
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [t]);
+  // The cache holds the raw roles, so switching language relabels them from
+  // memory instead of refetching.
+  const { data, isLoading } = useApiQuery<PlatformRole[]>({
+    queryKey: queryKeys.assignableRoles(academyId),
+    queryFn: async (signal) => {
+      const { roles } = await apiClient.getPlatformRoles({ signal });
+      return roles;
+    },
+    enabled,
+    staleTime: ROLES_STALE_TIME_MS
+  });
 
-  useEffect(() => {
-    if (enabled) void load();
-  }, [enabled, load]);
+  const roles = useMemo(() => toAssignable(data ?? EMPTY_ROLES, t), [data, t]);
 
-  return { roles, loading };
+  return { roles, loading: isLoading };
 }
 
 function toAssignable(

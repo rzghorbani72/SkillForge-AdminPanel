@@ -1,7 +1,8 @@
 'use client';
 
-import useSWR from 'swr';
 import { apiClient, type StructuredPlanLimits } from '@/lib/api';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { queryKeys } from '@/lib/query/keys';
 import {
   isStarterPlan,
   isTopPlan,
@@ -70,17 +71,15 @@ export function useAcademySubscription(enabled = true) {
 
   // Keyed by academyId so the sidebar, header, and /plans page — all mounted
   // at once — share one deduped request instead of firing three independently.
-  const { data, isLoading, mutate } = useSWR<AcademySubscriptionState | null>(
-    canFetch ? ['academy-subscription', academyId] : null,
-    () =>
-      apiClient.getCurrentAcademySubscription() as Promise<AcademySubscriptionState>,
-    { revalidateOnFocus: false, dedupingInterval: 2000 }
-  );
+  const { data, isLoading, refresh } = useApiQuery<AcademySubscriptionState>({
+    queryKey: queryKeys.subscription(academyId),
+    queryFn: (signal) =>
+      apiClient.getCurrentAcademySubscription({
+        signal
+      }) as Promise<AcademySubscriptionState>,
+    enabled: canFetch
+  });
   const subscription = data ?? null;
-
-  const refresh = async () => {
-    await mutate();
-  };
 
   const planSlug = subscription?.academy?.subscription_plan ?? null;
   const customPlan = subscription?.academy?.custom_plan ?? null;

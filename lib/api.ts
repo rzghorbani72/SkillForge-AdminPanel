@@ -58,6 +58,14 @@ export interface ApiResponse<T = unknown> {
   status: number;
 }
 
+/**
+ * Passed straight through to `fetch` by `request()`. React Query owns the
+ * signal and aborts it on unmount or query-key change.
+ */
+export interface ReadOptions {
+  signal?: AbortSignal;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {
@@ -1049,13 +1057,16 @@ class ApiClient {
   }
 
   // ── Offers (one purchasable option over one or more courses) ───────────────
-  async getCourseOffers(courseId: string) {
-    const response = await this.request(`/offers/manage/course/${courseId}`);
+  async getCourseOffers(courseId: string, opts?: ReadOptions) {
+    const response = await this.request(
+      `/offers/manage/course/${courseId}`,
+      opts
+    );
     return (response.data as Offer[]) ?? [];
   }
 
-  async getAcademyOffers() {
-    const response = await this.request('/offers/manage');
+  async getAcademyOffers(opts?: ReadOptions) {
+    const response = await this.request('/offers/manage', opts);
     return (response.data as Offer[]) ?? [];
   }
 
@@ -1339,9 +1350,13 @@ class ApiClient {
     return response;
   }
 
-  async checkSlugAvailability(slug: string): Promise<{ available: boolean }> {
+  async checkSlugAvailability(
+    slug: string,
+    opts?: ReadOptions
+  ): Promise<{ available: boolean }> {
     const res = await this.request<{ available: boolean }>(
-      `/academies/slug-available?slug=${encodeURIComponent(slug)}`
+      `/academies/slug-available?slug=${encodeURIComponent(slug)}`,
+      opts
     );
     return (res as any)?.data ?? res;
   }
@@ -1409,10 +1424,12 @@ class ApiClient {
     return unwrapDataEnvelope(res.data);
   }
 
-  async getLearningNavCapabilities(): Promise<LearningNavCapabilities> {
+  async getLearningNavCapabilities(
+    opts?: ReadOptions
+  ): Promise<LearningNavCapabilities> {
     const res = await this.request<
       LearningNavCapabilities | { data: LearningNavCapabilities }
-    >('/staff/me/learning-capabilities');
+    >('/staff/me/learning-capabilities', opts);
     return unwrapDataEnvelope(res.data);
   }
 
@@ -1430,8 +1447,11 @@ class ApiClient {
     return this.updateAcademy(data);
   }
 
-  async getCurrentAcademySubscription() {
-    const response = await this.request('/academies/current/subscription');
+  async getCurrentAcademySubscription(opts?: ReadOptions) {
+    const response = await this.request(
+      '/academies/current/subscription',
+      opts
+    );
     const payload = response.data as any;
     return payload?.data ?? payload;
   }
@@ -1584,13 +1604,16 @@ class ApiClient {
   }
 
   // Courses endpoints
-  async getCourses(params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    category_id?: number;
-    academy_id?: string;
-  }) {
+  async getCourses(
+    params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      category_id?: number;
+      academy_id?: string;
+    },
+    opts?: ReadOptions
+  ) {
     const queryParams = new URLSearchParams();
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -1602,7 +1625,8 @@ class ApiClient {
     }
 
     const response = (await this.request(
-      `/courses?${queryParams.toString()}`
+      `/courses?${queryParams.toString()}`,
+      opts
     )) as any;
     if (response.data.data && response.data.status === 'ok') {
       return response.data.data as { courses: any[]; pagination?: any };
@@ -2794,20 +2818,23 @@ class ApiClient {
     return payload;
   }
 
-  async getUsers(params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    id?: number;
-    uuid?: string;
-    /** Role NAME — built-in or academy-defined (TEACHER_1, ...), never a fixed union. */
-    role?: string;
-    academy_id?: string;
-    status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
-    is_active?: boolean;
-    group_by_role?: boolean;
-    filter?: 'none';
-  }) {
+  async getUsers(
+    params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      id?: number;
+      uuid?: string;
+      /** Role NAME — built-in or academy-defined (TEACHER_1, ...), never a fixed union. */
+      role?: string;
+      academy_id?: string;
+      status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+      is_active?: boolean;
+      group_by_role?: boolean;
+      filter?: 'none';
+    },
+    opts?: ReadOptions
+  ) {
     const queryParams = new URLSearchParams();
 
     if (params?.page) queryParams.append('page', params.page.toString());
@@ -2828,7 +2855,7 @@ class ApiClient {
     const queryString = queryParams.toString();
     const endpoint = `/users${queryString ? `?${queryString}` : ''}`;
 
-    const response = await this.request(endpoint);
+    const response = await this.request(endpoint, opts);
 
     // If grouped by role, return the full response structure
     if (params?.group_by_role) {
@@ -2838,27 +2865,33 @@ class ApiClient {
     return this.mapUsersResponse(response);
   }
 
-  async getStudentUsers(params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    academy_id?: string;
-    status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
-  }) {
+  async getStudentUsers(
+    params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      academy_id?: string;
+      status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+    },
+    opts?: ReadOptions
+  ) {
     const query = this.buildUserQuery(params);
-    const response = await this.request(`/users/students${query}`);
+    const response = await this.request(`/users/students${query}`, opts);
     return this.mapUsersResponse(response);
   }
 
-  async getTeacherUsers(params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    academy_id?: string;
-    status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
-  }) {
+  async getTeacherUsers(
+    params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      academy_id?: string;
+      status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
+    },
+    opts?: ReadOptions
+  ) {
     const query = this.buildUserQuery(params);
-    const response = await this.request(`/users/teachers${query}`);
+    const response = await this.request(`/users/teachers${query}`, opts);
     return this.mapUsersResponse(response);
   }
 
@@ -3116,8 +3149,8 @@ class ApiClient {
     };
   }
 
-  async getPlatformRoles(): Promise<RolesListResponse> {
-    const response = await this.request('/platform/roles');
+  async getPlatformRoles(opts?: ReadOptions): Promise<RolesListResponse> {
+    const response = await this.request('/platform/roles', opts);
     return response.data as RolesListResponse;
   }
 
