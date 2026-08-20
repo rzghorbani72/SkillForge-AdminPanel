@@ -616,6 +616,7 @@ export const en = {
     coupons: 'Coupons',
     subscriptions: 'Subscriptions',
     platformSettings: 'Platform Settings',
+    contentReview: 'Content Review',
     legalDocuments: 'Legal Documents',
     allAcademies: 'Academies',
     myAcademies: 'My Academies',
@@ -2122,6 +2123,99 @@ export const en = {
     redirectingToLogin: 'Redirecting to sign in...',
     resetAnotherPassword: 'Reset Another Password',
     goToLogin: 'Go to Login'
+  },
+  compliance: {
+    reviewStatus: {
+      PENDING: 'Pending review',
+      APPROVED: 'Approved',
+      FLAGGED: 'Flagged',
+      SUSPENDED: 'Suspended'
+    },
+    enamadStatus: {
+      NOT_REQUIRED: 'Not required',
+      REQUIRED: 'Required',
+      PENDING: 'Pending review',
+      VERIFIED: 'Verified',
+      REJECTED: 'Rejected'
+    },
+    queue: {
+      title: 'Academy content review',
+      subtitle:
+        'Academies published on their own domain are reviewed first, because they reach the public under their own brand.',
+      listTitle: 'Review list',
+      count: '{{count}} academies',
+      publicDomainOnly: 'Custom domain only',
+      academy: 'Academy',
+      operator: 'Operator',
+      signals: 'Signals',
+      published: 'Last published',
+      actions: 'Action',
+      noIdentity: 'No identity on file',
+      empty: 'Nothing to review.',
+      tab: {
+        PENDING: 'Pending',
+        FLAGGED: 'Flagged',
+        APPROVED: 'Approved',
+        ALL: 'All'
+      }
+    },
+    action: {
+      confirm: 'Confirm',
+      noteRequired: 'Reason (required)',
+      noteOptional: 'Note (optional)',
+      notePlaceholder: 'Internal note for the support team',
+      suspendNotePlaceholder: 'This text is shown to the academy students.',
+      suspendWarning:
+        'The public site goes offline immediately. Students who already paid keep their access.',
+      APPROVED: { title: 'Approve academy content', short: 'Approve' },
+      FLAGGED: { title: 'Flag academy', short: 'Flag' },
+      SUSPENDED: { title: 'Suspend academy site', short: 'Suspend' },
+      PENDING: { title: 'Return to review queue', short: 'Reopen' }
+    },
+    enamad: {
+      title: 'eNamad trust seal',
+      description:
+        'eNamad is issued per domain, to the registered owner of that domain.',
+      subdomainNotice:
+        'Your academy runs on a Mentoma subdomain, so eNamad cannot be obtained for it. Connecting your own domain makes the seal both possible and required.',
+      statusTitle: 'Seal status',
+      requiredNotice:
+        'Until the seal is verified, your public site shows an "identity under review" notice and your academy is prioritised for content review. Your domain keeps working.',
+      pendingNotice:
+        'Your code was submitted and the Mentoma team is checking it. The result appears on this page.',
+      codeLabel: 'eNamad code (the number in your eNamad panel)',
+      submit: 'Submit code',
+      openPortal: 'Open eNamad portal',
+      stepsTitle: 'What you need',
+      stepsDescription:
+        'These steps happen in the eNamad system. Have them ready before you start.',
+      introHelp:
+        'Obtaining the seal is entirely the academy’s responsibility and Mentoma does not issue it — but we handle the technical steps for you.',
+      technicalHelp:
+        'For the "technical access" step on {{domain}}, send us the verification file or meta tag and we will place it on your site. An info@ mailbox on your own domain must also work.',
+      step: {
+        ownership: {
+          title: 'Domain ownership',
+          body: 'The domain must be registered to the same person or company you entered in Mentoma.'
+        },
+        businessInfo: {
+          title: 'Business details',
+          body: 'National ID or company ID, plus registration notice and official gazette for companies.'
+        },
+        contactInfo: {
+          title: 'Contact details',
+          body: 'A landline in your own name, postal address and postcode. The landline is verified by phone call.'
+        },
+        commitment: {
+          title: 'Undertaking and activity permit',
+          body: 'The eNamad undertaking, and a teaching permit from the competent authority where required.'
+        },
+        technical: {
+          title: 'Technical access to the domain',
+          body: 'Prove ownership via the domain’s info@ mailbox, a file at the site root, or a meta tag in the header. We do this step for you.'
+        }
+      }
+    }
   },
   settings: {
     title: 'Settings',

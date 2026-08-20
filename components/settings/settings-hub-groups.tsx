@@ -16,6 +16,7 @@ import {
   CreditCard,
   Layers,
   Layout,
+  BadgeCheck,
   Shield,
   User,
   Zap
@@ -206,6 +207,13 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             description: t('settings.studentPlansDescription'),
             href: '/plans?tab=academy',
             icon: Layers,
+            scope: 'academy'
+          },
+          {
+            title: t('compliance.enamad.title'),
+            description: t('compliance.enamad.description'),
+            href: '/settings/compliance',
+            icon: BadgeCheck,
             scope: 'academy'
           }
         ]

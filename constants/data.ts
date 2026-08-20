@@ -181,6 +181,16 @@ export const navItems: NavItem[] = [
     section: 'configuration'
   },
   {
+    title: 'Content Review',
+    href: '/platform/moderation',
+    icon: 'shield' as IconType,
+    label: 'contentReview',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'configuration'
+  },
+  {
     title: 'Legal Documents',
     href: '/platform/legal',
     icon: 'fileText' as IconType,

@@ -1,5 +1,10 @@
 import { OtpType } from '@/constants/data';
 import { Enrollment, User as UserType, Offer, OfferInput } from '@/types/api';
+import type {
+  EnamadState,
+  ReviewQueueItem,
+  ReviewQueueResponse
+} from '@/types/compliance';
 import { toast } from 'react-toastify';
 import { getBrowserApiBaseUrl } from './api-base-url';
 import { csrfHeader, selectedAcademyHeader } from './browser-request-headers';
@@ -3688,6 +3693,60 @@ class ApiClient {
       method: 'POST'
     });
     return response.data;
+  }
+
+  // --- Compliance: eNamad (manager) and content moderation (platform staff) ---
+
+  async getEnamadState() {
+    const response = await this.request('/compliance/current/enamad');
+    return response.data as EnamadState | null;
+  }
+
+  async submitEnamadCode(enamad_code: string) {
+    const response = await this.request('/compliance/current/enamad', {
+      method: 'POST',
+      body: JSON.stringify({ enamad_code })
+    });
+    return response.data as EnamadState;
+  }
+
+  async getReviewQueue(params: {
+    status?: string;
+    public_domain_only?: boolean;
+    page?: number;
+  }) {
+    const query = new URLSearchParams();
+    if (params.status) query.set('status', params.status);
+    if (params.public_domain_only) query.set('public_domain_only', 'true');
+    if (params.page) query.set('page', String(params.page));
+    const suffix = query.toString() ? `?${query.toString()}` : '';
+    const response = await this.request(`/compliance/review-queue${suffix}`);
+    return response.data as ReviewQueueResponse;
+  }
+
+  async reviewAcademyContent(
+    academyId: string,
+    body: { status: string; note?: string }
+  ) {
+    const response = await this.request(
+      `/compliance/review-queue/${academyId}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(body)
+      }
+    );
+    return response.data as ReviewQueueItem;
+  }
+
+  async reviewAcademyEnamad(
+    academyId: string,
+    body: { approved: boolean; note?: string }
+  ) {
+    const response = await this.request(
+      `/compliance/review-queue/${academyId}/enamad`,
+      { method: 'PATCH', body: JSON.stringify(body) }
+    );
+    return response.data as EnamadState;
   }
 
   async createTemplatePreviewToken() {
