@@ -1,7 +1,11 @@
 import { OtpType } from '@/constants/data';
 import { Enrollment, User as UserType, Offer, OfferInput } from '@/types/api';
 import type {
+  ContentKind,
+  ContentQueueItem,
   EnamadState,
+  ModerationPolicy,
+  ModerationPolicyMap,
   ReviewQueueItem,
   ReviewQueueResponse
 } from '@/types/compliance';
@@ -3736,6 +3740,60 @@ class ApiClient {
       }
     );
     return response.data as ReviewQueueItem;
+  }
+
+  async getModerationDefaults() {
+    const response = await this.request('/compliance/moderation-defaults');
+    return response.data as ModerationPolicyMap;
+  }
+
+  async updateModerationDefaults(patch: Partial<ModerationPolicyMap>) {
+    const response = await this.request('/compliance/moderation-defaults', {
+      method: 'PATCH',
+      body: JSON.stringify(patch)
+    });
+    return response.data as ModerationPolicyMap;
+  }
+
+  async getAcademyModerationPolicy(academyId: string) {
+    const response = await this.request(
+      `/compliance/review-queue/${academyId}/moderation-policy`
+    );
+    return response.data as Partial<ModerationPolicyMap>;
+  }
+
+  async setAcademyModerationPolicy(
+    academyId: string,
+    body: { content_kind: ContentKind; policy: ModerationPolicy | null }
+  ) {
+    const response = await this.request(
+      `/compliance/review-queue/${academyId}/moderation-policy`,
+      { method: 'PATCH', body: JSON.stringify(body) }
+    );
+    return response.data as Partial<ModerationPolicyMap>;
+  }
+
+  async getContentQueue(params: {
+    content_kind?: ContentKind;
+    status?: string;
+  }) {
+    const query = new URLSearchParams();
+    if (params.content_kind) query.set('content_kind', params.content_kind);
+    if (params.status) query.set('status', params.status);
+    const suffix = query.toString() ? `?${query.toString()}` : '';
+    const response = await this.request(`/compliance/content-queue${suffix}`);
+    return response.data as ContentQueueItem[];
+  }
+
+  async reviewContentItem(
+    id: string,
+    body: { content_kind: ContentKind; status: string; note?: string }
+  ) {
+    const response = await this.request(`/compliance/content-queue/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    });
+    return response.data;
   }
 
   async reviewAcademyEnamad(

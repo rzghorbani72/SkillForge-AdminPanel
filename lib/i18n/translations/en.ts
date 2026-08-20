@@ -2172,6 +2172,28 @@ export const en = {
       SUSPENDED: { title: 'Suspend academy site', short: 'Suspend' },
       PENDING: { title: 'Return to review queue', short: 'Reopen' }
     },
+    moderation: {
+      title: 'Default content publishing state',
+      description:
+        'Decides whether newly uploaded content goes live immediately, or stays hidden until the Mentoma team approves it.',
+      holdWarning:
+        'While "hold for review" is on, no student sees new content until your team approves it. This applies to every academy and creates daily review work — for a specific suspicious academy, use that academy\'s own override instead.',
+      stateHold: 'Hidden until the Mentoma team approves it.',
+      statePublish: 'Goes live immediately and is reviewed afterwards.',
+      kind: {
+        VIDEO: 'Videos',
+        AUDIO: 'Voices',
+        DOCUMENT: 'Files',
+        ARTICLE: 'Texts and articles'
+      },
+      queueTitle: 'Content awaiting approval',
+      queueDescription:
+        'Items still hidden from students because of a hold-for-review policy.',
+      queueEmpty: 'Nothing is waiting for approval.',
+      item: 'Content',
+      reject: 'Reject',
+      rejectReason: 'Explain why this content is rejected:'
+    },
     enamad: {
       title: 'eNamad trust seal',
       description:
