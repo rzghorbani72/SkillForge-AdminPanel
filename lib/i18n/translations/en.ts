@@ -2248,9 +2248,26 @@ export const en = {
       stepsDescription:
         'These steps happen in the eNamad system. Have them ready before you start.',
       introHelp:
-        'Obtaining the seal is entirely the academy’s responsibility and Mentoma does not issue it — but we handle the technical steps for you.',
+        'Obtaining the seal is the academy’s job — Mentoma does not issue it. Fill in the code below and we place the file, meta tag, and footer widget on your domain.',
       technicalHelp:
-        'For the "technical access" step on {{domain}}, send us the verification file or meta tag and we will place it on your site. An info@ mailbox on your own domain must also work.',
+        'We already place the verification file and meta tag on {{domain}}. You still need a working info@ mailbox on that domain, then paste the badge id so we can put the official seal in your footer.',
+      submitToPlaceProofs:
+        'Save the code first. Mentoma then places the file and meta tag on your domain so you can click verify in the eNamad panel.',
+      proofsReady:
+        'Hosting proofs are live on {{domain}}. Use them in the eNamad panel, then paste the badge id for the footer.',
+      fileStep: 'Verification file',
+      metaStep: 'Meta tag (already in your homepage header)',
+      emailStep: 'Email',
+      emailStepBody:
+        'eNamad will send a code to {{email}}. That mailbox is yours — Mentoma does not read it.',
+      sealIdLabel: 'Badge id (from the eNamad footer HTML)',
+      sealIdHelp:
+        'After eNamad issues the seal, copy the numeric id= value from the snippet. We put the official widget in your footer.',
+      titleVerifyLabel: 'Put the code in the homepage title',
+      titleVerifyHelp:
+        'Turn on only while you click “verify title” in eNamad, then turn it off.',
+      footerLive: 'Official seal is showing in the public footer',
+      saveSealId: 'Save badge id',
       step: {
         ownership: {
           title: 'Domain ownership',
@@ -2270,7 +2287,7 @@ export const en = {
         },
         technical: {
           title: 'Technical access to the domain',
-          body: 'Prove ownership via the domain’s info@ mailbox, a file at the site root, or a meta tag in the header. We do this step for you.'
+          body: 'We place the file at the site root and the meta tag in the header. You confirm them in eNamad, keep info@ working, then paste the badge id for the footer.'
         }
       }
     }

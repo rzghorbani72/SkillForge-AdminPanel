@@ -3707,10 +3707,24 @@ class ApiClient {
     return response.data as EnamadState | null;
   }
 
-  async submitEnamadCode(enamad_code: string) {
+  async submitEnamadCode(enamad_code: string, enamad_seal_id?: string) {
     const response = await this.request('/compliance/current/enamad', {
       method: 'POST',
-      body: JSON.stringify({ enamad_code })
+      body: JSON.stringify({
+        enamad_code,
+        ...(enamad_seal_id ? { enamad_seal_id } : {})
+      })
+    });
+    return response.data as EnamadState;
+  }
+
+  async updateEnamadHosting(body: {
+    enamad_seal_id?: string;
+    enamad_title_verify?: boolean;
+  }) {
+    const response = await this.request('/compliance/current/enamad', {
+      method: 'PATCH',
+      body: JSON.stringify(body)
     });
     return response.data as EnamadState;
   }

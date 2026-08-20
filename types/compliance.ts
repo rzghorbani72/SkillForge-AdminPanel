@@ -21,11 +21,17 @@ export type ContentReviewStatus =
 export type EnamadState = {
   status: EnamadStatus;
   code: string | null;
+  seal_id: string | null;
+  title_verify: boolean;
   submitted_at: string | null;
   reviewed_at: string | null;
   review_note: string | null;
   custom_domain: string | null;
   is_required: boolean;
+  proofs_live: boolean;
+  footer_live: boolean;
+  file_url: string | null;
+  info_email: string | null;
 };
 
 export type ReviewQueueItem = {
