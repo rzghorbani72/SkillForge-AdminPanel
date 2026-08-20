@@ -24,7 +24,12 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatDate } from '@/lib/utils';
-import { MODERATION_STATUS, type ContentQueueItem } from '@/types/compliance';
+import {
+  CONTENT_KIND_VALUES,
+  MODERATION_STATUS,
+  type ContentKind,
+  type ContentQueueItem
+} from '@/types/compliance';
 
 /** Individual uploads held by a HOLD_FOR_REVIEW policy, awaiting approval. */
 export function ContentQueueCard() {
@@ -32,13 +37,15 @@ export function ContentQueueCard() {
   const [items, setItems] = useState<ContentQueueItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
+  const [kind, setKind] = useState<ContentKind | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       setItems(
         await apiClient.getContentQueue({
-          status: MODERATION_STATUS.PENDING_REVIEW
+          status: MODERATION_STATUS.PENDING_REVIEW,
+          content_kind: kind ?? undefined
         })
       );
     } catch (error) {
@@ -46,7 +53,7 @@ export function ContentQueueCard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [kind]);
 
   useEffect(() => {
     void load();
@@ -85,7 +92,27 @@ export function ContentQueueCard() {
           {t('compliance.moderation.queueDescription')}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant={kind === null ? 'default' : 'outline'}
+            onClick={() => setKind(null)}
+          >
+            {t('compliance.queue.tab.ALL')}
+          </Button>
+          {CONTENT_KIND_VALUES.map((value) => (
+            <Button
+              key={value}
+              size="sm"
+              variant={kind === value ? 'default' : 'outline'}
+              onClick={() => setKind(value)}
+            >
+              {t(`compliance.moderation.kind.${value}`)}
+            </Button>
+          ))}
+        </div>
+
         {loading ? (
           <div className="space-y-2">
             {Array.from({ length: 3 }).map((_, index) => (

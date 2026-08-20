@@ -10,7 +10,13 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Globe, Link2, ShieldAlert, ExternalLink } from 'lucide-react';
+import {
+  Globe,
+  Link2,
+  ShieldAlert,
+  ExternalLink,
+  SlidersHorizontal
+} from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatDate } from '@/lib/utils';
 import {
@@ -23,6 +29,7 @@ import { EnamadStatusBadge, ReviewStatusBadge } from './review-status-badge';
 type Props = {
   items: ReviewQueueItem[];
   onAct: (item: ReviewQueueItem, action: ContentReviewStatus) => void;
+  onManage: (item: ReviewQueueItem) => void;
   storefrontBaseUrl: string | null;
 };
 
@@ -32,7 +39,12 @@ function siteUrl(item: ReviewQueueItem, storefrontBaseUrl: string | null) {
   return `${storefrontBaseUrl}/${item.academy_slug}`;
 }
 
-export function ReviewQueueTable({ items, onAct, storefrontBaseUrl }: Props) {
+export function ReviewQueueTable({
+  items,
+  onAct,
+  onManage,
+  storefrontBaseUrl
+}: Props) {
   const { t } = useTranslation();
 
   if (items.length === 0) {
@@ -120,6 +132,14 @@ export function ReviewQueueTable({ items, onAct, storefrontBaseUrl }: Props) {
                         </a>
                       </Button>
                     ) : null}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      title={t('compliance.manage.title')}
+                      onClick={() => onManage(item)}
+                    >
+                      <SlidersHorizontal className="h-3.5 w-3.5" />
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"

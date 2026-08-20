@@ -2172,6 +2172,29 @@ export const en = {
       SUSPENDED: { title: 'Suspend academy site', short: 'Suspend' },
       PENDING: { title: 'Return to review queue', short: 'Reopen' }
     },
+    manage: {
+      title: 'Manage academy compliance'
+    },
+    override: {
+      title: 'Content publishing policy for this academy',
+      description:
+        'Leave unset and this academy follows the platform default. For a suspicious academy, restrict it here instead of changing the global default.',
+      useDefault: 'Use default',
+      inheriting: 'Following the default: {{policy}}',
+      PUBLISH_IMMEDIATELY: 'Publish immediately',
+      HOLD_FOR_REVIEW: 'Hold for review'
+    },
+    enamadReview: {
+      notApplicable:
+        'This academy is on a Mentoma subdomain, so eNamad does not apply.',
+      awaitingSubmission:
+        'A custom domain is connected but no code has been submitted yet.',
+      lookup: 'Look up on eNamad',
+      notePlaceholder: 'Review note (required when rejecting)',
+      approve: 'Verify seal',
+      reject: 'Reject seal',
+      rejectNeedsNote: 'A reason is required to reject.'
+    },
     moderation: {
       title: 'Default content publishing state',
       description:

@@ -23,6 +23,7 @@ import { ReviewQueueTable } from '@/components/compliance/review-queue-table';
 import { ReviewActionDialog } from '@/components/compliance/review-action-dialog';
 import { ModerationDefaultsCard } from '@/components/compliance/moderation-defaults-card';
 import { ContentQueueCard } from '@/components/compliance/content-queue-card';
+import { AcademyComplianceDialog } from '@/components/compliance/academy-compliance-dialog';
 import {
   CONTENT_REVIEW_STATUS,
   type ContentReviewStatus,
@@ -53,6 +54,7 @@ export default function PlatformModerationPage() {
   const [target, setTarget] = useState<ReviewQueueItem | null>(null);
   const [action, setAction] = useState<ContentReviewStatus | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [managing, setManaging] = useState<ReviewQueueItem | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -175,6 +177,7 @@ export default function PlatformModerationPage() {
                   setTarget(item);
                   setAction(next);
                 }}
+                onManage={setManaging}
               />
               {queue && queue.total > queue.page_size ? (
                 <Pagination
@@ -191,6 +194,12 @@ export default function PlatformModerationPage() {
           )}
         </CardContent>
       </Card>
+
+      <AcademyComplianceDialog
+        item={managing}
+        onClose={() => setManaging(null)}
+        onChanged={load}
+      />
 
       <ContentQueueCard />
 
