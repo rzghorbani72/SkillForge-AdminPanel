@@ -3,72 +3,13 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Info } from 'lucide-react';
-import { CopyBtn } from '@/components/affiliates/copy-btn';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { CUSTOM_DOMAIN_CNAME_TARGET } from '@/lib/custom-domain-dns';
-import type { InterpolationParams } from '@/lib/i18n';
-
-type Translate = (key: string, params?: InterpolationParams) => string;
-
-type DnsRecordRow = {
-  type: string;
-  name: string;
-  value: string;
-};
-
-function RecordTable({
-  title,
-  rows,
-  t
-}: {
-  title: string;
-  rows: DnsRecordRow[];
-  t: Translate;
-}) {
-  return (
-    <div className="space-y-2">
-      <p className="text-sm font-medium">{title}</p>
-      <div className="overflow-x-auto rounded-lg border">
-        <table className="w-full table-fixed text-sm">
-          <thead className="bg-muted/50 text-muted-foreground">
-            <tr>
-              <th className="w-24 px-3 py-2 text-start font-medium">
-                {t('settings.domainDns.colType')}
-              </th>
-              <th className="w-20 px-3 py-2 text-start font-medium">
-                {t('settings.domainDns.colName')}
-              </th>
-              <th className="px-3 py-2 text-start font-medium">
-                {t('settings.domainDns.colValue')}
-              </th>
-              <th className="w-10 px-2 py-2" />
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={`${row.type}-${row.name}`} className="border-t">
-                <td className="px-3 py-2 font-mono text-xs">{row.type}</td>
-                <td className="px-3 py-2 font-mono text-xs" dir="ltr">
-                  {row.name}
-                </td>
-                <td
-                  className="truncate px-3 py-2 font-mono text-xs"
-                  dir="ltr"
-                  title={row.value}
-                >
-                  {row.value}
-                </td>
-                <td className="px-2 py-2">
-                  <CopyBtn text={row.value} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
+import {
+  CUSTOM_DOMAIN_CNAME_TARGET,
+  trafficDnsRows
+} from '@/lib/custom-domain-dns';
+import { DomainAddDnsHowTo } from '@/components/settings/domain-add-dns-howto';
+import { DnsRecordTable } from '@/components/settings/dns-record-table';
 
 /**
  * Step-by-step DNS guide so a manager can point their public domain at Mentoma.
@@ -122,28 +63,12 @@ export function DomainDnsGuide({
         ))}
       </ol>
 
-      <RecordTable
-        title={t('settings.domainDns.recommendedTitle')}
+      <DomainAddDnsHowTo t={t} domain={exampleDomain} />
+      <DnsRecordTable
+        title={t('settings.domainDns.mentomaKeysTitle')}
         t={t}
-        rows={[
-          {
-            type: 'CNAME',
-            name: 'www',
-            value: target
-          }
-        ]}
-      />
-
-      <RecordTable
-        title={t('settings.domainDns.apexTitle')}
-        t={t}
-        rows={[
-          {
-            type: 'ANAME / A',
-            name: '@',
-            value: target
-          }
-        ]}
+        rows={trafficDnsRows(target)}
+        footnote={t('settings.domainDns.hostHint')}
       />
 
       <Alert>

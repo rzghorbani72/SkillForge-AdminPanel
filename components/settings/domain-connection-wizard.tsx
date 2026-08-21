@@ -8,12 +8,19 @@ import { Info } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { CopyBtn } from '@/components/affiliates/copy-btn';
+import { DomainAddDnsHowTo } from '@/components/settings/domain-add-dns-howto';
+import { DnsRecordTable } from '@/components/settings/dns-record-table';
 import {
   DomainSetupCheckButton,
   DomainSetupStepCard
 } from '@/components/settings/domain-setup-step-card';
 import { DomainPlatformSteps } from '@/components/settings/domain-platform-steps';
+import {
+  toDnsPanelHost,
+  toManagerAcmeRows,
+  trafficDnsRows,
+  stripDnsDot
+} from '@/lib/custom-domain-dns';
 import type {
   AcmeDnsRecord,
   CustomDomainSetupResponse
@@ -34,9 +41,13 @@ export function DomainConnectionWizard() {
     setHamraveshHost(
       next.setup.hamravesh_hostname ?? next.public_address ?? ''
     );
+    const zone = next.public_address ?? '';
     setAcmeRows(
       next.setup.acme_records.length > 0
-        ? next.setup.acme_records
+        ? next.setup.acme_records.map((r) => ({
+            host: toDnsPanelHost(r.host, zone),
+            value: stripDnsDot(r.value)
+          }))
         : [{ host: '', value: '' }]
     );
   }, []);
@@ -165,7 +176,12 @@ export function DomainConnectionWizard() {
           }
           onSaveAcme={() =>
             void patch({
-              acme_records: acmeRows.filter((r) => r.host && r.value)
+              acme_records: acmeRows
+                .filter((r) => r.host && r.value)
+                .map((r) => ({
+                  host: toDnsPanelHost(r.host, domain),
+                  value: stripDnsDot(r.value)
+                }))
             })
           }
         />
@@ -178,13 +194,12 @@ export function DomainConnectionWizard() {
           title={t('settings.domainDns.wizard.traffic.title')}
           body={t('settings.domainDns.wizard.traffic.body', { target })}
         >
-          <div
-            className="flex flex-wrap items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2 font-mono text-xs"
-            dir="ltr"
-          >
-            <span>CNAME www → {target}</span>
-            <CopyBtn text={target} />
-          </div>
+          <DomainAddDnsHowTo t={t} domain={domain} />
+          <DnsRecordTable
+            t={t}
+            rows={trafficDnsRows(target)}
+            footnote={t('settings.domainDns.hostHint')}
+          />
           <DomainSetupCheckButton
             label={t('settings.domainDns.wizard.traffic.check')}
             loading={saving}
@@ -214,20 +229,14 @@ export function DomainConnectionWizard() {
               {t('settings.domainDns.wizard.acmeDns.waitPlatform')}
             </p>
           ) : (
-            <ul className="space-y-1">
-              {setup.acme_records.map((r) => (
-                <li
-                  key={r.host}
-                  className="flex flex-wrap items-center gap-2 font-mono text-xs"
-                  dir="ltr"
-                >
-                  <span>
-                    CNAME {r.host} → {r.value}
-                  </span>
-                  <CopyBtn text={r.value} />
-                </li>
-              ))}
-            </ul>
+            <>
+              <DomainAddDnsHowTo t={t} domain={domain} />
+              <DnsRecordTable
+                t={t}
+                rows={toManagerAcmeRows(setup.acme_records, domain)}
+                footnote={`${t('settings.domainDns.hostHint')} ${t('settings.domainDns.wizard.acmeDns.proxyOff')}`}
+              />
+            </>
           )}
           <DomainSetupCheckButton
             label={t('settings.domainDns.wizard.acmeDns.check')}

@@ -2492,23 +2492,23 @@ export const en = {
     domainDns: {
       title: 'Custom domain DNS',
       description:
-        'Point your own domain at Mentoma so students open your academy on your brand.',
+        'Connect your own website address to Mentoma. You do not need to be a technician — follow the pictures and copy the table.',
       targetTitle: 'Where traffic must go',
       targetDescription:
-        'Copy this value into your DNS panel. It is Mentoma’s Hamravesh host.',
+        'This is the address you will paste into the Value box when you add DNS. Copy it; do not type it by hand.',
       currentDomain: 'Saved public domain: {{domain}}',
       noDomainYet:
         'No public domain saved yet. Add it under Academy details, then return here.',
       openAcademySettings: 'Open academy details',
       stepsTitle: 'Connection steps',
       stepsDescription:
-        'Do these at your domain registrar or DNS provider. Do not change Mentoma’s DNS.',
+        'Do these on the website that manages YOUR domain (for example Arvan Cloud). Do not change Mentoma’s DNS.',
       checklistTitle: 'Connection checklist',
       checklistDescription:
-        'Each step says who does it (manager or Mentoma platform). Fill the blank, then press Check.',
+        'Green means done. Steps marked Manager are yours: open Arvan (or similar), then Add DNS and paste Type, Host, and Value.',
       referenceTitle: 'Reference (copy tables)',
       wizardIntro:
-        'Work top to bottom. Platform steps are Mentoma ops (Hamravesh). Manager steps are DNS on the academy’s own domain.',
+        'You do not need IT knowledge. Mentoma staff do the Platform steps. Your job: open the site that manages your domain (usually Arvan Cloud), open your domain, press Add DNS, and paste Type, Host, and Value from the tables.',
       actorPlatform: 'Platform (Mentoma)',
       actorManager: 'Manager',
       loading: 'Loading domain checklist…',
@@ -2518,18 +2518,32 @@ export const en = {
       dnsFail: 'DNS not ready yet (resolved: {{resolved}})',
       resolvedTo: 'Resolved to: {{value}}',
       intro:
-        'Example domain: {{example}}. Replace it with yours. Keep your current nameservers — only add records.',
+        'Example domain: {{example}}. Use your own address instead. Do not change nameservers — only add DNS rows.',
       colType: 'Type',
-      colName: 'Name / host',
+      colName: 'Host',
       colValue: 'Value',
+      mentomaKeysTitle: 'Copy these rows into Add DNS',
+      hostHint:
+        'In Add DNS: Type = first column, Host = middle, Value = last. Copy with the copy button. In Host write only @ or www — not your full website address. Arvan already knows your domain.',
+      howTo: {
+        title: 'How to add DNS (no technical skill needed)',
+        openProvider:
+          'Log in to the company that holds your domain. In Iran this is usually Arvan Cloud (ابرآروان). Cloudflare is also common. This is not Mentoma.',
+        openDomain:
+          'Find and open YOUR domain ({{domain}}). Do not open mentoma.ir.',
+        clickAdd:
+          'Open the DNS page, then press “Add DNS” or “Add record”.',
+        copyRow:
+          'For each row in the table below: paste Type into Type, Host into Host, Value into Value, then save. Use the copy button so you do not mistype.'
+      },
       recommendedTitle: 'Recommended — subdomain (www)',
       apexTitle: 'Root domain (@) — only if your DNS supports ANAME/ALIAS',
       sslNote:
-        'After Mentoma attaches your domain, you may get unique _acme-challenge CNAME values for SSL. Add those exactly as shown — do not copy Mentoma’s own ACME records.',
+        'Later this page may show extra rows for the padlock (HTTPS). Add those the same way in Add DNS. Do not copy rows from mentoma.ir.',
       wizard: {
         save: {
-          title: 'Save public domain in Mentoma',
-          body: 'Manager enters the hostname (e.g. www.maral.ir) in Academy details, then rechecks this step.'
+          title: 'Write your website address in Mentoma',
+          body: 'In Academy details, type the address students should open (for example www.maral.ir). Then come back here and press Recheck.'
         },
         hamravesh: {
           title: 'Add the domain in Hamravesh',
@@ -2539,20 +2553,22 @@ export const en = {
         },
         acmePaste: {
           title: 'Paste ACME CNAMEs from Hamravesh',
-          body: 'Platform copies _acme-challenge rows from Hamravesh into Mentoma so the manager can add them on their DNS.',
+          body: 'Paste Type CNAME rows with Host as the short name (_acme-challenge or _acme-challenge.www), same as Mentoma DNS — not the full domain.',
           addRow: 'Add ACME row',
           check: 'Check — ACME records saved for manager'
         },
         traffic: {
-          title: 'Point traffic DNS (CNAME)',
-          body: 'Manager adds CNAME www → {{target}} on their DNS (not Mentoma Arvan), then runs Check DNS.',
+          title: 'Add your domain in Arvan, then Add DNS',
+          body: 'Open Arvan Cloud (or Cloudflare) and open YOUR domain. Press Add DNS / Add record. Copy each row below: Type, Host, and Value. If there is no ANAME, choose ALIAS or A for Host @.',
           check: 'Check DNS'
         },
         acmeDns: {
-          title: 'Add ACME CNAMEs on manager DNS',
-          body: 'Manager adds the ACME rows below at their DNS panel, then confirms.',
-          waitPlatform: 'Waiting for platform to paste ACME records (step 3).',
-          check: 'Check — I added the ACME records'
+          title: 'Add more DNS rows for the padlock (HTTPS)',
+          body: 'Stay on the same DNS page. Press Add DNS again and copy each row below. Host is a short name like _acme-challenge — do not type your full website in Host.',
+          waitPlatform: 'Waiting for Mentoma to prepare the extra rows (step 3). Come back after that.',
+          check: 'Check — I added the ACME records',
+          proxyOff:
+            'On these extra rows, turn the orange/blue cloud OFF (grey cloud). If the cloud stays on, the padlock will not work.'
         },
         ssl: {
           title: 'Confirm SSL valid in Hamravesh',
@@ -2562,28 +2578,28 @@ export const en = {
       },
       step: {
         saveDomain: {
-          title: 'Save the domain in Mentoma',
-          body: 'In Academy details, enter your public domain (e.g. www.{{example}} or {{example}}).'
+          title: 'Write your website address in Mentoma',
+          body: 'In Academy details, enter the address students will type (for example www.{{example}}).'
         },
         openDns: {
-          title: 'Open your domain’s DNS panel',
-          body: 'Use Irnic, Arvan, Cloudflare, or wherever {{example}} DNS is managed — not Mentoma’s DNS.'
+          title: 'Open your domain in Arvan (or similar)',
+          body: 'Log in to Arvan Cloud, Cloudflare, or Irnic — the site that already holds {{example}}. Do not use Mentoma’s DNS.'
         },
         addRecord: {
-          title: 'Add a CNAME (or A/ANAME for the root)',
-          body: 'Point www (or @) to {{target}} so traffic reaches Mentoma.'
+          title: 'Press Add DNS and paste Type, Host, Value',
+          body: 'Add one row at a time from the table. Host is only @ or www. Value is {{target}}.'
         },
         noNsChange: {
           title: 'Do not change nameservers (NS)',
-          body: 'Leave NS with your current provider. Mentoma only needs the CNAME/A record.'
+          body: 'Leave those settings as they are. You only add DNS rows.'
         },
         ssl: {
-          title: 'SSL / ACME records (when shown)',
-          body: 'If Mentoma or Hamravesh shows _acme-challenge CNAMEs for your domain, add them so HTTPS can be issued.'
+          title: 'Extra rows for the padlock (when shown)',
+          body: 'If this page shows extra rows with Host _acme-challenge, add those the same way in Add DNS. Do not copy Mentoma’s own rows from mentoma.ir.'
         },
         wait: {
-          title: 'Wait for DNS',
-          body: 'Changes often take a few minutes and can take up to about two hours.'
+          title: 'Wait a few minutes',
+          body: 'The internet needs a little time. Often a few minutes; sometimes up to about two hours.'
         }
       }
     },

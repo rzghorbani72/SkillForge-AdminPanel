@@ -76,12 +76,18 @@ export function DomainPlatformSteps({
         body={t('settings.domainDns.wizard.acmePaste.body')}
       >
         <div className="space-y-2">
+          <div className="hidden grid-cols-[1fr_1fr_auto] gap-2 text-xs text-muted-foreground sm:grid">
+            <span>{t('settings.domainDns.colName')}</span>
+            <span>{t('settings.domainDns.colValue')}</span>
+            <span />
+          </div>
           {acmeRows.map((row, i) => (
             <div key={i} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
               <Input
                 dir="ltr"
                 className="font-mono text-xs"
-                placeholder="_acme-challenge.www"
+                placeholder="_acme-challenge"
+                aria-label={t('settings.domainDns.colName')}
                 value={row.host}
                 onChange={(e) => {
                   const next = [...acmeRows];
@@ -93,6 +99,7 @@ export function DomainPlatformSteps({
                 dir="ltr"
                 className="font-mono text-xs"
                 placeholder="xxx.acme-dns.onhamravesh.ir"
+                aria-label={t('settings.domainDns.colValue')}
                 value={row.value}
                 onChange={(e) => {
                   const next = [...acmeRows];
