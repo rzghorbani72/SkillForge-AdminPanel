@@ -2529,7 +2529,9 @@ export const en = {
         'Title is short only: @ or www or _acme-challenge. Do not write your full website in Title.',
       howTo: {
         title: 'How to add DNS',
-        openProvider: 'Log in to Arvan Cloud (your domain site — not Mentoma).',
+        openArvanButton: 'Open Arvan — domains list',
+        openProvider:
+          'Press the button and open Arvan: panel.arvancloud.ir/cdn/domains',
         openDomain: 'Open your domain: {{domain}}.',
         clickAdd: 'Press “Add DNS”.',
         fillType: 'Copy Type from the Type column.',
@@ -2561,7 +2563,7 @@ export const en = {
         },
         traffic: {
           title: 'In Arvan, press Add DNS',
-          body: 'Open your domain. For each row, copy Type, Title, Value, and Cloud from the table.',
+          body: 'Go to panel.arvancloud.ir/cdn/domains. Open your domain. Copy Type, Title, Value, and Cloud from the table.',
           check: 'Check DNS'
         },
         acmeDns: {
@@ -2584,7 +2586,7 @@ export const en = {
         },
         openDns: {
           title: 'Open Arvan',
-          body: 'Open domain {{example}} in Arvan. Not Mentoma DNS.'
+          body: 'Go to panel.arvancloud.ir/cdn/domains. Open domain {{example}}. Not Mentoma DNS.'
         },
         addRecord: {
           title: 'Add DNS: Type, Title, Value',

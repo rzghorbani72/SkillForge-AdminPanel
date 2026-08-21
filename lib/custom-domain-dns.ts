@@ -6,6 +6,10 @@ export const CUSTOM_DOMAIN_CNAME_TARGET =
   process.env.NEXT_PUBLIC_CUSTOM_DOMAIN_CNAME_TARGET ??
   'c13.hamravesh.onhamravesh.ir';
 
+/** Where managers open their domain and add DNS rows (Arvan Cloud). */
+export const ARVAN_DOMAINS_PANEL_URL =
+  'https://panel.arvancloud.ir/cdn/domains';
+
 /** Cloud toggle in Arvan DNS: روشن (on) or خاموش (off). */
 export type DnsCloudMode = 'on' | 'off';
 
