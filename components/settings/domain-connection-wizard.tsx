@@ -9,6 +9,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { DomainAddDnsHowTo } from '@/components/settings/domain-add-dns-howto';
+import { ArvanDomainsLink } from '@/components/settings/arvan-domains-link';
 import { DnsRecordTable } from '@/components/settings/dns-record-table';
 import {
   DomainSetupCheckButton,
@@ -192,7 +193,14 @@ export function DomainConnectionWizard() {
           actorLabel={actorManager}
           done={steps.traffic_dns.done}
           title={t('settings.domainDns.wizard.traffic.title')}
-          body={t('settings.domainDns.wizard.traffic.body', { target })}
+          body={
+            <>
+              {t('settings.domainDns.wizard.traffic.bodyBefore')}{' '}
+              <ArvanDomainsLink />
+              {'. '}
+              {t('settings.domainDns.wizard.traffic.bodyAfter')}
+            </>
+          }
         >
           <DomainAddDnsHowTo t={t} domain={domain} />
           <DnsRecordTable

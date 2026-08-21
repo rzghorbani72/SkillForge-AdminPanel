@@ -2313,8 +2313,7 @@ export const fa = {
       howTo: {
         title: 'چطور DNS اضافه کنیم',
         openArvanButton: 'باز کردن ابرآروان — لیست دامنه‌ها',
-        openProvider:
-          'این دکمه را بزنید و وارد ابرآروان شوید: panel.arvancloud.ir/cdn/domains',
+        openProvider: 'این دکمه را بزنید و وارد ابرآروان شوید:',
         openDomain: 'دامنهٔ خودتان را باز کنید: {{domain}}.',
         clickAdd: 'روی «افزودن DNS» بزنید.',
         fillType: 'نوع را از ستون «نوع» کپی کنید.',
@@ -2346,7 +2345,9 @@ export const fa = {
         },
         traffic: {
           title: 'در ابرآروان افزودن DNS بزنید',
-          body: 'به panel.arvancloud.ir/cdn/domains بروید. دامنهٔ خود را باز کنید. نوع، عنوان، مقدار و ابر را از جدول کپی کنید.',
+          bodyBefore: 'به این آدرس بروید',
+          bodyAfter:
+            'دامنهٔ خود را باز کنید. نوع، عنوان، مقدار و ابر را از جدول کپی کنید.',
           check: 'بررسی DNS'
         },
         acmeDns: {
@@ -2369,7 +2370,8 @@ export const fa = {
         },
         openDns: {
           title: 'ابرآروان را باز کنید',
-          body: 'به panel.arvancloud.ir/cdn/domains بروید. دامنهٔ {{example}} را باز کنید. نه DNS منتوما.'
+          bodyBefore: 'به این آدرس بروید',
+          bodyAfter: 'دامنهٔ {{example}} را باز کنید. نه DNS منتوما.'
         },
         addRecord: {
           title: 'افزودن DNS: نوع، عنوان، مقدار',

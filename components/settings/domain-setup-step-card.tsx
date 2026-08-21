@@ -11,7 +11,7 @@ import type { DomainSetupActor } from '@/types/custom-domain-setup';
 type DomainSetupStepCardProps = {
   index: number;
   title: string;
-  body: string;
+  body: React.ReactNode;
   actor: DomainSetupActor;
   done: boolean;
   actorLabel: string;
@@ -64,7 +64,7 @@ export function DomainSetupStepCard({
                 </Badge>
               ) : null}
             </div>
-            <p className="text-sm text-muted-foreground">{body}</p>
+            <div className="text-sm text-muted-foreground">{body}</div>
           </div>
           {children}
         </div>

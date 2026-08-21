@@ -2,6 +2,7 @@
 
 import { ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ArvanDomainsLink } from '@/components/settings/arvan-domains-link';
 import { ARVAN_DOMAINS_PANEL_URL } from '@/lib/custom-domain-dns';
 import type { InterpolationParams } from '@/lib/i18n';
 
@@ -34,7 +35,10 @@ export function DomainAddDnsHowTo({
         </a>
       </Button>
       <ol className="list-decimal space-y-1.5 ps-5 text-sm text-muted-foreground">
-        <li>{t('settings.domainDns.howTo.openProvider')}</li>
+        <li>
+          {t('settings.domainDns.howTo.openProvider')}{' '}
+          <ArvanDomainsLink />
+        </li>
         <li>{t('settings.domainDns.howTo.openDomain', params)}</li>
         <li>{t('settings.domainDns.howTo.clickAdd')}</li>
         <li>{t('settings.domainDns.howTo.fillType')}</li>

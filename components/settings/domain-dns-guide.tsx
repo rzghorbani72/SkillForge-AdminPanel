@@ -8,6 +8,7 @@ import {
   CUSTOM_DOMAIN_CNAME_TARGET,
   trafficDnsRows
 } from '@/lib/custom-domain-dns';
+import { ArvanDomainsLink } from '@/components/settings/arvan-domains-link';
 import { DomainAddDnsHowTo } from '@/components/settings/domain-add-dns-howto';
 import { DnsRecordTable } from '@/components/settings/dns-record-table';
 
@@ -52,12 +53,23 @@ export function DomainDnsGuide({
               <p className="text-sm font-medium">
                 {t(`settings.domainDns.step.${step}.title`)}
               </p>
-              <p className="text-sm text-muted-foreground">
-                {t(`settings.domainDns.step.${step}.body`, {
-                  target,
-                  example: exampleDomain
-                })}
-              </p>
+              <div className="text-sm text-muted-foreground">
+                {step === 'openDns' ? (
+                  <>
+                    {t('settings.domainDns.step.openDns.bodyBefore')}{' '}
+                    <ArvanDomainsLink />
+                    {'. '}
+                    {t('settings.domainDns.step.openDns.bodyAfter', {
+                      example: exampleDomain
+                    })}
+                  </>
+                ) : (
+                  t(`settings.domainDns.step.${step}.body`, {
+                    target,
+                    example: exampleDomain
+                  })
+                )}
+              </div>
             </div>
           </li>
         ))}
