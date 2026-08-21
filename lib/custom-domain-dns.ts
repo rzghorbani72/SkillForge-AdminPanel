@@ -6,10 +6,15 @@ export const CUSTOM_DOMAIN_CNAME_TARGET =
   process.env.NEXT_PUBLIC_CUSTOM_DOMAIN_CNAME_TARGET ??
   'c13.hamravesh.onhamravesh.ir';
 
+/** Cloud toggle in Arvan DNS: روشن (on) or خاموش (off). */
+export type DnsCloudMode = 'on' | 'off';
+
 export type DnsRecordRow = {
   type: string;
+  /** Arvan field «عنوان» — short name only (@, www, _acme-challenge). */
   name: string;
   value: string;
+  cloud: DnsCloudMode;
 };
 
 export function stripDnsDot(value: string): string {
@@ -22,8 +27,7 @@ export function apexFromHostname(hostname: string): string {
 }
 
 /**
- * Host field as typed in a DNS panel (Mentoma Arvan style):
- * `_acme-challenge` or `_acme-challenge.www`, never the full domain.
+ * «عنوان» as typed in Arvan: `_acme-challenge`, never the full domain.
  */
 export function toDnsPanelHost(host: string, publicAddress: string): string {
   const h = stripDnsDot(host).toLowerCase();
@@ -41,15 +45,16 @@ export function toDnsPanelHost(host: string, publicAddress: string): string {
   return stripDnsDot(host);
 }
 
-/** Same Type / Host / Value rows Mentoma uses for academy traffic. */
+/** Traffic rows: عنوان @ and www — cloud ON. */
 export function trafficDnsRows(target: string): DnsRecordRow[] {
   const value = stripDnsDot(target);
   return [
-    { type: 'ANAME', name: '@', value },
-    { type: 'CNAME', name: 'www', value }
+    { type: 'ANAME', name: '@', value, cloud: 'on' },
+    { type: 'CNAME', name: 'www', value, cloud: 'on' }
   ];
 }
 
+/** ACME rows for HTTPS — cloud OFF. */
 export function toManagerAcmeRows(
   records: readonly { host: string; value: string }[],
   publicAddress: string
@@ -57,6 +62,7 @@ export function toManagerAcmeRows(
   return records.map((record) => ({
     type: 'CNAME',
     name: toDnsPanelHost(record.host, publicAddress),
-    value: stripDnsDot(record.value)
+    value: stripDnsDot(record.value),
+    cloud: 'off' as const
   }));
 }

@@ -198,7 +198,7 @@ export function DomainConnectionWizard() {
           <DnsRecordTable
             t={t}
             rows={trafficDnsRows(target)}
-            footnote={t('settings.domainDns.hostHint')}
+            footnote={t('settings.domainDns.titleHint')}
           />
           <DomainSetupCheckButton
             label={t('settings.domainDns.wizard.traffic.check')}
@@ -234,7 +234,7 @@ export function DomainConnectionWizard() {
               <DnsRecordTable
                 t={t}
                 rows={toManagerAcmeRows(setup.acme_records, domain)}
-                footnote={`${t('settings.domainDns.hostHint')} ${t('settings.domainDns.wizard.acmeDns.proxyOff')}`}
+                footnote={t('settings.domainDns.titleHint')}
               />
             </>
           )}

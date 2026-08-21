@@ -5,7 +5,7 @@ import type { InterpolationParams } from '@/lib/i18n';
 type Translate = (key: string, params?: InterpolationParams) => string;
 
 /**
- * Plain-language “how to Add DNS” for managers with no IT background.
+ * Simple “how to Add DNS” — Arvan fields: نوع، عنوان، مقدار، ابر.
  */
 export function DomainAddDnsHowTo({
   t,
@@ -24,7 +24,11 @@ export function DomainAddDnsHowTo({
         <li>{t('settings.domainDns.howTo.openProvider')}</li>
         <li>{t('settings.domainDns.howTo.openDomain', params)}</li>
         <li>{t('settings.domainDns.howTo.clickAdd')}</li>
-        <li>{t('settings.domainDns.howTo.copyRow')}</li>
+        <li>{t('settings.domainDns.howTo.fillType')}</li>
+        <li>{t('settings.domainDns.howTo.fillTitle')}</li>
+        <li>{t('settings.domainDns.howTo.fillValue')}</li>
+        <li>{t('settings.domainDns.howTo.setCloud')}</li>
+        <li>{t('settings.domainDns.howTo.save')}</li>
       </ol>
     </div>
   );

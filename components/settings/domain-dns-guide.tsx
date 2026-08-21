@@ -68,7 +68,7 @@ export function DomainDnsGuide({
         title={t('settings.domainDns.mentomaKeysTitle')}
         t={t}
         rows={trafficDnsRows(target)}
-        footnote={t('settings.domainDns.hostHint')}
+        footnote={t('settings.domainDns.titleHint')}
       />
 
       <Alert>
