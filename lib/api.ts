@@ -3274,7 +3274,9 @@ class ApiClient {
   }
 
   async getCustomDomainSetup(): Promise<CustomDomainSetupResponse> {
-    const response = await this.request('/domain/custom-setup');
+    const response = await this.request(
+      '/academies/current/custom-domain-setup'
+    );
     const payload = response.data as
       | CustomDomainSetupResponse
       | { data: CustomDomainSetupResponse };
@@ -3293,10 +3295,13 @@ class ApiClient {
       ssl_confirmed: boolean;
     }>
   ): Promise<CustomDomainSetupResponse> {
-    const response = await this.request('/domain/custom-setup', {
-      method: 'PATCH',
-      body: JSON.stringify(body)
-    });
+    const response = await this.request(
+      '/academies/current/custom-domain-setup',
+      {
+        method: 'PATCH',
+        body: JSON.stringify(body)
+      }
+    );
     const payload = response.data as
       | CustomDomainSetupResponse
       | { data: CustomDomainSetupResponse };
@@ -3307,9 +3312,12 @@ class ApiClient {
   }
 
   async verifyCustomDomainDns(): Promise<VerifyDnsResponse> {
-    const response = await this.request('/domain/custom-setup/verify-dns', {
-      method: 'POST'
-    });
+    const response = await this.request(
+      '/academies/current/custom-domain-setup/verify-dns',
+      {
+        method: 'POST'
+      }
+    );
     const payload = response.data as
       | VerifyDnsResponse
       | { data: VerifyDnsResponse };

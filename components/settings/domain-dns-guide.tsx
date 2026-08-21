@@ -29,13 +29,13 @@ function RecordTable({
     <div className="space-y-2">
       <p className="text-sm font-medium">{title}</p>
       <div className="overflow-x-auto rounded-lg border">
-        <table className="w-full text-sm">
+        <table className="w-full table-fixed text-sm">
           <thead className="bg-muted/50 text-muted-foreground">
             <tr>
-              <th className="px-3 py-2 text-start font-medium">
+              <th className="w-24 px-3 py-2 text-start font-medium">
                 {t('settings.domainDns.colType')}
               </th>
-              <th className="px-3 py-2 text-start font-medium">
+              <th className="w-20 px-3 py-2 text-start font-medium">
                 {t('settings.domainDns.colName')}
               </th>
               <th className="px-3 py-2 text-start font-medium">
@@ -51,7 +51,11 @@ function RecordTable({
                 <td className="px-3 py-2 font-mono text-xs" dir="ltr">
                   {row.name}
                 </td>
-                <td className="px-3 py-2 font-mono text-xs" dir="ltr">
+                <td
+                  className="truncate px-3 py-2 font-mono text-xs"
+                  dir="ltr"
+                  title={row.value}
+                >
                   {row.value}
                 </td>
                 <td className="px-2 py-2">
@@ -144,9 +148,7 @@ export function DomainDnsGuide({
 
       <Alert>
         <Info className="h-4 w-4" />
-        <AlertDescription>
-          {t('settings.domainDns.sslNote')}
-        </AlertDescription>
+        <AlertDescription>{t('settings.domainDns.sslNote')}</AlertDescription>
       </Alert>
     </div>
   );
