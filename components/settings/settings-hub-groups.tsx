@@ -17,6 +17,7 @@ import {
   Layers,
   Layout,
   BadgeCheck,
+  Globe,
   Shield,
   User,
   Zap
@@ -207,6 +208,13 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             description: t('settings.studentPlansDescription'),
             href: '/plans?tab=academy',
             icon: Layers,
+            scope: 'academy'
+          },
+          {
+            title: t('settings.domainDns.title'),
+            description: t('settings.domainDns.description'),
+            href: '/settings/domain',
+            icon: Globe,
             scope: 'academy'
           },
           {

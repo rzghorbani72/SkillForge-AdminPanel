@@ -2481,13 +2481,64 @@ export const en = {
     managers: 'Managers',
     domainTips: 'Domain tips',
     domainTipsText1:
-      'Use a subdomain you control (e.g. academy.yourstore.com) for the best branding experience.',
+      'Use a subdomain you control (e.g. www.maral.ir) for the best branding experience.',
     domainTipsText2:
-      'You can request SSL certificates and custom DNS support by contacting آکادمی support.',
+      'Point a CNAME (or A/ANAME) at Mentoma’s host, then wait for DNS and SSL. Full steps are on the custom domain page.',
+    domainTipsCta: 'Open DNS guide',
     needHelp: 'Need help?',
     needHelpText:
       'Visit the documentation to learn how to configure single sign-on, custom domains, and more.',
     openDocumentation: 'Open documentation',
+    domainDns: {
+      title: 'Custom domain DNS',
+      description:
+        'Point your own domain at Mentoma so students open your academy on your brand.',
+      targetTitle: 'Where traffic must go',
+      targetDescription:
+        'Copy this value into your DNS panel. It is Mentoma’s Hamravesh host.',
+      currentDomain: 'Saved public domain: {{domain}}',
+      noDomainYet:
+        'No public domain saved yet. Add it under Academy details, then return here.',
+      openAcademySettings: 'Open academy details',
+      stepsTitle: 'Connection steps',
+      stepsDescription:
+        'Do these at your domain registrar or DNS provider. Do not change Mentoma’s DNS.',
+      intro:
+        'Example domain: {{example}}. Replace it with yours. Keep your current nameservers — only add records.',
+      colType: 'Type',
+      colName: 'Name / host',
+      colValue: 'Value',
+      recommendedTitle: 'Recommended — subdomain (www)',
+      apexTitle: 'Root domain (@) — only if your DNS supports ANAME/ALIAS',
+      sslNote:
+        'After Mentoma attaches your domain, you may get unique _acme-challenge CNAME values for SSL. Add those exactly as shown — do not copy Mentoma’s own ACME records.',
+      step: {
+        saveDomain: {
+          title: 'Save the domain in Mentoma',
+          body: 'In Academy details, enter your public domain (e.g. www.{{example}} or {{example}}).'
+        },
+        openDns: {
+          title: 'Open your domain’s DNS panel',
+          body: 'Use Irnic, Arvan, Cloudflare, or wherever {{example}} DNS is managed — not Mentoma’s DNS.'
+        },
+        addRecord: {
+          title: 'Add a CNAME (or A/ANAME for the root)',
+          body: 'Point www (or @) to {{target}} so traffic reaches Mentoma.'
+        },
+        noNsChange: {
+          title: 'Do not change nameservers (NS)',
+          body: 'Leave NS with your current provider. Mentoma only needs the CNAME/A record.'
+        },
+        ssl: {
+          title: 'SSL / ACME records (when shown)',
+          body: 'If Mentoma or Hamravesh shows _acme-challenge CNAMEs for your domain, add them so HTTPS can be issued.'
+        },
+        wait: {
+          title: 'Wait for DNS',
+          body: 'Changes often take a few minutes and can take up to about two hours.'
+        }
+      }
+    },
     securityTitle: 'Security',
     securitySubtitle:
       'Strengthen your account by keeping credentials and notifications up to date.',

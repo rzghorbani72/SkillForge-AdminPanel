@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Building2, Globe, Info } from 'lucide-react';
+import Link from '@/components/ui/link';
 import { SettingsSectionHeader } from '@/components/settings/settings-section-header';
 import { useSettingsData } from '../_hooks/use-settings-data';
 import { apiClient } from '@/lib/api';
@@ -138,6 +139,11 @@ export default function AcademySettingsPage() {
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>{t('settings.domainTipsText1')}</p>
               <p>{t('settings.domainTipsText2')}</p>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/settings/domain">
+                  {t('settings.domainTipsCta')}
+                </Link>
+              </Button>
             </CardContent>
           </Card>
 
