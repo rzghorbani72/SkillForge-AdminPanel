@@ -10,6 +10,10 @@ import type {
   ReviewQueueItem,
   ReviewQueueResponse
 } from '@/types/compliance';
+import type {
+  CustomDomainSetupResponse,
+  VerifyDnsResponse
+} from '@/types/custom-domain-setup';
 import { toast } from 'react-toastify';
 import { getBrowserApiBaseUrl } from './api-base-url';
 import { csrfHeader, selectedAcademyHeader } from './browser-request-headers';
@@ -3267,6 +3271,52 @@ class ApiClient {
 
   async generateUniqueDomainName() {
     return this.request('/domain/generate-unique-name');
+  }
+
+  async getCustomDomainSetup(): Promise<CustomDomainSetupResponse> {
+    const response = await this.request('/domain/custom-setup');
+    const payload = response.data as
+      | CustomDomainSetupResponse
+      | { data: CustomDomainSetupResponse };
+    return (
+      (payload as { data?: CustomDomainSetupResponse }).data ??
+      (payload as CustomDomainSetupResponse)
+    );
+  }
+
+  async updateCustomDomainSetup(
+    body: Partial<{
+      hamravesh_attached: boolean;
+      hamravesh_hostname: string;
+      acme_records: Array<{ host: string; value: string }>;
+      acme_confirmed: boolean;
+      ssl_confirmed: boolean;
+    }>
+  ): Promise<CustomDomainSetupResponse> {
+    const response = await this.request('/domain/custom-setup', {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    });
+    const payload = response.data as
+      | CustomDomainSetupResponse
+      | { data: CustomDomainSetupResponse };
+    return (
+      (payload as { data?: CustomDomainSetupResponse }).data ??
+      (payload as CustomDomainSetupResponse)
+    );
+  }
+
+  async verifyCustomDomainDns(): Promise<VerifyDnsResponse> {
+    const response = await this.request('/domain/custom-setup/verify-dns', {
+      method: 'POST'
+    });
+    const payload = response.data as
+      | VerifyDnsResponse
+      | { data: VerifyDnsResponse };
+    return (
+      (payload as { data?: VerifyDnsResponse }).data ??
+      (payload as VerifyDnsResponse)
+    );
   }
 
   async getRecentEnrollments() {

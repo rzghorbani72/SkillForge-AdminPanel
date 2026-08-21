@@ -2503,6 +2503,20 @@ export const en = {
       stepsTitle: 'Connection steps',
       stepsDescription:
         'Do these at your domain registrar or DNS provider. Do not change Mentoma’s DNS.',
+      checklistTitle: 'Connection checklist',
+      checklistDescription:
+        'Each step says who does it (manager or Mentoma platform). Fill the blank, then press Check.',
+      referenceTitle: 'Reference (copy tables)',
+      wizardIntro:
+        'Work top to bottom. Platform steps are Mentoma ops (Hamravesh). Manager steps are DNS on the academy’s own domain.',
+      actorPlatform: 'Platform (Mentoma)',
+      actorManager: 'Manager',
+      loading: 'Loading domain checklist…',
+      stepSaved: 'Step saved',
+      recheck: 'Recheck',
+      dnsOk: 'DNS points at Mentoma',
+      dnsFail: 'DNS not ready yet (resolved: {{resolved}})',
+      resolvedTo: 'Resolved to: {{value}}',
       intro:
         'Example domain: {{example}}. Replace it with yours. Keep your current nameservers — only add records.',
       colType: 'Type',
@@ -2512,6 +2526,40 @@ export const en = {
       apexTitle: 'Root domain (@) — only if your DNS supports ANAME/ALIAS',
       sslNote:
         'After Mentoma attaches your domain, you may get unique _acme-challenge CNAME values for SSL. Add those exactly as shown — do not copy Mentoma’s own ACME records.',
+      wizard: {
+        save: {
+          title: 'Save public domain in Mentoma',
+          body: 'Manager enters the hostname (e.g. www.maral.ir) in Academy details, then rechecks this step.'
+        },
+        hamravesh: {
+          title: 'Add the domain in Hamravesh',
+          body: 'Platform opens Hamravesh → web app → Add domain for {{domain}}, then types the same hostname below and checks.',
+          blank: 'Hostname added in Hamravesh',
+          check: 'Check — domain added in Hamravesh'
+        },
+        acmePaste: {
+          title: 'Paste ACME CNAMEs from Hamravesh',
+          body: 'Platform copies _acme-challenge rows from Hamravesh into Mentoma so the manager can add them on their DNS.',
+          addRow: 'Add ACME row',
+          check: 'Check — ACME records saved for manager'
+        },
+        traffic: {
+          title: 'Point traffic DNS (CNAME)',
+          body: 'Manager adds CNAME www → {{target}} on their DNS (not Mentoma Arvan), then runs Check DNS.',
+          check: 'Check DNS'
+        },
+        acmeDns: {
+          title: 'Add ACME CNAMEs on manager DNS',
+          body: 'Manager adds the ACME rows below at their DNS panel, then confirms.',
+          waitPlatform: 'Waiting for platform to paste ACME records (step 3).',
+          check: 'Check — I added the ACME records'
+        },
+        ssl: {
+          title: 'Confirm SSL valid in Hamravesh',
+          body: 'Platform checks the certificate shows Valid / Record found for this hostname in Hamravesh, then confirms.',
+          check: 'Check — SSL is valid'
+        }
+      },
       step: {
         saveDomain: {
           title: 'Save the domain in Mentoma',

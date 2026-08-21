@@ -1,6 +1,5 @@
 'use client';
 
-import Link from '@/components/ui/link';
 import {
   Card,
   CardContent,
@@ -8,9 +7,9 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Globe } from 'lucide-react';
 import { SettingsSectionHeader } from '@/components/settings/settings-section-header';
+import { DomainConnectionWizard } from '@/components/settings/domain-connection-wizard';
 import { DomainDnsGuide } from '@/components/settings/domain-dns-guide';
 import { useSettingsData } from '../_hooks/use-settings-data';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -21,9 +20,7 @@ export default function DomainDnsSettingsPage() {
   const { t } = useTranslation();
   const { academy } = useSettingsData();
   const publicDomain =
-    academy?.domain?.public_address ??
-    academy?.Domain?.public_address ??
-    null;
+    academy?.domain?.public_address ?? academy?.Domain?.public_address ?? null;
   const exampleDomain = publicDomain?.trim() || 'maral.ir';
 
   return (
@@ -55,28 +52,26 @@ export default function DomainDnsSettingsPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {publicDomain ? (
-            <p className="text-sm text-muted-foreground">
-              {t('settings.domainDns.currentDomain', { domain: publicDomain })}
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              {t('settings.domainDns.noDomainYet')}
-            </p>
-          )}
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/settings/academy">
-              {t('settings.domainDns.openAcademySettings')}
-            </Link>
-          </Button>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">
+            {t('settings.domainDns.checklistTitle')}
+          </CardTitle>
+          <CardDescription>
+            {t('settings.domainDns.checklistDescription')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DomainConnectionWizard />
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle className="text-base">
-            {t('settings.domainDns.stepsTitle')}
+            {t('settings.domainDns.referenceTitle')}
           </CardTitle>
           <CardDescription>
             {t('settings.domainDns.stepsDescription')}

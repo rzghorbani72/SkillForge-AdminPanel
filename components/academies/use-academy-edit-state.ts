@@ -8,9 +8,7 @@ import {
   isSlugBlocking,
   useSlugAvailability
 } from '@/hooks/use-slug-availability';
-import {
-  DEFAULT_BRAND_COLOR
-} from '@/components/academies/brand-color-picker';
+import { DEFAULT_BRAND_COLOR } from '@/components/academies/brand-color-picker';
 import type { Academy } from '@/types/api';
 import type { AcademyEditPayload } from './academy-edit-types';
 
@@ -46,7 +44,7 @@ export function useAcademyEditState(academy: Academy) {
   } = useSlugAvailability({ ownSlug });
   const logo = useImageUpload();
   const favicon = useImageUpload();
-  const [primaryColor, setPrimaryColor] = useState(DEFAULT_BRAND_COLOR);
+  const [primaryColor, setPrimaryColor] = useState<string>(DEFAULT_BRAND_COLOR);
 
   useEffect(() => {
     setStep(0);
