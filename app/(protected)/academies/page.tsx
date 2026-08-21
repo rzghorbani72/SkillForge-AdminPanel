@@ -84,6 +84,14 @@ export default function AcademiesPage() {
     void handleSwitch(academy.id, '/settings/academy');
   }
 
+  function handleEdit(academy: Academy) {
+    if (academy.id === currentAcademyId) {
+      void handleSwitch(academy.id, '/settings/academy');
+      return;
+    }
+    setEditAcademy(academy);
+  }
+
   function buildTheme(hex: string) {
     const ch = (h: string, amt: number) =>
       Math.min(255, Math.max(0, parseInt(h, 16) + amt))
@@ -188,7 +196,7 @@ export default function AcademiesPage() {
         resolveUserRole={resolveUserRole}
         onSwitch={handleSwitch}
         onDetails={handleDetails}
-        onEdit={setEditAcademy}
+        onEdit={handleEdit}
         onCreate={() => setCreateOpen(true)}
         t={t}
         filters={
