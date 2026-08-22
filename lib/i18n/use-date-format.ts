@@ -19,8 +19,9 @@ export function useDateFormat() {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
+        ...(language === 'fa' ? { calendar: 'persian' as const } : {}),
         ...options
       }).format(new Date(value)),
-    [locale]
+    [locale, language]
   );
 }

@@ -158,37 +158,46 @@ export function formatCurrencyWithStore(
     currentLanguage = DEFAULT_LANGUAGE;
   }
 
+  const isToman =
+    storeWithCurrency.currency === 'IRR' ||
+    storeWithCurrency.currency_symbol?.toLowerCase() === 'toman';
+
   return formatCurrency(amount, {
     currency: storeWithCurrency.currency || 'USD',
     currency_symbol: storeWithCurrency.currency_symbol,
     currency_position: storeWithCurrency.currency_position || 'after',
-    divideBy: divideBy ?? 100,
+    divideBy: divideBy ?? (isToman ? 1 : 100),
     language: currentLanguage
   });
 }
 
-const defaultLocale = getLocaleForLanguage(DEFAULT_LANGUAGE);
-
-export function formatNumber(num: number): string {
-  return new Intl.NumberFormat(defaultLocale).format(num);
+export function formatNumber(num: number, language?: string): string {
+  const locale = getLocaleForLanguage(language ?? DEFAULT_LANGUAGE);
+  return new Intl.NumberFormat(locale).format(num);
 }
 
-export function formatDate(date: string | Date): string {
-  return new Intl.DateTimeFormat(defaultLocale, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  }).format(new Date(date));
+export function formatDate(date: string | Date, language?: string): string {
+  return new Intl.DateTimeFormat(
+    getLocaleForLanguage(language ?? DEFAULT_LANGUAGE),
+    {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }
+  ).format(new Date(date));
 }
 
-export function formatDateTime(date: string | Date): string {
-  return new Intl.DateTimeFormat(defaultLocale, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(new Date(date));
+export function formatDateTime(date: string | Date, language?: string): string {
+  return new Intl.DateTimeFormat(
+    getLocaleForLanguage(language ?? DEFAULT_LANGUAGE),
+    {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }
+  ).format(new Date(date));
 }
 
 export function formatRelativeTime(

@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import {
   COUPON_TYPE_BADGE,
   COUPON_TYPE_LABEL_KEY,
@@ -31,6 +33,8 @@ import {
 export function PlanVouchersCard() {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
+  const formatDate = useDateFormat();
+  const formatPercent = usePercentLabel();
   const [vouchers, setVouchers] = useState<CouponSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,12 +62,11 @@ export function PlanVouchersCard() {
     const type = couponTypeOf(voucher);
     if (type === 'FREE_TRIAL') {
       return t('coupons.daysValue', {
-        count: formatNumber(voucher.free_trial_days ?? 0)
+        count: voucher.free_trial_days ?? 0
       });
     }
-    if (type === 'FULL_DISCOUNT') return `${formatNumber(100)}٪`;
-    if (type === 'PERCENT')
-      return `${formatNumber(voucher.discount_value ?? 0)}٪`;
+    if (type === 'FULL_DISCOUNT') return formatPercent(100);
+    if (type === 'PERCENT') return formatPercent(voucher.discount_value ?? 0);
     return formatNumber(voucher.discount_value ?? 0);
   }
 
@@ -107,7 +110,7 @@ export function PlanVouchersCard() {
                   </TableCell>
                   <TableCell>{valueOf(voucher)}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {voucher.end_date?.slice(0, 10)}
+                    {voucher.end_date ? formatDate(voucher.end_date) : '—'}
                   </TableCell>
                 </TableRow>
               ))}

@@ -72,9 +72,10 @@ export function useFinancialFilters(): FinancialFilters {
       new Date(isoString).toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
+        ...(language === 'fa' ? { calendar: 'persian' as const } : {})
       }),
-    [locale]
+    [locale, language]
   );
 
   return {

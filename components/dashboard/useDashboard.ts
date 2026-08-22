@@ -353,7 +353,7 @@ const useDashboard = () => {
     () => [
       {
         title: t('dashboard.totalCourses'),
-        value: formatNumber(statsTotals.totalCourses),
+        value: formatNumber(statsTotals.totalCourses, language),
         icon: BookOpen,
         change: t('dashboard.live'),
         changeType: 'increase',
@@ -363,7 +363,7 @@ const useDashboard = () => {
       },
       {
         title: t('dashboard.totalStudents'),
-        value: formatNumber(statsTotals.totalStudents),
+        value: formatNumber(statsTotals.totalStudents, language),
         icon: Users,
         change: t('dashboard.live'),
         changeType: 'increase',
@@ -375,7 +375,9 @@ const useDashboard = () => {
         title: t('dashboard.totalRevenue'),
         value: formatCurrencyWithStore(
           statsTotals.totalRevenue,
-          effectiveAcademy
+          effectiveAcademy,
+          undefined,
+          language
         ),
         icon: DollarSign,
         change: t('dashboard.live'),
@@ -386,14 +388,14 @@ const useDashboard = () => {
       },
       {
         title: t('dashboard.activeEnrollments'),
-        value: formatNumber(statsTotals.activeEnrollments),
+        value: formatNumber(statsTotals.activeEnrollments, language),
         icon: TrendingUp,
         change: t('dashboard.live'),
         changeType: 'increase',
         description: t('dashboard.studentsCurrentlyProgressing')
       }
     ],
-    [statsTotals, effectiveAcademy, isAdminWithoutStore, t]
+    [statsTotals, effectiveAcademy, isAdminWithoutStore, t, language]
   );
 
   const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];

@@ -18,6 +18,38 @@ export function toPersianDigits(str: string): string {
 }
 
 /**
+ * E.164 or raw digits → spaced national Iranian mobile for display.
+ * Example: +989120000000 → ۰۹۱۲ ۰۰۰ ۰۰۰۰ (LTR-isolated in fa).
+ */
+export function formatPhoneDisplay(
+  raw: string,
+  language: string = 'fa'
+): string {
+  if (!raw) return '—';
+
+  let digits = toEnglishDigits(raw).replace(/\D/g, '');
+  if (digits.startsWith('0098')) digits = digits.slice(4);
+  else if (digits.startsWith('98')) digits = digits.slice(2);
+
+  let national = digits;
+  if (digits.length === 10 && digits.startsWith('9')) {
+    national = `0${digits}`;
+  }
+
+  let formatted = national;
+  if (national.length === 11 && national.startsWith('09')) {
+    formatted = `${national.slice(0, 4)} ${national.slice(4, 7)} ${national.slice(7)}`;
+  } else {
+    formatted = national.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
+  }
+
+  if (language === 'fa') {
+    return `\u2066${toPersianDigits(formatted)}\u2069`;
+  }
+  return formatted;
+}
+
+/**
  * Cleans a phone number by removing country codes, leading zeros, and invalid characters
  * @param phoneNumber - The raw phone number input
  * @param countryCode - The selected country code

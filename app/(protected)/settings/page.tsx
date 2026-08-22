@@ -16,10 +16,13 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { DefaultAcademyCard } from '@/components/settings/default-academy-card';
+import { formatPhoneDisplay } from '@/lib/phone-utils';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 export default function SettingsOverviewPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const formatDate = useDateFormat();
+  const formatNumber = useNumberFormat();
   const { user: authUser } = useAuthUser();
   const { user, academy, isLoading, refresh } = useSettingsData();
   const isPlatformAdminUser = isPlatformAdmin(authUser);
@@ -77,8 +80,10 @@ export default function SettingsOverviewPage() {
             </div>
             <div className="flex justify-between">
               <span>{t('settings.phone')}</span>
-              <span className="font-medium text-foreground">
-                {user?.phone_number ?? '—'}
+              <span className="font-medium text-foreground" dir="ltr">
+                {user?.phone_number
+                  ? formatPhoneDisplay(user.phone_number, language)
+                  : '—'}
               </span>
             </div>
             {user?.created_at && (
@@ -115,7 +120,9 @@ export default function SettingsOverviewPage() {
             <div className="flex justify-between">
               <span>{t('settings.students')}</span>
               <span className="font-medium text-foreground">
-                {academy?.students_count ?? '—'}
+                {academy?.students_count != null
+                  ? formatNumber(academy.students_count)
+                  : '—'}
               </span>
             </div>
             <div className="flex justify-between">

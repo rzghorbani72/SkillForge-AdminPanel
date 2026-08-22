@@ -54,6 +54,8 @@ import {
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { PlanVouchersCard } from '@/components/coupons/plan-vouchers-card';
@@ -97,6 +99,8 @@ type CouponValues = z.infer<typeof couponSchema>;
 export default function CouponsPage() {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
+  const formatDate = useDateFormat();
+  const formatPercent = usePercentLabel();
   const { user } = useAuthUser();
   const canManagePlatformVouchers = isPlatformAdmin(user);
   // Managers mint academy coupons; the backend forces their own academy_id.
@@ -305,12 +309,12 @@ export default function CouponsPage() {
                     <TableCell>
                       {c.coupon_type === 'FREE_TRIAL'
                         ? t('coupons.daysValue', {
-                            count: formatNumber(c.free_trial_days ?? 0)
+                            count: c.free_trial_days ?? 0
                           })
                         : c.coupon_type === 'FULL_DISCOUNT'
-                          ? '100%'
+                          ? formatPercent(100)
                           : c.coupon_type === 'PERCENT'
-                            ? `${formatNumber(c.discount_value ?? 0)}٪`
+                            ? formatPercent(c.discount_value ?? 0)
                             : formatNumber(c.discount_value ?? 0)}
                     </TableCell>
                     {canManagePlatformVouchers && (
@@ -320,11 +324,13 @@ export default function CouponsPage() {
                     )}
                     <TableCell>
                       {c.usage_limit
-                        ? `${c.used_count ?? 0}/${c.usage_limit}`
-                        : (c.used_count ?? 0)}
+                        ? `${formatNumber(c.used_count ?? 0)}/${formatNumber(c.usage_limit)}`
+                        : formatNumber(c.used_count ?? 0)}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {c.start_date?.slice(0, 10)} → {c.end_date?.slice(0, 10)}
+                      {c.start_date && c.end_date
+                        ? `${formatDate(c.start_date)} → ${formatDate(c.end_date)}`
+                        : '—'}
                     </TableCell>
                     <TableCell className="text-end">
                       <Button
