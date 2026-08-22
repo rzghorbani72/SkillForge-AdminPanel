@@ -22,7 +22,8 @@ import { UserContactActions } from '@/components/users/user-contact-actions';
 import { UserPaymentsCard } from '@/components/users/user-activity-panel';
 import { StudentLearningSection } from '@/components/students/student-learning-section';
 import { useAuthUser } from '@/hooks/useAuthUser';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
+import { formatPhoneDisplay } from '@/lib/phone-utils';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 import type { UserDetailsResponse } from '@/types/user-details';
@@ -83,6 +84,7 @@ function VerifiedMark({
 
 export default function UserDetailPage() {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const params = useParams();
   const router = useRouter();
   const { user: authUser } = useAuthUser();
@@ -185,7 +187,9 @@ export default function UserDetailPage() {
             targetLevel={user.role_hierarchy_level}
             callerRole={authUser?.role}
             isSelf={String(authUser?.id) === String(user.id)}
+            showEditLink={false}
             onChanged={fetchUser}
+            className="justify-start"
           />
         </div>
       </PageHeader>
@@ -222,8 +226,13 @@ export default function UserDetailPage() {
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm" dir="ltr">
-                    {user.phone_number || '—'}
+                  <p
+                    className="text-[15px] font-medium tabular-nums tracking-wide"
+                    dir="ltr"
+                  >
+                    {user.phone_number
+                      ? formatPhoneDisplay(user.phone_number, language)
+                      : '—'}
                   </p>
                   <VerifiedMark confirmed={user.phone_confirmed} t={t} />
                 </div>

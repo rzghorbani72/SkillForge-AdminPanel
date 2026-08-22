@@ -1,9 +1,8 @@
 'use client';
 
-import Link from 'next/link';
-import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
-import { toPersianDigits } from '@/lib/phone-utils';
+import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
+import { formatPhoneDisplay } from '@/lib/phone-utils';
 import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { UserRoleBadge, type RoleConfig } from './user-role-badge';
@@ -45,9 +44,7 @@ function UserRow({
       : translatedRole;
   const displayName = user.display_name || user.name;
   const phoneDisplay = user.phone_number
-    ? language === 'fa'
-      ? toPersianDigits(user.phone_number)
-      : user.phone_number
+    ? formatPhoneDisplay(user.phone_number, language)
     : '—';
 
   return (
@@ -56,7 +53,7 @@ function UserRow({
         <div className="flex items-center gap-2.5">
           <UserAvatar name={displayName} tone={roleTone} size={32} />
           <div>
-            <div className="flex items-center gap-1.5 text-[13.5px] font-semibold leading-tight">
+            <div className="flex items-center gap-1.5 text-base font-semibold leading-tight">
               {displayName || t('users.unnamedUser')}
               {isSelf && (
                 <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
@@ -72,11 +69,11 @@ function UserRow({
       </td>
       <td
         dir="ltr"
-        className="px-4 py-3 text-right font-mono text-[12px] text-muted-foreground"
+        className="px-4 py-3.5 text-end text-[15px] font-medium tabular-nums tracking-wide text-foreground"
       >
         {phoneDisplay}
       </td>
-      <td className="px-4 py-3 font-mono text-[11.5px] text-muted-foreground">
+      <td className="px-4 py-3.5 text-sm text-muted-foreground">
         {user.created_at
           ? new Date(user.created_at).toLocaleDateString('fa-IR')
           : '—'}
@@ -86,23 +83,15 @@ function UserRow({
           status={user.status || (user.is_active ? 'active' : 'inactive')}
         />
       </td>
-      <td className="w-px whitespace-nowrap px-4 py-3">
-        {/* Details is the primary open; reset/deactivate/delete stay in the menu. */}
-        <div className="flex items-center justify-end gap-3 text-[12.5px]">
-          <Link
-            href={`/user/${user.id}`}
-            className="whitespace-nowrap font-medium text-primary hover:underline"
-          >
-            {t('stores.details')}
-          </Link>
-          <UserRowActions
-            user={user}
-            targetLevel={user.role_hierarchy_level}
-            callerRole={callerRole}
-            isSelf={isSelf}
-            onChanged={onChanged}
-          />
-        </div>
+      <td className="whitespace-nowrap px-4 py-3.5">
+        <UserRowActions
+          user={user}
+          targetLevel={user.role_hierarchy_level}
+          callerRole={callerRole}
+          isSelf={isSelf}
+          showDetailsLink
+          onChanged={onChanged}
+        />
       </td>
     </tr>
   );
@@ -150,25 +139,27 @@ export function UsersTable({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full border-collapse text-base">
         <thead>
           <tr className="border-b border-border bg-muted/50">
-            <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {t('common.name')}
             </th>
-            <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {t('userEdit.role')}
             </th>
-            <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {t('common.phone')}
             </th>
-            <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {t('users.joinDate')}
             </th>
-            <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {t('common.status')}
             </th>
-            <th className="w-24 px-4 py-3" />
+            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('common.actions')}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -176,7 +167,7 @@ export function UsersTable({
             <tr>
               <td
                 colSpan={6}
-                className="py-12 text-center text-sm text-muted-foreground"
+                className="py-12 text-center text-base text-muted-foreground"
               >
                 {t('users.noUsersFound')}
               </td>
@@ -198,7 +189,7 @@ export function UsersTable({
           )}
         </tbody>
       </table>
-      <div className="flex items-center justify-between border-t border-border bg-muted/20 px-4 py-3 text-[12px] text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
         <span>
           {t('users.showingOf', {
             shown: users.length,

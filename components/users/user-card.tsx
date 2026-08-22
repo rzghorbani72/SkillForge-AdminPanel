@@ -5,7 +5,7 @@ import { Mail, Phone } from 'lucide-react';
 import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
-import { toPersianDigits } from '@/lib/phone-utils';
+import { formatPhoneDisplay } from '@/lib/phone-utils';
 import { getRoleDisplayLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 
@@ -57,9 +57,7 @@ export function UserCard({ user, actions }: UserCardProps) {
   const role = getUserRoleName(user);
   const roleLabel = getUserRoleLabel(user);
   const phoneDisplay = user.phone_number
-    ? language === 'fa'
-      ? toPersianDigits(user.phone_number)
-      : user.phone_number
+    ? formatPhoneDisplay(user.phone_number, language)
     : '—';
 
   return (
@@ -85,14 +83,19 @@ export function UserCard({ user, actions }: UserCardProps) {
         <UserStatusPill status={getUserStatus(user)} />
       </div>
 
-      <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
+      <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
         <p className="flex items-center gap-1.5">
-          <Mail className="h-3.5 w-3.5 shrink-0" />
+          <Mail className="h-4 w-4 shrink-0" />
           <span className="truncate">{user.email || '—'}</span>
         </p>
         <p className="flex items-center gap-1.5">
-          <Phone className="h-3.5 w-3.5 shrink-0" />
-          <span dir="ltr">{phoneDisplay}</span>
+          <Phone className="h-4 w-4 shrink-0" />
+          <span
+            dir="ltr"
+            className="text-[15px] font-medium tabular-nums tracking-wide text-foreground"
+          >
+            {phoneDisplay}
+          </span>
         </p>
       </div>
 

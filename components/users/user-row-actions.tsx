@@ -1,24 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactElement } from 'react';
 import Link from 'next/link';
 import {
-  MoreHorizontal,
-  Pencil,
-  KeyRound,
-  Ban,
-  CheckCircle2,
-  Trash2,
+  Check,
   Copy,
-  Check
+  Eye,
+  KeyRound,
+  Pencil,
+  Trash2,
+  UserCheck,
+  UserX
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,16 +29,26 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { generateTempPassword } from '@/lib/password-utils';
+import { cn } from '@/lib/utils';
 import type { User } from '@/types/api';
 
-// Mirrors the server-side scope in UsersService.update/remove/resetUserPassword —
-// a manager may only manage profiles BELOW their own rank. Compared by rank, not
-// by role name, so academy-defined custom roles are covered too.
 const MANAGER_HIERARCHY_LEVEL = 3;
+
+const iconBtnClass =
+  'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-50';
+
+const iconBtnDestructiveClass =
+  'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:pointer-events-none disabled:opacity-50';
 
 type UserRowActionsProps = {
   user: User;
@@ -53,14 +56,37 @@ type UserRowActionsProps = {
   callerRole?: string;
   isSelf: boolean;
   onChanged: () => void;
+  /** Show the profile link — used in table rows; hidden on the detail page header. */
+  showDetailsLink?: boolean;
+  /** Hide edit when the page already exposes it (e.g. user detail header). */
+  showEditLink?: boolean;
+  className?: string;
 };
+
+function ActionTooltip({
+  label,
+  children
+}: {
+  label: string;
+  children: ReactElement;
+}) {
+  return (
+    <Tooltip delayDuration={200}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="top">{label}</TooltipContent>
+    </Tooltip>
+  );
+}
 
 export function UserRowActions({
   user,
   targetLevel,
   callerRole,
   isSelf,
-  onChanged
+  onChanged,
+  showDetailsLink = false,
+  showEditLink = true,
+  className
 }: UserRowActionsProps) {
   const { t } = useTranslation();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -122,52 +148,83 @@ export function UserRowActions({
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted/60 disabled:opacity-50"
-            disabled={busy}
-          >
-            <MoreHorizontal style={{ width: 14, height: 14 }} />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem asChild>
-            <Link href={`/user/${user.id}/edit`}>
-              <Pencil className="me-2 h-3.5 w-3.5" />
-              {t('common.edit')}
-            </Link>
-          </DropdownMenuItem>
+      <TooltipProvider delayDuration={200}>
+        <div className={cn('flex items-center justify-end gap-0.5', className)}>
+          {showDetailsLink && (
+            <ActionTooltip label={t('stores.details')}>
+              <Link
+                href={`/user/${user.id}`}
+                className={iconBtnClass}
+                aria-label={t('stores.details')}
+              >
+                <Eye className="h-4 w-4" />
+              </Link>
+            </ActionTooltip>
+          )}
+          {showEditLink && (
+            <ActionTooltip label={t('common.edit')}>
+              <Link
+                href={`/user/${user.id}/edit`}
+                className={iconBtnClass}
+                aria-label={t('common.edit')}
+              >
+                <Pencil className="h-4 w-4" />
+              </Link>
+            </ActionTooltip>
+          )}
           {canManage && (
             <>
-              <DropdownMenuItem onClick={handleResetPassword} disabled={busy}>
-                <KeyRound className="me-2 h-3.5 w-3.5" />
-                {t('users.resetPassword')}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleToggleActive} disabled={busy}>
-                {user.is_active ? (
-                  <Ban className="me-2 h-3.5 w-3.5" />
-                ) : (
-                  <CheckCircle2 className="me-2 h-3.5 w-3.5" />
-                )}
-                {user.is_active ? t('common.deactivate') : t('common.activate')}
-              </DropdownMenuItem>
+              <ActionTooltip label={t('users.resetPassword')}>
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  disabled={busy}
+                  className={iconBtnClass}
+                  aria-label={t('users.resetPassword')}
+                >
+                  <KeyRound className="h-4 w-4" />
+                </button>
+              </ActionTooltip>
+              <ActionTooltip
+                label={
+                  user.is_active ? t('common.deactivate') : t('common.activate')
+                }
+              >
+                <button
+                  type="button"
+                  onClick={handleToggleActive}
+                  disabled={busy}
+                  className={iconBtnClass}
+                  aria-label={
+                    user.is_active
+                      ? t('common.deactivate')
+                      : t('common.activate')
+                  }
+                >
+                  {user.is_active ? (
+                    <UserX className="h-4 w-4" />
+                  ) : (
+                    <UserCheck className="h-4 w-4" />
+                  )}
+                </button>
+              </ActionTooltip>
             </>
           )}
           {canManage && !isSelf && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
+            <ActionTooltip label={t('common.delete')}>
+              <button
+                type="button"
                 onClick={() => setConfirmDelete(true)}
-                className="text-destructive focus:text-destructive"
+                disabled={busy}
+                className={iconBtnDestructiveClass}
+                aria-label={t('common.delete')}
               >
-                <Trash2 className="me-2 h-3.5 w-3.5" />
-                {t('common.delete')}
-              </DropdownMenuItem>
-            </>
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </ActionTooltip>
           )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </div>
+      </TooltipProvider>
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>

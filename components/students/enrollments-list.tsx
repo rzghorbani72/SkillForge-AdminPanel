@@ -64,15 +64,12 @@ interface EnrollmentsListProps {
   enrollments: readonly Enrollment[];
   isLoading: boolean;
   t: TranslateFn;
-  /** Progress view drops the enrolment date and leads with the completion bar. */
-  variant?: 'enrollments' | 'progress';
 }
 
 export function EnrollmentsList({
   enrollments,
   isLoading,
-  t,
-  variant = 'enrollments'
+  t
 }: EnrollmentsListProps) {
   const formatNumber = useNumberFormat();
   const formatDate = useDateFormat();
@@ -136,10 +133,6 @@ export function EnrollmentsList({
       )
     };
 
-    if (variant === 'progress') {
-      return [student, progress, status];
-    }
-
     return [
       student,
       {
@@ -155,7 +148,7 @@ export function EnrollmentsList({
       progress,
       status
     ];
-  }, [t, formatNumber, formatDate, variant]);
+  }, [t, formatNumber, formatDate]);
 
   return (
     <DataList

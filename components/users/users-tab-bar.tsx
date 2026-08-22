@@ -2,12 +2,7 @@
 
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
-export type UsersTab =
-  | 'all'
-  | 'groups'
-  | 'requests'
-  | 'enrollments'
-  | 'progress';
+export type UsersTab = 'all' | 'groups' | 'requests' | 'enrollments';
 
 export interface UsersTabItem {
   value: UsersTab;

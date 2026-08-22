@@ -20,7 +20,6 @@ import {
 } from '@/components/users/users-groups-grid';
 import { UsersRequestsView } from '@/components/users/users-requests-view';
 import { UsersEnrollmentsView } from '@/components/users/users-enrollments-view';
-import { UsersProgressView } from '@/components/users/users-progress-view';
 import { UsersPendingBanner } from '@/components/users/users-pending-banner';
 import {
   UsersTabBar,
@@ -43,13 +42,13 @@ const PAGE_SIZE = 20;
 /**
  * One people hub: roles are a dropdown filter (so academy-defined roles work
  * like built-in ones), and everything a manager does with people — groups,
- * join requests, enrolments and progress — lives in a tab next to the list.
+ * course enrollments and teacher requests — lives in a tab next to the list.
  */
 const TAB_ACCESS: Record<string, UsersTab[]> = {
-  PLATFORM_OWNER: ['all', 'groups', 'requests', 'enrollments', 'progress'],
-  ADMIN: ['all', 'groups', 'requests', 'enrollments', 'progress'],
-  MANAGER: ['all', 'groups', 'requests', 'enrollments', 'progress'],
-  TEACHER: ['all', 'groups', 'enrollments', 'progress']
+  PLATFORM_OWNER: ['all', 'groups', 'enrollments', 'requests'],
+  ADMIN: ['all', 'groups', 'enrollments', 'requests'],
+  MANAGER: ['all', 'groups', 'enrollments', 'requests'],
+  TEACHER: ['all', 'groups', 'enrollments']
 };
 
 function allowedTabs(role?: string): UsersTab[] {
@@ -174,14 +173,13 @@ export default function UsersPage() {
   const allTabs: UsersTabItem[] = [
     { value: 'all', label: t('users.users'), count: totalCount },
     { value: 'groups', label: t('users.groups'), count: groups.length },
+    { value: 'enrollments', label: t('students.enrollments') },
     {
       value: 'requests',
       label: t('users.requests'),
       count: pendingRequestsCount,
       urgent: true
-    },
-    { value: 'enrollments', label: t('students.enrollments') },
-    { value: 'progress', label: t('students.progressTracking') }
+    }
   ];
   const tabs = allTabs.filter((item) => allowed.includes(item.value));
 
@@ -255,21 +253,16 @@ export default function UsersPage() {
           onOpen={setOpenGroupId}
         />
       )}
-      {tab === 'requests' && (
-        <UsersRequestsView
-          onPendingCountChange={refreshStats}
-          onStats={setReportedStats}
-        />
-      )}
       {tab === 'enrollments' && (
         <LearningNavGate requiredCapability="students">
           <UsersEnrollmentsView onStats={setReportedStats} />
         </LearningNavGate>
       )}
-      {tab === 'progress' && (
-        <LearningNavGate requiredCapability="students">
-          <UsersProgressView onStats={setReportedStats} />
-        </LearningNavGate>
+      {tab === 'requests' && (
+        <UsersRequestsView
+          onPendingCountChange={refreshStats}
+          onStats={setReportedStats}
+        />
       )}
     </PageContainer>
   );

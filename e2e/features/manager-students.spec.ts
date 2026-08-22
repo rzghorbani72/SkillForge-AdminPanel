@@ -33,7 +33,7 @@ test.describe('Manager people management @backend', () => {
   test('users page loads with every people tab', async ({ page }) => {
     await page.goto('/users');
     await expectNoServerError(page);
-    for (const name of [/group/i, /request/i, /enrol/i, /progress/i]) {
+    for (const name of [/group/i, /enrol/i, /request/i]) {
       await expect(page.getByRole('button', { name })).toBeVisible();
     }
   });
@@ -55,8 +55,8 @@ test.describe('Manager people management @backend', () => {
     }
   });
 
-  test('enrollments and progress tabs load', async ({ page }) => {
-    for (const tab of ['enrollments', 'progress']) {
+  test('enrollments and teacher-request tabs load', async ({ page }) => {
+    for (const tab of ['enrollments', 'requests']) {
       await page.goto(`/users?tab=${tab}`);
       await expectNoServerError(page);
     }
