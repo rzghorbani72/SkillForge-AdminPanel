@@ -63,19 +63,19 @@ export default function CourseSettingsCard({
                 <Lock className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <FormLabel className="text-sm font-medium">
-                    {t('courses.allowDownloads')}
+                    {t('courses.secureMode')}
                   </FormLabel>
                   <p className="text-xs text-muted-foreground">
                     {field.value
-                      ? t('courses.allowDownloadsOnHint')
-                      : t('courses.allowDownloadsOffHint')}
+                      ? t('courses.secureModeOffHint')
+                      : t('courses.secureModeOnHint')}
                   </p>
                 </div>
               </div>
               <FormControl>
                 <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
+                  checked={!field.value}
+                  onCheckedChange={(secure) => field.onChange(!secure)}
                 />
               </FormControl>
             </FormItem>

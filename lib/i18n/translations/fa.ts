@@ -1581,16 +1581,18 @@ export const fa = {
     toman: 'تومان',
     courseSettings: 'تنظیمات دوره',
     highlightedOnHomepage: 'در صفحه اصلی برجسته نمایش داده می‌شود',
-    allowDownloads: 'اجازه ذخیره فایل‌ها توسط دانشجو',
-    allowDownloadsOnHint:
+    secureMode: 'حالت امن (جلوگیری از دانلود)',
+    secureModeOnHint:
+      'دانشجو فقط به‌صورت آنلاین تماشا و گوش می‌کند؛ دکمه دانلود پخش‌کننده مخفی می‌شود و ذخیره فایل ممکن نیست.',
+    secureModeOffHint:
       'دانشجویانی که هزینه پرداخت کرده‌اند می‌توانند ویدیوها و صوت‌های این دوره را دانلود کنند.',
-    allowDownloadsOffHint:
-      'حالت امن: دانشجو فقط به‌صورت آنلاین تماشا و گوش می‌کند و نمی‌تواند فایل را ذخیره کند.',
     applyDownloadsToLessons: 'اعمال روی همه درس‌های این دوره',
     applyDownloadsToLessonsOnHint:
       'با ذخیره، همه درس‌های موجود برای دانشجوی پرداخت‌کرده قابل دانلود می‌شوند.',
     applyDownloadsToLessonsOffHint:
       'با ذخیره، همه درس‌های موجود فقط قابل پخش آنلاین می‌شوند.',
+    applyDownloadsToLessonsDone:
+      'تنظیم دانلود روی همه درس‌های این دوره اعمال شد.',
     level: 'سطح',
     shortDescription: 'توضیحات کوتاه',
     descriptionPlaceholder:

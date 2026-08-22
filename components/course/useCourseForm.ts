@@ -301,6 +301,7 @@ export function useCourseForm(courseId: string) {
         // overwrite per-lesson overrides the teacher made in the meantime.
         if (data.apply_downloads_to_lessons) {
           form.setValue('apply_downloads_to_lessons', false);
+          toast.success(t('courses.applyDownloadsToLessonsDone'));
         }
 
         // The backend never learns a draft's clientKey — it only echoes back

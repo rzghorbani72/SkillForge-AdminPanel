@@ -1594,16 +1594,18 @@ export const en = {
     toman: 'Toman',
     courseSettings: 'Course Settings',
     highlightedOnHomepage: 'Highlighted on the homepage',
-    allowDownloads: 'Allow students to save files',
-    allowDownloadsOnHint:
+    secureMode: 'Secure mode (no downloading)',
+    secureModeOnHint:
+      'Students can only watch and listen online. The download button is hidden and saving the file is blocked.',
+    secureModeOffHint:
       'Students who paid can download this course\u2019s videos and voices.',
-    allowDownloadsOffHint:
-      'Secure mode: students can only watch and listen online, not save the files.',
     applyDownloadsToLessons: 'Apply to every lesson in this course',
     applyDownloadsToLessonsOnHint:
       'On save, every existing lesson becomes downloadable for paid students.',
     applyDownloadsToLessonsOffHint:
       'On save, every existing lesson becomes stream-only.',
+    applyDownloadsToLessonsDone:
+      'The download setting was applied to every lesson in this course.',
     level: 'Level',
     shortDescription: 'Short Description',
     descriptionPlaceholder:
