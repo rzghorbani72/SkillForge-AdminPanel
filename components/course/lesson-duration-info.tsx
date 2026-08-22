@@ -9,10 +9,7 @@ interface LessonDurationInfoProps {
   lesson: LessonDraft;
 }
 
-/**
- * The length always comes from the uploaded file, so it is shown as a read-only
- * fact next to the player instead of a field the manager could mistype.
- */
+/** Length always comes from the uploaded file, so it is read-only here. */
 export function LessonDurationInfo({ lesson }: LessonDurationInfoProps) {
   const { t, language } = useTranslation();
   const isFa = language === 'fa';
@@ -23,13 +20,8 @@ export function LessonDurationInfo({ lesson }: LessonDurationInfoProps) {
         <Clock className="h-3.5 w-3.5" aria-hidden />
         {t('courses.lessonDuration')}
       </span>
-      <span className="text-end">
-        <span className="block text-base font-semibold tabular-nums leading-tight">
-          {isFa ? toPersianDigits(lesson.duration) : lesson.duration}
-        </span>
-        <span className="block text-[11px] leading-snug text-muted-foreground">
-          {t('courses.lessonDurationAuto')}
-        </span>
+      <span className="text-sm font-semibold tabular-nums">
+        {isFa ? toPersianDigits(lesson.duration) : lesson.duration}
       </span>
     </div>
   );

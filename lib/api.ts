@@ -2458,6 +2458,13 @@ class ApiClient {
     });
   }
 
+  /** Stores the image as the video's cover (poster) on the video row. */
+  async attachVideoPoster(videoId: string, poster: File) {
+    const formData = new FormData();
+    formData.append('posterfile', poster);
+    return this.uploadFileWithProgress(`/videos/${videoId}/poster`, formData);
+  }
+
   async uploadImage(
     file: File,
     metadata?: { title?: string; description?: string },
@@ -2568,12 +2575,7 @@ class ApiClient {
     ).data;
 
     if (posterFile && video?.id) {
-      const posterForm = new FormData();
-      posterForm.append('posterfile', posterFile);
-      await this.uploadFileWithProgress(
-        `/videos/${video.id}/poster`,
-        posterForm
-      );
+      await this.attachVideoPoster(video.id, posterFile);
     }
 
     onProgress?.(100);

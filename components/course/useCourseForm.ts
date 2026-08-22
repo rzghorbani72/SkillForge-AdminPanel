@@ -433,7 +433,12 @@ export function useCourseForm(courseId: string) {
    */
   const saveCover = useCallback(async () => {
     const values = form.getValues();
-    if (!courseFormSchema.safeParse(values).success) return;
+    // A half-filled form cannot be saved yet, so show what is missing instead
+    // of dropping the new cover without a word.
+    if (!courseFormSchema.safeParse(values).success) {
+      void form.trigger();
+      return;
+    }
     await save(values, { silent: true });
   }, [form, save]);
 

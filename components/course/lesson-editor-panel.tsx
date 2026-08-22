@@ -43,8 +43,9 @@ function patchForType(
 
 const SETTING_ROW_CLASS = 'flex items-center justify-between gap-3 px-4 py-3';
 
-/** Player and settings share one column size, so both boxes line up exactly. */
-const LESSON_COLUMN_CLASS = 'w-full sm:w-[calc(50%-0.625rem)]';
+/** Media (video + cover) takes the wide column; settings fit in the rest. */
+const LESSON_MEDIA_COLUMN_CLASS = 'w-full lg:w-[calc(70%-0.625rem)]';
+const LESSON_SETTINGS_COLUMN_CLASS = 'w-full lg:w-[calc(30%-0.625rem)]';
 
 interface LessonEditorPanelProps {
   lesson: LessonDraft;
@@ -102,7 +103,7 @@ export function LessonEditorPanel({
         </div>
 
         <div className="flex flex-wrap items-stretch gap-5">
-          <div className={LESSON_COLUMN_CLASS}>
+          <div className={LESSON_MEDIA_COLUMN_CLASS}>
             {lesson.lesson_type === 'LIVE' ? (
               <div className="space-y-2">
                 <Label className="text-xs font-medium text-muted-foreground">
@@ -124,7 +125,7 @@ export function LessonEditorPanel({
 
           {/* Settings read as one list of "label → value" rows, so they stay
               aligned instead of floating around the player. */}
-          <div className={cn(LESSON_COLUMN_CLASS, 'space-y-2')}>
+          <div className={cn(LESSON_SETTINGS_COLUMN_CLASS, 'space-y-2')}>
             <Label className="text-xs font-medium text-muted-foreground">
               {t('courses.lessonSectionSettings')}
             </Label>

@@ -1466,8 +1466,7 @@ export const en = {
     seasonDescription: 'Season description',
     lessonTitle: 'Lesson',
     lessonDescription: 'Lesson description',
-    lessonDuration: 'Duration (mm:ss)',
-    lessonDurationAuto: 'Measured automatically from the file',
+    lessonDuration: 'Duration',
     lessonSectionContent: 'Lesson content',
     lessonSectionDetails: 'Lesson details',
     lessonSectionSettings: 'Lesson settings',
@@ -1489,6 +1488,7 @@ export const en = {
       'Organize your course into seasons, then add lessons to each season',
     lessonVideo: 'Video',
     lessonCover: 'Cover Image',
+    lessonCoverHint: 'Shown as the thumbnail for this lesson',
     removeVideo: 'Remove video',
     removeCover: 'Remove cover image',
     cancelUpload: 'Cancel',
@@ -2976,6 +2976,7 @@ export const en = {
     limitMultiple: 'Up to {{count}} files, {{size}} each'
   },
   media: {
+    changeImage: 'Change image',
     cancelUpload: 'Cancel upload',
     videoUploaded: 'Video uploaded successfully',
     audioUploaded: 'Audio uploaded successfully',

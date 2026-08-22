@@ -1,10 +1,16 @@
 'use client';
 
 import React, { useCallback, useRef, useState } from 'react';
-import { Image as ImageIcon, Loader2, UploadCloud, X } from 'lucide-react';
+import {
+  Image as ImageIcon,
+  Loader2,
+  Pencil,
+  UploadCloud,
+  X
+} from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { langApiVersionPath } from '@/lib/api-lang';
+import { imageByIdSrc as fetchImageByIdSrc } from '@/lib/image-src';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useTranslation } from '@/lib/i18n/hooks';
 import ProgressBar from './ProgressBar';
@@ -22,11 +28,8 @@ interface ImageUploadPreviewProps {
   placeholderSubtext?: string;
   selectedImageId?: string | null;
   disabled?: boolean;
-}
-
-/** Same-origin API image URL (lang-prefixed /v1). Keep relative for the image loader. */
-function fetchImageByIdSrc(id: string | number): string {
-  return `${langApiVersionPath()}/images/fetch-image-by-id/${id}`;
+  /** Gives the caller the picked file, e.g. to reuse it as a video poster. */
+  onFileSelected?: (file: File) => void;
 }
 
 /** Prefer relative same-origin paths; absolute / blob / data URLs pass through. */
@@ -47,7 +50,8 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   placeholderText,
   placeholderSubtext,
   selectedImageId,
-  disabled = false
+  disabled = false,
+  onFileSelected
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -62,9 +66,11 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
 
   const handleFile = useCallback(
     (file: File | undefined) => {
-      if (file) imageUpload.selectAndUpload(file);
+      if (!file) return;
+      onFileSelected?.(file);
+      imageUpload.selectAndUpload(file);
     },
-    [imageUpload]
+    [imageUpload, onFileSelected]
   );
 
   const currentSrc = imageUpload.preview
@@ -119,7 +125,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
       />
 
       {currentSrc ? (
-        <div className="relative aspect-[5/4] h-64 w-full">
+        <div className="group relative aspect-[5/4] h-64 w-full">
           <Image
             src={currentSrc}
             alt={alt ?? t('media.imagePreview')}
@@ -127,6 +133,12 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
             sizes="400px"
             className="object-cover"
           />
+          {!imageUpload.isUploading && !disabled && (
+            <span className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+              <Pencil className="h-4 w-4" />
+              {t('media.changeImage')}
+            </span>
+          )}
           {!imageUpload.isUploading && (
             <button
               type="button"

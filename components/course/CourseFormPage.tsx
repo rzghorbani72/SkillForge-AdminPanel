@@ -103,7 +103,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     <>
       {/* Sticky bar is full-bleed; title + actions share the form column */}
       <div className="sticky top-0 z-10 border-b bg-background">
-        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-6 py-4">
+        <div className="mx-auto flex w-full max-w-[1700px] flex-wrap items-center justify-between gap-3 px-6 py-4">
           <div className="flex min-w-0 items-center gap-3">
             <Button
               type="button"
@@ -163,7 +163,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-5xl p-6">
+      <div className="mx-auto w-full max-w-[1700px] p-6">
         <p className="mb-6 text-sm text-muted-foreground">
           {isPublished
             ? t('courses.builderPublishedHint')

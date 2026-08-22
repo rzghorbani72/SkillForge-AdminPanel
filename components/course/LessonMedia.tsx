@@ -3,12 +3,14 @@
 import {
   ExternalLink,
   FileText,
+  Image as ImageIcon,
   Loader2,
   Mic,
   Video,
   X,
   type LucideIcon
 } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import Link from '@/components/ui/link';
 import { Label } from '@/components/ui/label';
@@ -19,13 +21,14 @@ import { apiClient } from '@/lib/api';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { ErrorHandler } from '@/lib/error-handler';
 import { pickFile } from '@/lib/file-picker';
+import { useVideoCover } from '@/hooks/use-video-cover';
 import { isVideoFileAcceptable } from '@/lib/validate-video-upload';
 import { VIDEO_CONSTRAINTS } from '@/constants/video-constraints';
 import type { LessonDraft, LessonType } from './useCourseForm';
 import { DEFAULT_DURATION, secondsToDuration } from './course-drafts';
 import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
 
-type SlotKey = 'video' | 'audio' | 'document';
+type SlotKey = 'video' | 'audio' | 'document' | 'cover';
 
 /** Shared outer size for every type — prevents layout jump on type change. */
 export const LESSON_MEDIA_SLOT_CLASS = 'h-[14rem] w-full';
@@ -157,12 +160,14 @@ interface LessonMediaProps {
 const ZERO: Record<SlotKey, number> = {
   video: 0,
   audio: 0,
-  document: 0
+  document: 0,
+  cover: 0
 };
 const FALSE: Record<SlotKey, boolean> = {
   video: false,
   audio: false,
-  document: false
+  document: false,
+  cover: false
 };
 
 function toneFor(type: LessonType): string {
@@ -179,24 +184,28 @@ function revokeIfBlob(url: string | undefined) {
 export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   const { t } = useTranslation();
   const percentLabel = usePercentLabel();
+  const { onCoverPicked, onVideoAttached } = useVideoCover();
   const [progress, setProgress] = useState<Record<SlotKey, number>>(ZERO);
   const [uploading, setUploading] = useState<Record<SlotKey, boolean>>(FALSE);
   const abortRefs = useRef<Record<SlotKey, AbortController | null>>({
     video: null,
     audio: null,
-    document: null
+    document: null,
+    cover: null
   });
   // Keep blob URLs so we can revoke them after the server URL replaces them.
   const blobRefs = useRef<Record<SlotKey, string | null>>({
     video: null,
     audio: null,
-    document: null
+    document: null,
+    cover: null
   });
 
   useEffect(() => {
     return () => {
       revokeIfBlob(blobRefs.current.video ?? undefined);
       revokeIfBlob(blobRefs.current.audio ?? undefined);
+      revokeIfBlob(blobRefs.current.cover ?? undefined);
     };
   }, []);
 
@@ -205,6 +214,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   const showAudio = type === 'AUDIO';
   const showDocument =
     type === 'TEXT' || type === 'QUIZ' || type === 'ASSIGNMENT';
+  const showCover = showVideo || showAudio;
   const tone = toneFor(type);
   const DocIcon = LESSON_TYPE_BY_KEY[type]?.Icon ?? FileText;
 
@@ -237,19 +247,25 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     }
   }
 
-  function startLocalPreview(key: 'video' | 'audio', file: File) {
+  const PREVIEW_FIELD: Record<'video' | 'audio' | 'cover', keyof LessonDraft> =
+    {
+      video: 'videoPreviewUrl',
+      audio: 'audioPreviewUrl',
+      cover: 'coverPreviewUrl'
+    };
+
+  function startLocalPreview(key: 'video' | 'audio' | 'cover', file: File) {
     revokeIfBlob(blobRefs.current[key] ?? undefined);
     const blobUrl = URL.createObjectURL(file);
     blobRefs.current[key] = blobUrl;
-    if (key === 'video') {
-      onUpdate({ videoPreviewUrl: blobUrl });
-    } else {
-      onUpdate({ audioPreviewUrl: blobUrl });
-    }
+    onUpdate({ [PREVIEW_FIELD[key]]: blobUrl });
     return blobUrl;
   }
 
-  function replacePreview(key: 'video' | 'audio', patch: Partial<LessonDraft>) {
+  function replacePreview(
+    key: 'video' | 'audio' | 'cover',
+    patch: Partial<LessonDraft>
+  ) {
     const prevBlob = blobRefs.current[key];
     blobRefs.current[key] = null;
     onUpdate(patch);
@@ -276,7 +292,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     : null;
 
   return (
-    <div className="grid gap-3">
+    <div className={cn('grid gap-3', showCover && 'md:grid-cols-2')}>
       {showVideo && (
         <UploadSlot
           label={t('courses.lessonVideo')}
@@ -303,13 +319,15 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                     onP,
                     abort
                   ),
-                (data) =>
+                (data) => {
+                  onVideoAttached(String(data.id));
                   replacePreview('video', {
                     video_id: String(data.id),
                     videoPreviewUrl: apiClient.getVideoStreamUrl(
                       String(data.id)
                     )
-                  })
+                  });
+                }
               );
             })();
           }}
@@ -324,6 +342,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                 <video
                   key={lesson.videoPreviewUrl}
                   src={lesson.videoPreviewUrl}
+                  poster={lesson.coverPreviewUrl}
                   className="h-full w-full object-contain"
                   controls
                   preload="metadata"
@@ -423,6 +442,82 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                       audio_id: undefined,
                       audioPreviewUrl: undefined,
                       duration: DEFAULT_DURATION
+                    });
+                  }}
+                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : null
+          }
+        />
+      )}
+
+      {showCover && (
+        <UploadSlot
+          label={t('courses.lessonCover')}
+          Icon={ImageIcon}
+          uploadLabel={t('courses.uploadCoverImage')}
+          accept="image/*"
+          hint={t('courses.lessonCoverHint')}
+          toneClass={tone}
+          uploading={uploading.cover && !lesson.coverPreviewUrl}
+          progress={progress.cover}
+          onCancel={() => abortRefs.current.cover?.abort()}
+          onSelect={(file) => {
+            onCoverPicked(file, lesson.video_id);
+            startLocalPreview('cover', file);
+            void runUpload(
+              'cover',
+              (abort, onP) =>
+                apiClient.uploadImage(
+                  file,
+                  { title: lesson.title || file.name },
+                  onP,
+                  abort
+                ),
+              (data) => {
+                const url = data.publicUrl as string | undefined;
+                replacePreview('cover', {
+                  cover_id: String(data.id),
+                  coverPreviewUrl: url?.startsWith('http')
+                    ? url
+                    : `${getBrowserApiBaseUrl()}/images/fetch-image-by-id/${data.id}`
+                });
+              }
+            );
+          }}
+          filled={
+            lesson.coverPreviewUrl ? (
+              <div
+                className={cn(
+                  'relative shrink-0 overflow-hidden rounded-lg border bg-muted',
+                  LESSON_MEDIA_SLOT_CLASS
+                )}
+              >
+                <Image
+                  key={lesson.coverPreviewUrl}
+                  src={lesson.coverPreviewUrl}
+                  alt={t('courses.lessonCover')}
+                  fill
+                  sizes="400px"
+                  className="object-cover"
+                />
+                {uploading.cover && (
+                  <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-center text-[10px] text-white">
+                    {percentLabel(progress.cover)}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  aria-label={t('courses.removeCover')}
+                  onClick={() => {
+                    revokeIfBlob(blobRefs.current.cover ?? undefined);
+                    blobRefs.current.cover = null;
+                    onUpdate({
+                      cover_id: undefined,
+                      coverPreviewUrl: undefined
                     });
                   }}
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"

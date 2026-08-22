@@ -65,10 +65,12 @@ function clearFormMediaForType(
 ) {
   if (type !== 'VIDEO') {
     form.setValue('video_id', '');
-    form.setValue('cover_id', '');
   }
   if (type !== 'AUDIO') {
     form.setValue('audio_id', '');
+  }
+  if (type !== 'VIDEO' && type !== 'AUDIO') {
+    form.setValue('cover_id', '');
   }
   if (type !== 'TEXT' && type !== 'QUIZ' && type !== 'ASSIGNMENT') {
     form.setValue('document_id', '');

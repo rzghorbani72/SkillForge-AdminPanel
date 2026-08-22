@@ -38,7 +38,7 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
           control={form.control}
           name="title"
           render={({ field }) => (
-            <FormItem className="w-full max-w-4xl">
+            <FormItem className="w-full">
               <FormLabel>{t('courses.courseTitle')} *</FormLabel>
               <FormControl>
                 <Input placeholder={t('courses.enterCourseTitle')} {...field} />
@@ -59,7 +59,7 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem className="max-w-4xl">
+            <FormItem>
               <FormLabel>{t('courses.description')} *</FormLabel>
               <FormControl>
                 <MarkdownEditor

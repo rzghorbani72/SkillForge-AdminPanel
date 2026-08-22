@@ -163,8 +163,6 @@ export function clearIncompatibleMedia(type: LessonType): Partial<LessonDraft> {
     return {
       audio_id: undefined,
       audioPreviewUrl: undefined,
-      cover_id: undefined,
-      coverPreviewUrl: undefined,
       document_id: undefined,
       documentPreviewName: undefined
     };
@@ -173,8 +171,6 @@ export function clearIncompatibleMedia(type: LessonType): Partial<LessonDraft> {
     return {
       video_id: undefined,
       videoPreviewUrl: undefined,
-      cover_id: undefined,
-      coverPreviewUrl: undefined,
       document_id: undefined,
       documentPreviewName: undefined
     };

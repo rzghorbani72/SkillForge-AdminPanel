@@ -837,7 +837,7 @@ export const tr = {
     seasonDescription: 'Sezon açıklaması',
     lessonTitle: 'Ders',
     lessonDescription: 'Ders açıklaması',
-    lessonDuration: 'Süre (dd:ss)',
+    lessonDuration: 'Süre',
     publishLessonTitleRequired:
       'Yayınlamadan önce her dersin bir başlığı olmalıdır.',
     publishEmptySeason:
@@ -848,6 +848,8 @@ export const tr = {
     optional: 'İsteğe bağlı',
     lessonVideo: 'Video',
     lessonCover: 'Kapak Görseli',
+    lessonCoverHint: 'Bu ders için küçük resim olarak gösterilir',
+    uploadCoverImage: 'Kapak görseli yükle',
     removeVideo: 'Videoyu kaldır',
     removeCover: 'Kapak görselini kaldır',
     cancelUpload: 'İptal',
@@ -1504,6 +1506,7 @@ export const tr = {
     goToLogin: 'Girişe Git'
   },
   media: {
+    changeImage: 'Görseli değiştir',
     imagePreview: 'Görsel önizleme',
     noImageSelected: 'Görsel seçilmedi',
     videoPoster: 'Video kapağı',

@@ -1454,8 +1454,7 @@ export const fa = {
     seasonDescription: 'توضیحات فصل',
     lessonTitle: 'درس',
     lessonDescription: 'توضیحات درس',
-    lessonDuration: 'مدت زمان (دقیقه:ثانیه)',
-    lessonDurationAuto: 'به‌طور خودکار از روی فایل محاسبه شد',
+    lessonDuration: 'مدت زمان',
     lessonSectionContent: 'محتوای درس',
     lessonSectionDetails: 'مشخصات درس',
     lessonSectionSettings: 'تنظیمات درس',
@@ -1469,6 +1468,7 @@ export const fa = {
     optional: 'اختیاری',
     lessonVideo: 'ویدیو',
     lessonCover: 'تصویر پوشش',
+    lessonCoverHint: 'به عنوان تصویر شاخص این درس نمایش داده می‌شود',
     removeVideo: 'حذف ویدیو',
     removeCover: 'حذف تصویر پوشش',
     cancelUpload: 'لغو',
@@ -2955,6 +2955,7 @@ export const fa = {
     limitMultiple: 'تا {{count}} فایل، هرکدام حداکثر {{size}}'
   },
   media: {
+    changeImage: 'تغییر تصویر',
     cancelUpload: 'لغو بارگذاری',
     videoUploaded: 'ویدیو با موفقیت بارگذاری شد',
     audioUploaded: 'فایل صوتی با موفقیت بارگذاری شد',

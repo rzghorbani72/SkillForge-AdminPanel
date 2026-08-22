@@ -817,7 +817,7 @@ export const ar = {
     seasonDescription: 'وصف الفصل',
     lessonTitle: 'الدرس',
     lessonDescription: 'وصف الدرس',
-    lessonDuration: 'المدة (دد:ثث)',
+    lessonDuration: 'المدة',
     publishLessonTitleRequired: 'يجب أن يكون لكل درس عنوان قبل النشر.',
     publishEmptySeason: 'يجب أن يحتوي كل فصل على درس واحد على الأقل قبل النشر.',
     publishNeedsLesson: 'أضف درساً واحداً على الأقل قبل النشر.',
@@ -1461,6 +1461,7 @@ export const ar = {
     goToLogin: 'الذهاب إلى تسجيل الدخول'
   },
   media: {
+    changeImage: 'تغيير الصورة',
     imagePreview: 'معاينة الصورة',
     noImageSelected: 'لم يتم اختيار صورة',
     videoPoster: 'صورة الفيديو',

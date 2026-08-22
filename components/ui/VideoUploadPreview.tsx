@@ -6,7 +6,6 @@ import { Video, X } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useVideoUpload } from '@/hooks/useVideoUpload';
 import MediaDropzone from './media-dropzone';
-import ImageUploadPreview from './ImageUploadPreview';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -20,9 +19,7 @@ interface VideoUploadPreviewProps {
   selectedVideoId?: string | null;
   disabled?: boolean;
   className?: string;
-  allowPosterUpload?: boolean;
-  posterImageId?: string | number | null;
-  onPosterSuccess?: (image: { id: string; url: string }) => void;
+  posterUrl?: string | null;
 }
 
 const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
@@ -33,9 +30,7 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
   selectedVideoId,
   disabled = false,
   className,
-  allowPosterUpload = false,
-  posterImageId,
-  onPosterSuccess
+  posterUrl
 }) => {
   const { t } = useTranslation();
 
@@ -77,6 +72,7 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
           playableUrl ? (
             <video
               src={playableUrl}
+              poster={posterUrl ?? undefined}
               controls
               className="aspect-video w-full rounded-md bg-black"
             />
@@ -98,25 +94,6 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
           <X className="me-2 h-4 w-4" />
           {t('common.cancel')}
         </Button>
-      )}
-
-      {allowPosterUpload && (
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground">
-            {t('media.videoPoster')}
-          </h4>
-          <ImageUploadPreview
-            title={title ?? t('media.videoPoster')}
-            description={description ?? t('media.videoPoster')}
-            onSuccess={onPosterSuccess}
-            selectedImageId={posterImageId ? String(posterImageId) : null}
-            alt={t('media.videoPoster')}
-            placeholderText={t('media.noPosterSelected')}
-            placeholderSubtext={t('media.dropImageHint')}
-            onError={onError}
-            disabled={disabled}
-          />
-        </div>
       )}
     </div>
   );

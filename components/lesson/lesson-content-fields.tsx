@@ -14,6 +14,9 @@ import {
 import VideoUploadPreview from '@/components/ui/VideoUploadPreview';
 import AudioUploadPreview from '@/components/ui/AudioUploadPreview';
 import DocumentUploadPreview from '@/components/ui/DocumentUploadPreview';
+import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
+import { useVideoCover } from '@/hooks/use-video-cover';
+import { imageByIdSrc } from '@/lib/image-src';
 import { useTranslation } from '@/lib/i18n/hooks';
 import LiveSessionEditor from './LiveSessionEditor';
 import { LessonFormData } from './schema';
@@ -41,9 +44,39 @@ const LessonContentFields = ({
   onLiveSessionSaved
 }: Props) => {
   const { t } = useTranslation();
+  const { onCoverPicked, onVideoAttached } = useVideoCover();
   const lessonType = form.watch('lesson_type');
   const title = form.watch('title');
   const description = form.watch('description');
+
+  const coverField = (
+    <FormField
+      control={form.control}
+      name="cover_id"
+      render={() => (
+        <FormItem>
+          <FormLabel>{t('courses.lessonCover')}</FormLabel>
+          <FormControl>
+            <ImageUploadPreview
+              title={title || t('courses.lessonCover')}
+              description={description || t('courses.lessonCover')}
+              alt={t('courses.lessonCover')}
+              className="max-w-none"
+              placeholderText={t('media.noPosterSelected')}
+              placeholderSubtext={t('media.dropImageHint')}
+              selectedImageId={form.watch('cover_id') || null}
+              onFileSelected={(file) =>
+                onCoverPicked(file, form.watch('video_id'))
+              }
+              onSuccess={(image) => form.setValue('cover_id', image.id)}
+            />
+          </FormControl>
+          <FormDescription>{t('courses.lessonCoverHint')}</FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
 
   const audioField = (label: string, hint: React.ReactNode) => (
     <FormField
@@ -102,45 +135,54 @@ const LessonContentFields = ({
 
   if (lessonType === 'VIDEO') {
     return (
-      <FormField
-        control={form.control}
-        name="video_id"
-        render={() => (
-          <FormItem>
-            <FormLabel>{t('courses.lessonVideo')}</FormLabel>
-            <FormControl>
-              <VideoUploadPreview
-                title={title || t('courses.lessonVideoTitle')}
-                description={description || t('courses.lessonVideoTitle')}
-                onSuccess={(video) =>
-                  form.setValue('video_id', video.id.toString())
-                }
-                selectedVideoId={form.watch('video_id')}
-                allowPosterUpload
-                posterImageId={form.watch('cover_id')}
-                onPosterSuccess={(image) =>
-                  form.setValue('cover_id', image.id.toString())
-                }
-              />
-            </FormControl>
-            <FormDescription>
-              {t('courses.lessonForm.videoHint')}
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="grid gap-6 md:grid-cols-2">
+        <FormField
+          control={form.control}
+          name="video_id"
+          render={() => (
+            <FormItem>
+              <FormLabel>{t('courses.lessonVideo')}</FormLabel>
+              <FormControl>
+                <VideoUploadPreview
+                  title={title || t('courses.lessonVideoTitle')}
+                  description={description || t('courses.lessonVideoTitle')}
+                  onSuccess={(video) => {
+                    form.setValue('video_id', video.id.toString());
+                    if (video.id) onVideoAttached(video.id.toString());
+                  }}
+                  selectedVideoId={form.watch('video_id')}
+                  posterUrl={
+                    form.watch('cover_id')
+                      ? imageByIdSrc(form.watch('cover_id') as string)
+                      : null
+                  }
+                />
+              </FormControl>
+              <FormDescription>
+                {t('courses.lessonForm.videoHint')}
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {coverField}
+      </div>
     );
   }
 
   if (lessonType === 'AUDIO') {
-    return audioField(
-      t('courses.lessonAudio'),
-      libraryHint(
-        'courses.lessonForm.audioMainHint',
-        '/audios',
-        t('courses.manageAudios')
-      )
+    return (
+      <div className="grid gap-6 md:grid-cols-2">
+        {audioField(
+          t('courses.lessonAudio'),
+          libraryHint(
+            'courses.lessonForm.audioMainHint',
+            '/audios',
+            t('courses.manageAudios')
+          )
+        )}
+        {coverField}
+      </div>
     );
   }
 
