@@ -2309,6 +2309,47 @@ export const en = {
     }
   },
   settings: {
+    sitePages: {
+      title: 'Site pages',
+      description:
+        'The About and Contact text, plus the contact channels shown on your academy website.',
+      pagesTitle: 'Pages',
+      pageTitleLabel: 'Page title',
+      pageBodyLabel: 'Page content',
+      pageBodyPlaceholder:
+        'Your academy, its history, its teachers — anything a visitor should know…',
+      publishLabel: 'Show on the site',
+      publishHint: 'While this is off, the page does not open on your site.',
+      pageAbout: 'About us',
+      pageContact: 'Contact us',
+      pageSaved: 'Page saved',
+      titleRequired: 'Give the page a title',
+      linksTitle: 'Contact and social channels',
+      linksDescription:
+        'Each one appears on the Contact page and in the site footer. A full URL or just a handle both work.',
+      linksSaved: 'Contact channels saved',
+      addLink: 'Add',
+      removeLink: 'Remove',
+      linkValueLabel: 'Value',
+      linkValuePlaceholder: 'e.g. @myacademy or +982112345678',
+      linkLabelLabel: 'Custom label (optional)',
+      emptyLinks: 'No contact channels yet.',
+      valueRequired: 'Value cannot be empty',
+      channels: {
+        phone: 'Phone',
+        email: 'Email',
+        address: 'Address',
+        website: 'Website',
+        instagram: 'Instagram',
+        telegram: 'Telegram',
+        whatsapp: 'WhatsApp',
+        linkedin: 'LinkedIn',
+        youtube: 'YouTube',
+        twitter: 'X',
+        aparat: 'Aparat',
+        eitaa: 'Eitaa'
+      }
+    },
     title: 'Settings',
     defaultAcademy: {
       title: 'Default academy',

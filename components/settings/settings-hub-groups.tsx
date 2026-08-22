@@ -16,6 +16,7 @@ import {
   CreditCard,
   Layers,
   Layout,
+  FileText,
   BadgeCheck,
   Globe,
   Shield,
@@ -201,6 +202,13 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             description: t('settings.uiTemplateBuilderDescription'),
             href: '/settings/ui-template',
             icon: Layout,
+            scope: 'academy'
+          },
+          {
+            title: t('settings.sitePages.title'),
+            description: t('settings.sitePages.description'),
+            href: '/settings/site-pages',
+            icon: FileText,
             scope: 'academy'
           },
           {

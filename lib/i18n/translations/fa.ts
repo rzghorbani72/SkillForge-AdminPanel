@@ -2053,6 +2053,47 @@ export const fa = {
   },
   settings: {
     title: 'تنظیمات',
+    sitePages: {
+      title: 'صفحات سایت',
+      description:
+        'متن صفحه‌های «درباره ما» و «تماس با ما» و راه‌های ارتباطی که روی سایت آکادمی شما دیده می‌شود.',
+      pagesTitle: 'صفحه‌ها',
+      pageTitleLabel: 'عنوان صفحه',
+      pageBodyLabel: 'متن صفحه',
+      pageBodyPlaceholder:
+        'درباره آکادمی، سابقه، مدرس‌ها و هر چیزی که دوست دارید بازدیدکننده بداند…',
+      publishLabel: 'نمایش روی سایت',
+      publishHint: 'تا وقتی خاموش است، این صفحه روی سایت شما باز نمی‌شود.',
+      pageAbout: 'درباره ما',
+      pageContact: 'تماس با ما',
+      pageSaved: 'صفحه ذخیره شد',
+      titleRequired: 'عنوان صفحه را بنویسید',
+      linksTitle: 'راه‌های ارتباطی و شبکه‌های اجتماعی',
+      linksDescription:
+        'هر مورد روی صفحه «تماس با ما» و در پاورقی سایت نمایش داده می‌شود. نشانی کامل یا فقط نام کاربری هر دو قابل قبول است.',
+      linksSaved: 'راه‌های ارتباطی ذخیره شد',
+      addLink: 'افزودن',
+      removeLink: 'حذف',
+      linkValueLabel: 'مقدار',
+      linkValuePlaceholder: 'مثلاً @myacademy یا ۰۲۱۱۲۳۴۵۶۷۸',
+      linkLabelLabel: 'عنوان دلخواه (اختیاری)',
+      emptyLinks: 'هنوز راه ارتباطی اضافه نکرده‌اید.',
+      valueRequired: 'مقدار را خالی نگذارید',
+      channels: {
+        phone: 'تلفن',
+        email: 'ایمیل',
+        address: 'نشانی',
+        website: 'وب‌سایت',
+        instagram: 'اینستاگرام',
+        telegram: 'تلگرام',
+        whatsapp: 'واتساپ',
+        linkedin: 'لینکدین',
+        youtube: 'یوتیوب',
+        twitter: 'ایکس',
+        aparat: 'آپارات',
+        eitaa: 'ایتا'
+      }
+    },
     defaultAcademy: {
       title: 'آکادمی پیش‌فرض',
       description:

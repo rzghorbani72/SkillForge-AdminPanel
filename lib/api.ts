@@ -26,6 +26,12 @@ import {
 import { currentLanguage } from './current-language';
 import { isAuthPagePath } from './auth-routes';
 import type {
+  AcademyPage,
+  AcademyPagePayload,
+  AcademyPageSlug,
+  ContactLink
+} from '@/types/academy-site';
+import type {
   AssignmentListResponse,
   AssignmentSubmission,
   CreateTutoringEngagementPayload,
@@ -1435,6 +1441,41 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(data)
     });
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getAcademyPages(): Promise<AcademyPage[]> {
+    const res = await this.request<AcademyPage[] | { data: AcademyPage[] }>(
+      '/academy-site/pages'
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async updateAcademyPage(
+    slug: AcademyPageSlug,
+    data: AcademyPagePayload
+  ): Promise<AcademyPage> {
+    const res = await this.request<AcademyPage | { data: AcademyPage }>(
+      `/academy-site/pages/${slug}`,
+      { method: 'PUT', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getAcademyContactLinks(): Promise<ContactLink[]> {
+    const res = await this.request<ContactLink[] | { data: ContactLink[] }>(
+      '/academy-site/contact-links'
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async updateAcademyContactLinks(
+    links: ContactLink[]
+  ): Promise<ContactLink[]> {
+    const res = await this.request<ContactLink[] | { data: ContactLink[] }>(
+      '/academy-site/contact-links',
+      { method: 'PUT', body: JSON.stringify({ links }) }
+    );
     return unwrapDataEnvelope(res.data);
   }
 
