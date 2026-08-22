@@ -16,9 +16,6 @@ import {
   CreditCard,
   Layers,
   Layout,
-  FileText,
-  BadgeCheck,
-  Globe,
   Shield,
   User,
   Zap
@@ -197,18 +194,13 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
     items: isPlatformAdmin
       ? []
       : [
+          // Appearance, pages, SEO, trust badge and domain all moved into the
+          // Website area, so the public site is one destination, not five cards.
           {
-            title: t('settings.uiTemplateBuilder'),
-            description: t('settings.uiTemplateBuilderDescription'),
-            href: '/settings/ui-template',
+            title: t('website.title'),
+            description: t('website.description'),
+            href: '/website',
             icon: Layout,
-            scope: 'academy'
-          },
-          {
-            title: t('settings.sitePages.title'),
-            description: t('settings.sitePages.description'),
-            href: '/settings/site-pages',
-            icon: FileText,
             scope: 'academy'
           },
           {
@@ -216,20 +208,6 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             description: t('settings.studentPlansDescription'),
             href: '/plans?tab=academy',
             icon: Layers,
-            scope: 'academy'
-          },
-          {
-            title: t('settings.domainDns.title'),
-            description: t('settings.domainDns.description'),
-            href: '/settings/domain',
-            icon: Globe,
-            scope: 'academy'
-          },
-          {
-            title: t('compliance.enamad.title'),
-            description: t('compliance.enamad.description'),
-            href: '/settings/compliance',
-            icon: BadgeCheck,
             scope: 'academy'
           }
         ]

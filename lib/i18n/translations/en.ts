@@ -605,6 +605,7 @@ export const en = {
     groups: 'Groups',
     requests: 'Requests',
     siteTemplate: 'Site Template',
+    academyWebsite: 'Website',
     financial: 'Financial',
     plans: 'Plans',
     platformPlan: 'Academy Subscription',
@@ -630,9 +631,13 @@ export const en = {
     section: {
       account: 'My account',
       manage: 'Manage',
-      learning: 'Learning operations',
-      finance: 'Finance',
-      platform: 'Platform',
+      learning: 'Teaching',
+      people: 'People',
+      website: 'Academy website',
+      insights: 'Insights',
+      growth: 'Growth',
+      finance: 'Money',
+      platform: 'Overview',
       templates: 'Templates',
       configuration: 'Configuration',
       students: 'Students'
@@ -5039,6 +5044,62 @@ export const en = {
     selectAcademyFirst:
       'Select an academy context to manage its subscriptions.',
     subscriptionOnlyDuration: 'Only required for subscriptions'
+  },
+  website: {
+    title: 'Academy Website',
+    description:
+      'Everything visitors see: how the site looks, its pages, how it appears in search, and the address it lives at.',
+    viewSite: 'View site',
+    tabs: {
+      overview: 'Overview',
+      appearance: 'Appearance',
+      pages: 'Pages',
+      seo: 'Search & sharing',
+      trust: 'Trust badge',
+      domain: 'Domain'
+    },
+    cards: {
+      appearanceTitle: 'Appearance',
+      appearanceDescription:
+        'Pick a template and arrange the sections of your public site.',
+      pagesTitle: 'Pages & contact',
+      pagesDescription:
+        'Write your About and Contact pages and list your contact links.',
+      seoTitle: 'Search & sharing',
+      seoDescription:
+        'Control the title, description and picture shown in Google and on shared links.',
+      trustTitle: 'Trust badge',
+      trustDescription: 'Submit and display your eNamad trust badge.',
+      domainTitle: 'Domain',
+      domainDescription: 'Connect your own domain and set up its DNS.',
+      brandingTitle: 'Name & branding',
+      brandingDescription:
+        'Academy name, address, logo, favicon and brand colour.'
+    },
+    seo: {
+      title: 'Search & sharing',
+      description:
+        'What people see when your academy shows up in Google or someone shares a link to it.',
+      formTitle: 'Search and share details',
+      metaTitle: 'Search title',
+      metaTitlePlaceholder:
+        'e.g. Maral Language Academy — IELTS & general English',
+      metaTitleHint:
+        'Shown as the blue headline in Google. Leave empty to use your academy name.',
+      metaDescription: 'Search description',
+      metaDescriptionPlaceholder:
+        'One or two sentences about who you teach and what you offer.',
+      metaDescriptionHint:
+        'The grey text under the headline. Leave empty to use your academy description.',
+      shareImage: 'Share image',
+      shareImageHint: 'Click to upload — 1200 x 630 pixels works best',
+      shareImageReplace: 'Click to replace',
+      shareImageEmpty: 'No share image yet',
+      previewSearch: 'Google preview',
+      previewShare: 'Shared link preview',
+      previewEmptyDescription: 'No description yet.',
+      saved: 'Search and sharing details saved'
+    }
   },
   sitePreview: {
     academyName: 'Your Academy',

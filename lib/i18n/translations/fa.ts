@@ -593,6 +593,7 @@ export const fa = {
     groups: 'گروه‌ها',
     requests: 'درخواست‌ها',
     siteTemplate: 'قالب سایت',
+    academyWebsite: 'وب‌سایت',
     financial: 'مالی',
     plans: 'پلن‌ها',
     platformPlan: 'اشتراک آکادمی',
@@ -622,9 +623,13 @@ export const fa = {
     section: {
       account: 'حساب من',
       manage: 'مدیریت',
-      learning: 'عملیات آموزشی',
+      learning: 'آموزش',
+      people: 'افراد',
+      website: 'وب‌سایت آکادمی',
+      insights: 'گزارش‌ها',
+      growth: 'رشد',
       finance: 'مالی',
-      platform: 'پلتفرم',
+      platform: 'نمای کلی',
       templates: 'قالب‌ها',
       configuration: 'پیکربندی',
       students: 'دانشجویان'
@@ -5027,6 +5032,62 @@ export const fa = {
     createFirstAcademyPlan: 'اولین اشتراک را بسازید',
     selectAcademyFirst: 'برای مدیریت اشتراک‌ها ابتدا یک آکادمی انتخاب کنید.',
     subscriptionOnlyDuration: 'فقط برای اشتراک‌ها لازم است'
+  },
+  website: {
+    title: 'وب‌سایت آکادمی',
+    description:
+      'هر چیزی که بازدیدکننده می‌بیند: ظاهر سایت، صفحه‌ها، نحوهٔ نمایش در جست‌وجو و نشانی سایت.',
+    viewSite: 'مشاهدهٔ سایت',
+    tabs: {
+      overview: 'نمای کلی',
+      appearance: 'ظاهر سایت',
+      pages: 'صفحه‌ها',
+      seo: 'جست‌وجو و اشتراک‌گذاری',
+      trust: 'نماد اعتماد',
+      domain: 'دامنه'
+    },
+    cards: {
+      appearanceTitle: 'ظاهر سایت',
+      appearanceDescription:
+        'یک قالب انتخاب کنید و بخش‌های سایت عمومی را بچینید.',
+      pagesTitle: 'صفحه‌ها و تماس',
+      pagesDescription:
+        'صفحهٔ دربارهٔ ما و تماس با ما را بنویسید و راه‌های ارتباطی را وارد کنید.',
+      seoTitle: 'جست‌وجو و اشتراک‌گذاری',
+      seoDescription:
+        'عنوان، توضیح و تصویری که در گوگل و هنگام اشتراک لینک دیده می‌شود.',
+      trustTitle: 'نماد اعتماد',
+      trustDescription: 'درخواست و نمایش نماد اعتماد الکترونیکی (اینماد).',
+      domainTitle: 'دامنه',
+      domainDescription:
+        'دامنهٔ اختصاصی خود را وصل کنید و DNS آن را تنظیم کنید.',
+      brandingTitle: 'نام و هویت بصری',
+      brandingDescription: 'نام آکادمی، نشانی، لوگو، فاوآیکون و رنگ برند.'
+    },
+    seo: {
+      title: 'جست‌وجو و اشتراک‌گذاری',
+      description:
+        'چیزی که مردم می‌بینند وقتی آکادمی شما در گوگل بالا می‌آید یا کسی لینک آن را به اشتراک می‌گذارد.',
+      formTitle: 'مشخصات جست‌وجو و اشتراک‌گذاری',
+      metaTitle: 'عنوان در جست‌وجو',
+      metaTitlePlaceholder: 'مثال: آموزشگاه زبان مارال — آیلتس و زبان عمومی',
+      metaTitleHint:
+        'همان تیتر آبی‌رنگ در گوگل. اگر خالی بماند، نام آکادمی استفاده می‌شود.',
+      metaDescription: 'توضیح در جست‌وجو',
+      metaDescriptionPlaceholder:
+        'یک یا دو جمله دربارهٔ اینکه به چه کسانی و چه چیزی آموزش می‌دهید.',
+      metaDescriptionHint:
+        'متن خاکستری زیر تیتر. اگر خالی بماند، توضیح آکادمی استفاده می‌شود.',
+      shareImage: 'تصویر اشتراک‌گذاری',
+      shareImageHint:
+        'برای بارگذاری کلیک کنید — اندازهٔ ۱۲۰۰ در ۶۳۰ پیکسل بهترین است',
+      shareImageReplace: 'برای تعویض کلیک کنید',
+      shareImageEmpty: 'هنوز تصویری انتخاب نشده',
+      previewSearch: 'پیش‌نمایش گوگل',
+      previewShare: 'پیش‌نمایش لینک اشتراکی',
+      previewEmptyDescription: 'هنوز توضیحی وارد نشده است.',
+      saved: 'مشخصات جست‌وجو و اشتراک‌گذاری ذخیره شد'
+    }
   },
   sitePreview: {
     academyName: 'آکادمی شما',

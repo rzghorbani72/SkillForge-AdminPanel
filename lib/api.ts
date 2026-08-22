@@ -1,5 +1,11 @@
 import { OtpType } from '@/constants/data';
-import { Enrollment, User as UserType, Offer, OfferInput } from '@/types/api';
+import {
+  Academy,
+  Enrollment,
+  User as UserType,
+  Offer,
+  OfferInput
+} from '@/types/api';
 import type {
   AbuseReport,
   ContentKind,
@@ -1370,6 +1376,15 @@ class ApiClient {
     return response;
   }
 
+  /** The current academy already unwrapped, for forms that hydrate from it. */
+  async getCurrentAcademyDetail(): Promise<Academy> {
+    const response = await this.request<Academy | { data: Academy }>(
+      '/academies/current'
+    );
+    const payload = response.data as Academy | { data: Academy };
+    return ((payload as { data?: Academy })?.data ?? payload) as Academy;
+  }
+
   async checkSlugAvailability(
     slug: string,
     opts?: ReadOptions
@@ -1418,6 +1433,9 @@ class ApiClient {
     description?: string;
     logo_id?: string;
     favicon_id?: string;
+    meta_title?: string | null;
+    meta_description?: string | null;
+    og_image_id?: string | null;
   }) {
     return this.request('/academies/current', {
       method: 'PATCH',

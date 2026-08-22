@@ -84,7 +84,7 @@ export const navItems: NavItem[] = [
   // Templates section
   {
     title: 'Templates Gallery',
-    href: '/settings/ui-template',
+    href: '/website/appearance',
     icon: 'gallery' as IconType,
     label: 'templatesGallery',
     roles: ['PLATFORM_OWNER', 'ADMIN'],
@@ -309,7 +309,7 @@ export const navItems: NavItem[] = [
       'TEACHER'
     ],
     scope: 'academy',
-    section: 'manage',
+    section: 'people',
     children: [
       {
         title: 'Users',
@@ -328,32 +328,15 @@ export const navItems: NavItem[] = [
       }
     ]
   },
+  // One destination for the public site: appearance, pages, SEO, trust, domain.
   {
-    title: 'Site Template',
-    href: '/settings/ui-template',
+    title: 'Website',
+    href: '/website',
     icon: 'layout' as IconType,
-    label: 'siteTemplate',
+    label: 'academyWebsite',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy',
-    section: 'manage'
-  },
-  {
-    title: 'Marketing',
-    href: '/affiliates',
-    icon: 'network' as IconType,
-    label: 'affiliates',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-    scope: 'academy',
-    section: 'manage'
-  },
-  {
-    title: 'Analytics',
-    href: '/analytics',
-    icon: 'barChart' as IconType,
-    label: 'analytics',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-    scope: 'academy',
-    section: 'manage'
+    section: 'website'
   },
   // Money
   {
@@ -383,6 +366,24 @@ export const navItems: NavItem[] = [
     scope: 'academy',
     section: 'finance',
     paymentGated: true
+  },
+  {
+    title: 'Analytics',
+    href: '/analytics',
+    icon: 'barChart' as IconType,
+    label: 'analytics',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'insights'
+  },
+  {
+    title: 'Marketing',
+    href: '/affiliates',
+    icon: 'network' as IconType,
+    label: 'affiliates',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'growth'
   },
   // The owner's own account, not the academy's day-to-day
   {

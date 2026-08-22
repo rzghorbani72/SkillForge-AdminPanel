@@ -11,6 +11,31 @@ import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
+/** A settled payment. The API's PaymentStatus enum spells this `PAID`. */
+const isSettledPayment = (status?: string | null) => status === 'PAID';
+
+/**
+ * `GET /payments` answers `{ data: { payments: [...] } }`, and apiClient already
+ * unwraps one level. Reading `.data` again therefore yielded undefined, the
+ * array check failed, and every revenue figure on the dashboard read zero.
+ */
+const readPaymentsList = (payload: unknown): Payment[] => {
+  if (Array.isArray(payload)) return payload as Payment[];
+  const nested = (payload as { payments?: unknown } | null)?.payments;
+  if (Array.isArray(nested)) return nested as Payment[];
+  const inner = (payload as { data?: unknown } | null)?.data;
+  if (Array.isArray(inner)) return inner as Payment[];
+  const innerNested = (inner as { payments?: unknown } | null)?.payments;
+  return Array.isArray(innerNested) ? (innerNested as Payment[]) : [];
+};
+
+/** The API dates a settled payment with `paid_at`; `payment_date` is legacy. */
+const paymentDateOf = (payment: {
+  paid_at?: string | null;
+  payment_date?: string | null;
+  created_at?: string | null;
+}) => payment.paid_at ?? payment.payment_date ?? payment.created_at ?? null;
+
 export type DashboardStatsCard = {
   title: string;
   value: string | number;
@@ -169,26 +194,19 @@ const useDashboard = () => {
 
         // Payments & totals
         if (paymentsResult.status === 'fulfilled') {
-          let paymentsData: Payment[] = [];
-          const paymentsPayload =
-            (paymentsResult.value as any)?.data ?? paymentsResult.value;
-          if (Array.isArray(paymentsPayload)) {
-            paymentsData = paymentsPayload as Payment[];
-          }
+          const paymentsData = readPaymentsList(paymentsResult.value);
           const sortedPayments = paymentsData.slice().sort((a, b) => {
-            const aDate = a.payment_date
-              ? new Date(a.payment_date).getTime()
-              : 0;
-            const bDate = b.payment_date
-              ? new Date(b.payment_date).getTime()
-              : 0;
+            const aRaw = paymentDateOf(a);
+            const bRaw = paymentDateOf(b);
+            const aDate = aRaw ? new Date(aRaw).getTime() : 0;
+            const bDate = bRaw ? new Date(bRaw).getTime() : 0;
             return bDate - aDate;
           });
           setRecentPayments(sortedPayments.slice(0, 5));
           setAllPayments(sortedPayments);
 
           const totalRevenue = paymentsData
-            .filter((payment) => payment.status === 'COMPLETED')
+            .filter((payment) => isSettledPayment(payment.status))
             .reduce((sum, payment) => sum + (payment.amount ?? 0), 0);
 
           setStatsTotals((prev) => ({
@@ -285,8 +303,9 @@ const useDashboard = () => {
       // Calculate revenue for this month
       const monthRevenue = allPayments
         .filter((p) => {
-          if (p.status !== 'COMPLETED' || !p.payment_date) return false;
-          const paymentDate = new Date(p.payment_date);
+          const raw = paymentDateOf(p);
+          if (!isSettledPayment(p.status) || !raw) return false;
+          const paymentDate = new Date(raw);
           return paymentDate >= targetDate && paymentDate < nextMonth;
         })
         .reduce((sum, p) => sum + (p.amount ?? 0), 0);
@@ -430,10 +449,11 @@ const useDashboard = () => {
 
     // Generate activities from recent payments
     safeRecentPayments
-      .filter((payment) => payment.status === 'COMPLETED')
+      .filter((payment) => isSettledPayment(payment.status))
       .slice(0, 3)
       .forEach((payment) => {
-        if (payment.payment_date) {
+        const paidAt = paymentDateOf(payment);
+        if (paidAt) {
           const userName = payment.user?.name || t('dashboard.unknownUser');
           const courseName =
             payment.course?.title || t('dashboard.unknownCourse');
@@ -450,7 +470,7 @@ const useDashboard = () => {
             description: t('dashboard.activityPaymentFor')
               .replace(/\{\{amount\}\}/g, amount)
               .replace(/\{\{courseName\}\}/g, courseName),
-            timestamp: payment.payment_date,
+            timestamp: paidAt,
             user: userName
           });
         }

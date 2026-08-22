@@ -187,6 +187,10 @@ export interface Academy {
     Partial<Domain>;
   logo?: { id: string; publicUrl: string } | null;
   favicon?: { id: string; publicUrl: string } | null;
+  /** Manager-authored search/share metadata for the public site. */
+  meta_title?: string | null;
+  meta_description?: string | null;
+  og_image?: { id: string; publicUrl: string } | null;
   cover?: Media;
   profiles?: Profile[];
   courses?: Course[];

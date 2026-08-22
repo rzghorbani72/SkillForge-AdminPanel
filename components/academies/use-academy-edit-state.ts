@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { toSlug } from '@/lib/slug';
+import { resolveMediaUrl } from '@/lib/media-url';
 import {
   isSlugBlocking,
   useSlugAvailability
@@ -11,13 +12,6 @@ import {
 import { DEFAULT_BRAND_COLOR } from '@/components/academies/brand-color-picker';
 import type { Academy } from '@/types/api';
 import type { AcademyEditPayload } from './academy-edit-types';
-
-function resolveLogoUrl(url: string | undefined): string {
-  if (!url) return '';
-  return url.startsWith('/')
-    ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${url}`
-    : url;
-}
 
 function currentSlugOf(academy: Academy): string {
   return (
@@ -57,8 +51,8 @@ export function useAcademyEditState(academy: Academy) {
       academy.domain?.public_address ?? academy.Domain?.public_address ?? ''
     );
     setDescription(academy.description ?? '');
-    logo.reset(resolveLogoUrl(academy.logo?.publicUrl));
-    favicon.reset(resolveLogoUrl(academy.favicon?.publicUrl));
+    logo.reset(resolveMediaUrl(academy.logo?.publicUrl));
+    favicon.reset(resolveMediaUrl(academy.favicon?.publicUrl));
     setPrimaryColor(DEFAULT_BRAND_COLOR);
 
     void apiClient
