@@ -28,7 +28,7 @@ import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
 type SlotKey = 'video' | 'audio' | 'document';
 
 /** Shared outer size for every type — prevents layout jump on type change. */
-export const LESSON_MEDIA_SLOT_CLASS = 'h-[7.75rem] w-[13.75rem]';
+export const LESSON_MEDIA_SLOT_CLASS = 'h-[12rem] w-full';
 
 function ProgressBar({ value }: { value: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -88,7 +88,7 @@ function UploadSlot({
   );
 
   return (
-    <div className="space-y-1.5">
+    <div className="w-full space-y-1.5">
       <Label className="text-xs font-medium text-muted-foreground">
         {label}
       </Label>
@@ -121,7 +121,7 @@ function UploadSlot({
           <span className="bg-current/10 flex h-10 w-10 items-center justify-center rounded-full">
             <Icon className="h-5 w-5" aria-hidden />
           </span>
-          <span className="max-w-[11rem] text-xs font-medium leading-snug">
+          <span className="max-w-[16rem] text-xs font-medium leading-snug">
             {uploadLabel}
           </span>
           <input
@@ -139,9 +139,7 @@ function UploadSlot({
         </label>
       )}
       {hint ? (
-        <p className="max-w-[13.75rem] text-[11px] leading-snug text-muted-foreground">
-          {hint}
-        </p>
+        <p className="text-[11px] leading-snug text-muted-foreground">{hint}</p>
       ) : null}
     </div>
   );
@@ -404,7 +402,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   controls
                   preload="metadata"
                   onLoadedMetadata={handleMediaMetadata}
-                  className="h-8 w-full max-w-[11.5rem]"
+                  className="h-8 w-full max-w-[20rem]"
                 />
                 {uploading.audio && (
                   <span className="text-[10px] opacity-70">
@@ -473,7 +471,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                 <span className="bg-current/10 flex h-9 w-9 items-center justify-center rounded-full">
                   <DocIcon className="h-4 w-4" aria-hidden />
                 </span>
-                <span className="line-clamp-2 max-w-[11rem] break-all text-xs font-medium leading-snug">
+                <span className="line-clamp-2 max-w-[18rem] break-all text-xs font-medium leading-snug">
                   {lesson.documentPreviewName ?? t('courses.lessonDocument')}
                 </span>
                 {documentPreviewUrl && (
