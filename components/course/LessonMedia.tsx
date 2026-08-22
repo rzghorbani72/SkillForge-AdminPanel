@@ -88,7 +88,7 @@ function UploadSlot({
   );
 
   return (
-    <div className="w-full space-y-1.5">
+    <div className="w-full space-y-2">
       <Label className="text-xs font-medium text-muted-foreground">
         {label}
       </Label>

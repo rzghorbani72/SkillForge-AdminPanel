@@ -1460,6 +1460,7 @@ export const en = {
     lessonDurationAuto: 'Measured automatically from the file',
     lessonSectionContent: 'Lesson content',
     lessonSectionDetails: 'Lesson details',
+    lessonSectionSettings: 'Lesson settings',
     seasonLength: 'Season length',
     courseLength: 'Total length',
     publishLessonTitleRequired: 'Every lesson needs a title before publishing.',

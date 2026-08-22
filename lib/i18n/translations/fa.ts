@@ -1448,6 +1448,7 @@ export const fa = {
     lessonDurationAuto: 'به‌طور خودکار از روی فایل محاسبه شد',
     lessonSectionContent: 'محتوای درس',
     lessonSectionDetails: 'مشخصات درس',
+    lessonSectionSettings: 'تنظیمات درس',
     seasonLength: 'مدت فصل',
     courseLength: 'مدت کل',
     publishLessonTitleRequired: 'پیش از انتشار، هر درس باید عنوان داشته باشد.',

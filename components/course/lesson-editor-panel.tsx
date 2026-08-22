@@ -41,6 +41,8 @@ function patchForType(
   };
 }
 
+const SETTING_ROW_CLASS = 'flex items-center justify-between gap-3 px-4 py-3';
+
 interface LessonEditorPanelProps {
   lesson: LessonDraft;
   seasons: SeasonDraft[];
@@ -57,16 +59,16 @@ export function LessonEditorPanel({
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-3 border-t px-3 py-3">
-      {/* Content: the type chips sit on the section header, the player on the
-          start side, and everything measured from that player beside it. */}
-      <section className="space-y-3 rounded-md border bg-background p-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="space-y-4 border-t bg-muted/20 px-4 py-4">
+      {/* Content: type chips on the section header, the player on the start
+          side, and everything that describes that player beside it. */}
+      <section className="space-y-4 rounded-lg border bg-background p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
             {t('courses.lessonSectionContent')}
           </p>
           <div
-            className="flex flex-wrap gap-1.5"
+            className="flex flex-wrap gap-2"
             role="radiogroup"
             aria-label={t('courses.lessonType')}
           >
@@ -81,13 +83,13 @@ export function LessonEditorPanel({
                     aria-checked={selected}
                     onClick={() => onUpdate(patchForType(lesson, type))}
                     className={cn(
-                      'flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs transition-colors',
+                      'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors',
                       selected
                         ? chipActiveClass
                         : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground'
                     )}
                   >
-                    <Icon className="h-3 w-3" />
+                    <Icon className="h-3.5 w-3.5" />
                     {t(labelKey)}
                   </button>
                 );
@@ -96,16 +98,16 @@ export function LessonEditorPanel({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-start gap-4">
-          <div className="w-full sm:w-[calc(50%-0.5rem)]">
+        <div className="flex flex-wrap items-stretch gap-5">
+          <div className="w-full sm:w-[calc(50%-0.625rem)]">
             {lesson.lesson_type === 'LIVE' ? (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label className="text-xs font-medium text-muted-foreground">
                   {t(LESSON_TYPE_BY_KEY.LIVE.labelKey)}
                 </Label>
                 <p
                   className={cn(
-                    'flex shrink-0 items-center justify-center rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-4 text-center text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
+                    'flex items-center justify-center rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-4 text-center text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
                     LESSON_MEDIA_SLOT_CLASS
                   )}
                 >
@@ -117,52 +119,60 @@ export function LessonEditorPanel({
             )}
           </div>
 
-          <div className="grid min-w-[13rem] flex-1 gap-3 sm:grid-cols-2">
-            {hasTimedMedia(lesson) && <LessonDurationInfo lesson={lesson} />}
+          {/* Settings read as one list of "label → value" rows, so they stay
+              aligned instead of floating around the player. */}
+          <div className="flex min-w-[15rem] flex-1 flex-col space-y-2">
+            <Label className="text-xs font-medium text-muted-foreground">
+              {t('courses.lessonSectionSettings')}
+            </Label>
+            <div className="flex flex-1 flex-col divide-y rounded-lg border bg-muted/20">
+              {hasTimedMedia(lesson) && <LessonDurationInfo lesson={lesson} />}
 
-            {seasons.length > 0 && (
-              <div className="space-y-1">
-                <Label className="text-xs">{t('courses.season')}</Label>
-                <Select
-                  value={lesson.seasonClientKey}
-                  onValueChange={(value) => onAssign(value)}
-                >
-                  <SelectTrigger className="h-8 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {seasons.map((s, i) => (
-                      <SelectItem key={s.clientKey} value={s.clientKey}>
-                        {s.title || t('courses.seasonNumber', { n: i + 1 })}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+              {seasons.length > 0 && (
+                <div className={SETTING_ROW_CLASS}>
+                  <span className="text-sm text-muted-foreground">
+                    {t('courses.season')}
+                  </span>
+                  <Select
+                    value={lesson.seasonClientKey}
+                    onValueChange={(value) => onAssign(value)}
+                  >
+                    <SelectTrigger className="h-9 w-[11rem] bg-background text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {seasons.map((s, i) => (
+                        <SelectItem key={s.clientKey} value={s.clientKey}>
+                          {s.title || t('courses.seasonNumber', { n: i + 1 })}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-            <div className="flex flex-wrap items-center gap-4 rounded-md border border-dashed bg-muted/30 px-3 py-2 sm:col-span-2">
-              <label className="flex cursor-pointer items-center gap-2">
+              <label className={cn(SETTING_ROW_CLASS, 'cursor-pointer')}>
+                <span className="text-sm">{t('courses.published')}</span>
                 <Switch
                   checked={lesson.published}
                   onCheckedChange={(v) => onUpdate({ published: v })}
                 />
-                <span className="text-sm">{t('courses.published')}</span>
               </label>
-              <label className="flex cursor-pointer items-center gap-2">
+
+              <label className={cn(SETTING_ROW_CLASS, 'cursor-pointer')}>
+                <span className="text-sm">{t('courses.freePreview')}</span>
                 <Switch
                   checked={lesson.is_free}
                   onCheckedChange={(v) => onUpdate({ is_free: v })}
                 />
-                <span className="text-sm">{t('courses.freePreview')}</span>
               </label>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="space-y-1 rounded-md border bg-background p-3">
-        <div className="flex items-center justify-between gap-2">
+      <section className="space-y-2 rounded-lg border bg-background p-4">
+        <div className="flex items-center justify-between gap-3">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
             {t('courses.lessonSectionDetails')}
           </p>
