@@ -19,6 +19,9 @@ export function PanelFooter() {
     { year: 'numeric' }
   );
 
+  // eNamad's own snippet puts a non-standard `code` attribute on the img and
+  // their verifier looks for it; React only passes it through via a spread.
+  const enamadCodeAttr: Record<string, string> = { code: SEAL_CODE };
   const href = `https://trustseal.enamad.ir/?id=${SEAL_ID}&Code=${SEAL_CODE}`;
   const src = `https://trustseal.enamad.ir/logo.aspx?id=${SEAL_ID}&Code=${SEAL_CODE}`;
 
@@ -51,6 +54,7 @@ export function PanelFooter() {
             referrerPolicy="origin"
             src={src}
             alt={t('panelFooter.enamadAlt')}
+            {...enamadCodeAttr}
             width={125}
             height={136}
             className="h-14 w-auto"
