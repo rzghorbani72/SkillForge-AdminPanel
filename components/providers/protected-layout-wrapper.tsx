@@ -35,8 +35,10 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
           <Header />
           <ScopeContextBanner />
           <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
-            <div className="mx-auto w-full max-w-[1700px]">
-              <AcademyRequiredGate>{children}</AcademyRequiredGate>
+            <div className="mx-auto flex min-h-full w-full max-w-[1700px] flex-col">
+              <div className="flex-1">
+                <AcademyRequiredGate>{children}</AcademyRequiredGate>
+              </div>
               <PanelFooter />
             </div>
           </div>

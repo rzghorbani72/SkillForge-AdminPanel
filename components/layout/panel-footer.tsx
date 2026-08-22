@@ -23,9 +23,9 @@ export function PanelFooter() {
   const src = `https://trustseal.enamad.ir/logo.aspx?id=${SEAL_ID}&Code=${SEAL_CODE}`;
 
   return (
-    <footer className="mt-8 border-t border-border px-4 py-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="text-xs text-muted-foreground">
+    <footer className="mt-auto h-20 shrink-0 border-t border-border px-4">
+      <div className="flex h-full items-center justify-between gap-3">
+        <div className="truncate text-xs text-muted-foreground">
           <span>
             © {year} · {t('panelFooter.poweredBy')}{' '}
             <a
@@ -43,6 +43,7 @@ export function PanelFooter() {
           target="_blank"
           rel="noopener noreferrer"
           href={href}
+          className="shrink-0"
         >
           {/* eNamad requires a plain img with referrerPolicy=origin, not next/image. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -52,6 +53,7 @@ export function PanelFooter() {
             alt={t('panelFooter.enamadAlt')}
             width={125}
             height={136}
+            className="h-14 w-auto"
             style={{ cursor: 'pointer' }}
           />
         </a>

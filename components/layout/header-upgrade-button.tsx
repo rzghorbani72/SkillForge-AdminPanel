@@ -5,16 +5,13 @@ import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { canManageSubscription } from '@/lib/subscription-access';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { cn } from '@/lib/utils';
 import { Sparkles } from 'lucide-react';
 
 /**
- * Header shortcut in the header for the academy manager. Turns solid/urgent
- * when the plan is expiring or expired; subtle otherwise. Business has no
- * higher self-serve tier, so once it's paid and active there is nothing to
- * "upgrade" to — the label switches to a neutral "manage plan", and only
- * reverts to an urgent CTA (labeled as a renewal, not an upgrade) if it's
- * actually expiring or expired.
+ * Header shortcut for the academy manager. Always uses the green brand CTA
+ * so "upgrade / renew / manage plan" stays visible in the header. The label
+ * still switches: Business (top plan) with no urgency → manage; top plan
+ * expiring → renew; otherwise → upgrade.
  */
 export function HeaderUpgradeButton() {
   const { t } = useTranslation();
@@ -39,12 +36,7 @@ export function HeaderUpgradeButton() {
     <Link
       href="/plans"
       title={label}
-      className={cn(
-        'inline-flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-sm font-semibold transition-opacity hover:opacity-90 sm:px-3',
-        isUrgent
-          ? 'bg-brandGreen text-brandGreen-foreground'
-          : 'border border-border/60 bg-muted/50 text-foreground'
-      )}
+      className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brandGreen px-2.5 text-sm font-semibold text-brandGreen-foreground transition-opacity hover:opacity-90 sm:px-3"
     >
       <Sparkles className="h-4 w-4" />
       <span className="hidden sm:inline">{label}</span>
