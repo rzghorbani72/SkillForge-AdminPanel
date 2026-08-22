@@ -31,6 +31,7 @@ import { tNow } from '@/lib/i18n/t-now';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import {
   Table,
   TableBody,
@@ -43,6 +44,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function StoreReportsPage() {
   const { t, language } = useTranslation();
+  const formatNumber = useNumberFormat();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<any>(null);
   const [summary, setSummary] = useState<any>(null);
@@ -395,7 +397,7 @@ export default function StoreReportsPage() {
                         {t('financial.store.reports.totalRecords')}
                       </p>
                       <p className="text-xl font-semibold">
-                        {summary.record_count}
+                        {formatNumber(summary.record_count)}
                       </p>
                     </div>
                   )}

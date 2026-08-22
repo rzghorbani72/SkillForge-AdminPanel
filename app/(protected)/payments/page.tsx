@@ -20,9 +20,13 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { usePaymentsData } from './_hooks/use-payments-data';
-import { cn, formatCurrencyWithStore } from '@/lib/utils';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
+import { formatPaymentMethodLabel } from '@/lib/format-payment-method-label';
+import { toPersianDigits } from '@/lib/phone-utils';
 import { Pagination } from '@/components/shared/Pagination';
 import {
   Sheet,
@@ -49,9 +53,29 @@ const STATUS_BADGES: Record<string, string> = {
   CANCELLED: 'bg-muted text-foreground'
 };
 
-function formatDate(value?: string | null): string {
-  if (!value) return '—';
-  return new Date(value).toLocaleDateString();
+function paymentStatusLabel(
+  status: string | undefined,
+  t: (key: string) => string
+): string {
+  switch (status?.toUpperCase()) {
+    case 'PAID':
+      return t('financial.store.overview.statusPaid');
+    case 'PENDING':
+      return t('financial.store.overview.statusPending');
+    case 'FAILED':
+      return t('financial.store.overview.statusFailed');
+    case 'REFUNDED':
+      return t('financial.store.overview.statusRefunded');
+    case 'CANCELLED':
+      return t('payments.cancelled');
+    default:
+      return status ?? '—';
+  }
+}
+
+function formatDisplayUuid(uuid: string | undefined, language: string): string {
+  if (!uuid) return '—';
+  return language === 'fa' ? toPersianDigits(uuid) : uuid;
 }
 
 type PaymentNotes = {
@@ -78,9 +102,11 @@ function parsePaymentNotes(value?: string | null): PaymentNotes | null {
 
 export default function PaymentsPage() {
   const { t, language } = useTranslation();
+  const formatNumber = useNumberFormat();
+  const formatDate = useDateFormat();
+  const formatCurrency = useFormatCurrency();
   const { payments, transactions, monetizationSummary, isLoading, refresh } =
     usePaymentsData();
-  const currentAcademy = useCurrentAcademy();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
@@ -217,12 +243,7 @@ export default function PaymentsPage() {
           <CardContent>
             {monetizationSummary?.visibility?.can_view_store_revenue ? (
               <p className="text-2xl font-bold">
-                {formatCurrencyWithStore(
-                  totals.revenue,
-                  currentAcademy,
-                  100,
-                  language
-                )}
+                {formatCurrency(totals.revenue)}
               </p>
             ) : (
               <p className="text-2xl font-bold">
@@ -243,7 +264,9 @@ export default function PaymentsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{totals.completed}</p>
+            <p className="text-2xl font-bold">
+              {formatNumber(totals.completed)}
+            </p>
             <p className="text-xs text-muted-foreground">
               {t('payments.successfulPayments')}
             </p>
@@ -256,7 +279,7 @@ export default function PaymentsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{totals.pending}</p>
+            <p className="text-2xl font-bold">{formatNumber(totals.pending)}</p>
             <p className="text-xs text-muted-foreground">
               {t('payments.awaitingConfirmation')}
             </p>
@@ -269,7 +292,7 @@ export default function PaymentsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{totals.failed}</p>
+            <p className="text-2xl font-bold">{formatNumber(totals.failed)}</p>
             <p className="text-xs text-muted-foreground">
               {t('payments.requiresFollowUp')}
             </p>
@@ -354,8 +377,8 @@ export default function PaymentsPage() {
                       }
                     }}
                   >
-                    <TableCell className="max-w-[180px] truncate">
-                      {(payment as any).uuid || '-'}
+                    <TableCell className="max-w-[180px] truncate" dir="ltr">
+                      {formatDisplayUuid((payment as any).uuid, language)}
                     </TableCell>
                     <TableCell>
                       {payment.user?.display_name ??
@@ -367,32 +390,28 @@ export default function PaymentsPage() {
                         payment.Course?.title ??
                         t('payments.unknownCourse')}
                     </TableCell>
-                    <TableCell>
-                      {formatCurrencyWithStore(
-                        payment.amount ?? 0,
-                        currentAcademy
-                      )}
-                    </TableCell>
+                    <TableCell>{formatCurrency(payment.amount ?? 0)}</TableCell>
                     <TableCell>
                       <Badge
                         className={cn(
-                          'capitalize',
                           STATUS_BADGES[payment.status] ??
                             'bg-muted text-muted-foreground'
                         )}
                       >
-                        {payment.status?.toLowerCase() ?? 'unknown'}
+                        {paymentStatusLabel(payment.status, t)}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       {(payment.gateway_id || payment.authority || '-') as any}
                     </TableCell>
                     <TableCell>
-                      {formatDate(
-                        payment.paid_at ??
+                      {(() => {
+                        const date =
+                          payment.paid_at ??
                           payment.payment_date ??
-                          payment.created_at
-                      )}
+                          payment.created_at;
+                        return date ? formatDate(date) : '—';
+                      })()}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -436,10 +455,12 @@ export default function PaymentsPage() {
           </SheetHeader>
           <div className="space-y-2 py-4 text-sm">
             <div>
-              {t('payments.colUuid')}: {selectedPayment?.uuid || '-'}
+              {t('payments.colUuid')}:{' '}
+              {formatDisplayUuid(selectedPayment?.uuid, language)}
             </div>
             <div>
-              {t('payments.colStatus')}: {selectedPayment?.status}
+              {t('payments.colStatus')}:{' '}
+              {paymentStatusLabel(selectedPayment?.status, t)}
             </div>
             <div>
               {t('payments.colGatewayRef')}:{' '}
@@ -451,17 +472,21 @@ export default function PaymentsPage() {
             </div>
             <div>
               {t('payments.detailPlatformCommission')}:{' '}
-              {selectedPayment?.financials?.platform_commission ??
-                selectedPayment?.platform_fee ??
-                0}
+              {formatCurrency(
+                selectedPayment?.financials?.platform_commission ??
+                  selectedPayment?.platform_fee ??
+                  0
+              )}
             </div>
             <div>
               {t('payments.detailVat')}:{' '}
-              {selectedPayment?.financials?.vat_amount ?? 0}
+              {formatCurrency(selectedPayment?.financials?.vat_amount ?? 0)}
             </div>
             <div>
               {t('payments.detailAcademyRevenue')}:{' '}
-              {selectedPayment?.financials?.academy_revenue ?? 0}
+              {formatCurrency(
+                selectedPayment?.financials?.academy_revenue ?? 0
+              )}
             </div>
             {selectedPaymentNotes ? (
               <>
@@ -477,31 +502,19 @@ export default function PaymentsPage() {
                 </div>
                 <div>
                   {t('payments.detailAffiliateFee')}:{' '}
-                  {formatCurrencyWithStore(
-                    selectedPaymentNotes.a ?? 0,
-                    currentAcademy
-                  )}
+                  {formatCurrency(selectedPaymentNotes.a ?? 0)}
                 </div>
                 <div>
                   {t('payments.detailPlatformFee')}:{' '}
-                  {formatCurrencyWithStore(
-                    selectedPaymentNotes.pf ?? 0,
-                    currentAcademy
-                  )}
+                  {formatCurrency(selectedPaymentNotes.pf ?? 0)}
                 </div>
                 <div>
                   {t('payments.detailInstructorShare')}:{' '}
-                  {formatCurrencyWithStore(
-                    selectedPaymentNotes.tp ?? 0,
-                    currentAcademy
-                  )}
+                  {formatCurrency(selectedPaymentNotes.tp ?? 0)}
                 </div>
                 <div>
                   {t('payments.detailNetSettlement')}:{' '}
-                  {formatCurrencyWithStore(
-                    selectedPaymentNotes.sn ?? 0,
-                    currentAcademy
-                  )}
+                  {formatCurrency(selectedPaymentNotes.sn ?? 0)}
                 </div>
               </>
             ) : null}
@@ -528,20 +541,16 @@ export default function PaymentsPage() {
                 className="flex items-center justify-between rounded-lg border p-4"
               >
                 <div>
-                  <p className="text-sm font-medium capitalize">
-                    {item.method.replace('_', ' ').toLowerCase()}
+                  <p className="text-sm font-medium">
+                    {formatPaymentMethodLabel(item.method, t)}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {item.count} {t('financial.store.payments.payments')}
+                    {formatNumber(item.count)}{' '}
+                    {t('financial.store.payments.payments')}
                   </p>
                 </div>
                 <p className="text-sm font-semibold">
-                  {formatCurrencyWithStore(
-                    item.total,
-                    currentAcademy,
-                    100,
-                    language
-                  )}
+                  {formatCurrency(item.total)}
                 </p>
               </div>
             ))
@@ -569,8 +578,7 @@ export default function PaymentsPage() {
               >
                 <div>
                   <p className="text-sm font-medium">
-                    {t('payments.transactions')} #
-                    {transaction.id.toString().padStart(6, '0')}
+                    {t('payments.transactions')} #{formatNumber(transaction.id)}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {transaction.type}
@@ -578,12 +586,7 @@ export default function PaymentsPage() {
                 </div>
                 <div className="text-end text-sm">
                   <p className="font-semibold">
-                    {formatCurrencyWithStore(
-                      transaction.amount ?? 0,
-                      currentAcademy,
-                      100,
-                      language
-                    )}
+                    {formatCurrency(transaction.amount ?? 0)}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {formatDate(transaction.created_at)}

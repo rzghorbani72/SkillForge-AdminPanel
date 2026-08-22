@@ -33,6 +33,7 @@ import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useFinancialFilters } from '@/hooks/useFinancialFilters';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -79,6 +80,7 @@ interface CourseRevenueBucket {
 
 export default function StoreRevenuePage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const currentAcademy = useCurrentAcademy();
   const formatCurrency = useFormatCurrency();
   const {
@@ -271,7 +273,9 @@ export default function StoreRevenuePage() {
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{payments.length}</p>
+              <p className="text-2xl font-bold">
+                {formatNumber(payments.length)}
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.successfulTransactions')}
               </p>
@@ -308,7 +312,9 @@ export default function StoreRevenuePage() {
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{paymentsByCourse.length}</p>
+              <p className="text-2xl font-bold">
+                {formatNumber(paymentsByCourse.length)}
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.coursesWithPayments')}
               </p>
@@ -427,7 +433,7 @@ export default function StoreRevenuePage() {
                     </TableCell>
                     <TableCell className="text-end">
                       <Badge variant="secondary">
-                        {row.payment_count ?? 0}
+                        {formatNumber(row.payment_count ?? 0)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-end font-medium">
@@ -577,7 +583,9 @@ export default function StoreRevenuePage() {
                           {c.course}
                         </TableCell>
                         <TableCell className="text-end">
-                          <Badge variant="secondary">{c.count}</Badge>
+                          <Badge variant="secondary">
+                            {formatNumber(c.count)}
+                          </Badge>
                         </TableCell>
                         <TableCell className="text-end font-medium">
                           {canSeeAnyRevenue

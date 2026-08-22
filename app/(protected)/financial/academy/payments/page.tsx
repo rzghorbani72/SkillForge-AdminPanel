@@ -31,6 +31,7 @@ import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useFinancialFilters } from '@/hooks/useFinancialFilters';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -45,6 +46,7 @@ import { toast } from 'react-toastify';
 
 export default function StorePaymentsPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const currentAcademy = useCurrentAcademy();
   const formatCurrency = useFormatCurrency();
   const {
@@ -134,6 +136,7 @@ export default function StorePaymentsPage() {
   }, [payments]);
 
   const vatRate = statement?.totals?.vat_rate ?? 0.09;
+  const vatPercentLabel = formatNumber(Math.round(vatRate * 100));
 
   async function handleExport() {
     if (!currentAcademy?.id) return;
@@ -258,7 +261,7 @@ export default function StorePaymentsPage() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                {paymentStats.completed}
+                {formatNumber(paymentStats.completed)}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.payments.successfulPayments')}
@@ -275,7 +278,7 @@ export default function StorePaymentsPage() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-                {paymentStats.pending}
+                {formatNumber(paymentStats.pending)}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.payments.awaitingProcessing')}
@@ -292,7 +295,7 @@ export default function StorePaymentsPage() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-destructive">
-                {paymentStats.failed}
+                {formatNumber(paymentStats.failed)}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.payments.failedTransactions')}
@@ -321,7 +324,7 @@ export default function StorePaymentsPage() {
                 {
                   key: 'vatIran',
                   value: statement.totals.tax_vat_amount,
-                  suffix: ` (${(vatRate * 100).toFixed(0)}%)`
+                  suffix: ` (${vatPercentLabel}٪)`
                 },
                 {
                   key: 'teacherPayout',
@@ -379,7 +382,9 @@ export default function StorePaymentsPage() {
                   <p className="text-xs text-muted-foreground">
                     {t(`financial.store.payments.${key}`)}
                   </p>
-                  <p className="mt-1 text-base font-semibold">{value ?? 0}</p>
+                  <p className="mt-1 text-base font-semibold">
+                    {formatNumber(value ?? 0)}
+                  </p>
                 </div>
               ))}
             </div>
@@ -418,7 +423,7 @@ export default function StorePaymentsPage() {
                   <TableRow key={m.method}>
                     <TableCell className="font-medium">{m.method}</TableCell>
                     <TableCell className="text-end">
-                      <Badge variant="secondary">{m.count}</Badge>
+                      <Badge variant="secondary">{formatNumber(m.count)}</Badge>
                     </TableCell>
                     <TableCell className="text-end font-medium">
                       {formatCurrency(m.total, m.currency)}

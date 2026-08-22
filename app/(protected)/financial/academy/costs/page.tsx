@@ -23,6 +23,7 @@ import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useFinancialFilters } from '@/hooks/useFinancialFilters';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -37,6 +38,7 @@ interface CategoryBucket {
 
 export default function StoreCostsPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const currentAcademy = useCurrentAcademy();
   const formatCurrency = useFormatCurrency();
   const {
@@ -223,7 +225,9 @@ export default function StoreCostsPage() {
                         {cat.category}
                       </div>
                     </TableCell>
-                    <TableCell className="text-end">{cat.count}</TableCell>
+                    <TableCell className="text-end">
+                      {formatNumber(cat.count)}
+                    </TableCell>
                     <TableCell className="text-end font-medium">
                       {formatCurrency(cat.totalCost, cat.currency)}
                     </TableCell>

@@ -14,13 +14,13 @@ import {
 } from '@/components/ui/table';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { formatPaymentMethodLabel } from '@/lib/format-payment-method-label';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
 import type {
   AcademyPaymentRow,
-  AcademyPaymentsResponse,
   SettledPaymentStatus
 } from '@/types/financial';
 
@@ -81,14 +81,19 @@ export function AcademyPaymentsTable({
   const loadPayments = useCallback(async () => {
     setIsLoading(true);
     try {
-      const data = (await apiClient.getPayments({
+      const data = await apiClient.getPayments({
         status,
         page,
         limit: PAGE_SIZE,
         start_date: startDate,
         end_date: endDate
-      })) as AcademyPaymentsResponse;
-      setPayments(data?.payments ?? []);
+      });
+      const list = Array.isArray(data)
+        ? (data as AcademyPaymentRow[])
+        : Array.isArray(data?.payments)
+          ? (data.payments as AcademyPaymentRow[])
+          : [];
+      setPayments(list);
       setTotalPages(data?.pagination?.totalPages ?? 1);
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -196,7 +201,7 @@ export function AcademyPaymentsTable({
                     <TableCell>
                       {gateway ? (
                         <Badge variant="outline" className="text-xs">
-                          {gateway}
+                          {formatPaymentMethodLabel(gateway, t)}
                         </Badge>
                       ) : (
                         '—'

@@ -16,6 +16,7 @@ import { usePaymentsData } from '../_hooks/use-payments-data';
 import { Progress } from '@/components/ui/progress';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore } from '@/lib/utils';
+import { formatPaymentMethodLabel } from '@/lib/format-payment-method-label';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const METHOD_CONFIG = [
@@ -56,13 +57,8 @@ export default function PaymentMethodsPage() {
   const { t, language } = useTranslation();
   const { payments } = usePaymentsData();
   const currentAcademy = useCurrentAcademy();
-  const formatMethodLabel = (method: string) => {
-    if (method === 'UNKNOWN') return t('payments.unknownMethod');
-    if (method === 'PAYPING') return t('payments.gateways.payping.title');
-    if (method === 'SAMAN_SEP') return t('payments.gateways.samanSep.title');
-    if (method === 'MELLAT_BP') return t('payments.gateways.mellatBp.title');
-    return method.replaceAll('_', ' ');
-  };
+  const formatMethodLabel = (method: string) =>
+    formatPaymentMethodLabel(method, t);
 
   const methodMetrics = useMemo(() => {
     const map = new Map<string, { count: number; total: number }>();
