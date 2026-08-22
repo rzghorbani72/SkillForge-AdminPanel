@@ -309,24 +309,7 @@ export const navItems: NavItem[] = [
       'TEACHER'
     ],
     scope: 'academy',
-    section: 'people',
-    children: [
-      {
-        title: 'Users',
-        href: '/users',
-        label: 'users-list'
-      },
-      {
-        title: 'Groups',
-        href: '/users?tab=groups',
-        label: 'groups'
-      },
-      {
-        title: 'Requests',
-        href: '/users?tab=requests',
-        label: 'requests'
-      }
-    ]
+    section: 'people'
   },
   // One destination for the public site: appearance, pages, SEO, trust, domain.
   {
