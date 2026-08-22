@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Sidebar from '@/components/layout/sidebar';
 import Header from '@/components/layout/header';
+import { PanelFooter } from '@/components/layout/panel-footer';
 import { ThemeInitializer } from '@/components/providers/ThemeInitializer';
 import { UserProvider } from '@/components/providers/user-provider';
 import { StoreProvider } from '@/components/providers/store-provider';
@@ -36,6 +37,7 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
           <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
             <div className="mx-auto w-full max-w-[1700px]">
               <AcademyRequiredGate>{children}</AcademyRequiredGate>
+              <PanelFooter />
             </div>
           </div>
         </main>

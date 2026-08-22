@@ -2,6 +2,10 @@
  * Persian (Farsi) translations for Admin Panel - RTL
  */
 export const fa = {
+  panelFooter: {
+    rights: '© منتوما — همه حقوق محفوظ است.',
+    enamadAlt: 'نماد اعتماد الکترونیکی'
+  },
   weekdays: {
     saturday: 'شنبه',
     sunday: 'یکشنبه',

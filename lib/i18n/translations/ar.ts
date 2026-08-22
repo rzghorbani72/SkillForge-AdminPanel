@@ -2,6 +2,10 @@
  * Arabic translations for Admin Panel - RTL
  */
 export const ar = {
+  panelFooter: {
+    rights: '© منتوما — جميع الحقوق محفوظة.',
+    enamadAlt: 'رمز الثقة الإلكتروني'
+  },
   validation: {
     titleMin3: 'يجب أن يكون العنوان 3 أحرف على الأقل',
     titleMin5: 'يجب أن يكون العنوان 5 أحرف على الأقل',

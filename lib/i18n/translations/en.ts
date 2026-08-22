@@ -2,6 +2,10 @@
  * English translations for Admin Panel
  */
 export const en = {
+  panelFooter: {
+    rights: '© Mentoma — All rights reserved.',
+    enamadAlt: 'E-Namad trust seal'
+  },
   weekdays: {
     saturday: 'Saturday',
     sunday: 'Sunday',

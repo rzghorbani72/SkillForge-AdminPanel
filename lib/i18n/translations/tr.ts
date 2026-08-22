@@ -2,6 +2,10 @@
  * Turkish translations for Admin Panel - LTR
  */
 export const tr = {
+  panelFooter: {
+    rights: '© Mentoma — Tüm hakları saklıdır.',
+    enamadAlt: 'E-Namad güven mührü'
+  },
   validation: {
     titleMin3: 'Başlık en az 3 karakter olmalıdır',
     titleMin5: 'Başlık en az 5 karakter olmalıdır',
