@@ -120,7 +120,7 @@ export default function SupportAccessLogsPage() {
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-base">
               <thead>
                 <tr className="border-b text-start text-muted-foreground">
                   <th className="py-2 pe-4 text-start font-medium">Time</th>

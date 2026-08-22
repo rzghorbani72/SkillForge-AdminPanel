@@ -58,8 +58,8 @@ export function CourseRow({
             }}
           />
           <div>
-            <div className="text-[13.5px] font-semibold">{course.title}</div>
-            <div className="text-[11.5px] text-muted-foreground">
+            <div className="text-base font-semibold">{course.title}</div>
+            <div className="text-sm text-muted-foreground">
               {seasonsCount} {t('courses.season')} · {lessonsCount}{' '}
               {t('courses.lesson')}
             </div>
@@ -77,22 +77,22 @@ export function CourseRow({
           >
             {teacher.charAt(0)}
           </span>
-          <span className="text-[13px]">{teacher}</span>
+          <span className="text-base">{teacher}</span>
         </div>
       </td>
-      <td className="px-4 py-3 text-[13px]">
+      <td className="px-4 py-3.5 text-base">
         {studentsCount > 0
           ? formatNumber(studentsCount)
           : t('courses.beFirstStudent')}
       </td>
-      <td className="px-4 py-3 font-mono text-[13px] text-primary">
+      <td className="px-4 py-3.5 text-base font-medium tabular-nums text-primary">
         {pricingType === 'FREE'
           ? t('courses.free')
           : priceVal > 0
             ? formatNumber(priceVal)
             : '—'}
       </td>
-      <td className="px-4 py-3 text-[12px] text-muted-foreground">
+      <td className="px-4 py-3.5 text-sm text-muted-foreground">
         {(course as any).updated_at
           ? new Date((course as any).updated_at).toLocaleDateString('fa-IR')
           : '—'}

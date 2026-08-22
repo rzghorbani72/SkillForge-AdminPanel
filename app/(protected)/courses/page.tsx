@@ -143,25 +143,25 @@ export default function CoursesPage() {
           </div>
         ) : (
           <div className="overflow-hidden rounded-xl border border-border bg-card">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full border-collapse text-base">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
-                  <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('courses.course')}
                   </th>
-                  <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('courses.instructor')}
                   </th>
-                  <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('courses.student')}
                   </th>
-                  <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('courses.price')}
                   </th>
-                  <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('courses.lastUpdated')}
                   </th>
-                  <th className="px-4 py-3 text-start text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('common.status')}
                   </th>
                   <th className="w-10 px-4 py-3" />

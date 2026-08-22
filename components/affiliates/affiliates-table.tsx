@@ -24,7 +24,7 @@ export function AffiliatesTable({
 
   return (
     <div className="overflow-x-auto rounded-xl border bg-card">
-      <table className="w-full text-sm">
+      <table className="w-full text-base">
         <thead className="border-b bg-muted/30">
           <tr className="text-xs text-muted-foreground">
             <th className="px-4 py-3 text-start font-medium">
