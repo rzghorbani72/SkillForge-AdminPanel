@@ -3,7 +3,8 @@
  */
 export const tr = {
   panelFooter: {
-    rights: '© Mentoma — Tüm hakları saklıdır.',
+    poweredBy: 'Destekleyen',
+    brand: 'Mentoma',
     enamadAlt: 'E-Namad güven mührü'
   },
   validation: {

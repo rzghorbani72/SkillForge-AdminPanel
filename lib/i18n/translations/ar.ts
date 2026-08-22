@@ -3,7 +3,8 @@
  */
 export const ar = {
   panelFooter: {
-    rights: '© منتوما — جميع الحقوق محفوظة.',
+    poweredBy: 'مدعوم بواسطة',
+    brand: 'منتوما',
     enamadAlt: 'رمز الثقة الإلكتروني'
   },
   validation: {

@@ -3,7 +3,8 @@
  */
 export const fa = {
   panelFooter: {
-    rights: '© منتوما — همه حقوق محفوظ است.',
+    poweredBy: 'قدرت‌گرفته از',
+    brand: 'منتوما',
     enamadAlt: 'نماد اعتماد الکترونیکی'
   },
   weekdays: {

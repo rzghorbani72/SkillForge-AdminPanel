@@ -3,7 +3,8 @@
  */
 export const en = {
   panelFooter: {
-    rights: '© Mentoma — All rights reserved.',
+    poweredBy: 'Powered by',
+    brand: 'Mentoma',
     enamadAlt: 'E-Namad trust seal'
   },
   weekdays: {
