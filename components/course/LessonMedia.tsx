@@ -28,7 +28,7 @@ import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
 type SlotKey = 'video' | 'audio' | 'document';
 
 /** Shared outer size for every type — prevents layout jump on type change. */
-export const LESSON_MEDIA_SLOT_CLASS = 'h-[12rem] w-full';
+export const LESSON_MEDIA_SLOT_CLASS = 'h-[14rem] w-full';
 
 function ProgressBar({ value }: { value: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -89,9 +89,16 @@ function UploadSlot({
 
   return (
     <div className="w-full space-y-2">
-      <Label className="text-xs font-medium text-muted-foreground">
-        {label}
-      </Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="text-xs font-medium text-muted-foreground">
+          {label}
+        </Label>
+        {hint ? (
+          <span className="text-[11px] leading-snug text-muted-foreground">
+            {hint}
+          </span>
+        ) : null}
+      </div>
       {filled ? (
         filled
       ) : uploading ? (
@@ -138,9 +145,6 @@ function UploadSlot({
           />
         </label>
       )}
-      {hint ? (
-        <p className="text-[11px] leading-snug text-muted-foreground">{hint}</p>
-      ) : null}
     </div>
   );
 }
