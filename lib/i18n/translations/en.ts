@@ -1601,11 +1601,9 @@ export const en = {
       'Students who paid can download this course\u2019s videos and voices.',
     applyDownloadsToLessons: 'Apply to every lesson in this course',
     applyDownloadsToLessonsOnHint:
-      'On save, every existing lesson becomes downloadable for paid students.',
+      'Every lesson in this course follows this setting and stays downloadable for paid students. Per-lesson choices are overwritten.',
     applyDownloadsToLessonsOffHint:
-      'On save, every existing lesson becomes stream-only.',
-    applyDownloadsToLessonsDone:
-      'The download setting was applied to every lesson in this course.',
+      'Every lesson in this course follows this setting and stays stream-only. Per-lesson choices are overwritten.',
     level: 'Level',
     shortDescription: 'Short Description',
     descriptionPlaceholder:
