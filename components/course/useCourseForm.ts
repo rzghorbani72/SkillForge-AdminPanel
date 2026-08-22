@@ -33,6 +33,16 @@ const AUTOSAVE_DELAY_MS = 5000;
 export type { LessonDraft, LessonType, SeasonDraft } from './course-drafts';
 export { durationToSeconds, secondsToDuration, validateForPublish };
 
+// The "unchanged since last save" key. One-shot actions are stripped out: they
+// describe what this request should do, not what the course now looks like, so
+// leaving them in would make re-running the same action look like a no-op.
+function fingerprintOf<T extends { apply_downloads_to_lessons?: boolean }>(
+  payload: T
+): string {
+  const { apply_downloads_to_lessons: _oneShot, ...state } = payload;
+  return JSON.stringify(state);
+}
+
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 /**
@@ -228,7 +238,7 @@ export function useCourseForm(courseId: string) {
 
         setSeasons(loadedSeasons);
         setLessons(loadedLessons);
-        lastSavedRef.current = JSON.stringify(
+        lastSavedRef.current = fingerprintOf(
           buildPayload(loadedForm, loadedSeasons, loadedLessons, [], [])
         );
       } catch (err) {
@@ -281,11 +291,15 @@ export function useCourseForm(courseId: string) {
 
       // Nothing changed since the last successful save, so there is nothing to
       // send. This is what keeps autosave from firing a request per keystroke.
-      const fingerprint = JSON.stringify(payload);
+      const fingerprint = fingerprintOf(payload);
       const hasDeletes =
         (payload.deleted_season_ids?.length ?? 0) > 0 ||
         (payload.deleted_lesson_ids?.length ?? 0) > 0;
-      if (!hasDeletes && fingerprint === lastSavedRef.current) {
+      // A one-shot action is a request, not a state: it must always be sent,
+      // even when every other field is identical to the last save.
+      const mustSend =
+        hasDeletes || payload.apply_downloads_to_lessons === true;
+      if (!mustSend && fingerprint === lastSavedRef.current) {
         savingRef.current = false;
         setSaveStatus('saved');
         if (!silent) toast.success(t('courses.updatedToast'));
@@ -347,7 +361,7 @@ export function useCourseForm(courseId: string) {
 
         // Fingerprint must include the ids we just received, otherwise the next
         // autosave looks "changed" only because ids appeared and re-POSTs creates.
-        lastSavedRef.current = JSON.stringify({
+        lastSavedRef.current = fingerprintOf({
           ...payload,
           seasons: payload.seasons.map((s) => ({
             ...s,
