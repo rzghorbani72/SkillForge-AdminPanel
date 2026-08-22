@@ -1594,6 +1594,16 @@ export const en = {
     toman: 'Toman',
     courseSettings: 'Course Settings',
     highlightedOnHomepage: 'Highlighted on the homepage',
+    allowDownloads: 'Allow students to save files',
+    allowDownloadsOnHint:
+      'Students who paid can download this course\u2019s videos and voices.',
+    allowDownloadsOffHint:
+      'Secure mode: students can only watch and listen online, not save the files.',
+    applyDownloadsToLessons: 'Apply to every lesson in this course',
+    applyDownloadsToLessonsOnHint:
+      'On save, every existing lesson becomes downloadable for paid students.',
+    applyDownloadsToLessonsOffHint:
+      'On save, every existing lesson becomes stream-only.',
     level: 'Level',
     shortDescription: 'Short Description',
     descriptionPlaceholder:
@@ -2516,8 +2526,7 @@ export const en = {
       dnsOk: 'DNS is correct',
       dnsFail: 'Not ready yet ({{resolved}})',
       resolvedTo: 'Currently points to: {{value}}',
-      intro:
-        'Example: {{example}}. Use your own address. Only add DNS rows.',
+      intro: 'Example: {{example}}. Use your own address. Only add DNS rows.',
       colType: 'Type',
       colName: 'Title',
       colValue: 'Value',

@@ -239,6 +239,8 @@ export interface Course {
   original_price?: number;
   /** False = the course is not sold at its own price. */
   base_price_active?: boolean;
+  // False = secure media: students stream lesson video/audio but cannot save it.
+  allow_downloads?: boolean;
   discount_percent?: number;
   is_free: boolean;
   is_published: boolean;

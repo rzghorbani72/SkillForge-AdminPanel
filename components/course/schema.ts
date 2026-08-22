@@ -45,7 +45,12 @@ export const courseFormFields = z.object({
   published: z.boolean().default(false),
   is_featured: z.boolean().default(false),
   // False = the course is not sold at its own price; another selling way carries it.
-  base_price_active: z.boolean().default(true)
+  base_price_active: z.boolean().default(true),
+  // False = secure media: students stream lesson video/audio but cannot save it.
+  allow_downloads: z.boolean().default(false),
+  // Not a course field: asks the server to push allow_downloads onto every
+  // existing lesson, replacing per-lesson choices.
+  apply_downloads_to_lessons: z.boolean().default(false)
 });
 
 // A "before discount" price must sit above the price actually charged, or it

@@ -5093,7 +5093,7 @@ class ApiClient {
   ): Promise<LessonDownloadPolicy> {
     const res = await this.request<
       LessonDownloadPolicy | { data: LessonDownloadPolicy }
-    >(`/tutoring/lessons/${lessonId}/download-policy`, {
+    >(`/lessons/${lessonId}/download-policy`, {
       method: 'PATCH',
       body: JSON.stringify(data)
     });

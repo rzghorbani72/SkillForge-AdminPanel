@@ -75,7 +75,9 @@ export function useCourseForm(courseId: string) {
       cover_id: '',
       published: false,
       is_featured: false,
-      base_price_active: true
+      base_price_active: true,
+      allow_downloads: false,
+      apply_downloads_to_lessons: false
     }
   });
 
@@ -104,6 +106,9 @@ export function useCourseForm(courseId: string) {
         published: data.published,
         is_featured: data.is_featured,
         base_price_active: data.base_price_active,
+        allow_downloads: data.allow_downloads,
+        apply_downloads_to_lessons:
+          data.apply_downloads_to_lessons || undefined,
         seasons: curriculum.seasons.map((s, i) => ({
           id: s.id,
           client_key: s.clientKey,
@@ -163,7 +168,11 @@ export function useCourseForm(courseId: string) {
           cover_id: cover?.id ?? '',
           published: course.is_published ?? false,
           is_featured: course.is_featured ?? false,
-          base_price_active: course.base_price_active ?? true
+          base_price_active: course.base_price_active ?? true,
+          allow_downloads: course.allow_downloads ?? false,
+          // Always starts off: re-applying to every lesson is a deliberate act,
+          // never something a plain re-save should silently repeat.
+          apply_downloads_to_lessons: false
         };
         form.reset(loadedForm);
 
@@ -287,6 +296,12 @@ export function useCourseForm(courseId: string) {
       try {
         const response = await apiClient.updateCourseContent(courseId, payload);
         clearDeleted();
+
+        // One-shot: leaving it checked would let the next autosave silently
+        // overwrite per-lesson overrides the teacher made in the meantime.
+        if (data.apply_downloads_to_lessons) {
+          form.setValue('apply_downloads_to_lessons', false);
+        }
 
         // The backend never learns a draft's clientKey — it only echoes back
         // which real id it created for it. Without writing that id back here,

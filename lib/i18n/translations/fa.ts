@@ -1581,6 +1581,16 @@ export const fa = {
     toman: 'تومان',
     courseSettings: 'تنظیمات دوره',
     highlightedOnHomepage: 'در صفحه اصلی برجسته نمایش داده می‌شود',
+    allowDownloads: 'اجازه ذخیره فایل‌ها توسط دانشجو',
+    allowDownloadsOnHint:
+      'دانشجویانی که هزینه پرداخت کرده‌اند می‌توانند ویدیوها و صوت‌های این دوره را دانلود کنند.',
+    allowDownloadsOffHint:
+      'حالت امن: دانشجو فقط به‌صورت آنلاین تماشا و گوش می‌کند و نمی‌تواند فایل را ذخیره کند.',
+    applyDownloadsToLessons: 'اعمال روی همه درس‌های این دوره',
+    applyDownloadsToLessonsOnHint:
+      'با ذخیره، همه درس‌های موجود برای دانشجوی پرداخت‌کرده قابل دانلود می‌شوند.',
+    applyDownloadsToLessonsOffHint:
+      'با ذخیره، همه درس‌های موجود فقط قابل پخش آنلاین می‌شوند.',
     level: 'سطح',
     shortDescription: 'توضیحات کوتاه',
     descriptionPlaceholder:
@@ -2299,8 +2309,7 @@ export const fa = {
       dnsOk: 'DNS درست است',
       dnsFail: 'هنوز آماده نیست ({{resolved}})',
       resolvedTo: 'الان به این وصل است: {{value}}',
-      intro:
-        'مثال: {{example}}. آدرس خود را بگذارید. فقط ردیف DNS اضافه کنید.',
+      intro: 'مثال: {{example}}. آدرس خود را بگذارید. فقط ردیف DNS اضافه کنید.',
       colType: 'نوع',
       colName: 'عنوان',
       colValue: 'مقدار',
