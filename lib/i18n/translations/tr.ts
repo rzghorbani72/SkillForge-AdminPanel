@@ -908,10 +908,10 @@ export const tr = {
     status: 'Durum',
     allStudents: 'Tüm Öğrenciler',
     noStudents: 'Öğrenci bulunamadı',
-    enrollments: 'Kayıtlar',
-    studentEnrollments: 'Öğrenci Kayıtları',
+    enrollments: 'Kurs kayıtları',
+    studentEnrollments: 'Öğrenci kurs kayıtları',
     enrollmentsDescription:
-      'Kayıt aktivitesini inceleyin, duruma göre filtreleyin ve öğrenci-kurs ilişkilerini detaylandırın.',
+      'Öğrenci × kurs listesi: kayıt durumu, filtreler ve her kurs için erişim detayları.',
     zeroResults: '0 sonuç',
     useSearchAndFilters:
       'Belirli kayıtları daraltmak için aşağıdaki arama ve filtreleri kullanın.',

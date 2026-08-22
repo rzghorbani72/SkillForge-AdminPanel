@@ -562,7 +562,7 @@ export const en = {
     managers: 'Managers',
     'teacher-requests': 'Teacher Requests',
     'all-students': 'All Students',
-    enrollments: 'Enrollments',
+    enrollments: 'Course enrollments',
     assignments: 'Assignments',
     progress: 'Progress',
     opsQueue: 'Ops queue',
@@ -1775,10 +1775,10 @@ export const en = {
     noProgressData: 'No progress data',
     progressWillBeTracked:
       'Progress will be tracked once students start courses.',
-    enrollments: 'Enrollments',
-    studentEnrollments: 'Student Enrollments',
+    enrollments: 'Course enrollments',
+    studentEnrollments: 'Student course enrollments',
     enrollmentsDescription:
-      'Review enrollment activity, filter by status, and drill into student-course relationships.',
+      'Student × course list: enrollment status, filters, and access details per course.',
     zeroResults: '0 results',
     useSearchAndFilters:
       'Use the search and filters below to narrow down specific records.',
@@ -3334,7 +3334,7 @@ export const en = {
     addRole: 'New Role',
     affiliates: 'Affiliates',
     groups: 'Groups',
-    requests: 'Requests',
+    requests: 'Teacher requests',
     rolesTab: 'Roles',
     courses: 'Courses',
     joinDate: 'Join Date',
@@ -3448,7 +3448,7 @@ export const en = {
     userId: 'User ID',
     created: 'Created',
     lastUpdated: 'Last Updated',
-    enrollments: 'Enrollments',
+    enrollments: 'Course enrollments',
     enrollmentsDescription: 'Courses this user is enrolled in',
     noEnrollments: 'Not enrolled in any course yet',
     enrolledOn: 'Enrolled on',
@@ -3732,6 +3732,27 @@ export const en = {
     ofRevenue: '% of revenue',
     paymentsCountLabel: 'payments',
     unknownMethod: 'Unknown',
+    methodLabels: {
+      ONLINE: 'Online',
+      WALLET: 'Wallet',
+      BANK_TRANSFER: 'Bank transfer',
+      CASH: 'Cash',
+      POS: 'Card / POS',
+      PAYPING: 'PayPing',
+      SAMAN_SEP: 'Saman SEP',
+      MELLAT_BP: 'Mellat BP',
+      MANUAL: 'Manual',
+      SIMULATOR: 'Simulator',
+      STRIPE: 'Stripe',
+      TAP: 'Tap',
+      IYZICO: 'iyzico',
+      PAYTR: 'PayTR',
+      ZARINPAL: 'Zarinpal',
+      IDPAY: 'IDPay',
+      PAYMOB: 'Paymob',
+      PAYTABS: 'PayTabs',
+      CHECKOUT_COM: 'Checkout.com'
+    },
     gatewayBadge: {
       active: 'Active',
       planned: 'Planned'
@@ -3828,6 +3849,13 @@ export const en = {
     deletedSuccess: 'Voucher deleted successfully',
     deleteFailed: 'Failed to delete voucher'
   },
+  period: {
+    heading: 'Time range',
+    thisMonth: 'This month',
+    wholeYear: 'All of {{year}}',
+    olderYear: 'Previous year',
+    newerYear: 'Next year'
+  },
   financial: {
     store: {
       title: 'Academy Financial Management',
@@ -3859,9 +3887,10 @@ export const en = {
         courseRevenue: 'Course Revenue Breakdown',
         courseRevenueDescription: 'Revenue by course',
         comingSoon: 'Course revenue breakdown coming soon',
-        eyebrow: 'Financial Reports',
-        paymentsTitle: 'Payments',
-        paymentsDescription2: 'All transactions & payment reports',
+        eyebrow: 'Academy finances',
+        paymentsTitle: 'Payments & invoices',
+        paymentsDescription2:
+          'Student payments and your academy subscription invoices, for the period you pick.',
         dateRange: 'Date Range',
         export: 'Export Excel',
         allStatuses: 'All',
@@ -3880,10 +3909,10 @@ export const en = {
         successTab: 'Successful',
         failedTab: 'Failed',
         studentPaymentsHint:
-          'Payments students made to enroll in this academy’s courses',
-        platformPayments: 'Platform subscription payments',
+          'What students paid for this academy’s courses. You keep all of it — we take no commission.',
+        platformPayments: 'Academy subscription invoices',
         platformPaymentsHint:
-          'What you pay for your platform subscription. This is a cost, not academy income.',
+          'What you pay for your academy subscription. This is a cost, not academy income.',
         pageOf: 'Page {{page}} of {{total}}'
       },
       revenue: {

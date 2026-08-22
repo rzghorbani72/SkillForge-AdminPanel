@@ -549,7 +549,7 @@ export const fa = {
     managers: 'مدیران',
     'teacher-requests': 'درخواست‌های معلم',
     'all-students': 'همه دانشجویان',
-    enrollments: 'ثبت‌نام‌ها',
+    enrollments: 'ثبت‌نام در دوره',
     assignments: 'تکالیف',
     progress: 'پیشرفت',
     opsQueue: 'پیگیری آموزشی',
@@ -1760,10 +1760,10 @@ export const fa = {
     noProgressData: 'داده پیشرفتی وجود ندارد',
     progressWillBeTracked:
       'پیشرفت پس از شروع دوره‌ها توسط دانشجویان ردیابی می‌شود.',
-    enrollments: 'ثبت‌نام‌ها',
-    studentEnrollments: 'ثبت‌نام دانشجویان',
+    enrollments: 'ثبت‌نام در دوره',
+    studentEnrollments: 'ثبت‌نام دانشجویان در دوره',
     enrollmentsDescription:
-      'بررسی فعالیت ثبت‌نام، فیلتر بر اساس وضعیت و مشاهده جزئیات رابطه دانشجو-دوره.',
+      'فهرست دانشجو × دوره: وضعیت ثبت‌نام، فیلتر، و جزئیات دسترسی به هر دوره.',
     zeroResults: '۰ نتیجه',
     useSearchAndFilters:
       'از جستجو و فیلترهای زیر برای محدود کردن رکوردهای خاص استفاده کنید.',
@@ -3307,7 +3307,7 @@ export const fa = {
     addRole: 'نقش جدید',
     affiliates: 'بازاریاب‌ها',
     groups: 'گروه‌ها',
-    requests: 'درخواست‌ها',
+    requests: 'درخواست مدرسی',
     rolesTab: 'نقش‌ها',
     courses: 'دوره‌ها',
     joinDate: 'تاریخ عضویت',
@@ -3421,7 +3421,7 @@ export const fa = {
     userId: 'شناسه کاربر',
     created: 'ایجاد شده',
     lastUpdated: 'آخرین به‌روزرسانی',
-    enrollments: 'ثبت‌نام‌ها',
+    enrollments: 'ثبت‌نام در دوره',
     enrollmentsDescription: 'دوره‌هایی که این کاربر در آن‌ها ثبت‌نام کرده است',
     noEnrollments: 'هنوز در هیچ دوره‌ای ثبت‌نام نکرده است',
     enrolledOn: 'ثبت‌نام در',
@@ -3697,6 +3697,27 @@ export const fa = {
     ofRevenue: '٪ از درآمد',
     paymentsCountLabel: 'پرداخت',
     unknownMethod: 'نامشخص',
+    methodLabels: {
+      ONLINE: 'آنلاین',
+      WALLET: 'کیف پول',
+      BANK_TRANSFER: 'کارت به کارت / بانکی',
+      CASH: 'نقدی',
+      POS: 'کارت‌خوان',
+      PAYPING: 'پی‌پینگ',
+      SAMAN_SEP: 'سداد سامان',
+      MELLAT_BP: 'به‌پرداخت ملت',
+      MANUAL: 'دستی',
+      SIMULATOR: 'شبیه‌ساز',
+      STRIPE: 'استرایپ',
+      TAP: 'تپ',
+      IYZICO: 'آی‌زیکو',
+      PAYTR: 'پی‌تی‌آر',
+      ZARINPAL: 'زرین‌پال',
+      IDPAY: 'آیدی‌پی',
+      PAYMOB: 'پی‌موب',
+      PAYTABS: 'پی‌تبز',
+      CHECKOUT_COM: 'چک‌اوت'
+    },
     gatewayBadge: {
       active: 'فعال',
       planned: 'برنامه‌ریزی‌شده'
@@ -3791,6 +3812,13 @@ export const fa = {
     deletedSuccess: 'کوپن با موفقیت حذف شد',
     deleteFailed: 'حذف کوپن ناموفق بود'
   },
+  period: {
+    heading: 'بازه زمانی',
+    thisMonth: 'این ماه',
+    wholeYear: 'کل سال {{year}}',
+    olderYear: 'سال قبل',
+    newerYear: 'سال بعد'
+  },
   financial: {
     store: {
       title: 'مدیریت مالی آکادمی',
@@ -3822,9 +3850,10 @@ export const fa = {
         courseRevenue: 'تفکیک درآمد دوره',
         courseRevenueDescription: 'درآمد بر اساس دوره',
         comingSoon: 'تفکیک درآمد دوره به زودی',
-        eyebrow: 'گزارش‌های مالی',
-        paymentsTitle: 'پرداخت‌ها',
-        paymentsDescription2: 'همه‌ی تراکنش‌ها و گزارش‌های پرداخت',
+        eyebrow: 'مالی آکادمی',
+        paymentsTitle: 'پرداخت‌ها و صورت‌حساب‌ها',
+        paymentsDescription2:
+          'پرداخت دانشجویان و صورت‌حساب اشتراک آکادمی، در بازه‌ای که انتخاب می‌کنید.',
         dateRange: 'بازه زمانی',
         export: 'خروجی اکسل',
         allStatuses: 'همه',
@@ -3843,10 +3872,10 @@ export const fa = {
         successTab: 'موفق',
         failedTab: 'ناموفق',
         studentPaymentsHint:
-          'پرداخت‌های دانشجویان برای ثبت‌نام در دوره‌های این آکادمی',
-        platformPayments: 'پرداخت‌های اشتراک پلتفرم',
+          'پرداخت دانشجویان برای دوره‌های این آکادمی. کل این مبلغ به آکادمی شما می‌رسد؛ ما هیچ درصدی برنمی‌داریم.',
+        platformPayments: 'صورت‌حساب اشتراک آکادمی',
         platformPaymentsHint:
-          'مبالغی که برای اشتراک پلتفرم پرداخت کرده‌اید. این مبالغ درآمد آکادمی نیستند.',
+          'هزینه‌ای که برای اشتراک آکادمی پرداخت کرده‌اید. این مبلغ درآمد آکادمی نیست.',
         pageOf: 'صفحه {{page}} از {{total}}'
       },
       revenue: {

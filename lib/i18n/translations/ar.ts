@@ -883,10 +883,10 @@ export const ar = {
     status: 'الحالة',
     allStudents: 'جميع الطلاب',
     noStudents: 'لم يتم العثور على طلاب',
-    enrollments: 'التسجيلات',
-    studentEnrollments: 'تسجيلات الطلاب',
+    enrollments: 'التسجيل في الدورة',
+    studentEnrollments: 'تسجيل الطلاب في الدورات',
     enrollmentsDescription:
-      'مراجعة نشاط التسجيل، والتصفية حسب الحالة، والتعمق في علاقات الطالب بالدورة.',
+      'قائمة طالب × دورة: حالة التسجيل، والفلاتر، وتفاصيل الوصول لكل دورة.',
     zeroResults: '0 نتائج',
     useSearchAndFilters:
       'استخدم البحث والفلاتر أدناه لتضييق نطاق السجلات المحددة.',
