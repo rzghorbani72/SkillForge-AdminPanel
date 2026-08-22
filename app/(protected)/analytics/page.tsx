@@ -24,9 +24,12 @@ import {
 import { DollarSign, Eye, Star, Users } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from './_hooks/use-analytics-data';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { formatCurrencyWithStore } from '@/lib/utils';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
+import { formatMonthYear } from '@/lib/i18n/format-month-year';
+import { isPaidPayment, paymentDateOf } from '@/lib/payment-date';
 
 interface RevenuePoint {
   month: string;
@@ -42,16 +45,10 @@ interface EngagementSlice {
 
 export default function AnalyticsPage() {
   const { t, language } = useTranslation();
+  const formatNumber = useNumberFormat();
+  const formatPercent = usePercentLabel();
+  const formatCurrency = useFormatCurrency();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
-  const currentAcademy = useCurrentAcademy();
-  const locale =
-    language === 'fa'
-      ? 'fa-IR'
-      : language === 'ar'
-        ? 'ar'
-        : language === 'tr'
-          ? 'tr'
-          : 'en';
   const isRtl = language === 'fa' || language === 'ar';
 
   const { revenueTrend, totalRevenue, totalEnrollments, activeEnrollments } =
@@ -65,14 +62,19 @@ export default function AnalyticsPage() {
         };
       }
 
+      const paidPayments = payments.filter((payment) =>
+        isPaidPayment(payment.status)
+      );
+
       const revenueMap = new Map<
         string,
         { revenue: number; enrollments: number }
       >();
 
-      payments.forEach((payment) => {
-        if (!payment.payment_date) return;
-        const date = new Date(payment.payment_date);
+      paidPayments.forEach((payment) => {
+        const rawDate = paymentDateOf(payment);
+        if (!rawDate) return;
+        const date = new Date(rawDate);
         const key = `${date.getFullYear()}-${date.getMonth()}`;
         if (!revenueMap.has(key)) {
           revenueMap.set(key, { revenue: 0, enrollments: 0 });
@@ -97,10 +99,7 @@ export default function AnalyticsPage() {
           const [year, month] = key.split('-').map((item) => Number(item));
           const date = new Date(year, month, 1);
           return {
-            month: new Intl.DateTimeFormat(locale, {
-              month: 'short',
-              year: '2-digit'
-            }).format(date),
+            month: formatMonthYear(date, language),
             timestamp: date.getTime(),
             revenue: value.revenue,
             enrollments: value.enrollments
@@ -109,7 +108,7 @@ export default function AnalyticsPage() {
         .sort((a, b) => a.timestamp - b.timestamp)
         .map(({ timestamp, ...item }) => item);
 
-      const totalRevenueAccum = payments.reduce(
+      const totalRevenueAccum = paidPayments.reduce(
         (sum, payment) => sum + (payment.amount ?? 0),
         0
       );
@@ -124,7 +123,7 @@ export default function AnalyticsPage() {
         totalEnrollments: totalEnrollmentsAccum,
         activeEnrollments: activeEnrollmentsAccum
       };
-    }, [payments, enrollments]);
+    }, [payments, enrollments, language]);
 
   const completionRate = useMemo(() => {
     if (totalEnrollments === 0) return 0;
@@ -216,12 +215,7 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrencyWithStore(
-                totalRevenue,
-                currentAcademy,
-                100,
-                language
-              )}
+              {formatCurrency(totalRevenue)}
             </div>
             <p className="text-xs text-muted-foreground">
               {t('analytics.combinedPayments')}
@@ -236,7 +230,9 @@ export default function AnalyticsPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalEnrollments}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(totalEnrollments)}
+            </div>
             <p className="text-xs text-muted-foreground">
               {t('analytics.recentEnrollmentActivity')}
             </p>
@@ -250,7 +246,9 @@ export default function AnalyticsPage() {
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeEnrollments}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(activeEnrollments)}
+            </div>
             <p className="text-xs text-muted-foreground">
               {t('analytics.currentlyProgressingCourses')}
             </p>
@@ -264,7 +262,9 @@ export default function AnalyticsPage() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{completionRate}%</div>
+            <div className="text-2xl font-bold">
+              {formatPercent(completionRate)}
+            </div>
             <p className="text-xs text-muted-foreground">
               {t('analytics.shareOfFinishedEnrollments')}
             </p>
@@ -284,36 +284,27 @@ export default function AnalyticsPage() {
             <ResponsiveContainer width="100%" height={320}>
               <AreaChart data={revenueTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number, name: string) =>
-                    name === 'revenue'
-                      ? [
-                          formatCurrencyWithStore(
-                            value,
-                            currentAcademy,
-                            100,
-                            language
-                          ),
-                          t('analytics.totalRevenue')
-                        ]
-                      : [value, t('students.enrollments')]
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(label) => String(label)}
+                />
+                <YAxis
+                  tickFormatter={(value: number) =>
+                    formatNumber(Math.round(value / 1_000_000))
                   }
+                />
+                <Tooltip
+                  formatter={(value: number) => [
+                    formatCurrency(value),
+                    t('analytics.totalRevenue')
+                  ]}
                 />
                 <Area
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#6366f1"
-                  fill="#6366f1"
+                  stroke="#10b981"
+                  fill="#10b98155"
                   name="revenue"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="enrollments"
-                  stroke="#22c55e"
-                  fill="#22c55e33"
-                  name="enrollments"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -332,8 +323,16 @@ export default function AnalyticsPage() {
               <BarChart data={engagementSlices}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
+                <YAxis
+                  allowDecimals={false}
+                  tickFormatter={(value: number) => formatNumber(value)}
+                />
+                <Tooltip
+                  formatter={(value: number) => [
+                    formatNumber(value),
+                    t('analytics.engagementBreakdown')
+                  ]}
+                />
                 <Bar dataKey="value">
                   {engagementSlices.map((slice, index) => (
                     <Cell key={slice.name} fill={slice.color} />
@@ -365,19 +364,21 @@ export default function AnalyticsPage() {
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
-                    {index + 1}
+                    {formatNumber(index + 1)}
                   </div>
                   <div>
                     <p className="text-sm font-medium">{course.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {course.students} {t('users.students')}
+                      {formatNumber(course.students)} {t('users.students')}
                     </p>
                   </div>
                 </div>
                 <div className="flex w-full flex-col gap-2 md:w-64">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{t('analytics.totalEnrollments')}</span>
-                    <Badge variant="outline">{course.students}</Badge>
+                    <Badge variant="outline">
+                      {formatNumber(course.students)}
+                    </Badge>
                   </div>
                   <Progress
                     value={

@@ -22,9 +22,13 @@ import {
 } from 'recharts';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
 import { Progress } from '@/components/ui/progress';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { formatCurrencyWithStore } from '@/lib/utils';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
+import { formatMonthYear } from '@/lib/i18n/format-month-year';
+import type { LanguageCode } from '@/lib/i18n/config';
+import { isPaidPayment, paymentDateOf } from '@/lib/payment-date';
 
 interface RevenuePoint {
   month: string;
@@ -32,22 +36,24 @@ interface RevenuePoint {
   enrollments: number;
 }
 
-function groupPaymentsByMonth(payments: any[], locale: string): RevenuePoint[] {
+function groupPaymentsByMonth(
+  payments: any[],
+  language: LanguageCode
+): RevenuePoint[] {
   if (payments.length === 0) return [];
 
   const map = new Map<string, RevenuePoint>();
 
   payments.forEach((payment) => {
-    if (!payment.payment_date) return;
-    const date = new Date(payment.payment_date);
+    if (!isPaidPayment(payment.status)) return;
+    const rawDate = paymentDateOf(payment);
+    if (!rawDate) return;
+    const date = new Date(rawDate);
     const key = `${date.getFullYear()}-${date.getMonth()}`;
     if (!map.has(key)) {
       const labelDate = new Date(date.getFullYear(), date.getMonth(), 1);
       map.set(key, {
-        month: new Intl.DateTimeFormat(locale, {
-          month: 'short',
-          year: '2-digit'
-        }).format(labelDate),
+        month: formatMonthYear(labelDate, language),
         revenue: 0,
         enrollments: 0
       });
@@ -71,9 +77,10 @@ function groupPaymentsByMonth(payments: any[], locale: string): RevenuePoint[] {
 
 export default function RevenueAnalyticsPage() {
   const { t, language } = useTranslation();
+  const formatNumber = useNumberFormat();
+  const formatPercent = usePercentLabel();
+  const formatCurrency = useFormatCurrency();
   const { payments, enrollments, isLoading } = useAnalyticsData();
-  const currentAcademy = useCurrentAcademy();
-  const locale = 'fa-IR';
 
   const {
     monthlyRevenue,
@@ -98,8 +105,11 @@ export default function RevenueAnalyticsPage() {
       };
     }
 
-    const monthly = groupPaymentsByMonth(payments, locale);
-    const totalAmount = payments.reduce(
+    const monthly = groupPaymentsByMonth(payments, language);
+    const paidPayments = payments.filter((payment) =>
+      isPaidPayment(payment.status)
+    );
+    const totalAmount = paidPayments.reduce(
       (sum, payment) => sum + (payment.amount ?? 0),
       0
     );
@@ -107,13 +117,15 @@ export default function RevenueAnalyticsPage() {
       .filter((payment) => payment.status === 'REFUNDED')
       .reduce((sum, payment) => sum + (payment.amount ?? 0), 0);
     const averageTicketValue =
-      payments.length > 0 ? Math.round(totalAmount / payments.length) : 0;
+      paidPayments.length > 0
+        ? Math.round(totalAmount / paidPayments.length)
+        : 0;
 
     const revenueByCourse = new Map<
       string,
       { name: string; amount: number; count: number }
     >();
-    payments.forEach((payment) => {
+    paidPayments.forEach((payment) => {
       if (!payment.course_id) return;
       if (!revenueByCourse.has(payment.course_id)) {
         revenueByCourse.set(payment.course_id, {
@@ -150,7 +162,7 @@ export default function RevenueAnalyticsPage() {
       monthOverMonth: percentChange,
       topCourses: topCourseRevenue
     };
-  }, [payments]);
+  }, [payments, language]);
 
   const enrolmentRevenue = useMemo(() => {
     if (enrollments.length === 0) return [];
@@ -210,9 +222,7 @@ export default function RevenueAnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(total, currentAcademy, 100, language)}
-            </p>
+            <p className="text-2xl font-bold">{formatCurrency(total)}</p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.acrossAllPayments')}
             </p>
@@ -226,12 +236,7 @@ export default function RevenueAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(
-                averageTicket,
-                currentAcademy,
-                100,
-                language
-              )}
+              {formatCurrency(averageTicket)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.perSuccessfulPayment')}
@@ -246,12 +251,7 @@ export default function RevenueAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-red-500">
-              {formatCurrencyWithStore(
-                totalRefunds,
-                currentAcademy,
-                100,
-                language
-              )}
+              {formatCurrency(totalRefunds)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.processedRefunds')}
@@ -271,7 +271,7 @@ export default function RevenueAnalyticsPage() {
               }`}
             >
               {monthOverMonth >= 0 ? '+' : ''}
-              {monthOverMonth}%
+              {formatPercent(monthOverMonth)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.changeComparedPrevious')}
@@ -295,20 +295,12 @@ export default function RevenueAnalyticsPage() {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis />
+              <YAxis tickFormatter={(value: number) => formatNumber(value)} />
               <Tooltip
                 formatter={(value: number, name: string) =>
                   name === 'revenue'
-                    ? [
-                        formatCurrencyWithStore(
-                          value,
-                          currentAcademy,
-                          100,
-                          language
-                        ),
-                        t('analytics.totalRevenue')
-                      ]
-                    : [value, t('students.enrollments')]
+                    ? [formatCurrency(value), t('analytics.totalRevenue')]
+                    : [formatNumber(value), t('students.enrollments')]
                 }
               />
               <Line
@@ -352,23 +344,18 @@ export default function RevenueAnalyticsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
-                        {index + 1}
+                        {formatNumber(index + 1)}
                       </div>
                       <div>
                         <p className="text-sm font-medium">{course.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {course.count}{' '}
+                          {formatNumber(course.count)}{' '}
                           {t('financial.store.payments.payments')}
                         </p>
                       </div>
                     </div>
                     <Badge variant="outline">
-                      {formatCurrencyWithStore(
-                        course.amount,
-                        currentAcademy,
-                        100,
-                        language
-                      )}
+                      {formatCurrency(course.amount)}
                     </Badge>
                   </div>
                   <Progress
@@ -399,17 +386,8 @@ export default function RevenueAnalyticsPage() {
               <BarChart data={enrolmentRevenue}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number) =>
-                    formatCurrencyWithStore(
-                      value,
-                      currentAcademy,
-                      100,
-                      language
-                    )
-                  }
-                />
+                <YAxis tickFormatter={(value: number) => formatNumber(value)} />
+                <Tooltip formatter={(value: number) => formatCurrency(value)} />
                 <Bar dataKey="value" fill="#8b5cf6" />
               </BarChart>
             </ResponsiveContainer>
@@ -417,14 +395,7 @@ export default function RevenueAnalyticsPage() {
               {enrolmentRevenue.map((item) => (
                 <div key={item.name} className="flex justify-between">
                   <span>{item.name}</span>
-                  <span>
-                    {formatCurrencyWithStore(
-                      item.value,
-                      currentAcademy,
-                      100,
-                      language
-                    )}
-                  </span>
+                  <span>{formatCurrency(item.value)}</span>
                 </div>
               ))}
             </div>

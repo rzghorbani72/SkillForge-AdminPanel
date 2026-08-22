@@ -3386,8 +3386,10 @@ class ApiClient {
     );
   }
 
-  async getRecentEnrollments() {
-    const response = await this.request('/enrollments/recent');
+  async getRecentEnrollments(limit = 10) {
+    const response = await this.request(
+      `/enrollments/recent?limit=${encodeURIComponent(String(limit))}`
+    );
 
     // Return the enrollments data directly
     if (response.data) {
@@ -3396,8 +3398,10 @@ class ApiClient {
     return null as any;
   }
 
-  async getRecentPayments() {
-    const response = await this.request('/payments/recent');
+  async getRecentPayments(limit = 10) {
+    const response = await this.request(
+      `/payments/recent?limit=${encodeURIComponent(String(limit))}`
+    );
 
     // Return the payments data directly
     if (response.data) {
@@ -3498,7 +3502,17 @@ class ApiClient {
     if (params?.end_date) queryParams.append('end_date', params.end_date);
     const query = queryParams.toString();
     const response = await this.request(`/payments${query ? `?${query}` : ''}`);
-    return response.data || [];
+    return unwrapDataEnvelope(response.data) as {
+      payments: unknown[];
+      pagination?: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+      };
+    };
   }
 
   async getTransactionTracking(params?: {

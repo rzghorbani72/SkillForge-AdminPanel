@@ -22,9 +22,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { formatCurrencyWithStore } from '@/lib/utils';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { formatMonthYear } from '@/lib/i18n/format-month-year';
 
 interface CoursePerformance {
   name: string;
@@ -36,9 +37,9 @@ interface CoursePerformance {
 
 export default function CoursePerformancePage() {
   const { t, language } = useTranslation();
+  const formatNumber = useNumberFormat();
+  const formatCurrency = useFormatCurrency();
   const { courses, enrollments, payments, isLoading } = useAnalyticsData();
-  const currentAcademy = useCurrentAcademy();
-  const locale = 'fa-IR';
 
   const courseMetrics = useMemo<CoursePerformance[]>(() => {
     if (courses.length === 0) return [];
@@ -127,9 +128,8 @@ export default function CoursePerformancePage() {
     enrollments.forEach((enrollment) => {
       const date = new Date(enrollment.enrolled_at);
       const key = `${date.getFullYear()}-${date.getMonth()}`;
-      const label = `${date.toLocaleString(locale, { month: 'short' })} ${String(
-        date.getFullYear()
-      ).slice(-2)}`;
+      const labelDate = new Date(date.getFullYear(), date.getMonth(), 1);
+      const label = formatMonthYear(labelDate, language);
 
       if (!map.has(key)) {
         map.set(key, { month: label, active: 0, completed: 0 });
@@ -142,28 +142,17 @@ export default function CoursePerformancePage() {
       }
     });
 
-    return Array.from(map.values()).sort((a, b) => {
-      const [monthA, yearA] = a.month.split(' ');
-      const [monthB, yearB] = b.month.split(' ');
-      const yearDiff = Number(yearA) - Number(yearB);
-      if (yearDiff !== 0) return yearDiff;
-      const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ];
-      return months.indexOf(monthA) - months.indexOf(monthB);
-    });
-  }, [enrollments, locale]);
+    return Array.from(map.entries())
+      .sort(([keyA], [keyB]) => {
+        const [yearA, monthA] = keyA.split('-').map(Number);
+        const [yearB, monthB] = keyB.split('-').map(Number);
+        return (
+          new Date(yearA, monthA, 1).getTime() -
+          new Date(yearB, monthB, 1).getTime()
+        );
+      })
+      .map(([, value]) => value);
+  }, [enrollments, language]);
 
   if (isLoading) {
     return (
@@ -203,8 +192,13 @@ export default function CoursePerformancePage() {
             <AreaChart data={aggregateTrend}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
+              <YAxis
+                allowDecimals={false}
+                tickFormatter={(value: number) => formatNumber(value)}
+              />
+              <Tooltip
+                formatter={(value: number) => [formatNumber(value), '']}
+              />
               <Area
                 type="monotone"
                 dataKey="active"
@@ -239,8 +233,16 @@ export default function CoursePerformancePage() {
               <BarChart data={topByEnrollment.slice(0, 8)}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
+                <YAxis
+                  allowDecimals={false}
+                  tickFormatter={(value: number) => formatNumber(value)}
+                />
+                <Tooltip
+                  formatter={(value: number) => [
+                    formatNumber(value),
+                    t('analytics.totalEnrollments')
+                  ]}
+                />
                 <Bar dataKey="enrollments" fill="#818cf8" />
               </BarChart>
             </ResponsiveContainer>
@@ -252,7 +254,7 @@ export default function CoursePerformancePage() {
                 >
                   <span className="truncate">{course.name}</span>
                   <Badge variant="outline">
-                    {course.enrollments} {t('users.students')}
+                    {formatNumber(course.enrollments)} {t('users.students')}
                   </Badge>
                 </div>
               ))}
@@ -272,17 +274,8 @@ export default function CoursePerformancePage() {
               <BarChart data={topByRevenue.slice(0, 8)}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number) =>
-                    formatCurrencyWithStore(
-                      value,
-                      currentAcademy,
-                      100,
-                      language
-                    )
-                  }
-                />
+                <YAxis tickFormatter={(value: number) => formatNumber(value)} />
+                <Tooltip formatter={(value: number) => formatCurrency(value)} />
                 <Bar dataKey="revenue" fill="#34d399" />
               </BarChart>
             </ResponsiveContainer>
@@ -292,12 +285,7 @@ export default function CoursePerformancePage() {
                   <div className="flex items-center justify-between">
                     <span className="truncate">{course.name}</span>
                     <Badge variant="secondary">
-                      {formatCurrencyWithStore(
-                        course.revenue,
-                        currentAcademy,
-                        100,
-                        language
-                      )}
+                      {formatCurrency(course.revenue)}
                     </Badge>
                   </div>
                   <Progress value={course.completion} className="h-2" />

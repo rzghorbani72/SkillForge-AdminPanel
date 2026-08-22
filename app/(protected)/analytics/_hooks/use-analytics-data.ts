@@ -51,8 +51,8 @@ export function useAnalyticsData(): AnalyticsSnapshots {
         const [coursesResponse, enrollmentsResponse, paymentsResponse] =
           await Promise.allSettled([
             apiClient.getCourses(),
-            apiClient.getRecentEnrollments(),
-            apiClient.getRecentPayments()
+            apiClient.getRecentEnrollments(300),
+            apiClient.getRecentPayments(300)
           ]);
 
         if (!isMounted) return;

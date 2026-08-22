@@ -23,6 +23,8 @@ import {
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
 import { Progress } from '@/components/ui/progress';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 
 interface EngagementSlice {
   name: string;
@@ -31,7 +33,9 @@ interface EngagementSlice {
 }
 
 export default function StudentEngagementPage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
+  const formatPercent = usePercentLabel();
   const { enrollments, courses, isLoading } = useAnalyticsData();
 
   const {
@@ -100,16 +104,24 @@ export default function StudentEngagementPage() {
 
     return {
       engagementDistribution: [
-        { name: 'Active', value: activeCount, fill: '#10b981' },
-        { name: 'Completed', value: completedCount, fill: '#3b82f6' },
-        { name: 'Cancelled', value: cancelledCount, fill: '#ef4444' }
+        { name: t('common.active'), value: activeCount, fill: '#10b981' },
+        {
+          name: t('students.completed'),
+          value: completedCount,
+          fill: '#3b82f6'
+        },
+        {
+          name: t('students.cancelled'),
+          value: cancelledCount,
+          fill: '#ef4444'
+        }
       ] as EngagementSlice[],
       averageProgress: averageProgressValue,
       laggingStudents: laggingCount,
       completedStudents: completedCount,
       courseEngagement: courseEngagementStats
     };
-  }, [enrollments, courses]);
+  }, [enrollments, courses, t]);
 
   const topEngagedCourses = useMemo(() => {
     return courseEngagement
@@ -156,7 +168,9 @@ export default function StudentEngagementPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{averageProgress}%</p>
+            <p className="text-2xl font-bold">
+              {formatPercent(averageProgress)}
+            </p>
             <Progress value={averageProgress} className="mt-2 h-2" />
           </CardContent>
         </Card>
@@ -167,7 +181,9 @@ export default function StudentEngagementPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-red-500">{laggingStudents}</p>
+            <p className="text-2xl font-bold text-red-500">
+              {formatNumber(laggingStudents)}
+            </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.laggingStudentsDescription')}
             </p>
@@ -181,7 +197,7 @@ export default function StudentEngagementPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-green-600">
-              {completedStudents}
+              {formatNumber(completedStudents)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.completedStudentsDescription')}
@@ -196,7 +212,7 @@ export default function StudentEngagementPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-indigo-600">
-              {topEngagedCourses.length}
+              {formatNumber(topEngagedCourses.length)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.activeCoursesDescription')}
@@ -223,7 +239,9 @@ export default function StudentEngagementPage() {
                 endAngle={-270}
               >
                 <RadialBar background dataKey="value" />
-                <Tooltip />
+                <Tooltip
+                  formatter={(value: number) => [formatNumber(value), '']}
+                />
               </RadialBarChart>
             </ResponsiveContainer>
             <div className="mt-4 grid gap-2 text-sm sm:grid-cols-3">
@@ -234,7 +252,7 @@ export default function StudentEngagementPage() {
                     style={{ backgroundColor: slice.fill }}
                   />
                   <span className="text-muted-foreground">{slice.name}</span>
-                  <Badge variant="outline">{slice.value}</Badge>
+                  <Badge variant="outline">{formatNumber(slice.value)}</Badge>
                 </div>
               ))}
             </div>
@@ -253,8 +271,13 @@ export default function StudentEngagementPage() {
               <BarChart data={topEngagedCourses}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />
-                <YAxis />
-                <Tooltip />
+                <YAxis
+                  allowDecimals={false}
+                  tickFormatter={(value: number) => formatNumber(value)}
+                />
+                <Tooltip
+                  formatter={(value: number) => [formatNumber(value), '']}
+                />
                 <Bar dataKey="active" stackId="a" fill="#6366f1" />
                 <Bar dataKey="completed" stackId="a" fill="#22c55e" />
               </BarChart>
@@ -267,9 +290,13 @@ export default function StudentEngagementPage() {
                 >
                   <span className="truncate">{course.name}</span>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>Active {course.active}</span>
+                    <span>
+                      {t('common.active')} {formatNumber(course.active)}
+                    </span>
                     <span>•</span>
-                    <span>Completed {course.completed}</span>
+                    <span>
+                      {t('students.completed')} {formatNumber(course.completed)}
+                    </span>
                   </div>
                 </div>
               ))}
