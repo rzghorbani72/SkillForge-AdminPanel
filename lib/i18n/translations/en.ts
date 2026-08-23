@@ -4,8 +4,7 @@
 export const en = {
   panelFooter: {
     poweredBy: 'Powered by',
-    brand: 'Mentoma',
-    enamadAlt: 'E-Namad trust seal'
+    brand: 'Mentoma'
   },
   weekdays: {
     saturday: 'Saturday',

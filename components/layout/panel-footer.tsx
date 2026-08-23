@@ -3,14 +3,6 @@
 import { useTranslation } from '@/lib/i18n/hooks';
 import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
 
-/**
- * Platform-level eNamad seal. The image and link must stay on
- * trustseal.enamad.ir — a local copy fails their domain check, and the seal
- * must not be altered. Academy-owned seals are shown on the academy site, not here.
- */
-const SEAL_ID = '7370484';
-const SEAL_CODE = 'JQB9S5hD9i2hI9kLvZiyE3UH0Znbj14F';
-
 export function PanelFooter() {
   const { t, language } = useTranslation();
   const landingUrl = resolveStorefrontBaseUrl();
@@ -19,48 +11,20 @@ export function PanelFooter() {
     { year: 'numeric' }
   );
 
-  // eNamad's own snippet puts a non-standard `code` attribute on the img and
-  // their verifier looks for it; React only passes it through via a spread.
-  const enamadCodeAttr: Record<string, string> = { code: SEAL_CODE };
-  const href = `https://trustseal.enamad.ir/?id=${SEAL_ID}&Code=${SEAL_CODE}`;
-  const src = `https://trustseal.enamad.ir/logo.aspx?id=${SEAL_ID}&Code=${SEAL_CODE}`;
-
   return (
-    <footer className="mt-auto h-20 shrink-0 border-t border-border px-4">
-      <div className="flex h-full items-center justify-between gap-3">
-        <div className="truncate text-xs text-muted-foreground">
-          <span>
-            © {year} · {t('panelFooter.poweredBy')}{' '}
-            <a
-              href={landingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline-offset-4 hover:underline"
-            >
-              {t('panelFooter.brand')}
-            </a>
-          </span>
-        </div>
-        <a
-          referrerPolicy="origin"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={href}
-          className="shrink-0"
-        >
-          {/* eNamad requires a plain img with referrerPolicy=origin, not next/image. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            referrerPolicy="origin"
-            src={src}
-            alt={t('panelFooter.enamadAlt')}
-            {...enamadCodeAttr}
-            width={125}
-            height={136}
-            className="h-14 w-auto"
-            style={{ cursor: 'pointer' }}
-          />
-        </a>
+    <footer className="mt-auto h-[50px] shrink-0 border-t border-border px-4">
+      <div className="flex h-full items-center justify-center">
+        <p className="truncate text-center text-xs text-muted-foreground">
+          © {year} · {t('panelFooter.poweredBy')}{' '}
+          <a
+            href={landingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium underline-offset-4 hover:underline"
+          >
+            {t('panelFooter.brand')}
+          </a>
+        </p>
       </div>
     </footer>
   );

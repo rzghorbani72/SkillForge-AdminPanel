@@ -4,8 +4,7 @@
 export const fa = {
   panelFooter: {
     poweredBy: 'قدرت‌گرفته از',
-    brand: 'منتوما',
-    enamadAlt: 'نماد اعتماد الکترونیکی'
+    brand: 'منتوما'
   },
   weekdays: {
     saturday: 'شنبه',

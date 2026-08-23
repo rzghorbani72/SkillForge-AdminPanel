@@ -4,8 +4,7 @@
 export const ar = {
   panelFooter: {
     poweredBy: 'مدعوم بواسطة',
-    brand: 'منتوما',
-    enamadAlt: 'رمز الثقة الإلكتروني'
+    brand: 'منتوما'
   },
   validation: {
     titleMin3: 'يجب أن يكون العنوان 3 أحرف على الأقل',

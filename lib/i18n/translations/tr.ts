@@ -4,8 +4,7 @@
 export const tr = {
   panelFooter: {
     poweredBy: 'Destekleyen',
-    brand: 'Mentoma',
-    enamadAlt: 'E-Namad güven mührü'
+    brand: 'Mentoma'
   },
   validation: {
     titleMin3: 'Başlık en az 3 karakter olmalıdır',
