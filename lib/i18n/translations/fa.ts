@@ -2296,6 +2296,15 @@ export const fa = {
     uploadingPhoto: 'در حال آپلود…',
     changePhoto: 'تغییر عکس',
     storeSettingsTitle: 'مشخصات آکادمی',
+    showcaseTitle: 'نمایش در صفحهٔ اصلی',
+    showcaseDescription:
+      'تصویرهای این آکادمی که در سایت معرفی پلتفرم نمایش داده می‌شود. فقط مدیران پلتفرم.',
+    showcaseDesktop: 'نمای دسکتاپ',
+    showcaseDesktopHint:
+      'برای آپلود کلیک کن — اندازهٔ پیشنهادی ۱۴۴۰ × ۹۰۰ پیکسل',
+    showcaseMobile: 'نمای موبایل',
+    showcaseMobileHint: 'برای آپلود کلیک کن — اندازهٔ پیشنهادی ۳۹۰ × ۸۴۴ پیکسل',
+    showcaseSaved: 'تصویرهای نمایش ذخیره شد',
     storeSettingsSubtitle:
       'نام، آدرس سایت و معرفی آکادمی شما را در سامانه تعیین می‌کند.',
     academyFeaturesTitle: 'قابلیت‌های آموزشی',

@@ -1436,6 +1436,8 @@ class ApiClient {
     meta_title?: string | null;
     meta_description?: string | null;
     og_image_id?: string | null;
+    showcase_desktop_id?: string | null;
+    showcase_mobile_id?: string | null;
   }) {
     return this.request('/academies/current', {
       method: 'PATCH',

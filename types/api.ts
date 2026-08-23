@@ -191,6 +191,9 @@ export interface Academy {
   meta_title?: string | null;
   meta_description?: string | null;
   og_image?: { id: string; publicUrl: string } | null;
+  /** Platform-curated landing-page screenshots of this academy's public site. */
+  showcase_desktop?: { id: string; publicUrl: string } | null;
+  showcase_mobile?: { id: string; publicUrl: string } | null;
   cover?: Media;
   profiles?: Profile[];
   courses?: Course[];

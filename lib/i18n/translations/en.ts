@@ -2512,6 +2512,14 @@ export const en = {
     uploadingPhoto: 'Uploading…',
     changePhoto: 'Change Photo',
     storeSettingsTitle: 'Academy Details',
+    showcaseTitle: 'Landing page showcase',
+    showcaseDescription:
+      'Screenshots of this academy shown on the public marketing site. Platform admins only.',
+    showcaseDesktop: 'Desktop view',
+    showcaseDesktopHint: 'Click to upload — 1440 x 900 pixels works best',
+    showcaseMobile: 'Mobile view',
+    showcaseMobileHint: 'Click to upload — 390 x 844 pixels works best',
+    showcaseSaved: 'Showcase images saved',
     storeSettingsSubtitle:
       'Sets your academy name, site address, and description on the platform.',
     academyFeaturesTitle: 'Learning features',

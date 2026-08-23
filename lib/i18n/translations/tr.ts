@@ -1183,6 +1183,14 @@ export const tr = {
     uploadingPhoto: 'Yükleniyor…',
     changePhoto: 'Fotoğrafı Değiştir',
     storeSettingsTitle: 'Akademi Bilgileri',
+    showcaseTitle: 'Tanıtım sayfası vitrini',
+    showcaseDescription:
+      'Bu akademinin tanıtım sitesinde gösterilen ekran görüntüleri. Yalnızca platform yöneticileri.',
+    showcaseDesktop: 'Masaüstü görünümü',
+    showcaseDesktopHint: 'Yüklemek için tıkla — en iyisi 1440 x 900 piksel',
+    showcaseMobile: 'Mobil görünüm',
+    showcaseMobileHint: 'Yüklemek için tıkla — en iyisi 390 x 844 piksel',
+    showcaseSaved: 'Vitrin görselleri kaydedildi',
     storeSettingsSubtitle:
       'Enstitünüzün آکادمی ekosisteminde nasıl göründüğünü yönetin.',
     generalInformation: 'Genel Bilgiler',

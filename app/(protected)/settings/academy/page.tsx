@@ -18,6 +18,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { AcademyFeaturesCard } from '@/components/settings/academy-features-card';
 import { AcademySiteStatusCard } from '@/components/settings/academy-site-status-card';
+import { AcademyShowcaseCard } from '@/components/settings/academy-showcase-card';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin } from '@/lib/roles';
 import {
   AcademyEditForm,
   buildAcademyThemePatch,
@@ -27,6 +30,7 @@ import {
 export default function AcademySettingsPage() {
   const { t } = useTranslation();
   const { academy, isLoading, refresh } = useSettingsData();
+  const { user } = useAuthUser();
 
   const handleSave = async (data: AcademyEditPayload) => {
     try {
@@ -99,13 +103,15 @@ export default function AcademySettingsPage() {
 
           <AcademyFeaturesCard />
           <AcademySiteStatusCard academyName={academy.name ?? ''} />
+          {isPlatformAdmin(user) ? <AcademyShowcaseCard /> : null}
         </div>
 
         <div className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                <Building2 className="h-4 w-4" /> {t('settings.currentOverview')}
+                <Building2 className="h-4 w-4" />{' '}
+                {t('settings.currentOverview')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
