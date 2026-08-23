@@ -279,6 +279,23 @@ export const navItems: NavItem[] = [
     requiresLearningCapability: 'tutoring'
   },
   {
+    title: 'Group Classes',
+    href: '/tutoring/groups',
+    icon: 'users' as IconType,
+    label: 'tutoringGroups',
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
+    scope: 'academy',
+    section: 'learning',
+    requiresLearningCapability: 'tutoring'
+  },
+  {
     title: 'Ops Queue',
     href: '/learning/ops-queue',
     icon: 'trendingUp' as IconType,

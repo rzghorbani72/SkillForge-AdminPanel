@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { WEEKDAY_LABEL_KEYS, WEEK_ORDER } from '@/lib/live-recurrence';
+import { WeekdayPicker } from '@/components/shared/weekday-picker';
 
 type Props = {
   repeats: boolean;
@@ -30,12 +30,6 @@ const LiveSessionRecurrence = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  const toggleDay = (day: number) => {
-    onDaysChange(
-      days.includes(day) ? days.filter((d) => d !== day) : [...days, day]
-    );
-  };
-
   return (
     <div className="space-y-3 rounded-md border p-3">
       <div className="flex items-center justify-between gap-3">
@@ -56,19 +50,7 @@ const LiveSessionRecurrence = ({
 
       {repeats ? (
         <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            {WEEK_ORDER.map((day) => (
-              <Button
-                key={day}
-                type="button"
-                size="sm"
-                variant={days.includes(day) ? 'default' : 'outline'}
-                onClick={() => toggleDay(day)}
-              >
-                {t(WEEKDAY_LABEL_KEYS[day])}
-              </Button>
-            ))}
-          </div>
+          <WeekdayPicker value={days} onChange={onDaysChange} />
           <div className="space-y-2">
             <Label htmlFor="live-repeat-until">
               {t('courses.liveSession.repeatUntilLabel')}

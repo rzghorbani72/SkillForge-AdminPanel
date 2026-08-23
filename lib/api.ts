@@ -53,7 +53,11 @@ import type {
   SubmissionListResponse,
   TutoringAttendanceStatus,
   TutoringEngagement,
+  TutoringGroup,
   TutoringOffer,
+  CreateTutoringGroupPayload,
+  UpdateTutoringGroupPayload,
+  TutoringGroupSlot,
   TutoringSession,
   TutoringSessionListItem,
   UpdateLessonDownloadPolicyPayload,
@@ -5080,6 +5084,129 @@ class ApiClient {
       body: JSON.stringify(data)
     });
     return unwrapDataEnvelope(res.data);
+  }
+
+  // ─── Group classes ─────────────────────────────────────────────────────────
+
+  async createTutoringGroup(
+    data: CreateTutoringGroupPayload
+  ): Promise<TutoringGroup> {
+    const res = await this.request<TutoringGroup | { data: TutoringGroup }>(
+      '/tutoring/groups',
+      { method: 'POST', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getTutoringGroups(params?: {
+    course_id?: string;
+    status?: string;
+  }): Promise<TutoringGroup[]> {
+    const qs = new URLSearchParams();
+    if (params?.course_id) qs.append('course_id', params.course_id);
+    if (params?.status) qs.append('status', params.status);
+    const url = qs.toString() ? `/tutoring/groups?${qs}` : '/tutoring/groups';
+    const res = await this.request<TutoringGroup[] | { data: TutoringGroup[] }>(
+      url
+    );
+    const payload = unwrapDataEnvelope(res.data);
+    return Array.isArray(payload) ? payload : [];
+  }
+
+  async getTutoringGroup(groupId: string): Promise<TutoringGroup> {
+    const res = await this.request<TutoringGroup | { data: TutoringGroup }>(
+      `/tutoring/groups/${groupId}`
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async updateTutoringGroup(
+    groupId: string,
+    data: UpdateTutoringGroupPayload
+  ): Promise<TutoringGroup> {
+    const res = await this.request<TutoringGroup | { data: TutoringGroup }>(
+      `/tutoring/groups/${groupId}`,
+      { method: 'PATCH', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async replaceTutoringGroupSlots(
+    groupId: string,
+    slots: TutoringGroupSlot[]
+  ): Promise<TutoringGroupSlot[]> {
+    const res = await this.request<
+      TutoringGroupSlot[] | { data: TutoringGroupSlot[] }
+    >(`/tutoring/groups/${groupId}/slots`, {
+      method: 'PUT',
+      body: JSON.stringify({ slots })
+    });
+    const payload = unwrapDataEnvelope(res.data);
+    return Array.isArray(payload) ? payload : [];
+  }
+
+  async publishTutoringGroup(groupId: string): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/publish`, {
+      method: 'POST',
+      body: JSON.stringify({})
+    });
+  }
+
+  async confirmTutoringGroup(groupId: string): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/confirm`, {
+      method: 'POST',
+      body: JSON.stringify({})
+    });
+  }
+
+  async cancelTutoringGroup(groupId: string, reason?: string): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/cancel`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    });
+  }
+
+  async updateTutoringGroupMeetingLink(
+    groupId: string,
+    meetingUrl: string,
+    notify = true
+  ): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/meeting-link`, {
+      method: 'PATCH',
+      body: JSON.stringify({ meeting_url: meetingUrl, notify })
+    });
+  }
+
+  async addTutoringGroupMember(
+    groupId: string,
+    studentProfileId: string,
+    seats = 1
+  ): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/members`, {
+      method: 'POST',
+      body: JSON.stringify({ student_profile_id: studentProfileId, seats })
+    });
+  }
+
+  async removeTutoringGroupMember(
+    groupId: string,
+    studentProfileId: string
+  ): Promise<void> {
+    await this.request(
+      `/tutoring/groups/${groupId}/members/${studentProfileId}`,
+      { method: 'DELETE' }
+    );
+  }
+
+  async announceToTutoringGroup(
+    groupId: string,
+    body: string,
+    sendSms = false
+  ): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/announce`, {
+      method: 'POST',
+      body: JSON.stringify({ body, send_sms: sendSms })
+    });
   }
 
   // ─── Tutoring ──────────────────────────────────────────────────────────────

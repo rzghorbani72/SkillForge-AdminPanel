@@ -336,3 +336,94 @@ export interface UpdateLessonDownloadPolicyPayload {
   allow_download_subscription?: boolean;
   allow_download_tutoring?: boolean;
 }
+
+// ─── Group classes ───────────────────────────────────────────────────────────
+
+export type TutoringGroupStatus =
+  | 'DRAFT'
+  | 'WAITING'
+  | 'CONFIRMED'
+  | 'RUNNING'
+  | 'COMPLETED'
+  | 'CANCELLED';
+
+export type TutoringGroupVisibility = 'PUBLIC' | 'PRIVATE';
+
+export interface TutoringGroupSlot {
+  id?: string;
+  /** 0 = Sunday, same index space as Date.getDay() */
+  weekday: number;
+  /** Minutes after local midnight in the class timezone: 15:00 -> 900 */
+  start_minute: number;
+  duration_minutes: number;
+  lesson_id?: string | null;
+  Lesson?: { id: string; title: string } | null;
+}
+
+export interface TutoringGroupMember {
+  id: string;
+  status: string;
+  seats_claimed: number;
+  created_at: string;
+  Student?: { id: string; display_name: string | null } | null;
+}
+
+export interface TutoringGroupSession {
+  id: string;
+  starts_at: string;
+  ends_at?: string | null;
+  status: string;
+  lesson_id?: string | null;
+}
+
+export interface TutoringGroup {
+  id: string;
+  academy_id: string;
+  course_id: string;
+  tutor_profile_id: string;
+  offer_id: string;
+  title: string;
+  description?: string | null;
+  timezone: string;
+  capacity: number;
+  min_students: number;
+  seats_taken: number;
+  seats_left?: number;
+  age_min?: number | null;
+  age_max?: number | null;
+  visibility: TutoringGroupVisibility;
+  join_code?: string | null;
+  term_weeks: number;
+  join_deadline?: string | null;
+  status: TutoringGroupStatus;
+  meeting_url?: string | null;
+  meeting_url_updated_at?: string | null;
+  starts_on?: string | null;
+  ends_on?: string | null;
+  Slots?: TutoringGroupSlot[];
+  Course?: { id: string; title: string } | null;
+  Tutor?: { id: string; display_name: string | null } | null;
+  Offer?: { id: string; price: number; currency: string } | null;
+  members?: TutoringGroupMember[];
+  sessions?: TutoringGroupSession[];
+}
+
+export interface CreateTutoringGroupPayload {
+  offer_id: string;
+  title: string;
+  description?: string;
+  timezone: string;
+  capacity: number;
+  min_students: number;
+  age_min?: number;
+  age_max?: number;
+  visibility?: TutoringGroupVisibility;
+  term_weeks: number;
+  join_deadline?: string;
+  meeting_url?: string;
+  slots: TutoringGroupSlot[];
+}
+
+export type UpdateTutoringGroupPayload = Partial<
+  Omit<CreateTutoringGroupPayload, 'offer_id' | 'slots' | 'timezone'>
+>;

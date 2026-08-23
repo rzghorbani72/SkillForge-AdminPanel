@@ -1,0 +1,153 @@
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { DataPanel } from '@/components/shared/data-list/data-panel';
+import { useTranslation } from '@/lib/i18n/hooks';
+import type { TutoringGroup } from '@/types/learning-operations';
+
+type Props = {
+  group: TutoringGroup;
+  busy: boolean;
+  onUpdateLink: (url: string, notify: boolean) => void;
+  onAnnounce: (body: string, sendSms: boolean) => void;
+  onConfirm: () => void;
+  onCancel: (reason: string) => void;
+};
+
+/** Running the class day to day: the link, the announcements, start and stop. */
+export const GroupActionsCard = ({
+  group,
+  busy,
+  onUpdateLink,
+  onAnnounce,
+  onConfirm,
+  onCancel
+}: Props) => {
+  const { t } = useTranslation();
+  const [link, setLink] = useState(group.meeting_url ?? '');
+  const [notify, setNotify] = useState(true);
+  const [message, setMessage] = useState('');
+  const [sendSms, setSendSms] = useState(false);
+  const [reason, setReason] = useState('');
+
+  const canStartNow =
+    group.status === 'WAITING' && group.seats_taken < group.min_students;
+  const canCancel =
+    group.status !== 'CANCELLED' && group.status !== 'COMPLETED';
+
+  return (
+    <DataPanel
+      title={t('tutoring.groups.manageTitle')}
+      subtitle={t('tutoring.groups.manageSubtitle')}
+    >
+      <div className="space-y-6 p-5">
+        <div className="space-y-2">
+          <Label htmlFor="group-meeting-url">
+            {t('tutoring.groups.meetingUrl')}
+          </Label>
+          <Input
+            id="group-meeting-url"
+            type="url"
+            dir="ltr"
+            placeholder="https://"
+            value={link}
+            onChange={(e) => setLink(e.target.value)}
+          />
+          <div className="flex items-center gap-2">
+            <Switch
+              id="group-link-notify"
+              checked={notify}
+              onCheckedChange={setNotify}
+            />
+            <Label htmlFor="group-link-notify" className="text-sm font-normal">
+              {t('tutoring.groups.notifyOnLinkChange')}
+            </Label>
+          </div>
+          <Button
+            size="sm"
+            disabled={busy || !link.trim()}
+            onClick={() => onUpdateLink(link.trim(), notify)}
+          >
+            {t('tutoring.groups.saveLink')}
+          </Button>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="group-announcement">
+            {t('tutoring.groups.announceLabel')}
+          </Label>
+          <Textarea
+            id="group-announcement"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <div className="flex items-center gap-2">
+            <Switch
+              id="group-announce-sms"
+              checked={sendSms}
+              onCheckedChange={setSendSms}
+            />
+            <Label htmlFor="group-announce-sms" className="text-sm font-normal">
+              {t('tutoring.groups.announceSms')}
+            </Label>
+          </div>
+          <Button
+            size="sm"
+            disabled={busy || !message.trim()}
+            onClick={() => {
+              onAnnounce(message.trim(), sendSms);
+              setMessage('');
+            }}
+          >
+            {t('tutoring.groups.announceSend')}
+          </Button>
+        </div>
+
+        {canStartNow ? (
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              {t('tutoring.groups.startNowHint')}
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={busy}
+              onClick={onConfirm}
+            >
+              {t('tutoring.groups.startNow')}
+            </Button>
+          </div>
+        ) : null}
+
+        {canCancel ? (
+          <div className="space-y-2 rounded-md border border-destructive/40 p-3">
+            <Label htmlFor="group-cancel-reason">
+              {t('tutoring.groups.cancelLabel')}
+            </Label>
+            <Input
+              id="group-cancel-reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              {t('tutoring.groups.cancelHint')}
+            </p>
+            <Button
+              size="sm"
+              variant="destructive"
+              disabled={busy}
+              onClick={() => onCancel(reason.trim())}
+            >
+              {t('tutoring.groups.cancel')}
+            </Button>
+          </div>
+        ) : null}
+      </div>
+    </DataPanel>
+  );
+};

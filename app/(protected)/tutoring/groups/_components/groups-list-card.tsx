@@ -1,0 +1,123 @@
+'use client';
+
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { DataList } from '@/components/shared/data-list/data-list';
+import { DataPanel } from '@/components/shared/data-list/data-panel';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { formatNumber } from '@/lib/utils';
+import type { TutoringGroup } from '@/types/learning-operations';
+import { GroupScheduleSummary } from './group-schedule-summary';
+import { GroupStatusBadge } from './group-status-badge';
+
+type Props = {
+  groups: TutoringGroup[];
+  loading: boolean;
+  saving: boolean;
+  onPublish: (groupId: string) => void;
+};
+
+export const GroupsListCard = ({
+  groups,
+  loading,
+  saving,
+  onPublish
+}: Props) => {
+  const { t, language } = useTranslation();
+
+  const seats = (group: TutoringGroup) =>
+    `${formatNumber(group.seats_taken, language)} / ${formatNumber(group.capacity, language)}`;
+
+  const publishButton = (group: TutoringGroup) =>
+    group.status === 'DRAFT' ? (
+      <Button
+        size="sm"
+        variant="outline"
+        disabled={saving}
+        onClick={() => onPublish(group.id)}
+      >
+        {t('tutoring.groups.publish')}
+      </Button>
+    ) : null;
+
+  return (
+    <DataPanel
+      title={t('tutoring.groups.listTitle')}
+      subtitle={t('tutoring.groups.listSubtitle')}
+    >
+      <DataList
+        items={groups}
+        isLoading={loading}
+        rowKey={(group) => group.id}
+        emptyState={
+          <p className="p-6 text-center text-sm text-muted-foreground">
+            {t('tutoring.groups.empty')}
+          </p>
+        }
+        columns={[
+          {
+            id: 'title',
+            header: t('tutoring.groups.columnTitle'),
+            cell: (group) => (
+              <Link
+                href={`/tutoring/groups/${group.id}`}
+                className="font-medium hover:underline"
+              >
+                {group.title}
+              </Link>
+            )
+          },
+          {
+            id: 'schedule',
+            header: t('tutoring.groups.columnSchedule'),
+            cell: (group) => <GroupScheduleSummary slots={group.Slots} />
+          },
+          {
+            id: 'seats',
+            header: t('tutoring.groups.columnSeats'),
+            cell: (group) => seats(group),
+            align: 'center'
+          },
+          {
+            id: 'min',
+            header: t('tutoring.groups.columnMin'),
+            cell: (group) => formatNumber(group.min_students, language),
+            align: 'center'
+          },
+          {
+            id: 'status',
+            header: t('tutoring.groups.columnStatus'),
+            cell: (group) => <GroupStatusBadge status={group.status} />,
+            align: 'center'
+          },
+          {
+            id: 'actions',
+            header: '',
+            cell: publishButton,
+            align: 'end'
+          }
+        ]}
+        renderCard={(group) => (
+          <div className="space-y-2 rounded-xl border p-4">
+            <div className="flex items-center justify-between gap-2">
+              <Link
+                href={`/tutoring/groups/${group.id}`}
+                className="font-medium hover:underline"
+              >
+                {group.title}
+              </Link>
+              <GroupStatusBadge status={group.status} />
+            </div>
+            <GroupScheduleSummary slots={group.Slots} />
+            <p className="text-xs text-muted-foreground">
+              {t('tutoring.groups.columnSeats')}: {seats(group)} ·{' '}
+              {t('tutoring.groups.columnMin')}:{' '}
+              {formatNumber(group.min_students, language)}
+            </p>
+            {publishButton(group)}
+          </div>
+        )}
+      />
+    </DataPanel>
+  );
+};
