@@ -17,21 +17,13 @@ export interface AcademyAddress {
 const clean = (value?: string | null): string | undefined =>
   value?.trim() || undefined;
 
-/**
- * Where an academy's public site lives. A custom hostname the academy owns wins;
- * otherwise the academy is served from its own subdomain of the storefront.
- * Mirrors academySiteUrl() in Backend/src/common/storefront-url.ts — keep the
- * two in step so a link in the panel always matches what the backend sends out.
- */
-export function academySiteUrl(
-  academy: AcademyAddress | null | undefined
-): string | null {
-  if (!academy) return null;
+export interface AcademySiteUrls {
+  subdomain: string | null;
+  public: string | null;
+}
 
+function buildSubdomainUrl(academy: AcademyAddress): string | null {
   const domain = academy.domain ?? academy.Domain ?? null;
-  const publicAddress = clean(domain?.public_address);
-  if (publicAddress) return `https://${publicAddress}`;
-
   const subdomain =
     clean(domain?.private_address) ??
     clean(academy.private_address) ??
@@ -47,4 +39,45 @@ export function academySiteUrl(
   } catch {
     return null;
   }
+}
+
+function buildPublicUrl(academy: AcademyAddress): string | null {
+  const domain = academy.domain ?? academy.Domain ?? null;
+  const publicAddress = clean(domain?.public_address);
+  if (!publicAddress) return null;
+  return /^https?:\/\//i.test(publicAddress)
+    ? publicAddress
+    : `https://${publicAddress}`;
+}
+
+/** Both storefront URLs when configured — subdomain always; public when connected. */
+export function resolveAcademySiteUrls(
+  academy: AcademyAddress | null | undefined
+): AcademySiteUrls {
+  if (!academy) return { subdomain: null, public: null };
+  return {
+    subdomain: buildSubdomainUrl(academy),
+    public: buildPublicUrl(academy)
+  };
+}
+
+export function academySiteHost(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
+}
+
+/**
+ * Where an academy's public site lives. A custom hostname the academy owns wins;
+ * otherwise the academy is served from its own subdomain of the storefront.
+ * Mirrors academySiteUrl() in Backend/src/common/storefront-url.ts — keep the
+ * two in step so a link in the panel always matches what the backend sends out.
+ */
+export function academySiteUrl(
+  academy: AcademyAddress | null | undefined
+): string | null {
+  const urls = resolveAcademySiteUrls(academy);
+  return urls.public ?? urls.subdomain;
 }

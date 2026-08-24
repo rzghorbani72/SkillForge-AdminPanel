@@ -8,11 +8,13 @@ import {
   isTopPlan,
   shouldShowUpgradePrompt
 } from '@/lib/settings-scope';
+import { subscriptionNeedsLiveRefresh } from '@/lib/subscription-days';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 import {
   useCurrentAcademyId,
   useHasAcademyAccess
 } from '@/hooks/useCurrentAcademy';
+import { useLiveSubscriptionDays } from '@/hooks/use-live-subscription-days';
 import type { TrialContext } from '@/components/plans/trial-move-card';
 
 export interface AcademySubscriptionInvoice {
@@ -83,7 +85,19 @@ export function useAcademySubscription(enabled = true) {
       apiClient.getCurrentAcademySubscription({
         signal
       }) as Promise<AcademySubscriptionState>,
-    enabled: canFetch
+    enabled: canFetch,
+    refetchOnWindowFocus: true,
+    refetchInterval: (query) => {
+      const sub = query.state.data;
+      if (!sub) return false;
+      return subscriptionNeedsLiveRefresh({
+        isTrial: sub.is_trial,
+        status: sub.status,
+        daysRemaining: sub.days_remaining
+      })
+        ? 3_600_000
+        : false;
+    }
   });
   const subscription = data ?? null;
 
@@ -93,7 +107,13 @@ export function useAcademySubscription(enabled = true) {
     customPlan?.name ??
     (planSlug && planSlug !== 'none' ? getPlanDisplayName(planSlug) : null);
   const status = subscription?.status;
-  const daysRemaining = subscription?.days_remaining ?? null;
+  const liveDaysRemaining = useLiveSubscriptionDays({
+    subscriptionExpires: subscription?.academy?.subscription_expires,
+    graceUntil: subscription?.grace_until,
+    status
+  });
+  const daysRemaining =
+    liveDaysRemaining ?? subscription?.days_remaining ?? null;
 
   return {
     subscription,

@@ -6,6 +6,10 @@ export const en = {
     poweredBy: 'Powered by',
     brand: 'Mentoma'
   },
+  header: {
+    trialDaysLeft: 'Trial · {{days}} days left',
+    trialGraceDays: 'Trial ended · {{days}} days to pay'
+  },
   weekdays: {
     saturday: 'Saturday',
     sunday: 'Sunday',
@@ -284,7 +288,10 @@ export const en = {
     noAcademySelected: 'No academy selected'
   },
   academy: {
-    visitSite: 'Visit site'
+    visitSite: 'Visit site',
+    visitSiteChoose: 'Open academy site',
+    visitSiteSubdomain: 'Subdomain',
+    visitSiteCustomDomain: 'Custom domain'
   },
   common: {
     saveChanges: 'Save changes',
@@ -3870,7 +3877,9 @@ export const en = {
     pickDate: 'Pick a date',
     today: 'Today',
     olderMonth: 'Previous month',
-    newerMonth: 'Next month'
+    newerMonth: 'Next month',
+    olderYear: 'Previous year',
+    newerYear: 'Next year'
   },
   financial: {
     store: {
@@ -4663,6 +4672,9 @@ export const en = {
     confirmDelete: 'Are you sure you want to delete coupon {{code}}?',
     freeTrialDays: 'Free Trial Days',
     saveCoupon: 'Save Coupon',
+    codeTaken:
+      'This code is already in use for this academy in the selected period. Choose another code or change the dates.',
+    endBeforeStart: 'End date must be after start date.',
     platformOnly:
       'Only the platform owner or admins can create vouchers for manager plan payments.',
     platformScope: 'Platform (plan pay)',

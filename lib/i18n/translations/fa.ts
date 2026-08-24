@@ -6,6 +6,10 @@ export const fa = {
     poweredBy: 'قدرت‌گرفته از',
     brand: 'منتوما'
   },
+  header: {
+    trialDaysLeft: 'آزمایشی · {{days}} روز مانده',
+    trialGraceDays: 'پایان آزمایشی · {{days}} روز برای پرداخت'
+  },
   weekdays: {
     saturday: 'شنبه',
     sunday: 'یکشنبه',
@@ -276,7 +280,10 @@ export const fa = {
     noAcademySelected: 'آکادمی‌ای انتخاب نشده است'
   },
   academy: {
-    visitSite: 'مشاهده سایت'
+    visitSite: 'مشاهده سایت',
+    visitSiteChoose: 'باز کردن سایت آکادمی',
+    visitSiteSubdomain: 'زیردامنه',
+    visitSiteCustomDomain: 'دامنه اختصاصی'
   },
   common: {
     saveChanges: 'ذخیره تغییرات',
@@ -3834,7 +3841,9 @@ export const fa = {
     pickDate: 'تاریخ را انتخاب کنید',
     today: 'امروز',
     olderMonth: 'ماه قبل',
-    newerMonth: 'ماه بعد'
+    newerMonth: 'ماه بعد',
+    olderYear: 'سال قبل',
+    newerYear: 'سال بعد'
   },
   financial: {
     store: {
@@ -4652,6 +4661,9 @@ export const fa = {
     confirmDelete: 'آیا مطمئن هستید که کوپن {{code}} حذف شود؟',
     freeTrialDays: 'روزهای آزمایشی رایگان',
     saveCoupon: 'ذخیره کوپن',
+    codeTaken:
+      'این کد در بازهٔ انتخاب‌شده برای آکادمی شما قبلاً استفاده شده است. کد دیگری انتخاب کنید یا تاریخ‌ها را تغییر دهید.',
+    endBeforeStart: 'تاریخ پایان باید بعد از تاریخ شروع باشد.',
     platformOnly:
       'فقط مالک پلتفرم و ادمین‌ها می‌توانند کد تخفیف پرداخت پلن مدیران را بسازند.',
     platformScope: 'پلتفرم (پرداخت پلن)',

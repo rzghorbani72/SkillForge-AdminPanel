@@ -5,6 +5,7 @@ import { UserNav } from './user-nav';
 import { AcademySelector } from './AcademySelector';
 import { NotificationBell } from './notification-bell';
 import { HeaderUpgradeButton } from './header-upgrade-button';
+import { HeaderTrialBadge } from './header-trial-badge';
 import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 
@@ -27,11 +28,7 @@ export default function Header() {
           <VisitSiteLink academy={academy} iconOnly className="rounded-full" />
           <div className="h-6 w-px bg-border/50" />
 
-          {/* <div className="flex items-center gap-1">
-            <LanguageSwitcher />
-            <ThemeToggle />
-          </div> */}
-
+          <HeaderTrialBadge />
           <HeaderUpgradeButton />
 
           {/* Notification bell */}
