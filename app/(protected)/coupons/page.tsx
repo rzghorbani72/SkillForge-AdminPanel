@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Plus, Percent, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
@@ -60,6 +60,7 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { PlanVouchersCard } from '@/components/coupons/plan-vouchers-card';
 import { CalendarDatePicker } from '@/components/shared/calendar-date-picker';
+import { addInputDays, todayInputValue } from '@/lib/i18n/calendar-date';
 import {
   COUPON_TYPES,
   COUPON_TYPE_BADGE,
@@ -67,35 +68,47 @@ import {
   USAGE_TYPES,
   USAGE_TYPE_LABEL_KEY,
   couponTypeOf,
+  normalizeDiscountCode,
   type CouponType
 } from '@/lib/coupons';
+import { useCouponCodeAvailability } from '@/hooks/useCouponCodeAvailability';
 
-const couponSchema = z
-  .object({
-    code: z.string().min(1),
-    coupon_type: z.enum(COUPON_TYPES),
-    discount_value: z.coerce.number().min(0).optional(),
-    free_trial_days: z.coerce.number().int().min(1).optional(),
-    start_date: z.string().min(1),
-    end_date: z.string().min(1),
-    usage_type: z.enum(USAGE_TYPES),
-    usage_limit: z.coerce.number().int().min(1).optional(),
-    // Empty = Mentoma platform plan voucher (owner/admin only).
-    academy_id: z.string().optional(),
-    max_discount_amount: z.coerce.number().optional(),
-    min_purchase_amount: z.coerce.number().optional()
-  })
-  .refine(
-    (values) =>
-      values.coupon_type !== 'FREE_TRIAL' || (values.free_trial_days ?? 0) >= 1,
-    { path: ['free_trial_days'], message: 'required' }
-  )
-  .refine(
-    (values) =>
-      values.usage_type !== 'LIMITED' || (values.usage_limit ?? 0) >= 1,
-    { path: ['usage_limit'], message: 'required' }
-  );
-type CouponValues = z.infer<typeof couponSchema>;
+function buildCouponSchema(endBeforeStartMessage: string) {
+  return z
+    .object({
+      code: z.string().min(1),
+      coupon_type: z.enum(COUPON_TYPES),
+      discount_value: z.coerce.number().min(0).optional(),
+      free_trial_days: z.coerce.number().int().min(1).optional(),
+      start_date: z.string().min(1),
+      end_date: z.string().min(1),
+      usage_type: z.enum(USAGE_TYPES),
+      usage_limit: z.coerce.number().int().min(1).optional(),
+      academy_id: z.string().optional(),
+      max_discount_amount: z.coerce.number().optional(),
+      min_purchase_amount: z.coerce.number().optional()
+    })
+    .refine(
+      (values) =>
+        values.coupon_type !== 'FREE_TRIAL' ||
+        (values.free_trial_days ?? 0) >= 1,
+      { path: ['free_trial_days'], message: 'required' }
+    )
+    .refine(
+      (values) =>
+        values.usage_type !== 'LIMITED' || (values.usage_limit ?? 0) >= 1,
+      { path: ['usage_limit'], message: 'required' }
+    )
+    .refine(
+      (values) =>
+        !values.start_date ||
+        !values.end_date ||
+        values.start_date < values.end_date,
+      { path: ['end_date'], message: endBeforeStartMessage }
+    );
+}
+
+type CouponValues = z.infer<ReturnType<typeof buildCouponSchema>>;
 
 export default function CouponsPage() {
   const { t } = useTranslation();
@@ -114,6 +127,11 @@ export default function CouponsPage() {
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [saving, setSaving] = useState(false);
 
+  const couponSchema = useMemo(
+    () => buildCouponSchema(t('coupons.endBeforeStart')),
+    [t]
+  );
+
   const form = useForm<CouponValues>({
     resolver: zodResolver(couponSchema),
     defaultValues: {
@@ -129,6 +147,57 @@ export default function CouponsPage() {
 
   const couponType = form.watch('coupon_type');
   const usageType = form.watch('usage_type');
+  const watchedCode = form.watch('code');
+  const watchedStartDate = form.watch('start_date');
+  const watchedEndDate = form.watch('end_date');
+  const watchedAcademyId = form.watch('academy_id');
+
+  const clearCodeError = useCallback(() => {
+    form.clearErrors('code');
+  }, [form]);
+
+  const setCodeTakenError = useCallback(
+    (message: string) => {
+      form.setError('code', { type: 'manual', message });
+    },
+    [form]
+  );
+
+  useCouponCodeAvailability({
+    enabled: dialogOpen,
+    code: watchedCode,
+    startDate: watchedStartDate,
+    endDate: watchedEndDate,
+    academyId: watchedAcademyId,
+    excludeId: editTarget?.id,
+    takenMessage: t('coupons.codeTaken'),
+    onAvailable: clearCodeError,
+    onTaken: setCodeTakenError
+  });
+
+  const today = todayInputValue();
+  const startMinDate = editTarget ? undefined : today;
+  const startMaxDate = watchedEndDate
+    ? addInputDays(watchedEndDate, -1)
+    : undefined;
+  const endMinDate = watchedStartDate
+    ? (addInputDays(watchedStartDate, 1) ?? today)
+    : today;
+
+  useEffect(() => {
+    if (!watchedStartDate || !watchedEndDate) {
+      form.clearErrors('end_date');
+      return;
+    }
+    if (watchedStartDate >= watchedEndDate) {
+      form.setError('end_date', {
+        type: 'manual',
+        message: t('coupons.endBeforeStart')
+      });
+    } else {
+      form.clearErrors('end_date');
+    }
+  }, [watchedStartDate, watchedEndDate, form, t]);
 
   async function load() {
     setLoading(true);
@@ -188,7 +257,7 @@ export default function CouponsPage() {
     try {
       const academyId = values.academy_id?.trim();
       const payload: Record<string, unknown> = {
-        code: values.code,
+        code: normalizeDiscountCode(values.code),
         coupon_type: values.coupon_type,
         discount_type: values.coupon_type === 'FIXED' ? 'FIXED' : 'PERCENT',
         discount_value: values.discount_value ?? 0,
@@ -376,7 +445,15 @@ export default function CouponsPage() {
                     <FormItem>
                       <FormLabel>{t('coupons.code')}</FormLabel>
                       <FormControl>
-                        <Input {...field} disabled={!!editTarget} />
+                        <Input
+                          {...field}
+                          disabled={!!editTarget}
+                          onChange={(event) =>
+                            field.onChange(
+                              normalizeDiscountCode(event.target.value)
+                            )
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -495,6 +572,8 @@ export default function CouponsPage() {
                         <CalendarDatePicker
                           value={field.value}
                           onChange={field.onChange}
+                          minDate={startMinDate}
+                          maxDate={startMaxDate}
                           aria-label={t('coupons.startDate')}
                         />
                       </FormControl>
@@ -513,6 +592,7 @@ export default function CouponsPage() {
                         <CalendarDatePicker
                           value={field.value}
                           onChange={field.onChange}
+                          minDate={endMinDate}
                           aria-label={t('coupons.endDate')}
                         />
                       </FormControl>
@@ -589,7 +669,14 @@ export default function CouponsPage() {
                 >
                   {t('common.cancel')}
                 </Button>
-                <Button type="submit" disabled={saving}>
+                <Button
+                  type="submit"
+                  disabled={
+                    saving ||
+                    !!form.formState.errors.code ||
+                    !!form.formState.errors.end_date
+                  }
+                >
                   {saving ? t('common.saving') : t('coupons.saveCoupon')}
                 </Button>
               </div>

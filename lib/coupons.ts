@@ -43,3 +43,8 @@ export interface CouponSummary {
 export function couponTypeOf(coupon: CouponSummary): CouponType {
   return coupon.coupon_type ?? coupon.discount_type ?? 'PERCENT';
 }
+
+/** Matches backend normalizeDiscountCode — trim + uppercase for comparisons. */
+export function normalizeDiscountCode(code: string): string {
+  return code.trim().toUpperCase();
+}

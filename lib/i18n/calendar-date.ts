@@ -91,24 +91,39 @@ export function shiftCalendarMonth(
   year: number,
   month: number,
   delta: number,
-  language: LanguageCode
+  _language: LanguageCode
 ): { year: number; month: number } {
-  const calendar = calendarFor(language);
-  let start = startOfMonth(
-    findCalendarDate(year, month, 1, language),
-    calendar
-  );
+  let nextMonth = month + delta;
+  let nextYear = year;
 
-  const steps = Math.abs(delta);
-  const forward = delta > 0;
-  for (let i = 0; i < steps; i++) {
-    start = forward
-      ? startOfMonth(addDays(start, 35), calendar)
-      : startOfMonth(addDays(start, -1), calendar);
+  while (nextMonth > 12) {
+    nextMonth -= 12;
+    nextYear += 1;
+  }
+  while (nextMonth < 1) {
+    nextMonth += 12;
+    nextYear -= 1;
   }
 
-  const next = partsOf(start, calendar);
-  return { year: next.year, month: next.month };
+  return { year: nextYear, month: nextMonth };
+}
+
+export function buildMonthsForYear(
+  year: number,
+  language: LanguageCode
+): Array<{ month: number; shortLabel: string }> {
+  const locale = getLocaleForLanguage(language);
+  const calendar = calendarFor(language);
+  const shortName = new Intl.DateTimeFormat(locale, {
+    month: 'short',
+    calendar
+  });
+
+  return Array.from({ length: 12 }, (_, index) => {
+    const month = index + 1;
+    const date = findCalendarDate(year, month, 15, language);
+    return { month, shortLabel: shortName.format(date) };
+  });
 }
 
 export function buildMonthGrid(
@@ -177,4 +192,29 @@ export function weekdayLabels(language: LanguageCode): string[] {
 
 export function isSameInputDay(a: Date, b: Date): boolean {
   return toInputValue(a) === toInputValue(b);
+}
+
+export function todayInputValue(): string {
+  return toInputValue(new Date());
+}
+
+export function addInputDays(value: string, days: number): string | undefined {
+  const date = fromInputValue(value);
+  if (!date) return undefined;
+  return toInputValue(addDays(date, days));
+}
+
+export function isInputDayBefore(a: string, b: string): boolean {
+  return a < b;
+}
+
+export function isDayDisabled(
+  date: Date,
+  minDate?: string,
+  maxDate?: string
+): boolean {
+  const value = toInputValue(date);
+  if (minDate && value < minDate) return true;
+  if (maxDate && value > maxDate) return true;
+  return false;
 }

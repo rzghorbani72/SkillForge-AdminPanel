@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   CalendarDays,
   ChevronDown,
@@ -21,6 +21,7 @@ import {
   calendarParts,
   formatMonthYear,
   fromInputValue,
+  isDayDisabled,
   isSameInputDay,
   shiftCalendarMonth,
   toInputValue,
@@ -31,6 +32,10 @@ import { cn } from '@/lib/utils';
 interface CalendarDatePickerProps {
   value: string;
   onChange: (value: string) => void;
+  /** Inclusive lower bound (YYYY-MM-DD). */
+  minDate?: string;
+  /** Inclusive upper bound (YYYY-MM-DD). */
+  maxDate?: string;
   disabled?: boolean;
   className?: string;
   'aria-label'?: string;
@@ -40,6 +45,8 @@ interface CalendarDatePickerProps {
 export function CalendarDatePicker({
   value,
   onChange,
+  minDate,
+  maxDate,
   disabled = false,
   className,
   'aria-label': ariaLabel
@@ -49,22 +56,30 @@ export function CalendarDatePicker({
   const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
   const [open, setOpen] = useState(false);
+  const wasOpen = useRef(false);
 
   const selected = fromInputValue(value);
   const today = useMemo(() => new Date(), []);
-  const todayParts = calendarParts(today, language);
 
-  const initialView = selected ? calendarParts(selected, language) : todayParts;
-
-  const [viewYear, setViewYear] = useState(initialView.year);
-  const [viewMonth, setViewMonth] = useState(initialView.month);
+  const [viewYear, setViewYear] = useState(() => {
+    const anchor = selected ?? today;
+    return calendarParts(anchor, language).year;
+  });
+  const [viewMonth, setViewMonth] = useState(() => {
+    const anchor = selected ?? today;
+    return calendarParts(anchor, language).month;
+  });
 
   useEffect(() => {
-    if (!open) return;
-    const parts = selected ? calendarParts(selected, language) : todayParts;
-    setViewYear(parts.year);
-    setViewMonth(parts.month);
-  }, [open, selected, todayParts, language]);
+    if (open && !wasOpen.current) {
+      const anchor = fromInputValue(value) ?? today;
+      const parts = calendarParts(anchor, language);
+      setViewYear(parts.year);
+      setViewMonth(parts.month);
+    }
+    wasOpen.current = open;
+  }, [open, value, language, today]);
+
   const monthCells = useMemo(
     () => buildMonthGrid(viewYear, viewMonth, language),
     [viewYear, viewMonth, language]
@@ -75,6 +90,12 @@ export function CalendarDatePicker({
   const OlderIcon = isRTL ? ChevronRight : ChevronLeft;
   const NewerIcon = isRTL ? ChevronLeft : ChevronRight;
 
+  const shiftMonth = (delta: number) => {
+    const next = shiftCalendarMonth(viewYear, viewMonth, delta, language);
+    setViewYear(next.year);
+    setViewMonth(next.month);
+  };
+
   const dayClass = (active: boolean, muted = false) =>
     cn(
       'h-8 w-8 rounded-md text-[13px] transition-colors',
@@ -84,19 +105,14 @@ export function CalendarDatePicker({
         : 'hover:bg-muted'
     );
 
-  const shiftMonth = (delta: number) => {
-    const next = shiftCalendarMonth(viewYear, viewMonth, delta, language);
-    setViewYear(next.year);
-    setViewMonth(next.month);
-  };
-
   const selectDate = (date: Date) => {
+    if (isDayDisabled(date, minDate, maxDate)) return;
     onChange(toInputValue(date));
     setOpen(false);
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover modal open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           type="button"
@@ -117,75 +133,122 @@ export function CalendarDatePicker({
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent align="start" sideOffset={8} className="w-[19rem] p-0">
-        <div className="flex items-center justify-between border-b px-3 py-2">
-          <span className="text-xs font-medium text-muted-foreground">
-            {t('datePicker.heading')}
-          </span>
-          <button
-            type="button"
-            className="text-xs font-medium text-primary hover:underline"
-            onClick={() => selectDate(today)}
-          >
-            {t('datePicker.today')}
-          </button>
-        </div>
-
-        <div className="flex items-center justify-between px-3 py-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
-            aria-label={t('datePicker.olderMonth')}
-            onClick={() => shiftMonth(-1)}
-          >
-            <OlderIcon className="h-4 w-4" />
-          </Button>
-          <span className="text-sm font-semibold">{monthLabel}</span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
-            aria-label={t('datePicker.newerMonth')}
-            onClick={() => shiftMonth(1)}
-          >
-            <NewerIcon className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-7 gap-1 px-3 pb-1">
-          {weekdays.map((label) => (
-            <span
-              key={label}
-              className="text-center text-[11px] font-medium text-muted-foreground"
-            >
-              {label}
+      <PopoverContent
+        align="start"
+        side="bottom"
+        sideOffset={8}
+        collisionPadding={16}
+        avoidCollisions
+        className="z-[100] flex max-h-[min(20rem,var(--radix-popover-content-available-height))] w-[19rem] flex-col overflow-hidden p-0"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
+        <div className="shrink-0 border-b bg-popover px-3 py-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground">
+              {t('datePicker.heading')}
             </span>
-          ))}
+            <button
+              type="button"
+              className="text-xs font-medium text-primary hover:underline"
+              onClick={() => selectDate(today)}
+            >
+              {t('datePicker.today')}
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 px-3 pb-3">
-          {monthCells.map((cell) => {
-            const selectedDay = selected
-              ? isSameInputDay(cell.date, selected)
-              : false;
-            const todayDay = isSameInputDay(cell.date, today);
-            return (
-              <button
-                key={cell.date.toISOString()}
-                type="button"
-                onClick={() => selectDate(cell.date)}
-                className={cn(
-                  dayClass(selectedDay, !cell.inMonth),
-                  !selectedDay && todayDay && 'ring-1 ring-primary/40'
-                )}
+        <div className="shrink-0 bg-popover px-3 py-2">
+          <div className="flex items-center justify-between">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              aria-label={t('datePicker.olderYear')}
+              onClick={() => setViewYear((y) => y - 1)}
+            >
+              <OlderIcon className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-semibold tabular-nums">
+              {formatNumber(viewYear, { useGrouping: false })}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              aria-label={t('datePicker.newerYear')}
+              onClick={() => setViewYear((y) => y + 1)}
+            >
+              <NewerIcon className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="mt-1 flex items-center justify-between">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              aria-label={t('datePicker.olderMonth')}
+              onClick={() => shiftMonth(-1)}
+            >
+              <OlderIcon className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium">{monthLabel}</span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              aria-label={t('datePicker.newerMonth')}
+              onClick={() => shiftMonth(1)}
+            >
+              <NewerIcon className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="min-h-0 overflow-y-auto overscroll-contain px-3 pb-3">
+          <div className="grid grid-cols-7 gap-1 pb-1">
+            {weekdays.map((label) => (
+              <span
+                key={label}
+                className="text-center text-[11px] font-medium text-muted-foreground"
               >
-                {formatNumber(cell.day, { useGrouping: false })}
-              </button>
-            );
-          })}
+                {label}
+              </span>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 gap-1">
+            {monthCells.map((cell) => {
+              const selectedDay = selected
+                ? isSameInputDay(cell.date, selected)
+                : false;
+              const todayDay = isSameInputDay(cell.date, today);
+              const dayDisabled = isDayDisabled(cell.date, minDate, maxDate);
+              return (
+                <button
+                  key={cell.date.toISOString()}
+                  type="button"
+                  disabled={dayDisabled}
+                  onClick={() => selectDate(cell.date)}
+                  className={cn(
+                    dayClass(selectedDay, !cell.inMonth),
+                    dayDisabled &&
+                      'cursor-not-allowed opacity-30 hover:bg-transparent',
+                    !selectedDay &&
+                      todayDay &&
+                      !dayDisabled &&
+                      'ring-1 ring-primary/40'
+                  )}
+                >
+                  {formatNumber(cell.day, { useGrouping: false })}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </PopoverContent>
     </Popover>

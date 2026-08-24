@@ -4224,6 +4224,27 @@ class ApiClient {
     return unwrapDataEnvelope<any>(response.data);
   }
 
+  async checkDiscountCodeAvailability(params: {
+    code: string;
+    start_date?: string;
+    end_date?: string;
+    academy_id?: string;
+    exclude_id?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    queryParams.append('code', params.code);
+    if (params.start_date) queryParams.append('start_date', params.start_date);
+    if (params.end_date) queryParams.append('end_date', params.end_date);
+    if (params.academy_id) queryParams.append('academy_id', params.academy_id);
+    if (params.exclude_id) queryParams.append('exclude_id', params.exclude_id);
+
+    const response = await this.request<{ available: boolean }>(
+      `/discounts/check-code?${queryParams.toString()}`
+    );
+
+    return unwrapDataEnvelope<{ available: boolean }>(response.data);
+  }
+
   async getDiscountById(id: string) {
     const response = await this.request<any>(`/discounts/${id}`);
 

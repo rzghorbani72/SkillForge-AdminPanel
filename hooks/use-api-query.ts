@@ -3,7 +3,8 @@
 import {
   keepPreviousData,
   useQuery,
-  type QueryKey
+  type QueryKey,
+  type UseQueryOptions
 } from '@tanstack/react-query';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
 
@@ -17,7 +18,8 @@ interface ApiQueryOptions<T> {
   queryFn: (signal: AbortSignal) => Promise<T>;
   enabled?: boolean;
   staleTime?: number;
-  refetchInterval?: number;
+  refetchInterval?: UseQueryOptions<T, Error>['refetchInterval'];
+  refetchOnWindowFocus?: boolean;
   /** Paginated lists: hold the previous page on screen instead of blanking. */
   keepPrevious?: boolean;
 }
