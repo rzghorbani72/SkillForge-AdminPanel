@@ -3865,6 +3865,13 @@ export const en = {
     olderYear: 'Previous year',
     newerYear: 'Next year'
   },
+  datePicker: {
+    heading: 'Select date',
+    pickDate: 'Pick a date',
+    today: 'Today',
+    olderMonth: 'Previous month',
+    newerMonth: 'Next month'
+  },
   financial: {
     store: {
       title: 'Academy Financial Management',

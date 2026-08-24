@@ -3829,6 +3829,13 @@ export const fa = {
     olderYear: 'سال قبل',
     newerYear: 'سال بعد'
   },
+  datePicker: {
+    heading: 'انتخاب تاریخ',
+    pickDate: 'تاریخ را انتخاب کنید',
+    today: 'امروز',
+    olderMonth: 'ماه قبل',
+    newerMonth: 'ماه بعد'
+  },
   financial: {
     store: {
       title: 'مدیریت مالی آکادمی',

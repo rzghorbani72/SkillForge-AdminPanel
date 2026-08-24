@@ -59,6 +59,7 @@ import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { PlanVouchersCard } from '@/components/coupons/plan-vouchers-card';
+import { CalendarDatePicker } from '@/components/shared/calendar-date-picker';
 import {
   COUPON_TYPES,
   COUPON_TYPE_BADGE,
@@ -491,7 +492,11 @@ export default function CouponsPage() {
                     <FormItem>
                       <FormLabel>{t('coupons.startDate')}</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <CalendarDatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          aria-label={t('coupons.startDate')}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -505,7 +510,11 @@ export default function CouponsPage() {
                     <FormItem>
                       <FormLabel>{t('coupons.endDate')}</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <CalendarDatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          aria-label={t('coupons.endDate')}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
