@@ -33,25 +33,40 @@ export interface GroupedUsersResponse {
 }
 
 export interface LearningAssignment {
-  id: number;
+  id: string;
   title: string;
   description?: string;
   due_date?: string;
   max_score: number;
   is_required: boolean;
+  /** Exactly one parent is set: a lesson, a whole class, or one meeting. */
+  lesson_id?: string | null;
+  tutoring_group_id?: string | null;
+  tutoring_session_id?: string | null;
   Lesson?: {
-    id: number;
+    id: string;
     title: string;
-    Course?: { id: number; title: string };
-    Season?: { id: number; title: string; course_id: number };
+    Course?: { id: string; title: string };
+    Season?: { id: string; title: string; course_id: string };
   };
+  TutoringGroup?: {
+    id: string;
+    title: string;
+    Course?: { id: string; title: string };
+  } | null;
+  TutoringSession?: {
+    id: string;
+    title: string | null;
+    starts_at: string;
+    Group?: { id: string; title: string } | null;
+  } | null;
   _count?: { Submission: number };
 }
 
 export type SubmissionStatus = 'DRAFT' | 'SUBMITTED' | 'GRADED' | 'REJECTED';
 
 export interface AssignmentSubmission {
-  id: number;
+  id: string;
   status: SubmissionStatus;
   score?: number;
   feedback?: string;
@@ -60,22 +75,25 @@ export interface AssignmentSubmission {
   content?: string;
   file_url?: string;
   discussion_thread_id?: string;
-  enrollment_id?: number;
+  enrollment_id?: string;
+  /** Recorded, never blocking — a late hand-in is still accepted. */
+  is_late?: boolean;
   Assignment?: {
-    id: number;
+    id: string;
     title: string;
     max_score: number;
+    due_date?: string | null;
     Lesson?: {
-      Course?: { id: number; title: string };
-      Season?: { id: number; title: string };
+      Course?: { id: string; title: string };
+      Season?: { id: string; title: string };
     };
   };
   Profile?: {
-    id: number;
+    id: string;
     display_name: string;
   };
   GradedBy?: {
-    id: number;
+    id: string;
     display_name: string;
   };
 }

@@ -23,6 +23,7 @@ import type {
   TutoringGroup
 } from '@/types/learning-operations';
 import SessionRow from './session-row';
+import ClassHomeworkCard from './class-homework-card';
 
 interface ClassPanelProps {
   group: TutoringGroup;
@@ -77,67 +78,73 @@ export default function ClassPanel({
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <CardTitle className="text-base">{group.title}</CardTitle>
-            <CardDescription className="flex flex-wrap items-center gap-3 pt-1">
-              <span className="inline-flex items-center gap-1">
-                <Users className="h-3.5 w-3.5" />
-                {t('courses.live.seatsTaken', {
-                  taken: formatNumber(group.seats_taken),
-                  capacity: formatNumber(group.capacity)
-                })}
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <CalendarDays className="h-3.5 w-3.5" />
-                {t('courses.live.meetingsCount', {
-                  count: formatNumber(sessions.length)
-                })}
-              </span>
-            </CardDescription>
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <CardTitle className="text-base">{group.title}</CardTitle>
+              <CardDescription className="flex flex-wrap items-center gap-3 pt-1">
+                <span className="inline-flex items-center gap-1">
+                  <Users className="h-3.5 w-3.5" />
+                  {t('courses.live.seatsTaken', {
+                    taken: formatNumber(group.seats_taken),
+                    capacity: formatNumber(group.capacity)
+                  })}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <CalendarDays className="h-3.5 w-3.5" />
+                  {t('courses.live.meetingsCount', {
+                    count: formatNumber(sessions.length)
+                  })}
+                </span>
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline">{group.status}</Badge>
+              {group.status === 'DRAFT' && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={publish}
+                  disabled={isPublishing}
+                >
+                  {isPublishing
+                    ? t('common.saving')
+                    : t('courses.live.publishClass')}
+                </Button>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline">{group.status}</Badge>
-            {group.status === 'DRAFT' && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={publish}
-                disabled={isPublishing}
-              >
-                {isPublishing
-                  ? t('common.saving')
-                  : t('courses.live.publishClass')}
-              </Button>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
-        ) : sessions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('courses.live.noSessionsYet')}
-          </p>
-        ) : (
-          sessions.map((session, index) => (
-            <SessionRow
-              key={session.id}
-              index={index}
-              session={session}
-              topics={topics}
-              onChanged={(updated) =>
-                setSessions((rows) =>
-                  rows.map((row) => (row.id === updated.id ? updated : row))
-                )
-              }
-            />
-          ))
-        )}
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground">
+              {t('common.loading')}
+            </p>
+          ) : sessions.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {t('courses.live.noSessionsYet')}
+            </p>
+          ) : (
+            sessions.map((session, index) => (
+              <SessionRow
+                key={session.id}
+                index={index}
+                session={session}
+                topics={topics}
+                onChanged={(updated) =>
+                  setSessions((rows) =>
+                    rows.map((row) => (row.id === updated.id ? updated : row))
+                  )
+                }
+              />
+            ))
+          )}
+        </CardContent>
+      </Card>
+
+      <ClassHomeworkCard groupId={group.id} sessions={sessions} />
+    </div>
   );
 }

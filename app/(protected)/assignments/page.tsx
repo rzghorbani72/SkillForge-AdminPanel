@@ -48,10 +48,9 @@ import { RequirePermission } from '@/components/access-control/RequirePermission
 import { AssignmentsFilters } from './_components/assignments-filters';
 import { AssignmentsStats } from './_components/assignments-stats';
 
-function parseCourseId(value: string): number | undefined {
-  if (!value.trim()) return undefined;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : undefined;
+/** Course ids are cuids, so they are passed through as text, never parsed. */
+function parseCourseId(value: string): string | undefined {
+  return value.trim() || undefined;
 }
 
 export default function AssignmentsPage() {

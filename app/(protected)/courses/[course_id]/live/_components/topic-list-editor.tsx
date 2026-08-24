@@ -1,11 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { GripVertical, Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
+import {
+  closestCenter,
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent
+} from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+  SortableContext,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -17,8 +29,10 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { CourseTopic } from '@/types/learning-operations';
+import SortableTopicRow from './sortable-topic-row';
 
-type Draft = { id?: string; title: string };
+/** Rows need a stable key while unsaved, so a new one gets a local key. */
+type Draft = { key: string; id?: string; title: string };
 
 interface TopicListEditorProps {
   courseId: string;
@@ -26,10 +40,13 @@ interface TopicListEditorProps {
   onSaved?: (topics: CourseTopic[]) => void;
 }
 
+let localKeySeq = 0;
+const newDraft = (): Draft => ({ key: `new-${localKeySeq++}`, title: '' });
+
 /**
- * The syllabus a live course promises. Saved as one list rather than row by
- * row, so reordering and renaming are a single call the backend can validate
- * against the meetings already named after a topic.
+ * The syllabus a live course promises. Saved as one ordered list rather than
+ * row by row, so reordering and renaming are a single call the backend can
+ * validate against the meetings already named after a topic.
  */
 export default function TopicListEditor({
   courseId,
@@ -38,18 +55,39 @@ export default function TopicListEditor({
 }: TopicListEditorProps) {
   const { t } = useTranslation();
   const [drafts, setDrafts] = useState<Draft[]>(
-    initial.map((topic) => ({ id: topic.id, title: topic.title }))
+    initial.map((topic) => ({
+      key: topic.id,
+      id: topic.id,
+      title: topic.title
+    }))
   );
   const [isSaving, setIsSaving] = useState(false);
+  const sensors = useSensors(useSensor(PointerSensor));
 
-  const update = (index: number, title: string) =>
+  const update = (key: string, title: string) =>
     setDrafts((rows) =>
-      rows.map((row, i) => (i === index ? { ...row, title } : row))
+      rows.map((row) => (row.key === key ? { ...row, title } : row))
     );
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setDrafts((rows) => {
+      const from = rows.findIndex((row) => row.key === active.id);
+      const to = rows.findIndex((row) => row.key === over.id);
+      if (from === -1 || to === -1) return rows;
+      const next = [...rows];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+  };
+
   const save = async () => {
+    // Order is the list order: the backend stores it, so what the teacher sees
+    // here is the order a student is promised.
     const topics = drafts
-      .map((row) => ({ ...row, title: row.title.trim() }))
+      .map((row) => ({ id: row.id, title: row.title.trim() }))
       .filter((row) => row.title);
     if (!topics.length) {
       toast.error(t('courses.live.topicsRequired'));
@@ -58,7 +96,13 @@ export default function TopicListEditor({
     setIsSaving(true);
     try {
       const saved = await apiClient.replaceCourseTopics(courseId, topics);
-      setDrafts(saved.map((topic) => ({ id: topic.id, title: topic.title })));
+      setDrafts(
+        saved.map((topic) => ({
+          key: topic.id,
+          id: topic.id,
+          title: topic.title
+        }))
+      );
       onSaved?.(saved);
       toast.success(t('courses.live.topicsSaved'));
     } catch (err) {
@@ -75,40 +119,41 @@ export default function TopicListEditor({
         <CardDescription>{t('courses.live.topicsHint')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {drafts.map((draft, index) => (
-          <div
-            key={draft.id ?? `new-${index}`}
-            className="flex items-center gap-2"
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToVerticalAxis]}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={drafts.map((row) => row.key)}
+            strategy={verticalListSortingStrategy}
           >
-            <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <span className="w-6 shrink-0 text-sm text-muted-foreground">
-              {index + 1}
-            </span>
-            <Input
-              value={draft.title}
-              onChange={(e) => update(index, e.target.value)}
-              placeholder={t('courses.live.topicPlaceholder')}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label={t('common.delete')}
-              onClick={() =>
-                setDrafts((rows) => rows.filter((_, i) => i !== index))
-              }
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
+            <div className="space-y-3">
+              {drafts.map((draft, index) => (
+                <SortableTopicRow
+                  key={draft.key}
+                  rowKey={draft.key}
+                  index={index}
+                  title={draft.title}
+                  onChange={(title) => update(draft.key, title)}
+                  onRemove={() =>
+                    setDrafts((rows) =>
+                      rows.filter((row) => row.key !== draft.key)
+                    )
+                  }
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
 
         <div className="flex flex-wrap gap-2 pt-1">
           <Button
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => setDrafts((rows) => [...rows, { title: '' }])}
+            onClick={() => setDrafts((rows) => [...rows, newDraft()])}
           >
             <Plus className="h-4 w-4" />
             {t('courses.live.addTopic')}

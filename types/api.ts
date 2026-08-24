@@ -558,7 +558,7 @@ export interface CourseTag {
 
 // Enrollment and Progress Types
 export interface Enrollment {
-  id: string | number;
+  id: string;
   user_id: string;
   course_id: string;
   status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';

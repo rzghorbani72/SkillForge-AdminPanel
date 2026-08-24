@@ -4978,8 +4978,10 @@ class ApiClient {
   async getAssignments(params?: {
     page?: number;
     limit?: number;
-    lesson_id?: number;
-    course_id?: number;
+    lesson_id?: string;
+    tutoring_group_id?: string;
+    tutoring_session_id?: string;
+    course_id?: string;
   }): Promise<AssignmentListResponse> {
     const qs = new URLSearchParams();
     if (params)
@@ -4994,7 +4996,10 @@ class ApiClient {
   }
 
   async createAssignment(data: {
-    lesson_id: number;
+    /** Exactly one parent: a lesson, a whole class, or one meeting of it. */
+    lesson_id?: string;
+    tutoring_group_id?: string;
+    tutoring_session_id?: string;
     title: string;
     description?: string;
     due_date?: string;
@@ -5011,7 +5016,7 @@ class ApiClient {
   }
 
   async updateAssignment(
-    id: number,
+    id: string,
     data: Partial<{
       title: string;
       description: string;
@@ -5032,10 +5037,10 @@ class ApiClient {
   async getSubmissions(params?: {
     page?: number;
     limit?: number;
-    assignment_id?: number;
-    profile_id?: number;
-    enrollment_id?: number;
-    course_id?: number;
+    assignment_id?: string;
+    profile_id?: string;
+    enrollment_id?: string;
+    course_id?: string;
     status?: 'DRAFT' | 'SUBMITTED' | 'GRADED' | 'REJECTED';
   }): Promise<SubmissionListResponse> {
     const qs = new URLSearchParams();
@@ -5053,7 +5058,7 @@ class ApiClient {
   }
 
   async gradeSubmission(
-    submissionId: number,
+    submissionId: string,
     data: { score: number; feedback?: string }
   ): Promise<AssignmentSubmission> {
     const res = await this.request<

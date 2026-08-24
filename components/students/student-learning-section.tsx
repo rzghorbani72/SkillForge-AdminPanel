@@ -44,7 +44,7 @@ export function StudentLearningSection({ profileId }: { profileId: string }) {
       const submissionResults = await Promise.allSettled(
         studentEnrollments.map((enrollment) =>
           apiClient.getSubmissions({
-            enrollment_id: Number(enrollment.id),
+            enrollment_id: enrollment.id,
             page: 1,
             limit: 100
           })
