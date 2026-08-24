@@ -2,19 +2,23 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, CreditCard, Layers } from 'lucide-react';
+import { BarChart3, CreditCard, Layers, Radio } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
 type CourseWorkspaceTabsProps = {
   courseId: string;
+  courseType?: 'OFFLINE' | 'LIVE';
 };
 
 /**
  * Real links, not a JS tab widget: every tab is a URL the manager can share,
  * bookmark or open in a new tab.
  */
-export function CourseWorkspaceTabs({ courseId }: CourseWorkspaceTabsProps) {
+export function CourseWorkspaceTabs({
+  courseId,
+  courseType = 'OFFLINE'
+}: CourseWorkspaceTabsProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const base = `/courses/${courseId}`;
@@ -26,12 +30,20 @@ export function CourseWorkspaceTabs({ courseId }: CourseWorkspaceTabsProps) {
       icon: BarChart3,
       exact: true
     },
-    {
-      href: `${base}/seasons`,
-      label: t('courseDetail.curriculum'),
-      icon: Layers,
-      exact: false
-    },
+    // A live course has no lessons to curate: its content is the timetable.
+    courseType === 'LIVE'
+      ? {
+          href: `${base}/live`,
+          label: t('courseDetail.classroom'),
+          icon: Radio,
+          exact: false
+        }
+      : {
+          href: `${base}/seasons`,
+          label: t('courseDetail.curriculum'),
+          icon: Layers,
+          exact: false
+        },
     {
       href: `${base}/plans`,
       label: t('courseDetail.paymentPlansLink'),

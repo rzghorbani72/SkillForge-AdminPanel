@@ -65,6 +65,8 @@ export type CourseDetail = {
   is_published: boolean;
   is_featured: boolean;
   is_certificate: boolean;
+  /** LIVE = sold as a timetable of classes; OFFLINE = recorded lessons. */
+  course_type?: 'OFFLINE' | 'LIVE';
   access_duration_days: number | null;
   author_id: string;
   academy_id: string;

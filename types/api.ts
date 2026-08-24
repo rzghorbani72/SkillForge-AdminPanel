@@ -244,6 +244,8 @@ export interface Course {
   short_description?: string;
   price: number;
   original_price?: number;
+  /** LIVE = sold as a timetable of classes; OFFLINE = recorded lessons. */
+  course_type?: 'OFFLINE' | 'LIVE';
   /** False = the course is not sold at its own price. */
   base_price_active?: boolean;
   // False = secure media: students stream lesson video/audio but cannot save it.

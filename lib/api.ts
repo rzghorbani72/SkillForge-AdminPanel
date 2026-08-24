@@ -58,6 +58,7 @@ import type {
   TutoringOffer,
   ClassSession,
   CourseTopic,
+  SessionRecording,
   CreateTutoringGroupPayload,
   UpdateTutoringGroupPayload,
   TutoringGroupSlot,
@@ -2633,14 +2634,14 @@ class ApiClient {
     onProgress?: (progress: number) => void,
     abortController?: AbortController,
     durationSeconds?: number
-  ) {
+  ): Promise<{ id: string }> {
     const response = await this.uploadFileWithProgress(
       '/videos/upload',
       this.buildVideoFormData(file, metadata, posterFile, durationSeconds),
       onProgress,
       abortController
     );
-    return response.data ?? response;
+    return (response.data ?? response) as { id: string };
   }
 
   async uploadVideo(
@@ -5186,6 +5187,19 @@ class ApiClient {
       { method: 'PATCH', body: JSON.stringify(data) }
     );
     return unwrapDataEnvelope(res.data);
+  }
+
+  async setSessionRecording(
+    sessionId: string,
+    data: { video_id: string | null; allow_download?: boolean }
+  ): Promise<SessionRecording | null> {
+    const res = await this.request<
+      SessionRecording | null | { data: SessionRecording | null }
+    >(`/tutoring/class-sessions/${sessionId}/recording`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return unwrapDataEnvelope(res.data) ?? null;
   }
 
   async cancelClassSession(sessionId: string, reason?: string): Promise<void> {

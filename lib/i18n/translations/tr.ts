@@ -704,6 +704,67 @@ export const tr = {
     storeDeleted: 'Enstitü başarıyla silindi'
   },
   courses: {
+    // Live courses: syllabus, pricing, timetable and per-meeting naming.
+    live: {
+      topics: 'Konular',
+      topicsHint: 'Bu kursun oturumlar boyunca işlediği konular.',
+      topicPlaceholder: 'Konu başlığı',
+      addTopic: 'Konu ekle',
+      topicsRequired: 'En az bir konu yazın.',
+      topicsSaved: 'Konular kaydedildi.',
+      pricing: 'Fiyatlandırma',
+      pricingHint:
+        'Canlı kurs iki şekilde satılır: grup dersinde bir yer ya da birebir ders.',
+      groupPrice: 'Grup dersi kişi başı fiyat',
+      groupPriceHint:
+        'Bir öğrencinin grup dersine katılmak için ödediği tutar.',
+      soloPrice: 'Özel ders fiyatı',
+      soloPriceHint: 'Birebir ders fiyatı. Boş bırakırsanız satılmaz.',
+      pricesRequired: 'İki fiyattan en az birini girin.',
+      pricesSaved: 'Fiyatlar kaydedildi.',
+      solo: 'Özel',
+      group: 'Grup',
+      schedule: 'Ders programı',
+      scheduleHint:
+        'Haftalık saatleri ve oturum sayısını seçin; tarihler otomatik oluşur.',
+      sessionCount: 'Oturum sayısı',
+      startDate: 'Başlangıç tarihi',
+      startDateRequired: 'Bir başlangıç tarihi seçin.',
+      joinDeadline: 'Son kayıt tarihi',
+      minStudents: 'En az öğrenci',
+      maxStudents: 'En fazla öğrenci',
+      previewTitle: 'Oturum tarihleri',
+      createClass: 'Ders oluştur',
+      classCreated: 'Ders oluşturuldu.',
+      needsPriceBeforeSchedule:
+        'Önce grup fiyatını kaydedin, sonra ders oluşturun.',
+      publishClass: 'Dersi yayınla',
+      classPublished: 'Ders yayınlandı ve tarihleri yazıldı.',
+      noSessionsYet:
+        'Henüz oturum yok. Tarihleri oluşturmak için dersi yayınlayın.',
+      seatsTaken: '{capacity} yerin {taken} tanesi',
+      meetingsCount: '{count} oturum',
+      sessionTitlePlaceholder: 'Bu oturuma ad verin',
+      pickTopic: 'Konu seçin',
+      noTopic: 'Konu yok',
+      sessionSaved: 'Oturum kaydedildi.',
+      cancelSession: 'Oturumu iptal et',
+      sessionCancelled: 'Oturum iptal edildi.',
+      cancelled: 'İptal edildi',
+      uploadRecording: 'Kaydı yükle',
+      uploadRecordingHint: 'Bu oturumun videosunu ders öğrencilerine bırakın.',
+      recordingSaved: 'Kayıt kaydedildi.',
+      hasRecording: 'Kaydı var',
+      allowRecordingDownload: 'Kaydın indirilmesine izin ver',
+      pageSubtitle:
+        'Konuları, fiyatı, programı ve her oturumun adını burada oluşturun.',
+      coursePublished: 'Kurs yayınlandı.',
+      publishNeedsTopic: 'Yayınlamadan önce en az bir konu ekleyin.',
+      publishNeedsPrice: 'Yayınlamadan önce ders fiyatını belirleyin.',
+      publishNeedsClass: 'Yayınlamadan önce en az bir ders oluşturun.',
+      publishNeedsSchedule:
+        'Dersin haftalık saatlerini ve oturum sayısını belirtin.'
+    },
     title: 'Kurslar',
     backToCourses: 'Kurslara Dön',
     seasonDeleted: 'Sezon başarıyla silindi',

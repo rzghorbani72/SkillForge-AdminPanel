@@ -149,7 +149,10 @@ export function CourseWorkspaceHeader() {
         </div>
       </div>
 
-      <CourseWorkspaceTabs courseId={courseId} />
+      <CourseWorkspaceTabs
+        courseId={courseId}
+        courseType={course?.course_type}
+      />
 
       <CourseQuickSettingsDialog
         open={settingsOpen}

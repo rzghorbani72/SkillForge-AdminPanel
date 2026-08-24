@@ -152,6 +152,34 @@ export function validateForPublish(
   return null;
 }
 
+export interface LiveCourseReadiness {
+  topics: number;
+  classes: number;
+  classesWithSchedule: number;
+  /** Active tutoring offers — a live course sells through these, not a price. */
+  sellingOffers: number;
+}
+
+/**
+ * What a live course must have before it can go on sale. Mirrors
+ * `Backend/src/common/services/live-course-publish.ts` plus the sellable check
+ * in `selling-ways.ts`, so the panel disables the button for the same reason
+ * the server would refuse it — a teacher who gets a surprise 400 stops
+ * trusting the page. A free class is allowed: what counts is an active offer,
+ * not a non-zero price.
+ */
+export function validateLiveForPublish(
+  readiness: LiveCourseReadiness
+): string | null {
+  if (readiness.topics === 0) return 'courses.live.publishNeedsTopic';
+  if (readiness.sellingOffers === 0) return 'courses.live.publishNeedsPrice';
+  if (readiness.classes === 0) return 'courses.live.publishNeedsClass';
+  if (readiness.classesWithSchedule === 0) {
+    return 'courses.live.publishNeedsSchedule';
+  }
+  return null;
+}
+
 /** Drop media fields that do not belong to the selected lesson type. */
 export function clearIncompatibleMedia(type: LessonType): Partial<LessonDraft> {
   const clearAll: Partial<LessonDraft> = {

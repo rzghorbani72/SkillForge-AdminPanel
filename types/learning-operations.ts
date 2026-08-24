@@ -219,8 +219,12 @@ export type TutoringSessionStatus =
 
 export type TutoringAttendanceStatus = 'JOINED' | 'PRESENT' | 'ABSENT';
 
+export type TutoringOfferKind = 'SOLO' | 'GROUP';
+
 export interface TutoringOffer {
   id: string;
+  /** SOLO = the 1:1 price, GROUP = the per-seat price of a class. */
+  kind: TutoringOfferKind;
   academy_id: string;
   course_id: string;
   tutor_profile_id: string;
@@ -296,6 +300,7 @@ export interface LessonDownloadPolicy {
 export interface CreateTutoringOfferPayload {
   course_id: string;
   tutor_profile_id: string;
+  kind?: TutoringOfferKind;
   title: string;
   description?: string;
   price?: number;
@@ -438,6 +443,15 @@ export interface CourseTopic {
   order: number;
 }
 
+export interface SessionRecording {
+  video_id: string;
+  title: string;
+  duration: number | null;
+  poster_url: string | null;
+  can_download: boolean;
+  url: string | null;
+}
+
 export interface ClassSession {
   id: string;
   starts_at: string;
@@ -448,4 +462,6 @@ export interface ClassSession {
   notes: string | null;
   topic_id: string | null;
   Topic: { id: string; title: string } | null;
+  recording_video_id?: string | null;
+  recording_allow_download?: boolean;
 }

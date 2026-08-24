@@ -1246,6 +1246,68 @@ export const en = {
     brandingColorCustom: 'Custom color'
   },
   courses: {
+    // Live courses: syllabus, pricing, timetable and per-meeting naming.
+    live: {
+      topics: 'Topics',
+      topicsHint: 'The subjects this course covers across its meetings.',
+      topicPlaceholder: 'Topic title',
+      addTopic: 'Add topic',
+      topicsRequired: 'Write at least one topic.',
+      topicsSaved: 'Syllabus saved.',
+      pricing: 'Pricing',
+      pricingHint:
+        'A live course sells two ways: a seat in a group class, or the teacher alone.',
+      groupPrice: 'Price per class seat',
+      groupPriceHint: 'What one student pays to join the group class.',
+      soloPrice: 'Private class price',
+      soloPriceHint:
+        'One-to-one price. Leave empty to not sell private classes.',
+      pricesRequired: 'Enter at least one of the two prices.',
+      pricesSaved: 'Prices saved.',
+      solo: 'Private',
+      group: 'Group',
+      schedule: 'Class schedule',
+      scheduleHint:
+        'Pick the weekly times and how many meetings; the dates are generated for you.',
+      sessionCount: 'Number of meetings',
+      startDate: 'Start date',
+      startDateRequired: 'Pick a start date.',
+      joinDeadline: 'Join deadline',
+      minStudents: 'Minimum students',
+      maxStudents: 'Maximum students',
+      previewTitle: 'Meeting dates',
+      createClass: 'Create class',
+      classCreated: 'Class created.',
+      needsPriceBeforeSchedule:
+        'Save the group price first, then schedule a class.',
+      publishClass: 'Publish class',
+      classPublished: 'Class published and its dates written.',
+      noSessionsYet:
+        'No meetings yet. Publish the class to generate its dates.',
+      seatsTaken: '{taken} of {capacity} seats',
+      meetingsCount: '{count} meetings',
+      sessionTitlePlaceholder: 'Name this meeting',
+      pickTopic: 'Pick a topic',
+      noTopic: 'No topic',
+      sessionSaved: 'Meeting saved.',
+      cancelSession: 'Cancel meeting',
+      sessionCancelled: 'Meeting cancelled.',
+      cancelled: 'Cancelled',
+      uploadRecording: 'Upload recording',
+      uploadRecordingHint:
+        'Leave this meeting’s video for the students of the class.',
+      recordingSaved: 'Recording saved.',
+      hasRecording: 'Has recording',
+      allowRecordingDownload: 'Allow downloading the recording',
+      pageSubtitle:
+        'Build the syllabus, the price, the timetable and the name of each meeting.',
+      coursePublished: 'Course published.',
+      publishNeedsTopic: 'Add at least one topic before publishing.',
+      publishNeedsPrice: 'Set the class price before publishing.',
+      publishNeedsClass: 'Create at least one class before publishing.',
+      publishNeedsSchedule:
+        'Give the class its weekly times and number of meetings.'
+    },
     title: 'Courses',
     pricingTitle: 'Pricing & ways to sell',
     pricingSectionHint:
@@ -4861,6 +4923,7 @@ export const en = {
     pricingCard: 'Pricing',
     manageCard: 'Manage',
     curriculum: 'Curriculum',
+    classroom: 'Classroom',
     tabOverview: 'Overview',
     moreActions: 'More actions',
     quickSettings: 'Quick settings',
