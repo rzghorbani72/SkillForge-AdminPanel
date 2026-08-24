@@ -5,7 +5,8 @@ import {
   Enrollment,
   User as UserType,
   Offer,
-  OfferInput
+  OfferInput,
+  PaymentGatewayProvider
 } from '@/types/api';
 import type {
   AbuseReport,
@@ -1568,7 +1569,7 @@ class ApiClient {
     storage_addon?: number;
     note?: string;
     callback_url?: string;
-    provider?: 'SAMAN_SEP' | 'MELLAT_BP';
+    provider?: PaymentGatewayProvider;
     coupon_code?: string;
   }): Promise<{
     academy?: unknown;
@@ -1626,7 +1627,7 @@ class ApiClient {
 
   async purchaseStorageAddon(data: {
     callback_url?: string;
-    provider?: 'SAMAN_SEP' | 'MELLAT_BP';
+    provider?: PaymentGatewayProvider;
   }): Promise<{
     payment_id?: string;
     redirect_url?: string;
@@ -1678,7 +1679,7 @@ class ApiClient {
     planSlug: string,
     options?: {
       callback_url?: string;
-      provider?: 'SAMAN_SEP' | 'MELLAT_BP';
+      provider?: PaymentGatewayProvider;
       coupon_code?: string;
     }
   ): Promise<{

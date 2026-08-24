@@ -3771,6 +3771,9 @@ export const fa = {
     activeMethodsDescription: 'در حال حاضر برای دانشجویان موجود است.',
     inPipeline: 'در خط لوله',
     inPipelineDescription: 'روش‌های برنامه‌ریزی شده یا در حالت آزمایشی.',
+    retiredGateways: 'بازنشسته',
+    retiredGatewaysDescription:
+      'درگاه‌هایی که فقط برای پرداخت‌های قدیمی نگه داشته شده‌اند.',
     gatewayPerformance: 'عملکرد درگاه',
     gatewayPerformanceDescription: 'سهم درآمد و کل پرداخت‌ها به ازای هر روش.',
     noPaymentsProcessed:
@@ -3795,6 +3798,7 @@ export const fa = {
       BANK_TRANSFER: 'کارت به کارت / بانکی',
       CASH: 'نقدی',
       POS: 'کارت‌خوان',
+      BITPAY: 'بیت‌پی',
       PAYPING: 'پی‌پینگ',
       SAMAN_SEP: 'سداد سامان',
       MELLAT_BP: 'به‌پرداخت ملت',
@@ -3812,22 +3816,26 @@ export const fa = {
     },
     gatewayBadge: {
       active: 'فعال',
+      inactive: 'غیرفعال',
       planned: 'برنامه‌ریزی‌شده'
     },
     gateways: {
+      bitpay: {
+        title: 'درگاه بیت‌پی (BitPay)',
+        description:
+          'تنها درگاه پرداخت فعال در محیط عملیاتی؛ همه پرداخت‌های دانشجو و اشتراک آکادمی از این مسیر انجام می‌شود.'
+      },
       payping: {
         title: 'درگاه پی‌پینگ',
-        description:
-          'درگاه آنلاین اصلی برای فاز ایران و پرداخت واقعی در محیط عملیاتی.'
+        description: 'درگاه قدیمی؛ دیگر برای پرداخت جدید استفاده نمی‌شود.'
       },
       samanSep: {
         title: 'سداد سامان (Saman SEP)',
-        description:
-          'اتصال پذیرنده بانکی که بعد از فاز پی‌پینگ برای انتشار آماده است.'
+        description: 'درگاه قدیمی؛ دیگر برای پرداخت جدید استفاده نمی‌شود.'
       },
       mellatBp: {
         title: 'به‌پرداخت ملت (Mellat BP)',
-        description: 'اتصال پذیرنده بانکی آماده برای فعال‌سازی مرحله‌ای.'
+        description: 'درگاه قدیمی؛ دیگر برای پرداخت جدید استفاده نمی‌شود.'
       }
     },
     invoices: 'فاکتورها',

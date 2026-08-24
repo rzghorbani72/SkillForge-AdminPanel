@@ -21,25 +21,32 @@ import { useTranslation } from '@/lib/i18n/hooks';
 
 const METHOD_CONFIG = [
   {
+    key: 'BITPAY',
+    titleKey: 'payments.gateways.bitpay.title',
+    descriptionKey: 'payments.gateways.bitpay.description',
+    icon: CreditCard,
+    badges: [{ labelKey: 'payments.gatewayBadge.active', tone: 'active' }]
+  },
+  {
     key: 'PAYPING',
     titleKey: 'payments.gateways.payping.title',
     descriptionKey: 'payments.gateways.payping.description',
     icon: CreditCard,
-    badges: [{ labelKey: 'payments.gatewayBadge.active', tone: 'active' }]
+    badges: [{ labelKey: 'payments.gatewayBadge.inactive', tone: 'inactive' }]
   },
   {
     key: 'SAMAN_SEP',
     titleKey: 'payments.gateways.samanSep.title',
     descriptionKey: 'payments.gateways.samanSep.description',
     icon: DollarSign,
-    badges: [{ labelKey: 'payments.gatewayBadge.planned', tone: 'roadmap' }]
+    badges: [{ labelKey: 'payments.gatewayBadge.inactive', tone: 'inactive' }]
   },
   {
     key: 'MELLAT_BP',
     titleKey: 'payments.gateways.mellatBp.title',
     descriptionKey: 'payments.gateways.mellatBp.description',
     icon: Globe,
-    badges: [{ labelKey: 'payments.gatewayBadge.planned', tone: 'roadmap' }]
+    badges: [{ labelKey: 'payments.gatewayBadge.inactive', tone: 'inactive' }]
   }
 ] as const;
 
@@ -144,17 +151,17 @@ export default function PaymentMethodsPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('payments.inPipeline')}
+              {t('payments.retiredGateways')}
             </CardTitle>
             <CardDescription>
-              {t('payments.inPipelineDescription')}
+              {t('payments.retiredGatewaysDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
               {
                 METHOD_CONFIG.filter((item) =>
-                  item.badges.some((badge) => badge.tone === 'roadmap')
+                  item.badges.some((badge) => badge.tone === 'inactive')
                 ).length
               }
             </p>

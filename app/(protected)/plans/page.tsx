@@ -75,6 +75,21 @@ import {
   type BillingPeriod,
   quarterlyDiscount
 } from '@/components/plans/plan-types';
+import type { PaymentGatewayProvider } from '@/types/api';
+
+/** Where each gateway sends the manager back after payment. */
+const CALLBACK_PATHS: Record<PaymentGatewayProvider, string> = {
+  BITPAY: '/payment/bitpay-callback',
+  SAMAN_SEP: '/payment/saman-callback',
+  MELLAT_BP: '/payment/mellat-callback'
+};
+
+/**
+ * Used for the first "probe" call, before the backend has told us which
+ * gateways are enabled. BitPay is the only production rail, so a probe that
+ * goes straight through lands on the right callback.
+ */
+const DEFAULT_GATEWAY: PaymentGatewayProvider = 'BITPAY';
 
 export default function PlansPage() {
   const { t } = useTranslation();
@@ -134,9 +149,8 @@ export default function PlansPage() {
     null
   );
   const [isQuoteLoading, setIsQuoteLoading] = useState(false);
-  const [selectedGateway, setSelectedGateway] = useState<
-    'SAMAN_SEP' | 'MELLAT_BP' | null
-  >(null);
+  const [selectedGateway, setSelectedGateway] =
+    useState<PaymentGatewayProvider | null>(null);
   const [availableGateways, setAvailableGateways] = useState<
     Array<{ provider: string; display_name: string }>
   >([]);
@@ -339,11 +353,8 @@ export default function PlansPage() {
     }
   }
 
-  function callbackUrlForProvider(provider: 'SAMAN_SEP' | 'MELLAT_BP'): string {
-    const origin = window.location.origin;
-    return provider === 'SAMAN_SEP'
-      ? `${origin}/payment/saman-callback`
-      : `${origin}/payment/mellat-callback`;
+  function callbackUrlForProvider(provider: PaymentGatewayProvider): string {
+    return `${window.location.origin}${CALLBACK_PATHS[provider]}`;
   }
 
   async function handleBuyStorageAddon() {
@@ -352,7 +363,7 @@ export default function PlansPage() {
       let provider = selectedGateway;
       if (!provider) {
         const probe = await apiClient.purchaseStorageAddon({
-          callback_url: `${window.location.origin}/payment/saman-callback`
+          callback_url: callbackUrlForProvider(DEFAULT_GATEWAY)
         });
         if (probe.redirect_url) {
           window.location.href = probe.redirect_url;
@@ -361,9 +372,8 @@ export default function PlansPage() {
         if (probe.needs_gateway_selection && probe.available_gateways?.length) {
           setAvailableGateways(probe.available_gateways);
           if (probe.available_gateways.length === 1) {
-            provider = probe.available_gateways[0].provider as
-              | 'SAMAN_SEP'
-              | 'MELLAT_BP';
+            provider = probe.available_gateways[0]
+              .provider as PaymentGatewayProvider;
             setSelectedGateway(provider);
           } else {
             setNeedsGatewaySelection(true);
@@ -412,7 +422,7 @@ export default function PlansPage() {
           const probe = await apiClient.upgradeCurrentAcademyPlan(
             selectingPlan.slug,
             {
-              callback_url: `${window.location.origin}/payment/saman-callback`,
+              callback_url: callbackUrlForProvider(DEFAULT_GATEWAY),
               coupon_code
             }
           );
@@ -428,9 +438,8 @@ export default function PlansPage() {
           ) {
             setAvailableGateways(probe.available_gateways);
             if (probe.available_gateways.length === 1) {
-              provider = probe.available_gateways[0].provider as
-                | 'SAMAN_SEP'
-                | 'MELLAT_BP';
+              provider = probe.available_gateways[0]
+                .provider as PaymentGatewayProvider;
               setSelectedGateway(provider);
             } else {
               setNeedsGatewaySelection(true);
@@ -502,7 +511,7 @@ export default function PlansPage() {
             selectedMonths === 3 ? 'quarterly' : 'monthly'
           ),
           storage_addon: includeStorageAddon ? 1 : 0,
-          callback_url: `${window.location.origin}/payment/saman-callback`,
+          callback_url: callbackUrlForProvider(DEFAULT_GATEWAY),
           coupon_code
         });
 
@@ -514,9 +523,8 @@ export default function PlansPage() {
         if (probe.needs_gateway_selection && probe.available_gateways?.length) {
           setAvailableGateways(probe.available_gateways);
           if (probe.available_gateways.length === 1) {
-            provider = probe.available_gateways[0].provider as
-              | 'SAMAN_SEP'
-              | 'MELLAT_BP';
+            provider = probe.available_gateways[0]
+              .provider as PaymentGatewayProvider;
             setSelectedGateway(provider);
           } else {
             setNeedsGatewaySelection(true);
@@ -1137,7 +1145,7 @@ export default function PlansPage() {
                   <Label>{t('plans.selectGateway')}</Label>
                   <div className="grid gap-2">
                     {availableGateways.map((gw) => {
-                      const provider = gw.provider as 'SAMAN_SEP' | 'MELLAT_BP';
+                      const provider = gw.provider as PaymentGatewayProvider;
                       return (
                         <button
                           key={gw.provider}

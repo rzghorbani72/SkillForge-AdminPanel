@@ -1,3 +1,9 @@
+/**
+ * Gateways the platform can charge a manager through. BITPAY is the only one
+ * enabled in production; the others are kept for historical payments.
+ */
+export type PaymentGatewayProvider = 'BITPAY' | 'SAMAN_SEP' | 'MELLAT_BP';
+
 // User Status Type
 export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 

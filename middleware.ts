@@ -44,6 +44,7 @@ const SKIP_AUTH_PREFIXES = [
   '/v1',
   '/_next/',
   '/favicon.ico',
+  '/payment/bitpay-callback',
   '/payment/saman-callback',
   '/payment/mellat-callback'
 ] as const;

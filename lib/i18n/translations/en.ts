@@ -3807,6 +3807,8 @@ export const en = {
     activeMethodsDescription: 'Currently available to students.',
     inPipeline: 'In Pipeline',
     inPipelineDescription: 'Methods scheduled or in beta.',
+    retiredGateways: 'Retired',
+    retiredGatewaysDescription: 'Gateways kept for old payments only.',
     gatewayPerformance: 'Gateway Performance',
     gatewayPerformanceDescription:
       'Share of revenue and total payments per method.',
@@ -3832,6 +3834,7 @@ export const en = {
       BANK_TRANSFER: 'Bank transfer',
       CASH: 'Cash',
       POS: 'Card / POS',
+      BITPAY: 'BitPay',
       PAYPING: 'PayPing',
       SAMAN_SEP: 'Saman SEP',
       MELLAT_BP: 'Mellat BP',
@@ -3849,22 +3852,26 @@ export const en = {
     },
     gatewayBadge: {
       active: 'Active',
+      inactive: 'Inactive',
       planned: 'Planned'
     },
     gateways: {
+      bitpay: {
+        title: 'BitPay Gateway',
+        description:
+          'The only gateway live in production — every student checkout and academy subscription is settled through it.'
+      },
       payping: {
         title: 'PayPing Gateway',
-        description:
-          'Primary online gateway for Iran-first release and production checkout.'
+        description: 'Legacy gateway, no longer used for new payments.'
       },
       samanSep: {
         title: 'Saman SEP',
-        description:
-          'Bank acquirer adapter available for rollout after PayPing phase.'
+        description: 'Legacy gateway, no longer used for new payments.'
       },
       mellatBp: {
         title: 'Mellat BP',
-        description: 'Bank acquirer adapter prepared for staged activation.'
+        description: 'Legacy gateway, no longer used for new payments.'
       }
     },
     // Invoices Page
