@@ -13,8 +13,6 @@ import ConversionFunnel from '@/components/dashboard/ConversionFunnel';
 import WeekdayEnrollmentChart from '@/components/dashboard/WeekdayEnrollmentChart';
 import CompletionDonut from '@/components/dashboard/CompletionDonut';
 import { useTranslation } from '@/lib/i18n/hooks';
-import CampaignBanner from '@/components/dashboard/CampaignBanner';
-import { SubscriptionStatusCard } from '@/components/dashboard/subscription-status-card';
 import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { cn } from '@/lib/utils';
@@ -139,12 +137,6 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
-
-        {/* Subscription upgrade — Platform scope */}
-        <SubscriptionStatusCard />
-
-        {/* Campaign banner */}
-        <CampaignBanner />
 
         {/* Row 1: 4 KPI cards */}
         <StatsCards cards={statsCards} />
