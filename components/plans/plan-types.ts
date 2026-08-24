@@ -99,10 +99,50 @@ export const DEFAULT_ACADEMY_PLAN_FORM: AcademyPlanFormData = {
 
 export const PERIOD_OPTIONS = [
   { months: 1, key: 'months1' },
-  { months: 3, key: 'months3' },
-  { months: 6, key: 'months6' },
-  { months: 12, key: 'months12' }
+  { months: 3, key: 'months3' }
 ] as const;
+
+export type BillingPeriod = 'monthly' | 'quarterly';
+
+export function monthsForPeriod(period: BillingPeriod): number {
+  return period === 'quarterly' ? 3 : 1;
+}
+
+/** Matches Backend: 5% off 3× monthly, then floor to 500,000 Toman. */
+const QUARTERLY_STEP = 500_000;
+const QUARTERLY_DISCOUNT_RATE = 0.05;
+
+export function roundQuarterlyToman(monthlyToman: number): number {
+  const discounted = monthlyToman * 3 * (1 - QUARTERLY_DISCOUNT_RATE);
+  return Math.max(
+    QUARTERLY_STEP,
+    Math.floor(discounted / QUARTERLY_STEP) * QUARTERLY_STEP
+  );
+}
+
+/** Full 3× monthly vs discounted quarterly charge — badge is always 5%. */
+export function quarterlyDiscount(monthlyToman: number): {
+  full: number;
+  charged: number;
+  amount: number;
+  percent: number;
+} {
+  const full = monthlyToman * 3;
+  const charged = roundQuarterlyToman(monthlyToman);
+  const amount = Math.max(0, full - charged);
+  const percent = amount > 0 ? Math.round(QUARTERLY_DISCOUNT_RATE * 100) : 0;
+  return { full, charged, amount, percent };
+}
+
+export function periodPrice(
+  plan: { price_monthly: number; price_yearly: number | null },
+  period: BillingPeriod
+): number {
+  if (period === 'quarterly') {
+    return roundQuarterlyToman(plan.price_monthly);
+  }
+  return plan.price_monthly;
+}
 
 // Mirrors the public landing's curated per-plan checklist
 // (edusphere landing.messages `pricing.plans[].features`) so the manager

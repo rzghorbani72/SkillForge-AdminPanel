@@ -49,8 +49,14 @@ export interface AcademySubscriptionState {
   storage?: {
     usage_gb: number;
     included_gb: number;
-    overage_gb: number;
-    overage_fee_irr: number;
+    percent_used?: number;
+    warn_level?: 'ok' | 'warning' | 'full';
+    is_upload_blocked?: boolean;
+    extra_storage_gb?: number;
+    addon_gb?: number;
+    addon_price_toman?: number;
+    overage_gb?: number;
+    overage_fee_irr?: number;
   };
   invoices?: AcademySubscriptionInvoice[];
   /** Where the owner's one free-trial credit sits, and whether it can move here. */

@@ -69,7 +69,11 @@ import {
   PERIOD_OPTIONS,
   formatPrice,
   formatStorage,
-  planFeatureList
+  planFeatureList,
+  monthsForPeriod,
+  periodPrice,
+  type BillingPeriod,
+  quarterlyDiscount
 } from '@/components/plans/plan-types';
 
 export default function PlansPage() {
@@ -93,7 +97,7 @@ export default function PlansPage() {
   const isTeacher = user?.role === 'TEACHER';
   const canManageAcademyPlans = isPlatformAdminUser || canManagePlan;
 
-  const [period, setPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [period, setPeriod] = useState<BillingPeriod>('monthly');
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
   // Shared with the sidebar/header via one SWR cache key — avoids firing the
   // same /academies/current/subscription request three times per page load.
@@ -120,6 +124,8 @@ export default function PlansPage() {
   const [selectingPlan, setSelectingPlan] =
     useState<SubscriptionPlanData | null>(null);
   const [selectedMonths, setSelectedMonths] = useState<number>(1);
+  const [includeStorageAddon, setIncludeStorageAddon] = useState(false);
+  const [isBuyingAddon, setIsBuyingAddon] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
   // Present only when the selected plan is an UPGRADE (active paid plan → higher
   // tier): its presence switches the dialog from full-price purchase to the
@@ -305,7 +311,8 @@ export default function PlansPage() {
 
   function openSelectPlan(plan: SubscriptionPlanData) {
     setSelectingPlan(plan);
-    setSelectedMonths(1);
+    setSelectedMonths(monthsForPeriod(period));
+    setIncludeStorageAddon(false);
     setSelectedGateway(null);
     setAvailableGateways([]);
     setNeedsGatewaySelection(false);
@@ -337,6 +344,54 @@ export default function PlansPage() {
     return provider === 'SAMAN_SEP'
       ? `${origin}/payment/saman-callback`
       : `${origin}/payment/mellat-callback`;
+  }
+
+  async function handleBuyStorageAddon() {
+    try {
+      setIsBuyingAddon(true);
+      let provider = selectedGateway;
+      if (!provider) {
+        const probe = await apiClient.purchaseStorageAddon({
+          callback_url: `${window.location.origin}/payment/saman-callback`
+        });
+        if (probe.redirect_url) {
+          window.location.href = probe.redirect_url;
+          return;
+        }
+        if (probe.needs_gateway_selection && probe.available_gateways?.length) {
+          setAvailableGateways(probe.available_gateways);
+          if (probe.available_gateways.length === 1) {
+            provider = probe.available_gateways[0].provider as
+              | 'SAMAN_SEP'
+              | 'MELLAT_BP';
+            setSelectedGateway(provider);
+          } else {
+            setNeedsGatewaySelection(true);
+            toast.info(t('plans.selectGateway'));
+            return;
+          }
+        }
+      }
+      if (!provider) {
+        setNeedsGatewaySelection(true);
+        toast.info(t('plans.selectGateway'));
+        return;
+      }
+      const result = await apiClient.purchaseStorageAddon({
+        provider,
+        callback_url: callbackUrlForProvider(provider)
+      });
+      if (result.redirect_url) {
+        window.location.href = result.redirect_url;
+        return;
+      }
+      toast.success(t('plans.paymentSuccess'));
+      await refreshPlansAndSubscription();
+    } catch (e) {
+      ErrorHandler.handleApiError(e);
+    } finally {
+      setIsBuyingAddon(false);
+    }
   }
 
   async function handleChangePlan() {
@@ -442,7 +497,11 @@ export default function PlansPage() {
         const probe = await apiClient.renewCurrentAcademySubscription({
           plan_name: selectingPlan.slug,
           months: selectedMonths,
-          amount: selectingPlan.price_monthly * selectedMonths,
+          amount: periodPrice(
+            selectingPlan,
+            selectedMonths === 3 ? 'quarterly' : 'monthly'
+          ),
+          storage_addon: includeStorageAddon ? 1 : 0,
           callback_url: `${window.location.origin}/payment/saman-callback`,
           coupon_code
         });
@@ -483,7 +542,11 @@ export default function PlansPage() {
       const result = await apiClient.renewCurrentAcademySubscription({
         plan_name: selectingPlan.slug,
         months: selectedMonths,
-        amount: selectingPlan.price_monthly * selectedMonths,
+        amount: periodPrice(
+          selectingPlan,
+          selectedMonths === 3 ? 'quarterly' : 'monthly'
+        ),
+        storage_addon: includeStorageAddon ? 1 : 0,
         provider,
         callback_url: callbackUrlForProvider(provider),
         coupon_code
@@ -877,6 +940,10 @@ export default function PlansPage() {
             currentSub={currentSub}
             currentPlan={currentPlan}
             t={t}
+            isBuyingAddon={isBuyingAddon}
+            onBuyStorageAddon={
+              canManagePlan ? () => void handleBuyStorageAddon() : undefined
+            }
           />
           {selectedAcademy && (
             <TrialMoveCard
@@ -921,10 +988,7 @@ export default function PlansPage() {
                   : true;
                 const isLocked =
                   hasActivePaidPlan && !isCurrent && !isUpperPlan;
-                const price =
-                  period === 'yearly' && plan.price_yearly
-                    ? plan.price_yearly
-                    : plan.price_monthly;
+                const price = periodPrice(plan, period);
                 return (
                   <SubscriptionPlanCard
                     key={plan.id}
@@ -998,7 +1062,7 @@ export default function PlansPage() {
                 <>
                   <div className="space-y-2">
                     <Label>{t('plans.subscriptionPeriod')}</Label>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {PERIOD_OPTIONS.map(({ months, key }) => (
                         <button
                           key={months}
@@ -1015,14 +1079,51 @@ export default function PlansPage() {
                         </button>
                       ))}
                     </div>
+                    {selectedMonths === 3 && (
+                      <p className="text-xs text-muted-foreground">
+                        {t('plans.quarterlyHint')}
+                      </p>
+                    )}
                   </div>
+                  {currentSub?.storage?.addon_gb != null && (
+                    <label className="flex cursor-pointer items-start gap-3 rounded-xl border bg-card px-3 py-3 text-sm">
+                      <input
+                        type="checkbox"
+                        className="mt-1"
+                        checked={includeStorageAddon}
+                        onChange={(e) =>
+                          setIncludeStorageAddon(e.target.checked)
+                        }
+                      />
+                      <span>
+                        {t('plans.includeStorageAddon', {
+                          gb: currentSub.storage.addon_gb
+                        })}
+                        {currentSub.storage.addon_price_toman != null && (
+                          <span className="mt-0.5 block text-xs text-muted-foreground">
+                            {t('plans.storageAddonPrice', {
+                              price: formatPrice(
+                                currentSub.storage.addon_price_toman
+                              )
+                            })}
+                          </span>
+                        )}
+                      </span>
+                    </label>
+                  )}
                   <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3">
                     <span className="text-sm font-medium">
                       {t('plans.totalPrice')}
                     </span>
                     <span className="text-xl font-bold">
                       {formatPrice(
-                        selectingPlan.price_monthly * selectedMonths
+                        periodPrice(
+                          selectingPlan,
+                          selectedMonths === 3 ? 'quarterly' : 'monthly'
+                        ) +
+                          (includeStorageAddon
+                            ? (currentSub?.storage?.addon_price_toman ?? 0)
+                            : 0)
                       )}{' '}
                       <span className="text-sm font-normal text-muted-foreground">
                         {t('plans.toman')}
@@ -1222,27 +1323,34 @@ function BillingPeriodToggle({
   setPeriod,
   t
 }: {
-  period: 'monthly' | 'yearly';
-  setPeriod: (p: 'monthly' | 'yearly') => void;
+  period: BillingPeriod;
+  setPeriod: (p: BillingPeriod) => void;
   t: (key: string) => string;
 }) {
   return (
-    <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
-      {(['monthly', 'yearly'] as const).map((p) => (
-        <button
-          key={p}
-          type="button"
-          onClick={() => setPeriod(p)}
-          className={cn(
-            'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
-            period === p
-              ? 'bg-card text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
-          )}
-        >
-          {t(`plans.${p}`)}
-        </button>
-      ))}
+    <div className="flex flex-col items-center gap-2">
+      <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
+        {(['monthly', 'quarterly'] as const).map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => setPeriod(p)}
+            className={cn(
+              'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
+              period === p
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            {t(`plans.${p}`)}
+          </button>
+        ))}
+      </div>
+      {period === 'quarterly' && (
+        <p className="max-w-md text-center text-xs text-muted-foreground">
+          {t('plans.quarterlyHint')}
+        </p>
+      )}
     </div>
   );
 }
@@ -1250,16 +1358,21 @@ function BillingPeriodToggle({
 function CurrentSubscriptionBanner({
   currentSub,
   currentPlan,
-  t
+  t,
+  onBuyStorageAddon,
+  isBuyingAddon
 }: {
   currentSub: AcademySubscriptionState | null;
   currentPlan: SubscriptionPlanData | null | undefined;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
+  onBuyStorageAddon?: () => void;
+  isBuyingAddon?: boolean;
 }) {
   if (!currentSub?.academy) return null;
   const expiresAt = currentSub.academy.subscription_expires;
   const storageUsedGb = currentSub.storage?.usage_gb;
   const includedStorageGb = currentSub.storage?.included_gb;
+  const warnLevel = currentSub.storage?.warn_level;
   const display = getSubscriptionStatusDisplay(
     currentSub.status,
     currentSub.is_trial
@@ -1362,8 +1475,51 @@ function CurrentSubscriptionBanner({
           </div>
           <Progress
             value={Math.min((storageUsedGb / includedStorageGb) * 100, 100)}
-            className="h-1.5"
+            className={cn(
+              'h-1.5',
+              warnLevel === 'full' && '[&>div]:bg-destructive',
+              warnLevel === 'warning' && '[&>div]:bg-amber-500'
+            )}
           />
+          {(warnLevel === 'warning' || warnLevel === 'full') && (
+            <div
+              className={cn(
+                'flex flex-col gap-2 rounded-xl px-3 py-2 text-xs sm:flex-row sm:items-center sm:justify-between',
+                warnLevel === 'full'
+                  ? 'bg-destructive/10 text-destructive'
+                  : 'bg-amber-500/10 text-amber-800 dark:text-amber-200'
+              )}
+            >
+              <p className="flex items-start gap-2">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                {warnLevel === 'full'
+                  ? t('plans.storageFull', {
+                      gb: currentSub.storage?.addon_gb ?? 50
+                    })
+                  : t('plans.storageAlmostFull', {
+                      percent: currentSub.storage?.percent_used ?? 80
+                    })}
+              </p>
+              {onBuyStorageAddon && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={warnLevel === 'full' ? 'destructive' : 'outline'}
+                  disabled={isBuyingAddon}
+                  onClick={onBuyStorageAddon}
+                  className="shrink-0"
+                >
+                  {isBuyingAddon ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    t('plans.buyStorageAddon', {
+                      gb: currentSub.storage?.addon_gb ?? 50
+                    })
+                  )}
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -1389,13 +1545,16 @@ function SubscriptionPlanCard({
   isCurrent: boolean;
   isLocked: boolean;
   price: number;
-  period: 'monthly' | 'yearly';
+  period: BillingPeriod;
   canSelect: boolean;
   onCardSelect: () => void;
   onSelect: () => void;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   const features = planFeatureList(plan.slug, plan.features);
+  const qDiscount =
+    period === 'quarterly' ? quarterlyDiscount(plan.price_monthly) : null;
+
   return (
     <div
       dir="rtl"
@@ -1425,26 +1584,32 @@ function SubscriptionPlanCard({
           {formatPrice(price)}
         </span>
         <span className="ms-2 text-[13px] text-muted-foreground">
-          {period === 'yearly'
-            ? t('plans.pricePerYear')
+          {period === 'quarterly'
+            ? t('plans.pricePerQuarter')
             : t('plans.pricePerMonth')}
         </span>
       </p>
 
-      {period === 'yearly' && plan.price_yearly && (
-        <div className="mt-2 flex items-center justify-center gap-2 text-[12px]">
-          <span className="text-muted-foreground">
-            {t('plans.equivalentPerMonth', {
-              price: formatPrice(Math.round(plan.price_yearly / 12))
-            })}
-          </span>
-          <span className="rounded-full bg-success/10 px-2 py-0.5 font-semibold text-success">
-            {t('plans.yearlyDiscount', {
-              percent: Math.round(
-                100 - (plan.price_yearly / (plan.price_monthly * 12)) * 100
-              )
-            })}
-          </span>
+      {period === 'quarterly' && (
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[12px]">
+          {qDiscount && qDiscount.amount > 0 ? (
+            <>
+              <span className="text-muted-foreground line-through">
+                {t('plans.quarterlyWas', {
+                  price: formatPrice(qDiscount.full)
+                })}
+              </span>
+              <span className="rounded-full bg-success/10 px-2 py-0.5 font-semibold text-success">
+                {t('plans.quarterlyDiscount', { percent: qDiscount.percent })}
+              </span>
+            </>
+          ) : (
+            <span className="text-muted-foreground">
+              {t('plans.equivalentPerMonth', {
+                price: formatPrice(Math.round(price / 3))
+              })}
+            </span>
+          )}
         </div>
       )}
 
@@ -1583,8 +1748,8 @@ function PlatformPlansAdmin({
   t
 }: {
   plans: SubscriptionPlanData[];
-  period: 'monthly' | 'yearly';
-  setPeriod: (p: 'monthly' | 'yearly') => void;
+  period: BillingPeriod;
+  setPeriod: (p: BillingPeriod) => void;
   popularIndex: number;
   onOpenCreate: () => void;
   onEdit: (plan: SubscriptionPlanData) => void;
@@ -1627,10 +1792,7 @@ function PlatformPlansAdmin({
         >
           {plans.map((plan, i) => {
             const isPopular = i === popularIndex && plans.length >= 2;
-            const price =
-              period === 'yearly' && plan.price_yearly
-                ? plan.price_yearly
-                : plan.price_monthly;
+            const price = periodPrice(plan, period);
             const features = plan.features ?? [];
             return (
               <div
@@ -1728,8 +1890,8 @@ function PlatformPlansAdmin({
                       isPopular ? 'text-background/50' : 'text-muted-foreground'
                     )}
                   >
-                    {period === 'yearly'
-                      ? t('plans.pricePerYear')
+                    {period === 'quarterly'
+                      ? t('plans.pricePerQuarter')
                       : t('plans.pricePerMonth')}
                   </span>
                 </div>

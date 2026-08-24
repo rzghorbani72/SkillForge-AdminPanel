@@ -1,4 +1,5 @@
 import { OtpType } from '@/constants/data';
+import type { CourseType } from '@/components/course/course-drafts';
 import {
   Academy,
   Enrollment,
@@ -55,6 +56,8 @@ import type {
   TutoringEngagement,
   TutoringGroup,
   TutoringOffer,
+  ClassSession,
+  CourseTopic,
   CreateTutoringGroupPayload,
   UpdateTutoringGroupPayload,
   TutoringGroupSlot,
@@ -1558,6 +1561,7 @@ class ApiClient {
     plan_name: string;
     months: number;
     amount: number;
+    storage_addon?: number;
     note?: string;
     callback_url?: string;
     provider?: 'SAMAN_SEP' | 'MELLAT_BP';
@@ -1576,6 +1580,7 @@ class ApiClient {
     billing?: {
       base_plan_amount_irr: number;
       upload_overage_fee_irr: number;
+      storage_addon_fee_irr?: number;
       total_amount_irr: number;
       storage_usage_gb: number;
       discount_amount_irr?: number;
@@ -1607,9 +1612,40 @@ class ApiClient {
       billing?: {
         base_plan_amount_irr: number;
         upload_overage_fee_irr: number;
+        storage_addon_fee_irr?: number;
         total_amount_irr: number;
         storage_usage_gb: number;
       };
+      [key: string]: unknown;
+    };
+  }
+
+  async purchaseStorageAddon(data: {
+    callback_url?: string;
+    provider?: 'SAMAN_SEP' | 'MELLAT_BP';
+  }): Promise<{
+    payment_id?: string;
+    redirect_url?: string;
+    needs_gateway_selection?: boolean;
+    available_gateways?: Array<{ provider: string; display_name: string }>;
+    [key: string]: unknown;
+  }> {
+    const response = await this.request(
+      '/academies/current/subscription/storage-addon',
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
+    const payload = response.data as {
+      data?: Record<string, unknown>;
+      [key: string]: unknown;
+    };
+    return (payload?.data ?? payload) as {
+      payment_id?: string;
+      redirect_url?: string;
+      needs_gateway_selection?: boolean;
+      available_gateways?: Array<{ provider: string; display_name: string }>;
       [key: string]: unknown;
     };
   }
@@ -1738,6 +1774,7 @@ class ApiClient {
   async createCourse(courseData: {
     title: string;
     description: string;
+    course_type?: CourseType;
     primary_price: number;
     secondary_price: number;
     meta_tags?: Array<{ title: string; content: string }>;
@@ -5084,6 +5121,57 @@ class ApiClient {
       body: JSON.stringify(data)
     });
     return unwrapDataEnvelope(res.data);
+  }
+
+  // ─── Live course syllabus ──────────────────────────────────────────────────
+
+  async getCourseTopics(courseId: string): Promise<CourseTopic[]> {
+    const res = await this.request<CourseTopic[] | { data: CourseTopic[] }>(
+      `/courses/${courseId}/topics`
+    );
+    return unwrapDataEnvelope(res.data) ?? [];
+  }
+
+  async replaceCourseTopics(
+    courseId: string,
+    topics: { id?: string; title: string; description?: string | null }[]
+  ): Promise<CourseTopic[]> {
+    const res = await this.request<CourseTopic[] | { data: CourseTopic[] }>(
+      `/courses/${courseId}/topics`,
+      { method: 'PUT', body: JSON.stringify({ topics }) }
+    );
+    return unwrapDataEnvelope(res.data) ?? [];
+  }
+
+  // ─── Class sessions ────────────────────────────────────────────────────────
+
+  async getClassSessions(groupId: string): Promise<ClassSession[]> {
+    const res = await this.request<ClassSession[] | { data: ClassSession[] }>(
+      `/tutoring/groups/${groupId}/sessions`
+    );
+    return unwrapDataEnvelope(res.data) ?? [];
+  }
+
+  async updateClassSession(
+    sessionId: string,
+    data: {
+      title?: string | null;
+      topic_id?: string | null;
+      notes?: string | null;
+    }
+  ): Promise<ClassSession> {
+    const res = await this.request<ClassSession | { data: ClassSession }>(
+      `/tutoring/class-sessions/${sessionId}`,
+      { method: 'PATCH', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async cancelClassSession(sessionId: string, reason?: string): Promise<void> {
+    await this.request(`/tutoring/class-sessions/${sessionId}/cancel`, {
+      method: 'PATCH',
+      body: JSON.stringify({ reason })
+    });
   }
 
   // ─── Group classes ─────────────────────────────────────────────────────────
