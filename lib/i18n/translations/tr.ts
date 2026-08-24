@@ -2438,6 +2438,105 @@ export const tr = {
       }
     }
   },
+  settlement: {
+    eyebrow: 'Finance',
+    title: 'Settlement',
+    description:
+      'See where your money came from, how much of it Mentoma is still holding, and request a transfer to your academy bank account.',
+    custody: {
+      PLATFORM: 'Held by Mentoma',
+      ACADEMY: 'Held by you'
+    },
+    balance: {
+      available: {
+        title: 'Available to settle',
+        hint: 'The amount you can request right now.'
+      },
+      pending: {
+        title: 'In progress',
+        hint: 'Requested but not yet transferred to your bank account.'
+      },
+      withdrawn: {
+        title: 'Settled to date',
+        hint: 'Everything transferred to your academy account so far.'
+      },
+      direct: {
+        title: 'Collected by you',
+        hint: 'Cash, POS and card-to-card. You already have this money; it is never settled.'
+      }
+    },
+    channels: {
+      title: 'Earnings by payment channel',
+      description:
+        'Only money that went through the Mentoma online gateway is held by us and settleable. The rest you collected yourself and is shown for the record.',
+      method: 'Payment method',
+      custody: 'Who holds it',
+      count: 'Transactions',
+      gross: 'Total amount',
+      share: 'Share'
+    },
+    bank: {
+      title: 'Settlement bank account',
+      add: 'Add Sheba number',
+      change: 'Change Sheba number',
+      emptyHint:
+        'Add your academy Sheba number first. Settlement cannot be requested until it is verified.',
+      holder: 'Account holder',
+      holderRule: 'The Sheba must belong to the academy manager.',
+      holderLabel: 'Account holder name',
+      shebaLabel: 'Sheba number',
+      shebaHint: 'Starts with IR followed by 24 digits.',
+      dialogTitle: 'Settlement bank account',
+      dialogDescription:
+        'Enter the Sheba number and account holder name. A confirmation code will be sent to you.',
+      otpDescription: 'Enter the code we sent you to save the Sheba number.',
+      sendCode: 'Send confirmation code',
+      codeSent: 'Confirmation code sent',
+      submitted: 'Sheba number saved and awaiting verification',
+      status: {
+        PENDING: 'Awaiting verification',
+        APPROVED: 'Verified',
+        REJECTED: 'Rejected'
+      }
+    },
+    request: {
+      title: 'Request a settlement',
+      description:
+        'Enter the amount to be transferred to your verified account.',
+      amountLabel: 'Requested amount',
+      notesLabel: 'Note (optional)',
+      useMax: 'Full balance: {{amount}}',
+      submit: 'Submit settlement request',
+      submitted: 'Settlement request submitted',
+      manualHint:
+        'Transfers are made manually during banking hours; the bank reference appears here once it is done.'
+    },
+    blockers: {
+      NO_BANK_ACCOUNT: 'You have not added a Sheba number yet.',
+      BANK_ACCOUNT_PENDING: 'Your Sheba number is being reviewed.',
+      BANK_ACCOUNT_REJECTED:
+        'Your Sheba number was rejected; please correct it.',
+      NO_BALANCE: 'There is nothing available to settle.',
+      BELOW_MINIMUM: 'The minimum request amount is {{amount}}.',
+      REQUEST_IN_PROGRESS: 'A settlement request is already being processed.',
+      COOLDOWN_UNTIL: 'You can submit the next request from {{date}}.',
+      COOLDOWN: 'The waiting period before the next request has not passed yet.'
+    },
+    status: {
+      PENDING: 'Pending review',
+      APPROVED: 'Approved',
+      REJECTED: 'Rejected',
+      PAID: 'Transferred'
+    },
+    history: {
+      title: 'Settlement history',
+      empty: 'You have not requested a settlement yet.',
+      requestedAt: 'Requested at',
+      amount: 'Amount',
+      destination: 'Destination account',
+      bankRef: 'Bank reference'
+    }
+  },
   affiliates: {
     title: 'Bağlı Pazarlama',
     copy: 'Kopyala',

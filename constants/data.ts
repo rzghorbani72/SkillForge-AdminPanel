@@ -349,6 +349,16 @@ export const navItems: NavItem[] = [
     section: 'finance'
   },
   {
+    title: 'Settlement',
+    href: '/financial/academy/settlement',
+    icon: 'banknote' as IconType,
+    label: 'settlement',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'finance',
+    paymentGated: true
+  },
+  {
     title: 'Discounts',
     href: '/coupons',
     icon: 'percent' as IconType,

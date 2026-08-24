@@ -2,27 +2,7 @@
 // sibling module so we don't have to expose ApiClient.request publicly.
 // All calls use httpOnly cookie auth via credentials: 'include'.
 
-import { getBrowserApiBaseUrl } from './api-base-url';
-import { browserRequestHeaders } from './browser-request-headers';
-
-async function call<T>(path: string, init?: RequestInit): Promise<T> {
-  const method = init?.method ?? 'GET';
-  const res = await fetch(`${getBrowserApiBaseUrl()}${path}`, {
-    credentials: 'include',
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...browserRequestHeaders(method),
-      ...(init?.headers ?? {})
-    }
-  });
-  const text = await res.text();
-  const data = text ? JSON.parse(text) : null;
-  if (!res.ok) {
-    throw new Error(data?.message ?? `Request failed: ${res.status}`);
-  }
-  return data as T;
-}
+import { call } from './api-call';
 
 // ---------- Student groups (Mig 3) ----------------------------------------
 // Every id here is a cuid STRING. Typing them as `number` (as this file once
