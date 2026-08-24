@@ -7,10 +7,13 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { Building, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SettingsHubGroups } from '@/components/settings/settings-hub-groups';
+import { HUB_TONES } from '@/components/settings/tinted-nav-card';
 import { isPlatformAdmin } from '@/lib/roles';
+import { cn } from '@/lib/utils';
 import { useSettingsData } from './_hooks/use-settings-data';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -58,8 +61,16 @@ export default function SettingsOverviewPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="overflow-hidden border-s-4 border-s-sky-500/70">
           <CardHeader>
+            <span
+              className={cn(
+                'mb-2 flex h-11 w-11 items-center justify-center rounded-xl',
+                HUB_TONES.sky.tile
+              )}
+            >
+              <User className="h-5 w-5" aria-hidden />
+            </span>
             <CardTitle>{t('settings.accountSummary')}</CardTitle>
             <CardDescription>
               {t('settings.accountSummaryDescription')}
@@ -97,8 +108,16 @@ export default function SettingsOverviewPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="overflow-hidden border-s-4 border-s-teal-500/70">
           <CardHeader>
+            <span
+              className={cn(
+                'mb-2 flex h-11 w-11 items-center justify-center rounded-xl',
+                HUB_TONES.teal.tile
+              )}
+            >
+              <Building className="h-5 w-5" aria-hidden />
+            </span>
             <CardTitle>{t('settings.storeSnapshot')}</CardTitle>
             <CardDescription>
               {t('settings.storeSnapshotDescription')}

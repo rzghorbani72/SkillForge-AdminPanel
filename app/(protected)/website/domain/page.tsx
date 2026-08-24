@@ -24,7 +24,7 @@ export default function DomainDnsSettingsPage() {
   const exampleDomain = publicDomain?.trim() || 'maral.ir';
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-6 p-6">
+    <div className="space-y-6 p-6">
       <SettingsSectionHeader
         title={t('settings.domainDns.title')}
         subtitle={t('settings.domainDns.description')}

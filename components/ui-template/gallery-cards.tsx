@@ -56,6 +56,8 @@ interface TemplateSectionProps {
   description: string;
   presets: TemplatePreset[];
   activePresetId: string;
+  previewToken?: string | null;
+  storefrontBaseUrl?: string | null;
   onSelect: (preset: TemplatePreset) => void;
   onQuickApply?: (preset: TemplatePreset) => void;
   onDelete: (preset: TemplatePreset) => void;
@@ -66,6 +68,8 @@ export function TemplateSection({
   description,
   presets,
   activePresetId,
+  previewToken,
+  storefrontBaseUrl,
   onSelect,
   onQuickApply,
   onDelete
@@ -83,6 +87,8 @@ export function TemplateSection({
             preset={preset}
             isActive={preset.id === activePresetId}
             index={idx}
+            previewToken={previewToken}
+            storefrontBaseUrl={storefrontBaseUrl}
             onClick={() => onSelect(preset)}
             onQuickApply={onQuickApply ? () => onQuickApply(preset) : undefined}
             onDelete={preset.isOwned ? () => onDelete(preset) : undefined}
@@ -97,6 +103,8 @@ interface GalleryCardProps {
   preset: TemplatePreset;
   isActive: boolean;
   index: number;
+  previewToken?: string | null;
+  storefrontBaseUrl?: string | null;
   onClick: () => void;
   onQuickApply?: () => void;
   onDelete?: () => void;
@@ -106,6 +114,8 @@ function GalleryCard({
   preset,
   isActive,
   index,
+  previewToken,
+  storefrontBaseUrl: storefrontBaseUrlProp,
   onClick,
   onQuickApply,
   onDelete
@@ -123,7 +133,12 @@ function GalleryCard({
   // The cover is a real storefront render of the template, so no manual cover
   // upload is needed. The brand gradient shows as a placeholder until the iframe
   // finishes loading (and stays as the fallback if no storefront URL is set).
-  const storefrontBaseUrl = resolveStorefrontBaseUrl();
+  const storefrontBaseUrl = resolveStorefrontBaseUrl(storefrontBaseUrlProp);
+  // Dedicated templates are academy-scoped. Embedding /preview/blocks without
+  // a token returns an empty page (the iframe still fires onLoad, so the
+  // gradient fades to white). Wait for the session token before mounting.
+  const canRenderFrame =
+    Boolean(storefrontBaseUrl) && (!isDedicated || Boolean(previewToken));
 
   return (
     <div
@@ -190,10 +205,11 @@ function GalleryCard({
           </div>
         </div>
 
-        {storefrontBaseUrl && (
+        {canRenderFrame && (
           <SectionPreviewFrame
-            baseUrl={storefrontBaseUrl}
+            baseUrl={storefrontBaseUrl!}
             templateKey={preset.id}
+            token={isDedicated ? (previewToken ?? undefined) : undefined}
             onLoad={() => setFrameLoaded(true)}
             className={`h-full w-full transition-opacity duration-500 ${
               frameLoaded ? 'opacity-100' : 'opacity-0'

@@ -9,16 +9,12 @@ import {
   Layout,
   Search
 } from 'lucide-react';
-import Link from '@/components/ui/link';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 import { SettingsSectionHeader } from '@/components/settings/settings-section-header';
+import {
+  HUB_TONES,
+  TintedNavCard
+} from '@/components/settings/tinted-nav-card';
 import { useSettingsData } from '@/app/(protected)/settings/_hooks/use-settings-data';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { buildAcademySiteUrl } from '@/lib/website/academy-site-url';
@@ -33,37 +29,43 @@ export default function WebsiteHubPage() {
       href: '/website/appearance',
       icon: Layout,
       title: t('website.cards.appearanceTitle'),
-      description: t('website.cards.appearanceDescription')
+      description: t('website.cards.appearanceDescription'),
+      tone: HUB_TONES.violet
     },
     {
       href: '/website/pages',
       icon: FileText,
       title: t('website.cards.pagesTitle'),
-      description: t('website.cards.pagesDescription')
+      description: t('website.cards.pagesDescription'),
+      tone: HUB_TONES.sky
     },
     {
       href: '/website/seo',
       icon: Search,
       title: t('website.cards.seoTitle'),
-      description: t('website.cards.seoDescription')
+      description: t('website.cards.seoDescription'),
+      tone: HUB_TONES.amber
     },
     {
       href: '/website/trust',
       icon: BadgeCheck,
       title: t('website.cards.trustTitle'),
-      description: t('website.cards.trustDescription')
+      description: t('website.cards.trustDescription'),
+      tone: HUB_TONES.emerald
     },
     {
       href: '/website/domain',
       icon: Globe,
       title: t('website.cards.domainTitle'),
-      description: t('website.cards.domainDescription')
+      description: t('website.cards.domainDescription'),
+      tone: HUB_TONES.teal
     },
     {
       href: '/settings/academy',
       icon: Building,
       title: t('website.cards.brandingTitle'),
-      description: t('website.cards.brandingDescription')
+      description: t('website.cards.brandingDescription'),
+      tone: HUB_TONES.rose
     }
   ];
 
@@ -85,29 +87,18 @@ export default function WebsiteHubPage() {
         ) : null}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {cards.map((card) => {
-          const Icon = card.icon;
-          return (
-            <Card
-              key={card.href}
-              className="transition hover:border-primary/50 hover:shadow-sm"
-            >
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-                  <Icon className="h-5 w-5" />
-                  {card.title}
-                </CardTitle>
-                <CardDescription>{card.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button variant="link" asChild className="px-0 font-medium">
-                  <Link href={card.href}>{t('settings.openSettings')}</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {cards.map((card) => (
+          <TintedNavCard
+            key={card.href}
+            href={card.href}
+            icon={card.icon}
+            title={card.title}
+            description={card.description}
+            tone={card.tone}
+            actionLabel={t('settings.openSettings')}
+          />
+        ))}
       </div>
     </div>
   );

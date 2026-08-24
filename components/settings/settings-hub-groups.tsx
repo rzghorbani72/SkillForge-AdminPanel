@@ -1,17 +1,6 @@
 'use client';
 
-import Link from '@/components/ui/link';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  ArrowRight,
   Building,
   CreditCard,
   Layers,
@@ -20,7 +9,13 @@ import {
   User,
   Zap
 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ScopeBadge } from '@/components/settings/scope-badge';
+import {
+  HUB_TONES,
+  TintedNavCard,
+  type HubCardTone
+} from '@/components/settings/tinted-nav-card';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { SettingsScope } from '@/lib/settings-scope';
@@ -32,6 +27,7 @@ type HubItem = {
   href: string;
   icon: LucideIcon;
   scope: SettingsScope;
+  tone: HubCardTone;
 };
 
 type HubGroup = {
@@ -47,29 +43,17 @@ type SettingsHubGroupsProps = {
 
 function HubCard({ item }: { item: HubItem }) {
   const { t } = useTranslation();
-  const Icon = item.icon;
 
   return (
-    <Card className="transition hover:border-primary/50 hover:shadow-sm">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-            <Icon className="h-5 w-5" />
-            {item.title}
-          </CardTitle>
-          <ScopeBadge scope={item.scope} showTooltip={false} />
-        </div>
-        <CardDescription>{item.description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button variant="link" asChild className="px-0 font-medium">
-          <Link href={item.href} className="inline-flex items-center gap-2">
-            {t('settings.openSettings')}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </Button>
-      </CardContent>
-    </Card>
+    <TintedNavCard
+      href={item.href}
+      icon={item.icon}
+      title={item.title}
+      description={item.description}
+      tone={item.tone}
+      actionLabel={t('settings.openSettings')}
+      badge={<ScopeBadge scope={item.scope} showTooltip={false} />}
+    />
   );
 }
 
@@ -79,54 +63,40 @@ function PlatformPlanCard() {
     useAcademySubscription(true);
 
   return (
-    <Card className="border-violet-200/60 transition hover:border-violet-300 hover:shadow-sm dark:border-violet-800/60">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-            <Zap className="h-5 w-5 text-violet-600" />
-            {t('settings.platformPlanTitle')}
-          </CardTitle>
-          <ScopeBadge scope="platform" showTooltip={false} />
-        </div>
-        <CardDescription>
-          {t('settings.platformPlanDescription')}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {isLoading ? (
-          <Skeleton className="h-4 w-40" />
-        ) : (
-          <div className="space-y-1 text-sm text-muted-foreground">
-            <div className="flex justify-between">
-              <span>{t('settings.subscriptionPlan')}</span>
-              <span className="font-medium capitalize text-foreground">
-                {planName ?? t('settings.noPlan')}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>{t('settings.subscriptionStatus')}</span>
-              <span className="font-medium text-foreground">
-                {status ?? '—'}
-              </span>
-            </div>
-            {daysRemaining != null ? (
-              <div className="flex justify-between">
-                <span>{t('settings.daysRemaining')}</span>
-                <span className="font-medium text-foreground">
-                  {daysRemaining}
-                </span>
-              </div>
-            ) : null}
+    <TintedNavCard
+      href="/plans"
+      icon={Zap}
+      title={t('settings.platformPlanTitle')}
+      description={t('settings.platformPlanDescription')}
+      tone={HUB_TONES.violet}
+      actionLabel={t('settings.managePlatformPlan')}
+      badge={<ScopeBadge scope="platform" showTooltip={false} />}
+    >
+      {isLoading ? (
+        <Skeleton className="h-4 w-40" />
+      ) : (
+        <div className="space-y-1 text-sm text-muted-foreground">
+          <div className="flex justify-between">
+            <span>{t('settings.subscriptionPlan')}</span>
+            <span className="font-medium capitalize text-foreground">
+              {planName ?? t('settings.noPlan')}
+            </span>
           </div>
-        )}
-        <Button variant="link" asChild className="px-0 font-medium">
-          <Link href="/plans" className="inline-flex items-center gap-2">
-            {t('settings.managePlatformPlan')}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </Button>
-      </CardContent>
-    </Card>
+          <div className="flex justify-between">
+            <span>{t('settings.subscriptionStatus')}</span>
+            <span className="font-medium text-foreground">{status ?? '—'}</span>
+          </div>
+          {daysRemaining != null ? (
+            <div className="flex justify-between">
+              <span>{t('settings.daysRemaining')}</span>
+              <span className="font-medium text-foreground">
+                {daysRemaining}
+              </span>
+            </div>
+          ) : null}
+        </div>
+      )}
+    </TintedNavCard>
   );
 }
 
@@ -143,14 +113,16 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
         description: t('settings.profileSettingsDescription'),
         href: '/settings/profile',
         icon: User,
-        scope: 'personal'
+        scope: 'personal',
+        tone: HUB_TONES.sky
       },
       {
         title: t('settings.security'),
         description: t('settings.securityDescription'),
         href: '/settings/security',
         icon: Shield,
-        scope: 'personal'
+        scope: 'personal',
+        tone: HUB_TONES.amber
       }
     ]
   };
@@ -166,14 +138,16 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             description: t('settings.platformPricingDescription'),
             href: '/platform/pricing',
             icon: Building,
-            scope: 'platform'
+            scope: 'platform',
+            tone: HUB_TONES.violet
           },
           {
             title: t('settings.paymentGatewayTitle'),
             description: t('settings.paymentGatewayDescription'),
             href: '/settings/payment-gateway',
             icon: CreditCard,
-            scope: 'platform'
+            scope: 'platform',
+            tone: HUB_TONES.teal
           }
         ]
       : [
@@ -182,7 +156,8 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             description: t('settings.storeSettingsPlatformDescription'),
             href: '/settings/academy',
             icon: Building,
-            scope: 'platform'
+            scope: 'platform',
+            tone: HUB_TONES.rose
           }
         ]
   };
@@ -194,21 +169,21 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
     items: isPlatformAdmin
       ? []
       : [
-          // Appearance, pages, SEO, trust badge and domain all moved into the
-          // Website area, so the public site is one destination, not five cards.
           {
             title: t('website.title'),
             description: t('website.description'),
             href: '/website',
             icon: Layout,
-            scope: 'academy'
+            scope: 'academy',
+            tone: HUB_TONES.indigo
           },
           {
             title: t('settings.studentPlansTitle'),
             description: t('settings.studentPlansDescription'),
             href: '/plans?tab=academy',
             icon: Layers,
-            scope: 'academy'
+            scope: 'academy',
+            tone: HUB_TONES.emerald
           }
         ]
   };

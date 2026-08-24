@@ -42,10 +42,6 @@ import {
   type SaveMode
 } from '@/components/ui-template/template-customization-sidebar';
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
-import {
-  GenerateTemplateDialog,
-  type AcademyField
-} from '@/components/ui-template/generate-template-dialog';
 import { TemplateConfirmDialog } from '@/components/ui-template/template-confirm-dialog';
 import { EditorPreview } from '@/components/ui-template/editor-preview';
 import {
@@ -102,8 +98,6 @@ export default function UITemplateSettingsPage() {
 
   // Customizer state
   const [showCustomizer, setShowCustomizer] = useState(false);
-  const [showGenerate, setShowGenerate] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [viewport, setViewport] = useState<ViewportMode>('desktop');
   const [primaryColor, setPrimaryColor] = useState('#3b82f6');
   const [fontFamily, setFontFamily] = useState<FontFamily>('vazirmatn');
@@ -132,6 +126,16 @@ export default function UITemplateSettingsPage() {
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [previewToken, setPreviewToken] = useState<string | null>(null);
   const [storefrontBase, setStorefrontBase] = useState<string | null>(null);
+  // Gallery thumbnails need their own session: dedicated templates are
+  // academy-scoped and /preview/blocks cannot resolve them without a token.
+  // Keep this separate from the editor session so closing the editor does
+  // not blank the cards.
+  const [galleryPreviewToken, setGalleryPreviewToken] = useState<string | null>(
+    null
+  );
+  const [galleryStorefrontUrl, setGalleryStorefrontUrl] = useState<
+    string | null
+  >(null);
   const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
   // Preview data source: false = placeholder/sample design, true = the academy's
   // real backend records (courses, stats) so the manager sees the live site view.
@@ -337,15 +341,22 @@ export default function UITemplateSettingsPage() {
     (async () => {
       try {
         setIsLoading(true);
-        const [templateData, presetsData] = await Promise.all([
+        const [templateData, presetsData, previewSession] = await Promise.all([
           apiClient.getCurrentUITemplate().catch(() => null),
-          apiClient.getAvailableTemplatePresets().catch(() => [])
+          apiClient.getAvailableTemplatePresets().catch(() => []),
+          apiClient.getTemplatePreviewSession().catch(() => null)
         ]);
         setPresets(presetsData as TemplatePreset[]);
         setActivePresetId(
           ((templateData as Record<string, unknown>)
             ?.template_preset as string) ?? ''
         );
+        if (previewSession?.token) {
+          setGalleryPreviewToken(previewSession.token);
+          setGalleryStorefrontUrl(
+            resolveStorefrontBaseUrl(previewSession.storefrontBaseUrl) ?? null
+          );
+        }
       } catch (error) {
         ErrorHandler.handleApiError(error);
       } finally {
@@ -482,47 +493,6 @@ export default function UITemplateSettingsPage() {
       ErrorHandler.handleApiError(error);
     } finally {
       setIsPreviewLoading(false);
-    }
-  };
-
-  // Field → recommended preset, mirrors Backend FIELD_CONTENT.recommendedPreset.
-  const FIELD_PRESET: Record<AcademyField, string> = {
-    language: 'zabaneh',
-    exam: 'nokhbeh',
-    coding: 'keyhan',
-    arts: 'dastan',
-    business: 'tavan',
-    general: 'bikaran'
-  };
-
-  const handleGenerate = async (field: AcademyField) => {
-    try {
-      setIsGenerating(true);
-      const result = await apiClient.generateTemplate({ field });
-      // Open the editor on the just-generated preset. `template_preset` on the
-      // response is the still-published one, so resolve from the field instead.
-      const presetId = FIELD_PRESET[field];
-      const preset = presets.find((p) => p.id === presetId);
-      const seededBlocks = (result?.blocks as UIBlockConfig[]) ?? undefined;
-
-      // Mint a preview token so the editor renders the seeded DRAFT (the
-      // personalized site), not the bare catalog preset.
-      const tokenRes = await apiClient
-        .createTemplatePreviewToken()
-        .catch(() => null);
-
-      setShowGenerate(false);
-      if (preset) {
-        await handleCardClick(preset, {
-          seededBlocks,
-          draftPreviewSession: tokenRes
-        });
-        ErrorHandler.showSuccess('سایت شما ساخته شد');
-      }
-    } catch (error) {
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setIsGenerating(false);
     }
   };
 
@@ -1491,37 +1461,6 @@ export default function UITemplateSettingsPage() {
         </div>
       </div>
 
-      {/* Lead action — generate a starter site from the academy's field */}
-      <button
-        type="button"
-        onClick={() => setShowGenerate(true)}
-        className="mb-6 flex w-full items-center gap-4 rounded-2xl border border-primary/20 bg-gradient-to-l from-primary/10 to-primary/5 px-5 py-4 text-right transition-colors hover:from-primary/15"
-      >
-        <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-          <Wand2 className="h-6 w-6" />
-        </span>
-        <div className="flex-1">
-          <p className="text-base font-bold text-foreground">
-            ساخت خودکار سایت
-          </p>
-          <p className="text-sm text-muted-foreground">
-            بگویید آکادمی شما چه آموزش می‌دهد تا یک سایت آماده با متن‌های مرتبط
-            بسازیم
-          </p>
-        </div>
-        <span className="hidden flex-shrink-0 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground sm:block">
-          شروع
-        </span>
-      </button>
-
-      <GenerateTemplateDialog
-        open={showGenerate}
-        academyName={academyName || 'آکادمی'}
-        isGenerating={isGenerating}
-        onGenerate={handleGenerate}
-        onClose={() => setShowGenerate(false)}
-      />
-
       {/* Currently live callout */}
       {activePreset && (
         <div className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
@@ -1582,6 +1521,8 @@ export default function UITemplateSettingsPage() {
               description="کاتالوگ آماده پلتفرم؛ برای شروع یک قالب را انتخاب و سفارشی کنید."
               presets={filteredPlatform}
               activePresetId={activePresetId}
+              previewToken={galleryPreviewToken}
+              storefrontBaseUrl={galleryStorefrontUrl}
               onSelect={handleCardClick}
               onQuickApply={handleQuickApply}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
@@ -1593,6 +1534,8 @@ export default function UITemplateSettingsPage() {
               description="قالب‌های اختصاصی."
               presets={academyPresets}
               activePresetId={activePresetId}
+              previewToken={galleryPreviewToken}
+              storefrontBaseUrl={galleryStorefrontUrl}
               onSelect={handleCardClick}
               onQuickApply={handleQuickApply}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
