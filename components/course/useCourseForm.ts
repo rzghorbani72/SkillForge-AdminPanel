@@ -18,6 +18,7 @@ import {
   prepareCurriculumForSave,
   secondsToDuration,
   validateForPublish,
+  type CourseType,
   type LessonDraft,
   type SeasonDraft
 } from './course-drafts';
@@ -40,6 +41,8 @@ export { durationToSeconds, secondsToDuration, validateForPublish };
  * of it — details, cover, pricing and curriculum — in a single request.
  */
 export function useCourseForm(courseId: string) {
+  // A live course promises a timetable, not lessons: the publish rules differ.
+  const [courseType, setCourseType] = useState<CourseType>('OFFLINE');
   const router = useRouter();
   const { t } = useTranslation();
   const { selectedAcademy } = useStore();
@@ -167,6 +170,10 @@ export function useCourseForm(courseId: string) {
               (l.allow_download_tutoring ?? false) === courseAllowsDownloads
           );
 
+        setCourseType(
+          ((course as { course_type?: CourseType }).course_type ??
+            'OFFLINE') as CourseType
+        );
         const cover = (course as any).Image ?? course.cover;
         const categoryId =
           (course as any).Category?.id ?? course.category?.id ?? '';
@@ -272,7 +279,7 @@ export function useCourseForm(courseId: string) {
       savingRef.current = true;
 
       if (data.published) {
-        const problem = validateForPublish(seasons, lessons);
+        const problem = validateForPublish(seasons, lessons, courseType);
         if (problem) {
           savingRef.current = false;
           if (!silent) toast.error(t(problem));
@@ -377,6 +384,7 @@ export function useCourseForm(courseId: string) {
     [
       selectedAcademy,
       courseId,
+      courseType,
       seasons,
       lessons,
       deletedSeasonIds,
@@ -504,6 +512,7 @@ export function useCourseForm(courseId: string) {
 
   return {
     form,
+    courseType,
     isLoading,
     isSaving,
     saveStatus,

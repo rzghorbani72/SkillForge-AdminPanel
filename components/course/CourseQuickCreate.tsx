@@ -6,8 +6,16 @@ import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  PlayCircle,
+  Radio
+} from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { cn } from '@/lib/utils';
+import type { CourseType } from '@/components/course/course-drafts';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -37,6 +45,26 @@ const quickCreateSchema = courseFormFields.pick({
 
 type QuickCreateData = z.infer<typeof quickCreateSchema>;
 
+const COURSE_TYPES: {
+  value: CourseType;
+  titleKey: string;
+  hintKey: string;
+  icon: typeof Radio;
+}[] = [
+  {
+    value: 'OFFLINE',
+    titleKey: 'courses.typeOfflineTitle',
+    hintKey: 'courses.typeOfflineHint',
+    icon: PlayCircle
+  },
+  {
+    value: 'LIVE',
+    titleKey: 'courses.typeLiveTitle',
+    hintKey: 'courses.typeLiveHint',
+    icon: Radio
+  }
+];
+
 function extractId(resp: unknown): string | undefined {
   const r = resp as { data?: { data?: { id?: string }; id?: string } };
   return r?.data?.data?.id ?? r?.data?.id;
@@ -53,6 +81,7 @@ export default function CourseQuickCreate() {
   const { selectedAcademy } = useStore();
   const [isSaving, setIsSaving] = useState(false);
   const [access, setAccess] = useState<AssignAccessSelection | null>(null);
+  const [courseType, setCourseType] = useState<CourseType>('OFFLINE');
 
   const form = useForm<QuickCreateData>({
     resolver: zodResolver(quickCreateSchema),
@@ -74,7 +103,8 @@ export default function CourseQuickCreate() {
         description: data.description.trim(),
         primary_price: 0,
         secondary_price: 0,
-        published: false
+        published: false,
+        course_type: courseType
       });
       const id = extractId(resp);
       if (!id) throw new Error('Course creation returned no id');
@@ -84,7 +114,10 @@ export default function CourseQuickCreate() {
       await applyAccessSelection(id, access);
 
       toast.success(t('courses.createdDraftToast'));
-      router.push(`/courses/${id}/edit`);
+      // A live course is built on its timetable, not on a lesson tree.
+      router.push(
+        courseType === 'LIVE' ? `/courses/${id}/live` : `/courses/${id}/edit`
+      );
     } catch (err) {
       ErrorHandler.handleApiError(err);
       setIsSaving(false);
@@ -133,6 +166,38 @@ export default function CourseQuickCreate() {
               className="space-y-6"
               noValidate
             >
+              <div className="space-y-2">
+                <FormLabel>{t('courses.courseTypeLabel')} *</FormLabel>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {COURSE_TYPES.map(
+                    ({ value, titleKey, hintKey, icon: Icon }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setCourseType(value)}
+                        aria-pressed={courseType === value}
+                        className={cn(
+                          'flex items-start gap-3 rounded-lg border p-4 text-start transition-colors',
+                          courseType === value
+                            ? 'border-primary bg-primary/5'
+                            : 'border-input hover:bg-accent'
+                        )}
+                      >
+                        <Icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                        <span>
+                          <span className="block text-sm font-medium">
+                            {t(titleKey)}
+                          </span>
+                          <span className="mt-1 block text-xs text-muted-foreground">
+                            {t(hintKey)}
+                          </span>
+                        </span>
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+
               <FormField
                 control={form.control}
                 name="title"

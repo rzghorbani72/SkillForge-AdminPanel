@@ -7,6 +7,8 @@ import { toEnglishDigits } from '@/lib/phone-utils';
 
 // ─── Draft types ──────────────────────────────────────────────────────────────
 
+export type CourseType = 'OFFLINE' | 'LIVE';
+
 export type LessonType =
   | 'VIDEO'
   | 'AUDIO'
@@ -131,8 +133,12 @@ export function prepareCurriculumForSave(
 
 export function validateForPublish(
   seasons: SeasonDraft[],
-  lessons: LessonDraft[]
+  lessons: LessonDraft[],
+  courseType: CourseType = 'OFFLINE'
 ): string | null {
+  // A live course has no uploaded lessons at all — it promises a timetable
+  // instead, and the backend checks that promise on publish.
+  if (courseType === 'LIVE') return null;
   // Season titles are not checked: an untitled season is saved under its
   // number rather than dropped, so it can never block publishing.
   if (lessons.some((l) => !l.title.trim())) {

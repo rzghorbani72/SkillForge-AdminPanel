@@ -418,7 +418,10 @@ export interface CreateTutoringGroupPayload {
   age_min?: number;
   age_max?: number;
   visibility?: TutoringGroupVisibility;
-  term_weeks: number;
+  /** Optional once session_count is given: the teacher counts meetings. */
+  term_weeks?: number;
+  session_count?: number;
+  starts_on_requested?: string;
   join_deadline?: string;
   meeting_url?: string;
   slots: TutoringGroupSlot[];
@@ -427,3 +430,22 @@ export interface CreateTutoringGroupPayload {
 export type UpdateTutoringGroupPayload = Partial<
   Omit<CreateTutoringGroupPayload, 'offer_id' | 'slots' | 'timezone'>
 >;
+
+export interface CourseTopic {
+  id: string;
+  title: string;
+  description: string | null;
+  order: number;
+}
+
+export interface ClassSession {
+  id: string;
+  starts_at: string;
+  ends_at: string | null;
+  timezone: string;
+  status: string;
+  title: string | null;
+  notes: string | null;
+  topic_id: string | null;
+  Topic: { id: string; title: string } | null;
+}
