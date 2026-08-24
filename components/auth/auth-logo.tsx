@@ -17,14 +17,13 @@ export function AuthLogo({ className }: { className?: string }) {
         aria-hidden
         className="h-[38px] w-[38px]"
       />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/logo-type.svg"
-        alt=""
-        width={52}
-        height={16}
+      <span
         aria-hidden
-        className="h-4 w-[52px]"
+        className="inline-block h-7 w-[69px] bg-foreground"
+        style={{
+          WebkitMask: 'url(/logo-type.png) center / contain no-repeat',
+          mask: 'url(/logo-type.png) center / contain no-repeat'
+        }}
       />
     </div>
   );

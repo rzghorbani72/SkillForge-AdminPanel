@@ -80,9 +80,15 @@ export default function Sidebar({ className }: SidebarProps) {
         />
         {!isMinimized && (
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold leading-tight">
-              {t('auth.brandName')}
-            </p>
+            <span
+              aria-hidden
+              className="mb-0.5 block h-5 w-[49px] bg-foreground"
+              style={{
+                WebkitMask: 'url(/logo-type.png) center / contain no-repeat',
+                mask: 'url(/logo-type.png) center / contain no-repeat'
+              }}
+            />
+            <span className="sr-only">{t('auth.brandName')}</span>
             <p className="truncate text-xs text-muted-foreground">
               {isPlatformMode
                 ? t('sidebar.managementConsole')
