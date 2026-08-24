@@ -44,7 +44,6 @@ export const ar = {
     charactersRemaining: 'بقي {{count}} حرف'
   },
   toasts: {
-    otpDebugCode: 'الرمز: {{code}}',
     imageNoneSelected: 'لم يتم اختيار صورة',
     imageUploaded: 'تم رفع الصورة بنجاح',
     imageBadResponse: 'تم رفع الصورة لكن الخادم لم يُرجع معرفًا',

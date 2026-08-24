@@ -28,7 +28,7 @@ export function useMemberAcademies(phoneE164: string) {
     try {
       const response = await apiClient.sendAcademyLookupOtp(phoneE164);
       setStep('otp');
-      notifyOtpSent(response, t('success.otpSent'), 'academy-lookup-otp');
+      notifyOtpSent(t('success.otpSent'), 'academy-lookup-otp');
     } catch (err: unknown) {
       setError(apiErrorMessage(err, t('error.authenticationFailed')));
     } finally {

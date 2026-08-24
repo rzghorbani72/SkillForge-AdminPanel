@@ -135,7 +135,6 @@ export default function RegisterPage() {
       setStep('verify');
       setOtpCode('');
       notifyOtpSent(
-        response,
         response?.data?.message ?? t('auth.sendVerificationCode'),
         'register-otp-sent'
       );
@@ -218,7 +217,7 @@ export default function RegisterPage() {
         phone,
         OtpType.REGISTER_PHONE_VERIFICATION
       );
-      notifyOtpSent(response, t('auth.resendCode'), 'register-otp-resent');
+      notifyOtpSent(t('auth.resendCode'), 'register-otp-resent');
     } catch (err: unknown) {
       toast.error(apiErrorMessage(err, t('common.error')), {
         toastId: 'register-otp-error'

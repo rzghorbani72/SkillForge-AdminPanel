@@ -94,7 +94,6 @@ export function useAdminForgetPassword() {
         );
         setMessage(t('forgotPassword.otpSentToEmail'));
         notifyOtpSent(
-          response,
           t('forgotPassword.otpSentToEmail'),
           'admin-forget-password-otp-sent'
         );
@@ -105,7 +104,6 @@ export function useAdminForgetPassword() {
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
         notifyOtpSent(
-          response,
           t('forgotPassword.otpSentToPhone'),
           'admin-forget-password-otp-sent'
         );

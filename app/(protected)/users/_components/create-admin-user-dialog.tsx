@@ -28,7 +28,6 @@ import { isPlatformAdmin, isPlatformOwner } from '@/lib/roles';
 import { Loader2, Mail, Phone } from 'lucide-react';
 import { OtpType } from '@/constants/data';
 import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'react-toastify';
 
 type PlatformStaffRole = 'ADMIN' | 'FINANCE' | 'SUPPORT';
 
@@ -88,24 +87,12 @@ export function CreateAdminUserDialog({
     try {
       setIsSendingOtp(true);
       const fullPhone = `${formData.countryCode}${formData.phone.replace(/^\+/, '')}`;
-      const response = await apiClient.sendPhoneOtp(
+      await apiClient.sendPhoneOtp(
         fullPhone,
         OtpType.REGISTER_PHONE_VERIFICATION
       );
       setOtpSent((prev) => ({ ...prev, phone: true }));
-      // TODO: Remove when real SMS/email provider is integrated
-      if (response?.data?.otp) {
-        // Use toast directly for multiline support
-        toast.success(
-          `${t('createAdminUser.phoneOtpSent')}\n\n🔐 Code: ${response.data.otp}`,
-          {
-            autoClose: 8000,
-            style: { whiteSpace: 'pre-wrap' }
-          }
-        );
-      } else {
-        ErrorHandler.showSuccess(t('createAdminUser.phoneOtpSent'));
-      }
+      ErrorHandler.showSuccess(t('createAdminUser.phoneOtpSent'));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -121,24 +108,12 @@ export function CreateAdminUserDialog({
 
     try {
       setIsSendingOtp(true);
-      const response = await apiClient.sendEmailOtp(
+      await apiClient.sendEmailOtp(
         formData.email,
         OtpType.REGISTER_EMAIL_VERIFICATION
       );
       setOtpSent((prev) => ({ ...prev, email: true }));
-      // TODO: Remove when real SMS/email provider is integrated
-      if (response?.data?.otp) {
-        // Use toast directly for multiline support
-        toast.success(
-          `${t('createAdminUser.emailOtpSent')}\n\n🔐 Code: ${response.data.otp}`,
-          {
-            autoClose: 8000,
-            style: { whiteSpace: 'pre-wrap' }
-          }
-        );
-      } else {
-        ErrorHandler.showSuccess(t('createAdminUser.emailOtpSent'));
-      }
+      ErrorHandler.showSuccess(t('createAdminUser.emailOtpSent'));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {

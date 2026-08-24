@@ -61,7 +61,6 @@ export const fa = {
     charactersRemaining: '{{count}} کاراکتر باقی مانده'
   },
   toasts: {
-    otpDebugCode: 'کد: {{code}}',
     imageNoneSelected: 'تصویری انتخاب نشده است',
     imageUploaded: 'تصویر با موفقیت بارگذاری شد',
     imageBadResponse: 'تصویر بارگذاری شد اما سرور شناسه‌ای برنگرداند',

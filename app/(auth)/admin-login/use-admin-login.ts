@@ -121,11 +121,7 @@ export function useAdminLogin() {
         formData.fullPhoneNumber || formData.phone
       );
       setOtpSent(true);
-      notifyOtpSent(
-        response as { data?: { otp?: string } },
-        t('success.otpSent'),
-        'admin-otp-sent'
-      );
+      notifyOtpSent(t('success.otpSent'), 'admin-otp-sent');
     } catch (error: unknown) {
       ErrorHandler.handleValidationErrors(error);
     } finally {

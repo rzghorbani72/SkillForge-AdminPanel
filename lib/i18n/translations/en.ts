@@ -62,7 +62,6 @@ export const en = {
     charactersRemaining: '{{count}} characters remaining'
   },
   toasts: {
-    otpDebugCode: 'Code: {{code}}',
     imageNoneSelected: 'No image selected',
     imageUploaded: 'Image uploaded successfully',
     imageBadResponse: 'The image was uploaded but the server sent no image id',

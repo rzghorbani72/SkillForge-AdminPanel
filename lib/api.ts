@@ -712,10 +712,13 @@ class ApiClient {
    * private, so only the person holding the phone may see it.
    */
   async sendAcademyLookupOtp(phone_number: string) {
-    return this.request<{ otp?: string }>('/auth/academies/lookup/send-otp', {
-      method: 'POST',
-      body: JSON.stringify({ phone_number })
-    });
+    return this.request<{ message: string }>(
+      '/auth/academies/lookup/send-otp',
+      {
+        method: 'POST',
+        body: JSON.stringify({ phone_number })
+      }
+    );
   }
 
   /** The academies this phone belongs to, once its one-time code checks out. */

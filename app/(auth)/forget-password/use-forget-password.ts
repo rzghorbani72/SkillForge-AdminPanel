@@ -120,7 +120,6 @@ export function useForgetPassword() {
         );
         setMessage(t('forgotPassword.otpSentToEmail'));
         notifyOtpSent(
-          response,
           t('forgotPassword.otpSentToEmail'),
           'forget-password-otp-sent'
         );
@@ -132,7 +131,6 @@ export function useForgetPassword() {
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
         notifyOtpSent(
-          response,
           t('forgotPassword.otpSentToPhone'),
           'forget-password-otp-sent'
         );

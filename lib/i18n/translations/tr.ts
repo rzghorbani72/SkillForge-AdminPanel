@@ -45,7 +45,6 @@ export const tr = {
     charactersRemaining: '{{count}} karakter kaldı'
   },
   toasts: {
-    otpDebugCode: 'Kod: {{code}}',
     imageNoneSelected: 'Görsel seçilmedi',
     imageUploaded: 'Görsel başarıyla yüklendi',
     imageBadResponse: 'Görsel yüklendi ancak sunucu bir kimlik döndürmedi',

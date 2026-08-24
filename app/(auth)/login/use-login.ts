@@ -42,7 +42,6 @@ type LoginResponse = {
   /** Real E.164 — what the OTP endpoints must be called with. */
   full_phone?: string;
   /** Debug code, only while no real SMS provider is delivering it. */
-  otp?: string;
   availableAcademies?: Academy[];
   available_academies?: Academy[];
   requires_academy_selection?: boolean;
@@ -161,7 +160,7 @@ export function useLogin() {
       setOtpFullPhone(phoneE164);
       setOtpMode('login');
       setOtpRequired(true);
-      notifyOtpSent(response, t('success.otpSent'), 'login-otp-sent');
+      notifyOtpSent(t('success.otpSent'), 'login-otp-sent');
     } catch (error: unknown) {
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(
@@ -277,11 +276,7 @@ export function useLogin() {
         setOtpRequired(true);
         // Login already sent the code server-side, so no OTP request shows up
         // in the network tab — surface it the same way every other OTP screen does.
-        notifyOtpSent(
-          { data: { otp: response.otp } },
-          t('success.otpSent'),
-          'login-otp-gate'
-        );
+        notifyOtpSent(t('success.otpSent'), 'login-otp-gate');
         return;
       }
 
@@ -453,7 +448,7 @@ export function useLogin() {
           ? OtpType.REGISTER_PHONE_VERIFICATION
           : OtpType.LOGIN_BY_PHONE
       );
-      notifyOtpSent(response, t('success.otpSent'), 'otp-resent');
+      notifyOtpSent(t('success.otpSent'), 'otp-resent');
     } catch (error: unknown) {
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(
