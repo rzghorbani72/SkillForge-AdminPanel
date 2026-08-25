@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
-/** Matches OTP_COOLDOWN_SECONDS in Backend/src/otp/otp.service.ts. */
-const DURATION = 60;
+const DURATION = 120;
 
 export function useOtpTimer() {
   const [seconds, setSeconds] = useState(DURATION);
+  const formatNumber = useNumberFormat();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const clear = () => {
@@ -29,8 +30,10 @@ export function useOtpTimer() {
 
   useEffect(() => () => clear(), []);
 
-  const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
-  const ss = String(seconds % 60).padStart(2, '0');
+  const pad = (value: number) =>
+    formatNumber(value, { minimumIntegerDigits: 2, useGrouping: false });
+  const mm = pad(Math.floor(seconds / 60));
+  const ss = pad(seconds % 60);
 
   return {
     formatted: `${mm}:${ss}`,

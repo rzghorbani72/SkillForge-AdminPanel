@@ -109,7 +109,7 @@ export function PhoneOtpScreen({
               </button>
             ) : (
               <span className="tabular-nums text-primary">
-                {timer.formatted}
+                <bdi>{timer.formatted}</bdi>
               </span>
             )}
           </div>
