@@ -16,7 +16,7 @@ export default function AcademyFinancialPage() {
 
   if (!currentAcademy) {
     return (
-      <div className="flex flex-1 items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
         <p className="text-muted-foreground">
           {t('financial.store.overview.noStore')}
         </p>
@@ -25,7 +25,7 @@ export default function AcademyFinancialPage() {
   }
 
   return (
-    <div className="w-full space-y-8 p-6">
+    <div className="w-full space-y-8 p-4 sm:p-6">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b pb-5">
         <div className="space-y-1">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">

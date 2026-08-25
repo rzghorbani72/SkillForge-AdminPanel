@@ -380,7 +380,7 @@ export default function BundlesPage() {
   const savings = originalTotal - bundlePrice;
 
   return (
-    <div className="flex-1 space-y-8 p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-8 p-4 sm:p-6" dir={'rtl'}>
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>

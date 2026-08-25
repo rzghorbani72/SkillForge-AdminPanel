@@ -136,7 +136,7 @@ export default function ScheduleBuilder({
               onChange={(e) => setJoinDeadline(e.target.value)}
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="min-students">
                 {t('courses.live.minStudents')}

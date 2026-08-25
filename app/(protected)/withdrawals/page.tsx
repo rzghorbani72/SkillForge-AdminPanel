@@ -129,7 +129,7 @@ export default function WithdrawalsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
           {t('withdrawals.title')}
@@ -140,11 +140,11 @@ export default function WithdrawalsPage() {
       </div>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>{t('withdrawals.requests')}</CardTitle>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger
-              className="w-36"
+              className="w-full sm:w-36"
               aria-label={t('withdrawals.statusFilter')}
             >
               <SelectValue />

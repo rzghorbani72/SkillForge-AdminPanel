@@ -134,26 +134,30 @@ export default function SeasonViewPage() {
       </div>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="outline"
             size="sm"
+            className="self-start"
             onClick={() => router.push(`/courses/${courseId}/seasons`)}
           >
             <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
             {t('courses.backToSeasons')}
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold">{season.title}</h1>
+          <div className="min-w-0">
+            <h1 className="truncate text-2xl font-bold sm:text-3xl">
+              {season.title}
+            </h1>
             <p className="text-muted-foreground">
               {t('courses.seasonDetailsSubtitle', { title: course.title })}
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <Button
             variant="outline"
+            className="w-full sm:w-auto"
             onClick={() =>
               router.push(`/courses/${courseId}/seasons/${seasonId}/lessons`)
             }
@@ -162,6 +166,7 @@ export default function SeasonViewPage() {
             {t('courses.manageLessons')}
           </Button>
           <Button
+            className="w-full sm:w-auto"
             onClick={() =>
               router.push(`/courses/${courseId}/seasons/${seasonId}/edit`)
             }

@@ -31,7 +31,7 @@ export function FinancialFilterBar({
 
   return (
     <div className="flex flex-wrap gap-4">
-      <div className="min-w-[120px] space-y-1.5">
+      <div className="w-full min-w-0 space-y-1.5 sm:w-auto sm:min-w-[120px]">
         <Label className="text-xs text-muted-foreground">
           {t('financial.store.overview.year')}
         </Label>
@@ -52,7 +52,7 @@ export function FinancialFilterBar({
         </Select>
       </div>
 
-      <div className="min-w-[160px] space-y-1.5">
+      <div className="w-full min-w-0 space-y-1.5 sm:w-auto sm:min-w-[160px]">
         <Label className="text-xs text-muted-foreground">
           {t('financial.store.overview.month')}
         </Label>

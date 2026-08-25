@@ -184,7 +184,7 @@ export function TemplateSelectModal({
         </div>
 
         {/* ── Template grid ── */}
-        <div className="flex-1 space-y-8 overflow-y-auto p-6">
+        <div className="flex-1 space-y-8 overflow-y-auto p-4 sm:p-6">
           {/* Featured 2-col */}
           {featuredPresets.length > 0 && (
             <section>

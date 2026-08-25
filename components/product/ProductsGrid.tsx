@@ -81,7 +81,7 @@ const ProductsGrid = ({
   if (products.length === 0) {
     return (
       <div
-        className="fade-in-up flex flex-1 items-center justify-center p-6"
+        className="fade-in-up flex flex-1 items-center justify-center p-4 sm:p-6"
         style={{ animationDelay: '0.2s' }}
       >
         <div className="text-center">

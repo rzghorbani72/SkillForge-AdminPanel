@@ -32,7 +32,7 @@ export default function EditProductPage() {
 
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
@@ -47,7 +47,7 @@ export default function EditProductPage() {
 
   if (!product) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-muted-foreground">
@@ -67,7 +67,7 @@ export default function EditProductPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <EditProductHeader product={product} onBack={handleBack} />
 
       <CreateProductForm

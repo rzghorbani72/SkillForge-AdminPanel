@@ -23,7 +23,7 @@ export default function WebsiteSeoPage() {
   const siteUrl = buildAcademySiteUrl(academy) ?? '';
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <SettingsSectionHeader
         title={t('website.seo.title')}
         subtitle={t('website.seo.description')}

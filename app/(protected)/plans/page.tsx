@@ -711,7 +711,7 @@ export default function PlansPage() {
 
   if (isLoading) {
     return (
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-4 sm:p-6">
         <div className="grid gap-5 sm:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="h-96 animate-pulse rounded-2xl bg-muted" />
@@ -723,7 +723,7 @@ export default function PlansPage() {
 
   if (isTeacher) {
     return (
-      <div className="fade-in-up flex-1 space-y-8 p-6">
+      <div className="fade-in-up flex-1 space-y-8 p-4 sm:p-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
@@ -825,7 +825,7 @@ export default function PlansPage() {
 
   if (isPlatformAdminUser) {
     return (
-      <div className="fade-in-up flex-1 space-y-6 p-6" dir="rtl">
+      <div className="fade-in-up flex-1 space-y-6 p-4 sm:p-6" dir="rtl">
         <div>
           <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
             {t('plans.badge')}
@@ -906,7 +906,7 @@ export default function PlansPage() {
 
   // Manager / Academy Admin View
   return (
-    <div className="fade-in-up flex-1 space-y-6 p-6" dir="rtl">
+    <div className="fade-in-up flex-1 space-y-6 p-4 sm:p-6" dir="rtl">
       <div>
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
           {t('plans.badge')}
@@ -1767,9 +1767,9 @@ function PlatformPlansAdmin({
 }) {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <BillingPeriodToggle period={period} setPeriod={setPeriod} t={t} />
-        <Button onClick={onOpenCreate} size="sm">
+        <Button onClick={onOpenCreate} size="sm" className="w-full sm:w-auto">
           <Plus className="me-2 h-4 w-4" />
           {t('plans.addPlan')}
         </Button>

@@ -88,7 +88,7 @@ export default function WebhooksPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-48 w-full" />
       </div>
@@ -96,7 +96,7 @@ export default function WebhooksPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="flex items-center gap-3">
         <Link href={`/academies/${academyId}`}>
           <Button variant="ghost" size="icon">

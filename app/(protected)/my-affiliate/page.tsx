@@ -372,7 +372,7 @@ export default function MyAffiliatePage() {
   );
 
   return (
-    <div className="flex-1 space-y-8 p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-8 p-4 sm:p-6" dir={'rtl'}>
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">

@@ -56,7 +56,7 @@ export default function AcademySettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <Skeleton className="h-9 w-56" />
         <Skeleton className="h-4 w-72" />
         <Skeleton className="h-[400px]" />
@@ -66,7 +66,7 @@ export default function AcademySettingsPage() {
 
   if (!academy) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <SettingsSectionHeader
           title={t('settings.storeSettingsTitle')}
           subtitle={t('settings.storeSettingsPlatformDescription')}
@@ -80,7 +80,7 @@ export default function AcademySettingsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <SettingsSectionHeader
         title={t('settings.storeSettingsTitle')}
         subtitle={t('settings.storeSettingsPlatformDescription')}

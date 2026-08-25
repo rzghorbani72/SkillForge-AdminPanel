@@ -374,7 +374,7 @@ export default function AudiosPage() {
 
   if (!selectedAcademy) {
     return (
-      <div className="page-wrapper flex-1 p-6">
+      <div className="page-wrapper flex-1 p-4 sm:p-6">
         <EmptyState
           icon={<Music className="h-10 w-10" />}
           title={t('media.noStoreSelected')}
@@ -389,7 +389,7 @@ export default function AudiosPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6">
+    <div className="page-wrapper flex-1 space-y-6 p-4 sm:p-6">
       <PageHeader
         icon={<Music2 className="h-5 w-5" />}
         title={t('media.audioLibrary')}
@@ -640,7 +640,7 @@ export default function AudiosPage() {
               <audio controls className="w-full" src={getAudioUrl(viewAudio)}>
                 {t('media.audioElementNotSupported')}
               </audio>
-              <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
+              <div className="grid gap-2 rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground sm:grid-cols-2">
                 <span>
                   {t('media.fileSize')}: {formatFileSize(viewAudio.size)}
                 </span>

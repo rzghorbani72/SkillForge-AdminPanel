@@ -174,7 +174,7 @@ export default function AcademiesPage() {
   const isFiltered = searchQuery.trim() !== '' || statusFilter !== 'all';
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir="rtl">
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir="rtl">
       <PageHeader
         icon={<GraduationCap className="h-5 w-5" />}
         title={t('navigation.stores')}

@@ -61,7 +61,7 @@ export function CreateOfferCard({
             placeholder={t('tutoring.offerTitlePlaceholder')}
           />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="offerPrice">{t('tutoring.offerPrice')}</Label>
             <NumberInput

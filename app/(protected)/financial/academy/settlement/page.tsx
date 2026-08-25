@@ -19,7 +19,7 @@ export default function SettlementPage() {
 
   if (!academyId) {
     return (
-      <div className="flex flex-1 items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
         <p className="text-muted-foreground">
           {t('financial.store.overview.noStore')}
         </p>
@@ -28,7 +28,7 @@ export default function SettlementPage() {
   }
 
   return (
-    <div className="w-full space-y-6 p-6">
+    <div className="w-full space-y-6 p-4 sm:p-6">
       <header className="space-y-1 border-b pb-5">
         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {t('settlement.eyebrow')}

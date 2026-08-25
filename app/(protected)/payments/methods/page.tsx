@@ -98,7 +98,7 @@ export default function PaymentMethodsPage() {
   }, [payments]);
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('payments.paymentMethodsTitle')}

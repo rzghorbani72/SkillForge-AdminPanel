@@ -298,11 +298,11 @@ export default function DatabasePage() {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-3xl font-bold">
-            <Database className="h-8 w-8" />
+    <div className="container mx-auto space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
+            <Database className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" />
             Database Dashboard
           </h1>
           <p className="mt-2 text-muted-foreground">

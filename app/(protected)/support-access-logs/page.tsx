@@ -83,7 +83,7 @@ export default function SupportAccessLogsPage() {
   if (!isAdmin) return null;
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-4 sm:p-6">
       <div className="flex items-center gap-3">
         <ShieldCheck className="h-6 w-6 text-primary" />
         <div>
@@ -170,7 +170,7 @@ export default function SupportAccessLogsPage() {
             </table>
           </div>
 
-          <div className="flex items-center justify-between pt-4">
+          <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-sm text-muted-foreground">
               Page {page} of {totalPages}
             </span>
@@ -178,6 +178,7 @@ export default function SupportAccessLogsPage() {
               <Button
                 variant="outline"
                 size="sm"
+                className="flex-1 sm:flex-none"
                 disabled={page <= 1 || isLoading}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
@@ -186,6 +187,7 @@ export default function SupportAccessLogsPage() {
               <Button
                 variant="outline"
                 size="sm"
+                className="flex-1 sm:flex-none"
                 disabled={page >= totalPages || isLoading}
                 onClick={() => setPage((p) => p + 1)}
               >

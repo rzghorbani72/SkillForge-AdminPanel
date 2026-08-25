@@ -113,7 +113,7 @@ export default function StoreCostsPage() {
 
   if (!currentAcademy) {
     return (
-      <div className="flex flex-1 items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
         <p className="text-muted-foreground">
           {t('financial.store.costs.noStore')}
         </p>
@@ -126,7 +126,7 @@ export default function StoreCostsPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-4 sm:p-6">
       <PageHeader
         title={t('financial.store.costs.title')}
         description={`${currentAcademy.name} — ${t('financial.store.costs.description')}`}

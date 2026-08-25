@@ -157,7 +157,7 @@ export default function DocumentsPage() {
 
   if (!selectedAcademy) {
     return (
-      <div className="page-wrapper flex-1 p-6">
+      <div className="page-wrapper flex-1 p-4 sm:p-6">
         <EmptyState
           icon={<FileText className="h-10 w-10" />}
           title={t('media.noStoreSelected')}
@@ -172,7 +172,7 @@ export default function DocumentsPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6">
+    <div className="page-wrapper flex-1 space-y-6 p-4 sm:p-6">
       <PageHeader
         icon={<Files className="h-5 w-5" />}
         title={t('media.documents')}
@@ -325,7 +325,7 @@ export default function DocumentsPage() {
                     title={previewDocument.title}
                   />
                 ) : (
-                  <div className="flex h-64 flex-col items-center justify-center space-y-3 p-6 text-center text-sm text-muted-foreground">
+                  <div className="flex h-64 flex-col items-center justify-center space-y-3 p-4 text-center text-sm text-muted-foreground sm:p-6">
                     <File className="h-12 w-12" />
                     <p className="max-w-sm">{t('media.previewNotAvailable')}</p>
                     <Button

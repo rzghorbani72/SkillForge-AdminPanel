@@ -181,7 +181,7 @@ export default function ImagesPage() {
 
   if (error) {
     return (
-      <div className="page-wrapper flex-1 p-6">
+      <div className="page-wrapper flex-1 p-4 sm:p-6">
         <div className="flex h-[calc(100vh-200px)] items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
@@ -201,7 +201,7 @@ export default function ImagesPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6" dir={'rtl'}>
+    <div className="page-wrapper flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       {/* Header */}
       <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -282,7 +282,7 @@ export default function ImagesPage() {
       {/* Images Grid */}
       {filteredImages.length === 0 ? (
         <div
-          className="fade-in-up flex flex-1 items-center justify-center p-6"
+          className="fade-in-up flex flex-1 items-center justify-center p-4 sm:p-6"
           style={{ animationDelay: '0.2s' }}
         >
           <div className="text-center">

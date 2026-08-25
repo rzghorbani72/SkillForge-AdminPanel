@@ -183,7 +183,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6" dir={'rtl'}>
+    <div className="page-wrapper flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       <CategoryHeader onCreateClick={() => setIsCreateDialogOpen(true)} />
 
       {error && (
@@ -205,7 +205,7 @@ export default function CategoriesPage() {
 
       {filteredCategories.length === 0 ? (
         <div
-          className="fade-in-up flex flex-1 items-center justify-center p-6"
+          className="fade-in-up flex flex-1 items-center justify-center p-4 sm:p-6"
           style={{ animationDelay: '0.2s' }}
         >
           <div className="text-center">

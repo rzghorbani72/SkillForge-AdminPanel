@@ -137,7 +137,7 @@ export default function UserDetailPage() {
 
   if (!user) {
     return (
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-4 sm:p-6">
         <div className="text-center">
           <h2 className="text-2xl font-bold">
             {t('userDetails.userNotFound')}
@@ -163,7 +163,7 @@ export default function UserDetailPage() {
       : translatedRole;
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <PageHeader
         title={t('userDetails.title')}
         description={t('userDetails.description')}

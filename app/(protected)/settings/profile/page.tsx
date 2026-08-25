@@ -320,7 +320,7 @@ export default function ProfileSettingsPage() {
   // ── loading ────────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <Skeleton className="h-9 w-48" />
         <Skeleton className="h-4 w-64" />
         <Skeleton className="h-[420px]" />
@@ -334,7 +334,7 @@ export default function ProfileSettingsPage() {
   const isPhoneDirty = form.phone !== (user?.phone_number ?? '');
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('settings.profileSettingsTitle')}

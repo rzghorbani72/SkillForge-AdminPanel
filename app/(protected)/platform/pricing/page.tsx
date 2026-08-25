@@ -300,11 +300,11 @@ export default function PlatformPricingPage() {
     }
   };
 
-  if (isLoading) return <div className="flex-1 p-6" />;
+  if (isLoading) return <div className="flex-1 p-4 sm:p-6" />;
 
   if (!isPlatformAdminUser) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <Card>
           <CardHeader>
             <CardTitle>{t('pricing.platform.accessRestricted')}</CardTitle>
@@ -318,7 +318,7 @@ export default function PlatformPricingPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('pricing.platform.title')}

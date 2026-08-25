@@ -106,7 +106,7 @@ export default function PlatformSettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-64 w-full" />
       </div>
@@ -114,7 +114,7 @@ export default function PlatformSettingsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="flex items-center gap-3">
         <Settings className="h-6 w-6 text-muted-foreground" />
         <div>

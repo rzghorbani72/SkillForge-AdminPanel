@@ -174,7 +174,7 @@ export default function StoreReportsPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">
@@ -192,7 +192,7 @@ export default function StoreReportsPage() {
           <CardTitle>{t('financial.store.reports.filters')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium">
                 {t('financial.store.reports.year')}

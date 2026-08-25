@@ -209,16 +209,16 @@ export default function PlatformAcademiesPage() {
     return (
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
         {/* Header with back button */}
-        <div className="flex items-center justify-between space-y-2">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <Button variant="ghost" size="sm" asChild className="self-start">
               <Link href="/platform/academies">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t('common.back')}
               </Link>
             </Button>
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight">
+            <div className="min-w-0">
+              <h2 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
                 {selectedStore.name}
               </h2>
               <p className="text-muted-foreground">
@@ -226,7 +226,10 @@ export default function PlatformAcademiesPage() {
               </p>
             </div>
           </div>
-          <Badge variant={selectedStore.is_active ? 'default' : 'secondary'}>
+          <Badge
+            variant={selectedStore.is_active ? 'default' : 'secondary'}
+            className="self-start sm:self-auto"
+          >
             {selectedStore.is_active
               ? t('common.active')
               : t('common.inactive')}
@@ -598,16 +601,16 @@ export default function PlatformAcademiesPage() {
   // Show stores list view
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
-      <div className="flex items-center justify-between space-y-2">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t('platform.stores.title')}
           </h2>
           <p className="text-muted-foreground">
             {t('platform.stores.description')}
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full shrink-0 sm:w-auto">
           <Link href="/platform/academies/create">
             <Plus className="mr-2 h-4 w-4" />
             {t('platform.stores.createStore')}

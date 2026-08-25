@@ -80,7 +80,7 @@ const LessonFormPage = ({
         </span>
       </nav>
 
-      <div className="flex min-w-0 items-start justify-between gap-3">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h1 className="truncate text-2xl font-bold tracking-tight">
             {isEdit
@@ -96,7 +96,7 @@ const LessonFormPage = ({
         <Button
           variant="outline"
           size="sm"
-          className="shrink-0"
+          className="w-full shrink-0 sm:w-auto"
           onClick={onCancel}
         >
           <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />

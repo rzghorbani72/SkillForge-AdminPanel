@@ -79,7 +79,7 @@ export default function AffiliatesPage() {
   const baseUrl = academySiteUrl(academy) ?? resolveStorefrontBaseUrl() ?? '';
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir="rtl">
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir="rtl">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">

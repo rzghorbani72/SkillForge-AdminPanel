@@ -31,12 +31,12 @@ export function GroupStatCards({
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="rounded-lg border border-border bg-muted/20 p-3 text-center"
+          className="rounded-lg border border-border bg-muted/20 p-2 text-center sm:p-3"
         >
-          <div className="text-[18px] font-bold leading-none">
+          <div className="text-base font-bold leading-none sm:text-[18px]">
             {stat.value.toLocaleString('fa-IR')}
           </div>
-          <div className="mt-1 text-[11px] text-muted-foreground">
+          <div className="mt-1 text-[10px] leading-tight text-muted-foreground sm:text-[11px]">
             {stat.label}
           </div>
         </div>

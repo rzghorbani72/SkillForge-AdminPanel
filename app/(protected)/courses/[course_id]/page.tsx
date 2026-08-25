@@ -34,7 +34,7 @@ export default function CourseDetailPage() {
 
   if (courseLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <Skeleton className="h-56 w-full rounded-xl" />
         <Skeleton className="h-64 w-full rounded-xl" />
       </div>
@@ -43,7 +43,7 @@ export default function CourseDetailPage() {
 
   if (!course) {
     return (
-      <div className="flex flex-1 items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
         <div className="text-center">
           <p className="text-muted-foreground">{t('courseDetail.notFound')}</p>
           <Button

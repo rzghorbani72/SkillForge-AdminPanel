@@ -33,7 +33,7 @@ export default function BillingOverviewPage() {
   }, [load]);
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <PageHeader
         icon={<Wallet className="h-5 w-5" />}
         title={t('billing.title')}

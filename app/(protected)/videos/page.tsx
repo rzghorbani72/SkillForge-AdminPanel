@@ -93,7 +93,7 @@ export default function VideosPage() {
 
   if (!selectedAcademy) {
     return (
-      <div className="page-wrapper flex-1 p-6">
+      <div className="page-wrapper flex-1 p-4 sm:p-6">
         <EmptyState
           icon={<Video className="h-10 w-10" />}
           title={t('media.noStoreSelected')}
@@ -108,7 +108,7 @@ export default function VideosPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6">
+    <div className="page-wrapper flex-1 space-y-6 p-4 sm:p-6">
       <PageHeader
         icon={<Film className="h-5 w-5" />}
         title={t('media.videoManagement')}

@@ -32,7 +32,7 @@ export default function SettingsOverviewPage() {
 
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <div className="space-y-4">
           <Skeleton className="h-8 w-40" />
           <Skeleton className="h-4 w-72" />
@@ -47,7 +47,7 @@ export default function SettingsOverviewPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">

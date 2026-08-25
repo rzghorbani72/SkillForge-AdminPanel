@@ -284,7 +284,7 @@ export default function LessonViewPage() {
             <DetailField label={t('common.description')}>
               {lesson.description || t('common.noDescriptionProvided')}
             </DetailField>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <DetailField label={t('courses.duration')}>
                 {lesson.duration || '—'}
               </DetailField>

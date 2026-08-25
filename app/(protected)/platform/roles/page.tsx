@@ -11,7 +11,7 @@ export default function PlatformRolesPage() {
 
   return (
     <RequirePermission resource="roles" action="read">
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <PageHeader
           icon={<ShieldCheck className="h-5 w-5" />}
           title={t('roles.title')}

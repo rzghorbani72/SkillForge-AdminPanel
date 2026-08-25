@@ -2,7 +2,7 @@ import React from 'react';
 
 const NoAcademyState = () => {
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="flex h-64 items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-semibold text-muted-foreground">

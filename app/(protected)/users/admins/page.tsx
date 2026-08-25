@@ -298,7 +298,7 @@ export default function AdminsPage() {
 
   if (isLoading && admins.length === 0) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
@@ -312,21 +312,22 @@ export default function AdminsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
-            <Shield className="h-8 w-8" />
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight sm:text-3xl">
+            <Shield className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" />
             {t('admins.title')}
           </h1>
           <p className="text-muted-foreground">{t('admins.description')}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button onClick={() => setShowCreateAdminDialog(true)}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('admins.addAdminUser')}
-          </Button>
-        </div>
+        <Button
+          onClick={() => setShowCreateAdminDialog(true)}
+          className="w-full shrink-0 sm:w-auto"
+        >
+          <Plus className="me-2 h-4 w-4" />
+          {t('admins.addAdminUser')}
+        </Button>
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-center">

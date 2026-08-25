@@ -106,11 +106,11 @@ export default function BroadcastsPage() {
     }
   };
 
-  if (isLoading) return <div className="flex-1 p-6" />;
+  if (isLoading) return <div className="flex-1 p-4 sm:p-6" />;
 
   if (!allowed) {
     return (
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-4 sm:p-6">
         <Card>
           <CardHeader>
             <CardTitle>{t('broadcasts.title')}</CardTitle>
@@ -122,7 +122,7 @@ export default function BroadcastsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="flex items-center gap-2">
         <Megaphone className="h-5 w-5 text-primary" />
         <h1 className="text-2xl font-bold">{t('broadcasts.title')}</h1>

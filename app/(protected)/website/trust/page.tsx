@@ -93,7 +93,7 @@ export default function AcademyCompliancePage() {
 
   if (loading) {
     return (
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-64 w-full" />
       </div>
@@ -102,7 +102,7 @@ export default function AcademyCompliancePage() {
 
   if (!state?.is_required) {
     return (
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 p-4 sm:p-6">
         <SettingsSectionHeader
           title={t('compliance.enamad.title')}
           subtitle={t('compliance.enamad.description')}
@@ -118,7 +118,7 @@ export default function AcademyCompliancePage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-4 sm:p-6">
       <SettingsSectionHeader
         title={t('compliance.enamad.title')}
         subtitle={t('compliance.enamad.description')}

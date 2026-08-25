@@ -58,7 +58,7 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
         <div className="text-center">
           <div className="relative mx-auto h-14 w-14">
             <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
@@ -82,7 +82,7 @@ export default function DashboardPage() {
   if (!storeLoading && !isPlatformAdmin && academies.length === 0) {
     return (
       <div className="dashboard-shell flex-1">
-        <div className="relative space-y-5 p-6">
+        <div className="relative space-y-5 p-4 sm:p-6">
           <AcademyOnboarding />
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-shell flex-1">
-      <div className="relative space-y-5 p-6">
+      <div className="relative space-y-5 p-4 sm:p-6">
         {/* Page header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

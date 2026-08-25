@@ -124,7 +124,7 @@ export default function ManualEnrollPage() {
   };
 
   return (
-    <div className="flex-1 space-y-6 p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           {t('students.manualEnroll.title')}

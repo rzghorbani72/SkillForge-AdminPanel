@@ -28,7 +28,7 @@ export default function ProductsPage() {
 
   if (!selectedAcademy) {
     return (
-      <div className="page-wrapper flex-1 p-6">
+      <div className="page-wrapper flex-1 p-4 sm:p-6">
         <EmptyState
           icon={<Building2 className="h-10 w-10" />}
           title={t('common.noStoreSelected')}
@@ -43,7 +43,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="page-wrapper flex-1 space-y-6 p-6">
+    <div className="page-wrapper flex-1 space-y-6 p-4 sm:p-6">
       <Header />
       <SearchBar value={searchTerm} onChange={setSearchTerm} />
       <ProductsGrid

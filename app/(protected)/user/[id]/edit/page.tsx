@@ -208,7 +208,7 @@ export default function UserEditPage() {
 
   if (!canEdit) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <Card>
           <CardHeader>
             <CardTitle>{t('userEdit.accessDeniedTitle')}</CardTitle>
@@ -227,7 +227,7 @@ export default function UserEditPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <PageHeader
         title={t('userEdit.title')}
         description={t('userEdit.description')}

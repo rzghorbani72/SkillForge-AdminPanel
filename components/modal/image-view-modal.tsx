@@ -67,7 +67,7 @@ const ImageViewModal: React.FC<ImageViewModalProps> = ({
             </div>
           </div>
         </DialogHeader>
-        <div className="relative flex h-[calc(90vh-100px)] w-full items-center justify-center bg-muted p-6">
+        <div className="relative flex h-[calc(90vh-100px)] w-full items-center justify-center bg-muted p-4 sm:p-6">
           <Image
             src={fullImageUrl}
             alt={title || filename || 'Image'}

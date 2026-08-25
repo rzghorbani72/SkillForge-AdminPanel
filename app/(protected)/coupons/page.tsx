@@ -303,7 +303,7 @@ export default function CouponsPage() {
 
   if (!canManageCoupons) {
     return (
-      <div className="flex-1 space-y-4 p-6">
+      <div className="flex-1 space-y-4 p-4 sm:p-6">
         <h1 className="text-2xl font-bold tracking-tight">
           {t('coupons.title')}
         </h1>
@@ -313,9 +313,9 @@ export default function CouponsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight">
             {t(
               canManagePlatformVouchers
@@ -331,7 +331,7 @@ export default function CouponsPage() {
             )}
           </p>
         </div>
-        <Button onClick={openCreate}>
+        <Button onClick={openCreate} className="w-full shrink-0 sm:w-auto">
           <Plus className="me-2 h-4 w-4" />
           {t('coupons.newCoupon')}
         </Button>

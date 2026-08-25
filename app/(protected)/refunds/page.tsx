@@ -136,7 +136,7 @@ export default function RefundsPage() {
   });
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
           {t('refunds.title')}

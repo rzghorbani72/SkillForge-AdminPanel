@@ -53,7 +53,7 @@ export default function SecuritySettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
         <Skeleton className="h-9 w-56" />
         <Skeleton className="h-4 w-72" />
         <Skeleton className="h-[360px]" />
@@ -63,7 +63,7 @@ export default function SecuritySettingsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('settings.securityTitle')}

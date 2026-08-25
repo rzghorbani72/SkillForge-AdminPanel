@@ -42,7 +42,7 @@ export function AssignmentsFilters({
 
   return (
     <div className="flex flex-wrap items-end gap-4">
-      <div className="min-w-[220px] flex-1 space-y-2">
+      <div className="min-w-0 flex-1 space-y-2 sm:min-w-[220px]">
         <Label htmlFor="assignments-course-filter">
           {t('assignmentsPage.filterByCourse')}
         </Label>

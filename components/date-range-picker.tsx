@@ -6,6 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
+import { useBreakpoint } from '@/hooks/useBreakPoints';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { addDays, format } from 'date-fns';
@@ -15,6 +16,7 @@ import { DateRange } from 'react-day-picker';
 export function CalendarDateRangePicker({
   className
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const { isAboveSm } = useBreakpoint('sm');
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(2023, 0, 20),
     to: addDays(new Date(2023, 0, 20), 20)
@@ -28,7 +30,7 @@ export function CalendarDateRangePicker({
             id="date"
             variant={'outline'}
             className={cn(
-              'w-[260px] justify-start text-left font-normal',
+              'w-full max-w-[260px] justify-start text-left font-normal',
               !date && 'text-muted-foreground'
             )}
           >
@@ -47,14 +49,17 @@ export function CalendarDateRangePicker({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="end">
+        <PopoverContent
+          className="w-auto max-w-[calc(100vw-2rem)] p-0"
+          align="end"
+        >
           <Calendar
             initialFocus
             mode="range"
             defaultMonth={date?.from}
             selected={date}
             onSelect={setDate}
-            numberOfMonths={2}
+            numberOfMonths={isAboveSm ? 2 : 1}
           />
         </PopoverContent>
       </Popover>
