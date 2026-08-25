@@ -46,7 +46,7 @@ export function AcademyOnboarding() {
     // one time we are allowed to interrupt this manager.
     setDialogHandled(true);
     setDialogOpen(true);
-    logger.event('onboarding', 'academy_dialog_shown', {});
+    logger.event('Onboarding', 'AcademyDialogShown', {});
     apiClient.markOnboardingSeen().catch(() => {});
   }, [showFirstTimeDialog, dialogHandled]);
 

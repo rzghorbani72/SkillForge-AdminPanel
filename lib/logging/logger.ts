@@ -38,16 +38,67 @@ export interface LoggerConfig {
   sink?: (entry: LogEntry) => void;
 }
 
+/**
+ * Event and action names are PascalCase, enforced by the compiler: a
+ * snake_case or camelCase name resolves to `never` and fails the build, so the
+ * Grafana filter keys can never drift back to mixed conventions.
+ */
+type UpperAlpha =
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G'
+  | 'H'
+  | 'I'
+  | 'J'
+  | 'K'
+  | 'L'
+  | 'M'
+  | 'N'
+  | 'O'
+  | 'P'
+  | 'Q'
+  | 'R'
+  | 'S'
+  | 'T'
+  | 'U'
+  | 'V'
+  | 'W'
+  | 'X'
+  | 'Y'
+  | 'Z';
+
+export type PascalCase<S extends string> = S extends `${UpperAlpha}${string}`
+  ? S extends `${string}_${string}`
+    ? never
+    : S
+  : never;
+
 export interface Logger {
   /** General form; `status` defaults to 'ok'. */
-  event(
-    category: string,
-    type: string,
-    fields?: LogFields & { status?: LogStatus }
+  event<E extends string, A extends string>(
+    event: PascalCase<E>,
+    action: PascalCase<A>,
+    details?: LogFields & { status?: LogStatus }
   ): void;
-  ok(category: string, type: string, fields?: LogFields): void;
-  warn(category: string, type: string, fields?: LogFields): void;
-  error(category: string, type: string, fields?: LogFields): void;
+  ok<E extends string, A extends string>(
+    event: PascalCase<E>,
+    action: PascalCase<A>,
+    details?: LogFields
+  ): void;
+  warn<E extends string, A extends string>(
+    event: PascalCase<E>,
+    action: PascalCase<A>,
+    details?: LogFields
+  ): void;
+  error<E extends string, A extends string>(
+    event: PascalCase<E>,
+    action: PascalCase<A>,
+    details?: LogFields
+  ): void;
 }
 
 function resolveEnv(explicit?: string): string {

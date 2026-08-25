@@ -27,13 +27,13 @@ export function GdprConsentBanner() {
 
   function accept() {
     setCookie(COOKIE_NAME, 'accepted', COOKIE_MAX_AGE);
-    logger.event('gdpr', 'consent_accepted', { surface: 'panel' });
+    logger.event('Gdpr', 'ConsentAccepted', { surface: 'panel' });
     setVisible(false);
   }
 
   function decline() {
     setCookie(COOKIE_NAME, 'declined', COOKIE_MAX_AGE);
-    logger.event('gdpr', 'consent_declined', { surface: 'panel' });
+    logger.event('Gdpr', 'ConsentDeclined', { surface: 'panel' });
     setVisible(false);
   }
 

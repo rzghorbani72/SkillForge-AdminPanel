@@ -28,7 +28,7 @@ export function useCreateFirstAcademy() {
         }
         await refreshAcademies().catch(() => {});
         setCreated(true);
-        logger.ok('onboarding', 'first_academy_created', {
+        logger.ok('Onboarding', 'FirstAcademyCreated', {
           academy_id: result.id ?? ''
         });
         toast.success(t('auth.academyCreatedTitle'));
