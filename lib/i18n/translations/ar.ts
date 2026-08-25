@@ -853,6 +853,11 @@ export const ar = {
     updatedToast: 'تم تحديث الدورة',
     fixErrorsBeforeSaving: 'يرجى تصحيح الحقول المميزة قبل الحفظ',
     createdDraftToast: 'تم إنشاء الدورة كمسودة — انشرها عندما تكون جاهزة',
+    courseTypeLabel: 'نوع الدورة',
+    typeOfflineTitle: 'مسجّلة',
+    typeOfflineHint: 'دروس فيديو يشاهدها الطالب في الوقت الذي يناسبه.',
+    typeLiveTitle: 'مباشرة',
+    typeLiveHint: 'حصص أونلاين بجدول زمني محدد وحضور المدرّس.',
     errors: {
       titleMin: 'يجب أن يكون العنوان 5 أحرف على الأقل',
       titleMax: 'يجب أن يكون العنوان أقل من 80 حرفًا',

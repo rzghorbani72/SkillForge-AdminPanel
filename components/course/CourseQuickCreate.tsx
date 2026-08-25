@@ -136,7 +136,7 @@ export default function CourseQuickCreate() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl p-6">
+    <div className="w-full p-6">
       <div className="mb-6 flex items-start gap-3">
         <Button
           type="button"

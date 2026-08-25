@@ -1495,6 +1495,11 @@ export const en = {
     fixErrorsBeforeSaving: 'Please fix the highlighted fields before saving',
     createdDraftToast:
       'Course created as a draft — publish it when it is ready',
+    courseTypeLabel: 'Course type',
+    typeOfflineTitle: 'Recorded',
+    typeOfflineHint: 'Video lessons students watch on their own time.',
+    typeLiveTitle: 'Live',
+    typeLiveHint: 'Scheduled online classes taught in real time.',
     errors: {
       titleMin: 'Title must be at least 5 characters',
       titleMax: 'Title must be less than 80 characters',

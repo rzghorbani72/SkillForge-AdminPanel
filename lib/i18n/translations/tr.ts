@@ -876,6 +876,12 @@ export const tr = {
     fixErrorsBeforeSaving: 'Kaydetmeden önce işaretli alanları düzeltin',
     createdDraftToast:
       'Kurs taslak olarak oluşturuldu — hazır olduğunda yayınlayın',
+    courseTypeLabel: 'Kurs türü',
+    typeOfflineTitle: 'Kayıtlı',
+    typeOfflineHint: 'Öğrencinin kendi zamanında izlediği video dersler.',
+    typeLiveTitle: 'Canlı',
+    typeLiveHint:
+      'Belirli bir programda, öğretmenin katılımıyla yapılan çevrimiçi ders.',
     errors: {
       titleMin: 'Başlık en az 5 karakter olmalıdır',
       titleMax: 'Başlık 80 karakterden az olmalıdır',

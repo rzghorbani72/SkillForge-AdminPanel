@@ -1481,6 +1481,11 @@ export const fa = {
     fixErrorsBeforeSaving: 'قبل از ذخیره، خطاهای مشخص‌شده را برطرف کنید',
     createdDraftToast:
       'دوره به‌صورت پیش‌نویس ساخته شد — هر وقت آماده بود آن را منتشر کنید',
+    courseTypeLabel: 'نوع دوره',
+    typeOfflineTitle: 'ضبط‌شده',
+    typeOfflineHint: 'درس‌های ویدئویی که دانشجو در زمان دلخواه خودش می‌بیند.',
+    typeLiveTitle: 'زنده',
+    typeLiveHint: 'کلاس آنلاین با زمان‌بندی مشخص و حضور مدرس.',
     errors: {
       titleMin: 'عنوان باید حداقل ۵ کاراکتر باشد',
       titleMax: 'عنوان باید کمتر از ۸۰ کاراکتر باشد',
