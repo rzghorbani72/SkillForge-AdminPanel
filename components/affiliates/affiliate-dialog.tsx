@@ -190,7 +190,7 @@ export function AffiliateDialog({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)}>
             <div className="space-y-4 px-6 py-5">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="affiliate_name"

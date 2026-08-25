@@ -197,7 +197,7 @@ export function TemplateSelectModal({
                   — الهام گرفته از بهترین پلتفرم‌های آموزشی
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {featuredPresets.map((preset) => (
                   <TemplateCard
                     key={preset.id}
@@ -227,7 +227,7 @@ export function TemplateSelectModal({
                   </span>
                 </div>
               )}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {classicPresets.map((preset) => (
                   <TemplateCard
                     key={preset.id}

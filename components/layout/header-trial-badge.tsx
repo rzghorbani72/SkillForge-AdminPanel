@@ -40,14 +40,14 @@ export function HeaderTrialBadge() {
       href="/plans"
       title={label}
       className={cn(
-        'inline-flex h-9 max-w-[11rem] items-center gap-1.5 truncate rounded-xl border px-2.5 text-xs font-semibold transition-opacity hover:opacity-90 sm:max-w-none sm:px-3 sm:text-sm',
+        'inline-flex h-9 items-center gap-1.5 rounded-xl border px-2 text-xs font-semibold transition-opacity hover:opacity-90 sm:max-w-[11rem] sm:px-3 sm:text-sm',
         urgent
           ? 'border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-200'
           : 'border-brandGreen/30 bg-brandGreen/10 text-brandGreen'
       )}
     >
       <Clock3 className="h-3.5 w-3.5 shrink-0" />
-      <span className="truncate">{label}</span>
+      <span className="hidden truncate sm:inline">{label}</span>
     </Link>
   );
 }

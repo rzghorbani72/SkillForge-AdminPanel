@@ -23,10 +23,14 @@ export default function Header() {
         </div>
 
         {/* Right controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
           <AcademySelector />
-          <VisitSiteLink academy={academy} iconOnly className="rounded-full" />
-          <div className="h-6 w-px bg-border/50" />
+          <VisitSiteLink
+            academy={academy}
+            iconOnly
+            className="hidden rounded-full sm:inline-flex"
+          />
+          <div className="hidden h-6 w-px bg-border/50 sm:block" />
 
           <HeaderTrialBadge />
           <HeaderUpgradeButton />
@@ -34,7 +38,7 @@ export default function Header() {
           {/* Notification bell */}
           <NotificationBell />
 
-          <div className="h-6 w-px bg-border/50" />
+          <div className="hidden h-6 w-px bg-border/50 sm:block" />
 
           <UserNav />
         </div>

@@ -183,9 +183,9 @@ export function AcademySelector() {
     : '';
 
   const selectorContent = current ? (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-0 sm:gap-2.5">
       <AcademyAvatar name={current.name} id={current.id} logo={current.logo} />
-      <div className="flex min-w-0 items-center gap-1.5 text-start">
+      <div className="hidden min-w-0 items-center gap-1.5 text-start sm:flex">
         <p className="text-sm font-semibold leading-tight" title={current.name}>
           {truncateName(current.name)}
         </p>
@@ -214,7 +214,7 @@ export function AcademySelector() {
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="flex h-10 items-center rounded-xl border bg-background px-3 shadow-sm transition-colors hover:bg-accent"
+              className="flex h-9 items-center rounded-xl border bg-background px-2 shadow-sm transition-colors hover:bg-accent sm:h-10 sm:px-3"
             >
               {selectorContent}
             </button>
@@ -336,13 +336,13 @@ function AdminModeSwitcher() {
   const platformLabel = t('stores.platformAdmin') || 'Platform Admin';
 
   const trigger = selectedAcademy ? (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-0 sm:gap-2.5">
       <AcademyAvatar
         name={selectedAcademy.name}
         id={selectedAcademy.id}
         logo={selectedAcademy.logo}
       />
-      <div className="flex min-w-0 items-center gap-1.5 text-start">
+      <div className="hidden min-w-0 items-center gap-1.5 text-start sm:flex">
         <p
           className="text-sm font-semibold leading-tight"
           title={selectedAcademy.name}
@@ -359,11 +359,13 @@ function AdminModeSwitcher() {
       />
     </div>
   ) : (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-0 sm:gap-2.5">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/90">
         <Building2 className="h-4 w-4 text-background" />
       </div>
-      <p className="text-sm font-semibold leading-tight">{platformLabel}</p>
+      <p className="hidden text-sm font-semibold leading-tight sm:block">
+        {platformLabel}
+      </p>
       <ChevronDown
         className={cn(
           'ms-1 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200',
@@ -386,7 +388,7 @@ function AdminModeSwitcher() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="flex h-10 items-center rounded-xl border bg-background px-3 shadow-sm transition-colors hover:bg-accent"
+          className="flex h-9 items-center rounded-xl border bg-background px-2 shadow-sm transition-colors hover:bg-accent sm:h-10 sm:px-3"
         >
           {trigger}
         </button>

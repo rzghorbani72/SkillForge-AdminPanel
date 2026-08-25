@@ -225,7 +225,7 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label>{t('platform.stores.customPlan.priceMonthlyLabel')}</Label>
             <PriceInput
