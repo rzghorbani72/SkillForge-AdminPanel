@@ -71,6 +71,7 @@ import type {
 } from '@/types/learning-operations';
 import type { AccountIdentity, MemberAcademy } from '@/types/auth';
 import type { UserDetailsResponse } from '@/types/user-details';
+import type { CouponSummary } from '@/lib/coupons';
 import type {
   CreateRolePayload,
   PermissionCatalog,
@@ -4258,10 +4259,16 @@ class ApiClient {
   }
 
   /** Platform plan vouchers the signed-in manager may redeem (read-only). */
-  async getRedeemablePlanVouchers() {
-    const response = await this.request<any>('/discounts/plan-vouchers');
+  async getRedeemablePlanVouchers(): Promise<{ vouchers: CouponSummary[] }> {
+    const response = await this.request<{ vouchers: CouponSummary[] }>(
+      '/discounts/plan-vouchers'
+    );
 
-    return unwrapDataEnvelope<any>(response.data);
+    return (
+      unwrapDataEnvelope<{ vouchers: CouponSummary[] }>(response.data) ?? {
+        vouchers: []
+      }
+    );
   }
 
   async checkDiscountCodeAvailability(params: {

@@ -4894,6 +4894,12 @@ export const en = {
     myPlanVouchersHint:
       'Created by Mentoma and usable only when you pay or upgrade your own academy plan — they never apply to student checkout.',
     noPlanVouchers: 'No plan vouchers available right now',
+    bannerSingleIntro: 'Plan discount available:',
+    bannerMultiIntro: 'You have {{count}} plan discount codes:',
+    bannerMore: '+{{count}} more',
+    bannerUseOnPlans: 'Use on Plans',
+    bannerViewAll: 'View codes',
+    bannerCopyCode: 'Copy code {{code}}',
     academyScopeHint:
       'Codes created here belong to your academy and apply to student checkout only.'
   },

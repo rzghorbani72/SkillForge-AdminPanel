@@ -98,6 +98,7 @@ export default function PlansPage() {
   const tabParam = searchParams.get('tab');
   const paidParam = searchParams.get('paid');
   const planParam = searchParams.get('plan');
+  const voucherParam = searchParams.get('voucher');
   // Guard against double toast: React Strict Mode remounts and `t` identity
   // changes both re-run the effect while `?paid=1` is still in the URL.
   const paidToastShownRef = useRef(false);
@@ -207,6 +208,11 @@ export default function PlansPage() {
       setIsAcademyPlansLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (!voucherParam) return;
+    setVoucherCode(voucherParam.trim().toUpperCase());
+  }, [voucherParam]);
 
   useEffect(() => {
     if (tabParam === 'academy') {

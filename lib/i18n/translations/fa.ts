@@ -4882,7 +4882,13 @@ export const fa = {
     myPlanVouchers: 'کدهای تخفیف پلن شما',
     myPlanVouchersHint:
       'این کدها را منتوما ساخته و فقط هنگام پرداخت یا ارتقای پلن آکادمی خودتان استفاده می‌شوند — روی خرید دانشجو اثری ندارند.',
-    noPlanVouchers: 'در حال حاضر کد تخفیفی برای پلن شما وجود ندارد'
+    noPlanVouchers: 'در حال حاضر کد تخفیفی برای پلن شما وجود ندارد',
+    bannerSingleIntro: 'کد تخفیف پلن فعال:',
+    bannerMultiIntro: '{{count}} کد تخفیف پلن دارید:',
+    bannerMore: 'و {{count}} مورد دیگر',
+    bannerUseOnPlans: 'استفاده در پلن‌ها',
+    bannerViewAll: 'مشاهده کدها',
+    bannerCopyCode: 'کپی کد {{code}}'
   },
   subscriptions: {
     title: 'اشتراک‌ها',

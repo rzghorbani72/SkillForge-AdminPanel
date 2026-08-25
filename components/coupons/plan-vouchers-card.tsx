@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Ticket } from 'lucide-react';
-import { apiClient } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -18,6 +16,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
+import { useRedeemablePlanVouchers } from '@/hooks/use-redeemable-plan-vouchers';
 import {
   COUPON_TYPE_BADGE,
   COUPON_TYPE_LABEL_KEY,
@@ -35,28 +34,7 @@ export function PlanVouchersCard() {
   const formatNumber = useNumberFormat();
   const formatDate = useDateFormat();
   const formatPercent = usePercentLabel();
-  const [vouchers, setVouchers] = useState<CouponSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const data = await apiClient.getRedeemablePlanVouchers();
-        if (!cancelled) setVouchers(data?.vouchers ?? []);
-      } catch {
-        if (!cancelled) setVouchers([]);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { vouchers, loading } = useRedeemablePlanVouchers();
 
   function valueOf(voucher: CouponSummary): string {
     const type = couponTypeOf(voucher);

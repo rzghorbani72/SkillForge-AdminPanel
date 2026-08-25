@@ -11,6 +11,7 @@ import { LegalConsentGate } from '@/components/legal/legal-consent-gate';
 import { SubscriptionRequiredGate } from '@/components/subscription/subscription-required-gate';
 import { AcademyRequiredGate } from '@/components/academies/academy-required-gate';
 import { ScopeContextBanner } from '@/components/shared/scope-context-banner';
+import { PlanVoucherBanner } from '@/components/coupons/plan-voucher-banner';
 import { useCategoriesStore } from '@/lib/store';
 import { useI18n } from '@/lib/i18n/provider';
 
@@ -29,20 +30,23 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
     <StoreProvider>
       <ThemeInitializer />
       <SubscriptionRequiredGate />
-      <div className="flex h-screen overflow-hidden" dir={direction}>
-        <Sidebar />
-        <main className="flex flex-1 flex-col overflow-hidden">
-          <Header />
-          <ScopeContextBanner />
-          <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
-            <div className="mx-auto flex min-h-full w-full max-w-[1700px] flex-col">
-              <div className="flex-1">
-                <AcademyRequiredGate>{children}</AcademyRequiredGate>
+      <div className="flex h-screen flex-col overflow-hidden" dir={direction}>
+        <PlanVoucherBanner className="sticky top-0 z-50 w-full shrink-0" />
+        <div className="flex min-h-0 flex-1 overflow-hidden">
+          <Sidebar />
+          <main className="flex flex-1 flex-col overflow-hidden">
+            <Header />
+            <ScopeContextBanner />
+            <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
+              <div className="mx-auto flex min-h-full w-full max-w-[1700px] flex-col">
+                <div className="flex-1">
+                  <AcademyRequiredGate>{children}</AcademyRequiredGate>
+                </div>
+                <PanelFooter />
               </div>
-              <PanelFooter />
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </StoreProvider>
   );
