@@ -6,7 +6,8 @@ import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthSubmit } from '@/components/auth/auth-fields';
 import type { AuthTab } from '@/components/auth/auth-tabs';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { formatIdentifierDisplay } from '@/lib/phone-utils';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
 
 const DEFAULT_OTP_LENGTH = 5;
@@ -49,6 +50,7 @@ export function PhoneOtpScreen({
   children
 }: PhoneOtpScreenProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const timer = useOtpTimer();
 
   useEffect(() => {
@@ -63,7 +65,10 @@ export function PhoneOtpScreen({
     >
       <div className="flex items-start justify-between gap-3 px-4">
         <p className="text-start text-base text-[#616579]">
-          {t('auth.otpSentTo')} <strong dir="ltr">{otpPhone}</strong>
+          {t('auth.otpSentTo')}{' '}
+          <strong dir="ltr">
+            {formatIdentifierDisplay(otpPhone, language)}
+          </strong>
         </p>
         <button
           type="button"

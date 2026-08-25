@@ -10,7 +10,8 @@ import {
 import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
 import Link from '@/components/ui/link';
 import { sanitizePasswordInput } from '@/lib/password-utils';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { formatIdentifierDisplay } from '@/lib/phone-utils';
 
 interface PasswordStepProps {
   title: string;
@@ -49,6 +50,7 @@ export function PasswordStep({
   onSubmit
 }: PasswordStepProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const [hasCaptchaToken, setHasCaptchaToken] = useState(false);
 
   function handleCaptchaVerify(token: string) {
@@ -62,7 +64,7 @@ export function PasswordStep({
     <AuthShell activeTab="login" title={title}>
       <div className="flex items-center justify-between rounded-2xl bg-black/5 px-4 py-3 text-sm">
         <span dir="ltr" className="text-[#181C20]">
-          {identifier}
+          {formatIdentifierDisplay(identifier, language)}
         </span>
         <button
           type="button"

@@ -1,11 +1,14 @@
 'use client';
 
 import { UseFormReturn, UseFormRegisterReturn } from 'react-hook-form';
-import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
+import {
+  AuthField,
+  AuthPhoneField,
+  AuthSubmit
+} from '@/components/auth/auth-fields';
 import { LegalConsentCheckbox } from '@/components/auth/legal-consent-checkbox';
 import { PasswordStrength } from '@/components/ui/password-strength';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { toEnglishDigits } from '@/lib/phone-utils';
 import { sanitizePasswordInput } from '@/lib/password-utils';
 
 export type RegisterValues = {
@@ -23,19 +26,7 @@ interface RegisterDetailsFormProps {
   onSubmit: (values: RegisterValues) => void;
 }
 
-const toEnglish = (value: string) => toEnglishDigits(value);
 const toPassword = (value: string) => sanitizePasswordInput(value);
-
-/** Rewrites Persian/Arabic digits to English while the user is typing. */
-const withEnglishDigits = (
-  field: UseFormRegisterReturn
-): UseFormRegisterReturn => ({
-  ...field,
-  onChange: (event: { target: HTMLInputElement }) => {
-    event.target.value = toEnglishDigits(event.target.value);
-    return field.onChange(event);
-  }
-});
 
 /** Converts Persian digits and strips non-English password characters. */
 const withAsciiPassword = (
@@ -81,16 +72,12 @@ export function RegisterDetailsForm({
         {...form.register('name')}
       />
 
-      <AuthField
+      <AuthPhoneField
         label={t('auth.phoneNumber')}
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel"
         error={errors.phone?.message}
         disabled={loading}
-        {...withEnglishDigits(
-          form.register('phone', { setValueAs: toEnglish })
-        )}
+        value={phone}
+        onValueChange={(v) => form.setValue('phone', v, { shouldDirty: true })}
       />
 
       <div className="space-y-1.5">

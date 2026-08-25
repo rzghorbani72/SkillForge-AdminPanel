@@ -4,6 +4,8 @@ import * as React from 'react';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { cn } from '@/lib/utils';
+import { toEnglishDigits, toPersianDigits } from '@/lib/phone-utils';
+import { useLanguage } from '@/lib/i18n/hooks';
 
 const AUTH_SECONDARY_CLASS =
   'inline-flex h-12 w-full items-center justify-center rounded-2xl text-base text-[#181C20] transition-colors hover:bg-white/40';
@@ -57,6 +59,36 @@ export const AuthField = React.forwardRef<HTMLInputElement, AuthFieldProps>(
     );
   }
 );
+
+interface AuthPhoneFieldProps
+  extends Omit<AuthFieldProps, 'value' | 'onChange' | 'type'> {
+  value: string;
+  onValueChange: (value: string) => void;
+}
+
+/**
+ * Phone input for every auth screen: Persian digits on screen in fa, English
+ * digits in state — so what is sent to the API is always English.
+ */
+export function AuthPhoneField({
+  value,
+  onValueChange,
+  ...props
+}: AuthPhoneFieldProps) {
+  const { language } = useLanguage();
+
+  return (
+    <AuthField
+      {...props}
+      type="tel"
+      inputMode="tel"
+      dir="ltr"
+      autoComplete="tel"
+      value={language === 'fa' ? toPersianDigits(value) : value}
+      onChange={(e) => onValueChange(toEnglishDigits(e.target.value))}
+    />
+  );
+}
 
 interface AuthSubmitProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {

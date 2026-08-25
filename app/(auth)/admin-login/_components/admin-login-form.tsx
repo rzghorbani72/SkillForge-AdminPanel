@@ -1,9 +1,13 @@
 'use client';
 
 import { AuthShell } from '@/components/auth/auth-shell';
-import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
+import {
+  AuthField,
+  AuthPhoneField,
+  AuthSubmit
+} from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { toEnglishDigits, toE164Iran } from '@/lib/phone-utils';
+import { toE164Iran } from '@/lib/phone-utils';
 import Link from '@/components/ui/link';
 import { cn } from '@/lib/utils';
 import type { useAdminLogin } from '../use-admin-login';
@@ -64,16 +68,11 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
           disabled={login.isLoading}
         />
 
-        <AuthField
+        <AuthPhoneField
           id="phone"
           label={t('auth.phoneNumber')}
-          type="tel"
-          inputMode="tel"
-          dir="ltr"
-          autoComplete="tel"
           value={login.formData.phone}
-          onChange={(e) => {
-            const v = toEnglishDigits(e.target.value);
+          onValueChange={(v) => {
             login.handleInputChange('phone', v);
             login.handleInputChange('fullPhoneNumber', toE164Iran(v));
           }}

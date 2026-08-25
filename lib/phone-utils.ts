@@ -50,6 +50,19 @@ export function formatPhoneDisplay(
 }
 
 /**
+ * Phone or email → what the user should read. Emails pass through untouched;
+ * phones are localised, so a Persian page never shows English digits.
+ */
+export function formatIdentifierDisplay(
+  raw: string,
+  language: string = 'fa'
+): string {
+  if (!raw) return '';
+  if (raw.includes('@')) return raw;
+  return formatPhoneDisplay(raw, language);
+}
+
+/**
  * Cleans a phone number by removing country codes, leading zeros, and invalid characters
  * @param phoneNumber - The raw phone number input
  * @param countryCode - The selected country code

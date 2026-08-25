@@ -3,14 +3,13 @@
 import { useState } from 'react';
 import { AuthShell } from '@/components/auth/auth-shell';
 import {
-  AuthField,
+  AuthPhoneField,
   AuthSubmit,
   AuthSecondaryLink
 } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
 import Link from '@/components/ui/link';
-import { toEnglishDigits } from '@/lib/phone-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface IdentifyStepProps {
@@ -84,15 +83,12 @@ export function IdentifyStep({
       )}
 
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
-        <AuthField
+        <AuthPhoneField
           id="phone"
           label={t('auth.phoneNumber')}
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
           autoFocus
           value={identifier}
-          onChange={(e) => onIdentifierChange(toEnglishDigits(e.target.value))}
+          onValueChange={onIdentifierChange}
           error={error}
           disabled={isLoading}
         />

@@ -1,7 +1,11 @@
 'use client';
 
-import { AuthField, AuthSubmit } from '@/components/auth/auth-fields';
-import { toEnglishDigits, toE164Iran } from '@/lib/phone-utils';
+import {
+  AuthField,
+  AuthPhoneField,
+  AuthSubmit
+} from '@/components/auth/auth-fields';
+import { toE164Iran } from '@/lib/phone-utils';
 import { cn } from '@/lib/utils';
 import type { useForgetPassword } from '../use-forget-password';
 
@@ -59,16 +63,11 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
             disabled={fp.isLoading}
           />
         ) : (
-          <AuthField
+          <AuthPhoneField
             id="phone"
             label={t('auth.phoneNumber')}
-            type="tel"
-            inputMode="tel"
-            dir="ltr"
-            autoComplete="tel"
             value={fp.formData.phoneNumber}
-            onChange={(e) => {
-              const v = toEnglishDigits(e.target.value);
+            onValueChange={(v) => {
               fp.handleInputChange('phoneNumber', v);
               fp.handleInputChange('fullPhoneNumber', toE164Iran(v));
             }}
