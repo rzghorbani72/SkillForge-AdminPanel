@@ -6127,6 +6127,7 @@ export const en = {
   userNav: {
     profile: 'Profile',
     settings: 'Settings',
+    settlement: 'Settlement',
     logout: 'Sign out',
     loggingOut: 'Signing out...',
     roles: {

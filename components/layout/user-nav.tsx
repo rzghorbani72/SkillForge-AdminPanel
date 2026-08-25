@@ -14,9 +14,19 @@ import {
 import { useAuthUser } from '@/components/providers/user-provider';
 import { logout } from '@/app/actions/auth';
 import { clearAcademyData } from '@/lib/store-utils';
-import { Building2, ChevronDown, LogOut, Settings, User } from 'lucide-react';
+import {
+  Banknote,
+  Building2,
+  ChevronDown,
+  LogOut,
+  Settings,
+  User
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { formatIdentifierDisplay } from '@/lib/phone-utils';
+
+const SETTLEMENT_ROLES = ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'];
 
 function getInitials(name: string): string {
   return name
@@ -41,12 +51,13 @@ function formatLastLogin(date: string): string {
 export function UserNav() {
   const { user } = useAuthUser();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const email = user?.email ?? '';
   const phone = user?.phone ?? '';
   const roleName = user?.role ?? '';
+  const canSeeSettlement = SETTLEMENT_ROLES.includes(roleName);
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
   const lastLogin = user?.lastLogin ?? null;
   const currentAcademy = user?.currentAcademy ?? null;
@@ -104,11 +115,8 @@ export function UserNav() {
             <p className="truncate text-sm font-semibold leading-none text-foreground">
               {headingName || roleLabel}
             </p>
-            <p
-              dir="ltr"
-              className="truncate text-start text-xs leading-none text-muted-foreground"
-            >
-              {email || phone}
+            <p className="truncate text-start text-xs leading-none text-muted-foreground">
+              {email || formatIdentifierDisplay(phone, language)}
             </p>
             {roleLabel && (
               <span className="mt-0.5 inline-flex w-fit items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium leading-none text-primary">
@@ -135,6 +143,16 @@ export function UserNav() {
           <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
           <span>{t('userNav.settings')}</span>
         </DropdownMenuItem>
+
+        {canSeeSettlement && (
+          <DropdownMenuItem
+            className="cursor-pointer gap-2.5 py-2"
+            onClick={() => router.push('/financial/academy/settlement')}
+          >
+            <Banknote className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span>{t('userNav.settlement')}</span>
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuSeparator />
 

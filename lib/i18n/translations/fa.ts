@@ -6107,6 +6107,7 @@ export const fa = {
   userNav: {
     profile: 'پروفایل',
     settings: 'تنظیمات',
+    settlement: 'تسویه مالی',
     logout: 'خروج از حساب',
     loggingOut: 'در حال خروج...',
     roles: {
