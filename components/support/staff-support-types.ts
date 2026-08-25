@@ -98,3 +98,27 @@ export const TICKET_PRIORITIES: TicketPriority[] = [
   'URGENT'
 ];
 export const CALL_STATUSES = ['COMPLETED', 'NO_ANSWER', 'SCHEDULED'] as const;
+
+export type ContactMessageStatus = 'NEW' | 'IN_PROGRESS' | 'RESOLVED' | 'SPAM';
+
+/** A message left by an unauthenticated visitor on the public contact page. */
+export interface ContactMessageItem {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  subject: string;
+  category: TicketCategory;
+  body: string;
+  status: ContactMessageStatus;
+  staff_note: string | null;
+  created_at: string;
+  HandledBy: TicketPerson | null;
+}
+
+export const CONTACT_MESSAGE_STATUSES: ContactMessageStatus[] = [
+  'NEW',
+  'IN_PROGRESS',
+  'RESOLVED',
+  'SPAM'
+];

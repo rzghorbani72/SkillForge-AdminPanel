@@ -199,7 +199,22 @@ export const fa = {
     logEmail: 'ثبت ایمیل',
     emailOutcome: 'خلاصه ایمیل',
     resolutionSummaryRequired: 'خلاصه رفع مشکل الزامی است',
-    resolutionSummaryPlaceholder: 'توضیح دهید این تیکت چگونه حل شد…'
+    resolutionSummaryPlaceholder: 'توضیح دهید این تیکت چگونه حل شد…',
+    newTicket: 'ثبت تیکت جدید',
+    subject: 'عنوان',
+    category: 'موضوع',
+    message: 'شرح درخواست',
+    ticketCreated: 'تیکت شما ثبت شد',
+    contactMessages: {
+      tab: 'پیام‌های فرم تماس',
+      updated: 'وضعیت پیام به‌روزرسانی شد',
+      statuses: {
+        NEW: 'جدید',
+        IN_PROGRESS: 'در حال بررسی',
+        RESOLVED: 'پاسخ داده شد',
+        SPAM: 'اسپم'
+      }
+    }
   },
   findSchool: {
     title: 'آکادمی خود را پیدا کنید',
@@ -620,6 +635,7 @@ export const fa = {
     contentReview: 'بررسی محتوا',
     legalDocuments: 'اسناد حقوقی',
     allAcademies: 'آکادمی‌ها',
+    support: 'پشتیبانی',
     supportInbox: 'صندوق پشتیبانی',
     planPricing: 'قیمت‌گذاری پلن‌ها',
     platformVouchers: 'کد تخفیف پلتفرم',

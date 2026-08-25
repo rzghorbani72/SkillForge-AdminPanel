@@ -1,5 +1,6 @@
 import { OtpType } from '@/constants/data';
 import type { CourseType } from '@/components/course/course-drafts';
+import type { ContactMessageItem } from '@/components/support/staff-support-types';
 import {
   Academy,
   Enrollment,
@@ -1202,6 +1203,40 @@ class ApiClient {
       page: params.page != null ? String(params.page) : undefined,
       limit: params.limit != null ? String(params.limit) : undefined
     };
+  }
+
+  // ----- Public contact-page messages (platform staff) -----
+  async getContactMessages(params?: {
+    status?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const res = await this.request(
+      `/support/contact-messages${this.supportQuery({
+        status: params?.status,
+        search: params?.search,
+        page: params?.page != null ? String(params.page) : undefined,
+        limit: params?.limit != null ? String(params.limit) : undefined
+      })}`
+    );
+    return (res as any).data as {
+      items: ContactMessageItem[];
+      total: number;
+      page: number;
+      limit: number;
+    };
+  }
+
+  async updateContactMessage(
+    id: string,
+    body: { status?: string; staff_note?: string }
+  ) {
+    const res = await this.request(`/support/contact-messages/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    });
+    return (res as any).data as ContactMessageItem;
   }
 
   async getSupportTicket(id: string) {

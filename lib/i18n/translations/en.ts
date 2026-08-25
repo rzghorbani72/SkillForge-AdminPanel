@@ -206,7 +206,22 @@ export const en = {
     logEmail: 'Log email',
     emailOutcome: 'Email summary',
     resolutionSummaryRequired: 'Resolution summary required',
-    resolutionSummaryPlaceholder: 'Describe how this ticket was resolved…'
+    resolutionSummaryPlaceholder: 'Describe how this ticket was resolved…',
+    newTicket: 'New ticket',
+    subject: 'Subject',
+    category: 'Category',
+    message: 'Message',
+    ticketCreated: 'Your ticket has been created',
+    contactMessages: {
+      tab: 'Contact form messages',
+      updated: 'Message status updated',
+      statuses: {
+        NEW: 'New',
+        IN_PROGRESS: 'In progress',
+        RESOLVED: 'Answered',
+        SPAM: 'Spam'
+      }
+    }
   },
   findSchool: {
     title: 'Find Your Academy',
@@ -535,6 +550,7 @@ export const en = {
     rolesPermissions: 'Roles & Permissions',
     dashboard: 'Dashboard',
     platformOverview: 'Platform Overview',
+    support: 'Support',
     supportInbox: 'Support Inbox',
     planPricing: 'Plan Pricing',
     platformVouchers: 'Platform Vouchers',

@@ -16,8 +16,10 @@ import {
 } from '@/components/support/support-inbox-filters';
 import { StaffTicketListItem } from '@/components/support/staff-support-types';
 import { isPlatformStaff } from '@/lib/roles';
+import { NewPlatformTicketDialog } from '@/components/support/new-platform-ticket-dialog';
+import { ContactMessagesPanel } from '@/components/support/contact-messages-panel';
 
-type InboxKind = 'academy' | 'platform';
+type InboxKind = 'academy' | 'platform' | 'contact';
 
 const emptyFilters = (): SupportInboxFiltersState => ({
   status: '',
@@ -31,7 +33,8 @@ export default function SupportPage() {
   const platformStaffMode = isPlatformStaff(user);
 
   const tabs = useMemo<InboxKind[]>(
-    () => (platformStaffMode ? ['platform'] : ['academy', 'platform']),
+    () =>
+      platformStaffMode ? ['platform', 'contact'] : ['academy', 'platform'],
     [platformStaffMode]
   );
   const [tab, setTab] = useState<InboxKind>('academy');
@@ -48,6 +51,7 @@ export default function SupportPage() {
   }, [tabs]);
 
   const load = useCallback(async () => {
+    if (tab === 'contact') return;
     setItems(null);
     try {
       const query = {
@@ -78,9 +82,14 @@ export default function SupportPage() {
 
   return (
     <div className="space-y-4 p-4">
-      <div className="flex items-center gap-2">
-        <LifeBuoy className="h-5 w-5 text-primary" />
-        <h1 className="text-xl font-semibold">{t('support.title')}</h1>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <LifeBuoy className="h-5 w-5 text-primary" />
+          <h1 className="text-xl font-semibold">{t('support.title')}</h1>
+        </div>
+        {/* Academy staff raise tickets to the platform; platform staff answer
+            them, so the create button is theirs only. */}
+        {!platformStaffMode && <NewPlatformTicketDialog onCreated={load} />}
       </div>
 
       <Tabs
@@ -95,93 +104,99 @@ export default function SupportPage() {
         <TabsList>
           {tabs.map((tk) => (
             <TabsTrigger key={tk} value={tk}>
-              {tk === 'academy'
-                ? t('support.academyInbox')
-                : t('support.platformInbox')}
+              {tk === 'academy' && t('support.academyInbox')}
+              {tk === 'platform' && t('support.platformInbox')}
+              {tk === 'contact' && t('support.contactMessages.tab')}
             </TabsTrigger>
           ))}
         </TabsList>
       </Tabs>
 
-      <SupportInboxFilters
-        tab={tab}
-        filters={filters}
-        onChange={(next) => {
-          setFilters(next);
-          setPage(1);
-        }}
-      />
+      {tab === 'contact' && <ContactMessagesPanel />}
 
-      <div className="grid gap-4 md:grid-cols-[minmax(260px,360px)_1fr]">
-        <Card className="flex h-[70vh] flex-col overflow-hidden">
-          <CardHeader className="py-3">
-            <CardTitle className="text-sm">
-              {total} {t('support.messages')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 space-y-2 overflow-y-auto">
-            {items === null && (
-              <p className="text-sm text-muted-foreground">
-                {t('support.loading')}
-              </p>
-            )}
-            {items?.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                {t('support.empty')}
-              </p>
-            )}
-            {items?.map((it) => (
-              <button
-                key={it.id}
-                type="button"
-                onClick={() => setSelected(it.id)}
-                className={`flex w-full flex-col gap-1 rounded-md border p-2 text-start transition-colors hover:border-primary ${selected === it.id ? 'border-primary bg-primary/5' : ''}`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="truncate font-medium">{it.subject}</span>
-                  <Badge variant="secondary">
-                    {t(`support.statuses.${it.status}`)}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="truncate">
-                    {it.CreatedBy?.display_name ?? '—'}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MessageSquare className="h-3 w-3" />
-                    {it._count?.Message ?? 0}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </CardContent>
-          {total > limit && (
-            <div className="border-t p-2">
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-                hasNextPage={page < totalPages}
-                hasPreviousPage={page > 1}
-                totalItems={total}
-                itemsPerPage={limit}
-              />
-            </div>
-          )}
-        </Card>
+      {tab !== 'contact' && (
+        <>
+          <SupportInboxFilters
+            tab={tab}
+            filters={filters}
+            onChange={(next) => {
+              setFilters(next);
+              setPage(1);
+            }}
+          />
 
-        <Card className="h-[70vh] overflow-hidden">
-          <CardContent className="h-full p-4">
-            {selected ? (
-              <StaffTicketDetail ticketId={selected} onChanged={load} />
-            ) : (
-              <p className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                {t('support.selectTicket')}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+          <div className="grid gap-4 md:grid-cols-[minmax(260px,360px)_1fr]">
+            <Card className="flex h-[70vh] flex-col overflow-hidden">
+              <CardHeader className="py-3">
+                <CardTitle className="text-sm">
+                  {total} {t('support.messages')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 space-y-2 overflow-y-auto">
+                {items === null && (
+                  <p className="text-sm text-muted-foreground">
+                    {t('support.loading')}
+                  </p>
+                )}
+                {items?.length === 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {t('support.empty')}
+                  </p>
+                )}
+                {items?.map((it) => (
+                  <button
+                    key={it.id}
+                    type="button"
+                    onClick={() => setSelected(it.id)}
+                    className={`flex w-full flex-col gap-1 rounded-md border p-2 text-start transition-colors hover:border-primary ${selected === it.id ? 'border-primary bg-primary/5' : ''}`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate font-medium">{it.subject}</span>
+                      <Badge variant="secondary">
+                        {t(`support.statuses.${it.status}`)}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span className="truncate">
+                        {it.CreatedBy?.display_name ?? '—'}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <MessageSquare className="h-3 w-3" />
+                        {it._count?.Message ?? 0}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </CardContent>
+              {total > limit && (
+                <div className="border-t p-2">
+                  <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                    hasNextPage={page < totalPages}
+                    hasPreviousPage={page > 1}
+                    totalItems={total}
+                    itemsPerPage={limit}
+                  />
+                </div>
+              )}
+            </Card>
+
+            <Card className="h-[70vh] overflow-hidden">
+              <CardContent className="h-full p-4">
+                {selected ? (
+                  <StaffTicketDetail ticketId={selected} onChanged={load} />
+                ) : (
+                  <p className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                    {t('support.selectTicket')}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   );
 }

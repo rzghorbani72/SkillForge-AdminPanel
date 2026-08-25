@@ -425,6 +425,15 @@ export const navItems: NavItem[] = [
     section: 'account'
   },
   {
+    title: 'Support',
+    href: '/support',
+    icon: 'help' as IconType,
+    label: 'support',
+    roles: ['MANAGER', 'TEACHER'],
+    scope: 'academy',
+    section: 'account'
+  },
+  {
     title: 'Settings',
     href: '/settings',
     icon: 'settings' as IconType,
