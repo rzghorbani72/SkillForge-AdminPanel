@@ -40,3 +40,6 @@ next-env.d.ts
 /blob-report/
 /playwright/.cache/
 .last-run.json
+
+# Local Cursor/Claude agent state (worktrees, settings)
+.claude/
