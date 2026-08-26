@@ -1146,6 +1146,7 @@ export const en = {
     removeAcademy: 'Remove academy',
     removeAcademyConfirm:
       'This academy will leave the public site and this list. Student records and payments stay saved.',
+    landingScreenshots: 'Landing screenshots',
     createNew: 'New Academy',
     switchToAcademy: 'Open',
     manageAcademy: 'Manage',

@@ -1,77 +1,80 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, Save } from 'lucide-react';
-
 import { ImageUploadField } from '@/components/academies/image-upload-field';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { resolveMediaUrl } from '@/lib/media-url';
+import type { Academy } from '@/types/api';
 
-/**
- * Landing-page showcase shots. These are platform editorial — the marketing site
- * pairs the desktop image with the mobile one for every academy it features — so
- * the card is only rendered for platform admins, and the API rejects anyone else.
- */
-export function AcademyShowcaseCard() {
+type AcademyShowcaseModalProps = {
+  academy: Pick<
+    Academy,
+    'id' | 'name' | 'showcase_desktop' | 'showcase_mobile'
+  >;
+  open: boolean;
+  onClose: () => void;
+  onSaved: () => void;
+};
+
+export function AcademyShowcaseModal({
+  academy,
+  open,
+  onClose,
+  onSaved
+}: AcademyShowcaseModalProps) {
   const { t } = useTranslation();
   const desktop = useImageUpload();
   const mobile = useImageUpload();
   const [saving, setSaving] = useState(false);
 
-  // Detail endpoint still works when staff is inside one academy; the
-  // academies list now also returns these two fields for the dashboard modal.
-  const load = useCallback(async () => {
-    try {
-      const data = await apiClient.getCurrentAcademyDetail();
-      desktop.reset(resolveMediaUrl(data.showcase_desktop?.publicUrl));
-      mobile.reset(resolveMediaUrl(data.showcase_mobile?.publicUrl));
-    } catch (error) {
-      ErrorHandler.handleApiError(error);
-    }
-    // The upload hooks are stable ref-like results; depending on them would loop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (!open) return;
+    desktop.reset(resolveMediaUrl(academy.showcase_desktop?.publicUrl));
+    mobile.reset(resolveMediaUrl(academy.showcase_mobile?.publicUrl));
+    // Reset only when the modal opens for this academy.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, academy.id]);
 
   const dirty = Boolean(desktop.id || mobile.id);
 
-  const handleSave = async () => {
+  async function handleSave() {
     setSaving(true);
     try {
-      await apiClient.updateAcademy({
+      await apiClient.setAcademyShowcase(academy.id, {
         ...(desktop.id ? { showcase_desktop_id: desktop.id } : {}),
         ...(mobile.id ? { showcase_mobile_id: mobile.id } : {})
       });
       ErrorHandler.showSuccess(t('settings.showcaseSaved'));
-      await load();
+      onSaved();
+      onClose();
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
       setSaving(false);
     }
-  };
+  }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('settings.showcaseTitle')}</CardTitle>
-        <CardDescription>{t('settings.showcaseDescription')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-5">
+    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent className="sm:max-w-[560px]">
+        <DialogHeader>
+          <DialogTitle>{t('settings.showcaseTitle')}</DialogTitle>
+          <DialogDescription>
+            {academy.name} — {t('settings.showcaseDescription')}
+          </DialogDescription>
+        </DialogHeader>
         <div className="grid items-stretch gap-4 sm:grid-cols-2">
           <ImageUploadField
             label={t('settings.showcaseDesktop')}
@@ -90,7 +93,6 @@ export function AcademyShowcaseCard() {
             onFile={mobile.upload}
           />
         </div>
-
         <div className="flex justify-end">
           <Button
             disabled={!dirty || saving || desktop.uploading || mobile.uploading}
@@ -104,7 +106,7 @@ export function AcademyShowcaseCard() {
             {t('common.save')}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

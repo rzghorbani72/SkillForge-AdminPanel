@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, EyeOff, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, ImageIcon, MoreHorizontal, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,13 +11,17 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
+import { AcademyShowcaseModal } from '@/components/academies/academy-showcase-modal';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { Academy } from '@/types/api';
 
 type AcademyStaffActionsProps = {
-  academy: Pick<Academy, 'id' | 'name' | 'listed_publicly'>;
+  academy: Pick<
+    Academy,
+    'id' | 'name' | 'listed_publicly' | 'showcase_desktop' | 'showcase_mobile'
+  >;
   onChanged: () => void;
 };
 
@@ -28,6 +32,7 @@ export function AcademyStaffActions({
   const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
+  const [showcaseOpen, setShowcaseOpen] = useState(false);
   const listed = academy.listed_publicly !== false;
 
   async function setListed(listedPublicly: boolean) {
@@ -77,6 +82,13 @@ export function AcademyStaffActions({
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             disabled={busy}
+            onSelect={() => setShowcaseOpen(true)}
+          >
+            <ImageIcon className="me-2 h-4 w-4" />
+            {t('stores.landingScreenshots')}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={busy}
             onSelect={() => void setListed(!listed)}
           >
             {listed ? (
@@ -96,6 +108,12 @@ export function AcademyStaffActions({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <AcademyShowcaseModal
+        academy={academy}
+        open={showcaseOpen}
+        onClose={() => setShowcaseOpen(false)}
+        onSaved={onChanged}
+      />
       <ConfirmDeleteModal
         open={confirmRemove}
         onOpenChange={setConfirmRemove}

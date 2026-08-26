@@ -692,7 +692,8 @@ export const ar = {
     hiddenToast: 'تم إخفاء المعهد عن الموقع العام',
     removeAcademy: 'إزالة المعهد',
     removeAcademyConfirm:
-      'سيختفي هذا المعهد من الموقع العام ومن هذه القائمة. سجلات الطلاب والمدفوعات تبقى محفوظة.'
+      'سيختفي هذا المعهد من الموقع العام ومن هذه القائمة. سجلات الطلاب والمدفوعات تبقى محفوظة.',
+    landingScreenshots: 'لقطات الصفحة الرئيسية'
   },
   courses: {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.

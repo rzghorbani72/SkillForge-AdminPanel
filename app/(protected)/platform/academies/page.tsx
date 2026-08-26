@@ -107,21 +107,23 @@ export default function PlatformAcademiesPage() {
           : Array.isArray((payload as { data?: Academy[] } | null)?.data)
             ? (payload as { data: Academy[] }).data
             : [];
-        const listedById = new Map(
-          academyList.map((academy) => [
-            academy.id,
-            academy.listed_publicly !== false
-          ])
+        const academyById = new Map(
+          academyList.map((academy) => [academy.id, academy])
         );
         setStores(
-          rows.map((row: AcademySettlementRow) => ({
-            id: row.academy_id,
-            uuid: row.academy_uuid,
-            name: row.academy_name,
-            slug: row.academy_slug,
-            is_active: row.is_active,
-            listed_publicly: listedById.get(row.academy_id) ?? true
-          })) as Academy[]
+          rows.map((row: AcademySettlementRow) => {
+            const listed = academyById.get(row.academy_id);
+            return {
+              id: row.academy_id,
+              uuid: row.academy_uuid,
+              name: row.academy_name,
+              slug: row.academy_slug,
+              is_active: row.is_active,
+              listed_publicly: listed?.listed_publicly !== false,
+              showcase_desktop: listed?.showcase_desktop ?? null,
+              showcase_mobile: listed?.showcase_mobile ?? null
+            };
+          }) as Academy[]
         );
       } catch (error) {
         console.error('Error fetching stores:', error);

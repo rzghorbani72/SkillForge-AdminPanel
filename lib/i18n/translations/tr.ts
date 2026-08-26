@@ -708,7 +708,8 @@ export const tr = {
     hiddenToast: 'Akademi herkese açık siteden gizlendi',
     removeAcademy: 'Akademiyi kaldır',
     removeAcademyConfirm:
-      'Bu akademi herkese açık siteden ve bu listeden kalkar. Öğrenci kayıtları ve ödemeler saklanır.'
+      'Bu akademi herkese açık siteden ve bu listeden kalkar. Öğrenci kayıtları ve ödemeler saklanır.',
+    landingScreenshots: 'Tanıtım ekran görüntüleri'
   },
   courses: {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.

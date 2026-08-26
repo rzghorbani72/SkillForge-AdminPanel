@@ -1136,6 +1136,7 @@ export const fa = {
     removeAcademy: 'حذف آکادمی',
     removeAcademyConfirm:
       'این آکادمی از سایت عمومی و این فهرست حذف می‌شود. سوابق دانشجویان و پرداخت‌ها باقی می‌ماند.',
+    landingScreenshots: 'تصویرهای صفحه اصلی',
     createNew: 'آکادمی جدید',
     switchToAcademy: 'باز کردن',
     manageAcademy: 'مدیریت',

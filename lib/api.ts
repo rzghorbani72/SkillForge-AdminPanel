@@ -1577,6 +1577,19 @@ class ApiClient {
     });
   }
 
+  async setAcademyShowcase(
+    id: string,
+    data: {
+      showcase_desktop_id?: string | null;
+      showcase_mobile_id?: string | null;
+    }
+  ) {
+    return this.request(`/academies/${id}/showcase`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+  }
+
   async removeAcademyById(id: string) {
     return this.request(`/academies/${id}`, { method: 'DELETE' });
   }
