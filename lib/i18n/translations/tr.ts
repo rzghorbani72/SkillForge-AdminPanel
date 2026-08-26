@@ -1277,11 +1277,13 @@ export const tr = {
     storeSettingsTitle: 'Akademi Bilgileri',
     showcaseTitle: 'Tanıtım sayfası vitrini',
     showcaseDescription:
-      'Bu akademinin tanıtım sitesinde gösterilen ekran görüntüleri. Yalnızca platform yöneticileri.',
-    showcaseDesktop: 'Masaüstü görünümü',
-    showcaseDesktopHint: 'Yüklemek için tıkla — en iyisi 1440 x 900 piksel',
-    showcaseMobile: 'Mobil görünüm',
-    showcaseMobileHint: 'Yüklemek için tıkla — en iyisi 390 x 844 piksel',
+      'Tanıtım için iki görsel: kare kart ve telefon ekranı. Yalnızca platform yöneticileri.',
+    showcaseDesktop: 'Kart fotoğrafı',
+    showcaseDesktopHint:
+      'Tanıtım kartı için kare fotoğraf — en iyisi 1080 x 1080 piksel',
+    showcaseMobile: 'Telefon ekran görüntüsü',
+    showcaseMobileHint:
+      'Telefon çerçevesindeki mobil site görüntüsü — en iyisi 390 x 844 piksel',
     showcaseSaved: 'Vitrin görselleri kaydedildi',
     storeSettingsSubtitle:
       'Enstitünüzün آکادمی ekosisteminde nasıl göründüğünü yönetin.',

@@ -2630,11 +2630,13 @@ export const en = {
     storeSettingsTitle: 'Academy Details',
     showcaseTitle: 'Landing page showcase',
     showcaseDescription:
-      'Screenshots of this academy shown on the public marketing site. Platform admins only.',
-    showcaseDesktop: 'Desktop view',
-    showcaseDesktopHint: 'Click to upload — 1440 x 900 pixels works best',
-    showcaseMobile: 'Mobile view',
-    showcaseMobileHint: 'Click to upload — 390 x 844 pixels works best',
+      'Two photos for the public landing: the square card and the phone screen. Platform admins only.',
+    showcaseDesktop: 'Card photo',
+    showcaseDesktopHint:
+      'Square photo for the landing card — 1080 x 1080 pixels works best',
+    showcaseMobile: 'Phone screenshot',
+    showcaseMobileHint:
+      'Mobile site screenshot inside the phone frame — 390 x 844 pixels works best',
     showcaseSaved: 'Showcase images saved',
     storeSettingsSubtitle:
       'Sets your academy name, site address, and description on the platform.',

@@ -1239,11 +1239,13 @@ export const ar = {
     storeSettingsTitle: 'بيانات المعهد',
     showcaseTitle: 'العرض في الصفحة الرئيسية',
     showcaseDescription:
-      'صور هذا المعهد التي تظهر في موقع المنصة التعريفي. لمديري المنصة فقط.',
-    showcaseDesktop: 'عرض سطح المكتب',
-    showcaseDesktopHint: 'انقر للرفع — المقاس المفضل ١٤٤٠ × ٩٠٠ بكسل',
-    showcaseMobile: 'عرض الجوال',
-    showcaseMobileHint: 'انقر للرفع — المقاس المفضل ٣٩٠ × ٨٤٤ بكسل',
+      'صورتان للصفحة التعريفية: البطاقة المربعة وشاشة الهاتف. لمديري المنصة فقط.',
+    showcaseDesktop: 'صورة البطاقة',
+    showcaseDesktopHint:
+      'صورة مربعة لبطاقة الصفحة الرئيسية — المقاس المفضل ١٠٨٠ × ١٠٨٠ بكسل',
+    showcaseMobile: 'لقطة داخل الهاتف',
+    showcaseMobileHint:
+      'لقطة لموقع الجوال داخل إطار الهاتف — المقاس المفضل ٣٩٠ × ٨٤٤ بكسل',
     showcaseSaved: 'تم حفظ صور العرض',
     storeSettingsSubtitle: 'إدارة كيفية ظهور معهدك عبر نظام آکادمی.',
     generalInformation: 'المعلومات العامة',
