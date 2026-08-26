@@ -6129,6 +6129,9 @@ export const en = {
   academiesHealth: {
     title: 'Academy health',
     empty: 'No academy health data',
+    row: '#',
+    id: 'ID',
+    copyId: 'Copy ID',
     name: 'Academy',
     plan: 'Plan',
     expiry: 'Expiry',

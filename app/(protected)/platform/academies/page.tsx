@@ -9,6 +9,8 @@ import {
 } from '@/components/ui/card';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import {
   Store as StoreIcon,
   Search,
@@ -43,6 +45,7 @@ import { Pagination } from '@/components/shared/Pagination';
 import { AcademyCustomPlanCard } from '@/components/plans/AcademyCustomPlanCard';
 import { canAccessSupportOps, isPlatformAdmin } from '@/lib/roles';
 import { AcademyStaffActions } from '@/components/academies/academy-staff-actions';
+import { CopyableId } from '@/components/academies/copyable-id';
 
 type AcademySettlementRow = {
   academy_id: string;
@@ -60,6 +63,8 @@ type AcademySettlementRow = {
 
 export default function PlatformAcademiesPage() {
   const { t, language } = useTranslation();
+  const formatDate = useDateFormat();
+  const formatNumber = useNumberFormat();
   const { user, isLoading: userLoading } = useAuthUser();
   const searchParams = useSearchParams();
   const academyId = searchParams.get('academyId');
@@ -293,7 +298,7 @@ export default function PlatformAcademiesPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {storeStats.totalCourses}
+                {formatNumber(storeStats.totalCourses)}
               </div>
             </CardContent>
           </Card>
@@ -307,7 +312,7 @@ export default function PlatformAcademiesPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {storeStats.totalStudents}
+                {formatNumber(storeStats.totalStudents)}
               </div>
             </CardContent>
           </Card>
@@ -341,7 +346,7 @@ export default function PlatformAcademiesPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {storeStats.totalPayments}
+                {formatNumber(storeStats.totalPayments)}
               </div>
             </CardContent>
           </Card>
@@ -361,9 +366,7 @@ export default function PlatformAcademiesPage() {
               <p className="text-xs text-muted-foreground">
                 {t('platform.stores.expires')}:{' '}
                 {selectedStore.subscription_expires
-                  ? new Date(
-                      selectedStore.subscription_expires
-                    ).toLocaleDateString()
+                  ? formatDate(selectedStore.subscription_expires)
                   : t('platform.stores.noExpiry')}
               </p>
             </CardContent>
@@ -499,9 +502,7 @@ export default function PlatformAcademiesPage() {
                         <TableRow key={payment.id}>
                           <TableCell>
                             {payment.payment_date
-                              ? new Date(
-                                  payment.payment_date
-                                ).toLocaleDateString()
+                              ? formatDate(payment.payment_date)
                               : '-'}
                           </TableCell>
                           <TableCell>
@@ -555,6 +556,18 @@ export default function PlatformAcademiesPage() {
                     {selectedStore.name}
                   </p>
                 </div>
+                <div>
+                  <p className="text-sm font-medium">
+                    {t('academiesHealth.id')}
+                  </p>
+                  <CopyableId value={selectedStore.id} className="mt-1" />
+                </div>
+                {selectedStore.uuid ? (
+                  <div>
+                    <p className="text-sm font-medium">UUID</p>
+                    <CopyableId value={selectedStore.uuid} className="mt-1" />
+                  </div>
+                ) : null}
                 <div>
                   <p className="text-sm font-medium">
                     {t('platform.stores.slug')}
@@ -667,7 +680,9 @@ export default function PlatformAcademiesPage() {
             <StoreIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stores.length}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(stores.length)}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -679,7 +694,7 @@ export default function PlatformAcademiesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stores.filter((s) => s.is_active).length}
+              {formatNumber(stores.filter((s) => s.is_active).length)}
             </div>
           </CardContent>
         </Card>
@@ -692,7 +707,7 @@ export default function PlatformAcademiesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stores.filter((s) => !s.is_active).length}
+              {formatNumber(stores.filter((s) => !s.is_active).length)}
             </div>
           </CardContent>
         </Card>
@@ -720,7 +735,8 @@ export default function PlatformAcademiesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
+                <TableHead>{t('academiesHealth.row')}</TableHead>
+                <TableHead>{t('academiesHealth.id')}</TableHead>
                 <TableHead>UUID</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Slug</TableHead>
@@ -731,11 +747,16 @@ export default function PlatformAcademiesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedStores.map((store) => (
+              {paginatedStores.map((store, index) => (
                 <TableRow key={store.id}>
-                  <TableCell>{store.id}</TableCell>
-                  <TableCell className="max-w-[180px] truncate">
-                    {(store as any).uuid || '-'}
+                  <TableCell className="tabular-nums">
+                    {formatNumber((currentPage - 1) * itemsPerPage + index + 1)}
+                  </TableCell>
+                  <TableCell>
+                    <CopyableId value={store.id} className="max-w-[180px]" />
+                  </TableCell>
+                  <TableCell className="max-w-[180px]">
+                    {store.uuid ? <CopyableId value={store.uuid} /> : '-'}
                   </TableCell>
                   <TableCell>{store.name}</TableCell>
                   <TableCell>{store.slug}</TableCell>
@@ -758,14 +779,18 @@ export default function PlatformAcademiesPage() {
                   <TableCell>
                     {formatCurrencyWithStore(
                       settlementByAcademy.get(store.id)?.payable_now || 0,
-                      store
+                      store,
+                      undefined,
+                      language
                     )}
                   </TableCell>
                   <TableCell>
                     {formatCurrencyWithStore(
                       settlementByAcademy.get(store.id)
                         ?.platform_commission_total || 0,
-                      store
+                      store,
+                      undefined,
+                      language
                     )}
                   </TableCell>
                   <TableCell className="text-right">

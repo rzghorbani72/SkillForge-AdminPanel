@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { formatCurrency } from '@/lib/utils';
 import {
   Building2,
@@ -25,6 +26,7 @@ import { isPlatformOwner } from '@/lib/roles';
 
 export default function PlatformOverviewPage() {
   const { t, language } = useTranslation();
+  const formatNumber = useNumberFormat();
   const { user, isLoading: userLoading } = useAuthUser();
   const [stats, setStats] = useState({
     totalStores: 0,
@@ -151,7 +153,9 @@ export default function PlatformOverviewPage() {
             <Store className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalStores}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.totalStores)}
+            </div>
             <p className="text-xs text-muted-foreground">
               {t('platform.overview.activeSchools', {
                 count: stats.activeStores
@@ -168,7 +172,9 @@ export default function PlatformOverviewPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsers}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.totalUsers)}
+            </div>
             <p className="text-xs text-muted-foreground">
               {t('platform.overview.acrossAllSchools')}
             </p>
@@ -183,7 +189,9 @@ export default function PlatformOverviewPage() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalCourses}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.totalCourses)}
+            </div>
             <p className="text-xs text-muted-foreground">
               {t('platform.overview.platformWideCourses')}
             </p>

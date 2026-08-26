@@ -6109,6 +6109,9 @@ export const fa = {
   academiesHealth: {
     title: 'سلامت آکادمی‌ها',
     empty: 'داده سلامت آکادمی موجود نیست',
+    row: 'ردیف',
+    id: 'شناسه',
+    copyId: 'کپی شناسه',
     name: 'آکادمی',
     plan: 'پلن',
     expiry: 'انقضا',

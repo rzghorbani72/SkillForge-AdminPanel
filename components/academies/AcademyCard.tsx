@@ -15,6 +15,7 @@ import {
   type AcademyRow
 } from './academy-helpers';
 import { AcademyStaffActions } from './academy-staff-actions';
+import { CopyableId } from './copyable-id';
 
 const CARD_COLORS = [
   { bg: 'bg-blue-100', icon: 'bg-blue-200 text-blue-700' },
@@ -148,6 +149,7 @@ export function AcademyCard({
         >
           {domain}.{ACADEMY_DOMAIN}
         </a>
+        <CopyableId value={academy.id} className="mt-1 max-w-full" />
 
         {/* Stats row */}
         <div className="mt-4 flex items-center justify-between text-sm">

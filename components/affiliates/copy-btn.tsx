@@ -2,22 +2,27 @@
 
 import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
 
-export function CopyBtn({ text }: { text: string }) {
+export function CopyBtn({ text, label }: { text: string; label?: string }) {
+  const { t } = useTranslation();
   const [done, setDone] = useState(false);
+  const title = label ?? t('affiliates.copy');
 
-  function copy() {
-    navigator.clipboard.writeText(text).then(() => {
-      setDone(true);
-      setTimeout(() => setDone(false), 2000);
-    });
+  async function copy() {
+    await navigator.clipboard.writeText(text);
+    setDone(true);
+    setTimeout(() => setDone(false), 2000);
   }
 
   return (
     <button
       type="button"
-      onClick={copy}
-      title="کپی"
+      onClick={() => {
+        void copy();
+      }}
+      title={title}
+      aria-label={title}
       className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
     >
       {done ? (
