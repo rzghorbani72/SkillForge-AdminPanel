@@ -1098,7 +1098,7 @@ export const en = {
     editBanner: 'Edit Banner',
     addBanner: 'Add Banner'
   },
-  academies: {
+  stores: {
     title: 'Stores',
     createStore: 'Create Store',
     editStore: 'Edit Store',
@@ -1138,6 +1138,14 @@ export const en = {
     storeCreated: 'Academy created successfully',
     storeUpdated: 'Academy updated successfully',
     storeDeleted: 'Academy deleted successfully',
+    hideFromPublic: 'Hide from public site',
+    showOnPublic: 'Show on public site',
+    hiddenFromPublic: 'Hidden from public',
+    listedToast: 'Academy is listed on the public site',
+    hiddenToast: 'Academy is hidden from the public site',
+    removeAcademy: 'Remove academy',
+    removeAcademyConfirm:
+      'This academy will leave the public site and this list. Student records and payments stay saved.',
     createNew: 'New Academy',
     switchToAcademy: 'Open',
     manageAcademy: 'Manage',

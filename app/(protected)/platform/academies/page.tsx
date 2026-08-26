@@ -41,7 +41,8 @@ import { formatCurrency, formatCurrencyWithStore } from '@/lib/utils';
 import type { Academy } from '@/types/api';
 import { Pagination } from '@/components/shared/Pagination';
 import { AcademyCustomPlanCard } from '@/components/plans/AcademyCustomPlanCard';
-import { canAccessSupportOps } from '@/lib/roles';
+import { canAccessSupportOps, isPlatformAdmin } from '@/lib/roles';
+import { AcademyStaffActions } from '@/components/academies/academy-staff-actions';
 
 type AcademySettlementRow = {
   academy_id: string;
@@ -71,6 +72,8 @@ export default function PlatformAcademiesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
+  const [listVersion, setListVersion] = useState(0);
+  const canManageListing = isPlatformAdmin(user);
 
   // Store detail data
   const [selectedStore, setSelectedStore] = useState<Academy | null>(null);
@@ -89,19 +92,35 @@ export default function PlatformAcademiesPage() {
     const fetchStores = async () => {
       try {
         setIsLoading(true);
-        const settlementData = await apiClient.getAcademySettlementTable({
-          page: 1,
-          limit: 200
-        });
+        const [settlementData, academiesRes] = await Promise.all([
+          apiClient.getAcademySettlementTable({
+            page: 1,
+            limit: 200
+          }),
+          apiClient.getMyAcademies().catch(() => null)
+        ]);
         const rows = settlementData?.rows || [];
         setSettlementRows(rows);
+        const payload = (academiesRes as { data?: unknown } | null)?.data;
+        const academyList: Academy[] = Array.isArray(payload)
+          ? payload
+          : Array.isArray((payload as { data?: Academy[] } | null)?.data)
+            ? (payload as { data: Academy[] }).data
+            : [];
+        const listedById = new Map(
+          academyList.map((academy) => [
+            academy.id,
+            academy.listed_publicly !== false
+          ])
+        );
         setStores(
           rows.map((row: AcademySettlementRow) => ({
             id: row.academy_id,
             uuid: row.academy_uuid,
             name: row.academy_name,
             slug: row.academy_slug,
-            is_active: row.is_active
+            is_active: row.is_active,
+            listed_publicly: listedById.get(row.academy_id) ?? true
           })) as Academy[]
         );
       } catch (error) {
@@ -115,7 +134,7 @@ export default function PlatformAcademiesPage() {
     if (!userLoading && canAccessSupportOps(user)) {
       fetchStores();
     }
-  }, [user, userLoading]);
+  }, [user, userLoading, listVersion]);
 
   // Fetch store detail and financial data when academyId is present
   useEffect(() => {
@@ -719,11 +738,20 @@ export default function PlatformAcademiesPage() {
                   <TableCell>{store.name}</TableCell>
                   <TableCell>{store.slug}</TableCell>
                   <TableCell>
-                    <Badge variant={store.is_active ? 'default' : 'secondary'}>
-                      {store.is_active
-                        ? t('common.active')
-                        : t('common.inactive')}
-                    </Badge>
+                    <div className="flex flex-wrap items-center gap-1">
+                      <Badge
+                        variant={store.is_active ? 'default' : 'secondary'}
+                      >
+                        {store.is_active
+                          ? t('common.active')
+                          : t('common.inactive')}
+                      </Badge>
+                      {store.listed_publicly === false && (
+                        <Badge variant="outline">
+                          {t('stores.hiddenFromPublic')}
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     {formatCurrencyWithStore(
@@ -754,6 +782,12 @@ export default function PlatformAcademiesPage() {
                           {t('platform.stores.edit')}
                         </Link>
                       </Button>
+                      {canManageListing && (
+                        <AcademyStaffActions
+                          academy={store}
+                          onChanged={() => setListVersion((n) => n + 1)}
+                        />
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

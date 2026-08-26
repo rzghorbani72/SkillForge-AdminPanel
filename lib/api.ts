@@ -1570,6 +1570,17 @@ class ApiClient {
     return this.updateAcademy(data);
   }
 
+  async setAcademyPublicListing(id: string, listed_publicly: boolean) {
+    return this.request(`/academies/${id}/public-listing`, {
+      method: 'PATCH',
+      body: JSON.stringify({ listed_publicly })
+    });
+  }
+
+  async removeAcademyById(id: string) {
+    return this.request(`/academies/${id}`, { method: 'DELETE' });
+  }
+
   async getCurrentAcademySubscription(opts?: ReadOptions) {
     const response = await this.request(
       '/academies/current/subscription',

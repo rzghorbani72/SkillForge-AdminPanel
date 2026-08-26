@@ -198,6 +198,8 @@ export default function AcademiesPage() {
         onDetails={handleDetails}
         onEdit={handleEdit}
         onCreate={() => setCreateOpen(true)}
+        showStaffActions={isPlatformAdmin(user)}
+        onStaffChanged={() => void refreshAcademies()}
         t={t}
         filters={
           <>

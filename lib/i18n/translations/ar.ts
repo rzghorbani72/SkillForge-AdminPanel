@@ -684,7 +684,15 @@ export const ar = {
     noStoresFound: 'لم يتم العثور على معاهد',
     storeCreated: 'تم إنشاء المعهد بنجاح',
     storeUpdated: 'تم تحديث المعهد بنجاح',
-    storeDeleted: 'تم حذف المعهد بنجاح'
+    storeDeleted: 'تم حذف المعهد بنجاح',
+    hideFromPublic: 'إخفاء عن الموقع العام',
+    showOnPublic: 'إظهار في الموقع العام',
+    hiddenFromPublic: 'مخفي عن العامة',
+    listedToast: 'المعهد ظاهر في الموقع العام',
+    hiddenToast: 'تم إخفاء المعهد عن الموقع العام',
+    removeAcademy: 'إزالة المعهد',
+    removeAcademyConfirm:
+      'سيختفي هذا المعهد من الموقع العام ومن هذه القائمة. سجلات الطلاب والمدفوعات تبقى محفوظة.'
   },
   courses: {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.

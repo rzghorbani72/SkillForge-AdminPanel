@@ -90,6 +90,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const isPlatformStaff =
     !!user?.isAdminProfile ||
     !!user?.platformLevel ||
+    user?.role === 'PLATFORM_OWNER' ||
     user?.role === 'ADMIN' ||
     user?.canManagePlatform === true;
 

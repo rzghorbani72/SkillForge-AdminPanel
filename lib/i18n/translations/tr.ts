@@ -700,7 +700,15 @@ export const tr = {
     noStoresFound: 'Enstitü bulunamadı',
     storeCreated: 'Enstitü başarıyla oluşturuldu',
     storeUpdated: 'Enstitü başarıyla güncellendi',
-    storeDeleted: 'Enstitü başarıyla silindi'
+    storeDeleted: 'Enstitü başarıyla silindi',
+    hideFromPublic: 'Herkese açık siteden gizle',
+    showOnPublic: 'Herkese açık sitede göster',
+    hiddenFromPublic: 'Herkese açık listeden gizli',
+    listedToast: 'Akademi herkese açık sitede listeleniyor',
+    hiddenToast: 'Akademi herkese açık siteden gizlendi',
+    removeAcademy: 'Akademiyi kaldır',
+    removeAcademyConfirm:
+      'Bu akademi herkese açık siteden ve bu listeden kalkar. Öğrenci kayıtları ve ödemeler saklanır.'
   },
   courses: {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.

@@ -14,6 +14,7 @@ import {
   canEnterAcademy,
   type AcademyRow
 } from './academy-helpers';
+import { AcademyStaffActions } from './academy-staff-actions';
 
 const CARD_COLORS = [
   { bg: 'bg-blue-100', icon: 'bg-blue-200 text-blue-700' },
@@ -80,6 +81,8 @@ type AcademyCardProps = {
   onDetails: (academy: Academy) => void;
   onEdit: (academy: Academy) => void;
   switching: string | null;
+  showStaffActions?: boolean;
+  onStaffChanged?: () => void;
   t: (k: string) => string;
 };
 
@@ -91,6 +94,8 @@ export function AcademyCard({
   onDetails,
   onEdit,
   switching,
+  showStaffActions = false,
+  onStaffChanged,
   t
 }: AcademyCardProps) {
   const formatNumber = useNumberFormat();
@@ -110,8 +115,11 @@ export function AcademyCard({
       {/* Colored header band */}
       <div className={cn('relative flex h-24 items-start px-4 pt-3', color.bg)}>
         <AcademyStatusPill academy={academy} t={t} />
-
-        {/* Icon floats at the bottom-start corner of the header */}
+        {academy.listed_publicly === false && (
+          <span className="ms-auto inline-flex shrink-0 items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+            {t('stores.hiddenFromPublic')}
+          </span>
+        )}
         <div className="absolute bottom-[-20px] start-4">
           <AcademyIcon
             name={academy.name}
@@ -201,6 +209,9 @@ export function AcademyCard({
             <Info className={ACTION_ICON} />
             {t('stores.details')}
           </Button>
+          {showStaffActions && onStaffChanged && (
+            <AcademyStaffActions academy={academy} onChanged={onStaffChanged} />
+          )}
         </div>
       </div>
     </div>

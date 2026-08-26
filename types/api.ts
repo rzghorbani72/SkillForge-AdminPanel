@@ -175,6 +175,8 @@ export interface Academy {
   is_active: boolean;
   /** Set while the manager has taken the public site offline. */
   site_disabled_at?: string | null;
+  /** False when platform staff unlisted this academy from the public directory. */
+  listed_publicly?: boolean;
   country_code?: string;
   currency?: string;
   currency_symbol?: string;
