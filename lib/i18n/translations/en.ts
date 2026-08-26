@@ -3640,10 +3640,30 @@ export const en = {
     revokeSessions: 'Revoke sessions',
     sessionsRevoked: 'Sessions revoked successfully',
     platformStaff: {
+      PLATFORM_OWNER: 'Platform owner',
       ADMIN: 'Platform admin',
       FINANCE: 'Finance',
       SUPPORT: 'Support'
     }
+  },
+  platformUsers: {
+    eyebrow: 'Platform',
+    title: 'Users',
+    description:
+      'Platform staff and academy members across Mentoma. Owner and admin can invite or promote people into staff roles.',
+    staffTab: 'Platform staff',
+    academyTab: 'Academy members',
+    addStaff: 'Add staff',
+    promote: 'Promote user',
+    promoteTitle: 'Promote registered user',
+    promoteDescription:
+      'Look up an existing Mentoma account by phone and grant a staff role.',
+    promoted: 'User promoted to platform staff',
+    notRegistered: 'No registered user with this phone.',
+    alreadyStaff: 'This person is already platform staff.',
+    emptyStaff: 'No platform staff found.',
+    emptyAcademy: 'No academy members found.',
+    academy: 'Academy'
   },
   createAdminUser: {
     title: 'Create Admin User',

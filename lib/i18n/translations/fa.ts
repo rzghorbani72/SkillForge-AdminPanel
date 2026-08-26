@@ -3611,10 +3611,30 @@ export const fa = {
     revokeSessions: 'لغو نشست‌ها',
     sessionsRevoked: 'نشست‌ها با موفقیت لغو شد',
     platformStaff: {
+      PLATFORM_OWNER: 'مالک پلتفرم',
       ADMIN: 'ادمین پلتفرم',
       FINANCE: 'مالی',
       SUPPORT: 'پشتیبانی'
     }
+  },
+  platformUsers: {
+    eyebrow: 'پلتفرم',
+    title: 'کاربران',
+    description:
+      'کارکنان پلتفرم و اعضای آکادمی‌ها. مالک و ادمین می‌توانند افراد را دعوت یا به نقش‌های کارکنان ارتقا دهند.',
+    staffTab: 'کارکنان پلتفرم',
+    academyTab: 'اعضای آکادمی',
+    addStaff: 'افزودن کارمند',
+    promote: 'ارتقا کاربر',
+    promoteTitle: 'ارتقا کاربر ثبت‌شده',
+    promoteDescription:
+      'با شماره تلفن یک حساب موجود در منتوما را پیدا کنید و نقش کارکنان بدهید.',
+    promoted: 'کاربر به کارکنان پلتفرم ارتقا یافت',
+    notRegistered: 'کاربری با این شماره ثبت نشده است.',
+    alreadyStaff: 'این فرد هم‌اکنون کارمند پلتفرم است.',
+    emptyStaff: 'کارمند پلتفرمی یافت نشد.',
+    emptyAcademy: 'عضو آکادمی یافت نشد.',
+    academy: 'آکادمی'
   },
   createAdminUser: {
     pleaseVerifyPhoneOtp:

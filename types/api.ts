@@ -30,9 +30,51 @@ export interface User {
   /** Rank of the role (MANAGER=3, TEACHER=2, STUDENT=1); custom roles inherit their creator-picked rank. */
   role_hierarchy_level?: number | null;
   full_name?: string;
+  academy_id?: string | null;
+  academy_name?: string | null;
+  platform_role?: 'PLATFORM_OWNER' | 'ADMIN' | 'FINANCE' | 'SUPPORT';
   created_at: string;
   updated_at: string;
   profiles?: UserProfile[];
+}
+
+export type PlatformStaffRoleName =
+  | 'PLATFORM_OWNER'
+  | 'ADMIN'
+  | 'FINANCE'
+  | 'SUPPORT';
+
+export interface PlatformStaffRecord {
+  id: string;
+  display_name: string;
+  full_name?: string | null;
+  email: string | null;
+  phone_number: string | null;
+  is_active: boolean;
+  platform_role: PlatformStaffRoleName;
+  created_at: string;
+}
+
+export interface PlatformStaffListResponse {
+  profiles: PlatformStaffRecord[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+export interface PlatformStaffLookup {
+  found: boolean;
+  already_staff?: boolean;
+  user_id?: string;
+  full_name?: string | null;
+  email?: string | null;
+  phone_number?: string | null;
+  is_active?: boolean;
 }
 
 // User Profile (embedded in User response from /users endpoints)

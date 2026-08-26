@@ -29,7 +29,7 @@ const emptyFilters = (): SupportInboxFiltersState => ({
 
 export default function SupportPage() {
   const { t } = useTranslation();
-  const { user } = useAuthUser();
+  const { user, isLoading: userLoading } = useAuthUser();
   const platformStaffMode = isPlatformStaff(user);
 
   const tabs = useMemo<InboxKind[]>(
@@ -37,7 +37,9 @@ export default function SupportPage() {
       platformStaffMode ? ['platform', 'contact'] : ['academy', 'platform'],
     [platformStaffMode]
   );
-  const [tab, setTab] = useState<InboxKind>('academy');
+  const [chosenTab, setChosenTab] = useState<InboxKind | null>(null);
+  const tab: InboxKind =
+    chosenTab && tabs.includes(chosenTab) ? chosenTab : tabs[0];
   const [filters, setFilters] =
     useState<SupportInboxFiltersState>(emptyFilters);
   const [page, setPage] = useState(1);
@@ -46,12 +48,8 @@ export default function SupportPage() {
   const [limit, setLimit] = useState(20);
   const [selected, setSelected] = useState<string | null>(null);
 
-  useEffect(() => {
-    setTab(tabs[0]);
-  }, [tabs]);
-
   const load = useCallback(async () => {
-    if (tab === 'contact') return;
+    if (userLoading || !user || tab === 'contact') return;
     setItems(null);
     try {
       const query = {
@@ -72,7 +70,7 @@ export default function SupportPage() {
       setItems([]);
       setTotal(0);
     }
-  }, [tab, filters, page, limit]);
+  }, [userLoading, user, tab, filters, page, limit]);
 
   useEffect(() => {
     load();
@@ -95,7 +93,7 @@ export default function SupportPage() {
       <Tabs
         value={tab}
         onValueChange={(v) => {
-          setTab(v as InboxKind);
+          setChosenTab(v as InboxKind);
           setSelected(null);
           setPage(1);
           setFilters(emptyFilters());

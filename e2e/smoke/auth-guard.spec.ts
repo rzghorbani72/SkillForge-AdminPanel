@@ -8,6 +8,7 @@ import { test, expect } from '@playwright/test';
 const PROTECTED = [
   '/dashboard',
   '/users',
+  '/platform/users',
   '/courses',
   '/financial/platform',
   '/platform/academies',

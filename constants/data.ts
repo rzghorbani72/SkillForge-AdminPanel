@@ -72,6 +72,15 @@ export const navItems: NavItem[] = [
     section: 'platform'
   },
   {
+    title: 'Users',
+    href: '/platform/users',
+    icon: 'users' as IconType,
+    label: 'users',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
+    scope: 'platform',
+    section: 'platform'
+  },
+  {
     title: 'Support Inbox',
     href: '/support',
     icon: 'help' as IconType,

@@ -67,6 +67,12 @@ export function canAccessSupportOps(
   return role === 'PLATFORM_OWNER' || role === 'ADMIN' || role === 'SUPPORT';
 }
 
+export function canManagePlatformStaff(
+  user: PlatformStaffUser | null | undefined
+): boolean {
+  return isPlatformAdmin(user);
+}
+
 export function isPanelStaffRole(role: string | null | undefined): boolean {
   return (
     role === 'PLATFORM_OWNER' ||

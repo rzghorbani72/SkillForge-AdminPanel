@@ -294,7 +294,7 @@ export default function PlatformOverviewPage() {
               </span>
             </a>
             <a
-              href="/users/admins"
+              href="/platform/users"
               className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
             >
               <Users className="mb-2 h-8 w-8 text-primary" />
@@ -303,7 +303,7 @@ export default function PlatformOverviewPage() {
               </span>
             </a>
             <a
-              href="/users"
+              href="/platform/users"
               className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
             >
               <Users className="mb-2 h-8 w-8 text-primary" />

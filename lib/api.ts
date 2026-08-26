@@ -7,7 +7,10 @@ import {
   User as UserType,
   Offer,
   OfferInput,
-  PaymentGatewayProvider
+  PaymentGatewayProvider,
+  PlatformStaffListResponse,
+  PlatformStaffLookup,
+  PlatformStaffRecord
 } from '@/types/api';
 import type {
   AbuseReport,
@@ -3267,7 +3270,7 @@ class ApiClient {
     limit?: number;
     search?: string;
     is_active?: boolean;
-  }) {
+  }): Promise<PlatformStaffListResponse> {
     const queryParams = new URLSearchParams();
     if (params?.page) queryParams.append('page', String(params.page));
     if (params?.limit) queryParams.append('limit', String(params.limit));
@@ -3279,7 +3282,58 @@ class ApiClient {
     const response = await this.request(
       `/users/platform-staff${qs ? `?${qs}` : ''}`
     );
-    return response.data as any;
+    const payload = response.data as
+      | PlatformStaffListResponse
+      | { data?: PlatformStaffListResponse }
+      | null;
+    if (payload && 'profiles' in payload && payload.profiles) {
+      return payload;
+    }
+    if (payload && 'data' in payload && payload.data?.profiles) {
+      return payload.data;
+    }
+    return {
+      profiles: [],
+      pagination: {
+        page: 1,
+        limit: 20,
+        total: 0,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false
+      }
+    };
+  }
+
+  async lookupPlatformStaffCandidate(phone: string) {
+    const qs = new URLSearchParams({ phone }).toString();
+    const response = await this.request(`/users/platform-staff/lookup?${qs}`);
+    const body = response.data as
+      | PlatformStaffLookup
+      | { data?: PlatformStaffLookup }
+      | null;
+    if (body && 'found' in body) return body;
+    if (body && 'data' in body && body.data) return body.data;
+    return { found: false };
+  }
+
+  async promotePlatformStaff(body: {
+    phone_number: string;
+    platform_role: 'ADMIN' | 'FINANCE' | 'SUPPORT';
+    password: string;
+    name?: string;
+  }) {
+    const response = await this.request('/users/platform-staff/promote', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    const payload = response.data as
+      | PlatformStaffRecord
+      | { data?: PlatformStaffRecord }
+      | null;
+    if (payload && 'id' in payload) return payload;
+    if (payload && 'data' in payload && payload.data) return payload.data;
+    throw new Error('Failed to promote platform staff');
   }
 
   async updatePlatformStaff(
