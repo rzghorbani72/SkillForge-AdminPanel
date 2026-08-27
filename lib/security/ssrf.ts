@@ -66,6 +66,23 @@ export function buildTrustedBackendUrl(path: string): string {
   return `${base}${path}`;
 }
 
+/** Server-to-server backend calls (payment verify, etc.). */
+export function buildInternalBackendHeaders(
+  extra?: Record<string, string | undefined>
+): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json'
+  };
+  const key = process.env.INTERNAL_API_KEY;
+  if (key) headers['x-api-key'] = key;
+  if (extra) {
+    for (const [name, value] of Object.entries(extra)) {
+      if (value !== undefined) headers[name] = value;
+    }
+  }
+  return headers;
+}
+
 export function assertAllowedBackendRewriteTarget(url: string): string {
   const target = stripTrailingSlash(url);
   const withProtocol = target.startsWith('http') ? target : `https://${target}`;

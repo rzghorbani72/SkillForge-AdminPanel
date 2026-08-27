@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { buildTrustedBackendUrl } from '@/lib/security/ssrf';
+import {
+  buildTrustedBackendUrl,
+  buildInternalBackendHeaders
+} from '@/lib/security/ssrf';
 
 /**
  * Saman SEP POSTs the payment result here after the user completes (or cancels) payment.
@@ -72,11 +75,10 @@ export async function POST(request: NextRequest) {
       buildTrustedBackendUrl('/payments/verify/saman'),
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+        headers: buildInternalBackendHeaders({
           ...(token && { Authorization: `Bearer ${token}` }),
           ...(academyId && { 'X-Academy-ID': academyId })
-        },
+        }),
         body: JSON.stringify({ payment_id: resNum, ref_num: refNum })
       }
     );

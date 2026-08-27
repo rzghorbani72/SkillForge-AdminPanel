@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { buildTrustedBackendUrl } from '@/lib/security/ssrf';
+import {
+  buildTrustedBackendUrl,
+  buildInternalBackendHeaders
+} from '@/lib/security/ssrf';
 
 /**
  * BitPay redirects the manager back here after payment with trans_id, id_get
@@ -50,11 +53,10 @@ const handle = async (request: NextRequest) => {
       buildTrustedBackendUrl('/payments/verify/bitpay'),
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+        headers: buildInternalBackendHeaders({
           ...(token && { Authorization: `Bearer ${token}` }),
           ...(academyId && { 'X-Academy-ID': academyId })
-        },
+        }),
         body: JSON.stringify({
           payment_id: paymentId,
           trans_id: transId,

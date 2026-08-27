@@ -1,6 +1,9 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { buildTrustedBackendUrl } from '@/lib/security/ssrf';
+import {
+  buildTrustedBackendUrl,
+  buildInternalBackendHeaders
+} from '@/lib/security/ssrf';
 
 /**
  * POST /api/payment/verify
@@ -27,11 +30,10 @@ export async function POST(request: NextRequest) {
       buildTrustedBackendUrl('/payments/verify/payping'),
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+        headers: buildInternalBackendHeaders({
           ...(token && { Authorization: `Bearer ${token}` }),
           ...(academyId && { 'X-Academy-ID': academyId })
-        },
+        }),
         body: JSON.stringify({ payment_id, ref_id: ref_id || '' })
       }
     );
