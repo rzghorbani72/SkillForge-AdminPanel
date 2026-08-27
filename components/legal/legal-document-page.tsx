@@ -9,6 +9,7 @@ import { t as translate } from '@/lib/i18n';
 import { getTextDirection } from '@/lib/i18n/config';
 import type { LanguageCode } from '@/lib/i18n/config';
 import type { LegalDocument } from '@/lib/legal/types';
+import { sanitizeRichText } from '@/lib/sanitize';
 
 type LegalDocumentPageProps = {
   document: LegalDocument;
@@ -46,6 +47,8 @@ export function LegalDocumentPage({
       )
     : null;
 
+  const safeHtml = sanitizeRichText(html);
+
   return (
     <AuthLayout
       maxWidth="xl"
@@ -82,7 +85,7 @@ export function LegalDocumentPage({
           dir={
             document.locale === 'fa' || document.locale === 'ar' ? 'rtl' : 'ltr'
           }
-          dangerouslySetInnerHTML={{ __html: html }}
+          dangerouslySetInnerHTML={{ __html: safeHtml }}
         />
 
         <div className="mt-10 flex flex-wrap justify-center gap-3 border-t border-border pt-6 text-sm">

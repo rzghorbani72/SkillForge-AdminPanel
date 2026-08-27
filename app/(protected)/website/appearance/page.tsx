@@ -29,6 +29,10 @@ import {
   appendPreviewCacheBuster,
   resolveStorefrontBaseUrl
 } from '@/lib/ui-template/preview-url';
+import {
+  getPreviewPostMessageTarget,
+  isTrustedPreviewOrigin
+} from '@/lib/trusted-preview-origin';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import type { HeroPreviewContext } from '@/components/ui-template/hero-variant-picker';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
@@ -148,6 +152,10 @@ export default function UITemplateSettingsPage() {
   // history only after the user pauses, so undo jumps per edit, not per key.
   const pendingHistoryRef = useRef<UIBlockConfig[] | null>(null);
   const previewIframeRef = useRef<HTMLIFrameElement | null>(null);
+  const storefrontBaseRef = useRef(storefrontBase);
+  useEffect(() => {
+    storefrontBaseRef.current = storefrontBase;
+  }, [storefrontBase]);
   const mediaPickerRef = useRef<TemplateMediaPickerHandle>(null);
   // Stable ref so the message handler always sees the latest blocks without
   // re-registering the listener on every keystroke.
@@ -182,7 +190,7 @@ export default function UITemplateSettingsPage() {
     (blockId: string | null, scroll: boolean) => {
       previewIframeRef.current?.contentWindow?.postMessage(
         { source: 'template-admin', type: 'highlight', blockId, scroll },
-        '*'
+        getPreviewPostMessageTarget(storefrontBaseRef.current)
       );
     },
     []
@@ -198,6 +206,10 @@ export default function UITemplateSettingsPage() {
   // - 'field-update' → inline text edit committed, update draftBlocks directly
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
+      if (!isTrustedPreviewOrigin(e.origin, storefrontBaseRef.current)) {
+        return;
+      }
+
       const data = e.data as {
         source?: string;
         type?: string;
@@ -789,7 +801,7 @@ export default function UITemplateSettingsPage() {
         theme: payload,
         direction: next.textDirection
       },
-      '*'
+      getPreviewPostMessageTarget(storefrontBaseRef.current)
     );
     return payload;
   };
@@ -880,7 +892,7 @@ export default function UITemplateSettingsPage() {
         type: 'sync-order',
         order: [...blocks].sort((a, b) => a.order - b.order).map((b) => b.id)
       },
-      '*'
+      getPreviewPostMessageTarget(storefrontBaseRef.current)
     );
   };
 
@@ -913,7 +925,7 @@ export default function UITemplateSettingsPage() {
             fieldKey,
             value
           },
-          '*'
+          getPreviewPostMessageTarget(storefrontBaseRef.current)
         );
       }
     }
@@ -980,7 +992,7 @@ export default function UITemplateSettingsPage() {
     // full save + iframe reload cycle — gives immediate visual feedback.
     previewIframeRef.current?.contentWindow?.postMessage(
       { source: 'template-admin', type: 'toggle-visible', blockId, visible },
-      '*'
+      getPreviewPostMessageTarget(storefrontBaseRef.current)
     );
     commitBlocks(
       draftBlocks.map((b) =>

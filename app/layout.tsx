@@ -7,7 +7,7 @@ import { getAdminLanguage, getAdminDirection } from '@/lib/i18n/server';
 import { cookies } from 'next/headers';
 import { ToastContainerWrapper } from '@/components/providers/toast-container-wrapper';
 import { LanguageSync } from '@/components/providers/language-sync';
-import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
+import { LegacyAuthStorageCleaner } from '@/components/providers/legacy-auth-storage-cleaner';
 import { buildPanelMetadata } from '@/lib/seo/panel-metadata';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,6 +52,7 @@ export default async function RootLayout({
         <QueryProvider>
           <ThemeProviderWrapper>
             <I18nProvider initialLanguage={language}>
+              <LegacyAuthStorageCleaner />
               <LanguageSync />
               {children}
               <ToastContainerWrapper />

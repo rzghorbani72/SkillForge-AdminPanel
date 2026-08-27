@@ -2,6 +2,7 @@ import { apiClient } from './api';
 import { ErrorHandler } from './error-handler';
 import { User, Profile, Academy } from '@/types/api';
 import { isDevelopmentMode, getStoreUrl, logDevInfo } from './dev-utils';
+import { clearLegacyAuthStorage } from './clear-legacy-auth-storage';
 
 export interface AuthUser {
   user: User;
@@ -85,101 +86,24 @@ class AuthService {
   private authType: AuthType['type'] = 'admin';
 
   /**
-   * Persist session data - SECURITY NOTE:
-   * - Access tokens are NO LONGER stored in localStorage (XSS vulnerability)
-   * - JWT is stored in HttpOnly cookie by the backend
-   * - Only non-sensitive user info is stored for UI purposes
+   * Session lives in HttpOnly cookies — never persist tokens or RBAC in
+   * localStorage (readable from DevTools / XSS).
    */
   private persistSession(user: AuthUser | null) {
     if (typeof window === 'undefined') return;
+    clearLegacyAuthStorage();
+    if (!user) return;
 
-    try {
-      if (!user) {
-        // Clear all stored data on logout
-        window.localStorage.removeItem('user_data');
-        window.localStorage.removeItem('current_profile');
-        window.localStorage.removeItem('current_academy');
-        window.localStorage.removeItem('current_store');
-        window.localStorage.removeItem('user_permissions');
-        window.localStorage.removeItem('auth_user');
-        // Also remove legacy token storage keys if they exist
-        window.localStorage.removeItem('auth_token');
-        window.localStorage.removeItem('jwt');
-        window.localStorage.removeItem('token');
-        return;
-      }
-
-      const derivedPermissions =
-        user.permissions && user.permissions.length > 0
-          ? normalizePermissionArray(user.permissions)
-          : normalizePermissionArray(
-              (user.currentProfile as any)?.permissions ||
-                (user.currentProfile?.role as any)?.permissions ||
-                []
-            );
-
-      // SECURITY: DO NOT store access_token in localStorage
-      // The JWT is securely stored in an HttpOnly cookie by the backend
-      // We only store non-sensitive user data for UI purposes
-
-      if (user.user) {
-        // Store minimal user info (no sensitive data)
-        const safeUserData = {
-          id: user.user.id,
-          name: user.user.display_name ?? user.user.name,
-          email: user.user.email
-            ? user.user.email.substring(0, 3) + '***'
-            : null // Mask email
-        };
-        window.localStorage.setItem('user_data', JSON.stringify(safeUserData));
-      } else {
-        window.localStorage.removeItem('user_data');
-      }
-
-      if (user.currentProfile) {
-        window.localStorage.setItem(
-          'current_profile',
-          JSON.stringify(user.currentProfile)
-        );
-      } else {
-        window.localStorage.removeItem('current_profile');
-      }
-
-      if (user.currentAcademy) {
-        window.localStorage.setItem(
-          'current_academy',
-          JSON.stringify(user.currentAcademy)
-        );
-      } else {
-        window.localStorage.removeItem('current_academy');
-        window.localStorage.removeItem('current_store');
-      }
-
+    const academyId =
+      user.currentProfile?.academy_id ??
+      (user.currentProfile as { Academy?: { id?: number } })?.Academy?.id ??
+      user.currentAcademy?.id ??
+      null;
+    if (academyId) {
       window.localStorage.setItem(
-        'user_permissions',
-        JSON.stringify(derivedPermissions)
+        'skillforge_selected_academy_id',
+        String(academyId)
       );
-
-      const academyId =
-        user.currentProfile?.academy_id ??
-        (user.currentProfile as { Academy?: { id?: number } })?.Academy?.id ??
-        user.currentAcademy?.id ??
-        null;
-      if (academyId) {
-        window.localStorage.setItem(
-          'skillforge_selected_academy_id',
-          String(academyId)
-        );
-      }
-
-      // Store auth user data without access_token
-      const safeAuthUser = {
-        ...user,
-        access_token: undefined // Remove token from stored data
-      };
-      window.localStorage.setItem('auth_user', JSON.stringify(safeAuthUser));
-    } catch (error) {
-      console.error('Failed to persist auth session', error);
     }
   }
 
@@ -488,7 +412,7 @@ class AuthService {
         this.currentUser = null;
         this.persistSession(null);
         if (typeof window !== 'undefined') {
-          window.localStorage.removeItem('user_state');
+          clearLegacyAuthStorage();
 
           const { clearAcademyData } = await import('@/lib/store-utils');
           clearAcademyData();
@@ -509,7 +433,7 @@ class AuthService {
       this.currentUser = null;
       this.persistSession(null);
       if (typeof window !== 'undefined') {
-        window.localStorage.removeItem('user_state');
+        clearLegacyAuthStorage();
 
         try {
           const { clearAcademyData } = await import('@/lib/store-utils');

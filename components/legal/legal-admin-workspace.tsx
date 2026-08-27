@@ -19,6 +19,7 @@ import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { markdownToHtml } from '@/lib/legal/markdown-to-html';
 import { prepareLegalMarkdown } from '@/lib/legal/prepare-legal-markdown';
+import { sanitizeRichText } from '@/lib/sanitize';
 import {
   LEGAL_ADMIN_DOC_TYPES,
   LEGAL_ADMIN_LOCALES,
@@ -75,7 +76,7 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
   const previewHtml = useMemo(() => {
     if (!body.trim()) return '';
     const markdown = prepareLegalMarkdown(body, locale);
-    return markdownToHtml(markdown);
+    return sanitizeRichText(markdownToHtml(markdown));
   }, [body, locale]);
 
   async function handleSaveDraft() {

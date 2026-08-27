@@ -8,6 +8,7 @@ import React, {
   useCallback,
   useRef
 } from 'react';
+import { clearLegacyAuthStorage } from '@/lib/clear-legacy-auth-storage';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 
@@ -177,8 +178,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, [router]);
 
-  // Fetch user only once on mount
   useEffect(() => {
+    clearLegacyAuthStorage();
     if (!hasFetchedRef.current) {
       fetchUser();
     }

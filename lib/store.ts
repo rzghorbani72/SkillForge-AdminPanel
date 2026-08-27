@@ -186,105 +186,92 @@ export type UserActions = {
   reset: () => void;
 };
 
-export const useUserStore = create<UserState & UserActions>()(
-  persist(
-    (set, get) => ({
+export const useUserStore = create<UserState & UserActions>()((set, get) => ({
+  user: null,
+  isLoading: false,
+  error: null,
+  isInitialized: false,
+  setUser: (user: AuthUser | null) => set({ user, isInitialized: true }),
+  setLoading: (loading: boolean) => set({ isLoading: loading }),
+  setError: (error: string | null) => set({ error }),
+  fetchUser: async () => {
+    const { isLoading } = get();
+    if (isLoading) return; // Prevent concurrent fetches
+
+    set({ isLoading: true, error: null });
+    try {
+      const userData = (await apiClient.getCurrentUser()) as any;
+      const currentUser = userData?.data as any;
+
+      if (!currentUser) {
+        set({ user: null, isLoading: false, isInitialized: true });
+        return;
+      }
+
+      const role =
+        currentUser?.role ||
+        currentUser?.profile?.role?.name ||
+        currentUser?.profile?.role_name ||
+        currentUser?.profile?.role ||
+        null;
+
+      if (!role) {
+        set({ user: null, isLoading: false, isInitialized: true });
+        return;
+      }
+
+      const academyId =
+        currentUser?.academyId ?? currentUser?.academy_id ?? null;
+      const currentAcademy = currentUser?.currentAcademy ?? null;
+
+      const isAdminProfile = currentUser?.isAdminProfile ?? false;
+      const platformLevel = currentUser?.platformLevel ?? false;
+      const canManageAllAcademies = currentUser?.canManageAllAcademies ?? false;
+      const canManagePlatform = currentUser?.canManagePlatform ?? false;
+
+      const user: AuthUser = {
+        id: (currentUser as any)?.id || 0,
+        role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
+        academyId: academyId,
+        isAdminProfile: isAdminProfile,
+        platformLevel: platformLevel,
+        canManageAllAcademies: canManageAllAcademies,
+        canManagePlatform: canManagePlatform,
+        profile: {
+          ...((currentUser as any)?.profile || {}),
+          academy_id: academyId,
+          academyId: academyId,
+          academy:
+            currentAcademy ||
+            (currentUser as any)?.profile?.academy ||
+            (currentUser as any)?.profile?.store ||
+            null,
+          role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
+          isAdminProfile: isAdminProfile,
+          platformLevel: platformLevel
+        },
+        currentAcademy: currentAcademy,
+        permissions: currentUser?.permissions || []
+      };
+
+      set({ user, isLoading: false, isInitialized: true });
+    } catch (error: any) {
+      console.error('Error fetching user:', error);
+      set({
+        error: error?.message || 'Failed to fetch user',
+        isLoading: false,
+        isInitialized: true
+      });
+    }
+  },
+  reset: () =>
+    set({
       user: null,
       isLoading: false,
       error: null,
-      isInitialized: false,
-      setUser: (user: AuthUser | null) => set({ user, isInitialized: true }),
-      setLoading: (loading: boolean) => set({ isLoading: loading }),
-      setError: (error: string | null) => set({ error }),
-      fetchUser: async () => {
-        const { isLoading } = get();
-        if (isLoading) return; // Prevent concurrent fetches
-
-        set({ isLoading: true, error: null });
-        try {
-          const userData = (await apiClient.getCurrentUser()) as any;
-          const currentUser = userData?.data as any;
-
-          if (!currentUser) {
-            set({ user: null, isLoading: false, isInitialized: true });
-            return;
-          }
-
-          const role =
-            currentUser?.role ||
-            currentUser?.profile?.role?.name ||
-            currentUser?.profile?.role_name ||
-            currentUser?.profile?.role ||
-            null;
-
-          if (!role) {
-            set({ user: null, isLoading: false, isInitialized: true });
-            return;
-          }
-
-          const academyId =
-            currentUser?.academyId ?? currentUser?.academy_id ?? null;
-          const currentAcademy = currentUser?.currentAcademy ?? null;
-
-          const isAdminProfile = currentUser?.isAdminProfile ?? false;
-          const platformLevel = currentUser?.platformLevel ?? false;
-          const canManageAllAcademies =
-            currentUser?.canManageAllAcademies ?? false;
-          const canManagePlatform = currentUser?.canManagePlatform ?? false;
-
-          const user: AuthUser = {
-            id: (currentUser as any)?.id || 0,
-            role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
-            academyId: academyId,
-            isAdminProfile: isAdminProfile,
-            platformLevel: platformLevel,
-            canManageAllAcademies: canManageAllAcademies,
-            canManagePlatform: canManagePlatform,
-            profile: {
-              ...((currentUser as any)?.profile || {}),
-              academy_id: academyId,
-              academyId: academyId,
-              academy:
-                currentAcademy ||
-                (currentUser as any)?.profile?.academy ||
-                (currentUser as any)?.profile?.store ||
-                null,
-              role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
-              isAdminProfile: isAdminProfile,
-              platformLevel: platformLevel
-            },
-            currentAcademy: currentAcademy,
-            permissions: currentUser?.permissions || []
-          };
-
-          set({ user, isLoading: false, isInitialized: true });
-        } catch (error: any) {
-          console.error('Error fetching user:', error);
-          set({
-            error: error?.message || 'Failed to fetch user',
-            isLoading: false,
-            isInitialized: true
-          });
-        }
-      },
-      reset: () =>
-        set({
-          user: null,
-          isLoading: false,
-          error: null,
-          isInitialized: false
-        })
-    }),
-    {
-      name: 'user-store',
-      skipHydration: true,
-      partialize: (state) => ({
-        user: state.user,
-        isInitialized: state.isInitialized
-      })
-    }
-  )
-);
+      isInitialized: false
+    })
+}));
 
 // Branding store — holds logo URL resolved from the theme config API
 export const useBrandingStore = create<{

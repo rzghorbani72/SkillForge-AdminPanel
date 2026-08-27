@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
-import { authService, AuthUser } from '@/lib/auth';
-import { Profile } from '@/types/api';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 export interface UserState {
   user_id: string;
@@ -34,403 +33,193 @@ export interface ResourceAccessControl {
   userPermissions: string[];
 }
 
-const normalizePermissionArray = (permissions: unknown): string[] => {
-  if (!permissions) return [];
-  if (!Array.isArray(permissions)) return [];
+function buildUserState(
+  user: NonNullable<ReturnType<typeof useAuthUser>['user']>
+): UserState {
+  const normalizedRole = user.role.toUpperCase();
+  const permissions = [
+    ...user.granularPermissions,
+    ...(user.profile?.role === 'MANAGER'
+      ? ['manage_courses', 'manage_content']
+      : [])
+  ];
 
-  return permissions
-    .map((permission) => {
-      if (!permission) return null;
-      if (typeof permission === 'string') return permission;
-      if (typeof permission === 'object') {
-        if (
-          'name' in permission &&
-          typeof (permission as any).name === 'string'
-        ) {
-          return (permission as any).name as string;
-        }
-        if (
-          'permission' in permission &&
-          typeof (permission as any).permission === 'string'
-        ) {
-          return (permission as any).permission as string;
-        }
-      }
-      return null;
-    })
-    .filter((permission): permission is string => Boolean(permission));
-};
-
-const restoreUserFromStorage = (): AuthUser | null => {
-  if (typeof window === 'undefined') return null;
-
-  try {
-    let storedUser = window.localStorage.getItem('user_data');
-    let storedProfile = window.localStorage.getItem('current_profile');
-    let storedStore =
-      window.localStorage.getItem('current_academy') ||
-      window.localStorage.getItem('current_store');
-    let storedPermissions = window.localStorage.getItem('user_permissions');
-    let accessToken = window.localStorage.getItem('auth_token') || '';
-    const storedAuthUser = window.localStorage.getItem('auth_user');
-
-    const isNullish = (
-      value: string | null
-    ): value is null | 'undefined' | 'null' | '' =>
-      value === null ||
-      value === 'undefined' ||
-      value === 'null' ||
-      value === '';
-
-    if (
-      storedAuthUser &&
-      !isNullish(storedAuthUser) &&
-      (isNullish(storedUser) ||
-        isNullish(storedProfile) ||
-        isNullish(storedPermissions) ||
-        !accessToken)
-    ) {
-      try {
-        const parsedAuthUser = JSON.parse(storedAuthUser) as AuthUser;
-        if (parsedAuthUser) {
-          if (isNullish(storedUser) && parsedAuthUser.user) {
-            storedUser = JSON.stringify(parsedAuthUser.user);
-          }
-          if (isNullish(storedProfile) && parsedAuthUser.currentProfile) {
-            storedProfile = JSON.stringify(parsedAuthUser.currentProfile);
-          }
-          if (isNullish(storedStore) && parsedAuthUser.currentAcademy) {
-            storedStore = JSON.stringify(parsedAuthUser.currentAcademy);
-          }
-          if (isNullish(storedPermissions)) {
-            storedPermissions = JSON.stringify(
-              parsedAuthUser.permissions &&
-                parsedAuthUser.permissions.length > 0
-                ? parsedAuthUser.permissions
-                : (parsedAuthUser.currentProfile as any)?.permissions ||
-                    (parsedAuthUser.currentProfile?.role as any)?.permissions ||
-                    []
-            );
-          }
-          if (!accessToken && parsedAuthUser.access_token) {
-            accessToken = parsedAuthUser.access_token;
-          }
-        }
-      } catch (parseError) {
-        console.error('Failed to parse stored auth_user', parseError);
-      }
-    }
-
-    if (isNullish(storedUser) || isNullish(storedProfile) || !accessToken) {
-      return null;
-    }
-
-    const user = JSON.parse(storedUser);
-    const currentProfile = JSON.parse(storedProfile) as Profile;
-    const currentAcademy = storedStore ? JSON.parse(storedStore) : undefined;
-    const permissionSource = storedPermissions
-      ? JSON.parse(storedPermissions)
-      : (currentProfile as any)?.permissions ||
-        (currentProfile?.role as any)?.permissions ||
-        [];
-
-    const restoredUser: AuthUser = {
-      user,
-      access_token: accessToken,
-      currentProfile,
-      currentAcademy,
-      permissions: normalizePermissionArray(permissionSource)
-    };
-
-    authService.setCurrentUser(restoredUser);
-    return restoredUser;
-  } catch (error) {
-    console.error('Failed to restore auth data from storage', error);
-    return null;
-  }
-};
+  return {
+    user_id: String(user.id),
+    academy_id: String(user.academyId ?? user.profile?.academy_id ?? ''),
+    role: normalizedRole,
+    is_admin: normalizedRole === 'ADMIN' || normalizedRole === 'PLATFORM_OWNER',
+    is_manager: normalizedRole === 'MANAGER',
+    is_teacher: normalizedRole === 'TEACHER',
+    is_student: normalizedRole === 'STUDENT',
+    permissions
+  };
+}
 
 export function useAccessControl() {
-  const [userState, setUserState] = useState<UserState | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, isLoading, error, refetch } = useAuthUser();
   const router = useRouter();
-  const hasRedirectedRef = useRef(false);
+  const userState = user ? buildUserState(user) : null;
 
-  const fetchUserState = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  const hasPermission = useCallback(
+    (permission: string): boolean => {
+      if (!userState) return false;
+      if (userState.is_admin) return true;
+      return userState.permissions.includes(permission);
+    },
+    [userState]
+  );
 
-      // Get user context from the auth service
-      let currentUser = authService.getCurrentUser();
+  const hasRole = useCallback(
+    (role: string): boolean => {
+      if (!userState) return false;
+      return userState.role === role.toUpperCase();
+    },
+    [userState]
+  );
 
-      if (!currentUser) {
-        currentUser = restoreUserFromStorage();
-      }
+  const isAdmin = useCallback(
+    (): boolean => userState?.is_admin ?? false,
+    [userState]
+  );
+  const isManager = useCallback(
+    (): boolean => userState?.is_manager ?? false,
+    [userState]
+  );
+  const isTeacher = useCallback(
+    (): boolean => userState?.is_teacher ?? false,
+    [userState]
+  );
+  const isStudent = useCallback(
+    (): boolean => userState?.is_student ?? false,
+    [userState]
+  );
 
-      if (currentUser) {
-        // Transform the current user data to match our UserState interface
-        const derivedPermissions =
-          currentUser.permissions && currentUser.permissions.length > 0
-            ? currentUser.permissions
-            : normalizePermissionArray(
-                (currentUser.currentProfile as any)?.permissions ||
-                  (currentUser.currentProfile?.role as any)?.permissions ||
-                  []
-              );
+  const canManageCourses = useCallback(
+    (): boolean => hasPermission('manage_courses') || isAdmin() || isManager(),
+    [hasPermission, isAdmin, isManager]
+  );
 
-        const currentProfileAcademyId =
-          (currentUser.currentProfile as any)?.academy_id ??
-          (currentUser.currentProfile as any)?.academyId ??
-          currentUser.currentAcademy?.id ??
-          0;
+  const canManageContent = useCallback(
+    (): boolean => hasPermission('manage_content') || isAdmin() || isManager(),
+    [hasPermission, isAdmin, isManager]
+  );
 
-        const roleName =
-          (currentUser.currentProfile as any)?.role?.name ||
-          (currentUser.currentProfile as any)?.role_name ||
-          (currentUser.currentProfile as any)?.role ||
-          (currentUser as any)?.role ||
-          'STUDENT';
-
-        // Normalize role name to uppercase for consistent comparison
-        const normalizedRole =
-          typeof roleName === 'string' ? roleName.toUpperCase() : 'STUDENT';
-
-        const userState: UserState = {
-          user_id: currentUser.user.id,
-          academy_id: currentProfileAcademyId,
-          role: normalizedRole,
-          is_admin: normalizedRole === 'ADMIN',
-          is_manager: normalizedRole === 'MANAGER',
-          is_teacher: normalizedRole === 'TEACHER',
-          is_student: normalizedRole === 'STUDENT',
-          permissions: derivedPermissions
-        };
-
-        setUserState(userState);
-        if (typeof window !== 'undefined') {
-          window.localStorage.setItem('user_state', JSON.stringify(userState));
-        }
-      } else {
-        if (typeof window !== 'undefined') {
-          const cachedState = window.localStorage.getItem('user_state');
-          if (cachedState) {
-            try {
-              const parsed = JSON.parse(cachedState) as UserState;
-              // Normalize role from cache as well
-              if (parsed.role && typeof parsed.role === 'string') {
-                parsed.role = parsed.role.toUpperCase();
-              }
-              setUserState(parsed);
-              setError(null);
-              setIsLoading(false);
-              return;
-            } catch {
-              window.localStorage.removeItem('user_state');
-            }
-          }
-        }
-
-        setUserState(null);
-        setError('User not authenticated');
-        if (!hasRedirectedRef.current) {
-          hasRedirectedRef.current = true;
-          router.replace('/login');
-        }
-      }
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to fetch user state'
-      );
-      if (typeof window !== 'undefined') {
-        const cachedState = window.localStorage.getItem('user_state');
-        if (cachedState) {
-          try {
-            const parsed = JSON.parse(cachedState) as UserState;
-            // Normalize role from cache as well
-            if (parsed.role && typeof parsed.role === 'string') {
-              parsed.role = parsed.role.toUpperCase();
-            }
-            setUserState(parsed);
-            setIsLoading(false);
-            return;
-          } catch {
-            window.localStorage.removeItem('user_state');
-          }
-        }
-      }
-
-      setUserState(null);
-      if (!hasRedirectedRef.current) {
-        hasRedirectedRef.current = true;
-        router.replace('/login');
-      }
-      // Don't redirect automatically, let the component handle it
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router]);
-
-  useEffect(() => {
-    fetchUserState();
-  }, [fetchUserState]);
-
-  const hasPermission = (permission: string): boolean => {
-    if (!userState) return false;
-    return userState.permissions.includes(permission);
-  };
-
-  const hasRole = (role: string): boolean => {
-    if (!userState) return false;
-    return userState.role === role;
-  };
-
-  const isAdmin = (): boolean => {
-    return hasRole('ADMIN');
-  };
-
-  const isManager = (): boolean => {
-    return hasRole('MANAGER');
-  };
-
-  const isTeacher = (): boolean => {
-    return hasRole('TEACHER');
-  };
-
-  const isStudent = (): boolean => {
-    return hasRole('STUDENT');
-  };
-
-  const canManageCourses = (): boolean => {
-    return hasPermission('manage_courses') || isAdmin() || isManager();
-  };
-
-  const canManageContent = (): boolean => {
-    return hasPermission('manage_content') || isAdmin() || isManager();
-  };
-
-  const canModifyResource = (
-    resourceOwnerId: string,
-    resourceStoreId?: string
-  ): boolean => {
-    if (!userState) return false;
-
-    // Admin can modify everything
-    if (isAdmin()) return true;
-
-    // Manager can modify everything in their store
-    if (isManager() && resourceStoreId === userState.academy_id) return true;
-
-    // Teacher can only modify their own resources
-    if (isTeacher() && resourceOwnerId === userState.user_id) return true;
-
-    return false;
-  };
-
-  const canDeleteResource = (
-    resourceOwnerId: string,
-    resourceStoreId?: string
-  ): boolean => {
-    return canModifyResource(resourceOwnerId, resourceStoreId);
-  };
-
-  const canViewResource = (resourceStoreId?: string): boolean => {
-    if (!userState) return false;
-
-    // Admin can view everything
-    if (isAdmin()) return true;
-
-    // Manager and Teacher can view everything in their store
-    if (
-      (isManager() || isTeacher()) &&
-      resourceStoreId === userState.academy_id
-    )
-      return true;
-
-    return false;
-  };
-
-  const checkResourceAccess = (resource: {
-    owner_id?: string;
-    academy_id?: string;
-    access_control?: AccessControl;
-  }): ResourceAccessControl => {
-    if (resource.access_control) {
-      // Use backend-provided access control
-      return {
-        canModify: resource.access_control.can_modify,
-        canDelete: resource.access_control.can_delete,
-        canView: resource.access_control.can_view,
-        isOwner: resource.access_control.is_owner,
-        userRole: resource.access_control.user_role,
-        userPermissions: resource.access_control.user_permissions
-      };
-    }
-
-    // Fallback to frontend calculation
-    const ownerId = resource.owner_id ?? '';
-    const academyId = resource.academy_id;
-
-    return {
-      canModify: canModifyResource(ownerId, academyId),
-      canDelete: canDeleteResource(ownerId, academyId),
-      canView: canViewResource(academyId),
-      isOwner: ownerId === userState?.user_id,
-      userRole: userState?.role || '',
-      userPermissions: userState?.permissions || []
-    };
-  };
-
-  const requirePermission = (
-    permission: string,
-    redirectTo: string = '/dashboard'
-  ) => {
-    if (!hasPermission(permission)) {
-      toast.error(tNow('toasts.noPermission'));
+  const canModifyResource = useCallback(
+    (resourceOwnerId: string, resourceStoreId?: string): boolean => {
+      if (!userState) return false;
+      if (isAdmin()) return true;
+      if (isManager() && resourceStoreId === userState.academy_id) return true;
+      if (isTeacher() && resourceOwnerId === userState.user_id) return true;
       return false;
-    }
-    return true;
-  };
+    },
+    [userState, isAdmin, isManager, isTeacher]
+  );
 
-  const requireRole = (role: string, redirectTo: string = '/dashboard') => {
-    if (!hasRole(role)) {
-      toast.error(tNow('toasts.noRole'));
+  const canDeleteResource = useCallback(
+    (resourceOwnerId: string, resourceStoreId?: string): boolean =>
+      canModifyResource(resourceOwnerId, resourceStoreId),
+    [canModifyResource]
+  );
+
+  const canViewResource = useCallback(
+    (resourceStoreId?: string): boolean => {
+      if (!userState) return false;
+      if (isAdmin()) return true;
+      if (
+        (isManager() || isTeacher()) &&
+        resourceStoreId === userState.academy_id
+      ) {
+        return true;
+      }
       return false;
-    }
-    return true;
-  };
+    },
+    [userState, isAdmin, isManager, isTeacher]
+  );
 
-  const requireResourceAccess = (
-    resource: {
+  const checkResourceAccess = useCallback(
+    (resource: {
       owner_id?: string;
       academy_id?: string;
       access_control?: AccessControl;
+    }): ResourceAccessControl => {
+      if (resource.access_control) {
+        return {
+          canModify: resource.access_control.can_modify,
+          canDelete: resource.access_control.can_delete,
+          canView: resource.access_control.can_view,
+          isOwner: resource.access_control.is_owner,
+          userRole: resource.access_control.user_role,
+          userPermissions: resource.access_control.user_permissions
+        };
+      }
+
+      const ownerId = resource.owner_id ?? '';
+      const academyId = resource.academy_id;
+
+      return {
+        canModify: canModifyResource(ownerId, academyId),
+        canDelete: canDeleteResource(ownerId, academyId),
+        canView: canViewResource(academyId),
+        isOwner: ownerId === userState?.user_id,
+        userRole: userState?.role || '',
+        userPermissions: userState?.permissions || []
+      };
     },
-    action: 'view' | 'modify' | 'delete' = 'view',
-    redirectTo: string = '/dashboard'
-  ) => {
-    const access = checkResourceAccess(resource);
+    [canModifyResource, canDeleteResource, canViewResource, userState]
+  );
 
-    let hasAccess = false;
-    switch (action) {
-      case 'view':
-        hasAccess = access.canView;
-        break;
-      case 'modify':
-        hasAccess = access.canModify;
-        break;
-      case 'delete':
-        hasAccess = access.canDelete;
-        break;
-    }
+  const requirePermission = useCallback(
+    (permission: string, redirectTo: string = '/dashboard') => {
+      if (!hasPermission(permission)) {
+        toast.error(tNow('toasts.noPermission'));
+        router.push(redirectTo);
+        return false;
+      }
+      return true;
+    },
+    [hasPermission, router]
+  );
 
-    if (!hasAccess) {
-      toast.error(tNow('toasts.noPermission'));
-      return false;
-    }
-    return true;
-  };
+  const requireRole = useCallback(
+    (role: string, redirectTo: string = '/dashboard') => {
+      if (!hasRole(role)) {
+        toast.error(tNow('toasts.noRole'));
+        router.push(redirectTo);
+        return false;
+      }
+      return true;
+    },
+    [hasRole, router]
+  );
+
+  const requireResourceAccess = useCallback(
+    (
+      resource: {
+        owner_id?: string;
+        academy_id?: string;
+        access_control?: AccessControl;
+      },
+      action: 'view' | 'modify' | 'delete' = 'view',
+      redirectTo: string = '/dashboard'
+    ) => {
+      const access = checkResourceAccess(resource);
+      const allowed =
+        action === 'view'
+          ? access.canView
+          : action === 'modify'
+            ? access.canModify
+            : access.canDelete;
+
+      if (!allowed) {
+        toast.error(tNow('toasts.noPermission'));
+        router.push(redirectTo);
+        return false;
+      }
+      return true;
+    },
+    [checkResourceAccess, router]
+  );
 
   return {
     userState,
@@ -451,6 +240,6 @@ export function useAccessControl() {
     requirePermission,
     requireRole,
     requireResourceAccess,
-    refetch: fetchUserState
+    refetch
   };
 }
