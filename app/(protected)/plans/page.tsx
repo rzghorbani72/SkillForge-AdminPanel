@@ -1111,57 +1111,33 @@ export default function PlansPage() {
 
       {selectingPlan && (
         <Dialog open onOpenChange={(o) => !o && setSelectingPlan(null)}>
-          <DialogContent className="sm:max-w-md" dir="rtl">
-            <DialogHeader>
+          <DialogContent className="gap-0 sm:max-w-md" dir="rtl">
+            <DialogHeader className="space-y-1 pb-3">
               <DialogTitle>{t('plans.confirmChangePlan')}</DialogTitle>
-              <DialogDescription>
-                {upgradeQuote || isQuoteLoading
-                  ? t('plans.confirmUpgradeDesc')
-                  : t('plans.confirmChangePlanDesc')}
-              </DialogDescription>
+              {!upgradeQuote && !isQuoteLoading && (
+                <DialogDescription className="text-xs">
+                  {t('plans.confirmChangePlanDesc')}
+                </DialogDescription>
+              )}
             </DialogHeader>
-            <div className="space-y-5 py-2">
-              <div className="space-y-3 rounded-xl border bg-muted/40 p-4">
-                <div>
-                  <p className="text-xs text-muted-foreground">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-3 rounded-lg border bg-muted/40 px-3 py-2.5">
+                <div className="min-w-0">
+                  <p className="text-[11px] text-muted-foreground">
                     {t('plans.choosePlan')}
                   </p>
-                  <p className="mt-1 text-lg font-bold">{selectingPlan.name}</p>
+                  <p className="truncate font-bold">{selectingPlan.name}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <p className="text-xs text-muted-foreground">
-                      {t('plans.pricePerMonth')}
-                    </p>
-                    <p className="font-semibold">
-                      {formatPrice(selectingPlan.price_monthly)}{' '}
-                      {t('plans.toman')}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">
-                      {t('plans.storage')}
-                    </p>
-                    <p className="font-semibold">
-                      {formatStorage(selectingPlan.storage_limit_gb)}
-                    </p>
-                  </div>
-                </div>
-                {upgradeQuote && (
-                  <div className="flex items-center justify-between border-t border-border/50 pt-2 text-sm">
-                    <span className="text-muted-foreground">
-                      {t('plans.daysRemaining')}
-                    </span>
-                    <span className="font-semibold">
-                      {upgradeQuote.remainingDays.toLocaleString('fa-IR')}{' '}
-                      {t('plans.daysUnit')}
-                    </span>
-                  </div>
-                )}
+                <p className="shrink-0 text-sm font-semibold tabular-nums">
+                  {formatPrice(selectingPlan.price_monthly)}{' '}
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {t('plans.pricePerMonth')}
+                  </span>
+                </p>
               </div>
 
               {isQuoteLoading ? (
-                <div className="flex justify-center py-6">
+                <div className="flex justify-center py-4">
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                 </div>
               ) : upgradeQuote ? (
@@ -1172,9 +1148,11 @@ export default function PlansPage() {
                 />
               ) : (
                 <>
-                  <div className="space-y-2">
-                    <Label>{t('plans.subscriptionPeriod')}</Label>
-                    <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">
+                      {t('plans.subscriptionPeriod')}
+                    </Label>
+                    <div className="grid grid-cols-2 gap-1.5">
                       {PERIOD_OPTIONS.map(({ months, key }) => (
                         <button
                           key={months}
@@ -1184,7 +1162,7 @@ export default function PlansPage() {
                             setAppliedVoucher(null);
                           }}
                           className={cn(
-                            'rounded-xl border px-2 py-2.5 text-sm font-medium transition-all duration-150',
+                            'rounded-lg border px-2 py-2 text-sm font-medium transition-all duration-150',
                             selectedMonths === months
                               ? 'border-primary bg-primary/5 text-primary'
                               : 'border-border bg-card text-foreground hover:border-primary/40'
@@ -1194,17 +1172,12 @@ export default function PlansPage() {
                         </button>
                       ))}
                     </div>
-                    {selectedMonths === 3 && (
-                      <p className="text-xs text-muted-foreground">
-                        {t('plans.quarterlyHint')}
-                      </p>
-                    )}
                   </div>
                   {currentSub?.storage?.addon_gb != null && (
-                    <label className="flex cursor-pointer items-start gap-3 rounded-xl border bg-card px-3 py-3 text-sm">
+                    <label className="flex cursor-pointer items-start gap-2 rounded-lg border px-2.5 py-2 text-xs">
                       <input
                         type="checkbox"
-                        className="mt-1"
+                        className="mt-0.5"
                         checked={includeStorageAddon}
                         onChange={(e) => {
                           setIncludeStorageAddon(e.target.checked);
@@ -1216,28 +1189,28 @@ export default function PlansPage() {
                           gb: currentSub.storage.addon_gb
                         })}
                         {currentSub.storage.addon_price_toman != null && (
-                          <span className="mt-0.5 block text-xs text-muted-foreground">
-                            {t('plans.storageAddonPrice', {
-                              price: formatPrice(
-                                currentSub.storage.addon_price_toman
-                              )
-                            })}
+                          <span className="text-muted-foreground">
+                            {' '}
+                            ({formatPrice(
+                              currentSub.storage.addon_price_toman
+                            )}{' '}
+                            {t('plans.toman')})
                           </span>
                         )}
                       </span>
                     </label>
                   )}
-                  <div className="space-y-2 rounded-xl bg-muted/50 p-4">
+                  <div className="space-y-1 rounded-lg bg-muted/50 px-3 py-2.5 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">
+                      <span className="font-medium">
                         {t('plans.totalPrice')}
                       </span>
                       <span
                         className={cn(
-                          'text-xl font-bold',
+                          'font-bold tabular-nums',
                           appliedVoucher &&
                             appliedVoucher.discountAmount > 0 &&
-                            'text-base font-normal text-muted-foreground line-through'
+                            'text-sm font-normal text-muted-foreground line-through'
                         )}
                       >
                         {formatPrice(
@@ -1249,29 +1222,23 @@ export default function PlansPage() {
                               ? (currentSub?.storage?.addon_price_toman ?? 0)
                               : 0)
                         )}{' '}
-                        <span className="text-sm font-normal text-muted-foreground">
-                          {t('plans.toman')}
-                        </span>
+                        {t('plans.toman')}
                       </span>
                     </div>
                     {appliedVoucher && appliedVoucher.discountAmount > 0 && (
                       <>
-                        <div className="flex items-center justify-between text-sm font-medium text-success">
+                        <div className="flex items-center justify-between text-success">
                           <span>{t('plans.voucherDiscount')}</span>
-                          <span>
+                          <span className="tabular-nums">
                             − {formatPrice(appliedVoucher.discountAmount)}{' '}
                             {t('plans.toman')}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between border-t border-border/50 pt-2">
-                          <span className="text-sm font-bold text-foreground">
-                            {t('plans.finalPayableAmount')}
-                          </span>
-                          <span className="text-xl font-bold text-primary">
+                        <div className="flex items-center justify-between border-t border-border/50 pt-1 font-bold text-primary">
+                          <span>{t('plans.finalPayableAmount')}</span>
+                          <span className="tabular-nums">
                             {formatPrice(appliedVoucher.finalAmount)}{' '}
-                            <span className="text-sm font-normal text-muted-foreground">
-                              {t('plans.toman')}
-                            </span>
+                            {t('plans.toman')}
                           </span>
                         </div>
                       </>
@@ -1307,8 +1274,8 @@ export default function PlansPage() {
                   </div>
                 </div>
               )}
-              <div className="space-y-2">
-                <Label htmlFor="plan-voucher-code">
+              <div className="space-y-1.5">
+                <Label htmlFor="plan-voucher-code" className="text-xs">
                   {t('plans.voucherCode')}
                 </Label>
                 <div className="flex gap-2">
@@ -1351,19 +1318,19 @@ export default function PlansPage() {
                   )}
                 </div>
                 {appliedVoucher ? (
-                  <p className="text-xs font-medium text-success">
+                  <p className="text-[11px] font-medium text-success">
                     {t('plans.voucherApplied')}: {appliedVoucher.code} (−
                     {formatPrice(appliedVoucher.discountAmount)}{' '}
                     {t('plans.toman')})
                   </p>
                 ) : (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[11px] leading-snug text-muted-foreground">
                     {t('plans.voucherCodeHint')}
                   </p>
                 )}
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="pt-3">
               <Button variant="outline" onClick={() => setSelectingPlan(null)}>
                 {t('common.cancel')}
               </Button>
@@ -1436,7 +1403,6 @@ function UpgradeSummary({
   appliedVoucher?: { discountAmount: number; finalAmount: number } | null;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
-  const today = new Date().toLocaleDateString('fa-IR');
   const hasStorageCredit = quote.storage_amount_toman !== 0;
   const hasVoucher =
     appliedVoucher != null && appliedVoucher.discountAmount > 0;
@@ -1445,65 +1411,41 @@ function UpgradeSummary({
     : quote.amount_toman;
 
   return (
-    <div className="space-y-3">
-      <div className="rounded-xl border border-success/30 bg-success/5 p-3.5 text-sm">
-        <p className="font-semibold text-success">{t('plans.youPayLess')}</p>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-          {t('plans.upgradeWhyLess', {
-            days: quote.remainingDays,
-            plan: getPlanDisplayName(quote.fromSlug) ?? quote.fromSlug
-          })}
-        </p>
-      </div>
-
-      <div className="rounded-xl border bg-muted/30 p-4 text-sm">
-        <div className="flex items-center justify-between py-1">
-          <span className="flex items-center gap-1.5 text-muted-foreground">
-            <Calendar className="h-3.5 w-3.5" />
-            {t('plans.daysRemaining')}
-          </span>
-          <span className="font-semibold">
-            {quote.remainingDays.toLocaleString('fa-IR')} {t('plans.daysUnit')}
-          </span>
-        </div>
-        <div className="flex items-center justify-between py-1">
-          <span className="flex items-center gap-1.5 text-muted-foreground">
-            <Zap className="h-3.5 w-3.5" />
-            {t('plans.activationDate')}
-          </span>
-          <span className="font-semibold">{today}</span>
-        </div>
-      </div>
-
-      <div className="space-y-1.5 rounded-xl border bg-muted/30 p-4 text-sm">
-        <div className="flex items-center justify-between text-muted-foreground">
-          <span>{t('plans.fullPriceRef')}</span>
-          <span className="line-through">
-            {formatPrice(quote.target_full_period_toman)} {t('plans.toman')}
-          </span>
-        </div>
+    <div className="rounded-lg border bg-muted/40 px-3 py-2.5 text-sm">
+      <p className="text-[11px] leading-snug text-muted-foreground">
+        {t('plans.upgradeWhyLess', {
+          days: quote.remainingDays,
+          plan: getPlanDisplayName(quote.fromSlug) ?? quote.fromSlug
+        })}
+      </p>
+      <div className="mt-2 space-y-1">
         <div className="flex items-center justify-between text-muted-foreground">
           <span>{t('plans.planDiff')}</span>
-          <span>
+          <span className="tabular-nums">
             {formatPrice(quote.plan_amount_toman)} {t('plans.toman')}
           </span>
         </div>
         {hasStorageCredit && (
           <div className="flex items-center justify-between text-success">
             <span>{t('plans.storageCredit')}</span>
-            <span>
+            <span className="tabular-nums">
               − {formatPrice(Math.abs(quote.storage_amount_toman))}{' '}
               {t('plans.toman')}
             </span>
           </div>
         )}
-        <div className="mt-1 flex items-center justify-between border-t pt-2 font-bold">
+        <div
+          className={cn(
+            'flex items-center justify-between border-t border-border/50 pt-1.5 font-bold',
+            !hasVoucher && 'text-base'
+          )}
+        >
           <span>{t('plans.proratedTotal')}</span>
           <span
             className={cn(
-              'text-lg',
+              'tabular-nums',
               hasVoucher &&
-                'text-base font-normal text-muted-foreground line-through'
+                'text-sm font-normal text-muted-foreground line-through'
             )}
           >
             {formatPrice(quote.amount_toman)} {t('plans.toman')}
@@ -1513,24 +1455,20 @@ function UpgradeSummary({
           <>
             <div className="flex items-center justify-between font-medium text-success">
               <span>{t('plans.voucherDiscount')}</span>
-              <span>
+              <span className="tabular-nums">
                 − {formatPrice(appliedVoucher.discountAmount)}{' '}
                 {t('plans.toman')}
               </span>
             </div>
-            <div className="mt-1 flex items-center justify-between border-t pt-2 font-bold text-primary">
+            <div className="flex items-center justify-between border-t border-border/50 pt-1 font-bold text-primary">
               <span>{t('plans.finalPayableAmount')}</span>
-              <span className="text-xl">
+              <span className="tabular-nums">
                 {formatPrice(finalPrice)} {t('plans.toman')}
               </span>
             </div>
           </>
         )}
       </div>
-
-      <p className="text-xs text-muted-foreground">
-        {t('plans.expiryUnchanged')}
-      </p>
     </div>
   );
 }

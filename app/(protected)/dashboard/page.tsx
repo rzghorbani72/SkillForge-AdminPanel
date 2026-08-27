@@ -18,7 +18,6 @@ import { canManageSubscription } from '@/lib/subscription-access';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
 import { BuyPlansSection } from '@/components/dashboard/buy-plans-section';
-import { useAuthUser } from '@/hooks/useAuthUser';
 import { cn } from '@/lib/utils';
 
 type Period = '7d' | '30d' | '3m' | '1y';
