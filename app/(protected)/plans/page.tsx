@@ -1297,6 +1297,7 @@ export default function PlansPage() {
                       variant="outline"
                       onClick={handleRemoveVoucher}
                       disabled={isChanging || isValidatingVoucher}
+                      className="shrink-0 whitespace-nowrap"
                     >
                       {t('plans.removeVoucher')}
                     </Button>
@@ -1308,6 +1309,7 @@ export default function PlansPage() {
                       disabled={
                         !voucherCode.trim() || isChanging || isValidatingVoucher
                       }
+                      className="shrink-0 min-w-[6.5rem] whitespace-nowrap px-4"
                     >
                       {isValidatingVoucher ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
