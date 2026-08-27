@@ -2,6 +2,12 @@
  * English translations for Admin Panel
  */
 export const en = {
+  meta: {
+    title: 'Mentoma Panel',
+    titleTemplate: '%s | Mentoma Panel',
+    description:
+      'Manage academies, courses, and students on the Mentoma admin panel.'
+  },
   panelFooter: {
     poweredBy: 'Powered by',
     brand: 'Mentoma'

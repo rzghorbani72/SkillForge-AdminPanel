@@ -2,6 +2,12 @@
  * Turkish translations for Admin Panel - LTR
  */
 export const tr = {
+  meta: {
+    title: 'Mentoma Paneli',
+    titleTemplate: '%s | Mentoma Paneli',
+    description:
+      'Mentoma yönetim paneli — akademileri, kursları ve öğrencileri yönetin.'
+  },
   panelFooter: {
     poweredBy: 'Destekleyen',
     brand: 'Mentoma'

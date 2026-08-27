@@ -8,12 +8,15 @@ import { cookies } from 'next/headers';
 import { ToastContainerWrapper } from '@/components/providers/toast-container-wrapper';
 import { LanguageSync } from '@/components/providers/language-sync';
 import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
+import { buildPanelMetadata } from '@/lib/seo/panel-metadata';
 
-export const metadata: Metadata = {
-  title: 'منتوما | mentoma.ir',
-  description: 'پنل مدیریت منتوما — مدیریت آکادمی‌ها، دوره‌ها و دانشجویان',
-  robots: { index: false, follow: false }
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const cookieStore = await cookies();
+  const languagePreference =
+    cookieStore.get('preferred_language')?.value || null;
+  const language = getAdminLanguage(languagePreference, null);
+  return buildPanelMetadata(language);
+}
 
 export default async function RootLayout({
   children
@@ -26,13 +29,6 @@ export default async function RootLayout({
 
   const language = getAdminLanguage(languagePreference, null);
   const direction = getAdminDirection(languagePreference, null);
-  const irDomain = process.env.NEXT_PUBLIC_IR_DOMAIN?.trim();
-  const comDomain = process.env.NEXT_PUBLIC_COM_DOMAIN?.trim();
-  const distinctMarkets =
-    irDomain && comDomain
-      ? new URL(irDomain).hostname.toLowerCase() !==
-        new URL(comDomain).hostname.toLowerCase()
-      : Boolean(comDomain);
 
   return (
     <html
@@ -51,15 +47,6 @@ export default async function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
-        {irDomain ? (
-          <link rel="alternate" hrefLang="fa-IR" href={irDomain} />
-        ) : null}
-        {distinctMarkets && comDomain ? (
-          <>
-            <link rel="alternate" hrefLang="en" href={comDomain} />
-            <link rel="alternate" hrefLang="x-default" href={comDomain} />
-          </>
-        ) : null}
       </head>
       <body suppressHydrationWarning>
         <QueryProvider>

@@ -2,6 +2,11 @@
  * Persian (Farsi) translations for Admin Panel - RTL
  */
 export const fa = {
+  meta: {
+    title: 'پنل مدیریت منتوما',
+    titleTemplate: '%s | پنل منتوما',
+    description: 'پنل مدیریت منتوما — مدیریت آکادمی‌ها، دوره‌ها و دانشجویان'
+  },
   panelFooter: {
     poweredBy: 'قدرت‌گرفته از',
     brand: 'منتوما'

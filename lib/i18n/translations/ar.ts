@@ -2,6 +2,11 @@
  * Arabic translations for Admin Panel - RTL
  */
 export const ar = {
+  meta: {
+    title: 'لوحة تحكم منتوما',
+    titleTemplate: '%s | لوحة منتوما',
+    description: 'لوحة إدارة منتوما — إدارة الأكاديميات والدورات والطلاب'
+  },
   panelFooter: {
     poweredBy: 'مدعوم بواسطة',
     brand: 'منتوما'
