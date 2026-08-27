@@ -2,7 +2,8 @@
 
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { toEnglishDigits } from '@/lib/phone-utils';
+import { useLanguage } from '@/lib/i18n/hooks';
+import { toEnglishDigits, toPersianDigits } from '@/lib/phone-utils';
 
 interface OtpBoxInputProps {
   length?: number;
@@ -22,8 +23,12 @@ export function OtpBoxInput({
   className
 }: OtpBoxInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const { language } = useLanguage();
 
   const digits = Array.from({ length }, (_, i) => value[i] ?? '');
+
+  const displayDigit = (digit: string) =>
+    digit && language === 'fa' ? toPersianDigits(digit) : digit;
 
   function handleChange(index: number, raw: string) {
     const digit = toEnglishDigits(raw).replace(/\D/g, '').slice(-1);
@@ -76,7 +81,7 @@ export function OtpBoxInput({
           type="text"
           inputMode="numeric"
           maxLength={1}
-          value={digit}
+          value={displayDigit(digit)}
           disabled={disabled}
           autoFocus={autoFocus && i === 0}
           onChange={(e) => handleChange(i, e.target.value)}
