@@ -1,3 +1,5 @@
+import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
+
 function normalizeOrigin(raw: string): string | null {
   try {
     return new URL(raw).origin;
@@ -6,12 +8,19 @@ function normalizeOrigin(raw: string): string | null {
   }
 }
 
+function resolvePreviewOriginBase(
+  previewBaseUrl: string | null | undefined
+): string | null | undefined {
+  return resolveStorefrontBaseUrl(previewBaseUrl) ?? previewBaseUrl;
+}
+
 export function isTrustedPreviewOrigin(
   origin: string,
   previewBaseUrl: string | null | undefined
 ): boolean {
-  if (!previewBaseUrl) return false;
-  const expected = normalizeOrigin(previewBaseUrl);
+  const resolved = resolvePreviewOriginBase(previewBaseUrl);
+  if (!resolved) return false;
+  const expected = normalizeOrigin(resolved);
   return expected !== null && expected === origin;
 }
 
@@ -19,6 +28,7 @@ export function isTrustedPreviewOrigin(
 export function getPreviewPostMessageTarget(
   previewBaseUrl: string | null | undefined
 ): string {
-  const expected = previewBaseUrl ? normalizeOrigin(previewBaseUrl) : null;
+  const resolved = resolvePreviewOriginBase(previewBaseUrl);
+  const expected = resolved ? normalizeOrigin(resolved) : null;
   return expected ?? '*';
 }

@@ -8,6 +8,7 @@ import { cookies } from 'next/headers';
 import { ToastContainerWrapper } from '@/components/providers/toast-container-wrapper';
 import { LanguageSync } from '@/components/providers/language-sync';
 import { LegacyAuthStorageCleaner } from '@/components/providers/legacy-auth-storage-cleaner';
+import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
 import { buildPanelMetadata } from '@/lib/seo/panel-metadata';
 
 export async function generateMetadata(): Promise<Metadata> {

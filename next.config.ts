@@ -37,7 +37,10 @@ const nextConfig: NextConfig = {
       process.env.NEXT_PUBLIC_HOST || API_PRODUCTION_DEFAULTS.panelHost,
     NEXT_PUBLIC_BACKEND_API_URL:
       process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-      API_PRODUCTION_DEFAULTS.backendApiUrl
+      API_PRODUCTION_DEFAULTS.backendApiUrl,
+    NEXT_PUBLIC_STOREFRONT_URL:
+      process.env.NEXT_PUBLIC_STOREFRONT_URL ||
+      API_PRODUCTION_DEFAULTS.storefrontUrl
   },
   async rewrites() {
     const rawTarget =
