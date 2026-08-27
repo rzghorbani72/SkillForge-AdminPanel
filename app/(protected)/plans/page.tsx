@@ -157,6 +157,13 @@ export default function PlansPage() {
   >([]);
   const [needsGatewaySelection, setNeedsGatewaySelection] = useState(false);
   const [voucherCode, setVoucherCode] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<{
+    code: string;
+    discountAmount: number;
+    finalAmount: number;
+    couponType: string;
+  } | null>(null);
+  const [isValidatingVoucher, setIsValidatingVoucher] = useState(false);
 
   const selectedAcademy = useCurrentAcademy();
 
@@ -338,6 +345,7 @@ export default function PlansPage() {
     setNeedsGatewaySelection(false);
     setUpgradeQuote(null);
     setVoucherCode('');
+    setAppliedVoucher(null);
 
     // Upgrading from an active paid plan to a higher tier is a prorated diff,
     // not a full purchase — fetch the quote so the dialog can show it.
@@ -361,6 +369,60 @@ export default function PlansPage() {
 
   function callbackUrlForProvider(provider: PaymentGatewayProvider): string {
     return `${window.location.origin}${CALLBACK_PATHS[provider]}`;
+  }
+
+  function computePayableAmount(): number {
+    if (!selectingPlan) return 0;
+    if (upgradeQuote) {
+      return upgradeQuote.amount_toman;
+    }
+    const basePlanPrice = periodPrice(
+      selectingPlan,
+      selectedMonths === 3 ? 'quarterly' : 'monthly'
+    );
+    const storagePrice =
+      includeStorageAddon && currentSub?.storage?.addon_price_toman != null
+        ? currentSub.storage.addon_price_toman
+        : 0;
+    return basePlanPrice + storagePrice;
+  }
+
+  async function handleApplyVoucher() {
+    const code = voucherCode.trim();
+    if (!code) return;
+    const currentAmount = computePayableAmount();
+    try {
+      setIsValidatingVoucher(true);
+      const res = await apiClient.validateDiscount(
+        code,
+        currentAmount,
+        undefined,
+        { academy_id: null }
+      );
+      if (res && typeof res === 'object') {
+        const discountAmount = Number(res.discount_amount ?? 0);
+        const finalAmount = Number(
+          res.final_amount ?? Math.max(0, currentAmount - discountAmount)
+        );
+        setAppliedVoucher({
+          code: res.discount_code ?? code.toUpperCase(),
+          discountAmount,
+          finalAmount,
+          couponType: res.coupon_type ?? 'PERCENTAGE'
+        });
+        toast.success(t('plans.voucherApplied'));
+      }
+    } catch (e) {
+      setAppliedVoucher(null);
+      ErrorHandler.handleApiError(e);
+    } finally {
+      setIsValidatingVoucher(false);
+    }
+  }
+
+  function handleRemoveVoucher() {
+    setAppliedVoucher(null);
+    setVoucherCode('');
   }
 
   async function handleBuyStorageAddon() {
@@ -413,7 +475,7 @@ export default function PlansPage() {
   async function handleChangePlan() {
     if (!selectingPlan) return;
 
-    const coupon_code = voucherCode.trim() || undefined;
+    const coupon_code = appliedVoucher?.code || voucherCode.trim() || undefined;
 
     // Upgrade path: charge only the prorated diff, keeping the current
     // expiry. When money is owed this goes through the same gateway checkout
@@ -459,6 +521,7 @@ export default function PlansPage() {
             setNeedsGatewaySelection(false);
             setAvailableGateways([]);
             setVoucherCode('');
+            setAppliedVoucher(null);
             await refreshPlansAndSubscription();
             return;
           }
@@ -495,6 +558,7 @@ export default function PlansPage() {
         setNeedsGatewaySelection(false);
         setAvailableGateways([]);
         setVoucherCode('');
+        setAppliedVoucher(null);
         await refreshPlansAndSubscription();
       } catch (e) {
         ErrorHandler.handleApiError(e);
@@ -543,6 +607,7 @@ export default function PlansPage() {
           setNeedsGatewaySelection(false);
           setAvailableGateways([]);
           setVoucherCode('');
+          setAppliedVoucher(null);
           await refreshPlansAndSubscription();
           return;
         }
@@ -582,6 +647,7 @@ export default function PlansPage() {
       setNeedsGatewaySelection(false);
       setAvailableGateways([]);
       setVoucherCode('');
+      setAppliedVoucher(null);
       await refreshPlansAndSubscription();
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -1055,15 +1121,43 @@ export default function PlansPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-5 py-2">
-              <div className="rounded-xl border bg-muted/40 p-4">
-                <p className="text-xs text-muted-foreground">
-                  {t('plans.choosePlan')}
-                </p>
-                <p className="mt-1 text-lg font-bold">{selectingPlan.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {formatPrice(selectingPlan.price_monthly)}{' '}
-                  {t('plans.pricePerMonth')}
-                </p>
+              <div className="space-y-3 rounded-xl border bg-muted/40 p-4">
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    {t('plans.choosePlan')}
+                  </p>
+                  <p className="mt-1 text-lg font-bold">{selectingPlan.name}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-xs text-muted-foreground">
+                      {t('plans.pricePerMonth')}
+                    </p>
+                    <p className="font-semibold">
+                      {formatPrice(selectingPlan.price_monthly)}{' '}
+                      {t('plans.toman')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">
+                      {t('plans.storage')}
+                    </p>
+                    <p className="font-semibold">
+                      {formatStorage(selectingPlan.storage_limit_gb)}
+                    </p>
+                  </div>
+                </div>
+                {upgradeQuote && (
+                  <div className="flex items-center justify-between border-t border-border/50 pt-2 text-sm">
+                    <span className="text-muted-foreground">
+                      {t('plans.daysRemaining')}
+                    </span>
+                    <span className="font-semibold">
+                      {upgradeQuote.remainingDays.toLocaleString('fa-IR')}{' '}
+                      {t('plans.daysUnit')}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {isQuoteLoading ? (
@@ -1071,7 +1165,11 @@ export default function PlansPage() {
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                 </div>
               ) : upgradeQuote ? (
-                <UpgradeSummary quote={upgradeQuote} t={t} />
+                <UpgradeSummary
+                  quote={upgradeQuote}
+                  appliedVoucher={appliedVoucher}
+                  t={t}
+                />
               ) : (
                 <>
                   <div className="space-y-2">
@@ -1081,7 +1179,10 @@ export default function PlansPage() {
                         <button
                           key={months}
                           type="button"
-                          onClick={() => setSelectedMonths(months)}
+                          onClick={() => {
+                            setSelectedMonths(months);
+                            setAppliedVoucher(null);
+                          }}
                           className={cn(
                             'rounded-xl border px-2 py-2.5 text-sm font-medium transition-all duration-150',
                             selectedMonths === months
@@ -1105,9 +1206,10 @@ export default function PlansPage() {
                         type="checkbox"
                         className="mt-1"
                         checked={includeStorageAddon}
-                        onChange={(e) =>
-                          setIncludeStorageAddon(e.target.checked)
-                        }
+                        onChange={(e) => {
+                          setIncludeStorageAddon(e.target.checked);
+                          setAppliedVoucher(null);
+                        }}
                       />
                       <span>
                         {t('plans.includeStorageAddon', {
@@ -1125,24 +1227,55 @@ export default function PlansPage() {
                       </span>
                     </label>
                   )}
-                  <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3">
-                    <span className="text-sm font-medium">
-                      {t('plans.totalPrice')}
-                    </span>
-                    <span className="text-xl font-bold">
-                      {formatPrice(
-                        periodPrice(
-                          selectingPlan,
-                          selectedMonths === 3 ? 'quarterly' : 'monthly'
-                        ) +
-                          (includeStorageAddon
-                            ? (currentSub?.storage?.addon_price_toman ?? 0)
-                            : 0)
-                      )}{' '}
-                      <span className="text-sm font-normal text-muted-foreground">
-                        {t('plans.toman')}
+                  <div className="space-y-2 rounded-xl bg-muted/50 p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">
+                        {t('plans.totalPrice')}
                       </span>
-                    </span>
+                      <span
+                        className={cn(
+                          'text-xl font-bold',
+                          appliedVoucher &&
+                            appliedVoucher.discountAmount > 0 &&
+                            'text-base font-normal text-muted-foreground line-through'
+                        )}
+                      >
+                        {formatPrice(
+                          periodPrice(
+                            selectingPlan,
+                            selectedMonths === 3 ? 'quarterly' : 'monthly'
+                          ) +
+                            (includeStorageAddon
+                              ? (currentSub?.storage?.addon_price_toman ?? 0)
+                              : 0)
+                        )}{' '}
+                        <span className="text-sm font-normal text-muted-foreground">
+                          {t('plans.toman')}
+                        </span>
+                      </span>
+                    </div>
+                    {appliedVoucher && appliedVoucher.discountAmount > 0 && (
+                      <>
+                        <div className="flex items-center justify-between text-sm font-medium text-success">
+                          <span>{t('plans.voucherDiscount')}</span>
+                          <span>
+                            − {formatPrice(appliedVoucher.discountAmount)}{' '}
+                            {t('plans.toman')}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between border-t border-border/50 pt-2">
+                          <span className="text-sm font-bold text-foreground">
+                            {t('plans.finalPayableAmount')}
+                          </span>
+                          <span className="text-xl font-bold text-primary">
+                            {formatPrice(appliedVoucher.finalAmount)}{' '}
+                            <span className="text-sm font-normal text-muted-foreground">
+                              {t('plans.toman')}
+                            </span>
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </>
               )}
@@ -1178,17 +1311,56 @@ export default function PlansPage() {
                 <Label htmlFor="plan-voucher-code">
                   {t('plans.voucherCode')}
                 </Label>
-                <Input
-                  id="plan-voucher-code"
-                  value={voucherCode}
-                  onChange={(e) => setVoucherCode(e.target.value)}
-                  placeholder={t('plans.voucherCodePlaceholder')}
-                  autoComplete="off"
-                  disabled={isChanging}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t('plans.voucherCodeHint')}
-                </p>
+                <div className="flex gap-2">
+                  <Input
+                    id="plan-voucher-code"
+                    value={voucherCode}
+                    onChange={(e) => {
+                      setVoucherCode(e.target.value);
+                      if (appliedVoucher) setAppliedVoucher(null);
+                    }}
+                    placeholder={t('plans.voucherCodePlaceholder')}
+                    autoComplete="off"
+                    disabled={isChanging || isValidatingVoucher}
+                    className="font-mono uppercase"
+                  />
+                  {appliedVoucher ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleRemoveVoucher}
+                      disabled={isChanging || isValidatingVoucher}
+                    >
+                      {t('plans.removeVoucher')}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={handleApplyVoucher}
+                      disabled={
+                        !voucherCode.trim() || isChanging || isValidatingVoucher
+                      }
+                    >
+                      {isValidatingVoucher ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        t('plans.applyVoucher')
+                      )}
+                    </Button>
+                  )}
+                </div>
+                {appliedVoucher ? (
+                  <p className="text-xs font-medium text-success">
+                    {t('plans.voucherApplied')}: {appliedVoucher.code} (−
+                    {formatPrice(appliedVoucher.discountAmount)}{' '}
+                    {t('plans.toman')})
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    {t('plans.voucherCodeHint')}
+                  </p>
+                )}
               </div>
             </div>
             <DialogFooter>
@@ -1257,13 +1429,21 @@ export default function PlansPage() {
 
 function UpgradeSummary({
   quote,
+  appliedVoucher,
   t
 }: {
   quote: AcademyUpgradeQuote;
+  appliedVoucher?: { discountAmount: number; finalAmount: number } | null;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   const today = new Date().toLocaleDateString('fa-IR');
   const hasStorageCredit = quote.storage_amount_toman !== 0;
+  const hasVoucher =
+    appliedVoucher != null && appliedVoucher.discountAmount > 0;
+  const finalPrice = hasVoucher
+    ? appliedVoucher.finalAmount
+    : quote.amount_toman;
+
   return (
     <div className="space-y-3">
       <div className="rounded-xl border border-success/30 bg-success/5 p-3.5 text-sm">
@@ -1319,10 +1499,33 @@ function UpgradeSummary({
         )}
         <div className="mt-1 flex items-center justify-between border-t pt-2 font-bold">
           <span>{t('plans.proratedTotal')}</span>
-          <span className="text-lg">
+          <span
+            className={cn(
+              'text-lg',
+              hasVoucher &&
+                'text-base font-normal text-muted-foreground line-through'
+            )}
+          >
             {formatPrice(quote.amount_toman)} {t('plans.toman')}
           </span>
         </div>
+        {hasVoucher && (
+          <>
+            <div className="flex items-center justify-between font-medium text-success">
+              <span>{t('plans.voucherDiscount')}</span>
+              <span>
+                − {formatPrice(appliedVoucher.discountAmount)}{' '}
+                {t('plans.toman')}
+              </span>
+            </div>
+            <div className="mt-1 flex items-center justify-between border-t pt-2 font-bold text-primary">
+              <span>{t('plans.finalPayableAmount')}</span>
+              <span className="text-xl">
+                {formatPrice(finalPrice)} {t('plans.toman')}
+              </span>
+            </div>
+          </>
+        )}
       </div>
 
       <p className="text-xs text-muted-foreground">

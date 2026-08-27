@@ -13,7 +13,11 @@ import ConversionFunnel from '@/components/dashboard/ConversionFunnel';
 import WeekdayEnrollmentChart from '@/components/dashboard/WeekdayEnrollmentChart';
 import CompletionDonut from '@/components/dashboard/CompletionDonut';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { canManageSubscription } from '@/lib/subscription-access';
+import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
+import { BuyPlansSection } from '@/components/dashboard/buy-plans-section';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { cn } from '@/lib/utils';
 
@@ -51,6 +55,15 @@ export default function DashboardPage() {
     monthlyChartData
   } = useDashboard();
 
+  const canManagePlan = canManageSubscription(user);
+  const { needsPlanPurchase, isLoading: subscriptionLoading } =
+    useAcademySubscription(canManagePlan);
+  const showBuyPlans =
+    canManagePlan &&
+    !subscriptionLoading &&
+    needsPlanPurchase &&
+    academies.length > 0;
+
   const firstName =
     (user as any)?.profile?.display_name?.split(' ')?.[0] ??
     (user as any)?.profile?.name?.split(' ')?.[0] ??
@@ -84,6 +97,17 @@ export default function DashboardPage() {
       <div className="dashboard-shell flex-1">
         <div className="relative space-y-5 p-4 sm:p-6">
           <AcademyOnboarding />
+          {canManagePlan && <BuyPlansSection />}
+        </div>
+      </div>
+    );
+  }
+
+  if (showBuyPlans) {
+    return (
+      <div className="dashboard-shell flex-1">
+        <div className="relative space-y-5 p-4 sm:p-6">
+          <BuyPlansSection />
         </div>
       </div>
     );

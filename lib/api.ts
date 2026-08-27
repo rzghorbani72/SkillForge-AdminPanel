@@ -4434,21 +4434,34 @@ class ApiClient {
     return response.data as any;
   }
 
-  async validateDiscount(code: string, amount: number, user_id?: number) {
-    const response = await this.request<any>('/discounts/validate', {
+  async validateDiscount(
+    code: string,
+    amount: number,
+    user_id?: number,
+    options?: { academy_id?: string | null; profile_id?: string }
+  ) {
+    const response = await this.request<{
+      discount_code_id: string;
+      discount_code: string;
+      discount_type: string;
+      coupon_type: string;
+      discount_value: number;
+      free_trial_days: number | null;
+      original_amount: number;
+      discount_amount: number;
+      final_amount: number;
+    }>('/discounts/validate', {
       method: 'POST',
-      body: JSON.stringify({ code, amount, user_id })
+      body: JSON.stringify({
+        code,
+        amount,
+        user_id,
+        academy_id: options?.academy_id,
+        profile_id: options?.profile_id
+      })
     });
 
-    // Backend returns { message, status, data }
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
-      return response.data;
-    }
-    return response.data as any;
+    return unwrapDataEnvelope(response.data) ?? (response.data as any);
   }
 
   // ============================================================================

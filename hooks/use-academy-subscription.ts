@@ -6,6 +6,7 @@ import { queryKeys } from '@/lib/query/keys';
 import {
   isStarterPlan,
   isTopPlan,
+  needsPlanPurchase as computeNeedsPlanPurchase,
   shouldShowUpgradePrompt
 } from '@/lib/settings-scope';
 import { subscriptionNeedsLiveRefresh } from '@/lib/subscription-days';
@@ -124,11 +125,19 @@ export function useAcademySubscription(enabled = true) {
     planName,
     status,
     daysRemaining,
+    hasAcademy: hasAcademyAccess,
+    hasPaid: subscription?.has_paid ?? false,
     isTrial: subscription?.is_trial ?? false,
     isStarter: isStarterPlan(planSlug),
     // Business has no higher self-serve tier — once paid and active, there is
     // nothing to upgrade to, only to renew when it's expiring.
     isTopPlan: !!customPlan || isTopPlan(planSlug),
+    needsPlanPurchase: computeNeedsPlanPurchase({
+      hasAcademy: hasAcademyAccess,
+      planSlug,
+      status,
+      hasPaid: subscription?.has_paid
+    }),
     shouldShowUpgrade:
       !customPlan && shouldShowUpgradePrompt(status, daysRemaining, planSlug)
   };

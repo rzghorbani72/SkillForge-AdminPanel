@@ -1089,6 +1089,10 @@ export const en = {
     upgradePlanDesc:
       'Get more storage, more students, and priority support with Pro.',
     upgradePlanCta: 'View Plans',
+    buyPlanTitle: 'Choose your plan',
+    buyPlanDesc:
+      'Pick one of the plans below to unlock Mentoma for your academy.',
+    buyPlanCta: 'Select & buy',
     renewPlanTitle: 'Renew Your Subscription',
     renewPlanDesc: 'Your plan is expiring soon — renew now to keep access.',
     inviteTeamTitle: 'Invite Your Team',
@@ -5170,6 +5174,9 @@ export const en = {
     startPlanHint: 'Choose and activate one of the plans below to get started.'
   },
   sidebar: {
+    buyPlan: 'Buy plan',
+    buyPlanDescription:
+      'Choose a platform plan to activate your academy and get started.',
     upgradePlan: 'Upgrade plan',
     upgradeDescription:
       'Unlock more courses, storage, and features with a higher tier',
@@ -5308,6 +5315,11 @@ export const en = {
     voucherCodePlaceholder: 'e.g. MENTOMA100',
     voucherCodeHint:
       'If the final price is zero, the plan activates without a bank gateway.',
+    applyVoucher: 'Apply',
+    removeVoucher: 'Remove',
+    voucherApplied: 'Voucher applied',
+    voucherDiscount: 'Discount',
+    finalPayableAmount: 'Final payable amount',
     billingHistory: 'Invoices & payment history',
     noInvoices: 'No invoices yet.',
     downloadFactor: 'Download invoice',

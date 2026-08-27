@@ -18,29 +18,40 @@ export function SidebarUpgradeBanner({
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const canManage = canManageSubscription(user);
-  const { shouldShowUpgrade, planName, daysRemaining, isLoading } =
-    useAcademySubscription(canManage);
+  const {
+    shouldShowUpgrade,
+    planName,
+    daysRemaining,
+    isLoading,
+    needsPlanPurchase
+  } = useAcademySubscription(canManage);
 
   if (!canManage) {
     return null;
   }
 
   const isUrgent = shouldShowUpgrade;
-  const title = isUrgent
-    ? planName
-      ? t('sidebar.subscriptionExpiring', { plan: planName })
-      : t('sidebar.upgradePlan')
-    : planName
-      ? t('sidebar.currentPlan', { plan: planName })
+  const title = needsPlanPurchase
+    ? t('sidebar.buyPlan')
+    : isUrgent
+      ? planName
+        ? t('sidebar.subscriptionExpiring', { plan: planName })
+        : t('sidebar.upgradePlan')
+      : planName
+        ? t('sidebar.currentPlan', { plan: planName })
+        : t('sidebar.manageSubscription');
+  const description = needsPlanPurchase
+    ? t('sidebar.buyPlanDescription')
+    : isUrgent
+      ? daysRemaining != null && daysRemaining <= 14
+        ? t('sidebar.upgradeDescriptionExpiring', { days: daysRemaining })
+        : t('sidebar.upgradeDescription')
+      : t('sidebar.managePlanHint');
+  const ctaLabel = needsPlanPurchase
+    ? t('sidebar.buyPlan')
+    : isUrgent
+      ? t('sidebar.upgradeButton')
       : t('sidebar.manageSubscription');
-  const description = isUrgent
-    ? daysRemaining != null && daysRemaining <= 14
-      ? t('sidebar.upgradeDescriptionExpiring', { days: daysRemaining })
-      : t('sidebar.upgradeDescription')
-    : t('sidebar.managePlanHint');
-  const ctaLabel = isUrgent
-    ? t('sidebar.upgradeButton')
-    : t('sidebar.manageSubscription');
 
   if (isMinimized) {
     return (

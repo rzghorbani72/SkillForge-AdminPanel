@@ -1075,6 +1075,10 @@ export const fa = {
     upgradePlanDesc:
       'با پلن Pro فضای ذخیره‌سازی بیشتر، دانشجویان بیشتر و پشتیبانی اولویت‌دار دریافت کنید.',
     upgradePlanCta: 'مشاهده پلن‌ها',
+    buyPlanTitle: 'پلن خود را انتخاب کنید',
+    buyPlanDesc:
+      'برای استفاده از امکانات منتوما، یکی از پلن‌های زیر را انتخاب و خرید کنید.',
+    buyPlanCta: 'انتخاب و خرید',
     // Business has no higher tier — this card must not invite an upgrade there.
     renewPlanTitle: 'اشتراک خود را تمدید کنید',
     renewPlanDesc:
@@ -5156,6 +5160,9 @@ export const fa = {
       'برای شروع، یک پلن را از بین گزینه‌های زیر انتخاب و فعال کنید.'
   },
   sidebar: {
+    buyPlan: 'خرید پلن',
+    buyPlanDescription:
+      'برای فعال‌سازی آکادمی و شروع کار، یک پلن پلتفرم انتخاب کنید.',
     upgradePlan: 'ارتقای پلن',
     upgradeDescription: 'دوره، فضای ذخیره و امکانات بیشتر با پلن بالاتر',
     upgradeDescriptionExpiring:
@@ -5295,6 +5302,11 @@ export const fa = {
     voucherCodePlaceholder: 'مثلاً MENTOMA100',
     voucherCodeHint:
       'در صورت صفر شدن مبلغ نهایی، پلن بدون درگاه بانکی فعال می‌شود.',
+    applyVoucher: 'اعمال کد',
+    removeVoucher: 'حذف',
+    voucherApplied: 'کد تخفیف اعمال شد',
+    voucherDiscount: 'تخفیف',
+    finalPayableAmount: 'مبلغ نهایی قابل پرداخت',
     billingHistory: 'فاکتورها و سوابق پرداخت',
     noInvoices: 'هنوز فاکتوری ثبت نشده است.',
     downloadFactor: 'دانلود فاکتور',

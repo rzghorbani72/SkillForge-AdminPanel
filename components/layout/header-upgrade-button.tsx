@@ -17,7 +17,7 @@ export function HeaderUpgradeButton() {
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const canManage = canManageSubscription(user);
-  const { shouldShowUpgrade, isTopPlan, isLoading } =
+  const { shouldShowUpgrade, isTopPlan, isLoading, needsPlanPurchase } =
     useAcademySubscription(canManage);
 
   if (!canManage || isLoading) {
@@ -25,8 +25,9 @@ export function HeaderUpgradeButton() {
   }
 
   const isUrgent = shouldShowUpgrade;
-  const label =
-    isTopPlan && !isUrgent
+  const label = needsPlanPurchase
+    ? t('sidebar.buyPlan')
+    : isTopPlan && !isUrgent
       ? t('sidebar.manageSubscription')
       : isTopPlan && isUrgent
         ? t('sidebar.renewPlan')

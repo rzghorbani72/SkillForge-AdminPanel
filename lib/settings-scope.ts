@@ -52,6 +52,21 @@ export function shouldShowUpgradePrompt(
   return false;
 }
 
+/** First purchase: no academy yet, or academy has never had a paid platform plan. */
+export function needsPlanPurchase(params: {
+  hasAcademy: boolean;
+  planSlug: string | null | undefined;
+  status: string | undefined;
+  hasPaid?: boolean;
+}): boolean {
+  if (!params.hasAcademy) return true;
+  const slug = params.planSlug?.trim().toLowerCase();
+  if (!slug || slug === 'none') return true;
+  if (params.status === 'INACTIVE' || params.status === 'EXPIRED') return true;
+  if (!params.hasPaid) return true;
+  return false;
+}
+
 export function shouldHideUpgradeCard(
   status: string | undefined,
   daysRemaining: number | null | undefined,
