@@ -148,7 +148,7 @@ export const navItems: NavItem[] = [
     section: 'finance',
     paymentGated: true
   },
-  // Configuration section
+  // Configuration — what the platform sells and says
   {
     title: 'Platform Settings',
     href: '/platform-settings',
@@ -189,6 +189,7 @@ export const navItems: NavItem[] = [
     scope: 'platform',
     section: 'configuration'
   },
+  // Governance — trust, legal and audit surfaces
   {
     title: 'Content Review',
     href: '/platform/moderation',
@@ -197,7 +198,7 @@ export const navItems: NavItem[] = [
     roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
     adminOnly: true,
     scope: 'platform',
-    section: 'configuration'
+    section: 'governance'
   },
   {
     title: 'Legal Documents',
@@ -207,7 +208,7 @@ export const navItems: NavItem[] = [
     roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
-    section: 'configuration'
+    section: 'governance'
   },
   {
     title: 'Support Access Logs',
@@ -217,7 +218,7 @@ export const navItems: NavItem[] = [
     roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
-    section: 'configuration'
+    section: 'governance'
   },
   {
     title: 'Roles & Permissions',
@@ -227,7 +228,7 @@ export const navItems: NavItem[] = [
     roles: ['PLATFORM_OWNER', 'ADMIN'],
     adminOnly: true,
     scope: 'platform',
-    section: 'configuration'
+    section: 'governance'
   },
   {
     title: 'Dashboard',
@@ -335,19 +336,9 @@ export const navItems: NavItem[] = [
       'TEACHER'
     ],
     scope: 'academy',
-    section: 'people'
+    section: 'learning'
   },
-  // One destination for the public site: appearance, pages, SEO, trust, domain.
-  {
-    title: 'Website',
-    href: '/website',
-    icon: 'layout' as IconType,
-    label: 'academyWebsite',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-    scope: 'academy',
-    section: 'website'
-  },
-  // Money
+  // Money — academy cash in and out
   {
     title: 'Financial',
     href: '/financial',
@@ -386,6 +377,16 @@ export const navItems: NavItem[] = [
     section: 'finance',
     paymentGated: true
   },
+  // One destination for the public site: appearance, pages, SEO, trust, domain.
+  {
+    title: 'Website',
+    href: '/website',
+    icon: 'layout' as IconType,
+    label: 'academyWebsite',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'growth'
+  },
   {
     title: 'Analytics',
     href: '/analytics',
@@ -393,7 +394,7 @@ export const navItems: NavItem[] = [
     label: 'analytics',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy',
-    section: 'insights'
+    section: 'growth'
   },
   {
     title: 'Marketing',

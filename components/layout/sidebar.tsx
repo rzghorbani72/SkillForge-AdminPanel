@@ -4,7 +4,7 @@ import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import { ChevronLeft } from 'lucide-react';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 import { filterNavItems } from '@/lib/nav-filter';
 import { isPaymentEnabled } from '@/lib/payment';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -26,6 +26,10 @@ export default function Sidebar({ className }: SidebarProps) {
     if (!user) return null;
     return user.role;
   }, [user]);
+
+  useEffect(() => {
+    void useSidebar.persist.rehydrate();
+  }, []);
 
   const hasStore = useHasStore();
   const { visibility: learningVisibility } = useLearningNavCapabilities();

@@ -411,8 +411,16 @@ export const ar = {
       account: 'حسابي',
       manage: 'الإدارة',
       learning: 'عمليات التعلم',
+      people: 'الأشخاص',
+      website: 'موقع الأكاديمية',
+      insights: 'التقارير',
+      growth: 'النمو',
       finance: 'المالية',
-      platform: 'المنصة'
+      platform: 'المنصة',
+      templates: 'القوالب',
+      configuration: 'الإعدادات',
+      governance: 'الحوكمة والقانون',
+      students: 'الطلاب'
     }
   },
   legal: {

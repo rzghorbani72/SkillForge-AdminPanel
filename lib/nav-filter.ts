@@ -27,7 +27,12 @@ const ACADEMY_CAPABILITY_ROLES: Role[] = [
   'PLATFORM_OWNER'
 ];
 
-function isPlatformMode(role: Role, hasStore?: boolean): boolean {
+/**
+ * Platform mode = platform staff who have not scoped into an academy. Shared so
+ * the sidebar and the scope banner never disagree about which mode we are in.
+ */
+export function isPlatformMode(role: Role | null, hasStore?: boolean): boolean {
+  if (!role) return false;
   const isPlatformRole =
     role === 'PLATFORM_OWNER' ||
     role === 'ADMIN' ||

@@ -417,8 +417,16 @@ export const tr = {
       account: 'Hesabım',
       manage: 'Yönetim',
       learning: 'Öğrenme operasyonları',
+      people: 'Kişiler',
+      website: 'Akademi sitesi',
+      insights: 'Raporlar',
+      growth: 'Büyüme',
       finance: 'Finans',
-      platform: 'Platform'
+      platform: 'Platform',
+      templates: 'Şablonlar',
+      configuration: 'Yapılandırma',
+      governance: 'Güven ve hukuk',
+      students: 'Öğrenciler'
     }
   },
   legal: {

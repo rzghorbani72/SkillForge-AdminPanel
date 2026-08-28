@@ -669,6 +669,7 @@ export const en = {
       platform: 'Overview',
       templates: 'Templates',
       configuration: 'Configuration',
+      governance: 'Trust & legal',
       students: 'Students'
     }
   },

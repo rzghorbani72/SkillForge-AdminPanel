@@ -660,6 +660,7 @@ export const fa = {
       platform: 'نمای کلی',
       templates: 'قالب‌ها',
       configuration: 'پیکربندی',
+      governance: 'نظارت و حقوقی',
       students: 'دانشجویان'
     }
   },
