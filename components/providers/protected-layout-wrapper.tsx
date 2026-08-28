@@ -30,9 +30,12 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
     <StoreProvider>
       <ThemeInitializer />
       <SubscriptionRequiredGate />
-      <div className="flex h-screen flex-col overflow-hidden" dir={direction}>
-        <PlanVoucherBanner className="sticky top-0 z-50 w-full shrink-0" />
-        <div className="flex min-h-0 flex-1 overflow-hidden">
+      <div
+        className="grid h-screen grid-rows-[auto_1fr] overflow-hidden"
+        dir={direction}
+      >
+        <PlanVoucherBanner className="w-full" />
+        <div className="flex min-h-0 overflow-hidden">
           <Sidebar />
           <main className="flex flex-1 flex-col overflow-hidden">
             <Header />

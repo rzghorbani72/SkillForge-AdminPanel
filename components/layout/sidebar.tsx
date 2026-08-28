@@ -42,7 +42,7 @@ export default function Sidebar({ className }: SidebarProps) {
     return (
       <aside
         className={cn(
-          'relative hidden h-screen flex-none border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:block',
+          'relative hidden h-full flex-none border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:block',
           !isMinimized ? 'w-[248px]' : 'w-[72px]',
           className
         )}
@@ -59,7 +59,7 @@ export default function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'relative hidden h-screen flex-none flex-col border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:flex',
+        'relative hidden h-full flex-none flex-col border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:flex',
         !isMinimized ? 'w-[248px]' : 'w-[72px]',
         className
       )}
