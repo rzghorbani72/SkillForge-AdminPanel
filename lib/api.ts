@@ -6150,6 +6150,7 @@ class ApiClient {
     phone: string;
     password?: string;
     commission_rate: number;
+    send_sms?: boolean;
   }) {
     const res = await this.request<any>('/affiliates/accounts', {
       method: 'POST',

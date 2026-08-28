@@ -24,7 +24,6 @@ export type Affiliate = {
 export const addAffiliateSchema = z.object({
   affiliate_name: z.string().min(2, 'validation.nameRequired'),
   phone: z.string().min(7, 'validation.phoneRequired'),
-  code: z.string().optional(),
   password: z
     .string()
     .min(6, 'validation.passwordMin6')
