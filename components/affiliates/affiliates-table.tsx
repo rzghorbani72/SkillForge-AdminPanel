@@ -80,9 +80,6 @@ export function AffiliatesTable({
                       <p className="font-semibold leading-tight">
                         {aff.affiliate_name}
                       </p>
-                      <p className="font-mono text-xs text-muted-foreground">
-                        {aff.code}
-                      </p>
                     </div>
                   </div>
                 </td>
