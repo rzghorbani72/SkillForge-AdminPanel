@@ -6,6 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
+import { authService } from '@/lib/auth';
+import {
+  homeRouteFor,
+  NO_HOME_ROUTE,
+  resolveSessionRole
+} from '@/lib/auth-routing';
 import { OtpType } from '@/constants/data';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toE164Iran } from '@/lib/phone-utils';
@@ -77,12 +83,6 @@ export default function RegisterPage() {
   }>({ terms: null, privacy: null });
 
   useEffect(() => {
-    if (!done) return;
-    const timer = window.setTimeout(() => router.push(loginHref), 2200);
-    return () => window.clearTimeout(timer);
-  }, [done, router, loginHref]);
-
-  useEffect(() => {
     apiClient
       .getLegalDocuments()
       .then((res) => {
@@ -147,6 +147,31 @@ export default function RegisterPage() {
     }
   }
 
+  /**
+   * Signup already proved the phone and set the password, so a second manual
+   * login adds nothing. If it fails the account still exists — fall back to the
+   * login page instead of showing a signup error.
+   */
+  async function signInNewAccount(identifier: string, password: string) {
+    setDone(true);
+    try {
+      const session = await authService.login({ identifier, password });
+      // No role means no session was created — the backend answered with a
+      // verification/reset gate the login page knows how to finish, not us.
+      const role = resolveSessionRole(session);
+      if (!role) {
+        router.replace(loginHref);
+        return;
+      }
+      const planQuery = planParam
+        ? `?plan=${encodeURIComponent(planParam)}`
+        : '';
+      router.replace(homeRouteFor(role, { planQuery }) ?? NO_HOME_ROUTE);
+    } catch {
+      router.replace(loginHref);
+    }
+  }
+
   async function verifyAndCreateAccount() {
     const values = form.getValues();
     const e164Phone = toE164Iran(values.phone);
@@ -198,7 +223,7 @@ export default function RegisterPage() {
         accepted_terms_version: termsVersion,
         accepted_privacy_version: privacyVersion
       });
-      setDone(true);
+      await signInNewAccount(e164Phone, values.password);
     } catch (err: unknown) {
       toast.error(apiErrorMessage(err, t('common.error')), {
         toastId: 'register-error'
@@ -231,7 +256,7 @@ export default function RegisterPage() {
     return (
       <AuthStatusScreen
         title={t('auth.accountCreatedTitle')}
-        message={t('auth.redirectingToSignIn')}
+        message={t('auth.redirectingToDashboard')}
       />
     );
   }

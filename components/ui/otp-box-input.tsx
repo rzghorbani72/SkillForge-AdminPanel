@@ -27,8 +27,6 @@ export function OtpBoxInput({
 }: OtpBoxInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { language } = useLanguage();
-  const completeRef = useRef(onComplete);
-  completeRef.current = onComplete;
   const firedRef = useRef<string | null>(null);
 
   const digits = Array.from({ length }, (_, i) => value[i] ?? '');
@@ -40,8 +38,8 @@ export function OtpBoxInput({
     }
     if (firedRef.current === value) return;
     firedRef.current = value;
-    completeRef.current?.(value);
-  }, [value, length, disabled]);
+    onComplete?.(value);
+  }, [value, length, disabled, onComplete]);
 
   const displayDigit = (digit: string) =>
     digit && language === 'fa' ? toPersianDigits(digit) : digit;
