@@ -6,6 +6,7 @@ import {
   Layers,
   Layout,
   Shield,
+  ShieldCheck,
   User,
   Zap
 } from 'lucide-react';
@@ -184,6 +185,14 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             icon: Layers,
             scope: 'academy',
             tone: HUB_TONES.emerald
+          },
+          {
+            title: t('roles.title'),
+            description: t('roles.description'),
+            href: '/settings/roles',
+            icon: ShieldCheck,
+            scope: 'academy',
+            tone: HUB_TONES.amber
           }
         ]
   };

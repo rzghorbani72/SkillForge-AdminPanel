@@ -1,5 +1,5 @@
-import { NavItem } from '@/types';
-import { PanelRole } from '@/lib/roles';
+import type { NavItem } from '@/types';
+import type { PanelRole } from '@/lib/roles';
 
 type Role = PanelRole;
 

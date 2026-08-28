@@ -6,7 +6,12 @@ import { PageHeader } from '@/components/shared/PageHeader';
 import { RequirePermission } from '@/components/access-control/RequirePermission';
 import { RolesManager } from '@/components/roles/roles-manager';
 
-export default function PlatformRolesPage() {
+/**
+ * Academy-scoped roles. Same manager UI as the platform route, but reached from
+ * a path that matches what it edits: the backend already filters roles to the
+ * caller's academy, so the URL should not claim platform scope.
+ */
+export default function AcademyRolesPage() {
   const { t } = useTranslation();
 
   return (

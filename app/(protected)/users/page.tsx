@@ -242,7 +242,7 @@ export default function UsersPage() {
             totalCount={totalCount}
             page={page}
             onPageChange={setPage}
-            onRoleClick={() => router.push('/platform/roles')}
+            onRoleClick={() => router.push('/settings/roles')}
             onChanged={refresh}
           />
         ))}

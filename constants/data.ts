@@ -1,5 +1,5 @@
-import { IconType } from '@/components/icons';
-import { NavItem } from '@/types';
+import type { IconType } from '@/components/icons';
+import type { NavItem } from '@/types';
 
 export enum OtpType {
   LOGIN_BY_PHONE = 'LOGIN_BY_PHONE',
@@ -427,7 +427,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Roles & Permissions',
-    href: '/platform/roles',
+    href: '/settings/roles',
     icon: 'shield' as IconType,
     label: 'rolesPermissions',
     roles: ['MANAGER'],
