@@ -133,7 +133,15 @@ export function BankAccountDialog({
             </div>
           </div>
         ) : (
-          <OtpBoxInput length={OTP_LENGTH} value={otp} onChange={setOtp} />
+          <OtpBoxInput
+            length={OTP_LENGTH}
+            value={otp}
+            onChange={setOtp}
+            disabled={isSubmitting}
+            onComplete={() => {
+              if (!isSubmitting) void save();
+            }}
+          />
         )}
 
         <DialogFooter>

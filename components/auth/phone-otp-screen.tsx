@@ -92,6 +92,9 @@ export function PhoneOtpScreen({
             value={otp}
             onChange={setOtp}
             disabled={verified || otpLoading}
+            onComplete={() => {
+              if (!verified && !otpLoading) onSubmit();
+            }}
           />
           {otpError && (
             <p className="text-center text-xs text-destructive">{otpError}</p>

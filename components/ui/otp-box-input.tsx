@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n/hooks';
 import { toEnglishDigits, toPersianDigits } from '@/lib/phone-utils';
@@ -12,6 +12,8 @@ interface OtpBoxInputProps {
   disabled?: boolean;
   autoFocus?: boolean;
   className?: string;
+  /** Fired once the last box is filled, so the code submits without a click. */
+  onComplete?: (code: string) => void;
 }
 
 export function OtpBoxInput({
@@ -20,12 +22,26 @@ export function OtpBoxInput({
   onChange,
   disabled,
   autoFocus = true,
-  className
+  className,
+  onComplete
 }: OtpBoxInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { language } = useLanguage();
+  const completeRef = useRef(onComplete);
+  completeRef.current = onComplete;
+  const firedRef = useRef<string | null>(null);
 
   const digits = Array.from({ length }, (_, i) => value[i] ?? '');
+
+  useEffect(() => {
+    if (value.length < length || disabled) {
+      if (value.length < length) firedRef.current = null;
+      return;
+    }
+    if (firedRef.current === value) return;
+    firedRef.current = value;
+    completeRef.current?.(value);
+  }, [value, length, disabled]);
 
   const displayDigit = (digit: string) =>
     digit && language === 'fa' ? toPersianDigits(digit) : digit;

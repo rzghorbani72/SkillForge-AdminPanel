@@ -32,6 +32,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import { authService } from '@/lib/auth';
 import { OtpType } from '@/constants/data';
+import { OtpBoxInput } from '@/components/ui/otp-box-input';
 
 interface ProfileFormState {
   name: string;
@@ -95,18 +96,12 @@ function OtpPanel({
             {t('settings.codeSentTo').replace('{{value}}', sentTo)}
           </p>
           <div className="flex flex-wrap gap-2">
-            <Input
-              dir="ltr"
+            <OtpBoxInput
               value={state.code}
-              onChange={(e) =>
-                onCodeChange(e.target.value.replace(/\D/g, '').slice(0, 6))
-              }
-              placeholder={t('settings.otpPlaceholder')}
-              className="w-36 text-center font-mono text-base tracking-[0.4em]"
-              maxLength={6}
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && state.code.length >= 4) onVerify();
+              onChange={onCodeChange}
+              disabled={state.step === 'verifying'}
+              onComplete={() => {
+                if (state.step !== 'verifying') onVerify();
               }}
             />
             <Button
