@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Local Cursor/Claude agent state (worktrees, settings)
 .claude/
+
+# graphify agent tooling (regenerated locally)
+/graphify-out/
