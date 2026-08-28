@@ -23,6 +23,10 @@ import type {
   ReviewQueueResponse
 } from '@/types/compliance';
 import type {
+  SellerIdentity,
+  UpdateSellerIdentityPayload
+} from '@/types/seller-identity';
+import type {
   CustomDomainSetupResponse,
   VerifyDnsResponse
 } from '@/types/custom-domain-setup';
@@ -37,6 +41,11 @@ import {
 } from './api-error';
 import { currentLanguage } from './current-language';
 import { isAuthPagePath } from './auth-routes';
+import {
+  createSellerIdentityIncompleteError,
+  SELLER_IDENTITY_INCOMPLETE
+} from './seller-identity-error';
+import type { SellerIdentityField } from '@/types/seller-identity';
 import type {
   AcademyPage,
   AcademyPagePayload,
@@ -555,6 +564,30 @@ class ApiClient {
           error.code = 'LEGAL_CONSENT_REQUIRED';
           error.pending = pending;
           throw error;
+        }
+
+        const sellerIdentityCode =
+          payload?.code === SELLER_IDENTITY_INCOMPLETE ||
+          (data as Record<string, unknown> | null)?.code ===
+            SELLER_IDENTITY_INCOMPLETE;
+
+        if (sellerIdentityCode) {
+          const missingRaw = (payload?.missing ??
+            (data as Record<string, unknown> | null)?.missing) as unknown;
+          const allowed = new Set<SellerIdentityField>([
+            'legal_entity_name',
+            'national_id',
+            'contact_address',
+            'permit_declared'
+          ]);
+          const missing = Array.isArray(missingRaw)
+            ? missingRaw.filter(
+                (item): item is SellerIdentityField =>
+                  typeof item === 'string' &&
+                  allowed.has(item as SellerIdentityField)
+              )
+            : [];
+          throw createSellerIdentityIncompleteError(missing);
         }
 
         const forbiddenError = new ApiResponseError(
@@ -3993,6 +4026,19 @@ class ApiClient {
       method: 'POST'
     });
     return response.data;
+  }
+
+  async getSellerIdentity() {
+    const response = await this.request('/academies/current/seller-identity');
+    return response.data as SellerIdentity;
+  }
+
+  async updateSellerIdentity(payload: UpdateSellerIdentityPayload) {
+    const response = await this.request('/academies/current/seller-identity', {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    return response.data as SellerIdentity;
   }
 
   // --- Compliance: eNamad (manager) and content moderation (platform staff) ---

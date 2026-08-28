@@ -19,6 +19,7 @@ import { EnamadSteps } from '@/components/compliance/enamad-steps';
 import { EnamadHostingForm } from '@/components/compliance/enamad-hosting-form';
 import { EnamadProofPanel } from '@/components/compliance/enamad-proof-panel';
 import { EnamadStatusBadge } from '@/components/compliance/review-status-badge';
+import { SellerIdentityCard } from '@/components/compliance/seller-identity-card';
 import { ENAMAD_STATUS, type EnamadState } from '@/types/compliance';
 
 export default function AcademyCompliancePage() {
@@ -107,6 +108,7 @@ export default function AcademyCompliancePage() {
           title={t('compliance.enamad.title')}
           subtitle={t('compliance.enamad.description')}
         />
+        <SellerIdentityCard />
         <Alert>
           <ShieldAlert className="h-4 w-4" />
           <AlertDescription>
@@ -123,6 +125,8 @@ export default function AcademyCompliancePage() {
         title={t('compliance.enamad.title')}
         subtitle={t('compliance.enamad.description')}
       />
+
+      <SellerIdentityCard />
 
       <Card>
         <CardHeader>
