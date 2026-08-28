@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, CircleCheck, Phone, Sparkles } from 'lucide-react';
+import { Loader2, CircleCheck, Phone, Sparkles, Copy, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { generateTempPassword } from '@/lib/password-utils';
+import { generateSimpleTempPassword } from '@/lib/password-utils';
 import { toE164Iran } from '@/lib/phone-utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +56,7 @@ export function AffiliateDialog({
   const [checkingPhone, setCheckingPhone] = useState(false);
   const [customCommission, setCustomCommission] = useState(false);
   const [sendSms, setSendSms] = useState(true);
+  const [passwordCopied, setPasswordCopied] = useState(false);
 
   const form = useForm<AddAffiliateForm>({
     resolver: zodResolver(addAffiliateSchema),
@@ -74,7 +75,7 @@ export function AffiliateDialog({
       form.reset({
         affiliate_name: editData?.affiliate_name ?? '',
         phone: editData?.affiliate_phone ?? '',
-        password: isEdit ? '' : generateTempPassword(),
+        password: isEdit ? '' : generateSimpleTempPassword(),
         commission_pct: editData
           ? Math.round((editData.commission_rate ?? 0.15) * 100)
           : 15
@@ -82,6 +83,7 @@ export function AffiliateDialog({
       setFoundUser(null);
       setCustomCommission(false);
       setSendSms(true);
+      setPasswordCopied(false);
     }
   }, [open, editData, isEdit, form]);
 
@@ -119,7 +121,21 @@ export function AffiliateDialog({
     setFoundUser(null);
     setCustomCommission(false);
     setSendSms(true);
+    setPasswordCopied(false);
     onClose();
+  }
+
+  function handleGeneratePassword() {
+    form.setValue('password', generateSimpleTempPassword());
+    setPasswordCopied(false);
+  }
+
+  async function handleCopyPassword() {
+    const password = form.getValues('password');
+    if (!password) return;
+    await navigator.clipboard.writeText(password);
+    setPasswordCopied(true);
+    setTimeout(() => setPasswordCopied(false), 2000);
   }
 
   async function submit(values: AddAffiliateForm) {
@@ -358,28 +374,49 @@ export function AffiliateDialog({
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('affiliates.fieldPassword')}</FormLabel>
+                      <div className="flex items-center justify-between gap-2">
+                        <FormLabel className="mb-0">
+                          {t('affiliates.fieldPassword')}
+                        </FormLabel>
+                        <button
+                          type="button"
+                          onClick={handleGeneratePassword}
+                          className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                        >
+                          <Sparkles className="h-3 w-3" />
+                          {t('users.generatePassword')}
+                        </button>
+                      </div>
                       <FormControl>
-                        <div className="relative">
+                        <div className="relative" dir="ltr">
                           <Input
-                            type="password"
+                            type="text"
                             dir="ltr"
-                            className="pe-10 font-mono"
+                            className="pe-9 font-mono"
                             placeholder="حداقل ۶ کاراکتر"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              setPasswordCopied(false);
+                            }}
                           />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute end-0 top-0 h-9 w-9"
-                            aria-label={t('users.generatePassword')}
-                            onClick={() =>
-                              form.setValue('password', generateTempPassword())
-                            }
-                          >
-                            <Sparkles className="h-4 w-4 text-muted-foreground" />
-                          </Button>
+                          {field.value && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                void handleCopyPassword();
+                              }}
+                              className="absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                              title={t('affiliates.copy')}
+                              aria-label={t('affiliates.copy')}
+                            >
+                              {passwordCopied ? (
+                                <Check className="h-4 w-4 text-emerald-500" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
+                            </button>
+                          )}
                         </div>
                       </FormControl>
                       <p className="text-xs text-muted-foreground">

@@ -81,3 +81,18 @@ export function generateTempPassword(length = 10): string {
   );
   return shuffle([...required, ...rest]).join('');
 }
+
+/**
+ * Shortest password that passes isPasswordValid: 3 letters + 2 digits + "!".
+ * Fixed order so it is easy to read aloud and type on a phone.
+ */
+export function generateSimpleTempPassword(): string {
+  return (
+    randomChar(LOWER) +
+    randomChar(LOWER) +
+    randomChar(LOWER) +
+    randomChar(DIGITS) +
+    randomChar(DIGITS) +
+    '!'
+  );
+}
