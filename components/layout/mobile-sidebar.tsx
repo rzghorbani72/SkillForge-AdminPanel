@@ -8,13 +8,12 @@ import { filterNavItems } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHasStore } from '@/hooks/useHasStore';
 import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
-import { useLanguage } from '@/lib/i18n/hooks';
-
-// import { Playlist } from "../data/playlists";
+import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 
 export function MobileSidebar() {
   const [open, setOpen] = useState(false);
   const { isRTL } = useLanguage();
+  const { t } = useTranslation();
   const { user } = useAuthUser();
   const hasStore = useHasStore();
   const { visibility: learningVisibility } = useLearningNavCapabilities();
@@ -39,27 +38,20 @@ export function MobileSidebar() {
           <MenuIcon />
         </SheetTrigger>
         <SheetContent side={isRTL ? 'right' : 'left'} className="!px-0">
-          <div className="space-y-4 py-4">
-            <div className="px-3 py-2">
-              <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-                Overview
-              </h2>
-              <div className="space-y-1">
-                <Suspense
-                  fallback={
-                    <div className="p-4 text-center text-muted-foreground">
-                      Loading...
-                    </div>
-                  }
-                >
-                  <DashboardNav
-                    items={filteredNavItems}
-                    isMobileNav={true}
-                    setOpen={setOpen}
-                  />
-                </Suspense>
-              </div>
-            </div>
+          <div className="beautiful-scrollbar h-full overflow-y-auto py-3 pe-2 ps-4">
+            <Suspense
+              fallback={
+                <div className="p-4 text-center text-xs text-muted-foreground">
+                  {t('common.loading')}
+                </div>
+              }
+            >
+              <DashboardNav
+                items={filteredNavItems}
+                isMobileNav={true}
+                setOpen={setOpen}
+              />
+            </Suspense>
           </div>
         </SheetContent>
       </Sheet>

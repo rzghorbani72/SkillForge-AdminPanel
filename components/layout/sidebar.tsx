@@ -43,7 +43,7 @@ export default function Sidebar({ className }: SidebarProps) {
       <aside
         className={cn(
           'relative hidden h-full flex-none border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:block',
-          !isMinimized ? 'w-[248px]' : 'w-[72px]',
+          !isMinimized ? 'w-[228px]' : 'w-[64px]',
           className
         )}
       >
@@ -60,14 +60,14 @@ export default function Sidebar({ className }: SidebarProps) {
     <aside
       className={cn(
         'relative hidden h-full flex-none flex-col border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:flex',
-        !isMinimized ? 'w-[248px]' : 'w-[72px]',
+        !isMinimized ? 'w-[228px]' : 'w-[64px]',
         className
       )}
     >
       {/* Product brand — academy identity lives in the header switcher */}
       <div
         className={cn(
-          'flex items-center gap-3 border-b border-[hsl(var(--sidebar-border))] px-4 py-4 transition-all duration-300',
+          'flex items-center gap-2.5 border-b border-[hsl(var(--sidebar-border))] px-3 py-3 transition-all duration-300',
           isMinimized && 'justify-center px-2'
         )}
       >
@@ -76,20 +76,20 @@ export default function Sidebar({ className }: SidebarProps) {
           src="/logo-mark.svg"
           alt=""
           aria-hidden
-          className="h-9 w-9 shrink-0"
+          className="h-8 w-8 shrink-0"
         />
         {!isMinimized && (
           <div className="min-w-0 flex-1">
             <span
               aria-hidden
-              className="mb-0.5 block h-5 w-[49px] bg-foreground"
+              className="block h-[18px] w-[44px] bg-foreground"
               style={{
                 WebkitMask: 'url(/logo-type.png) center / contain no-repeat',
                 mask: 'url(/logo-type.png) center / contain no-repeat'
               }}
             />
             <span className="sr-only">{t('auth.brandName')}</span>
-            <p className="truncate text-xs text-muted-foreground">
+            <p className="truncate text-[10px] leading-tight text-muted-foreground">
               {isPlatformMode
                 ? t('sidebar.managementConsole')
                 : t('auth.brandTagline')}
@@ -103,7 +103,7 @@ export default function Sidebar({ className }: SidebarProps) {
         type="button"
         onClick={toggle}
         className={cn(
-          'absolute -end-3 top-[4.5rem] z-50 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-md transition-all duration-300 hover:bg-primary hover:text-white',
+          'absolute -end-3 top-[3.75rem] z-50 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-md transition-all duration-300 hover:bg-primary hover:text-white',
           !isMinimized && 'rotate-180'
         )}
         aria-label="Toggle sidebar"
@@ -111,8 +111,8 @@ export default function Sidebar({ className }: SidebarProps) {
         <ChevronLeft className="h-3.5 w-3.5" />
       </button>
 
-      {/* Navigation — ps-4 gives room for the 3px active bar on the start edge */}
-      <div className="beautiful-scrollbar flex-1 overflow-y-auto py-3 pe-3 ps-4">
+      {/* Navigation — ps-3 gives room for the 3px active bar on the start edge */}
+      <div className="beautiful-scrollbar flex-1 overflow-y-auto py-2 pe-2 ps-3">
         <Suspense
           fallback={
             <div className="p-4 text-center text-xs text-muted-foreground">

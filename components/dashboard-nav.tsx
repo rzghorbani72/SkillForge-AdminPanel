@@ -64,7 +64,7 @@ const NavItemContent = React.memo(
         {/* Plain icon — no box, matches Mentoma design */}
         <Icon
           className={cn(
-            'h-[18px] w-[18px] shrink-0 transition-colors duration-150',
+            'h-[17px] w-[17px] shrink-0 transition-colors duration-150',
             isActive
               ? 'text-primary'
               : 'text-muted-foreground group-hover:text-primary'
@@ -86,7 +86,7 @@ const NavItemContent = React.memo(
               <Badge
                 variant="secondary"
                 className={cn(
-                  'h-5 rounded-full px-2 py-0.5 text-[10px] font-semibold',
+                  'h-[18px] rounded-full px-1.5 py-0 text-[10px] font-semibold',
                   isActive
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-primary/10 text-primary'
@@ -378,7 +378,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
             isExpanded &&
             (() => {
               return (
-                <div className="ms-5 mt-1 space-y-1 border-s-2 border-border/50 ps-3">
+                <div className="ms-4 mt-0.5 space-y-px border-s border-border/60 ps-2.5">
                   {item.children &&
                     item.children.map((child, index) => (
                       <div key={`${child.title}-${index}`}>
@@ -416,7 +416,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const renderedSections = new Set<string>();
 
   return (
-    <nav className="flex flex-col gap-0.5">
+    <nav className="flex flex-col gap-px">
       <TooltipProvider delayDuration={0}>
         {memoizedItems.map((item) => {
           const showSection =
@@ -431,7 +431,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
                 </div>
               )}
               {showSection && isMinimized && (
-                <div className="mx-2 my-2 h-px bg-border/50" />
+                <div className="mx-2 my-1.5 h-px bg-border/50" />
               )}
               <Tooltip>
                 <TooltipTrigger asChild>{renderNavItem(item)}</TooltipTrigger>

@@ -166,7 +166,7 @@ body {
 @layer components {
   /* ─── Sidebar ─────────────────────────────────────────────────── */
   .sidebar-item {
-    @apply relative flex cursor-pointer items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm
+    @apply relative flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-sm
            font-medium text-muted-foreground transition-all duration-150;
   }
 
@@ -198,11 +198,11 @@ body {
   .sidebar-item.active::before {
     content: '';
     position: absolute;
-    inset-inline-start: -16px;
+    inset-inline-start: -12px;
     top: 50%;
     transform: translateY(-50%);
     width: 3px;
-    height: 18px;
+    height: 16px;
     background: hsl(var(--primary));
     border-radius: 0 3px 3px 0;
   }
@@ -234,7 +234,8 @@ body {
 
   /* Nav section label */
   .nav-section-label {
-    @apply mb-1 mt-5 px-3 text-[10px] font-semibold uppercase tracking-widest;
+    @apply mb-0.5 mt-3 px-2.5 text-[10px] font-semibold uppercase tracking-wider
+           first:mt-0;
     color: hsl(var(--muted-foreground) / 0.6);
   }
 
