@@ -6,14 +6,18 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import {
   Responsible,
   StaffTicketDetail,
   TICKET_PRIORITIES,
   TICKET_STATUSES
 } from './staff-support-types';
-
-const field =
-  'rounded-md border border-input bg-background px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring';
 
 interface Props {
   ticket: StaffTicketDetail;
@@ -66,59 +70,75 @@ export function TicketStaffControls({
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        <select
-          aria-label={t('support.changeStatus')}
-          className={field}
+        <Select
           value={ticket.status}
           disabled={busy}
-          onChange={(e) => applyStatus(e.target.value)}
+          onValueChange={applyStatus}
         >
-          {TICKET_STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {t(`support.statuses.${s}`)}
-            </option>
-          ))}
-        </select>
-        <select
-          aria-label={t('support.changePriority')}
-          className={field}
+          <SelectTrigger
+            className="h-9 w-[150px]"
+            aria-label={t('support.changeStatus')}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {TICKET_STATUSES.map((s) => (
+              <SelectItem key={s} value={s}>
+                {t(`support.statuses.${s}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
           value={ticket.priority}
           disabled={busy}
-          onChange={(e) =>
-            onAct(() =>
-              apiClient.changeSupportPriority(ticket.id, e.target.value)
-            )
+          onValueChange={(v) =>
+            onAct(() => apiClient.changeSupportPriority(ticket.id, v))
           }
         >
-          {TICKET_PRIORITIES.map((p) => (
-            <option key={p} value={p}>
-              {t(`support.priorities.${p}`)}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger
+            className="h-9 w-[130px]"
+            aria-label={t('support.changePriority')}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {TICKET_PRIORITIES.map((p) => (
+              <SelectItem key={p} value={p}>
+                {t(`support.priorities.${p}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         {canReassign && responsibles.length > 0 && (
-          <select
-            aria-label={t('support.reassign')}
-            className={field}
+          <Select
             value={ticket.AssignedTo?.id ?? ''}
             disabled={busy}
-            onChange={(e) =>
-              e.target.value &&
-              onAct(() =>
-                apiClient.reassignSupportTicket(ticket.id, e.target.value)
-              )
+            onValueChange={(v) =>
+              v && onAct(() => apiClient.reassignSupportTicket(ticket.id, v))
             }
           >
-            {responsibles.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.display_name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              className="h-9 w-[170px]"
+              aria-label={t('support.reassign')}
+            >
+              <SelectValue placeholder={t('support.reassign')} />
+            </SelectTrigger>
+            <SelectContent>
+              {responsibles.map((r) => (
+                <SelectItem key={r.id} value={r.id}>
+                  {r.display_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
       </div>
+
       {pendingStatus && (
-        <div className="space-y-2 rounded-md border bg-muted/30 p-2">
+        <div className="space-y-2 rounded-md border bg-muted/30 p-3">
           <p className="text-xs font-medium">
             {t('support.resolutionSummaryRequired')}
           </p>

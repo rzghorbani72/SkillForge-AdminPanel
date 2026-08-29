@@ -1,10 +1,17 @@
 'use client';
 
 import { useTranslation } from '@/lib/i18n/hooks';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { TICKET_PRIORITIES, TICKET_STATUSES } from './staff-support-types';
 
-const field =
-  'h-8 rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring';
+const ALL = 'ALL';
 
 export interface SupportInboxFiltersState {
   status: string;
@@ -23,35 +30,57 @@ export function SupportInboxFilters({ tab, filters, onChange }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <select
-        aria-label={t('support.filters.status')}
-        className={field}
-        value={filters.status}
-        onChange={(e) => onChange({ ...filters, status: e.target.value })}
+      <Select
+        value={filters.status || ALL}
+        onValueChange={(v) =>
+          onChange({ ...filters, status: v === ALL ? '' : v })
+        }
       >
-        <option value="">{t('support.filters.allStatuses')}</option>
-        {TICKET_STATUSES.map((s) => (
-          <option key={s} value={s}>
-            {t(`support.statuses.${s}`)}
-          </option>
-        ))}
-      </select>
-      <select
-        aria-label={t('support.filters.priority')}
-        className={field}
-        value={filters.priority}
-        onChange={(e) => onChange({ ...filters, priority: e.target.value })}
+        <SelectTrigger
+          className="h-9 w-[140px]"
+          aria-label={t('support.filters.status')}
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={ALL}>
+            {t('support.filters.allStatuses')}
+          </SelectItem>
+          {TICKET_STATUSES.map((s) => (
+            <SelectItem key={s} value={s}>
+              {t(`support.statuses.${s}`)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select
+        value={filters.priority || ALL}
+        onValueChange={(v) =>
+          onChange({ ...filters, priority: v === ALL ? '' : v })
+        }
       >
-        <option value="">{t('support.filters.allPriorities')}</option>
-        {TICKET_PRIORITIES.map((p) => (
-          <option key={p} value={p}>
-            {t(`support.priorities.${p}`)}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger
+          className="h-9 w-[130px]"
+          aria-label={t('support.filters.priority')}
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={ALL}>
+            {t('support.filters.allPriorities')}
+          </SelectItem>
+          {TICKET_PRIORITIES.map((p) => (
+            <SelectItem key={p} value={p}>
+              {t(`support.priorities.${p}`)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
       {tab === 'platform' && (
-        <input
-          className={`${field} min-w-[140px]`}
+        <Input
+          className="h-9 w-[160px]"
           placeholder={t('support.filters.academyId')}
           value={filters.academy_id}
           onChange={(e) => onChange({ ...filters, academy_id: e.target.value })}

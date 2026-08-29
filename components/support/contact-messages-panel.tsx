@@ -1,12 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Mail, Phone } from 'lucide-react';
+import { Inbox, Mail, Phone } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -29,6 +30,7 @@ import {
  */
 export function ContactMessagesPanel() {
   const { t } = useTranslation();
+  const formatDate = useDateFormat();
   const [status, setStatus] = useState<string>('NEW');
   const [items, setItems] = useState<ContactMessageItem[] | null>(null);
 
@@ -80,7 +82,10 @@ export function ContactMessagesPanel() {
         <p className="text-sm text-muted-foreground">{t('support.loading')}</p>
       )}
       {items?.length === 0 && (
-        <p className="text-sm text-muted-foreground">{t('support.empty')}</p>
+        <div className="flex flex-col items-center gap-2 py-12 text-center text-sm text-muted-foreground">
+          <Inbox className="h-8 w-8 opacity-40" />
+          {t('support.empty')}
+        </div>
       )}
 
       {items?.map((item) => (
@@ -119,7 +124,13 @@ export function ContactMessagesPanel() {
             </p>
 
             <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-              <span>{item.name}</span>
+              <span className="font-medium text-foreground">{item.name}</span>
+              <span>
+                {formatDate(item.created_at, {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </span>
               <a
                 href={`mailto:${item.email}`}
                 dir="ltr"

@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import Link from '@/components/ui/link';
 import { Crown } from 'lucide-react';
@@ -15,6 +14,7 @@ import {
 import { TicketStaffControls } from './ticket-staff-controls';
 import { TicketCallPanel } from './ticket-call-panel';
 import { TicketMessageThread } from './ticket-message-thread';
+import { TicketPriorityDot, TicketStatusBadge } from './ticket-badges';
 
 interface Props {
   ticketId: string;
@@ -81,9 +81,12 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
 
   return (
     <div className="flex h-full flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
-        <div>
-          <h3 className="font-semibold">{ticket.subject}</h3>
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b pb-3">
+        <div className="min-w-0">
+          <h3 className="flex items-center gap-2 font-semibold">
+            <TicketPriorityDot priority={ticket.priority} />
+            {ticket.subject}
+          </h3>
           <p className="text-xs text-muted-foreground">
             {ticket.Academy ? `${ticket.Academy.name} · ` : ''}
             {t('support.from')}: {ticket.CreatedBy?.display_name ?? '—'}
@@ -103,11 +106,11 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
             </Link>
           )}
         </div>
-        <Badge>{t(`support.statuses.${ticket.status}`)}</Badge>
+        <TicketStatusBadge status={ticket.status} />
       </div>
 
       {ticket.Rating && (
-        <div className="rounded-md border bg-muted/40 px-3 py-2 text-sm">
+        <div className="rounded-lg border bg-muted/40 px-3 py-2 text-sm">
           <span className="font-medium">{t('support.csat')}:</span>{' '}
           {'★'.repeat(ticket.Rating.score)}
           {'☆'.repeat(5 - ticket.Rating.score)}
@@ -130,7 +133,7 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
       <TicketCallPanel ticket={ticket} busy={busy} onAct={act} />
 
       {caps.canReply && ticket.status !== 'CLOSED' && (
-        <div className="space-y-2 border-t pt-2">
+        <div className="space-y-2 border-t pt-3">
           <Textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
