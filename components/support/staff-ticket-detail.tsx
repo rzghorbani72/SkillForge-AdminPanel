@@ -6,6 +6,8 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import Link from '@/components/ui/link';
+import { Crown } from 'lucide-react';
 import {
   Responsible,
   StaffTicketDetail as StaffTicketDetailData
@@ -81,11 +83,23 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
         <div>
           <h3 className="font-semibold">{ticket.subject}</h3>
           <p className="text-xs text-muted-foreground">
+            {ticket.Academy ? `${ticket.Academy.name} · ` : ''}
             {t('support.from')}: {ticket.CreatedBy?.display_name ?? '—'}
             {ticket.AssignedTo
               ? ` · ${t('support.responsible')}: ${ticket.AssignedTo.display_name}`
               : ''}
           </p>
+          {/* Closing a plan deal ends on the academy's custom-plan card, so
+              the ticket links straight there instead of making staff search. */}
+          {caps.isPlatformStaff && ticket.Academy && (
+            <Link
+              href={`/platform/academies?academyId=${ticket.Academy.id}`}
+              className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+            >
+              <Crown className="h-3 w-3" />
+              {t('support.openAcademyPlan')}
+            </Link>
+          )}
         </div>
         <Badge>{t(`support.statuses.${ticket.status}`)}</Badge>
       </div>

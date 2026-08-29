@@ -179,6 +179,7 @@ export const en = {
   },
   support: {
     title: 'Support',
+    openAcademyPlan: "Open this academy's plan",
     academyInbox: 'Academy inbox',
     platformInbox: 'Platform support',
     open: 'Open',
@@ -5317,6 +5318,8 @@ export const en = {
     upgradeFree: 'Free',
     extendPlan: 'Extend this plan',
     termMonthly: 'Monthly term',
+    enterpriseContactAcademy: 'Academy: {{name}}',
+    enterpriseContactCurrentPlan: 'Current plan: {{plan}} ({{term}})',
     termQuarterly: '3-month term',
     extendHint: 'Added on top of your current term, same plan.',
     storageAlmostFull:

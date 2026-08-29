@@ -176,6 +176,7 @@ export const fa = {
   },
   support: {
     title: 'پشتیبانی',
+    openAcademyPlan: 'باز کردن پلن این آکادمی',
     academyInbox: 'تیکت‌های آکادمی',
     platformInbox: 'پشتیبانی پلتفرم',
     open: 'باز کردن',
@@ -5302,6 +5303,8 @@ export const fa = {
     upgradeFree: 'رایگان',
     extendPlan: 'تمدید همین پلن',
     termMonthly: 'دورهٔ ماهانه',
+    enterpriseContactAcademy: 'آکادمی: {{name}}',
+    enterpriseContactCurrentPlan: 'پلن فعلی: {{plan}} ({{term}})',
     termQuarterly: 'دورهٔ ۳ ماهه',
     extendHint: 'به انتهای دورهٔ فعلی شما اضافه می‌شود؛ همین پلن.',
     storageAlmostFull:

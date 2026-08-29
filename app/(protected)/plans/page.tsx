@@ -739,10 +739,29 @@ export default function PlansPage() {
   async function handleSubmitContactSales() {
     try {
       setIsSubmittingContact(true);
+      // Sales needs to know who is asking and what they run today, or the
+      // first call is spent collecting facts the panel already has.
+      const context = [
+        t('plans.enterpriseContactAcademy', {
+          name: selectedAcademy?.name ?? '—'
+        }),
+        t('plans.enterpriseContactCurrentPlan', {
+          plan:
+            currentSub?.academy?.custom_plan?.name ??
+            currentPlan?.name ??
+            t('subscriptionStatus.inactive'),
+          term: t(
+            currentSub?.period_months === 3
+              ? 'plans.termQuarterly'
+              : 'plans.termMonthly'
+          )
+        })
+      ].join('\n');
       await apiClient.createPlatformTicket({
         subject: t('plans.enterpriseContactSubject'),
-        category: 'OTHER',
-        body: contactMessage.trim() || t('plans.enterpriseContactSubject')
+        category: 'BILLING',
+        priority: 'HIGH',
+        body: `${contactMessage.trim() || t('plans.enterpriseContactSubject')}\n\n${context}`
       });
       toast.success(t('plans.enterpriseContactSuccess'));
       setIsContactOpen(false);

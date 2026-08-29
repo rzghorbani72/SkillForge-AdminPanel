@@ -156,7 +156,9 @@ export default function SupportPage() {
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span className="truncate">
-                        {it.CreatedBy?.display_name ?? '—'}
+                        {it.Academy
+                          ? `${it.Academy.name} · ${it.CreatedBy?.display_name ?? '—'}`
+                          : (it.CreatedBy?.display_name ?? '—')}
                       </span>
                       <span className="flex items-center gap-1">
                         <MessageSquare className="h-3 w-3" />

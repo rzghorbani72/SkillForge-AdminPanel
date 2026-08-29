@@ -20,6 +20,12 @@ export interface TicketPerson {
   display_name: string;
 }
 
+/** The academy a ticket came from, so staff never see a bare id. */
+export interface TicketAcademy {
+  id: string;
+  name: string;
+}
+
 export interface StaffTicketListItem {
   id: string;
   subject: string;
@@ -27,6 +33,7 @@ export interface StaffTicketListItem {
   priority: TicketPriority;
   category: TicketCategory;
   last_activity_at: string;
+  Academy: TicketAcademy | null;
   CreatedBy: TicketPerson | null;
   AssignedTo: TicketPerson | null;
   _count: { Message: number };
@@ -71,6 +78,7 @@ export interface StaffTicketDetail {
   priority: TicketPriority;
   category: TicketCategory;
   scope: 'ACADEMY' | 'PLATFORM';
+  Academy: TicketAcademy | null;
   CreatedBy: TicketPerson | null;
   AssignedTo: TicketPerson | null;
   Message: TicketMessage[];
