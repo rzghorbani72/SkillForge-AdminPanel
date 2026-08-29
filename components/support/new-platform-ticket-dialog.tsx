@@ -27,10 +27,14 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
+// Order follows how often academy staff pick them, not the enum order.
 const CATEGORIES = [
   'TECHNICAL',
   'BILLING',
   'PAYMENT',
+  'SALES',
+  'CONSULTING',
+  'ONBOARDING',
   'COURSE_ACCESS',
   'LIVE_CLASS',
   'CONTENT',

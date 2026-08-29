@@ -181,6 +181,22 @@ export const en = {
     title: 'Support',
     subtitle: 'Track support tickets and messages in one place',
     ticketCount: '{{count}} tickets',
+    teamLabel: 'Answering team:',
+    teams: {
+      ALL: 'All teams',
+      SALES: 'Sales',
+      TECHNICAL: 'Technical support',
+      BILLING: 'Billing',
+      CONSULTING: 'Consulting',
+      GENERAL: 'General'
+    },
+    views: {
+      all: 'All',
+      mine: 'Assigned to me',
+      unassigned: 'Unassigned'
+    },
+    unassigned: 'Unassigned',
+    claim: 'Take this ticket',
     openAcademyPlan: "Open this academy's plan",
     academyInbox: 'Academy inbox',
     platformInbox: 'Platform support',
@@ -212,6 +228,9 @@ export const en = {
       LIVE_CLASS: 'Live class',
       TECHNICAL: 'Technical',
       CONTENT: 'Content',
+      SALES: 'Sales & plan upgrade',
+      CONSULTING: 'Consulting',
+      ONBOARDING: 'Academy setup',
       OTHER: 'Other'
     },
     statuses: {

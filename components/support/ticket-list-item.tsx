@@ -1,10 +1,14 @@
 'use client';
 
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, UserRound } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
-import type { StaffTicketListItem } from './staff-support-types';
+import {
+  ticketResponsible,
+  type StaffTicketListItem
+} from './staff-support-types';
 import { TicketPriorityDot, TicketStatusBadge } from './ticket-badges';
 
 interface Props {
@@ -14,8 +18,10 @@ interface Props {
 }
 
 export function TicketListItem({ ticket, active, onSelect }: Props) {
+  const { t } = useTranslation();
   const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
+  const responsible = ticketResponsible(ticket);
 
   const who = ticket.Academy
     ? `${ticket.Academy.name} · ${ticket.CreatedBy?.display_name ?? '—'}`
@@ -38,6 +44,23 @@ export function TicketListItem({ ticket, active, onSelect }: Props) {
         <TicketStatusBadge status={ticket.status} />
       </div>
       <p className="mt-1 truncate text-xs text-muted-foreground">{who}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+          {t(`support.categories.${ticket.category}`)}
+        </span>
+        {/* Unclaimed is the state staff must act on, so it is said out loud. */}
+        <span
+          className={cn(
+            'inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px]',
+            responsible
+              ? 'text-muted-foreground'
+              : 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300'
+          )}
+        >
+          <UserRound className="h-3 w-3" />
+          {responsible?.display_name ?? t('support.unassigned')}
+        </span>
+      </div>
       <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <MessageSquare className="h-3 w-3" />

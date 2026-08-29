@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { UserCheck } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { Button } from '@/components/ui/button';
@@ -66,10 +67,23 @@ export function TicketStaffControls({
   const canReassign =
     caps.canReassign &&
     (ticket.scope === 'ACADEMY' || ticket.scope === 'PLATFORM');
+  const unclaimed = !ticket.AssignedTo;
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
+        {/* A queue only works if taking a ticket is one click. */}
+        {caps.canReassign && unclaimed && (
+          <Button
+            size="sm"
+            className="h-9 gap-1.5"
+            disabled={busy}
+            onClick={() => onAct(() => apiClient.claimSupportTicket(ticket.id))}
+          >
+            <UserCheck className="h-4 w-4" />
+            {t('support.claim')}
+          </Button>
+        )}
         <Select
           value={ticket.status}
           disabled={busy}

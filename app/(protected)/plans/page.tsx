@@ -759,8 +759,10 @@ export default function PlansPage() {
         })
       ].join('\n');
       await apiClient.createPlatformTicket({
+        // SALES routes it to the sales queue; BILLING would bury a new deal in
+        // the invoice pile.
         subject: t('plans.enterpriseContactSubject'),
-        category: 'BILLING',
+        category: 'SALES',
         priority: 'HIGH',
         body: `${contactMessage.trim() || t('plans.enterpriseContactSubject')}\n\n${context}`
       });

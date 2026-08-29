@@ -178,6 +178,22 @@ export const fa = {
     title: 'پشتیبانی',
     subtitle: 'تیکت‌ها و پیام‌های پشتیبانی را اینجا پیگیری کنید',
     ticketCount: '{{count}} تیکت',
+    teamLabel: 'تیم پاسخ‌گو:',
+    teams: {
+      ALL: 'همه تیم‌ها',
+      SALES: 'فروش',
+      TECHNICAL: 'پشتیبانی فنی',
+      BILLING: 'مالی و صورتحساب',
+      CONSULTING: 'مشاوره',
+      GENERAL: 'عمومی'
+    },
+    views: {
+      all: 'همه',
+      mine: 'به عهده من',
+      unassigned: 'بدون مسئول'
+    },
+    unassigned: 'بدون مسئول',
+    claim: 'قبول مسئولیت',
     openAcademyPlan: 'باز کردن پلن این آکادمی',
     academyInbox: 'تیکت‌های آکادمی',
     platformInbox: 'پشتیبانی پلتفرم',
@@ -209,6 +225,9 @@ export const fa = {
       LIVE_CLASS: 'کلاس زنده',
       TECHNICAL: 'فنی',
       CONTENT: 'محتوا',
+      SALES: 'فروش و ارتقای پلن',
+      CONSULTING: 'مشاوره',
+      ONBOARDING: 'راه‌اندازی آکادمی',
       OTHER: 'سایر'
     },
     statuses: {

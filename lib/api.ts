@@ -1230,6 +1230,27 @@ class ApiClient {
     return unwrapSupportInbox(res);
   }
 
+  async getSupportInboxSummary(
+    scope: 'academy' | 'platform',
+    params?: SupportInboxQuery
+  ): Promise<SupportInboxSummary> {
+    const path =
+      scope === 'academy'
+        ? '/support/inbox/summary'
+        : '/support/platform/inbox/summary';
+    const res = await this.request(
+      `${path}${this.supportQuery(this.supportInboxQueryParams(params))}`
+    );
+    return unwrapEnvelope<SupportInboxSummary>(res);
+  }
+
+  async claimSupportTicket(id: string) {
+    const res = await this.request(`/support/tickets/${id}/claim`, {
+      method: 'POST'
+    });
+    return unwrapEnvelope<unknown>(res);
+  }
+
   private supportInboxQueryParams(
     params?: SupportInboxQuery
   ): Record<string, string | undefined> {
@@ -1239,7 +1260,10 @@ class ApiClient {
       priority: params.priority,
       academy_id: params.academy_id,
       category: params.category,
+      team: params.team,
       assigned_to: params.assigned_to,
+      unassigned: params.unassigned ? 'true' : undefined,
+      mine: params.mine ? 'true' : undefined,
       search: params.search,
       page: params.page != null ? String(params.page) : undefined,
       limit: params.limit != null ? String(params.limit) : undefined
@@ -6489,10 +6513,20 @@ export interface SupportInboxQuery {
   priority?: string;
   academy_id?: string;
   category?: string;
+  team?: string;
   assigned_to?: string;
+  unassigned?: boolean;
+  mine?: boolean;
   search?: string;
   page?: number;
   limit?: number;
+}
+
+export interface SupportInboxSummary {
+  teams: Array<{ team: string; count: number }>;
+  unassigned: number;
+  mine: number;
+  total: number;
 }
 
 export interface SupportInboxResult {

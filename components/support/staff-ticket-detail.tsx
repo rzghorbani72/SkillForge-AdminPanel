@@ -106,7 +106,15 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
             </Link>
           )}
         </div>
-        <TicketStatusBadge status={ticket.status} />
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="rounded bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+            {t(`support.categories.${ticket.category}`)}
+          </span>
+          <span className="rounded bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+            {t(`support.teams.${ticket.team}`)}
+          </span>
+          <TicketStatusBadge status={ticket.status} />
+        </div>
       </div>
 
       {ticket.Rating && (

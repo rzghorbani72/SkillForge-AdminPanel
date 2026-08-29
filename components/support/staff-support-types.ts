@@ -13,7 +13,26 @@ export type TicketCategory =
   | 'LIVE_CLASS'
   | 'TECHNICAL'
   | 'CONTENT'
+  | 'SALES'
+  | 'CONSULTING'
+  | 'ONBOARDING'
   | 'OTHER';
+
+/** Which queue answers the ticket. The backend derives it from the category. */
+export type TicketTeam =
+  | 'SALES'
+  | 'TECHNICAL'
+  | 'BILLING'
+  | 'CONSULTING'
+  | 'GENERAL';
+
+export const TICKET_TEAMS: TicketTeam[] = [
+  'SALES',
+  'TECHNICAL',
+  'BILLING',
+  'CONSULTING',
+  'GENERAL'
+];
 
 export interface TicketPerson {
   id: string;
@@ -32,11 +51,20 @@ export interface StaffTicketListItem {
   status: TicketStatus;
   priority: TicketPriority;
   category: TicketCategory;
+  team: TicketTeam;
   last_activity_at: string;
   Academy: TicketAcademy | null;
   CreatedBy: TicketPerson | null;
+  /** Academy-tier responsible; platform staff arrive as AssignedAdmin. */
   AssignedTo: TicketPerson | null;
+  AssignedAdmin: TicketPerson | null;
   _count: { Message: number };
+}
+
+export function ticketResponsible(
+  ticket: Pick<StaffTicketListItem, 'AssignedTo' | 'AssignedAdmin'>
+): TicketPerson | null {
+  return ticket.AssignedAdmin ?? ticket.AssignedTo;
 }
 
 export interface TicketMessage {
@@ -77,6 +105,7 @@ export interface StaffTicketDetail {
   status: TicketStatus;
   priority: TicketPriority;
   category: TicketCategory;
+  team: TicketTeam;
   scope: 'ACADEMY' | 'PLATFORM';
   Academy: TicketAcademy | null;
   CreatedBy: TicketPerson | null;
