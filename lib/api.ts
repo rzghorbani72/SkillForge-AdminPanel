@@ -386,6 +386,7 @@ class ApiClient {
       endpoint.includes('/auth/register') ||
       endpoint.includes('/auth/otp/') ||
       endpoint.includes('/auth/refresh') ||
+      endpoint.includes('/auth/logout') ||
       endpoint.includes('/auth/confirm-phone') ||
       endpoint.includes('/auth/set-new-password') ||
       endpoint.includes('/auth/select-academy') ||

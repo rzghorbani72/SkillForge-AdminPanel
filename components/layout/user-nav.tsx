@@ -12,8 +12,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useAuthUser } from '@/components/providers/user-provider';
-import { logout } from '@/app/actions/auth';
-import { clearAcademyData } from '@/lib/store-utils';
+import { signOut } from '@/lib/sign-out';
 import {
   Banknote,
   Building2,
@@ -68,9 +67,7 @@ export function UserNav() {
 
   async function handleLogout() {
     setIsLoggingOut(true);
-    clearAcademyData();
-    await logout();
-    router.replace('/login');
+    await signOut();
   }
 
   return (

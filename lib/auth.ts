@@ -400,60 +400,11 @@ class AuthService {
     return role === 'ADMIN' || role === 'MANAGER';
   }
 
-  // Logout user - uses server action to remove cookie
+  // Logout user - single canonical path (see lib/sign-out.ts)
   async logout(): Promise<void> {
-    try {
-      // Import server action dynamically to avoid SSR issues
-      const { logout: logoutAction } = await import('@/app/actions/auth');
-      const result = await logoutAction();
-
-      if (result.success) {
-        // Clear cached data
-        this.currentUser = null;
-        this.persistSession(null);
-        if (typeof window !== 'undefined') {
-          clearLegacyAuthStorage();
-
-          const { clearAcademyData } = await import('@/lib/store-utils');
-          clearAcademyData();
-
-          // Clear Zustand stores
-          const storeModule = await import('@/lib/store');
-          storeModule.useUserStore.getState().reset();
-          storeModule.useCategoriesStore.getState().reset();
-
-          window.location.href = '/login';
-        }
-      } else {
-        throw new Error(result.error || 'Logout failed');
-      }
-    } catch (error) {
-      console.warn('Logout failed:', error);
-      // Fallback: clear cached data and redirect
-      this.currentUser = null;
-      this.persistSession(null);
-      if (typeof window !== 'undefined') {
-        clearLegacyAuthStorage();
-
-        try {
-          const { clearAcademyData } = await import('@/lib/store-utils');
-          clearAcademyData();
-        } catch (e) {
-          console.warn('Failed to clear academy cache:', e);
-        }
-
-        // Clear Zustand stores even on error
-        try {
-          const storeModule = await import('@/lib/store');
-          storeModule.useUserStore.getState().reset();
-          storeModule.useCategoriesStore.getState().reset();
-        } catch (e) {
-          console.warn('Failed to clear Zustand stores:', e);
-        }
-
-        window.location.href = '/login';
-      }
-    }
+    this.currentUser = null;
+    const { signOut } = await import('./sign-out');
+    await signOut();
   }
 
   // Clear cached data
