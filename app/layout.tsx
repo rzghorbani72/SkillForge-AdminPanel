@@ -9,6 +9,7 @@ import { ToastContainerWrapper } from '@/components/providers/toast-container-wr
 import { LanguageSync } from '@/components/providers/language-sync';
 import { LegacyAuthStorageCleaner } from '@/components/providers/legacy-auth-storage-cleaner';
 import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
+import { PageTitleSync } from '@/components/providers/page-title-sync';
 import { buildPanelMetadata } from '@/lib/seo/panel-metadata';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -55,6 +56,7 @@ export default async function RootLayout({
             <I18nProvider initialLanguage={language}>
               <LegacyAuthStorageCleaner />
               <LanguageSync />
+              <PageTitleSync />
               {children}
               <ToastContainerWrapper />
               {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && (
