@@ -32,7 +32,8 @@ import {
   Pencil,
   Plus,
   Trash2,
-  Building2
+  Building2,
+  Clock3
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
@@ -1136,6 +1137,7 @@ export default function PlansPage() {
                     isLocked={isLocked}
                     price={price}
                     period={period}
+                    daysRemaining={currentSub?.days_remaining ?? null}
                     upgradeQuote={upgradeQuotes[plan.slug] ?? null}
                     canSelect={canManagePlan}
                     onCardSelect={() => setSelectedCardSlug(plan.slug)}
@@ -1759,6 +1761,7 @@ function SubscriptionPlanCard({
   isLocked,
   price,
   period,
+  daysRemaining,
   upgradeQuote,
   canSelect,
   onCardSelect,
@@ -1774,6 +1777,8 @@ function SubscriptionPlanCard({
   isLocked: boolean;
   price: number;
   period: BillingPeriod;
+  /** Days left on the running term — shown on the active card only. */
+  daysRemaining: number | null;
   /** Set only while a paid plan is running: the prorated cost to switch here. */
   upgradeQuote: AcademyUpgradeQuote | null;
   canSelect: boolean;
@@ -1791,15 +1796,26 @@ function SubscriptionPlanCard({
       onClick={onCardSelect}
       className={cn(
         'relative flex h-full cursor-pointer flex-col rounded-2xl border bg-card p-8 transition-all duration-200',
-        isSelected
-          ? 'border-primary shadow-md ring-2 ring-primary/40'
-          : 'border-border hover:border-primary/40 hover:shadow-md'
+        // The plan they are ON reads as owned, not as an offer: it keeps the
+        // success tone of the header badge instead of the primary buy accent.
+        isCurrent
+          ? 'border-success/45 bg-success/[0.04] shadow-sm ring-1 ring-success/25'
+          : isSelected
+            ? 'border-primary shadow-md ring-2 ring-primary/40'
+            : 'border-border hover:border-primary/40 hover:shadow-md'
       )}
     >
-      {isRecommended && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-primary-foreground shadow">
-          {t('plans.popular')}
+      {isCurrent ? (
+        <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full bg-success px-3 py-1 text-[11px] font-bold text-success-foreground shadow">
+          <Crown className="h-3 w-3" />
+          {t('plans.currentPlan')}
         </span>
+      ) : (
+        isRecommended && (
+          <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-primary-foreground shadow">
+            {t('plans.popular')}
+          </span>
+        )
       )}
 
       <h2 className="text-center text-lg font-bold text-foreground">
@@ -1850,6 +1866,15 @@ function SubscriptionPlanCard({
             {period === 'quarterly'
               ? t('plans.pricePerQuarter')
               : t('plans.pricePerMonth')}
+          </span>
+        </p>
+      )}
+
+      {isCurrent && daysRemaining != null && (
+        <p className="mt-3 flex justify-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-[12px] font-semibold text-success">
+            <Clock3 className="h-3.5 w-3.5" />
+            {t('header.planDaysLeft', { days: formatPrice(daysRemaining) })}
           </span>
         </p>
       )}
@@ -1914,7 +1939,7 @@ function SubscriptionPlanCard({
           className={cn(
             'mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-bold transition-all duration-150',
             isCurrent
-              ? 'cursor-default bg-muted text-muted-foreground'
+              ? 'cursor-default bg-success/10 text-success'
               : isLocked
                 ? 'cursor-not-allowed border border-border bg-muted/40 text-muted-foreground'
                 : isSelected
