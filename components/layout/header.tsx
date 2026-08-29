@@ -5,7 +5,7 @@ import { UserNav } from './user-nav';
 import { AcademySelector } from './AcademySelector';
 import { NotificationBell } from './notification-bell';
 import { HeaderUpgradeButton } from './header-upgrade-button';
-import { HeaderTrialBadge } from './header-trial-badge';
+import { HeaderPlanBadge } from './header-plan-badge';
 import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 
@@ -32,7 +32,7 @@ export default function Header() {
           />
           <div className="hidden h-6 w-px bg-border/50 sm:block" />
 
-          <HeaderTrialBadge />
+          <HeaderPlanBadge />
           <HeaderUpgradeButton />
 
           {/* Notification bell */}

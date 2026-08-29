@@ -49,8 +49,8 @@ export const en = {
     brand: 'Mentoma'
   },
   header: {
-    trialDaysLeft: 'Trial · {{days}} days left',
-    trialGraceDays: 'Trial ended · {{days}} days to pay'
+    planDaysLeft: '{{days}} days left',
+    planDaysToPay: '{{days}} days to pay'
   },
   weekdays: {
     saturday: 'Saturday',

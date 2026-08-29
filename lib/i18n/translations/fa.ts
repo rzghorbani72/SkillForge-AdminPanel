@@ -48,8 +48,8 @@ export const fa = {
     brand: 'منتوما'
   },
   header: {
-    trialDaysLeft: 'آزمایشی · {{days}} روز مانده',
-    trialGraceDays: 'پایان آزمایشی · {{days}} روز برای پرداخت'
+    planDaysLeft: '{{days}} روز مانده',
+    planDaysToPay: '{{days}} روز برای پرداخت'
   },
   weekdays: {
     saturday: 'شنبه',
