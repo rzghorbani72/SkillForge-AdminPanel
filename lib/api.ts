@@ -1,6 +1,10 @@
 import { OtpType } from '@/constants/data';
 import type { CourseType } from '@/components/course/course-drafts';
-import type { ContactMessageItem } from '@/components/support/staff-support-types';
+import type {
+  ContactMessageItem,
+  Responsible,
+  StaffTicketDetail
+} from '@/components/support/staff-support-types';
 import {
   Academy,
   Enrollment,
@@ -1276,19 +1280,19 @@ class ApiClient {
     return (res as any).data as ContactMessageItem;
   }
 
-  async getSupportTicket(id: string) {
+  async getSupportTicket(id: string): Promise<StaffTicketDetail> {
     const res = await this.request(`/support/tickets/${id}`);
-    return (res as any).data;
+    return unwrapEnvelope<StaffTicketDetail>(res);
   }
 
-  async listSupportResponsibles() {
+  async listSupportResponsibles(): Promise<Responsible[]> {
     const res = await this.request(`/support/responsibles`);
-    return (res as any).data;
+    return unwrapEnvelope<Responsible[]>(res) ?? [];
   }
 
-  async getPlatformResponsibles() {
+  async getPlatformResponsibles(): Promise<Responsible[]> {
     const res = await this.request(`/support/platform/responsibles`);
-    return (res as any).data;
+    return unwrapEnvelope<Responsible[]>(res) ?? [];
   }
 
   async createPlatformTicket(body: {
@@ -1301,7 +1305,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    return (res as any).data;
+    return unwrapEnvelope<unknown>(res);
   }
 
   async replySupportTicket(
@@ -1312,7 +1316,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    return (res as any).data;
+    return unwrapEnvelope<unknown>(res);
   }
 
   async reassignSupportTicket(id: string, responsible_id: string) {
@@ -1320,7 +1324,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ responsible_id })
     });
-    return (res as any).data;
+    return unwrapEnvelope<unknown>(res);
   }
 
   async changeSupportStatus(
@@ -1332,7 +1336,7 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify({ status, resolution_summary })
     });
-    return (res as any).data;
+    return unwrapEnvelope<unknown>(res);
   }
 
   async changeSupportPriority(id: string, priority: string) {
@@ -1340,7 +1344,7 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify({ priority })
     });
-    return (res as any).data;
+    return unwrapEnvelope<unknown>(res);
   }
 
   async logSupportCall(
@@ -1351,7 +1355,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    return (res as any).data;
+    return unwrapEnvelope<unknown>(res);
   }
 
   async logSupportEmail(id: string, body: { outcome_note?: string }) {
@@ -1359,7 +1363,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    return (res as any).data;
+    return unwrapEnvelope<unknown>(res);
   }
 
   async getPlatformAcademiesHealth() {
@@ -6560,6 +6564,19 @@ export interface CreatePlatformBroadcastPayload {
   body: string;
   audience: PlatformBroadcastAudience;
   academy_ids?: string[];
+}
+
+/**
+ * Support routes answer with the `{ message, status, data }` envelope, so the
+ * payload sits one level deeper than `res.data`. Reading it without this is
+ * how a ticket detail ends up with an undefined `capabilities`.
+ */
+function unwrapEnvelope<T>(res: unknown): T {
+  const outer = (res as { data?: unknown }).data;
+  if (outer && typeof outer === 'object' && 'data' in outer) {
+    return (outer as { data: T }).data;
+  }
+  return outer as T;
 }
 
 function unwrapSupportInbox(res: unknown): SupportInboxResult {

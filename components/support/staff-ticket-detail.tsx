@@ -67,7 +67,9 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
       setInternal(false);
     });
 
-  if (!ticket) {
+  // Capabilities decide what renders below, so a payload without them is not
+  // a usable ticket — never a half-rendered one.
+  if (!ticket?.capabilities) {
     return (
       <p className="p-4 text-sm text-muted-foreground">
         {t('support.loading')}
