@@ -1,7 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, EyeOff, ImageIcon, MoreHorizontal, Trash2 } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  ImageIcon,
+  MoreHorizontal,
+  Pause,
+  Play,
+  Trash2
+} from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 import { AcademyShowcaseModal } from '@/components/academies/academy-showcase-modal';
+import { ReasonDialog } from '@/components/platform/reason-dialog';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -20,7 +29,12 @@ import type { Academy } from '@/types/api';
 type AcademyStaffActionsProps = {
   academy: Pick<
     Academy,
-    'id' | 'name' | 'listed_publicly' | 'showcase_desktop' | 'showcase_mobile'
+    | 'id'
+    | 'name'
+    | 'listed_publicly'
+    | 'suspended_at'
+    | 'showcase_desktop'
+    | 'showcase_mobile'
   >;
   onChanged: () => void;
 };
@@ -33,7 +47,22 @@ export function AcademyStaffActions({
   const [busy, setBusy] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [showcaseOpen, setShowcaseOpen] = useState(false);
+  const [suspendOpen, setSuspendOpen] = useState(false);
   const listed = academy.listed_publicly !== false;
+  const suspended = Boolean(academy.suspended_at);
+
+  async function liftSuspension() {
+    setBusy(true);
+    try {
+      await apiClient.unsuspendAcademy(academy.id);
+      toast.success(t('accountActions.unsuspended_ok'));
+      onChanged();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function setListed(listedPublicly: boolean) {
     setBusy(true);
@@ -100,6 +129,21 @@ export function AcademyStaffActions({
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={busy}
+            onSelect={() =>
+              suspended ? void liftSuspension() : setSuspendOpen(true)
+            }
+          >
+            {suspended ? (
+              <Play className="me-2 h-4 w-4" />
+            ) : (
+              <Pause className="me-2 h-4 w-4" />
+            )}
+            {suspended
+              ? t('accountActions.unsuspend')
+              : t('accountActions.suspend')}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={busy}
             className="text-destructive focus:text-destructive"
             onSelect={() => setConfirmRemove(true)}
           >
@@ -113,6 +157,19 @@ export function AcademyStaffActions({
         open={showcaseOpen}
         onClose={() => setShowcaseOpen(false)}
         onSaved={onChanged}
+      />
+      <ReasonDialog
+        open={suspendOpen}
+        onOpenChange={setSuspendOpen}
+        title={t('accountActions.suspendTitle')}
+        description={t('accountActions.suspendDescription')}
+        subject={academy.name}
+        confirmLabel={t('accountActions.suspend')}
+        onConfirm={async (reason) => {
+          await apiClient.suspendAcademy(academy.id, reason);
+          toast.success(t('accountActions.suspended_ok'));
+        }}
+        onDone={onChanged}
       />
       <ConfirmDeleteModal
         open={confirmRemove}

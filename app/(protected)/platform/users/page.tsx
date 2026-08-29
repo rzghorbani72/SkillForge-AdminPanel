@@ -237,7 +237,11 @@ export default function PlatformUsersPage() {
           onChanged={load}
         />
       ) : (
-        <AcademyMembersTable rows={academyUsers} />
+        <AcademyMembersTable
+          rows={academyUsers}
+          canModerate={canManage}
+          onChanged={() => void load()}
+        />
       )}
 
       {total > PAGE_SIZE && (

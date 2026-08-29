@@ -4,6 +4,9 @@
  */
 export type PaymentGatewayProvider = 'BITPAY' | 'SAMAN_SEP' | 'MELLAT_BP';
 
+/** What a platform owner is resetting when they reset a person. */
+export type UserResetMode = 'CREDENTIALS' | 'LEARNING_RECORD' | 'ERASE';
+
 // User Status Type
 export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
 
@@ -23,6 +26,14 @@ export interface User {
   phone_confirmed: boolean;
   is_active: boolean;
   status?: UserStatus;
+  /** Set while this person is banned inside one academy. */
+  banned_at?: string | null;
+  ban_reason?: string | null;
+  /** Set while this person is banned across the whole platform. */
+  user_banned_at?: string | null;
+  user_ban_reason?: string | null;
+  /** The platform User behind this academy profile — the target of a platform ban. */
+  user_id?: string | null;
   /** Flattened role name returned by the role-scoped list endpoints. */
   role_name?: string;
   /** Human-readable role name; set for custom roles that have no translation key. */
@@ -219,6 +230,9 @@ export interface Academy {
   site_disabled_at?: string | null;
   /** False when platform staff unlisted this academy from the public directory. */
   listed_publicly?: boolean;
+  /** Set while platform staff have suspended the academy; data is kept. */
+  suspended_at?: string | null;
+  suspended_reason?: string | null;
   country_code?: string;
   currency?: string;
   currency_symbol?: string;

@@ -13,7 +13,7 @@ import {
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import type { PlatformStaffRecord, User } from '@/types/api';
+import type { PlatformStaffRecord } from '@/types/api';
 
 export function PlatformStaffTable({
   rows,
@@ -117,49 +117,4 @@ export function PlatformStaffTable({
   );
 }
 
-export function AcademyMembersTable({ rows }: { rows: User[] }) {
-  const { t } = useTranslation();
-
-  if (rows.length === 0) {
-    return (
-      <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-        {t('platformUsers.emptyAcademy')}
-      </p>
-    );
-  }
-
-  return (
-    <div className="overflow-hidden rounded-xl border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t('users.colFullName')}</TableHead>
-            <TableHead>{t('users.colRole')}</TableHead>
-            <TableHead>{t('platformUsers.academy')}</TableHead>
-            <TableHead>{t('users.colPhone')}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell className="font-medium">
-                {row.display_name || row.full_name || t('users.unnamedUser')}
-              </TableCell>
-              <TableCell>
-                <Badge variant="secondary">
-                  {row.role_label || row.role_name || '—'}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {row.academy_name ?? t('users.platformFallback')}
-              </TableCell>
-              <TableCell dir="ltr" className="text-end tabular-nums">
-                {row.phone_number || '—'}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
+export { AcademyMembersTable } from './academy-members-table';

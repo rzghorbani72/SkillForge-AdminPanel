@@ -14,7 +14,8 @@ import {
   PaymentGatewayProvider,
   PlatformStaffListResponse,
   PlatformStaffLookup,
-  PlatformStaffRecord
+  PlatformStaffRecord,
+  UserResetMode
 } from '@/types/api';
 import type {
   AbuseReport,
@@ -3411,6 +3412,67 @@ class ApiClient {
       body: JSON.stringify(body)
     });
     return response.data as any;
+  }
+
+  async banUserPlatformWide(userId: string, reason: string) {
+    const response = await this.request(`/platform-admin/users/${userId}/ban`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    });
+    return response.data;
+  }
+
+  async unbanUserPlatformWide(userId: string) {
+    const response = await this.request(`/platform-admin/users/${userId}/ban`, {
+      method: 'DELETE'
+    });
+    return response.data;
+  }
+
+  async resetPlatformUser(
+    userId: string,
+    body: {
+      mode: UserResetMode;
+      confirm_identifier?: string;
+      academy_id?: string;
+    }
+  ) {
+    const response = await this.request(
+      `/platform-admin/users/${userId}/reset`,
+      { method: 'POST', body: JSON.stringify(body) }
+    );
+    return response.data;
+  }
+
+  async suspendAcademy(academyId: string, reason: string) {
+    const response = await this.request(
+      `/platform-admin/academies/${academyId}/suspend`,
+      { method: 'POST', body: JSON.stringify({ reason }) }
+    );
+    return response.data;
+  }
+
+  async unsuspendAcademy(academyId: string) {
+    const response = await this.request(
+      `/platform-admin/academies/${academyId}/suspend`,
+      { method: 'DELETE' }
+    );
+    return response.data;
+  }
+
+  async banAcademyMember(profileId: string, reason: string) {
+    const response = await this.request(`/users/${profileId}/ban`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    });
+    return response.data;
+  }
+
+  async unbanAcademyMember(profileId: string) {
+    const response = await this.request(`/users/${profileId}/ban`, {
+      method: 'DELETE'
+    });
+    return response.data;
   }
 
   async revokePlatformStaffSessions(id: string) {

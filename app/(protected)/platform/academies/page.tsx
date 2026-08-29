@@ -774,6 +774,11 @@ export default function PlatformAcademiesPage() {
                           {t('stores.hiddenFromPublic')}
                         </Badge>
                       )}
+                      {store.suspended_at && (
+                        <Badge variant="destructive">
+                          {t('accountActions.suspended')}
+                        </Badge>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
