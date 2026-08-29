@@ -5332,6 +5332,7 @@ export const en = {
     choosePlan: 'Choose plan',
     currentPlan: 'Current plan',
     lockedUntilCurrentEnds: 'Available after your current plan ends',
+    lockedShort: 'After the current plan',
     popular: 'Most Popular',
     managePlans: 'Manage Plans',
     addPlan: 'Add Plan',

@@ -5317,6 +5317,7 @@ export const fa = {
     choosePlan: 'انتخاب پلن',
     currentPlan: 'پلن فعلی',
     lockedUntilCurrentEnds: 'پس از پایان پلن فعلی قابل انتخاب است',
+    lockedShort: 'پس از پلن فعلی',
     popular: 'پیشنهاد ما',
     managePlans: 'مدیریت پلن‌ها',
     addPlan: 'افزودن پلن',

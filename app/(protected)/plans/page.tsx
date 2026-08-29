@@ -1910,8 +1910,12 @@ function SubscriptionPlanCard({
             </>
           ) : isLocked ? (
             <>
-              <Lock className="h-4 w-4" />
-              {t('plans.lockedUntilCurrentEnds')}
+              <Lock className="h-3.5 w-3.5 shrink-0 opacity-70" />
+              {/* Short label keeps the button one line; the full sentence
+                  stays in the tooltip. */}
+              <span className="truncate text-[13px] font-semibold">
+                {t('plans.lockedShort')}
+              </span>
             </>
           ) : isExtend ? (
             t('plans.extendPlan')
