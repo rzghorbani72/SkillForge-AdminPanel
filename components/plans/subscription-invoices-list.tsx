@@ -19,7 +19,17 @@ const STATUS_META: Record<
 > = {
   PAID: { labelKey: 'plans.invoiceStatusPaid', variant: 'default' },
   PENDING: { labelKey: 'plans.invoiceStatusPending', variant: 'secondary' },
-  FAILED: { labelKey: 'plans.invoiceStatusFailed', variant: 'destructive' }
+  FAILED: { labelKey: 'plans.invoiceStatusFailed', variant: 'destructive' },
+  CANCELLED: {
+    labelKey: 'plans.invoiceStatusCancelled',
+    variant: 'secondary'
+  },
+  // Paid a second time for a period the academy already owned: nothing was
+  // granted and the amount is owed back.
+  DUPLICATE: {
+    labelKey: 'plans.invoiceStatusDuplicate',
+    variant: 'destructive'
+  }
 };
 
 export function SubscriptionInvoicesList({

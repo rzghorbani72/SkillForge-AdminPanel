@@ -3755,6 +3755,48 @@ export const en = {
       SUPPORT: 'Support'
     }
   },
+  accountActions: {
+    ban: 'Ban',
+    unban: 'Lift ban',
+    banned: 'Banned',
+    banUserTitle: 'Ban this person across the platform',
+    banUserDescription:
+      'They lose access in every academy and their active sessions end. The reason you write is shown to them when they try to sign in.',
+    banMemberTitle: 'Ban inside this academy',
+    banMemberDescription:
+      'They lose access to your academy only. Their other academies stay open.',
+    unbanConfirm: 'Lift the ban on this person?',
+    reasonLabel: 'Reason (shown to the person)',
+    reasonPlaceholder: 'e.g. Repeated breaches of the academy rules',
+    reasonRequired: 'A reason is required.',
+    banned_ok: 'Person banned',
+    unbanned_ok: 'Ban lifted',
+    suspend: 'Suspend academy',
+    unsuspend: 'Lift suspension',
+    suspended: 'Suspended',
+    suspendTitle: 'Suspend this academy',
+    suspendDescription:
+      'The public site goes offline and every member is signed out. Nothing is deleted and you can lift the suspension at any time.',
+    unsuspendConfirm: 'Lift the suspension on this academy?',
+    suspended_ok: 'Academy suspended',
+    unsuspended_ok: 'Academy restored',
+    reset: 'Reset data',
+    resetTitle: 'Reset this person\u2019s data',
+    resetDescription: 'Choose exactly what gets reset.',
+    modeCredentials: 'Password and sessions only',
+    modeCredentialsHelp:
+      'Clears the password and signs every device out. The learning record is untouched.',
+    modeLearningRecord: 'Erase the learning record',
+    modeLearningRecordHelp:
+      'Deletes quiz attempts, submissions, grades, attendance and certificates for good. This cannot be undone.',
+    modeErase: 'Erase the whole account',
+    modeEraseHelp:
+      'Removes personal details and the learning record, and closes the account. Financial records are kept for accounting.',
+    confirmIdentifierLabel: 'Type this person\u2019s phone or email to confirm',
+    confirmIdentifierMismatch: 'That does not match this account.',
+    reset_ok: 'Reset completed',
+    irreversible: 'This cannot be undone.'
+  },
   platformUsers: {
     eyebrow: 'Platform',
     title: 'Users',
@@ -5357,6 +5399,8 @@ export const en = {
     currentPlan: 'Current plan',
     lockedUntilCurrentEnds: 'Available after your current plan ends',
     lockedShort: 'After the current plan',
+    invoiceStatusCancelled: 'Cancelled',
+    invoiceStatusDuplicate: 'Duplicate — refund due',
     renewLockedShort: 'Renew near the end',
     renewOpensLater:
       'Renewal opens in the last {{days}} days of your current plan',

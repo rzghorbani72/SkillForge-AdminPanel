@@ -3723,6 +3723,49 @@ export const fa = {
       SUPPORT: 'پشتیبانی'
     }
   },
+  accountActions: {
+    ban: 'مسدودسازی',
+    unban: 'رفع مسدودی',
+    banned: 'مسدود',
+    banUserTitle: 'مسدودسازی این فرد در کل پلتفرم',
+    banUserDescription:
+      'دسترسی این فرد در همهٔ آکادمی‌ها بسته می‌شود و نشست‌های فعالش پایان می‌یابد. دلیلی که می‌نویسید هنگام ورود به او نمایش داده می‌شود.',
+    banMemberTitle: 'مسدودسازی در این آکادمی',
+    banMemberDescription:
+      'دسترسی این فرد فقط در آکادمی شما بسته می‌شود. آکادمی‌های دیگرش باز می‌ماند.',
+    unbanConfirm: 'مسدودی این فرد برداشته شود؟',
+    reasonLabel: 'دلیل (به فرد نشان داده می‌شود)',
+    reasonPlaceholder: 'مثال: تخلف مکرر از قوانین آکادمی',
+    reasonRequired: 'نوشتن دلیل الزامی است.',
+    banned_ok: 'فرد مسدود شد',
+    unbanned_ok: 'مسدودی برداشته شد',
+    suspend: 'تعلیق آکادمی',
+    unsuspend: 'رفع تعلیق',
+    suspended: 'معلق',
+    suspendTitle: 'تعلیق این آکادمی',
+    suspendDescription:
+      'سایت عمومی آفلاین می‌شود و همهٔ اعضا از حساب خارج می‌شوند. هیچ داده‌ای پاک نمی‌شود و هر زمان می‌توانید تعلیق را بردارید.',
+    unsuspendConfirm: 'تعلیق این آکادمی برداشته شود؟',
+    suspended_ok: 'آکادمی معلق شد',
+    unsuspended_ok: 'تعلیق آکادمی برداشته شد',
+    reset: 'بازنشانی داده',
+    resetTitle: 'بازنشانی دادهٔ این فرد',
+    resetDescription: 'انتخاب کنید دقیقاً چه چیزی بازنشانی شود.',
+    modeCredentials: 'فقط رمز عبور و نشست‌ها',
+    modeCredentialsHelp:
+      'رمز عبور پاک می‌شود و همهٔ دستگاه‌ها از حساب خارج می‌شوند. سابقهٔ یادگیری دست‌نخورده می‌ماند.',
+    modeLearningRecord: 'پاک‌کردن سابقهٔ یادگیری',
+    modeLearningRecordHelp:
+      'آزمون‌ها، تکالیف، نمرات، حضور و گواهی‌ها برای همیشه حذف می‌شوند. برگشت‌پذیر نیست.',
+    modeErase: 'حذف کامل حساب',
+    modeEraseHelp:
+      'اطلاعات شخصی و سابقهٔ یادگیری حذف و حساب بسته می‌شود. سوابق مالی برای حسابداری نگه داشته می‌شود.',
+    confirmIdentifierLabel:
+      'برای تأیید، شمارهٔ تلفن یا ایمیل این فرد را بنویسید',
+    confirmIdentifierMismatch: 'مقدار واردشده با حساب این فرد یکی نیست.',
+    reset_ok: 'بازنشانی انجام شد',
+    irreversible: 'این کار برگشت‌پذیر نیست.'
+  },
   platformUsers: {
     eyebrow: 'پلتفرم',
     title: 'کاربران',
@@ -5342,6 +5385,8 @@ export const fa = {
     currentPlan: 'پلن فعلی',
     lockedUntilCurrentEnds: 'پس از پایان پلن فعلی قابل انتخاب است',
     lockedShort: 'پس از پلن فعلی',
+    invoiceStatusCancelled: 'لغو شده',
+    invoiceStatusDuplicate: 'پرداخت تکراری — قابل بازگشت',
     renewLockedShort: 'تمدید در روزهای پایانی',
     renewOpensLater: 'تمدید در {{days}} روز پایانی پلن فعلی فعال می‌شود',
     popular: 'پیشنهاد ما',
