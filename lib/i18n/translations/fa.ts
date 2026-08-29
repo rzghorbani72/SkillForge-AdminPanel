@@ -177,7 +177,7 @@ export const fa = {
   support: {
     title: 'پشتیبانی',
     subtitle: 'تیکت‌ها و پیام‌های پشتیبانی را اینجا پیگیری کنید',
-    ticketCount: '{count} تیکت',
+    ticketCount: '{{count}} تیکت',
     openAcademyPlan: 'باز کردن پلن این آکادمی',
     academyInbox: 'تیکت‌های آکادمی',
     platformInbox: 'پشتیبانی پلتفرم',

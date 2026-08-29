@@ -180,7 +180,7 @@ export const en = {
   support: {
     title: 'Support',
     subtitle: 'Track support tickets and messages in one place',
-    ticketCount: '{count} tickets',
+    ticketCount: '{{count}} tickets',
     openAcademyPlan: "Open this academy's plan",
     academyInbox: 'Academy inbox',
     platformInbox: 'Platform support',
