@@ -5296,6 +5296,9 @@ export const fa = {
     equivalentPerMonth: 'معادل {{price}} تومان در ماه',
     quarterlyDiscount: '٪{{percent}} تخفیف',
     quarterlyWas: '{{price}} تومان',
+    upgradeCostLabel: 'برای ارتقا، تا {{days}} روز باقی‌ماندهٔ پلن فعلی',
+    upgradeThenFull: 'در تمدید بعدی: {{price}} تومان / ماه',
+    upgradeFree: 'رایگان',
     storageAlmostFull:
       'فضا تقریباً پر است (٪{{percent}}). قبل از مسدود شدن آپلود، بسته فضای اضافه بخرید یا پلن را ارتقا دهید.',
     storageFull:

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -53,6 +53,7 @@ import {
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
 import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoices-list';
+import { useUpgradeQuotes } from '@/hooks/use-upgrade-quotes';
 import { TrialMoveCard } from '@/components/plans/trial-move-card';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { PlanFormDialog } from '@/components/plans/PlanFormDialog';
@@ -781,6 +782,23 @@ export default function PlansPage() {
     .filter((invoice) => invoice.status === 'PAID')
     .reduce((newest, invoice) => Math.max(newest, invoice.id), 0);
 
+  // On a paid plan the manager does not pay the target plan's full price — they
+  // pay the prorated difference for the days left. Quote every higher tier up
+  // front so each card can show that number instead of a price they never pay.
+  const upgradableSlugs = useMemo(
+    () =>
+      hasActivePaidPlan && currentPlan
+        ? plans
+            .filter((p) => p.sort_order > currentPlan.sort_order)
+            .map((p) => p.slug)
+        : [],
+    [plans, currentPlan, hasActivePaidPlan]
+  );
+  const { quotes: upgradeQuotes } = useUpgradeQuotes(
+    upgradableSlugs,
+    canManagePlan
+  );
+
   if (isLoading) {
     return (
       <div className="flex-1 p-4 sm:p-6">
@@ -1079,6 +1097,7 @@ export default function PlansPage() {
                     isLocked={isLocked}
                     price={price}
                     period={period}
+                    upgradeQuote={upgradeQuotes[plan.slug] ?? null}
                     canSelect={canManagePlan}
                     onCardSelect={() => setSelectedCardSlug(plan.slug)}
                     onSelect={() =>
@@ -1309,7 +1328,7 @@ export default function PlansPage() {
                       disabled={
                         !voucherCode.trim() || isChanging || isValidatingVoucher
                       }
-                      className="shrink-0 min-w-[6.5rem] whitespace-nowrap px-4"
+                      className="min-w-[6.5rem] shrink-0 whitespace-nowrap px-4"
                     >
                       {isValidatingVoucher ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -1691,6 +1710,7 @@ function SubscriptionPlanCard({
   isLocked,
   price,
   period,
+  upgradeQuote,
   canSelect,
   onCardSelect,
   onSelect,
@@ -1703,6 +1723,8 @@ function SubscriptionPlanCard({
   isLocked: boolean;
   price: number;
   period: BillingPeriod;
+  /** Set only while a paid plan is running: the prorated cost to switch here. */
+  upgradeQuote: AcademyUpgradeQuote | null;
   canSelect: boolean;
   onCardSelect: () => void;
   onSelect: () => void;
@@ -1711,6 +1733,9 @@ function SubscriptionPlanCard({
   const features = planFeatureList(plan.slug, plan.features);
   const qDiscount =
     period === 'quarterly' ? quarterlyDiscount(plan.price_monthly) : null;
+  // The headline is what this manager actually pays next: the upgrade
+  // difference while a paid plan is running, the full price otherwise.
+  const upgradeAmount = upgradeQuote?.amount_toman ?? null;
 
   return (
     <div
@@ -1736,18 +1761,45 @@ function SubscriptionPlanCard({
         {plan.slug}
       </p>
 
-      <p className="mt-6 text-center">
-        <span className="text-[34px] font-black leading-none text-foreground">
-          {formatPrice(price)}
-        </span>
-        <span className="ms-2 text-[13px] text-muted-foreground">
-          {period === 'quarterly'
-            ? t('plans.pricePerQuarter')
-            : t('plans.pricePerMonth')}
-        </span>
-      </p>
+      {upgradeAmount !== null ? (
+        <div className="mt-6 text-center">
+          <p>
+            <span className="text-[34px] font-black leading-none text-primary">
+              {upgradeAmount > 0
+                ? formatPrice(upgradeAmount)
+                : t('plans.upgradeFree')}
+            </span>
+            {upgradeAmount > 0 && (
+              <span className="ms-2 text-[13px] text-muted-foreground">
+                {t('plans.toman')}
+              </span>
+            )}
+          </p>
+          <p className="mt-1.5 text-[12px] font-semibold text-primary/80">
+            {t('plans.upgradeCostLabel', {
+              days: formatPrice(upgradeQuote?.remainingDays ?? 0)
+            })}
+          </p>
+          <p className="mt-1 text-[12px] text-muted-foreground">
+            {t('plans.upgradeThenFull', {
+              price: formatPrice(plan.price_monthly)
+            })}
+          </p>
+        </div>
+      ) : (
+        <p className="mt-6 text-center">
+          <span className="text-[34px] font-black leading-none text-foreground">
+            {formatPrice(price)}
+          </span>
+          <span className="ms-2 text-[13px] text-muted-foreground">
+            {period === 'quarterly'
+              ? t('plans.pricePerQuarter')
+              : t('plans.pricePerMonth')}
+          </span>
+        </p>
+      )}
 
-      {period === 'quarterly' && (
+      {upgradeAmount === null && period === 'quarterly' && (
         <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[12px]">
           {qDiscount && qDiscount.amount > 0 ? (
             <>

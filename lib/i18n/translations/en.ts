@@ -5311,6 +5311,9 @@ export const en = {
     equivalentPerMonth: 'equivalent to {{price}} Toman / month',
     quarterlyDiscount: '{{percent}}% off',
     quarterlyWas: '{{price}} Toman',
+    upgradeCostLabel: 'to upgrade, for the {{days}} days left',
+    upgradeThenFull: 'Then {{price}} Toman / month at renewal',
+    upgradeFree: 'Free',
     storageAlmostFull:
       'Storage is almost full ({{percent}}%). Buy a storage pack or upgrade before uploads stop.',
     storageFull:

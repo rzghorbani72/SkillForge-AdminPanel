@@ -33,6 +33,10 @@ export const queryKeys = {
 
   subscription: (academyId: AcademyId) => scope(academyId, 'subscription'),
 
+  /** `slugs` is the sorted, comma-joined batch these quotes were priced for. */
+  upgradeQuotes: (academyId: AcademyId, slugs: string) =>
+    scope(academyId, 'upgrade-quotes', slugs),
+
   learningNavCapabilities: (academyId: AcademyId) =>
     scope(academyId, 'learning-nav-capabilities'),
 
