@@ -5357,6 +5357,9 @@ export const en = {
     currentPlan: 'Current plan',
     lockedUntilCurrentEnds: 'Available after your current plan ends',
     lockedShort: 'After the current plan',
+    renewLockedShort: 'Renew near the end',
+    renewOpensLater:
+      'Renewal opens in the last {{days}} days of your current plan',
     popular: 'Most Popular',
     managePlans: 'Manage Plans',
     addPlan: 'Add Plan',

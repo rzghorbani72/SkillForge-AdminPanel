@@ -817,6 +817,9 @@ export default function PlansPage() {
   // it swaps the plan for the days already bought and never moves the expiry.
   // On the other tab the manager is buying a NEW term at full price, so no
   // quote applies there.
+  // The backend decides when a renewal opens; the panel just mirrors it.
+  const canRenewNow = currentSub?.can_renew_now !== false;
+  const renewalWindowDays = currentSub?.renewal_window_days ?? 7;
   const canUpgradeInPeriod = hasActivePaidPlan && period === currentPeriod;
   const upgradableSlugs = useMemo(
     () =>
@@ -1119,6 +1122,11 @@ export default function PlansPage() {
                 // Same tier, other term: not an upgrade and not a lock — it is
                 // a renewal that extends the plan by the chosen term.
                 const isExtend = isSameTier && !isCurrent;
+                // Buying the running tier again is a RENEWAL, and it only opens
+                // near the end of the paid term — otherwise a manager could buy
+                // the same plan over and over and stack terms. The backend
+                // refuses it too; this only keeps the button honest.
+                const canRenew = isSameTier && canRenewNow;
                 // While the current plan is actively paid, only upper
                 // (higher-tier) plans can be selected for upgrade; the
                 // current and lower tiers unlock once it ends.
@@ -1126,7 +1134,8 @@ export default function PlansPage() {
                   ? plan.sort_order > currentPlan.sort_order
                   : true;
                 const isLocked =
-                  hasActivePaidPlan && !isSameTier && !isUpperPlan;
+                  hasActivePaidPlan &&
+                  ((!isSameTier && !isUpperPlan) || (isExtend && !canRenewNow));
                 const price = periodPrice(plan, period);
                 return (
                   <SubscriptionPlanCard
@@ -1137,6 +1146,8 @@ export default function PlansPage() {
                     isCurrent={isCurrent}
                     isExtend={isExtend}
                     isLocked={isLocked}
+                    canRenew={canRenew}
+                    renewalWindowDays={renewalWindowDays}
                     price={price}
                     period={period}
                     daysRemaining={currentSub?.days_remaining ?? null}
@@ -1144,7 +1155,9 @@ export default function PlansPage() {
                     canSelect={canManagePlan}
                     onCardSelect={() => setSelectedCardSlug(plan.slug)}
                     onSelect={() =>
-                      !isCurrent && !isLocked && openSelectPlan(plan)
+                      (!isCurrent || canRenew) &&
+                      !isLocked &&
+                      openSelectPlan(plan)
                     }
                     t={t}
                   />
@@ -1761,6 +1774,8 @@ function SubscriptionPlanCard({
   isCurrent,
   isExtend,
   isLocked,
+  canRenew,
+  renewalWindowDays,
   price,
   period,
   daysRemaining,
@@ -1777,6 +1792,9 @@ function SubscriptionPlanCard({
   /** Same plan, other term — buying it extends the subscription. */
   isExtend: boolean;
   isLocked: boolean;
+  /** Same plan, and the running term is close enough to its end to re-buy. */
+  canRenew: boolean;
+  renewalWindowDays: number;
   price: number;
   period: BillingPeriod;
   /** Days left on the running term — shown on the active card only. */
@@ -1932,15 +1950,21 @@ function SubscriptionPlanCard({
       {canSelect && (
         <button
           type="button"
-          disabled={isCurrent || isLocked}
+          disabled={(isCurrent && !canRenew) || isLocked}
           onClick={(e) => {
             e.stopPropagation();
             onSelect();
           }}
-          title={isLocked ? t('plans.lockedUntilCurrentEnds') : undefined}
+          title={
+            isLocked
+              ? isExtend
+                ? t('plans.renewOpensLater', { days: renewalWindowDays })
+                : t('plans.lockedUntilCurrentEnds')
+              : undefined
+          }
           className={cn(
             'mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-bold transition-all duration-150',
-            isCurrent
+            isCurrent && !canRenew
               ? 'cursor-default bg-success/10 text-success'
               : isLocked
                 ? 'cursor-not-allowed border border-border bg-muted/40 text-muted-foreground'
@@ -1949,7 +1973,7 @@ function SubscriptionPlanCard({
                   : 'border border-border bg-muted/40 text-foreground hover:border-primary/40'
           )}
         >
-          {isCurrent ? (
+          {isCurrent && !canRenew ? (
             <>
               <Check className="h-4 w-4" />
               {t('plans.currentPlan')}
@@ -1960,10 +1984,12 @@ function SubscriptionPlanCard({
               {/* Short label keeps the button one line; the full sentence
                   stays in the tooltip. */}
               <span className="truncate text-[13px] font-semibold">
-                {t('plans.lockedShort')}
+                {isExtend
+                  ? t('plans.renewLockedShort')
+                  : t('plans.lockedShort')}
               </span>
             </>
-          ) : isExtend ? (
+          ) : isExtend || canRenew ? (
             t('plans.extendPlan')
           ) : (
             t('plans.choosePlan')

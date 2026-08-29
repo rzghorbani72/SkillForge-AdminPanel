@@ -51,6 +51,9 @@ export interface AcademySubscriptionState {
   has_paid?: boolean;
   /** Term currently running: 1 or 3 months; null when nothing is paid. */
   period_months?: number | null;
+  /** One plan at a time: re-buying the same tier only opens near expiry. */
+  can_renew_now?: boolean;
+  renewal_window_days?: number;
   storage?: {
     usage_gb: number;
     included_gb: number;
