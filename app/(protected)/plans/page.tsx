@@ -352,6 +352,7 @@ export default function PlansPage() {
     // not a full purchase — fetch the quote so the dialog can show it.
     const isUpgrade =
       hasActivePaidPlan &&
+      period === currentPeriod &&
       !!currentPlan &&
       plan.sort_order > currentPlan.sort_order;
     if (isUpgrade) void loadUpgradeQuote(plan.slug);
@@ -768,6 +769,11 @@ export default function PlansPage() {
     currentSub?.status === 'ACTIVE' &&
     currentSub?.has_paid === true &&
     !!currentPlan;
+  // A plan is only "the active plan" on the tab whose TERM was actually
+  // bought. A monthly Growth academy is not on 3-month Growth, so the
+  // quarterly tab must offer that card, not mark it as current.
+  const currentPeriod: BillingPeriod =
+    currentSub?.period_months === 3 ? 'quarterly' : 'monthly';
   const popularIndex = Math.floor(plans.length / 2);
   // Recommended is fixed on the popular tier; selection is a click-to-compare
   // highlight that only one card holds at a time (defaults to the current
@@ -785,14 +791,19 @@ export default function PlansPage() {
   // On a paid plan the manager does not pay the target plan's full price — they
   // pay the prorated difference for the days left. Quote every higher tier up
   // front so each card can show that number instead of a price they never pay.
+  // A prorated upgrade only exists for the term the academy is actually on:
+  // it swaps the plan for the days already bought and never moves the expiry.
+  // On the other tab the manager is buying a NEW term at full price, so no
+  // quote applies there.
+  const canUpgradeInPeriod = hasActivePaidPlan && period === currentPeriod;
   const upgradableSlugs = useMemo(
     () =>
-      hasActivePaidPlan && currentPlan
+      canUpgradeInPeriod && currentPlan
         ? plans
             .filter((p) => p.sort_order > currentPlan.sort_order)
             .map((p) => p.slug)
         : [],
-    [plans, currentPlan, hasActivePaidPlan]
+    [plans, currentPlan, canUpgradeInPeriod]
   );
   const { quotes: upgradeQuotes } = useUpgradeQuotes(
     upgradableSlugs,
@@ -1080,8 +1091,12 @@ export default function PlansPage() {
                 // free trial the academy sits on a plan it hasn't paid for, so
                 // every tier — including that one — stays buyable at full price
                 // to convert the trial into a paid subscription.
-                const isCurrent =
+                const isSameTier =
                   hasActivePaidPlan && currentPlan?.id === plan.id;
+                const isCurrent = isSameTier && period === currentPeriod;
+                // Same tier, other term: not an upgrade and not a lock — it is
+                // a renewal that extends the plan by the chosen term.
+                const isExtend = isSameTier && !isCurrent;
                 // While the current plan is actively paid, only upper
                 // (higher-tier) plans can be selected for upgrade; the
                 // current and lower tiers unlock once it ends.
@@ -1089,7 +1104,7 @@ export default function PlansPage() {
                   ? plan.sort_order > currentPlan.sort_order
                   : true;
                 const isLocked =
-                  hasActivePaidPlan && !isCurrent && !isUpperPlan;
+                  hasActivePaidPlan && !isSameTier && !isUpperPlan;
                 const price = periodPrice(plan, period);
                 return (
                   <SubscriptionPlanCard
@@ -1098,6 +1113,7 @@ export default function PlansPage() {
                     isRecommended={isPopular}
                     isSelected={selectedCardSlug === plan.slug}
                     isCurrent={isCurrent}
+                    isExtend={isExtend}
                     isLocked={isLocked}
                     price={price}
                     period={period}
@@ -1613,6 +1629,15 @@ function CurrentSubscriptionBanner({
               >
                 {t(display.labelKey)}
               </span>
+              {currentSub.has_paid && (
+                <span>
+                  {t(
+                    currentSub.period_months === 3
+                      ? 'plans.termQuarterly'
+                      : 'plans.termMonthly'
+                  )}
+                </span>
+              )}
               {expiresAt && (
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
@@ -1711,6 +1736,7 @@ function SubscriptionPlanCard({
   isRecommended,
   isSelected,
   isCurrent,
+  isExtend,
   isLocked,
   price,
   period,
@@ -1724,6 +1750,8 @@ function SubscriptionPlanCard({
   isRecommended: boolean;
   isSelected: boolean;
   isCurrent: boolean;
+  /** Same plan, other term — buying it extends the subscription. */
+  isExtend: boolean;
   isLocked: boolean;
   price: number;
   period: BillingPeriod;
@@ -1737,9 +1765,6 @@ function SubscriptionPlanCard({
   const features = planFeatureList(plan.slug, plan.features);
   const qDiscount =
     period === 'quarterly' ? quarterlyDiscount(plan.price_monthly) : null;
-  // The headline is what this manager actually pays next: the upgrade
-  // difference while a paid plan is running, the full price otherwise.
-  const upgradeAmount = upgradeQuote?.amount_toman ?? null;
 
   return (
     <div
@@ -1765,15 +1790,17 @@ function SubscriptionPlanCard({
         {plan.slug}
       </p>
 
-      {upgradeAmount !== null ? (
+      {/* The headline is what this manager actually pays next: the prorated
+          upgrade difference while a paid plan runs, the full price otherwise. */}
+      {upgradeQuote ? (
         <div className="mt-6 text-center">
           <p>
             <span className="text-[34px] font-black leading-none text-primary">
-              {upgradeAmount > 0
-                ? formatPrice(upgradeAmount)
+              {upgradeQuote.amount_toman > 0
+                ? formatPrice(upgradeQuote.amount_toman)
                 : t('plans.upgradeFree')}
             </span>
-            {upgradeAmount > 0 && (
+            {upgradeQuote.amount_toman > 0 && (
               <span className="ms-2 text-[13px] text-muted-foreground">
                 {t('plans.toman')}
               </span>
@@ -1781,13 +1808,18 @@ function SubscriptionPlanCard({
           </p>
           <p className="mt-1.5 text-[12px] font-semibold text-primary/80">
             {t('plans.upgradeCostLabel', {
-              days: formatPrice(upgradeQuote?.remainingDays ?? 0)
+              days: formatPrice(upgradeQuote.remainingDays)
             })}
           </p>
           <p className="mt-1 text-[12px] text-muted-foreground">
-            {t('plans.upgradeThenFull', {
-              price: formatPrice(plan.price_monthly)
-            })}
+            {t(
+              upgradeQuote.periodMonths === 3
+                ? 'plans.upgradeThenFullQuarterly'
+                : 'plans.upgradeThenFullMonthly',
+              {
+                price: formatPrice(upgradeQuote.target_plan.price_period_toman)
+              }
+            )}
           </p>
         </div>
       ) : (
@@ -1803,7 +1835,13 @@ function SubscriptionPlanCard({
         </p>
       )}
 
-      {upgradeAmount === null && period === 'quarterly' && (
+      {isExtend && (
+        <p className="mt-2 text-center text-[12px] text-muted-foreground">
+          {t('plans.extendHint')}
+        </p>
+      )}
+
+      {period === 'quarterly' && (
         <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[12px]">
           {qDiscount && qDiscount.amount > 0 ? (
             <>
@@ -1875,6 +1913,8 @@ function SubscriptionPlanCard({
               <Lock className="h-4 w-4" />
               {t('plans.lockedUntilCurrentEnds')}
             </>
+          ) : isExtend ? (
+            t('plans.extendPlan')
           ) : (
             t('plans.choosePlan')
           )}

@@ -5297,8 +5297,13 @@ export const fa = {
     quarterlyDiscount: '٪{{percent}} تخفیف',
     quarterlyWas: '{{price}} تومان',
     upgradeCostLabel: 'برای ارتقا، تا {{days}} روز باقی‌ماندهٔ پلن فعلی',
-    upgradeThenFull: 'در تمدید بعدی: {{price}} تومان / ماه',
+    upgradeThenFullMonthly: 'در تمدید بعدی: {{price}} تومان / ماه',
+    upgradeThenFullQuarterly: 'در تمدید بعدی: {{price}} تومان / ۳ ماه',
     upgradeFree: 'رایگان',
+    extendPlan: 'تمدید همین پلن',
+    termMonthly: 'دورهٔ ماهانه',
+    termQuarterly: 'دورهٔ ۳ ماهه',
+    extendHint: 'به انتهای دورهٔ فعلی شما اضافه می‌شود؛ همین پلن.',
     storageAlmostFull:
       'فضا تقریباً پر است (٪{{percent}}). قبل از مسدود شدن آپلود، بسته فضای اضافه بخرید یا پلن را ارتقا دهید.',
     storageFull:

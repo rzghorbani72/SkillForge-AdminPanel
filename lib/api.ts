@@ -6417,6 +6417,8 @@ export interface AcademyUpgradeQuote {
   fromSlug: string;
   toSlug: string;
   remainingDays: number;
+  /** Term the quote was priced on: 1 or 3 months. */
+  periodMonths: number;
   isDowngrade: boolean;
   expiresAt: string | null;
   storage_usage_gb: number;
@@ -6428,6 +6430,8 @@ export interface AcademyUpgradeQuote {
     slug: string;
     name: string;
     price_monthly_toman: number;
+    /** Renewal price on the term the academy is actually on. */
+    price_period_toman: number;
     storage_gb: number;
   };
 }

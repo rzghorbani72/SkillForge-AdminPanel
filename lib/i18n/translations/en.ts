@@ -5312,8 +5312,13 @@ export const en = {
     quarterlyDiscount: '{{percent}}% off',
     quarterlyWas: '{{price}} Toman',
     upgradeCostLabel: 'to upgrade, for the {{days}} days left',
-    upgradeThenFull: 'Then {{price}} Toman / month at renewal',
+    upgradeThenFullMonthly: 'Then {{price}} Toman / month at renewal',
+    upgradeThenFullQuarterly: 'Then {{price}} Toman / 3 months at renewal',
     upgradeFree: 'Free',
+    extendPlan: 'Extend this plan',
+    termMonthly: 'Monthly term',
+    termQuarterly: '3-month term',
+    extendHint: 'Added on top of your current term, same plan.',
     storageAlmostFull:
       'Storage is almost full ({{percent}}%). Buy a storage pack or upgrade before uploads stop.',
     storageFull:

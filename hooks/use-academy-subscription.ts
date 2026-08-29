@@ -49,6 +49,8 @@ export interface AcademySubscriptionState {
   // (prorated). Trial and no-plan both buy at full price.
   is_trial?: boolean;
   has_paid?: boolean;
+  /** Term currently running: 1 or 3 months; null when nothing is paid. */
+  period_months?: number | null;
   storage?: {
     usage_gb: number;
     included_gb: number;
@@ -127,6 +129,8 @@ export function useAcademySubscription(enabled = true) {
     daysRemaining,
     hasAcademy: hasAcademyAccess,
     hasPaid: subscription?.has_paid ?? false,
+    /** 3 when the academy bought a quarterly term, 1 otherwise. */
+    periodMonths: subscription?.period_months ?? 1,
     isTrial: subscription?.is_trial ?? false,
     isStarter: isStarterPlan(planSlug),
     // Business has no higher self-serve tier — once paid and active, there is
