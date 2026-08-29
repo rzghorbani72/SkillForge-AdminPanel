@@ -74,6 +74,9 @@ export function useCourseForm(courseId: string) {
       description: '',
       primary_price: '0',
       secondary_price: '',
+      meta_title: '',
+      meta_description: '',
+      keywords: [],
       category_id: '',
       cover_id: '',
       published: false,
@@ -102,6 +105,9 @@ export function useCourseForm(courseId: string) {
       return {
         title: data.title.trim(),
         description: data.description.trim(),
+        meta_title: data.meta_title.trim(),
+        meta_description: data.meta_description.trim(),
+        keywords: data.keywords,
         primary_price: Number(data.primary_price),
         secondary_price: Number(data.secondary_price) || 0,
         category_id: data.category_id || undefined,
@@ -182,6 +188,9 @@ export function useCourseForm(courseId: string) {
         const loadedForm: CourseFormData = {
           title: course.title ?? '',
           description: course.description ?? '',
+          meta_title: course.meta_title ?? '',
+          meta_description: course.meta_description ?? '',
+          keywords: course.keywords ?? [],
           primary_price: Math.trunc(course.price ?? 0).toString(),
           secondary_price: course.original_price
             ? Math.trunc(course.original_price).toString()

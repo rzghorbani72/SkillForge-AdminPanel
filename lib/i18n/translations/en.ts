@@ -1731,6 +1731,22 @@ export const en = {
     removeCategoryAria: 'Remove {{name}}',
     toman: 'Toman',
     courseSettings: 'Course Settings',
+    seo: {
+      title: 'Search & sharing',
+      description:
+        'What people see when this course shows up on Google. Leave it empty and the course title and description are used.',
+      metaTitle: 'Search title',
+      metaTitlePlaceholder: 'e.g. IELTS Speaking course with weekly mock tests',
+      metaTitleHint: 'The blue headline on Google',
+      metaDescription: 'Search description',
+      metaDescriptionPlaceholder:
+        'One or two sentences about who this course is for and what they get.',
+      metaDescriptionHint: 'The grey text under the headline on Google',
+      keywords: 'Keywords',
+      keywordsPlaceholder: 'Type a keyword and press Enter',
+      keywordsHint:
+        'The words students search for. Up to {{count}}; used in the page metadata and search data.'
+    },
     highlightedOnHomepage: 'Highlighted on the homepage',
     secureMode: 'Secure mode (no downloading)',
     secureModeOnHint:

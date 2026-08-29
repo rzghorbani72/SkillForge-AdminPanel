@@ -1714,6 +1714,22 @@ export const fa = {
     removeCategoryAria: 'حذف {{name}}',
     toman: 'تومان',
     courseSettings: 'تنظیمات دوره',
+    seo: {
+      title: 'جست‌وجو و اشتراک‌گذاری',
+      description:
+        'چیزی که مردم می‌بینند وقتی این دوره در گوگل بالا می‌آید. اگر خالی بماند، عنوان و توضیح خود دوره استفاده می‌شود.',
+      metaTitle: 'عنوان در جست‌وجو',
+      metaTitlePlaceholder: 'مثلاً دورهٔ اسپیکینگ آیلتس با آزمون آزمایشی هفتگی',
+      metaTitleHint: 'همان تیتر آبی‌رنگ در گوگل',
+      metaDescription: 'توضیح در جست‌وجو',
+      metaDescriptionPlaceholder:
+        'یک یا دو جمله دربارهٔ اینکه این دوره برای چه کسانی است و چه چیزی یاد می‌دهد.',
+      metaDescriptionHint: 'همان متن خاکستری زیر تیتر در گوگل',
+      keywords: 'کلیدواژه‌ها',
+      keywordsPlaceholder: 'کلیدواژه را بنویسید و Enter بزنید',
+      keywordsHint:
+        'کلمه‌هایی که دانشجو جست‌وجو می‌کند. تا {{count}} مورد؛ در متادیتا و دادهٔ جست‌وجوی صفحه استفاده می‌شود.'
+    },
     highlightedOnHomepage: 'در صفحه اصلی برجسته نمایش داده می‌شود',
     secureMode: 'حالت امن (جلوگیری از دانلود)',
     secureModeOnHint:

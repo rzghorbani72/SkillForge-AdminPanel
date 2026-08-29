@@ -4,6 +4,10 @@ import * as z from 'zod';
 // schema and validated again by the backend DTOs — they must never drift.
 export const COURSE_TITLE_MAX = 80;
 export const COURSE_DESCRIPTION_MAX = 4000;
+export const COURSE_META_TITLE_MAX = 60;
+export const COURSE_META_DESCRIPTION_MAX = 160;
+export const COURSE_KEYWORDS_MAX = 10;
+export const COURSE_KEYWORD_MAX = 40;
 
 export const courseFormFields = z.object({
   title: z
@@ -37,6 +41,13 @@ export const courseFormFields = z.object({
       const num = Number(val);
       return !isNaN(num) && num >= 0 && num <= 999999999;
     }, 'courses.errors.beforeDiscountRange'),
+  // Search metadata. Empty = fall back to the course title/description.
+  meta_title: z.string().max(COURSE_META_TITLE_MAX).default(''),
+  meta_description: z.string().max(COURSE_META_DESCRIPTION_MAX).default(''),
+  keywords: z
+    .array(z.string().max(COURSE_KEYWORD_MAX))
+    .max(COURSE_KEYWORDS_MAX)
+    .default([]),
   category_id: z.string().optional(),
   season_id: z.string().optional(),
   audio_id: z.string().optional(),

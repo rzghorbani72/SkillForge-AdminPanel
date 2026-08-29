@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useCourseForm } from './useCourseForm';
 import CreateCourseBasicInfo from './CreateCourseBasicInfo';
 import CourseSettingsCard from './CourseSettingsCard';
+import CourseSeoCard from './CourseSeoCard';
 import CreateCourseAssociations from './CreateCourseAssociations';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
@@ -210,6 +211,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
             <CoursePricingSection courseId={courseId} form={form} />
 
             <CourseSettingsCard form={form} />
+
+            <CourseSeoCard form={form} />
 
             <SeasonsSection
               seasons={seasons}

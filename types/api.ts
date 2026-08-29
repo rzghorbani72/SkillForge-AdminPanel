@@ -292,6 +292,10 @@ export interface Course {
   slug: string;
   description: string;
   short_description?: string;
+  /** Author-written search metadata; empty falls back to title/description. */
+  meta_title?: string | null;
+  meta_description?: string | null;
+  keywords?: string[] | null;
   price: number;
   original_price?: number;
   /** LIVE = sold as a timetable of classes; OFFLINE = recorded lessons. */
