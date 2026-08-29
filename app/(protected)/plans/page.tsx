@@ -1071,7 +1071,11 @@ export default function PlansPage() {
               className="stagger-children grid items-stretch gap-5 pt-3 sm:grid-cols-2 lg:grid-cols-4"
             >
               {plans.map((plan, i) => {
-                const isPopular = i === popularIndex && plans.length >= 2;
+                // The "popular" nudge is for someone choosing a first plan.
+                // Once the academy exists the manager is comparing against
+                // what they already pay, so the badge is noise.
+                const isPopular =
+                  !selectedAcademy && i === popularIndex && plans.length >= 2;
                 // Only a genuinely PAID plan is "current" (locked). During a
                 // free trial the academy sits on a plan it hasn't paid for, so
                 // every tier — including that one — stays buyable at full price
