@@ -116,7 +116,8 @@ export default function CoursesPage() {
           <div
             className="grid gap-4"
             style={{
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))'
+              gridTemplateColumns:
+                'repeat(auto-fill, minmax(min(100%, 16rem), 1fr))'
             }}
           >
             {filteredCourses.map((c) => (
@@ -142,7 +143,7 @@ export default function CoursesPage() {
             </button>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <div className="table-h-scroll rounded-xl border border-border bg-card">
             <table className="w-full border-collapse text-base">
               <thead>
                 <tr className="border-b border-border bg-muted/50">

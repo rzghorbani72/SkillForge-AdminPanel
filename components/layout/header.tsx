@@ -14,9 +14,9 @@ export default function Header() {
 
   return (
     <header className="sticky inset-x-0 top-0 z-40 w-full">
-      <nav className="flex h-16 items-center justify-between border-b border-[hsl(var(--sidebar-border))] bg-background/95 px-4 backdrop-blur-xl md:px-6">
+      <nav className="flex h-14 min-w-0 items-center justify-between gap-2 border-b border-[hsl(var(--sidebar-border))] bg-background/95 px-3 backdrop-blur-xl sm:h-16 md:px-6">
         {/* Left — mobile trigger */}
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           <div className="block md:hidden">
             <MobileSidebar />
           </div>

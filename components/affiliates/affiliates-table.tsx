@@ -23,7 +23,7 @@ export function AffiliatesTable({
   const { t } = useTranslation();
 
   return (
-    <div className="overflow-x-auto rounded-xl border bg-card">
+    <div className="table-h-scroll rounded-xl border bg-card">
       <table className="w-full text-base">
         <thead className="border-b bg-muted/30">
           <tr className="text-xs text-muted-foreground">

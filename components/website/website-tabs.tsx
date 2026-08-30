@@ -32,7 +32,7 @@ export function WebsiteTabs() {
   ];
 
   return (
-    <nav className="flex gap-1 overflow-x-auto border-b bg-background px-6">
+    <nav className="flex gap-1 overflow-x-auto border-b bg-background px-4 sm:px-6">
       {tabs.map((tab) => {
         const active =
           tab.href === '/website'

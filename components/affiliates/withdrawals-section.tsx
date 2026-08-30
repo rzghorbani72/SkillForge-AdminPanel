@@ -102,7 +102,7 @@ export function WithdrawalsSection({
           </span>
         )}
       </div>
-      <div className="overflow-hidden rounded-xl border">
+      <div className="table-h-scroll rounded-xl border">
         <table className="w-full text-base">
           <thead className="border-b bg-muted/30">
             <tr className="text-xs text-muted-foreground">

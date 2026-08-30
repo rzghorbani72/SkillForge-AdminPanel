@@ -150,9 +150,9 @@ export function AcademySelector() {
 
   if (isLoading || switching) {
     return (
-      <div className="flex h-10 w-48 animate-pulse items-center gap-2.5 rounded-xl bg-muted px-3">
-        <div className="h-8 w-8 rounded-lg bg-muted-foreground/20" />
-        <div className="flex flex-col gap-1">
+      <div className="flex h-9 w-9 shrink-0 animate-pulse items-center gap-2.5 rounded-xl bg-muted sm:h-10 sm:w-48 sm:px-3">
+        <div className="hidden h-8 w-8 rounded-lg bg-muted-foreground/20 sm:block" />
+        <div className="hidden flex-col gap-1 sm:flex">
           <div className="h-3 w-24 rounded bg-muted-foreground/20" />
           <div className="h-2.5 w-32 rounded bg-muted-foreground/15" />
         </div>

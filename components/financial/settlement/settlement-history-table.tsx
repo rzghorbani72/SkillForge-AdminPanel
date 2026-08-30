@@ -41,7 +41,7 @@ export function SettlementHistoryTable({
             <p className="text-sm">{t('settlement.history.empty')}</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="table-h-scroll">
             <Table>
               <TableHeader>
                 <TableRow>

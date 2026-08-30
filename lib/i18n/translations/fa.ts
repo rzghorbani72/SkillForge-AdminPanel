@@ -382,6 +382,7 @@ export const fa = {
     filter: 'فیلتر',
     clear: 'پاک کردن',
     close: 'بستن',
+    openMenu: 'باز کردن منو',
     back: 'بازگشت',
     next: 'بعدی',
     previous: 'قبلی',

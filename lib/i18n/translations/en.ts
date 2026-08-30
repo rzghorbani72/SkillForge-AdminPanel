@@ -391,6 +391,7 @@ export const en = {
     filter: 'Filter',
     clear: 'Clear',
     close: 'Close',
+    openMenu: 'Open menu',
     back: 'Back',
     next: 'Next',
     previous: 'Previous',

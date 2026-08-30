@@ -34,10 +34,19 @@ export function MobileSidebar() {
   return (
     <>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild className="focus:outline-none">
-          <MenuIcon />
+        <SheetTrigger asChild>
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-accent"
+            aria-label={t('common.openMenu')}
+          >
+            <MenuIcon className="h-5 w-5" />
+          </button>
         </SheetTrigger>
-        <SheetContent side={isRTL ? 'right' : 'left'} className="!px-0">
+        <SheetContent
+          side={isRTL ? 'right' : 'left'}
+          className="w-[min(18rem,85vw)] !px-0"
+        >
           <div className="beautiful-scrollbar h-full overflow-y-auto py-3 pe-2 ps-4">
             <Suspense
               fallback={

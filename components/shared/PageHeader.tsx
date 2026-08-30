@@ -33,11 +33,11 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        'fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between',
+        'fade-in-up flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4',
         className
       )}
     >
-      <div className="space-y-1">
+      <div className="min-w-0 space-y-1">
         <div className="flex items-center gap-3">
           {icon && (
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -46,7 +46,7 @@ export function PageHeader({
           )}
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight sm:text-3xl">
+              <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
                 {title}
               </h1>
               {scope && <ScopeBadge scope={scope} />}
@@ -67,7 +67,9 @@ export function PageHeader({
         </div>
       </div>
       {children && (
-        <div className="flex flex-wrap items-center gap-2">{children}</div>
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          {children}
+        </div>
       )}
     </div>
   );

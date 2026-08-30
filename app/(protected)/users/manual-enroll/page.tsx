@@ -229,7 +229,7 @@ export default function ManualEnrollPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="overflow-x-auto">
+            <div className="table-h-scroll">
               <Table>
                 <TableHeader>
                   <TableRow>

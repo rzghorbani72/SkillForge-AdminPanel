@@ -211,11 +211,11 @@ export default function UsersPage() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <UsersTabBar tabs={tabs} value={tab} onChange={setTab} />
         {isUserTab && (
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
+            <div className="relative w-full min-w-0 sm:w-56">
               <Search className="pointer-events-none absolute start-[10px] top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
-                className="h-9 w-56 rounded-lg border border-border bg-card pe-3 ps-8 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
+                className="h-9 w-full rounded-lg border border-border bg-card pe-3 ps-8 text-[13px] outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10"
                 placeholder={t('users.searchUsersPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}

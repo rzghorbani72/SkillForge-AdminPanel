@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { ThemeProviderWrapper } from '@/components/providers/theme-provider-wrapper';
@@ -11,6 +11,12 @@ import { LegacyAuthStorageCleaner } from '@/components/providers/legacy-auth-sto
 import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
 import { PageTitleSync } from '@/components/providers/page-title-sync';
 import { buildPanelMetadata } from '@/lib/seo/panel-metadata';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover'
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies();

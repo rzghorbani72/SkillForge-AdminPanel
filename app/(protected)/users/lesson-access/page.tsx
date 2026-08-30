@@ -162,7 +162,7 @@ export default function StudentLessonAccessPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="table-h-scroll">
             <Table>
               <TableHeader>
                 <TableRow>

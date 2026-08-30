@@ -119,7 +119,7 @@ export default function SupportAccessLogsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          <div className="table-h-scroll">
             <table className="w-full text-base">
               <thead>
                 <tr className="border-b text-start text-muted-foreground">

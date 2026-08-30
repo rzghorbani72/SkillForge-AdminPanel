@@ -133,15 +133,15 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex rounded-lg border bg-white/70 p-0.5 backdrop-blur-md">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <div className="flex max-w-full overflow-x-auto rounded-lg border bg-white/70 p-0.5 backdrop-blur-md">
               {PERIODS.map((p) => (
                 <button
                   key={p.key}
                   type="button"
                   onClick={() => setPeriod(p.key)}
                   className={cn(
-                    'rounded-md px-3 py-1.5 text-sm font-medium transition-all',
+                    'shrink-0 rounded-md px-3 py-1.5 text-sm font-medium transition-all',
                     period === p.key
                       ? 'bg-background text-foreground shadow-sm'
                       : 'text-muted-foreground hover:text-foreground'
@@ -156,7 +156,9 @@ export default function DashboardPage() {
               className="flex items-center gap-1.5 rounded-lg border bg-white/70 px-3 py-1.5 text-sm font-medium text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:bg-white/90"
             >
               <Download className="h-4 w-4" />
-              {isFa ? 'خروجی گزارش' : 'Export'}
+              <span className="hidden sm:inline">
+                {isFa ? 'خروجی گزارش' : 'Export'}
+              </span>
             </button>
           </div>
         </div>

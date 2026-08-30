@@ -304,7 +304,7 @@ export default function AssignmentsPage() {
                     className="ps-8"
                   />
                 </div>
-                <div className="overflow-x-auto">
+                <div className="table-h-scroll">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -421,7 +421,7 @@ export default function AssignmentsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="overflow-x-auto">
+                <div className="table-h-scroll">
                   <Table>
                     <TableHeader>
                       <TableRow>

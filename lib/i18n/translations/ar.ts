@@ -251,6 +251,7 @@ export const ar = {
     filter: 'تصفية',
     clear: 'مسح',
     close: 'إغلاق',
+    openMenu: 'فتح القائمة',
     back: 'رجوع',
     next: 'التالي',
     previous: 'السابق',

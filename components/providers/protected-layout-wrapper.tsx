@@ -35,14 +35,14 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
         dir={direction}
       >
         <PlanVoucherBanner className="w-full" />
-        <div className="flex min-h-0 overflow-hidden">
+        <div className="flex min-h-0 min-w-0 overflow-hidden">
           <Sidebar />
-          <main className="flex flex-1 flex-col overflow-hidden">
+          <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
             <Header />
             <ScopeContextBanner />
-            <div className="beautiful-scrollbar flex-1 overflow-auto overscroll-contain">
-              <div className="mx-auto flex min-h-full w-full max-w-[1700px] flex-col">
-                <div className="flex-1">
+            <div className="beautiful-scrollbar min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
+              <div className="mx-auto flex min-h-full w-full min-w-0 max-w-[1700px] flex-col">
+                <div className="min-w-0 flex-1">
                   <AcademyRequiredGate>{children}</AcademyRequiredGate>
                 </div>
                 <PanelFooter />

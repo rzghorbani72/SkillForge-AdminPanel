@@ -138,7 +138,7 @@ export function UsersTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-card">
+    <div className="table-h-scroll rounded-xl border border-border bg-card">
       <table className="w-full border-collapse text-base">
         <thead>
           <tr className="border-b border-border bg-muted/50">
@@ -189,7 +189,7 @@ export function UsersTable({
           )}
         </tbody>
       </table>
-      <div className="flex items-center justify-between border-t border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
         <span>
           {t('users.showingOf', {
             shown: users.length,

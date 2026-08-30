@@ -38,81 +38,83 @@ export default function TopCoursesTable({ courses }: Props) {
         </Link>
       </CardHeader>
       <CardContent className="p-0">
-        <table className="w-full text-base">
-          <thead>
-            <tr className="border-b border-border/50 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              <th className="px-6 pb-2 text-start">
-                {isFa ? 'دوره' : 'Course'}
-              </th>
-              <th className="px-3 pb-2 text-start">
-                {isFa ? 'دانشجو' : 'Students'}
-              </th>
-              <th className="px-3 pb-2 text-start">
-                {isFa ? 'درآمد' : 'Revenue'}
-              </th>
-              <th className="px-6 pb-2 text-end">
-                {isFa ? 'تغییر' : 'Change'}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border/40">
-            {courses.slice(0, 6).map((course, i) => {
-              const change = i % 3 === 2 ? -4 + i : 8 + i * 3;
-              return (
-                <tr
-                  key={course.id}
-                  className="transition-colors hover:bg-muted/40"
-                >
-                  <td className="px-6 py-3.5">
-                    <span className="text-base font-medium">
-                      {course.title}
-                    </span>
-                  </td>
-                  <td className="px-3 py-3.5 text-base tabular-nums">
-                    {formatNumber(course.students_count ?? 0)}
-                  </td>
-                  <td className="px-3 py-3.5 text-base font-semibold tabular-nums">
-                    {course.is_free
-                      ? t('common.free')
-                      : formatCurrencyWithStore(
-                          course.price,
-                          currentAcademy,
-                          undefined,
-                          language
+        <div className="table-h-scroll">
+          <table className="w-full text-base">
+            <thead>
+              <tr className="border-b border-border/50 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <th className="px-6 pb-2 text-start">
+                  {isFa ? 'دوره' : 'Course'}
+                </th>
+                <th className="px-3 pb-2 text-start">
+                  {isFa ? 'دانشجو' : 'Students'}
+                </th>
+                <th className="px-3 pb-2 text-start">
+                  {isFa ? 'درآمد' : 'Revenue'}
+                </th>
+                <th className="px-6 pb-2 text-end">
+                  {isFa ? 'تغییر' : 'Change'}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40">
+              {courses.slice(0, 6).map((course, i) => {
+                const change = i % 3 === 2 ? -4 + i : 8 + i * 3;
+                return (
+                  <tr
+                    key={course.id}
+                    className="transition-colors hover:bg-muted/40"
+                  >
+                    <td className="px-6 py-3.5">
+                      <span className="text-base font-medium">
+                        {course.title}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3.5 text-base tabular-nums">
+                      {formatNumber(course.students_count ?? 0)}
+                    </td>
+                    <td className="px-3 py-3.5 text-base font-semibold tabular-nums">
+                      {course.is_free
+                        ? t('common.free')
+                        : formatCurrencyWithStore(
+                            course.price,
+                            currentAcademy,
+                            undefined,
+                            language
+                          )}
+                    </td>
+                    <td className="px-6 py-3 text-end">
+                      <Badge
+                        variant="outline"
+                        className={`gap-0.5 text-[11px] ${
+                          change >= 0
+                            ? 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
+                            : 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'
+                        }`}
+                      >
+                        {change >= 0 ? (
+                          <ArrowUp className="h-2.5 w-2.5" />
+                        ) : (
+                          <ArrowDown className="h-2.5 w-2.5" />
                         )}
-                  </td>
-                  <td className="px-6 py-3 text-end">
-                    <Badge
-                      variant="outline"
-                      className={`gap-0.5 text-[11px] ${
-                        change >= 0
-                          ? 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
-                          : 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'
-                      }`}
-                    >
-                      {change >= 0 ? (
-                        <ArrowUp className="h-2.5 w-2.5" />
-                      ) : (
-                        <ArrowDown className="h-2.5 w-2.5" />
-                      )}
-                      {percentLabel(Math.abs(change))}
-                    </Badge>
+                        {percentLabel(Math.abs(change))}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+              {courses.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="px-6 py-10 text-center text-base text-muted-foreground"
+                  >
+                    {t('common.noData')}
                   </td>
                 </tr>
-              );
-            })}
-            {courses.length === 0 && (
-              <tr>
-                <td
-                  colSpan={4}
-                  className="px-6 py-10 text-center text-base text-muted-foreground"
-                >
-                  {t('common.noData')}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </CardContent>
     </Card>
   );

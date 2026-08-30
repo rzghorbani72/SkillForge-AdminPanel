@@ -255,6 +255,7 @@ export const tr = {
     filter: 'Filtrele',
     clear: 'Temizle',
     close: 'Kapat',
+    openMenu: 'Menüyü aç',
     back: 'Geri',
     next: 'İleri',
     previous: 'Önceki',

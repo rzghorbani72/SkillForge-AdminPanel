@@ -124,7 +124,7 @@ export function ContentQueueCard() {
             {t('compliance.moderation.queueEmpty')}
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="table-h-scroll">
             <Table>
               <TableHeader>
                 <TableRow>

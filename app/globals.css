@@ -339,6 +339,25 @@ body {
     background: hsl(192 12% 84%); /* --border-strong */
   }
 
+  /* Data tables: keep readable column width and swipe sideways on phones */
+  .table-h-scroll {
+    @apply relative w-full max-w-full overflow-x-auto overscroll-x-contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .table-h-scroll > table {
+    @apply w-full min-w-[36rem];
+  }
+  @media (min-width: 768px) {
+    .table-h-scroll > table {
+      min-width: 100%;
+    }
+  }
+  .table-h-scroll th,
+  .table-h-scroll td {
+    white-space: nowrap;
+  }
+
   /* ─── Shimmer skeleton ────────────────────────────────────────── */
   .shimmer {
     background: linear-gradient(

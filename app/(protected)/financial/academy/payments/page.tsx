@@ -444,7 +444,7 @@ export default function StorePaymentsPage() {
             {t('financial.store.payments.allPaymentsDescription')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
+        <CardContent className="table-h-scroll">
           <Table>
             <TableHeader>
               <TableRow>

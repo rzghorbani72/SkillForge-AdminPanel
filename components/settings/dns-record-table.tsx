@@ -37,7 +37,7 @@ export function DnsRecordTable({
   return (
     <div className="space-y-2">
       {title ? <p className="text-sm font-medium">{title}</p> : null}
-      <div className="overflow-x-auto rounded-lg border">
+      <div className="table-h-scroll rounded-lg border">
         <table className="w-full text-base">
           <thead className="bg-muted/50 text-muted-foreground">
             <tr>

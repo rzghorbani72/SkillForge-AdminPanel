@@ -56,7 +56,7 @@ export function ReviewQueueTable({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="table-h-scroll">
       <Table>
         <TableHeader>
           <TableRow>

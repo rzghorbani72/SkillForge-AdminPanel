@@ -45,7 +45,7 @@ export function ScopeContextBanner({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-2 border-b bg-muted/30 px-6 py-2 text-sm',
+        'flex items-center gap-2 border-b bg-muted/30 px-4 py-2 text-sm sm:px-6',
         className
       )}
     >
