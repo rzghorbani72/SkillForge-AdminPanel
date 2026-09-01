@@ -2794,6 +2794,12 @@ export const tr = {
     blockProjects: 'Projeler',
     blockMembership: 'Üyelik',
     blockSlideshow: 'Slayt Gösterisi',
+    heroVideoTitle: 'Banner videosu',
+    heroVideoHint:
+      'Video, aynı kutuda foto slaytının yerini alır. Videoyu İçerik bölümünden yükleyin.',
+    heroVideoPick: 'Video seç',
+    heroVideoSelected: 'Seçilen video',
+    heroVideoAutoplay: 'Otomatik ve sessiz oynat',
     panelMediaRatio: 'Görsel kutu oranı',
     panelRatioFree: 'Serbest',
     panelMediaHeight: 'Görsel kutu yüksekliği',

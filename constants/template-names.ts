@@ -112,6 +112,46 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
   }
 };
 
+/**
+ * Design family. Groups the hero picker and filters the gallery, so 14 designs
+ * read as four short lists instead of one long scroll. One map for both — the
+ * gallery used to carry a partial copy that silently called half the catalog
+ * "professional".
+ */
+export type TemplateCategory = 'minimal' | 'creative' | 'professional' | 'dark';
+
+export const TEMPLATE_CATEGORY: Record<TemplateKey, TemplateCategory> = {
+  keyhan: 'dark',
+  tavan: 'dark',
+  shabtab: 'dark',
+  dastan: 'creative',
+  parastoo: 'creative',
+  hamrang: 'creative',
+  shafagh: 'creative',
+  elektron: 'creative',
+  nokhbeh: 'minimal',
+  zabaneh: 'minimal',
+  raushan: 'minimal',
+  sepid: 'minimal',
+  baran: 'minimal',
+  bikaran: 'professional'
+};
+
+export const CATEGORY_LABELS: {
+  value: TemplateCategory | 'all';
+  label: string;
+}[] = [
+  { value: 'all', label: 'همه' },
+  { value: 'minimal', label: 'مینیمال' },
+  { value: 'creative', label: 'خلاق' },
+  { value: 'professional', label: 'حرفه‌ای' },
+  { value: 'dark', label: 'تاریک' }
+];
+
+export function getTemplateCategoryByKey(key: string): TemplateCategory {
+  return TEMPLATE_CATEGORY[key as TemplateKey] ?? 'professional';
+}
+
 const FALLBACK_IDENTITY: TemplateIdentity = {
   name: 'قالب اختصاصی',
   vertical: 'عمومی',

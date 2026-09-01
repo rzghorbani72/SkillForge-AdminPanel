@@ -5810,6 +5810,12 @@ export const en = {
     blockProjects: 'Projects',
     blockMembership: 'Membership',
     blockSlideshow: 'Slideshow / Banner',
+    heroVideoTitle: 'Banner video',
+    heroVideoHint:
+      "A video takes the photo slideshow's place in the same box. Upload videos from the Content area.",
+    heroVideoPick: 'Choose a video',
+    heroVideoSelected: 'Selected video',
+    heroVideoAutoplay: 'Autoplay, muted',
     panelMediaRatio: 'Image box ratio',
     panelRatioFree: 'Free',
     panelMediaHeight: 'Image box height',

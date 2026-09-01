@@ -6,6 +6,10 @@ import type { TemplatePreset } from '@/types/api';
 import { getDesignSystem } from '@/lib/design-systems';
 import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
 import { SectionPreviewFrame } from './section-preview-frame';
+import {
+  getTemplateCategoryByKey,
+  type TemplateCategory
+} from '@/constants/template-names';
 
 // Card/preview swatches follow the template's saved theme when present, so a
 // dedicated template shows its real palette instead of the design-system default.
@@ -22,34 +26,11 @@ export function resolveTemplateColors(preset: TemplatePreset) {
   };
 }
 
-export type TemplateCategory = 'minimal' | 'creative' | 'professional' | 'dark';
-
-const CATEGORY_BY_ID: Record<string, TemplateCategory> = {
-  keyhan: 'dark',
-  tavan: 'dark',
-  dastan: 'creative',
-  parastoo: 'creative',
-  nokhbeh: 'minimal',
-  zabaneh: 'minimal',
-  bikaran: 'professional'
-};
-
 // PUBLIC presets map to a known catalog category; until the API returns one,
 // derive it from the preset id. DEDICATED templates have no fixed category.
 export function getTemplateCategory(preset: TemplatePreset): TemplateCategory {
-  return CATEGORY_BY_ID[preset.id] ?? 'professional';
+  return getTemplateCategoryByKey(preset.id);
 }
-
-export const CATEGORY_LABELS: {
-  value: TemplateCategory | 'all';
-  label: string;
-}[] = [
-  { value: 'all', label: 'همه' },
-  { value: 'minimal', label: 'مینیمال' },
-  { value: 'creative', label: 'خلاق' },
-  { value: 'professional', label: 'حرفه‌ای' },
-  { value: 'dark', label: 'تاریک' }
-];
 
 interface TemplateSectionProps {
   title: string;

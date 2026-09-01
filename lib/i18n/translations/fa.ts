@@ -5792,6 +5792,12 @@ export const fa = {
     blockProjects: 'نمونه‌کارها',
     blockMembership: 'اشتراک',
     blockSlideshow: 'اسلایدشو / بنر',
+    heroVideoTitle: 'ویدیوی بنر',
+    heroVideoHint:
+      'یک ویدیو جای اسلایدشو عکس را در همان کادر می‌گیرد. ویدیو را از بخش «محتوا» بارگذاری کنید.',
+    heroVideoPick: 'انتخاب ویدیو',
+    heroVideoSelected: 'ویدیوی انتخاب‌شده',
+    heroVideoAutoplay: 'پخش خودکار و بی‌صدا',
     panelMediaRatio: 'نسبت کادر تصویر',
     panelRatioFree: 'آزاد',
     panelMediaHeight: 'ارتفاع کادر تصویر',

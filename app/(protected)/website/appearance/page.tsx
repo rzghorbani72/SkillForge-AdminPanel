@@ -55,10 +55,12 @@ import {
 import {
   TemplateSection,
   resolveTemplateColors,
-  getTemplateCategory,
+  getTemplateCategory
+} from '@/components/ui-template/gallery-cards';
+import {
   CATEGORY_LABELS,
   type TemplateCategory
-} from '@/components/ui-template/gallery-cards';
+} from '@/constants/template-names';
 import type {
   BorderRadius,
   ElementAnimation,

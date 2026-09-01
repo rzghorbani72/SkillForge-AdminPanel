@@ -2720,6 +2720,12 @@ export const ar = {
     blockProjects: 'المشاريع',
     blockMembership: 'العضوية',
     blockSlideshow: 'عرض الشرائح',
+    heroVideoTitle: 'فيديو البانر',
+    heroVideoHint:
+      'يحل الفيديو محل عرض الصور في الصندوق نفسه. ارفع الفيديو من قسم المحتوى.',
+    heroVideoPick: 'اختر فيديو',
+    heroVideoSelected: 'الفيديو المختار',
+    heroVideoAutoplay: 'تشغيل تلقائي وصامت',
     panelMediaRatio: 'نسبة صندوق الصورة',
     panelRatioFree: 'حر',
     panelMediaHeight: 'ارتفاع صندوق الصورة',

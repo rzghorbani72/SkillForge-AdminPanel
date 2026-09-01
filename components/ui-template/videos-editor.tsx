@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -9,9 +8,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { apiClient } from '@/lib/api';
-import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import {
+  useAcademyVideos,
+  videoStreamPath
+} from '@/lib/ui-template/use-academy-videos';
 import { SectionItemControls, moveItem } from './section-item-controls';
 
 export interface VideoItemConfig {
@@ -21,13 +22,6 @@ export interface VideoItemConfig {
   poster?: string;
   title?: string;
   description?: string;
-}
-
-interface LibraryVideo {
-  id: string;
-  title: string;
-  streaming_url?: string;
-  poster_url?: string | null;
 }
 
 interface VideosEditorProps {
@@ -46,28 +40,8 @@ function readVideos(cfg: Record<string, unknown>): VideoItemConfig[] {
  */
 export function VideosEditor({ cfg, set }: VideosEditorProps) {
   const { t } = useTranslation();
-  const [library, setLibrary] = useState<LibraryVideo[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { videos: library, isLoading } = useAcademyVideos();
   const videos = readVideos(cfg);
-
-  useEffect(() => {
-    let cancelled = false;
-    apiClient
-      .getVideos()
-      .then((data: unknown) => {
-        if (cancelled) return;
-        setLibrary(Array.isArray(data) ? (data as LibraryVideo[]) : []);
-      })
-      .catch((error) => {
-        if (!cancelled) ErrorHandler.handleApiError(error);
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const write = (next: VideoItemConfig[]) => set('videos', next);
 
@@ -83,7 +57,7 @@ export function VideosEditor({ cfg, set }: VideosEditorProps) {
       ...videos,
       {
         videoId: source.id,
-        url: source.streaming_url ?? `/videos/stream/${source.id}`,
+        url: videoStreamPath(source),
         poster: source.poster_url ?? undefined,
         title: source.title
       }

@@ -30,6 +30,7 @@ import {
   type HeroPreviewContext
 } from './hero-variant-picker';
 import { BlockTypePicker, blockTypeLabelKey } from './block-type-picker';
+import { HeroVideoPicker } from './hero-video-picker';
 import { SlidesEditor } from './slides-editor';
 import { VideosEditor } from './videos-editor';
 import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
@@ -220,6 +221,12 @@ export function SectionEditor({
                     })}
                   </div>
                 </div>
+
+                <HeroVideoPicker
+                  cfg={cfg}
+                  set={set}
+                  onUpdate={(config) => onUpdate(block.id, config)}
+                />
 
                 {(cfg.mediaRatio ?? 'free') === 'free' && (
                   <div>
