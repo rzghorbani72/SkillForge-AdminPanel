@@ -567,7 +567,7 @@ html.transitioning *::after {
 /* Browsers force direction:ltr on tel/email/number inputs, which would flush
    their text to the left edge. Align to the page direction instead, so digits
    keep their safe LTR order while the text sits where the design expects. */
-[dir='rtl'] .auth-input {
+[dir='rtl'] .auth-input:not([dir='ltr']) {
   text-align: right;
 }
 .auth-input::placeholder {

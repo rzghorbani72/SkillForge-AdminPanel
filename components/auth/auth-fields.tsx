@@ -18,7 +18,7 @@ interface AuthFieldProps
 
 /** Boxed 56px input matching the auth design (label is the placeholder). */
 export const AuthField = React.forwardRef<HTMLInputElement, AuthFieldProps>(
-  function AuthField({ label, error, type, ...props }, ref) {
+  function AuthField({ label, error, type, placeholder, ...props }, ref) {
     const [show, setShow] = React.useState(false);
     const isPassword = type === 'password';
     const inputType = isPassword && show ? 'text' : type;
@@ -30,7 +30,7 @@ export const AuthField = React.forwardRef<HTMLInputElement, AuthFieldProps>(
             {...props}
             ref={ref}
             type={inputType}
-            placeholder={label}
+            placeholder={placeholder ?? label}
             aria-label={label}
             className={cn(
               'auth-input',
@@ -70,6 +70,8 @@ interface AuthPhoneFieldProps
  * Phone input for every auth screen: Persian digits on screen in fa, English
  * digits in state — so what is sent to the API is always English.
  */
+const PHONE_PLACEHOLDER = '0912 *** ** **';
+
 export function AuthPhoneField({
   value,
   onValueChange,
@@ -84,6 +86,7 @@ export function AuthPhoneField({
       inputMode="tel"
       dir="ltr"
       autoComplete="tel"
+      placeholder={PHONE_PLACEHOLDER}
       value={language === 'fa' ? toPersianDigits(value) : value}
       onChange={(e) => onValueChange(toEnglishDigits(e.target.value))}
     />
