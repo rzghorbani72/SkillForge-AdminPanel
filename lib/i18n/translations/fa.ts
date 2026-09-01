@@ -598,8 +598,58 @@ export const fa = {
     deniedTitle: 'دسترسی مجاز نیست',
     deniedDescription: 'شما مجوز مشاهده این صفحه را ندارید.'
   },
+  storage: {
+    title: 'فضای ذخیره‌سازی',
+    description:
+      'ببینید فایل‌های آکادمی چقدر فضا گرفته‌اند و چقدر از سهم پلن باقی مانده است',
+    totalUsed: 'فضای استفاده‌شده',
+    remaining: 'فضای باقی‌مانده',
+    percentOfPlanUsed: '{{percent}} از فضای پلن استفاده شده است',
+    breakdownTitle: 'تفکیک بر اساس نوع فایل',
+    breakdownDescription: 'هر نوع فایل چقدر از فضای استفاده‌شده را گرفته است',
+    typeVideo: 'ویدیوها',
+    typeImage: 'تصاویر',
+    typeAudio: 'فایل‌های صوتی',
+    typeDocument: 'اسناد',
+    fileCount: '{{count}} فایل',
+    shareOfTotal: '{{percent}} از کل',
+    nearFullWarning: 'فضای ذخیره‌سازی رو به پایان است.',
+    fullWarning:
+      'فضای ذخیره‌سازی پر شده است؛ تا آزادسازی فضا یا خرید فضای بیشتر، آپلود انجام نمی‌شود.',
+    addStorage: 'افزایش فضا',
+    filesTitle: 'فایل‌ها',
+    filesDescription:
+      'بزرگ‌ترین فایل‌ها در ابتدا. حذف فایل، آن را برای همیشه پاک می‌کند.',
+    filterAll: 'همه',
+    columnFile: 'فایل',
+    columnType: 'نوع',
+    columnSize: 'حجم',
+    columnUploaded: 'تاریخ بارگذاری',
+    columnUsedIn: 'محل استفاده',
+    unused: 'هیچ‌جا استفاده نشده',
+    openLocation: 'رفتن به محل استفاده',
+    area: {
+      lesson: 'درس',
+      course: 'دوره',
+      course_cover: 'کاور دوره',
+      session_recording: 'ضبط جلسه',
+      academy_branding: 'هویت بصری',
+      home_page: 'صفحهٔ اصلی',
+      profile_avatar: 'تصویر پروفایل',
+      article: 'مقاله',
+      product: 'محصول'
+    },
+    delete: 'حذف',
+    deleteTitle: 'این فایل حذف شود؟',
+    deleteConfirm:
+      '«{{name}}» ({{size}}) هیچ‌جا استفاده نشده است. برای همیشه از فضای ذخیره‌سازی پاک می‌شود و فضای آن آزاد می‌گردد. این کار بازگشت‌پذیر نیست.',
+    deleteSuccess: 'فایل حذف شد و فضای آن آزاد گردید',
+    noFiles: 'هنوز فایلی وجود ندارد',
+    pageOf: 'صفحهٔ {{page}} از {{total}}'
+  },
   navigation: {
     allSubscriptions: 'همهٔ اشتراک‌ها',
+    storage: 'فضای ذخیره‌سازی',
     rolesPermissions: 'نقش‌ها و دسترسی‌ها',
     Dashboard: 'داشبورد',
     dashboard: 'داشبورد',

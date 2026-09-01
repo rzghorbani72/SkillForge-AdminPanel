@@ -610,8 +610,58 @@ export const en = {
     deniedTitle: 'Access denied',
     deniedDescription: 'You do not have permission to view this page.'
   },
+  storage: {
+    title: 'Storage',
+    description:
+      'See what your academy files take up, and how much of your plan is left',
+    totalUsed: 'Used',
+    remaining: 'Remaining',
+    percentOfPlanUsed: '{{percent}} of your plan storage used',
+    breakdownTitle: 'Usage by file type',
+    breakdownDescription:
+      'How much of the used space each kind of file takes up',
+    typeVideo: 'Videos',
+    typeImage: 'Images',
+    typeAudio: 'Audio',
+    typeDocument: 'Documents',
+    fileCount: '{{count}} files',
+    shareOfTotal: '{{percent}} of total',
+    nearFullWarning: 'Your storage is almost full.',
+    fullWarning:
+      'Your storage is full — uploads are blocked until you free space or add more.',
+    addStorage: 'Add storage',
+    filesTitle: 'Files',
+    filesDescription: 'Biggest first. Deleting a file removes it for good.',
+    filterAll: 'All',
+    columnFile: 'File',
+    columnType: 'Type',
+    columnSize: 'Size',
+    columnUploaded: 'Uploaded',
+    columnUsedIn: 'Used in',
+    unused: 'Not used anywhere',
+    openLocation: 'Open where it is used',
+    area: {
+      lesson: 'Lesson',
+      course: 'Course',
+      course_cover: 'Course cover',
+      session_recording: 'Session recording',
+      academy_branding: 'Branding',
+      home_page: 'Home page',
+      profile_avatar: 'Profile photo',
+      article: 'Article',
+      product: 'Product'
+    },
+    delete: 'Delete',
+    deleteTitle: 'Delete this file?',
+    deleteConfirm:
+      '"{{name}}" ({{size}}) is not used anywhere. It will be permanently removed from storage and the space freed. This cannot be undone.',
+    deleteSuccess: 'File deleted and space freed',
+    noFiles: 'No files yet',
+    pageOf: 'Page {{page}} of {{total}}'
+  },
   navigation: {
     allSubscriptions: 'All Subscriptions',
+    storage: 'Storage',
     rolesPermissions: 'Roles & Permissions',
     dashboard: 'Dashboard',
     platformOverview: 'Platform Overview',

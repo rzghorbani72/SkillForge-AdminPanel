@@ -1669,6 +1669,40 @@ class ApiClient {
     return payload?.data ?? payload;
   }
 
+  /** What each media kind takes of this academy's storage quota. */
+  async getCurrentAcademyStorageUsage(
+    opts?: ReadOptions
+  ): Promise<AcademyStorageUsage> {
+    const response = await this.request(
+      '/academies/current/storage-usage',
+      opts
+    );
+    const payload = response.data as { data?: AcademyStorageUsage };
+    if (!payload?.data) throw new Error('Unexpected storage usage response');
+    return payload.data;
+  }
+
+  /** Files filling the quota, biggest first. */
+  async getStorageFiles(
+    params: { kind?: StorageMediaType; page?: number; limit?: number } = {},
+    opts?: ReadOptions
+  ): Promise<StorageFilesPage> {
+    const query = new URLSearchParams();
+    if (params.kind) query.set('kind', params.kind);
+    query.set('page', String(params.page ?? 1));
+    query.set('limit', String(params.limit ?? 20));
+
+    const response = await this.request(`/storage/files?${query}`, opts);
+    const payload = response.data as { data?: StorageFilesPage };
+    if (!payload?.data) throw new Error('Unexpected storage files response');
+    return payload.data;
+  }
+
+  /** Only an unused upload; the backend 409s anything still in use. */
+  async deleteStorageFile(kind: StorageMediaType, id: string) {
+    return this.request(`/storage/files/${kind}/${id}`, { method: 'DELETE' });
+  }
+
   /** Every academy the signed-in owner pays for, each with its own plan. */
   async getSubscriptionsOverview(): Promise<AcademySubscriptionOverviewRow[]> {
     const response = await this.request('/academies/subscriptions/overview');
@@ -6458,6 +6492,62 @@ export interface StructuredPlanLimits {
   storage_gb: number;
   live_classes_per_month: number;
   videos: number;
+}
+
+export type StorageMediaType = 'video' | 'image' | 'audio' | 'document';
+
+export interface AcademyStorageTypeUsage {
+  type: StorageMediaType;
+  bytes: number;
+  count: number;
+}
+
+export interface AcademyStorageUsage {
+  total_bytes: number;
+  limit_bytes: number;
+  remaining_bytes: number;
+  percent_used: number;
+  warn_level: 'ok' | 'warning' | 'full';
+  is_upload_blocked: boolean;
+  by_type: AcademyStorageTypeUsage[];
+}
+
+export type StorageUsageArea =
+  | 'lesson'
+  | 'course'
+  | 'course_cover'
+  | 'session_recording'
+  | 'academy_branding'
+  | 'home_page'
+  | 'profile_avatar'
+  | 'article';
+
+export interface StorageFileUsage {
+  area: StorageUsageArea;
+  label: string;
+  /** The course a lesson belongs to, when there is one. */
+  context?: string;
+  href?: string;
+}
+
+export interface StorageFileRow {
+  id: string;
+  kind: StorageMediaType;
+  title: string;
+  size: number;
+  mime_type: string | null;
+  created_at: string;
+  /** Where the file is used — the manager removes it from there, not here. */
+  usages: StorageFileUsage[];
+  /** Thumbnail source for images; null for every other kind. */
+  preview_url: string | null;
+}
+
+export interface StorageFilesPage {
+  rows: StorageFileRow[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 export interface AcademySiteStatusData {

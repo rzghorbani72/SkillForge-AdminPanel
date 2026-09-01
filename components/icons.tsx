@@ -61,6 +61,7 @@ import {
   Network,
   Percent,
   CalendarClock,
+  HardDrive,
   Webhook
 } from 'lucide-react';
 export type IconType =
@@ -128,6 +129,7 @@ export type IconType =
   | 'percent'
   | 'calendarClock'
   | 'webhook'
+  | 'hardDrive'
   | 'gallery'
   | 'megaphone';
 export type Icon = LucideIcon;
@@ -197,6 +199,7 @@ export const Icons = {
   percent: Percent,
   calendarClock: CalendarClock,
   webhook: Webhook,
+  hardDrive: HardDrive,
   gallery: LayoutGrid,
   megaphone: Megaphone
 };

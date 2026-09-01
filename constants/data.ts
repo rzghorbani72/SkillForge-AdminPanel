@@ -426,6 +426,15 @@ export const navItems: NavItem[] = [
     paymentGated: true
   },
   {
+    title: 'Storage',
+    href: '/settings/storage',
+    icon: 'hardDrive' as IconType,
+    label: 'storage',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'account'
+  },
+  {
     title: 'Roles & Permissions',
     href: '/settings/roles',
     icon: 'shield' as IconType,

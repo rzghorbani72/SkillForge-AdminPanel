@@ -33,6 +33,11 @@ export const queryKeys = {
 
   subscription: (academyId: AcademyId) => scope(academyId, 'subscription'),
 
+  storageUsage: (academyId: AcademyId) => scope(academyId, 'storage-usage'),
+
+  storageFiles: (academyId: AcademyId, kind: string, page: number) =>
+    scope(academyId, 'storage-files', kind, String(page)),
+
   /** `slugs` is the sorted, comma-joined batch these quotes were priced for. */
   upgradeQuotes: (academyId: AcademyId, slugs: string) =>
     scope(academyId, 'upgrade-quotes', slugs),
