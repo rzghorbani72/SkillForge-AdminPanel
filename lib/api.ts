@@ -3046,10 +3046,10 @@ class ApiClient {
 
   async updateProfile(profileData: {
     display_name?: string;
-    bio?: string;
-    avatar_id?: number;
+    /** Image id returned by uploadImage — persisted as the profile avatar. */
+    image_id?: string;
   }) {
-    return this.request('/profiles/current', {
+    return this.request('/profiles/me', {
       method: 'PATCH',
       body: JSON.stringify(profileData)
     }) as any;
@@ -3994,7 +3994,8 @@ class ApiClient {
   async changeProfilePassword(data: {
     /** Omit to change the signed-in profile's own password. */
     profile_id?: string | number;
-    current_password: string;
+    /** Omit to set a new password without re-entering the old one. */
+    current_password?: string;
     new_password: string;
     confirm_new_password: string;
   }) {

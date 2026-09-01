@@ -991,6 +991,8 @@ export const en = {
     passwordTooWeak:
       'Password must contain an English letter, a number, and a symbol',
     passwordMinLength: 'At least 6 characters',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
     passwordHasLetter: 'Contains an English letter',
     passwordHasNumber: 'Contains a number',
     selectStore: 'Please select an academy',
@@ -2805,6 +2807,11 @@ export const en = {
       'Manage your avatar, contact information, and bio.',
     uploadPhoto: 'Upload Photo',
     photoFormatHint: 'JPG, PNG or GIF up to 2MB.',
+    photoDropHint: 'Drop a photo here, or click to choose one.',
+    photoTooLarge: 'The photo is larger than 2MB.',
+    photoInvalidType: 'Only JPG, PNG, GIF or WebP images are accepted.',
+    passwordSessionNote:
+      'The new password replaces the old one right away and you stay signed in.',
     fullName: 'Full name',
     fullNamePlaceholder: 'Jane Doe',
     emailPlaceholder: 'jane@skillforge.com',
@@ -3018,7 +3025,8 @@ export const en = {
     securitySubtitle:
       'Strengthen your account by keeping credentials and notifications up to date.',
     changePassword: 'Change password',
-    changePasswordDescription: 'Use a strong password and update it regularly.',
+    changePasswordDescription:
+      'Set a new password directly — your current one is not needed.',
     currentPassword: 'Current password',
     currentPasswordPlaceholder: 'Enter your current password',
     newPassword: 'New password',

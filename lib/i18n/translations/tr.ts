@@ -625,6 +625,8 @@ export const tr = {
     passwordTooWeak:
       'Şifre bir İngilizce harf, bir rakam ve bir sembol içermelidir',
     passwordMinLength: 'En az 6 karakter',
+    showPassword: 'Parolayı göster',
+    hidePassword: 'Parolayı gizle',
     passwordHasLetter: 'Bir İngilizce harf içerir',
     passwordHasNumber: 'Bir rakam içerir',
     selectStore: 'Lütfen bir enstitü seçin',
@@ -1337,6 +1339,11 @@ export const tr = {
       'Avatarınızı, iletişim bilgilerinizi ve biyografinizi yönetin.',
     uploadPhoto: 'Fotoğraf Yükle',
     photoFormatHint: 'JPG, PNG veya GIF, maksimum 2MB.',
+    photoDropHint: 'Buraya bir fotoğraf bırakın veya seçmek için tıklayın.',
+    photoTooLarge: 'Fotoğraf 2MB sınırından büyük.',
+    photoInvalidType: 'Yalnızca JPG, PNG, GIF veya WebP kabul edilir.',
+    passwordSessionNote:
+      'Yeni parola eskisinin yerini hemen alır ve oturumunuz açık kalır.',
     fullName: 'Tam Ad',
     fullNamePlaceholder: 'Ad Soyad',
     emailPlaceholder: 'ornek@skillforge.com',
