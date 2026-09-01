@@ -21,9 +21,9 @@ export function ToastContainerWrapper() {
       draggable
       pauseOnHover
       theme="light"
+      className="right-[10px] md:right-[-50px]"
       style={{
-        bottom: '24px',
-        right: '24px',
+        bottom: '12px',
         width: `min(${TOAST_WIDTH}px, calc(100vw - 32px))`,
         zIndex: 9999
       }}
