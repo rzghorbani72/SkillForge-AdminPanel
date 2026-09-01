@@ -348,7 +348,38 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
   },
 
   footer: { name: 'فوتر', content: [] },
-  slideshow: { name: 'اسلایدشو / بنر', content: [] },
+  slideshow: {
+    name: 'اسلایدشو / بنر',
+    content: [],
+    hasAlignment: true,
+    hasHeight: true,
+    dynamicContentNote:
+      'تصویر، عنوان و متن هر اسلاید را در همین پنل، بخش «اسلایدها» تنظیم کنید. تا زمانی که اسلایدی اضافه نشود این بخش در سایت نمایش داده نمی‌شود.'
+  },
+
+  videos: {
+    name: 'ویدیوها',
+    content: [
+      {
+        key: 'title',
+        label: 'عنوان بخش',
+        kind: 'text',
+        required: true,
+        placeholder: 'عنوان این بخش',
+        defaultValue: 'ویدیوهای آکادمی'
+      },
+      {
+        key: 'subtitle',
+        label: 'توضیحات زیر عنوان',
+        kind: 'textarea',
+        placeholder: 'یک جمله دربارهٔ ویدیوها',
+        defaultValue:
+          'معرفی کوتاه دوره‌ها، کلاس‌ها و فضای آموزشی ما را تماشا کنید.'
+      }
+    ],
+    dynamicContentNote:
+      'ویدیوها از کتابخانه رسانه آکادمی انتخاب می‌شوند و تا زمان کلیک بازدیدکننده پخش نمی‌شوند. تا زمانی که ویدیویی انتخاب نشود این بخش در سایت نمایش داده نمی‌شود.'
+  },
   marquee: { name: 'عناوین متحرک', content: [] },
   membership: { name: 'اشتراک', content: [] },
   placeholder: { name: 'جایگاه خالی', content: [] }

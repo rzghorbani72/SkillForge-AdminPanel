@@ -2,6 +2,7 @@
 export const ADDABLE_SECTION_TYPES = [
   'hero',
   'slideshow',
+  'videos',
   'features',
   'courses',
   'testimonials',

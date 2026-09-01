@@ -753,6 +753,7 @@ export interface UIBlockConfig {
     | 'footer'
     | 'sidebar'
     | 'slideshow'
+    | 'videos'
     | 'membership'
     | 'marquee'
     | 'course-grid'

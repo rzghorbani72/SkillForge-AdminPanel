@@ -9,7 +9,8 @@ import {
   Sparkles,
   Star,
   Tag,
-  Users
+  Users,
+  Video
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
@@ -17,6 +18,7 @@ import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
 const TYPE_ICONS: Record<string, typeof Sparkles> = {
   hero: Sparkles,
   slideshow: ImageIcon,
+  videos: Video,
   features: Layers,
   courses: LayoutGrid,
   testimonials: Star,

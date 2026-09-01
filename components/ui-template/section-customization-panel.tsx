@@ -30,6 +30,8 @@ import {
   type HeroPreviewContext
 } from './hero-variant-picker';
 import { BlockTypePicker, blockTypeLabelKey } from './block-type-picker';
+import { SlidesEditor } from './slides-editor';
+import { VideosEditor } from './videos-editor';
 import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
 import { TEMPLATE_KEYS } from '@/constants/template-names';
 
@@ -95,6 +97,15 @@ export function SectionEditor({
       : null;
   const incomplete = isSectionIncomplete(block.type, cfg);
   const isVisible = block.isVisible !== false;
+  // Media sections ship hidden, because an empty carousel or video wall is
+  // worse than no section. Adding the first item is the manager saying they
+  // want it, so it turns itself on rather than needing a second toggle.
+  const setAndReveal = (key: string, value: unknown) => {
+    set(key, value);
+    if (!isVisible && Array.isArray(value) && value.length > 0) {
+      onToggleVisible(block.id, true);
+    }
+  };
   const isGalleryHero = block.type === 'hero' && isGalleryHeroStyle(cfg.style);
 
   return (
@@ -161,6 +172,18 @@ export function SectionEditor({
                   onChange={(style) => set('style', style)}
                   preview={preview}
                 />
+              </div>
+            )}
+
+            {block.type === 'slideshow' && (
+              <div className="mt-4 border-t border-zinc-200/70 pt-4">
+                <SlidesEditor cfg={cfg} set={setAndReveal} />
+              </div>
+            )}
+
+            {block.type === 'videos' && (
+              <div className="mt-4 border-t border-zinc-200/70 pt-4">
+                <VideosEditor cfg={cfg} set={setAndReveal} />
               </div>
             )}
 
