@@ -3,6 +3,8 @@
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
 
+// Nine well-separated hues plus the colour wheel: two tidy rows of five, and no
+// two presets so close together that choosing between them is a decision.
 export const BRAND_COLORS = [
   '#6366f1',
   '#8b5cf6',
@@ -11,10 +13,7 @@ export const BRAND_COLORS = [
   '#f97316',
   '#eab308',
   '#22c55e',
-  '#14b8a6',
   '#06b6d4',
-  '#3b82f6',
-  '#64748b',
   '#1e293b'
 ] as const;
 
@@ -52,7 +51,7 @@ export function BrandColorPicker({
 
       {/* A fixed grid, not a wrapping row: the swatches must land in the same
           two tidy rows at every dialog width. */}
-      <div className="grid grid-cols-7 justify-items-center gap-2">
+      <div className="grid w-fit grid-cols-5 gap-2.5">
         {BRAND_COLORS.map((hex) => (
           <button
             key={hex}

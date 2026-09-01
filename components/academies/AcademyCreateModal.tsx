@@ -11,7 +11,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { SlugField } from '@/components/academies/slug-field';
 import { ImageUploadField } from '@/components/academies/image-upload-field';
 import {
@@ -51,6 +57,10 @@ type AcademyCreateModalProps = {
   onSubmit: (data: AcademyCreateInput) => Promise<void>;
   t: (k: string) => string;
 };
+
+function categoryLabelKey(key: string) {
+  return `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+}
 
 export function AcademyCreateModal({
   open,
@@ -126,84 +136,93 @@ export function AcademyCreateModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent dir="rtl" className="gap-4 rounded-2xl sm:max-w-4xl">
-        <DialogHeader className="text-right">
-          <p className="text-xs text-muted-foreground">
-            {t('stores.createModalTitle')}
-          </p>
-          <DialogTitle className="text-lg">
+      <DialogContent
+        dir="rtl"
+        className="gap-0 rounded-2xl sm:max-w-3xl sm:p-8"
+      >
+        <DialogHeader className="space-y-1.5 text-start">
+          <DialogTitle className="text-xl font-semibold">
             {t('stores.createModalHeading')}
           </DialogTitle>
+          <p className="text-sm leading-6 text-muted-foreground">
+            {t('stores.createModalSubtitle')}
+          </p>
         </DialogHeader>
 
         {/* Two columns keep the dialog short: what the academy is on one side,
             how it looks on the other. */}
-        <div className="grid gap-x-6 gap-y-4 sm:grid-cols-12">
-          <div className="space-y-4 sm:col-span-7">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium">
-                  {t('stores.academyName')}
-                </label>
-                <Input
-                  value={name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  placeholder={t('stores.academyNamePlaceholder')}
-                  autoFocus
-                />
-              </div>
-              <SlugField
-                value={slug}
-                status={slugStatus}
-                onChange={handleSlugChange}
-                t={t}
+        <div className="mt-6 grid gap-x-8 gap-y-8 sm:grid-cols-12">
+          <div className="space-y-5 sm:col-span-7">
+            <p className="text-xs font-medium text-muted-foreground">
+              {t('stores.sectionIdentity')}
+            </p>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                {t('stores.academyName')}
+              </label>
+              <Input
+                value={name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder={t('stores.academyNamePlaceholder')}
+                autoFocus
               />
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium">
+            <SlugField
+              value={slug}
+              status={slugStatus}
+              onChange={handleSlugChange}
+              t={t}
+            />
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
                 {t('stores.mainCategory')}
+                <span className="ms-1.5 font-normal text-muted-foreground">
+                  {t('stores.optionalTag')}
+                </span>
               </label>
-              <div className="flex flex-wrap gap-1.5">
-                {CATEGORY_KEYS.map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    aria-pressed={category === key}
-                    onClick={() => setCategory(category === key ? '' : key)}
-                    className={cn(
-                      'rounded-full border px-2.5 py-1 text-xs transition-colors',
-                      category === key
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground'
-                    )}
-                  >
-                    {t(
-                      `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`
-                    )}
-                  </button>
-                ))}
-              </div>
+              <Select dir="rtl" value={category} onValueChange={setCategory}>
+                <SelectTrigger aria-label={t('stores.mainCategory')}>
+                  <SelectValue placeholder={t('stores.categoryPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORY_KEYS.map((key) => (
+                    <SelectItem key={key} value={key}>
+                      {t(categoryLabelKey(key))}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div>
-              <label className="mb-1 block text-sm font-medium">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
                 {t('stores.shortDescription')}
+                <span className="ms-1.5 font-normal text-muted-foreground">
+                  {t('stores.optionalTag')}
+                </span>
               </label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder={t('stores.shortDescriptionPlaceholder')}
-                rows={2}
+                rows={3}
                 className="resize-none"
               />
             </div>
           </div>
 
-          {/* Branding — the two uploads share one row and one height so they
-              read as a pair. */}
-          <div className="space-y-3 rounded-2xl border border-border/70 bg-muted/20 p-3 sm:col-span-5">
-            <div className="grid items-stretch gap-3 sm:grid-cols-2">
+          {/* A hairline instead of a filled panel: it separates branding from
+              the identity fields without adding another box to read. */}
+          <div className="space-y-5 sm:col-span-5 sm:border-s sm:border-border/60 sm:ps-8">
+            <p className="text-xs font-medium text-muted-foreground">
+              {t('stores.sectionBranding')}
+              <span className="ms-1.5">{t('stores.optionalTag')}</span>
+            </p>
+
+            <div className="grid items-stretch gap-4 sm:grid-cols-2">
               <ImageUploadField
                 size="sm"
                 label={t('stores.brandingLogo')}
@@ -225,23 +244,21 @@ export function AcademyCreateModal({
               />
             </div>
 
-            <div className="border-t border-border/70 pt-3">
-              <BrandColorPicker
-                value={primaryColor}
-                onChange={setPrimaryColor}
-                label={t('stores.brandingColor')}
-                customLabel={t('stores.brandingColorCustom')}
-              />
-            </div>
+            <BrandColorPicker
+              value={primaryColor}
+              onChange={setPrimaryColor}
+              label={t('stores.brandingColor')}
+              customLabel={t('stores.brandingColorCustom')}
+            />
           </div>
         </div>
 
-        <DialogFooter className="flex-row gap-3 sm:justify-normal sm:space-x-0">
+        <DialogFooter className="mt-7 flex-row justify-end gap-3 border-t border-border/60 pt-5 sm:space-x-0">
           <button
             type="button"
             disabled={saving}
             onClick={handleClose}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-[14px] border border-border text-sm font-medium text-muted-foreground transition-colors hover:bg-muted disabled:opacity-60"
+            className="inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-60"
           >
             {t('stores.cancel')}
           </button>
@@ -250,9 +267,9 @@ export function AcademyCreateModal({
             type="button"
             disabled={!canSubmit}
             onClick={handleSubmit}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-[14px] bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
+            className="inline-flex h-11 min-w-[10rem] items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
           >
-            {saving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             {t('common.create')}
           </button>
         </DialogFooter>

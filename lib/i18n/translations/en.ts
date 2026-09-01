@@ -1443,7 +1443,13 @@ export const en = {
     brandingFaviconHint: 'Square PNG · min 64×64',
     brandingReplaceHint: 'Click to replace',
     brandingColor: 'Brand Color',
-    brandingColorCustom: 'Custom color'
+    brandingColorCustom: 'Custom color',
+    createModalSubtitle:
+      'All you need is a name and an address. Everything else can be changed later.',
+    sectionIdentity: 'Academy details',
+    sectionBranding: 'Branding',
+    categoryPlaceholder: 'Choose a category',
+    optionalTag: '(optional)'
   },
   courses: {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.

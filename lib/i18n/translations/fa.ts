@@ -1433,7 +1433,13 @@ export const fa = {
     brandingFaviconHint: 'PNG مربعی · حداقل ۶۴×۶۴',
     brandingReplaceHint: 'برای تغییر کلیک کنید',
     brandingColor: 'رنگ برند',
-    brandingColorCustom: 'رنگ دلخواه'
+    brandingColorCustom: 'رنگ دلخواه',
+    createModalSubtitle:
+      'فقط یک نام و یک آدرس لازم است. بقیه موارد را بعداً هم می‌توانید تغییر دهید.',
+    sectionIdentity: 'مشخصات آکادمی',
+    sectionBranding: 'هویت بصری',
+    categoryPlaceholder: 'انتخاب دسته‌بندی',
+    optionalTag: '(اختیاری)'
   },
   courses: {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.

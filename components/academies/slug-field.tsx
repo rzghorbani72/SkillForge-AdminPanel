@@ -32,7 +32,6 @@ export function SlugField({ value, status, onChange, t }: SlugFieldProps) {
           status === 'available' && 'border-green-500'
         )}
       >
-        {' '}
         <span className="flex shrink-0 items-center gap-1 border-r bg-muted px-3 py-2 text-xs text-muted-foreground">
           {ACADEMY_DOMAIN}
           {status === 'checking' && (
