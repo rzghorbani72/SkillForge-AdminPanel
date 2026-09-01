@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import {
+  API_DEVELOPMENT_DEFAULTS,
   API_PRODUCTION_DEFAULTS,
   API_REWRITE_SOURCES,
   API_VERSION_PATH
@@ -38,9 +39,13 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_BACKEND_API_URL:
       process.env.NEXT_PUBLIC_BACKEND_API_URL ||
       API_PRODUCTION_DEFAULTS.backendApiUrl,
+    // Falling back to the production storefront in dev pointed the site-builder
+    // iframe at the live site, so the local draft preview could never render.
     NEXT_PUBLIC_STOREFRONT_URL:
       process.env.NEXT_PUBLIC_STOREFRONT_URL ||
-      API_PRODUCTION_DEFAULTS.storefrontUrl
+      (isDevelopment
+        ? API_DEVELOPMENT_DEFAULTS.storefrontUrl
+        : API_PRODUCTION_DEFAULTS.storefrontUrl)
   },
   async rewrites() {
     const rawTarget =

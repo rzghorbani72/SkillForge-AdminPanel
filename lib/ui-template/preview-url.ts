@@ -1,4 +1,7 @@
-import { API_PRODUCTION_DEFAULTS } from '../api-config';
+import {
+  API_DEVELOPMENT_DEFAULTS,
+  API_PRODUCTION_DEFAULTS
+} from '../api-config';
 
 export interface TemplatePreviewSession {
   token: string;
@@ -6,8 +9,6 @@ export interface TemplatePreviewSession {
   academySlug: string;
   previewPath: string;
 }
-
-const DEV_STOREFRONT_URL = 'http://localhost:5000';
 
 /**
  * Gallery thumbnails render before any preview token exists, so there is no
@@ -21,7 +22,7 @@ export function resolveStorefrontBaseUrl(
   if (fromEnv) return fromEnv;
 
   if (process.env.NODE_ENV === 'development') {
-    return DEV_STOREFRONT_URL;
+    return API_DEVELOPMENT_DEFAULTS.storefrontUrl;
   }
 
   return (

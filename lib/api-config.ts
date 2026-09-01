@@ -15,7 +15,8 @@ export const API_PRODUCTION_DEFAULTS = {
 
 export const API_DEVELOPMENT_DEFAULTS = {
   backendOrigin: 'http://localhost:3000',
-  browserApiUrl: `http://localhost:3000${API_VERSION_PATH}`
+  browserApiUrl: `http://localhost:3000${API_VERSION_PATH}`,
+  storefrontUrl: 'http://localhost:5000'
 } as const;
 
 export const API_REWRITE_SOURCES = {
