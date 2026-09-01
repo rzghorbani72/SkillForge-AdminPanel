@@ -55,11 +55,7 @@ export function useAvatarUpload(
       setProgress(0);
 
       try {
-        const uploaded = await apiClient.uploadImage(
-          file,
-          { title: 'Avatar' },
-          setProgress
-        );
+        const uploaded = await apiClient.uploadAvatarImage(file, setProgress);
         if (!uploaded?.id) throw new Error('upload_failed');
         await apiClient.updateProfile({ image_id: String(uploaded.id) });
         if (uploaded.publicUrl) setAvatarUrl(uploaded.publicUrl);

@@ -65,7 +65,7 @@ export function AvatarUploader({
         className="group relative shrink-0 rounded-full outline-none ring-offset-2 ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Avatar className="h-24 w-24 shadow-md ring-2 ring-background sm:h-28 sm:w-28">
-          <AvatarImage src={avatarUrl ?? ''} alt={displayName} />
+          {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName} /> : null}
           <AvatarFallback className="bg-primary/10 text-2xl font-semibold text-primary">
             {initials}
           </AvatarFallback>

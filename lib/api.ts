@@ -2698,6 +2698,28 @@ class ApiClient {
     return (response.data ?? null) as any;
   }
 
+  /**
+   * Profile photos go to their own route: it is the only image upload that
+   * works without academy context, which most accounts do not have.
+   */
+  async uploadAvatarImage(
+    file: File,
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
+  ) {
+    const formData = new FormData();
+    formData.append('imagefile', file);
+    formData.append('alt', file.name);
+
+    const response = await this.uploadFileWithProgress(
+      '/images/avatar',
+      formData,
+      onProgress,
+      abortController
+    );
+    return (response.data ?? null) as any;
+  }
+
   private buildVideoFormData(
     file: File,
     metadata?: { title?: string; description?: string },
