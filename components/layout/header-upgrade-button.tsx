@@ -17,10 +17,17 @@ export function HeaderUpgradeButton() {
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const canManage = canManageSubscription(user);
-  const { shouldShowUpgrade, isTopPlan, isLoading, needsPlanPurchase } =
-    useAcademySubscription(canManage);
+  const {
+    shouldShowUpgrade,
+    isTopPlan,
+    isLoading,
+    needsPlanPurchase,
+    hasAcademy
+  } = useAcademySubscription(canManage);
 
-  if (!canManage || isLoading) {
+  // Before the first academy exists there is no plan to sell: the panel offers
+  // "create your first academy" instead.
+  if (!canManage || isLoading || !hasAcademy) {
     return null;
   }
 

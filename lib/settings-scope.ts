@@ -52,14 +52,16 @@ export function shouldShowUpgradePrompt(
   return false;
 }
 
-/** First purchase: no academy yet, or academy has never had a paid platform plan. */
+/** First purchase: the academy exists but has never had a paid platform plan. */
 export function needsPlanPurchase(params: {
   hasAcademy: boolean;
   planSlug: string | null | undefined;
   status: string | undefined;
   hasPaid?: boolean;
 }): boolean {
-  if (!params.hasAcademy) return true;
+  // No academy yet means there is nothing to buy a plan for: that manager is
+  // asked to create their first academy, not to pay.
+  if (!params.hasAcademy) return false;
   const slug = params.planSlug?.trim().toLowerCase();
   if (!slug || slug === 'none') return true;
   if (params.status === 'INACTIVE' || params.status === 'EXPIRED') return true;

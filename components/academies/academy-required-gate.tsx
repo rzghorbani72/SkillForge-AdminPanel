@@ -1,17 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { isPlatformStaff } from '@/lib/roles';
+import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
 
 /**
  * Routes a user with no academy can still reach. Everything else in the panel
  * reads or writes academy-scoped data — those endpoints reject a request with no
- * academy context — so the rest of the panel sends them back to the dashboard,
- * where the onboarding dialog or banner explains what to do next.
+ * academy context — so the rest of the panel shows the "create your first
+ * academy" call to action in place of the page.
  */
 const ACADEMY_LESS_PATHS = [
   '/dashboard',
@@ -19,8 +18,6 @@ const ACADEMY_LESS_PATHS = [
   '/settings/profile',
   '/settings/security'
 ];
-
-const FALLBACK_PATH = '/dashboard';
 
 function isAcademyLessPath(pathname: string): boolean {
   return ACADEMY_LESS_PATHS.some(
@@ -38,26 +35,24 @@ export function AcademyRequiredGate({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
   const pathname = usePathname();
   const { academies, isLoading } = useStore();
   const { user } = useAuthUser();
 
-  const mustRedirect =
+  const mustCreateAcademy =
     !isLoading &&
     !!user &&
     !isPlatformStaff(user) &&
     academies.length === 0 &&
     !isAcademyLessPath(pathname);
 
-  useEffect(() => {
-    if (mustRedirect) router.replace(FALLBACK_PATH);
-  }, [mustRedirect, router]);
-
-  if (mustRedirect) {
+  // Showing the call to action in place of the page beats bouncing to the
+  // dashboard: the user keeps the URL they asked for and sees exactly one next
+  // step instead of a redirect they did not ask for.
+  if (mustCreateAcademy) {
     return (
-      <div className="flex h-full items-center justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      <div className="p-4 sm:p-6">
+        <AcademyOnboarding />
       </div>
     );
   }

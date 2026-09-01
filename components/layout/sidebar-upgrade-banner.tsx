@@ -23,10 +23,11 @@ export function SidebarUpgradeBanner({
     planName,
     daysRemaining,
     isLoading,
-    needsPlanPurchase
+    needsPlanPurchase,
+    hasAcademy
   } = useAcademySubscription(canManage);
 
-  if (!canManage) {
+  if (!canManage || !hasAcademy) {
     return null;
   }
 

@@ -23,10 +23,12 @@ export function CurrentPlanBanner() {
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const canManage = canManageSubscription(user);
-  const { planName, status, isTrial, isLoading } =
+  const { planName, status, isTrial, isLoading, hasAcademy } =
     useAcademySubscription(canManage);
 
-  if (!canManage) return null;
+  // With no academy there is no plan to report and none to sell yet — the page
+  // below offers "create your first academy" instead.
+  if (!canManage || !hasAcademy) return null;
   if (isLoading) return <Skeleton className="h-20 w-full rounded-2xl" />;
 
   const display = getSubscriptionStatusDisplay(status, isTrial);

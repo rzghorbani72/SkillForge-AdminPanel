@@ -10,6 +10,7 @@ import { isPaymentEnabled } from '@/lib/payment';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useHasStore } from '@/hooks/useHasStore';
+import { useHasAcademy } from '@/hooks/useHasAcademy';
 import { SidebarUpgradeBanner } from '@/components/layout/sidebar-upgrade-banner';
 import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
 
@@ -33,14 +34,16 @@ export default function Sidebar({ className }: SidebarProps) {
 
   const hasStore = useHasStore();
   const { visibility: learningVisibility } = useLearningNavCapabilities();
+  const hasAcademy = useHasAcademy();
 
   const filteredNavItems = useMemo(() => {
     return filterNavItems(navItems, {
       role: userRole,
       hasStore,
-      learningVisibility
+      learningVisibility,
+      hasAcademy
     });
-  }, [userRole, hasStore, learningVisibility]);
+  }, [userRole, hasStore, learningVisibility, hasAcademy]);
 
   if (isLoading) {
     return (

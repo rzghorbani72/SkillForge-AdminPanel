@@ -82,6 +82,36 @@ test.describe('nav scoping', () => {
   });
 });
 
+test.describe('academy-less nav', () => {
+  test('a manager with no academy only gets My Academies', () => {
+    const items = filterNavItems(navItems, { ...MANAGER, hasAcademy: false });
+    expect(items).toHaveLength(1);
+    expect(items[0].href).toBe('/academies');
+  });
+
+  test('a teacher with no academy only gets My Academies', () => {
+    const items = filterNavItems(navItems, {
+      role: 'TEACHER',
+      hasStore: true,
+      hasAcademy: false
+    });
+    expect(items.map((item) => item.href)).toEqual(['/academies']);
+  });
+
+  test('no plan or billing route is offered before the first academy', () => {
+    const items = filterNavItems(navItems, { ...MANAGER, hasAcademy: false });
+    expect(titles(items)).not.toContain('Academy Subscription');
+  });
+
+  test('platform staff are not gated on having an academy', () => {
+    const items = filterNavItems(navItems, {
+      ...PLATFORM_STAFF,
+      hasAcademy: undefined
+    });
+    expect(items.length).toBeGreaterThan(1);
+  });
+});
+
 test.describe('section grouping', () => {
   // A section header renders once, at the first item carrying that section, so a
   // section split across the array silently files its later items under the

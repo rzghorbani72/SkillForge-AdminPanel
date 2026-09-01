@@ -7,6 +7,7 @@ import { useState, Suspense, useMemo } from 'react';
 import { filterNavItems } from '@/lib/nav-filter';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHasStore } from '@/hooks/useHasStore';
+import { useHasAcademy } from '@/hooks/useHasAcademy';
 import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 
@@ -17,6 +18,7 @@ export function MobileSidebar() {
   const { user } = useAuthUser();
   const hasStore = useHasStore();
   const { visibility: learningVisibility } = useLearningNavCapabilities();
+  const hasAcademy = useHasAcademy();
 
   const userRole = useMemo(() => {
     if (!user) return null;
@@ -27,9 +29,10 @@ export function MobileSidebar() {
     return filterNavItems(navItems, {
       role: userRole,
       hasStore,
-      learningVisibility
+      learningVisibility,
+      hasAcademy
     });
-  }, [userRole, hasStore, learningVisibility]);
+  }, [userRole, hasStore, learningVisibility, hasAcademy]);
 
   return (
     <>

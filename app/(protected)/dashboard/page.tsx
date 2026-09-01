@@ -90,13 +90,13 @@ export default function DashboardPage() {
 
   // Nothing on this dashboard can be computed without an academy, so the
   // onboarding surface replaces the metric grid rather than sitting above
-  // rows of zeros.
+  // rows of zeros. Plans are deliberately absent: the first step is creating an
+  // academy, and a price list here would sell a plan with nothing to attach to.
   if (!storeLoading && !isPlatformAdmin && academies.length === 0) {
     return (
       <div className="dashboard-shell flex-1">
         <div className="relative space-y-5 p-4 sm:p-6">
           <AcademyOnboarding />
-          {canManagePlan && <BuyPlansSection />}
         </div>
       </div>
     );

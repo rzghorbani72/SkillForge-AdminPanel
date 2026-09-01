@@ -14,7 +14,15 @@ type FilterNavOptions = {
   role: Role | null;
   hasStore?: boolean;
   learningVisibility?: LearningNavVisibility | null;
+  /** False only for a non-staff user who has not created/joined an academy yet. */
+  hasAcademy?: boolean;
 };
+
+/**
+ * The single destination an academy-less user is offered: every other page is
+ * academy-scoped, so listing it would only lead to a blocked screen.
+ */
+const ACADEMY_LESS_HREF = '/academies';
 
 const paymentEnabled = process.env.NEXT_PUBLIC_PAYMENT_ENABLED === 'true';
 
@@ -151,9 +159,17 @@ export function filterNavItems(
 
   const platformMode = isPlatformMode(role, hasStore);
 
-  return items
+  const visible = items
     .map((item) => filterItem(item, options, platformMode))
     .filter((item): item is NavItem => item !== null);
+
+  if (options.hasAcademy === false) {
+    return visible
+      .filter((item) => item.href === ACADEMY_LESS_HREF)
+      .slice(0, 1);
+  }
+
+  return visible;
 }
 
 /** @deprecated Use filterNavItems */
