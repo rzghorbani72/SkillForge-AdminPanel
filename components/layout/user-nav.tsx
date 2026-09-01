@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useAuthUser } from '@/components/providers/user-provider';
+import { useStore } from '@/hooks/useStore';
+import { isPlatformStaff } from '@/lib/roles';
 import { signOut } from '@/lib/sign-out';
 import {
   Banknote,
@@ -49,6 +51,7 @@ function formatLastLogin(date: string): string {
 
 export function UserNav() {
   const { user } = useAuthUser();
+  const { academies, isLoading: academiesLoading } = useStore();
   const router = useRouter();
   const { t, language } = useTranslation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -56,7 +59,15 @@ export function UserNav() {
   const email = user?.email ?? '';
   const phone = user?.phone ?? '';
   const roleName = user?.role ?? '';
-  const canSeeSettlement = SETTLEMENT_ROLES.includes(roleName);
+
+  // Everything except the profile and signing out needs a tenant, so a user who
+  // has not created an academy yet would only reach a blocked page. Assume an
+  // academy while the list loads: hiding then re-showing the items flickers.
+  const hasAcademyContext =
+    academiesLoading || academies.length > 0 || isPlatformStaff(user);
+
+  const canSeeSettlement =
+    hasAcademyContext && SETTLEMENT_ROLES.includes(roleName);
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
   const lastLogin = user?.lastLogin ?? null;
   const currentAcademy = user?.currentAcademy ?? null;
@@ -133,13 +144,15 @@ export function UserNav() {
           <span>{t('userNav.profile')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="cursor-pointer gap-2.5 py-2"
-          onClick={() => router.push('/settings')}
-        >
-          <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <span>{t('userNav.settings')}</span>
-        </DropdownMenuItem>
+        {hasAcademyContext && (
+          <DropdownMenuItem
+            className="cursor-pointer gap-2.5 py-2"
+            onClick={() => router.push('/settings')}
+          >
+            <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span>{t('userNav.settings')}</span>
+          </DropdownMenuItem>
+        )}
 
         {canSeeSettlement && (
           <DropdownMenuItem
