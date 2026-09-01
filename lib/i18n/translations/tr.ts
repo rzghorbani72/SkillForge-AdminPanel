@@ -2739,6 +2739,8 @@ export const tr = {
     blockProjects: 'Projeler',
     blockMembership: 'Üyelik',
     blockSlideshow: 'Slayt Gösterisi',
+    panelMediaRatio: 'Görsel kutu oranı',
+    panelRatioFree: 'Serbest',
     panelMediaHeight: 'Görsel kutu yüksekliği',
     blockVideos: 'Videolar',
     slidesEditorTitle: 'Slaytlar',

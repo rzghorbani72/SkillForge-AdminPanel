@@ -37,10 +37,19 @@ import { TEMPLATE_KEYS } from '@/constants/template-names';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
 
-// Mirror of MEDIA_HEIGHT_BOUNDS in edusphere's hero-slideshow-slot.
+// Mirror of MEDIA_HEIGHT_BOUNDS / MEDIA_RATIOS in edusphere's hero-slideshow-slot.
 const MEDIA_HEIGHT_MIN = 120;
 const MEDIA_HEIGHT_MAX = 720;
 const MEDIA_HEIGHT_DEFAULT = 260;
+const MEDIA_RATIOS = [
+  'free',
+  '3:1',
+  '21:9',
+  '16:9',
+  '4:3',
+  '1:1',
+  '9:16'
+] as const;
 
 function isGalleryHeroStyle(style: unknown): boolean {
   return (
@@ -181,25 +190,63 @@ export function SectionEditor({
             )}
 
             {isGalleryHero && (
-              <div className="mt-4 border-b border-zinc-200/70 pb-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-zinc-600">
-                    {t('sitePreview.panelMediaHeight')}
+              <div className="mt-4 space-y-3 border-b border-zinc-200/70 pb-4">
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+                    {t('sitePreview.panelMediaRatio')}
                   </span>
-                  <span className="text-xs text-zinc-700">
-                    {(cfg.mediaHeight as number) ?? MEDIA_HEIGHT_DEFAULT}px
-                  </span>
+                  <div className="grid grid-cols-4 gap-1.5" dir="ltr">
+                    {MEDIA_RATIOS.map((ratio) => {
+                      const current =
+                        typeof cfg.mediaRatio === 'string'
+                          ? cfg.mediaRatio
+                          : 'free';
+                      return (
+                        <button
+                          key={ratio}
+                          type="button"
+                          onClick={() => set('mediaRatio', ratio)}
+                          className={`rounded border py-1.5 text-[11px] font-medium transition-colors ${
+                            current === ratio
+                              ? 'border-blue-500 bg-blue-600 text-white'
+                              : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100'
+                          }`}
+                        >
+                          {ratio === 'free'
+                            ? t('sitePreview.panelRatioFree')
+                            : ratio}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <input
-                  type="range"
-                  title={t('sitePreview.panelMediaHeight')}
-                  min={MEDIA_HEIGHT_MIN}
-                  max={MEDIA_HEIGHT_MAX}
-                  step={10}
-                  value={(cfg.mediaHeight as number) ?? MEDIA_HEIGHT_DEFAULT}
-                  onChange={(e) => set('mediaHeight', Number(e.target.value))}
-                  className="mt-1.5 w-full accent-blue-500"
-                />
+
+                {(cfg.mediaRatio ?? 'free') === 'free' && (
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-zinc-600">
+                        {t('sitePreview.panelMediaHeight')}
+                      </span>
+                      <span className="text-xs text-zinc-700">
+                        {(cfg.mediaHeight as number) ?? MEDIA_HEIGHT_DEFAULT}px
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      title={t('sitePreview.panelMediaHeight')}
+                      min={MEDIA_HEIGHT_MIN}
+                      max={MEDIA_HEIGHT_MAX}
+                      step={10}
+                      value={
+                        (cfg.mediaHeight as number) ?? MEDIA_HEIGHT_DEFAULT
+                      }
+                      onChange={(e) =>
+                        set('mediaHeight', Number(e.target.value))
+                      }
+                      className="mt-1.5 w-full accent-blue-500"
+                    />
+                  </div>
+                )}
               </div>
             )}
 

@@ -5702,6 +5702,8 @@ export const en = {
     blockProjects: 'Projects',
     blockMembership: 'Membership',
     blockSlideshow: 'Slideshow / Banner',
+    panelMediaRatio: 'Image box ratio',
+    panelRatioFree: 'Free',
     panelMediaHeight: 'Image box height',
     blockVideos: 'Videos',
     slidesEditorTitle: 'Slides',

@@ -2665,6 +2665,8 @@ export const ar = {
     blockProjects: 'المشاريع',
     blockMembership: 'العضوية',
     blockSlideshow: 'عرض الشرائح',
+    panelMediaRatio: 'نسبة صندوق الصورة',
+    panelRatioFree: 'حر',
     panelMediaHeight: 'ارتفاع صندوق الصورة',
     blockVideos: 'الفيديوهات',
     slidesEditorTitle: 'الشرائح',
