@@ -285,11 +285,28 @@ export default function UITemplateSettingsPage() {
         const mimeType =
           typeof data.mimeType === 'string' ? data.mimeType : 'image/jpeg';
         const file = new File([data.buffer], fileName, { type: mimeType });
+        // The upload button lives in the canvas, so the canvas is where the
+        // progress belongs — the panel only knows the percentages.
+        const postUploadState = (uploading: boolean, percent: number) =>
+          previewIframeRef.current?.contentWindow?.postMessage(
+            {
+              source: 'template-admin',
+              type: 'media-uploading',
+              blockId: data.blockId,
+              fieldKey: data.fieldKey,
+              uploading,
+              percent
+            },
+            getPreviewPostMessageTarget(storefrontBaseRef.current)
+          );
         void (async () => {
           try {
-            const result = await apiClient.uploadImage(file, {
-              title: 'Section Media'
-            });
+            postUploadState(true, 0);
+            const result = await apiClient.uploadImage(
+              file,
+              { title: 'Section Media' },
+              (percent) => postUploadState(true, percent)
+            );
             const raw = result as unknown as Record<string, unknown>;
             const id =
               (raw?.id as number | undefined) ??
@@ -306,6 +323,8 @@ export default function UITemplateSettingsPage() {
             });
           } catch (error) {
             ErrorHandler.handleApiError(error);
+          } finally {
+            postUploadState(false, 100);
           }
         })();
       }

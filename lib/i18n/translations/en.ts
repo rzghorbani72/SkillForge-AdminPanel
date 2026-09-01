@@ -5702,6 +5702,7 @@ export const en = {
     blockProjects: 'Projects',
     blockMembership: 'Membership',
     blockSlideshow: 'Slideshow / Banner',
+    panelMediaHeight: 'Image box height',
     blockVideos: 'Videos',
     slidesEditorTitle: 'Slides',
     slidesAdd: 'Add slide',

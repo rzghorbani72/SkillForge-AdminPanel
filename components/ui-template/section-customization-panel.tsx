@@ -37,6 +37,11 @@ import { TEMPLATE_KEYS } from '@/constants/template-names';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
 
+// Mirror of MEDIA_HEIGHT_BOUNDS in edusphere's hero-slideshow-slot.
+const MEDIA_HEIGHT_MIN = 120;
+const MEDIA_HEIGHT_MAX = 720;
+const MEDIA_HEIGHT_DEFAULT = 260;
+
 function isGalleryHeroStyle(style: unknown): boolean {
   return (
     typeof style === 'string' &&
@@ -171,6 +176,29 @@ export function SectionEditor({
                   value={(cfg.style as string) ?? TEMPLATE_KEYS[0]}
                   onChange={(style) => set('style', style)}
                   preview={preview}
+                />
+              </div>
+            )}
+
+            {isGalleryHero && (
+              <div className="mt-4 border-b border-zinc-200/70 pb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-zinc-600">
+                    {t('sitePreview.panelMediaHeight')}
+                  </span>
+                  <span className="text-xs text-zinc-700">
+                    {(cfg.mediaHeight as number) ?? MEDIA_HEIGHT_DEFAULT}px
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  title={t('sitePreview.panelMediaHeight')}
+                  min={MEDIA_HEIGHT_MIN}
+                  max={MEDIA_HEIGHT_MAX}
+                  step={10}
+                  value={(cfg.mediaHeight as number) ?? MEDIA_HEIGHT_DEFAULT}
+                  onChange={(e) => set('mediaHeight', Number(e.target.value))}
+                  className="mt-1.5 w-full accent-blue-500"
                 />
               </div>
             )}

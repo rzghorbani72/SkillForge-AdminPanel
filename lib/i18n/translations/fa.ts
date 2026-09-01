@@ -5684,6 +5684,7 @@ export const fa = {
     blockProjects: 'نمونه‌کارها',
     blockMembership: 'اشتراک',
     blockSlideshow: 'اسلایدشو / بنر',
+    panelMediaHeight: 'ارتفاع کادر تصویر',
     blockVideos: 'ویدیوها',
     slidesEditorTitle: 'اسلایدها',
     slidesAdd: 'افزودن اسلاید',
