@@ -90,6 +90,16 @@ export const navItems: NavItem[] = [
     scope: 'platform',
     section: 'platform'
   },
+  {
+    title: 'Platform Blog',
+    href: '/platform/blog',
+    icon: 'fileText' as IconType,
+    label: 'platformBlog',
+    roles: ['PLATFORM_OWNER', 'ADMIN'],
+    adminOnly: true,
+    scope: 'platform',
+    section: 'platform'
+  },
   // Templates section
   {
     title: 'Templates Gallery',
@@ -384,6 +394,15 @@ export const navItems: NavItem[] = [
     icon: 'layout' as IconType,
     label: 'academyWebsite',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'growth'
+  },
+  {
+    title: 'Blog',
+    href: '/website/blog',
+    icon: 'fileText' as IconType,
+    label: 'academyBlog',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
     scope: 'academy',
     section: 'growth'
   },

@@ -67,7 +67,60 @@ export const ar = {
     phoneRequired: 'رقم الهاتف مطلوب',
     passwordMin6: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل'
   },
+  blog: {
+    academyTitle: 'المدونة',
+    platformTitle: 'مدونة المنصة',
+    description:
+      'اكتب مقالات لموقعك العام. المسودة تبقى مرئية هنا فقط حتى يتم نشرها.',
+    newArticle: 'مقال جديد',
+    editArticle: 'تعديل المقال',
+    saved: 'تم حفظ المقال',
+    titleRequired: 'اكتب عنوانًا للمقال',
+    contentRequired: 'اكتب نصًا قبل الحفظ',
+    rejectReasonPrompt: 'ما الذي يجب أن يغيّره الكاتب؟',
+    status: {
+      DRAFT: 'مسودة',
+      IN_REVIEW: 'قيد المراجعة',
+      PUBLISHED: 'منشور',
+      ARCHIVED: 'مؤرشف'
+    },
+    actions: {
+      submit: 'إرسال للمراجعة',
+      approve: 'نشر',
+      reject: 'إعادة للكاتب',
+      archive: 'إلغاء النشر',
+      uploadCover: 'رفع صورة الغلاف'
+    },
+    fields: {
+      title: 'العنوان',
+      status: 'الحالة',
+      author: 'الكاتب',
+      publishedAt: 'تاريخ النشر',
+      views: 'المشاهدات',
+      cover: 'صورة الغلاف',
+      excerpt: 'ملخص قصير',
+      excerptPlaceholder: 'سطر أو سطران يظهران في قائمة المدونة.',
+      content: 'المقال',
+      contentPlaceholder: 'اكتب مقالك هنا...',
+      metaTitle: 'عنوان البحث',
+      metaDescription: 'وصف البحث'
+    },
+    seo: {
+      title: 'البحث والمشاركة',
+      description:
+        'ما تعرضه جوجل والشبكات الاجتماعية. اتركه فارغًا لاستخدام العنوان والملخص.'
+    },
+    empty: {
+      title: 'لا توجد مقالات بعد',
+      description: 'اكتب مقالك الأول لتبدأ مدونتك.'
+    }
+  },
   editor: {
+    quote: 'اقتباس',
+    alignStart: 'محاذاة للبداية',
+    alignCenter: 'توسيط',
+    alignEnd: 'محاذاة للنهاية',
+    image: 'صورة',
     bold: 'عريض',
     italic: 'مائل',
     underline: 'تسطير',
@@ -374,6 +427,8 @@ export const ar = {
     deniedDescription: 'ليس لديك صلاحية لعرض هذه الصفحة.'
   },
   navigation: {
+    academyBlog: 'المدونة',
+    platformBlog: 'مدونة المنصة',
     allSubscriptions: 'كل الاشتراكات',
     rolesPermissions: 'الأدوار والصلاحيات',
     dashboard: 'لوحة التحكم',

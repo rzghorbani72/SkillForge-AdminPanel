@@ -83,7 +83,60 @@ export const fa = {
     passwordMin6: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
     fileRequired: 'انتخاب فایل الزامی است'
   },
+  blog: {
+    academyTitle: 'بلاگ',
+    platformTitle: 'بلاگ پلتفرم',
+    description:
+      'برای سایت عمومی خود مقاله بنویسید. پیش‌نویس تا زمان انتشار فقط اینجا دیده می‌شود.',
+    newArticle: 'مقالهٔ جدید',
+    editArticle: 'ویرایش مقاله',
+    saved: 'مقاله ذخیره شد',
+    titleRequired: 'برای مقاله عنوان بنویسید',
+    contentRequired: 'پیش از ذخیره، متنی بنویسید',
+    rejectReasonPrompt: 'نویسنده چه چیزی را باید تغییر دهد؟',
+    status: {
+      DRAFT: 'پیش‌نویس',
+      IN_REVIEW: 'در انتظار بررسی',
+      PUBLISHED: 'منتشرشده',
+      ARCHIVED: 'بایگانی‌شده'
+    },
+    actions: {
+      submit: 'ارسال برای بررسی',
+      approve: 'انتشار',
+      reject: 'بازگرداندن',
+      archive: 'لغو انتشار',
+      uploadCover: 'بارگذاری کاور'
+    },
+    fields: {
+      title: 'عنوان',
+      status: 'وضعیت',
+      author: 'نویسنده',
+      publishedAt: 'تاریخ انتشار',
+      views: 'بازدید',
+      cover: 'تصویر کاور',
+      excerpt: 'خلاصهٔ کوتاه',
+      excerptPlaceholder: 'یک یا دو خط که در فهرست بلاگ نمایش داده می‌شود.',
+      content: 'متن مقاله',
+      contentPlaceholder: 'مقالهٔ خود را اینجا بنویسید...',
+      metaTitle: 'عنوان در جست‌وجو',
+      metaDescription: 'توضیح در جست‌وجو'
+    },
+    seo: {
+      title: 'جست‌وجو و اشتراک‌گذاری',
+      description:
+        'چیزی که گوگل و شبکه‌های اجتماعی نشان می‌دهند. خالی بگذارید تا از عنوان و خلاصه استفاده شود.'
+    },
+    empty: {
+      title: 'هنوز مقاله‌ای نیست',
+      description: 'اولین مقالهٔ خود را بنویسید تا بلاگ شما شروع شود.'
+    }
+  },
   editor: {
+    quote: 'نقل‌قول',
+    alignStart: 'تراز از ابتدا',
+    alignCenter: 'وسط‌چین',
+    alignEnd: 'تراز از انتها',
+    image: 'تصویر',
     bold: 'پررنگ',
     italic: 'مورب',
     underline: 'زیرخط',
@@ -648,6 +701,8 @@ export const fa = {
     pageOf: 'صفحهٔ {{page}} از {{total}}'
   },
   navigation: {
+    academyBlog: 'بلاگ',
+    platformBlog: 'بلاگ پلتفرم',
     allSubscriptions: 'همهٔ اشتراک‌ها',
     storage: 'فضای ذخیره‌سازی',
     rolesPermissions: 'نقش‌ها و دسترسی‌ها',
@@ -5581,6 +5636,9 @@ export const fa = {
       domain: 'دامنه'
     },
     cards: {
+      blogTitle: 'بلاگ',
+      blogDescription:
+        'برای سایت عمومی خود مقاله بنویسید و تصمیم بگیرید چه چیزی منتشر شود.',
       appearanceTitle: 'ظاهر سایت',
       appearanceDescription:
         'یک قالب انتخاب کنید و بخش‌های سایت عمومی را بچینید.',

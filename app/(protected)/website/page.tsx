@@ -7,6 +7,7 @@ import {
   FileText,
   Globe,
   Layout,
+  Newspaper,
   Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,13 @@ export default function WebsiteHubPage() {
       title: t('website.cards.pagesTitle'),
       description: t('website.cards.pagesDescription'),
       tone: HUB_TONES.sky
+    },
+    {
+      href: '/website/blog',
+      icon: Newspaper,
+      title: t('website.cards.blogTitle'),
+      description: t('website.cards.blogDescription'),
+      tone: HUB_TONES.indigo
     },
     {
       href: '/website/seo',

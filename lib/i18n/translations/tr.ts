@@ -68,7 +68,60 @@ export const tr = {
     phoneRequired: 'Telefon numarası gereklidir',
     passwordMin6: 'Şifre en az 6 karakter olmalıdır'
   },
+  blog: {
+    academyTitle: 'Blog',
+    platformTitle: 'Platform blogu',
+    description:
+      'Herkese açık siteniz için yazı yazın. Taslak, yayınlanana kadar yalnızca burada görünür.',
+    newArticle: 'Yeni yazı',
+    editArticle: 'Yazıyı düzenle',
+    saved: 'Yazı kaydedildi',
+    titleRequired: 'Yazıya bir başlık verin',
+    contentRequired: 'Kaydetmeden önce bir şeyler yazın',
+    rejectReasonPrompt: 'Yazar neyi değiştirmeli?',
+    status: {
+      DRAFT: 'Taslak',
+      IN_REVIEW: 'İncelemede',
+      PUBLISHED: 'Yayında',
+      ARCHIVED: 'Arşivlendi'
+    },
+    actions: {
+      submit: 'İncelemeye gönder',
+      approve: 'Yayınla',
+      reject: 'Geri gönder',
+      archive: 'Yayından kaldır',
+      uploadCover: 'Kapak yükle'
+    },
+    fields: {
+      title: 'Başlık',
+      status: 'Durum',
+      author: 'Yazar',
+      publishedAt: 'Yayın tarihi',
+      views: 'Görüntülenme',
+      cover: 'Kapak görseli',
+      excerpt: 'Kısa özet',
+      excerptPlaceholder: 'Blog listesinde görünen bir iki satır.',
+      content: 'Yazı',
+      contentPlaceholder: 'Yazınızı buraya yazın...',
+      metaTitle: 'Arama başlığı',
+      metaDescription: 'Arama açıklaması'
+    },
+    seo: {
+      title: 'Arama ve paylaşım',
+      description:
+        'Google ve sosyal ağların gösterdiği bilgi. Başlık ve özeti kullanmak için boş bırakın.'
+    },
+    empty: {
+      title: 'Henüz yazı yok',
+      description: 'Blogunuzu doldurmak için ilk yazınızı yazın.'
+    }
+  },
   editor: {
+    quote: 'Alıntı',
+    alignStart: 'Başa hizala',
+    alignCenter: 'Ortala',
+    alignEnd: 'Sona hizala',
+    image: 'Görsel',
     bold: 'Kalın',
     italic: 'İtalik',
     underline: 'Altı çizili',
@@ -380,6 +433,8 @@ export const tr = {
     deniedDescription: 'Bu sayfayı görüntüleme izniniz yok.'
   },
   navigation: {
+    academyBlog: 'Blog',
+    platformBlog: 'Platform blogu',
     allSubscriptions: 'Tüm Abonelikler',
     rolesPermissions: 'Roller ve İzinler',
     dashboard: 'Kontrol Paneli',

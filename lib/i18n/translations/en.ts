@@ -85,7 +85,60 @@ export const en = {
     passwordMin6: 'Password must be at least 6 characters',
     fileRequired: 'A file is required'
   },
+  blog: {
+    academyTitle: 'Blog',
+    platformTitle: 'Platform blog',
+    description:
+      'Write articles for your public site. A draft is only visible here until it is published.',
+    newArticle: 'New article',
+    editArticle: 'Edit article',
+    saved: 'Article saved',
+    titleRequired: 'Give the article a title',
+    contentRequired: 'Write something before saving',
+    rejectReasonPrompt: 'What should the author change?',
+    status: {
+      DRAFT: 'Draft',
+      IN_REVIEW: 'In review',
+      PUBLISHED: 'Published',
+      ARCHIVED: 'Archived'
+    },
+    actions: {
+      submit: 'Send for review',
+      approve: 'Publish',
+      reject: 'Send back',
+      archive: 'Unpublish',
+      uploadCover: 'Upload cover'
+    },
+    fields: {
+      title: 'Title',
+      status: 'Status',
+      author: 'Author',
+      publishedAt: 'Published',
+      views: 'Views',
+      cover: 'Cover image',
+      excerpt: 'Short summary',
+      excerptPlaceholder: 'One or two lines shown on the blog list.',
+      content: 'Article',
+      contentPlaceholder: 'Write your article here...',
+      metaTitle: 'Search title',
+      metaDescription: 'Search description'
+    },
+    seo: {
+      title: 'Search & sharing',
+      description:
+        'What Google and social networks show. Leave empty to use the title and summary.'
+    },
+    empty: {
+      title: 'No articles yet',
+      description: 'Write your first article to start filling your blog.'
+    }
+  },
   editor: {
+    quote: 'Quote',
+    alignStart: 'Align to start',
+    alignCenter: 'Center',
+    alignEnd: 'Align to end',
+    image: 'Image',
     bold: 'Bold',
     italic: 'Italic',
     underline: 'Underline',
@@ -660,6 +713,8 @@ export const en = {
     pageOf: 'Page {{page}} of {{total}}'
   },
   navigation: {
+    academyBlog: 'Blog',
+    platformBlog: 'Platform blog',
     allSubscriptions: 'All Subscriptions',
     storage: 'Storage',
     rolesPermissions: 'Roles & Permissions',
@@ -5598,6 +5653,9 @@ export const en = {
       domain: 'Domain'
     },
     cards: {
+      blogTitle: 'Blog',
+      blogDescription:
+        'Write articles for your public site and decide what gets published.',
       appearanceTitle: 'Appearance',
       appearanceDescription:
         'Pick a template and arrange the sections of your public site.',

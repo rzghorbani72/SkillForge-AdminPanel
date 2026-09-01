@@ -1,4 +1,10 @@
 import { OtpType } from '@/constants/data';
+import type {
+  Article,
+  ArticleInput,
+  ArticleTransition,
+  BlogScope
+} from '@/types/blog';
 import type { CourseType } from '@/components/course/course-drafts';
 import type {
   ContactMessageItem,
@@ -3732,68 +3738,63 @@ class ApiClient {
     return null as any;
   }
 
-  // Articles endpoints
-  async getArticles() {
-    const response = await this.request('/articles');
-
-    // Return the articles data directly
-    if (response.data) {
-      return response.data as any;
-    }
-    return null as any;
+  // Blog (articles) endpoints. `scope` picks the academy blog or the platform
+  // blog; the backend derives the tenant itself, never from these arguments.
+  private blogBase(scope: BlogScope): string {
+    return scope === 'platform' ? '/platform/articles' : '/articles';
   }
 
-  async getArticle(id: number) {
-    const response = await this.request(`/articles/${id}`);
-    if (response.data) {
-      return response.data as any;
-    }
-    return null as any;
+  async getBlogArticles(scope: BlogScope): Promise<Article[]> {
+    const response = await this.request(this.blogBase(scope));
+    return (response.data as Article[] | undefined) ?? [];
   }
 
-  async createArticle(articleData: {
-    title: string;
-    content: string;
-    category_id: number;
-    featured_image_id?: number;
-  }) {
-    return this.request('/articles', {
+  async getBlogArticle(scope: BlogScope, id: string): Promise<Article | null> {
+    const response = await this.request(`${this.blogBase(scope)}/${id}`);
+    return (response.data as Article | undefined) ?? null;
+  }
+
+  async createBlogArticle(
+    scope: BlogScope,
+    input: ArticleInput
+  ): Promise<Article | null> {
+    const response = await this.request(this.blogBase(scope), {
       method: 'POST',
-      body: JSON.stringify(articleData)
-    }) as any;
+      body: JSON.stringify(input)
+    });
+    return (response.data as Article | undefined) ?? null;
   }
 
-  async updateArticle(id: number, articleData: unknown) {
-    return this.request(`/articles/${id}`, {
+  async updateBlogArticle(
+    scope: BlogScope,
+    id: string,
+    input: Partial<ArticleInput>
+  ): Promise<Article | null> {
+    const response = await this.request(`${this.blogBase(scope)}/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(articleData)
-    }) as any;
+      body: JSON.stringify(input)
+    });
+    return (response.data as Article | undefined) ?? null;
   }
 
-  async deleteArticle(id: number) {
-    return this.request(`/articles/${id}`, {
-      method: 'DELETE'
-    }) as any;
+  async transitionBlogArticle(
+    scope: BlogScope,
+    id: string,
+    transition: ArticleTransition,
+    reviewNote?: string
+  ): Promise<Article | null> {
+    const response = await this.request(
+      `${this.blogBase(scope)}/${id}/${transition}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(reviewNote ? { review_note: reviewNote } : {})
+      }
+    );
+    return (response.data as Article | undefined) ?? null;
   }
 
-  async getArticleCategories() {
-    const response = await this.request('/articles/categories');
-
-    // Return the categories data directly
-    if (response.data) {
-      return response.data as any;
-    }
-    return null as any;
-  }
-
-  async getArticleTags() {
-    const response = await this.request('/articles/tags');
-
-    // Return the tags data directly
-    if (response.data) {
-      return response.data as any;
-    }
-    return null as any;
+  async deleteBlogArticle(scope: BlogScope, id: string): Promise<void> {
+    await this.request(`${this.blogBase(scope)}/${id}`, { method: 'DELETE' });
   }
 
   async getPayments(params?: {
