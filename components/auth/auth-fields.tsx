@@ -71,6 +71,7 @@ interface AuthPhoneFieldProps
  * digits in state — so what is sent to the API is always English.
  */
 const PHONE_PLACEHOLDER = '0912 *** ** **';
+const IRAN_PHONE_MAX_LENGTH = 11;
 
 export function AuthPhoneField({
   value,
@@ -87,8 +88,14 @@ export function AuthPhoneField({
       dir="ltr"
       autoComplete="tel"
       placeholder={PHONE_PLACEHOLDER}
+      maxLength={IRAN_PHONE_MAX_LENGTH}
       value={language === 'fa' ? toPersianDigits(value) : value}
-      onChange={(e) => onValueChange(toEnglishDigits(e.target.value))}
+      onChange={(e) => {
+        const digits = toEnglishDigits(e.target.value)
+          .replace(/\D/g, '')
+          .slice(0, IRAN_PHONE_MAX_LENGTH);
+        onValueChange(digits);
+      }}
     />
   );
 }
