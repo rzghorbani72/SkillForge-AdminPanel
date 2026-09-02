@@ -23,7 +23,7 @@ interface SessionRecordingFieldProps {
  * video pipeline, so storage quota and academy scoping are already applied by
  * the time the id is attached to the session.
  */
-export default function SessionRecordingField({
+export function SessionRecordingField({
   sessionId,
   videoId,
   allowDownload,

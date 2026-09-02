@@ -3,7 +3,7 @@
 import { useTranslation } from '@/lib/i18n/hooks';
 import { WEEKDAY_LABEL_KEYS } from '@/lib/live-recurrence';
 import type { TutoringGroupSlot } from '@/types/learning-operations';
-import { minutesToTime } from '../lib/slot-time';
+import { minutesToTime } from '@/lib/class-slot-time';
 
 /** "شنبه ۰۹:۰۰ – ۱۰:۳۰" for every weekly meeting of a class. */
 export const GroupScheduleSummary = ({

@@ -1537,6 +1537,10 @@ export const fa = {
       classCreated: 'کلاس ساخته شد.',
       needsPriceBeforeSchedule:
         'برای ساختن کلاس، اول قیمت گروهی را ذخیره کنید.',
+      timetable: 'برنامه جلسه‌ها',
+      noClassesYet:
+        'هنوز کلاسی ساخته نشده است. اول قیمت گروهی را ثبت کنید، بعد کلاس بسازید.',
+      backToClasses: 'بازگشت به کلاس‌ها',
       publishClass: 'انتشار کلاس',
       classPublished: 'کلاس منتشر شد و تاریخ جلسه‌ها ثبت شد.',
       noSessionsYet:

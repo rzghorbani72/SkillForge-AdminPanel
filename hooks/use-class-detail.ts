@@ -5,7 +5,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import type { TutoringGroup } from '@/types/learning-operations';
 
-export function useGroupDetail(groupId: string) {
+export function useClassDetail(groupId: string) {
   const [group, setGroup] = useState<TutoringGroup | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);

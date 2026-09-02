@@ -7,7 +7,7 @@ import { TimePicker } from '@/components/ui/time-picker';
 import { WeekdayPicker } from '@/components/shared/weekday-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TutoringGroupSlot } from '@/types/learning-operations';
-import { minutesToTime, timeToMinutes } from '../lib/slot-time';
+import { minutesToTime, timeToMinutes } from '@/lib/class-slot-time';
 
 type Props = {
   slots: TutoringGroupSlot[];

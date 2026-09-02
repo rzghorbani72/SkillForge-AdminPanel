@@ -18,8 +18,8 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { ClassSession, CourseTopic } from '@/types/learning-operations';
-import SessionRecordingField from './session-recording-field';
-import SessionMaterialsField from './session-materials-field';
+import { SessionRecordingField } from './session-recording-field';
+import { SessionMaterialsField } from './session-materials-field';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
 
 const NO_TOPIC = 'none';
@@ -36,7 +36,7 @@ interface SessionRowProps {
  * join link, and what it leaves behind afterwards — the recording, the
  * handouts, and the conversation the class had about it.
  */
-export default function SessionRow({
+export function SessionRow({
   index,
   session,
   topics,

@@ -874,6 +874,10 @@ export const tr = {
       classCreated: 'Ders oluşturuldu.',
       needsPriceBeforeSchedule:
         'Önce grup fiyatını kaydedin, sonra ders oluşturun.',
+      timetable: 'Ders programı',
+      noClassesYet:
+        'Henüz ders yok. Önce grup fiyatını kaydedin, sonra ders oluşturun.',
+      backToClasses: 'Derslere dön',
       publishClass: 'Dersi yayınla',
       classPublished: 'Ders yayınlandı ve tarihleri yazıldı.',
       noSessionsYet:

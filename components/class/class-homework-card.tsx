@@ -34,7 +34,7 @@ interface ClassHomeworkCardProps {
  * whole class, and work attached to a single meeting — the teacher picks which
  * when creating it, so there is no second screen to learn.
  */
-export default function ClassHomeworkCard({
+export function ClassHomeworkCard({
   groupId,
   sessions
 }: ClassHomeworkCardProps) {

@@ -15,7 +15,7 @@ import { useLiveCourse } from './hooks/use-live-course';
 import TopicListEditor from './_components/topic-list-editor';
 import LivePricingCard from './_components/live-pricing-card';
 import ScheduleBuilder from './_components/schedule-builder';
-import ClassPanel from './_components/class-panel';
+import { ClassListCard } from './_components/class-list-card';
 
 /**
  * Building a live course, in the order a teacher actually thinks: what it
@@ -138,14 +138,7 @@ export default function LiveCoursePage() {
         </p>
       )}
 
-      {groups.map((group) => (
-        <ClassPanel
-          key={group.id}
-          group={group}
-          topics={topics}
-          onPublished={() => void reload()}
-        />
-      ))}
+      <ClassListCard courseId={courseId} groups={groups} />
     </div>
   );
 }

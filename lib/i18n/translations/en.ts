@@ -1547,6 +1547,9 @@ export const en = {
       classCreated: 'Class created.',
       needsPriceBeforeSchedule:
         'Save the group price first, then schedule a class.',
+      timetable: 'Timetable',
+      noClassesYet: 'No classes yet. Set a group price, then schedule one.',
+      backToClasses: 'Back to classes',
       publishClass: 'Publish class',
       classPublished: 'Class published and its dates written.',
       noSessionsYet:

@@ -8,7 +8,7 @@ import type {
   TutoringGroup,
   TutoringGroupSlot
 } from '@/types/learning-operations';
-import { defaultTimezone } from '../lib/slot-time';
+import { defaultTimezone } from '@/lib/class-slot-time';
 
 export interface GroupFormState {
   offer_id: string;

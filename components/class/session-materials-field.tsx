@@ -25,7 +25,7 @@ const DOCUMENT_ACCEPT = '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip';
  * academy scoping are applied before the id is attached to the meeting. The
  * class recording is separate — that is the meeting itself, not an extra.
  */
-export default function SessionMaterialsField({
+export function SessionMaterialsField({
   sessionId,
   materials,
   onChanged

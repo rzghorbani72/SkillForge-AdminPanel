@@ -7,8 +7,8 @@ import { DataPanel } from '@/components/shared/data-list/data-panel';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatNumber } from '@/lib/utils';
 import type { TutoringGroup } from '@/types/learning-operations';
-import { GroupScheduleSummary } from './group-schedule-summary';
-import { GroupStatusBadge } from './group-status-badge';
+import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
+import { GroupStatusBadge } from '@/components/class/group-status-badge';
 
 type Props = {
   groups: TutoringGroup[];
@@ -24,6 +24,12 @@ export const GroupsListCard = ({
   onPublish
 }: Props) => {
   const { t, language } = useTranslation();
+
+  /** A class is run inside its course; the old address only forwards there. */
+  const classHref = (group: TutoringGroup) =>
+    group.Course
+      ? `/courses/${group.Course.id}/live/${group.id}`
+      : `/tutoring/groups/${group.id}`;
 
   const seats = (group: TutoringGroup) =>
     `${formatNumber(group.seats_taken, language)} / ${formatNumber(group.capacity, language)}`;
@@ -60,7 +66,7 @@ export const GroupsListCard = ({
             header: t('tutoring.groups.columnTitle'),
             cell: (group) => (
               <Link
-                href={`/tutoring/groups/${group.id}`}
+                href={classHref(group)}
                 className="font-medium hover:underline"
               >
                 {group.title}
@@ -101,7 +107,7 @@ export const GroupsListCard = ({
           <div className="space-y-2 rounded-xl border p-4">
             <div className="flex items-center justify-between gap-2">
               <Link
-                href={`/tutoring/groups/${group.id}`}
+                href={classHref(group)}
                 className="font-medium hover:underline"
               >
                 {group.title}

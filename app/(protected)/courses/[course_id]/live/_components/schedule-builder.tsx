@@ -15,7 +15,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
-import { defaultTimezone } from '@/app/(protected)/tutoring/groups/lib/slot-time';
+import { defaultTimezone } from '@/lib/class-slot-time';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
