@@ -9,8 +9,7 @@ import { CourseTypePill } from './course-type-pill';
 import {
   courseHue,
   formatCourseDurationMinutes,
-  groupSeatPrice,
-  pricingTypeLabel
+  groupSeatPrice
 } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
 
@@ -97,17 +96,19 @@ export function CourseCard({
             />
           </div>
         )}
-        <div className="absolute end-3 top-3 flex max-w-[70%] gap-1.5">
-          <span
-            className="truncate rounded-full px-2 py-0.5 text-[11px] font-medium backdrop-blur-sm"
-            style={{
-              background: 'rgba(255,255,255,0.85)',
-              color: 'hsl(var(--foreground))'
-            }}
-          >
-            {categoryName ?? pricingTypeLabel(pricingType, t)}
-          </span>
-        </div>
+        {categoryName ? (
+          <div className="absolute end-3 top-3 flex max-w-[70%] gap-1.5">
+            <span
+              className="truncate rounded-full px-2 py-0.5 text-[11px] font-medium backdrop-blur-sm"
+              style={{
+                background: 'rgba(255,255,255,0.85)',
+                color: 'hsl(var(--foreground))'
+              }}
+            >
+              {categoryName}
+            </span>
+          </div>
+        ) : null}
         <div className="absolute start-3 top-3 flex items-center gap-1.5">
           <StatusPill status={status} />
           <CourseTypePill type={course.course_type} />

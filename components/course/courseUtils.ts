@@ -42,16 +42,6 @@ export function formatCourseDurationMinutes(
   return `${hoursLabel} ${formatNum(rest)} ${t('courses.minutesShort')}`;
 }
 
-export function pricingTypeLabel(
-  type: string,
-  t: (key: string) => string
-): string {
-  if (type === 'FREE') return t('courses.free');
-  if (type === 'ONE_TIME') return t('courses.oneTimePayment');
-  if (type === 'SUBSCRIPTION') return t('courses.subscriptionPlan');
-  return t('courses.installmentPlan');
-}
-
 /**
  * What a live course actually charges: the price of one seat in the class. It
  * lives on the course's GROUP tutoring offer, never on the course itself.
