@@ -1,8 +1,6 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatNumber } from '@/components/course/courseUtils';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
@@ -19,13 +17,9 @@ function Fact({ label, children }: { label: string; children: ReactNode }) {
 
 type CourseFactsCardProps = {
   course: CourseDetail;
-  onPaymentPlans: () => void;
 };
 
-export function CourseFactsCard({
-  course,
-  onPaymentPlans
-}: CourseFactsCardProps) {
+export function CourseFactsCard({ course }: CourseFactsCardProps) {
   const { t } = useTranslation();
   const { locale } = useLanguage();
 
@@ -92,13 +86,6 @@ export function CourseFactsCard({
         <Fact label={t('courseDetail.updatedAt')}>
           {formatDate(course.updated_at)}
         </Fact>
-
-        <div className="flex justify-end pt-2">
-          <Button variant="outline" size="sm" onClick={onPaymentPlans}>
-            <ExternalLink className="me-1.5 h-3.5 w-3.5" />
-            {t('courseDetail.paymentPlansLink')}
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );

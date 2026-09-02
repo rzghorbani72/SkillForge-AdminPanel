@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, CreditCard, Layers, Radio } from 'lucide-react';
+import { BarChart3, Layers, Radio } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
@@ -43,13 +43,9 @@ export function CourseWorkspaceTabs({
           label: t('courseDetail.curriculum'),
           icon: Layers,
           exact: false
-        },
-    {
-      href: `${base}/plans`,
-      label: t('courseDetail.paymentPlansLink'),
-      icon: CreditCard,
-      exact: false
-    }
+        }
+    // Instalment plans are hidden until a gateway supports them; the page and
+    // its route still exist, so restoring this entry is the whole change.
   ];
 
   return (

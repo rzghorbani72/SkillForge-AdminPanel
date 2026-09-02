@@ -99,10 +99,7 @@ export default function CourseDetailPage() {
         <div className="lg:col-span-2">
           <CourseEnrollmentsCard enrollments={enrollments} />
         </div>
-        <CourseFactsCard
-          course={course}
-          onPaymentPlans={() => router.push(`/courses/${courseId}/plans`)}
-        />
+        <CourseFactsCard course={course} />
       </div>
     </div>
   );
