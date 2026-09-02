@@ -5437,6 +5437,11 @@ export const en = {
     manageCard: 'Manage',
     curriculum: 'Curriculum',
     classroom: 'Classroom',
+    liveSummary:
+      'This course is taught live. Its topics, prices, timetable and meetings are managed in the classroom.',
+    manageClassroom: 'Open classroom',
+    liveLeftoverLessons:
+      'This course still has {{count}} recorded lesson(s) from before it was switched to live. Students do not see them here — the live classroom is what they get.',
     tabOverview: 'Overview',
     moreActions: 'More actions',
     quickSettings: 'Quick settings',

@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import NoAcademyState from '@/components/course/NoAcademyState';
 import { formatNumber } from '@/components/course/courseUtils';
 import { CourseCurriculumPreview } from '@/components/course/detail/course-curriculum-preview';
+import { CourseLiveSummary } from '@/components/course/detail/course-live-summary';
 import { CourseEnrollmentsCard } from '@/components/course/detail/course-enrollments-card';
 import { CourseFactsCard } from '@/components/course/detail/course-facts-card';
 import { CourseHero } from '@/components/course/detail/course-hero';
@@ -60,12 +61,19 @@ export default function CourseDetailPage() {
 
   const seasons = course.Season ?? [];
   const showMoney = canViewCourseMoney(course);
+  const isLive = course.course_type === 'LIVE';
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
       <CourseHero course={course} />
 
-      <div className="grid grid-cols-2 gap-3 sm:max-w-md">
+      <div
+        className={
+          isLive
+            ? 'grid grid-cols-1 gap-3 sm:max-w-xs'
+            : 'grid grid-cols-2 gap-3 sm:max-w-md'
+        }
+      >
         <StatTile
           icon={<Users className="h-4 w-4" />}
           label={t('courseDetail.totalStudents')}
@@ -73,25 +81,34 @@ export default function CourseDetailPage() {
           sub={t('courseDetail.allTimeEnrollments')}
           color="blue"
         />
-        <StatTile
-          icon={<BookOpen className="h-4 w-4" />}
-          label={t('courseDetail.lessons')}
-          value={formatNumber(countLessons(seasons))}
-          sub={t('courseDetail.sections', {
-            count: formatNumber(seasons.length)
-          })}
-          color="violet"
-        />
+        {!isLive && (
+          <StatTile
+            icon={<BookOpen className="h-4 w-4" />}
+            label={t('courseDetail.lessons')}
+            value={formatNumber(countLessons(seasons))}
+            sub={t('courseDetail.sections', {
+              count: formatNumber(seasons.length)
+            })}
+            color="violet"
+          />
+        )}
       </div>
 
       {showMoney && (
         <CourseMoneyBand payments={payments} loading={paymentsLoading} />
       )}
 
-      <CourseCurriculumPreview
-        seasons={seasons}
-        onManage={() => router.push(`/courses/${courseId}/seasons`)}
-      />
+      {isLive ? (
+        <CourseLiveSummary
+          seasons={seasons}
+          onManage={() => router.push(`/courses/${courseId}/live`)}
+        />
+      ) : (
+        <CourseCurriculumPreview
+          seasons={seasons}
+          onManage={() => router.push(`/courses/${courseId}/seasons`)}
+        />
+      )}
 
       <CourseAccessSection courseId={courseId} />
 
