@@ -1,4 +1,7 @@
+'use client';
+
 import { Course, Season } from '@/types/api';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const LessonNavigation = ({
   courseId,
@@ -11,40 +14,34 @@ const LessonNavigation = ({
   course: Course;
   seasonId: string;
   season: Season;
-  router: any;
+  router: { push: (href: string) => void };
 }) => {
+  const { t } = useTranslation();
+
+  const crumbs = [
+    { label: t('navigation.courses'), href: '/courses' },
+    { label: course.title, href: `/courses/${courseId}` },
+    { label: t('courses.seasons'), href: `/courses/${courseId}/seasons` },
+    { label: season.title, href: `/courses/${courseId}/seasons/${seasonId}` }
+  ];
+
   return (
-    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-      <button
-        onClick={() => router.push('/courses')}
-        className="transition-colors hover:text-foreground"
-      >
-        Courses
-      </button>
-      <span>/</span>
-      <button
-        onClick={() => router.push(`/courses/${courseId}`)}
-        className="transition-colors hover:text-foreground"
-      >
-        {course.title}
-      </button>
-      <span>/</span>
-      <button
-        onClick={() => router.push(`/courses/${courseId}/seasons`)}
-        className="transition-colors hover:text-foreground"
-      >
-        Seasons
-      </button>
-      <span>/</span>
-      <button
-        onClick={() => router.push(`/courses/${courseId}/seasons/${seasonId}`)}
-        className="transition-colors hover:text-foreground"
-      >
-        {season.title}
-      </button>
-      <span>/</span>
-      <span className="font-medium text-foreground">Lessons</span>
-    </div>
+    <nav className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+      {crumbs.map((crumb) => (
+        <span key={crumb.href} className="flex items-center gap-2">
+          <button
+            onClick={() => router.push(crumb.href)}
+            className="max-w-[12rem] truncate transition-colors hover:text-foreground"
+          >
+            {crumb.label}
+          </button>
+          <span aria-hidden>/</span>
+        </span>
+      ))}
+      <span className="font-medium text-foreground">
+        {t('courses.lessons')}
+      </span>
+    </nav>
   );
 };
 

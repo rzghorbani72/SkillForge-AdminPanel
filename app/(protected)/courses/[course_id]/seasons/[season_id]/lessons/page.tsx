@@ -17,6 +17,7 @@ export default function SeasonLessonsPage() {
   const seasonId = params.season_id as string;
   const {
     lessons,
+    allLessons,
     season,
     course,
     isLoading,
@@ -52,7 +53,7 @@ export default function SeasonLessonsPage() {
       <SearchAndStats
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        lessons={lessons}
+        lessons={allLessons}
       />
       {lessons.length === 0 ? (
         <NotFound
@@ -62,7 +63,7 @@ export default function SeasonLessonsPage() {
           seasonId={seasonId}
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
           {lessons.map((lesson) => (
             <LessonIndex
               key={lesson.id}

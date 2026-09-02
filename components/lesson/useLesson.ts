@@ -3,7 +3,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { Course, Lesson, Season } from '@/types/api';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
@@ -72,8 +72,19 @@ const useLesson = () => {
     500
   );
 
+  const filteredLessons = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return lessons;
+    return lessons.filter(
+      (lesson) =>
+        lesson.title.toLowerCase().includes(term) ||
+        (lesson.description ?? '').toLowerCase().includes(term)
+    );
+  }, [lessons, searchTerm]);
+
   return {
-    lessons,
+    lessons: filteredLessons,
+    allLessons: lessons,
     season,
     course,
     isLoading,

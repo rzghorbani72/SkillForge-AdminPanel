@@ -546,6 +546,14 @@ export interface Lesson {
   audio?: Audio;
   document?: Document;
   image?: Image;
+  access_control?: {
+    can_modify: boolean;
+    can_delete: boolean;
+    can_view: boolean;
+    is_owner: boolean;
+    user_role: string;
+    user_permissions: string[];
+  };
 }
 
 // Media Types

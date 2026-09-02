@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface LessonMediaPreviewProps {
   lesson: Lesson;
@@ -31,6 +32,7 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
   lesson,
   className
 }) => {
+  const { t } = useTranslation();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewType, setPreviewType] = useState<
     'video' | 'audio' | 'document' | 'image' | null
@@ -52,9 +54,9 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
   if (!hasAnyMedia) {
     return (
       <div className={cn('text-sm text-muted-foreground', className)}>
-        <span className="flex items-center">
-          <FileText className="mr-1 h-4 w-4" />
-          No media files
+        <span className="flex items-center gap-1">
+          <FileText className="h-4 w-4" />
+          {t('courses.noMediaFiles')}
         </span>
       </div>
     );
@@ -109,8 +111,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
             className="h-8"
             onClick={() => openPreview('video')}
           >
-            <Video className="mr-1 h-3 w-3" />
-            <span className="text-xs">Video</span>
+            <Video className="me-1 h-3 w-3" />
+            <span className="text-xs">{t('courses.mediaVideo')}</span>
           </Button>
         )}
 
@@ -121,8 +123,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
             className="h-8"
             onClick={() => openPreview('audio')}
           >
-            <AudioLines className="mr-1 h-3 w-3" />
-            <span className="text-xs">Audio</span>
+            <AudioLines className="me-1 h-3 w-3" />
+            <span className="text-xs">{t('courses.mediaAudio')}</span>
           </Button>
         )}
 
@@ -133,8 +135,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
             className="h-8"
             onClick={() => openPreview('document')}
           >
-            <FileText className="mr-1 h-3 w-3" />
-            <span className="text-xs">Document</span>
+            <FileText className="me-1 h-3 w-3" />
+            <span className="text-xs">{t('courses.mediaDocument')}</span>
           </Button>
         )}
 
@@ -145,8 +147,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
             className="h-8"
             onClick={() => openPreview('image')}
           >
-            <ImageIcon className="mr-1 h-3 w-3" />
-            <span className="text-xs">Image</span>
+            <ImageIcon className="me-1 h-3 w-3" />
+            <span className="text-xs">{t('courses.mediaImage')}</span>
           </Button>
         )}
       </div>
@@ -156,10 +158,10 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>
-                {previewType === 'video' && 'Video Preview'}
-                {previewType === 'audio' && 'Audio Preview'}
-                {previewType === 'document' && 'Document Preview'}
-                {previewType === 'image' && 'Image Preview'}
+                {previewType === 'video' && t('courses.videoPreview')}
+                {previewType === 'audio' && t('courses.audioPreview')}
+                {previewType === 'document' && t('courses.documentPreview')}
+                {previewType === 'image' && t('courses.imagePreview')}
               </span>
               <Button
                 variant="ghost"
@@ -181,7 +183,7 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                   poster={getImageUrl() || undefined}
                 >
                   <source src={getVideoUrl()} type="video/mp4" />
-                  Your browser does not support the video tag.
+                  {t('courses.videoNotSupported')}
                 </video>
               </div>
             )}
@@ -191,11 +193,12 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                 <div className="rounded-lg border bg-muted p-4">
                   <div className="mb-2">
                     <h4 className="font-medium">
-                      {audioRel?.title || `Audio File #${lesson.audio_id}`}
+                      {audioRel?.title || t('courses.audioFileFallback')}
                     </h4>
                     {audioRel?.duration && (
                       <p className="text-sm text-muted-foreground">
-                        Duration: {Math.floor(audioRel.duration / 60)}:
+                        {t('courses.duration')}:{' '}
+                        {Math.floor(audioRel.duration / 60)}:
                         {String(Math.floor(audioRel.duration % 60)).padStart(
                           2,
                           '0'
@@ -205,7 +208,7 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                   </div>
                   <audio controls className="w-full">
                     <source src={getAudioUrl()} type="audio/mpeg" />
-                    Your browser does not support the audio tag.
+                    {t('courses.audioNotSupported')}
                   </audio>
                 </div>
                 <Button
@@ -214,8 +217,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                   onClick={() => window.open(getAudioUrl(), '_blank')}
                   className="w-full"
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Audio
+                  <Download className="me-2 h-4 w-4" />
+                  {t('courses.downloadAudio')}
                 </Button>
               </div>
             )}
@@ -225,17 +228,19 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                 <div className="rounded-lg border bg-muted p-6 text-center">
                   <FileText className="mx-auto h-16 w-16 text-muted-foreground" />
                   <h4 className="mt-4 font-medium">
-                    {documentRel?.title || `Document #${lesson.document_id}`}
+                    {documentRel?.title || t('courses.documentFallback')}
                   </h4>
                   {documentRel?.file_size && (
                     <p className="text-sm text-muted-foreground">
-                      Size: {(documentRel.file_size / 1024 / 1024).toFixed(2)}{' '}
-                      MB
+                      {t('courses.fileSizeLabel')}:{' '}
+                      {t('courses.fileSizeMb', {
+                        size: (documentRel.file_size / 1024 / 1024).toFixed(2)
+                      })}
                     </p>
                   )}
                   {documentRel?.mime_type && (
                     <p className="text-sm text-muted-foreground">
-                      Type: {documentRel.mime_type}
+                      {t('courses.fileTypeLabel')}: {documentRel.mime_type}
                     </p>
                   )}
                 </div>
@@ -245,8 +250,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                   onClick={() => window.open(getDocumentUrl(), '_blank')}
                   className="w-full"
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Document
+                  <Download className="me-2 h-4 w-4" />
+                  {t('courses.downloadDocument')}
                 </Button>
               </div>
             )}
@@ -256,7 +261,7 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                 <div className="relative w-full overflow-hidden rounded-lg border">
                   <img
                     src={getImageUrl()}
-                    alt={imageRel?.title || `Lesson image #${lesson.image_id}`}
+                    alt={imageRel?.title || t('courses.lessonImageAlt')}
                     className="h-auto w-full object-contain"
                     onError={(e) => {
                       // Fallback if image fails to load
@@ -276,8 +281,8 @@ const LessonMediaPreview: React.FC<LessonMediaPreviewProps> = ({
                   onClick={() => window.open(getImageUrl(), '_blank')}
                   className="w-full"
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Image
+                  <Download className="me-2 h-4 w-4" />
+                  {t('courses.downloadImage')}
                 </Button>
               </div>
             )}

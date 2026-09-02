@@ -1,6 +1,7 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { User, Shield, Eye, Edit, Trash2, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +25,7 @@ export function AccessControlBadge({
   className,
   showDetails = false
 }: AccessControlBadgeProps) {
+  const { t } = useTranslation();
   const { is_owner, can_modify, can_delete } = accessControl;
 
   // Determine badge variant and content based on ownership and permissions
@@ -33,8 +35,8 @@ export function AccessControlBadge({
         variant: 'default' as const,
         className: 'bg-green-100 text-green-800 border-green-200',
         icon: <User className="h-3 w-3" />,
-        text: 'Yours',
-        tooltip: 'You own this resource'
+        text: t('accessControl.ownerBadge'),
+        tooltip: t('accessControl.ownerHint')
       };
     }
 
@@ -43,8 +45,8 @@ export function AccessControlBadge({
         variant: 'secondary' as const,
         className: 'bg-blue-100 text-blue-800 border-blue-200',
         icon: <Shield className="h-3 w-3" />,
-        text: 'Manager',
-        tooltip: 'You can modify and delete this resource'
+        text: t('accessControl.managerBadge'),
+        tooltip: t('accessControl.managerHint')
       };
     }
 
@@ -53,8 +55,8 @@ export function AccessControlBadge({
         variant: 'outline' as const,
         className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
         icon: <Edit className="h-3 w-3" />,
-        text: 'Can Edit',
-        tooltip: 'You can edit this resource'
+        text: t('accessControl.canEditBadge'),
+        tooltip: t('accessControl.canEditHint')
       };
     }
 
@@ -62,18 +64,18 @@ export function AccessControlBadge({
       variant: 'outline' as const,
       className: 'bg-muted text-muted-foreground border-border',
       icon: <Eye className="h-3 w-3" />,
-      text: 'View Only',
-      tooltip: 'You can only view this resource'
+      text: t('accessControl.viewOnlyBadge'),
+      tooltip: t('accessControl.viewOnlyHint')
     };
   };
 
   const config = getBadgeConfig();
 
   return (
-    <div className={cn('flex items-center space-x-1', className)}>
+    <div className={cn('flex items-center gap-1', className)}>
       <Badge
         variant={config.variant}
-        className={cn('flex items-center space-x-1 text-xs', config.className)}
+        className={cn('flex items-center gap-1 text-xs', config.className)}
         title={config.tooltip}
       >
         {config.icon}
@@ -81,20 +83,20 @@ export function AccessControlBadge({
       </Badge>
 
       {showDetails && (
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center gap-1">
           {can_modify && (
             <Badge
               variant="outline"
               className="bg-green-50 text-xs text-green-700"
             >
-              <Edit className="mr-1 h-2 w-2" />
-              Edit
+              <Edit className="me-1 h-2 w-2" />
+              {t('common.edit')}
             </Badge>
           )}
           {can_delete && (
             <Badge variant="outline" className="bg-red-50 text-xs text-red-700">
-              <Trash2 className="mr-1 h-2 w-2" />
-              Delete
+              <Trash2 className="me-1 h-2 w-2" />
+              {t('common.delete')}
             </Badge>
           )}
           {!can_modify && !can_delete && (
@@ -102,8 +104,8 @@ export function AccessControlBadge({
               variant="outline"
               className="bg-muted/50 text-xs text-muted-foreground"
             >
-              <Lock className="mr-1 h-2 w-2" />
-              Read Only
+              <Lock className="me-1 h-2 w-2" />
+              {t('accessControl.readOnly')}
             </Badge>
           )}
         </div>

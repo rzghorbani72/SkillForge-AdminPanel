@@ -1,6 +1,9 @@
+'use client';
+
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { BookOpen, Plus } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const NotFound = ({
   searchTerm,
@@ -9,19 +12,21 @@ const NotFound = ({
   seasonId
 }: {
   searchTerm: string;
-  router: any;
+  router: { push: (href: string) => void };
   courseId: string;
   seasonId: string;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Card>
-      <CardContent className="flex flex-col items-center justify-center py-12">
-        <BookOpen className="mb-4 h-12 w-12 text-muted-foreground" />
-        <h3 className="mb-2 text-lg font-semibold">No lessons found</h3>
-        <p className="mb-4 text-center text-muted-foreground">
+      <CardContent className="flex flex-col items-center justify-center gap-3 py-12">
+        <BookOpen className="h-12 w-12 text-muted-foreground" />
+        <h3 className="text-lg font-semibold">{t('courses.noLessonsFound')}</h3>
+        <p className="text-center text-muted-foreground">
           {searchTerm
-            ? 'No lessons match your search criteria.'
-            : "This season doesn't have any lessons yet."}
+            ? t('courses.noLessonsMatchSearch')
+            : t('courses.noLessonsInSeason')}
         </p>
         {!searchTerm && (
           <Button
@@ -31,8 +36,8 @@ const NotFound = ({
               )
             }
           >
-            <Plus className="mr-2 h-4 w-4" />
-            Add First Lesson
+            <Plus className="me-2 h-4 w-4" />
+            {t('courses.addFirstLesson')}
           </Button>
         )}
       </CardContent>
