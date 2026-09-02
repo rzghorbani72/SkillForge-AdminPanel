@@ -416,6 +416,7 @@ export const fa = {
     visitSiteCustomDomain: 'دامنه اختصاصی'
   },
   common: {
+    minutes: 'دقیقه',
     unsavedChanges: 'ذخیره‌نشده',
     saveChanges: 'ذخیره تغییرات',
     uploading: 'در حال بارگذاری…',
@@ -6246,7 +6247,7 @@ export const fa = {
         'برای هر جلسهٔ هفتگی یک ردیف اضافه کنید، مثلاً سه‌شنبه ۱۵:۰۰ به مدت ۹۰ دقیقه.',
       slotRow: 'جلسهٔ هفتگی',
       slotStart: 'ساعت شروع',
-      slotDuration: 'مدت (دقیقه)',
+      slotDurationLabel: 'مدت هر جلسه',
       addSlot: 'افزودن زمان دیگر',
       removeSlot: 'حذف این زمان',
       publish: 'انتشار',

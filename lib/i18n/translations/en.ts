@@ -425,6 +425,7 @@ export const en = {
     visitSiteCustomDomain: 'Custom domain'
   },
   common: {
+    minutes: 'min',
     unsavedChanges: 'Unsaved',
     saveChanges: 'Save changes',
     uploading: 'Uploading…',
@@ -6268,7 +6269,7 @@ export const en = {
         'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
       slotRow: 'Weekly meeting',
       slotStart: 'Start time',
-      slotDuration: 'Length (minutes)',
+      slotDurationLabel: 'Session length',
       addSlot: 'Add another time',
       removeSlot: 'Remove this time',
       publish: 'Publish',
