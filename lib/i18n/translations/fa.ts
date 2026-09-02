@@ -2643,6 +2643,20 @@ export const fa = {
     newPasswordsDoNotMatch: 'رمزهای عبور جدید با هم مطابقت ندارند',
     unableToLoadProfile:
       'بارگذاری پروفایل حساب ممکن نیست. لطفاً صفحه را تازه‌سازی کنید و دوباره تلاش کنید.',
+    activeSessions: 'نشست‌های فعال',
+    activeSessionsDescription:
+      'دستگاه‌هایی که هم‌اکنون به حساب شما وارد شده‌اند. هر نشست ناآشنا را ببندید.',
+    noActiveSessions: 'دستگاه دیگری وارد حساب نشده است.',
+    thisDevice: 'همین دستگاه',
+    sessionLastActive: 'آخرین فعالیت {{date}}',
+    terminateSession: 'خروج از این دستگاه',
+    terminateSessionConfirm:
+      'حساب شما از {{device}} خارج شود؟ برای ورود دوباره باید وارد شود.',
+    terminateOtherSessions: 'خروج از سایر دستگاه‌ها',
+    terminateOtherSessionsConfirm:
+      'از {{count}} دستگاه دیگر خارج شوید؟ همین دستگاه وارد می‌ماند.',
+    sessionTerminated: 'نشست بسته شد',
+    otherSessionsTerminated: 'سایر دستگاه‌ها خارج شدند',
     twoFactorAuthentication: 'احراز هویت دو مرحله‌ای',
     twoFactorAuthenticationDescription:
       'برای افزایش امنیت حساب، یک لایه امنیتی اضافه کنید.',

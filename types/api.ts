@@ -823,6 +823,16 @@ export interface Session {
   user?: User;
 }
 
+/** A live login session (one device), as returned by GET /auth/sessions. */
+export interface ActiveSession {
+  id: string;
+  device_info: string;
+  ip_address: string;
+  created_at: string;
+  last_used_at: string;
+  is_current: boolean;
+}
+
 export interface Otp {
   id: number;
   user_id: number;

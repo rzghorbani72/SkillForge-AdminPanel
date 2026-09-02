@@ -13,6 +13,7 @@ import type {
 } from '@/components/support/staff-support-types';
 import {
   Academy,
+  ActiveSession,
   Enrollment,
   User as UserType,
   Offer,
@@ -1003,6 +1004,32 @@ class ApiClient {
     return this.request('/auth/logout', {
       method: 'POST'
     });
+  }
+
+  async getActiveSessions() {
+    const res = await this.request<{
+      success: boolean;
+      sessions: ActiveSession[];
+    }>('/auth/sessions');
+    return res.data?.sessions ?? [];
+  }
+
+  async revokeSession(sessionId: string) {
+    return this.request(`/auth/sessions/${sessionId}`, {
+      method: 'DELETE'
+    });
+  }
+
+  /** Terminates every other device; the current one stays signed in. */
+  async logoutOtherDevices() {
+    const res = await this.request<{ message: string; revokedCount: number }>(
+      '/auth/logout-all',
+      {
+        method: 'POST',
+        body: JSON.stringify({ keep_current: true })
+      }
+    );
+    return res.data?.revokedCount ?? 0;
   }
 
   async loginPhoneByOtp(credentials: {

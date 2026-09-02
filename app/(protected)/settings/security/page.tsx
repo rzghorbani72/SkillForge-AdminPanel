@@ -15,6 +15,7 @@ import { useSettingsData } from '../_hooks/use-settings-data';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { ActiveSessionsCard } from '@/components/settings/active-sessions-card';
 
 interface NotificationSettings {
   emailNotifications: boolean;
@@ -72,6 +73,8 @@ export default function SecuritySettingsPage() {
           {t('settings.securitySubtitle')}
         </p>
       </div>
+
+      <ActiveSessionsCard />
 
       <Card>
         <CardHeader>

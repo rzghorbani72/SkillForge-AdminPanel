@@ -3134,6 +3134,20 @@ export const en = {
     newPasswordsDoNotMatch: 'New passwords do not match',
     unableToLoadProfile:
       'Unable to load account profile. Please refresh and try again.',
+    activeSessions: 'Active sessions',
+    activeSessionsDescription:
+      'Devices currently signed in to your account. End any session you do not recognise.',
+    noActiveSessions: 'No other device is signed in.',
+    thisDevice: 'This device',
+    sessionLastActive: 'Last active {{date}}',
+    terminateSession: 'Terminate',
+    terminateSessionConfirm:
+      'Sign {{device}} out of your account? It will need to log in again.',
+    terminateOtherSessions: 'Sign out my other devices',
+    terminateOtherSessionsConfirm:
+      'Sign out {{count}} other device(s)? This device stays signed in.',
+    sessionTerminated: 'Session terminated',
+    otherSessionsTerminated: 'Other devices signed out',
     twoFactorAuthentication: 'Two-factor authentication',
     twoFactorAuthenticationDescription:
       'Add an additional layer of security to your account.',
