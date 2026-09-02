@@ -509,3 +509,48 @@ export interface ClassSession {
   recording_video_id?: string | null;
   recording_allow_download?: boolean;
 }
+
+export interface CertificateRequirementTally {
+  total: number;
+  done: number;
+}
+
+export interface CertificateEligibility {
+  enrollment_id: string;
+  profile_id: string;
+  course_id: string;
+  eligible: boolean;
+  min_percent: number;
+  lessons: CertificateRequirementTally;
+  quizzes: CertificateRequirementTally;
+  assignments: CertificateRequirementTally;
+  blockers: string[];
+}
+
+export interface IssuedCertificate {
+  id: string;
+  profile_id: string;
+  certificate_number: string;
+  issued_at: string;
+  is_valid: boolean;
+}
+
+export interface CertificateRosterStudent {
+  enrollment_id: string;
+  profile_id: string;
+  display_name: string | null;
+  status: string;
+  progress_percent: number;
+  eligibility: CertificateEligibility | null;
+  certificate: IssuedCertificate | null;
+}
+
+export interface CertificateRoster {
+  course: {
+    id: string;
+    title: string;
+    is_certificate: boolean;
+    certificate_min_percent: number;
+  };
+  students: CertificateRosterStudent[];
+}

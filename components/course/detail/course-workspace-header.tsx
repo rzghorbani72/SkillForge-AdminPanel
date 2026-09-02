@@ -154,6 +154,7 @@ export function CourseWorkspaceHeader() {
       <CourseWorkspaceTabs
         courseId={courseId}
         courseType={course?.course_type}
+        hasCertificate={course.is_certificate}
       />
 
       <CourseQuickSettingsDialog

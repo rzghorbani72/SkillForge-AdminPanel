@@ -83,6 +83,8 @@ import type {
   TutoringOffer,
   ClassSession,
   CourseTopic,
+  CertificateRoster,
+  IssuedCertificate,
   DiscussionParent,
   SessionMaterial,
   SessionRecording,
@@ -5498,6 +5500,38 @@ class ApiClient {
       body: JSON.stringify(data)
     });
     return unwrapDataEnvelope(res.data);
+  }
+
+  // ─── Certificates ──────────────────────────────────────────────────────────
+
+  async getCertificateRoster(courseId: string): Promise<CertificateRoster> {
+    const res = await this.request<
+      CertificateRoster | { data: CertificateRoster }
+    >(`/courses/${courseId}/certificates/roster`);
+    return unwrapDataEnvelope(res.data) as CertificateRoster;
+  }
+
+  async issueCertificate(enrollmentId: string): Promise<IssuedCertificate> {
+    const res = await this.request<
+      IssuedCertificate | { data: IssuedCertificate }
+    >('/certificates', {
+      method: 'POST',
+      body: JSON.stringify({ enrollment_id: enrollmentId })
+    });
+    return unwrapDataEnvelope(res.data) as IssuedCertificate;
+  }
+
+  async revokeCertificate(
+    certificateId: string,
+    reason?: string
+  ): Promise<IssuedCertificate> {
+    const res = await this.request<
+      IssuedCertificate | { data: IssuedCertificate }
+    >(`/certificates/${certificateId}/revoke`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    });
+    return unwrapDataEnvelope(res.data) as IssuedCertificate;
   }
 
   // ─── Live course syllabus ──────────────────────────────────────────────────

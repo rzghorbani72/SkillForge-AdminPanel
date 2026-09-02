@@ -5448,6 +5448,31 @@ export const en = {
     draft: 'Draft',
     lifetime: 'Lifetime'
   },
+  certificates: {
+    tab: 'Certificate',
+    certificate: 'Certificate',
+    rosterTitle: 'Students and completion',
+    rosterHint:
+      'A certificate is issued once the student has watched every lesson in full and passed the quizzes and assignments.',
+    lessonsWatched: 'Lessons watched',
+    quizzesPassed: 'Quizzes passed',
+    assignmentsPassed: 'Assignments passed',
+    issue: 'Issue certificate',
+    issued: 'Certificate issued.',
+    revoke: 'Revoke',
+    revoked: 'Certificate revoked.',
+    issuedCount: 'Certificates issued',
+    issuedCountHint: 'Valid certificates for this course',
+    readyCount: 'Ready to issue',
+    readyCountHint: 'Students who finished the course',
+    passMark: 'Assignment pass mark',
+    passMarkHint: 'Minimum percent for every required assignment',
+    courseNotEnabled:
+      'This course does not award a certificate. Turn on "Certificate" in the course settings.',
+    minPercentLabel: 'Assignment pass mark (percent)',
+    minPercentHint:
+      'Every required assignment must reach this share of its full score before a certificate can be issued.'
+  },
   courseDetail: {
     nextClass: 'Next class',
     activeClasses: 'Active classes',

@@ -24,6 +24,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import {
   Select,
   SelectContent,
@@ -43,7 +44,9 @@ const schema = z.object({
     .min(5, 'validation.titleMin5')
     .max(80, 'validation.titleMax80'),
   category_id: z.string().optional(),
-  is_featured: z.boolean()
+  is_featured: z.boolean(),
+  is_certificate: z.boolean(),
+  certificate_min_percent: z.coerce.number().int().min(0).max(100)
 });
 
 type QuickSettingsValues = z.infer<typeof schema>;
@@ -80,7 +83,13 @@ export function CourseQuickSettingsDialog({
 
   const form = useForm<QuickSettingsValues>({
     resolver: zodResolver(schema),
-    defaultValues: { title: '', category_id: undefined, is_featured: false }
+    defaultValues: {
+      title: '',
+      category_id: undefined,
+      is_featured: false,
+      is_certificate: false,
+      certificate_min_percent: 70
+    }
   });
 
   useEffect(() => {
@@ -88,7 +97,9 @@ export function CourseQuickSettingsDialog({
     form.reset({
       title: course.title,
       category_id: course.Category?.id,
-      is_featured: course.is_featured
+      is_featured: course.is_featured,
+      is_certificate: course.is_certificate,
+      certificate_min_percent: course.certificate_min_percent ?? 70
     });
   }, [open, course, form]);
 
@@ -121,7 +132,7 @@ export function CourseQuickSettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[460px]">
+      <DialogContent className="sm:max-w-[560px]">
         <DialogHeader>
           <DialogTitle>{t('courseDetail.quickSettings')}</DialogTitle>
           <DialogDescription>
@@ -193,6 +204,58 @@ export function CourseQuickSettingsDialog({
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="is_certificate"
+              render={({ field }) => (
+                <FormItem className="space-y-3 rounded-lg border p-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <FormLabel>{t('courseDetail.certificate')}</FormLabel>
+                      <FormDescription>
+                        {t('certificates.rosterHint')}
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </div>
+
+                  {field.value ? (
+                    <FormField
+                      control={form.control}
+                      name="certificate_min_percent"
+                      render={({ field: percentField }) => (
+                        <FormItem className="grid grid-cols-[1fr_auto] items-center gap-3 border-t pt-3">
+                          <div className="space-y-1">
+                            <FormLabel>
+                              {t('certificates.minPercentLabel')}
+                            </FormLabel>
+                            <FormDescription>
+                              {t('certificates.minPercentHint')}
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <NumberInput
+                              className="w-24"
+                              value={percentField.value}
+                              onChange={(raw) =>
+                                percentField.onChange(Number(raw) || 0)
+                              }
+                              suffix="٪"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  ) : null}
                 </FormItem>
               )}
             />

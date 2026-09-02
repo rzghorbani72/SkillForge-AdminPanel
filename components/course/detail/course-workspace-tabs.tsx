@@ -2,13 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, Layers, Radio } from 'lucide-react';
+import { Award, BarChart3, Layers, Radio } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
 type CourseWorkspaceTabsProps = {
   courseId: string;
   courseType?: 'OFFLINE' | 'LIVE';
+  /** The certificates tab only exists for a course that awards one. */
+  hasCertificate?: boolean;
 };
 
 /**
@@ -17,7 +19,8 @@ type CourseWorkspaceTabsProps = {
  */
 export function CourseWorkspaceTabs({
   courseId,
-  courseType = 'OFFLINE'
+  courseType = 'OFFLINE',
+  hasCertificate = false
 }: CourseWorkspaceTabsProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -47,6 +50,15 @@ export function CourseWorkspaceTabs({
     // Instalment plans are hidden until a gateway supports them; the page and
     // its route still exist, so restoring this entry is the whole change.
   ];
+
+  if (hasCertificate) {
+    tabs.push({
+      href: `${base}/certificates`,
+      label: t('certificates.tab'),
+      icon: Award,
+      exact: false
+    });
+  }
 
   return (
     <nav className="-mb-px flex gap-1 overflow-x-auto">
