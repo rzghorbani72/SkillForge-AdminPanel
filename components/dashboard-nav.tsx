@@ -5,7 +5,7 @@ import { useBreakpoint } from '@/hooks/useBreakPoints';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import { NavItem } from '@/types';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Lock } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -58,16 +58,15 @@ const NavItemContent = React.memo(
         className={cn(
           'sidebar-item group',
           isActive && (isChildItem ? 'active-child' : 'active'),
-          item.disabled && 'cursor-not-allowed opacity-60'
+          item.disabled && 'cursor-not-allowed opacity-45 hover:bg-transparent'
         )}
       >
         {/* Plain icon — no box, matches Mentoma design */}
         <Icon
           className={cn(
             'h-[17px] w-[17px] shrink-0 transition-colors duration-150',
-            isActive
-              ? 'text-primary'
-              : 'text-muted-foreground group-hover:text-primary'
+            isActive ? 'text-primary' : 'text-muted-foreground',
+            !isActive && !item.disabled && 'group-hover:text-primary'
           )}
         />
         {!isMinimized && (
@@ -82,6 +81,9 @@ const NavItemContent = React.memo(
             >
               {translatedTitle}
             </span>
+            {item.disabled && (
+              <Lock className="h-3 w-3 shrink-0 text-muted-foreground" />
+            )}
             {item.badge !== undefined && (
               <Badge
                 variant="secondary"
@@ -97,7 +99,7 @@ const NavItemContent = React.memo(
             )}
           </div>
         )}
-        {hasChildren && !isMinimized && (
+        {hasChildren && !isMinimized && !item.disabled && (
           <ChevronRight
             className={cn(
               'h-3.5 w-3.5 shrink-0 text-muted-foreground/60 transition-transform duration-150',
@@ -293,7 +295,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         />
       );
 
-      if (hasChildren && isAboveLg && isMinimized) {
+      if (hasChildren && isAboveLg && isMinimized && !item.disabled) {
         return (
           <DropdownMenu key={item.title}>
             <DropdownMenuTrigger className="w-full" asChild>
@@ -364,7 +366,11 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
 
       return (
         <div key={item.title}>
-          {hasChildren ? (
+          {item.disabled ? (
+            // A preview, not a destination: no link and no submenu, so the item
+            // shows what exists without leading anywhere it cannot go yet.
+            <div aria-disabled="true">{content}</div>
+          ) : hasChildren ? (
             <NavItemButton onClick={handleParentClick}>{content}</NavItemButton>
           ) : item.href ? (
             <NavItemLink item={item} onClick={handleSetOpen}>

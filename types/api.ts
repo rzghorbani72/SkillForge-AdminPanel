@@ -41,6 +41,8 @@ export interface User {
   /** Rank of the role (MANAGER=3, TEACHER=2, STUDENT=1); custom roles inherit their creator-picked rank. */
   role_hierarchy_level?: number | null;
   full_name?: string;
+  /** The signed-in person's picture, flattened by /auth/me to one ready url. */
+  avatar?: { id: string; url: string } | null;
   academy_id?: string | null;
   academy_name?: string | null;
   platform_role?: 'PLATFORM_OWNER' | 'ADMIN' | 'FINANCE' | 'SUPPORT';

@@ -20,6 +20,7 @@ import { authService } from '@/lib/auth';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
+import { useAuthUser } from '@/components/providers/user-provider';
 import { useSettingsData } from '../_hooks/use-settings-data';
 import { AvatarUploader } from './_components/avatar-uploader';
 import { PasswordCard } from './_components/password-card';
@@ -48,6 +49,14 @@ function initialsOf(name: string): string {
 export default function ProfileSettingsPage() {
   const { t } = useTranslation();
   const { user, isLoading, refresh } = useSettingsData();
+  const { refetch: refetchAuthUser } = useAuthUser();
+
+  // The header avatar and name come from the auth provider, not this page's
+  // fetch, so a save has to refresh both or the header stays stale.
+  const refreshAll = useCallback(() => {
+    refresh();
+    void refetchAuthUser();
+  }, [refresh, refetchAuthUser]);
 
   const [form, setForm] = useState<ProfileForm>(EMPTY_FORM);
   const [isSaving, setIsSaving] = useState(false);
@@ -67,10 +76,10 @@ export default function ProfileSettingsPage() {
 
   const displayName = user?.full_name ?? user?.display_name ?? '';
   const initials = useMemo(() => initialsOf(displayName), [displayName]);
-  const savedAvatar = user?.profiles?.[0]?.avatar?.publicUrl ?? null;
+  const savedAvatar = user?.avatar?.url ?? null;
   const roleName = user?.role_name ?? user?.profiles?.[0]?.role?.name;
 
-  const avatar = useAvatarUpload(savedAvatar, refresh);
+  const avatar = useAvatarUpload(savedAvatar, refreshAll);
   const emailOtp = useContactOtp('email', form.email, refresh);
   const phoneOtp = useContactOtp('phone', form.phone, refresh);
 
@@ -80,13 +89,13 @@ export default function ProfileSettingsPage() {
       setIsSaving(true);
       await apiClient.updateMe({ full_name: form.name });
       ErrorHandler.showSuccess(t('settings.profileUpdatedSuccess'));
-      refresh();
+      refreshAll();
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSaving(false);
     }
-  }, [form.name, refresh, t, user]);
+  }, [form.name, refreshAll, t, user]);
 
   const handleLogout = useCallback(async () => {
     try {

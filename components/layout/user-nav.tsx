@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,6 +70,7 @@ export function UserNav() {
     hasAcademyContext && SETTLEMENT_ROLES.includes(roleName);
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
   const lastLogin = user?.lastLogin ?? null;
+  const avatarUrl = user?.avatarUrl ?? null;
   const currentAcademy = user?.currentAcademy ?? null;
   const headingName = user?.displayName ?? '';
   const initials = headingName
@@ -93,6 +94,7 @@ export function UserNav() {
           )}
         >
           <Avatar className="h-8 w-8 ring-2 ring-primary/20">
+            {avatarUrl && <AvatarImage src={avatarUrl} alt={headingName} />}
             <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
               {initials}
             </AvatarFallback>

@@ -31,6 +31,7 @@ export interface AuthUser {
     | 'TEACHER'
     | 'STUDENT';
   lastLogin?: string | null;
+  avatarUrl?: string | null;
   academyId?: string | null;
   currentAcademy?: { id?: number; name: string; domain?: string | null } | null;
   isAdminProfile?: boolean;
@@ -142,6 +143,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         phone: currentUser?.phone_number ?? '',
         role: role as AuthUser['role'],
         lastLogin: currentUser?.last_login ?? null,
+        avatarUrl: currentUser?.avatar?.url ?? null,
         academyId: academyId,
         currentAcademy: currentAcademy,
         isAdminProfile: isAdminProfile,

@@ -19,10 +19,27 @@ type FilterNavOptions = {
 };
 
 /**
- * The single destination an academy-less user is offered: every other page is
- * academy-scoped, so listing it would only lead to a blocked screen.
+ * The destinations that work without a tenant. Every other page is
+ * academy-scoped, so it is shown disabled — a preview of what creating the
+ * first academy unlocks, instead of a link to a blocked screen.
  */
-const ACADEMY_LESS_HREF = '/academies';
+const ACADEMY_LESS_HREFS = ['/academies', '/dashboard'];
+
+function isAcademyLessHref(href: string | undefined): boolean {
+  if (!href) return false;
+  return ACADEMY_LESS_HREFS.some(
+    (path) => href === path || href.startsWith(`${path}/`)
+  );
+}
+
+function asPreview(item: NavItem): NavItem {
+  if (!item.children?.length && isAcademyLessHref(item.href)) return item;
+  return {
+    ...item,
+    disabled: true,
+    children: item.children?.map(asPreview)
+  };
+}
 
 const paymentEnabled = process.env.NEXT_PUBLIC_PAYMENT_ENABLED === 'true';
 
@@ -164,9 +181,7 @@ export function filterNavItems(
     .filter((item): item is NavItem => item !== null);
 
   if (options.hasAcademy === false) {
-    return visible
-      .filter((item) => item.href === ACADEMY_LESS_HREF)
-      .slice(0, 1);
+    return visible.map(asPreview);
   }
 
   return visible;
