@@ -1082,6 +1082,11 @@ export const ar = {
     lessonsReady: '{{n}} / {{total}} جاهز',
     expandAll: 'توسيع الكل',
     collapseAll: 'طي الكل',
+    backToCurriculum: 'العودة إلى المنهج',
+    lessonSettingsHint: 'بقية إعدادات هذا الدرس تُحرَّر في المنهج.',
+    liveScheduleHint: 'يُقدَّم هذا الدرس مباشرة.',
+    liveScheduleLink: 'حدد موعد الجلسة',
+    lessonSettingsLink: 'الاختبار وموعد البث وقاعدة التنزيل',
     liveSaveFirst: 'احفظ الدرس أولاً، ثم أعدّ رابط الاجتماع في صفحة التعديل.'
   },
   students: {

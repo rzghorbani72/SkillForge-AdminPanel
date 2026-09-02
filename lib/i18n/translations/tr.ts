@@ -1118,6 +1118,11 @@ export const tr = {
     lessonsReady: '{{n}} / {{total}} hazır',
     expandAll: 'Tümünü genişlet',
     collapseAll: 'Tümünü daralt',
+    backToCurriculum: 'Müfredata dön',
+    lessonSettingsHint: 'Bu dersin diğer tüm ayarları müfredatta düzenlenir.',
+    liveScheduleHint: 'Bu ders canlı işlenir.',
+    liveScheduleLink: 'Buluşma saatini belirle',
+    lessonSettingsLink: 'Sınav, canlı saat ve indirme kuralı',
     liveSaveFirst:
       'Önce dersi kaydedin, ardından düzenleme sayfasında toplantı bağlantısını yapılandırın.'
   },

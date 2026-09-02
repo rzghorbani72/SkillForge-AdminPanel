@@ -1877,6 +1877,11 @@ export const fa = {
     lessonsReady: '{{n}} / {{total}} آماده',
     expandAll: 'بازکردن همه',
     collapseAll: 'بستن همه',
+    backToCurriculum: 'بازگشت به سرفصل‌ها',
+    lessonSettingsHint: 'بقیهٔ تنظیمات این درس در بخش سرفصل‌ها ویرایش می‌شود.',
+    liveScheduleHint: 'این درس زنده برگزار می‌شود.',
+    liveScheduleLink: 'زمان جلسه را تعیین کنید',
+    lessonSettingsLink: 'آزمون، زمان جلسه زنده و قانون دانلود',
     liveSaveFirst:
       'ابتدا درس را ذخیره کنید، سپس لینک جلسه را در صفحه ویرایش تنظیم کنید.',
     saving: 'در حال ذخیره…',

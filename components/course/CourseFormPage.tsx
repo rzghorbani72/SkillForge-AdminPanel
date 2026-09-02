@@ -15,7 +15,6 @@ import CourseSettingsCard from './CourseSettingsCard';
 import CourseSeoCard from './CourseSeoCard';
 import CreateCourseAssociations from './CreateCourseAssociations';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
-import { SeasonsSection } from './SeasonsSection';
 import { CoursePricingSection } from './pricing/course-pricing-section';
 import { CourseTypePill } from './course-type-pill';
 import { CourseAccessSection } from '@/components/access/course-access-section';
@@ -42,21 +41,8 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
     isLoading,
     isSaving,
     saveStatus,
-    seasons,
-    lessons,
     selectedAcademy,
     coverPreviewUrl,
-    addSeason,
-    removeSeason,
-    clearSeason,
-    updateSeason,
-    reorderSeasons,
-    addLesson,
-    removeLesson,
-    clearLesson,
-    updateLesson,
-    assignLesson,
-    reorderLessons,
     togglePublish,
     retrySave,
     saveNow,
@@ -222,22 +208,6 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
             <CourseSettingsCard form={form} />
 
             <CourseSeoCard form={form} />
-
-            <SeasonsSection
-              seasons={seasons}
-              lessons={lessons}
-              onAddSeason={addSeason}
-              onRemoveSeason={removeSeason}
-              onClearSeason={clearSeason}
-              onUpdateSeason={updateSeason}
-              onReorderSeasons={reorderSeasons}
-              onAddLesson={addLesson}
-              onRemoveLesson={removeLesson}
-              onClearLesson={clearLesson}
-              onUpdateLesson={updateLesson}
-              onAssignLesson={assignLesson}
-              onReorderLessons={reorderLessons}
-            />
 
             {/* Hand the course to students/groups without a purchase */}
             <CourseAccessSection

@@ -1897,6 +1897,12 @@ export const en = {
     lessonsReady: '{{n}} / {{total}} ready',
     expandAll: 'Expand all',
     collapseAll: 'Collapse all',
+    backToCurriculum: 'Back to curriculum',
+    lessonSettingsHint:
+      'Everything else about this lesson is edited in the curriculum.',
+    liveScheduleHint: 'This lesson meets live.',
+    liveScheduleLink: 'Set the meeting time',
+    lessonSettingsLink: 'Quiz, live time and download rule',
     liveSaveFirst:
       'Save the lesson first, then configure the meeting link on the edit page.',
     course: 'Course',

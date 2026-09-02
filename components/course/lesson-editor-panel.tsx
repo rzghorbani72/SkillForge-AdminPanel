@@ -1,5 +1,8 @@
 'use client';
 
+import { useParams } from 'next/navigation';
+import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { CharacterCounter } from '@/components/ui/character-counter';
@@ -61,6 +64,11 @@ export function LessonEditorPanel({
   onAssign
 }: LessonEditorPanelProps) {
   const { t } = useTranslation();
+  const { course_id: courseId } = useParams<{ course_id: string }>();
+  // Quizzes, live times and the download rule need a screen each, so an
+  // unsaved lesson has nowhere to link to yet.
+  const settingsHref =
+    lesson.id && courseId ? `/courses/${courseId}/lessons/${lesson.id}` : null;
 
   return (
     <div className="space-y-4 border-t bg-muted/20 px-4 py-4">
@@ -109,14 +117,27 @@ export function LessonEditorPanel({
                 <Label className="text-xs font-medium text-muted-foreground">
                   {t(LESSON_TYPE_BY_KEY.LIVE.labelKey)}
                 </Label>
-                <p
+                <div
                   className={cn(
-                    'flex items-center justify-center rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-4 text-center text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
+                    'flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-4 text-center text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
                     LESSON_MEDIA_SLOT_CLASS
                   )}
                 >
-                  {t('courses.liveSaveFirst')}
-                </p>
+                  {settingsHref ? (
+                    <>
+                      <p>{t('courses.liveScheduleHint')}</p>
+                      <Link
+                        href={settingsHref}
+                        className="inline-flex items-center gap-1 font-medium underline"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        {t('courses.liveScheduleLink')}
+                      </Link>
+                    </>
+                  ) : (
+                    <p>{t('courses.liveSaveFirst')}</p>
+                  )}
+                </div>
               </div>
             ) : (
               <LessonMedia lesson={lesson} onUpdate={onUpdate} />
@@ -191,6 +212,15 @@ export function LessonEditorPanel({
             className="text-xs"
           />
         </div>
+        {settingsHref && (
+          <Link
+            href={settingsHref}
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            {t('courses.lessonSettingsLink')}
+          </Link>
+        )}
         <textarea
           value={lesson.description}
           onChange={(e) => onUpdate({ description: e.target.value })}
