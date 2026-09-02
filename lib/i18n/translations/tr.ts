@@ -897,6 +897,9 @@ export const tr = {
         'Bu ders için sınıf geneli bağlantıyı kullanmak istiyorsanız boş bırakın.',
       sessionChat: 'Bu dersin sohbeti',
       uploadMaterial: 'Ders materyali yükle',
+      uploadHelperVideo: 'Yardımcı video yükle',
+      uploadHelperVideoHint:
+        'Öğrencilerin canlı dersin yanında izleyebileceği ek video.',
       uploadMaterialHint:
         'Ders sonrası paylaşılan slayt, çalışma kağıdı veya notlar.',
       materialAdded: 'Dosya bu derse eklendi',

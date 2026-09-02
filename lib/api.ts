@@ -5560,7 +5560,12 @@ class ApiClient {
 
   async addSessionMaterial(
     sessionId: string,
-    data: { document_id: string; title?: string }
+    data: {
+      document_id?: string;
+      video_id?: string;
+      title?: string;
+      allow_download?: boolean;
+    }
   ): Promise<SessionMaterial> {
     const res = await this.request<SessionMaterial | { data: SessionMaterial }>(
       `/tutoring/class-sessions/${sessionId}/materials`,
@@ -5582,6 +5587,24 @@ class ApiClient {
     );
     return this.addSessionMaterial(sessionId, {
       document_id: uploadedFileId(uploaded),
+      title: file.name
+    });
+  }
+
+  /** Upload a helper video students may watch beside the live class. */
+  async addSessionMaterialVideo(
+    sessionId: string,
+    file: File,
+    onProgress?: (progress: number) => void
+  ): Promise<SessionMaterial> {
+    const uploaded = await this.uploadVideo(
+      file,
+      { title: file.name },
+      undefined,
+      onProgress
+    );
+    return this.addSessionMaterial(sessionId, {
+      video_id: uploadedFileId(uploaded),
       title: file.name
     });
   }

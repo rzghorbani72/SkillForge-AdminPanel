@@ -876,6 +876,9 @@ export const ar = {
       meetingUrlHint: 'اتركه فارغًا لاستخدام رابط الصف العام لهذا اللقاء.',
       sessionChat: 'محادثة هذا اللقاء',
       uploadMaterial: 'رفع مادة',
+      uploadHelperVideo: 'رفع فيديو مساعد',
+      uploadHelperVideoHint:
+        'فيديو إضافي يشاهده الطالب إلى جانب الحصة المباشرة.',
       uploadMaterialHint: 'شرائح أو أوراق عمل أو ملاحظات تُشارك بعد الحصة.',
       materialAdded: 'أُضيف الملف إلى هذا اللقاء',
       allowRecordingDownload: 'السماح بتنزيل التسجيل',

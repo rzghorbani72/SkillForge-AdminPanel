@@ -470,17 +470,18 @@ export interface SessionRecording {
   url: string | null;
 }
 
-/** A file the teacher left behind after one meeting. */
+/** A handout or helper video the teacher left alongside one meeting. */
 export interface SessionMaterial {
   id: string;
   title: string;
   order: number;
-  Document: {
-    id: string;
-    publicUrl: string | null;
-    mime_type: string | null;
-    size: number | null;
-  } | null;
+  kind: 'DOCUMENT' | 'VIDEO';
+  url: string | null;
+  can_download: boolean;
+  mime_type: string | null;
+  size: number | null;
+  duration: number | null;
+  poster_url: string | null;
 }
 
 /** Exactly one of these identifies the thread a message belongs to. */

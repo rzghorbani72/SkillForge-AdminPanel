@@ -1572,6 +1572,9 @@ export const en = {
       sessionChat: 'Class chat for this meeting',
       uploadMaterial: 'Upload a handout',
       uploadMaterialHint: 'Slides, worksheets or notes shared after the class.',
+      uploadHelperVideo: 'Upload a helper video',
+      uploadHelperVideoHint:
+        'An extra video students can watch beside the live class.',
       materialAdded: 'File added to this meeting',
       allowRecordingDownload: 'Allow downloading the recording',
       pageSubtitle:
