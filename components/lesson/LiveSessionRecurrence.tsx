@@ -1,11 +1,11 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { WeekdayPicker } from '@/components/shared/weekday-picker';
+import { DatePicker } from '@/components/ui/date-picker';
 
 type Props = {
   repeats: boolean;
@@ -55,12 +55,10 @@ const LiveSessionRecurrence = ({
             <Label htmlFor="live-repeat-until">
               {t('courses.liveSession.repeatUntilLabel')}
             </Label>
-            <Input
+            <DatePicker
               id="live-repeat-until"
-              type="date"
-              dir="ltr"
               value={until}
-              onChange={(e) => onUntilChange(e.target.value)}
+              onChange={(pickedValue: string) => onUntilChange(pickedValue)}
             />
             <p className="text-xs text-muted-foreground">
               {t('courses.liveSession.repeatUntilHint')}

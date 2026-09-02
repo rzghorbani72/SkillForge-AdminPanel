@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   CourseSearchCombobox,
   StudentProfileSearchCombobox,
@@ -72,13 +72,13 @@ export function CreateEngagementCard({
         </div>
         <div className="space-y-2">
           <Label htmlFor="endsAt">{t('tutoring.endsAtOptional')}</Label>
-          <Input
+          <DatePicker
             id="endsAt"
-            type="datetime-local"
             value={form.ends_at}
-            onChange={(event) =>
-              onChange({ ...form, ends_at: event.target.value })
+            onChange={(pickedValue: string) =>
+              onChange({ ...form, ends_at: pickedValue })
             }
+            withTime
           />
         </div>
         <Button onClick={() => void onSubmit()} disabled={saving}>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Card,
   CardContent,
@@ -71,12 +72,11 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
               {t('courses.liveSession.startsLabel')}{' '}
               <span className="text-destructive">*</span>
             </Label>
-            <Input
+            <DatePicker
               id="live-starts"
-              type="datetime-local"
-              dir="ltr"
               value={form.startsAt}
-              onChange={(e) => form.setStartsAt(e.target.value)}
+              onChange={(pickedValue: string) => form.setStartsAt(pickedValue)}
+              withTime
             />
           </div>
           <div className="space-y-2">

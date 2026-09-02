@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
 import { apiClient, type AcademySiteStatusData } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 
@@ -210,11 +211,10 @@ export function AcademySiteStatusDialog({
               <label className="mb-1 block text-sm font-medium">
                 {t('stores.siteReopenAt')}
               </label>
-              <Input
-                type="datetime-local"
+              <DatePicker
                 value={reopenAt}
-                onChange={(e) => setReopenAt(e.target.value)}
-                dir="ltr"
+                onChange={(pickedValue: string) => setReopenAt(pickedValue)}
+                withTime
               />
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('stores.siteReopenAtHint')}

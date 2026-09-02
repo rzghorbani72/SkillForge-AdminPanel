@@ -12,6 +12,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
+import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TutoringOffer } from '@/types/learning-operations';
 import type { GroupFormState } from '../hooks/use-tutoring-groups';
@@ -183,12 +184,12 @@ export const CreateGroupCard = ({
             <Label htmlFor="group-deadline">
               {t('tutoring.groups.joinDeadline')}
             </Label>
-            <Input
+            <DatePicker
               id="group-deadline"
-              type="date"
-              dir="ltr"
               value={form.join_deadline}
-              onChange={(e) => patch({ join_deadline: e.target.value })}
+              onChange={(pickedValue: string) =>
+                patch({ join_deadline: pickedValue })
+              }
             />
             <p className="text-xs text-muted-foreground">
               {t('tutoring.groups.joinDeadlineHint')}

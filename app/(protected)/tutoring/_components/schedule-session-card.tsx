@@ -12,6 +12,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TutoringEngagement } from '@/types/learning-operations';
 
@@ -71,24 +72,24 @@ export function ScheduleSessionCard({
         </div>
         <div className="space-y-2">
           <Label htmlFor="startsAt">{t('tutoring.startsAt')}</Label>
-          <Input
+          <DatePicker
             id="startsAt"
-            type="datetime-local"
             value={form.starts_at}
-            onChange={(event) =>
-              onChange({ ...form, starts_at: event.target.value })
+            onChange={(pickedValue: string) =>
+              onChange({ ...form, starts_at: pickedValue })
             }
+            withTime
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor="endsAtSession">{t('tutoring.endsAtOptional')}</Label>
-          <Input
+          <DatePicker
             id="endsAtSession"
-            type="datetime-local"
             value={form.ends_at}
-            onChange={(event) =>
-              onChange({ ...form, ends_at: event.target.value })
+            onChange={(pickedValue: string) =>
+              onChange({ ...form, ends_at: pickedValue })
             }
+            withTime
           />
         </div>
         <div className="space-y-2">

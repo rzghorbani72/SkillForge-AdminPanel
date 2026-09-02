@@ -50,6 +50,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { DatePicker } from '@/components/ui/date-picker';
 
 interface ModelField {
   name: string;
@@ -226,12 +227,12 @@ export default function DatabasePage() {
 
     if (fieldType === 'datetime') {
       return (
-        <Input
-          type="datetime-local"
+        <DatePicker
           value={value ? new Date(value).toISOString().slice(0, 16) : ''}
-          onChange={(e) =>
-            setFormData({ ...formData, [field.name]: e.target.value })
+          onChange={(pickedValue: string) =>
+            setFormData({ ...formData, [field.name]: pickedValue })
           }
+          withTime
         />
       );
     }

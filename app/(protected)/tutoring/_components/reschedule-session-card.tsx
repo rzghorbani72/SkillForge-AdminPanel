@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { TutoringSessionSearchCombobox } from '@/components/entity-search';
+import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface RescheduleFormState {
@@ -48,24 +48,24 @@ export function RescheduleSessionCard({
         </div>
         <div className="space-y-2">
           <Label htmlFor="rescheduleStarts">{t('tutoring.startsAt')}</Label>
-          <Input
+          <DatePicker
             id="rescheduleStarts"
-            type="datetime-local"
             value={form.starts_at}
-            onChange={(event) =>
-              onChange({ ...form, starts_at: event.target.value })
+            onChange={(pickedValue: string) =>
+              onChange({ ...form, starts_at: pickedValue })
             }
+            withTime
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor="rescheduleEnds">{t('tutoring.endsAtOptional')}</Label>
-          <Input
+          <DatePicker
             id="rescheduleEnds"
-            type="datetime-local"
             value={form.ends_at}
-            onChange={(event) =>
-              onChange({ ...form, ends_at: event.target.value })
+            onChange={(pickedValue: string) =>
+              onChange({ ...form, ends_at: pickedValue })
             }
+            withTime
           />
         </div>
         <div className="flex flex-wrap gap-2">

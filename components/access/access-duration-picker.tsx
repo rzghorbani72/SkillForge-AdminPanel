@@ -1,9 +1,9 @@
 'use client';
 
 import { Infinity as InfinityIcon, CalendarDays, Timer } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
+import { DatePicker } from '@/components/ui/date-picker';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { AccessDuration } from '@/lib/api-extra';
@@ -100,14 +100,13 @@ export function AccessDurationPicker({
       )}
 
       {value.mode === 'until' && (
-        <Input
-          type="date"
+        <DatePicker
           disabled={disabled}
           value={value.until.slice(0, 10)}
-          onChange={(event) =>
+          onChange={(pickedValue: string) =>
             onChange({
               mode: 'until',
-              until: new Date(`${event.target.value}T23:59:59`).toISOString()
+              until: new Date(`${pickedValue}T23:59:59`).toISOString()
             })
           }
           aria-label={t('accessGrants.durationUntil')}

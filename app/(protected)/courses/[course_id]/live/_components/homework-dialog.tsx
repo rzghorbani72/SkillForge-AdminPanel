@@ -21,6 +21,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -148,12 +149,10 @@ export function HomeworkDialog({
             <Label htmlFor="homework-due">
               {t('courses.live.homeworkDue')}
             </Label>
-            <Input
+            <DatePicker
               id="homework-due"
-              type="date"
-              dir="ltr"
               value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
+              onChange={(pickedValue: string) => setDueDate(pickedValue)}
             />
             <p className="text-xs text-muted-foreground">
               {t('courses.live.homeworkDueHint')}

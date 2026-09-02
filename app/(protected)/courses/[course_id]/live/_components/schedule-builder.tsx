@@ -4,8 +4,8 @@ import { useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DatePicker } from '@/components/ui/date-picker';
 import { NumberInput } from '@/components/ui/number-input';
 import {
   Card,
@@ -116,24 +116,20 @@ export default function ScheduleBuilder({
           </div>
           <div className="space-y-2">
             <Label htmlFor="starts-on">{t('courses.live.startDate')} *</Label>
-            <Input
+            <DatePicker
               id="starts-on"
-              type="date"
-              dir="ltr"
               value={startsOn}
-              onChange={(e) => setStartsOn(e.target.value)}
+              onChange={setStartsOn}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="join-deadline">
               {t('courses.live.joinDeadline')}
             </Label>
-            <Input
+            <DatePicker
               id="join-deadline"
-              type="date"
-              dir="ltr"
               value={joinDeadline}
-              onChange={(e) => setJoinDeadline(e.target.value)}
+              onChange={setJoinDeadline}
             />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -172,6 +168,7 @@ export default function ScheduleBuilder({
                   {new Intl.DateTimeFormat(language, {
                     dateStyle: 'medium',
                     timeStyle: 'short',
+                    hourCycle: 'h23',
                     timeZone: timezone
                   }).format(date)}
                 </li>

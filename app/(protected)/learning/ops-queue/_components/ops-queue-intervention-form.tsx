@@ -8,11 +8,11 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { StudentProfileSearchCombobox } from '@/components/entity-search';
+import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface OpsQueueInterventionFormProps {
@@ -61,11 +61,11 @@ export function OpsQueueInterventionForm({
         </div>
         <div className="space-y-2">
           <Label htmlFor="followUpAt">{t('opsQueue.followUpAt')}</Label>
-          <Input
+          <DatePicker
             id="followUpAt"
-            type="datetime-local"
             value={followUpAt}
-            onChange={(event) => onFollowUpAtChange(event.target.value)}
+            onChange={(pickedValue: string) => onFollowUpAtChange(pickedValue)}
+            withTime
           />
         </div>
         <div className="space-y-2 md:col-span-2">

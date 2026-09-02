@@ -19,6 +19,8 @@ export function useDateFormat() {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
+        // 24-hour whenever the caller asks for a time.
+        hourCycle: 'h23',
         ...(language === 'fa' ? { calendar: 'persian' as const } : {}),
         ...options
       }).format(new Date(value)),

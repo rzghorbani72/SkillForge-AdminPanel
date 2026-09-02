@@ -52,6 +52,23 @@ export function fromInputValue(value: string): Date | undefined {
   return new Date(y, m - 1, d, 12, 0, 0, 0);
 }
 
+/** Local `YYYY-MM-DDTHH:mm`, the shape a datetime form field carries. */
+export function toDateTimeInputValue(date: Date): string {
+  const hh = String(date.getHours()).padStart(2, '0');
+  const mm = String(date.getMinutes()).padStart(2, '0');
+  return `${toInputValue(date)}T${hh}:${mm}`;
+}
+
+export function fromDateTimeInputValue(value: string): Date | undefined {
+  if (!value) return undefined;
+  const [datePart, timePart] = value.split('T');
+  const date = fromInputValue(datePart);
+  if (!date) return undefined;
+  const [hours, minutes] = (timePart ?? '00:00').split(':').map(Number);
+  date.setHours(hours || 0, minutes || 0, 0, 0);
+  return date;
+}
+
 export function calendarParts(date: Date, language: LanguageCode) {
   return partsOf(date, calendarFor(language));
 }

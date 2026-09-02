@@ -81,6 +81,7 @@ export default function SessionRow({
   const when = new Intl.DateTimeFormat(language, {
     dateStyle: 'medium',
     timeStyle: 'short',
+    hourCycle: 'h23',
     timeZone: session.timezone
   }).format(new Date(session.starts_at));
 

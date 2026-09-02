@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { TimePicker } from '@/components/ui/time-picker';
 import { WeekdayPicker } from '@/components/shared/weekday-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TutoringGroupSlot } from '@/types/learning-operations';
@@ -51,14 +52,12 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
               <Label htmlFor={`slot-start-${index}`}>
                 {t('tutoring.groups.slotStart')}
               </Label>
-              <Input
+              <TimePicker
                 id={`slot-start-${index}`}
-                type="time"
-                dir="ltr"
                 disabled={disabled}
                 value={minutesToTime(slot.start_minute)}
-                onChange={(e) =>
-                  patch(index, { start_minute: timeToMinutes(e.target.value) })
+                onChange={(next) =>
+                  patch(index, { start_minute: timeToMinutes(next) })
                 }
               />
             </div>

@@ -195,7 +195,9 @@ export function formatDateTime(date: string | Date, language?: string): string {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      // 24-hour everywhere: an academy timetable is never read as 9 AM / 9 PM.
+      hourCycle: 'h23'
     }
   ).format(new Date(date));
 }
