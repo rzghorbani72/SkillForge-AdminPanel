@@ -8,13 +8,7 @@ import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PriceInput } from '@/components/ui/price-input';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { SetupCard } from '@/components/course/live/setup-card';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -110,14 +104,20 @@ export default function LivePricingCard({
     }
   };
 
+  const dirty =
+    groupPrice !== priceOf(offers, 'GROUP') ||
+    soloPrice !== priceOf(offers, 'SOLO');
+
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">{t('courses.live.pricing')}</CardTitle>
-        <CardDescription>{t('courses.live.pricingHint')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2">
+    <SetupCard
+      step={2}
+      title={t('courses.live.pricing')}
+      description={t('courses.live.pricingHint')}
+      done={offers.length > 0 && !dirty}
+      dirty={dirty}
+    >
+      <div className="space-y-4">
+        <div className="grid gap-4">
           <div className="space-y-2">
             <Label htmlFor="group-price">
               {t('courses.live.groupPrice')} *
@@ -145,10 +145,15 @@ export default function LivePricingCard({
             </p>
           </div>
         </div>
-        <Button type="button" size="sm" onClick={save} disabled={isSaving}>
+        <Button
+          type="button"
+          size="sm"
+          onClick={save}
+          disabled={isSaving || !dirty}
+        >
           {isSaving ? t('common.saving') : t('common.save')}
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </SetupCard>
   );
 }

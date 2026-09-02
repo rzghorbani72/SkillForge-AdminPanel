@@ -199,9 +199,10 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
                 axisLine={false}
                 width={44}
                 tickFormatter={(value: number) =>
-                  value >= 1000
-                    ? `${formatNumber(Math.round(value / 1000))}K`
-                    : formatNumber(value)
+                  value.toLocaleString(locale, {
+                    notation: 'compact',
+                    maximumFractionDigits: 1
+                  })
                 }
               />
               <Tooltip

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
@@ -18,13 +18,7 @@ import {
 } from '@dnd-kit/sortable';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { SetupCard } from '@/components/course/live/setup-card';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -42,6 +36,10 @@ interface TopicListEditorProps {
 
 let localKeySeq = 0;
 const newDraft = (): Draft => ({ key: `new-${localKeySeq++}`, title: '' });
+
+/** What the server holds, so an edit can be told apart from a reorder-free visit. */
+const signature = (rows: readonly { title: string }[]) =>
+  rows.map((row) => row.title.trim()).join('\u0000');
 
 /**
  * The syllabus a live course promises. Saved as one ordered list rather than
@@ -62,7 +60,12 @@ export default function TopicListEditor({
     }))
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [saved, setSaved] = useState(() => signature(initial));
   const sensors = useSensors(useSensor(PointerSensor));
+  const dirty = useMemo(
+    () => signature(drafts.filter((row) => row.title.trim())) !== saved,
+    [drafts, saved]
+  );
 
   const update = (key: string, title: string) =>
     setDrafts((rows) =>
@@ -103,6 +106,7 @@ export default function TopicListEditor({
           title: topic.title
         }))
       );
+      setSaved(signature(saved));
       onSaved?.(saved);
       toast.success(t('courses.live.topicsSaved'));
     } catch (err) {
@@ -113,12 +117,14 @@ export default function TopicListEditor({
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">{t('courses.live.topics')}</CardTitle>
-        <CardDescription>{t('courses.live.topicsHint')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3">
+    <SetupCard
+      step={1}
+      title={t('courses.live.topics')}
+      description={t('courses.live.topicsHint')}
+      done={drafts.some((row) => row.title.trim()) && !dirty}
+      dirty={dirty}
+    >
+      <div className="space-y-3">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -130,6 +136,11 @@ export default function TopicListEditor({
             strategy={verticalListSortingStrategy}
           >
             <div className="space-y-3">
+              {drafts.length === 0 ? (
+                <p className="rounded-xl border border-dashed p-4 text-center text-xs text-muted-foreground">
+                  {t('courses.live.topicsEmpty')}
+                </p>
+              ) : null}
               {drafts.map((draft, index) => (
                 <SortableTopicRow
                   key={draft.key}
@@ -158,11 +169,16 @@ export default function TopicListEditor({
             <Plus className="h-4 w-4" />
             {t('courses.live.addTopic')}
           </Button>
-          <Button type="button" size="sm" onClick={save} disabled={isSaving}>
+          <Button
+            type="button"
+            size="sm"
+            onClick={save}
+            disabled={isSaving || !dirty}
+          >
             {isSaving ? t('common.saving') : t('common.save')}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </SetupCard>
   );
 }

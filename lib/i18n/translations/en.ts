@@ -425,6 +425,7 @@ export const en = {
     visitSiteCustomDomain: 'Custom domain'
   },
   common: {
+    unsavedChanges: 'Unsaved',
     saveChanges: 'Save changes',
     uploading: 'Uploading…',
     toman: 'Toman',
@@ -1495,6 +1496,26 @@ export const en = {
     lessonImageAlt: 'Lesson image',
     // Live courses: syllabus, pricing, timetable and per-meeting naming.
     live: {
+      stepTopics: 'Topics',
+      stepTopicsHint: 'List the subjects you teach across the sessions.',
+      stepPricing: 'Price',
+      stepPricingHint:
+        'Set the per-seat group price so classes can be created.',
+      stepClass: 'Create class',
+      stepClassHint: 'Create a class — a student buys a seat in it.',
+      stepSchedule: 'Schedule',
+      stepScheduleHint:
+        'Pick the weekly days and times so session dates are generated.',
+      setupTitle: 'Live course setup',
+      setupProgress: '{{done}} of {{total}} steps done',
+      setupReadyTitle: 'This course is ready to sell',
+      setupReadyHint: 'Topics, price and a scheduled class are all set.',
+      nextStep: 'Next step',
+      topicsEmpty: 'No topics yet. Start with "Add topic".',
+      weeklyTimes: 'Weekly days and times',
+      classesTitle: 'Classes in this course',
+      classesCount: '{{count}} classes',
+      startsOn: 'Starts: {{date}}',
       homework: 'Homework',
       homeworkHint: 'Work set for the whole class, or for one meeting of it.',
       addHomework: 'Add homework',
@@ -5427,6 +5448,21 @@ export const en = {
     lifetime: 'Lifetime'
   },
   courseDetail: {
+    nextClass: 'Next class',
+    activeClasses: 'Active classes',
+    activeClassesHint: 'Enrolling or running',
+    seatsSold: 'Seats sold',
+    seatsOf: '{{taken}} of {{capacity}}',
+    seatsSoldHint: 'Across active classes',
+    seatFill: 'Seat fill',
+    seatFillHint: 'Share of seats sold',
+    continueSetup: 'Continue classroom setup',
+    noUpcomingClass: 'No upcoming class yet.',
+    startDateNotSet: 'Start date not set',
+    meetingLinkSet: 'Meeting link set',
+    meetingLinkMissing: 'Meeting link missing',
+    priceNotSet: 'Not set',
+    notSelling: 'Not sold',
     revenuePeriod: 'Revenue ({{period}})',
     sales: '{{count}} sale(s)',
     totalStudents: 'Total Students',

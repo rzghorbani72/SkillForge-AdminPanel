@@ -416,6 +416,7 @@ export const fa = {
     visitSiteCustomDomain: 'دامنه اختصاصی'
   },
   common: {
+    unsavedChanges: 'ذخیره‌نشده',
     saveChanges: 'ذخیره تغییرات',
     uploading: 'در حال بارگذاری…',
     toman: 'تومان',
@@ -1485,6 +1486,27 @@ export const fa = {
     lessonImageAlt: 'تصویر درس',
     // Live courses: syllabus, pricing, timetable and per-meeting naming.
     live: {
+      stepTopics: 'سرفصل‌ها',
+      stepTopicsHint:
+        'فهرست موضوع‌هایی را بنویسید که در جلسه‌ها آموزش می‌دهید.',
+      stepPricing: 'قیمت',
+      stepPricingHint:
+        'قیمت هر صندلی کلاس گروهی را ثبت کنید تا بتوانید کلاس بسازید.',
+      stepClass: 'ساخت کلاس',
+      stepClassHint: 'یک کلاس بسازید؛ دانشجو صندلی همین کلاس را می‌خرد.',
+      stepSchedule: 'زمان‌بندی',
+      stepScheduleHint:
+        'روز و ساعت هفتگی کلاس را مشخص کنید تا تاریخ جلسه‌ها ساخته شود.',
+      setupTitle: 'راه‌اندازی دورهٔ زنده',
+      setupProgress: '{{done}} مرحله از {{total}} انجام شده',
+      setupReadyTitle: 'این دوره آمادهٔ فروش است',
+      setupReadyHint: 'سرفصل، قیمت و کلاسِ زمان‌بندی‌شده ثبت شده است.',
+      nextStep: 'قدم بعدی',
+      topicsEmpty: 'هنوز سرفصلی ننوشته‌اید. با «افزودن سرفصل» شروع کنید.',
+      weeklyTimes: 'روزها و ساعت‌های هفتگی',
+      classesTitle: 'کلاس‌های این دوره',
+      classesCount: '{{count}} کلاس',
+      startsOn: 'شروع: {{date}}',
       homework: 'تکالیف',
       homeworkHint: 'تکلیفی که کل کلاس یا یک جلسهٔ مشخص باید انجام دهد.',
       addHomework: 'افزودن تکلیف',
@@ -5413,6 +5435,21 @@ export const fa = {
     lifetime: 'مادام‌العمر'
   },
   courseDetail: {
+    nextClass: 'نزدیک‌ترین کلاس',
+    activeClasses: 'کلاس‌های فعال',
+    activeClassesHint: 'در حال ثبت‌نام یا برگزاری',
+    seatsSold: 'صندلی‌های فروخته‌شده',
+    seatsOf: '{{taken}} از {{capacity}}',
+    seatsSoldHint: 'در کلاس‌های فعال',
+    seatFill: 'پرشدن ظرفیت',
+    seatFillHint: 'نسبت صندلی‌های فروخته‌شده',
+    continueSetup: 'ادامهٔ راه‌اندازی کلاس',
+    noUpcomingClass: 'کلاس پیش‌رویی ثبت نشده است.',
+    startDateNotSet: 'تاریخ شروع ثبت نشده',
+    meetingLinkSet: 'لینک جلسه ثبت شده',
+    meetingLinkMissing: 'لینک جلسه ثبت نشده',
+    priceNotSet: 'ثبت نشده',
+    notSelling: 'فروخته نمی‌شود',
     revenuePeriod: 'درآمد ({{period}})',
     sales: '{{count}} فروش',
     totalStudents: 'کل دانشجویان',

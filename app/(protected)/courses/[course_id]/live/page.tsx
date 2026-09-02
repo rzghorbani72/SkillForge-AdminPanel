@@ -2,26 +2,27 @@
 
 import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Radio } from 'lucide-react';
+import { ArrowLeft, Globe } from 'lucide-react';
 import { toast } from 'react-toastify';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LiveSetupChecklist } from '@/components/course/live/live-setup-checklist';
+import { liveSetupSteps } from '@/components/course/live/live-setup-steps';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { validateLiveForPublish } from '@/components/course/course-drafts';
 import { useLiveCourse } from './hooks/use-live-course';
 import TopicListEditor from './_components/topic-list-editor';
 import LivePricingCard from './_components/live-pricing-card';
-import ScheduleBuilder from './_components/schedule-builder';
+import { CreateClassSheet } from './_components/create-class-sheet';
 import { ClassListCard } from './_components/class-list-card';
 
 /**
  * Building a live course, in the order a teacher actually thinks: what it
- * covers, what it costs, when it meets, and then what each meeting is called.
- * Each step unlocks the next, so an empty page never asks for a class before
- * there is a price to sell a seat at.
+ * covers, what it costs, and when it meets. The checklist on top is the whole
+ * navigation — it says how far the course got and which single thing is left,
+ * so the page never reads as four unrelated forms.
  */
 export default function LiveCoursePage() {
   const { t } = useTranslation();
@@ -33,9 +34,9 @@ export default function LiveCoursePage() {
   const [isPublishing, setIsPublishing] = useState(false);
 
   const groupOffer = offers.find((offer) => offer.kind === 'GROUP');
-  const publishBlocker = useMemo(
+  const steps = useMemo(
     () =>
-      validateLiveForPublish({
+      liveSetupSteps({
         topics: topics.length,
         classes: groups.length,
         classesWithSchedule: groups.filter((group) => group.Slots?.length)
@@ -45,6 +46,7 @@ export default function LiveCoursePage() {
       }),
     [topics, groups, offers]
   );
+  const ready = steps.every((step) => step.done);
 
   const publish = async () => {
     setIsPublishing(true);
@@ -61,16 +63,20 @@ export default function LiveCoursePage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto flex h-64 items-center justify-center py-6">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+      <div className="flex-1 space-y-6 p-4 sm:p-6">
+        <Skeleton className="h-36 w-full rounded-2xl" />
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Skeleton className="h-64 w-full rounded-xl" />
+          <Skeleton className="h-64 w-full rounded-xl" />
+        </div>
       </div>
     );
   }
 
   if (!course) {
     return (
-      <div className="container mx-auto flex h-64 flex-col items-center justify-center gap-4 py-6 text-center">
-        <h2 className="text-2xl font-bold">{t('courses.courseNotFound')}</h2>
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
+        <h2 className="text-lg font-semibold">{t('courses.courseNotFound')}</h2>
         <Button variant="outline" onClick={() => router.push('/courses')}>
           <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
           {t('courses.backToCourses')}
@@ -80,65 +86,58 @@ export default function LiveCoursePage() {
   }
 
   return (
-    <div className="container mx-auto space-y-6 py-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Radio className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold tracking-tight">{course.title}</h2>
-            <Badge variant={course.is_published ? 'default' : 'outline'}>
-              {course.is_published
-                ? t('courses.published')
-                : t('courses.draft')}
-            </Badge>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {t('courses.live.pageSubtitle')}
-          </p>
-        </div>
-        <div className="flex flex-col items-end gap-1">
-          <Button
-            type="button"
-            onClick={publish}
-            disabled={
-              isPublishing || Boolean(publishBlocker) || course.is_published
-            }
-          >
-            {isPublishing ? t('common.saving') : t('courses.publishCourse')}
-          </Button>
-          {publishBlocker && !course.is_published && (
-            <p className="text-xs text-muted-foreground">{t(publishBlocker)}</p>
-          )}
-        </div>
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
+      <LiveSetupChecklist
+        steps={steps}
+        action={
+          ready && !course.is_published ? (
+            <Button type="button" onClick={publish} disabled={isPublishing}>
+              <Globe className="me-1.5 h-4 w-4" />
+              {isPublishing ? t('common.saving') : t('courses.publishCourse')}
+            </Button>
+          ) : null
+        }
+      />
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TopicListEditor
+          courseId={courseId}
+          initial={topics}
+          onSaved={(saved) => patch({ topics: saved })}
+        />
+
+        <LivePricingCard
+          courseId={courseId}
+          courseTitle={course.title}
+          tutorProfileId={String(course.author_id)}
+          offers={offers}
+          onSaved={() => void reload()}
+        />
       </div>
 
-      <TopicListEditor
+      <ClassListCard
         courseId={courseId}
-        initial={topics}
-        onSaved={(saved) => patch({ topics: saved })}
+        groups={groups}
+        action={
+          groupOffer ? (
+            <CreateClassSheet
+              offerId={groupOffer.id}
+              courseTitle={course.title}
+              onCreated={() => void reload()}
+            />
+          ) : null
+        }
+        emptyAction={
+          groupOffer ? (
+            <CreateClassSheet
+              offerId={groupOffer.id}
+              courseTitle={course.title}
+              onCreated={() => void reload()}
+              variant="cta"
+            />
+          ) : null
+        }
       />
-
-      <LivePricingCard
-        courseId={courseId}
-        courseTitle={course.title}
-        tutorProfileId={String(course.author_id)}
-        offers={offers}
-        onSaved={() => void reload()}
-      />
-
-      {groupOffer ? (
-        <ScheduleBuilder
-          offerId={groupOffer.id}
-          courseTitle={course.title}
-          onCreated={() => void reload()}
-        />
-      ) : (
-        <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-          {t('courses.live.needsPriceBeforeSchedule')}
-        </p>
-      )}
-
-      <ClassListCard courseId={courseId} groups={groups} />
     </div>
   );
 }

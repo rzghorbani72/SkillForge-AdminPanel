@@ -7,18 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
 import { NumberInput } from '@/components/ui/number-input';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
 import { defaultTimezone } from '@/lib/class-slot-time';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroupSlot } from '@/types/learning-operations';
 import { previewSessionDates } from '../lib/session-plan-preview';
 
@@ -44,7 +39,9 @@ export default function ScheduleBuilder({
   courseTitle,
   onCreated
 }: ScheduleBuilderProps) {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
+  const formatDate = useDateFormat();
+  const formatNumber = useNumberFormat();
   const [slots, setSlots] = useState<TutoringGroupSlot[]>([DEFAULT_SLOT]);
   const [sessionCount, setSessionCount] = useState(10);
   const [capacity, setCapacity] = useState(8);
@@ -91,96 +88,94 @@ export default function ScheduleBuilder({
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">
-          {t('courses.live.schedule')}
-        </CardTitle>
-        <CardDescription>{t('courses.live.scheduleHint')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-5">
+    <div className="space-y-5">
+      <div className="space-y-2">
+        <Label>{t('courses.live.weeklyTimes')}</Label>
         <GroupSlotEditor slots={slots} onChange={setSlots} />
+      </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="session-count">
+            {t('courses.live.sessionCount')} *
+          </Label>
+          <NumberInput
+            id="session-count"
+            value={sessionCount}
+            min={1}
+            max={200}
+            onChange={(raw) => setSessionCount(Number(raw) || 1)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="starts-on">{t('courses.live.startDate')} *</Label>
+          <DatePicker id="starts-on" value={startsOn} onChange={setStartsOn} />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="join-deadline">
+            {t('courses.live.joinDeadline')}
+          </Label>
+          <DatePicker
+            id="join-deadline"
+            value={joinDeadline}
+            onChange={setJoinDeadline}
+          />
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="session-count">
-              {t('courses.live.sessionCount')} *
+            <Label htmlFor="min-students">
+              {t('courses.live.minStudents')}
             </Label>
             <NumberInput
-              id="session-count"
-              value={sessionCount}
+              id="min-students"
+              value={minStudents}
               min={1}
-              max={200}
-              onChange={(raw) => setSessionCount(Number(raw) || 1)}
+              onChange={(raw) => setMinStudents(Number(raw) || 1)}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="starts-on">{t('courses.live.startDate')} *</Label>
-            <DatePicker
-              id="starts-on"
-              value={startsOn}
-              onChange={setStartsOn}
+            <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
+            <NumberInput
+              id="capacity"
+              value={capacity}
+              min={1}
+              onChange={(raw) => setCapacity(Number(raw) || 1)}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="join-deadline">
-              {t('courses.live.joinDeadline')}
-            </Label>
-            <DatePicker
-              id="join-deadline"
-              value={joinDeadline}
-              onChange={setJoinDeadline}
-            />
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="min-students">
-                {t('courses.live.minStudents')}
-              </Label>
-              <NumberInput
-                id="min-students"
-                value={minStudents}
-                min={1}
-                onChange={(raw) => setMinStudents(Number(raw) || 1)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
-              <NumberInput
-                id="capacity"
-                value={capacity}
-                min={1}
-                onChange={(raw) => setCapacity(Number(raw) || 1)}
-              />
-            </div>
           </div>
         </div>
+      </div>
 
-        {preview.length > 0 && (
-          <div className="rounded-md border bg-muted/30 p-3">
-            <p className="mb-2 text-sm font-medium">
-              {t('courses.live.previewTitle')}
-            </p>
-            <ol className="grid gap-1 text-sm text-muted-foreground sm:grid-cols-2">
-              {preview.map((date, index) => (
-                <li key={date.toISOString()}>
-                  {index + 1}.{' '}
-                  {new Intl.DateTimeFormat(language, {
-                    dateStyle: 'medium',
-                    timeStyle: 'short',
-                    hourCycle: 'h23',
-                    timeZone: timezone
-                  }).format(date)}
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
+      {preview.length > 0 && (
+        <div className="rounded-xl border bg-muted/30 p-3">
+          <p className="mb-2 text-sm font-medium">
+            {t('courses.live.previewTitle')}
+          </p>
+          <ol className="grid gap-1 text-sm text-muted-foreground sm:grid-cols-2">
+            {preview.map((date, index) => (
+              <li key={date.toISOString()} className="flex gap-2">
+                <span className="shrink-0 tabular-nums">
+                  {formatNumber(index + 1)}.
+                </span>
+                <span>
+                  {formatDate(date, {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
-        <Button type="button" onClick={create} disabled={isSaving}>
-          {isSaving ? t('common.saving') : t('courses.live.createClass')}
-        </Button>
-      </CardContent>
-    </Card>
+      <Button
+        type="button"
+        className="w-full sm:w-auto"
+        onClick={create}
+        disabled={isSaving}
+      >
+        {isSaving ? t('common.saving') : t('courses.live.createClass')}
+      </Button>
+    </div>
   );
 }

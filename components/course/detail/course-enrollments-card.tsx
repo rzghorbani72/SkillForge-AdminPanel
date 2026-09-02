@@ -17,7 +17,8 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { StatusBadge } from '@/components/shared/status-badge';
-import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
 import type { CourseEnrollment } from './types';
 
 function studentName(enrollment: CourseEnrollment, fallback: string): string {
@@ -34,7 +35,7 @@ export function CourseEnrollmentsCard({
   enrollments: CourseEnrollment[];
 }) {
   const { t } = useTranslation();
-  const { locale } = useLanguage();
+  const formatDate = useDateFormat();
 
   return (
     <Card>
@@ -79,9 +80,7 @@ export function CourseEnrollmentsCard({
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {enrollment.enrolled_at
-                        ? new Date(enrollment.enrolled_at).toLocaleDateString(
-                            locale
-                          )
+                        ? formatDate(enrollment.enrolled_at)
                         : '—'}
                     </TableCell>
                     <TableCell>
