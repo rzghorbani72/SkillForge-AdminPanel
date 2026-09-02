@@ -837,6 +837,9 @@ export const ar = {
       soloPriceHint: 'سعر الدرس الفردي. اتركه فارغًا إن لم ترغب ببيعه.',
       pricesRequired: 'أدخل أحد السعرين على الأقل.',
       pricesSaved: 'تم حفظ الأسعار.',
+      pricesSavedAndSellingEnabled:
+        'تم حفظ الأسعار وتفعيل بيع الحصص الخاصة والجماعية لهذه الأكاديمية.',
+      openAcademySettings: 'إعدادات الأكاديمية',
       solo: 'خاص',
       group: 'جماعي',
       schedule: 'جدول الصف',

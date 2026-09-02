@@ -1489,6 +1489,9 @@ export const en = {
         'One-to-one price. Leave empty to not sell private classes.',
       pricesRequired: 'Enter at least one of the two prices.',
       pricesSaved: 'Prices saved.',
+      pricesSavedAndSellingEnabled:
+        'Prices saved. Selling private and group classes is now on for this academy.',
+      openAcademySettings: 'Academy settings',
       solo: 'Private',
       group: 'Group',
       schedule: 'Class schedule',
@@ -2869,9 +2872,9 @@ export const en = {
     academyFeaturesTitle: 'Learning features',
     academyFeaturesDescription:
       'Enable or disable learning paths and follow-up tools for your academy.',
-    tutorLedLearningEnabled: 'Learning follow-up',
+    tutorLedLearningEnabled: 'Private & group classes',
     tutorLedLearningEnabledDescription:
-      'Follow-up queue, private tutoring, and staff notes for managers and teachers.',
+      'Sell and run private and group classes, with the follow-up queue and student notes.',
     enrollmentEnabled: 'One-time enrollment',
     enrollmentEnabledDescription: 'Sell courses with a single payment.',
     subscriptionEnabled: 'Course subscriptions',
@@ -6108,14 +6111,14 @@ export const en = {
     noteSaved: 'Intervention note saved',
     noteRequired: 'Profile id and note are required',
     useForNote: 'Use for note',
-    featureDisabled: 'Learning follow-up is disabled for this academy',
+    featureDisabled: 'Private and group classes are off for this academy',
     featureDisabledDescription:
-      'Enable learning follow-up in academy settings to use this page.',
-    enableFeature: 'Enable learning follow-up',
+      'Turn private and group classes on in academy settings to use this page.',
+    enableFeature: 'Turn on private & group classes',
     enablingFeature: 'Enabling…',
-    featureEnabledSuccess: 'Learning follow-up enabled',
+    featureEnabledSuccess: 'Private and group classes turned on',
     contactManager:
-      'Ask your academy manager to enable learning follow-up for access.'
+      'Ask your academy manager to turn on private and group classes for access.'
   },
   tutoring: {
     groups: {

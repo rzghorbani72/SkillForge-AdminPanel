@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
@@ -16,6 +18,8 @@ import {
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
+import { queryKeys } from '@/lib/query/keys';
 import type {
   TutoringOffer,
   TutoringOfferKind
@@ -28,6 +32,8 @@ interface LivePricingCardProps {
   offers: TutoringOffer[];
   onSaved: (offers: TutoringOffer[]) => void;
 }
+
+type SavedOffer = TutoringOffer & { feature_enabled_now?: boolean };
 
 const priceOf = (offers: TutoringOffer[], kind: TutoringOfferKind) =>
   String(offers.find((offer) => offer.kind === kind)?.price ?? '');
@@ -45,6 +51,8 @@ export default function LivePricingCard({
   onSaved
 }: LivePricingCardProps) {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const academyId = useCurrentAcademyId();
   const [groupPrice, setGroupPrice] = useState(priceOf(offers, 'GROUP'));
   const [soloPrice, setSoloPrice] = useState(priceOf(offers, 'SOLO'));
   const [isSaving, setIsSaving] = useState(false);
@@ -72,11 +80,29 @@ export default function LivePricingCard({
     }
     setIsSaving(true);
     try {
-      const saved: TutoringOffer[] = [];
+      const saved: SavedOffer[] = [];
       if (groupPrice) saved.push(await saveOne('GROUP', groupPrice));
       if (soloPrice) saved.push(await saveOne('SOLO', soloPrice));
       onSaved(saved);
-      toast.success(t('courses.live.pricesSaved'));
+
+      // Pricing a live course is itself the decision to sell classes, so the
+      // server turns that on rather than blocking the save. Say so, because it
+      // also adds the class pages to the sidebar.
+      if (saved.some((offer) => offer.feature_enabled_now)) {
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.learningNavCapabilities(academyId)
+        });
+        toast.success(
+          <span>
+            {t('courses.live.pricesSavedAndSellingEnabled')}{' '}
+            <Link href="/settings/academy" className="underline">
+              {t('courses.live.openAcademySettings')}
+            </Link>
+          </span>
+        );
+      } else {
+        toast.success(t('courses.live.pricesSaved'));
+      }
     } catch (err) {
       ErrorHandler.handleApiError(err);
     } finally {

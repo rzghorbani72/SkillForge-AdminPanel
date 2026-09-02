@@ -5671,14 +5671,23 @@ class ApiClient {
 
   // ─── Tutoring ──────────────────────────────────────────────────────────────
 
+  /**
+   * `feature_enabled_now` says the server switched tutor-led learning on for the
+   * academy as part of this call, so the caller can report the change.
+   */
   async createTutoringOffer(
     data: CreateTutoringOfferPayload
-  ): Promise<TutoringOffer> {
-    const res = await this.request<TutoringOffer | { data: TutoringOffer }>(
-      '/tutoring/offers',
-      { method: 'POST', body: JSON.stringify(data) }
-    );
-    return unwrapDataEnvelope(res.data);
+  ): Promise<TutoringOffer & { feature_enabled_now?: boolean }> {
+    const res = await this.request<
+      TutoringOffer | { data: TutoringOffer; feature_enabled_now?: boolean }
+    >('/tutoring/offers', { method: 'POST', body: JSON.stringify(data) });
+    const body = res.data;
+    const featureEnabledNow =
+      'feature_enabled_now' in body ? body.feature_enabled_now : undefined;
+    return {
+      ...unwrapDataEnvelope(body),
+      feature_enabled_now: featureEnabledNow
+    };
   }
 
   async getTutoringOffers(params?: {

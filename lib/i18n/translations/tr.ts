@@ -855,6 +855,9 @@ export const tr = {
       soloPriceHint: 'Birebir ders fiyatı. Boş bırakırsanız satılmaz.',
       pricesRequired: 'İki fiyattan en az birini girin.',
       pricesSaved: 'Fiyatlar kaydedildi.',
+      pricesSavedAndSellingEnabled:
+        'Fiyatlar kaydedildi. Bu akademi için özel ve grup dersi satışı açıldı.',
+      openAcademySettings: 'Akademi ayarları',
       solo: 'Özel',
       group: 'Grup',
       schedule: 'Ders programı',
