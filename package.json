@@ -11,7 +11,7 @@
     "kill-port": "fuser -k 4000/tcp",
     "build": "next build",
     "start": "next start --port 4000",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test:unit": "playwright test -c playwright.unit.config.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

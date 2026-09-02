@@ -38,7 +38,7 @@ export default function CourseCurriculumPage() {
     reorderLessons,
     retrySave,
     saveNow
-  } = useCourseForm(courseId);
+  } = useCourseForm(courseId, { curriculumOnly: true });
 
   if (!selectedAcademy) return <NoAcademyState />;
 

@@ -26,6 +26,8 @@ export default function LessonSettingsPage() {
     lesson_id: string;
   }>();
   const { t } = useTranslation();
+  // The lesson id alone would load, so a lesson reached under the wrong
+  // course's address reads as not found rather than opening here.
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -57,7 +59,7 @@ export default function LessonSettingsPage() {
 
       {isLoading ? (
         <Skeleton className="h-64 w-full rounded-xl" />
-      ) : !lesson ? (
+      ) : !lesson || String(lesson.course_id) !== courseId ? (
         <p className="text-sm text-muted-foreground">
           {t('courses.lessonNotFound')}
         </p>
