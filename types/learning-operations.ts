@@ -470,6 +470,28 @@ export interface SessionRecording {
   url: string | null;
 }
 
+/** A file the teacher left behind after one meeting. */
+export interface SessionMaterial {
+  id: string;
+  title: string;
+  order: number;
+  Document: {
+    id: string;
+    publicUrl: string | null;
+    mime_type: string | null;
+    size: number | null;
+  } | null;
+}
+
+/** Exactly one of these identifies the thread a message belongs to. */
+export interface DiscussionParent {
+  attempt_id?: string;
+  submission_id?: string;
+  engagement_id?: string;
+  tutoring_session_id?: string;
+  tutoring_group_id?: string;
+}
+
 export interface ClassSession {
   id: string;
   starts_at: string;
@@ -479,7 +501,10 @@ export interface ClassSession {
   title: string | null;
   notes: string | null;
   topic_id: string | null;
+  /** Null falls back to the class-wide link. */
+  meeting_url: string | null;
   Topic: { id: string; title: string } | null;
+  Materials?: SessionMaterial[];
   recording_video_id?: string | null;
   recording_allow_download?: boolean;
 }

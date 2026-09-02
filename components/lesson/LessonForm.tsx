@@ -47,16 +47,25 @@ type Props = {
   onLiveSessionSaved?: () => void;
 };
 
+/**
+ * Recorded lesson types. This form only ever opens inside an OFFLINE course —
+ * a live course sells a timetable of meetings, not lessons — so LIVE is not
+ * offered here, only kept for a lesson that is already LIVE on the server.
+ */
 const LESSON_TYPE_OPTIONS = [
   { value: 'VIDEO', labelKey: 'courses.lessonTypeVideo' },
   { value: 'AUDIO', labelKey: 'courses.lessonTypeAudio' },
   { value: 'TEXT', labelKey: 'courses.lessonTypeText' },
   { value: 'QUIZ', labelKey: 'courses.lessonTypeQuiz' },
-  { value: 'ASSIGNMENT', labelKey: 'courses.lessonTypeAssignment' },
-  { value: 'LIVE', labelKey: 'courses.lessonTypeLive' }
+  { value: 'ASSIGNMENT', labelKey: 'courses.lessonTypeAssignment' }
 ] as const;
 
-type LessonTypeValue = (typeof LESSON_TYPE_OPTIONS)[number]['value'];
+const LIVE_LESSON_OPTION = {
+  value: 'LIVE',
+  labelKey: 'courses.lessonTypeLive'
+} as const;
+
+type LessonTypeValue = LessonFormData['lesson_type'];
 
 /** Clear media ids that do not match the newly selected lesson type. */
 function clearFormMediaForType(
@@ -95,6 +104,10 @@ const LessonForm = ({
   onLiveSessionSaved
 }: Props) => {
   const { t } = useTranslation();
+  const typeOptions =
+    serverLessonType === 'LIVE'
+      ? [...LESSON_TYPE_OPTIONS, LIVE_LESSON_OPTION]
+      : LESSON_TYPE_OPTIONS;
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonFormSchema),
     defaultValues: {
@@ -195,7 +208,7 @@ const LessonForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {LESSON_TYPE_OPTIONS.map((option) => (
+                      {typeOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {t(option.labelKey)}
                         </SelectItem>

@@ -83,6 +83,8 @@ import type {
   TutoringOffer,
   ClassSession,
   CourseTopic,
+  DiscussionParent,
+  SessionMaterial,
   SessionRecording,
   CreateTutoringGroupPayload,
   UpdateTutoringGroupPayload,
@@ -141,6 +143,15 @@ function unwrapDataEnvelope<T>(payload: T | { data: T }): T {
     return payload.data;
   }
   return payload;
+}
+
+/** The upload endpoints answer in a few envelope shapes; only the id matters. */
+function uploadedFileId(payload: unknown): string {
+  if (payload && typeof payload === 'object') {
+    if ('data' in payload && payload.data) return uploadedFileId(payload.data);
+    if ('id' in payload && typeof payload.id === 'string') return payload.id;
+  }
+  throw new Error('Upload did not return a file id');
 }
 
 /** Why the client stopped issuing new API calls (first 401/403 wins). */
@@ -2186,10 +2197,17 @@ class ApiClient {
     return this.quizData<T>(`/discussions/threads/${threadId}`);
   }
 
-  async postDiscussionMessage(
-    parent: { attempt_id?: string; submission_id?: string },
-    body: string
-  ) {
+  async findDiscussionThread<T = unknown>(parent: DiscussionParent) {
+    const query = new URLSearchParams(
+      Object.entries(parent).filter(([, value]) => Boolean(value)) as [
+        string,
+        string
+      ][]
+    );
+    return this.quizData<T>(`/discussions/thread?${query.toString()}`);
+  }
+
+  async postDiscussionMessage(parent: DiscussionParent, body: string) {
     return this.quizData(`/discussions/messages`, {
       method: 'POST',
       body: JSON.stringify({ ...parent, body })
@@ -5517,6 +5535,7 @@ class ApiClient {
       title?: string | null;
       topic_id?: string | null;
       notes?: string | null;
+      meeting_url?: string | null;
     }
   ): Promise<ClassSession> {
     const res = await this.request<ClassSession | { data: ClassSession }>(
@@ -5537,6 +5556,44 @@ class ApiClient {
       body: JSON.stringify(data)
     });
     return unwrapDataEnvelope(res.data) ?? null;
+  }
+
+  async addSessionMaterial(
+    sessionId: string,
+    data: { document_id: string; title?: string }
+  ): Promise<SessionMaterial> {
+    const res = await this.request<SessionMaterial | { data: SessionMaterial }>(
+      `/tutoring/class-sessions/${sessionId}/materials`,
+      { method: 'POST', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  /** Upload a handout and attach it to the meeting in one step. */
+  async addSessionMaterialFile(
+    sessionId: string,
+    file: File,
+    onProgress?: (progress: number) => void
+  ): Promise<SessionMaterial> {
+    const uploaded = await this.uploadDocument(
+      file,
+      { title: file.name },
+      onProgress
+    );
+    return this.addSessionMaterial(sessionId, {
+      document_id: uploadedFileId(uploaded),
+      title: file.name
+    });
+  }
+
+  async removeSessionMaterial(
+    sessionId: string,
+    materialId: string
+  ): Promise<void> {
+    await this.request(
+      `/tutoring/class-sessions/${sessionId}/materials/${materialId}`,
+      { method: 'DELETE' }
+    );
   }
 
   async cancelClassSession(sessionId: string, reason?: string): Promise<void> {

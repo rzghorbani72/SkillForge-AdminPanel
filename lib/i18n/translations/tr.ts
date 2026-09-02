@@ -891,6 +891,15 @@ export const tr = {
       uploadRecordingHint: 'Bu oturumun videosunu ders öğrencilerine bırakın.',
       recordingSaved: 'Kayıt kaydedildi.',
       hasRecording: 'Kaydı var',
+      hasOwnLink: 'Kendi bağlantısı',
+      meetingUrlPlaceholder: 'https://meet.example.com/your-class',
+      meetingUrlHint:
+        'Bu ders için sınıf geneli bağlantıyı kullanmak istiyorsanız boş bırakın.',
+      sessionChat: 'Bu dersin sohbeti',
+      uploadMaterial: 'Ders materyali yükle',
+      uploadMaterialHint:
+        'Ders sonrası paylaşılan slayt, çalışma kağıdı veya notlar.',
+      materialAdded: 'Dosya bu derse eklendi',
       allowRecordingDownload: 'Kaydın indirilmesine izin ver',
       pageSubtitle:
         'Konuları, fiyatı, programı ve her oturumun adını burada oluşturun.',
@@ -918,7 +927,8 @@ export const tr = {
     contentManagement: 'İçerik Yönetimi',
     courseNotFoundDesc: 'Aradığınız kurs mevcut değil.',
     backToCourse: 'Kursa Dön',
-    seasonsManagementSubtitle: '"{{title}}" için sezonları ve dersleri yönetin',
+    seasonsManagementSubtitle:
+      '"{{title}}" dersinde öğrencilerin izlediği bölümler ve kayıtlı dersler',
     totalSeasons: 'Toplam Sezon',
     totalLessons: 'Toplam Ders',
     noSeasonsMatchSearch: 'Arama kriterlerinize uyan sezon yok.',

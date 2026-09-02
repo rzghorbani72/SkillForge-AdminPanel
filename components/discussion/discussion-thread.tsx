@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { MessageSquare, Send } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+import type { DiscussionParent } from '@/types/learning-operations';
 
 interface ThreadMessage {
   id: string;
@@ -19,6 +20,7 @@ interface DiscussionThreadProps {
   /** Provide exactly one parent. */
   attemptId?: string;
   submissionId?: string;
+  tutoringSessionId?: string;
   threadId?: string;
   currentProfileId?: string;
 }
@@ -30,6 +32,7 @@ interface DiscussionThreadProps {
 export function DiscussionThread({
   attemptId,
   submissionId,
+  tutoringSessionId,
   threadId,
   currentProfileId
 }: DiscussionThreadProps) {
@@ -41,9 +44,25 @@ export function DiscussionThread({
   const [error, setError] = useState<string | null>(null);
   const activeThreadId = useRef<string | undefined>(threadId);
 
+  const parent: DiscussionParent = attemptId
+    ? { attempt_id: attemptId }
+    : submissionId
+      ? { submission_id: submissionId }
+      : { tutoring_session_id: tutoringSessionId };
+  const parentRef = useRef(parent);
+  parentRef.current = parent;
+
+  // A thread is created lazily on the first message, so an id may not exist
+  // yet: look it up by its parent before giving up on showing history.
   const load = useCallback(async () => {
-    if (!activeThreadId.current) return;
     try {
+      if (!activeThreadId.current) {
+        const found = await apiClient.findDiscussionThread<{
+          id?: string;
+        } | null>(parentRef.current);
+        if (!found?.id) return;
+        activeThreadId.current = found.id;
+      }
       const data = await apiClient.getDiscussionThread<{
         messages: ThreadMessage[];
       }>(activeThreadId.current);
@@ -64,7 +83,7 @@ export function DiscussionThread({
     setError(null);
     try {
       const msg = (await apiClient.postDiscussionMessage(
-        attemptId ? { attempt_id: attemptId } : { submission_id: submissionId },
+        parent,
         text
       )) as ThreadMessage;
       activeThreadId.current = msg.thread_id;
