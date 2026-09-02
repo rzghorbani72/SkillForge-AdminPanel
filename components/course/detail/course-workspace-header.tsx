@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CourseTypePill } from '@/components/course/course-type-pill';
 import { StatusPill } from '@/components/course/StatusPill';
 import { courseHue } from '@/components/course/courseUtils';
 import { langApiVersionPath } from '@/lib/api-lang';
@@ -106,6 +107,7 @@ export function CourseWorkspaceHeader() {
             {course.title}
           </h1>
           <StatusPill status={course.is_published ? 'PUBLISHED' : 'DRAFT'} />
+          <CourseTypePill type={course.course_type} />
         </div>
 
         <div className="flex shrink-0 items-center gap-2">

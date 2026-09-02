@@ -4,6 +4,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { StatusPill } from './StatusPill';
+import { CourseTypePill } from './course-type-pill';
 import { courseHue } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
 
@@ -58,7 +59,10 @@ export function CourseRow({
             }}
           />
           <div>
-            <div className="text-base font-semibold">{course.title}</div>
+            <div className="flex items-center gap-2">
+              <div className="text-base font-semibold">{course.title}</div>
+              <CourseTypePill type={course.course_type} />
+            </div>
             <div className="text-sm text-muted-foreground">
               {seasonsCount} {t('courses.season')} · {lessonsCount}{' '}
               {t('courses.lesson')}

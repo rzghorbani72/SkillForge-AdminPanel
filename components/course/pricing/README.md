@@ -31,6 +31,21 @@ While the course is **published**, the last active way is locked: the card's
 switch and delete are disabled with a reason. The server enforces the same rule
 (`assertKeepsSellingWay`), so a stale page cannot get around it.
 
+## Live courses sell differently
+
+A **LIVE** course is attended, not watched later, so it is either **open to
+everyone (FREE)** or sold as a **reserved seat**. One-time and subscription
+belong to recorded courses only, and a live course never sells at its own base
+price — `CoursesService.create` keeps `base_price_active` off for LIVE. The
+section therefore hides the base-price tile, offers only `FREE` in the add
+dialog, and shows the GROUP/SOLO seat prices read-only with a link to the class
+page, which is where they are edited (`LiveSeatCards`).
+
+| Course type | Ways it can be sold                                   |
+| ----------- | ----------------------------------------------------- |
+| OFFLINE     | base price, one-time, subscription, free, private 1:1 |
+| LIVE        | free, group seat, private class                       |
+
 ## Live class vs recorded
 
 `Offer.includes_live` (the switch in the dialog) decides whether that price also

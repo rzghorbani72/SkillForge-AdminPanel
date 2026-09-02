@@ -1535,6 +1535,13 @@ export const fa = {
     tutoringPricedElsewhere:
       'تدریس خصوصی — از صفحهٔ تدریس خصوصی قیمت‌گذاری می‌شود',
     openTutoringPage: 'رفتن به تدریس خصوصی',
+    pricingSectionHintLive:
+      'کلاس زنده یا برای همه رایگان است یا با رزرو صندلی فروخته می‌شود.',
+    seatPricing: 'رزرو صندلی',
+    seatPricingEmpty:
+      'قیمت هر صندلی کلاس گروهی و قیمت کلاس خصوصی در صفحهٔ کلاس زنده تعیین می‌شود.',
+    seatPricedOnClassPage: 'از صفحهٔ کلاس زنده قیمت‌گذاری می‌شود',
+    openLiveClassPage: 'رفتن به کلاس زنده',
     includesLive: 'شامل کلاس آنلاین زنده',
     includesLiveOnHint: 'خریدار به لینک کلاس آنلاین (زنده) هم دسترسی دارد',
     includesLiveOffHint:

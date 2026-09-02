@@ -5,6 +5,7 @@ import { langApiVersionPath } from '@/lib/api-lang';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { StatusPill } from './StatusPill';
+import { CourseTypePill } from './course-type-pill';
 import {
   courseHue,
   formatCourseDurationMinutes,
@@ -103,8 +104,9 @@ export function CourseCard({
             {categoryName ?? pricingTypeLabel(pricingType, t)}
           </span>
         </div>
-        <div className="absolute start-3 top-3">
+        <div className="absolute start-3 top-3 flex items-center gap-1.5">
           <StatusPill status={status} />
+          <CourseTypePill type={course.course_type} />
         </div>
         {durationLabel ? (
           <div

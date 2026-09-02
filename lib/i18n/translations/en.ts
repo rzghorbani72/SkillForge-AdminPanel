@@ -1548,6 +1548,13 @@ export const en = {
       'This price is stored on the course itself and applies when you save the page.',
     tutoringPricedElsewhere: 'Private tutoring — priced on the tutoring page',
     openTutoringPage: 'Open tutoring page',
+    pricingSectionHintLive:
+      'A live course is either open to everyone or sold as a reserved seat.',
+    seatPricing: 'Seat reservation',
+    seatPricingEmpty:
+      'The group seat price and the private class price are set on the class page.',
+    seatPricedOnClassPage: 'Priced on the class page',
+    openLiveClassPage: 'Open class page',
     includesLive: 'Includes the live class',
     includesLiveOnHint: 'The buyer also gets the live class link',
     includesLiveOffHint: 'Recorded videos only — no live class link',

@@ -17,6 +17,7 @@ import CreateCourseAssociations from './CreateCourseAssociations';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { SeasonsSection } from './SeasonsSection';
 import { CoursePricingSection } from './pricing/course-pricing-section';
+import { CourseTypePill } from './course-type-pill';
 import { CourseAccessSection } from '@/components/access/course-access-section';
 import { applyAccessSelection } from '@/components/access/staged-access-section';
 import type { AssignAccessSelection } from '@/components/access/assign-access-form';
@@ -37,6 +38,7 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
 
   const {
     form,
+    courseType,
     isLoading,
     isSaving,
     saveStatus,
@@ -117,9 +119,12 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
               <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
             </Button>
             <div className="min-w-0">
-              <h1 className="truncate text-2xl font-bold tracking-tight">
-                {t('courses.editCourse')}
-              </h1>
+              <div className="flex items-center gap-2">
+                <h1 className="truncate text-2xl font-bold tracking-tight">
+                  {t('courses.editCourse')}
+                </h1>
+                <CourseTypePill type={courseType} />
+              </div>
               <p className="mt-0.5 truncate text-sm text-muted-foreground">
                 {selectedAcademy.name}
               </p>
@@ -208,7 +213,11 @@ export default function CourseFormPage({ courseId }: CourseFormPageProps) {
               error={form.formState.errors.category_id?.message}
             />
 
-            <CoursePricingSection courseId={courseId} form={form} />
+            <CoursePricingSection
+              courseId={courseId}
+              form={form}
+              courseType={courseType}
+            />
 
             <CourseSettingsCard form={form} />
 

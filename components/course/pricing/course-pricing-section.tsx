@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -10,15 +9,19 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useCourseOffers } from '@/hooks/use-course-offers';
 import { accessTermDays } from '@/lib/access-term';
 import type { Offer, OfferInput, OfferingType } from '@/types/api';
+import type { CourseType } from '../course-drafts';
 import type { CourseFormData } from '../schema';
 import { SellingWayCard } from './selling-way-card';
 import { ADDABLE_OFFER_TYPES, OfferDialog } from './offer-dialog';
 import { BasePriceDialog } from './base-price-dialog';
+import { LiveSeatCards } from './live-seat-cards';
+import { TutoringWayCards } from './tutoring-way-cards';
 import { useCourseTutoringOffers } from './use-course-tutoring-offers';
 
 type Props = {
   courseId: string;
   form: UseFormReturn<CourseFormData>;
+  courseType?: CourseType;
 };
 
 /**
@@ -26,11 +29,24 @@ type Props = {
  * edited in a dialog so the page shows the prices that exist instead of a row of
  * empty inputs.
  */
-export function CoursePricingSection({ courseId, form }: Props) {
+export function CoursePricingSection({
+  courseId,
+  form,
+  courseType = 'OFFLINE'
+}: Props) {
   const { t } = useTranslation();
   const { offers, isSaving, create, update, toggleActive, remove } =
     useCourseOffers(courseId);
   const tutoringOffers = useCourseTutoringOffers(courseId);
+
+  // A live course is attended, not watched later: it is either open to everyone
+  // or a seat in it is reserved. One-time and subscription belong to recorded
+  // courses, and its base price is never a selling way (the server keeps
+  // `base_price_active` off for LIVE).
+  const isLive = courseType === 'LIVE';
+  const addableTypes: readonly OfferingType[] = isLive
+    ? ['FREE']
+    : ADDABLE_OFFER_TYPES;
 
   const [basePriceOpen, setBasePriceOpen] = useState(false);
   const [offerDialogOpen, setOfferDialogOpen] = useState(false);
@@ -47,7 +63,7 @@ export function CoursePricingSection({ courseId, form }: Props) {
   // A published course must keep one way to enrol — the same rule the server
   // enforces. Locking the last card explains it before the request fails.
   const activeWays =
-    (basePriceActive ? 1 : 0) +
+    (!isLive && basePriceActive ? 1 : 0) +
     extraOffers.filter((o) => o.is_active).length +
     tutoringOffers.filter((o) => o.is_active).length;
   const lockReason =
@@ -59,12 +75,10 @@ export function CoursePricingSection({ courseId, form }: Props) {
   // FREE when it is zero), so those drop off the list when adding a new way.
   const baseType: OfferingType = basePrice === 0 ? 'FREE' : 'ONE_TIME';
   const takenTypes: OfferingType[] = [
-    ...(basePriceActive ? [baseType] : []),
+    ...(!isLive && basePriceActive ? [baseType] : []),
     ...extraOffers.map((o) => o.type)
   ];
-  const allTypesTaken = ADDABLE_OFFER_TYPES.every((ot) =>
-    takenTypes.includes(ot)
-  );
+  const allTypesTaken = addableTypes.every((ot) => takenTypes.includes(ot));
 
   const openAdd = () => {
     setEditing(null);
@@ -96,7 +110,11 @@ export function CoursePricingSection({ courseId, form }: Props) {
         <div className="space-y-1">
           <CardTitle>{t('courses.pricingTitle')}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            {t('courses.pricingSectionHint')}
+            {t(
+              isLive
+                ? 'courses.pricingSectionHintLive'
+                : 'courses.pricingSectionHint'
+            )}
           </p>
         </div>
         <Button
@@ -112,27 +130,29 @@ export function CoursePricingSection({ courseId, form }: Props) {
 
       <CardContent>
         <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          <SellingWayCard
-            label={
-              basePrice === 0
-                ? t('courses.offeringFREE')
-                : t('courses.offeringONE_TIME')
-            }
-            note={t('courses.offerFromCoursePrice')}
-            price={basePrice}
-            beforeDiscount={baseBeforeDiscount}
-            isFree={basePrice === 0}
-            termLabel={termLabel(null)}
-            isActive={basePriceActive}
-            lockReason={basePriceActive ? lockReason : undefined}
-            removeDisabledReason={t('courses.basePriceNotRemovable')}
-            onToggleActive={() =>
-              form.setValue('base_price_active', !basePriceActive, {
-                shouldDirty: true
-              })
-            }
-            onEdit={() => setBasePriceOpen(true)}
-          />
+          {!isLive && (
+            <SellingWayCard
+              label={
+                basePrice === 0
+                  ? t('courses.offeringFREE')
+                  : t('courses.offeringONE_TIME')
+              }
+              note={t('courses.offerFromCoursePrice')}
+              price={basePrice}
+              beforeDiscount={baseBeforeDiscount}
+              isFree={basePrice === 0}
+              termLabel={termLabel(null)}
+              isActive={basePriceActive}
+              lockReason={basePriceActive ? lockReason : undefined}
+              removeDisabledReason={t('courses.basePriceNotRemovable')}
+              onToggleActive={() =>
+                form.setValue('base_price_active', !basePriceActive, {
+                  shouldDirty: true
+                })
+              }
+              onEdit={() => setBasePriceOpen(true)}
+            />
+          )}
 
           {extraOffers.map((offer) => (
             <SellingWayCard
@@ -152,31 +172,17 @@ export function CoursePricingSection({ courseId, form }: Props) {
             />
           ))}
 
-          {tutoringOffers.map((offer) => (
-            <SellingWayCard
-              key={offer.id}
-              label={offer.title}
-              note={t('courses.tutoringPricedElsewhere')}
-              price={offer.price}
-              beforeDiscount={null}
-              isFree={false}
-              termLabel={termLabel(offer.duration_days ?? null)}
-              footer={
-                <div className="mt-auto border-t pt-3">
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                  >
-                    <Link href="/tutoring">
-                      {t('courses.openTutoringPage')}
-                    </Link>
-                  </Button>
-                </div>
-              }
+          {isLive && (
+            <LiveSeatCards
+              courseId={courseId}
+              offers={tutoringOffers}
+              termLabel={termLabel}
             />
-          ))}
+          )}
+
+          {!isLive && (
+            <TutoringWayCards offers={tutoringOffers} termLabel={termLabel} />
+          )}
         </div>
       </CardContent>
 
@@ -189,6 +195,7 @@ export function CoursePricingSection({ courseId, form }: Props) {
         open={offerDialogOpen}
         onOpenChange={setOfferDialogOpen}
         offer={editing}
+        addableTypes={addableTypes}
         takenTypes={takenTypes}
         onSubmit={submitOffer}
       />

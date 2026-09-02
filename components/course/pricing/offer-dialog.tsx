@@ -42,6 +42,8 @@ type Props = {
   offer: Offer | null;
   /** Types this course already sells — offered once each, so they drop off the list. */
   takenTypes: readonly OfferingType[];
+  /** Types this course may sell at all: a live course only ever adds FREE. */
+  addableTypes?: readonly OfferingType[];
   onSubmit: (values: Omit<OfferInput, 'course_ids'>) => Promise<void>;
 };
 
@@ -51,6 +53,7 @@ export function OfferDialog({
   onOpenChange,
   offer,
   takenTypes,
+  addableTypes = ADDABLE_OFFER_TYPES,
   onSubmit
 }: Props) {
   const { t } = useTranslation();
@@ -62,7 +65,7 @@ export function OfferDialog({
   const [saving, setSaving] = useState(false);
 
   // The way being edited keeps its own type; every other used type is gone.
-  const availableTypes = ADDABLE_OFFER_TYPES.filter(
+  const availableTypes = addableTypes.filter(
     (ot) => ot === offer?.type || !takenTypes.includes(ot)
   );
 
