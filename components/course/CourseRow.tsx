@@ -5,7 +5,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { StatusPill } from './StatusPill';
 import { CourseTypePill } from './course-type-pill';
-import { courseHue } from './courseUtils';
+import { courseHue, groupSeatPrice } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
 
 export function CourseRow({
@@ -37,6 +37,9 @@ export function CourseRow({
     (course as any).teacher_name ??
     (course as any).Teacher?.display_name ??
     '—';
+  // A live course is sold by the seat, so its own price is not what it charges.
+  const isLive = course.course_type === 'LIVE';
+  const seatPrice = groupSeatPrice(course);
   const status = course.is_published
     ? 'PUBLISHED'
     : ((course as any).status ?? 'DRAFT');
@@ -90,11 +93,17 @@ export function CourseRow({
           : t('courses.beFirstStudent')}
       </td>
       <td className="px-4 py-3.5 text-base font-medium tabular-nums text-primary">
-        {pricingType === 'FREE'
-          ? t('courses.free')
-          : priceVal > 0
-            ? formatNumber(priceVal)
-            : '—'}
+        {isLive
+          ? seatPrice === null
+            ? t('courses.seatPriceNotSet')
+            : seatPrice === 0
+              ? t('courses.free')
+              : formatNumber(seatPrice)
+          : pricingType === 'FREE'
+            ? t('courses.free')
+            : priceVal > 0
+              ? formatNumber(priceVal)
+              : '—'}
       </td>
       <td className="px-4 py-3.5 text-sm text-muted-foreground">
         {(course as any).updated_at

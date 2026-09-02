@@ -1549,8 +1549,10 @@ export const en = {
     tutoringPricedElsewhere: 'Private tutoring — priced on the tutoring page',
     openTutoringPage: 'Open tutoring page',
     pricingSectionHintLive:
-      'A live course is either open to everyone or sold as a reserved seat.',
+      'A live course is sold by reserving a seat, priced on the class page.',
     seatPricing: 'Seat reservation',
+    seatPrice: 'Price per seat',
+    seatPriceNotSet: 'Not set',
     seatPricingEmpty:
       'The group seat price and the private class price are set on the class page.',
     seatPricedOnClassPage: 'Priced on the class page',

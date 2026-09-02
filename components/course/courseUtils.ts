@@ -51,3 +51,14 @@ export function pricingTypeLabel(
   if (type === 'SUBSCRIPTION') return t('courses.subscriptionPlan');
   return t('courses.installmentPlan');
 }
+
+/**
+ * What a live course actually charges: the price of one seat in the class. It
+ * lives on the course's GROUP tutoring offer, never on the course itself.
+ */
+export function groupSeatPrice(course: {
+  TutoringOffer?: { kind: 'GROUP' | 'SOLO'; price: number }[];
+}): number | null {
+  const seat = course.TutoringOffer?.find((offer) => offer.kind === 'GROUP');
+  return seat ? seat.price : null;
+}

@@ -33,18 +33,19 @@ switch and delete are disabled with a reason. The server enforces the same rule
 
 ## Live courses sell differently
 
-A **LIVE** course is attended, not watched later, so it is either **open to
-everyone (FREE)** or sold as a **reserved seat**. One-time and subscription
-belong to recorded courses only, and a live course never sells at its own base
-price — `CoursesService.create` keeps `base_price_active` off for LIVE. The
-section therefore hides the base-price tile, offers only `FREE` in the add
-dialog, and shows the GROUP/SOLO seat prices read-only with a link to the class
-page, which is where they are edited (`LiveSeatCards`).
+A **LIVE** course is attended, not watched later, so the only way in is a
+**reserved seat** — a `TutoringOffer` on the class, never an `Offer`. It does
+not sell at its own base price either (`CoursesService.create` keeps
+`base_price_active` off for LIVE). The section therefore hides the base-price
+tile and the add button entirely, and shows the GROUP/SOLO seat prices read-only
+with a link to the class page, which is where they are edited (`LiveSeatCards`).
+`OffersService` rejects **any** offer on a live course, so a stale page cannot
+get around it.
 
 | Course type | Ways it can be sold                                   |
 | ----------- | ----------------------------------------------------- |
 | OFFLINE     | base price, one-time, subscription, free, private 1:1 |
-| LIVE        | free, group seat, private class                       |
+| LIVE        | group seat, private class (both priced on class page) |
 
 ## Live class vs recorded
 

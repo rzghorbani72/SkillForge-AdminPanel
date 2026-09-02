@@ -39,13 +39,12 @@ export function CoursePricingSection({
     useCourseOffers(courseId);
   const tutoringOffers = useCourseTutoringOffers(courseId);
 
-  // A live course is attended, not watched later: it is either open to everyone
-  // or a seat in it is reserved. One-time and subscription belong to recorded
-  // courses, and its base price is never a selling way (the server keeps
-  // `base_price_active` off for LIVE).
+  // A live course is attended, not watched later: reserving a seat is the only
+  // way in. No offer type applies, and its base price is never a selling way
+  // (the server keeps `base_price_active` off for LIVE).
   const isLive = courseType === 'LIVE';
   const addableTypes: readonly OfferingType[] = isLive
-    ? ['FREE']
+    ? []
     : ADDABLE_OFFER_TYPES;
 
   const [basePriceOpen, setBasePriceOpen] = useState(false);
@@ -117,15 +116,17 @@ export function CoursePricingSection({
             )}
           </p>
         </div>
-        <Button
-          type="button"
-          onClick={openAdd}
-          disabled={isSaving || allTypesTaken}
-          title={allTypesTaken ? t('courses.allSellingWaysUsed') : undefined}
-        >
-          <Plus className="me-1 h-4 w-4" />
-          {t('courses.addOffering')}
-        </Button>
+        {!isLive && (
+          <Button
+            type="button"
+            onClick={openAdd}
+            disabled={isSaving || allTypesTaken}
+            title={allTypesTaken ? t('courses.allSellingWaysUsed') : undefined}
+          >
+            <Plus className="me-1 h-4 w-4" />
+            {t('courses.addOffering')}
+          </Button>
+        )}
       </CardHeader>
 
       <CardContent>

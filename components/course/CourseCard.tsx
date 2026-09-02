@@ -9,6 +9,7 @@ import { CourseTypePill } from './course-type-pill';
 import {
   courseHue,
   formatCourseDurationMinutes,
+  groupSeatPrice,
   pricingTypeLabel
 } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
@@ -53,6 +54,9 @@ export function CourseCard({
   const status = course.is_published
     ? 'PUBLISHED'
     : ((course as any).status ?? 'DRAFT');
+  // A live course is sold by the seat, so its own price is not what it charges.
+  const isLive = course.course_type === 'LIVE';
+  const seatPrice = groupSeatPrice(course);
   const rawDuration = (course as any).duration;
   const durationMinutes =
     typeof rawDuration === 'number'
@@ -152,14 +156,20 @@ export function CourseCard({
             </div>
             <div className="min-w-0 text-end">
               <div className="mb-0.5 truncate text-[10.5px] uppercase tracking-wider text-muted-foreground">
-                {t('courses.price')}
+                {t(isLive ? 'courses.seatPrice' : 'courses.price')}
               </div>
               <div className="truncate text-[13px] font-semibold text-primary">
-                {pricingType === 'FREE'
-                  ? t('courses.free')
-                  : priceVal > 0
-                    ? formatNumber(priceVal)
-                    : '—'}
+                {isLive
+                  ? seatPrice === null
+                    ? t('courses.seatPriceNotSet')
+                    : seatPrice === 0
+                      ? t('courses.free')
+                      : formatNumber(seatPrice)
+                  : pricingType === 'FREE'
+                    ? t('courses.free')
+                    : priceVal > 0
+                      ? formatNumber(priceVal)
+                      : '—'}
               </div>
             </div>
           </div>
