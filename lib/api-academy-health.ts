@@ -11,6 +11,9 @@ export interface HealthSignals {
   failed_payments_24h: number;
   logins_24h: number;
   active_learners_60m: number;
+  requests_24h: number;
+  /** Null when traffic is too low for a percentage to mean anything. */
+  error_rate_pct: number | null;
   last_activity_at: string | null;
 }
 
@@ -24,6 +27,9 @@ export interface HealthDailyPoint {
   failed_count: number;
   client_4xx: number;
   server_5xx: number;
+  requests: number;
+  /** Null on days with too little traffic to rate. */
+  error_rate_pct: number | null;
 }
 
 export interface HealthTopError {

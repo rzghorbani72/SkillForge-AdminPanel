@@ -4,6 +4,7 @@ import {
   AlertTriangle,
   CreditCard,
   Database,
+  Gauge,
   LogIn,
   PlayCircle,
   ServerCrash
@@ -19,6 +20,8 @@ export function HealthSignalCards({ signals }: { signals: HealthSignals }) {
   const formatNumber = useNumberFormat();
   const formatDate = useDateFormat();
 
+  const rate = signals.error_rate_pct;
+  const rateIsBad = rate !== null && rate >= 10;
   const hasServerErrors = signals.server_errors_24h > 0;
   const hasFailedPayments = signals.failed_payments_24h > 0;
 
@@ -50,6 +53,20 @@ export function HealthSignalCards({ signals }: { signals: HealthSignals }) {
           hasFailedPayments ? 'text-destructive' : 'text-muted-foreground'
         }
         changeType={hasFailedPayments ? 'negative' : 'neutral'}
+      />
+      <StatsCard
+        title={t('monitoring.errorRate')}
+        value={
+          rate === null
+            ? t('monitoring.errorRateTooQuiet')
+            : t('monitoring.percentValue', { value: formatNumber(rate) })
+        }
+        icon={Gauge}
+        iconColor={rateIsBad ? 'text-destructive' : 'text-muted-foreground'}
+        changeType={rateIsBad ? 'negative' : 'neutral'}
+        description={t('monitoring.requestsCounted', {
+          value: formatNumber(signals.requests_24h)
+        })}
       />
       <StatsCard
         title={t('monitoring.serverErrors24h')}

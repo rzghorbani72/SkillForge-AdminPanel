@@ -10,6 +10,7 @@ import { HealthStatusBanner } from '@/components/monitoring/health-status-banner
 import { HealthSignalCards } from '@/components/monitoring/health-signal-cards';
 import { ActivityChart } from '@/components/monitoring/activity-chart';
 import { PaymentsChart } from '@/components/monitoring/payments-chart';
+import { ErrorRateChart } from '@/components/monitoring/error-rate-chart';
 import { ErrorPanel } from '@/components/monitoring/error-panel';
 import { useHealthSeries, useHealthSignals } from '@/hooks/use-academy-health';
 import { HEALTH_RANGES, type HealthRange } from '@/lib/api-academy-health';
@@ -87,6 +88,7 @@ export default function MonitoringPage() {
               <ActivityChart points={series.data.points} />
               <PaymentsChart points={series.data.points} />
             </div>
+            <ErrorRateChart points={series.data.points} />
             <ErrorPanel
               topErrors={series.data.top_errors}
               topPaymentFailures={series.data.top_payment_failures}
