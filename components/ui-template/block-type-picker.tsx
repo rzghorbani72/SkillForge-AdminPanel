@@ -8,7 +8,6 @@ import {
   Play,
   Sparkles,
   Star,
-  Tag,
   Users,
   Video
 } from 'lucide-react';
@@ -22,7 +21,6 @@ const TYPE_ICONS: Record<string, typeof Sparkles> = {
   features: Layers,
   courses: LayoutGrid,
   testimonials: Star,
-  pricing: Tag,
   cta: Megaphone,
   categories: LayoutGrid,
   projects: Layers,

@@ -6,7 +6,6 @@ export const ADDABLE_SECTION_TYPES = [
   'features',
   'courses',
   'testimonials',
-  'pricing',
   'cta',
   'categories',
   'projects',

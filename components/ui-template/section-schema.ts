@@ -61,6 +61,13 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         // Mirrors the renderer, which falls back to the academy's own name.
         defaultFrom: 'academyName',
         defaultValue: 'آکادمی من'
+      },
+      {
+        key: 'reverseActions',
+        label: 'جابه‌جایی جای دکمه و حساب کاربری',
+        kind: 'toggle',
+        defaultOn: false,
+        hint: 'ترتیب دکمه ثبت‌نام و بخش حساب کاربری در نوار بالا را برعکس می‌کند'
       }
     ]
   },
@@ -197,22 +204,6 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     ],
     dynamicContentNote:
       'نظرات به‌صورت زنده از بازخوردهای ثبت‌شده دانشجویان آکادمی شما نمایش داده می‌شوند.'
-  },
-
-  pricing: {
-    name: 'تعرفه‌ها',
-    content: [
-      {
-        key: 'title',
-        label: 'عنوان بخش',
-        kind: 'text',
-        required: true,
-        placeholder: 'عنوان این بخش',
-        defaultValue: 'پلان‌های اشتراک'
-      }
-    ],
-    dynamicContentNote:
-      'کارت‌های قیمت‌گذاری از تنظیمات پلان‌های آکادمی شما بارگذاری می‌شوند. مدیریت پلان‌ها از بخش «تنظیمات / اشتراک» انجام می‌شود.'
   },
 
   cta: {

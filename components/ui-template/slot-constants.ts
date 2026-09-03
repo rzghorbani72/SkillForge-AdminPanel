@@ -41,7 +41,6 @@ export const GRID_SLOT_COUNTS: Record<string, number> = {
   courses: 6,
   features: 6,
   testimonials: 3,
-  pricing: 3,
   projects: 4,
   categories: 6,
   'course-grid': 6

@@ -82,13 +82,6 @@ function SectionTypeThumb({ type }: { type: string }) {
         <div className={`h-1.5 w-1/2 ${bar}`} />
       </div>
     ),
-    pricing: (
-      <div className="flex w-full items-end justify-center gap-1.5">
-        <div className={`h-8 w-1/4 ${bar}`} />
-        <div className="h-11 w-1/4 rounded-sm bg-primary/40" />
-        <div className={`h-8 w-1/4 ${bar}`} />
-      </div>
-    ),
     cta: (
       <div className="flex w-full flex-col items-center gap-1.5">
         <div className={`h-2 w-1/2 ${bar}`} />
