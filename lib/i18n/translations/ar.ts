@@ -1746,6 +1746,8 @@ export const ar = {
     goToLogin: 'الذهاب إلى تسجيل الدخول'
   },
   media: {
+    videoLoading: 'جارٍ تجهيز التشغيل الآمن…',
+    videoPlaybackFailed: 'تعذر تشغيل هذا الفيديو. يرجى تحديث الصفحة.',
     changeImage: 'تغيير الصورة',
     imagePreview: 'معاينة الصورة',
     noImageSelected: 'لم يتم اختيار صورة',

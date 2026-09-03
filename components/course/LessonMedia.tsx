@@ -27,6 +27,7 @@ import { VIDEO_CONSTRAINTS } from '@/constants/video-constraints';
 import type { LessonDraft, LessonType } from './useCourseForm';
 import { DEFAULT_DURATION, secondsToDuration } from './course-drafts';
 import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
+import { SecureVideoPlayer } from '@/components/media/secure-video-player';
 
 type SlotKey = 'video' | 'audio' | 'document' | 'cover';
 
@@ -339,15 +340,29 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   LESSON_MEDIA_SLOT_CLASS
                 )}
               >
-                <video
-                  key={lesson.videoPreviewUrl}
-                  src={lesson.videoPreviewUrl}
-                  poster={lesson.coverPreviewUrl}
-                  className="h-full w-full object-contain"
-                  controls
-                  preload="metadata"
-                  onLoadedMetadata={handleMediaMetadata}
-                />
+                {lesson.videoPreviewUrl.startsWith('blob:') ||
+                !lesson.video_id ? (
+                  // The file the teacher just picked, still on their disk. Kept
+                  // native because reading its duration is the whole point and
+                  // there is nothing to protect yet.
+                  <video
+                    key={lesson.videoPreviewUrl}
+                    src={lesson.videoPreviewUrl}
+                    poster={lesson.coverPreviewUrl}
+                    className="h-full w-full object-contain"
+                    controls
+                    preload="metadata"
+                    onLoadedMetadata={handleMediaMetadata}
+                  />
+                ) : (
+                  <SecureVideoPlayer
+                    key={lesson.video_id}
+                    videoId={lesson.video_id}
+                    title={lesson.title}
+                    fill
+                    className="h-full w-full"
+                  />
+                )}
                 {uploading.video && (
                   <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-center text-[10px] text-white">
                     {percentLabel(progress.video)}

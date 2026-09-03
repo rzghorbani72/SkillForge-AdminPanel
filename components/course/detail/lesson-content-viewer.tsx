@@ -2,9 +2,9 @@
 
 import { FileText } from 'lucide-react';
 import Link from '@/components/ui/link';
-import { apiClient } from '@/lib/api';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { SecureVideoPlayer } from '@/components/media/secure-video-player';
 import type { CourseDetailLesson } from './types';
 
 function toAbsolute(url: string): string {
@@ -30,7 +30,6 @@ export function LessonContentViewer({ lesson }: LessonContentViewerProps) {
   const documentId = lesson.document_id ?? lesson.Document?.id ?? null;
   const description = lesson.description?.trim() || lesson.content?.trim();
 
-  const videoUrl = videoId ? apiClient.getVideoStreamUrl(videoId) : null;
   const audioUrl = audioId
     ? lesson.Audio?.publicUrl
       ? toAbsolute(lesson.Audio.publicUrl)
@@ -40,7 +39,7 @@ export function LessonContentViewer({ lesson }: LessonContentViewerProps) {
     ? `${getBrowserApiBaseUrl()}/files/preview/${documentId}`
     : null;
 
-  const hasMedia = !!(videoUrl || audioUrl || documentPreviewUrl);
+  const hasMedia = !!(videoId || audioUrl || documentPreviewUrl);
   if (!description && !hasMedia) {
     return (
       <p className="text-xs text-muted-foreground">
@@ -57,18 +56,13 @@ export function LessonContentViewer({ lesson }: LessonContentViewerProps) {
         </p>
       )}
 
-      {videoUrl && (
-        <div className="overflow-hidden rounded-lg border bg-black">
-          <video
-            key={videoUrl}
-            src={videoUrl}
-            controls
-            preload="metadata"
-            className="aspect-video max-h-72 w-full"
-          >
-            {t('courseDetail.videoNotSupported')}
-          </video>
-        </div>
+      {videoId && (
+        <SecureVideoPlayer
+          key={videoId}
+          videoId={videoId}
+          title={lesson.title}
+          className="max-h-72 border"
+        />
       )}
 
       {audioUrl && (

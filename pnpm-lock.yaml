@@ -151,6 +151,9 @@ importers:
       eslint-config-next:
         specifier: ^16.0.7
         version: 16.0.7(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.8.3))(eslint-plugin-import-x@4.16.2(eslint-import-resolver-node@0.3.9)(eslint@9.39.1(jiti@1.21.7)))(eslint@9.39.1(jiti@1.21.7))(typescript@5.8.3)
+      hls.js:
+        specifier: ^1.7.1
+        version: 1.7.1
       jose:
         specifier: ^5.10.0
         version: 5.10.0
@@ -6095,6 +6098,13 @@ packages:
       {
         integrity: sha512-6pEjquH3rqaI6cYAXYPcz9MS4rY6R4ngRgrgfDshRptUZIc3lw0MCIJIGDj9++mfySOuPTHB4nrSW99BCvOPIA==,
         tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/hermes-parser/-/hermes-parser-0.25.1.tgz
+      }
+
+  hls.js@1.7.1:
+    resolution:
+      {
+        integrity: sha512-DlzIkeBAS9IIQ432k3BUf3HlwbsR0+trB1i2lDdN2gUkNkrehFurh0/48M5c1/EjlDkdGng1gwZIpwyPxvdZ/g==,
+        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/hls.js/-/hls.js-1.7.1.tgz
       }
 
   html-styles@1.0.0:
@@ -13338,6 +13348,8 @@ snapshots:
   hermes-parser@0.25.1:
     dependencies:
       hermes-estree: 0.25.1
+
+  hls.js@1.7.1: {}
 
   html-styles@1.0.0:
     optional: true

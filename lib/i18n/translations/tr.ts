@@ -1804,6 +1804,8 @@ export const tr = {
     goToLogin: 'Girişe Git'
   },
   media: {
+    videoLoading: 'Güvenli oynatma hazırlanıyor…',
+    videoPlaybackFailed: 'Bu video oynatılamadı. Lütfen sayfayı yenileyin.',
     changeImage: 'Görseli değiştir',
     imagePreview: 'Görsel önizleme',
     noImageSelected: 'Görsel seçilmedi',

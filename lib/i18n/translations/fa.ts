@@ -3466,6 +3466,9 @@ export const fa = {
     limitMultiple: 'تا {{count}} فایل، هرکدام حداکثر {{size}}'
   },
   media: {
+    videoLoading: 'آماده‌سازی پخش امن…',
+    videoPlaybackFailed:
+      'پخش این ویدیو ممکن نشد. لطفاً صفحه را دوباره بارگذاری کنید.',
     changeImage: 'تغییر تصویر',
     cancelUpload: 'لغو بارگذاری',
     videoUploaded: 'ویدیو با موفقیت بارگذاری شد',

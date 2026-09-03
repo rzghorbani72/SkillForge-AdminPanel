@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import { Play, BookOpen } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +8,7 @@ import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getLocaleForLanguage } from '@/lib/i18n/config';
 import { formatDuration, formatFileSize } from '@/components/shared/utils';
+import { SecureVideoPlayer } from '@/components/media/secure-video-player';
 import type { VideoItem } from './video-types';
 
 const DEFAULT_POSTER = '/images/video-placeholder.svg';
@@ -33,21 +33,6 @@ export function VideoCard({
   onDeactivate
 }: VideoCardProps) {
   const { t, language } = useTranslation();
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const element = videoRef.current;
-    if (!element) return;
-
-    if (isActive) {
-      void element.play().catch(() => {
-        // Autoplay may be blocked by the browser; ignore silently.
-      });
-    } else {
-      element.pause();
-      element.currentTime = 0;
-    }
-  }, [isActive]);
 
   const posterUrl = resolvePosterUrl(video.poster_url);
   const ownerName = video.Profile?.display_name ?? t('media.unknownCreator');
@@ -65,20 +50,14 @@ export function VideoCard({
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card text-start shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5">
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
         {isActive && canPlay ? (
-          <video
-            ref={videoRef}
-            className="h-full w-full bg-black object-contain"
-            poster={posterUrl}
-            controls
+          <SecureVideoPlayer
+            videoId={video.id}
+            title={video.title}
+            className="h-full w-full"
+            fill
             autoPlay
             onEnded={onDeactivate}
-          >
-            <source
-              src={getBrowserApiBaseUrl() + video.streaming_url}
-              type={video.mime_type ?? 'video/mp4'}
-            />
-            {t('media.browserNoVideoSupport')}
-          </video>
+          />
         ) : (
           <>
             <img

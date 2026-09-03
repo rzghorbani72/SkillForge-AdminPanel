@@ -3493,6 +3493,9 @@ export const en = {
     limitMultiple: 'Up to {{count}} files, {{size}} each'
   },
   media: {
+    videoLoading: 'Preparing secure playback…',
+    videoPlaybackFailed:
+      'This video could not be played. Please refresh the page.',
     changeImage: 'Change image',
     cancelUpload: 'Cancel upload',
     videoUploaded: 'Video uploaded successfully',
