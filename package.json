@@ -19,7 +19,9 @@
     "prepare": "husky",
     "production-report": "ts-node scripts/production-report.ts",
     "load-test": "k6 run loadtests/basic-load-test.js",
-    "load-test:advanced": "k6 run loadtests/api-load-test.js"
+    "load-test:advanced": "k6 run loadtests/api-load-test.js",
+    "log:catalog": "cd .. && node Backend/tools/build-log-catalog.mjs",
+    "log:catalog:check": "cd .. && node Backend/tools/build-log-catalog.mjs --check"
   },
   "lint-staged": {
     "**/*": [
