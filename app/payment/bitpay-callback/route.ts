@@ -6,9 +6,9 @@ import {
 } from '@/lib/security/ssrf';
 
 /**
- * BitPay redirects the manager back here after payment with trans_id, id_get
- * and factorId in the query string; payment_id is the one we appended to the
- * redirect URL ourselves at checkout.
+ * BitPay redirects the manager back here after payment with trans_id and
+ * id_get in the query string (official BitPay.ir callback). payment_id is
+ * optional: we also stored id_get as the payment authority at checkout.
  *
  * Verification happens server-side here, so the manager never sees a screen
  * that "confirms" a payment the backend has not verified.
