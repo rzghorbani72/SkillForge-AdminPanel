@@ -6654,6 +6654,9 @@ export const en = {
       gatewaysDesc:
         'Enable or disable gateways used for academy plan checkout and student payments.',
       gatewayActive: 'Active — accepting payments',
+      gatewaySandbox: 'Active — sandbox (test payments only)',
+      gatewayNeedsToken:
+        'On, but no API key saved — open Token & details and paste the BitPay key',
       gatewayInactive: 'Inactive — disabled',
       gatewaySaved: 'Gateway updated',
       gatewaySaveFailed: 'Failed to update gateway',
@@ -6853,6 +6856,10 @@ export const en = {
       'Your academy is locked because the subscription lapsed. Renew to restore access — your data is kept.',
     PAYMENT_GATEWAY_DISABLED:
       'No payment gateway is currently enabled. Contact the platform administrator.',
+    PAYMENT_GATEWAY_NOT_CONFIGURED:
+      'The payment gateway is on, but no API key is saved. Open Token & details and paste the BitPay key.',
+    PAYMENT_GATEWAY_REJECTED:
+      'The payment gateway rejected this checkout. {reason}',
     HTTP_400:
       'The information sent was incomplete or invalid. Please check the form and try again.',
     BAD_REQUEST:

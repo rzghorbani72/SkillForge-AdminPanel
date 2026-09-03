@@ -71,9 +71,13 @@ export function GatewayTogglesCard({
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {gw.is_active
-                    ? t('pricing.platform.gatewayActive')
-                    : t('pricing.platform.gatewayInactive')}
+                  {!gw.is_active
+                    ? t('pricing.platform.gatewayInactive')
+                    : gw.config_schema?.token_configured
+                      ? gw.is_sandbox
+                        ? t('pricing.platform.gatewaySandbox')
+                        : t('pricing.platform.gatewayActive')
+                      : t('pricing.platform.gatewayNeedsToken')}
                 </p>
               </div>
               <div className="flex items-center gap-2">
