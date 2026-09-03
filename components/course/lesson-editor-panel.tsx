@@ -70,6 +70,12 @@ export function LessonEditorPanel({
   const settingsHref =
     lesson.id && courseId ? `/courses/${courseId}/lessons/${lesson.id}` : null;
 
+  // Live teaching is a live course with its own timetable, so a recorded
+  // course can no longer make a live lesson; ones that exist stay editable.
+  const typeOptions = LESSON_TYPE_OPTIONS.filter(
+    (option) => option.type !== 'LIVE' || lesson.lesson_type === 'LIVE'
+  );
+
   return (
     <div className="space-y-4 border-t bg-muted/20 px-4 py-4">
       {/* Content: type chips on the section header, the player on the start
@@ -84,29 +90,27 @@ export function LessonEditorPanel({
             role="radiogroup"
             aria-label={t('courses.lessonType')}
           >
-            {LESSON_TYPE_OPTIONS.map(
-              ({ type, labelKey, Icon, chipActiveClass }) => {
-                const selected = lesson.lesson_type === type;
-                return (
-                  <button
-                    key={type}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() => onUpdate(patchForType(lesson, type))}
-                    className={cn(
-                      'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors',
-                      selected
-                        ? chipActiveClass
-                        : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground'
-                    )}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                    {t(labelKey)}
-                  </button>
-                );
-              }
-            )}
+            {typeOptions.map(({ type, labelKey, Icon, chipActiveClass }) => {
+              const selected = lesson.lesson_type === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => onUpdate(patchForType(lesson, type))}
+                  className={cn(
+                    'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors',
+                    selected
+                      ? chipActiveClass
+                      : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground'
+                  )}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {t(labelKey)}
+                </button>
+              );
+            })}
           </div>
         </div>
 
