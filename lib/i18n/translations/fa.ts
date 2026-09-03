@@ -2663,6 +2663,55 @@ export const fa = {
       'سیاست درآمدزایی نمایش‌داده‌شده به مدیران آکادمی',
     paymentGatewayTitle: 'درگاه پرداخت',
     paymentGatewayDescription: 'پیکربندی پی‌پینگ و سایر درگاه‌های پرداخت',
+    gateway: {
+      subtitle: 'توکن API را تنظیم کنید و درگاه‌های پرداخت را مدیریت کنید',
+      adapterStatusTitle: 'وضعیت اتصال درگاه‌ها',
+      adapterStatusDescription:
+        'پیکربندی‌شده یعنی توکن در سامانه یا محیط ثبت شده است. پیاده‌سازی‌شده یعنی جریان پرداخت این درگاه در سامانه وصل است.',
+      configured: 'پیکربندی‌شده',
+      notConfigured: 'پیکربندی نشده',
+      implemented: 'پیاده‌سازی‌شده',
+      stub: 'هنوز آماده نیست',
+      noRecords: 'هیچ درگاه پرداختی پیدا نشد.',
+      reload: 'بارگذاری دوباره',
+      fullyImplemented: 'کاملاً پیاده‌سازی شده',
+      notYetImplemented: 'هنوز پیاده‌سازی نشده',
+      supportedCurrencies: 'ارزهای پشتیبانی‌شده:',
+      currencyIrr: 'ریال ایران (IRR)',
+      seeDocs: 'طبق مستندات',
+      activeAccepting: 'فعال — در حال دریافت پرداخت',
+      inactiveDisabled: 'غیرفعال',
+      sandboxMode:
+        'حالت آزمایشی — از اطلاعات تست و درگاه آزمایشی بانک استفاده می‌شود',
+      productionMode: 'حالت عملیاتی — از درگاه واقعی بانک استفاده می‌شود',
+      apiToken: 'توکن / کلید API',
+      tokenIsSet: 'توکن ثبت شده است',
+      tokenPlaceholderReplace:
+        'برای جایگزینی توکن فعلی، توکن جدید را وارد کنید',
+      tokenPlaceholderPaste: 'توکن یا کلید درگاه را اینجا جای‌گذاری کنید',
+      hideToken: 'پنهان کردن توکن',
+      showToken: 'نمایش توکن',
+      tokenHint:
+        'برای حفظ توکن فعلی این فیلد را خالی بگذارید. مقادیر حساس در پاسخ API برنمی‌گردند.',
+      terminalId: 'شناسه ترمینال',
+      merchantId: 'شناسه پذیرنده',
+      callbackUrl: 'آدرس بازگشت (اختیاری)',
+      terminalIdPlaceholder: 'مثلاً ۱۲۳۴۵۶۷۸',
+      merchantIdPlaceholder: 'مثلاً شناسه پذیرنده',
+      paypingGuideTitle: 'چگونه توکن پی‌پینگ را بگیرید',
+      paypingGuide1: 'وارد حساب پذیرندگی پی‌پینگ در payping.ir شوید',
+      paypingGuide2: 'به تنظیمات API بروید و توکن بسازید',
+      paypingGuide3: 'توکن Bearer را کپی کنید (رشته‌ای طولانی از حروف و اعداد)',
+      paypingGuide4: 'آن را بالا جای‌گذاری کنید و ذخیره تغییرات را بزنید',
+      paypingGuide5:
+        'سامانه از API نسخه ۳ پی‌پینگ استفاده می‌کند (api.payping.ir/v3)',
+      samanNotesTitle: 'نکات راه‌اندازی سامان SEP (بر اساس مستندات پذیرنده)',
+      samanRequired: 'برای جریان توکن این موارد لازم است:',
+      samanWhitelist:
+        'پیشنهاد: قبل از محیط عملیاتی، IP سرور خود را در سامان ثبت کنید.',
+      samanKeepDisabled:
+        'تا وقتی جریان شروع و تأیید پرداخت کامل نشده، سامان را غیرفعال نگه دارید.'
+    },
     description:
       'پروفایل، پیکربندی آکادمی، برندینگ و تنظیمات امنیتی خود را مدیریت کنید.',
     refreshData: 'به‌روزرسانی داده‌ها',

@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { apiClient, GatewayConfigData, GatewayRegistryStatus } from '@/lib/api';
 import { toast } from 'react-toastify';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { tNow } from '@/lib/i18n/t-now';
 import { apiErrorMessage } from '@/lib/api-error-message';
 
@@ -51,6 +52,7 @@ interface GatewayState {
 }
 
 export default function PaymentGatewaySettingsPage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const selectedGateway = (searchParams.get('gateway') || '').toUpperCase();
   const [gateways, setGateways] = useState<GatewayState[]>([]);
@@ -90,7 +92,7 @@ export default function PaymentGatewaySettingsPage() {
           initialCallbackUrl: String(g.config_schema?.callback_url ?? '')
         }))
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(apiErrorMessage(err, tNow('toasts.gatewayLoadFailed')));
     } finally {
       setIsLoading(false);
@@ -150,9 +152,8 @@ export default function PaymentGatewaySettingsPage() {
         }
       });
       toast.success(tNow('toasts.gatewayUpdated', { name: gw.display_name }));
-      // Reload to reflect token_configured status
       await load();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(apiErrorMessage(err, tNow('toasts.gatewayUpdateFailed')));
       setGateways((prev) =>
         prev.map((g) => (g.id === gw.id ? { ...g, isSaving: false } : g))
@@ -174,10 +175,10 @@ export default function PaymentGatewaySettingsPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Payment Gateway Settings
+            {t('settings.paymentGatewayTitle')}
           </h1>
           <p className="text-muted-foreground">
-            Configure API tokens and manage payment gateway providers
+            {t('settings.gateway.subtitle')}
           </p>
         </div>
         <Button
@@ -186,19 +187,19 @@ export default function PaymentGatewaySettingsPage() {
           disabled={isLoading}
           className="w-full shrink-0 sm:w-auto"
         >
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Refresh
+          <RefreshCw className="me-2 h-4 w-4" />
+          {t('common.refresh')}
         </Button>
       </div>
 
-      {/* Registry status banner */}
       {registry.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Gateway Adapter Status</CardTitle>
+            <CardTitle className="text-base">
+              {t('settings.gateway.adapterStatusTitle')}
+            </CardTitle>
             <CardDescription>
-              Configured = token is set in DB or env. Implemented = HTTP flow is
-              wired in backend code.
+              {t('settings.gateway.adapterStatusDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -210,10 +211,14 @@ export default function PaymentGatewaySettingsPage() {
                 >
                   <span className="font-medium">{r.provider}</span>
                   <Badge variant={r.configured ? 'default' : 'secondary'}>
-                    {r.configured ? 'Configured' : 'Not configured'}
+                    {r.configured
+                      ? t('settings.gateway.configured')
+                      : t('settings.gateway.notConfigured')}
                   </Badge>
                   <Badge variant={r.implemented ? 'default' : 'outline'}>
-                    {r.implemented ? 'Implemented' : 'Stub'}
+                    {r.implemented
+                      ? t('settings.gateway.implemented')
+                      : t('settings.gateway.stub')}
                   </Badge>
                 </div>
               ))}
@@ -232,9 +237,9 @@ export default function PaymentGatewaySettingsPage() {
         <Card>
           <CardContent className="flex flex-col items-center gap-4 py-12">
             <p className="text-muted-foreground">
-              No payment gateway records found in database.
+              {t('settings.gateway.noRecords')}
             </p>
-            <Button onClick={load}>Reload</Button>
+            <Button onClick={load}>{t('settings.gateway.reload')}</Button>
           </CardContent>
         </Card>
       ) : (
@@ -261,14 +266,16 @@ export default function PaymentGatewaySettingsPage() {
                       )}
                       <span className="text-xs text-muted-foreground">
                         {reg?.implemented
-                          ? 'Fully implemented'
-                          : 'Not yet implemented'}
+                          ? t('settings.gateway.fullyImplemented')
+                          : t('settings.gateway.notYetImplemented')}
                       </span>
                     </div>
                   </div>
                   <CardDescription>
-                    Supported currencies:{' '}
-                    {gw.name === 'PayPing' ? 'IRR (Iranian Rial)' : 'See docs'}
+                    {t('settings.gateway.supportedCurrencies')}{' '}
+                    {gw.name === 'PayPing'
+                      ? t('settings.gateway.currencyIrr')
+                      : t('settings.gateway.seeDocs')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -282,8 +289,8 @@ export default function PaymentGatewaySettingsPage() {
                     />
                     <Label htmlFor={`active-${gw.id}`}>
                       {gw.is_active
-                        ? 'Active — accepting payments'
-                        : 'Inactive — disabled'}
+                        ? t('settings.gateway.activeAccepting')
+                        : t('settings.gateway.inactiveDisabled')}
                     </Label>
                   </div>
 
@@ -297,17 +304,17 @@ export default function PaymentGatewaySettingsPage() {
                     />
                     <Label htmlFor={`sandbox-${gw.id}`}>
                       {gw.is_sandbox
-                        ? 'Sandbox mode — uses test credentials & test bank endpoint'
-                        : 'Production mode — uses live bank endpoint'}
+                        ? t('settings.gateway.sandboxMode')
+                        : t('settings.gateway.productionMode')}
                     </Label>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor={`token-${gw.id}`}>
-                      API Token / Secret
+                      {t('settings.gateway.apiToken')}
                       {gw.token_configured && (
-                        <span className="ml-2 text-xs text-green-600 dark:text-green-400">
-                          ✓ Token is set
+                        <span className="ms-2 text-xs text-green-600 dark:text-green-400">
+                          ✓ {t('settings.gateway.tokenIsSet')}
                         </span>
                       )}
                     </Label>
@@ -317,8 +324,8 @@ export default function PaymentGatewaySettingsPage() {
                         type={gw.showToken ? 'text' : 'password'}
                         placeholder={
                           gw.token_configured
-                            ? 'Enter new token to replace the existing one'
-                            : 'Paste gateway token/secret here'
+                            ? t('settings.gateway.tokenPlaceholderReplace')
+                            : t('settings.gateway.tokenPlaceholderPaste')
                         }
                         value={gw.newToken}
                         onChange={(e) =>
@@ -332,7 +339,11 @@ export default function PaymentGatewaySettingsPage() {
                         onClick={() =>
                           updateGateway(gw.id, { showToken: !gw.showToken })
                         }
-                        title={gw.showToken ? 'Hide token' : 'Show token'}
+                        title={
+                          gw.showToken
+                            ? t('settings.gateway.hideToken')
+                            : t('settings.gateway.showToken')
+                        }
                       >
                         {gw.showToken ? (
                           <EyeOff className="h-4 w-4" />
@@ -342,18 +353,21 @@ export default function PaymentGatewaySettingsPage() {
                       </Button>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Leave blank to keep the existing token unchanged.
-                      Sensitive values are never returned by API responses.
+                      {t('settings.gateway.tokenHint')}
                     </p>
                   </div>
 
                   {isSaman && (
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="space-y-2">
-                        <Label htmlFor={`terminal-${gw.id}`}>Terminal ID</Label>
+                        <Label htmlFor={`terminal-${gw.id}`}>
+                          {t('settings.gateway.terminalId')}
+                        </Label>
                         <Input
                           id={`terminal-${gw.id}`}
-                          placeholder="e.g. 12345678"
+                          placeholder={t(
+                            'settings.gateway.terminalIdPlaceholder'
+                          )}
                           value={gw.terminalId}
                           onChange={(e) =>
                             updateGateway(gw.id, { terminalId: e.target.value })
@@ -361,10 +375,14 @@ export default function PaymentGatewaySettingsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor={`merchant-${gw.id}`}>Merchant ID</Label>
+                        <Label htmlFor={`merchant-${gw.id}`}>
+                          {t('settings.gateway.merchantId')}
+                        </Label>
                         <Input
                           id={`merchant-${gw.id}`}
-                          placeholder="e.g. merchant-id"
+                          placeholder={t(
+                            'settings.gateway.merchantIdPlaceholder'
+                          )}
                           value={gw.merchantId}
                           onChange={(e) =>
                             updateGateway(gw.id, { merchantId: e.target.value })
@@ -373,11 +391,11 @@ export default function PaymentGatewaySettingsPage() {
                       </div>
                       <div className="space-y-2 md:col-span-2">
                         <Label htmlFor={`callback-${gw.id}`}>
-                          Callback URL (optional override)
+                          {t('settings.gateway.callbackUrl')}
                         </Label>
                         <Input
                           id={`callback-${gw.id}`}
-                          placeholder="https://Mentomaacademy.com/payment/callback"
+                          placeholder="https://academy.mentoma.ir/payment/callback"
                           value={gw.callbackUrl}
                           onChange={(e) =>
                             updateGateway(gw.id, {
@@ -394,8 +412,10 @@ export default function PaymentGatewaySettingsPage() {
                       onClick={() => handleSave(gw)}
                       disabled={gw.isSaving}
                     >
-                      <Save className="mr-2 h-4 w-4" />
-                      {gw.isSaving ? 'Saving...' : 'Save Changes'}
+                      <Save className="me-2 h-4 w-4" />
+                      {gw.isSaving
+                        ? t('common.saving')
+                        : t('common.saveChanges')}
                     </Button>
                   </div>
                 </CardContent>
@@ -408,16 +428,14 @@ export default function PaymentGatewaySettingsPage() {
       <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20">
         <CardContent className="pt-6">
           <h3 className="mb-2 font-semibold text-amber-800 dark:text-amber-300">
-            How to get your PayPing token
+            {t('settings.gateway.paypingGuideTitle')}
           </h3>
           <ol className="list-inside list-decimal space-y-1 text-sm text-amber-700 dark:text-amber-400">
-            <li>Log in to your PayPing merchant account at payping.ir</li>
-            <li>Go to API Settings → Generate Token</li>
-            <li>
-              Copy the Bearer token (starts with a long alphanumeric string)
-            </li>
-            <li>Paste it above and click Save Changes</li>
-            <li>The system uses PayPing API v3 (api.payping.ir/v3)</li>
+            <li>{t('settings.gateway.paypingGuide1')}</li>
+            <li>{t('settings.gateway.paypingGuide2')}</li>
+            <li>{t('settings.gateway.paypingGuide3')}</li>
+            <li>{t('settings.gateway.paypingGuide4')}</li>
+            <li>{t('settings.gateway.paypingGuide5')}</li>
           </ol>
         </CardContent>
       </Card>
@@ -425,21 +443,15 @@ export default function PaymentGatewaySettingsPage() {
       <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20">
         <CardContent className="pt-6">
           <h3 className="mb-2 font-semibold text-blue-800 dark:text-blue-300">
-            Saman SEP setup notes (based on merchant docs)
+            {t('settings.gateway.samanNotesTitle')}
           </h3>
           <ul className="list-inside list-disc space-y-1 text-sm text-blue-700 dark:text-blue-400">
             <li>
-              Required for token flow: <code>TerminalId</code>,{' '}
+              {t('settings.gateway.samanRequired')} <code>TerminalId</code>,{' '}
               <code>ResNum</code>, <code>RedirectURL</code>.
             </li>
-            <li>
-              Recommended: whitelist your server IP with Saman before
-              production.
-            </li>
-            <li>
-              Keep Saman disabled until backend initiate/verify flow is fully
-              implemented.
-            </li>
+            <li>{t('settings.gateway.samanWhitelist')}</li>
+            <li>{t('settings.gateway.samanKeepDisabled')}</li>
           </ul>
         </CardContent>
       </Card>
