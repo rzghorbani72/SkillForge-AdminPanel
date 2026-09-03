@@ -1633,8 +1633,8 @@ export const en = {
       classPublished: 'Class published and its dates written.',
       noSessionsYet:
         'No meetings yet. Publish the class to generate its dates.',
-      seatsTaken: '{taken} of {capacity} seats',
-      meetingsCount: '{count} meetings',
+      seatsTaken: '{{taken}} of {{capacity}} seats',
+      meetingsCount: '{{count}} meetings',
       sessionTitlePlaceholder: 'Name this meeting',
       pickTopic: 'Pick a topic',
       noTopic: 'No topic',

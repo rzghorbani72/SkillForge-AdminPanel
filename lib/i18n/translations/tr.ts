@@ -940,8 +940,8 @@ export const tr = {
       classPublished: 'Ders yayınlandı ve tarihleri yazıldı.',
       noSessionsYet:
         'Henüz oturum yok. Tarihleri oluşturmak için dersi yayınlayın.',
-      seatsTaken: '{capacity} yerin {taken} tanesi',
-      meetingsCount: '{count} oturum',
+      seatsTaken: '{{capacity}} yerin {{taken}} tanesi',
+      meetingsCount: '{{count}} oturum',
       sessionTitlePlaceholder: 'Bu oturuma ad verin',
       pickTopic: 'Konu seçin',
       noTopic: 'Konu yok',

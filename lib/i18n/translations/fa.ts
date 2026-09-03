@@ -1623,8 +1623,8 @@ export const fa = {
       classPublished: 'کلاس منتشر شد و تاریخ جلسه‌ها ثبت شد.',
       noSessionsYet:
         'هنوز جلسه‌ای ثبت نشده است. کلاس را منتشر کنید تا تاریخ‌ها ساخته شوند.',
-      seatsTaken: '{taken} از {capacity} صندلی',
-      meetingsCount: '{count} جلسه',
+      seatsTaken: '{{taken}} از {{capacity}} صندلی',
+      meetingsCount: '{{count}} جلسه',
       sessionTitlePlaceholder: 'نام این جلسه',
       pickTopic: 'انتخاب سرفصل',
       noTopic: 'بدون سرفصل',

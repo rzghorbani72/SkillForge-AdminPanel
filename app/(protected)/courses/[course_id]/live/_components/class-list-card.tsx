@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { CalendarDays, Users } from 'lucide-react';
+import { CalendarClock, CalendarDays } from 'lucide-react';
 
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { GroupStatusBadge } from '@/components/class/group-status-badge';
@@ -113,12 +113,15 @@ export function ClassListCard({
               <span className="truncate font-medium">{group.title}</span>
               <GroupStatusBadge status={group.status} />
             </div>
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <CalendarDays className="h-3.5 w-3.5 shrink-0" />
-              <GroupScheduleSummary slots={group.Slots} />
+            <div className="flex items-start gap-1.5 text-sm text-muted-foreground">
+              <CalendarDays className="mt-1 h-3.5 w-3.5 shrink-0" />
+              <GroupScheduleSummary
+                slots={group.Slots}
+                className="min-w-0 flex-1"
+              />
             </div>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Users className="h-3.5 w-3.5 shrink-0" />
+              <CalendarClock className="h-3.5 w-3.5 shrink-0" />
               {t('courses.live.startsOn', { date: startLabel(group) })}
             </p>
             <SeatMeter taken={group.seats_taken} capacity={group.capacity} />

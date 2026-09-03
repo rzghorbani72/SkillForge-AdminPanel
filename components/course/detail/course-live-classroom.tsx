@@ -93,7 +93,10 @@ export function CourseLiveClassroom({
                   ? formatDate(upcoming.starts_on)
                   : t('courseDetail.startDateNotSet')}
               </span>
-              <GroupScheduleSummary slots={upcoming.Slots} />
+              <GroupScheduleSummary
+                slots={upcoming.Slots}
+                className="min-w-0"
+              />
               <span className="inline-flex items-center gap-1.5">
                 {upcoming.meeting_url ? (
                   <Video className="h-3.5 w-3.5 shrink-0 text-emerald-600" />

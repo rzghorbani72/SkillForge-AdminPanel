@@ -3,13 +3,16 @@
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { WEEKDAY_LABEL_KEYS } from '@/lib/live-recurrence';
+import { cn } from '@/lib/utils';
 import type { TutoringGroupSlot } from '@/types/learning-operations';
 
 /** "شنبه ۰۹:۰۰ – ۱۰:۳۰" for every weekly meeting of a class. */
 export const GroupScheduleSummary = ({
-  slots
+  slots,
+  className
 }: {
   slots?: TutoringGroupSlot[];
+  className?: string;
 }) => {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -26,14 +29,14 @@ export const GroupScheduleSummary = ({
   if (!slots?.length) return <span className="text-muted-foreground">—</span>;
 
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className={cn('flex min-w-0 flex-wrap gap-1.5', className)}>
       {slots.map((slot, index) => (
         <span
           key={slot.id ?? index}
-          className="rounded-md bg-muted px-2 py-0.5 text-xs"
+          className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-muted/60 px-2 py-0.5 text-[11px] leading-5 text-foreground/80"
         >
-          {t(WEEKDAY_LABEL_KEYS[slot.weekday])}{' '}
-          <span dir="ltr" className="inline-block">
+          {t(WEEKDAY_LABEL_KEYS[slot.weekday])}
+          <span dir="ltr" className="inline-block tabular-nums">
             {clock(slot.start_minute)}–
             {clock(slot.start_minute + slot.duration_minutes)}
           </span>
