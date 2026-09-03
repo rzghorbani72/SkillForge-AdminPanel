@@ -902,6 +902,7 @@ export const ar = {
       sessionCount: 'عدد الجلسات',
       startDate: 'تاريخ البدء',
       startDateRequired: 'اختر تاريخ البدء.',
+      sessionCountRequired: 'أدخل عدد الجلسات.',
       joinDeadline: 'آخر موعد للتسجيل',
       minStudents: 'أقل عدد طلاب',
       maxStudents: 'أكبر عدد طلاب',

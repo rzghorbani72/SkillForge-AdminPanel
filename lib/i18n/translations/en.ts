@@ -1617,6 +1617,7 @@ export const en = {
       sessionCount: 'Number of meetings',
       startDate: 'Start date',
       startDateRequired: 'Pick a start date.',
+      sessionCountRequired: 'Enter the number of sessions.',
       joinDeadline: 'Join deadline',
       minStudents: 'Minimum students',
       maxStudents: 'Maximum students',

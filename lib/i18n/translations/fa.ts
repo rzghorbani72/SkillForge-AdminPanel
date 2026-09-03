@@ -1606,6 +1606,7 @@ export const fa = {
       sessionCount: 'تعداد جلسه‌ها',
       startDate: 'تاریخ شروع',
       startDateRequired: 'تاریخ شروع را انتخاب کنید.',
+      sessionCountRequired: 'تعداد جلسه‌ها را بنویسید.',
       joinDeadline: 'مهلت ثبت‌نام',
       minStudents: 'حداقل دانشجو',
       maxStudents: 'حداکثر دانشجو',

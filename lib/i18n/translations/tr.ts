@@ -923,6 +923,7 @@ export const tr = {
       sessionCount: 'Oturum sayısı',
       startDate: 'Başlangıç tarihi',
       startDateRequired: 'Bir başlangıç tarihi seçin.',
+      sessionCountRequired: 'Ders sayısını girin.',
       joinDeadline: 'Son kayıt tarihi',
       minStudents: 'En az öğrenci',
       maxStudents: 'En fazla öğrenci',

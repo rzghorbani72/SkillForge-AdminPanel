@@ -43,24 +43,29 @@ export default function ScheduleBuilder({
   const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
   const [slots, setSlots] = useState<TutoringGroupSlot[]>([DEFAULT_SLOT]);
-  const [sessionCount, setSessionCount] = useState(10);
-  const [capacity, setCapacity] = useState(8);
-  const [minStudents, setMinStudents] = useState(2);
+  const [sessionCount, setSessionCount] = useState('10');
+  const [capacity, setCapacity] = useState('8');
+  const [minStudents, setMinStudents] = useState('2');
   const [startsOn, setStartsOn] = useState('');
   const [joinDeadline, setJoinDeadline] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   const timezone = defaultTimezone();
+  const sessionCountValue = Number(sessionCount) || 0;
   const preview = useMemo(() => {
-    if (!startsOn) return [];
+    if (!startsOn || sessionCountValue < 1) return [];
     const from = new Date(startsOn);
     if (Number.isNaN(from.getTime())) return [];
-    return previewSessionDates(slots, sessionCount, from, timezone);
-  }, [slots, sessionCount, startsOn, timezone]);
+    return previewSessionDates(slots, sessionCountValue, from, timezone);
+  }, [slots, sessionCountValue, startsOn, timezone]);
 
   const create = async () => {
     if (!startsOn) {
       toast.error(t('courses.live.startDateRequired'));
+      return;
+    }
+    if (sessionCountValue < 1) {
+      toast.error(t('courses.live.sessionCountRequired'));
       return;
     }
     setIsSaving(true);
@@ -69,9 +74,9 @@ export default function ScheduleBuilder({
         offer_id: offerId,
         title: courseTitle,
         timezone,
-        capacity,
-        min_students: minStudents,
-        session_count: sessionCount,
+        capacity: Number(capacity) || 1,
+        min_students: Number(minStudents) || 1,
+        session_count: sessionCountValue,
         starts_on_requested: new Date(startsOn).toISOString(),
         join_deadline: joinDeadline
           ? new Date(joinDeadline).toISOString()
@@ -104,7 +109,7 @@ export default function ScheduleBuilder({
             value={sessionCount}
             min={1}
             max={200}
-            onChange={(raw) => setSessionCount(Number(raw) || 1)}
+            onChange={setSessionCount}
           />
         </div>
         <div className="space-y-2">
@@ -130,7 +135,7 @@ export default function ScheduleBuilder({
               id="min-students"
               value={minStudents}
               min={1}
-              onChange={(raw) => setMinStudents(Number(raw) || 1)}
+              onChange={setMinStudents}
             />
           </div>
           <div className="space-y-2">
@@ -139,7 +144,7 @@ export default function ScheduleBuilder({
               id="capacity"
               value={capacity}
               min={1}
-              onChange={(raw) => setCapacity(Number(raw) || 1)}
+              onChange={setCapacity}
             />
           </div>
         </div>
