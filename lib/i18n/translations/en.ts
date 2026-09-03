@@ -2720,10 +2720,7 @@ export const en = {
     sellerIdentity: {
       title: 'Publisher identity',
       description:
-        'Iranian law requires us to know who is legally responsible before your site goes public.',
-      dialogTitle: 'Complete publisher identity',
-      dialogDescription:
-        'Fill in your legal identity and permit declaration, then we can publish your site.',
+        'Iranian law requires us to know who is legally responsible before you connect a custom domain. Not needed on a Mentoma subdomain.',
       legalEntityName: 'Legal name (person or company)',
       nationalId: 'National ID or company ID',
       nationalIdHelp: '10-digit national code or 11-digit company ID',
@@ -2732,11 +2729,12 @@ export const en = {
       vatRegistrationNo: 'VAT registration (optional)',
       permitLabel: 'I hold any teaching permits my activity requires',
       permitHelp:
-        'Required under the platform agreement before making your site public.',
+        'Required under the platform agreement before connecting a custom domain.',
       save: 'Save identity',
       complete: 'Complete',
       incomplete: 'Incomplete',
-      savedComplete: 'Publisher identity saved — you can publish now',
+      savedComplete:
+        'Publisher identity saved — you can connect your domain now',
       savedIncomplete: 'Saved — fill the remaining fields to publish'
     },
     enamad: {

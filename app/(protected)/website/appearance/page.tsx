@@ -73,12 +73,6 @@ import type {
   ViewportMode
 } from '@/components/ui-template/sidebar-types';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
-import { SellerIdentityDialog } from '@/components/compliance/seller-identity-dialog';
-import {
-  isSellerIdentityIncompleteError,
-  missingFromSellerIdentityError
-} from '@/lib/seller-identity-error';
-import type { SellerIdentityField } from '@/types/seller-identity';
 
 // Commit action awaiting explicit confirmation. Drafts keep auto-saving;
 // only the committing step (publish/override/fork/delete) is gated.
@@ -130,12 +124,6 @@ export default function UITemplateSettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [sellerIdentityOpen, setSellerIdentityOpen] = useState(false);
-  const [sellerIdentityMissing, setSellerIdentityMissing] = useState<
-    readonly SellerIdentityField[]
-  >([]);
-  const [retryPublishAfterIdentity, setRetryPublishAfterIdentity] =
-    useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<{
     blockId: string;
@@ -535,20 +523,10 @@ export default function UITemplateSettingsPage() {
       setActivePresetId(preset.id);
       ErrorHandler.showSuccess(`قالب «${preset.name}» منتشر شد`);
     } catch (error) {
-      if (!openSellerIdentityGate(error, true)) {
-        ErrorHandler.handleApiError(error);
-      }
+      ErrorHandler.handleApiError(error);
     } finally {
       setIsPreviewLoading(false);
     }
-  };
-
-  const openSellerIdentityGate = (error: unknown, retryPublish: boolean) => {
-    if (!isSellerIdentityIncompleteError(error)) return false;
-    setSellerIdentityMissing(missingFromSellerIdentityError(error));
-    setRetryPublishAfterIdentity(retryPublish);
-    setSellerIdentityOpen(true);
-    return true;
   };
 
   const doPublish = async () => {
@@ -558,9 +536,7 @@ export default function UITemplateSettingsPage() {
       setIsApplied(true);
       ErrorHandler.showSuccess('قالب با موفقیت روی سایت منتشر شد');
     } catch (error) {
-      if (!openSellerIdentityGate(error, true)) {
-        ErrorHandler.handleApiError(error);
-      }
+      ErrorHandler.handleApiError(error);
     } finally {
       setIsPublishing(false);
     }
@@ -1262,19 +1238,6 @@ export default function UITemplateSettingsPage() {
     return (
       <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-zinc-100">
         {confirmDialog}
-        <SellerIdentityDialog
-          open={sellerIdentityOpen}
-          missing={sellerIdentityMissing}
-          onOpenChange={setSellerIdentityOpen}
-          onComplete={
-            retryPublishAfterIdentity
-              ? async () => {
-                  setRetryPublishAfterIdentity(false);
-                  await doPublish();
-                }
-              : undefined
-          }
-        />
 
         {/* Action bar */}
         <div className="flex flex-shrink-0 items-center gap-2 border-b border-zinc-200 bg-white px-4 py-2.5">
@@ -1518,19 +1481,6 @@ export default function UITemplateSettingsPage() {
   return (
     <div className="min-h-full bg-[#f7faf9] p-8" dir="rtl">
       {confirmDialog}
-      <SellerIdentityDialog
-        open={sellerIdentityOpen}
-        missing={sellerIdentityMissing}
-        onOpenChange={setSellerIdentityOpen}
-        onComplete={
-          retryPublishAfterIdentity
-            ? async () => {
-                setRetryPublishAfterIdentity(false);
-                await doPublish();
-              }
-            : undefined
-        }
-      />
 
       <div className="mb-6 flex items-start justify-between">
         <div>

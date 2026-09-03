@@ -15,6 +15,7 @@ import { useSettingsData } from '@/app/(protected)/settings/_hooks/use-settings-
 import { useTranslation } from '@/lib/i18n/hooks';
 import { CUSTOM_DOMAIN_CNAME_TARGET } from '@/lib/custom-domain-dns';
 import { CopyBtn } from '@/components/affiliates/copy-btn';
+import { SellerIdentityCard } from '@/components/compliance/seller-identity-card';
 
 export default function DomainDnsSettingsPage() {
   const { t } = useTranslation();
@@ -53,6 +54,8 @@ export default function DomainDnsSettingsPage() {
           </div>
         </CardHeader>
       </Card>
+
+      <SellerIdentityCard />
 
       <Card>
         <CardHeader>
