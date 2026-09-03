@@ -63,6 +63,15 @@ export const navItems: NavItem[] = [
     section: 'platform'
   },
   {
+    title: 'Investor Report',
+    href: '/platform/metrics',
+    icon: 'trendingUp' as IconType,
+    label: 'investorReport',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+    scope: 'platform',
+    section: 'platform'
+  },
+  {
     title: 'Academies',
     href: '/academies',
     icon: 'store' as IconType,

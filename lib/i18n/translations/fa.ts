@@ -720,6 +720,7 @@ export const fa = {
     Dashboard: 'داشبورد',
     dashboard: 'داشبورد',
     platformOverview: 'نمای کلی پلتفرم',
+    investorReport: 'گزارش سرمایه‌گذاران',
     supportAccessLogs: 'گزارش دسترسی پشتیبانی',
     management: 'مدیریت',
     'All Stores': 'همه آکادمی‌ها',
@@ -6840,6 +6841,109 @@ export const fa = {
       ends_at: 'تاریخ پایان',
       file: 'فایل',
       image_id: 'تصویر'
+    }
+  },
+  platformMetrics: {
+    title: 'گزارش سرمایه‌گذاران',
+    subtitle: 'شاخص‌های کسب‌وکار، قابل ردیابی و قابل دانلود',
+    tabs: {
+      overview: 'نمای کلی',
+      revenue: 'درآمد و MRR',
+      cohorts: 'کوهورت و نگه‌داشت',
+      subscriptions: 'اشتراک‌ها',
+      transactions: 'تراکنش‌ها',
+      users: 'کاربران و فعالیت',
+      catalog: 'دوره‌ها و سابقهٔ یادگیری',
+      economics: 'اقتصاد واحد',
+      reconciliation: 'مغایرت‌گیری'
+    },
+    currency: { label: 'واحد پول', toman: 'تومان', eur: 'یورو' },
+    source: { label: 'منبع داده', live: 'زنده', snapshot: 'ثبت‌شدهٔ ماهانه' },
+    download: 'دانلود فایل کامل',
+    downloadCsv: 'دانلود CSV',
+    downloadJson: 'دانلود JSON',
+    refreshSnapshot: 'بستن ماه‌های سپری‌شده',
+    snapshotDone: 'ماه‌های جدید ثبت شد',
+    empty: 'داده‌ای برای این بازه نیست',
+    backfilled: 'بازسازی‌شده',
+    metrics: {
+      mrr: 'درآمد ماهانه (MRR)',
+      arr: 'درآمد سالانه (ARR)',
+      arpa: 'میانگین درآمد هر آکادمی',
+      paying_academies: 'آکادمی‌های پرداخت‌کننده',
+      total_academies: 'کل آکادمی‌ها',
+      trialing_academies: 'در دورهٔ آزمایشی',
+      trial_conversion_rate: 'نرخ تبدیل آزمایشی',
+      nrr: 'نگه‌داشت خالص درآمد',
+      grr: 'نگه‌داشت ناخالص درآمد',
+      logo_retention: 'نگه‌داشت مشتری',
+      monthly_logo_churn: 'ریزش ماهانه',
+      total_users: 'کل کاربران',
+      activation_rate: 'نرخ فعال‌سازی',
+      dau: 'کاربر فعال روزانه',
+      wau: 'کاربر فعال هفتگی',
+      mau: 'کاربر فعال ماهانه',
+      gmv_paid_amount: 'گردش مالی آکادمی‌ها',
+      total_courses: 'کل دوره‌ها',
+      learning_records: 'رکوردهای یادگیری',
+      cac: 'هزینهٔ جذب مشتری',
+      ltv: 'ارزش طول عمر مشتری',
+      ltv_to_cac: 'نسبت LTV به CAC',
+      rule_of_40: 'قاعدهٔ ۴۰',
+      quick_ratio: 'نسبت سریع'
+    },
+    bridge: {
+      title: 'تغییرات ماهانهٔ درآمد',
+      starting: 'ابتدای ماه',
+      new: 'جدید',
+      expansion: 'رشد',
+      contraction: 'کاهش',
+      churned: 'ریزش',
+      ending: 'پایان ماه'
+    },
+    columns: {
+      month: 'ماه',
+      academy: 'آکادمی',
+      plan: 'پلن',
+      status: 'وضعیت',
+      amount: 'مبلغ',
+      term: 'مدت (ماه)',
+      startsAt: 'شروع',
+      endsAt: 'پایان',
+      firstPaid: 'اولین پرداخت',
+      lifetimePaid: 'مجموع پرداختی',
+      count: 'تعداد',
+      cohort: 'کوهورت',
+      monthIndex: 'ماه n‌ام',
+      retention: 'نگه‌داشت',
+      metric: 'شاخص',
+      value: 'مقدار',
+      days: 'روز'
+    },
+    reconciliation: {
+      title: 'تطبیق فاکتور، پرداخت و درگاه',
+      balanced: 'همه‌چیز تراز است',
+      unbalanced: 'مغایرت وجود دارد و باید بررسی شود',
+      matched: 'منطبق',
+      missing: 'مفقود',
+      orphan: 'بی‌صاحب',
+      manual: 'تسویهٔ دستی'
+    },
+    caveats: {
+      title: 'محدودیت‌های داده',
+      loginHistory:
+        'آمار ورود و نگه‌داشت از تاریخ راه‌اندازی این جدول شروع می‌شود.',
+      marketingSpend:
+        'هزینهٔ بازاریابی دستی وارد می‌شود؛ بدون آن CAC محاسبه نمی‌شود.',
+      runway:
+        'مانده نقدی در سامانه ذخیره نمی‌شود، پس «مدت دوام» محاسبه‌شدنی نیست.'
+    },
+    spend: {
+      title: 'هزینهٔ بازاریابی',
+      channel: 'کانال',
+      amount: 'مبلغ',
+      add: 'ثبت هزینه',
+      saved: 'ثبت شد'
     }
   }
 };

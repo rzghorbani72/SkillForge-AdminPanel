@@ -439,6 +439,7 @@ export const tr = {
     rolesPermissions: 'Roller ve İzinler',
     dashboard: 'Kontrol Paneli',
     platformOverview: 'Platform Genel Bakış',
+    investorReport: 'Yatırımcı raporu',
     supportAccessLogs: 'Destek Erişim Kayıtları',
     stores: 'Enstitüler',
     courses: 'Kurslar',
@@ -3500,6 +3501,109 @@ export const tr = {
       ends_at: 'End date',
       file: 'File',
       image_id: 'Image'
+    }
+  },
+  platformMetrics: {
+    title: 'Investor report',
+    subtitle: 'Business metrics you can track and download',
+    tabs: {
+      overview: 'Overview',
+      revenue: 'Revenue & MRR',
+      cohorts: 'Cohorts & retention',
+      subscriptions: 'Subscriptions',
+      transactions: 'Transactions',
+      users: 'Users & activity',
+      catalog: 'Courses & learning record',
+      economics: 'Unit economics',
+      reconciliation: 'Reconciliation'
+    },
+    currency: { label: 'Currency', toman: 'Toman', eur: 'EUR' },
+    source: { label: 'Source', live: 'Live', snapshot: 'Monthly snapshot' },
+    download: 'Download full file',
+    downloadCsv: 'Download CSV',
+    downloadJson: 'Download JSON',
+    refreshSnapshot: 'Close elapsed months',
+    snapshotDone: 'New months recorded',
+    empty: 'No data in this range',
+    backfilled: 'Backfilled',
+    metrics: {
+      mrr: 'MRR',
+      arr: 'ARR',
+      arpa: 'ARPA',
+      paying_academies: 'Paying academies',
+      total_academies: 'Total academies',
+      trialing_academies: 'On trial',
+      trial_conversion_rate: 'Trial conversion',
+      nrr: 'Net revenue retention',
+      grr: 'Gross revenue retention',
+      logo_retention: 'Logo retention',
+      monthly_logo_churn: 'Monthly churn',
+      total_users: 'Total users',
+      activation_rate: 'Activation rate',
+      dau: 'DAU',
+      wau: 'WAU',
+      mau: 'MAU',
+      gmv_paid_amount: 'Academy GMV',
+      total_courses: 'Total courses',
+      learning_records: 'Learning records',
+      cac: 'CAC',
+      ltv: 'LTV',
+      ltv_to_cac: 'LTV : CAC',
+      rule_of_40: 'Rule of 40',
+      quick_ratio: 'Quick ratio'
+    },
+    bridge: {
+      title: 'Monthly MRR bridge',
+      starting: 'Starting',
+      new: 'New',
+      expansion: 'Expansion',
+      contraction: 'Contraction',
+      churned: 'Churned',
+      ending: 'Ending'
+    },
+    columns: {
+      month: 'Month',
+      academy: 'Academy',
+      plan: 'Plan',
+      status: 'Status',
+      amount: 'Amount',
+      term: 'Term (months)',
+      startsAt: 'Starts',
+      endsAt: 'Ends',
+      firstPaid: 'First paid',
+      lifetimePaid: 'Lifetime paid',
+      count: 'Count',
+      cohort: 'Cohort',
+      monthIndex: 'Month n',
+      retention: 'Retention',
+      metric: 'Metric',
+      value: 'Value',
+      days: 'Days'
+    },
+    reconciliation: {
+      title: 'Invoice, payment and gateway tie-out',
+      balanced: 'Everything ties out',
+      unbalanced: 'There is a gap that needs investigating',
+      matched: 'Matched',
+      missing: 'Missing',
+      orphan: 'Orphan',
+      manual: 'Settled manually'
+    },
+    caveats: {
+      title: 'Data limits',
+      loginHistory:
+        'Login and retention series start from the day this table went live.',
+      marketingSpend:
+        'Marketing spend is entered by hand; without it CAC cannot be computed.',
+      runway:
+        'Cash balance is not stored in the platform, so runway cannot be computed.'
+    },
+    spend: {
+      title: 'Marketing spend',
+      channel: 'Channel',
+      amount: 'Amount',
+      add: 'Record spend',
+      saved: 'Saved'
     }
   }
 };
