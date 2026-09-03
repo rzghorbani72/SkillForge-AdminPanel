@@ -168,7 +168,11 @@ export default function UITemplateSettingsPage() {
   // Ref for handleBlockConfigChange — initialised to a no-op and patched after
   // the function is declared further below (avoids "used before declaration").
   const handleBlockConfigChangeRef = useRef<
-    (blockId: string, config: Record<string, unknown>) => void
+    (
+      blockId: string,
+      config: Record<string, unknown>,
+      options?: { syncPreview?: boolean }
+    ) => void
   >(() => {
     /* patched after declaration */
   });
@@ -209,6 +213,7 @@ export default function UITemplateSettingsPage() {
   // Receive messages from the preview canvas:
   // - 'select'      → click-to-select a section, opens its edit panel
   // - 'field-update' → inline text edit committed, update draftBlocks directly
+  // - 'list-update'  → inline edit inside a repeated list, rewrites the array
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
       if (!isTrustedPreviewOrigin(e.origin, storefrontBaseRef.current)) {
@@ -221,6 +226,8 @@ export default function UITemplateSettingsPage() {
         blockId?: string;
         fieldKey?: string;
         value?: string;
+        listKey?: string;
+        items?: unknown[];
         restore?: boolean;
         restoreKey?: string;
         action?: string;
@@ -256,6 +263,21 @@ export default function UITemplateSettingsPage() {
         handleBlockConfigChangeRef.current(data.blockId, {
           [data.fieldKey]: data.value ?? ''
         });
+      }
+
+      // Inline edit inside a repeated list — the canvas sends the whole array
+      // so untouched items and their non-text fields are preserved.
+      if (
+        data.type === 'list-update' &&
+        data.blockId &&
+        data.listKey &&
+        Array.isArray(data.items)
+      ) {
+        handleBlockConfigChangeRef.current(
+          data.blockId,
+          { [data.listKey]: data.items },
+          { syncPreview: false }
+        );
       }
 
       if (data.type === 'open-media-picker' && data.blockId && data.fieldKey) {
@@ -931,7 +953,10 @@ export default function UITemplateSettingsPage() {
 
   const handleBlockConfigChange = (
     blockId: string,
-    patch: Record<string, unknown>
+    patch: Record<string, unknown>,
+    // The canvas already shows an edit it made itself; pushing it back would
+    // miss the marked-up node and make the preview reload on every keystroke.
+    options?: { syncPreview?: boolean }
   ) => {
     // Merge onto the latest draft config so a stale sidebar snapshot cannot
     // wipe `style` (gallery → classic fallback) or other concurrent edits.
@@ -943,7 +968,9 @@ export default function UITemplateSettingsPage() {
 
     // Push each changed field to the preview instantly so the live text updates
     // without waiting for the full debounced save + iframe reload cycle.
-    for (const [fieldKey, value] of Object.entries(patch)) {
+    for (const [fieldKey, value] of Object.entries(
+      options?.syncPreview === false ? {} : patch
+    )) {
       if (prev[fieldKey] !== value) {
         previewIframeRef.current?.contentWindow?.postMessage(
           {
