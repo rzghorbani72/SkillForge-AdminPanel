@@ -1,0 +1,15 @@
+{
+  "domains": {
+    "Gdpr": "Cookie and privacy consent captured in the browser.",
+    "Media": "Video and file storage, transcoding and secure playback.",
+    "Onboarding": "First-run setup steps a manager completes to go live."
+  },
+  "events": {
+    "Gdpr.ConsentAccepted": "GDPR consent accepted.",
+    "Gdpr.ConsentDeclined": "GDPR consent declined.",
+    "Media.PlaybackSessionFailed": "Media playback session failed.",
+    "Media.PlayerError": "Media player error.",
+    "Onboarding.AcademyDialogShown": "Onboarding academy dialog shown.",
+    "Onboarding.FirstAcademyCreated": "Onboarding first academy created."
+  }
+}

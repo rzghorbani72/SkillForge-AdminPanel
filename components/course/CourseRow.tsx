@@ -67,8 +67,11 @@ export function CourseRow({
               <CourseTypePill type={course.course_type} />
             </div>
             <div className="text-sm text-muted-foreground">
-              {seasonsCount} {t('courses.season')} · {lessonsCount}{' '}
-              {t('courses.lesson')}
+              {isLive
+                ? t('courses.live.classesCount', {
+                    count: formatNumber(course.classes_count ?? 0)
+                  })
+                : `${seasonsCount} ${t('courses.season')} · ${lessonsCount} ${t('courses.lesson')}`}
             </div>
           </div>
         </div>

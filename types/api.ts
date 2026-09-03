@@ -316,6 +316,8 @@ export interface Course {
   original_price?: number;
   /** LIVE = sold as a timetable of classes; OFFLINE = recorded lessons. */
   course_type?: 'OFFLINE' | 'LIVE';
+  /** Live classes running for this course; live courses count these, not lessons. */
+  classes_count?: number;
   /** Live seat prices: GROUP = one seat in the class, SOLO = private. */
   TutoringOffer?: { kind: 'GROUP' | 'SOLO'; price: number }[];
   /** False = the course is not sold at its own price. */
