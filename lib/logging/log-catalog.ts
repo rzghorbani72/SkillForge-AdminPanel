@@ -41,12 +41,12 @@ export const LOG_CATALOG = {
     description: 'First-run setup steps a manager completes to go live.',
     actions: {
       AcademyDialogShown: {
-        description: 'TODO: describe this event',
+        description: 'Onboarding academy dialog shown.',
         status: 'ok',
         fields: [] as const
       },
       FirstAcademyCreated: {
-        description: 'TODO: describe this event',
+        description: 'Onboarding first academy created.',
         status: 'ok',
         fields: ['academy_id'] as const
       }
