@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { classProgress } from '@/lib/class-sessions';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { ClassSession, CourseTopic } from '@/types/learning-operations';
@@ -30,6 +31,8 @@ export function ClassTimetableCard({
 }: ClassTimetableCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
+  const progress = classProgress(sessions);
+  const focusId = (progress.current ?? progress.next)?.id ?? null;
 
   return (
     <Card>
@@ -42,6 +45,15 @@ export function ClassTimetableCard({
           {t('courses.live.meetingsCount', {
             count: formatNumber(sessions.length)
           })}
+          {progress.total ? (
+            <>
+              {' · '}
+              {t('courses.live.sessionsDone', {
+                done: formatNumber(progress.done),
+                total: formatNumber(progress.total)
+              })}
+            </>
+          ) : null}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -58,6 +70,7 @@ export function ClassTimetableCard({
               index={index}
               session={session}
               topics={topics}
+              isNext={session.id === focusId}
               onChanged={onSessionChanged}
             />
           ))

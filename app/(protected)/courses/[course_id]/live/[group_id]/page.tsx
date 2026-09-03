@@ -9,6 +9,7 @@ import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
 import { Button } from '@/components/ui/button';
 import { ClassHomeworkCard } from '@/components/class/class-homework-card';
 import { ClassTimetableCard } from '@/components/class/class-timetable-card';
+import { NextSessionCard } from '@/components/class/next-session-card';
 import { GroupActionsCard } from '@/components/class/group-actions-card';
 import { GroupRosterCard } from '@/components/class/group-roster-card';
 import { GroupStatusBadge } from '@/components/class/group-status-badge';
@@ -88,6 +89,11 @@ export default function ClassPage() {
             </div>
 
             <ClassSummaryCard group={group} />
+
+            <NextSessionCard
+              sessions={timetable.sessions}
+              classMeetingUrl={group.meeting_url}
+            />
 
             <GroupRosterCard
               members={group.members ?? []}

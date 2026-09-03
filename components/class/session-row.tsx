@@ -28,6 +28,8 @@ interface SessionRowProps {
   index: number;
   session: ClassSession;
   topics: CourseTopic[];
+  /** The meeting the teacher is working towards: running now, or up next. */
+  isNext?: boolean;
   onChanged: (session: ClassSession) => void;
 }
 
@@ -40,6 +42,7 @@ export function SessionRow({
   index,
   session,
   topics,
+  isNext = false,
   onChanged
 }: SessionRowProps) {
   const { t, language } = useTranslation();
@@ -86,11 +89,20 @@ export function SessionRow({
   }).format(new Date(session.starts_at));
 
   return (
-    <div className="space-y-3 rounded-lg border p-4">
+    <div
+      className={
+        isNext
+          ? 'space-y-3 rounded-lg border border-primary bg-primary/5 p-4'
+          : 'space-y-3 rounded-lg border p-4'
+      }
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">{index + 1}.</span>
           <span dir="ltr">{when}</span>
+          {isNext && (
+            <Badge className="gap-1">{t('courses.live.nextSession')}</Badge>
+          )}
           {isCancelled && (
             <Badge variant="destructive">{t('courses.live.cancelled')}</Badge>
           )}
