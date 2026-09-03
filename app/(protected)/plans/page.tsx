@@ -1084,6 +1084,7 @@ export default function PlansPage() {
               academyId={selectedAcademy.id}
               academyName={selectedAcademy.name}
               trial={currentSub?.trial}
+              hasPaid={currentSub?.has_paid === true}
               onMoved={() => void refreshPlansAndSubscription()}
             />
           )}

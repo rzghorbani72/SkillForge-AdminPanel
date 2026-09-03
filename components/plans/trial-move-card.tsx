@@ -31,6 +31,8 @@ interface TrialMoveCardProps {
   academyId: string;
   academyName: string;
   trial: TrialContext | null | undefined;
+  /** Paid academies never see the trial banner — leftover days already stacked. */
+  hasPaid?: boolean;
   onMoved: () => void;
 }
 
@@ -49,6 +51,7 @@ export function TrialMoveCard({
   academyId,
   academyName,
   trial,
+  hasPaid = false,
   onMoved
 }: TrialMoveCardProps) {
   const { t } = useTranslation();
@@ -56,7 +59,7 @@ export function TrialMoveCard({
   const [confirming, setConfirming] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  if (!trial?.transferable) return null;
+  if (hasPaid || !trial?.transferable) return null;
 
   const isMove = !!trial.holder_academy_id;
   const remaining = daysLeft(trial.expires_at);
