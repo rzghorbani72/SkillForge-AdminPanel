@@ -2,6 +2,54 @@
  * Turkish translations for Admin Panel - LTR
  */
 export const tr = {
+  monitoring: {
+    title: 'Akademi sağlığı',
+    subtitle:
+      'Sitenizin çalıştığını ve öğrencilerin hatasız kullandığını görün',
+    statusOk: 'Akademiniz normal çalışıyor',
+    statusDegraded: 'Bazı kullanıcılar hata alıyor',
+    statusQuiet: 'Son 24 saatte hiç etkinlik yok',
+    statusOkHint: 'Sunucu hatası ve ödeme sorunu görünmüyor.',
+    statusDegradedHint:
+      'Neyin bozuk olduğunu görmek için aşağıdaki hatalara bakın.',
+    statusQuietHint:
+      'Yeni bir akademi için bu normaldir, arıza anlamına gelmez.',
+    checkedJustNow: 'Her dakika otomatik yenilenir',
+    activeLearners: 'Şu anda öğrenen (son 60 dk)',
+    logins24h: 'Girişler (24s)',
+    paidPayments24h: 'Başarılı ödemeler (24s)',
+    failedPayments24h: 'Başarısız ödemeler (24s)',
+    serverErrors24h: 'Sunucu hataları (24s)',
+    clientErrors24h: 'Kullanıcı hataları (24s)',
+    msValue: '{{value}} ms',
+    dbLatency: 'Veritabanı yanıt süresi',
+    lastActivity: 'Son etkinlik',
+    lastActivityNever: 'Henüz etkinlik kaydedilmedi',
+    activityChartTitle: 'Zaman içinde kullanıcılar',
+    activityChartSubtitle: 'Girişler, kayıtlar ve izleyen öğrenciler',
+    paymentsChartTitle: 'Zaman içinde ödemeler',
+    paymentsChartSubtitle: 'Başarılıya karşı başarısız',
+    logins: 'Girişler',
+    registrations: 'Kayıtlar',
+    watchers: 'İzleyenler',
+    paid: 'Başarılı',
+    failed: 'Başarısız',
+    errorsTitle: 'Hatalar',
+    errorsWindow: 'Son {{days}} gün',
+    errorsWindowHint: 'Hata kayıtları yalnızca {{days}} gün saklanır.',
+    topErrors: 'En sık hatalar',
+    topPaymentFailures: 'Ödemeler neden başarısız oldu',
+    errorPath: 'Adres',
+    errorStatus: 'Kod',
+    errorCount: 'Adet',
+    failureReason: 'Sebep',
+    noErrors: 'Hata kaydedilmedi',
+    noPaymentFailures: 'Başarısız ödeme kaydedilmedi',
+    uptimeNote:
+      'Bu sayfa çalışma yüzdesi değil sağlık sinyalleri gösterir: kapalı bir sunucu kendini raporlayamaz.',
+    loadFailed: 'Akademi sağlığı yüklenemedi',
+    retry: 'Tekrar dene'
+  },
   meta: {
     title: 'Mentoma Paneli',
     titleTemplate: '%s | Mentoma Paneli',
@@ -433,6 +481,7 @@ export const tr = {
     deniedDescription: 'Bu sayfayı görüntüleme izniniz yok.'
   },
   navigation: {
+    monitoring: 'Akademi sağlığı',
     academyBlog: 'Blog',
     platformBlog: 'Platform blogu',
     allSubscriptions: 'Tüm Abonelikler',

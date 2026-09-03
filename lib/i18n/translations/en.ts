@@ -2,6 +2,53 @@
  * English translations for Admin Panel
  */
 export const en = {
+  monitoring: {
+    title: 'Academy health',
+    subtitle:
+      'See that your site is working and students are using it without errors',
+    statusOk: 'Your academy is running normally',
+    statusDegraded: 'Some people are hitting errors',
+    statusQuiet: 'No activity in the last 24 hours',
+    statusOkHint: 'No server errors and no payment trouble.',
+    statusDegradedHint: 'Check the errors below to see what is failing.',
+    statusQuietHint:
+      'That is normal for a new academy and does not mean anything is down.',
+    checkedJustNow: 'Refreshes automatically every minute',
+    activeLearners: 'Learning now (last 60 min)',
+    logins24h: 'Logins (24h)',
+    paidPayments24h: 'Successful payments (24h)',
+    failedPayments24h: 'Failed payments (24h)',
+    serverErrors24h: 'Server errors (24h)',
+    clientErrors24h: 'User errors (24h)',
+    msValue: '{{value}} ms',
+    dbLatency: 'Database response time',
+    lastActivity: 'Last activity',
+    lastActivityNever: 'No activity recorded yet',
+    activityChartTitle: 'People over time',
+    activityChartSubtitle: 'Logins, sign-ups and students watching',
+    paymentsChartTitle: 'Payments over time',
+    paymentsChartSubtitle: 'Successful against failed',
+    logins: 'Logins',
+    registrations: 'Sign-ups',
+    watchers: 'Watching',
+    paid: 'Successful',
+    failed: 'Failed',
+    errorsTitle: 'Errors',
+    errorsWindow: 'Last {{days}} days',
+    errorsWindowHint: 'Error records are kept for {{days}} days only.',
+    topErrors: 'Most common errors',
+    topPaymentFailures: 'Why payments failed',
+    errorPath: 'Address',
+    errorStatus: 'Code',
+    errorCount: 'Count',
+    failureReason: 'Reason',
+    noErrors: 'No errors recorded',
+    noPaymentFailures: 'No failed payments recorded',
+    uptimeNote:
+      'This page shows health signals, not an uptime percentage: a server that is down cannot report on itself.',
+    loadFailed: 'Could not load academy health',
+    retry: 'Try again'
+  },
   meta: {
     title: 'Mentoma Panel',
     titleTemplate: '%s | Mentoma Panel',
@@ -724,6 +771,7 @@ export const en = {
     pageOf: 'Page {{page}} of {{total}}'
   },
   navigation: {
+    monitoring: 'Academy health',
     academyBlog: 'Blog',
     platformBlog: 'Platform blog',
     allSubscriptions: 'All Subscriptions',

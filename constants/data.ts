@@ -425,6 +425,15 @@ export const navItems: NavItem[] = [
     section: 'growth'
   },
   {
+    title: 'Academy health',
+    href: '/monitoring',
+    icon: 'activity' as IconType,
+    label: 'monitoring',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    section: 'growth'
+  },
+  {
     title: 'Marketing',
     href: '/affiliates',
     icon: 'network' as IconType,

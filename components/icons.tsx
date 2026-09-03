@@ -62,7 +62,8 @@ import {
   Percent,
   CalendarClock,
   HardDrive,
-  Webhook
+  Webhook,
+  Activity
 } from 'lucide-react';
 export type IconType =
   | 'dashboard'
@@ -112,6 +113,7 @@ export type IconType =
   | 'graduationCap'
   | 'trendingUp'
   | 'barChart'
+  | 'activity'
   | 'dollarSign'
   | 'creditCard'
   | 'video'
@@ -182,6 +184,7 @@ export const Icons = {
   graduationCap: GraduationCap,
   trendingUp: TrendingUp,
   barChart: BarChart3,
+  activity: Activity,
   dollarSign: DollarSign,
   creditCard: CreditCard,
   video: Video,

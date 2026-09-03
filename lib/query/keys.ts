@@ -49,5 +49,11 @@ export const queryKeys = {
     scope(academyId, 'entity-search', entity, query),
 
   slugAvailability: (academyId: AcademyId, slug: string) =>
-    scope(academyId, 'slug-availability', slug)
+    scope(academyId, 'slug-availability', slug),
+
+  academyHealthSignals: (academyId: AcademyId) =>
+    scope(academyId, 'academy-health-signals'),
+
+  academyHealthSeries: (academyId: AcademyId, days: number) =>
+    scope(academyId, 'academy-health-series', days)
 } as const;
