@@ -46,7 +46,7 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
             {t('tutoring.groups.startsOn')}
           </dt>
           <dd className="text-lg font-semibold">
-            {group.starts_on ? formatDate(group.starts_on) : '—'}
+            {termStart(group) ? formatDate(termStart(group) ?? '') : '—'}
           </dd>
         </div>
         <div className="sm:col-span-3">
