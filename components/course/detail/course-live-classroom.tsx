@@ -7,12 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { GroupStatusBadge } from '@/components/class/group-status-badge';
+import { GroupTermRange } from '@/components/class/group-term-range';
 import { SeatMeter } from '@/components/class/seat-meter';
 import { LiveSetupChecklist } from '@/components/course/live/live-setup-checklist';
 import { nextClass } from '@/components/course/live/live-class-stats';
 import type { LiveSetupStep } from '@/components/course/live/live-setup-steps';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroup } from '@/types/learning-operations';
 
@@ -38,7 +38,6 @@ export function CourseLiveClassroom({
   leftoverLessons
 }: CourseLiveClassroomProps) {
   const { t } = useTranslation();
-  const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
   const ready = steps.every((step) => step.done);
   const upcoming = nextClass(groups);
@@ -89,9 +88,10 @@ export function CourseLiveClassroom({
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <CalendarClock className="h-3.5 w-3.5 shrink-0" />
-                {upcoming.starts_on
-                  ? formatDate(upcoming.starts_on)
-                  : t('courseDetail.startDateNotSet')}
+                <GroupTermRange
+                  startsOn={upcoming.starts_on}
+                  endsOn={upcoming.ends_on}
+                />
               </span>
               <GroupScheduleSummary
                 slots={upcoming.Slots}

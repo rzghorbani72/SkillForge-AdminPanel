@@ -6,6 +6,7 @@ import { CalendarClock, CalendarDays } from 'lucide-react';
 
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { GroupStatusBadge } from '@/components/class/group-status-badge';
+import { GroupTermRange } from '@/components/class/group-term-range';
 import { SeatMeter } from '@/components/class/seat-meter';
 import {
   DataList,
@@ -13,7 +14,6 @@ import {
   type DataColumn
 } from '@/components/shared/data-list';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroup } from '@/types/learning-operations';
 
@@ -44,13 +44,9 @@ export function ClassListCard({
 }: ClassListCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const formatDate = useDateFormat();
 
   const href = (group: TutoringGroup) =>
     `/courses/${courseId}/live/${group.id}`;
-
-  const startLabel = (group: TutoringGroup) =>
-    group.starts_on ? formatDate(group.starts_on) : '—';
 
   const columns: DataColumn<TutoringGroup>[] = [
     {
@@ -68,11 +64,11 @@ export function ClassListCard({
       cell: (group) => <GroupScheduleSummary slots={group.Slots} />
     },
     {
-      id: 'startsOn',
-      header: t('courses.live.startDate'),
+      id: 'term',
+      header: t('courses.live.termColumn'),
       cell: (group) => (
         <span className="text-xs text-muted-foreground">
-          {startLabel(group)}
+          <GroupTermRange startsOn={group.starts_on} endsOn={group.ends_on} />
         </span>
       )
     },
@@ -122,7 +118,10 @@ export function ClassListCard({
             </div>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <CalendarClock className="h-3.5 w-3.5 shrink-0" />
-              {t('courses.live.startsOn', { date: startLabel(group) })}
+              <GroupTermRange
+                startsOn={group.starts_on}
+                endsOn={group.ends_on}
+              />
             </p>
             <SeatMeter taken={group.seats_taken} capacity={group.capacity} />
           </Link>
