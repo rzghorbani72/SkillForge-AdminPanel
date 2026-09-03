@@ -23,3 +23,12 @@ export const defaultTimezone = (): string => {
     return 'Asia/Tehran';
   }
 };
+
+/**
+ * A class only gets `starts_on` when it is published, so a draft would look
+ * undated even though the manager already picked a first day.
+ */
+export const termStart = (group: {
+  starts_on?: string | null;
+  starts_on_requested?: string | null;
+}): string | null => group.starts_on ?? group.starts_on_requested ?? null;

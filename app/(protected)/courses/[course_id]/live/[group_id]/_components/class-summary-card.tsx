@@ -2,6 +2,7 @@
 
 import { DataPanel } from '@/components/shared/data-list/data-panel';
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
+import { termStart } from '@/lib/class-slot-time';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { formatNumber } from '@/lib/utils';
@@ -53,7 +54,11 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
             {t('tutoring.groups.columnSchedule')}
           </dt>
           <dd className="mt-1">
-            <GroupScheduleSummary slots={group.Slots} />
+            <GroupScheduleSummary
+              slots={group.Slots}
+              startsOn={termStart(group)}
+              timezone={group.timezone}
+            />
           </dd>
         </div>
         {group.age_min || group.age_max ? (

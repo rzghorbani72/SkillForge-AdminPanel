@@ -66,7 +66,7 @@ const instantOf = (
  * `from`. Mirrors `nextWeekdayTimeInZone` in the backend, which resolves the
  * same thing through moment-timezone.
  */
-const nextWeekdayTime = (
+export const nextWeekdayTime = (
   timeZone: string,
   weekday: number,
   startMinute: number,

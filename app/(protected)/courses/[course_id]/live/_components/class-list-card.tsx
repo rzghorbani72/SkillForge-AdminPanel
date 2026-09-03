@@ -13,6 +13,7 @@ import {
   DataPanel,
   type DataColumn
 } from '@/components/shared/data-list';
+import { termStart } from '@/lib/class-slot-time';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroup } from '@/types/learning-operations';
@@ -61,14 +62,20 @@ export function ClassListCard({
     {
       id: 'schedule',
       header: t('tutoring.groups.columnSchedule'),
-      cell: (group) => <GroupScheduleSummary slots={group.Slots} />
+      cell: (group) => (
+        <GroupScheduleSummary
+          slots={group.Slots}
+          startsOn={termStart(group)}
+          timezone={group.timezone}
+        />
+      )
     },
     {
       id: 'term',
       header: t('courses.live.termColumn'),
       cell: (group) => (
         <span className="text-xs text-muted-foreground">
-          <GroupTermRange startsOn={group.starts_on} endsOn={group.ends_on} />
+          <GroupTermRange group={group} />
         </span>
       )
     },
@@ -113,15 +120,14 @@ export function ClassListCard({
               <CalendarDays className="mt-1 h-3.5 w-3.5 shrink-0" />
               <GroupScheduleSummary
                 slots={group.Slots}
+                startsOn={termStart(group)}
+                timezone={group.timezone}
                 className="min-w-0 flex-1"
               />
             </div>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <CalendarClock className="h-3.5 w-3.5 shrink-0" />
-              <GroupTermRange
-                startsOn={group.starts_on}
-                endsOn={group.ends_on}
-              />
+              <GroupTermRange group={group} />
             </p>
             <SeatMeter taken={group.seats_taken} capacity={group.capacity} />
           </Link>

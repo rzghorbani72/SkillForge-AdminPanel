@@ -15,7 +15,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroupSlot } from '@/types/learning-operations';
-import { previewSessionDates } from '../lib/session-plan-preview';
+import { previewSessionDates } from '@/lib/session-plan-preview';
 
 const DEFAULT_SLOT: TutoringGroupSlot = {
   weekday: 6,

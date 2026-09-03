@@ -422,6 +422,9 @@ export interface TutoringGroup {
   meeting_url?: string | null;
   meeting_url_updated_at?: string | null;
   starts_on?: string | null;
+  /** The date the manager asked for; the only date a draft class has. */
+  starts_on_requested?: string | null;
+  session_count?: number | null;
   ends_on?: string | null;
   Slots?: TutoringGroupSlot[];
   Course?: { id: string; title: string } | null;

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { DataList } from '@/components/shared/data-list/data-list';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
+import { termStart } from '@/lib/class-slot-time';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatNumber } from '@/lib/utils';
 import type { TutoringGroup } from '@/types/learning-operations';
@@ -76,7 +77,13 @@ export const GroupsListCard = ({
           {
             id: 'schedule',
             header: t('tutoring.groups.columnSchedule'),
-            cell: (group) => <GroupScheduleSummary slots={group.Slots} />
+            cell: (group) => (
+              <GroupScheduleSummary
+                slots={group.Slots}
+                startsOn={termStart(group)}
+                timezone={group.timezone}
+              />
+            )
           },
           {
             id: 'seats',
@@ -114,7 +121,11 @@ export const GroupsListCard = ({
               </Link>
               <GroupStatusBadge status={group.status} />
             </div>
-            <GroupScheduleSummary slots={group.Slots} />
+            <GroupScheduleSummary
+              slots={group.Slots}
+              startsOn={termStart(group)}
+              timezone={group.timezone}
+            />
             <p className="text-xs text-muted-foreground">
               {t('tutoring.groups.columnSeats')}: {seats(group)} ·{' '}
               {t('tutoring.groups.columnMin')}:{' '}

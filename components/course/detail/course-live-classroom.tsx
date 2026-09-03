@@ -12,6 +12,7 @@ import { SeatMeter } from '@/components/class/seat-meter';
 import { LiveSetupChecklist } from '@/components/course/live/live-setup-checklist';
 import { nextClass } from '@/components/course/live/live-class-stats';
 import type { LiveSetupStep } from '@/components/course/live/live-setup-steps';
+import { termStart } from '@/lib/class-slot-time';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroup } from '@/types/learning-operations';
@@ -88,10 +89,7 @@ export function CourseLiveClassroom({
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <CalendarClock className="h-3.5 w-3.5 shrink-0" />
-                <GroupTermRange
-                  startsOn={upcoming.starts_on}
-                  endsOn={upcoming.ends_on}
-                />
+                <GroupTermRange group={upcoming} />
               </span>
               <GroupScheduleSummary
                 slots={upcoming.Slots}

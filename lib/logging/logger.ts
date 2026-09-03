@@ -26,7 +26,9 @@ export interface LogEntry extends LogFields {
   ts: string;
 }
 
-export interface LoggerConfig {
+export interface LoggerConfig<C extends LogCatalog> {
+  /** The catalog of every event this app may emit — see `log-catalog.ts`. */
+  catalog: C;
   /** Which application emits the log — the top-level index discriminator. */
   app: LogApp;
   /** Deployment environment; defaults to NODE_ENV or 'development'. */
@@ -36,6 +38,78 @@ export interface LoggerConfig {
    * to add an HTTP / Sentry / file transport later WITHOUT touching call sites.
    */
   sink?: (entry: LogEntry) => void;
+}
+
+/**
+ * ── The log catalog ────────────────────────────────────────────────────────
+ * Every log this app can emit is declared once, in `log-catalog.ts`. A catalog
+ * entry is the contract for one Grafana chart: a stable index name
+ * (`category` + `type`), a human description, the expected severity, and the
+ * flat detail fields it carries. The logger is typed against the catalog, so an
+ * unregistered event, action, or field is a compile error rather than a new
+ * shape appearing silently in Elasticsearch.
+ */
+export interface LogEventDef {
+  /** What happened and why someone would chart it. */
+  readonly description: string;
+  /** The severity this event is normally emitted at. */
+  readonly status: LogStatus;
+  /** Flat detail keys this event carries. Nothing else may be logged. */
+  readonly fields: readonly string[];
+}
+
+export interface LogDomainDef {
+  /** What this domain covers, e.g. "File storage quota and reconciliation". */
+  readonly description: string;
+  readonly actions: Readonly<Record<string, LogEventDef>>;
+}
+
+export type LogCatalog = Readonly<Record<string, LogDomainDef>>;
+
+/** Domain names available in a catalog. */
+export type LogDomain<C extends LogCatalog> = Extract<keyof C, string>;
+
+/** Action names available under one domain. */
+export type LogAction<C extends LogCatalog, E extends LogDomain<C>> = Extract<
+  keyof C[E]['actions'],
+  string
+>;
+
+/** The detail object one catalogued event accepts — declared fields only. */
+export type LogDetails<
+  C extends LogCatalog,
+  E extends LogDomain<C>,
+  A extends LogAction<C, E>
+> = Partial<
+  Record<
+    C[E]['actions'][A] extends LogEventDef
+      ? C[E]['actions'][A]['fields'][number]
+      : never,
+    string | number | boolean | null | undefined
+  >
+>;
+
+/** One flattened catalog row — used to document or export the log index. */
+export interface LogCatalogEntry extends LogEventDef {
+  readonly event: string;
+  readonly action: string;
+  readonly domainDescription: string;
+}
+
+/** Flattens a catalog into rows, e.g. to generate Grafana/ES documentation. */
+export function listLogCatalog(catalog: LogCatalog): LogCatalogEntry[] {
+  const rows: LogCatalogEntry[] = [];
+  for (const [event, domain] of Object.entries(catalog)) {
+    for (const [action, def] of Object.entries(domain.actions)) {
+      rows.push({
+        ...def,
+        event,
+        action,
+        domainDescription: domain.description
+      });
+    }
+  }
+  return rows;
 }
 
 /**
@@ -77,27 +151,27 @@ export type PascalCase<S extends string> = S extends `${UpperAlpha}${string}`
     : S
   : never;
 
-export interface Logger {
-  /** General form; `status` defaults to 'ok'. */
-  event<E extends string, A extends string>(
-    event: PascalCase<E>,
-    action: PascalCase<A>,
-    details?: LogFields & { status?: LogStatus }
+export interface Logger<C extends LogCatalog> {
+  /** General form; `status` defaults to the catalog entry's status. */
+  event<E extends LogDomain<C>, A extends LogAction<C, E>>(
+    event: E,
+    action: A,
+    details?: LogDetails<C, E, A> & { status?: LogStatus }
   ): void;
-  ok<E extends string, A extends string>(
-    event: PascalCase<E>,
-    action: PascalCase<A>,
-    details?: LogFields
+  ok<E extends LogDomain<C>, A extends LogAction<C, E>>(
+    event: E,
+    action: A,
+    details?: LogDetails<C, E, A>
   ): void;
-  warn<E extends string, A extends string>(
-    event: PascalCase<E>,
-    action: PascalCase<A>,
-    details?: LogFields
+  warn<E extends LogDomain<C>, A extends LogAction<C, E>>(
+    event: E,
+    action: A,
+    details?: LogDetails<C, E, A>
   ): void;
-  error<E extends string, A extends string>(
-    event: PascalCase<E>,
-    action: PascalCase<A>,
-    details?: LogFields
+  error<E extends LogDomain<C>, A extends LogAction<C, E>>(
+    event: E,
+    action: A,
+    details?: LogDetails<C, E, A>
   ): void;
 }
 
@@ -116,7 +190,9 @@ function defaultSink(entry: LogEntry): void {
   else console.log(line);
 }
 
-export function createLogger(config: LoggerConfig): Logger {
+export function createLogger<C extends LogCatalog>(
+  config: LoggerConfig<C>
+): Logger<C> {
   const env = resolveEnv(config.env);
   const sink = config.sink ?? defaultSink;
 
@@ -138,9 +214,12 @@ export function createLogger(config: LoggerConfig): Logger {
     });
   };
 
+  const catalogStatus = (category: string, type: string): LogStatus =>
+    config.catalog[category]?.actions[type]?.status ?? 'ok';
+
   return {
     event: (category, type, fields = {}) => {
-      const { status = 'ok', ...rest } = fields;
+      const { status = catalogStatus(category, type), ...rest } = fields;
       emit(category, type, status, rest);
     },
     ok: (category, type, fields = {}) => emit(category, type, 'ok', fields),
