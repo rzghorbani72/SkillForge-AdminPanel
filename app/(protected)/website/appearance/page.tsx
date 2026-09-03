@@ -179,6 +179,9 @@ export default function UITemplateSettingsPage() {
   const handleBlockMoveRef = useRef<
     (blockId: string, dir: 'up' | 'down') => void
   >(() => {});
+  // The canvas offers "undo" right after a hide/remove, so it needs the same
+  // history step the toolbar's undo button uses.
+  const undoRef = useRef<() => void>(() => {});
   // Same pattern: the message listener is registered before the debounced
   // rebuild exists, so it reaches it through a ref.
   const debouncedRebuildPreviewRef = useRef<() => void>(() => {
@@ -334,6 +337,10 @@ export default function UITemplateSettingsPage() {
         handleBlockConfigChangeRef.current(data.blockId, {
           [data.fieldKey]: data.restore === true
         });
+      }
+
+      if (data.type === 'undo') {
+        undoRef.current();
       }
 
       if (data.type === 'block-action' && data.blockId && data.action) {
@@ -1045,6 +1052,7 @@ export default function UITemplateSettingsPage() {
     commitBlocks(ordered);
   };
 
+  undoRef.current = undo;
   handleBlockDeleteRef.current = handleBlockDelete;
   handleBlockToggleVisibleRef.current = handleBlockToggleVisible;
   handleBlockMoveRef.current = handleBlockMove;
