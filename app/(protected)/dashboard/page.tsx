@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useStore } from '@/hooks/useStore';
 import { Download } from 'lucide-react';
 import useDashboard from '@/components/dashboard/useDashboard';
-import StatsCards from '@/components/dashboard/StatsCards';
+import DashboardHero from '@/components/dashboard/dashboard-hero';
 import RevenueEnrollmentChart from '@/components/dashboard/RevenueEnrollmentChart';
 import TopCoursesTable from '@/components/dashboard/TopCoursesTable';
 import RecentActivityFeed from '@/components/dashboard/RecentActivityFeed';
@@ -50,14 +50,26 @@ function DashboardSkeleton({ label }: { label: string }) {
           <div className="shimmer h-4 w-24 rounded-full" />
           <div className="shimmer h-8 w-56 rounded-lg" />
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="stat-card h-[168px]">
-              <div className="shimmer h-10 w-10 rounded-2xl" />
-              <div className="shimmer mt-4 h-3 w-20 rounded-full" />
-              <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
-            </div>
-          ))}
+        <div className="grid gap-4 lg:grid-cols-[1fr_minmax(240px,0.85fr)_1fr]">
+          <div className="flex flex-col gap-4">
+            {[0, 1].map((i) => (
+              <div key={i} className="stat-card h-[168px]">
+                <div className="shimmer h-10 w-10 rounded-2xl" />
+                <div className="shimmer mt-4 h-3 w-20 rounded-full" />
+                <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
+              </div>
+            ))}
+          </div>
+          <div className="hero-media order-first min-h-[220px] lg:order-none" />
+          <div className="flex flex-col gap-4">
+            {[2, 3].map((i) => (
+              <div key={i} className="stat-card h-[168px]">
+                <div className="shimmer h-10 w-10 rounded-2xl" />
+                <div className="shimmer mt-4 h-3 w-20 rounded-full" />
+                <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
+              </div>
+            ))}
+          </div>
         </div>
         <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
           <div className="dashboard-card shimmer h-[360px]" />
@@ -94,7 +106,11 @@ export default function DashboardPage() {
     recentCourses,
     recentActivity,
     statsCards,
-    monthlyChartData
+    monthlyChartData,
+    weekdayData,
+    statusData,
+    overallCompletion,
+    journeyData
   } = useDashboard();
 
   const canManagePlan = canManageSubscription(user);
@@ -198,19 +214,22 @@ export default function DashboardPage() {
         </div>
 
         <div className="stagger-children space-y-6">
-          {/* Row 1: 4 KPI cards */}
-          <StatsCards cards={statsCards} />
+          {/* Row 1: two stacked cards | academy panel | two stacked cards */}
+          <DashboardHero cards={statsCards} />
 
-          {/* Row 2: Revenue area chart (2/3) + Conversion funnel (1/3) */}
+          {/* Row 2: Revenue area chart (2/3) + student journey (1/3) */}
           <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
             <RevenueEnrollmentChart data={monthlyChartData} />
-            <ConversionFunnel />
+            <ConversionFunnel steps={journeyData} />
           </div>
 
           {/* Row 3: Weekday bar chart (1/2) + Completion donut (1/2) */}
           <div className="grid gap-5 lg:grid-cols-2">
-            <WeekdayEnrollmentChart />
-            <CompletionDonut />
+            <WeekdayEnrollmentChart data={weekdayData} />
+            <CompletionDonut
+              segments={statusData}
+              completion={overallCompletion}
+            />
           </div>
 
           {/* Row 4: Top courses table (1.4/2) + Activity history (1/2) */}

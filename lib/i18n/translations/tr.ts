@@ -346,6 +346,8 @@ export const tr = {
     visitSite: 'Siteyi ziyaret et'
   },
   common: {
+    published: 'Yayında',
+    draft: 'Taslak',
     free: 'Ücretsiz',
     saveChanges: 'Değişiklikleri kaydet',
     uploading: 'Yükleniyor…',

@@ -9,31 +9,38 @@ import {
   type ChartConfig
 } from '@/components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
+import type { StatusSegment } from './dashboard-metrics';
 
-const SEGMENTS = [
-  { key: 'completed', value: 42, color: 'hsl(var(--viz-accent))' },
-  { key: 'inProgress', value: 38, color: 'hsl(var(--viz-1))' },
-  { key: 'paused', value: 14, color: 'hsl(var(--viz-2))' },
-  { key: 'notStarted', value: 6, color: 'hsl(var(--viz-4))' }
-];
+const COLORS: Record<StatusSegment['key'], string> = {
+  completed: 'hsl(var(--viz-accent))',
+  inProgress: 'hsl(var(--viz-1))',
+  notStarted: 'hsl(var(--viz-2))',
+  ended: 'hsl(var(--viz-4))'
+};
 
-const LABELS: Record<string, { fa: string; en: string }> = {
+const LABELS: Record<StatusSegment['key'], { fa: string; en: string }> = {
   completed: { fa: 'تکمیل شده', en: 'Completed' },
   inProgress: { fa: 'در حال یادگیری', en: 'In progress' },
-  paused: { fa: 'متوقف شده', en: 'Paused' },
-  notStarted: { fa: 'شروع نشده', en: 'Not started' }
+  notStarted: { fa: 'شروع نشده', en: 'Not started' },
+  ended: { fa: 'پایان‌یافته', en: 'Ended' }
 };
 
 const chartConfig: ChartConfig = {
   completed: { label: 'Completed', color: 'hsl(var(--viz-accent))' },
   inProgress: { label: 'In progress', color: 'hsl(var(--viz-1))' },
-  paused: { label: 'Paused', color: 'hsl(var(--viz-2))' },
-  notStarted: { label: 'Not started', color: 'hsl(var(--viz-4))' }
+  notStarted: { label: 'Not started', color: 'hsl(var(--viz-2))' },
+  ended: { label: 'Ended', color: 'hsl(var(--viz-4))' }
 };
 
-export default function CompletionDonut() {
+type Props = { segments: StatusSegment[]; completion: number };
+
+export default function CompletionDonut({ segments, completion }: Props) {
   const { language } = useTranslation();
   const t = language === 'fa';
+  const fmt = (n: number) => (t ? n.toLocaleString('fa-IR') : String(n));
+  // An all-zero pie renders nothing; one neutral slice keeps the ring visible.
+  const isEmpty = segments.every((segment) => segment.value === 0);
+  const pieData = isEmpty ? [{ key: 'ended', value: 100 }] : segments;
 
   return (
     <Card className="dashboard-card h-full">
@@ -48,17 +55,17 @@ export default function CompletionDonut() {
       <CardContent>
         <div className="flex items-center gap-6">
           <div className="flex flex-col gap-2.5">
-            {SEGMENTS.map((seg) => (
+            {segments.map((seg) => (
               <div key={seg.key} className="flex items-center gap-2.5">
                 <span
                   className="h-2.5 w-2.5 shrink-0 rounded-full"
-                  style={{ background: seg.color }}
+                  style={{ background: COLORS[seg.key] }}
                 />
                 <span className="flex-1 text-[13px] text-muted-foreground">
                   {LABELS[seg.key][t ? 'fa' : 'en']}
                 </span>
                 <span className="text-[13px] font-semibold tabular-nums">
-                  {t ? seg.value.toLocaleString('fa-IR') : seg.value}٪
+                  {fmt(seg.value)}٪
                 </span>
               </div>
             ))}
@@ -71,7 +78,7 @@ export default function CompletionDonut() {
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="key" />} />
                 <Pie
-                  data={SEGMENTS}
+                  data={pieData}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -81,15 +88,22 @@ export default function CompletionDonut() {
                   stroke="none"
                   dataKey="value"
                 >
-                  {SEGMENTS.map((seg) => (
-                    <Cell key={seg.key} fill={seg.color} />
+                  {pieData.map((seg) => (
+                    <Cell
+                      key={seg.key}
+                      fill={
+                        isEmpty
+                          ? 'hsl(var(--viz-grid))'
+                          : COLORS[seg.key as StatusSegment['key']]
+                      }
+                    />
                   ))}
                 </Pie>
               </PieChart>
             </ChartContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-3xl font-bold tabular-nums leading-none">
-                {t ? '۴۲' : '42'}٪
+                {fmt(completion)}٪
               </span>
               <span className="mt-1 text-[11px] text-muted-foreground">
                 {t ? 'تکمیل کل' : 'overall'}

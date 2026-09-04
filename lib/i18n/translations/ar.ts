@@ -339,6 +339,8 @@ export const ar = {
     visitSite: 'زيارة الموقع'
   },
   common: {
+    published: 'منشور',
+    draft: 'مسودة',
     free: 'مجاني',
     saveChanges: 'حفظ التغييرات',
     uploading: 'جارٍ الرفع…',

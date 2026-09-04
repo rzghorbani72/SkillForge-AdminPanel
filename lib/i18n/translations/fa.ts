@@ -468,6 +468,8 @@ export const fa = {
     visitSiteCustomDomain: 'دامنه اختصاصی'
   },
   common: {
+    published: 'منتشر شده',
+    draft: 'پیش‌نویس',
     free: 'رایگان',
     minutes: 'دقیقه',
     unsavedChanges: 'ذخیره‌نشده',

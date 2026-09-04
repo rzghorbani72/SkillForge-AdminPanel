@@ -479,6 +479,8 @@ export const en = {
     visitSiteCustomDomain: 'Custom domain'
   },
   common: {
+    published: 'Published',
+    draft: 'Draft',
     free: 'Free',
     minutes: 'min',
     unsavedChanges: 'Unsaved',

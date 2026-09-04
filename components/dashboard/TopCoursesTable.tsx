@@ -2,11 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUp, ArrowDown, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { Course } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore, formatNumber } from '@/lib/utils';
 
@@ -14,9 +13,12 @@ type Props = { courses: Course[] };
 
 export default function TopCoursesTable({ courses }: Props) {
   const { t, language } = useTranslation();
-  const percentLabel = usePercentLabel();
   const currentAcademy = useCurrentAcademy();
   const isFa = language === 'fa';
+  // "Top" has to mean something: rank by students, largest first.
+  const ranked = [...courses]
+    .sort((a, b) => (b.students_count ?? 0) - (a.students_count ?? 0))
+    .slice(0, 6);
 
   return (
     <Card className="dashboard-card h-full">
@@ -26,7 +28,7 @@ export default function TopCoursesTable({ courses }: Props) {
             {isFa ? 'پرفروش‌ترین دوره‌ها' : 'Top courses'}
           </p>
           <CardTitle className="mt-1 text-base">
-            {isFa ? '۳۰ روز گذشته' : 'Last 30 days'}
+            {isFa ? 'بر اساس تعداد دانشجو' : 'By student count'}
           </CardTitle>
         </div>
         <Link
@@ -52,13 +54,14 @@ export default function TopCoursesTable({ courses }: Props) {
                   {isFa ? 'درآمد' : 'Revenue'}
                 </th>
                 <th className="px-6 pb-2 text-end">
-                  {isFa ? 'تغییر' : 'Change'}
+                  {isFa ? 'وضعیت' : 'Status'}
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
-              {courses.slice(0, 6).map((course, i) => {
-                const change = i % 3 === 2 ? -4 + i : 8 + i * 3;
+              {ranked.map((course) => {
+                const revenue =
+                  course.revenue ?? course.price * (course.students_count ?? 0);
                 return (
                   <tr
                     key={course.id}
@@ -76,7 +79,7 @@ export default function TopCoursesTable({ courses }: Props) {
                       {course.is_free
                         ? t('common.free')
                         : formatCurrencyWithStore(
-                            course.price,
+                            revenue,
                             currentAcademy,
                             undefined,
                             language
@@ -85,18 +88,15 @@ export default function TopCoursesTable({ courses }: Props) {
                     <td className="px-6 py-3 text-end">
                       <Badge
                         variant="outline"
-                        className={`gap-0.5 text-[11px] ${
-                          change >= 0
+                        className={`text-[11px] ${
+                          course.is_published
                             ? 'border-transparent bg-[hsl(var(--viz-accent)/0.12)] text-[hsl(var(--viz-accent))]'
-                            : 'border-transparent bg-destructive/10 text-destructive'
+                            : 'border-transparent bg-muted text-muted-foreground'
                         }`}
                       >
-                        {change >= 0 ? (
-                          <ArrowUp className="h-2.5 w-2.5" />
-                        ) : (
-                          <ArrowDown className="h-2.5 w-2.5" />
-                        )}
-                        {percentLabel(Math.abs(change))}
+                        {course.is_published
+                          ? t('common.published')
+                          : t('common.draft')}
                       </Badge>
                     </td>
                   </tr>

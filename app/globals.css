@@ -260,18 +260,41 @@ body {
   }
 
   /* ─── Stat cards (frosted glass) ─────────────────────────────── */
-  .stat-card {
-    @apply relative overflow-hidden rounded-[20px] border border-white/80 bg-white/80 p-5 backdrop-blur-xl transition-all duration-300;
+  /* Real glass: a translucent gradient pane, a lit top edge, and a saturating
+     blur so the ambient glows behind the grid show through the surface. */
+  .glass-surface {
+    background: linear-gradient(
+      150deg,
+      rgb(255 255 255 / 0.72) 0%,
+      rgb(255 255 255 / 0.42) 100%
+    );
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgb(255 255 255 / 0.65);
     box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.75),
       0 1px 1px hsl(195 20% 10% / 0.03),
-      0 12px 28px -22px hsl(195 20% 10% / 0.35);
+      0 16px 34px -24px hsl(195 30% 12% / 0.45);
+  }
+
+  .glass-surface:hover {
+    background: linear-gradient(
+      150deg,
+      rgb(255 255 255 / 0.85) 0%,
+      rgb(255 255 255 / 0.58) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.85),
+      0 1px 1px hsl(195 20% 10% / 0.03),
+      0 28px 52px -26px hsl(var(--primary) / 0.42);
+  }
+
+  .stat-card {
+    @apply glass-surface relative overflow-hidden rounded-[20px] p-5 transition-all duration-300;
   }
 
   .stat-card:hover {
-    @apply -translate-y-1 border-white bg-white;
-    box-shadow:
-      0 1px 1px hsl(195 20% 10% / 0.03),
-      0 26px 48px -26px hsl(var(--primary) / 0.4);
+    @apply -translate-y-1;
   }
 
   /* ─── Dashboard glass background ─────────────────────────────── */
@@ -322,17 +345,11 @@ body {
 
   /* ─── Dashboard cards (frosted glass, matches .stat-card) ────── */
   .dashboard-card {
-    @apply relative overflow-hidden rounded-[20px] border border-white/80 bg-white/80 backdrop-blur-xl transition-all duration-300;
-    box-shadow:
-      0 1px 1px hsl(195 20% 10% / 0.03),
-      0 12px 28px -22px hsl(195 20% 10% / 0.35);
+    @apply glass-surface relative overflow-hidden rounded-[20px] transition-all duration-300;
   }
 
   .dashboard-card:hover {
-    @apply -translate-y-1 border-white bg-white;
-    box-shadow:
-      0 1px 1px hsl(195 20% 10% / 0.03),
-      0 26px 48px -26px hsl(var(--primary) / 0.35);
+    @apply -translate-y-1;
   }
 
   /* Corner "open" affordance on a card, mirroring the reference dashboards */
@@ -350,10 +367,29 @@ body {
     @apply border-primary/30 bg-primary/10 text-primary;
   }
 
+  /* Centre block of the hero row: the academy's own identity panel. */
+  .hero-media {
+    @apply relative flex flex-col items-center justify-center overflow-hidden rounded-[20px] p-6 text-center;
+    background:
+      radial-gradient(
+        90% 70% at 50% 0%,
+        hsl(var(--viz-2) / 0.35) 0%,
+        transparent 70%
+      ),
+      linear-gradient(
+        160deg,
+        hsl(var(--viz-1) / 0.16) 0%,
+        hsl(var(--viz-3) / 0.22) 100%
+      );
+    border: 1px solid rgb(255 255 255 / 0.6);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.6),
+      0 20px 44px -28px hsl(var(--viz-3) / 0.6);
+  }
+
   /* Segmented period switcher */
   .dash-segment {
-    @apply flex max-w-full overflow-x-auto rounded-full border border-white/80 bg-white/70 p-1 backdrop-blur-md;
-    box-shadow: 0 1px 1px hsl(195 20% 10% / 0.03);
+    @apply glass-surface flex max-w-full overflow-x-auto rounded-full p-1;
   }
 
   .dash-segment-item {

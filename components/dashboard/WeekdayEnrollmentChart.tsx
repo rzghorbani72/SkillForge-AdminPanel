@@ -13,41 +13,35 @@ import {
   type ChartConfig
 } from '@/components/ui/chart';
 import { Bar, BarChart, Cell, ResponsiveContainer, XAxis } from 'recharts';
+import type { WeekdayPoint } from './dashboard-metrics';
 
-const DATA_FA = [
-  { day: 'شنبه', enrollments: 42 },
-  { day: 'یکشنبه', enrollments: 68 },
-  { day: 'دوشنبه', enrollments: 91 },
-  { day: 'سه‌شنبه', enrollments: 85 },
-  { day: 'چهارشنبه', enrollments: 74 },
-  { day: 'پنجشنبه', enrollments: 110 },
-  { day: 'جمعه', enrollments: 48 }
-];
-
-const DATA_EN = [
-  { day: 'Sat', enrollments: 42 },
-  { day: 'Sun', enrollments: 68 },
-  { day: 'Mon', enrollments: 91 },
-  { day: 'Tue', enrollments: 85 },
-  { day: 'Wed', enrollments: 74 },
-  { day: 'Thu', enrollments: 110 },
-  { day: 'Fri', enrollments: 48 }
-];
+const DAY_LABELS = {
+  fa: ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'],
+  en: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+};
 
 const chartConfig: ChartConfig = {
   enrollments: { label: 'Enrollments', color: 'hsl(var(--viz-1))' }
 };
 
-export default function WeekdayEnrollmentChart() {
+type Props = { data: WeekdayPoint[] };
+
+export default function WeekdayEnrollmentChart({ data: points }: Props) {
   const { language } = useTranslation();
   const percentLabel = usePercentLabel();
   const formatNumber = useNumberFormat();
   const t = language === 'fa';
-  const data = t ? DATA_FA : DATA_EN;
-  const peakDay = data.reduce((a, b) =>
-    b.enrollments > a.enrollments ? b : a
+  const data = points.map((point) => ({
+    day: DAY_LABELS[t ? 'fa' : 'en'][point.index],
+    enrollments: point.enrollments
+  }));
+  const total = data.reduce((sum, d) => sum + d.enrollments, 0);
+  const peakDay = data.reduce(
+    (a, b) => (b.enrollments > a.enrollments ? b : a),
+    data[0] ?? { day: '', enrollments: 0 }
   );
   const peak = peakDay.enrollments;
+  const share = total === 0 ? 0 : Math.round((peak / total) * 100);
 
   return (
     <Card className="dashboard-card h-full">
@@ -58,14 +52,15 @@ export default function WeekdayEnrollmentChart() {
               {t ? 'ثبت‌نام بر اساس روز' : 'Enrollments by day'}
             </p>
             <CardTitle className="mt-1 text-base">
-              {t ? 'هفته‌ی جاری' : 'This week'}
+              {t ? 'مجموع ثبت‌نام‌ها' : 'All enrollments'}
             </CardTitle>
           </div>
           <Badge
             variant="outline"
             className="gap-1 border-transparent bg-[hsl(var(--viz-accent)/0.12)] text-[hsl(var(--viz-accent))]"
           >
-            <TrendingUp className="h-3 w-3" />+{percentLabel(18)}
+            <TrendingUp className="h-3 w-3" />
+            {percentLabel(share)}
           </Badge>
         </div>
       </CardHeader>
@@ -104,13 +99,23 @@ export default function WeekdayEnrollmentChart() {
           </ResponsiveContainer>
         </ChartContainer>
         <p className="mt-3 text-xs text-muted-foreground">
-          {t ? 'شلوغ‌ترین روز' : 'Busiest day'}
-          <span className="mx-1 font-semibold text-foreground">
-            {peakDay.day}
-          </span>
-          <span className="tabular-nums">
-            ({formatNumber(peak)} {t ? 'ثبت‌نام' : 'enrollments'})
-          </span>
+          {total === 0
+            ? t
+              ? 'هنوز ثبت‌نامی ثبت نشده است'
+              : 'No enrollments recorded yet'
+            : t
+              ? 'شلوغ‌ترین روز'
+              : 'Busiest day'}
+          {total > 0 && (
+            <>
+              <span className="mx-1 font-semibold text-foreground">
+                {peakDay.day}
+              </span>
+              <span className="tabular-nums">
+                ({formatNumber(peak)} {t ? 'ثبت‌نام' : 'enrollments'})
+              </span>
+            </>
+          )}
         </p>
       </CardContent>
     </Card>

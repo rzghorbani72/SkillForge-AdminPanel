@@ -10,6 +10,16 @@ import {
 import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import {
+  bucketByWeekday,
+  completionRate,
+  journeySteps,
+  lastMonths,
+  monthOverMonth,
+  monthlyCount,
+  monthlyRevenue,
+  statusSegments
+} from './dashboard-metrics';
 
 /** A settled payment. The API's PaymentStatus enum spells this `PAID`. */
 const isSettledPayment = (status?: string | null) => status === 'PAID';
@@ -43,6 +53,8 @@ export type DashboardStatsCard = {
   change: string;
   changeType: 'increase' | 'decrease';
   description: string;
+  /** Real six-month series behind the number, drawn as the card sparkline. */
+  trend: number[];
 };
 
 export type ChartDataPoint = {
@@ -68,7 +80,11 @@ const useDashboard = () => {
   const [recentEnrollments, setRecentEnrollments] = useState<Enrollment[]>([]);
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
   const [allPayments, setAllPayments] = useState<Payment[]>([]);
-  const [allEnrollments, setAllEnrollments] = useState<Enrollment[]>([]);
+  /** A wide enrolment window; the recent list is only 10 rows and cannot
+      support the weekday, status or six-month breakdowns. */
+  const [analyticsEnrollments, setAnalyticsEnrollments] = useState<
+    Enrollment[]
+  >([]);
   const [statsTotals, setStatsTotals] = useState({
     totalCourses: 0,
     totalStudents: 0,
@@ -144,13 +160,19 @@ const useDashboard = () => {
           enrollmentsResult,
           paymentsResult,
           activeEnrollmentsResult,
-          studentsResult
+          studentsResult,
+          analyticsEnrollmentsResult
         ] = await Promise.allSettled([
           apiClient.getCourses(coursesParams),
           apiClient.getRecentEnrollments(),
           apiClient.getPayments(),
           apiClient.getEnrollments(enrollmentsParams),
-          apiClient.getStudentUsers(studentsParams)
+          apiClient.getStudentUsers(studentsParams),
+          apiClient.getEnrollments(
+            effectiveAcademyId
+              ? { page: 1, limit: 500, academy_id: effectiveAcademyId }
+              : { page: 1, limit: 500 }
+          )
         ]);
 
         // Courses list & total
@@ -186,10 +208,8 @@ const useDashboard = () => {
             recentEnrollmentsData = enrollmentsPayload.data as Enrollment[];
           }
           setRecentEnrollments(recentEnrollmentsData);
-          setAllEnrollments(recentEnrollmentsData);
         } else {
           setRecentEnrollments([]);
-          setAllEnrollments([]);
         }
 
         // Payments & totals
@@ -258,6 +278,16 @@ const useDashboard = () => {
         } else {
           setStatsTotals((prev) => ({ ...prev, totalStudents: 0 }));
         }
+
+        // Wide enrolment window for the breakdown charts
+        if (analyticsEnrollmentsResult.status === 'fulfilled') {
+          const payload = analyticsEnrollmentsResult.value;
+          setAnalyticsEnrollments(
+            Array.isArray(payload?.enrollments) ? payload.enrollments : []
+          );
+        } else {
+          setAnalyticsEnrollments([]);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -276,62 +306,61 @@ const useDashboard = () => {
     void fetchDashboardData();
   }, [userId, isAdminWithoutStore, effectiveAcademyId, storeLoading]);
 
-  // Generate monthly chart data from real payments and enrollments
-  const monthlyChartData: ChartDataPoint[] = useMemo(() => {
-    const months: string[] = [];
-    const now = new Date();
+  const months = useMemo(() => lastMonths(6), []);
 
-    // Generate last 6 months
-    for (let i = 5; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthName = date.toLocaleDateString('en-US', { month: 'short' });
-      months.push(monthName);
-    }
+  const revenueSeries = useMemo(
+    () => monthlyRevenue(allPayments, months),
+    [allPayments, months]
+  );
 
-    return months.map((month, index) => {
-      const targetDate = new Date(
-        now.getFullYear(),
-        now.getMonth() - (5 - index),
-        1
-      );
-      const nextMonth = new Date(
-        now.getFullYear(),
-        now.getMonth() - (4 - index),
-        1
-      );
+  const enrollmentSeries = useMemo(
+    () =>
+      monthlyCount(
+        analyticsEnrollments.map((e) => e.enrolled_at),
+        months
+      ),
+    [analyticsEnrollments, months]
+  );
 
-      // Calculate revenue for this month
-      const monthRevenue = allPayments
-        .filter((p) => {
-          const raw = paymentDateOf(p);
-          if (!isSettledPayment(p.status) || !raw) return false;
-          const paymentDate = new Date(raw);
-          return paymentDate >= targetDate && paymentDate < nextMonth;
-        })
-        .reduce((sum, p) => sum + (p.amount ?? 0), 0);
+  const courseSeries = useMemo(
+    () =>
+      monthlyCount(
+        recentCourses.map((c) => c.created_at),
+        months
+      ),
+    [recentCourses, months]
+  );
 
-      // Calculate enrollments for this month
-      const monthEnrollments = allEnrollments.filter((e) => {
-        if (!e.enrolled_at) return false;
-        const enrolledDate = new Date(e.enrolled_at);
-        return enrolledDate >= targetDate && enrolledDate < nextMonth;
-      }).length;
+  const monthlyChartData: ChartDataPoint[] = useMemo(
+    () =>
+      months.map((date, i) => ({
+        month: date.toLocaleDateString('en-US', { month: 'short' }),
+        revenue: revenueSeries[i],
+        enrollments: enrollmentSeries[i],
+        courses: courseSeries[i]
+      })),
+    [months, revenueSeries, enrollmentSeries, courseSeries]
+  );
 
-      // Calculate courses created this month
-      const monthCourses = recentCourses.filter((c) => {
-        if (!c.created_at) return false;
-        const createdDate = new Date(c.created_at);
-        return createdDate >= targetDate && createdDate < nextMonth;
-      }).length;
+  const weekdayData = useMemo(
+    () => bucketByWeekday(analyticsEnrollments),
+    [analyticsEnrollments]
+  );
 
-      return {
-        month,
-        revenue: monthRevenue,
-        enrollments: monthEnrollments,
-        courses: monthCourses
-      };
-    });
-  }, [allPayments, allEnrollments, recentCourses]);
+  const statusData = useMemo(
+    () => statusSegments(analyticsEnrollments),
+    [analyticsEnrollments]
+  );
+
+  const overallCompletion = useMemo(
+    () => completionRate(analyticsEnrollments),
+    [analyticsEnrollments]
+  );
+
+  const journeyData = useMemo(
+    () => journeySteps(analyticsEnrollments, statsTotals.totalStudents),
+    [analyticsEnrollments, statsTotals.totalStudents]
+  );
 
   // Course performance data
   const coursePerformanceData: CoursePerformance[] = useMemo(() => {
@@ -344,32 +373,45 @@ const useDashboard = () => {
           : course.title,
       students: course.students_count ?? 0,
       revenue: course.revenue ?? course.price * (course.students_count ?? 0),
-      completionRate:
-        course.completion_rate ?? Math.floor(Math.random() * 40 + 60)
+      completionRate: course.completion_rate ?? 0
     }));
   }, [recentCourses]);
 
-  const statsCards: DashboardStatsCard[] = useMemo(
-    () => [
+  const statsCards: DashboardStatsCard[] = useMemo(() => {
+    // A card shows a real month-over-month move, or the "live" label when the
+    // previous month has no base to compare against — never a made-up number.
+    const delta = (series: number[]) => {
+      const change = monthOverMonth(series);
+      return change === null
+        ? { change: t('dashboard.live'), changeType: 'increase' as const }
+        : {
+            change: `${change > 0 ? '+' : ''}${formatNumber(change, language)}%`,
+            changeType: (change < 0 ? 'decrease' : 'increase') as
+              | 'increase'
+              | 'decrease'
+          };
+    };
+
+    return [
       {
         title: t('dashboard.totalCourses'),
         value: formatNumber(statsTotals.totalCourses, language),
         icon: BookOpen,
-        change: t('dashboard.live'),
-        changeType: 'increase',
+        ...delta(courseSeries),
         description: isAdminWithoutStore
           ? t('dashboard.allPlatformCourses')
-          : t('dashboard.coursesAcrossStores')
+          : t('dashboard.coursesAcrossStores'),
+        trend: courseSeries
       },
       {
         title: t('dashboard.totalStudents'),
         value: formatNumber(statsTotals.totalStudents, language),
         icon: Users,
-        change: t('dashboard.live'),
-        changeType: 'increase',
+        ...delta(enrollmentSeries),
         description: isAdminWithoutStore
           ? t('dashboard.allPlatformStudents')
-          : t('dashboard.studentsEnrolledAcrossStores')
+          : t('dashboard.studentsEnrolledAcrossStores'),
+        trend: enrollmentSeries
       },
       {
         title: t('dashboard.totalRevenue'),
@@ -380,23 +422,31 @@ const useDashboard = () => {
           language
         ),
         icon: DollarSign,
-        change: t('dashboard.live'),
-        changeType: 'increase',
+        ...delta(revenueSeries),
         description: isAdminWithoutStore
           ? t('dashboard.platformRevenue')
-          : t('dashboard.completedPaymentsToDate')
+          : t('dashboard.completedPaymentsToDate'),
+        trend: revenueSeries
       },
       {
         title: t('dashboard.activeEnrollments'),
         value: formatNumber(statsTotals.activeEnrollments, language),
         icon: TrendingUp,
-        change: t('dashboard.live'),
-        changeType: 'increase',
-        description: t('dashboard.studentsCurrentlyProgressing')
+        ...delta(enrollmentSeries),
+        description: t('dashboard.studentsCurrentlyProgressing'),
+        trend: enrollmentSeries
       }
-    ],
-    [statsTotals, effectiveAcademy, isAdminWithoutStore, t, language]
-  );
+    ];
+  }, [
+    statsTotals,
+    effectiveAcademy,
+    isAdminWithoutStore,
+    t,
+    language,
+    courseSeries,
+    enrollmentSeries,
+    revenueSeries
+  ]);
 
   const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];
   const safeRecentEnrollments = Array.isArray(recentEnrollments)
@@ -523,7 +573,11 @@ const useDashboard = () => {
     statsCards,
     statsTotals,
     monthlyChartData,
-    coursePerformanceData
+    coursePerformanceData,
+    weekdayData,
+    statusData,
+    overallCompletion,
+    journeyData
   };
 };
 
