@@ -99,12 +99,12 @@ export function DataList<T>({
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-none bg-muted/50 hover:bg-muted/50">
+        <TableRow className="border-none bg-primary/10 hover:bg-primary/10">
           {columns.map((column) => (
             <TableHead
               key={column.id}
               className={cn(
-                'h-11 px-4 text-xs font-medium text-muted-foreground',
+                'h-11 bg-primary/10 px-4 text-xs font-medium text-muted-foreground',
                 ALIGN_CLASS[column.align ?? 'start'],
                 column.className
               )}
@@ -115,11 +115,11 @@ export function DataList<T>({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {items.map((item) => (
+        {items.map((item, rowIndex) => (
           <TableRow
             key={rowKey(item)}
             className={cn(
-              'border-border/50 hover:bg-muted/30',
+              'group border-border/50 hover:bg-transparent',
               onRowClick && 'cursor-pointer'
             )}
             onClick={onRowClick ? () => onRowClick(item) : undefined}
@@ -128,7 +128,9 @@ export function DataList<T>({
               <TableCell
                 key={column.id}
                 className={cn(
-                  'px-4 py-3 text-[13.5px]',
+                  'px-4 py-3 text-[13.5px] transition-[color,font-weight,background-color]',
+                  rowIndex % 2 === 1 ? 'bg-primary/10' : 'bg-card',
+                  'group-hover:bg-transparent group-hover:font-semibold group-hover:text-primary',
                   ALIGN_CLASS[column.align ?? 'start'],
                   column.className
                 )}
@@ -174,7 +176,13 @@ function DataListSkeleton({
   return (
     <div className="divide-y divide-border/50">
       {Array.from({ length: rows }).map((_, row) => (
-        <div key={row} className="flex items-center gap-4 px-4 py-3.5">
+        <div
+          key={row}
+          className={cn(
+            'flex items-center gap-4 px-4 py-3.5',
+            row % 2 === 1 && 'bg-primary/10'
+          )}
+        >
           {Array.from({ length: columns }).map((_, column) => (
             <div
               key={column}
