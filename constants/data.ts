@@ -175,6 +175,15 @@ export const navItems: NavItem[] = [
         scope: 'platform'
       },
       {
+        title: 'Dashboard Banners',
+        href: '/platform/dashboard-banners',
+        icon: 'image' as IconType,
+        label: 'dashboardBanners',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
         title: 'Templates Gallery',
         href: '/website/appearance',
         icon: 'gallery' as IconType,

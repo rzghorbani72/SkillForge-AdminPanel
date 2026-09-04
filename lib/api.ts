@@ -1545,6 +1545,52 @@ class ApiClient {
     return payload?.data?.broadcast ?? payload?.broadcast;
   }
 
+  async listDashboardBanners() {
+    const data = unwrapEnvelope<{ banners?: DashboardBanner[] }>(
+      await this.request('/platform/dashboard-banners')
+    );
+    return data?.banners ?? [];
+  }
+
+  async createDashboardBanner(body: CreateDashboardBannerPayload) {
+    const data = unwrapEnvelope<{ banner?: DashboardBanner }>(
+      await this.request('/platform/dashboard-banners', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      })
+    );
+    return data?.banner;
+  }
+
+  async updateDashboardBanner(id: string, body: UpdateDashboardBannerPayload) {
+    const data = unwrapEnvelope<{ banner?: DashboardBanner }>(
+      await this.request(`/platform/dashboard-banners/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(body)
+      })
+    );
+    return data?.banner;
+  }
+
+  async deleteDashboardBanner(id: string) {
+    await this.request(`/platform/dashboard-banners/${id}`, {
+      method: 'DELETE'
+    });
+  }
+
+  async getAcademyDashboardBanners() {
+    return (
+      unwrapEnvelope<AcademyDashboardBanners>(
+        await this.request('/dashboard/banners')
+      ) ?? {
+        state: 'INCOMPLETE',
+        has_template: false,
+        has_course: false,
+        banners: []
+      }
+    );
+  }
+
   async getCurrentAcademy() {
     const response = await this.request('/academies/current');
     return response;
@@ -7182,6 +7228,36 @@ export interface CreatePlatformBroadcastPayload {
   body: string;
   audience: PlatformBroadcastAudience;
   academy_ids?: string[];
+}
+
+export type DashboardBannerState = 'COMPLETED' | 'INCOMPLETE';
+
+export interface DashboardBanner {
+  id: string;
+  state: DashboardBannerState;
+  image_id: string;
+  image_url: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface CreateDashboardBannerPayload {
+  image_id: string;
+  state: DashboardBannerState;
+}
+
+export interface UpdateDashboardBannerPayload {
+  state?: DashboardBannerState;
+  is_active?: boolean;
+  sort_order?: number;
+}
+
+export interface AcademyDashboardBanners {
+  state: DashboardBannerState;
+  has_template: boolean;
+  has_course: boolean;
+  banners: { id: string; image_id: string; image_url: string }[];
 }
 
 /**

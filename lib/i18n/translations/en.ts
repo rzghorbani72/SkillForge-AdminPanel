@@ -805,6 +805,7 @@ export const en = {
     planPricing: 'Plan Pricing',
     platformVouchers: 'Platform Vouchers',
     broadcasts: 'Broadcasts',
+    dashboardBanners: 'Dashboard banners',
     supportAccessLogs: 'Support Access Logs',
     management: 'Management',
     academies: 'My Academies',
@@ -6823,6 +6824,28 @@ export const en = {
       noGateways: 'No payment gateway records found.',
       manageGatewayDetails: 'Manage tokens & details',
       refresh: 'Refresh'
+    }
+  },
+  dashboardBanners: {
+    title: 'Dashboard banners',
+    description:
+      'These images rotate slowly in the centre of every academy dashboard. The set an academy sees depends on whether it has finished setup (academy + template + first course).',
+    accessDenied:
+      'Only the platform owner and admins can manage dashboard banners.',
+    upload: 'Upload banner',
+    uploaded: 'Banner uploaded',
+    deleted: 'Banner deleted',
+    delete: 'Remove',
+    empty: 'No banners in this set yet',
+    hint: 'Use a landscape image. It scales to fill the dashboard centre card.',
+    states: {
+      INCOMPLETE: 'Setup not finished',
+      COMPLETED: 'Academy fully set up'
+    },
+    stateHelp: {
+      INCOMPLETE: 'Shown when the academy has no template or no course yet.',
+      COMPLETED:
+        'Shown when the academy has a template and at least one course.'
     }
   },
   broadcasts: {

@@ -1,5 +1,6 @@
 'use client';
 
+import { DashboardHeroSlideshow } from './dashboard-hero-slideshow';
 import { StatCard } from './StatsCards';
 import { DashboardStatsCard } from './useDashboard';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -52,30 +53,32 @@ export default function DashboardHero({
         ))}
       </div>
 
-      <div className="hero-media hero-in order-first min-h-[220px] lg:order-none">
-        {logoUrl ? (
-          <img
-            src={logoUrl}
-            alt={academy?.name ?? ''}
-            className="h-24 w-24 rounded-3xl object-cover shadow-lg"
-          />
-        ) : (
-          <div className="grid h-24 w-24 place-items-center rounded-3xl bg-white/70 text-3xl font-bold text-primary shadow-lg">
-            {academy?.name?.[0]?.toUpperCase() ?? '?'}
-          </div>
-        )}
-        <h2 className="mt-4 text-lg font-bold">
-          {academy?.name ?? (isFa ? 'آکادمی شما' : 'Your academy')}
-        </h2>
-        {academy?.domain?.public_address && (
-          <p className="mt-1 text-xs text-muted-foreground">
-            {academy.domain.public_address}
-          </p>
-        )}
-        <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/60 px-3 py-1 text-[11px] font-semibold text-foreground/80">
-          <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--viz-accent))]" />
-          {isFa ? 'فعال' : 'Active'}
-        </span>
+      <div className="hero-media hero-in relative order-first min-h-[220px] lg:order-none">
+        <DashboardHeroSlideshow>
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt={academy?.name ?? ''}
+              className="h-24 w-24 rounded-3xl object-cover shadow-lg"
+            />
+          ) : (
+            <div className="grid h-24 w-24 place-items-center rounded-3xl bg-white/70 text-3xl font-bold text-primary shadow-lg">
+              {academy?.name?.[0]?.toUpperCase() ?? '?'}
+            </div>
+          )}
+          <h2 className="mt-4 text-lg font-bold">
+            {academy?.name ?? (isFa ? 'آکادمی شما' : 'Your academy')}
+          </h2>
+          {academy?.domain?.public_address && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              {academy.domain.public_address}
+            </p>
+          )}
+          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/60 px-3 py-1 text-[11px] font-semibold text-foreground/80">
+            <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--viz-accent))]" />
+            {isFa ? 'فعال' : 'Active'}
+          </span>
+        </DashboardHeroSlideshow>
       </div>
 
       <div className="hero-in hero-in-end flex flex-col gap-4">
