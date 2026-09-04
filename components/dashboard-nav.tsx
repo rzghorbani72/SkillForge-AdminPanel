@@ -155,6 +155,33 @@ const NavItemButton = React.memo(
 
 NavItemButton.displayName = 'NavItemButton';
 
+/**
+ * How well an item's href matches the current URL. Longer wins, so a deep page
+ * highlights (and expands) the most specific item: at /website/blog the Blog
+ * child is active, not its Website sibling. -1 = no match.
+ */
+function matchScore(href: string, path: string, query: string): number {
+  const [hrefPath, hrefQuery] = href.split('?');
+  if (hrefQuery) {
+    if (path !== hrefPath || !query) return -1;
+    const current = new URLSearchParams(query);
+    const wanted = new URLSearchParams(hrefQuery);
+    for (const [key, value] of Array.from(wanted.entries())) {
+      if (current.get(key) !== value) return -1;
+    }
+    return hrefPath.length + hrefQuery.length;
+  }
+  if (path !== hrefPath && !path.startsWith(`${hrefPath}/`)) return -1;
+  return hrefPath.length;
+}
+
+function collectHrefs(items: NavItem[]): string[] {
+  return items.flatMap((item) => [
+    ...(item.href ? [item.href] : []),
+    ...(item.children ? collectHrefs(item.children) : [])
+  ]);
+}
+
 export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
@@ -198,48 +225,19 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
     if (setOpen) setOpen(false);
   }, [setOpen]);
 
+  const activeHref = useMemo(() => {
+    const [path, query = ''] = fullPath.split('?');
+    let best: { href: string; score: number } | null = null;
+    for (const href of collectHrefs(items)) {
+      const score = matchScore(href, path, query);
+      if (score >= 0 && (!best || score > best.score)) best = { href, score };
+    }
+    return best?.href ?? null;
+  }, [fullPath, items]);
+
   const isPathActive = useCallback(
-    (href: string | undefined) => {
-      if (!href) return false;
-
-      const [currentPath, currentQuery] = fullPath.split('?');
-      const [hrefPath, hrefQuery] = href.split('?');
-
-      if (currentPath !== hrefPath) return false;
-
-      if (!hrefQuery) {
-        return !currentQuery;
-      }
-
-      if (!currentQuery) return false;
-
-      const currentParams = new URLSearchParams(currentQuery);
-      const hrefParams = new URLSearchParams(hrefQuery);
-
-      const currentParamsArray: [string, string][] = [];
-      const hrefParamsArray: [string, string][] = [];
-
-      currentParams.forEach((value, key) => {
-        currentParamsArray.push([key, value]);
-      });
-
-      hrefParams.forEach((value, key) => {
-        hrefParamsArray.push([key, value]);
-      });
-
-      if (currentParamsArray.length !== hrefParamsArray.length) {
-        return false;
-      }
-
-      for (const [key, value] of hrefParamsArray) {
-        if (currentParams.get(key) !== value) {
-          return false;
-        }
-      }
-
-      return true;
-    },
-    [fullPath]
+    (href: string | undefined) => Boolean(href) && href === activeHref,
+    [activeHref]
   );
 
   const hasActiveChild = useCallback(
@@ -261,156 +259,129 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
     setExpandedItems(newExpandedItems);
   }, [fullPath, items, hasActiveChild]);
 
-  const renderNavItem = useCallback(
-    (item: NavItem, depth = 0, parentItem?: NavItem) => {
-      if (depth > 5) {
-        console.warn(
-          'Maximum navigation depth reached, skipping item:',
-          item.title
-        );
-        return null;
-      }
+  // Nesting is one level deep by construction (see nav-filter), so a plain
+  // recursive function is enough — no memo dance around itself.
+  function renderNavItem(item: NavItem, depth = 0) {
+    const hasChildren =
+      item.children && Array.isArray(item.children) && item.children.length > 0;
+    const isExpanded = expandedItems.has(item.title);
 
-      const hasChildren =
-        item.children &&
-        Array.isArray(item.children) &&
-        item.children.length > 0;
-      const isExpanded = expandedItems.has(item.title);
+    const isActive = hasChildren
+      ? isPathActive(item.href) || hasActiveChild(item)
+      : isPathActive(item.href);
+    const isChildItem = depth > 0 && !hasChildren;
 
-      const isActive = hasChildren
-        ? isPathActive(item.href) || hasActiveChild(item)
-        : isPathActive(item.href);
-      const isChildItem = depth > 0 && !hasChildren;
+    const translatedTitle = translateNavTitle(item.label || '', item.title);
 
-      const translatedTitle = translateNavTitle(item.label || '', item.title);
+    const content = (
+      <NavItemContent
+        item={item}
+        isMinimized={isMinimized}
+        isExpanded={isExpanded}
+        isActive={isActive}
+        isChildItem={isChildItem}
+        translatedTitle={translatedTitle}
+      />
+    );
 
-      const content = (
-        <NavItemContent
-          item={item}
-          isMinimized={isMinimized}
-          isExpanded={isExpanded}
-          isActive={isActive}
-          isChildItem={isChildItem}
-          translatedTitle={translatedTitle}
-        />
-      );
-
-      if (hasChildren && isAboveLg && isMinimized && !item.disabled) {
-        return (
-          <DropdownMenu key={item.title}>
-            <DropdownMenuTrigger className="w-full" asChild>
-              <div>{content}</div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-52 space-y-1 rounded-xl border-border/50 bg-popover/95 p-2 shadow-xl backdrop-blur-xl"
-              align="start"
-              side={isRTL ? 'left' : 'right'}
-              sideOffset={8}
-              avoidCollisions={true}
-            >
-              <DropdownMenuLabel className="px-2 text-xs font-semibold text-muted-foreground">
-                {translatedTitle}
-              </DropdownMenuLabel>
-              {item.children &&
-                item.children.map((child, index) => {
-                  const childTranslatedTitle = translateNavTitle(
-                    child.label || '',
-                    child.title
-                  );
-                  const childIsActive = isPathActive(child.href);
-                  return (
-                    <DropdownMenuItem
-                      key={`${child.title}-${index}`}
-                      className={cn(
-                        'rounded-lg px-3 py-2 transition-colors',
-                        childIsActive && 'bg-primary/10 text-primary'
-                      )}
-                      asChild
-                    >
-                      {child.href ? (
-                        <Link
-                          href={child.href}
-                          onClick={handleSetOpen}
-                          className={cn(
-                            'w-full cursor-pointer font-medium',
-                            childIsActive
-                              ? 'text-primary'
-                              : 'text-foreground/80'
-                          )}
-                        >
-                          {childTranslatedTitle}
-                        </Link>
-                      ) : (
-                        <span className="cursor-pointer">
-                          {childTranslatedTitle}
-                        </span>
-                      )}
-                    </DropdownMenuItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      }
-
-      const handleParentClick = () => {
-        if (hasChildren && item.children && item.children.length > 0) {
-          const firstChild = item.children[0];
-          if (firstChild.href) {
-            router.push(firstChild.href);
-            if (setOpen) setOpen(false);
-          }
-        }
-        toggleExpand(item.title);
-      };
-
+    if (hasChildren && isAboveLg && isMinimized && !item.disabled) {
       return (
-        <div key={item.title}>
-          {item.disabled ? (
-            // A preview, not a destination: no link and no submenu, so the item
-            // shows what exists without leading anywhere it cannot go yet.
-            <div aria-disabled="true">{content}</div>
-          ) : hasChildren ? (
-            <NavItemButton onClick={handleParentClick}>{content}</NavItemButton>
-          ) : item.href ? (
-            <NavItemLink item={item} onClick={handleSetOpen}>
-              {content}
-            </NavItemLink>
-          ) : (
+        <DropdownMenu key={item.title}>
+          <DropdownMenuTrigger className="w-full" asChild>
             <div>{content}</div>
-          )}
-          {hasChildren &&
-            !isMinimized &&
-            isExpanded &&
-            (() => {
-              return (
-                <div className="ms-4 mt-0.5 space-y-px border-s border-border/60 ps-2.5">
-                  {item.children &&
-                    item.children.map((child, index) => (
-                      <div key={`${child.title}-${index}`}>
-                        {renderNavItem(child, depth + 1, item)}
-                      </div>
-                    ))}
-                </div>
-              );
-            })()}
-        </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-52 space-y-1 rounded-xl border-border/50 bg-popover/95 p-2 shadow-xl backdrop-blur-xl"
+            align="start"
+            side={isRTL ? 'left' : 'right'}
+            sideOffset={8}
+            avoidCollisions={true}
+          >
+            <DropdownMenuLabel className="px-2 text-xs font-semibold text-muted-foreground">
+              {translatedTitle}
+            </DropdownMenuLabel>
+            {item.children &&
+              item.children.map((child, index) => {
+                const childTranslatedTitle = translateNavTitle(
+                  child.label || '',
+                  child.title
+                );
+                const childIsActive = isPathActive(child.href);
+                return (
+                  <DropdownMenuItem
+                    key={`${child.title}-${index}`}
+                    className={cn(
+                      'rounded-lg px-3 py-2 transition-colors',
+                      childIsActive && 'bg-primary/10 text-primary'
+                    )}
+                    asChild
+                  >
+                    {child.href ? (
+                      <Link
+                        href={child.href}
+                        onClick={handleSetOpen}
+                        className={cn(
+                          'w-full cursor-pointer font-medium',
+                          childIsActive ? 'text-primary' : 'text-foreground/80'
+                        )}
+                      >
+                        {childTranslatedTitle}
+                      </Link>
+                    ) : (
+                      <span className="cursor-pointer">
+                        {childTranslatedTitle}
+                      </span>
+                    )}
+                  </DropdownMenuItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
-    },
-    [
-      expandedItems,
-      isMinimized,
-      isAboveLg,
-      isRTL,
-      isPathActive,
-      hasActiveChild,
-      handleSetOpen,
-      toggleExpand,
-      translateNavTitle,
-      router,
-      setOpen
-    ]
-  );
+    }
+
+    // A group with no page of its own only opens; one with an href also goes there.
+    const handleParentClick = () => {
+      if (item.href) {
+        router.push(item.href);
+        if (setOpen) setOpen(false);
+      }
+      toggleExpand(item.title);
+    };
+
+    return (
+      <div key={item.title}>
+        {item.disabled ? (
+          // A preview, not a destination: no link and no submenu, so the item
+          // shows what exists without leading anywhere it cannot go yet.
+          <div aria-disabled="true">{content}</div>
+        ) : hasChildren ? (
+          <NavItemButton onClick={handleParentClick}>{content}</NavItemButton>
+        ) : item.href ? (
+          <NavItemLink item={item} onClick={handleSetOpen}>
+            {content}
+          </NavItemLink>
+        ) : (
+          <div>{content}</div>
+        )}
+        {hasChildren &&
+          !isMinimized &&
+          isExpanded &&
+          (() => {
+            return (
+              <div className="ms-4 mt-0.5 space-y-px border-s border-border/60 ps-2.5">
+                {item.children &&
+                  item.children.map((child, index) => (
+                    <div key={`${child.title}-${index}`}>
+                      {renderNavItem(child, depth + 1)}
+                    </div>
+                  ))}
+              </div>
+            );
+          })()}
+      </div>
+    );
+  }
 
   const memoizedItems = useMemo(() => items, [items]);
 

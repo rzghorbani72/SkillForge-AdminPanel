@@ -764,6 +764,11 @@ export const fa = {
     pageOf: 'صفحهٔ {{page}} از {{total}}'
   },
   navigation: {
+    teaching: 'آموزش',
+    financeHub: 'مالی',
+    financialOverview: 'نمای کلی مالی',
+    growthHub: 'رشد',
+    accountHub: 'حساب و تنظیمات',
     monitoring: 'سلامت آکادمی',
     academyBlog: 'بلاگ',
     platformBlog: 'بلاگ پلتفرم',

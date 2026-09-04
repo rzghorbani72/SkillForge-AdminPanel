@@ -479,6 +479,11 @@ export const ar = {
     deniedDescription: 'ليس لديك صلاحية لعرض هذه الصفحة.'
   },
   navigation: {
+    teaching: 'التدريس',
+    financeHub: 'المالية',
+    financialOverview: 'نظرة عامة مالية',
+    growthHub: 'النمو',
+    accountHub: 'الحساب والإعدادات',
     monitoring: 'صحة الأكاديمية',
     academyBlog: 'المدونة',
     platformBlog: 'مدونة المنصة',

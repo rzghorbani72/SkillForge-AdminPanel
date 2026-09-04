@@ -1,4 +1,5 @@
 import { navItems } from '@/constants/data';
+import type { NavItem } from '@/types';
 
 /** Routes with no sidebar entry (auth, legal, detail screens). */
 const EXTRA_TITLE_KEYS: Record<string, string> = {
@@ -72,12 +73,14 @@ const DYNAMIC_SEGMENT_KEYS: Record<string, string> = {
   webhooks: 'pageTitles.webhooks'
 };
 
-function navTitleKeys(): Record<string, string> {
-  const keys: Record<string, string> = {};
-  for (const item of navItems) {
+function navTitleKeys(
+  items: NavItem[] = navItems,
+  keys: Record<string, string> = {}
+): Record<string, string> {
+  for (const item of items) {
     const path = item.href?.split('?')[0];
-    if (!path || !item.label) continue;
-    keys[path] = `navigation.${item.label}`;
+    if (path && item.label) keys[path] = `navigation.${item.label}`;
+    if (item.children) navTitleKeys(item.children, keys);
   }
   return keys;
 }

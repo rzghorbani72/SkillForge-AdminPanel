@@ -488,6 +488,11 @@ export const tr = {
     deniedDescription: 'Bu sayfayı görüntüleme izniniz yok.'
   },
   navigation: {
+    teaching: 'Öğretim',
+    financeHub: 'Finans',
+    financialOverview: 'Finans özeti',
+    growthHub: 'Büyüme',
+    accountHub: 'Hesap ve ayarlar',
     monitoring: 'Akademi sağlığı',
     academyBlog: 'Blog',
     platformBlog: 'Platform blogu',

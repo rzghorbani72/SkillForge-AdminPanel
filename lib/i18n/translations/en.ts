@@ -778,6 +778,11 @@ export const en = {
     pageOf: 'Page {{page}} of {{total}}'
   },
   navigation: {
+    teaching: 'Teaching',
+    financeHub: 'Money',
+    financialOverview: 'Financial overview',
+    growthHub: 'Growth',
+    accountHub: 'Account & settings',
     monitoring: 'Academy health',
     academyBlog: 'Blog',
     platformBlog: 'Platform blog',

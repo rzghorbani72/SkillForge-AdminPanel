@@ -10,6 +10,11 @@ function titles(items: NavItem[]): string[] {
   return items.map((item) => item.title);
 }
 
+/** Every item in the tree, parents included. */
+function flatten(items: NavItem[]): NavItem[] {
+  return items.flatMap((item) => [item, ...flatten(item.children ?? [])]);
+}
+
 /** Section order as rendered, one entry per contiguous run of a section. */
 function sectionRuns(items: NavItem[]): string[] {
   const runs: string[] = [];
@@ -39,7 +44,7 @@ test.describe('isPlatformMode', () => {
 
 test.describe('nav scoping', () => {
   test('a manager is never shown a platform-scoped item', () => {
-    const items = filterNavItems(navItems, MANAGER);
+    const items = flatten(filterNavItems(navItems, MANAGER));
     expect(items.length).toBeGreaterThan(0);
     for (const item of items) {
       expect(item.scope).not.toBe('platform');
@@ -56,21 +61,20 @@ test.describe('nav scoping', () => {
 
   test('a manager never gets an admin-only item', () => {
     const items = filterNavItems(navItems, MANAGER);
-    expect(items.some((item) => item.adminOnly)).toBe(false);
+    expect(flatten(items).some((item) => item.adminOnly)).toBe(false);
   });
 
   test('a teacher sees fewer items than a manager', () => {
-    const manager = filterNavItems(navItems, MANAGER);
-    const teacher = filterNavItems(navItems, {
-      role: 'TEACHER',
-      hasStore: true
-    });
+    const manager = flatten(filterNavItems(navItems, MANAGER));
+    const teacher = flatten(
+      filterNavItems(navItems, { role: 'TEACHER', hasStore: true })
+    );
     expect(teacher.length).toBeLessThan(manager.length);
   });
 
   test('payment-gated items are hidden while payment is off', () => {
     // NEXT_PUBLIC_PAYMENT_ENABLED is unset in tests, so the gate is closed.
-    const items = filterNavItems(navItems, MANAGER);
+    const items = flatten(filterNavItems(navItems, MANAGER));
     expect(items.some((item) => item.paymentGated)).toBe(false);
   });
 
@@ -83,24 +87,38 @@ test.describe('nav scoping', () => {
 });
 
 test.describe('academy-less nav', () => {
-  test('a manager with no academy only gets My Academies', () => {
-    const items = filterNavItems(navItems, { ...MANAGER, hasAcademy: false });
-    expect(items).toHaveLength(1);
-    expect(items[0].href).toBe('/academies');
+  test('a manager with no academy can only reach the academy-less pages', () => {
+    const items = flatten(
+      filterNavItems(navItems, { ...MANAGER, hasAcademy: false })
+    );
+    const enabled = items.filter((item) => !item.disabled);
+    expect(enabled.map((item) => item.href).sort()).toEqual([
+      '/academies',
+      '/dashboard'
+    ]);
   });
 
-  test('a teacher with no academy only gets My Academies', () => {
-    const items = filterNavItems(navItems, {
-      role: 'TEACHER',
-      hasStore: true,
-      hasAcademy: false
-    });
-    expect(items.map((item) => item.href)).toEqual(['/academies']);
+  test('a teacher with no academy can only reach the academy-less pages', () => {
+    const items = flatten(
+      filterNavItems(navItems, {
+        role: 'TEACHER',
+        hasStore: true,
+        hasAcademy: false
+      })
+    );
+    const enabled = items.filter((item) => !item.disabled);
+    expect(enabled.map((item) => item.href).sort()).toEqual([
+      '/academies',
+      '/dashboard'
+    ]);
   });
 
-  test('no plan or billing route is offered before the first academy', () => {
-    const items = filterNavItems(navItems, { ...MANAGER, hasAcademy: false });
-    expect(titles(items)).not.toContain('Academy Subscription');
+  test('no plan or billing route is live before the first academy', () => {
+    const items = flatten(
+      filterNavItems(navItems, { ...MANAGER, hasAcademy: false })
+    );
+    const plans = items.find((item) => item.title === 'Academy Subscription');
+    expect(plans?.disabled ?? true).toBe(true);
   });
 
   test('platform staff are not gated on having an academy', () => {
@@ -112,44 +130,67 @@ test.describe('academy-less nav', () => {
   });
 });
 
-test.describe('section grouping', () => {
-  // A section header renders once, at the first item carrying that section, so a
-  // section split across the array silently files its later items under the
-  // wrong header.
-  test('each section appears as one contiguous run for a manager', () => {
-    const runs = sectionRuns(filterNavItems(navItems, MANAGER));
-    expect(runs).toEqual(Array.from(new Set(runs)));
-  });
-
-  test('each section appears as one contiguous run in platform mode', () => {
-    const runs = sectionRuns(filterNavItems(navItems, PLATFORM_STAFF));
-    expect(runs).toEqual(Array.from(new Set(runs)));
-  });
-
-  test('a manager gets a small, fixed set of sections', () => {
-    const runs = sectionRuns(filterNavItems(navItems, MANAGER));
-    expect(runs).toEqual(['learning', 'finance', 'growth', 'account']);
-  });
-
-  test('no section exists only to label a single row', () => {
+test.describe('sidebar shape', () => {
+  // The manager-facing sidebar is the product's front door: a long flat list is
+  // the complexity we removed, so the top level stays scannable without scrolling.
+  test('a manager gets a short top level', () => {
     const items = filterNavItems(navItems, MANAGER);
-    const counts = new Map<string, number>();
-    for (const item of items) {
+    expect(items.length).toBeLessThanOrEqual(7);
+  });
+
+  test('every group holds at least two children', () => {
+    for (const options of [
+      MANAGER,
+      { role: 'TEACHER' as const, hasStore: true }
+    ]) {
+      for (const item of flatten(filterNavItems(navItems, options))) {
+        if (!item.children) continue;
+        expect(item.children.length, `group "${item.title}"`).toBeGreaterThan(
+          1
+        );
+      }
+    }
+  });
+
+  test('the nesting never goes deeper than one level', () => {
+    for (const item of filterNavItems(navItems, MANAGER)) {
+      for (const child of item.children ?? []) {
+        expect(
+          child.children,
+          `${item.title} > ${child.title}`
+        ).toBeUndefined();
+      }
+    }
+  });
+
+  test('no destination is offered twice', () => {
+    const hrefs = flatten(filterNavItems(navItems, MANAGER))
+      .map((item) => item.href)
+      .filter((href): href is string => Boolean(href));
+    expect(hrefs).toEqual(Array.from(new Set(hrefs)));
+  });
+
+  test('every leaf has a destination and every group has none', () => {
+    for (const item of flatten(filterNavItems(navItems, MANAGER))) {
+      if (item.children) expect(item.href, item.title).toBeUndefined();
+      else expect(item.href, item.title).toBeTruthy();
+    }
+  });
+
+  test('platform mode keeps its section headers', () => {
+    const runs: string[] = [];
+    for (const item of filterNavItems(navItems, PLATFORM_STAFF)) {
       if (!item.section) continue;
-      counts.set(item.section, (counts.get(item.section) ?? 0) + 1);
+      if (runs[runs.length - 1] !== item.section) runs.push(item.section);
     }
-    for (const [section, count] of Array.from(counts.entries())) {
-      expect(
-        count,
-        `section "${section}" labels a single item`
-      ).toBeGreaterThan(1);
-    }
+    expect(runs.length).toBeGreaterThan(0);
+    expect(runs).toEqual(Array.from(new Set(runs)));
   });
 });
 
 test.describe('route scope honesty', () => {
   test("a manager's items never point at a platform route", () => {
-    const items = filterNavItems(navItems, MANAGER);
+    const items = flatten(filterNavItems(navItems, MANAGER));
     for (const item of items) {
       expect(
         item.href?.startsWith('/platform'),
@@ -159,7 +200,7 @@ test.describe('route scope honesty', () => {
   });
 
   test('roles management is reachable for a manager', () => {
-    const items = filterNavItems(navItems, MANAGER);
+    const items = flatten(filterNavItems(navItems, MANAGER));
     expect(titles(items)).toContain('Roles & Permissions');
     const roles = items.find((item) => item.title === 'Roles & Permissions');
     expect(roles?.href).toBe('/settings/roles');
