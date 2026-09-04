@@ -348,6 +348,7 @@ export const tr = {
   common: {
     saveChanges: 'Değişiklikleri kaydet',
     uploading: 'Yükleniyor…',
+    rial: 'Riyal',
     percentValue: '%{{value}}',
     remove: 'Kaldır',
     loading: 'Yükleniyor...',

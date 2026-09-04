@@ -341,6 +341,7 @@ export const ar = {
   common: {
     saveChanges: 'حفظ التغييرات',
     uploading: 'جارٍ الرفع…',
+    rial: 'ريال',
     percentValue: '{{value}}٪',
     remove: 'إزالة',
     loading: 'جاري التحميل...',

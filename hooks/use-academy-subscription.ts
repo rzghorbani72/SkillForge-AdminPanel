@@ -27,6 +27,7 @@ export interface AcademySubscriptionInvoice {
   starts_at: string;
   ends_at: string;
   paid_at?: string;
+  created_at?: string;
   note?: string;
 }
 

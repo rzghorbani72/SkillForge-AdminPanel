@@ -24,7 +24,10 @@ export function PlatformInvoicesCard() {
   const invoices = useMemo(
     () =>
       (subscription?.invoices ?? []).filter(
-        (invoice) => invoice.status === 'PAID' || invoice.status === 'FAILED'
+        (invoice) =>
+          invoice.status === 'PAID' ||
+          invoice.status === 'FAILED' ||
+          invoice.status === 'DUPLICATE'
       ),
     [subscription?.invoices]
   );
