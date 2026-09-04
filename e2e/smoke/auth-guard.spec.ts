@@ -12,6 +12,7 @@ const PROTECTED = [
   '/courses',
   '/financial/platform',
   '/platform/academies',
+  '/platform/costs',
   '/support-access-logs',
   '/settings'
 ];

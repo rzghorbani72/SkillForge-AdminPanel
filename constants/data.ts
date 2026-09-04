@@ -105,6 +105,15 @@ export const navItems: NavItem[] = [
     scope: 'platform',
     children: [
       {
+        title: 'Platform costs',
+        href: '/platform/costs',
+        icon: 'dollarSign' as IconType,
+        label: 'platformCosts',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
         title: 'Financial',
         href: '/financial/desk',
         icon: 'dollarSign' as IconType,

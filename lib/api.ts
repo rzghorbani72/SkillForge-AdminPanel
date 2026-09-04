@@ -5159,6 +5159,32 @@ class ApiClient {
     return res.data;
   }
 
+  async getPlatformCosts(query?: MetricsQuery) {
+    return this.metrics<PlatformCostRow[]>('costs', query);
+  }
+
+  async createPlatformCost(input: {
+    amount_toman: number;
+    paid_at: string;
+    description: string;
+    category: string;
+    subcategory: string;
+  }) {
+    const res = await this.request<PlatformCostRow>('/platform-metrics/costs', {
+      method: 'POST',
+      body: JSON.stringify(input)
+    });
+    return res.data;
+  }
+
+  async deletePlatformCost(id: string) {
+    const res = await this.request<{ deleted: true }>(
+      `/platform-metrics/costs/${id}`,
+      { method: 'DELETE' }
+    );
+    return res.data;
+  }
+
   async getMarketingSpend(query?: MetricsQuery) {
     return this.metrics<MarketingSpendRow[]>('marketing-spend', query);
   }
@@ -7505,6 +7531,15 @@ export interface TimeToValueRow {
   academies_measured: number;
   median_days: number | null;
   p75_days: number | null;
+}
+
+export interface PlatformCostRow {
+  id: string;
+  amount: number;
+  paid_at: string;
+  description: string;
+  category: string;
+  subcategory: string;
 }
 
 export interface MarketingSpendRow {

@@ -1,11 +1,13 @@
 'use client';
 
+import Link from 'next/link';
 import { ScalarMetrics } from './scalar-metrics';
 import {
   DataPanel,
   DataList,
   type DataColumn
 } from '@/components/shared/data-list';
+import { Button } from '@/components/ui/button';
 import {
   apiClient,
   type MetricsQuery,
@@ -85,7 +87,14 @@ export function EconomicsTab({ query, currency }: Props) {
         }
       />
 
-      <DataPanel title={t('platformMetrics.spend.title')}>
+      <DataPanel
+        title={t('platformMetrics.spend.title')}
+        actions={
+          <Button asChild size="sm">
+            <Link href="/platform/costs">{t('platformCosts.save')}</Link>
+          </Button>
+        }
+      >
         <DataList
           items={spend ?? []}
           columns={spendColumns}

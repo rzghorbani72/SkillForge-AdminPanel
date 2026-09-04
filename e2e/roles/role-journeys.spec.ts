@@ -71,7 +71,8 @@ test.describe('AdminPanel role journeys @backend', () => {
     for (const adminOnly of [
       '/platform/academies',
       '/platform-settings',
-      '/financial/platform'
+      '/financial/platform',
+      '/platform/costs'
     ]) {
       await page.goto(adminOnly, { waitUntil: 'domcontentloaded' });
       // The panel must bounce a non-admin off an admin route (to /unauthorized or

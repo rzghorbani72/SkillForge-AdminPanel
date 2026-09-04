@@ -800,6 +800,7 @@ export const en = {
     dashboard: 'Dashboard',
     platformOverview: 'Platform Overview',
     investorReport: 'Investor report',
+    platformCosts: 'Platform costs',
     support: 'Support',
     supportInbox: 'Support Inbox',
     planPricing: 'Plan Pricing',
@@ -7127,6 +7128,47 @@ export const en = {
       ends_at: 'End date',
       file: 'File',
       image_id: 'Image'
+    }
+  },
+  platformCosts: {
+    title: 'Platform costs',
+    subtitle:
+      'Revenue is measured from academies. Record Mentoma operating costs here — amount, when you paid, and what it was for.',
+    amount: 'Amount',
+    toman: 'Toman',
+    paidAt: 'Paid at',
+    description: 'Description',
+    category: 'Category',
+    subcategory: 'Type',
+    save: 'Record cost',
+    listTitle: 'Recorded costs',
+    empty: 'No costs recorded in this window',
+    categories: {
+      marketing: 'Marketing',
+      infrastructure: 'Infrastructure',
+      people: 'People',
+      operations: 'Operations',
+      other: 'Other'
+    },
+    subcategories: {
+      social: 'Social ads',
+      search: 'Search engine ads',
+      content: 'Content / SEO',
+      referral: 'Referral / affiliate',
+      events: 'Events',
+      influencer: 'Influencer',
+      hosting: 'Hosting',
+      storage: 'Storage',
+      sms: 'SMS',
+      domain: 'Domain / SSL',
+      cdn: 'CDN',
+      salary: 'Salary',
+      contractor: 'Contractor',
+      legal: 'Legal',
+      accounting: 'Accounting',
+      tools: 'Software tools',
+      office: 'Office',
+      other: 'Other'
     }
   },
   platformMetrics: {

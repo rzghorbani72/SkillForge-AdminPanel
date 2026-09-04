@@ -787,6 +787,7 @@ export const fa = {
     dashboard: 'داشبورد',
     platformOverview: 'نمای کلی پلتفرم',
     investorReport: 'گزارش سرمایه‌گذاران',
+    platformCosts: 'هزینه‌های پلتفرم',
     supportAccessLogs: 'گزارش دسترسی پشتیبانی',
     management: 'مدیریت',
     'All Stores': 'همه آکادمی‌ها',
@@ -7098,6 +7099,47 @@ export const fa = {
       ends_at: 'تاریخ پایان',
       file: 'فایل',
       image_id: 'تصویر'
+    }
+  },
+  platformCosts: {
+    title: 'هزینه‌های پلتفرم',
+    subtitle:
+      'درآمد از آکادمی‌ها اندازه‌گیری می‌شود. هزینهٔ عملیاتی منتوما را اینجا ثبت کنید — مبلغ، زمان پرداخت، و بابت چه.',
+    amount: 'مبلغ',
+    toman: 'تومان',
+    paidAt: 'زمان پرداخت',
+    description: 'شرح',
+    category: 'دسته',
+    subcategory: 'نوع',
+    save: 'ثبت هزینه',
+    listTitle: 'هزینه‌های ثبت‌شده',
+    empty: 'در این بازه هزینه‌ای ثبت نشده',
+    categories: {
+      marketing: 'بازاریابی',
+      infrastructure: 'زیرساخت',
+      people: 'نیروی انسانی',
+      operations: 'عملیات',
+      other: 'سایر'
+    },
+    subcategories: {
+      social: 'تبلیغات شبکه‌های اجتماعی',
+      search: 'تبلیغات موتور جستجو',
+      content: 'محتوا / سئو',
+      referral: 'معرفی / افیلیت',
+      events: 'رویداد',
+      influencer: 'اینفلوئنسر',
+      hosting: 'هاست',
+      storage: 'فضای ذخیره‌سازی',
+      sms: 'پیامک',
+      domain: 'دامنه / SSL',
+      cdn: 'CDN',
+      salary: 'حقوق',
+      contractor: 'پیمانکار',
+      legal: 'حقوقی',
+      accounting: 'حسابداری',
+      tools: 'ابزار نرم‌افزاری',
+      office: 'دفتر',
+      other: 'سایر'
     }
   },
   platformMetrics: {
