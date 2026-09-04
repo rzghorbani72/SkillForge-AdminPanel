@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Download, RefreshCcw } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -12,14 +12,17 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { apiClient, type MetricsCurrency } from '@/lib/api';
-import { useTranslation } from '@/lib/i18n/hooks';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { useMetricsControls } from '../_hooks/use-metrics-controls';
 import { OverviewTab } from './overview-tab';
 import { RevenueTab } from './revenue-tab';
 import { SubscriptionsTab } from './subscriptions-tab';
 import { CohortsTab } from './cohorts-tab';
 import { ReconciliationTab } from './reconciliation-tab';
-import { KeyValuePanel } from './simple-table-tab';
+import { TransactionsTab } from './transactions-tab';
+import { UsersTab } from './users-tab';
+import { CatalogTab } from './catalog-tab';
+import { EconomicsTab } from './economics-tab';
 
 const TABS = [
   'overview',
@@ -33,7 +36,6 @@ const TABS = [
   'reconciliation'
 ] as const;
 
-/** Saves a fetched Blob under a filename without leaving the page. */
 function saveBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -47,6 +49,7 @@ function saveBlob(blob: Blob, filename: string): void {
 
 export function MetricsPageClient() {
   const { t } = useTranslation();
+  const { isRTL } = useLanguage();
   const { query, currency, setCurrency } = useMetricsControls();
   const [busy, setBusy] = useState(false);
 
@@ -78,18 +81,6 @@ export function MetricsPageClient() {
       current === 'TOMAN' ? 'EUR' : 'TOMAN'
     );
   }, [setCurrency]);
-
-  // Widened to the panel's contract: it renders whatever numeric fields the
-  // payload happens to carry, so each tab is a fetch rather than a layout.
-  const loaders = useMemo<Record<string, () => Promise<object>>>(
-    () => ({
-      transactions: () => apiClient.getMetricsTransactions(query),
-      users: () => apiClient.getMetricsUsers(query),
-      catalog: () => apiClient.getMetricsCatalog(query),
-      economics: () => apiClient.getMetricsUnitEconomics(query)
-    }),
-    [query]
-  );
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -131,8 +122,8 @@ export function MetricsPageClient() {
         </div>
       </PageHeader>
 
-      <Tabs defaultValue="overview" dir="rtl">
-        <TabsList className="flex w-full flex-wrap justify-start">
+      <Tabs defaultValue="overview" dir={isRTL ? 'rtl' : 'ltr'}>
+        <TabsList className="flex h-auto w-full flex-wrap justify-start">
           {TABS.map((tab) => (
             <TabsTrigger key={tab} value={tab}>
               {t(`platformMetrics.tabs.${tab}`)}
@@ -153,40 +144,16 @@ export function MetricsPageClient() {
           <SubscriptionsTab query={query} currency={currency} />
         </TabsContent>
         <TabsContent value="transactions" className="mt-4">
-          <KeyValuePanel
-            title={t('platformMetrics.tabs.transactions')}
-            load={loaders.transactions}
-            currency={currency}
-            translateKeys={false}
-          />
+          <TransactionsTab query={query} currency={currency} />
         </TabsContent>
         <TabsContent value="users" className="mt-4">
-          <KeyValuePanel
-            title={t('platformMetrics.tabs.users')}
-            load={loaders.users}
-            currency={currency}
-          />
+          <UsersTab query={query} currency={currency} />
         </TabsContent>
         <TabsContent value="catalog" className="mt-4">
-          <KeyValuePanel
-            title={t('platformMetrics.tabs.catalog')}
-            load={loaders.catalog}
-            currency={currency}
-            translateKeys={false}
-          />
+          <CatalogTab query={query} currency={currency} />
         </TabsContent>
         <TabsContent value="economics" className="mt-4">
-          <KeyValuePanel
-            title={t('platformMetrics.tabs.economics')}
-            load={loaders.economics}
-            currency={currency}
-            footer={
-              <div className="space-y-1 p-4 text-xs text-muted-foreground">
-                <p>{t('platformMetrics.caveats.marketingSpend')}</p>
-                <p>{t('platformMetrics.caveats.runway')}</p>
-              </div>
-            }
-          />
+          <EconomicsTab query={query} currency={currency} />
         </TabsContent>
         <TabsContent value="reconciliation" className="mt-4">
           <ReconciliationTab query={query} currency={currency} />

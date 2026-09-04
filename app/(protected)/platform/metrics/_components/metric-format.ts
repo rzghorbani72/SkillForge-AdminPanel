@@ -23,7 +23,11 @@ const MONEY_KEYS = new Set([
   'monthly_burn',
   'lifetime_paid',
   'last_invoice_amount',
-  'amount'
+  'amount',
+  'paid_amount',
+  'refunded_amount',
+  'invoiced_amount',
+  'manual_invoice_amount'
 ]);
 
 const RATIO_KEYS = new Set([
@@ -38,7 +42,8 @@ const RATIO_KEYS = new Set([
   'refund_rate',
   'gross_margin',
   'retention',
-  'logo_churn_rate'
+  'logo_churn_rate',
+  'mrr_growth_annualised'
 ]);
 
 export function isMoneyKey(key: string): boolean {

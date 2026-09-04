@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { CheckCircle2, AlertTriangle } from 'lucide-react';
 import { DataPanel } from '@/components/shared/data-list';
 import {
   apiClient,
   type MetricsCurrency,
   type MetricsQuery,
-  type MetricsReconciliation,
   type ReconciliationLeg
 } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
+import { useMetricFormat } from './metric-format';
 
 interface Props {
   query: MetricsQuery;
@@ -48,30 +48,31 @@ function Leg({ title, leg }: { title: string; leg: ReconciliationLeg }) {
           </div>
         ))}
       </div>
+      {leg.missing_ids.length > 0 ? (
+        <p className="mt-3 break-all text-xs text-muted-foreground">
+          {t('platformMetrics.reconciliation.missing')}:{' '}
+          {leg.missing_ids.join(', ')}
+        </p>
+      ) : null}
+      {leg.orphan_ids.length > 0 ? (
+        <p className="mt-1 break-all text-xs text-muted-foreground">
+          {t('platformMetrics.reconciliation.orphan')}:{' '}
+          {leg.orphan_ids.join(', ')}
+        </p>
+      ) : null}
     </div>
   );
 }
 
-/**
- * The tie-out. An unexplained gap here is a defect in the money path, not a
- * reporting artefact — which is exactly why it is shown, not hidden.
- */
-export function ReconciliationTab({ query }: Props) {
+export function ReconciliationTab({ query, currency }: Props) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const [report, setReport] = useState<MetricsReconciliation | null>(null);
+  const format = useMetricFormat(currency);
+  const { data: report, loading } = useMetricsFetch(query, (q) =>
+    apiClient.getMetricsReconciliation(q)
+  );
 
-  useEffect(() => {
-    let active = true;
-    apiClient.getMetricsReconciliation(query).then((result) => {
-      if (active) setReport(result);
-    });
-    return () => {
-      active = false;
-    };
-  }, [query]);
-
-  if (!report) {
+  if (loading || !report) {
     return (
       <DataPanel title={t('platformMetrics.reconciliation.title')}>
         <p className="p-6 text-sm text-muted-foreground">
@@ -104,14 +105,42 @@ export function ReconciliationTab({ query }: Props) {
       }
     >
       <div className="space-y-4 p-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Leg title="Invoice → Payment" leg={report.invoice_to_payment} />
-          <Leg title="Payment → Gateway" leg={report.payment_to_gateway} />
+        <div className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <p>
+            {t('platformMetrics.metrics.invoiced_amount')}:{' '}
+            <span className="font-semibold">
+              {format('invoiced_amount', report.invoiced_amount)}
+            </span>
+          </p>
+          <p>
+            {t('platformMetrics.metrics.invoice_count')}:{' '}
+            <span className="font-semibold">
+              {formatNumber(report.invoice_count)}
+            </span>
+          </p>
+          <p>
+            {t('platformMetrics.metrics.manual_invoice_count')}:{' '}
+            <span className="font-semibold">
+              {formatNumber(report.manual_invoice_count)}
+            </span>
+          </p>
+          <p>
+            {t('platformMetrics.metrics.manual_invoice_amount')}:{' '}
+            <span className="font-semibold">
+              {format('manual_invoice_amount', report.manual_invoice_amount)}
+            </span>
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground">
-          {t('platformMetrics.reconciliation.manual')}:{' '}
-          {formatNumber(report.manual_invoice_count)}
-        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Leg
+            title={t('platformMetrics.reconciliation.invoiceToPayment')}
+            leg={report.invoice_to_payment}
+          />
+          <Leg
+            title={t('platformMetrics.reconciliation.paymentToGateway')}
+            leg={report.payment_to_gateway}
+          />
+        </div>
       </div>
     </DataPanel>
   );

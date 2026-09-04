@@ -1,5 +1,19 @@
 'use client';
 
+import Link from 'next/link';
+import {
+  BookOpen,
+  Building2,
+  GraduationCap,
+  Repeat,
+  ShieldCheck,
+  Store,
+  TrendingUp,
+  Users,
+  Wallet
+} from 'lucide-react';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { StatsCard } from '@/components/shared/stats-card';
 import {
   Card,
   CardContent,
@@ -7,101 +21,33 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { apiClient, type FlatMetrics } from '@/lib/api';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import { formatCurrency } from '@/lib/utils';
-import {
-  Building2,
-  Store,
-  Users,
-  BookOpen,
-  TrendingUp,
-  DollarSign,
-  ShieldCheck
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api';
 import { isPlatformOwner } from '@/lib/roles';
+import { useMetricsFetch } from './metrics/_hooks/use-metrics-fetch';
+import { useMetricFormat } from './metrics/_components/metric-format';
+
+const HEADLINE = [
+  { key: 'total_academies', icon: Store, hint: 'active_academies' },
+  { key: 'paying_academies', icon: Building2, hint: 'trialing_academies' },
+  { key: 'total_users', icon: Users, hint: 'active_last_30d' },
+  { key: 'total_courses', icon: BookOpen, hint: 'published_courses' },
+  { key: 'mrr', icon: TrendingUp, hint: 'arr' },
+  { key: 'gmv_paid_amount', icon: Wallet, hint: 'gmv_paid_count' },
+  { key: 'nrr', icon: Repeat, hint: 'monthly_logo_churn' },
+  { key: 'learning_records', icon: GraduationCap, hint: 'mau' }
+] as const;
 
 export default function PlatformOverviewPage() {
-  const { t, language } = useTranslation();
-  const formatNumber = useNumberFormat();
+  const { t } = useTranslation();
+  const format = useMetricFormat('TOMAN');
   const { user, isLoading: userLoading } = useAuthUser();
-  const [stats, setStats] = useState({
-    totalStores: 0,
-    totalUsers: 0,
-    totalCourses: 0,
-    totalRevenue: 0,
-    activeStores: 0,
-    totalStudents: 0
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, loading } = useMetricsFetch({}, (query) =>
+    apiClient.getMetricsOverview(query)
+  );
+  const metrics: FlatMetrics = data?.metrics ?? {};
 
-  useEffect(() => {
-    const fetchPlatformStats = async () => {
-      try {
-        setIsLoading(true);
-        // Fetch platform-level statistics
-        // TODO: Create backend endpoint for platform stats
-        // For now, using placeholder data
-        const [storesRaw, usersRaw, coursesBundle] = await Promise.all([
-          apiClient.getAcademies().catch(() => null),
-          apiClient.getUsers({ limit: 1000 }).catch(() => null),
-          apiClient.getCourses({ limit: 1000 }).catch(() => ({
-            courses: [] as unknown[]
-          }))
-        ]);
-
-        const academyRows = Array.isArray(storesRaw)
-          ? storesRaw
-          : storesRaw &&
-              typeof storesRaw === 'object' &&
-              Array.isArray((storesRaw as { items?: unknown[] }).items)
-            ? (storesRaw as { items: unknown[] }).items
-            : storesRaw &&
-                typeof storesRaw === 'object' &&
-                Array.isArray((storesRaw as { data?: unknown[] }).data)
-              ? (storesRaw as { data: unknown[] }).data
-              : [];
-
-        const userRows = Array.isArray(usersRaw)
-          ? usersRaw
-          : usersRaw &&
-              typeof usersRaw === 'object' &&
-              Array.isArray((usersRaw as { users?: unknown[] }).users)
-            ? (usersRaw as { users: unknown[] }).users
-            : usersRaw &&
-                typeof usersRaw === 'object' &&
-                Array.isArray((usersRaw as { items?: unknown[] }).items)
-              ? (usersRaw as { items: unknown[] }).items
-              : [];
-
-        const courseRows = coursesBundle?.courses ?? [];
-
-        setStats({
-          totalStores: academyRows.length,
-          totalUsers: userRows.length,
-          totalCourses: courseRows.length,
-          totalRevenue: 0, // TODO: Calculate from all stores
-          activeStores: academyRows.filter(
-            (s) => (s as { is_active?: boolean }).is_active
-          ).length,
-          totalStudents: 0 // TODO: Calculate from all stores
-        });
-      } catch (error) {
-        console.error('Error fetching platform stats:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (!userLoading && user?.isAdminProfile) {
-      fetchPlatformStats();
-    }
-  }, [user, userLoading]);
-
-  // Redirect if not platform-level admin
   if (!userLoading && user && !user.isAdminProfile && !user.platformLevel) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -117,11 +63,11 @@ export default function PlatformOverviewPage() {
     );
   }
 
-  if (userLoading || isLoading) {
+  if (userLoading || loading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
           <p className="mt-2 text-sm text-muted-foreground">
             {t('platform.overview.loading')}
           </p>
@@ -131,150 +77,66 @@ export default function PlatformOverviewPage() {
   }
 
   return (
-    <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
-      <div className="flex items-center justify-between space-y-2">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            {t('platform.overview.title')}
-          </h2>
-          <p className="text-muted-foreground">
-            {t('platform.overview.description')}
-          </p>
-        </div>
+    <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
+      <PageHeader
+        title={t('platform.overview.title')}
+        description={t('platform.overview.description')}
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {HEADLINE.map(({ key, icon, hint }) => (
+          <StatsCard
+            key={key}
+            title={t(`platformMetrics.metrics.${key}`)}
+            value={format(key, metrics[key] ?? null)}
+            icon={icon}
+            description={`${t(`platformMetrics.metrics.${hint}`)}: ${format(hint, metrics[hint] ?? null)}`}
+          />
+        ))}
       </div>
 
-      {/* Platform Statistics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('platform.overview.totalSchools')}
-            </CardTitle>
-            <Store className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(stats.totalStores)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('platform.overview.activeSchools', {
-                count: stats.activeStores
-              })}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('platform.overview.totalUsers')}
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(stats.totalUsers)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('platform.overview.acrossAllSchools')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('platform.overview.totalCourses')}
-            </CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(stats.totalCourses)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('platform.overview.platformWideCourses')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('platform.overview.platformRevenue')}
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(stats.totalRevenue, {
-                currency: 'USD',
-                divideBy: 1,
-                language
-              })}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('platform.overview.allTimeRevenue')}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Platform Management Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="cursor-pointer transition-colors hover:bg-accent">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5" />
-              {t('platform.overview.allSchools')}
-            </CardTitle>
-            <CardDescription>
-              {t('platform.overview.allSchoolsDescription')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {t('platform.overview.allSchoolsAccess')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer transition-colors hover:bg-accent">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              {t('platform.overview.platformUsers')}
-            </CardTitle>
-            <CardDescription>
-              {t('platform.overview.platformUsersDescription')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {t('platform.overview.platformUsersAccess')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer transition-colors hover:bg-accent">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              {t('platform.overview.platformAnalytics')}
-            </CardTitle>
-            <CardDescription>
-              {t('platform.overview.platformAnalyticsDescription')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {t('platform.overview.platformAnalyticsAccess')}
-            </p>
-          </CardContent>
-        </Card>
+        <Link href="/platform/academies" className="block">
+          <Card className="h-full transition-colors hover:bg-accent">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                {t('platform.overview.allSchools')}
+              </CardTitle>
+              <CardDescription>
+                {t('platform.overview.allSchoolsDescription')}
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link href="/platform/users" className="block">
+          <Card className="h-full transition-colors hover:bg-accent">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                {t('platform.overview.platformUsers')}
+              </CardTitle>
+              <CardDescription>
+                {t('platform.overview.platformUsersDescription')}
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link href="/platform/metrics" className="block">
+          <Card className="h-full transition-colors hover:bg-accent">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                {t('platform.overview.platformAnalytics')}
+              </CardTitle>
+              <CardDescription>
+                {t('platform.overview.platformAnalyticsDescription')}
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
-      {/* Quick Actions */}
       <Card>
         <CardHeader>
           <CardTitle>{t('platform.overview.quickActions')}</CardTitle>
@@ -284,7 +146,7 @@ export default function PlatformOverviewPage() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <a
+            <Link
               href="/platform/academies"
               className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
             >
@@ -292,17 +154,8 @@ export default function PlatformOverviewPage() {
               <span className="text-sm font-medium">
                 {t('platform.overview.manageSchools')}
               </span>
-            </a>
-            <a
-              href="/platform/users"
-              className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
-            >
-              <Users className="mb-2 h-8 w-8 text-primary" />
-              <span className="text-sm font-medium">
-                {t('platform.overview.manageAdmins')}
-              </span>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/platform/users"
               className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
             >
@@ -310,25 +163,25 @@ export default function PlatformOverviewPage() {
               <span className="text-sm font-medium">
                 {t('platform.overview.allUsers')}
               </span>
-            </a>
-            <a
-              href="/analytics"
+            </Link>
+            <Link
+              href="/platform/metrics"
               className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
             >
               <TrendingUp className="mb-2 h-8 w-8 text-primary" />
               <span className="text-sm font-medium">
                 {t('platform.overview.platformAnalyticsLink')}
               </span>
-            </a>
-            {isPlatformOwner(user) && (
-              <a
+            </Link>
+            {isPlatformOwner(user) ? (
+              <Link
                 href="/platform/roles"
                 className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
               >
                 <ShieldCheck className="mb-2 h-8 w-8 text-primary" />
                 <span className="text-sm font-medium">{t('roles.title')}</span>
-              </a>
-            )}
+              </Link>
+            ) : null}
           </div>
         </CardContent>
       </Card>

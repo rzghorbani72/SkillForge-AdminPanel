@@ -1,16 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
 import {
   DataPanel,
   DataList,
@@ -18,43 +7,49 @@ import {
 } from '@/components/shared/data-list';
 import {
   apiClient,
-  type MetricsCurrency,
   type MetricsQuery,
+  type MetricsCurrency,
   type MrrBridgeMonth,
-  type MetricsRetention
+  type ChurnMonth
 } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
 import { useMetricFormat } from './metric-format';
+import { MrrBridgeChart } from './mrr-bridge-chart';
 
 interface Props {
   query: MetricsQuery;
   currency: MetricsCurrency;
 }
 
+interface PlanRow {
+  month: string;
+  plan: string;
+  amount: number;
+}
+
 export function RevenueTab({ query, currency }: Props) {
   const { t } = useTranslation();
   const format = useMetricFormat(currency);
-  const [bridge, setBridge] = useState<MrrBridgeMonth[]>([]);
-  const [retention, setRetention] = useState<MetricsRetention | null>(null);
-  const [loading, setLoading] = useState(true);
+  const formatNumber = useNumberFormat();
+  const { data, loading } = useMetricsFetch(query, (q) =>
+    apiClient.getMetricsRevenue(q)
+  );
+  const { data: churnData, loading: churnLoading } = useMetricsFetch(
+    query,
+    (q) => apiClient.getMetricsChurn(q)
+  );
 
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    apiClient
-      .getMetricsRevenue(query)
-      .then((result) => {
-        if (!active) return;
-        setBridge(result.bridge);
-        setRetention(result.retention);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [query]);
+  const bridge = data?.bridge ?? [];
+  const planRows: PlanRow[] = bridge.flatMap((month) =>
+    Object.entries(month.by_plan).map(([plan, amount]) => ({
+      month: month.month,
+      plan,
+      amount
+    }))
+  );
+  const churn = churnData?.churn ?? [];
 
   const columns: DataColumn<MrrBridgeMonth>[] = [
     {
@@ -97,49 +92,79 @@ export function RevenueTab({ query, currency }: Props) {
       header: t('platformMetrics.bridge.ending'),
       align: 'end',
       cell: (row) => format('ending_mrr', row.ending_mrr)
+    },
+    {
+      id: 'paying',
+      header: t('platformMetrics.metrics.paying_academies'),
+      align: 'end',
+      cell: (row) => formatNumber(row.paying_academies)
+    },
+    {
+      id: 'arpa',
+      header: t('platformMetrics.metrics.arpa'),
+      align: 'end',
+      cell: (row) => format('arpa', row.arpa)
+    }
+  ];
+
+  const planColumns: DataColumn<PlanRow>[] = [
+    {
+      id: 'month',
+      header: t('platformMetrics.columns.month'),
+      cell: (row) => row.month
+    },
+    {
+      id: 'plan',
+      header: t('platformMetrics.columns.plan'),
+      cell: (row) => row.plan
+    },
+    {
+      id: 'amount',
+      header: t('platformMetrics.columns.amount'),
+      align: 'end',
+      cell: (row) => format('amount', row.amount)
+    }
+  ];
+
+  const churnColumns: DataColumn<ChurnMonth>[] = [
+    {
+      id: 'month',
+      header: t('platformMetrics.columns.month'),
+      cell: (row) => row.month
+    },
+    {
+      id: 'starting',
+      header: t('platformMetrics.columns.startingAcademies'),
+      align: 'end',
+      cell: (row) => formatNumber(row.starting_academies)
+    },
+    {
+      id: 'new',
+      header: t('platformMetrics.columns.newAcademies'),
+      align: 'end',
+      cell: (row) => formatNumber(row.new_academies)
+    },
+    {
+      id: 'churned',
+      header: t('platformMetrics.columns.churnedAcademies'),
+      align: 'end',
+      cell: (row) => formatNumber(row.churned_academies)
+    },
+    {
+      id: 'rate',
+      header: t('platformMetrics.metrics.monthly_logo_churn'),
+      align: 'end',
+      cell: (row) => format('logo_churn_rate', row.logo_churn_rate)
     }
   ];
 
   return (
     <div className="space-y-6">
-      <DataPanel
-        title={t('platformMetrics.bridge.title')}
-        subtitle={
-          retention
-            ? `${t('platformMetrics.metrics.nrr')}: ${format('nrr', retention.nrr)} · ${t('platformMetrics.metrics.grr')}: ${format('grr', retention.grr)}`
-            : undefined
-        }
-      >
-        <div className="h-72 w-full overflow-x-auto">
-          <ResponsiveContainer width="100%" height="100%" minWidth={480}>
-            <BarChart data={bridge}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} width={80} />
-              <Tooltip />
-              <Legend />
-              <Bar
-                dataKey="new_mrr"
-                name={t('platformMetrics.bridge.new')}
-                stackId="a"
-                fill="#2563eb"
-              />
-              <Bar
-                dataKey="expansion_mrr"
-                name={t('platformMetrics.bridge.expansion')}
-                stackId="a"
-                fill="#10b981"
-              />
-              <Bar
-                dataKey="churned_mrr"
-                name={t('platformMetrics.bridge.churned')}
-                stackId="a"
-                fill="#ef4444"
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </DataPanel>
+      <MrrBridgeChart
+        bridge={bridge}
+        retention={data?.retention ?? null}
+        currency={currency}
+      />
 
       <DataPanel title={t('platformMetrics.tabs.revenue')}>
         <DataList
@@ -147,6 +172,26 @@ export function RevenueTab({ query, currency }: Props) {
           columns={columns}
           rowKey={(row) => row.month}
           isLoading={loading}
+          emptyState={t('platformMetrics.empty')}
+        />
+      </DataPanel>
+
+      <DataPanel title={t('platformMetrics.sections.byPlan')}>
+        <DataList
+          items={planRows}
+          columns={planColumns}
+          rowKey={(row) => `${row.month}:${row.plan}`}
+          isLoading={loading}
+          emptyState={t('platformMetrics.empty')}
+        />
+      </DataPanel>
+
+      <DataPanel title={t('platformMetrics.sections.churn')}>
+        <DataList
+          items={churn}
+          columns={churnColumns}
+          rowKey={(row) => row.month}
+          isLoading={churnLoading}
           emptyState={t('platformMetrics.empty')}
         />
       </DataPanel>

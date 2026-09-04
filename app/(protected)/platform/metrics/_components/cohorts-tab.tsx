@@ -1,16 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { DataPanel } from '@/components/shared/data-list';
-import {
-  apiClient,
-  type CohortCell,
-  type MetricsCurrency,
-  type MetricsQuery,
-  type UserRetentionCell
-} from '@/lib/api';
+import { apiClient, type MetricsCurrency, type MetricsQuery } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
 
 interface Props {
   query: MetricsQuery;
@@ -96,25 +90,20 @@ function Heatmap({ cells, title }: { cells: Cell[]; title: string }) {
 
 export function CohortsTab({ query }: Props) {
   const { t } = useTranslation();
-  const [revenue, setRevenue] = useState<CohortCell[]>([]);
-  const [logins, setLogins] = useState<UserRetentionCell[]>([]);
-
-  useEffect(() => {
-    let active = true;
-    apiClient.getMetricsCohorts(query).then((result) => {
-      if (!active) return;
-      setRevenue(result.revenue_cohorts);
-      setLogins(result.login_cohorts);
-    });
-    return () => {
-      active = false;
-    };
-  }, [query]);
+  const { data } = useMetricsFetch(query, (q) =>
+    apiClient.getMetricsCohorts(q)
+  );
 
   return (
     <div className="space-y-6">
-      <Heatmap cells={revenue} title={t('platformMetrics.tabs.revenue')} />
-      <Heatmap cells={logins} title={t('platformMetrics.tabs.users')} />
+      <Heatmap
+        cells={data?.revenue_cohorts ?? []}
+        title={t('platformMetrics.tabs.revenue')}
+      />
+      <Heatmap
+        cells={data?.login_cohorts ?? []}
+        title={t('platformMetrics.tabs.users')}
+      />
       <p className="text-xs text-muted-foreground">
         {t('platformMetrics.caveats.loginHistory')}
       </p>

@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import {
   DataPanel,
   DataList,
@@ -11,12 +10,14 @@ import {
   apiClient,
   type MetricsCurrency,
   type MetricsQuery,
-  type SubscriptionMetricRow
+  type SubscriptionMetricRow,
+  type TimeToValueRow
 } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useMetricFormat } from './metric-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
 
 interface Props {
   query: MetricsQuery;
@@ -28,25 +29,14 @@ export function SubscriptionsTab({ query, currency }: Props) {
   const format = useMetricFormat(currency);
   const formatNumber = useNumberFormat();
   const formatDate = useDateFormat();
-  const [rows, setRows] = useState<SubscriptionMetricRow[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, loading } = useMetricsFetch(query, (q) =>
+    apiClient.getMetricsSubscriptions(q)
+  );
+  const { data: ttv, loading: ttvLoading } = useMetricsFetch(query, (q) =>
+    apiClient.getMetricsTimeToValue(q)
+  );
 
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    apiClient
-      .getMetricsSubscriptions(query)
-      .then((result) => {
-        if (active) setRows(result.rows);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [query]);
-
+  const rows = data?.rows ?? [];
   const date = (value: string | null) =>
     value ? formatDate(new Date(value)) : '—';
 
@@ -80,6 +70,12 @@ export function SubscriptionsTab({ query, currency }: Props) {
         row.last_term_months === null ? '—' : formatNumber(row.last_term_months)
     },
     {
+      id: 'invoices',
+      header: t('platformMetrics.columns.paidInvoices'),
+      align: 'end',
+      cell: (row) => formatNumber(row.paid_invoice_count)
+    },
+    {
       id: 'startsAt',
       header: t('platformMetrics.columns.startsAt'),
       cell: (row) => date(row.last_invoice_starts_at)
@@ -102,15 +98,58 @@ export function SubscriptionsTab({ query, currency }: Props) {
     }
   ];
 
+  const ttvColumns: DataColumn<TimeToValueRow>[] = [
+    {
+      id: 'metric',
+      header: t('platformMetrics.columns.metric'),
+      cell: (row) => {
+        const path = `platformMetrics.ttv.${row.metric}`;
+        const label = t(path);
+        return label === path ? row.metric : label;
+      }
+    },
+    {
+      id: 'measured',
+      header: t('platformMetrics.columns.measured'),
+      align: 'end',
+      cell: (row) => formatNumber(row.academies_measured)
+    },
+    {
+      id: 'median',
+      header: t('platformMetrics.columns.medianDays'),
+      align: 'end',
+      cell: (row) =>
+        row.median_days === null ? '—' : formatNumber(row.median_days)
+    },
+    {
+      id: 'p75',
+      header: t('platformMetrics.columns.p75Days'),
+      align: 'end',
+      cell: (row) => (row.p75_days === null ? '—' : formatNumber(row.p75_days))
+    }
+  ];
+
   return (
-    <DataPanel title={t('platformMetrics.tabs.subscriptions')}>
-      <DataList
-        items={rows}
-        columns={columns}
-        rowKey={(row) => row.academy_id}
-        isLoading={loading}
-        emptyState={t('platformMetrics.empty')}
-      />
-    </DataPanel>
+    <div className="space-y-6">
+      <DataPanel title={t('platformMetrics.tabs.subscriptions')}>
+        <DataList
+          items={rows}
+          columns={columns}
+          rowKey={(row) => row.academy_id}
+          isLoading={loading}
+          emptyState={t('platformMetrics.empty')}
+        />
+      </DataPanel>
+
+      <DataPanel title={t('platformMetrics.sections.timeToValue')}>
+        <DataList
+          items={ttv ?? []}
+          columns={ttvColumns}
+          rowKey={(row) => row.metric}
+          isLoading={ttvLoading}
+          emptyState={t('platformMetrics.empty')}
+        />
+      </DataPanel>
+    </div>
   );
 }
