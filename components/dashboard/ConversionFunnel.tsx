@@ -66,10 +66,11 @@ export default function ConversionFunnel({ steps }: Props) {
               </div>
               <div className="h-2.5 overflow-hidden rounded-full bg-muted/70">
                 <div
-                  className="h-full rounded-full transition-all duration-700"
+                  className="funnel-bar h-full rounded-full"
                   style={{
                     width: max === 0 ? '0%' : `${(step.value / max) * 100}%`,
-                    background: COLORS[step.key]
+                    background: COLORS[step.key],
+                    animationDelay: `${i * 90}ms`
                   }}
                 />
               </div>

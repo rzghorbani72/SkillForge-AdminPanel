@@ -83,7 +83,12 @@ export default function WeekdayEnrollmentChart({ data: points }: Props) {
                 cursor={{ fill: 'hsl(var(--viz-1) / 0.06)', radius: 10 }}
                 content={<ChartTooltipContent />}
               />
-              <Bar dataKey="enrollments" radius={10}>
+              <Bar
+                dataKey="enrollments"
+                radius={10}
+                animationDuration={800}
+                animationEasing="ease-out"
+              >
                 {data.map((entry) => (
                   <Cell
                     key={entry.day}

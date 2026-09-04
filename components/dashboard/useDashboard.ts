@@ -46,6 +46,30 @@ const paymentDateOf = (payment: {
   created_at?: string | null;
 }) => payment.paid_at ?? payment.payment_date ?? payment.created_at ?? null;
 
+/** `GET /payments` caps a page at 100 rows and defaults to 20, so a single
+    request under-reports the revenue of any academy past its first sales.
+    Page until the API runs out, bounded so a busy academy cannot turn one
+    dashboard load into an unbounded request storm. */
+const PAYMENTS_PAGE_SIZE = 100;
+const PAYMENTS_MAX_PAGES = 10;
+
+const fetchSettledPayments = async (): Promise<Payment[]> => {
+  const collected: Payment[] = [];
+
+  for (let page = 1; page <= PAYMENTS_MAX_PAGES; page += 1) {
+    const payload = await apiClient.getPayments({
+      page,
+      limit: PAYMENTS_PAGE_SIZE,
+      status: 'PAID'
+    });
+    const rows = readPaymentsList(payload);
+    collected.push(...rows);
+    if (rows.length < PAYMENTS_PAGE_SIZE) break;
+  }
+
+  return collected;
+};
+
 export type DashboardStatsCard = {
   title: string;
   value: string | number;
@@ -132,11 +156,13 @@ const useDashboard = () => {
 
         // For admins without stores, fetch platform-wide data (no store filter)
         // For managers/admins with stores, fetch store-specific data
+        // A 10-row page cannot rank "top courses" or plot course growth for an
+        // academy with a real catalogue, so the dashboard reads a wider window.
         const coursesParams = isAdminWithoutStore
-          ? { page: 1, limit: 10, filter: 'none' as const } // Platform-wide for admins
+          ? { page: 1, limit: 50, filter: 'none' as const } // Platform-wide for admins
           : effectiveAcademyId
-            ? { page: 1, limit: 10, academy_id: effectiveAcademyId } // Store-specific for managers
-            : { page: 1, limit: 10 }; // Default
+            ? { page: 1, limit: 50, academy_id: effectiveAcademyId } // Store-specific for managers
+            : { page: 1, limit: 50 }; // Default
 
         const enrollmentsParams = isAdminWithoutStore
           ? { status: 'ACTIVE' as const, page: 1, limit: 1 }
@@ -165,7 +191,7 @@ const useDashboard = () => {
         ] = await Promise.allSettled([
           apiClient.getCourses(coursesParams),
           apiClient.getRecentEnrollments(),
-          apiClient.getPayments(),
+          fetchSettledPayments(),
           apiClient.getEnrollments(enrollmentsParams),
           apiClient.getStudentUsers(studentsParams),
           apiClient.getEnrollments(
@@ -214,7 +240,7 @@ const useDashboard = () => {
 
         // Payments & totals
         if (paymentsResult.status === 'fulfilled') {
-          const paymentsData = readPaymentsList(paymentsResult.value);
+          const paymentsData = paymentsResult.value;
           const sortedPayments = paymentsData.slice().sort((a, b) => {
             const aRaw = paymentDateOf(a);
             const bRaw = paymentDateOf(b);

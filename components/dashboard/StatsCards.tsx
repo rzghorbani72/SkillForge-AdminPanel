@@ -98,7 +98,9 @@ export function StatCard({
                 stroke={line}
                 strokeWidth={2}
                 fill={`url(#${gradientId})`}
-                isAnimationActive={false}
+                animationDuration={900}
+                animationBegin={index * 90}
+                animationEasing="ease-out"
               />
             </AreaChart>
           </ResponsiveContainer>

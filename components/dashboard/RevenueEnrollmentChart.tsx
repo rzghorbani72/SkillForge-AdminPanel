@@ -153,6 +153,8 @@ export default function RevenueEnrollmentChart({ data }: Props) {
               strokeWidth={2.5}
               fill="url(#gradRevenue)"
               activeDot={{ r: 4, strokeWidth: 2, stroke: 'white' }}
+              animationDuration={1100}
+              animationEasing="ease-out"
             />
             <Area
               type="monotone"
@@ -161,6 +163,9 @@ export default function RevenueEnrollmentChart({ data }: Props) {
               strokeWidth={2.5}
               fill="url(#gradEnroll)"
               activeDot={{ r: 4, strokeWidth: 2, stroke: 'white' }}
+              animationDuration={1100}
+              animationBegin={180}
+              animationEasing="ease-out"
             />
           </AreaChart>
         </ChartContainer>

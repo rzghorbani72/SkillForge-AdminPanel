@@ -87,6 +87,8 @@ export default function CompletionDonut({ segments, completion }: Props) {
                   cornerRadius={6}
                   stroke="none"
                   dataKey="value"
+                  animationDuration={900}
+                  animationEasing="ease-out"
                 >
                   {pieData.map((seg) => (
                     <Cell

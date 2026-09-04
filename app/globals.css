@@ -480,6 +480,26 @@ body {
     }
   }
 
+  /* Funnel bars: grow from the row's start edge, each step after the one above.
+     Scaling keeps the inline width (the real value) as the animation target. */
+  .funnel-bar {
+    animation: funnelGrow 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    transform-origin: left center;
+  }
+
+  [dir='rtl'] .funnel-bar {
+    transform-origin: right center;
+  }
+
+  @keyframes funnelGrow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
   /* Hero row entrance: the side columns travel inward, the centre settles. */
   .hero-in {
     animation: heroIn 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
