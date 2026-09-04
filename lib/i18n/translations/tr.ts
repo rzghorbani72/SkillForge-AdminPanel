@@ -619,7 +619,15 @@ export const tr = {
     bannerAction: 'Akademi oluştur',
     noAcademyTitle: 'Henüz bir akademiye bağlı değilsiniz',
     noAcademyDescription:
-      'Hesabınız bir akademi yöneticisi tarafından oluşturuldu. Sizi akademisine ekleyene kadar burada bir şey görünmez.'
+      'Hesabınız bir akademi yöneticisi tarafından oluşturuldu. Sizi akademisine ekleyene kadar burada bir şey görünmez.',
+    setupBannerTitle: 'Akademinizi yayına alın',
+    setupBannerDescription:
+      '{done} / 4 adım tamamlandı — eğitime başlamak için bunları bitirin.',
+    setupStepWebsite: 'Akademi sitesini oluşturun veya düzenleyin',
+    setupStepTemplate: 'Şablon seçin',
+    setupStepCourse: 'Kurs ekleyin',
+    setupStepVisit: 'Siteyi ziyaret edin',
+    setupDismiss: 'Kurulum listesini kapat'
   },
 
   auth: {

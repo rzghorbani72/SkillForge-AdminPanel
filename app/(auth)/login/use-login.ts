@@ -8,6 +8,7 @@ import { OtpType } from '@/constants/data';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
 import {
+  checkoutQueryFromSearch,
   homeRouteFor,
   NO_HOME_ROUTE,
   resolveSessionRole
@@ -65,6 +66,8 @@ export function useLogin() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const planParam = searchParams.get('plan');
+  const periodParam = searchParams.get('period');
+  const planQuery = checkoutQueryFromSearch(planParam, periodParam);
   const { pending: redirectPending, scheduleRedirect } = useDelayedRedirect();
 
   const [identity, setIdentity] = useState<AccountIdentity | null>(null);
@@ -134,7 +137,6 @@ export function useLogin() {
   // leaving the user on the login screen after a session was created reads as a
   // failed login and is what stranded custom-role and platform-staff accounts.
   function schedulePostLoginRedirect(response: LoginResponse) {
-    const planQuery = planParam ? `?plan=${encodeURIComponent(planParam)}` : '';
     const role = resolveSessionRole(response);
     const href = homeRouteFor(role, { planQuery }) ?? NO_HOME_ROUTE;
 
@@ -321,7 +323,9 @@ export function useLogin() {
         // /unauthorized, and never to no redirect at all.
         const session = switched?.data?.data ?? switched?.data ?? {};
         scheduleRedirect({
-          href: homeRouteFor(resolveSessionRole(session)) ?? '/dashboard',
+          href:
+            homeRouteFor(resolveSessionRole(session), { planQuery }) ??
+            '/dashboard',
           title: t('success.loginSuccess'),
           message: t('auth.redirectingToDashboard')
         });
@@ -477,6 +481,9 @@ export function useLogin() {
     const params = new URLSearchParams();
     if (phone.trim()) params.set('phone', phone.trim());
     if (planParam) params.set('plan', planParam);
+    if (periodParam === 'monthly' || periodParam === 'quarterly') {
+      params.set('period', periodParam);
+    }
     const query = params.toString();
     return query ? `/register?${query}` : '/register';
   })();

@@ -49,6 +49,22 @@ export const LOG_CATALOG = {
         description: 'Onboarding first academy created.',
         status: 'ok',
         fields: ['academy_id'] as const
+      },
+      SetupBannerDismissed: {
+        description: 'Manager dismissed the first-run setup checklist.',
+        status: 'ok',
+        fields: [] as const
+      },
+      SetupBannerShown: {
+        description: 'First-run setup checklist shown on the dashboard.',
+        status: 'ok',
+        fields: [] as const
+      },
+      SetupStepOpened: {
+        description:
+          'Manager opened a first-run setup step from the dashboard banner.',
+        status: 'ok',
+        fields: ['step'] as const
       }
     }
   }

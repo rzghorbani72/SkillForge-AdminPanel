@@ -8,6 +8,7 @@ import {
 } from '@/lib/security/request-guards';
 import {
   canOpenRoute,
+  checkoutQueryFromSearch,
   homeRouteFor,
   NO_HOME_ROUTE,
   resolveSessionRole
@@ -26,7 +27,8 @@ const publicRoutes = [
   '/support',
   '/terms',
   '/privacy',
-  '/payment/callback'
+  '/payment/callback',
+  '/auth/handoff'
 ] as const;
 
 const authRoutes = [
@@ -117,8 +119,12 @@ async function handlePageAuth(request: NextRequest): Promise<NextResponse> {
   const userRole = resolveSessionRole(decoded);
   // Where this session belongs. Login uses the same helper, so the two can never
   // send the user to a route the other one bounces.
+  const checkoutQuery = checkoutQueryFromSearch(
+    request.nextUrl.searchParams.get('plan'),
+    request.nextUrl.searchParams.get('period')
+  );
   const home = isAuthenticated
-    ? (homeRouteFor(userRole) ?? NO_HOME_ROUTE)
+    ? (homeRouteFor(userRole, { planQuery: checkoutQuery }) ?? NO_HOME_ROUTE)
     : null;
 
   const redirectHome = (): NextResponse => {

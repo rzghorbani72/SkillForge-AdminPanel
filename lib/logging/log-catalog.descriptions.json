@@ -10,6 +10,9 @@
     "Media.PlaybackSessionFailed": "Media playback session failed.",
     "Media.PlayerError": "Media player error.",
     "Onboarding.AcademyDialogShown": "Onboarding academy dialog shown.",
-    "Onboarding.FirstAcademyCreated": "Onboarding first academy created."
+    "Onboarding.FirstAcademyCreated": "Onboarding first academy created.",
+    "Onboarding.SetupBannerDismissed": "Manager dismissed the first-run setup checklist.",
+    "Onboarding.SetupBannerShown": "First-run setup checklist shown on the dashboard.",
+    "Onboarding.SetupStepOpened": "Manager opened a first-run setup step from the dashboard banner."
   }
 }

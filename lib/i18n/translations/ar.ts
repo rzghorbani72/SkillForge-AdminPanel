@@ -608,7 +608,15 @@ export const ar = {
     bannerAction: 'إنشاء أكاديمية',
     noAcademyTitle: 'لم يتم ربطك بأي أكاديمية بعد',
     noAcademyDescription:
-      'تم إنشاء حسابك بواسطة مدير أكاديمية. لن يظهر شيء هنا حتى يضيفك إلى أكاديميته.'
+      'تم إنشاء حسابك بواسطة مدير أكاديمية. لن يظهر شيء هنا حتى يضيفك إلى أكاديميته.',
+    setupBannerTitle: 'جهّز أكاديميتك',
+    setupBannerDescription:
+      '{done} من 4 خطوات مكتملة — أنهِ هذه الخطوات لتبدأ التعليم.',
+    setupStepWebsite: 'إنشاء أو تعديل موقع الأكاديمية',
+    setupStepTemplate: 'اختيار قالب',
+    setupStepCourse: 'إضافة دورة',
+    setupStepVisit: 'زيارة الموقع',
+    setupDismiss: 'إخفاء قائمة الإعداد'
   },
 
   auth: {

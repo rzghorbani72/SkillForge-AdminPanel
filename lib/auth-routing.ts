@@ -93,6 +93,47 @@ export interface HomeRouteOptions {
   planQuery?: string;
 }
 
+const PLAN_SLUG = /^[a-z0-9-]{1,32}$/;
+
+/**
+ * Landing "pay this plan" links land on /login?plan=growth&period=quarterly.
+ * Only a real plan slug is forwarded — anything else is dropped so a crafted
+ * URL cannot bounce the manager onto an unexpected path after sign-in.
+ */
+export function checkoutQueryFromSearch(
+  plan: string | null | undefined,
+  period: string | null | undefined
+): string {
+  const slug = (plan ?? '').trim().toLowerCase();
+  if (!PLAN_SLUG.test(slug)) return '';
+  const periodPart =
+    period === 'monthly' || period === 'quarterly' ? `&period=${period}` : '';
+  return `?plan=${encodeURIComponent(slug)}${periodPart}`;
+}
+
+/**
+ * A `?next=` / `?redirect=` value is attacker-controllable. Only same-origin
+ * relative panel paths are safe after a session is opened.
+ */
+export function safePanelPath(
+  value: string | null | undefined,
+  fallback: string
+): string {
+  if (!value) return fallback;
+  const candidate = value.trim();
+  if (!candidate.startsWith('/')) return fallback;
+  if (candidate.startsWith('//')) return fallback;
+  if (candidate.includes('\\')) return fallback;
+  if (
+    /^\/(?:login|register|admin-login|forget-password|admin-forget-password|auth\/handoff)\b/.test(
+      candidate
+    )
+  ) {
+    return fallback;
+  }
+  return candidate;
+}
+
 /**
  * Where this role belongs after login. `null` means it has no home in this panel.
  *

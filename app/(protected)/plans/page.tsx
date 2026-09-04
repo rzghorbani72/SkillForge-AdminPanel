@@ -94,6 +94,7 @@ export default function PlansPage() {
   const tabParam = searchParams.get('tab');
   const paidParam = searchParams.get('paid');
   const planParam = searchParams.get('plan');
+  const periodParam = searchParams.get('period');
   const voucherParam = searchParams.get('voucher');
   // Guard against double toast: React Strict Mode remounts and `t` identity
   // changes both re-run the effect while `?paid=1` is still in the URL.
@@ -109,7 +110,9 @@ export default function PlansPage() {
   const isTeacher = user?.role === 'TEACHER';
   const canManageAcademyPlans = isPlatformAdminUser || canManagePlan;
 
-  const [period, setPeriod] = useState<BillingPeriod>('monthly');
+  const [period, setPeriod] = useState<BillingPeriod>(
+    periodParam === 'quarterly' ? 'quarterly' : 'monthly'
+  );
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
   // Shared with the sidebar/header via one SWR cache key — avoids firing the
   // same /academies/current/subscription request three times per page load.

@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { authService } from '@/lib/auth';
 import {
+  checkoutQueryFromSearch,
   homeRouteFor,
   NO_HOME_ROUTE,
   resolveSessionRole
@@ -64,11 +65,11 @@ export default function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planParam = searchParams.get('plan');
+  const periodParam = searchParams.get('period');
+  const planQuery = checkoutQueryFromSearch(planParam, periodParam);
   // Login sends the number it could not find, so signup never asks for it twice.
   const phoneParam = searchParams.get('phone') ?? '';
-  const loginHref = planParam
-    ? `/login?plan=${encodeURIComponent(planParam)}`
-    : '/login';
+  const loginHref = planQuery ? `/login${planQuery}` : '/login';
 
   const [step, setStep] = useState<'details' | 'verify'>('details');
   const [otpCode, setOtpCode] = useState('');
@@ -163,9 +164,6 @@ export default function RegisterPage() {
         router.replace(loginHref);
         return;
       }
-      const planQuery = planParam
-        ? `?plan=${encodeURIComponent(planParam)}`
-        : '';
       router.replace(homeRouteFor(role, { planQuery }) ?? NO_HOME_ROUTE);
     } catch {
       router.replace(loginHref);

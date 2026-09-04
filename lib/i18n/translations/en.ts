@@ -980,7 +980,15 @@ export const en = {
     bannerAction: 'Create academy',
     noAcademyTitle: 'You are not linked to an academy yet',
     noAcademyDescription:
-      'Your account was created by an academy manager. Nothing shows here until they add you to their academy.'
+      'Your account was created by an academy manager. Nothing shows here until they add you to their academy.',
+    setupBannerTitle: 'Get your academy live',
+    setupBannerDescription:
+      '{done} of 4 steps done — finish these to start teaching.',
+    setupStepWebsite: 'Create or edit your academy website',
+    setupStepTemplate: 'Choose a template',
+    setupStepCourse: 'Add a course',
+    setupStepVisit: 'Visit your website',
+    setupDismiss: 'Dismiss setup checklist'
   },
 
   auth: {

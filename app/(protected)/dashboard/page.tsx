@@ -17,6 +17,7 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { canManageSubscription } from '@/lib/subscription-access';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
+import { SetupChecklistBanner } from '@/components/dashboard/onboarding/setup-checklist-banner';
 import { BuyPlansSection } from '@/components/dashboard/buy-plans-section';
 import { cn } from '@/lib/utils';
 
@@ -106,6 +107,7 @@ export default function DashboardPage() {
     return (
       <div className="dashboard-shell flex-1">
         <div className="relative space-y-5 p-4 sm:p-6">
+          <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
           <BuyPlansSection />
         </div>
       </div>
@@ -115,6 +117,7 @@ export default function DashboardPage() {
   return (
     <div className="dashboard-shell flex-1">
       <div className="relative space-y-5 p-4 sm:p-6">
+        <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
         {/* Page header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

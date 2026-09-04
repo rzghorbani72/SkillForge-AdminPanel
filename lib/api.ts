@@ -411,6 +411,7 @@ class ApiClient {
       endpoint.includes('/auth/confirm-phone') ||
       endpoint.includes('/auth/set-new-password') ||
       endpoint.includes('/auth/select-academy') ||
+      endpoint.includes('/auth/panel-handoff') ||
       endpoint.includes('/auth/academies/lookup') ||
       endpoint.includes('/auth/csrf')
     );
@@ -1077,6 +1078,13 @@ class ApiClient {
 
   async markOnboardingSeen() {
     return this.request('/auth/me/onboarding-seen', { method: 'PATCH' });
+  }
+
+  async consumePanelHandoff(code: string) {
+    return this.request('/auth/panel-handoff/consume', {
+      method: 'POST',
+      body: JSON.stringify({ code })
+    });
   }
 
   // Note: These enhanced auth endpoints have been removed
