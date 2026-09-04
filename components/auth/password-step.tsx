@@ -11,7 +11,7 @@ import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
 import Link from '@/components/ui/link';
 import { sanitizePasswordInput } from '@/lib/password-utils';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
-import { formatIdentifierDisplay } from '@/lib/phone-utils';
+import { formatIdentifierDisplay } from '@/lib/format-identifier';
 
 interface PasswordStepProps {
   title: string;

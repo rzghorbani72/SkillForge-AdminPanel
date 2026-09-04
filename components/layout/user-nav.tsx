@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { formatIdentifierDisplay } from '@/lib/phone-utils';
+import { formatIdentifierDisplay } from '@/lib/format-identifier';
 
 const SETTLEMENT_ROLES = ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'];
 

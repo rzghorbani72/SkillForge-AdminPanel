@@ -7,7 +7,7 @@ import { AuthSubmit } from '@/components/auth/auth-fields';
 import type { AuthTab } from '@/components/auth/auth-tabs';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
-import { formatIdentifierDisplay } from '@/lib/phone-utils';
+import { formatIdentifierDisplay } from '@/lib/format-identifier';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
 
 const DEFAULT_OTP_LENGTH = 5;

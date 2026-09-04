@@ -4,6 +4,7 @@ import {
   buildTrustedBackendUrl,
   buildInternalBackendHeaders
 } from '@/lib/security/ssrf';
+import { paymentResultUrl } from '@/lib/payment-callback-url';
 
 /**
  * Mellat BP POSTs the payment result here after the user completes (or cancels) payment.
@@ -16,8 +17,6 @@ import {
  *  4. Redirect to /payment/callback with success/failure result
  */
 export async function POST(request: NextRequest) {
-  const origin = new URL(request.url).origin;
-
   let resCode: string | null = null;
   let refId: string | null = null;
   let saleOrderId: string | null = null;
@@ -64,18 +63,21 @@ export async function POST(request: NextRequest) {
     }
   } catch {
     return NextResponse.redirect(
-      `${origin}/payment/callback?success=false&error=invalid_callback`,
+      paymentResultUrl({ success: 'false', error: 'invalid_callback' }),
       { status: 303 }
     );
   }
 
   if (resCode !== '0' || !saleOrderId || !saleReferenceId) {
     const reason = resCode === '17' ? 'cancelled' : 'payment_failed';
-    const url = new URL(`${origin}/payment/callback`);
-    url.searchParams.set('success', 'false');
-    url.searchParams.set('error', reason);
-    if (resCode) url.searchParams.set('status', resCode);
-    return NextResponse.redirect(url.toString(), { status: 303 });
+    return NextResponse.redirect(
+      paymentResultUrl({
+        success: 'false',
+        error: reason,
+        status: resCode ?? undefined
+      }),
+      { status: 303 }
+    );
   }
 
   try {
@@ -108,20 +110,26 @@ export async function POST(request: NextRequest) {
     };
 
     if (data.status === 'ok') {
-      const url = new URL(`${origin}/payment/callback`);
-      url.searchParams.set('success', 'true');
-      url.searchParams.set('refid', saleReferenceId);
-      url.searchParams.set('clientrefid', data.data?.payment_id ?? saleOrderId);
-      return NextResponse.redirect(url.toString(), { status: 303 });
+      return NextResponse.redirect(
+        paymentResultUrl({
+          success: 'true',
+          refid: saleReferenceId,
+          clientrefid: data.data?.payment_id ?? saleOrderId
+        }),
+        { status: 303 }
+      );
     }
 
-    const url = new URL(`${origin}/payment/callback`);
-    url.searchParams.set('success', 'false');
-    url.searchParams.set('error', data.data?.reason ?? 'verification_failed');
-    return NextResponse.redirect(url.toString(), { status: 303 });
+    return NextResponse.redirect(
+      paymentResultUrl({
+        success: 'false',
+        error: data.data?.reason ?? 'verification_failed'
+      }),
+      { status: 303 }
+    );
   } catch {
     return NextResponse.redirect(
-      `${origin}/payment/callback?success=false&error=server_error`,
+      paymentResultUrl({ success: 'false', error: 'server_error' }),
       { status: 303 }
     );
   }

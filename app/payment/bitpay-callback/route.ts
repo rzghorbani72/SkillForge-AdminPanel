@@ -4,6 +4,7 @@ import {
   buildTrustedBackendUrl,
   buildInternalBackendHeaders
 } from '@/lib/security/ssrf';
+import { paymentResultUrl } from '@/lib/payment-callback-url';
 
 /**
  * BitPay redirects the manager back here after payment with trans_id and
@@ -15,16 +16,13 @@ import {
  *
  * A cancelled or failed payment comes back with trans_id = -1 (or missing).
  */
-const failure = (origin: string, reason: string) => {
-  const url = new URL(`${origin}/payment/callback`);
-  url.searchParams.set('success', 'false');
-  url.searchParams.set('error', reason);
-  return NextResponse.redirect(url.toString(), { status: 303 });
-};
+const failure = (reason: string) =>
+  NextResponse.redirect(paymentResultUrl({ success: 'false', error: reason }), {
+    status: 303
+  });
 
 const handle = async (request: NextRequest) => {
   const requestUrl = new URL(request.url);
-  const origin = requestUrl.origin;
 
   const params = new URLSearchParams(requestUrl.search);
   if (request.method === 'POST') {
@@ -41,7 +39,7 @@ const handle = async (request: NextRequest) => {
   const paymentId = params.get('payment_id') ?? '';
 
   if (!transId || transId === '-1' || !idGet) {
-    return failure(origin, transId === '-1' ? 'cancelled' : 'invalid_callback');
+    return failure(transId === '-1' ? 'cancelled' : 'invalid_callback');
   }
 
   try {
@@ -71,16 +69,19 @@ const handle = async (request: NextRequest) => {
     };
 
     if (data.status !== 'ok') {
-      return failure(origin, data.data?.reason ?? 'verification_failed');
+      return failure(data.data?.reason ?? 'verification_failed');
     }
 
-    const url = new URL(`${origin}/payment/callback`);
-    url.searchParams.set('success', 'true');
-    url.searchParams.set('refid', transId);
-    url.searchParams.set('clientrefid', data.data?.payment_id ?? paymentId);
-    return NextResponse.redirect(url.toString(), { status: 303 });
+    return NextResponse.redirect(
+      paymentResultUrl({
+        success: 'true',
+        refid: transId,
+        clientrefid: data.data?.payment_id ?? paymentId
+      }),
+      { status: 303 }
+    );
   } catch {
-    return failure(origin, 'server_error');
+    return failure('server_error');
   }
 };
 

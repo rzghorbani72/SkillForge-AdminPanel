@@ -78,13 +78,7 @@ import {
   quarterlyDiscount
 } from '@/components/plans/plan-types';
 import type { PaymentGatewayProvider } from '@/types/api';
-
-/** Where each gateway sends the manager back after payment. */
-const CALLBACK_PATHS: Record<PaymentGatewayProvider, string> = {
-  BITPAY: '/payment/bitpay-callback',
-  SAMAN_SEP: '/payment/saman-callback',
-  MELLAT_BP: '/payment/mellat-callback'
-};
+import { paymentGatewayCallbackUrl } from '@/lib/payment-callback-url';
 
 /**
  * Used for the first "probe" call, before the backend has told us which
@@ -370,10 +364,6 @@ export default function PlansPage() {
     }
   }
 
-  function callbackUrlForProvider(provider: PaymentGatewayProvider): string {
-    return `${window.location.origin}${CALLBACK_PATHS[provider]}`;
-  }
-
   function computePayableAmount(): number {
     if (!selectingPlan) return 0;
     if (upgradeQuote) {
@@ -434,7 +424,7 @@ export default function PlansPage() {
       let provider = selectedGateway;
       if (!provider) {
         const probe = await apiClient.purchaseStorageAddon({
-          callback_url: callbackUrlForProvider(DEFAULT_GATEWAY)
+          callback_url: paymentGatewayCallbackUrl(DEFAULT_GATEWAY)
         });
         if (probe.redirect_url) {
           window.location.href = probe.redirect_url;
@@ -460,7 +450,7 @@ export default function PlansPage() {
       }
       const result = await apiClient.purchaseStorageAddon({
         provider,
-        callback_url: callbackUrlForProvider(provider)
+        callback_url: paymentGatewayCallbackUrl(provider)
       });
       if (result.redirect_url) {
         window.location.href = result.redirect_url;
@@ -493,7 +483,7 @@ export default function PlansPage() {
           const probe = await apiClient.upgradeCurrentAcademyPlan(
             selectingPlan.slug,
             {
-              callback_url: callbackUrlForProvider(DEFAULT_GATEWAY),
+              callback_url: paymentGatewayCallbackUrl(DEFAULT_GATEWAY),
               coupon_code
             }
           );
@@ -539,7 +529,7 @@ export default function PlansPage() {
           selectingPlan.slug,
           {
             provider,
-            callback_url: callbackUrlForProvider(provider),
+            callback_url: paymentGatewayCallbackUrl(provider),
             coupon_code
           }
         );
@@ -584,7 +574,7 @@ export default function PlansPage() {
             selectedMonths === 3 ? 'quarterly' : 'monthly'
           ),
           storage_addon: includeStorageAddon ? 1 : 0,
-          callback_url: callbackUrlForProvider(DEFAULT_GATEWAY),
+          callback_url: paymentGatewayCallbackUrl(DEFAULT_GATEWAY),
           coupon_code
         });
 
@@ -630,7 +620,7 @@ export default function PlansPage() {
         ),
         storage_addon: includeStorageAddon ? 1 : 0,
         provider,
-        callback_url: callbackUrlForProvider(provider),
+        callback_url: paymentGatewayCallbackUrl(provider),
         coupon_code
       });
 
