@@ -182,13 +182,18 @@ function collectHrefs(items: NavItem[]): string[] {
   ]);
 }
 
-export function DashboardNav({ items, setOpen }: DashboardNavProps) {
+export function DashboardNav({
+  items,
+  setOpen,
+  isMobileNav = false
+}: DashboardNavProps) {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { isMinimized } = useSidebar();
+  const { isMinimized: isSidebarMinimized } = useSidebar();
+  const isMinimized = isMobileNav ? false : isSidebarMinimized;
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const { isAboveLg } = useBreakpoint('lg');
 
