@@ -50,7 +50,8 @@ function saveBlob(blob: Blob, filename: string): void {
 export function MetricsPageClient() {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
-  const { query, currency, setCurrency } = useMetricsControls();
+  const { query } = useMetricsControls();
+  const currency: MetricsCurrency = 'TOMAN';
   const [busy, setBusy] = useState(false);
 
   const download = useCallback(
@@ -76,12 +77,6 @@ export function MetricsPageClient() {
     }
   }, []);
 
-  const toggleCurrency = useCallback(() => {
-    setCurrency((current: MetricsCurrency) =>
-      current === 'TOMAN' ? 'EUR' : 'TOMAN'
-    );
-  }, [setCurrency]);
-
   return (
     <div className="space-y-6 p-4 md:p-6">
       <PageHeader
@@ -89,11 +84,6 @@ export function MetricsPageClient() {
         description={t('platformMetrics.subtitle')}
       >
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" onClick={toggleCurrency}>
-            {currency === 'TOMAN'
-              ? t('platformMetrics.currency.toman')
-              : t('platformMetrics.currency.eur')}
-          </Button>
           <Button
             variant="outline"
             size="sm"

@@ -69,9 +69,12 @@ export function useMetricFormat(currency: MetricsCurrency) {
         );
       }
       if (MONEY_KEYS.has(key)) {
-        return formatNumber(
-          currency === 'EUR' ? Math.round(value * 100) / 100 : Math.round(value)
-        );
+        const amount =
+          currency === 'EUR'
+            ? Math.round(value * 100) / 100
+            : Math.round(value);
+        const formatted = formatNumber(amount);
+        return currency === 'EUR' ? `${formatted} €` : `${formatted} تومان`;
       }
       return formatNumber(Math.round(value * 100) / 100);
     },

@@ -16,8 +16,8 @@ import {
   Search,
   Plus,
   ArrowLeft,
-  DollarSign,
   TrendingUp,
+  Wallet,
   Users,
   BookOpen,
   CreditCard
@@ -39,7 +39,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { formatCurrency, formatCurrencyWithStore } from '@/lib/utils';
+import { formatPlatformToman } from '@/lib/utils';
 import type { Academy } from '@/types/api';
 import { Pagination } from '@/components/shared/Pagination';
 import { AcademyCustomPlanCard } from '@/components/plans/AcademyCustomPlanCard';
@@ -322,16 +322,13 @@ export default function PlatformAcademiesPage() {
               <CardTitle className="text-sm font-medium">
                 {t('dashboard.totalRevenue')}
               </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {formatCurrency(storeStats.totalRevenue, {
-                  currency: selectedStore.currency || 'IRR',
-                  currency_symbol: selectedStore.currency_symbol || 'Toman',
-                  currency_position: 'after',
+                {formatPlatformToman(storeStats.totalRevenue, {
                   divideBy: 100,
-                  language: language
+                  language
                 })}
               </div>
             </CardContent>
@@ -415,14 +412,13 @@ export default function PlatformAcademiesPage() {
                         {t('platform.stores.totalRevenue')}
                       </p>
                       <p className="text-2xl font-bold">
-                        {formatCurrency(storeFinancial.total_revenue || 0, {
-                          currency: selectedStore.currency || 'IRR',
-                          currency_symbol:
-                            selectedStore.currency_symbol || 'Toman',
-                          currency_position: 'after',
-                          divideBy: 100,
-                          language: language
-                        })}
+                        {formatPlatformToman(
+                          storeFinancial.total_revenue || 0,
+                          {
+                            divideBy: 100,
+                            language
+                          }
+                        )}
                       </p>
                     </div>
                     <div>
@@ -430,13 +426,9 @@ export default function PlatformAcademiesPage() {
                         {t('platform.stores.totalCosts')}
                       </p>
                       <p className="text-2xl font-bold">
-                        {formatCurrency(storeFinancial.total_costs || 0, {
-                          currency: selectedStore.currency || 'IRR',
-                          currency_symbol:
-                            selectedStore.currency_symbol || 'Toman',
-                          currency_position: 'after',
+                        {formatPlatformToman(storeFinancial.total_costs || 0, {
                           divideBy: 100,
-                          language: language
+                          language
                         })}
                       </p>
                     </div>
@@ -445,16 +437,12 @@ export default function PlatformAcademiesPage() {
                         {t('platform.stores.netProfit')}
                       </p>
                       <p className="text-2xl font-bold">
-                        {formatCurrency(
+                        {formatPlatformToman(
                           (storeFinancial.total_revenue || 0) -
                             (storeFinancial.total_costs || 0),
                           {
-                            currency: selectedStore.currency || 'IRR',
-                            currency_symbol:
-                              selectedStore.currency_symbol || 'Toman',
-                            currency_position: 'after',
                             divideBy: 100,
-                            language: language
+                            language
                           }
                         )}
                       </p>
@@ -506,13 +494,9 @@ export default function PlatformAcademiesPage() {
                               : '-'}
                           </TableCell>
                           <TableCell>
-                            {formatCurrency(payment.amount || 0, {
-                              currency: selectedStore.currency || 'IRR',
-                              currency_symbol:
-                                selectedStore.currency_symbol || 'Toman',
-                              currency_position: 'after',
+                            {formatPlatformToman(payment.amount || 0, {
                               divideBy: 100,
-                              language: language
+                              language
                             })}
                           </TableCell>
                           <TableCell>
@@ -782,20 +766,16 @@ export default function PlatformAcademiesPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {formatCurrencyWithStore(
+                    {formatPlatformToman(
                       settlementByAcademy.get(store.id)?.payable_now || 0,
-                      store,
-                      undefined,
-                      language
+                      { language }
                     )}
                   </TableCell>
                   <TableCell>
-                    {formatCurrencyWithStore(
+                    {formatPlatformToman(
                       settlementByAcademy.get(store.id)
                         ?.platform_commission_total || 0,
-                      store,
-                      undefined,
-                      language
+                      { language }
                     )}
                   </TableCell>
                   <TableCell className="text-right">

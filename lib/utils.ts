@@ -51,15 +51,29 @@ export function formatBytes(
  * @param language - Language code (e.g., 'fa', 'en')
  * @returns Translated currency symbol
  */
-function translateCurrencySymbol(symbol: string, language?: string): string {
-  if (!symbol || !language) return symbol;
+function translateCurrencySymbol(symbol: string, _language?: string): string {
+  if (!symbol) return symbol;
 
-  // Translate Toman to Persian when language is Farsi
-  if (symbol === 'Toman' && language === 'fa') {
+  const normalized = symbol.toLowerCase();
+  if (normalized === 'toman' || symbol === 'تومان') {
     return 'تومان';
   }
 
   return symbol;
+}
+
+/** Platform admin views: always show amounts in تومان, never USD/$ */
+export function formatPlatformToman(
+  amount: number,
+  options?: { divideBy?: number; language?: string }
+): string {
+  return formatCurrency(amount, {
+    currency: 'IRR',
+    currency_symbol: 'تومان',
+    currency_position: 'after',
+    divideBy: options?.divideBy ?? 1,
+    language: options?.language
+  });
 }
 
 export function formatCurrency(
