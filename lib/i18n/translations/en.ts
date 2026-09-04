@@ -5484,6 +5484,11 @@ export const en = {
     legalEntityName: 'Legal Entity Name',
     vatRegNo: 'VAT Registration No.',
     economicCode: 'Economic Code',
+    ownerAlerts: 'Owner payment alerts',
+    ownerAlertsDesc:
+      'SMS sent to this number when a manager pays a Mentoma plan in the admin panel',
+    ownerNotifyPhone: 'Owner notify phone',
+    ownerNotifyPhoneHint: 'Iranian mobile, e.g. 09121234567',
     saveSettings: 'Save Settings'
   },
   paymentPlans: {

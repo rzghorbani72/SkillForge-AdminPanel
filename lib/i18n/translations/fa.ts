@@ -5469,6 +5469,11 @@ export const fa = {
     legalEntityName: 'نام شخص حقوقی',
     vatRegNo: 'شناسه مالیاتی',
     economicCode: 'کد اقتصادی',
+    ownerAlerts: 'هشدار پرداخت مالک',
+    ownerAlertsDesc:
+      'پیامک این شماره وقتی مدیر از پنل ادمین پلن منتوما را می‌خرد',
+    ownerNotifyPhone: 'شماره اطلاع‌رسانی مالک',
+    ownerNotifyPhoneHint: 'موبایل ایران، مثلاً ۰۹۱۲۱۲۳۴۵۶۷',
     saveSettings: 'ذخیره تنظیمات'
   },
   paymentPlans: {

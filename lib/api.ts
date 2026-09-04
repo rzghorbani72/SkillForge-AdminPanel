@@ -6850,6 +6850,7 @@ export interface PlatformSettingsData {
   legal_entity_name: string | null;
   vat_registration_no: string | null;
   economic_code: string | null;
+  owner_notify_phone: string | null;
   created_at: string;
   updated_at: string;
 }

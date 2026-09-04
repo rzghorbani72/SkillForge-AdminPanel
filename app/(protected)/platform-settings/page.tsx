@@ -37,7 +37,8 @@ const settingsSchema = z.object({
   subscription_reminder_days: z.coerce.number().int().min(0),
   legal_entity_name: z.string().optional(),
   vat_registration_no: z.string().optional(),
-  economic_code: z.string().optional()
+  economic_code: z.string().optional(),
+  owner_notify_phone: z.string().optional()
 });
 type SettingsValues = z.infer<typeof settingsSchema>;
 
@@ -55,7 +56,8 @@ export default function PlatformSettingsPage() {
       subscription_reminder_days: 0,
       legal_entity_name: '',
       vat_registration_no: '',
-      economic_code: ''
+      economic_code: '',
+      owner_notify_phone: ''
     }
   });
 
@@ -71,7 +73,8 @@ export default function PlatformSettingsPage() {
             subscription_reminder_days: data.subscription_reminder_days ?? 0,
             legal_entity_name: data.legal_entity_name ?? '',
             vat_registration_no: data.vat_registration_no ?? '',
-            economic_code: data.economic_code ?? ''
+            economic_code: data.economic_code ?? '',
+            owner_notify_phone: data.owner_notify_phone ?? ''
           });
         }
       } catch {
@@ -94,7 +97,8 @@ export default function PlatformSettingsPage() {
         subscription_reminder_days: values.subscription_reminder_days,
         legal_entity_name: values.legal_entity_name || null,
         vat_registration_no: values.vat_registration_no || null,
-        economic_code: values.economic_code || null
+        economic_code: values.economic_code || null,
+        owner_notify_phone: values.owner_notify_phone || null
       });
       toast.success(t('common.success'));
     } catch (err: any) {
@@ -239,6 +243,41 @@ export default function PlatformSettingsPage() {
                     </FormControl>
                     <FormDescription>
                       {t('platformSettings.reminderDaysHint')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('platformSettings.ownerAlerts')}</CardTitle>
+              <CardDescription>
+                {t('platformSettings.ownerAlertsDesc')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="owner_notify_phone"
+                render={({ field }) => (
+                  <FormItem className="max-w-sm">
+                    <FormLabel>
+                      {t('platformSettings.ownerNotifyPhone')}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        dir="ltr"
+                        inputMode="tel"
+                        autoComplete="tel"
+                        placeholder="09121234567"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t('platformSettings.ownerNotifyPhoneHint')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
