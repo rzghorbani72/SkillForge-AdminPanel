@@ -3813,14 +3813,20 @@ class ApiClient {
     return scope === 'platform' ? '/platform/articles' : '/articles';
   }
 
+  /** Article replies are wrapped in `{ message, status, data }` — unwrap once. */
+  private blogPayload<T>(body: unknown): T | null {
+    return (body as { data?: T } | null)?.data ?? null;
+  }
+
   async getBlogArticles(scope: BlogScope): Promise<Article[]> {
     const response = await this.request(this.blogBase(scope));
-    return (response.data as Article[] | undefined) ?? [];
+    const articles = this.blogPayload<Article[]>(response.data);
+    return Array.isArray(articles) ? articles : [];
   }
 
   async getBlogArticle(scope: BlogScope, id: string): Promise<Article | null> {
     const response = await this.request(`${this.blogBase(scope)}/${id}`);
-    return (response.data as Article | undefined) ?? null;
+    return this.blogPayload<Article>(response.data);
   }
 
   async createBlogArticle(
@@ -3831,7 +3837,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(input)
     });
-    return (response.data as Article | undefined) ?? null;
+    return this.blogPayload<Article>(response.data);
   }
 
   async updateBlogArticle(
@@ -3843,7 +3849,7 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(input)
     });
-    return (response.data as Article | undefined) ?? null;
+    return this.blogPayload<Article>(response.data);
   }
 
   async transitionBlogArticle(
@@ -3859,7 +3865,7 @@ class ApiClient {
         body: JSON.stringify(reviewNote ? { review_note: reviewNote } : {})
       }
     );
-    return (response.data as Article | undefined) ?? null;
+    return this.blogPayload<Article>(response.data);
   }
 
   async deleteBlogArticle(scope: BlogScope, id: string): Promise<void> {
