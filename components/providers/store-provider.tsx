@@ -23,6 +23,7 @@ import {
   autoSelectAcademy
 } from '@/lib/store-utils';
 import { useAuthUser } from '@/components/providers/user-provider';
+import { useSessionAcademyRescope } from '@/hooks/use-session-academy-rescope';
 import { isApiResponseError, resolveApiErrorMessage } from '@/lib/api-error';
 import { currentLanguage } from '@/lib/current-language';
 
@@ -159,6 +160,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       void loadAcademies();
     }
   }, [loadAcademies]);
+
+  // Academy staff whose token carries no academy cannot read any academy data,
+  // so the session is re-scoped instead of letting every request 401/403.
+  useSessionAcademyRescope({
+    enabled: !!user && !isPlatformStaff && !preferredAcademyId,
+    academies
+  });
 
   useEffect(() => {
     // Platform staff (admin + support) default to Platform mode (no academy),
