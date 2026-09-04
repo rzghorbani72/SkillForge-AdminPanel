@@ -479,6 +479,7 @@ export const en = {
     visitSiteCustomDomain: 'Custom domain'
   },
   common: {
+    free: 'Free',
     minutes: 'min',
     unsavedChanges: 'Unsaved',
     saveChanges: 'Save changes',

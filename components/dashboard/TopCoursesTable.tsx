@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpRight, ArrowUp, ArrowDown, ChevronRight } from 'lucide-react';
+import { ArrowUp, ArrowDown, ChevronRight } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { Course } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -87,8 +87,8 @@ export default function TopCoursesTable({ courses }: Props) {
                         variant="outline"
                         className={`gap-0.5 text-[11px] ${
                           change >= 0
-                            ? 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400'
-                            : 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'
+                            ? 'border-transparent bg-[hsl(var(--viz-accent)/0.12)] text-[hsl(var(--viz-accent))]'
+                            : 'border-transparent bg-destructive/10 text-destructive'
                         }`}
                       >
                         {change >= 0 ? (

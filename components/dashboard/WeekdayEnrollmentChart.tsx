@@ -12,7 +12,7 @@ import {
   ChartTooltipContent,
   type ChartConfig
 } from '@/components/ui/chart';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Cell, ResponsiveContainer, XAxis } from 'recharts';
 
 const DATA_FA = [
   { day: 'شنبه', enrollments: 42 },
@@ -35,7 +35,7 @@ const DATA_EN = [
 ];
 
 const chartConfig: ChartConfig = {
-  enrollments: { label: 'Enrollments', color: 'hsl(var(--chart-1))' }
+  enrollments: { label: 'Enrollments', color: 'hsl(var(--viz-1))' }
 };
 
 export default function WeekdayEnrollmentChart() {
@@ -44,6 +44,10 @@ export default function WeekdayEnrollmentChart() {
   const formatNumber = useNumberFormat();
   const t = language === 'fa';
   const data = t ? DATA_FA : DATA_EN;
+  const peakDay = data.reduce((a, b) =>
+    b.enrollments > a.enrollments ? b : a
+  );
+  const peak = peakDay.enrollments;
 
   return (
     <Card className="dashboard-card h-full">
@@ -59,7 +63,7 @@ export default function WeekdayEnrollmentChart() {
           </div>
           <Badge
             variant="outline"
-            className="gap-1 border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400"
+            className="gap-1 border-transparent bg-[hsl(var(--viz-accent)/0.12)] text-[hsl(var(--viz-accent))]"
           >
             <TrendingUp className="h-3 w-3" />+{percentLabel(18)}
           </Badge>
@@ -70,30 +74,44 @@ export default function WeekdayEnrollmentChart() {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}
-              barSize={28}
-              margin={{ top: 4, right: 0, left: -20, bottom: 0 }}
+              barSize={26}
+              margin={{ top: 8, right: 0, left: 0, bottom: 0 }}
             >
               <XAxis
                 dataKey="day"
                 axisLine={false}
                 tickLine={false}
+                tickMargin={10}
                 tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
               />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
-                tickFormatter={(value: number) => formatNumber(value)}
+              <ChartTooltip
+                cursor={{ fill: 'hsl(var(--viz-1) / 0.06)', radius: 10 }}
+                content={<ChartTooltipContent />}
               />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar
-                dataKey="enrollments"
-                fill="hsl(var(--chart-1))"
-                radius={[4, 4, 0, 0]}
-              />
+              <Bar dataKey="enrollments" radius={10}>
+                {data.map((entry) => (
+                  <Cell
+                    key={entry.day}
+                    fill={
+                      entry.enrollments === peak
+                        ? 'hsl(var(--viz-accent))'
+                        : 'hsl(var(--viz-1) / 0.16)'
+                    }
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
+        <p className="mt-3 text-xs text-muted-foreground">
+          {t ? 'شلوغ‌ترین روز' : 'Busiest day'}
+          <span className="mx-1 font-semibold text-foreground">
+            {peakDay.day}
+          </span>
+          <span className="tabular-nums">
+            ({formatNumber(peak)} {t ? 'ثبت‌نام' : 'enrollments'})
+          </span>
+        </p>
       </CardContent>
     </Card>
   );

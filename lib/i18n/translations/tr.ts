@@ -346,6 +346,7 @@ export const tr = {
     visitSite: 'Siteyi ziyaret et'
   },
   common: {
+    free: 'Ücretsiz',
     saveChanges: 'Değişiklikleri kaydet',
     uploading: 'Yükleniyor…',
     toman: 'Toman',

@@ -3,11 +3,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
 
+/** One hue, deepening toward the money step — colour marks depth, not category. */
 const FUNNEL_STEPS = [
-  { key: 'siteVisits', color: 'hsl(var(--chart-2))', value: 84200 },
-  { key: 'freeSignup', color: 'hsl(var(--chart-3))', value: 12840 },
-  { key: 'coursePreview', color: 'hsl(var(--chart-4))', value: 4680 },
-  { key: 'purchase', color: 'hsl(var(--chart-1))', value: 840 }
+  { key: 'siteVisits', color: 'hsl(var(--viz-1) / 0.28)', value: 84200 },
+  { key: 'freeSignup', color: 'hsl(var(--viz-1) / 0.5)', value: 12840 },
+  { key: 'coursePreview', color: 'hsl(var(--viz-1) / 0.75)', value: 4680 },
+  { key: 'purchase', color: 'hsl(var(--viz-accent))', value: 840 }
 ];
 
 const LABELS: Record<string, { fa: string; en: string }> = {
@@ -64,7 +65,7 @@ export default function ConversionFunnel() {
                   className="h-full rounded-full transition-all duration-700"
                   style={{
                     width: `${(step.value / max) * 100}%`,
-                    background: `linear-gradient(90deg, ${step.color}, ${step.color}99)`
+                    background: step.color
                   }}
                 />
               </div>

@@ -87,6 +87,16 @@ body {
     /* ── Border radius (10px base, matching design --r-md) ─── */
     --radius: 0.625rem;
 
+    /* ── Data-viz ramp — one brand hue in four steps, plus a single
+       highlight accent. Charts read as one system instead of a rainbow;
+       colour only carries meaning where the accent appears. ─── */
+    --viz-1: 202 80% 45%; /* core brand blue */
+    --viz-2: 199 88% 64%; /* light sky */
+    --viz-3: 214 55% 32%; /* deep indigo */
+    --viz-4: 200 16% 80%; /* muted neutral */
+    --viz-accent: 160 84% 39%; /* the one highlight (peaks, success) */
+    --viz-grid: 200 14% 92%;
+
     /* ── Charts (chart-1 = brand teal, chart-2 = amber accent) ─── */
     --chart-1: 193 80% 35%; /* teal */
     --chart-2: 38 92% 50%; /* amber #F59E0B */

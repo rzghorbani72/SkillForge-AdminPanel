@@ -11,10 +11,10 @@ import {
 import { PieChart, Pie, Cell } from 'recharts';
 
 const SEGMENTS = [
-  { key: 'completed', value: 42, color: 'hsl(var(--chart-5))' },
-  { key: 'inProgress', value: 38, color: 'hsl(var(--chart-1))' },
-  { key: 'paused', value: 14, color: 'hsl(var(--chart-3))' },
-  { key: 'notStarted', value: 6, color: 'hsl(var(--muted-foreground))' }
+  { key: 'completed', value: 42, color: 'hsl(var(--viz-accent))' },
+  { key: 'inProgress', value: 38, color: 'hsl(var(--viz-1))' },
+  { key: 'paused', value: 14, color: 'hsl(var(--viz-2))' },
+  { key: 'notStarted', value: 6, color: 'hsl(var(--viz-4))' }
 ];
 
 const LABELS: Record<string, { fa: string; en: string }> = {
@@ -25,10 +25,10 @@ const LABELS: Record<string, { fa: string; en: string }> = {
 };
 
 const chartConfig: ChartConfig = {
-  completed: { label: 'Completed', color: 'hsl(var(--chart-5))' },
-  inProgress: { label: 'In progress', color: 'hsl(var(--chart-1))' },
-  paused: { label: 'Paused', color: 'hsl(var(--chart-3))' },
-  notStarted: { label: 'Not started', color: 'hsl(var(--muted-foreground))' }
+  completed: { label: 'Completed', color: 'hsl(var(--viz-accent))' },
+  inProgress: { label: 'In progress', color: 'hsl(var(--viz-1))' },
+  paused: { label: 'Paused', color: 'hsl(var(--viz-2))' },
+  notStarted: { label: 'Not started', color: 'hsl(var(--viz-4))' }
 };
 
 export default function CompletionDonut() {
@@ -51,13 +51,13 @@ export default function CompletionDonut() {
             {SEGMENTS.map((seg) => (
               <div key={seg.key} className="flex items-center gap-2.5">
                 <span
-                  className="h-2 w-2 shrink-0 rounded-[2px]"
+                  className="h-2.5 w-2.5 shrink-0 rounded-full"
                   style={{ background: seg.color }}
                 />
                 <span className="flex-1 text-[13px] text-muted-foreground">
                   {LABELS[seg.key][t ? 'fa' : 'en']}
                 </span>
-                <span className="font-mono text-[13px] font-semibold">
+                <span className="text-[13px] font-semibold tabular-nums">
                   {t ? seg.value.toLocaleString('fa-IR') : seg.value}٪
                 </span>
               </div>
@@ -74,9 +74,11 @@ export default function CompletionDonut() {
                   data={SEGMENTS}
                   cx="50%"
                   cy="50%"
-                  innerRadius={52}
+                  innerRadius={60}
                   outerRadius={80}
-                  strokeWidth={2}
+                  paddingAngle={3}
+                  cornerRadius={6}
+                  stroke="none"
                   dataKey="value"
                 >
                   {SEGMENTS.map((seg) => (
@@ -86,7 +88,7 @@ export default function CompletionDonut() {
               </PieChart>
             </ChartContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="font-mono text-2xl font-bold leading-none">
+              <span className="text-3xl font-bold tabular-nums leading-none">
                 {t ? '۴۲' : '42'}٪
               </span>
               <span className="mt-1 text-[11px] text-muted-foreground">

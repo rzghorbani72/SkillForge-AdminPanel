@@ -339,6 +339,7 @@ export const ar = {
     visitSite: 'زيارة الموقع'
   },
   common: {
+    free: 'مجاني',
     saveChanges: 'حفظ التغييرات',
     uploading: 'جارٍ الرفع…',
     toman: 'تومان',

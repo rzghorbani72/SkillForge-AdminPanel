@@ -13,21 +13,19 @@ const SPARKLINES = [
   [72, 68, 74, 62, 70, 60, 64, 56, 60, 54]
 ];
 
-const STYLES = [
-  { icon: 'bg-primary/10 text-primary', line: 'hsl(var(--chart-1))' },
-  {
-    icon: 'bg-emerald-500/10 text-emerald-600',
-    line: 'hsl(var(--chart-2))'
-  },
-  { icon: 'bg-amber-500/10 text-amber-600', line: 'hsl(var(--chart-3))' },
-  { icon: 'bg-sky-500/10 text-sky-600', line: 'hsl(var(--chart-4))' }
+/** One hue in four steps — the cards read as a set, not four unrelated tiles. */
+const LINES = [
+  'hsl(var(--viz-1))',
+  'hsl(var(--viz-2))',
+  'hsl(var(--viz-3))',
+  'hsl(var(--viz-1))'
 ];
 
 export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, i) => {
-        const style = STYLES[i % STYLES.length];
+        const line = LINES[i % LINES.length];
         const isIncrease = card.changeType === 'increase';
         const sparkData = SPARKLINES[i % SPARKLINES.length].map((v) => ({ v }));
         const gradientId = `spark-${i}`;
@@ -37,13 +35,16 @@ export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
             <span
               className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               style={{
-                background: `linear-gradient(90deg, transparent, ${style.line}, transparent)`
+                background: `linear-gradient(90deg, transparent, ${line}, transparent)`
               }}
             />
             <CardContent className="p-0">
               <div className="flex items-start justify-between gap-3">
-                <div className={cn('shrink-0 rounded-2xl p-2.5', style.icon)}>
-                  <card.icon className="h-5 w-5" />
+                <div
+                  className="shrink-0 rounded-2xl p-2.5"
+                  style={{ background: `${line.slice(0, -1)} / 0.1)` }}
+                >
+                  <card.icon className="h-5 w-5" style={{ color: line }} />
                 </div>
                 <button
                   type="button"
@@ -66,7 +67,9 @@ export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
                 <span
                   className={cn(
                     'inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums',
-                    isIncrease ? 'text-emerald-600' : 'text-rose-600'
+                    isIncrease
+                      ? 'text-[hsl(var(--viz-accent))]'
+                      : 'text-destructive'
                   )}
                 >
                   {isIncrease ? (
@@ -96,22 +99,14 @@ export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
                         x2="0"
                         y2="1"
                       >
-                        <stop
-                          offset="0%"
-                          stopColor={style.line}
-                          stopOpacity={0.28}
-                        />
-                        <stop
-                          offset="100%"
-                          stopColor={style.line}
-                          stopOpacity={0}
-                        />
+                        <stop offset="0%" stopColor={line} stopOpacity={0.28} />
+                        <stop offset="100%" stopColor={line} stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <Area
                       type="monotone"
                       dataKey="v"
-                      stroke={style.line}
+                      stroke={line}
                       strokeWidth={2}
                       fill={`url(#${gradientId})`}
                       isAnimationActive={false}

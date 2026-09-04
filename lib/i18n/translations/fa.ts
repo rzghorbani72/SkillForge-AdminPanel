@@ -468,6 +468,7 @@ export const fa = {
     visitSiteCustomDomain: 'دامنه اختصاصی'
   },
   common: {
+    free: 'رایگان',
     minutes: 'دقیقه',
     unsavedChanges: 'ذخیره‌نشده',
     saveChanges: 'ذخیره تغییرات',
