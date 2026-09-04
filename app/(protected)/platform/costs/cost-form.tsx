@@ -4,8 +4,9 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
 import { PriceInput } from '@/components/ui/price-input';
+import { toDateTimeInputValue } from '@/lib/i18n/calendar-date';
 import {
   Select,
   SelectContent,
@@ -34,15 +35,10 @@ interface Props {
   onSubmit: (values: CostFormValues) => Promise<void>;
 }
 
-function localDateTimeValue(date: Date): string {
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
 export function CostForm({ busy, onSubmit }: Props) {
   const { t } = useTranslation();
   const [amount, setAmount] = useState('');
-  const [paidAt, setPaidAt] = useState(() => localDateTimeValue(new Date()));
+  const [paidAt, setPaidAt] = useState(() => toDateTimeInputValue(new Date()));
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<PlatformCostCategory>('marketing');
   const [subcategory, setSubcategory] = useState<string>('social');
@@ -51,17 +47,25 @@ export function CostForm({ busy, onSubmit }: Props) {
 
   const submit = async () => {
     const toman = Number(amount);
-    if (!Number.isFinite(toman) || toman < 1 || !description.trim()) return;
+    const paid = new Date(paidAt);
+    if (
+      !Number.isFinite(toman) ||
+      toman < 1 ||
+      !description.trim() ||
+      Number.isNaN(paid.getTime())
+    ) {
+      return;
+    }
     await onSubmit({
       amount_toman: Math.round(toman),
-      paid_at: new Date(paidAt).toISOString(),
+      paid_at: paid.toISOString(),
       description: description.trim(),
       category,
       subcategory
     });
     setAmount('');
     setDescription('');
-    setPaidAt(localDateTimeValue(new Date()));
+    setPaidAt(toDateTimeInputValue(new Date()));
   };
 
   return (
@@ -84,12 +88,11 @@ export function CostForm({ busy, onSubmit }: Props) {
       </div>
       <div className="space-y-2">
         <Label htmlFor="cost-paid-at">{t('platformCosts.paidAt')}</Label>
-        <Input
+        <DatePicker
           id="cost-paid-at"
-          type="datetime-local"
-          required
           value={paidAt}
-          onChange={(event) => setPaidAt(event.target.value)}
+          onChange={setPaidAt}
+          withTime
         />
       </div>
       <div className="space-y-2">
