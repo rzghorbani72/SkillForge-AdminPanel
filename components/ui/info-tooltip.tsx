@@ -14,8 +14,6 @@ type InfoTooltipProps = {
   className?: string;
 };
 
-// Small "?" style icon that shows a guide note on hover/focus. Use next to a
-// field label whose meaning is not obvious from the label alone.
 export function InfoTooltip({ text, className }: InfoTooltipProps) {
   return (
     <TooltipProvider>
@@ -31,8 +29,10 @@ export function InfoTooltip({ text, className }: InfoTooltipProps) {
             <Info className="h-3.5 w-3.5" />
           </button>
         </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-xs text-xs">
-          {text}
+        <TooltipContent side="top" className="text-start">
+          <span className="block max-w-xs whitespace-normal break-words">
+            {text}
+          </span>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

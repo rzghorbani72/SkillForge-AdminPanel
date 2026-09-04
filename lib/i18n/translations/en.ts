@@ -7319,6 +7319,143 @@ export const en = {
       amount: 'Amount',
       add: 'Record spend',
       saved: 'Saved'
+    },
+    guides: {
+      overview:
+        'Headline Mentoma subscription revenue and platform scale. Mentoma income is academy plan invoices — student checkout volume is GMV, not ours.',
+      revenue:
+        'How recognised monthly revenue moves: new academies, expansion, contraction, and churn. The bridge always ties: starting + new + expansion − contraction − churned = ending.',
+      cohorts:
+        'Academies or users grouped by the month they started, then tracked in later months. Each cell is the share of that starting group still paying or still logging in.',
+      subscriptions:
+        'Each academy’s current plan, payment history, and how long it took to reach first value (first course, first student, first paid invoice).',
+      transactions:
+        'Student payments to academies (GMV). Mentoma takes 0% commission, so this is customer volume, not Mentoma revenue.',
+      users:
+        'Registrations, roles, and login activity. DAU, WAU and MAU only exist from the day login history started being stored.',
+      catalog:
+        'Courses, lessons, live sessions, and the learning record — quizzes, submissions, attendance, certificates. That record is the switching cost.',
+      economics:
+        'Unit economics from marketing spend and cost records you enter. CAC, LTV and runway stay blank until those inputs exist.',
+      reconciliation:
+        'Three-way check that every paid invoice has a payment, and every payment has a gateway confirmation. A gap is a money-path defect, not a reporting artefact.'
+    },
+    terms: {
+      mrr: {
+        abbr: 'MRR',
+        full: 'Monthly Recurring Revenue',
+        hint: 'Invoice amount spread evenly across each month of the plan term.'
+      },
+      arr: {
+        abbr: 'ARR',
+        full: 'Annual Recurring Revenue',
+        hint: 'MRR × 12.'
+      },
+      arpa: {
+        abbr: 'ARPA',
+        full: 'Average Revenue Per Account',
+        hint: 'MRR ÷ paying academies.'
+      },
+      nrr: {
+        abbr: 'NRR',
+        full: 'Net Revenue Retention',
+        hint: 'Last-month MRR of the opening cohort ÷ first-month MRR. Can exceed 100% when academies upgrade.'
+      },
+      grr: {
+        abbr: 'GRR',
+        full: 'Gross Revenue Retention',
+        hint: 'Like NRR but upgrades are excluded, so it never exceeds 100%.'
+      },
+      cohort: {
+        abbr: 'Cohort',
+        full: 'Cohort',
+        hint: 'A group that started in the same month, followed together in later months.'
+      },
+      logoRetention: {
+        abbr: 'Logo retention',
+        full: 'Logo Retention',
+        hint: 'Share of the opening cohort still paying anything this month.'
+      },
+      gmv: {
+        abbr: 'GMV',
+        full: 'Gross Merchandise Value',
+        hint: 'Student payments to academies. Not Mentoma income (0% commission).'
+      },
+      dau: {
+        abbr: 'DAU',
+        full: 'Daily Active Users',
+        hint: 'Distinct users who logged in in the last 1 day.'
+      },
+      wau: {
+        abbr: 'WAU',
+        full: 'Weekly Active Users',
+        hint: 'Distinct users who logged in in the last 7 days.'
+      },
+      mau: {
+        abbr: 'MAU',
+        full: 'Monthly Active Users',
+        hint: 'Distinct users who logged in in the last 30 days.'
+      },
+      stickiness: {
+        abbr: 'Stickiness',
+        full: 'DAU / MAU',
+        hint: 'How often monthly users come back on a given day.'
+      },
+      cac: {
+        abbr: 'CAC',
+        full: 'Customer Acquisition Cost',
+        hint: 'Marketing spend ÷ new paying academies.'
+      },
+      ltv: {
+        abbr: 'LTV',
+        full: 'Lifetime Value',
+        hint: '(ARPA × gross margin) ÷ monthly logo churn.'
+      },
+      ltvCac: {
+        abbr: 'LTV : CAC',
+        full: 'Lifetime Value to Customer Acquisition Cost',
+        hint: 'How many times lifetime value covers acquisition cost. Above 3 is a common healthy bar.'
+      },
+      ttv: {
+        abbr: 'TTV',
+        full: 'Time To Value',
+        hint: 'Days from academy creation to first course, first enrollment, or first paid invoice.'
+      },
+      ruleOf40: {
+        abbr: 'Rule of 40',
+        full: 'Rule of 40',
+        hint: 'Annualised MRR growth % + gross margin %. Healthy SaaS is at or above 40.'
+      },
+      quickRatio: {
+        abbr: 'Quick ratio',
+        full: 'Quick Ratio',
+        hint: '(New + expansion MRR) ÷ (contraction + churned MRR). Above 4 is strong.'
+      },
+      expansion: {
+        abbr: 'Expansion',
+        full: 'Expansion MRR',
+        hint: 'Extra MRR from academies that already paid last month and pay more this month.'
+      },
+      contraction: {
+        abbr: 'Contraction',
+        full: 'Contraction MRR',
+        hint: 'Lost MRR from academies that still pay, but less than last month.'
+      },
+      churn: {
+        abbr: 'Churn',
+        full: 'Churned MRR',
+        hint: 'MRR (or academies) that paid last month and pay nothing this month.'
+      },
+      learningRecord: {
+        abbr: 'Learning record',
+        full: 'Learning Record',
+        hint: 'Quizzes, submissions, grades, discussions, attendance, and certificates. The switching-cost metric.'
+      },
+      orphan: {
+        abbr: 'Orphan',
+        full: 'Orphan payment',
+        hint: 'A paid payment with no matching invoice — investigate.'
+      }
     }
   }
 };

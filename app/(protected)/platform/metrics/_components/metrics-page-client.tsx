@@ -11,6 +11,12 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/shared/PageHeader';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import { apiClient, type MetricsCurrency } from '@/lib/api';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { useMetricsControls } from '../_hooks/use-metrics-controls';
@@ -23,18 +29,7 @@ import { TransactionsTab } from './transactions-tab';
 import { UsersTab } from './users-tab';
 import { CatalogTab } from './catalog-tab';
 import { EconomicsTab } from './economics-tab';
-
-const TABS = [
-  'overview',
-  'revenue',
-  'cohorts',
-  'subscriptions',
-  'transactions',
-  'users',
-  'catalog',
-  'economics',
-  'reconciliation'
-] as const;
+import { METRICS_TABS, TabGuide } from './tab-guide';
 
 function saveBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
@@ -113,39 +108,60 @@ export function MetricsPageClient() {
       </PageHeader>
 
       <Tabs defaultValue="overview" dir={isRTL ? 'rtl' : 'ltr'}>
-        <TabsList className="flex h-auto w-full flex-wrap justify-start">
-          {TABS.map((tab) => (
-            <TabsTrigger key={tab} value={tab}>
-              {t(`platformMetrics.tabs.${tab}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <TooltipProvider delayDuration={200}>
+          <TabsList className="flex h-auto w-full flex-wrap justify-start">
+            {METRICS_TABS.map((tab) => (
+              <TabsTrigger key={tab} value={tab}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>{t(`platformMetrics.tabs.${tab}`)}</span>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    className="max-w-xs whitespace-normal text-xs"
+                  >
+                    {t(`platformMetrics.guides.${tab}`)}
+                  </TooltipContent>
+                </Tooltip>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </TooltipProvider>
 
-        <TabsContent value="overview" className="mt-4">
+        <TabsContent value="overview" className="mt-4 space-y-4">
+          <TabGuide tab="overview" />
           <OverviewTab query={query} currency={currency} />
         </TabsContent>
-        <TabsContent value="revenue" className="mt-4">
+        <TabsContent value="revenue" className="mt-4 space-y-4">
+          <TabGuide tab="revenue" />
           <RevenueTab query={query} currency={currency} />
         </TabsContent>
-        <TabsContent value="cohorts" className="mt-4">
+        <TabsContent value="cohorts" className="mt-4 space-y-4">
+          <TabGuide tab="cohorts" />
           <CohortsTab query={query} currency={currency} />
         </TabsContent>
-        <TabsContent value="subscriptions" className="mt-4">
+        <TabsContent value="subscriptions" className="mt-4 space-y-4">
+          <TabGuide tab="subscriptions" />
           <SubscriptionsTab query={query} currency={currency} />
         </TabsContent>
-        <TabsContent value="transactions" className="mt-4">
+        <TabsContent value="transactions" className="mt-4 space-y-4">
+          <TabGuide tab="transactions" />
           <TransactionsTab query={query} currency={currency} />
         </TabsContent>
-        <TabsContent value="users" className="mt-4">
+        <TabsContent value="users" className="mt-4 space-y-4">
+          <TabGuide tab="users" />
           <UsersTab query={query} currency={currency} />
         </TabsContent>
-        <TabsContent value="catalog" className="mt-4">
+        <TabsContent value="catalog" className="mt-4 space-y-4">
+          <TabGuide tab="catalog" />
           <CatalogTab query={query} currency={currency} />
         </TabsContent>
-        <TabsContent value="economics" className="mt-4">
+        <TabsContent value="economics" className="mt-4 space-y-4">
+          <TabGuide tab="economics" />
           <EconomicsTab query={query} currency={currency} />
         </TabsContent>
-        <TabsContent value="reconciliation" className="mt-4">
+        <TabsContent value="reconciliation" className="mt-4 space-y-4">
+          <TabGuide tab="reconciliation" />
           <ReconciliationTab query={query} currency={currency} />
         </TabsContent>
       </Tabs>

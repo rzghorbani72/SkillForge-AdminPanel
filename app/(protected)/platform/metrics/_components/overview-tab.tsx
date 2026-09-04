@@ -13,6 +13,7 @@ import { apiClient, type MetricsQuery } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useMetricFormat } from './metric-format';
 import { ScalarMetrics } from './scalar-metrics';
+import { METRIC_TERM_KEYS, termFullHint } from './tab-guide';
 import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
 import type { MetricsCurrency } from '@/lib/api';
 
@@ -47,6 +48,11 @@ export function OverviewTab({ query, currency }: Props) {
             title={t(`platformMetrics.metrics.${key}`)}
             value={format(key, metrics?.[key] ?? null)}
             icon={icon}
+            description={
+              METRIC_TERM_KEYS[key]
+                ? termFullHint(t, METRIC_TERM_KEYS[key])
+                : undefined
+            }
           />
         ))}
       </div>
