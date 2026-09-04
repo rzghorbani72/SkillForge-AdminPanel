@@ -24,6 +24,12 @@ export interface DesignSystem {
     borderRadius: 'sharp' | 'soft' | 'rounded';
     shadow: 'none' | 'subtle' | 'medium' | 'strong';
   };
+  /**
+   * How much the sections move on entry. Part of the design, not a global
+   * default: a playful template that reveals as timidly as an academic one
+   * has lost half of what made it playful.
+   */
+  motion?: 'none' | 'subtle' | 'moderate' | 'dynamic';
   darkMode: boolean | null;
 }
 
@@ -40,6 +46,7 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
   },
   typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
   shape: { borderRadius: 'soft', shadow: 'medium' },
+  motion: 'subtle',
   darkMode: null
 };
 
@@ -60,6 +67,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    motion: 'subtle',
     darkMode: null
   },
   tavan: {
@@ -74,6 +82,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'sharp', shadow: 'medium' },
+    motion: 'moderate',
     darkMode: null
   },
   dastan: {
@@ -88,6 +97,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    motion: 'subtle',
     darkMode: null
   },
   parastoo: {
@@ -102,6 +112,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
+    motion: 'moderate',
     darkMode: null
   },
   nokhbeh: {
@@ -116,6 +127,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    motion: 'subtle',
     darkMode: null
   },
   zabaneh: {
@@ -130,6 +142,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'soft', shadow: 'subtle' },
+    motion: 'subtle',
     darkMode: null
   },
   bikaran: {
@@ -144,6 +157,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    motion: 'subtle',
     darkMode: null
   },
   shafagh: {
@@ -158,6 +172,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'soft', shadow: 'subtle' },
+    motion: 'subtle',
     darkMode: null
   },
   elektron: {
@@ -172,6 +187,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
+    motion: 'moderate',
     darkMode: null
   },
   rouzan: {
@@ -186,6 +202,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'subtle' },
+    motion: 'subtle',
     darkMode: null
   },
   daneshvar: {
@@ -201,6 +218,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    motion: 'subtle',
     darkMode: null
   },
   peleh: {
@@ -216,6 +234,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'soft', shadow: 'medium' },
+    motion: 'moderate',
     darkMode: null
   },
   andisheh: {
@@ -230,6 +249,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'soft', shadow: 'strong' },
+    motion: 'moderate',
     // The one design that is dark by definition: a light Andisheh would lose
     // the terminal stage the whole template is built on.
     darkMode: true
@@ -247,6 +267,7 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
+    motion: 'moderate',
     darkMode: null
   }
 };
@@ -274,6 +295,6 @@ export function buildThemePayload(ds: DesignSystem): ThemeConfigPayload {
     dark_mode: ds.darkMode,
     border_radius_style: ds.shape.borderRadius,
     shadow_style: ds.shape.shadow,
-    element_animation_style: 'subtle'
+    element_animation_style: ds.motion ?? 'subtle'
   };
 }
