@@ -10,6 +10,7 @@ import {
   getTemplateCategoryByKey,
   type TemplateCategory
 } from '@/constants/template-names';
+import { TemplateStarRating } from './template-star-rating';
 
 // Card/preview swatches follow the template's saved theme when present, so a
 // dedicated template shows its real palette instead of the design-system default.
@@ -42,6 +43,8 @@ interface TemplateSectionProps {
   onSelect: (preset: TemplatePreset) => void;
   onQuickApply?: (preset: TemplatePreset) => void;
   onDelete: (preset: TemplatePreset) => void;
+  /** Stars reorder the gallery, so rating refetches the list. */
+  onRate?: (preset: TemplatePreset, stars: number | null) => void;
 }
 
 export function TemplateSection({
@@ -53,7 +56,8 @@ export function TemplateSection({
   storefrontBaseUrl,
   onSelect,
   onQuickApply,
-  onDelete
+  onDelete,
+  onRate
 }: TemplateSectionProps) {
   return (
     <section>
@@ -73,6 +77,7 @@ export function TemplateSection({
             onClick={() => onSelect(preset)}
             onQuickApply={onQuickApply ? () => onQuickApply(preset) : undefined}
             onDelete={preset.isOwned ? () => onDelete(preset) : undefined}
+            onRate={onRate ? (stars) => onRate(preset, stars) : undefined}
           />
         ))}
       </div>
@@ -89,6 +94,7 @@ interface GalleryCardProps {
   onClick: () => void;
   onQuickApply?: () => void;
   onDelete?: () => void;
+  onRate?: (stars: number | null) => void;
 }
 
 function GalleryCard({
@@ -99,7 +105,8 @@ function GalleryCard({
   storefrontBaseUrl: storefrontBaseUrlProp,
   onClick,
   onQuickApply,
-  onDelete
+  onDelete,
+  onRate
 }: GalleryCardProps) {
   const [frameLoaded, setFrameLoaded] = useState(false);
   const ds = getDesignSystem(preset.id);
@@ -250,6 +257,18 @@ function GalleryCard({
           <p className="m-0 line-clamp-2 text-[12.5px] leading-relaxed text-muted-foreground">
             {preset.description}
           </p>
+        )}
+
+        {onRate && (
+          <div className="pt-0.5">
+            <TemplateStarRating
+              rating={preset.rating ?? 0}
+              ratingCount={preset.ratingCount ?? 0}
+              myRating={preset.myRating ?? null}
+              onRate={(stars) => onRate(stars)}
+              onClear={() => onRate(null)}
+            />
+          </div>
         )}
 
         {!isDedicated && ds.tagline && (

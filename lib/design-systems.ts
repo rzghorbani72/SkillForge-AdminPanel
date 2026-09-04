@@ -145,6 +145,109 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     darkMode: null
+  },
+  shafagh: {
+    colors: {
+      primary: '#d1462f',
+      secondary: '#3a1f18',
+      secondaryDark: '#f6e7dd',
+      accent: '#a3324f',
+      background: '#fdf6f0',
+      backgroundDark: '#180d0a',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'soft', shadow: 'subtle' },
+    darkMode: null
+  },
+  elektron: {
+    colors: {
+      primary: '#0d9488',
+      secondary: '#2a1a6e',
+      secondaryDark: '#e4e0ff',
+      accent: '#a855f7',
+      background: '#f6f5ff',
+      backgroundDark: '#0b0821',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
+    shape: { borderRadius: 'rounded', shadow: 'medium' },
+    darkMode: null
+  },
+  rouzan: {
+    colors: {
+      primary: '#4f46e5',
+      secondary: '#0b0b12',
+      secondaryDark: '#e8e8f2',
+      accent: '#06b6d4',
+      background: '#fbfbfd',
+      backgroundDark: '#0a0a12',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
+    shape: { borderRadius: 'rounded', shadow: 'subtle' },
+    darkMode: null
+  },
+  daneshvar: {
+    colors: {
+      primary: '#1e3a5f',
+      primaryDark: '#7ba7d4',
+      secondary: '#111827',
+      secondaryDark: '#e5e7eb',
+      accent: '#b08327',
+      background: '#f7f5f0',
+      backgroundDark: '#0b1017',
+      surface: '#fffdf8'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'sharp', shadow: 'subtle' },
+    darkMode: null
+  },
+  peleh: {
+    colors: {
+      primary: '#dc2626',
+      primaryDark: '#f87171',
+      secondary: '#0f172a',
+      secondaryDark: '#e2e8f0',
+      accent: '#f59e0b',
+      background: '#fff8f5',
+      backgroundDark: '#12080a',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
+    shape: { borderRadius: 'soft', shadow: 'medium' },
+    darkMode: null
+  },
+  andisheh: {
+    colors: {
+      primary: '#22d3ee',
+      secondary: '#0b1220',
+      secondaryDark: '#dbe6f5',
+      accent: '#a78bfa',
+      background: '#070b14',
+      backgroundDark: '#070b14',
+      surface: '#101a2b'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
+    shape: { borderRadius: 'soft', shadow: 'strong' },
+    // The one design that is dark by definition: a light Andisheh would lose
+    // the terminal stage the whole template is built on.
+    darkMode: true
+  },
+  shaparak: {
+    colors: {
+      primary: '#7c3aed',
+      primaryDark: '#c4a8ff',
+      secondary: '#0f172a',
+      secondaryDark: '#e9e4ff',
+      accent: '#f97316',
+      background: '#fffdf7',
+      backgroundDark: '#120c1f',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
+    shape: { borderRadius: 'rounded', shadow: 'medium' },
+    darkMode: null
   }
 };
 

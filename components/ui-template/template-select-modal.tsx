@@ -4,8 +4,6 @@ import { useState } from 'react';
 import {
   Check,
   Sparkles,
-  Users,
-  BookOpen,
   Layout,
   Minimize2,
   Type,
@@ -49,18 +47,28 @@ interface PresetCategory {
   icon: React.ElementType;
 }
 
-const PRESET_CATEGORY: Record<
-  string,
-  { category: Category; featured: boolean }
-> = {};
+/**
+ * "Featured" is earned, not curated: the best-rated templates managers have
+ * actually voted on. The vote floor keeps a single five-star from promoting a
+ * template nobody else has tried.
+ */
+const MIN_VOTES_TO_FEATURE = 3;
+const FEATURED_LIMIT = 3;
+
+function featuredIds(presets: TemplatePreset[]): Set<string> {
+  return new Set(
+    presets
+      .filter((p) => (p.ratingCount ?? 0) >= MIN_VOTES_TO_FEATURE)
+      .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+      .slice(0, FEATURED_LIMIT)
+      .map((p) => p.id)
+  );
+}
 
 const CATEGORIES: PresetCategory[] = [
   { id: 'all', label: 'همه', icon: Layout },
   { id: 'featured', label: 'ویژه', icon: Sparkles },
   { id: 'dedicated', label: 'اختصاصی', icon: Lock },
-  { id: 'creator', label: 'سازنده', icon: Users },
-  { id: 'academy', label: 'آکادمی', icon: BookOpen },
-  { id: 'community', label: 'جامعه', icon: Users },
   { id: 'classic', label: 'کلاسیک', icon: Minimize2 }
 ];
 
@@ -81,9 +89,6 @@ const CATEGORY_LABEL: Record<string, string> = {
   all: 'همه',
   featured: 'ویژه',
   dedicated: 'اختصاصی',
-  creator: 'سازنده',
-  academy: 'آکادمی',
-  community: 'جامعه',
   classic: 'کلاسیک'
 };
 
@@ -100,19 +105,17 @@ export function TemplateSelectModal({
   const [selectedId, setSelectedId] = useState(activePresetId);
   const [category, setCategory] = useState<Category>('all');
 
+  const featured = featuredIds(presets);
+
   const filtered = presets.filter((p) => {
     if (category === 'all') return true;
     if (category === 'dedicated') return p.visibility === 'DEDICATED';
-    if (category === 'featured') return PRESET_CATEGORY[p.id]?.featured;
-    return PRESET_CATEGORY[p.id]?.category === category;
+    if (category === 'featured') return featured.has(p.id);
+    return !featured.has(p.id) && p.visibility !== 'DEDICATED';
   });
 
-  const featuredPresets = filtered.filter(
-    (p) => PRESET_CATEGORY[p.id]?.featured
-  );
-  const classicPresets = filtered.filter(
-    (p) => !PRESET_CATEGORY[p.id]?.featured
-  );
+  const featuredPresets = filtered.filter((p) => featured.has(p.id));
+  const classicPresets = filtered.filter((p) => !featured.has(p.id));
 
   const selectedDs = selectedId ? getDesignSystem(selectedId) : null;
   const selectedPreset = presets.find((p) => p.id === selectedId);
@@ -348,9 +351,7 @@ function TemplateCard({
 }: TemplateCardProps) {
   const ds = getDesignSystem(preset.id);
   const isDedicated = preset.visibility === 'DEDICATED';
-  const category = isDedicated
-    ? 'dedicated'
-    : (PRESET_CATEGORY[preset.id]?.category ?? 'classic');
+  const category = isDedicated ? 'dedicated' : 'classic';
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();

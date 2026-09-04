@@ -25,7 +25,12 @@ export const TEMPLATE_KEYS = [
   'hamrang',
   'baran',
   'shafagh',
-  'elektron'
+  'elektron',
+  'rouzan',
+  'daneshvar',
+  'peleh',
+  'andisheh',
+  'shaparak'
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -109,16 +114,51 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
     name: 'الکترون',
     vertical: 'دیجیتال، رسانه و طراحی',
     tagline: 'رنگی · مدرن · پرانرژی'
+  },
+  rouzan: {
+    name: 'روزن',
+    vertical: 'مدرس برنامه‌نویسی',
+    tagline: 'روشن · ویدیومحور · مینیمال'
+  },
+  daneshvar: {
+    name: 'دانشور',
+    vertical: 'استاد دانشگاه',
+    tagline: 'آکادمیک · مستند · موقر'
+  },
+  peleh: {
+    name: 'پله',
+    vertical: 'مدرس کنکور و دبیرستان',
+    tagline: 'انگیزشی · نتیجه‌محور · پلکانی'
+  },
+  andisheh: {
+    name: 'اندیشه',
+    vertical: 'منتور هوش مصنوعی و دواپس',
+    tagline: 'تیره · فنی · ترمینالی'
+  },
+  shaparak: {
+    name: 'شاپرک',
+    vertical: 'مدرس برنامه‌نویسی کودکان',
+    tagline: 'بازی‌گونه · رنگی · بلوکی'
   }
 };
 
 /**
- * Design family. Groups the hero picker and filters the gallery, so 14 designs
- * read as four short lists instead of one long scroll. One map for both — the
+ * Design family. Groups the hero picker and filters the gallery, so the catalog
+ * reads as a few short lists instead of one long scroll. One map for both — the
  * gallery used to carry a partial copy that silently called half the catalog
  * "professional".
+ *
+ * `personal` is the one family defined by who the site is for rather than how
+ * it looks: a single teacher selling their own brand, where the intro video is
+ * the page. It keeps those designs from colliding with the institution
+ * templates that cover the same subject (nokhbeh vs peleh, parastoo vs shaparak).
  */
-export type TemplateCategory = 'minimal' | 'creative' | 'professional' | 'dark';
+export type TemplateCategory =
+  | 'minimal'
+  | 'creative'
+  | 'professional'
+  | 'dark'
+  | 'personal';
 
 export const TEMPLATE_CATEGORY: Record<TemplateKey, TemplateCategory> = {
   keyhan: 'dark',
@@ -134,7 +174,12 @@ export const TEMPLATE_CATEGORY: Record<TemplateKey, TemplateCategory> = {
   raushan: 'minimal',
   sepid: 'minimal',
   baran: 'minimal',
-  bikaran: 'professional'
+  bikaran: 'professional',
+  rouzan: 'personal',
+  daneshvar: 'personal',
+  peleh: 'personal',
+  andisheh: 'personal',
+  shaparak: 'personal'
 };
 
 export const CATEGORY_LABELS: {
@@ -145,7 +190,8 @@ export const CATEGORY_LABELS: {
   { value: 'minimal', label: 'مینیمال' },
   { value: 'creative', label: 'خلاق' },
   { value: 'professional', label: 'حرفه‌ای' },
-  { value: 'dark', label: 'تاریک' }
+  { value: 'dark', label: 'تاریک' },
+  { value: 'personal', label: 'برند شخصی' }
 ];
 
 export function getTemplateCategoryByKey(key: string): TemplateCategory {

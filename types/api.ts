@@ -807,6 +807,11 @@ export interface TemplatePreset {
   theme?: Record<string, string> | null;
   visibility?: TemplateVisibility;
   isOwned?: boolean;
+  /** Average of every academy's stars; also drives the gallery order. */
+  rating?: number;
+  ratingCount?: number;
+  /** This academy's own vote, or null when it has not rated the template. */
+  myRating?: number | null;
 }
 
 export interface PricingConfig {

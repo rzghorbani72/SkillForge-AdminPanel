@@ -4413,6 +4413,28 @@ class ApiClient {
     return Array.isArray(data) ? data : [];
   }
 
+  /** One vote per academy — calling again replaces the previous stars. */
+  async rateTemplate(key: string, stars: number) {
+    const response = await this.request(
+      `/ui-template/templates/${key}/rating`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ stars })
+      }
+    );
+    return (response.data as any)?.data ?? null;
+  }
+
+  async clearTemplateRating(key: string) {
+    const response = await this.request(
+      `/ui-template/templates/${key}/rating`,
+      {
+        method: 'DELETE'
+      }
+    );
+    return (response.data as any)?.data ?? null;
+  }
+
   async applyTemplatePreset(presetId: string) {
     const response = await this.request(`/ui-template/presets/${presetId}`, {
       method: 'POST'

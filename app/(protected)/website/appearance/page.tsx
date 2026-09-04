@@ -539,6 +539,26 @@ export default function UITemplateSettingsPage() {
     }
   };
 
+  // Rating a template also reorders the gallery, so the list is refetched from
+  // the API rather than patched locally — the server owns the order.
+  const handleRate = async (preset: TemplatePreset, stars: number | null) => {
+    // Optimistic: the star fills immediately, the reorder lands on refetch.
+    setPresets((current) =>
+      current.map((item) =>
+        item.id === preset.id ? { ...item, myRating: stars } : item
+      )
+    );
+    try {
+      if (stars === null) await apiClient.clearTemplateRating(preset.id);
+      else await apiClient.rateTemplate(preset.id, stars);
+      const refreshed = await apiClient.getAvailableTemplatePresets();
+      setPresets(refreshed as TemplatePreset[]);
+    } catch {
+      const refreshed = await apiClient.getAvailableTemplatePresets();
+      setPresets(refreshed as TemplatePreset[]);
+    }
+  };
+
   // Quick apply: apply the preset and publish it live without opening the
   // editor — the fast path for a returning manager who knows the template.
   const handleQuickApply = async (preset: TemplatePreset) => {
@@ -1594,6 +1614,7 @@ export default function UITemplateSettingsPage() {
               onSelect={handleCardClick}
               onQuickApply={handleQuickApply}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
+              onRate={handleRate}
             />
           )}
           {academyPresets.length > 0 && (
@@ -1607,6 +1628,7 @@ export default function UITemplateSettingsPage() {
               onSelect={handleCardClick}
               onQuickApply={handleQuickApply}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
+              onRate={handleRate}
             />
           )}
         </div>
