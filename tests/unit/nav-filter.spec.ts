@@ -15,16 +15,6 @@ function flatten(items: NavItem[]): NavItem[] {
   return items.flatMap((item) => [item, ...flatten(item.children ?? [])]);
 }
 
-/** Section order as rendered, one entry per contiguous run of a section. */
-function sectionRuns(items: NavItem[]): string[] {
-  const runs: string[] = [];
-  for (const item of items) {
-    if (!item.section) continue;
-    if (runs[runs.length - 1] !== item.section) runs.push(item.section);
-  }
-  return runs;
-}
-
 test.describe('isPlatformMode', () => {
   test('platform staff without an academy are in platform mode', () => {
     expect(isPlatformMode('ADMIN', false)).toBe(true);
@@ -177,14 +167,24 @@ test.describe('sidebar shape', () => {
     }
   });
 
-  test('platform mode keeps its section headers', () => {
-    const runs: string[] = [];
-    for (const item of filterNavItems(navItems, PLATFORM_STAFF)) {
-      if (!item.section) continue;
-      if (runs[runs.length - 1] !== item.section) runs.push(item.section);
+  test('platform staff get a short top level too', () => {
+    for (const options of [
+      PLATFORM_STAFF,
+      { role: 'PLATFORM_OWNER' as const, hasStore: false },
+      { role: 'FINANCE' as const, hasStore: false },
+      { role: 'SUPPORT' as const, hasStore: false }
+    ]) {
+      const items = filterNavItems(navItems, options);
+      expect(items.length, options.role).toBeLessThanOrEqual(9);
     }
-    expect(runs.length).toBeGreaterThan(0);
-    expect(runs).toEqual(Array.from(new Set(runs)));
+  });
+
+  test('no section header is left behind now that groups replace them', () => {
+    const items = flatten([
+      ...filterNavItems(navItems, MANAGER),
+      ...filterNavItems(navItems, PLATFORM_STAFF)
+    ]);
+    expect(items.some((item) => item.section)).toBe(false);
   });
 });
 

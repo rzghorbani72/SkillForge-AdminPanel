@@ -53,14 +53,15 @@ export type Product = {
 
 export const navItems: NavItem[] = [
   // ── Platform mode ──────────────────────────────────────────────────────────
+  // The daily destinations stay at the top level; everything a staff member
+  // visits occasionally lives one click deeper, inside a group.
   {
     title: 'Platform Overview',
     href: '/platform',
     icon: 'dashboard' as IconType,
     label: 'platformOverview',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT'],
-    scope: 'platform',
-    section: 'platform'
+    scope: 'platform'
   },
   {
     title: 'Investor Report',
@@ -68,8 +69,7 @@ export const navItems: NavItem[] = [
     icon: 'trendingUp' as IconType,
     label: 'investorReport',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
-    scope: 'platform',
-    section: 'platform'
+    scope: 'platform'
   },
   {
     title: 'Academies',
@@ -77,8 +77,7 @@ export const navItems: NavItem[] = [
     icon: 'store' as IconType,
     label: 'allAcademies',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT'],
-    scope: 'platform',
-    section: 'platform'
+    scope: 'platform'
   },
   {
     title: 'Users',
@@ -86,8 +85,7 @@ export const navItems: NavItem[] = [
     icon: 'users' as IconType,
     label: 'users',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
-    scope: 'platform',
-    section: 'platform'
+    scope: 'platform'
   },
   {
     title: 'Support Inbox',
@@ -96,158 +94,179 @@ export const navItems: NavItem[] = [
     label: 'supportInbox',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
     supportOnly: true,
-    scope: 'platform',
-    section: 'platform'
+    scope: 'platform'
   },
+  // Money — platform cash out
   {
-    title: 'Platform Blog',
-    href: '/platform/blog',
-    icon: 'fileText' as IconType,
-    label: 'platformBlog',
-    roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
+    title: 'Money',
+    icon: 'dollarSign' as IconType,
+    label: 'financeHub',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
     scope: 'platform',
-    section: 'platform'
+    children: [
+      {
+        title: 'Withdrawals',
+        href: '/withdrawals',
+        icon: 'banknote' as IconType,
+        label: 'withdrawals',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+        financeOnly: true,
+        adminOnly: true,
+        scope: 'platform',
+        paymentGated: true
+      },
+      {
+        title: 'Teacher Payouts',
+        href: '/teacher-payouts',
+        icon: 'wallet2' as IconType,
+        label: 'teacherPayouts',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+        financeOnly: true,
+        adminOnly: true,
+        scope: 'platform',
+        paymentGated: true
+      },
+      {
+        title: 'Subscriptions',
+        href: '/subscriptions',
+        icon: 'calendarClock' as IconType,
+        label: 'subscriptions',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+        financeOnly: true,
+        adminOnly: true,
+        scope: 'platform',
+        paymentGated: true
+      }
+    ]
   },
-  // Templates section
+  // Content — what the platform publishes, and the templates academies start from
   {
-    title: 'Templates Gallery',
-    href: '/website/appearance',
+    title: 'Content & Templates',
     icon: 'gallery' as IconType,
-    label: 'templatesGallery',
+    label: 'contentHub',
     roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
     scope: 'platform',
-    section: 'templates'
+    children: [
+      {
+        title: 'Platform Blog',
+        href: '/platform/blog',
+        icon: 'fileText' as IconType,
+        label: 'platformBlog',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
+        title: 'Broadcasts',
+        href: '/platform/broadcasts',
+        icon: 'megaphone' as IconType,
+        label: 'broadcasts',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
+        title: 'Templates Gallery',
+        href: '/website/appearance',
+        icon: 'gallery' as IconType,
+        label: 'templatesGallery',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
+        title: 'Template Covers',
+        href: '/settings/template-covers',
+        icon: 'media' as IconType,
+        label: 'templateCovers',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      }
+    ]
   },
+  // Configuration — what the platform sells
   {
-    title: 'Template Covers',
-    href: '/settings/template-covers',
-    icon: 'media' as IconType,
-    label: 'templateCovers',
-    roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
-    scope: 'platform',
-    section: 'templates'
-  },
-  // Finance section
-  {
-    title: 'Withdrawals',
-    href: '/withdrawals',
-    icon: 'banknote' as IconType,
-    label: 'withdrawals',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
-    financeOnly: true,
-    adminOnly: true,
-    scope: 'platform',
-    section: 'finance',
-    paymentGated: true
-  },
-  {
-    title: 'Teacher Payouts',
-    href: '/teacher-payouts',
-    icon: 'wallet2' as IconType,
-    label: 'teacherPayouts',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
-    financeOnly: true,
-    adminOnly: true,
-    scope: 'platform',
-    section: 'finance',
-    paymentGated: true
-  },
-  {
-    title: 'Subscriptions',
-    href: '/subscriptions',
-    icon: 'calendarClock' as IconType,
-    label: 'subscriptions',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
-    financeOnly: true,
-    adminOnly: true,
-    scope: 'platform',
-    section: 'finance',
-    paymentGated: true
-  },
-  // Configuration — what the platform sells and says
-  {
-    title: 'Platform Settings',
-    href: '/platform-settings',
+    title: 'Configuration',
     icon: 'settings' as IconType,
-    label: 'platformSettings',
+    label: 'configurationHub',
     roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
     scope: 'platform',
-    section: 'configuration'
-  },
-  {
-    title: 'Plan Pricing',
-    href: '/platform/pricing',
-    icon: 'layers' as IconType,
-    label: 'planPricing',
-    roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
-    scope: 'platform',
-    section: 'configuration'
-  },
-  {
-    title: 'Platform Vouchers',
-    href: '/coupons',
-    icon: 'percent' as IconType,
-    label: 'platformVouchers',
-    roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
-    scope: 'platform',
-    section: 'configuration'
-  },
-  {
-    title: 'Broadcasts',
-    href: '/platform/broadcasts',
-    icon: 'megaphone' as IconType,
-    label: 'broadcasts',
-    roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
-    scope: 'platform',
-    section: 'configuration'
+    children: [
+      {
+        title: 'Platform Settings',
+        href: '/platform-settings',
+        icon: 'settings' as IconType,
+        label: 'platformSettings',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
+        title: 'Plan Pricing',
+        href: '/platform/pricing',
+        icon: 'layers' as IconType,
+        label: 'planPricing',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
+        title: 'Platform Vouchers',
+        href: '/coupons',
+        icon: 'percent' as IconType,
+        label: 'platformVouchers',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      }
+    ]
   },
   // Governance — trust, legal and audit surfaces
   {
-    title: 'Content Review',
-    href: '/platform/moderation',
+    title: 'Trust & Legal',
     icon: 'shield' as IconType,
-    label: 'contentReview',
+    label: 'governanceHub',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
-    adminOnly: true,
     scope: 'platform',
-    section: 'governance'
-  },
-  {
-    title: 'Legal Documents',
-    href: '/platform/legal',
-    icon: 'fileText' as IconType,
-    label: 'legalDocuments',
-    roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
-    scope: 'platform',
-    section: 'governance'
-  },
-  {
-    title: 'Support Access Logs',
-    href: '/support-access-logs',
-    icon: 'shield' as IconType,
-    label: 'supportAccessLogs',
-    roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
-    scope: 'platform',
-    section: 'governance'
-  },
-  {
-    title: 'Roles & Permissions',
-    href: '/platform/roles',
-    icon: 'shield' as IconType,
-    label: 'rolesPermissions',
-    roles: ['PLATFORM_OWNER', 'ADMIN'],
-    adminOnly: true,
-    scope: 'platform',
-    section: 'governance'
+    children: [
+      {
+        title: 'Content Review',
+        href: '/platform/moderation',
+        icon: 'shield' as IconType,
+        label: 'contentReview',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
+        title: 'Legal Documents',
+        href: '/platform/legal',
+        icon: 'fileText' as IconType,
+        label: 'legalDocuments',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
+        title: 'Support Access Logs',
+        href: '/support-access-logs',
+        icon: 'shield' as IconType,
+        label: 'supportAccessLogs',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
+        title: 'Roles & Permissions',
+        href: '/platform/roles',
+        icon: 'shield' as IconType,
+        label: 'rolesPermissions',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      }
+    ]
   },
   {
     title: 'Dashboard',

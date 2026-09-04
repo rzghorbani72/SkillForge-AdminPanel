@@ -778,6 +778,9 @@ export const en = {
     pageOf: 'Page {{page}} of {{total}}'
   },
   navigation: {
+    contentHub: 'Content & templates',
+    configurationHub: 'Configuration',
+    governanceHub: 'Trust & legal',
     teaching: 'Teaching',
     financeHub: 'Money',
     financialOverview: 'Financial overview',

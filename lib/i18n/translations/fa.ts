@@ -764,6 +764,9 @@ export const fa = {
     pageOf: 'صفحهٔ {{page}} از {{total}}'
   },
   navigation: {
+    contentHub: 'محتوا و قالب‌ها',
+    configurationHub: 'پیکربندی',
+    governanceHub: 'نظارت و حقوقی',
     teaching: 'آموزش',
     financeHub: 'مالی',
     financialOverview: 'نمای کلی مالی',
