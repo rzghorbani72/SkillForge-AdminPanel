@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/hooks/useStore';
-import { Sparkles, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import useDashboard from '@/components/dashboard/useDashboard';
 import StatsCards from '@/components/dashboard/StatsCards';
 import RevenueEnrollmentChart from '@/components/dashboard/RevenueEnrollmentChart';
@@ -19,7 +19,6 @@ import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
 import { SetupChecklistBanner } from '@/components/dashboard/onboarding/setup-checklist-banner';
 import { BuyPlansSection } from '@/components/dashboard/buy-plans-section';
-import { cn } from '@/lib/utils';
 
 type Period = '7d' | '30d' | '3m' | '1y';
 
@@ -29,6 +28,49 @@ const PERIODS: { key: Period; fa: string; en: string }[] = [
   { key: '3m', fa: '۳ ماه', en: '3 months' },
   { key: '1y', fa: 'امسال', en: 'This year' }
 ];
+
+/** Ambient background wash: the three blurred colour fields behind the grid. */
+function DashboardGlow() {
+  return (
+    <>
+      <div className="dashboard-glow dashboard-glow-1" />
+      <div className="dashboard-glow dashboard-glow-2" />
+      <div className="dashboard-glow dashboard-glow-3" />
+    </>
+  );
+}
+
+/** Layout-shaped placeholder: the grid appears before the data does. */
+function DashboardSkeleton({ label }: { label: string }) {
+  return (
+    <div className="dashboard-shell flex-1">
+      <DashboardGlow />
+      <div className="relative space-y-6 p-4 sm:p-6" aria-label={label}>
+        <div className="space-y-2">
+          <div className="shimmer h-4 w-24 rounded-full" />
+          <div className="shimmer h-8 w-56 rounded-lg" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="stat-card h-[168px]">
+              <div className="shimmer h-10 w-10 rounded-2xl" />
+              <div className="shimmer mt-4 h-3 w-20 rounded-full" />
+              <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
+          <div className="dashboard-card shimmer h-[360px]" />
+          <div className="dashboard-card shimmer h-[360px]" />
+        </div>
+        <div className="grid gap-5 lg:grid-cols-2">
+          <div className="dashboard-card shimmer h-[300px]" />
+          <div className="dashboard-card shimmer h-[300px]" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
@@ -70,21 +112,7 @@ export default function DashboardPage() {
     '';
 
   if (isLoading) {
-    return (
-      <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
-        <div className="text-center">
-          <div className="relative mx-auto h-14 w-14">
-            <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-            <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-primary">
-              <Sparkles className="h-7 w-7 animate-pulse text-white" />
-            </div>
-          </div>
-          <p className="mt-4 text-sm text-muted-foreground">
-            {t('dashboard.loadingDashboardData')}
-          </p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton label={t('dashboard.loadingDashboardData')} />;
   }
 
   const activePeriod = PERIODS.find((p) => p.key === period)!;
@@ -96,6 +124,7 @@ export default function DashboardPage() {
   if (!storeLoading && !isPlatformAdmin && academies.length === 0) {
     return (
       <div className="dashboard-shell flex-1">
+        <DashboardGlow />
         <div className="relative space-y-5 p-4 sm:p-6">
           <AcademyOnboarding />
         </div>
@@ -106,6 +135,7 @@ export default function DashboardPage() {
   if (showBuyPlans) {
     return (
       <div className="dashboard-shell flex-1">
+        <DashboardGlow />
         <div className="relative space-y-5 p-4 sm:p-6">
           <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
           <BuyPlansSection />
@@ -116,20 +146,25 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-shell flex-1">
-      <div className="relative space-y-5 p-4 sm:p-6">
+      <DashboardGlow />
+      <div className="relative space-y-6 p-4 sm:p-6">
         <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
         {/* Page header */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="fade-in-up flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              {isFa ? 'مرور کلی' : 'Overview'}
-            </p>
-            <h1 className="mt-1 text-2xl font-bold">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1 text-[11px] font-semibold text-primary">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+              </span>
+              {isFa ? 'داده‌های زنده' : 'Live data'}
+            </span>
+            <h1 className="mt-2 bg-gradient-to-br from-foreground via-foreground to-primary bg-clip-text text-[26px] font-bold leading-tight text-transparent sm:text-3xl">
               {isFa
-                ? `خوش آمدید${firstName ? `، ${firstName}` : ''} 👋`
-                : `Welcome back${firstName ? `, ${firstName}` : ''} 👋`}
+                ? `خوش آمدید${firstName ? `، ${firstName}` : ''}`
+                : `Welcome back${firstName ? `, ${firstName}` : ''}`}
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1.5 text-sm text-muted-foreground">
               {isFa
                 ? `یک نگاه سریع به وضعیت آکادمی‌هایتان در ${activePeriod.fa} گذشته`
                 : `A quick look at your academies over the last ${activePeriod.en}`}
@@ -137,18 +172,14 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <div className="flex max-w-full overflow-x-auto rounded-lg border bg-white/70 p-0.5 backdrop-blur-md">
+            <div className="dash-segment">
               {PERIODS.map((p) => (
                 <button
                   key={p.key}
                   type="button"
                   onClick={() => setPeriod(p.key)}
-                  className={cn(
-                    'shrink-0 rounded-md px-3 py-1.5 text-sm font-medium transition-all',
-                    period === p.key
-                      ? 'bg-background text-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
-                  )}
+                  data-active={period === p.key}
+                  className="dash-segment-item"
                 >
                   {isFa ? p.fa : p.en}
                 </button>
@@ -156,7 +187,7 @@ export default function DashboardPage() {
             </div>
             <button
               type="button"
-              className="flex items-center gap-1.5 rounded-lg border bg-white/70 px-3 py-1.5 text-sm font-medium text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:bg-white/90"
+              className="flex items-center gap-1.5 rounded-full border border-white/80 bg-white/70 px-3.5 py-2 text-sm font-medium text-muted-foreground backdrop-blur-md transition-colors hover:bg-white hover:text-foreground"
             >
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">
@@ -166,25 +197,27 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Row 1: 4 KPI cards */}
-        <StatsCards cards={statsCards} />
+        <div className="stagger-children space-y-6">
+          {/* Row 1: 4 KPI cards */}
+          <StatsCards cards={statsCards} />
 
-        {/* Row 2: Revenue area chart (2/3) + Conversion funnel (1/3) */}
-        <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
-          <RevenueEnrollmentChart data={monthlyChartData} />
-          <ConversionFunnel />
-        </div>
+          {/* Row 2: Revenue area chart (2/3) + Conversion funnel (1/3) */}
+          <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
+            <RevenueEnrollmentChart data={monthlyChartData} />
+            <ConversionFunnel />
+          </div>
 
-        {/* Row 3: Weekday bar chart (1/2) + Completion donut (1/2) */}
-        <div className="grid gap-5 lg:grid-cols-2">
-          <WeekdayEnrollmentChart />
-          <CompletionDonut />
-        </div>
+          {/* Row 3: Weekday bar chart (1/2) + Completion donut (1/2) */}
+          <div className="grid gap-5 lg:grid-cols-2">
+            <WeekdayEnrollmentChart />
+            <CompletionDonut />
+          </div>
 
-        {/* Row 4: Top courses table (1.4/2) + Activity history (1/2) */}
-        <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-          <TopCoursesTable courses={recentCourses} />
-          <RecentActivityFeed activities={recentActivity} />
+          {/* Row 4: Top courses table (1.4/2) + Activity history (1/2) */}
+          <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
+            <TopCoursesTable courses={recentCourses} />
+            <RecentActivityFeed activities={recentActivity} />
+          </div>
         </div>
       </div>
     </div>

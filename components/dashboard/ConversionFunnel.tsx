@@ -26,7 +26,7 @@ export default function ConversionFunnel() {
     t ? n.toLocaleString('fa-IR') : n.toLocaleString('en-US');
 
   return (
-    <Card>
+    <Card className="dashboard-card h-full">
       <CardHeader className="pb-4">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
           {t ? 'قیف فروش' : 'Conversion funnel'}
@@ -36,27 +36,41 @@ export default function ConversionFunnel() {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {FUNNEL_STEPS.map((step) => (
-          <div key={step.key}>
-            <div className="mb-1.5 flex items-center justify-between">
-              <span className="text-[13px]">
-                {LABELS[step.key][t ? 'fa' : 'en']}
-              </span>
-              <span className="font-mono text-[13px] font-semibold">
-                {fmt(step.value)}
-              </span>
+        {FUNNEL_STEPS.map((step, i) => {
+          const previous = i === 0 ? null : FUNNEL_STEPS[i - 1].value;
+          const rate = previous
+            ? Math.round((step.value / previous) * 100)
+            : null;
+
+          return (
+            <div key={step.key}>
+              <div className="mb-1.5 flex items-center justify-between gap-2">
+                <span className="text-[13px]">
+                  {LABELS[step.key][t ? 'fa' : 'en']}
+                </span>
+                <span className="flex items-center gap-2">
+                  {rate !== null && (
+                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
+                      {fmt(rate)}%
+                    </span>
+                  )}
+                  <span className="text-[13px] font-semibold tabular-nums">
+                    {fmt(step.value)}
+                  </span>
+                </span>
+              </div>
+              <div className="h-2.5 overflow-hidden rounded-full bg-muted/70">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{
+                    width: `${(step.value / max) * 100}%`,
+                    background: `linear-gradient(90deg, ${step.color}, ${step.color}99)`
+                  }}
+                />
+              </div>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${(step.value / max) * 100}%`,
-                  background: step.color
-                }}
-              />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </CardContent>
     </Card>
   );

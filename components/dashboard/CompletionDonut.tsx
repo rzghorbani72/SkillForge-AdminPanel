@@ -36,7 +36,7 @@ export default function CompletionDonut() {
   const t = language === 'fa';
 
   return (
-    <Card>
+    <Card className="dashboard-card h-full">
       <CardHeader className="pb-2">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
           {t ? 'نرخ تکمیل دوره' : 'Course completion'}

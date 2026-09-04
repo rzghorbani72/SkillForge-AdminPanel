@@ -46,7 +46,7 @@ export default function WeekdayEnrollmentChart() {
   const data = t ? DATA_FA : DATA_EN;
 
   return (
-    <Card>
+    <Card className="dashboard-card h-full">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div>

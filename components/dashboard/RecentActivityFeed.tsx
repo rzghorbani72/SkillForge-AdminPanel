@@ -68,7 +68,7 @@ export default function RecentActivityFeed({ activities }: Props) {
   const isFa = language === 'fa';
 
   return (
-    <Card className="h-full">
+    <Card className="dashboard-card h-full">
       <CardHeader className="pb-4">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
           {isFa ? 'فعالیت اخیر' : 'Recent activity'}

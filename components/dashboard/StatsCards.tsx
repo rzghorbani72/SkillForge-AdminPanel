@@ -3,8 +3,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { DashboardStatsCard } from './useDashboard';
 import { cn } from '@/lib/utils';
-import { TrendingUp, TrendingDown } from 'lucide-react';
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { ArrowUpRight, TrendingUp, TrendingDown } from 'lucide-react';
+import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 
 const SPARKLINES = [
   [30, 38, 34, 44, 42, 55, 50, 62, 60, 75],
@@ -14,22 +14,13 @@ const SPARKLINES = [
 ];
 
 const STYLES = [
+  { icon: 'bg-primary/10 text-primary', line: 'hsl(var(--chart-1))' },
   {
-    icon: 'bg-primary/10 text-primary',
-    line: 'hsl(var(--chart-1))'
-  },
-  {
-    icon: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+    icon: 'bg-emerald-500/10 text-emerald-600',
     line: 'hsl(var(--chart-2))'
   },
-  {
-    icon: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-    line: 'hsl(var(--chart-3))'
-  },
-  {
-    icon: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
-    line: 'hsl(var(--chart-4))'
-  }
+  { icon: 'bg-amber-500/10 text-amber-600', line: 'hsl(var(--chart-3))' },
+  { icon: 'bg-sky-500/10 text-sky-600', line: 'hsl(var(--chart-4))' }
 ];
 
 export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
@@ -39,31 +30,43 @@ export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
         const style = STYLES[i % STYLES.length];
         const isIncrease = card.changeType === 'increase';
         const sparkData = SPARKLINES[i % SPARKLINES.length].map((v) => ({ v }));
+        const gradientId = `spark-${i}`;
 
         return (
-          <Card key={i} className="stat-card">
-            <CardContent className="p-5">
+          <Card key={i} className="stat-card group">
+            <span
+              className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{
+                background: `linear-gradient(90deg, transparent, ${style.line}, transparent)`
+              }}
+            />
+            <CardContent className="p-0">
               <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {card.title}
-                  </p>
-                  <p className="mt-1 text-2xl font-bold tracking-tight">
-                    {card.value}
-                  </p>
-                </div>
-                <div className={cn('shrink-0 rounded-xl p-2.5', style.icon)}>
+                <div className={cn('shrink-0 rounded-2xl p-2.5', style.icon)}>
                   <card.icon className="h-5 w-5" />
                 </div>
+                <button
+                  type="button"
+                  aria-hidden
+                  tabIndex={-1}
+                  className="card-corner-btn"
+                >
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </button>
               </div>
 
-              <div className="mt-3 flex items-center gap-2">
+              <p className="mt-4 text-[13px] font-medium text-muted-foreground">
+                {card.title}
+              </p>
+
+              <div className="mt-1 flex flex-wrap items-baseline gap-2">
+                <p className="text-[28px] font-bold tabular-nums leading-none tracking-tight">
+                  {card.value}
+                </p>
                 <span
                   className={cn(
-                    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
-                    isIncrease
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                      : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                    'inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums',
+                    isIncrease ? 'text-emerald-600' : 'text-rose-600'
                   )}
                 >
                   {isIncrease ? (
@@ -73,23 +76,47 @@ export default function StatsCards({ cards }: { cards: DashboardStatsCard[] }) {
                   )}
                   {card.change}
                 </span>
-                <p className="truncate text-xs text-muted-foreground">
-                  {card.description}
-                </p>
               </div>
 
-              <div className="-mx-1 mt-3 h-10">
+              <p className="mt-2 truncate text-xs text-muted-foreground">
+                {card.description}
+              </p>
+
+              <div className="-mx-5 -mb-5 mt-4 h-14">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={sparkData}>
-                    <Line
+                  <AreaChart
+                    data={sparkData}
+                    margin={{ top: 4, right: 0, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient
+                        id={gradientId}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor={style.line}
+                          stopOpacity={0.28}
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor={style.line}
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <Area
                       type="monotone"
                       dataKey="v"
                       stroke={style.line}
-                      strokeWidth={1.5}
-                      dot={false}
+                      strokeWidth={2}
+                      fill={`url(#${gradientId})`}
                       isAnimationActive={false}
                     />
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>

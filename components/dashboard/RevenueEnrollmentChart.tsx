@@ -44,7 +44,7 @@ export default function RevenueEnrollmentChart({ data }: Props) {
   const totalEnrollments = data.reduce((s, d) => s + d.enrollments, 0);
 
   return (
-    <Card>
+    <Card className="dashboard-card">
       <CardHeader className="flex flex-row items-start justify-between gap-4 pb-0">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -55,11 +55,11 @@ export default function RevenueEnrollmentChart({ data }: Props) {
           </CardTitle>
         </div>
         <div className="flex items-center gap-6">
-          <div className="text-right">
+          <div className="text-end">
             <p className="text-xs text-muted-foreground">
               {t('dashboard.totalRevenue')}
             </p>
-            <p className="text-lg font-bold">
+            <p className="text-xl font-bold tabular-nums">
               {formatCurrencyWithStore(
                 totalRevenue,
                 currentAcademy,
@@ -68,11 +68,11 @@ export default function RevenueEnrollmentChart({ data }: Props) {
               )}
             </p>
           </div>
-          <div className="text-right">
+          <div className="text-end">
             <p className="text-xs text-muted-foreground">
               {t('dashboard.totalEnrollments')}
             </p>
-            <p className="text-lg font-bold">
+            <p className="text-xl font-bold tabular-nums">
               {formatNumber(totalEnrollments)}
             </p>
           </div>
@@ -89,7 +89,7 @@ export default function RevenueEnrollmentChart({ data }: Props) {
                 <stop
                   offset="5%"
                   stopColor="hsl(var(--chart-1))"
-                  stopOpacity={0.3}
+                  stopOpacity={0.35}
                 />
                 <stop
                   offset="95%"
@@ -101,7 +101,7 @@ export default function RevenueEnrollmentChart({ data }: Props) {
                 <stop
                   offset="5%"
                   stopColor="hsl(var(--chart-2))"
-                  stopOpacity={0.3}
+                  stopOpacity={0.35}
                 />
                 <stop
                   offset="95%"
@@ -136,14 +136,14 @@ export default function RevenueEnrollmentChart({ data }: Props) {
               type="monotone"
               dataKey="revenue"
               stroke="hsl(var(--chart-1))"
-              strokeWidth={2}
+              strokeWidth={2.5}
               fill="url(#gradRevenue)"
             />
             <Area
               type="monotone"
               dataKey="enrollments"
               stroke="hsl(var(--chart-2))"
-              strokeWidth={2}
+              strokeWidth={2.5}
               fill="url(#gradEnroll)"
             />
           </AreaChart>

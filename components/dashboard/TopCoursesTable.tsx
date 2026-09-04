@@ -19,7 +19,7 @@ export default function TopCoursesTable({ courses }: Props) {
   const isFa = language === 'fa';
 
   return (
-    <Card className="h-full">
+    <Card className="dashboard-card h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">

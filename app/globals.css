@@ -251,17 +251,17 @@ body {
 
   /* ─── Stat cards (frosted glass) ─────────────────────────────── */
   .stat-card {
-    @apply relative overflow-hidden rounded-[16px] border border-white/70 bg-white/75 p-5 backdrop-blur-xl transition-all duration-200;
+    @apply relative overflow-hidden rounded-[20px] border border-white/80 bg-white/80 p-5 backdrop-blur-xl transition-all duration-300;
     box-shadow:
-      0 1px 2px rgba(15, 23, 25, 0.04),
-      0 16px 32px -20px hsl(var(--primary) / 0.22);
+      0 1px 1px hsl(195 20% 10% / 0.03),
+      0 12px 28px -22px hsl(195 20% 10% / 0.35);
   }
 
   .stat-card:hover {
-    @apply -translate-y-0.5;
+    @apply -translate-y-1 border-white bg-white;
     box-shadow:
-      0 1px 2px rgba(15, 23, 25, 0.04),
-      0 20px 40px -18px hsl(var(--primary) / 0.3);
+      0 1px 1px hsl(195 20% 10% / 0.03),
+      0 26px 48px -26px hsl(var(--primary) / 0.4);
   }
 
   /* ─── Dashboard glass background ─────────────────────────────── */
@@ -269,6 +269,13 @@ body {
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    background:
+      radial-gradient(
+        120% 80% at 50% -10%,
+        hsl(var(--primary) / 0.07) 0%,
+        transparent 60%
+      ),
+      linear-gradient(180deg, hsl(192 20% 99%) 0%, hsl(192 14% 96%) 100%);
   }
 
   .dashboard-glow {
@@ -305,17 +312,51 @@ body {
 
   /* ─── Dashboard cards (frosted glass, matches .stat-card) ────── */
   .dashboard-card {
-    @apply relative overflow-hidden rounded-2xl border border-white/70 bg-white/75 backdrop-blur-xl transition-all duration-200;
+    @apply relative overflow-hidden rounded-[20px] border border-white/80 bg-white/80 backdrop-blur-xl transition-all duration-300;
     box-shadow:
-      0 1px 2px rgba(15, 23, 25, 0.04),
-      0 16px 32px -20px hsl(var(--primary) / 0.25);
+      0 1px 1px hsl(195 20% 10% / 0.03),
+      0 12px 28px -22px hsl(195 20% 10% / 0.35);
   }
 
   .dashboard-card:hover {
-    @apply -translate-y-0.5;
+    @apply -translate-y-1 border-white bg-white;
     box-shadow:
-      0 1px 2px rgba(15, 23, 25, 0.04),
-      0 20px 40px -18px hsl(var(--primary) / 0.32);
+      0 1px 1px hsl(195 20% 10% / 0.03),
+      0 26px 48px -26px hsl(var(--primary) / 0.35);
+  }
+
+  /* Corner "open" affordance on a card, mirroring the reference dashboards */
+  .card-corner-btn {
+    @apply absolute top-4 grid h-7 w-7 place-items-center rounded-full border border-border/60 bg-white/70 text-muted-foreground opacity-0 transition-all duration-200;
+    inset-inline-end: 1rem;
+  }
+
+  .dashboard-card:hover .card-corner-btn,
+  .stat-card:hover .card-corner-btn {
+    @apply opacity-100;
+  }
+
+  .card-corner-btn:hover {
+    @apply border-primary/30 bg-primary/10 text-primary;
+  }
+
+  /* Segmented period switcher */
+  .dash-segment {
+    @apply flex max-w-full overflow-x-auto rounded-full border border-white/80 bg-white/70 p-1 backdrop-blur-md;
+    box-shadow: 0 1px 1px hsl(195 20% 10% / 0.03);
+  }
+
+  .dash-segment-item {
+    @apply shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium text-muted-foreground transition-all duration-200;
+  }
+
+  .dash-segment-item:hover {
+    @apply text-foreground;
+  }
+
+  .dash-segment-item[data-active='true'] {
+    @apply bg-primary text-primary-foreground;
+    box-shadow: 0 6px 14px -8px hsl(var(--primary) / 0.8);
   }
 
   /* ─── Scrollbar (matches design) ────────────────────────────── */
