@@ -1,7 +1,8 @@
 export interface AnalyticsPaymentDetail {
   id: string;
   amount: number;
-  bank_amount: number;
+  /** The gateway's own Rial figure; null when no gateway has confirmed one. */
+  bank_amount: number | null;
   currency: string;
   status: string;
   paid_at: string | null;

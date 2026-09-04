@@ -18,7 +18,7 @@ export function RevenueKpis({
 }) {
   const { t } = useTranslation();
   const formatPercent = usePercentLabel();
-  const { formatTomanFromRial } = useIranMoney();
+  const { formatToman } = useIranMoney();
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -29,9 +29,7 @@ export function RevenueKpis({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">
-            {formatTomanFromRial(totalRevenue)}
-          </p>
+          <p className="text-2xl font-bold">{formatToman(totalRevenue)}</p>
           <p className="text-xs text-muted-foreground">
             {t('analytics.acrossAllPayments')}
           </p>
@@ -44,9 +42,7 @@ export function RevenueKpis({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">
-            {formatTomanFromRial(averageTicket)}
-          </p>
+          <p className="text-2xl font-bold">{formatToman(averageTicket)}</p>
           <p className="text-xs text-muted-foreground">
             {t('analytics.perSuccessfulPayment')}
           </p>
@@ -60,7 +56,7 @@ export function RevenueKpis({
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-bold text-red-500">
-            {formatTomanFromRial(totalRefunds)}
+            {formatToman(totalRefunds)}
           </p>
           <p className="text-xs text-muted-foreground">
             {t('analytics.processedRefunds')}

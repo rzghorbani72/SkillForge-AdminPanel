@@ -146,7 +146,8 @@ export interface LedgerPaymentRow {
   academy_name: string | null;
   course_title: string | null;
   gross_amount: number;
-  bank_amount: number;
+  /** The gateway's own Rial figure; null when no gateway has confirmed one. */
+  bank_amount: number | null;
   bank_ref: string | null;
   academy_share: number;
   platform_share: number;

@@ -13,14 +13,24 @@ const absoluteUrl = (url?: string | null) =>
       : url
     : null;
 
-type Props = { cards: DashboardStatsCard[] };
+type Props = {
+  cards: DashboardStatsCard[];
+  period: string;
+  isLoading: boolean;
+  loadingLabel: string;
+};
 
 /**
  * Hero row: two stacked cards, the academy's identity panel, two stacked cards.
  * The centre block is one tall panel rather than a pair, so the row reads as a
  * single composition instead of six equal tiles.
  */
-export default function DashboardHero({ cards }: Props) {
+export default function DashboardHero({
+  cards,
+  period,
+  isLoading,
+  loadingLabel
+}: Props) {
   const academy = useCurrentAcademy();
   const { language } = useTranslation();
   const isFa = language === 'fa';
@@ -31,7 +41,14 @@ export default function DashboardHero({ cards }: Props) {
     <div className="grid gap-4 lg:grid-cols-[0.8fr_1.4fr_0.8fr]">
       <div className="hero-in hero-in-start flex flex-col gap-4">
         {left.map((card, i) => (
-          <StatCard key={card.title} card={card} index={i} />
+          <StatCard
+            key={card.title}
+            card={card}
+            index={i}
+            period={period}
+            isLoading={isLoading}
+            loadingLabel={loadingLabel}
+          />
         ))}
       </div>
 
@@ -63,7 +80,14 @@ export default function DashboardHero({ cards }: Props) {
 
       <div className="hero-in hero-in-end flex flex-col gap-4">
         {right.map((card, i) => (
-          <StatCard key={card.title} card={card} index={i + 2} />
+          <StatCard
+            key={card.title}
+            card={card}
+            index={i + 2}
+            period={period}
+            isLoading={isLoading}
+            loadingLabel={loadingLabel}
+          />
         ))}
       </div>
     </div>

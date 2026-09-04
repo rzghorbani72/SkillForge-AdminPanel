@@ -22,7 +22,7 @@ import {
 } from 'recharts';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
 import { Progress } from '@/components/ui/progress';
-import { useIranMoney, rialToToman } from '../_hooks/use-iran-money';
+import { useIranMoney } from '../_hooks/use-iran-money';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { formatTrendPeriod } from '../_components/format-trend-period';
@@ -33,7 +33,7 @@ import { RevenueKpis } from '../_components/revenue-kpis';
 export default function RevenueAnalyticsPage() {
   const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
-  const { formatTomanFromRial } = useIranMoney();
+  const { formatToman } = useIranMoney();
   const { revenue, isLoading } = useAnalyticsData({ revenue: true });
   const isRtl = language === 'fa' || language === 'ar';
 
@@ -41,7 +41,7 @@ export default function RevenueAnalyticsPage() {
     () =>
       revenue.revenueTrend.map((point) => ({
         month: formatTrendPeriod(point.period, language),
-        revenue: rialToToman(point.revenue),
+        revenue: point.revenue,
         transactions: point.transactions
       })),
     [revenue.revenueTrend, language]
@@ -63,7 +63,7 @@ export default function RevenueAnalyticsPage() {
   const topCourses = revenue.revenueByCourse;
   const methodBars = revenue.revenueByMethod.map((row) => ({
     name: row.method,
-    value: rialToToman(row.revenue)
+    value: row.revenue
   }));
 
   if (isLoading) return <AnalyticsLoading />;
@@ -161,7 +161,7 @@ export default function RevenueAnalyticsPage() {
                       </div>
                     </div>
                     <Badge variant="outline">
-                      {formatTomanFromRial(course.amount)}
+                      {formatToman(course.amount)}
                     </Badge>
                   </div>
                   <Progress
@@ -205,7 +205,7 @@ export default function RevenueAnalyticsPage() {
               {revenue.revenueByMethod.map((item) => (
                 <div key={item.method} className="flex justify-between">
                   <span>{item.method}</span>
-                  <span>{formatTomanFromRial(item.revenue)}</span>
+                  <span>{formatToman(item.revenue)}</span>
                 </div>
               ))}
             </div>

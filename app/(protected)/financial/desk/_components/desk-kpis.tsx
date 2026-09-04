@@ -13,7 +13,7 @@ type DeskKpisProps = {
 
 export function DeskKpis({ desk, loading }: DeskKpisProps) {
   const { t } = useTranslation();
-  const { formatTomanFromRial } = useIranMoney();
+  const { formatToman } = useIranMoney();
 
   const items = [
     {
@@ -52,7 +52,7 @@ export function DeskKpis({ desk, loading }: DeskKpisProps) {
               <Skeleton className="h-8 w-32" />
             ) : (
               <p className="text-2xl font-semibold tracking-tight">
-                {formatTomanFromRial(item.value)}
+                {formatToman(item.value)}
               </p>
             )}
             <p className="mt-1 text-xs text-muted-foreground">{item.hint}</p>

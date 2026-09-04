@@ -4,26 +4,28 @@ import { useCallback } from 'react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
-export const RIALS_PER_TOMAN = 10;
-
-export function rialToToman(rial: number): number {
-  return Math.round(rial / RIALS_PER_TOMAN);
-}
-
-/** Totals and charts: human-facing Toman. Details: bank/gateway Rial. Never USD. */
+/**
+ * Course sales, wallets and settlements are stored and served in **Toman**, so
+ * totals and charts print them as they arrive. Only a gateway's own confirmed
+ * figure is Rial, and it is labelled as such. Never USD.
+ */
 export function useIranMoney() {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
 
-  const formatTomanFromRial = useCallback(
-    (rial: number) => `${formatNumber(rialToToman(rial))} ${t('common.toman')}`,
+  const formatToman = useCallback(
+    (toman: number) =>
+      `${formatNumber(Math.round(toman))} ${t('common.toman')}`,
     [formatNumber, t]
   );
 
   const formatRial = useCallback(
-    (rial: number) => `${formatNumber(Math.round(rial))} ${t('common.rial')}`,
+    (rial: number | null) =>
+      rial === null
+        ? '—'
+        : `${formatNumber(Math.round(rial))} ${t('common.rial')}`,
     [formatNumber, t]
   );
 
-  return { formatTomanFromRial, formatRial, rialToToman };
+  return { formatToman, formatRial };
 }

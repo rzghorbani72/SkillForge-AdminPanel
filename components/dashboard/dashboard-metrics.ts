@@ -85,44 +85,57 @@ export const journeySteps = (
   ];
 };
 
-/** Month-over-month change as a whole percentage; null when there is no base. */
-export const monthOverMonth = (series: number[]): number | null => {
-  if (series.length < 2) return null;
-  const previous = series[series.length - 2];
-  const current = series[series.length - 1];
-  if (previous === 0) return null;
-  return Math.round(((current - previous) / previous) * 100);
+/** Change against the previous window as a whole percentage; null with no base. */
+export const percentChange = (
+  current: number,
+  previous: number
+): number | null =>
+  previous === 0 ? null : Math.round(((current - previous) / previous) * 100);
+
+const inRange = (raw: string | null | undefined, from: Date, to: Date) => {
+  if (!raw) return false;
+  const date = new Date(raw);
+  return date >= from && date < to;
 };
 
-export const monthlyRevenue = (payments: Payment[], months: Date[]): number[] =>
-  months.map((start, i) => {
-    const end = months[i + 1] ?? new Date(8640000000000000);
-    return payments
-      .filter((p) => {
-        const raw = paidAtOf(p);
-        if (!isPaid(p.status) || !raw) return false;
-        const date = new Date(raw);
-        return date >= start && date < end;
-      })
-      .reduce((sum, p) => sum + (p.amount ?? 0), 0);
-  });
+/** Settled revenue between two instants — a card value or its delta baseline. */
+export const revenueBetween = (
+  payments: Payment[],
+  from: Date,
+  to: Date
+): number =>
+  payments
+    .filter((p) => isPaid(p.status) && inRange(paidAtOf(p), from, to))
+    .reduce((sum, p) => sum + (p.amount ?? 0), 0);
 
-export const monthlyCount = (
+export const enrollmentsBetween = (
+  enrollments: Enrollment[],
+  from: Date,
+  to: Date
+): Enrollment[] => enrollments.filter((e) => inRange(e.enrolled_at, from, to));
+
+export const countBetween = (
   dates: (string | null | undefined)[],
-  months: Date[]
-): number[] =>
-  months.map((start, i) => {
-    const end = months[i + 1] ?? new Date(8640000000000000);
-    return dates.filter((raw) => {
-      if (!raw) return false;
-      const date = new Date(raw);
-      return date >= start && date < end;
-    }).length;
-  });
+  from: Date,
+  to: Date
+): number => dates.filter((raw) => inRange(raw, from, to)).length;
 
-/** First day of each of the last `count` months, oldest first. */
-export const lastMonths = (count: number, now = new Date()): Date[] =>
-  Array.from(
-    { length: count },
-    (_, i) => new Date(now.getFullYear(), now.getMonth() - (count - 1 - i), 1)
+/** Revenue per bucket; `end` closes the last, still-open bucket. */
+export const bucketRevenue = (
+  payments: Payment[],
+  buckets: Date[],
+  end: Date
+): number[] =>
+  buckets.map((from, i) =>
+    revenueBetween(payments, from, buckets[i + 1] ?? end)
   );
+
+export const bucketCount = (
+  dates: (string | null | undefined)[],
+  buckets: Date[],
+  end: Date
+): number[] =>
+  buckets.map((from, i) => {
+    const to = buckets[i + 1] ?? end;
+    return dates.filter((raw) => inRange(raw, from, to)).length;
+  });

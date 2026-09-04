@@ -22,7 +22,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
-import { useIranMoney, rialToToman } from '../_hooks/use-iran-money';
+import { useIranMoney } from '../_hooks/use-iran-money';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { formatTrendPeriod } from '../_components/format-trend-period';
@@ -31,7 +31,7 @@ import { AnalyticsLoading } from '../_components/analytics-loading';
 export default function CoursePerformancePage() {
   const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
-  const { formatTomanFromRial } = useIranMoney();
+  const { formatToman } = useIranMoney();
   const { courses, overview, isLoading } = useAnalyticsData();
   const isRtl = language === 'fa' || language === 'ar';
 
@@ -166,7 +166,7 @@ export default function CoursePerformancePage() {
               <BarChart
                 data={topByRevenue.slice(0, 8).map((course) => ({
                   ...course,
-                  revenueToman: rialToToman(course.revenue)
+                  revenueToman: course.revenue
                 }))}
               >
                 <CartesianGrid strokeDasharray="3 3" />
@@ -186,7 +186,7 @@ export default function CoursePerformancePage() {
                   <div className="flex items-center justify-between">
                     <span className="truncate">{course.name}</span>
                     <Badge variant="secondary">
-                      {formatTomanFromRial(course.revenue)}
+                      {formatToman(course.revenue)}
                     </Badge>
                   </div>
                   <Progress value={course.completion} className="h-2" />

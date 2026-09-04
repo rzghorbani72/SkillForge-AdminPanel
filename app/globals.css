@@ -558,6 +558,17 @@ body {
     animation-delay: 170ms;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in-up,
+    .stagger-children > *,
+    .hero-in,
+    .funnel-bar {
+      animation: none !important;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   /* ─── Utilities ───────────────────────────────────────────────── */
   .glass {
     @apply bg-white/70 backdrop-blur-xl;

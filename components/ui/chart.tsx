@@ -39,11 +39,13 @@ const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'> & {
     config: ChartConfig;
+    /** Resize observer delay. 0 so the first paint can animate. */
+    debounce?: number;
     children: React.ComponentProps<
       typeof RechartsPrimitive.ResponsiveContainer
     >['children'];
   }
->(({ id, className, children, config, ...props }, ref) => {
+>(({ id, className, children, config, debounce = 0, ...props }, ref) => {
   const uniqueId = React.useId();
   const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`;
 
@@ -59,8 +61,7 @@ const ChartContainer = React.forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        {/* Debounce the chart to avoid laggy behavior on window resize */}
-        <RechartsPrimitive.ResponsiveContainer debounce={2000}>
+        <RechartsPrimitive.ResponsiveContainer debounce={debounce}>
           {children}
         </RechartsPrimitive.ResponsiveContainer>
       </div>

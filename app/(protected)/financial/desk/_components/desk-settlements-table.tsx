@@ -54,7 +54,7 @@ export function DeskAcademiesTable({
   onNotify
 }: Pick<DeskSettlementsProps, 'academies' | 'notifyingId' | 'onNotify'>) {
   const { t } = useTranslation();
-  const { formatTomanFromRial } = useIranMoney();
+  const { formatToman } = useIranMoney();
   const formatDate = useDateFormat();
 
   return (
@@ -84,8 +84,8 @@ export function DeskAcademiesTable({
           academies.map((row) => (
             <TableRow key={row.academy_id}>
               <TableCell className="font-medium">{row.academy_name}</TableCell>
-              <TableCell>{formatTomanFromRial(row.to_deposit)}</TableCell>
-              <TableCell>{formatTomanFromRial(row.pending_amount)}</TableCell>
+              <TableCell>{formatToman(row.to_deposit)}</TableCell>
+              <TableCell>{formatToman(row.pending_amount)}</TableCell>
               <TableCell className="text-xs">
                 {row.last_settled_at
                   ? formatDate(row.last_settled_at, {
@@ -134,7 +134,7 @@ export function DeskPaidTable({
   onNotify
 }: Pick<DeskSettlementsProps, 'settlements' | 'notifyingId' | 'onNotify'>) {
   const { t } = useTranslation();
-  const { formatTomanFromRial } = useIranMoney();
+  const { formatToman } = useIranMoney();
   const formatDate = useDateFormat();
 
   return (
@@ -163,7 +163,7 @@ export function DeskPaidTable({
           settlements.map((row) => (
             <TableRow key={row.id}>
               <TableCell className="font-medium">{row.academy_name}</TableCell>
-              <TableCell>{formatTomanFromRial(row.amount)}</TableCell>
+              <TableCell>{formatToman(row.amount)}</TableCell>
               <TableCell className="text-xs">
                 {row.processed_at
                   ? formatDate(row.processed_at, {

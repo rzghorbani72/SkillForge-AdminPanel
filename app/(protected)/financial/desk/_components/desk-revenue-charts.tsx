@@ -27,7 +27,6 @@ import {
 } from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatTrendPeriod } from '@/app/(protected)/analytics/_components/format-trend-period';
-import { rialToToman } from '@/app/(protected)/analytics/_hooks/use-iran-money';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { DeskGrossPoint } from '@/types/financial';
@@ -57,8 +56,8 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
     () =>
       trend.map((point) => ({
         month: formatTrendPeriod(point.period, language),
-        academy: rialToToman(point.academy_gross),
-        platform: rialToToman(point.platform_gross)
+        academy: point.academy_gross,
+        platform: point.platform_gross
       })),
     [trend, language]
   );
@@ -67,8 +66,8 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
     () =>
       trend.map((point) => ({
         month: formatTrendPeriod(point.period, language),
-        academy: rialToToman(point.academy_cumulative),
-        platform: rialToToman(point.platform_cumulative)
+        academy: point.academy_cumulative,
+        platform: point.platform_cumulative
       })),
     [trend, language]
   );

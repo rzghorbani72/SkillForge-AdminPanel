@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/chart';
 import { Bar, BarChart, Cell, ResponsiveContainer, XAxis } from 'recharts';
 import type { WeekdayPoint } from './dashboard-metrics';
+import { ChartLoading, useChartReveal } from './chart-motion';
 
 const DAY_LABELS = {
   fa: ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'],
@@ -24,10 +25,20 @@ const chartConfig: ChartConfig = {
   enrollments: { label: 'Enrollments', color: 'hsl(var(--viz-1))' }
 };
 
-type Props = { data: WeekdayPoint[] };
+type Props = {
+  data: WeekdayPoint[];
+  periodLabel: string;
+  period: string;
+  isLoading: boolean;
+};
 
-export default function WeekdayEnrollmentChart({ data: points }: Props) {
-  const { language } = useTranslation();
+export default function WeekdayEnrollmentChart({
+  data: points,
+  periodLabel,
+  period,
+  isLoading
+}: Props) {
+  const { t: translate, language } = useTranslation();
   const percentLabel = usePercentLabel();
   const formatNumber = useNumberFormat();
   const t = language === 'fa';
@@ -42,6 +53,8 @@ export default function WeekdayEnrollmentChart({ data: points }: Props) {
   );
   const peak = peakDay.enrollments;
   const share = total === 0 ? 0 : Math.round((peak / total) * 100);
+  const showChart = useChartReveal(isLoading);
+  const loadingLabel = translate('dashboard.loadingDashboardData');
 
   return (
     <Card className="dashboard-card h-full">
@@ -52,7 +65,9 @@ export default function WeekdayEnrollmentChart({ data: points }: Props) {
               {t ? 'ثبت‌نام بر اساس روز' : 'Enrollments by day'}
             </p>
             <CardTitle className="mt-1 text-base">
-              {t ? 'مجموع ثبت‌نام‌ها' : 'All enrollments'}
+              {translate('dashboard.enrollmentsInPeriod', {
+                period: periodLabel
+              })}
             </CardTitle>
           </div>
           <Badge
@@ -65,44 +80,50 @@ export default function WeekdayEnrollmentChart({ data: points }: Props) {
         </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[200px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              barSize={26}
-              margin={{ top: 8, right: 0, left: 0, bottom: 0 }}
-            >
-              <XAxis
-                dataKey="day"
-                axisLine={false}
-                tickLine={false}
-                tickMargin={10}
-                tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
-              />
-              <ChartTooltip
-                cursor={{ fill: 'hsl(var(--viz-1) / 0.06)', radius: 10 }}
-                content={<ChartTooltipContent />}
-              />
-              <Bar
-                dataKey="enrollments"
-                radius={10}
-                animationDuration={800}
-                animationEasing="ease-out"
+        {!showChart ? (
+          <ChartLoading className="h-[200px] w-full" label={loadingLabel} />
+        ) : (
+          <ChartContainer config={chartConfig} className="h-[200px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                key={period}
+                data={data}
+                barSize={26}
+                margin={{ top: 8, right: 0, left: 0, bottom: 0 }}
               >
-                {data.map((entry) => (
-                  <Cell
-                    key={entry.day}
-                    fill={
-                      entry.enrollments === peak
-                        ? 'hsl(var(--viz-accent))'
-                        : 'hsl(var(--viz-1) / 0.16)'
-                    }
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+                <XAxis
+                  dataKey="day"
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                />
+                <ChartTooltip
+                  cursor={{ fill: 'hsl(var(--viz-1) / 0.06)', radius: 10 }}
+                  content={<ChartTooltipContent />}
+                />
+                <Bar
+                  dataKey="enrollments"
+                  radius={10}
+                  isAnimationActive
+                  animationDuration={800}
+                  animationEasing="ease-out"
+                >
+                  {data.map((entry) => (
+                    <Cell
+                      key={entry.day}
+                      fill={
+                        entry.enrollments === peak
+                          ? 'hsl(var(--viz-accent))'
+                          : 'hsl(var(--viz-1) / 0.16)'
+                      }
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        )}
         <p className="mt-3 text-xs text-muted-foreground">
           {total === 0
             ? t

@@ -23,7 +23,6 @@ import {
 } from 'recharts';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from './_hooks/use-analytics-data';
-import { rialToToman } from './_hooks/use-iran-money';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { formatTrendPeriod } from './_components/format-trend-period';
@@ -41,7 +40,7 @@ export default function AnalyticsPage() {
     () =>
       overview.revenueTrend.map((point) => ({
         month: formatTrendPeriod(point.period, language),
-        revenue: rialToToman(point.revenue),
+        revenue: point.revenue,
         enrollments: point.enrollments
       })),
     [overview.revenueTrend, language]

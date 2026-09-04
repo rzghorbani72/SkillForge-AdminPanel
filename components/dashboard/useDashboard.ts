@@ -12,14 +12,22 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import {
   bucketByWeekday,
+  bucketCount,
+  bucketRevenue,
   completionRate,
+  countBetween,
+  enrollmentsBetween,
   journeySteps,
-  lastMonths,
-  monthOverMonth,
-  monthlyCount,
-  monthlyRevenue,
+  percentChange,
+  revenueBetween,
   statusSegments
 } from './dashboard-metrics';
+import {
+  periodWindow,
+  type BucketGrain,
+  type DashboardPeriod
+} from './dashboard-periods';
+import { getLocaleForLanguage } from '@/lib/i18n/config';
 
 /** A settled payment. The API's PaymentStatus enum spells this `PAID`. */
 const isSettledPayment = (status?: string | null) => status === 'PAID';
@@ -70,6 +78,42 @@ const fetchSettledPayments = async (): Promise<Payment[]> => {
   return collected;
 };
 
+/** `GET /enrollments` silently clamps its page to 100 rows, so asking for one
+    wide page loses every enrolment past the hundredth. Page through instead:
+    rows arrive newest first, so this covers the dashboard's longest window. */
+const ENROLLMENTS_PAGE_SIZE = 100;
+const ENROLLMENTS_MAX_PAGES = 5;
+
+const fetchEnrollmentWindow = async (
+  academyId: string | null
+): Promise<Enrollment[]> => {
+  const collected: Enrollment[] = [];
+
+  for (let page = 1; page <= ENROLLMENTS_MAX_PAGES; page += 1) {
+    const payload = await apiClient.getEnrollments({
+      page,
+      limit: ENROLLMENTS_PAGE_SIZE,
+      ...(academyId ? { academy_id: academyId } : {})
+    });
+    const rows = Array.isArray(payload?.enrollments) ? payload.enrollments : [];
+    collected.push(...rows);
+    if (rows.length < ENROLLMENTS_PAGE_SIZE) break;
+  }
+
+  return collected;
+};
+
+/** Axis labels follow the bucket size: a day needs its date, a month does not. */
+const formatBucketLabel = (
+  date: Date,
+  grain: BucketGrain,
+  language: string
+): string =>
+  date.toLocaleDateString(
+    getLocaleForLanguage(language),
+    grain === 'month' ? { month: 'short' } : { day: 'numeric', month: 'short' }
+  );
+
 export type DashboardStatsCard = {
   title: string;
   value: string | number;
@@ -77,12 +121,12 @@ export type DashboardStatsCard = {
   change: string;
   changeType: 'increase' | 'decrease';
   description: string;
-  /** Real six-month series behind the number, drawn as the card sparkline. */
+  /** Real per-bucket series for the selected period, drawn as the sparkline. */
   trend: number[];
 };
 
 export type ChartDataPoint = {
-  month: string;
+  label: string;
   revenue: number;
   enrollments: number;
   courses: number;
@@ -95,7 +139,10 @@ export type CoursePerformance = {
   completionRate: number;
 };
 
-const useDashboard = () => {
+const useDashboard = (
+  period: DashboardPeriod = '30d',
+  periodLabel: string = ''
+) => {
   const { t, language } = useTranslation();
   const { selectedAcademy: currentAcademy, isLoading: storeLoading } =
     useStore();
@@ -105,7 +152,7 @@ const useDashboard = () => {
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
   const [allPayments, setAllPayments] = useState<Payment[]>([]);
   /** A wide enrolment window; the recent list is only 10 rows and cannot
-      support the weekday, status or six-month breakdowns. */
+      support the weekday, status or period breakdowns. */
   const [analyticsEnrollments, setAnalyticsEnrollments] = useState<
     Enrollment[]
   >([]);
@@ -187,18 +234,16 @@ const useDashboard = () => {
           paymentsResult,
           activeEnrollmentsResult,
           studentsResult,
-          analyticsEnrollmentsResult
+          analyticsEnrollmentsResult,
+          overviewResult
         ] = await Promise.allSettled([
           apiClient.getCourses(coursesParams),
           apiClient.getRecentEnrollments(),
           fetchSettledPayments(),
           apiClient.getEnrollments(enrollmentsParams),
           apiClient.getStudentUsers(studentsParams),
-          apiClient.getEnrollments(
-            effectiveAcademyId
-              ? { page: 1, limit: 500, academy_id: effectiveAcademyId }
-              : { page: 1, limit: 500 }
-          )
+          fetchEnrollmentWindow(effectiveAcademyId),
+          apiClient.getAnalyticsOverview()
         ]);
 
         // Courses list & total
@@ -307,12 +352,22 @@ const useDashboard = () => {
 
         // Wide enrolment window for the breakdown charts
         if (analyticsEnrollmentsResult.status === 'fulfilled') {
-          const payload = analyticsEnrollmentsResult.value;
-          setAnalyticsEnrollments(
-            Array.isArray(payload?.enrollments) ? payload.enrollments : []
-          );
+          setAnalyticsEnrollments(analyticsEnrollmentsResult.value);
         } else {
           setAnalyticsEnrollments([]);
+        }
+
+        // Server totals win over paginated list counts — those lists cap
+        // and under-report once an academy grows past a page.
+        if (overviewResult.status === 'fulfilled' && overviewResult.value) {
+          const overview = overviewResult.value;
+          setStatsTotals((prev) => ({
+            ...prev,
+            totalCourses: overview.totalCourses ?? prev.totalCourses,
+            totalStudents: overview.totalStudents ?? prev.totalStudents,
+            activeEnrollments:
+              overview.activeEnrollments ?? prev.activeEnrollments
+          }));
         }
       } finally {
         setIsLoading(false);
@@ -332,60 +387,96 @@ const useDashboard = () => {
     void fetchDashboardData();
   }, [userId, isAdminWithoutStore, effectiveAcademyId, storeLoading]);
 
-  const months = useMemo(() => lastMonths(6), []);
+  const range = useMemo(() => periodWindow(period), [period]);
+
+  // Everything below is scoped to the selected period, so the page's "last N"
+  // headline and the numbers under it describe the same span of time.
+  const periodEnrollments = useMemo(
+    () => enrollmentsBetween(analyticsEnrollments, range.start, range.end),
+    [analyticsEnrollments, range]
+  );
 
   const revenueSeries = useMemo(
-    () => monthlyRevenue(allPayments, months),
-    [allPayments, months]
+    () => bucketRevenue(allPayments, range.buckets, range.end),
+    [allPayments, range]
   );
 
   const enrollmentSeries = useMemo(
     () =>
-      monthlyCount(
-        analyticsEnrollments.map((e) => e.enrolled_at),
-        months
+      bucketCount(
+        periodEnrollments.map((e) => e.enrolled_at),
+        range.buckets,
+        range.end
       ),
-    [analyticsEnrollments, months]
+    [periodEnrollments, range]
   );
 
   const courseSeries = useMemo(
     () =>
-      monthlyCount(
+      bucketCount(
         recentCourses.map((c) => c.created_at),
-        months
+        range.buckets,
+        range.end
       ),
-    [recentCourses, months]
+    [recentCourses, range]
   );
 
-  const monthlyChartData: ChartDataPoint[] = useMemo(
+  const trendData: ChartDataPoint[] = useMemo(
     () =>
-      months.map((date, i) => ({
-        month: date.toLocaleDateString('en-US', { month: 'short' }),
+      range.buckets.map((date, i) => ({
+        label: formatBucketLabel(date, range.grain, language),
         revenue: revenueSeries[i],
         enrollments: enrollmentSeries[i],
         courses: courseSeries[i]
       })),
-    [months, revenueSeries, enrollmentSeries, courseSeries]
+    [range, language, revenueSeries, enrollmentSeries, courseSeries]
   );
 
   const weekdayData = useMemo(
-    () => bucketByWeekday(analyticsEnrollments),
-    [analyticsEnrollments]
+    () => bucketByWeekday(periodEnrollments),
+    [periodEnrollments]
   );
 
   const statusData = useMemo(
-    () => statusSegments(analyticsEnrollments),
-    [analyticsEnrollments]
+    () => statusSegments(periodEnrollments),
+    [periodEnrollments]
   );
 
   const overallCompletion = useMemo(
-    () => completionRate(analyticsEnrollments),
-    [analyticsEnrollments]
+    () => completionRate(periodEnrollments),
+    [periodEnrollments]
   );
 
+  // The funnel keeps every known student at its top and narrows to what
+  // happened in the period, so it reads "of all students, this many acted".
   const journeyData = useMemo(
-    () => journeySteps(analyticsEnrollments, statsTotals.totalStudents),
-    [analyticsEnrollments, statsTotals.totalStudents]
+    () => journeySteps(periodEnrollments, statsTotals.totalStudents),
+    [periodEnrollments, statsTotals.totalStudents]
+  );
+
+  const periodRevenue = useMemo(
+    () => revenueBetween(allPayments, range.start, range.end),
+    [allPayments, range]
+  );
+
+  const previousRevenue = useMemo(
+    () => revenueBetween(allPayments, range.previousStart, range.start),
+    [allPayments, range]
+  );
+
+  const previousEnrollments = useMemo(
+    () =>
+      enrollmentsBetween(
+        analyticsEnrollments,
+        range.previousStart,
+        range.start
+      ),
+    [analyticsEnrollments, range]
+  );
+
+  const courseDates = useMemo(
+    () => recentCourses.map((c) => c.created_at),
+    [recentCourses]
   );
 
   // Course performance data
@@ -404,10 +495,10 @@ const useDashboard = () => {
   }, [recentCourses]);
 
   const statsCards: DashboardStatsCard[] = useMemo(() => {
-    // A card shows a real month-over-month move, or the "live" label when the
-    // previous month has no base to compare against — never a made-up number.
-    const delta = (series: number[]) => {
-      const change = monthOverMonth(series);
+    // A card shows its real move against the previous window of equal length,
+    // or the "live" label when that window has no base — never a made-up number.
+    const delta = (current: number, previous: number) => {
+      const change = percentChange(current, previous);
       return change === null
         ? { change: t('dashboard.live'), changeType: 'increase' as const }
         : {
@@ -418,12 +509,21 @@ const useDashboard = () => {
           };
     };
 
+    const activeInPeriod = periodEnrollments.filter(
+      (e) => e.status === 'ACTIVE'
+    ).length;
+
+    // Cards 1 and 2 are stock counters: a total has no window, so the value
+    // stays all-time and only its move and sparkline follow the period.
     return [
       {
         title: t('dashboard.totalCourses'),
         value: formatNumber(statsTotals.totalCourses, language),
         icon: BookOpen,
-        ...delta(courseSeries),
+        ...delta(
+          countBetween(courseDates, range.start, range.end),
+          countBetween(courseDates, range.previousStart, range.start)
+        ),
         description: isAdminWithoutStore
           ? t('dashboard.allPlatformCourses')
           : t('dashboard.coursesAcrossStores'),
@@ -433,33 +533,36 @@ const useDashboard = () => {
         title: t('dashboard.totalStudents'),
         value: formatNumber(statsTotals.totalStudents, language),
         icon: Users,
-        ...delta(enrollmentSeries),
+        ...delta(periodEnrollments.length, previousEnrollments.length),
         description: isAdminWithoutStore
           ? t('dashboard.allPlatformStudents')
           : t('dashboard.studentsEnrolledAcrossStores'),
         trend: enrollmentSeries
       },
       {
-        title: t('dashboard.totalRevenue'),
+        title: t('dashboard.revenue'),
         value: formatCurrencyWithStore(
-          statsTotals.totalRevenue,
+          periodRevenue,
           effectiveAcademy,
           undefined,
           language
         ),
         icon: DollarSign,
-        ...delta(revenueSeries),
-        description: isAdminWithoutStore
-          ? t('dashboard.platformRevenue')
-          : t('dashboard.completedPaymentsToDate'),
+        ...delta(periodRevenue, previousRevenue),
+        description: t('dashboard.revenueInPeriod', { period: periodLabel }),
         trend: revenueSeries
       },
       {
         title: t('dashboard.activeEnrollments'),
-        value: formatNumber(statsTotals.activeEnrollments, language),
+        value: formatNumber(activeInPeriod, language),
         icon: TrendingUp,
-        ...delta(enrollmentSeries),
-        description: t('dashboard.studentsCurrentlyProgressing'),
+        ...delta(
+          activeInPeriod,
+          previousEnrollments.filter((e) => e.status === 'ACTIVE').length
+        ),
+        description: t('dashboard.activeEnrollmentsInPeriod', {
+          period: periodLabel
+        }),
         trend: enrollmentSeries
       }
     ];
@@ -469,6 +572,13 @@ const useDashboard = () => {
     isAdminWithoutStore,
     t,
     language,
+    periodLabel,
+    range,
+    courseDates,
+    periodEnrollments,
+    previousEnrollments,
+    periodRevenue,
+    previousRevenue,
     courseSeries,
     enrollmentSeries,
     revenueSeries
@@ -598,7 +708,7 @@ const useDashboard = () => {
     recentActivity: formattedActivity,
     statsCards,
     statsTotals,
-    monthlyChartData,
+    trendData,
     coursePerformanceData,
     weekdayData,
     statusData,

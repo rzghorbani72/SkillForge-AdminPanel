@@ -27,7 +27,7 @@ export function DeskPaymentsTable({
   onLoadMore
 }: DeskPaymentsTableProps) {
   const { t } = useTranslation();
-  const { formatTomanFromRial, formatRial } = useIranMoney();
+  const { formatToman, formatRial } = useIranMoney();
   const formatDate = useDateFormat();
   const hasMore = data.page * data.limit < data.total;
 
@@ -77,9 +77,9 @@ export function DeskPaymentsTable({
                       : t('financial.desk.kindSale')}
                   </Badge>
                 </TableCell>
-                <TableCell>{formatTomanFromRial(row.gross_amount)}</TableCell>
-                <TableCell>{formatTomanFromRial(row.academy_share)}</TableCell>
-                <TableCell>{formatTomanFromRial(row.platform_share)}</TableCell>
+                <TableCell>{formatToman(row.gross_amount)}</TableCell>
+                <TableCell>{formatToman(row.academy_share)}</TableCell>
+                <TableCell>{formatToman(row.platform_share)}</TableCell>
                 <TableCell className="text-xs">
                   <div>{formatRial(row.bank_amount)}</div>
                   <div className="text-muted-foreground">

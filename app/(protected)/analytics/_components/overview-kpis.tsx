@@ -12,7 +12,7 @@ export function OverviewKpis({ overview }: { overview: AnalyticsOverview }) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   const formatPercent = usePercentLabel();
-  const { formatTomanFromRial } = useIranMoney();
+  const { formatToman } = useIranMoney();
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -25,7 +25,7 @@ export function OverviewKpis({ overview }: { overview: AnalyticsOverview }) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {formatTomanFromRial(overview.totalRevenue)}
+            {formatToman(overview.totalRevenue)}
           </div>
           <p className="text-xs text-muted-foreground">
             {t('analytics.combinedPayments')}

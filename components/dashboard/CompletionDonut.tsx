@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
 import type { StatusSegment } from './dashboard-metrics';
+import { ChartLoading, useChartReveal } from './chart-motion';
 
 const COLORS: Record<StatusSegment['key'], string> = {
   completed: 'hsl(var(--viz-accent))',
@@ -32,15 +33,27 @@ const chartConfig: ChartConfig = {
   ended: { label: 'Ended', color: 'hsl(var(--viz-4))' }
 };
 
-type Props = { segments: StatusSegment[]; completion: number };
+type Props = {
+  segments: StatusSegment[];
+  completion: number;
+  period: string;
+  isLoading: boolean;
+};
 
-export default function CompletionDonut({ segments, completion }: Props) {
-  const { language } = useTranslation();
+export default function CompletionDonut({
+  segments,
+  completion,
+  period,
+  isLoading
+}: Props) {
+  const { t: translate, language } = useTranslation();
   const t = language === 'fa';
   const fmt = (n: number) => (t ? n.toLocaleString('fa-IR') : String(n));
   // An all-zero pie renders nothing; one neutral slice keeps the ring visible.
   const isEmpty = segments.every((segment) => segment.value === 0);
   const pieData = isEmpty ? [{ key: 'ended', value: 100 }] : segments;
+  const showChart = useChartReveal(isLoading);
+  const loadingLabel = translate('dashboard.loadingDashboardData');
 
   return (
     <Card className="dashboard-card h-full">
@@ -71,46 +84,59 @@ export default function CompletionDonut({ segments, completion }: Props) {
             ))}
           </div>
           <div className="relative shrink-0">
-            <ChartContainer
-              config={chartConfig}
-              className="h-[180px] w-[180px]"
-            >
-              <PieChart>
-                <ChartTooltip content={<ChartTooltipContent nameKey="key" />} />
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={3}
-                  cornerRadius={6}
-                  stroke="none"
-                  dataKey="value"
-                  animationDuration={900}
-                  animationEasing="ease-out"
-                >
-                  {pieData.map((seg) => (
-                    <Cell
-                      key={seg.key}
-                      fill={
-                        isEmpty
-                          ? 'hsl(var(--viz-grid))'
-                          : COLORS[seg.key as StatusSegment['key']]
-                      }
-                    />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ChartContainer>
-            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold tabular-nums leading-none">
-                {fmt(completion)}٪
-              </span>
-              <span className="mt-1 text-[11px] text-muted-foreground">
-                {t ? 'تکمیل کل' : 'overall'}
-              </span>
-            </div>
+            {!showChart ? (
+              <ChartLoading
+                className="h-[180px] w-[180px] rounded-full"
+                label={loadingLabel}
+              />
+            ) : (
+              <ChartContainer
+                config={chartConfig}
+                className="h-[180px] w-[180px]"
+              >
+                <PieChart>
+                  <ChartTooltip
+                    content={<ChartTooltipContent nameKey="key" />}
+                  />
+                  <Pie
+                    key={period}
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={3}
+                    cornerRadius={6}
+                    stroke="none"
+                    dataKey="value"
+                    isAnimationActive
+                    animationDuration={900}
+                    animationEasing="ease-out"
+                  >
+                    {pieData.map((seg) => (
+                      <Cell
+                        key={seg.key}
+                        fill={
+                          isEmpty
+                            ? 'hsl(var(--viz-grid))'
+                            : COLORS[seg.key as StatusSegment['key']]
+                        }
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
+            )}
+            {showChart && (
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-bold tabular-nums leading-none">
+                  {fmt(completion)}٪
+                </span>
+                <span className="mt-1 text-[11px] text-muted-foreground">
+                  {t ? 'تکمیل کل' : 'overall'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

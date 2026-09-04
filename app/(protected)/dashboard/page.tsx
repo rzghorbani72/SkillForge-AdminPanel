@@ -19,70 +19,14 @@ import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
 import { SetupChecklistBanner } from '@/components/dashboard/onboarding/setup-checklist-banner';
 import { BuyPlansSection } from '@/components/dashboard/buy-plans-section';
-
-type Period = '7d' | '30d' | '3m' | '1y';
-
-const PERIODS: { key: Period; fa: string; en: string }[] = [
-  { key: '7d', fa: '۷ روز', en: '7 days' },
-  { key: '30d', fa: '۳۰ روز', en: '30 days' },
-  { key: '3m', fa: '۳ ماه', en: '3 months' },
-  { key: '1y', fa: 'امسال', en: 'This year' }
-];
-
-/** Ambient background wash: the three blurred colour fields behind the grid. */
-function DashboardGlow() {
-  return (
-    <>
-      <div className="dashboard-glow dashboard-glow-1" />
-      <div className="dashboard-glow dashboard-glow-2" />
-      <div className="dashboard-glow dashboard-glow-3" />
-    </>
-  );
-}
-
-/** Layout-shaped placeholder: the grid appears before the data does. */
-function DashboardSkeleton({ label }: { label: string }) {
-  return (
-    <div className="dashboard-shell flex-1">
-      <DashboardGlow />
-      <div className="relative space-y-6 p-4 sm:p-6" aria-label={label}>
-        <div className="space-y-2">
-          <div className="shimmer h-4 w-24 rounded-full" />
-          <div className="shimmer h-8 w-56 rounded-lg" />
-        </div>
-        <div className="grid gap-4 lg:grid-cols-[0.8fr_1.4fr_0.8fr]">
-          <div className="flex flex-col gap-4">
-            {[0, 1].map((i) => (
-              <div key={i} className="stat-card h-[190px]">
-                <div className="shimmer h-10 w-10 rounded-2xl" />
-                <div className="shimmer mt-4 h-3 w-20 rounded-full" />
-                <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
-              </div>
-            ))}
-          </div>
-          <div className="hero-media order-first min-h-[220px] lg:order-none" />
-          <div className="flex flex-col gap-4">
-            {[2, 3].map((i) => (
-              <div key={i} className="stat-card h-[190px]">
-                <div className="shimmer h-10 w-10 rounded-2xl" />
-                <div className="shimmer mt-4 h-3 w-20 rounded-full" />
-                <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
-          <div className="dashboard-card shimmer h-[360px]" />
-          <div className="dashboard-card shimmer h-[360px]" />
-        </div>
-        <div className="grid gap-5 lg:grid-cols-2">
-          <div className="dashboard-card shimmer h-[300px]" />
-          <div className="dashboard-card shimmer h-[300px]" />
-        </div>
-      </div>
-    </div>
-  );
-}
+import {
+  PERIOD_OPTIONS,
+  type DashboardPeriod
+} from '@/components/dashboard/dashboard-periods';
+import {
+  DashboardGlow,
+  DashboardSkeleton
+} from '@/components/dashboard/dashboard-shell';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
@@ -90,7 +34,11 @@ export default function DashboardPage() {
   const { user } = useAuthUser();
   const router = useRouter();
   const { academies, selectedAcademy, isLoading: storeLoading } = useStore();
-  const [period, setPeriod] = useState<Period>('30d');
+  const [period, setPeriod] = useState<DashboardPeriod>('30d');
+  const periodLabel = t(
+    PERIOD_OPTIONS.find((option) => option.key === period)?.labelKey ??
+      PERIOD_OPTIONS[1].labelKey
+  );
 
   // Platform admins with no academy selected belong in Platform mode; the
   // academy dashboard has no tenant context to render.
@@ -106,12 +54,12 @@ export default function DashboardPage() {
     recentCourses,
     recentActivity,
     statsCards,
-    monthlyChartData,
+    trendData,
     weekdayData,
     statusData,
     overallCompletion,
     journeyData
-  } = useDashboard();
+  } = useDashboard(period, periodLabel);
 
   const canManagePlan = canManageSubscription(user);
   const { needsPlanPurchase, isLoading: subscriptionLoading } =
@@ -127,11 +75,13 @@ export default function DashboardPage() {
     (user as any)?.profile?.name?.split(' ')?.[0] ??
     '';
 
-  if (isLoading) {
-    return <DashboardSkeleton label={t('dashboard.loadingDashboardData')} />;
-  }
+  const loadingLabel = t('dashboard.loadingDashboardData');
+  const storeUnresolved =
+    storeLoading && !selectedAcademy && academies.length === 0;
 
-  const activePeriod = PERIODS.find((p) => p.key === period)!;
+  if (storeUnresolved || (canManagePlan && subscriptionLoading)) {
+    return <DashboardSkeleton label={loadingLabel} />;
+  }
 
   // Nothing on this dashboard can be computed without an academy, so the
   // onboarding surface replaces the metric grid rather than sitting above
@@ -181,23 +131,21 @@ export default function DashboardPage() {
                 : `Welcome back${firstName ? `, ${firstName}` : ''}`}
             </h1>
             <p className="mt-1.5 text-sm text-muted-foreground">
-              {isFa
-                ? `یک نگاه سریع به وضعیت آکادمی‌هایتان در ${activePeriod.fa} گذشته`
-                : `A quick look at your academies over the last ${activePeriod.en}`}
+              {t('dashboard.periodSummary', { period: periodLabel })}
             </p>
           </div>
 
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <div className="dash-segment">
-              {PERIODS.map((p) => (
+              {PERIOD_OPTIONS.map((option) => (
                 <button
-                  key={p.key}
+                  key={option.key}
                   type="button"
-                  onClick={() => setPeriod(p.key)}
-                  data-active={period === p.key}
+                  onClick={() => setPeriod(option.key)}
+                  data-active={period === option.key}
                   className="dash-segment-item"
                 >
-                  {isFa ? p.fa : p.en}
+                  {t(option.labelKey)}
                 </button>
               ))}
             </div>
@@ -215,20 +163,41 @@ export default function DashboardPage() {
 
         <div className="stagger-children space-y-6">
           {/* Row 1: two stacked cards | academy panel | two stacked cards */}
-          <DashboardHero cards={statsCards} />
+          <DashboardHero
+            cards={statsCards}
+            period={period}
+            isLoading={isLoading}
+            loadingLabel={loadingLabel}
+          />
 
           {/* Row 2: Revenue area chart (2/3) + student journey (1/3) */}
           <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
-            <RevenueEnrollmentChart data={monthlyChartData} />
-            <ConversionFunnel steps={journeyData} />
+            <RevenueEnrollmentChart
+              data={trendData}
+              periodLabel={periodLabel}
+              period={period}
+              isLoading={isLoading}
+            />
+            <ConversionFunnel
+              steps={journeyData}
+              period={period}
+              isLoading={isLoading}
+            />
           </div>
 
           {/* Row 3: Weekday bar chart (1/2) + Completion donut (1/2) */}
           <div className="grid gap-5 lg:grid-cols-2">
-            <WeekdayEnrollmentChart data={weekdayData} />
+            <WeekdayEnrollmentChart
+              data={weekdayData}
+              periodLabel={periodLabel}
+              period={period}
+              isLoading={isLoading}
+            />
             <CompletionDonut
               segments={statusData}
               completion={overallCompletion}
+              period={period}
+              isLoading={isLoading}
             />
           </div>
 
