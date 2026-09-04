@@ -50,10 +50,10 @@ function DashboardSkeleton({ label }: { label: string }) {
           <div className="shimmer h-4 w-24 rounded-full" />
           <div className="shimmer h-8 w-56 rounded-lg" />
         </div>
-        <div className="grid gap-4 lg:grid-cols-[1fr_minmax(240px,0.85fr)_1fr]">
+        <div className="grid gap-4 lg:grid-cols-[0.8fr_1.4fr_0.8fr]">
           <div className="flex flex-col gap-4">
             {[0, 1].map((i) => (
-              <div key={i} className="stat-card h-[168px]">
+              <div key={i} className="stat-card h-[190px]">
                 <div className="shimmer h-10 w-10 rounded-2xl" />
                 <div className="shimmer mt-4 h-3 w-20 rounded-full" />
                 <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
@@ -63,7 +63,7 @@ function DashboardSkeleton({ label }: { label: string }) {
           <div className="hero-media order-first min-h-[220px] lg:order-none" />
           <div className="flex flex-col gap-4">
             {[2, 3].map((i) => (
-              <div key={i} className="stat-card h-[168px]">
+              <div key={i} className="stat-card h-[190px]">
                 <div className="shimmer h-10 w-10 rounded-2xl" />
                 <div className="shimmer mt-4 h-3 w-20 rounded-full" />
                 <div className="shimmer mt-2 h-7 w-28 rounded-lg" />

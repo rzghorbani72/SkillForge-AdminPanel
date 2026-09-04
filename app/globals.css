@@ -290,7 +290,7 @@ body {
   }
 
   .stat-card {
-    @apply glass-surface relative overflow-hidden rounded-[20px] p-5 transition-all duration-300;
+    @apply glass-surface relative min-h-[190px] overflow-hidden rounded-[20px] p-5 transition-all duration-300;
   }
 
   .stat-card:hover {
@@ -477,6 +477,40 @@ body {
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  /* Hero row entrance: the side columns travel inward, the centre settles. */
+  .hero-in {
+    animation: heroIn 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .hero-in-start {
+    --hero-slide: -44px;
+    animation-delay: 80ms;
+  }
+
+  .hero-in-end {
+    --hero-slide: 44px;
+    animation-delay: 80ms;
+  }
+
+  [dir='rtl'] .hero-in-start {
+    --hero-slide: 44px;
+  }
+
+  [dir='rtl'] .hero-in-end {
+    --hero-slide: -44px;
+  }
+
+  @keyframes heroIn {
+    from {
+      opacity: 0;
+      transform: translateX(var(--hero-slide, 0)) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
     }
   }
 

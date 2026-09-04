@@ -28,14 +28,14 @@ export default function DashboardHero({ cards }: Props) {
   const [left, right] = [cards.slice(0, 2), cards.slice(2, 4)];
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_minmax(240px,0.85fr)_1fr]">
-      <div className="flex flex-col gap-4">
+    <div className="grid gap-4 lg:grid-cols-[0.8fr_1.4fr_0.8fr]">
+      <div className="hero-in hero-in-start flex flex-col gap-4">
         {left.map((card, i) => (
           <StatCard key={card.title} card={card} index={i} />
         ))}
       </div>
 
-      <div className="hero-media order-first min-h-[220px] lg:order-none">
+      <div className="hero-media hero-in order-first min-h-[220px] lg:order-none">
         {logoUrl ? (
           <img
             src={logoUrl}
@@ -61,7 +61,7 @@ export default function DashboardHero({ cards }: Props) {
         </span>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="hero-in hero-in-end flex flex-col gap-4">
         {right.map((card, i) => (
           <StatCard key={card.title} card={card} index={i + 2} />
         ))}

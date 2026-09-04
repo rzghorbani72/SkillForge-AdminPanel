@@ -28,14 +28,14 @@ export function StatCard({
   const gradientId = `spark-${index}`;
 
   return (
-    <Card className="stat-card group">
+    <Card className="stat-card group flex flex-col">
       <span
         className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
           background: `linear-gradient(90deg, transparent, ${line}, transparent)`
         }}
       />
-      <CardContent className="p-0">
+      <CardContent className="flex flex-1 flex-col p-0">
         <div className="flex items-start justify-between gap-3">
           <div
             className="shrink-0 rounded-2xl p-2.5"
@@ -80,11 +80,11 @@ export function StatCard({
           {card.description}
         </p>
 
-        <div className="-mx-5 -mb-5 mt-4 h-14" hidden={!hasTrend}>
+        <div className="mx-auto mt-auto h-11 w-[88%] pt-3" hidden={!hasTrend}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={sparkData}
-              margin={{ top: 4, right: 0, left: 0, bottom: 0 }}
+              margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
             >
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
