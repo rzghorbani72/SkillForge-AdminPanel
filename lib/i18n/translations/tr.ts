@@ -348,6 +348,7 @@ export const tr = {
   common: {
     saveChanges: 'Değişiklikleri kaydet',
     uploading: 'Yükleniyor…',
+    toman: 'Toman',
     rial: 'Riyal',
     percentValue: '%{{value}}',
     remove: 'Kaldır',
@@ -494,6 +495,7 @@ export const tr = {
     governanceHub: 'Güven ve hukuk',
     teaching: 'Öğretim',
     financeHub: 'Finans',
+    financialDesk: 'Finans',
     financialOverview: 'Finans özeti',
     growthHub: 'Büyüme',
     accountHub: 'Hesap ve ayarlar',
@@ -2174,7 +2176,23 @@ export const tr = {
     engagementDistributionDescription:
       'Etkileşim segmentine göre öğrenci payı.',
     coursesByEngagement: 'Etkileşime Göre Kurslar',
-    coursesByEngagementDescription: 'Kurs başına aktif ve tamamlanmış durum.'
+    coursesByEngagementDescription: 'Kurs başına aktif ve tamamlanmış durum.',
+    paymentDetails: 'Ödeme detayları',
+    paymentDetailsDescription:
+      'Banka ve ödeme sağlayıcısının kaydettiği tutarlar Riyal cinsinden.',
+    bankAmount: 'Banka tutarı (Riyal)',
+    gateway: 'Ödeme kanalı',
+    noPaymentDetails: 'Henüz kayıtlı ödeme yok.',
+    noCourse: 'Kurs yok',
+    revenueByMethod: 'Ödeme yöntemine göre gelir',
+    revenueByMethodDescription: 'Başarılı ödemelerin kanala göre toplamı.',
+    paymentStatus: {
+      PENDING: 'Beklemede',
+      PAID: 'Ödendi',
+      FAILED: 'Başarısız',
+      CANCELLED: 'İptal',
+      REFUNDED: 'İade'
+    }
   },
   payments: {
     transactions: 'İşlemler',
@@ -2572,6 +2590,55 @@ export const tr = {
         view: 'Görüntüle',
         noRecords: 'Mağaza mali kaydı bulunamadı'
       }
+    },
+    desk: {
+      title: 'Finans',
+      description:
+        'Akademi ve platform ödemeleri, paylar ve Mentoma’nın yatırması gereken tutar.',
+      toDeposit: 'Yatirilacak',
+      toDepositHint: 'Hâlâ Mentoma’da duran ve akademilere ait öğrenci parası',
+      pending: 'Bekleyen talepler',
+      pendingHint: 'Banka havalesi bekleyen çekim talepleri',
+      academyShare: 'Akademi payı',
+      academyShareHint: 'Akademilere ait öğrenci ödemeleri',
+      platformShare: 'Platform payı',
+      platformShareHint: 'Plan abonelikleri ve kayıtlı platform ücreti',
+      paymentsTab: 'Tüm ödemeler',
+      settleTab: 'Yatirilacak',
+      historyTab: 'Ödenen',
+      paidAt: 'Ödeme zamanı',
+      academy: 'Akademi',
+      kind: 'Tür',
+      kindSale: 'Akademi satışı',
+      kindPlan: 'Platform planı',
+      gross: 'Brüt',
+      bankDetail: 'Banka (Riyal)',
+      loadMore: 'Daha fazla',
+      noPayments: 'Henüz başarılı ödeme yok',
+      noAcademies: 'Henüz akademi cüzdanı yok',
+      noSettlements: 'Henüz yatırma kaydı yok',
+      settledAt: 'Yatırma zamanı',
+      trackingCode: 'Takip kodu',
+      informed: 'Bilgilendirildi',
+      notInformed: 'Bilgilendirilmedi',
+      sms: 'SMS',
+      email: 'E-posta',
+      inform: 'Kurucuyu bilgilendir',
+      amount: 'Tutar',
+      openWithdrawals: 'Çekimlere git',
+      accessRestricted: 'Bu sayfa yalnızca sahip, yönetici ve finans içindir.',
+      loadFailed: 'Finans verileri yüklenemedi',
+      notifyOk: 'Akademi kurucusu SMS ve e-posta ile bilgilendirildi',
+      notifyFailed: 'Akademi kurucusu bilgilendirilemedi',
+      monthlyGross: 'Aylık brüt',
+      monthlyGrossHint:
+        'Her aydaki akademi satışları ve platform plan ödemeleri (Toman)',
+      cumulativeGross: 'Zaman içinde brüt',
+      cumulativeGrossHint:
+        'Akademi satışları ve platform plan ödemelerinin birikimli toplamı (Toman)',
+      academyGross: 'Akademiler',
+      platformGross: 'Platform',
+      noTrend: 'Henüz çizilecek başarılı ödeme yok'
     }
   },
   platform: {

@@ -136,3 +136,74 @@ export interface MonetizationSummary {
   is_revenue_visible?: boolean;
   revenue_hidden_reason?: string;
 }
+
+export type LedgerPaymentKind = 'academy_sale' | 'platform_plan';
+
+export interface LedgerPaymentRow {
+  id: string;
+  kind: LedgerPaymentKind;
+  academy_id: string | null;
+  academy_name: string | null;
+  course_title: string | null;
+  gross_amount: number;
+  bank_amount: number;
+  bank_ref: string | null;
+  academy_share: number;
+  platform_share: number;
+  currency: string;
+  gateway: string | null;
+  paid_at: string;
+}
+
+export interface LedgerPaymentsResponse {
+  total: number;
+  page: number;
+  limit: number;
+  payments: LedgerPaymentRow[];
+}
+
+export interface DeskAcademyRow {
+  academy_id: string;
+  academy_name: string;
+  academy_slug: string;
+  wallet_balance: number;
+  pending_amount: number;
+  to_deposit: number;
+  withdrawn_total: number;
+  last_settled_at: string | null;
+  last_tracking_code: string | null;
+  last_withdrawal_id: string | null;
+  informed: boolean;
+  informed_sms: boolean;
+  informed_email: boolean;
+}
+
+export interface DeskSettlementRow {
+  id: string;
+  academy_id: string;
+  academy_name: string;
+  amount: number;
+  processed_at: string | null;
+  tracking_code: string | null;
+  informed: boolean;
+  informed_sms: boolean;
+  informed_email: boolean;
+}
+
+export interface DeskGrossPoint {
+  period: string;
+  academy_gross: number;
+  platform_gross: number;
+  academy_cumulative: number;
+  platform_cumulative: number;
+}
+
+export interface SettlementDesk {
+  to_deposit: number;
+  pending_amount: number;
+  academy_share: number;
+  platform_share: number;
+  academies: DeskAcademyRow[];
+  settlements: DeskSettlementRow[];
+  gross_trend: DeskGrossPoint[];
+}

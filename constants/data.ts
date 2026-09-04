@@ -105,13 +105,22 @@ export const navItems: NavItem[] = [
     scope: 'platform',
     children: [
       {
+        title: 'Financial',
+        href: '/financial/desk',
+        icon: 'dollarSign' as IconType,
+        label: 'financialDesk',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+        financeOnly: true,
+        scope: 'platform',
+        paymentGated: true
+      },
+      {
         title: 'Withdrawals',
         href: '/withdrawals',
         icon: 'banknote' as IconType,
         label: 'withdrawals',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
         financeOnly: true,
-        adminOnly: true,
         scope: 'platform',
         paymentGated: true
       },

@@ -341,6 +341,7 @@ export const ar = {
   common: {
     saveChanges: 'حفظ التغييرات',
     uploading: 'جارٍ الرفع…',
+    toman: 'تومان',
     rial: 'ريال',
     percentValue: '{{value}}٪',
     remove: 'إزالة',
@@ -485,6 +486,7 @@ export const ar = {
     governanceHub: 'الحوكمة والقانون',
     teaching: 'التدريس',
     financeHub: 'المالية',
+    financialDesk: 'المالية',
     financialOverview: 'نظرة عامة مالية',
     growthHub: 'النمو',
     accountHub: 'الحساب والإعدادات',
@@ -2107,7 +2109,23 @@ export const ar = {
     activeCoursesDescription: 'دورات مع متعلمين نشطين',
     engagementDistributionDescription: 'حصة الطلاب لكل شريحة تفاعل.',
     coursesByEngagement: 'الدورات حسب التفاعل',
-    coursesByEngagementDescription: 'الحالة النشطة مقابل المكتملة لكل دورة.'
+    coursesByEngagementDescription: 'الحالة النشطة مقابل المكتملة لكل دورة.',
+    paymentDetails: 'تفاصيل الدفع',
+    paymentDetailsDescription:
+      'مبالغ البنك والبوابة بالريال كما سجلها مزود الدفع.',
+    bankAmount: 'مبلغ البنك (ريال)',
+    gateway: 'البوابة',
+    noPaymentDetails: 'لا توجد مدفوعات مسجلة بعد.',
+    noCourse: 'بدون دورة',
+    revenueByMethod: 'الإيرادات حسب طريقة الدفع',
+    revenueByMethodDescription: 'إجمالي المدفوعات الناجحة حسب البوابة.',
+    paymentStatus: {
+      PENDING: 'قيد الانتظار',
+      PAID: 'مدفوع',
+      FAILED: 'فشل',
+      CANCELLED: 'ملغى',
+      REFUNDED: 'مسترد'
+    }
   },
   payments: {
     transactions: 'المعاملات',
@@ -2504,6 +2522,56 @@ export const ar = {
         view: 'عرض',
         noRecords: 'لم يتم العثور على سجلات مالية للمتجر'
       }
+    },
+    desk: {
+      title: 'المالية',
+      description:
+        'مدفوعات الأكاديمية والمنصة الحقيقية، حصة كل طرف، والمبلغ الذي يجب إيداعه.',
+      toDeposit: 'للإيداع',
+      toDepositHint:
+        'أموال الطلاب التي ما زالت لدى منتوما وتستحقها الأكاديميات',
+      pending: 'طلبات معلقة',
+      pendingHint: 'طلبات سحب تنتظر التحويل البنكي',
+      academyShare: 'حصة الأكاديمية',
+      academyShareHint: 'مدفوعات الطلاب التي تخص الأكاديميات',
+      platformShare: 'حصة المنصة',
+      platformShareHint: 'اشتراكات الخطط وأي رسوم منصة مسجلة',
+      paymentsTab: 'كل المدفوعات',
+      settleTab: 'للإيداع',
+      historyTab: 'تم التسوية',
+      paidAt: 'وقت الدفع',
+      academy: 'الأكاديمية',
+      kind: 'النوع',
+      kindSale: 'بيع أكاديمية',
+      kindPlan: 'خطة المنصة',
+      gross: 'الإجمالي',
+      bankDetail: 'البنك (ريال)',
+      loadMore: 'تحميل المزيد',
+      noPayments: 'لا مدفوعات ناجحة بعد',
+      noAcademies: 'لا محافظ أكاديمية بعد',
+      noSettlements: 'لا إيداعات مسجلة بعد',
+      settledAt: 'وقت التسوية',
+      trackingCode: 'رمز التتبع',
+      informed: 'تم الإبلاغ',
+      notInformed: 'لم يُبلَّغ',
+      sms: 'رسالة',
+      email: 'بريد',
+      inform: 'إبلاغ المنشئ',
+      amount: 'المبلغ',
+      openWithdrawals: 'معالجة السحوبات',
+      accessRestricted: 'هذه الصفحة للمالك والمسؤول والمالية فقط.',
+      loadFailed: 'تعذر تحميل البيانات المالية',
+      notifyOk: 'تم إبلاغ منشئ الأكاديمية بالرسالة والبريد',
+      notifyFailed: 'تعذر إبلاغ منشئ الأكاديمية',
+      monthlyGross: 'الإجمالي الشهري',
+      monthlyGrossHint:
+        'مبيعات الأكاديميات ومدفوعات خطط المنصة في كل شهر (تومان)',
+      cumulativeGross: 'الإجمالي عبر الزمن',
+      cumulativeGrossHint:
+        'المجموع التراكمي لمبيعات الأكاديميات ومدفوعات خطط المنصة (تومان)',
+      academyGross: 'الأكاديميات',
+      platformGross: 'المنصة',
+      noTrend: 'لا مدفوعات ناجحة للرسم بعد'
     }
   },
   platform: {

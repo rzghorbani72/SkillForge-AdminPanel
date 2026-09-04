@@ -22,90 +22,26 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
-import { useFormatCurrency } from '@/hooks/useFormatCurrency';
+import { useIranMoney, rialToToman } from '../_hooks/use-iran-money';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import { formatMonthYear } from '@/lib/i18n/format-month-year';
-
-interface CoursePerformance {
-  name: string;
-  enrollments: number;
-  revenue: number;
-  completion: number;
-  activeLearners: number;
-}
+import { formatTrendPeriod } from '../_components/format-trend-period';
+import { AnalyticsLoading } from '../_components/analytics-loading';
 
 export default function CoursePerformancePage() {
   const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
-  const formatCurrency = useFormatCurrency();
-  const { courses, enrollments, payments, isLoading } = useAnalyticsData();
+  const { formatTomanFromRial } = useIranMoney();
+  const { courses, overview, isLoading } = useAnalyticsData();
+  const isRtl = language === 'fa' || language === 'ar';
 
-  const courseMetrics = useMemo<CoursePerformance[]>(() => {
-    if (courses.length === 0) return [];
-
-    const enrollmentsByCourse = new Map<string, number>();
-    const completionByCourse = new Map<string, number>();
-    const revenueByCourse = new Map<string, number>();
-
-    enrollments.forEach((enrollment) => {
-      const courseId = enrollment.course_id;
-      if (!courseId) return;
-
-      enrollmentsByCourse.set(
-        courseId,
-        (enrollmentsByCourse.get(courseId) ?? 0) + 1
-      );
-
-      if (enrollment.status === 'COMPLETED') {
-        completionByCourse.set(
-          courseId,
-          (completionByCourse.get(courseId) ?? 0) + 1
-        );
-      }
-
-      const paymentTotal =
-        enrollment.payments?.reduce(
-          (sum, payment) => sum + (payment.amount ?? 0),
-          0
-        ) ?? 0;
-      revenueByCourse.set(
-        courseId,
-        (revenueByCourse.get(courseId) ?? 0) + paymentTotal
-      );
-    });
-
-    payments.forEach((payment) => {
-      if (!payment.course_id) return;
-      revenueByCourse.set(
-        payment.course_id,
-        (revenueByCourse.get(payment.course_id) ?? 0) + (payment.amount ?? 0)
-      );
-    });
-
-    return courses.map((course) => {
-      const totalEnrollments = enrollmentsByCourse.get(course.id) ?? 0;
-      const completedEnrollments = completionByCourse.get(course.id) ?? 0;
-      const revenue = revenueByCourse.get(course.id) ?? 0;
-      const activeLearners = enrollments.filter(
-        (enrollment) =>
-          enrollment.course_id === course.id && enrollment.status === 'ACTIVE'
-      ).length;
-
-      const completionRate =
-        totalEnrollments > 0
-          ? Math.round((completedEnrollments / totalEnrollments) * 100)
-          : 0;
-
-      return {
-        name: course.title,
-        enrollments: totalEnrollments,
-        revenue,
-        completion: completionRate,
-        activeLearners
-      };
-    });
-  }, [courses, enrollments, payments]);
+  const courseMetrics = courses.courses.map((course) => ({
+    name: course.courseTitle,
+    enrollments: course.totalEnrollments,
+    revenue: course.totalRevenue,
+    completion: course.completionRate,
+    activeLearners: course.activeEnrollments
+  }));
 
   const topByEnrollment = useMemo(
     () => [...courseMetrics].sort((a, b) => b.enrollments - a.enrollments),
@@ -117,60 +53,16 @@ export default function CoursePerformancePage() {
     [courseMetrics]
   );
 
-  const aggregateTrend = useMemo(() => {
-    if (enrollments.length === 0) return [];
+  const aggregateTrend = overview.revenueTrend.map((point) => ({
+    month: formatTrendPeriod(point.period, language),
+    active: point.active,
+    completed: point.completed
+  }));
 
-    const map = new Map<
-      string,
-      { month: string; active: number; completed: number }
-    >();
-
-    enrollments.forEach((enrollment) => {
-      const date = new Date(enrollment.enrolled_at);
-      const key = `${date.getFullYear()}-${date.getMonth()}`;
-      const labelDate = new Date(date.getFullYear(), date.getMonth(), 1);
-      const label = formatMonthYear(labelDate, language);
-
-      if (!map.has(key)) {
-        map.set(key, { month: label, active: 0, completed: 0 });
-      }
-      const bucket = map.get(key)!;
-      if (enrollment.status === 'COMPLETED') {
-        bucket.completed += 1;
-      } else {
-        bucket.active += 1;
-      }
-    });
-
-    return Array.from(map.entries())
-      .sort(([keyA], [keyB]) => {
-        const [yearA, monthA] = keyA.split('-').map(Number);
-        const [yearB, monthB] = keyB.split('-').map(Number);
-        return (
-          new Date(yearA, monthA, 1).getTime() -
-          new Date(yearB, monthB, 1).getTime()
-        );
-      })
-      .map(([, value]) => value);
-  }, [enrollments, language]);
-
-  if (isLoading) {
-    return (
-      <div className="flex-1 space-y-6 p-4 sm:p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t('common.loading')}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <AnalyticsLoading />;
 
   return (
-    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('analytics.coursePerformance')}
@@ -205,7 +97,7 @@ export default function CoursePerformancePage() {
                 stackId="1"
                 stroke="#6366f1"
                 fill="#6366f144"
-                name="Active"
+                name={t('common.active')}
               />
               <Area
                 type="monotone"
@@ -213,7 +105,7 @@ export default function CoursePerformancePage() {
                 stackId="1"
                 stroke="#22c55e"
                 fill="#22c55e44"
-                name="Completed"
+                name={t('students.completed')}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -271,12 +163,21 @@ export default function CoursePerformancePage() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={topByRevenue.slice(0, 8)}>
+              <BarChart
+                data={topByRevenue.slice(0, 8).map((course) => ({
+                  ...course,
+                  revenueToman: rialToToman(course.revenue)
+                }))}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />
                 <YAxis tickFormatter={(value: number) => formatNumber(value)} />
-                <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                <Bar dataKey="revenue" fill="#34d399" />
+                <Tooltip
+                  formatter={(value: number) =>
+                    `${formatNumber(value)} ${t('common.toman')}`
+                  }
+                />
+                <Bar dataKey="revenueToman" fill="#34d399" />
               </BarChart>
             </ResponsiveContainer>
             <div className="mt-4 space-y-2 text-sm">
@@ -285,7 +186,7 @@ export default function CoursePerformancePage() {
                   <div className="flex items-center justify-between">
                     <span className="truncate">{course.name}</span>
                     <Badge variant="secondary">
-                      {formatCurrency(course.revenue)}
+                      {formatTomanFromRial(course.revenue)}
                     </Badge>
                   </div>
                   <Progress value={course.completion} className="h-2" />

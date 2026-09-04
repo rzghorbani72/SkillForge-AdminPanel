@@ -770,6 +770,7 @@ export const fa = {
     governanceHub: 'نظارت و حقوقی',
     teaching: 'آموزش',
     financeHub: 'مالی',
+    financialDesk: 'مالی پلتفرم',
     financialOverview: 'نمای کلی مالی',
     growthHub: 'رشد',
     accountHub: 'حساب و تنظیمات',
@@ -4277,7 +4278,23 @@ export const fa = {
     engagementDistributionDescription: 'سهم دانشجویان در هر بخش تعامل.',
     coursesByEngagement: 'دوره‌ها بر اساس تعامل',
     coursesByEngagementDescription:
-      'وضعیت فعال در مقابل تکمیل شده به ازای هر دوره.'
+      'وضعیت فعال در مقابل تکمیل شده به ازای هر دوره.',
+    paymentDetails: 'جزئیات پرداخت',
+    paymentDetailsDescription:
+      'مبالغ بانک و درگاه به ریال، همان‌طور که درگاه ثبت کرده است.',
+    bankAmount: 'مبلغ بانک (ریال)',
+    gateway: 'درگاه',
+    noPaymentDetails: 'هنوز پرداختی ثبت نشده است.',
+    noCourse: 'بدون دوره',
+    revenueByMethod: 'درآمد بر اساس روش پرداخت',
+    revenueByMethodDescription: 'مجموع پرداخت‌های موفق به تفکیک درگاه.',
+    paymentStatus: {
+      PENDING: 'در انتظار',
+      PAID: 'پرداخت شده',
+      FAILED: 'ناموفق',
+      CANCELLED: 'لغو شده',
+      REFUNDED: 'بازگشت وجه'
+    }
   },
   payments: {
     transactions: 'تراکنش‌ها',
@@ -4806,6 +4823,55 @@ export const fa = {
       export: 'خروجی اکسل',
       netProfit: 'سود خالص',
       platformRevenueCount: '{{count}} سابقه'
+    },
+    desk: {
+      title: 'مالی پلتفرم',
+      description:
+        'پرداخت‌های واقعی آکادمی و پلتفرم، سهم هر طرف، و مبلغی که باید به آکادمی واریز شود.',
+      toDeposit: 'قابل واریز',
+      toDepositHint:
+        'پول دانشجویان که هنوز نزد منتوما است و به آکادمی تعلق دارد',
+      pending: 'در انتظار تسویه',
+      pendingHint: 'درخواست‌های برداشت در انتظار واریز بانکی',
+      academyShare: 'سهم آکادمی',
+      academyShareHint: 'پرداخت دانشجویان که متعلق به آکادمی‌ها است',
+      platformShare: 'سهم پلتفرم',
+      platformShareHint: 'اشتراک پلن به‌علاوه کارمزد ثبت‌شده پلتفرم',
+      paymentsTab: 'همه پرداخت‌ها',
+      settleTab: 'قابل واریز',
+      historyTab: 'واریز شده',
+      paidAt: 'زمان پرداخت',
+      academy: 'آکادمی',
+      kind: 'نوع',
+      kindSale: 'فروش آکادمی',
+      kindPlan: 'پلن پلتفرم',
+      gross: 'مبلغ کل',
+      bankDetail: 'بانک (ریال)',
+      loadMore: 'موارد بیشتر',
+      noPayments: 'هنوز پرداخت موفقی نیست',
+      noAcademies: 'هنوز کیف پول آکادمی نیست',
+      noSettlements: 'هنوز واریزی ثبت نشده',
+      settledAt: 'زمان واریز',
+      trackingCode: 'کد پیگیری',
+      informed: 'اطلاع‌رسانی شد',
+      notInformed: 'اطلاع‌رسانی نشده',
+      sms: 'پیامک',
+      email: 'ایمیل',
+      inform: 'اطلاع به سازنده',
+      amount: 'مبلغ',
+      openWithdrawals: 'پردازش برداشت‌ها',
+      accessRestricted: 'فقط مالک، ادمین و مالی به این صفحه دسترسی دارند.',
+      loadFailed: 'بارگذاری داده مالی ناموفق بود',
+      notifyOk: 'سازنده آکادمی با پیامک و ایمیل مطلع شد',
+      notifyFailed: 'اطلاع‌رسانی به سازنده آکادمی ناموفق بود',
+      monthlyGross: 'مبلغ کل ماهانه',
+      monthlyGrossHint: 'فروش آکادمی‌ها و پرداخت پلن پلتفرم در هر ماه (تومان)',
+      cumulativeGross: 'رشد مبلغ کل در زمان',
+      cumulativeGrossHint:
+        'جمع انباشته فروش آکادمی‌ها و پرداخت پلن پلتفرم (تومان)',
+      academyGross: 'آکادمی‌ها',
+      platformGross: 'پلتفرم',
+      noTrend: 'هنوز پرداخت موفقی برای نمودار نیست'
     }
   },
   platform: {
@@ -5219,7 +5285,13 @@ export const fa = {
     amount: 'مبلغ',
     requestedAt: 'تاریخ درخواست',
     bankRef: 'مرجع بانکی',
-    statusFilter: 'فیلتر وضعیت'
+    statusFilter: 'فیلتر وضعیت',
+    settledAt: 'زمان واریز',
+    informManager: 'اطلاع به سازنده آکادمی',
+    informed: 'اطلاع‌رسانی شد',
+    notInformed: 'اطلاع‌رسانی نشده',
+    informedSms: 'پیامک ارسال شد',
+    informedEmail: 'ایمیل ارسال شد'
   },
   teacherPayouts: {
     title: 'پرداخت‌های معلمان',

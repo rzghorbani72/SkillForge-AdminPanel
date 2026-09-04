@@ -25,132 +25,55 @@ import { Progress } from '@/components/ui/progress';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
-
-interface EngagementSlice {
-  name: string;
-  value: number;
-  fill: string;
-}
+import { AnalyticsLoading } from '../_components/analytics-loading';
 
 export default function StudentEngagementPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
   const formatPercent = usePercentLabel();
-  const { enrollments, courses, isLoading } = useAnalyticsData();
+  const { overview, courses, isLoading } = useAnalyticsData();
+  const isRtl = language === 'fa' || language === 'ar';
 
-  const {
-    engagementDistribution,
-    averageProgress,
-    laggingStudents,
-    completedStudents,
-    courseEngagement
-  } = useMemo(() => {
-    if (enrollments.length === 0) {
-      return {
-        engagementDistribution: [
-          { name: 'No data', value: 1, fill: '#CBD5F5' } as EngagementSlice
-        ],
-        averageProgress: 0,
-        laggingStudents: 0,
-        completedStudents: 0,
-        courseEngagement: [] as Array<{
-          name: string;
-          active: number;
-          completed: number;
-        }>
-      };
-    }
-
-    const activeCount = enrollments.filter(
-      (enrollment) => enrollment.status === 'ACTIVE'
-    ).length;
-    const completedCount = enrollments.filter(
-      (enrollment) => enrollment.status === 'COMPLETED'
-    ).length;
-    const cancelledCount = enrollments.filter(
-      (enrollment) => enrollment.status === 'CANCELLED'
-    ).length;
-
-    const averageProgressValue = Math.round(
-      enrollments.reduce((sum, enrollment) => {
-        if (typeof enrollment.progress_percent === 'number') {
-          return sum + enrollment.progress_percent;
-        }
-        return sum;
-      }, 0) / enrollments.length
-    );
-
-    const laggingCount = enrollments.filter((enrollment) => {
-      if (typeof enrollment.progress_percent === 'number') {
-        return enrollment.progress_percent < 50;
-      }
-      return false;
-    }).length;
-
-    const courseEngagementStats = courses.map((course) => {
-      const relatedEnrollments = enrollments.filter(
-        (enrollment) => enrollment.course_id === course.id
-      );
-      return {
-        name: course.title,
-        active: relatedEnrollments.filter(
-          (enrollment) => enrollment.status === 'ACTIVE'
-        ).length,
-        completed: relatedEnrollments.filter(
-          (enrollment) => enrollment.status === 'COMPLETED'
-        ).length
-      };
-    });
-
-    return {
-      engagementDistribution: [
-        { name: t('common.active'), value: activeCount, fill: '#10b981' },
+  const hasEnrollments = overview.totalEnrollments > 0;
+  const engagementDistribution = hasEnrollments
+    ? [
+        {
+          name: t('common.active'),
+          value: overview.activeEnrollments,
+          fill: '#10b981'
+        },
         {
           name: t('students.completed'),
-          value: completedCount,
+          value: overview.completedEnrollments,
           fill: '#3b82f6'
         },
         {
           name: t('students.cancelled'),
-          value: cancelledCount,
+          value: overview.cancelledEnrollments,
           fill: '#ef4444'
         }
-      ] as EngagementSlice[],
-      averageProgress: averageProgressValue,
-      laggingStudents: laggingCount,
-      completedStudents: completedCount,
-      courseEngagement: courseEngagementStats
-    };
-  }, [enrollments, courses, t]);
+      ]
+    : [{ name: t('analytics.noData'), value: 1, fill: '#CBD5F5' }];
 
-  const topEngagedCourses = useMemo(() => {
-    return courseEngagement
-      .map((course) => ({
-        ...course,
-        total: course.active + course.completed
-      }))
-      .filter((course) => course.total > 0)
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 6);
-  }, [courseEngagement]);
+  const topEngagedCourses = useMemo(
+    () =>
+      courses.courses
+        .map((course) => ({
+          name: course.courseTitle,
+          active: course.activeEnrollments,
+          completed: course.completedEnrollments,
+          total: course.activeEnrollments + course.completedEnrollments
+        }))
+        .filter((course) => course.total > 0)
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 6),
+    [courses.courses]
+  );
 
-  if (isLoading) {
-    return (
-      <div className="flex-1 space-y-6 p-4 sm:p-6">
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t('common.loading')}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <AnalyticsLoading />;
 
   return (
-    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
+    <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('analytics.studentEngagement')}
@@ -169,9 +92,9 @@ export default function StudentEngagementPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatPercent(averageProgress)}
+              {formatPercent(overview.averageProgress)}
             </p>
-            <Progress value={averageProgress} className="mt-2 h-2" />
+            <Progress value={overview.averageProgress} className="mt-2 h-2" />
           </CardContent>
         </Card>
         <Card>
@@ -182,7 +105,7 @@ export default function StudentEngagementPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-red-500">
-              {formatNumber(laggingStudents)}
+              {formatNumber(overview.laggingEnrollments)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.laggingStudentsDescription')}
@@ -197,7 +120,7 @@ export default function StudentEngagementPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-green-600">
-              {formatNumber(completedStudents)}
+              {formatNumber(overview.completedEnrollments)}
             </p>
             <p className="text-xs text-muted-foreground">
               {t('analytics.completedStudentsDescription')}

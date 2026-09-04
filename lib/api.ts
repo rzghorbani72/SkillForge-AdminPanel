@@ -25,6 +25,12 @@ import {
   UserResetMode
 } from '@/types/api';
 import type {
+  AnalyticsCourses,
+  AnalyticsOverview,
+  AnalyticsRevenue
+} from '@/types/analytics';
+import type { LedgerPaymentsResponse, SettlementDesk } from '@/types/financial';
+import type {
   AbuseReport,
   ContentKind,
   ContentQueueItem,
@@ -3815,6 +3821,27 @@ class ApiClient {
     return null as any;
   }
 
+  async getAnalyticsOverview() {
+    const res = await this.request<
+      AnalyticsOverview | { data: AnalyticsOverview }
+    >('/analytics');
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getAnalyticsRevenue() {
+    const res = await this.request<
+      AnalyticsRevenue | { data: AnalyticsRevenue }
+    >('/analytics/revenue?group_by=month');
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getAnalyticsCourses() {
+    const res = await this.request<
+      AnalyticsCourses | { data: AnalyticsCourses }
+    >('/analytics/courses?limit=50');
+    return unwrapDataEnvelope(res.data);
+  }
+
   // Blog (articles) endpoints. `scope` picks the academy blog or the platform
   // blog; the backend derives the tenant itself, never from these arguments.
   private blogBase(scope: BlogScope): string {
@@ -6595,6 +6622,29 @@ class ApiClient {
       }
     );
     return (res.data as any)?.data ?? res.data;
+  }
+
+  async getSettlementDesk() {
+    const res = await this.request<SettlementDesk | { data: SettlementDesk }>(
+      '/financial/settlement/desk'
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getSettlementPayments(params?: { page?: number; limit?: number }) {
+    const qs = new URLSearchParams();
+    if (params?.page) qs.append('page', String(params.page));
+    if (params?.limit) qs.append('limit', String(params.limit));
+    const res = await this.request<
+      LedgerPaymentsResponse | { data: LedgerPaymentsResponse }
+    >(`/financial/settlement/payments${qs.toString() ? `?${qs}` : ''}`);
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async notifySettlementManager(id: string) {
+    await this.request(`/financial/settlement/withdrawals/${id}/notify`, {
+      method: 'POST'
+    });
   }
 
   // -------------------------------------------------------------------------

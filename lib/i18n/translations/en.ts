@@ -784,6 +784,7 @@ export const en = {
     governanceHub: 'Trust & legal',
     teaching: 'Teaching',
     financeHub: 'Money',
+    financialDesk: 'Financial',
     financialOverview: 'Financial overview',
     growthHub: 'Growth',
     accountHub: 'Account & settings',
@@ -4313,7 +4314,23 @@ export const en = {
     engagementDistributionDescription:
       'Share of students per engagement segment.',
     coursesByEngagement: 'Courses by Engagement',
-    coursesByEngagementDescription: 'Active vs completed status per course.'
+    coursesByEngagementDescription: 'Active vs completed status per course.',
+    paymentDetails: 'Payment details',
+    paymentDetailsDescription:
+      'Bank and gateway amounts in Rial, as recorded by the payment provider.',
+    bankAmount: 'Bank amount (Rial)',
+    gateway: 'Gateway',
+    noPaymentDetails: 'No payments recorded yet.',
+    noCourse: 'No course',
+    revenueByMethod: 'Revenue by payment method',
+    revenueByMethodDescription: 'Paid totals grouped by gateway method.',
+    paymentStatus: {
+      PENDING: 'Pending',
+      PAID: 'Paid',
+      FAILED: 'Failed',
+      CANCELLED: 'Cancelled',
+      REFUNDED: 'Refunded'
+    }
   },
   payments: {
     transactions: 'Transactions',
@@ -4849,6 +4866,56 @@ export const en = {
       export: 'Export Excel',
       netProfit: 'Net Profit',
       platformRevenueCount: '{{count}} records'
+    },
+    desk: {
+      title: 'Financial',
+      description:
+        'Live academy and platform payments, shares, and what Mentoma must deposit.',
+      toDeposit: 'To deposit',
+      toDepositHint:
+        'Student money still sitting in Mentoma that academies are owed',
+      pending: 'Pending requests',
+      pendingHint: 'Withdrawal requests waiting for a bank transfer',
+      academyShare: 'Academy share',
+      academyShareHint: 'Student payments that belong to academies',
+      platformShare: 'Platform share',
+      platformShareHint: 'Plan subscriptions plus any recorded platform fee',
+      paymentsTab: 'All payments',
+      settleTab: 'To deposit',
+      historyTab: 'Settled',
+      paidAt: 'Paid at',
+      academy: 'Academy',
+      kind: 'Type',
+      kindSale: 'Academy sale',
+      kindPlan: 'Platform plan',
+      gross: 'Gross',
+      bankDetail: 'Bank (Rial)',
+      loadMore: 'Load more',
+      noPayments: 'No paid payments yet',
+      noAcademies: 'No academy wallets yet',
+      noSettlements: 'No deposits recorded yet',
+      settledAt: 'Settled at',
+      trackingCode: 'Tracking code',
+      informed: 'Informed',
+      notInformed: 'Not informed',
+      sms: 'SMS',
+      email: 'Email',
+      inform: 'Inform creator',
+      amount: 'Amount',
+      openWithdrawals: 'Process withdrawals',
+      accessRestricted: 'Only owners, admins, and finance can open this page.',
+      loadFailed: 'Could not load financial data',
+      notifyOk: 'Academy creator was informed by SMS and email',
+      notifyFailed: 'Could not inform the academy creator',
+      monthlyGross: 'Monthly gross',
+      monthlyGrossHint:
+        'Paid academy sales and platform plan payments in each month (Toman)',
+      cumulativeGross: 'Gross over time',
+      cumulativeGrossHint:
+        'Running total of academy sales and platform plan payments (Toman)',
+      academyGross: 'Academies',
+      platformGross: 'Platform',
+      noTrend: 'No paid payments to chart yet'
     }
   },
   platform: {
@@ -5234,7 +5301,13 @@ export const en = {
     amount: 'Amount',
     requestedAt: 'Requested At',
     bankRef: 'Bank Ref',
-    statusFilter: 'Status filter'
+    statusFilter: 'Status filter',
+    settledAt: 'Settled at',
+    informManager: 'Inform academy creator',
+    informed: 'Informed',
+    notInformed: 'Not informed',
+    informedSms: 'SMS sent',
+    informedEmail: 'Email sent'
   },
   teacherPayouts: {
     title: 'Teacher Payouts',
