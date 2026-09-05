@@ -6838,6 +6838,7 @@ export const en = {
     deleted: 'Banner deleted',
     delete: 'Remove',
     empty: 'No banners in this set yet',
+    goToSlide: 'Go to banner {{number}}',
     hint: 'Pick several landscape images at once; they play as a slideshow in upload order.',
     states: {
       INCOMPLETE: 'Setup not finished',

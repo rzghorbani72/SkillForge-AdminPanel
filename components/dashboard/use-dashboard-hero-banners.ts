@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { apiClient } from '@/lib/api';
 import { dashboardBannerSrc } from '@/lib/dashboard-banner-url';
@@ -11,6 +11,8 @@ export function useDashboardHeroBanners() {
   const academyId = useStore().selectedAcademy?.id ?? null;
   const [urls, setUrls] = useState<string[]>([]);
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [restartKey, setRestartKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -33,15 +35,24 @@ export function useDashboardHeroBanners() {
   }, [academyId]);
 
   useEffect(() => {
-    if (urls.length < 2) return;
+    if (urls.length < 2 || paused) return;
     const timer = window.setInterval(() => {
       setActive((index) => (index + 1) % urls.length);
     }, SLIDE_MS);
     return () => window.clearInterval(timer);
-  }, [urls.length]);
+  }, [urls.length, paused, restartKey]);
+
+  // Restarting the timer on a manual pick stops the next auto-slide from
+  // firing a moment after the click.
+  const select = useCallback((index: number) => {
+    setActive(index);
+    setRestartKey((key) => key + 1);
+  }, []);
 
   return {
     urls,
-    active: urls.length > 0 ? active % urls.length : 0
+    active: urls.length > 0 ? active % urls.length : 0,
+    select,
+    setPaused
   };
 }
