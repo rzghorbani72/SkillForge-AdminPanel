@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   apiClient,
   type DashboardBanner,
@@ -32,6 +33,24 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [linkDrafts, setLinkDrafts] = useState<Record<string, string>>({});
+
+  const linkValue = (banner: DashboardBanner) =>
+    linkDrafts[banner.id] ?? banner.link_url ?? '';
+
+  const handleSaveLink = async (banner: DashboardBanner) => {
+    const value = linkValue(banner).trim();
+    setBusy(true);
+    try {
+      await apiClient.updateDashboardBanner(banner.id, { link_url: value });
+      ErrorHandler.showSuccess(t('dashboardBanners.linkSaved'));
+      await onChanged();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   // One oversized or rejected file must not cancel the rest of the selection,
   // so each file is reported on its own and the loop keeps going.
@@ -125,18 +144,43 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
                     className="absolute inset-0 h-full w-full object-cover"
                   />
                 </div>
-                <div className="flex justify-end p-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
+                <div className="space-y-2 p-2">
+                  <Input
+                    value={linkValue(banner)}
+                    placeholder={t('dashboardBanners.linkPlaceholder')}
                     disabled={busy}
-                    className="text-destructive"
-                    onClick={() => void handleDelete(banner.id)}
-                  >
-                    <Trash2 className="me-1 h-4 w-4" />
-                    {t('dashboardBanners.delete')}
-                  </Button>
+                    onChange={(event) =>
+                      setLinkDrafts((prev) => ({
+                        ...prev,
+                        [banner.id]: event.target.value
+                      }))
+                    }
+                    className="h-8 text-xs"
+                  />
+                  <div className="flex justify-between gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={
+                        busy || linkValue(banner) === (banner.link_url ?? '')
+                      }
+                      onClick={() => void handleSaveLink(banner)}
+                    >
+                      {t('dashboardBanners.saveLink')}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      disabled={busy}
+                      className="text-destructive"
+                      onClick={() => void handleDelete(banner.id)}
+                    >
+                      <Trash2 className="me-1 h-4 w-4" />
+                      {t('dashboardBanners.delete')}
+                    </Button>
+                  </div>
                 </div>
               </li>
             ))}

@@ -6873,6 +6873,9 @@ export const en = {
     empty: 'No banners in this set yet',
     goToSlide: 'Go to banner {{number}}',
     hint: 'Pick several landscape images at once; they play as a slideshow in upload order.',
+    linkPlaceholder: 'Link (opens when clicked, optional)',
+    saveLink: 'Save link',
+    linkSaved: 'Banner link saved',
     states: {
       INCOMPLETE: 'Setup not finished',
       COMPLETED: 'Academy fully set up'

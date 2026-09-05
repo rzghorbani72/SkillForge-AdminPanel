@@ -10,9 +10,9 @@ type Props = {
 
 export function DashboardHeroSlideshow({ children }: Props) {
   const { t } = useTranslation();
-  const { urls, active, select, setPaused } = useDashboardHeroBanners();
+  const { banners, active, select, setPaused } = useDashboardHeroBanners();
 
-  if (urls.length === 0) return <>{children}</>;
+  if (banners.length === 0) return <>{children}</>;
 
   return (
     <div
@@ -22,27 +22,45 @@ export function DashboardHeroSlideshow({ children }: Props) {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      {urls.map((url, index) => (
-        <img
-          key={url}
-          src={url}
-          alt=""
-          loading={index === 0 ? 'eager' : 'lazy'}
-          aria-hidden={index !== active}
-          className="duration-[1200ms] absolute inset-0 h-full w-full object-cover transition-[opacity,transform] ease-out"
-          style={{
-            opacity: index === active ? 1 : 0,
-            transform: index === active ? 'scale(1)' : 'scale(1.04)'
-          }}
-        />
-      ))}
+      {banners.map((banner, index) => {
+        const image = (
+          <img
+            src={banner.url}
+            alt=""
+            loading={index === 0 ? 'eager' : 'lazy'}
+            aria-hidden={index !== active}
+            className="duration-[1200ms] absolute inset-0 h-full w-full object-cover transition-[opacity,transform] ease-out"
+            style={{
+              opacity: index === active ? 1 : 0,
+              transform: index === active ? 'scale(1)' : 'scale(1.04)'
+            }}
+          />
+        );
 
-      {urls.length > 1 && (
+        if (!banner.linkUrl) {
+          return <div key={banner.url}>{image}</div>;
+        }
+
+        return (
+          <a
+            key={banner.url}
+            href={banner.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-hidden={index !== active}
+            tabIndex={index === active ? 0 : -1}
+          >
+            {image}
+          </a>
+        );
+      })}
+
+      {banners.length > 1 && (
         <div className="absolute inset-x-0 bottom-0 flex justify-center pb-3">
           <div className="flex items-center gap-1.5 rounded-full bg-black/25 px-2.5 py-1.5 backdrop-blur-sm">
-            {urls.map((url, index) => (
+            {banners.map((banner, index) => (
               <button
-                key={url}
+                key={banner.url}
                 type="button"
                 aria-label={t('dashboardBanners.goToSlide', {
                   number: index + 1

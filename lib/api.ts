@@ -7291,6 +7291,7 @@ export interface DashboardBanner {
   state: DashboardBannerState;
   image_id: string;
   image_url: string;
+  link_url: string | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -7299,19 +7300,26 @@ export interface DashboardBanner {
 export interface CreateDashboardBannerPayload {
   image_id: string;
   state: DashboardBannerState;
+  link_url?: string;
 }
 
 export interface UpdateDashboardBannerPayload {
   state?: DashboardBannerState;
   is_active?: boolean;
   sort_order?: number;
+  link_url?: string;
 }
 
 export interface AcademyDashboardBanners {
   state: DashboardBannerState;
   has_template: boolean;
   has_course: boolean;
-  banners: { id: string; image_id: string; image_url: string }[];
+  banners: {
+    id: string;
+    image_id: string;
+    image_url: string;
+    link_url: string | null;
+  }[];
 }
 
 /**

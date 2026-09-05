@@ -7,9 +7,14 @@ import { dashboardBannerSrc } from '@/lib/dashboard-banner-url';
 
 const SLIDE_MS = 7000;
 
+export type DashboardHeroBanner = {
+  url: string;
+  linkUrl: string | null;
+};
+
 export function useDashboardHeroBanners() {
   const academyId = useStore().selectedAcademy?.id ?? null;
-  const [urls, setUrls] = useState<string[]>([]);
+  const [banners, setBanners] = useState<DashboardHeroBanner[]>([]);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [restartKey, setRestartKey] = useState(0);
@@ -20,12 +25,15 @@ export function useDashboardHeroBanners() {
       try {
         const data = await apiClient.getAcademyDashboardBanners();
         if (cancelled) return;
-        setUrls(
-          data.banners.map((banner) => dashboardBannerSrc(banner.image_id))
+        setBanners(
+          data.banners.map((banner) => ({
+            url: dashboardBannerSrc(banner.image_id),
+            linkUrl: banner.link_url
+          }))
         );
         setActive(0);
       } catch {
-        if (!cancelled) setUrls([]);
+        if (!cancelled) setBanners([]);
       }
     };
     void load();
@@ -35,12 +43,12 @@ export function useDashboardHeroBanners() {
   }, [academyId]);
 
   useEffect(() => {
-    if (urls.length < 2 || paused) return;
+    if (banners.length < 2 || paused) return;
     const timer = window.setInterval(() => {
-      setActive((index) => (index + 1) % urls.length);
+      setActive((index) => (index + 1) % banners.length);
     }, SLIDE_MS);
     return () => window.clearInterval(timer);
-  }, [urls.length, paused, restartKey]);
+  }, [banners.length, paused, restartKey]);
 
   // Restarting the timer on a manual pick stops the next auto-slide from
   // firing a moment after the click.
@@ -50,8 +58,8 @@ export function useDashboardHeroBanners() {
   }, []);
 
   return {
-    urls,
-    active: urls.length > 0 ? active % urls.length : 0,
+    banners,
+    active: banners.length > 0 ? active % banners.length : 0,
     select,
     setPaused
   };
