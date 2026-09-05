@@ -29,6 +29,11 @@ export interface AcademySubscriptionInvoice {
   paid_at?: string;
   created_at?: string;
   note?: string;
+  net_amount?: number;
+  vat_rate?: number;
+  vat_amount?: number;
+  discount_code?: string | null;
+  discount_amount?: number | null;
 }
 
 export interface AcademySubscriptionState {

@@ -111,6 +111,33 @@ export function SubscriptionInvoicesList({
                   : null}
                 {isFailed ? ` · ${t('plans.invoiceFailedHint')}` : null}
               </p>
+              {isPaid &&
+              (invoice.vat_amount != null || invoice.discount_code) ? (
+                <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                  {invoice.net_amount != null ? (
+                    <span>
+                      {t('plans.invoiceNetAmount')}:{' '}
+                      {invoice.net_amount.toLocaleString(locale)} {unit}
+                    </span>
+                  ) : null}
+                  {invoice.vat_amount != null ? (
+                    <span>
+                      {t('plans.invoiceVat', {
+                        rate: Math.round((invoice.vat_rate ?? 0) * 100)
+                      })}
+                      : {invoice.vat_amount.toLocaleString(locale)} {unit}
+                    </span>
+                  ) : null}
+                  {invoice.discount_code ? (
+                    <span>
+                      {t('plans.invoiceDiscountCode')}: {invoice.discount_code}
+                      {invoice.discount_amount
+                        ? ` (${invoice.discount_amount.toLocaleString(locale)} ${unit})`
+                        : ''}
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
             {isPaid ? (
               <Button
