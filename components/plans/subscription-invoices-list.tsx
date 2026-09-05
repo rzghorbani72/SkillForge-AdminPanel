@@ -66,8 +66,13 @@ export function SubscriptionInvoicesList({
         const showAmountLoud = isPaid || invoice.status === 'DUPLICATE';
         const amount = invoice.amount.toLocaleString(locale);
         const unit = currencyLabel(invoice.currency, rialLabel);
-        const dateValue =
-          invoice.paid_at ?? invoice.created_at ?? invoice.starts_at;
+        // A paid invoice shows when the money landed; an unpaid one can only
+        // show when it was issued, so the label has to follow the field used.
+        const paidOn = invoice.paid_at ?? null;
+        const dateValue = paidOn ?? invoice.created_at ?? invoice.starts_at;
+        const dateLabel = paidOn
+          ? t('plans.invoicePaidOn')
+          : t('plans.invoiceIssuedOn');
 
         return (
           <div
@@ -101,16 +106,23 @@ export function SubscriptionInvoicesList({
                   {unit}
                 </span>
               </p>
-              <p className="text-xs text-muted-foreground">
-                {dateValue ? formatDate(dateValue) : null}
-                {isPaid
-                  ? ` · ${t('plans.invoicePeriod', {
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                {dateValue ? (
+                  <span>
+                    {dateLabel}: {formatDate(dateValue)}
+                  </span>
+                ) : null}
+                {isPaid ? (
+                  <span>
+                    {t('plans.invoicePeriodLabel')}:{' '}
+                    {t('plans.invoicePeriod', {
                       start: formatDate(invoice.starts_at),
                       end: formatDate(invoice.ends_at)
-                    })}`
-                  : null}
-                {isFailed ? ` · ${t('plans.invoiceFailedHint')}` : null}
-              </p>
+                    })}
+                  </span>
+                ) : null}
+                {isFailed ? <span>{t('plans.invoiceFailedHint')}</span> : null}
+              </div>
               {isPaid &&
               (invoice.vat_amount != null || invoice.discount_code) ? (
                 <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
