@@ -13,6 +13,7 @@ import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
 import { useMetricFormat } from './metric-format';
 import { MonthlyBars } from './monthly-bars';
 import { ScalarMetrics } from './scalar-metrics';
+import { METRIC_VALUE_CLASS } from './period-label';
 import { BookOpen, GraduationCap, Radio, Video } from 'lucide-react';
 
 interface Props {
@@ -42,6 +43,7 @@ export function CatalogTab({ query, currency }: Props) {
       id: 'count',
       header: t('platformMetrics.columns.count'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => formatNumber(row.count)
     }
   ];

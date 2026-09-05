@@ -10,6 +10,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { useMetricFormat } from './metric-format';
 import { METRIC_TERM_KEYS, termFullHint } from './tab-guide';
+import { METRIC_VALUE_CLASS } from './period-label';
 import type { MetricsCurrency } from '@/lib/api';
 
 export interface ScalarRow {
@@ -72,6 +73,7 @@ export function ScalarMetrics({
       id: 'value',
       header: t('platformMetrics.columns.value'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => format(row.key, row.value)
     }
   ];

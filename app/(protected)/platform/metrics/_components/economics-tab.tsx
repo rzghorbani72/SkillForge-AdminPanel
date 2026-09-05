@@ -18,6 +18,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
 import { useMetricFormat } from './metric-format';
+import { METRIC_VALUE_CLASS } from './period-label';
 
 interface Props {
   query: MetricsQuery;
@@ -54,11 +55,13 @@ export function EconomicsTab({ query, currency }: Props) {
       id: 'amount',
       header: t('platformMetrics.spend.amount'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => format('amount', row.amount)
     },
     {
       id: 'period',
       header: t('platformMetrics.columns.month'),
+      className: METRIC_VALUE_CLASS,
       cell: (row) =>
         `${formatDate(new Date(row.period_start))} – ${formatDate(new Date(row.period_end))}`
     },

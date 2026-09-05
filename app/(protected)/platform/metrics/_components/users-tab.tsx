@@ -13,6 +13,7 @@ import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
 import { useMetricFormat } from './metric-format';
 import { MonthlyBars } from './monthly-bars';
 import { ScalarMetrics } from './scalar-metrics';
+import { METRIC_VALUE_CLASS } from './period-label';
 import { Users, UserCheck, Activity, Flame } from 'lucide-react';
 
 interface Props {
@@ -42,6 +43,7 @@ export function UsersTab({ query, currency }: Props) {
       id: 'profiles',
       header: t('platformMetrics.columns.profiles'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => formatNumber(row.profiles)
     }
   ];

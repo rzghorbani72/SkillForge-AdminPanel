@@ -12,6 +12,7 @@ import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
 import { useMetricFormat } from './metric-format';
 import { MonthlyBars } from './monthly-bars';
+import { METRIC_VALUE_CLASS, usePeriodLabel } from './period-label';
 import { Wallet, CreditCard, RotateCcw, ShoppingCart } from 'lucide-react';
 
 interface Props {
@@ -29,6 +30,7 @@ export function TransactionsTab({ query, currency }: Props) {
   const { t } = useTranslation();
   const format = useMetricFormat(currency);
   const formatNumber = useNumberFormat();
+  const periodLabel = usePeriodLabel();
   const { data, loading } = useMetricsFetch(query, (q) =>
     apiClient.getMetricsTransactions(q)
   );
@@ -43,12 +45,14 @@ export function TransactionsTab({ query, currency }: Props) {
       id: 'count',
       header: t('platformMetrics.columns.count'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => formatNumber(row.count)
     },
     {
       id: 'amount',
       header: t('platformMetrics.columns.amount'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => format('amount', row.amount)
     }
   ];
@@ -61,18 +65,21 @@ export function TransactionsTab({ query, currency }: Props) {
     {
       id: 'month',
       header: t('platformMetrics.columns.month'),
-      cell: (row) => row.month
+      className: METRIC_VALUE_CLASS,
+      cell: (row) => periodLabel(row.month)
     },
     {
       id: 'count',
       header: t('platformMetrics.columns.count'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => formatNumber(row.count)
     },
     {
       id: 'amount',
       header: t('platformMetrics.columns.amount'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => format('amount', row.amount)
     }
   ];

@@ -39,8 +39,8 @@ function Leg({ title, leg }: { title: string; leg: ReconciliationLeg }) {
             <p
               className={
                 key !== 'matched' && value > 0
-                  ? 'text-lg font-semibold text-destructive'
-                  : 'text-lg font-semibold'
+                  ? 'text-2xl font-bold text-destructive'
+                  : 'text-2xl font-bold'
               }
             >
               {formatNumber(value)}
@@ -108,25 +108,25 @@ export function ReconciliationTab({ query, currency }: Props) {
         <div className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
           <p>
             {t('platformMetrics.metrics.invoiced_amount')}:{' '}
-            <span className="font-semibold">
+            <span className="text-base font-semibold">
               {format('invoiced_amount', report.invoiced_amount)}
             </span>
           </p>
           <p>
             {t('platformMetrics.metrics.invoice_count')}:{' '}
-            <span className="font-semibold">
+            <span className="text-base font-semibold">
               {formatNumber(report.invoice_count)}
             </span>
           </p>
           <p>
             {t('platformMetrics.metrics.manual_invoice_count')}:{' '}
-            <span className="font-semibold">
+            <span className="text-base font-semibold">
               {formatNumber(report.manual_invoice_count)}
             </span>
           </p>
           <p>
             {t('platformMetrics.metrics.manual_invoice_amount')}:{' '}
-            <span className="font-semibold">
+            <span className="text-base font-semibold">
               {format('manual_invoice_amount', report.manual_invoice_amount)}
             </span>
           </p>

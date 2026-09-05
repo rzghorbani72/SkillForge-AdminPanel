@@ -5,6 +5,7 @@ import { apiClient, type MetricsCurrency, type MetricsQuery } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
+import { usePeriodLabel } from './period-label';
 
 interface Props {
   query: MetricsQuery;
@@ -23,6 +24,7 @@ function shade(retention: number | null): string {
 function Heatmap({ cells, title }: { cells: Cell[]; title: string }) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
+  const periodLabel = usePeriodLabel();
   const cohorts = Array.from(new Set(cells.map((cell) => cell.cohort)));
   const maxIndex = cells.reduce(
     (max, cell) => Math.max(max, cell.month_index),
@@ -45,7 +47,7 @@ function Heatmap({ cells, title }: { cells: Cell[]; title: string }) {
   return (
     <DataPanel title={title}>
       <div className="overflow-x-auto p-4">
-        <table className="w-full min-w-[480px] border-separate border-spacing-1 text-xs">
+        <table className="w-full min-w-[480px] border-separate border-spacing-1 text-sm">
           <thead>
             <tr>
               <th className="p-1 text-start font-medium text-muted-foreground">
@@ -64,13 +66,15 @@ function Heatmap({ cells, title }: { cells: Cell[]; title: string }) {
           <tbody>
             {cohorts.map((cohort) => (
               <tr key={cohort}>
-                <td className="whitespace-nowrap p-1 font-medium">{cohort}</td>
+                <td className="whitespace-nowrap p-1 text-base font-semibold">
+                  {periodLabel(cohort)}
+                </td>
                 {Array.from({ length: maxIndex + 1 }, (_, index) => {
                   const retention = lookup.get(`${cohort}:${index}`) ?? null;
                   return (
                     <td
                       key={index}
-                      className="rounded p-1 text-center"
+                      className="rounded p-1 text-center text-base font-semibold"
                       style={{ background: shade(retention) }}
                     >
                       {retention === null

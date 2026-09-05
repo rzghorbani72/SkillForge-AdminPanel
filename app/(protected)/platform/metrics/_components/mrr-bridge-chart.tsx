@@ -14,6 +14,7 @@ import { DataPanel } from '@/components/shared/data-list';
 import type { MetricsRetention, MrrBridgeMonth } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useMetricFormat } from './metric-format';
+import { usePeriodLabel } from './period-label';
 import type { MetricsCurrency } from '@/lib/api';
 
 interface Props {
@@ -25,6 +26,7 @@ interface Props {
 export function MrrBridgeChart({ bridge, retention, currency }: Props) {
   const { t } = useTranslation();
   const format = useMetricFormat(currency);
+  const periodLabel = usePeriodLabel();
 
   return (
     <DataPanel
@@ -39,9 +41,20 @@ export function MrrBridgeChart({ bridge, retention, currency }: Props) {
         <ResponsiveContainer width="100%" height="100%" minWidth={480}>
           <BarChart data={bridge}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} width={80} />
-            <Tooltip />
+            <XAxis
+              dataKey="month"
+              tick={{ fontSize: 14 }}
+              tickFormatter={periodLabel}
+            />
+            <YAxis
+              tick={{ fontSize: 14 }}
+              width={96}
+              tickFormatter={(value: number) => format('mrr', value)}
+            />
+            <Tooltip
+              labelFormatter={(label: string) => periodLabel(label)}
+              formatter={(value: number) => format('mrr', value)}
+            />
             <Legend />
             <Bar
               dataKey="new_mrr"

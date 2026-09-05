@@ -18,6 +18,7 @@ import { useMetricFormat } from './metric-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useMetricsFetch } from '../_hooks/use-metrics-fetch';
+import { METRIC_VALUE_CLASS } from './period-label';
 
 interface Props {
   query: MetricsQuery;
@@ -60,12 +61,14 @@ export function SubscriptionsTab({ query, currency }: Props) {
       id: 'amount',
       header: t('platformMetrics.columns.amount'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => format('last_invoice_amount', row.last_invoice_amount)
     },
     {
       id: 'term',
       header: t('platformMetrics.columns.term'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) =>
         row.last_term_months === null ? '—' : formatNumber(row.last_term_months)
     },
@@ -73,20 +76,24 @@ export function SubscriptionsTab({ query, currency }: Props) {
       id: 'invoices',
       header: t('platformMetrics.columns.paidInvoices'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => formatNumber(row.paid_invoice_count)
     },
     {
       id: 'startsAt',
+      className: METRIC_VALUE_CLASS,
       header: t('platformMetrics.columns.startsAt'),
       cell: (row) => date(row.last_invoice_starts_at)
     },
     {
       id: 'endsAt',
+      className: METRIC_VALUE_CLASS,
       header: t('platformMetrics.columns.endsAt'),
       cell: (row) => date(row.last_invoice_ends_at)
     },
     {
       id: 'firstPaid',
+      className: METRIC_VALUE_CLASS,
       header: t('platformMetrics.columns.firstPaid'),
       cell: (row) => date(row.first_paid_at)
     },
@@ -94,6 +101,7 @@ export function SubscriptionsTab({ query, currency }: Props) {
       id: 'lifetimePaid',
       header: t('platformMetrics.columns.lifetimePaid'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => format('lifetime_paid', row.lifetime_paid)
     }
   ];
@@ -112,12 +120,14 @@ export function SubscriptionsTab({ query, currency }: Props) {
       id: 'measured',
       header: t('platformMetrics.columns.measured'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => formatNumber(row.academies_measured)
     },
     {
       id: 'median',
       header: t('platformMetrics.columns.medianDays'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) =>
         row.median_days === null ? '—' : formatNumber(row.median_days)
     },
@@ -125,6 +135,7 @@ export function SubscriptionsTab({ query, currency }: Props) {
       id: 'p75',
       header: t('platformMetrics.columns.p75Days'),
       align: 'end',
+      className: METRIC_VALUE_CLASS,
       cell: (row) => (row.p75_days === null ? '—' : formatNumber(row.p75_days))
     }
   ];

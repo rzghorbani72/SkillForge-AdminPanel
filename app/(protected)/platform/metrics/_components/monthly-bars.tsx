@@ -9,6 +9,8 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { usePeriodLabel } from './period-label';
 
 interface MonthlyBarsProps {
   data: ReadonlyArray<object>;
@@ -23,6 +25,9 @@ export function MonthlyBars({
   dataKey,
   name
 }: MonthlyBarsProps) {
+  const periodLabel = usePeriodLabel();
+  const formatNumber = useNumberFormat();
+
   if (data.length === 0) return null;
 
   return (
@@ -30,9 +35,20 @@ export function MonthlyBars({
       <ResponsiveContainer width="100%" height="100%" minWidth={480}>
         <BarChart data={[...data]}>
           <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-          <XAxis dataKey={xKey} tick={{ fontSize: 12 }} />
-          <YAxis tick={{ fontSize: 12 }} width={80} />
-          <Tooltip />
+          <XAxis
+            dataKey={xKey}
+            tick={{ fontSize: 14 }}
+            tickFormatter={periodLabel}
+          />
+          <YAxis
+            tick={{ fontSize: 14 }}
+            width={96}
+            tickFormatter={(value: number) => formatNumber(value)}
+          />
+          <Tooltip
+            labelFormatter={(label: string) => periodLabel(label)}
+            formatter={(value: number) => formatNumber(value)}
+          />
           <Bar
             dataKey={dataKey}
             name={name}
