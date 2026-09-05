@@ -21,7 +21,6 @@ const publicRoutes = [
   '/register',
   '/forget-password',
   '/admin-forget-password',
-  '/find-school',
   '/select-school',
   '/unauthorized',
   '/support',

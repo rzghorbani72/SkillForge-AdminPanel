@@ -65,7 +65,6 @@ export const fa = {
     register: 'ثبت‌نام',
     adminLogin: 'ورود مدیران پلتفرم',
     forgotPassword: 'بازیابی رمز عبور',
-    findSchool: 'یافتن آکادمی',
     selectSchool: 'انتخاب آکادمی',
     unauthorized: 'دسترسی غیرمجاز',
     paymentCallback: 'نتیجهٔ پرداخت',
@@ -383,40 +382,6 @@ export const fa = {
         SPAM: 'اسپم'
       }
     }
-  },
-  findSchool: {
-    title: 'آکادمی خود را پیدا کنید',
-    subtitle:
-      'دامنه یا نام آکادمی خود را وارد کنید تا به داشبورد یادگیری دسترسی پیدا کنید',
-    searchTitle: 'جستجوی آکادمی',
-    searchDescription: 'دامنه یا نام آکادمی خود را وارد کنید',
-    searchLabel: 'دامنه یا نام آکادمی',
-    searchPlaceholder: 'مثلاً my-academy یا نام آکادمی من',
-    goToStore: 'ورود به آکادمی',
-    searching: 'در حال جستجو...',
-    enterStorePrompt: 'لطفاً نام یا دامنه آکادمی را وارد کنید',
-    redirectingTo: 'در حال انتقال به {{url}}',
-    searchFailed:
-      'آکادمی پیدا نشد. لطفاً دامنه را بررسی کنید یا با پشتیبانی تماس بگیرید.',
-    byDomain: 'بر اساس دامنه',
-    customDomain: 'دامنه اختصاصی',
-    subdomainLabel: 'زیردامنه',
-    byStoreName: 'بر اساس نام آکادمی',
-    fullStoreName: 'نام کامل آکادمی',
-    shortName: 'نام کوتاه',
-    popularStores: 'آکادمی‌های محبوب',
-    popularStoresDescription: 'دسترسی سریع به برخی از محبوب‌ترین آکادمی‌ها',
-    cantFindStore: 'آکادمی خود را پیدا نمی‌کنید؟',
-    cantFindStoreHelp:
-      'برای دریافت دامنه صحیح با مدیر آکادمی خود تماس بگیرید یا از او بخواهید یک حساب ایجاد کند.',
-    needToCreateStore: 'می‌خواهید آکادمی بسازید؟',
-    needToCreateStoreHelp1: 'اگر مدرس یا مدیر هستید، می‌توانید ',
-    registerHere: 'اینجا ثبت‌نام کنید',
-    needToCreateStoreHelp2: ' تا آکادمی خود را بسازید.',
-    backToLogin: 'بازگشت به ورود',
-    createNewStore: 'ساخت آکادمی جدید',
-    needHelp: 'کمک می‌خواهید؟',
-    contactSupport: 'تماس با پشتیبانی'
   },
   selectSchool: {
     title: 'آکادمی خود را انتخاب کنید',
@@ -1050,7 +1015,6 @@ export const fa = {
     dontHaveAccount: 'حساب مدیریتی ندارید؟',
     registerStore: 'آکادمی خود را ثبت کنید',
     areYouStudent: 'دانشجو هستید؟',
-    findStore: 'آکادمی خود را پیدا کنید',
     phone: 'تلفن',
     emailAddress: 'آدرس ایمیل',
     phoneNumber: 'شماره تلفن',

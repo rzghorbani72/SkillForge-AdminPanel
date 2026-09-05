@@ -9,7 +9,6 @@ const EXTRA_TITLE_KEYS: Record<string, string> = {
   '/admin-login': 'pageTitles.adminLogin',
   '/admin-forget-password': 'pageTitles.forgotPassword',
   '/forget-password': 'pageTitles.forgotPassword',
-  '/find-school': 'pageTitles.findSchool',
   '/select-school': 'pageTitles.selectSchool',
   '/unauthorized': 'pageTitles.unauthorized',
   '/payment/callback': 'pageTitles.paymentCallback',

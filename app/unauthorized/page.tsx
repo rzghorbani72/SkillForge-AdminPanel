@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldAlert, ArrowLeft, Building2 } from 'lucide-react';
+import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import { AuthLayout } from '@/components/auth/auth-layout';
 import { AuthLogo } from '@/components/auth/auth-logo';
 import { Button } from '@/components/ui/button';
-import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
@@ -87,13 +86,6 @@ export default function UnauthorizedPage() {
             <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
             {t('auth.backToLogin')}
           </Button>
-
-          <Link href="/find-school">
-            <Button className="w-full" variant="outline">
-              <Building2 className="me-2 h-4 w-4" />
-              {t('auth.findStore')}
-            </Button>
-          </Link>
         </div>
 
         <p className="text-center text-xs leading-6 text-muted-foreground">

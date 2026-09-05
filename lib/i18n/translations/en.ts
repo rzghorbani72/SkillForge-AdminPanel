@@ -68,7 +68,6 @@ export const en = {
     register: 'Sign up',
     adminLogin: 'Platform sign in',
     forgotPassword: 'Reset password',
-    findSchool: 'Find academy',
     selectSchool: 'Select academy',
     unauthorized: 'Access denied',
     paymentCallback: 'Payment result',
@@ -393,41 +392,6 @@ export const en = {
         SPAM: 'Spam'
       }
     }
-  },
-  findSchool: {
-    title: 'Find Your Academy',
-    subtitle:
-      'Enter your academy domain or name to access your learning dashboard',
-    searchTitle: 'Search for Your Academy',
-    searchDescription: 'Enter your academy domain or name',
-    searchLabel: 'Academy Domain or Name',
-    searchPlaceholder: 'e.g., my-academy or My Academy Name',
-    goToStore: 'Go to Academy',
-    searching: 'Searching...',
-    enterStorePrompt: 'Please enter an academy name or domain',
-    redirectingTo: 'Redirecting to {{url}}',
-    searchFailed:
-      'Could not find the academy. Please check the domain or contact support.',
-    byDomain: 'By Domain',
-    customDomain: 'Custom Domain',
-    subdomainLabel: 'Subdomain',
-    byStoreName: 'By Academy Name',
-    fullStoreName: 'Full Academy Name',
-    shortName: 'Short Name',
-    popularStores: 'Popular Academies',
-    popularStoresDescription:
-      'Quick access to some of the most popular academies',
-    cantFindStore: "Can't find your academy?",
-    cantFindStoreHelp:
-      'Contact your academy administrator to get the correct domain or ask them to set up an account.',
-    needToCreateStore: 'Need to create an academy?',
-    needToCreateStoreHelp1: "If you're a teacher or administrator, you can ",
-    registerHere: 'register here',
-    needToCreateStoreHelp2: ' to create your own academy.',
-    backToLogin: 'Back to Login',
-    createNewStore: 'Create New Academy',
-    needHelp: 'Need help?',
-    contactSupport: 'Contact Support'
   },
   selectSchool: {
     title: 'Select Your Academy',
@@ -1066,7 +1030,6 @@ export const en = {
     dontHaveAccount: "Don't have an admin account?",
     registerStore: 'Register your Academy',
     areYouStudent: 'Are you a student?',
-    findStore: 'Find your academy',
     phone: 'Phone',
     emailAddress: 'Email address',
     phoneNumber: 'Phone number',
