@@ -64,9 +64,11 @@ const NavItemContent = React.memo(
         {/* Plain icon — no box, matches Mentoma design */}
         <Icon
           className={cn(
-            'h-[17px] w-[17px] shrink-0 transition-colors duration-150',
+            'h-[17px] w-[17px] shrink-0 transition-[transform,color] duration-200 ease-out',
             isActive ? 'text-primary' : 'text-muted-foreground',
-            !isActive && !item.disabled && 'group-hover:text-primary'
+            !isActive &&
+              !item.disabled &&
+              'group-hover:scale-110 group-hover:text-primary'
           )}
         />
         {!isMinimized && (
@@ -393,7 +395,7 @@ export function DashboardNav({
   const renderedSections = new Set<string>();
 
   return (
-    <nav className="flex flex-col gap-px">
+    <nav className="flex flex-col gap-1">
       <TooltipProvider delayDuration={0}>
         {memoizedItems.map((item) => {
           const showSection =
