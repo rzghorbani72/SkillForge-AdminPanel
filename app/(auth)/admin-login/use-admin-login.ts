@@ -17,11 +17,8 @@ import {
 } from '@/lib/auth-validation';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { isPlatformStaff } from '@/lib/roles';
-import {
-  homeRouteFor,
-  NO_HOME_ROUTE,
-  resolveSessionRole
-} from '@/lib/auth-routing';
+import { homeRouteFor, resolveSessionRole } from '@/lib/auth-routing';
+import { isPanelAccessBlockedError } from '@/lib/auth-login-errors';
 import type { AuthUser } from '@/lib/auth';
 
 type LoginMethod = 'password' | 'otp';
@@ -93,7 +90,7 @@ export function useAdminLogin() {
     // Non-staff still have a valid session: send them to their own home rather
     // than to /login, which only loops.
     ErrorHandler.showWarning(t('auth.staffRouteOnly'));
-    window.location.href = homeRouteFor(userRole) ?? NO_HOME_ROUTE;
+    window.location.href = homeRouteFor(userRole) ?? '/dashboard';
   };
 
   const handlePasswordLogin = async () => {
@@ -106,6 +103,10 @@ export function useAdminLogin() {
       });
       if (response) routeAfterLogin(response);
     } catch (error: unknown) {
+      if (isPanelAccessBlockedError(error)) {
+        window.location.assign('/unauthorized');
+        return;
+      }
       const fieldErrors = ErrorHandler.handleFormError(error);
       if (Object.keys(fieldErrors).length > 0) setErrors(fieldErrors);
     } finally {

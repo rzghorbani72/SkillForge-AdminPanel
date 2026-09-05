@@ -18,9 +18,8 @@ export default function UnauthorizedPage() {
   const leaving = useRef(false);
 
   /**
-   * Plain navigation to /login bounces straight back here: the session is still
-   * valid and its role has no home route, so the middleware sends it to
-   * NO_HOME_ROUTE. Leaving means ending the session first.
+   * A banned or deactivated staff session may still hold cookies. Going to
+   * /login without signing out would bounce them back into the panel.
    */
   const goToLogin = useCallback(() => {
     if (leaving.current) return;
@@ -41,9 +40,8 @@ export default function UnauthorizedPage() {
   }, [secondsLeft, goToLogin]);
 
   const bullets = [
-    t('unauthorized.accessStudentDashboard'),
     t('unauthorized.contactStoreAdmin'),
-    t('unauthorized.joinAsTeacher')
+    t('unauthorized.contactSupport')
   ];
 
   return (
@@ -98,10 +96,6 @@ export default function UnauthorizedPage() {
             {t('auth.backToLogin')}
           </Button>
         </div>
-
-        <p className="text-center text-xs leading-6 text-muted-foreground">
-          {t('unauthorized.contactSupport')}
-        </p>
       </div>
     </AuthLayout>
   );

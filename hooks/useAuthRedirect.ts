@@ -60,10 +60,10 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
             setIsLoading(false);
             return;
           } else {
-            // User has invalid role for this panel
-            if (!hasRedirectedRef.current && pathname !== '/unauthorized') {
+            // User has no panel role — deny, do not use /unauthorized
+            if (!hasRedirectedRef.current && pathname !== '/login') {
               hasRedirectedRef.current = true;
-              router.replace('/unauthorized');
+              router.replace('/login');
               return;
             }
             setIsLoading(false);

@@ -10,12 +10,12 @@ import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
 import {
   checkoutQueryFromSearch,
   homeRouteFor,
-  NO_HOME_ROUTE,
   resolveSessionRole
 } from '@/lib/auth-routing';
 import {
   isUserNotRegisteredError,
-  isCaptchaRequiredError
+  isCaptchaRequiredError,
+  isPanelAccessBlockedError
 } from '@/lib/auth-login-errors';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { notifyOtpSent } from '@/lib/otp-notify';
@@ -47,6 +47,11 @@ type LoginResponse = {
   available_academies?: Academy[];
   requires_academy_selection?: boolean;
 };
+
+function goToUnauthorized() {
+  if (typeof window === 'undefined') return;
+  window.location.assign('/unauthorized');
+}
 
 function resolveLoginError(
   error: unknown,
@@ -133,12 +138,15 @@ export function useLogin() {
     return Object.keys(e).length === 0;
   }
 
-  // Always schedules a redirect. A role we cannot place goes to /unauthorized —
-  // leaving the user on the login screen after a session was created reads as a
-  // failed login and is what stranded custom-role and platform-staff accounts.
+  // Always schedules a redirect. A role we cannot place is a failed login
+  // (no panel seat) — /unauthorized is reserved for banned/deactivated staff.
   function schedulePostLoginRedirect(response: LoginResponse) {
     const role = resolveSessionRole(response);
-    const href = homeRouteFor(role, { planQuery }) ?? NO_HOME_ROUTE;
+    const href = homeRouteFor(role, { planQuery });
+    if (!href) {
+      toast.error(t('error.authenticationFailed'), { toastId: 'login-error' });
+      return;
+    }
 
     scheduleRedirect({
       href,
@@ -164,6 +172,10 @@ export function useLogin() {
       setOtpRequired(true);
       notifyOtpSent(t('success.otpSent'), 'login-otp-sent');
     } catch (error: unknown) {
+      if (isPanelAccessBlockedError(error)) {
+        goToUnauthorized();
+        return;
+      }
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(
           error,
@@ -209,6 +221,10 @@ export function useLogin() {
         setMemberElsewhere(true);
         return;
       }
+      if (next === 'panel_blocked') {
+        goToUnauthorized();
+        return;
+      }
 
       setIdentity(data);
       if (next === 'otp') {
@@ -224,6 +240,9 @@ export function useLogin() {
       if (isCaptchaRequiredError(error)) {
         setCaptchaRequired(true);
         setCaptchaToken('');
+      } else if (isPanelAccessBlockedError(error)) {
+        goToUnauthorized();
+        return;
       }
       toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
         toastId: 'login-error'
@@ -298,6 +317,10 @@ export function useLogin() {
         });
         return;
       }
+      if (isPanelAccessBlockedError(error)) {
+        goToUnauthorized();
+        return;
+      }
       toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
         toastId: 'login-error'
       });
@@ -342,6 +365,10 @@ export function useLogin() {
         schedulePostLoginRedirect(response);
       }
     } catch (error: unknown) {
+      if (isPanelAccessBlockedError(error)) {
+        goToUnauthorized();
+        return;
+      }
       toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
         toastId: 'login-error'
       });
@@ -367,17 +394,11 @@ export function useLogin() {
 
         // OTP login always creates the session, so a user with several academies
         // picks one by switching rather than by logging in again — there is no
-        // password to replay and the OTP is spent.
+        // password to replay and the OTP is spent. One academy still goes
+        // through finishLogin so we switch onto that staff seat instead of
+        // following a leftover student JWT.
         sessionReadyRef.current = true;
-        const academies = response.availableAcademies ?? [];
-        if (academies.length > 1) {
-          setAvailableAcademies(academies);
-          setAcademyPickerOpen(true);
-          return;
-        }
-
-        toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
-        schedulePostLoginRedirect(response);
+        await finishLogin(response);
         return;
       }
 
@@ -401,6 +422,10 @@ export function useLogin() {
         message: t('auth.redirectingToAffiliate')
       });
     } catch (error: unknown) {
+      if (isPanelAccessBlockedError(error)) {
+        goToUnauthorized();
+        return;
+      }
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(
           error,
@@ -431,6 +456,10 @@ export function useLogin() {
       setPasswordResetRequired(false);
       await finishLogin(response);
     } catch (error: unknown) {
+      if (isPanelAccessBlockedError(error)) {
+        goToUnauthorized();
+        return;
+      }
       setResetError(apiErrorMessage(error, t('error.authenticationFailed')));
     } finally {
       setResetLoading(false);
@@ -454,6 +483,10 @@ export function useLogin() {
       );
       notifyOtpSent(t('success.otpSent'), 'otp-resent');
     } catch (error: unknown) {
+      if (isPanelAccessBlockedError(error)) {
+        goToUnauthorized();
+        return;
+      }
       const { message, registrationRequired: needsRegistration } =
         resolveLoginError(
           error,

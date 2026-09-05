@@ -20,6 +20,7 @@ const NON_PANEL_ROLES = ['STUDENT', 'USER'] as const;
 /** Affiliates are external referrers: they sign in, but only to their own area. */
 const AFFILIATE_ROUTES = ['/my-affiliate', '/user', '/settings'] as const;
 
+/** Banned or deactivated staff land here. Not a fallback for missing panel roles. */
 export const NO_HOME_ROUTE = '/unauthorized';
 
 /**

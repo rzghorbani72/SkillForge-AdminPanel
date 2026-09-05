@@ -10,7 +10,6 @@ import { authService } from '@/lib/auth';
 import {
   checkoutQueryFromSearch,
   homeRouteFor,
-  NO_HOME_ROUTE,
   resolveSessionRole
 } from '@/lib/auth-routing';
 import { OtpType } from '@/constants/data';
@@ -164,7 +163,7 @@ export default function RegisterPage() {
         router.replace(loginHref);
         return;
       }
-      router.replace(homeRouteFor(role, { planQuery }) ?? NO_HOME_ROUTE);
+      router.replace(homeRouteFor(role, { planQuery }) ?? '/dashboard');
     } catch {
       router.replace(loginHref);
     }

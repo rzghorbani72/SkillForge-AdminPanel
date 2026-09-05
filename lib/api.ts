@@ -61,6 +61,7 @@ import {
 import { currentLanguage } from './current-language';
 import { assertUploadSize, MAX_IMAGE_UPLOAD_BYTES } from './upload-limits';
 import { isAuthPagePath } from './auth-routes';
+import { isPanelAccessBlockedError } from './auth-login-errors';
 import {
   createSellerIdentityIncompleteError,
   SELLER_IDENTITY_INCOMPLETE
@@ -628,6 +629,16 @@ class ApiClient {
         const forbiddenError = new ApiResponseError(
           parseApiError(response.status, data)
         );
+        if (isPanelAccessBlockedError(forbiddenError)) {
+          if (
+            typeof window !== 'undefined' &&
+            !isAuthPagePath(window.location.pathname) &&
+            window.location.pathname !== '/unauthorized'
+          ) {
+            window.location.assign('/unauthorized');
+          }
+          throw forbiddenError;
+        }
         const errorMessage = resolveApiErrorMessage(
           forbiddenError,
           currentLanguage()

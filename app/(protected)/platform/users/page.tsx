@@ -79,7 +79,7 @@ export default function PlatformUsersPage() {
 
   useEffect(() => {
     if (userLoading) return;
-    if (!isPlatformStaff(user)) router.replace('/unauthorized');
+    if (!isPlatformStaff(user)) router.replace('/dashboard');
   }, [user, userLoading, router]);
 
   const load = useCallback(async () => {

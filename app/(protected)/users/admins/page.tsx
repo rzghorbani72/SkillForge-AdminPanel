@@ -18,7 +18,7 @@ export default function AdminsRedirectPage() {
       router.replace('/platform/users');
       return;
     }
-    router.replace('/unauthorized');
+    router.replace('/dashboard');
   }, [isLoading, user, router]);
 
   return (

@@ -21,3 +21,17 @@ export function isUserNotRegisteredError(error: unknown): boolean {
 export function isCaptchaRequiredError(error: unknown): boolean {
   return isApiResponseError(error) && error.error.code === 'CAPTCHA_REQUIRED';
 }
+
+const PANEL_BLOCKED_CODES = new Set([
+  'AUTH_ACCOUNT_DISABLED',
+  'AUTH_USER_BANNED',
+  'AUTH_MEMBER_BANNED'
+]);
+
+/**
+ * True when login (or a live session) failed because this panel account is
+ * banned or deactivated. Those users go to `/unauthorized`, not back to login.
+ */
+export function isPanelAccessBlockedError(error: unknown): boolean {
+  return isApiResponseError(error) && PANEL_BLOCKED_CODES.has(error.error.code);
+}

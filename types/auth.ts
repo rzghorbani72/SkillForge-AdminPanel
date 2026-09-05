@@ -11,6 +11,11 @@ export interface AccountIdentity {
    * the phone with a one-time code (`GET`ting it needs `MemberAcademy` below).
    */
   member_elsewhere?: boolean;
+  /**
+   * This identifier belongs to a banned or deactivated panel account.
+   * The login screen sends them to `/unauthorized`.
+   */
+  panel_blocked?: boolean;
 }
 
 /** One academy the verified phone belongs to (`POST /auth/academies/lookup`). */

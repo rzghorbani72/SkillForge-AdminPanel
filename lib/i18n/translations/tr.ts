@@ -1793,21 +1793,21 @@ export const tr = {
     roleRequired: 'Bu kaynağa erişmek için gerekli role sahip değilsiniz'
   },
   unauthorized: {
-    title: 'Yetkisiz Erişim',
+    title: 'Account blocked',
     description:
-      'Bu yönetim paneli yalnızca öğretmenler, yöneticiler ve yöneticiler için sınırlıdır. Öğrenciler enstitülerinin web sitesi üzerinden öğrenme panellerine erişmelidir.',
-    note: 'Not:',
+      'This admin panel account has been banned or deactivated. You cannot sign in until an academy manager restores access.',
+    note: 'Note:',
     contactAdmin:
-      'Bu panele erişiminiz olması gerektiğini düşünüyorsanız, lütfen enstitü yöneticinizle iletişime geçin.',
-    whatYouCanDo: 'Ne yapabilirsiniz:',
-    accessStudentDashboard: 'Enstitünüzün öğrenci paneline erişin',
-    contactStoreAdmin: 'Enstitü yöneticinizle iletişime geçin',
+      'If you believe this is a mistake, contact your academy manager.',
+    whatYouCanDo: 'What you can do:',
+    accessStudentDashboard: "Access your academy's student dashboard",
+    contactStoreAdmin: 'Contact your academy manager to restore access',
     joinAsTeacher:
-      'Bir enstitüye katılın ve eğitimciyseniz öğretmen rolü isteyin',
-    needHelp: 'Yardıma mı ihtiyacınız var?',
+      "Join a academy and request teacher role if you're an educator",
+    needHelp: 'Need help?',
     contactSupport:
-      'Bu panele erişiminiz olması gerektiğini düşünüyorsanız, lütfen okul yöneticinizle veya destek ekibimizle iletişime geçin.',
-    redirectingIn: 'Giriş sayfasına {{seconds}} saniye içinde döneceksiniz.'
+      'If you believe this is a mistake, contact Mentoma support.',
+    redirectingIn: 'Returning to the login page in {{seconds}} seconds.'
   },
   notFound: {
     title: 'Sayfa Bulunamadı',

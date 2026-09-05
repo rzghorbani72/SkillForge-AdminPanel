@@ -1735,20 +1735,21 @@ export const ar = {
     roleRequired: 'ليس لديك الدور المطلوب للوصول إلى هذا المورد'
   },
   unauthorized: {
-    title: 'وصول غير مصرح به',
+    title: 'Account blocked',
     description:
-      'هذه اللوحة الإدارية مقتصرة على المعلمين والمديرين والمسؤولين فقط. يجب على الطلاب الوصول إلى لوحة معلومات التعلم الخاصة بهم من خلال موقع معهدهم.',
-    note: 'ملاحظة:',
+      'This admin panel account has been banned or deactivated. You cannot sign in until an academy manager restores access.',
+    note: 'Note:',
     contactAdmin:
-      'إذا كنت تعتقد أنه يجب أن يكون لديك حق الوصول إلى هذه اللوحة، يرجى الاتصال بمدير معهدك.',
-    whatYouCanDo: 'ما يمكنك فعله:',
-    accessStudentDashboard: 'الوصول إلى لوحة معلومات الطالب في معهدك',
-    contactStoreAdmin: 'اتصل بمدير معهدك',
-    joinAsTeacher: 'انضم إلى معهد واطلب دور المعلم إذا كنت معلماً',
-    needHelp: 'تحتاج مساعدة؟',
+      'If you believe this is a mistake, contact your academy manager.',
+    whatYouCanDo: 'What you can do:',
+    accessStudentDashboard: "Access your academy's student dashboard",
+    contactStoreAdmin: 'Contact your academy manager to restore access',
+    joinAsTeacher:
+      "Join a academy and request teacher role if you're an educator",
+    needHelp: 'Need help?',
     contactSupport:
-      'إذا كنت تعتقد أنه يجب أن يكون لديك حق الوصول إلى هذه اللوحة، يرجى الاتصال بمدير مدرستك أو فريق الدعم لدينا.',
-    redirectingIn: 'سيتم إعادتك إلى صفحة تسجيل الدخول خلال {{seconds}} ثانية.'
+      'If you believe this is a mistake, contact Mentoma support.',
+    redirectingIn: 'Returning to the login page in {{seconds}} seconds.'
   },
   notFound: {
     title: 'الصفحة غير موجودة',

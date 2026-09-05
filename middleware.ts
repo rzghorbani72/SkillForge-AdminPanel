@@ -10,7 +10,6 @@ import {
   canOpenRoute,
   checkoutQueryFromSearch,
   homeRouteFor,
-  NO_HOME_ROUTE,
   resolveSessionRole
 } from '@/lib/auth-routing';
 
@@ -123,7 +122,7 @@ async function handlePageAuth(request: NextRequest): Promise<NextResponse> {
     request.nextUrl.searchParams.get('period')
   );
   const home = isAuthenticated
-    ? (homeRouteFor(userRole, { planQuery: checkoutQuery }) ?? NO_HOME_ROUTE)
+    ? homeRouteFor(userRole, { planQuery: checkoutQuery })
     : null;
 
   const redirectHome = (): NextResponse => {
@@ -131,6 +130,16 @@ async function handlePageAuth(request: NextRequest): Promise<NextResponse> {
     if (!home || home === pathname) return NextResponse.next();
     return NextResponse.redirect(new URL(home, request.url));
   };
+
+  // A session with no panel role is not staff. Deny it; /unauthorized is only
+  // for banned or deactivated panel accounts.
+  if (isAuthenticated && home === null) {
+    const loginUrl = new URL('/login', request.url);
+    const response = NextResponse.redirect(loginUrl);
+    response.cookies.delete('jwt');
+    response.cookies.delete('refresh_token');
+    return response;
+  }
 
   if (isAuthenticated && (isAuthRoute(pathname) || pathname === '/')) {
     return redirectHome();
@@ -140,7 +149,6 @@ async function handlePageAuth(request: NextRequest): Promise<NextResponse> {
   // session cookie is never destroyed for merely visiting the wrong URL.
   if (
     isAuthenticated &&
-    pathname !== NO_HOME_ROUTE &&
     !isPublicRoute(pathname) &&
     !canOpenRoute(userRole, pathname)
   ) {

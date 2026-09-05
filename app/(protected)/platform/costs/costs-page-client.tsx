@@ -43,7 +43,7 @@ export function CostsPageClient() {
   useEffect(() => {
     if (userLoading) return;
     if (!isPlatformAdmin(user)) {
-      router.replace('/unauthorized');
+      router.replace('/dashboard');
       return;
     }
     void load();

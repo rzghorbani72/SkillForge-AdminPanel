@@ -2600,20 +2600,20 @@ export const en = {
     roleRequired: 'You do not have the required role to access this resource'
   },
   unauthorized: {
-    title: 'Unauthorized Access',
+    title: 'Account blocked',
     description:
-      "This admin panel is restricted to teachers, managers, and administrators only. Students should access their learning dashboard through their store's website.",
+      'This admin panel account has been banned or deactivated. You cannot sign in until an academy manager restores access.',
     note: 'Note:',
     contactAdmin:
-      'If you believe you should have access to this panel, please contact your academy administrator.',
+      'If you believe this is a mistake, contact your academy manager.',
     whatYouCanDo: 'What you can do:',
     accessStudentDashboard: "Access your academy's student dashboard",
-    contactStoreAdmin: 'Contact your academy administrator',
+    contactStoreAdmin: 'Contact your academy manager to restore access',
     joinAsTeacher:
       "Join a academy and request teacher role if you're an educator",
     needHelp: 'Need help?',
     contactSupport:
-      'If you believe you should have access to this panel, please contact your academy administrator or our support team.',
+      'If you believe this is a mistake, contact Mentoma support.',
     redirectingIn: 'Returning to the login page in {{seconds}} seconds.'
   },
   notFound: {
