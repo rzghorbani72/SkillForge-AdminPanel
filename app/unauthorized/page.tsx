@@ -1,21 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import { AuthLayout } from '@/components/auth/auth-layout';
 import { AuthLogo } from '@/components/auth/auth-logo';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { signOut } from '@/lib/sign-out';
 
 const REDIRECT_SECONDS = 30;
 
 export default function UnauthorizedPage() {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const router = useRouter();
   const [secondsLeft, setSecondsLeft] = useState(REDIRECT_SECONDS);
+  const leaving = useRef(false);
+
+  /**
+   * Plain navigation to /login bounces straight back here: the session is still
+   * valid and its role has no home route, so the middleware sends it to
+   * NO_HOME_ROUTE. Leaving means ending the session first.
+   */
+  const goToLogin = useCallback(() => {
+    if (leaving.current) return;
+    leaving.current = true;
+    void signOut('/login');
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(
@@ -26,8 +37,8 @@ export default function UnauthorizedPage() {
   }, []);
 
   useEffect(() => {
-    if (secondsLeft === 0) router.replace('/login');
-  }, [secondsLeft, router]);
+    if (secondsLeft === 0) goToLogin();
+  }, [secondsLeft, goToLogin]);
 
   const bullets = [
     t('unauthorized.accessStudentDashboard'),
@@ -82,7 +93,7 @@ export default function UnauthorizedPage() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button className="w-full" onClick={() => router.replace('/login')}>
+          <Button className="w-full" onClick={goToLogin}>
             <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
             {t('auth.backToLogin')}
           </Button>
