@@ -6833,12 +6833,12 @@ export const en = {
       'These images rotate slowly in the centre of every academy dashboard. The set an academy sees depends on whether it has finished setup (academy + template + first course).',
     accessDenied:
       'Only the platform owner and admins can manage dashboard banners.',
-    upload: 'Upload banner',
-    uploaded: 'Banner uploaded',
+    upload: 'Upload banners',
+    uploadedCount: '{{count}} banner(s) uploaded',
     deleted: 'Banner deleted',
     delete: 'Remove',
     empty: 'No banners in this set yet',
-    hint: 'Use a landscape image. It scales to fill the dashboard centre card.',
+    hint: 'Pick several landscape images at once; they play as a slideshow in upload order.',
     states: {
       INCOMPLETE: 'Setup not finished',
       COMPLETED: 'Academy fully set up'

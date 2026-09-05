@@ -33,23 +33,29 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
 
-  const handleUpload = async (file: File) => {
+  const handleUpload = async (files: File[]) => {
     setBusy(true);
+    let uploadedCount = 0;
     try {
-      const uploaded = await apiClient.uploadImage(file, {
-        title: `dashboard-banner-${state}`
-      });
-      const imageId = uploadedImageId(uploaded);
-      if (!imageId) {
-        throw new Error('upload-failed');
+      for (const file of files) {
+        const uploaded = await apiClient.uploadImage(file, {
+          title: `dashboard-banner-${state}`
+        });
+        const imageId = uploadedImageId(uploaded);
+        if (!imageId) {
+          throw new Error('upload-failed');
+        }
+        await apiClient.createDashboardBanner({ image_id: imageId, state });
+        uploadedCount += 1;
       }
-      await apiClient.createDashboardBanner({ image_id: imageId, state });
-      ErrorHandler.showSuccess(t('dashboardBanners.uploaded'));
-      await onChanged();
+      ErrorHandler.showSuccess(
+        t('dashboardBanners.uploadedCount', { count: uploadedCount })
+      );
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
       setBusy(false);
+      await onChanged();
     }
   };
 
@@ -79,11 +85,12 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
           ref={inputRef}
           type="file"
           accept="image/*"
+          multiple
           className="hidden"
           onChange={(event) => {
-            const file = event.target.files?.[0];
+            const files = Array.from(event.target.files ?? []);
             event.target.value = '';
-            if (file) void handleUpload(file);
+            if (files.length > 0) void handleUpload(files);
           }}
         />
         <Button
