@@ -29,6 +29,7 @@ import type {
   AnalyticsOverview,
   AnalyticsRevenue
 } from '@/types/analytics';
+import type { DashboardPeriodKey, ManagerDashboard } from '@/types/dashboard';
 import type { LedgerPaymentsResponse, SettlementDesk } from '@/types/financial';
 import type {
   AbuseReport,
@@ -3876,6 +3877,13 @@ class ApiClient {
       return response.data as any;
     }
     return null as any;
+  }
+
+  async getManagerDashboard(period: DashboardPeriodKey = '30d') {
+    const res = await this.request<
+      ManagerDashboard | { data: ManagerDashboard }
+    >(`/dashboard/manager?period=${period}`);
+    return unwrapDataEnvelope(res.data);
   }
 
   async getAnalyticsOverview() {

@@ -152,7 +152,7 @@ export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
   starter: [
     '۲ معلم',
     '۱۲۵ دانشجوی تدریس خصوصی',
-    '۳۰ گیگابایت فضا',
+    '۱۵ گیگابایت فضا',
     'فروش عمومی نامحدود',
     'دامنه اختصاصی',
     'بدون کارمزد فروش'
@@ -160,7 +160,7 @@ export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
   growth: [
     '۵ معلم',
     '۳۵۰ دانشجوی تدریس خصوصی',
-    '۹۰ گیگابایت فضا',
+    '۴۰ گیگابایت فضا',
     'فروش عمومی نامحدود',
     'دامنه اختصاصی',
     '۲ مدیر'
@@ -168,7 +168,7 @@ export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
   business: [
     '۱۵ معلم',
     '۹۰۰ دانشجوی تدریس خصوصی',
-    '۲۰۰ گیگابایت فضا',
+    '۸۰ گیگابایت فضا',
     'فروش عمومی نامحدود',
     '۵ مدیر',
     'دامنه اختصاصی'

@@ -6,12 +6,14 @@ import { useStore } from '@/hooks/useStore';
 import { Download } from 'lucide-react';
 import useDashboard from '@/components/dashboard/useDashboard';
 import DashboardHero from '@/components/dashboard/dashboard-hero';
-import RevenueEnrollmentChart from '@/components/dashboard/RevenueEnrollmentChart';
-import TopCoursesTable from '@/components/dashboard/TopCoursesTable';
-import RecentActivityFeed from '@/components/dashboard/RecentActivityFeed';
 import ConversionFunnel from '@/components/dashboard/ConversionFunnel';
-import WeekdayEnrollmentChart from '@/components/dashboard/WeekdayEnrollmentChart';
 import CompletionDonut from '@/components/dashboard/CompletionDonut';
+import MoneyCards from '@/components/dashboard/money-cards';
+import MoneyFlowChart from '@/components/dashboard/money-flow-chart';
+import PlanLimitsPanel from '@/components/dashboard/plan-limits-panel';
+import CourseMoneyTable from '@/components/dashboard/course-money-table';
+import TeacherMoneyTable from '@/components/dashboard/teacher-money-table';
+import { useManagerMoney } from '@/components/dashboard/use-manager-money';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { canManageSubscription } from '@/lib/subscription-access';
@@ -52,14 +54,15 @@ export default function DashboardPage() {
   const {
     isLoading,
     recentCourses,
-    recentActivity,
     statsCards,
-    trendData,
-    weekdayData,
     statusData,
     overallCompletion,
     journeyData
   } = useDashboard(period, periodLabel);
+
+  // Money, course and teacher figures are aggregated by the API so they stay
+  // correct past the page caps the list endpoints impose.
+  const money = useManagerMoney(period);
 
   const canManagePlan = canManageSubscription(user);
   const { needsPlanPurchase, isLoading: subscriptionLoading } =
@@ -162,7 +165,14 @@ export default function DashboardPage() {
         </div>
 
         <div className="stagger-children space-y-6">
-          {/* Row 1: two stacked cards | academy panel | two stacked cards */}
+          {/* Row 1: the four money numbers a manager acts on */}
+          <MoneyCards
+            money={money.money}
+            payouts_due={money.payouts_due}
+            isLoading={money.isLoading}
+          />
+
+          {/* Row 2: academy panel + stock counters */}
           <DashboardHero
             cards={statsCards}
             period={period}
@@ -170,13 +180,13 @@ export default function DashboardPage() {
             loadingLabel={loadingLabel}
           />
 
-          {/* Row 2: Revenue area chart (2/3) + student journey (1/3) */}
+          {/* Row 3: where the money goes (2/3) + student journey (1/3) */}
           <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
-            <RevenueEnrollmentChart
-              data={trendData}
-              periodLabel={periodLabel}
+            <MoneyFlowChart
+              series={money.series}
+              grain={money.period.grain}
               period={period}
-              isLoading={isLoading}
+              isLoading={money.isLoading}
             />
             <ConversionFunnel
               steps={journeyData}
@@ -185,13 +195,17 @@ export default function DashboardPage() {
             />
           </div>
 
-          {/* Row 3: Weekday bar chart (1/2) + Completion donut (1/2) */}
-          <div className="grid gap-5 lg:grid-cols-2">
-            <WeekdayEnrollmentChart
-              data={weekdayData}
-              periodLabel={periodLabel}
-              period={period}
-              isLoading={isLoading}
+          {/* Row 4: what the plan still allows before an upgrade is needed */}
+          <PlanLimitsPanel limits={money.limits} isLoading={money.isLoading} />
+
+          {/* Row 5: which course makes the money */}
+          <CourseMoneyTable rows={money.courses} isLoading={money.isLoading} />
+
+          {/* Row 5: which teacher makes the money (1.4/2) + progress (1/2) */}
+          <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
+            <TeacherMoneyTable
+              rows={money.teachers}
+              isLoading={money.isLoading}
             />
             <CompletionDonut
               segments={statusData}
@@ -199,12 +213,6 @@ export default function DashboardPage() {
               period={period}
               isLoading={isLoading}
             />
-          </div>
-
-          {/* Row 4: Top courses table (1.4/2) + Activity history (1/2) */}
-          <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-            <TopCoursesTable courses={recentCourses} />
-            <RecentActivityFeed activities={recentActivity} />
           </div>
         </div>
       </div>
