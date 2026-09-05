@@ -2589,7 +2589,8 @@ export const en = {
       "Join a academy and request teacher role if you're an educator",
     needHelp: 'Need help?',
     contactSupport:
-      'If you believe you should have access to this panel, please contact your academy administrator or our support team.'
+      'If you believe you should have access to this panel, please contact your academy administrator or our support team.',
+    redirectingIn: 'Returning to the login page in {{seconds}} seconds.'
   },
   notFound: {
     title: 'Page Not Found',

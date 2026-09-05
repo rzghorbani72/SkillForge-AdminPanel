@@ -1779,7 +1779,8 @@ export const tr = {
       'Bir enstitüye katılın ve eğitimciyseniz öğretmen rolü isteyin',
     needHelp: 'Yardıma mı ihtiyacınız var?',
     contactSupport:
-      'Bu panele erişiminiz olması gerektiğini düşünüyorsanız, lütfen okul yöneticinizle veya destek ekibimizle iletişime geçin.'
+      'Bu panele erişiminiz olması gerektiğini düşünüyorsanız, lütfen okul yöneticinizle veya destek ekibimizle iletişime geçin.',
+    redirectingIn: 'Giriş sayfasına {{seconds}} saniye içinde döneceksiniz.'
   },
   notFound: {
     title: 'Sayfa Bulunamadı',

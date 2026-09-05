@@ -1,107 +1,105 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ShieldAlert, ArrowLeft, Building2 } from 'lucide-react';
+import { AuthLayout } from '@/components/auth/auth-layout';
+import { AuthLogo } from '@/components/auth/auth-logo';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, AlertTriangle, ArrowLeft, Building2 } from 'lucide-react';
 import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+
+const REDIRECT_SECONDS = 30;
 
 export default function UnauthorizedPage() {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
+  const router = useRouter();
+  const [secondsLeft, setSecondsLeft] = useState(REDIRECT_SECONDS);
+
+  useEffect(() => {
+    const timer = setInterval(
+      () => setSecondsLeft((value) => Math.max(value - 1, 0)),
+      1000
+    );
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (secondsLeft === 0) router.replace('/login');
+  }, [secondsLeft, router]);
+
+  const bullets = [
+    t('unauthorized.accessStudentDashboard'),
+    t('unauthorized.contactStoreAdmin'),
+    t('unauthorized.joinAsTeacher')
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 to-orange-100 p-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-red-600">
-            <Shield className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+    <AuthLayout>
+      <div className="auth-card fade-in-up flex flex-col gap-6 rounded-3xl p-6 sm:p-10">
+        <AuthLogo className="self-center" />
+
+        <div className="flex flex-col items-center gap-3 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+            <ShieldAlert className="h-7 w-7" />
+          </span>
+          <h1 className="text-lg font-bold text-[#181C20]">
             {t('unauthorized.title')}
           </h1>
-          <p className="text-gray-600">{t('unauthorized.description')}</p>
-        </div>
-
-        <Card className="shadow-xl">
-          <CardHeader className="text-center">
-            <CardTitle className="flex items-center justify-center space-x-2">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
-              <span>{t('unauthorized.title')}</span>
-            </CardTitle>
-            <CardDescription>{t('unauthorized.description')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <Alert>
-              <AlertDescription>
-                <strong>{t('unauthorized.note')}</strong>{' '}
-                {t('unauthorized.contactAdmin')}
-              </AlertDescription>
-            </Alert>
-
-            <div className="space-y-4">
-              <div className="rounded-lg bg-blue-50 p-4">
-                <h3 className="mb-2 font-medium text-blue-900">
-                  {t('unauthorized.whatYouCanDo')}
-                </h3>
-                <ul className="space-y-1 text-sm text-blue-800">
-                  <li>• {t('unauthorized.accessStudentDashboard')}</li>
-                  <li>• {t('unauthorized.contactStoreAdmin')}</li>
-                  <li>• {t('unauthorized.joinAsTeacher')}</li>
-                </ul>
-              </div>
-
-              <div className="rounded-lg bg-orange-50 p-4">
-                <h3 className="mb-2 font-medium text-orange-900">
-                  {t('unauthorized.needHelp')}
-                </h3>
-                <p className="text-sm text-orange-800">
-                  {t('unauthorized.contactSupport')}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col space-y-3">
-              <Link href="/find-store">
-                <Button className="w-full" variant="outline">
-                  <Building2 className="mr-2 h-4 w-4" />
-                  {t('auth.findStore')}
-                </Button>
-              </Link>
-
-              <Link href="/register">
-                <Button className="w-full">{t('auth.registerStore')}</Button>
-              </Link>
-
-              <Link href="/login">
-                <Button className="w-full" variant="ghost">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  {t('auth.backToLogin')}
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
-            Need assistance?{' '}
-            <a
-              href="/support"
-              className="text-blue-600 underline hover:text-blue-500"
-            >
-              Contact Support
-            </a>
+          <p className="text-sm leading-6 text-muted-foreground">
+            {t('unauthorized.description')}
           </p>
         </div>
+
+        <ul className="space-y-2 rounded-2xl bg-white/50 p-4 text-sm text-foreground">
+          {bullets.map((item) => (
+            <li key={item} className="flex items-start gap-2">
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+              <span className="leading-6">{item}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="space-y-2">
+          <p className="text-center text-xs text-muted-foreground">
+            {t('unauthorized.redirectingIn', {
+              seconds: formatNumber(secondsLeft)
+            })}
+          </p>
+          <div
+            className="h-1.5 w-full overflow-hidden rounded-full bg-black/10"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={REDIRECT_SECONDS}
+            aria-valuenow={secondsLeft}
+          >
+            <div
+              className="h-full rounded-full bg-primary transition-[width] duration-1000 ease-linear"
+              style={{ width: `${(secondsLeft / REDIRECT_SECONDS) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <Button className="w-full" onClick={() => router.replace('/login')}>
+            <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
+            {t('auth.backToLogin')}
+          </Button>
+
+          <Link href="/find-school">
+            <Button className="w-full" variant="outline">
+              <Building2 className="me-2 h-4 w-4" />
+              {t('auth.findStore')}
+            </Button>
+          </Link>
+        </div>
+
+        <p className="text-center text-xs leading-6 text-muted-foreground">
+          {t('unauthorized.contactSupport')}
+        </p>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
