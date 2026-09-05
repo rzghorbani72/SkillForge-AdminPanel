@@ -64,14 +64,6 @@ export const navItems: NavItem[] = [
     scope: 'platform'
   },
   {
-    title: 'Investor Report',
-    href: '/platform/metrics',
-    icon: 'trendingUp' as IconType,
-    label: 'investorReport',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
-    scope: 'platform'
-  },
-  {
     title: 'Academies',
     href: '/academies',
     icon: 'store' as IconType,
@@ -104,6 +96,14 @@ export const navItems: NavItem[] = [
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
     scope: 'platform',
     children: [
+      {
+        title: 'Investor Report',
+        href: '/platform/metrics',
+        icon: 'trendingUp' as IconType,
+        label: 'investorReport',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+        scope: 'platform'
+      },
       {
         title: 'Platform costs',
         href: '/platform/costs',
@@ -295,6 +295,8 @@ export const navItems: NavItem[] = [
       }
     ]
   },
+  // Ordered by how often a manager needs it: the daily destinations are flat
+  // and always visible; only the occasional screens sit inside a group.
   {
     title: 'Dashboard',
     href: '/dashboard',
@@ -302,11 +304,33 @@ export const navItems: NavItem[] = [
     label: 'dashboard',
     scope: 'academy'
   },
-  // Teaching — the daily work. One group, so the daily screens stay together
-  // and the sidebar keeps a manager-sized top level.
+  {
+    title: 'Courses',
+    href: '/courses',
+    icon: 'course' as IconType,
+    label: 'courses',
+    scope: 'academy'
+  },
+  {
+    title: 'Users',
+    href: '/users',
+    icon: 'users' as IconType,
+    label: 'users',
+    roles: [
+      'PLATFORM_OWNER',
+      'ADMIN',
+      'FINANCE',
+      'SUPPORT',
+      'MANAGER',
+      'TEACHER'
+    ],
+    scope: 'academy'
+  },
+  // Teaching — every child is capability-gated, so an academy that sells only
+  // recorded courses never sees this group at all.
   {
     title: 'Teaching',
-    icon: 'course' as IconType,
+    icon: 'bookOpen' as IconType,
     label: 'teaching',
     roles: [
       'PLATFORM_OWNER',
@@ -318,13 +342,6 @@ export const navItems: NavItem[] = [
     ],
     scope: 'academy',
     children: [
-      {
-        title: 'Courses',
-        href: '/courses',
-        icon: 'course' as IconType,
-        label: 'courses',
-        scope: 'academy'
-      },
       {
         title: 'Assignments',
         href: '/assignments',
@@ -359,22 +376,8 @@ export const navItems: NavItem[] = [
       }
     ]
   },
-  {
-    title: 'Users',
-    href: '/users',
-    icon: 'users' as IconType,
-    label: 'users',
-    roles: [
-      'PLATFORM_OWNER',
-      'ADMIN',
-      'FINANCE',
-      'SUPPORT',
-      'MANAGER',
-      'TEACHER'
-    ],
-    scope: 'academy'
-  },
-  // Money — academy cash in and out
+  // Money — academy cash in and out. Everything but the overview is payment
+  // gated, so before payments go live this collapses to a single flat row.
   {
     title: 'Money',
     icon: 'dollarSign' as IconType,
@@ -418,7 +421,15 @@ export const navItems: NavItem[] = [
       }
     ]
   },
-  // Growth — the public site and everything that measures or grows it
+  {
+    title: 'Website',
+    href: '/website',
+    icon: 'layout' as IconType,
+    label: 'academyWebsite',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy'
+  },
+  // Growth — what measures or feeds the public site, not the site itself
   {
     title: 'Growth',
     icon: 'trendingUp' as IconType,
@@ -427,10 +438,10 @@ export const navItems: NavItem[] = [
     scope: 'academy',
     children: [
       {
-        title: 'Website',
-        href: '/website',
-        icon: 'layout' as IconType,
-        label: 'academyWebsite',
+        title: 'Analytics',
+        href: '/analytics',
+        icon: 'barChart' as IconType,
+        label: 'analytics',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
         scope: 'academy'
       },
@@ -440,14 +451,6 @@ export const navItems: NavItem[] = [
         icon: 'fileText' as IconType,
         label: 'academyBlog',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
-        scope: 'academy'
-      },
-      {
-        title: 'Analytics',
-        href: '/analytics',
-        icon: 'barChart' as IconType,
-        label: 'analytics',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
         scope: 'academy'
       },
       {

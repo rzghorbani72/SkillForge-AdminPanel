@@ -124,8 +124,28 @@ test.describe('sidebar shape', () => {
   // The manager-facing sidebar is the product's front door: a long flat list is
   // the complexity we removed, so the top level stays scannable without scrolling.
   test('a manager gets a short top level', () => {
+    // Worst case: every learning capability on, so nothing is filtered away.
+    const items = filterNavItems(navItems, {
+      ...MANAGER,
+      learningVisibility: {
+        students: true,
+        assignments: true,
+        ops_queue: true,
+        tutoring: true
+      }
+    });
+    expect(items.length).toBeLessThanOrEqual(8);
+  });
+
+  // The daily destinations must be one click away, not hidden in a group.
+  test('the everyday screens sit at the top level', () => {
     const items = filterNavItems(navItems, MANAGER);
-    expect(items.length).toBeLessThanOrEqual(7);
+    for (const href of ['/dashboard', '/courses', '/users', '/website']) {
+      expect(
+        items.some((item) => item.href === href),
+        href
+      ).toBe(true);
+    }
   });
 
   test('every group holds at least two children', () => {
