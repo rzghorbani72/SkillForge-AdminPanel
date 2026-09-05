@@ -17,8 +17,8 @@ import { isPlatformStaff } from '@/lib/roles';
 import { signOut } from '@/lib/sign-out';
 import {
   Banknote,
-  Building2,
   ChevronDown,
+  LifeBuoy,
   LogOut,
   Settings,
   User
@@ -37,16 +37,6 @@ function getInitials(name: string): string {
     .map((w) => w[0])
     .join('')
     .toUpperCase();
-}
-
-function formatLastLogin(date: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(new Date(date));
 }
 
 export function UserNav() {
@@ -68,10 +58,9 @@ export function UserNav() {
 
   const canSeeSettlement =
     hasAcademyContext && SETTLEMENT_ROLES.includes(roleName);
+
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
-  const lastLogin = user?.lastLogin ?? null;
   const avatarUrl = user?.avatarUrl ?? null;
-  const currentAcademy = user?.currentAcademy ?? null;
   const headingName = user?.displayName ?? '';
   const initials = headingName
     ? getInitials(headingName)
@@ -163,6 +152,16 @@ export function UserNav() {
           >
             <Banknote className="h-4 w-4 shrink-0 text-muted-foreground" />
             <span>{t('userNav.settlement')}</span>
+          </DropdownMenuItem>
+        )}
+
+        {hasAcademyContext && (
+          <DropdownMenuItem
+            className="cursor-pointer gap-2.5 py-2"
+            onClick={() => router.push('/support')}
+          >
+            <LifeBuoy className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span>{t('navigation.support')}</span>
           </DropdownMenuItem>
         )}
 

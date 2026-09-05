@@ -516,14 +516,6 @@ export const navItems: NavItem[] = [
         label: 'myAcademies',
         roles: ['MANAGER', 'TEACHER'],
         scope: 'academy'
-      },
-      {
-        title: 'Support',
-        href: '/support',
-        icon: 'help' as IconType,
-        label: 'support',
-        roles: ['MANAGER', 'TEACHER'],
-        scope: 'academy'
       }
     ]
   },

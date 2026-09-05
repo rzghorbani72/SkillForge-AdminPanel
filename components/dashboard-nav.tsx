@@ -214,16 +214,12 @@ export function DashboardNav({
     [t]
   );
 
+  // Accordion: one group open at a time, so the list never grows past the
+  // viewport and the next group is always one click away.
   const toggleExpand = useCallback((title: string) => {
-    setExpandedItems((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(title)) {
-        newSet.delete(title);
-      } else {
-        newSet.add(title);
-      }
-      return newSet;
-    });
+    setExpandedItems((prev) =>
+      prev.has(title) ? new Set<string>() : new Set([title])
+    );
   }, []);
 
   const handleSetOpen = useCallback(() => {
@@ -253,15 +249,14 @@ export function DashboardNav({
     [isPathActive]
   );
 
-  // Auto-expand parent items when their children are active
+  // Open the group holding the current page. A group the user opened by hand
+  // stays open until they open another one, so navigating never closes it.
   React.useEffect(() => {
-    const newExpandedItems = new Set<string>();
-    items.forEach((item) => {
-      if (hasActiveChild(item)) {
-        newExpandedItems.add(item.title);
-      }
-    });
-    setExpandedItems(newExpandedItems);
+    const active = items.find((item) => hasActiveChild(item));
+    if (!active) return;
+    setExpandedItems((prev) =>
+      prev.has(active.title) ? prev : new Set([active.title])
+    );
   }, [fullPath, items, hasActiveChild]);
 
   // Nesting is one level deep by construction (see nav-filter), so a plain
