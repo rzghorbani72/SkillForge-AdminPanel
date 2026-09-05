@@ -75,7 +75,8 @@ import {
   monthsForPeriod,
   periodPrice,
   type BillingPeriod,
-  quarterlyDiscount
+  quarterlyDiscount,
+  vatAmount
 } from '@/components/plans/plan-types';
 import type { PaymentGatewayProvider } from '@/types/api';
 import { paymentGatewayCallbackUrl } from '@/lib/payment-callback-url';
@@ -1269,50 +1270,69 @@ export default function PlansPage() {
                       </span>
                     </label>
                   )}
-                  <div className="space-y-1 rounded-lg bg-muted/50 px-3 py-2.5 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">
-                        {t('plans.totalPrice')}
-                      </span>
-                      <span
-                        className={cn(
-                          'font-bold tabular-nums',
-                          appliedVoucher &&
-                            appliedVoucher.discountAmount > 0 &&
-                            'text-sm font-normal text-muted-foreground line-through'
-                        )}
-                      >
-                        {formatPrice(
-                          periodPrice(
-                            selectingPlan,
-                            selectedMonths === 3 ? 'quarterly' : 'monthly'
-                          ) +
-                            (includeStorageAddon
-                              ? (currentSub?.storage?.addon_price_toman ?? 0)
-                              : 0)
-                        )}{' '}
-                        {t('plans.toman')}
-                      </span>
-                    </div>
-                    {appliedVoucher && appliedVoucher.discountAmount > 0 && (
-                      <>
-                        <div className="flex items-center justify-between text-success">
-                          <span>{t('plans.voucherDiscount')}</span>
-                          <span className="tabular-nums">
-                            − {formatPrice(appliedVoucher.discountAmount)}{' '}
-                            {t('plans.toman')}
+                  {(() => {
+                    const subtotal =
+                      periodPrice(
+                        selectingPlan,
+                        selectedMonths === 3 ? 'quarterly' : 'monthly'
+                      ) +
+                      (includeStorageAddon
+                        ? (currentSub?.storage?.addon_price_toman ?? 0)
+                        : 0);
+                    const hasDiscount =
+                      !!appliedVoucher && appliedVoucher.discountAmount > 0;
+                    const discountedSubtotal = hasDiscount
+                      ? appliedVoucher!.finalAmount
+                      : subtotal;
+                    const vatRate = selectingPlan.vat_rate ?? 0;
+                    const vat = vatAmount(discountedSubtotal, vatRate);
+                    const grandTotal = discountedSubtotal + vat;
+                    return (
+                      <div className="space-y-1 rounded-lg bg-muted/50 px-3 py-2.5 text-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">
+                            {t('plans.totalPrice')}
+                          </span>
+                          <span
+                            className={cn(
+                              'font-bold tabular-nums',
+                              hasDiscount &&
+                                'text-sm font-normal text-muted-foreground line-through'
+                            )}
+                          >
+                            {formatPrice(subtotal)} {t('plans.toman')}
                           </span>
                         </div>
+                        {hasDiscount && (
+                          <div className="flex items-center justify-between text-success">
+                            <span>{t('plans.voucherDiscount')}</span>
+                            <span className="tabular-nums">
+                              − {formatPrice(appliedVoucher!.discountAmount)}{' '}
+                              {t('plans.toman')}
+                            </span>
+                          </div>
+                        )}
+                        {vat > 0 && (
+                          <div className="flex items-center justify-between text-muted-foreground">
+                            <span>
+                              {t('plans.vatIncluded', {
+                                percent: Math.round(vatRate * 100)
+                              })}
+                            </span>
+                            <span className="tabular-nums">
+                              + {formatPrice(vat)} {t('plans.toman')}
+                            </span>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between border-t border-border/50 pt-1 font-bold text-primary">
                           <span>{t('plans.finalPayableAmount')}</span>
                           <span className="tabular-nums">
-                            {formatPrice(appliedVoucher.finalAmount)}{' '}
-                            {t('plans.toman')}
+                            {formatPrice(grandTotal)} {t('plans.toman')}
                           </span>
                         </div>
-                      </>
-                    )}
-                  </div>
+                      </div>
+                    );
+                  })()}
                 </>
               )}
               {(needsGatewaySelection || availableGateways.length > 1) && (
@@ -1477,9 +1497,12 @@ function UpgradeSummary({
   const hasStorageCredit = quote.storage_amount_toman !== 0;
   const hasVoucher =
     appliedVoucher != null && appliedVoucher.discountAmount > 0;
-  const finalPrice = hasVoucher
+  const discountedSubtotal = hasVoucher
     ? appliedVoucher.finalAmount
     : quote.amount_toman;
+  const vatRate = quote.vat_rate ?? 0;
+  const vat = vatAmount(discountedSubtotal, vatRate);
+  const finalPrice = discountedSubtotal + vat;
 
   return (
     <div className="rounded-lg border bg-muted/40 px-3 py-2.5 text-sm">
@@ -1505,17 +1528,12 @@ function UpgradeSummary({
             </span>
           </div>
         )}
-        <div
-          className={cn(
-            'flex items-center justify-between border-t border-border/50 pt-1.5 font-bold',
-            !hasVoucher && 'text-base'
-          )}
-        >
+        <div className="flex items-center justify-between border-t border-border/50 pt-1.5 font-bold">
           <span>{t('plans.proratedTotal')}</span>
           <span
             className={cn(
               'tabular-nums',
-              hasVoucher &&
+              (hasVoucher || vat > 0) &&
                 'text-sm font-normal text-muted-foreground line-through'
             )}
           >
@@ -1523,21 +1541,30 @@ function UpgradeSummary({
           </span>
         </div>
         {hasVoucher && (
-          <>
-            <div className="flex items-center justify-between font-medium text-success">
-              <span>{t('plans.voucherDiscount')}</span>
-              <span className="tabular-nums">
-                − {formatPrice(appliedVoucher.discountAmount)}{' '}
-                {t('plans.toman')}
-              </span>
-            </div>
-            <div className="flex items-center justify-between border-t border-border/50 pt-1 font-bold text-primary">
-              <span>{t('plans.finalPayableAmount')}</span>
-              <span className="tabular-nums">
-                {formatPrice(finalPrice)} {t('plans.toman')}
-              </span>
-            </div>
-          </>
+          <div className="flex items-center justify-between font-medium text-success">
+            <span>{t('plans.voucherDiscount')}</span>
+            <span className="tabular-nums">
+              − {formatPrice(appliedVoucher.discountAmount)} {t('plans.toman')}
+            </span>
+          </div>
+        )}
+        {vat > 0 && (
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span>
+              {t('plans.vatIncluded', { percent: Math.round(vatRate * 100) })}
+            </span>
+            <span className="tabular-nums">
+              + {formatPrice(vat)} {t('plans.toman')}
+            </span>
+          </div>
+        )}
+        {(hasVoucher || vat > 0) && (
+          <div className="flex items-center justify-between border-t border-border/50 pt-1 font-bold text-primary">
+            <span>{t('plans.finalPayableAmount')}</span>
+            <span className="tabular-nums">
+              {formatPrice(finalPrice)} {t('plans.toman')}
+            </span>
+          </div>
         )}
       </div>
     </div>

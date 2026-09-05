@@ -186,6 +186,15 @@ export function formatPrice(price: number) {
   return price.toLocaleString('fa-IR');
 }
 
+/** VAT is charged on top of the published price at checkout — never included in it. */
+export function vatAmount(subtotal: number, vatRate: number): number {
+  return Math.round(subtotal * vatRate);
+}
+
+export function priceWithVat(subtotal: number, vatRate: number): number {
+  return subtotal + vatAmount(subtotal, vatRate);
+}
+
 export function formatStorage(gb: number) {
   const isTb = gb >= 1000;
   const value = isTb ? Math.round(gb / 1000) : gb;

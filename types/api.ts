@@ -242,6 +242,8 @@ export interface Academy {
   subscription_plan?: string;
   subscription_expires?: string;
   primary_verification_method?: 'phone' | 'email';
+  /** Decimal 0-1. Manager-set; shown to teachers as their notional earned share. */
+  teacher_share_rate?: number;
   available_currencies?: CurrencyConfig[];
   default_currency?: CurrencyCode;
   created_at: string;

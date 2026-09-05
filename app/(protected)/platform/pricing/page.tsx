@@ -15,6 +15,13 @@ import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import {
   Table,
   TableBody,
   TableCell,
@@ -90,7 +97,6 @@ export default function PlatformPricingPage() {
   const [settings, setSettings] = useState<PlatformSettingsData | null>(null);
   const [settingsForm, setSettingsForm] = useState({
     vat_rate: '',
-    teacher_share_rate: '',
     storage_overage_fee_irr: '',
     subscription_grace_days: '',
     subscription_reminder_days: '',
@@ -116,7 +122,6 @@ export default function PlatformPricingPage() {
     setSettings(s);
     setSettingsForm({
       vat_rate: String(toPercent(asNumber(s.vat_rate))),
-      teacher_share_rate: String(toPercent(asNumber(s.teacher_share_rate))),
       storage_overage_fee_irr: String(asNumber(s.storage_overage_fee_irr)),
       subscription_grace_days: String(asNumber(s.subscription_grace_days)),
       subscription_reminder_days: String(
@@ -178,9 +183,6 @@ export default function PlatformPricingPage() {
       await apiClient.updatePlatformSettings({
         vat_rate: fromPercent(Number(settingsForm.vat_rate)),
         commission_rate: 0,
-        teacher_share_rate: fromPercent(
-          Number(settingsForm.teacher_share_rate)
-        ),
         storage_overage_fee_irr: Number(settingsForm.storage_overage_fee_irr),
         subscription_grace_days: Number(settingsForm.subscription_grace_days),
         subscription_reminder_days: Number(
@@ -350,22 +352,6 @@ export default function PlatformPricingPage() {
                 {t('pricing.platform.vatRateHint')}
               </p>
             </div>
-            <div className="space-y-2">
-              <Label>{t('pricing.platform.teacherShare')}</Label>
-              <NumberInput
-                allowDecimal
-                value={settingsForm.teacher_share_rate}
-                onChange={(raw) =>
-                  setSettingsForm({
-                    ...settingsForm,
-                    teacher_share_rate: raw
-                  })
-                }
-              />
-              <p className="text-xs text-muted-foreground">
-                {t('pricing.platform.teacherShareHint')}
-              </p>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -409,15 +395,27 @@ export default function PlatformPricingPage() {
 
           <div className="max-w-xs space-y-2">
             <Label>{t('pricing.platform.paymentPhase')}</Label>
-            <Input
+            <Select
               value={settingsForm.payment_release_phase}
-              onChange={(e) =>
+              onValueChange={(value) =>
                 setSettingsForm({
                   ...settingsForm,
-                  payment_release_phase: e.target.value
+                  payment_release_phase: value
                 })
               }
-            />
+            >
+              <SelectTrigger aria-label={t('pricing.platform.paymentPhase')}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="IRAN_PAYPING_ONLY">
+                  {t('pricing.platform.paymentPhasePaypingOnly')}
+                </SelectItem>
+                <SelectItem value="ALL_GATEWAYS">
+                  {t('pricing.platform.paymentPhaseAllGateways')}
+                </SelectItem>
+              </SelectContent>
+            </Select>
             <p className="text-xs text-muted-foreground">
               {t('pricing.platform.paymentPhaseHint')}
             </p>

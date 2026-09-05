@@ -32,7 +32,6 @@ import { useTranslation } from '@/lib/i18n/hooks';
 
 const settingsSchema = z.object({
   vat_rate_pct: z.coerce.number().min(0).max(100),
-  teacher_share_rate_pct: z.coerce.number().min(0).max(100),
   subscription_grace_days: z.coerce.number().int().min(0),
   subscription_reminder_days: z.coerce.number().int().min(0),
   legal_entity_name: z.string().optional(),
@@ -51,7 +50,6 @@ export default function PlatformSettingsPage() {
     resolver: zodResolver(settingsSchema),
     defaultValues: {
       vat_rate_pct: 0,
-      teacher_share_rate_pct: 0,
       subscription_grace_days: 0,
       subscription_reminder_days: 0,
       legal_entity_name: '',
@@ -68,7 +66,6 @@ export default function PlatformSettingsPage() {
         if (data) {
           form.reset({
             vat_rate_pct: (data.vat_rate ?? 0) * 100,
-            teacher_share_rate_pct: (data.teacher_share_rate ?? 0) * 100,
             subscription_grace_days: data.subscription_grace_days ?? 0,
             subscription_reminder_days: data.subscription_reminder_days ?? 0,
             legal_entity_name: data.legal_entity_name ?? '',
@@ -92,7 +89,6 @@ export default function PlatformSettingsPage() {
       await apiClient.updatePlatformSettings({
         vat_rate: values.vat_rate_pct / 100,
         commission_rate: 0,
-        teacher_share_rate: values.teacher_share_rate_pct / 100,
         subscription_grace_days: values.subscription_grace_days,
         subscription_reminder_days: values.subscription_reminder_days,
         legal_entity_name: values.legal_entity_name || null,
@@ -160,32 +156,6 @@ export default function PlatformSettingsPage() {
                     </FormControl>
                     <FormDescription>
                       {t('platformSettings.vatRateHint')}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="teacher_share_rate_pct"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('platformSettings.teacherShareRate')}
-                    </FormLabel>
-                    <FormControl>
-                      <NumberInput
-                        allowDecimal
-                        name={field.name}
-                        ref={field.ref}
-                        value={field.value ?? ''}
-                        onChange={(raw) =>
-                          field.onChange(raw === '' ? '' : Number(raw))
-                        }
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t('platformSettings.teacherShareRateHint')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

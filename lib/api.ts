@@ -1660,6 +1660,7 @@ class ApiClient {
     og_image_id?: string | null;
     showcase_desktop_id?: string | null;
     showcase_mobile_id?: string | null;
+    teacher_share_rate?: number;
   }) {
     return this.request('/academies/current', {
       method: 'PATCH',
@@ -7109,6 +7110,8 @@ export interface SubscriptionPlanData {
   limits?: StructuredPlanLimits | null;
   is_most_popular?: boolean;
   annual_months_included?: number | null;
+  /** VAT rate as a decimal (e.g. 0.09 = 9%), charged on top of this price at checkout. */
+  vat_rate?: number;
   created_at: string;
   updated_at: string;
 }
@@ -7129,6 +7132,10 @@ export interface AcademyUpgradeQuote {
   plan_amount_toman: number;
   storage_amount_toman: number;
   target_full_period_toman: number;
+  /** VAT rate as a decimal (e.g. 0.09 = 9%), charged on top of amount_toman at checkout. */
+  vat_rate: number;
+  vat_amount_toman: number;
+  grand_total_toman: number;
   target_plan: {
     slug: string;
     name: string;
@@ -7154,6 +7161,7 @@ export interface PublicSubscriptionPlanData {
   is_most_popular: boolean;
   annual_months_included: number;
   commission_rate: number;
+  vat_rate: number;
 }
 
 // Public plans only ever come back active and pre-sorted by the backend, so
@@ -7178,6 +7186,7 @@ function mapPublicPlanToSubscriptionPlan(
     limits: plan.limits,
     is_most_popular: plan.is_most_popular,
     annual_months_included: plan.annual_months_included,
+    vat_rate: plan.vat_rate,
     created_at: '',
     updated_at: ''
   };

@@ -11,7 +11,9 @@ import {
   formatPrice,
   formatStorage,
   periodPrice,
-  planFeatureList
+  planFeatureList,
+  priceWithVat,
+  vatAmount
 } from '@/components/plans/plan-types';
 
 export function BuyPlansSection() {
@@ -87,6 +89,9 @@ export function BuyPlansSection() {
           {plans.map((plan, i) => {
             const isPopular = i === popularIndex && plans.length >= 2;
             const price = periodPrice(plan, period);
+            const vatRate = plan.vat_rate ?? 0;
+            const vat = vatAmount(price, vatRate);
+            const total = priceWithVat(price, vatRate);
             const features = planFeatureList(plan.slug, plan.features).slice(
               0,
               4
@@ -108,7 +113,7 @@ export function BuyPlansSection() {
                 <h3 className="text-lg font-bold">{plan.name}</h3>
                 <p className="mt-4">
                   <span className="text-3xl font-black">
-                    {formatPrice(price)}
+                    {formatPrice(total)}
                   </span>
                   <span className="ms-2 text-sm text-muted-foreground">
                     {period === 'quarterly'
@@ -116,6 +121,15 @@ export function BuyPlansSection() {
                       : t('plans.pricePerMonth')}
                   </span>
                 </p>
+                {vat > 0 && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('plans.priceBeforeVat', { price: formatPrice(price) })}
+                    {' + '}
+                    {t('plans.vatIncluded', {
+                      percent: Math.round(vatRate * 100)
+                    })}
+                  </p>
+                )}
                 <p className="mt-2 text-xs text-muted-foreground">
                   {formatStorage(plan.storage_limit_gb)} {t('plans.storage')}
                 </p>

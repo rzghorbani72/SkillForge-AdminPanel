@@ -17,6 +17,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { AcademyFeaturesCard } from '@/components/settings/academy-features-card';
+import { AcademyTeacherShareCard } from '@/components/settings/academy-teacher-share-card';
 import { AcademySiteStatusCard } from '@/components/settings/academy-site-status-card';
 import { AcademyShowcaseCard } from '@/components/settings/academy-showcase-card';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -102,6 +103,10 @@ export default function AcademySettingsPage() {
           </Card>
 
           <AcademyFeaturesCard />
+          <AcademyTeacherShareCard
+            teacherShareRate={academy.teacher_share_rate}
+            onSaved={refresh}
+          />
           <AcademySiteStatusCard academyName={academy.name ?? ''} />
           {isPlatformAdmin(user) ? <AcademyShowcaseCard /> : null}
         </div>
