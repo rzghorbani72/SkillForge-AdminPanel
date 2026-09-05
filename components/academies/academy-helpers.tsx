@@ -9,9 +9,12 @@ export interface AcademyRow extends Academy {
 }
 
 export function canEnterAcademy(academy: Academy): boolean {
-  return ['AFFILIATE', 'TEACHER', 'MANAGER', 'ADMIN'].includes(
-    (academy.userRole ?? '').toUpperCase()
-  );
+  return !isStudentRankSeat(academy);
+}
+
+/** Student / public seats belong on the academy site, not in the panel switcher. */
+export function isStudentRankSeat(academy: Academy): boolean {
+  return ['STUDENT', 'USER'].includes((academy.userRole ?? '').toUpperCase());
 }
 
 export function canEditAcademy(academy: Academy): boolean {

@@ -26,6 +26,7 @@ import { useAuthUser } from '@/components/providers/user-provider';
 import { useSessionAcademyRescope } from '@/hooks/use-session-academy-rescope';
 import { isApiResponseError, resolveApiErrorMessage } from '@/lib/api-error';
 import { currentLanguage } from '@/lib/current-language';
+import { isStudentRankSeat } from '@/components/academies/academy-helpers';
 
 interface StoreContextValue {
   academies: Academy[];
@@ -55,6 +56,15 @@ function parseAcademiesResponse(data: unknown): Academy[] | null {
     return data;
   }
   return null;
+}
+
+/** Panel UI never lists a student/public seat, even from a stale cache. */
+function panelVisibleAcademies(
+  list: Academy[],
+  isPlatformStaff: boolean
+): Academy[] {
+  if (isPlatformStaff) return list;
+  return list.filter((academy) => !isStudentRankSeat(academy));
 }
 
 async function requestAcademies(): Promise<Academy[]> {
@@ -113,7 +123,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           });
         }
 
-        setAcademies(list);
+        const visible = panelVisibleAcademies(list, isPlatformStaff);
+        setCachedAcademies(visible);
+        setAcademies(visible);
       } catch (err) {
         console.error('Error fetching academies:', err);
         setError(resolveApiErrorMessage(err, currentLanguage()));
@@ -127,7 +139,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         hasFetchedRef.current = true;
       }
     },
-    [router]
+    [router, isPlatformStaff]
   );
 
   const loadAcademies = useCallback(async () => {
@@ -138,7 +150,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const cached = getCachedAcademies();
 
       if (cached.length > 0 && validateAcademyCurrencyFields(cached)) {
-        setAcademies(cached);
+        setAcademies(panelVisibleAcademies(cached, isPlatformStaff));
         setIsLoading(false);
         hasFetchedRef.current = true;
         // Paint from cache, then correct it. Serving the cache alone let a newly
@@ -153,7 +165,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setError('Failed to load academies');
       setIsLoading(false);
     }
-  }, [fetchFreshAcademies]);
+  }, [fetchFreshAcademies, isPlatformStaff]);
 
   useEffect(() => {
     if (!hasFetchedRef.current) {
