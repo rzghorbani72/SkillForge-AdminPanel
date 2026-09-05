@@ -30,7 +30,8 @@ export const TEMPLATE_KEYS = [
   'daneshvar',
   'peleh',
   'andisheh',
-  'shaparak'
+  'shaparak',
+  'partow'
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -139,6 +140,11 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
     name: 'شاپرک',
     vertical: 'مدرس برنامه‌نویسی کودکان',
     tagline: 'بازی‌گونه · رنگی · بلوکی'
+  },
+  partow: {
+    name: 'پرتو',
+    vertical: 'مدرس برنامه‌نویسی',
+    tagline: 'متمرکز · کارت‌محور · روشن'
   }
 };
 
@@ -179,7 +185,8 @@ export const TEMPLATE_CATEGORY: Record<TemplateKey, TemplateCategory> = {
   daneshvar: 'personal',
   peleh: 'personal',
   andisheh: 'personal',
-  shaparak: 'personal'
+  shaparak: 'personal',
+  partow: 'personal'
 };
 
 export const CATEGORY_LABELS: {

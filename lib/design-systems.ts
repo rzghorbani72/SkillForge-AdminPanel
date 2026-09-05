@@ -269,6 +269,22 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     motion: 'moderate',
     darkMode: null
+  },
+  partow: {
+    colors: {
+      primary: '#4f46e5',
+      primaryDark: '#8b84ff',
+      secondary: '#0b0b12',
+      secondaryDark: '#f1f1f6',
+      accent: '#06b6d4',
+      background: '#fbfbfd',
+      backgroundDark: '#0b0b12',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'soft', shadow: 'subtle' },
+    motion: 'subtle',
+    darkMode: null
   }
 };
 
