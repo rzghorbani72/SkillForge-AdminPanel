@@ -7029,6 +7029,8 @@ export const en = {
     TENANT_MISMATCH: 'This item does not belong to your academy.',
     FILE_TOO_LARGE:
       'The file is larger than allowed. Please choose a smaller file.',
+    FILE_TOO_LARGE_MB:
+      'The file must be smaller than {max}MB. Please choose a smaller file.',
     FILE_TYPE_NOT_ALLOWED:
       'This file type is not allowed. Please choose a supported format.',
     EXTERNAL_SERVICE_FAILED:

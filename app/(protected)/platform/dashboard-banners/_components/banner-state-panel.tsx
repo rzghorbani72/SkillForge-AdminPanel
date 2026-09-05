@@ -33,11 +33,14 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
 
+  // One oversized or rejected file must not cancel the rest of the selection,
+  // so each file is reported on its own and the loop keeps going.
   const handleUpload = async (files: File[]) => {
     setBusy(true);
     let uploadedCount = 0;
-    try {
-      for (const file of files) {
+
+    for (const file of files) {
+      try {
         const uploaded = await apiClient.uploadImage(file, {
           title: `dashboard-banner-${state}`
         });
@@ -47,16 +50,18 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
         }
         await apiClient.createDashboardBanner({ image_id: imageId, state });
         uploadedCount += 1;
+      } catch (error) {
+        ErrorHandler.handleApiError(error);
       }
+    }
+
+    if (uploadedCount > 0) {
       ErrorHandler.showSuccess(
         t('dashboardBanners.uploadedCount', { count: uploadedCount })
       );
-    } catch (error) {
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setBusy(false);
-      await onChanged();
     }
+    setBusy(false);
+    await onChanged();
   };
 
   const handleDelete = async (id: string) => {

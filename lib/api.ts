@@ -58,6 +58,7 @@ import {
   resolveApiErrorMessage
 } from './api-error';
 import { currentLanguage } from './current-language';
+import { assertUploadSize, MAX_IMAGE_UPLOAD_BYTES } from './upload-limits';
 import { isAuthPagePath } from './auth-routes';
 import {
   createSellerIdentityIncompleteError,
@@ -2758,7 +2759,13 @@ class ApiClient {
             reject(new Error('Failed to parse response'));
           }
         } else {
-          reject(new Error(`Upload failed with status: ${xhr.status}`));
+          let body: unknown = null;
+          try {
+            body = JSON.parse(xhr.responseText);
+          } catch {
+            body = null;
+          }
+          reject(new ApiResponseError(parseApiError(xhr.status, body)));
         }
       });
       xhr.addEventListener('error', () => reject(new Error('Upload failed')));
@@ -2792,6 +2799,8 @@ class ApiClient {
     onProgress?: (progress: number) => void,
     abortController?: AbortController
   ) {
+    assertUploadSize(file, MAX_IMAGE_UPLOAD_BYTES);
+
     const formData = new FormData();
     formData.append('imagefile', file); // Backend expects 'imagefile'
     formData.append('alt', metadata?.title || file.name); // Backend expects 'alt' field
@@ -2814,6 +2823,8 @@ class ApiClient {
     onProgress?: (progress: number) => void,
     abortController?: AbortController
   ) {
+    assertUploadSize(file, MAX_IMAGE_UPLOAD_BYTES);
+
     const formData = new FormData();
     formData.append('imagefile', file);
     formData.append('alt', file.name);
