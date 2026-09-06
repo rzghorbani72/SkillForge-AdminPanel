@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CreditCard, DollarSign, Globe, Lock, Plus } from 'lucide-react';
+import { CreditCard, DollarSign, Lock, Plus } from 'lucide-react';
 import { usePaymentsData } from '../_hooks/use-payments-data';
 import { Progress } from '@/components/ui/progress';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -19,33 +19,21 @@ import { formatCurrencyWithStore } from '@/lib/utils';
 import { formatPaymentMethodLabel } from '@/lib/format-payment-method-label';
 import { useTranslation } from '@/lib/i18n/hooks';
 
+// Only the two rails an owner may run. Retired providers (PayPing, Mellat)
+// stay out of this list — historical payments still label via methodLabels.
 const METHOD_CONFIG = [
-  {
-    key: 'BITPAY',
-    titleKey: 'payments.gateways.bitpay.title',
-    descriptionKey: 'payments.gateways.bitpay.description',
-    icon: CreditCard,
-    badges: [{ labelKey: 'payments.gatewayBadge.active', tone: 'active' }]
-  },
-  {
-    key: 'PAYPING',
-    titleKey: 'payments.gateways.payping.title',
-    descriptionKey: 'payments.gateways.payping.description',
-    icon: CreditCard,
-    badges: [{ labelKey: 'payments.gatewayBadge.inactive', tone: 'inactive' }]
-  },
   {
     key: 'SAMAN_SEP',
     titleKey: 'payments.gateways.samanSep.title',
     descriptionKey: 'payments.gateways.samanSep.description',
-    icon: DollarSign,
-    badges: [{ labelKey: 'payments.gatewayBadge.inactive', tone: 'inactive' }]
+    icon: CreditCard,
+    badges: [{ labelKey: 'payments.gatewayBadge.active', tone: 'active' }]
   },
   {
-    key: 'MELLAT_BP',
-    titleKey: 'payments.gateways.mellatBp.title',
-    descriptionKey: 'payments.gateways.mellatBp.description',
-    icon: Globe,
+    key: 'BITPAY',
+    titleKey: 'payments.gateways.bitpay.title',
+    descriptionKey: 'payments.gateways.bitpay.description',
+    icon: DollarSign,
     badges: [{ labelKey: 'payments.gatewayBadge.inactive', tone: 'inactive' }]
   }
 ] as const;

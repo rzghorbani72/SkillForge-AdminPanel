@@ -4515,19 +4515,20 @@ export const en = {
       bitpay: {
         title: 'BitPay Gateway',
         description:
-          'The only gateway live in production — every student checkout and academy subscription is settled through it.'
+          'Backup gateway. Switch to it from the owner panel if Saman is unavailable.'
       },
       payping: {
         title: 'PayPing Gateway',
-        description: 'Legacy gateway, no longer used for new payments.'
+        description: 'Retired gateway, no longer used for new payments.'
       },
       samanSep: {
         title: 'Saman SEP',
-        description: 'Legacy gateway, no longer used for new payments.'
+        description:
+          'Default gateway — student checkouts and academy subscriptions settle through it.'
       },
       mellatBp: {
         title: 'Mellat BP',
-        description: 'Legacy gateway, no longer used for new payments.'
+        description: 'Retired gateway, no longer used for new payments.'
       }
     },
     // Invoices Page
