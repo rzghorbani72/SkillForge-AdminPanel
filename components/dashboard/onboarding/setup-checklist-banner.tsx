@@ -128,6 +128,12 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
           const meta = STEP_META[step];
           const Icon = meta.icon;
           const complete = done[step];
+          // template/course are verified against real account state, so a
+          // click must not mark them done before the step actually happens.
+          const onStepClick =
+            step === 'template' || step === 'course'
+              ? undefined
+              : () => markDone(step);
           const href = meta.href === 'site' ? siteUrl : meta.href;
           const className = cn(
             'flex items-center gap-3 rounded-xl border px-3 py-3 text-start transition-colors',
@@ -172,7 +178,7 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
                   href={href}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() => markDone(step)}
+                  onClick={onStepClick}
                   className={className}
                 >
                   {body}
@@ -183,11 +189,7 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
 
           return (
             <li key={step}>
-              <Link
-                href={href}
-                onClick={() => markDone(step)}
-                className={className}
-              >
+              <Link href={href} onClick={onStepClick} className={className}>
                 {body}
               </Link>
             </li>
