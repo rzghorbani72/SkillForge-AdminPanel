@@ -78,6 +78,9 @@ export function getSelectedAcademy(academies: Academy[]): Academy | null {
   return academies.find((a) => a.id === selectedId) || academies[0] || null;
 }
 
+/** One re-scope attempt per session, cleared whenever the academy data is. */
+export const ACADEMY_RESCOPE_FLAG = 'skillforge_academy_rescoped';
+
 export function clearAcademyData(): void {
   if (typeof window === 'undefined') return;
 
@@ -85,6 +88,9 @@ export function clearAcademyData(): void {
     localStorage.removeItem(ACADEMY_STORAGE_KEYS.SELECTED_ACADEMY_ID);
     localStorage.removeItem(ACADEMY_STORAGE_KEYS.ACADEMIES_CACHE);
     localStorage.removeItem(ACADEMY_STORAGE_KEYS.LAST_FETCH);
+    // Kept per tab, so a second login in the same tab would otherwise never
+    // re-scope an academy-less session and every scoped request would fail.
+    sessionStorage.removeItem(ACADEMY_RESCOPE_FLAG);
   } catch (error) {
     console.error('Error clearing academy data:', error);
   }

@@ -145,12 +145,14 @@ export function useAcademySubscription(enabled = true) {
     // Business has no higher self-serve tier — once paid and active, there is
     // nothing to upgrade to, only to renew when it's expiring.
     isTopPlan: !!customPlan || isTopPlan(planSlug),
-    needsPlanPurchase: computeNeedsPlanPurchase({
-      hasAcademy: hasAcademyAccess,
-      planSlug,
-      status,
-      hasPaid: subscription?.has_paid
-    }),
+    needsPlanPurchase:
+      !!subscription &&
+      computeNeedsPlanPurchase({
+        hasAcademy: hasAcademyAccess,
+        planSlug,
+        status,
+        hasPaid: subscription.has_paid
+      }),
     shouldShowUpgrade:
       !customPlan && shouldShowUpgradePrompt(status, daysRemaining, planSlug)
   };

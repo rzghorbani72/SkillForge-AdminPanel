@@ -2,12 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 import { apiClient } from '@/lib/api';
-import { getSelectedAcademyId, setSelectedAcademyId } from '@/lib/store-utils';
+import {
+  ACADEMY_RESCOPE_FLAG,
+  getSelectedAcademyId,
+  setSelectedAcademyId
+} from '@/lib/store-utils';
 import type { Academy } from '@/types/api';
-
-// One attempt per tab: the retry needs a full reload to pick up the new token,
-// and without this flag a session that stays academy-less would reload forever.
-const RESCOPE_FLAG = 'skillforge_academy_rescoped';
 
 /**
  * A staff session can carry no academy even though the user is a member of one
@@ -26,10 +26,10 @@ export function useSessionAcademyRescope({
 
   useEffect(() => {
     if (attempted.current || !enabled || academies.length === 0) return;
-    if (window.sessionStorage.getItem(RESCOPE_FLAG)) return;
+    if (window.sessionStorage.getItem(ACADEMY_RESCOPE_FLAG)) return;
 
     attempted.current = true;
-    window.sessionStorage.setItem(RESCOPE_FLAG, '1');
+    window.sessionStorage.setItem(ACADEMY_RESCOPE_FLAG, '1');
 
     const selectedId = getSelectedAcademyId();
     const target = academies.find((a) => a.id === selectedId) ?? academies[0];

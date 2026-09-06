@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/hooks/useStore';
+import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import useDashboard from '@/components/dashboard/useDashboard';
 import DashboardHero from '@/components/dashboard/dashboard-hero';
@@ -35,7 +36,13 @@ export default function DashboardPage() {
   const isFa = language === 'fa';
   const { user } = useAuthUser();
   const router = useRouter();
-  const { academies, selectedAcademy, isLoading: storeLoading } = useStore();
+  const {
+    academies,
+    selectedAcademy,
+    isLoading: storeLoading,
+    error: storeError,
+    refreshAcademies
+  } = useStore();
   const [period, setPeriod] = useState<DashboardPeriod>('30d');
   const periodLabel = t(
     PERIOD_OPTIONS.find((option) => option.key === period)?.labelKey ??
@@ -90,6 +97,33 @@ export default function DashboardPage() {
   // onboarding surface replaces the metric grid rather than sitting above
   // rows of zeros. Plans are deliberately absent: the first step is creating an
   // academy, and a price list here would sell a plan with nothing to attach to.
+  // A failed academies fetch leaves the list empty, which is not the same as
+  // owning none. Offering "create your first academy" there looks like the
+  // platform lost the manager's academies, so a retry is shown instead.
+  if (
+    !storeLoading &&
+    !isPlatformAdmin &&
+    academies.length === 0 &&
+    storeError
+  ) {
+    return (
+      <div className="dashboard-shell flex-1">
+        <DashboardGlow />
+        <div className="relative space-y-3 p-4 sm:p-6">
+          <h1 className="text-lg font-semibold">
+            {t('common.somethingWentWrong')}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {t('common.errorLoadingPage')}
+          </p>
+          <Button onClick={() => void refreshAcademies()}>
+            {t('common.tryAgain')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (!storeLoading && !isPlatformAdmin && academies.length === 0) {
     return (
       <div className="dashboard-shell flex-1">
