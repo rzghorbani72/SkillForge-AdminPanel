@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from '@/components/ui/link';
 import {
   BookOpen,
@@ -17,6 +17,7 @@ import { useStore } from '@/hooks/useStore';
 import { buildAcademySiteUrl } from '@/lib/website/academy-site-url';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logging/app-logger';
+import { apiClient } from '@/lib/api';
 import {
   SETUP_STEPS,
   useSetupChecklist,
@@ -63,10 +64,31 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
     user.isSelfRegisteredManager === true &&
     !!selectedAcademy;
 
+  // A template already applied to this academy counts as done, whether or not
+  // this browser ever ticked the step.
+  const [hasTemplate, setHasTemplate] = useState(false);
+  const academyId = selectedAcademy?.id ?? null;
+
+  useEffect(() => {
+    if (!enabled || !academyId) return;
+    let cancelled = false;
+    void (async () => {
+      const data = await apiClient.getCurrentUITemplate().catch(() => null);
+      if (cancelled) return;
+      const preset = (data as { template_preset?: string | null } | null)
+        ?.template_preset;
+      setHasTemplate(!!preset);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, academyId]);
+
   const { visible, done, completedCount, markDone, dismiss } =
     useSetupChecklist({
-      academyId: selectedAcademy?.id ?? null,
+      academyId,
       hasCourse,
+      hasTemplate,
       enabled
     });
 

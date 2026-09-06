@@ -6346,6 +6346,7 @@ export const en = {
     resetConfirmAction: 'Delete my version',
     originalLockedBadge: 'Original template — view only',
     customizedBadge: 'Customized',
+    coverLoading: 'Loading preview…',
     saveTemplate: 'Save template',
     saveAndPublish: 'Save and publish',
     resetToOriginal: 'Reset to original',

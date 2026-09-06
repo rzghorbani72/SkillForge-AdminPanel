@@ -6326,6 +6326,7 @@ export const fa = {
     resetConfirmAction: 'حذف نسخهٔ من',
     originalLockedBadge: 'قالب اصلی — فقط نمایش',
     customizedBadge: 'سفارشی‌شده',
+    coverLoading: 'در حال بارگذاری پیش‌نمایش…',
     saveTemplate: 'ذخیره قالب',
     saveAndPublish: 'ذخیره و انتشار',
     resetToOriginal: 'بازگشت به حالت اولیه',

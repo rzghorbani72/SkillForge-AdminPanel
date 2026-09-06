@@ -3100,6 +3100,7 @@ export const tr = {
     resetConfirmAction: 'Sürümümü sil',
     originalLockedBadge: 'Orijinal şablon — yalnızca görüntüleme',
     customizedBadge: 'Özelleştirilmiş',
+    coverLoading: 'Önizleme yükleniyor…',
     saveTemplate: 'Şablonu kaydet',
     saveAndPublish: 'Kaydet ve yayınla',
     resetToOriginal: 'Orijinal haline döndür',

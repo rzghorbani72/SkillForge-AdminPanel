@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, Trash2, Check, Pencil } from 'lucide-react';
+import { Eye, Trash2, Check, Pencil, Loader2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TemplatePreset } from '@/types/api';
 import { presetSourceKey } from '@/lib/ui-template/preset-source';
@@ -197,6 +197,15 @@ function GalleryCard({
               />
             ))}
           </div>
+          {/* The cover is a live storefront render, so it takes a moment. Only
+              spin when a frame is actually on its way — otherwise the gradient
+              IS the final cover and a spinner would never stop. */}
+          {canRenderFrame && (
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-white/90">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              {t('sitePreview.coverLoading')}
+            </span>
+          )}
         </div>
 
         {canRenderFrame && (

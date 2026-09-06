@@ -3017,6 +3017,7 @@ export const ar = {
     resetConfirmAction: 'حذف نسختي',
     originalLockedBadge: 'قالب أصلي — للعرض فقط',
     customizedBadge: 'مخصص',
+    coverLoading: 'جارٍ تحميل المعاينة…',
     saveTemplate: 'حفظ القالب',
     saveAndPublish: 'حفظ ونشر',
     resetToOriginal: 'العودة إلى الحالة الأصلية',

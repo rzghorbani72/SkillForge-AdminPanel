@@ -51,10 +51,17 @@ function writeStored(academyId: string, value: StoredChecklist): void {
 type Args = {
   academyId: string | null;
   hasCourse: boolean;
+  /** The academy already has a site template applied. */
+  hasTemplate: boolean;
   enabled: boolean;
 };
 
-export function useSetupChecklist({ academyId, hasCourse, enabled }: Args) {
+export function useSetupChecklist({
+  academyId,
+  hasCourse,
+  hasTemplate,
+  enabled
+}: Args) {
   const searchParams = useSearchParams();
   const [stored, setStored] = useState<StoredChecklist | null>(null);
 
@@ -84,15 +91,17 @@ export function useSetupChecklist({ academyId, hasCourse, enabled }: Args) {
     [academyId]
   );
 
+  // Template and course are checked off by real account state, not by having
+  // clicked the step — so the banner is still right on a new device or browser.
   const done = useMemo(() => {
     const marks = stored?.done ?? {};
     return {
       website: marks.website === true,
-      template: marks.template === true,
+      template: marks.template === true || hasTemplate,
       course: marks.course === true || hasCourse,
       visit: marks.visit === true
     } satisfies Record<SetupStepId, boolean>;
-  }, [hasCourse, stored]);
+  }, [hasCourse, hasTemplate, stored]);
 
   const completedCount = SETUP_STEPS.filter((step) => done[step]).length;
   const allDone = completedCount === SETUP_STEPS.length;

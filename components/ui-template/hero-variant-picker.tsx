@@ -77,6 +77,7 @@ export function HeroVariantPicker({
                       token={preview.token}
                       blockId={heroBlockId}
                       params={{ heroStyle: variant.value }}
+                      showLoading
                       className="h-full w-full"
                     />
                     {isSelected && (

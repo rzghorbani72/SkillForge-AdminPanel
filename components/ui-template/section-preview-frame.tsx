@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 interface SectionPreviewFrameProps {
   // Storefront origin that serves /preview/blocks (from the preview session).
@@ -19,6 +20,9 @@ interface SectionPreviewFrameProps {
   params?: Record<string, string>;
   // Fires once the embedded storefront finishes loading (for fade-in/placeholder).
   onLoad?: () => void;
+  // Renders a built-in spinner until the frame loads. Skip it when the caller
+  // already draws its own placeholder (the gallery card does).
+  showLoading?: boolean;
   className?: string;
 }
 
@@ -34,10 +38,12 @@ export function SectionPreviewFrame({
   interactive = false,
   params,
   onLoad,
+  showLoading = false,
   className = ''
 }: SectionPreviewFrameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(0.2);
+  const [loaded, setLoaded] = useState(false);
 
   const recalc = useCallback(() => {
     if (containerRef.current) {
@@ -89,13 +95,22 @@ export function SectionPreviewFrame({
           src={src}
           title="Section preview"
           loading="lazy"
-          onLoad={onLoad}
+          onLoad={() => {
+            setLoaded(true);
+            onLoad?.();
+          }}
           className={`h-full w-full border-0 ${
             interactive ? '' : 'pointer-events-none'
           }`}
           sandbox="allow-scripts allow-same-origin"
         />
       </div>
+
+      {showLoading && !loaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-zinc-100">
+          <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
+        </div>
+      )}
     </div>
   );
 }
