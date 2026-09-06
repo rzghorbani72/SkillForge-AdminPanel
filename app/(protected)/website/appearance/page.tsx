@@ -261,6 +261,12 @@ export default function UITemplateSettingsPage() {
         postHighlight(selectedBlockIdRef.current, false);
       }
 
+      // Ctrl/Cmd+S pressed inside the canvas: the iframe owns the key event, so
+      // the shortcut only reaches the editor by being forwarded here.
+      if (data.type === 'save') {
+        void saveRef.current();
+      }
+
       // The preview could not patch an edit in place — rebuild it. Scroll and
       // selection are preserved across the rebuild, so this stays unobtrusive.
       if (data.type === 'needs-reload') {
