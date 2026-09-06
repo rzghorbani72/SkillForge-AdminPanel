@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, Lock, Trash2, Check, Pencil } from 'lucide-react';
+import { Eye, Trash2, Check, Pencil } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TemplatePreset } from '@/types/api';
 import { presetSourceKey } from '@/lib/ui-template/preset-source';
@@ -114,8 +114,8 @@ function GalleryCard({
   const [frameLoaded, setFrameLoaded] = useState(false);
   const ds = getDesignSystem(presetSourceKey(preset));
   const isDedicated = preset.visibility === 'DEDICATED';
-  // A copy that stands in for its original is the SAME design, just customized —
-  // it keeps the original's tagline and gets a softer badge.
+  // Every academy-owned template is a customized copy, whether or not it still
+  // records the original it came from — one badge, one word for the manager.
   const isCustomized = isDedicated && !!preset.sourcePresetKey;
   const colors = resolveTemplateColors(preset);
   const swatches = [
@@ -150,17 +150,9 @@ function GalleryCard({
       {/* Dedicated badge + owner delete */}
       <div className="absolute start-2.5 top-2.5 z-20 flex items-center gap-1.5">
         {isDedicated && (
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold text-white shadow-sm ${
-              isCustomized ? 'bg-emerald-600' : 'bg-indigo-600'
-            }`}
-          >
-            {isCustomized ? (
-              <Pencil className="h-2.5 w-2.5" />
-            ) : (
-              <Lock className="h-2.5 w-2.5" />
-            )}
-            {isCustomized ? t('sitePreview.customizedBadge') : 'اختصاصی'}
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+            <Pencil className="h-2.5 w-2.5" />
+            {t('sitePreview.customizedBadge')}
           </span>
         )}
         {onDelete && (
