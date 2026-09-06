@@ -2,7 +2,7 @@
 
 import { useCategoriesStore } from '@/lib/store';
 import { sumDurationSeconds } from '../course-drafts';
-import type { LessonDraft, SeasonDraft } from '../course-drafts';
+import type { CourseType, LessonDraft, SeasonDraft } from '../course-drafts';
 import type { CourseFormData } from '../schema';
 import { CourseStudentPreview } from '../student-preview';
 
@@ -11,6 +11,7 @@ type StepPreviewProps = {
   seasons: SeasonDraft[];
   lessons: LessonDraft[];
   coverPreviewUrl: string | null;
+  courseType: CourseType;
 };
 
 /**
@@ -21,7 +22,8 @@ export function StepPreview({
   values,
   seasons,
   lessons,
-  coverPreviewUrl
+  coverPreviewUrl,
+  courseType
 }: StepPreviewProps) {
   const { categories } = useCategoriesStore();
   const category = categories.find(
@@ -30,6 +32,7 @@ export function StepPreview({
 
   return (
     <CourseStudentPreview
+      showCurriculum={courseType !== 'LIVE'}
       course={{
         title: values.title,
         description: values.description,

@@ -130,17 +130,9 @@ export function CourseWorkspaceHeader({
         <div className="flex shrink-0 items-center gap-2">
           {showTabs && (
             <Button variant="outline" size="sm" className="h-8" asChild>
-              <Link href={isLive ? `${base}/live` : `${base}/edit`}>
-                {isLive ? (
-                  <Radio className="me-1.5 h-4 w-4" />
-                ) : (
-                  <Pencil className="me-1.5 h-4 w-4" />
-                )}
-                {t(
-                  isLive
-                    ? 'courseDetail.classroom'
-                    : 'courses.wizard.tabBuilder'
-                )}
+              <Link href={`${base}/edit`}>
+                <Pencil className="me-1.5 h-4 w-4" />
+                {t('courses.wizard.tabBuilder')}
               </Link>
             </Button>
           )}
@@ -161,6 +153,14 @@ export function CourseWorkspaceHeader({
                 <Settings2 className="me-2 h-4 w-4" />
                 {t('courseDetail.quickSettings')}
               </DropdownMenuItem>
+              {isLive && (
+                <DropdownMenuItem asChild>
+                  <Link href={`${base}/live`}>
+                    <Radio className="me-2 h-4 w-4" />
+                    {t('courseDetail.manageClassroom')}
+                  </Link>
+                </DropdownMenuItem>
+              )}
               {course.is_published && course.slug && (
                 <DropdownMenuItem asChild>
                   <a

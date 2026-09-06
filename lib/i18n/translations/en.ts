@@ -1883,10 +1883,10 @@ export const en = {
       tabBuilder: 'Course steps',
       stepBasics: 'Course details',
       stepBasicsHint:
-        'Name the course, say what it teaches, choose its type and upload a cover image.',
+        'Name the course, say what it teaches, choose its type and category, and upload a cover image.',
       stepContent: 'Content',
       stepContentHint:
-        'Pick a category, then build the sections and lessons: a video and an attached file for each lesson.',
+        'Build the sections and lessons: a video and an attached file for each lesson.',
       stepAccess: 'Access',
       stepAccessHint:
         'Decide who may open this course: everyone on your site, or only the students and groups you choose.',

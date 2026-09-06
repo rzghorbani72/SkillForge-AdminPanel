@@ -15,7 +15,7 @@ import {
 import { countLessons } from '@/components/course/detail/types';
 import type { CourseDetail } from '@/components/course/detail/types';
 import { useCourseWorkspace } from '@/components/course/detail/course-workspace-context';
-import { useTutoringOffers } from '@/components/course/detail/use-tutoring-offers';
+import { useCourseTutoringOffers } from '@/components/course/pricing/use-course-tutoring-offers';
 import { useStore } from '@/hooks/useStore';
 import { langApiVersionPath } from '@/lib/api-lang';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -47,9 +47,9 @@ export default function CourseOverviewPage() {
   const { selectedAcademy } = useStore();
   const { t } = useTranslation();
   const { course, loading } = useCourseWorkspace();
-  const offers = useTutoringOffers(
-    course?.id ?? '',
-    course?.course_type === 'LIVE'
+  // A live course is priced through its tutoring offers, not `course.price`.
+  const offers = useCourseTutoringOffers(
+    course?.course_type === 'LIVE' ? course.id : undefined
   );
 
   if (!selectedAcademy) return <NoAcademyState />;
@@ -90,6 +90,7 @@ export default function CourseOverviewPage() {
             {t('courseDetail.overviewHint')}
           </p>
           <CourseStudentPreview
+            showCurriculum={course.course_type !== 'LIVE'}
             course={{
               title: course.title,
               description: course.description ?? '',

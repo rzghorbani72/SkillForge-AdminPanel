@@ -6,6 +6,8 @@ import { FormLabel } from '@/components/ui/form';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { useTranslation } from '@/lib/i18n/hooks';
 import CreateCourseBasicInfo from '../CreateCourseBasicInfo';
+import CreateCourseAssociations from '../CreateCourseAssociations';
+import CourseSettingsCard from '../CourseSettingsCard';
 import { CourseTypePicker } from '../course-type-picker';
 import type { CourseType } from '../course-drafts';
 import type { CourseFormData } from '../schema';
@@ -19,7 +21,11 @@ type StepBasicsProps = {
   onCoverChange: (image: { id: string; url: string }) => void;
 };
 
-/** Step 1 — what the course is called, what it is about, and its cover. */
+/**
+ * Step 1 — what the course is: its type, title, description, cover, category
+ * and the two switches that apply to the whole course. Every course type has
+ * this step, so nothing here may depend on there being a lesson tree.
+ */
 export function StepBasics({
   form,
   courseType,
@@ -51,6 +57,17 @@ export function StepBasics({
 
       <CreateCourseBasicInfo form={form} />
 
+      <CreateCourseAssociations
+        categoryId={form.watch('category_id')}
+        onCategoryChange={(id) =>
+          form.setValue('category_id', id ?? '', {
+            shouldDirty: true,
+            shouldTouch: true
+          })
+        }
+        error={form.formState.errors.category_id?.message}
+      />
+
       <Card>
         <CardHeader>
           <CardTitle>{t('courses.coverImage')}</CardTitle>
@@ -69,6 +86,8 @@ export function StepBasics({
           />
         </CardContent>
       </Card>
+
+      <CourseSettingsCard form={form} />
     </div>
   );
 }

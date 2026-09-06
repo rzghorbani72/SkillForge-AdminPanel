@@ -1,10 +1,7 @@
+import type { CourseType } from '../course-drafts';
 import type { CourseFormData } from '../schema';
 
-/**
- * The five steps a recorded (OFFLINE) course is built in. Create starts at
- * `basics`; every later step needs a saved course, so it only opens once the
- * course row exists.
- */
+/** The five steps a course is built in, in create and in edit alike. */
 export const COURSE_WIZARD_STEPS = [
   'basics',
   'content',
@@ -14,6 +11,16 @@ export const COURSE_WIZARD_STEPS = [
 ] as const;
 
 export type CourseWizardStep = (typeof COURSE_WIZARD_STEPS)[number];
+
+/**
+ * A live course has no lesson tree — its classes live in the classroom — so it
+ * is built in the same steps minus `content`.
+ */
+export function stepsFor(courseType: CourseType): readonly CourseWizardStep[] {
+  return courseType === 'LIVE'
+    ? COURSE_WIZARD_STEPS.filter((step) => step !== 'content')
+    : COURSE_WIZARD_STEPS;
+}
 
 export const WIZARD_STEP_LABEL: Record<CourseWizardStep, string> = {
   basics: 'courses.wizard.stepBasics',
@@ -43,7 +50,9 @@ export const WIZARD_STEP_FIELDS: Record<
   preview: []
 };
 
-export function stepFromParam(value: string | null): CourseWizardStep {
-  const found = COURSE_WIZARD_STEPS.find((step) => step === value);
-  return found ?? 'basics';
+export function stepFromParam(
+  value: string | null,
+  steps: readonly CourseWizardStep[] = COURSE_WIZARD_STEPS
+): CourseWizardStep {
+  return steps.find((step) => step === value) ?? 'basics';
 }

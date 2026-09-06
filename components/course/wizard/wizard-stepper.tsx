@@ -12,43 +12,40 @@ import {
 
 type WizardStepperProps = {
   current: CourseWizardStep;
-  /** Steps after this index are not open yet (a new course has no id). */
-  maxReachableIndex: number;
+  steps?: readonly CourseWizardStep[];
   onSelect: (step: CourseWizardStep) => void;
 };
 
 /**
- * The course wizard's map: where the manager is, what is done, and what is
- * still locked. Done steps stay clickable so going back is never a re-run.
+ * The course wizard's map. Every step is clickable at any time, in create and
+ * in edit alike: the work autosaves, so jumping around never loses anything.
  */
 export function WizardStepper({
   current,
-  maxReachableIndex,
+  steps = COURSE_WIZARD_STEPS,
   onSelect
 }: WizardStepperProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const currentIndex = COURSE_WIZARD_STEPS.indexOf(current);
+  const currentIndex = steps.indexOf(current);
 
   return (
     <ol className="flex items-center gap-1 overflow-x-auto py-1">
-      {COURSE_WIZARD_STEPS.map((step, index) => {
+      {steps.map((step, index) => {
         const done = index < currentIndex;
         const active = index === currentIndex;
-        const locked = index > maxReachableIndex;
 
         return (
           <li key={step} className="flex shrink-0 items-center">
             <button
               type="button"
-              disabled={locked}
               onClick={() => onSelect(step)}
               aria-current={active ? 'step' : undefined}
               className={cn(
                 'inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm transition-colors',
-                active && 'bg-primary/10 font-medium text-foreground',
-                !active && !locked && 'text-muted-foreground hover:bg-accent',
-                locked && 'cursor-not-allowed text-muted-foreground/50'
+                active
+                  ? 'bg-primary/10 font-medium text-foreground'
+                  : 'text-muted-foreground hover:bg-accent'
               )}
             >
               <span
@@ -66,7 +63,7 @@ export function WizardStepper({
               </span>
               {t(WIZARD_STEP_LABEL[step])}
             </button>
-            {index < COURSE_WIZARD_STEPS.length - 1 && (
+            {index < steps.length - 1 && (
               <span className="mx-1 h-px w-4 shrink-0 bg-border sm:w-6" />
             )}
           </li>

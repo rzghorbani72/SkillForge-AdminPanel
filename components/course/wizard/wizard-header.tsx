@@ -16,7 +16,7 @@ type WizardHeaderProps = {
   subtitle?: string;
   courseType?: CourseType;
   step: CourseWizardStep;
-  maxReachableIndex: number;
+  steps?: readonly CourseWizardStep[];
   onSelectStep: (step: CourseWizardStep) => void;
   /** Absent while the course does not exist yet (nothing to autosave). */
   saveStatus?: SaveStatus;
@@ -33,7 +33,7 @@ export function WizardHeader({
   subtitle,
   courseType,
   step,
-  maxReachableIndex,
+  steps,
   onSelectStep,
   saveStatus,
   onRetrySave,
@@ -72,11 +72,7 @@ export function WizardHeader({
       )}
 
       <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
-        <WizardStepper
-          current={step}
-          maxReachableIndex={maxReachableIndex}
-          onSelect={onSelectStep}
-        />
+        <WizardStepper current={step} steps={steps} onSelect={onSelectStep} />
         {saveStatus && onRetrySave && (
           <SaveStatusIndicator status={saveStatus} onRetry={onRetrySave} />
         )}

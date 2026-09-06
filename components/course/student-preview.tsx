@@ -43,9 +43,12 @@ export type StudentPreviewCourse = {
  * (from the saved course), so both show the same thing.
  */
 export function CourseStudentPreview({
-  course
+  course,
+  /** Off for a live course: its classes are a timetable, not a lesson tree. */
+  showCurriculum = true
 }: {
   course: StudentPreviewCourse;
+  showCurriculum?: boolean;
 }) {
   const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -132,57 +135,59 @@ export function CourseStudentPreview({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('courses.seasonsAndLessons')}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {course.seasons.map((season, index) => (
-            <div key={season.key} className="rounded-lg border">
-              <div className="border-b bg-muted/40 px-4 py-2 text-sm font-medium">
-                {season.title.trim() ||
-                  t('courses.seasonNumber', { n: index + 1 })}
+      {showCurriculum && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('courses.seasonsAndLessons')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {course.seasons.map((season, index) => (
+              <div key={season.key} className="rounded-lg border">
+                <div className="border-b bg-muted/40 px-4 py-2 text-sm font-medium">
+                  {season.title.trim() ||
+                    t('courses.seasonNumber', { n: index + 1 })}
+                </div>
+                <ul className="divide-y">
+                  {season.lessons.map((lesson) => (
+                    <li
+                      key={lesson.key}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm"
+                    >
+                      {lesson.isFree ? (
+                        <PlayCircle className="h-4 w-4 shrink-0 text-primary" />
+                      ) : (
+                        <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      )}
+                      <span className="min-w-0 flex-1 truncate">
+                        {lesson.title.trim() ||
+                          t('courses.wizard.previewUntitledLesson')}
+                      </span>
+                      {lesson.isFree && (
+                        <Badge variant="secondary" className="text-[11px]">
+                          {t('courses.freePreview')}
+                        </Badge>
+                      )}
+                      <span className="shrink-0 tabular-nums text-muted-foreground">
+                        {localDigits(lesson.duration)}
+                      </span>
+                    </li>
+                  ))}
+                  {season.lessons.length === 0 && (
+                    <li className="px-4 py-3 text-sm text-muted-foreground">
+                      {t('courses.wizard.previewEmptySeason')}
+                    </li>
+                  )}
+                </ul>
               </div>
-              <ul className="divide-y">
-                {season.lessons.map((lesson) => (
-                  <li
-                    key={lesson.key}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm"
-                  >
-                    {lesson.isFree ? (
-                      <PlayCircle className="h-4 w-4 shrink-0 text-primary" />
-                    ) : (
-                      <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    )}
-                    <span className="min-w-0 flex-1 truncate">
-                      {lesson.title.trim() ||
-                        t('courses.wizard.previewUntitledLesson')}
-                    </span>
-                    {lesson.isFree && (
-                      <Badge variant="secondary" className="text-[11px]">
-                        {t('courses.freePreview')}
-                      </Badge>
-                    )}
-                    <span className="shrink-0 tabular-nums text-muted-foreground">
-                      {localDigits(lesson.duration)}
-                    </span>
-                  </li>
-                ))}
-                {season.lessons.length === 0 && (
-                  <li className="px-4 py-3 text-sm text-muted-foreground">
-                    {t('courses.wizard.previewEmptySeason')}
-                  </li>
-                )}
-              </ul>
-            </div>
-          ))}
-          {course.seasons.length === 0 && (
-            <p className="rounded-md border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
-              {t('courses.wizard.previewNoContent')}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+            ))}
+            {course.seasons.length === 0 && (
+              <p className="rounded-md border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
+                {t('courses.wizard.previewNoContent')}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

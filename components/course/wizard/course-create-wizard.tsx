@@ -17,6 +17,7 @@ import { courseFormSchema, type CourseFormData } from '../schema';
 import type { CourseType } from '../course-drafts';
 import { StepBasics } from './step-basics';
 import { WizardHeader } from './wizard-header';
+import { stepsFor, type CourseWizardStep } from './wizard-steps';
 
 function newCourseId(response: unknown): string | undefined {
   const body = response as { data?: { data?: { id?: string }; id?: string } };
@@ -34,6 +35,9 @@ export default function CourseCreateWizard() {
   const { selectedAcademy } = useStore();
 
   const [courseType, setCourseType] = useState<CourseType>('OFFLINE');
+  // Switching the type reshapes the wizard: a live course has no lesson tree,
+  // so its `content` step disappears from the stepper as soon as it is picked.
+  const steps = stepsFor(courseType);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -58,7 +62,12 @@ export default function CourseCreateWizard() {
     }
   });
 
-  const createAndContinue = async () => {
+  /**
+   * Every step is clickable here too, so the draft is created on the way to
+   * whichever step was asked for — the manager lands in the same builder they
+   * would reach with Next, already filled in.
+   */
+  const createAndContinue = async (step: CourseWizardStep) => {
     if (!(await form.trigger(['title', 'description']))) {
       toast.error(t('courses.fixErrorsBeforeSaving'));
       return;
@@ -81,12 +90,7 @@ export default function CourseCreateWizard() {
       if (!id) throw new Error('Course creation returned no id');
 
       toast.success(t('courses.createdDraftToast'));
-      // A live course is built on its timetable, not on a lesson tree.
-      router.push(
-        courseType === 'LIVE'
-          ? `/courses/${id}/live`
-          : `/courses/${id}/edit?step=content`
-      );
+      router.push(`/courses/${id}/edit?step=${step}`);
     } catch (error) {
       ErrorHandler.handleApiError(error);
       setIsSaving(false);
@@ -102,8 +106,10 @@ export default function CourseCreateWizard() {
         subtitle={selectedAcademy.name}
         courseType={courseType}
         step="basics"
-        maxReachableIndex={0}
-        onSelectStep={() => undefined}
+        steps={steps}
+        onSelectStep={(step) => {
+          if (step !== 'basics') void createAndContinue(step);
+        }}
         onBack={() => router.push('/courses')}
       />
 
@@ -136,7 +142,7 @@ export default function CourseCreateWizard() {
               <Button
                 type="button"
                 disabled={isSaving}
-                onClick={() => void createAndContinue()}
+                onClick={() => void createAndContinue(steps[1])}
                 className="gap-2"
               >
                 {isSaving ? (

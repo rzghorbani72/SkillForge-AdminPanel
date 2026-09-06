@@ -17,19 +17,21 @@ import { StepBasics } from './step-basics';
 import { StepContent } from './step-content';
 import { StepPreview } from './step-preview';
 import { WizardHeader } from './wizard-header';
+import { LiveClassroomBanner } from './live-classroom-banner';
 import {
-  COURSE_WIZARD_STEPS,
   WIZARD_STEP_FIELDS,
   WIZARD_STEP_HINT,
   stepFromParam,
+  stepsFor,
   type CourseWizardStep
 } from './wizard-steps';
 
 /**
- * Builds one recorded course in five steps: what it is, what is inside it, who
- * may open it, what it costs, and a last look at the student's view before the
- * whole thing is saved. Each step autosaves as it is edited, so stepping back
- * and forth never loses work; publishing happens only on the final save.
+ * Builds one course in steps: what it is, what is inside it, who may open it,
+ * what it costs, and a last look at the student's view before the whole thing
+ * is saved. Each step autosaves as it is edited, so stepping back and forth
+ * never loses work; publishing happens only on the final save. A live course
+ * runs the same steps without `content` — its classes live in the classroom.
  */
 export default function CourseWizard({ courseId }: { courseId: string }) {
   const { t } = useTranslation();
@@ -39,9 +41,15 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
   const course = useCourseForm(courseId);
   const { form, isLoading, isSaving, saveStatus, selectedAcademy } = course;
 
-  const [step, setStep] = useState<CourseWizardStep>(() =>
+  const isLive = course.courseType === 'LIVE';
+  const steps = stepsFor(course.courseType);
+
+  const [requestedStep, setStep] = useState<CourseWizardStep>(() =>
     stepFromParam(searchParams.get('step'))
   );
+  // The course type only arrives with the course, so a step this type does not
+  // have (`content` on a live course) falls back to the first one.
+  const step = steps.includes(requestedStep) ? requestedStep : 'basics';
   const [pendingAccess, setPendingAccess] =
     useState<AssignAccessSelection | null>(null);
   // Held out of the form until the final save — see StepAccess. Untouched, it
@@ -49,8 +57,8 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
   const [visibility, setVisibility] = useState<boolean | null>(null);
   const isPublic = visibility ?? form.watch('published');
 
-  const index = COURSE_WIZARD_STEPS.indexOf(step);
-  const isLast = index === COURSE_WIZARD_STEPS.length - 1;
+  const index = steps.indexOf(step);
+  const isLast = index === steps.length - 1;
 
   const goTo = (next: CourseWizardStep) => {
     setStep(next);
@@ -64,7 +72,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
       toast.error(t('courses.fixErrorsBeforeSaving'));
       return;
     }
-    goTo(COURSE_WIZARD_STEPS[index + 1]);
+    goTo(steps[index + 1]);
   };
 
   /** The one place the course, its visibility and its access grants are written. */
@@ -93,7 +101,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
     <>
       <WizardHeader
         step={step}
-        maxReachableIndex={COURSE_WIZARD_STEPS.length - 1}
+        steps={steps}
         onSelectStep={goTo}
         saveStatus={saveStatus}
         onRetrySave={course.retrySave}
@@ -103,6 +111,8 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
         <p className="mb-6 text-sm text-muted-foreground">
           {t(WIZARD_STEP_HINT[step])}
         </p>
+
+        {isLive && <LiveClassroomBanner courseId={courseId} />}
 
         <Form {...form}>
           <form onSubmit={(e) => e.preventDefault()} noValidate>
@@ -115,9 +125,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
               />
             )}
 
-            {step === 'content' && (
-              <StepContent form={form} curriculum={course} />
-            )}
+            {step === 'content' && <StepContent curriculum={course} />}
 
             {step === 'access' && (
               <StepAccess
@@ -143,6 +151,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
                 seasons={course.seasons}
                 lessons={course.lessons}
                 coverPreviewUrl={course.coverPreviewUrl}
+                courseType={course.courseType}
               />
             )}
 
@@ -151,7 +160,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
                 type="button"
                 variant="ghost"
                 disabled={index === 0}
-                onClick={() => goTo(COURSE_WIZARD_STEPS[index - 1])}
+                onClick={() => goTo(steps[index - 1])}
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
