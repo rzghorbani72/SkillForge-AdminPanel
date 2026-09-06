@@ -23,6 +23,7 @@ import { CourseTypePill } from '@/components/course/course-type-pill';
 import { StatusPill } from '@/components/course/StatusPill';
 import { courseHue } from '@/components/course/courseUtils';
 import { langApiVersionPath } from '@/lib/api-lang';
+import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { CoursePublishButton } from './course-publish-button';
 import { CourseQuickSettingsDialog } from './course-quick-settings-dialog';
@@ -41,9 +42,10 @@ function thumbUrl(course: CourseDetail): string | null {
 
 /**
  * Stays mounted across every course tab, so switching from the overview to the
- * curriculum feels like moving inside the course, not leaving it.
+ * builder feels like moving inside the course, not leaving it. `sticky` is off
+ * on the builder, which pins its own step bar to the top instead.
  */
-export function CourseWorkspaceHeader() {
+export function CourseWorkspaceHeader({ sticky = true }: { sticky?: boolean }) {
   const { t } = useTranslation();
   const { courseId, course, loading } = useCourseWorkspace();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -63,7 +65,12 @@ export function CourseWorkspaceHeader() {
   const hue = courseHue(course.id);
 
   return (
-    <div className="sticky top-0 z-20 border-b bg-background/95 px-4 pt-3 backdrop-blur sm:px-6">
+    <div
+      className={cn(
+        'border-b bg-background/95 px-4 pt-3 backdrop-blur sm:px-6',
+        sticky && 'sticky top-0 z-20'
+      )}
+    >
       <div className="flex flex-wrap items-center gap-3">
         <Button
           variant="ghost"

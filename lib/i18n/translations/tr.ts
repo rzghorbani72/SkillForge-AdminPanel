@@ -1124,8 +1124,6 @@ export const tr = {
     courseDescription: 'Kurs Açıklaması',
     basicInformation: 'Temel Bilgiler',
     creatingCourse: 'Kurs oluşturuluyor…',
-    quickCreateHint:
-      'Önce adını yazın — kapak, fiyat ve dersleri sonraki ekranda ekleyeceksiniz.',
     viewCourse: 'Kurs sayfasını gör',
     builderDraftHint:
       'Bu kurs taslak: yalnızca siz görüyorsunuz. Dersleri ekleyin, hazır olduğunda Yayında seçeneğini açın.',

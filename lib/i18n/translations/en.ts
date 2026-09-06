@@ -1879,7 +1879,37 @@ export const en = {
     manageAudios: 'Manage Audios',
     manageDocuments: 'Manage Documents',
     createCourse: 'Create Course',
-    createAndContinue: 'Create & add content',
+    wizard: {
+      tabBuilder: 'Course steps',
+      stepBasics: 'Course details',
+      stepBasicsHint:
+        'Name the course, say what it teaches, choose its type and upload a cover image.',
+      stepContent: 'Content',
+      stepContentHint:
+        'Pick a category, then build the sections and lessons: a video and an attached file for each lesson.',
+      stepAccess: 'Access',
+      stepAccessHint:
+        'Decide who may open this course: everyone on your site, or only the students and groups you choose.',
+      stepPricing: 'Pricing',
+      stepPricingHint:
+        'Set the price and every way a student can enrol in this course.',
+      stepPreview: 'Preview',
+      stepPreviewHint:
+        'This is what a student sees. Check it, then save the course.',
+      typeLockedHint: 'The course type is chosen once and cannot be changed.',
+      visibilityTitle: 'Who can see this course',
+      visibilityPublicTitle: 'Public',
+      visibilityPublicHint:
+        'Listed on your website — anyone can find it and enrol at the price you set.',
+      visibilityPrivateTitle: 'Only invited students',
+      visibilityPrivateHint:
+        'Hidden from your website. Only the students and groups you give access to can open it.',
+      saveCourse: 'Save course',
+      previewUntitled: 'Untitled course',
+      previewUntitledLesson: 'Untitled lesson',
+      previewEmptySeason: 'No lessons in this section yet',
+      previewNoContent: 'No sections yet — add lessons in the Content step.'
+    },
     editCourse: 'Edit Course',
     courseName: 'Course Name',
     description: 'Description',
@@ -1893,8 +1923,6 @@ export const en = {
     courseDescription: 'Course Description',
     basicInformation: 'Basic Information',
     creatingCourse: 'Creating course…',
-    quickCreateHint:
-      'Name it first — you will add the cover, price and lessons on the next screen.',
     builderDraftHint:
       'This course is a draft: only you can see it. Add the lessons, then turn on Published when it is ready.',
     builderPublishedHint:
@@ -5788,7 +5816,7 @@ export const en = {
     manageClassroom: 'Open classroom',
     liveLeftoverLessons:
       'This course still has {{count}} recorded lesson(s) from before it was switched to live. Students do not see them here — the live classroom is what they get.',
-    tabOverview: 'Overview',
+    tabFinancial: 'Financial statistics',
     moreActions: 'More actions',
     quickSettings: 'Quick settings',
     quickSettingsDesc: 'Small changes, without leaving this page',

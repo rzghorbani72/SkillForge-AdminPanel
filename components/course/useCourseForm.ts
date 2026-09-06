@@ -40,15 +40,7 @@ export { durationToSeconds, secondsToDuration, validateForPublish };
  * Drives the course builder: one page that loads a course and saves the whole
  * of it — details, cover, pricing and curriculum — in a single request.
  */
-/**
- * `curriculumOnly` is for the Curriculum tab, which shows seasons and lessons
- * and nothing else. It sends only the content tree, so saving a lesson can
- * never write back — or fail on — course fields the page is not showing.
- */
-export function useCourseForm(
-  courseId: string,
-  { curriculumOnly = false }: { curriculumOnly?: boolean } = {}
-) {
+export function useCourseForm(courseId: string) {
   // A live course promises a timetable, not lessons: the publish rules differ.
   const [courseType, setCourseType] = useState<CourseType>('OFFLINE');
   const router = useRouter();
@@ -111,28 +103,22 @@ export function useCourseForm(
       const coverId = data.cover_id?.trim();
       // Undefined keys are dropped from the JSON body, and every course field
       // on the server is optional — so omitting them leaves them untouched.
-      const courseFields = curriculumOnly
-        ? {}
-        : {
-            title: data.title.trim(),
-            description: data.description.trim(),
-            meta_title: data.meta_title.trim(),
-            meta_description: data.meta_description.trim(),
-            keywords: data.keywords,
-            primary_price: Number(data.primary_price),
-            secondary_price: Number(data.secondary_price) || 0,
-            category_id: data.category_id || undefined,
-            cover_id: coverId ? coverId : null,
-            published: data.published,
-            is_featured: data.is_featured,
-            base_price_active: data.base_price_active,
-            allow_downloads: data.allow_downloads,
-            apply_downloads_to_lessons:
-              data.apply_downloads_to_lessons || undefined
-          };
-
       return {
-        ...courseFields,
+        title: data.title.trim(),
+        description: data.description.trim(),
+        meta_title: data.meta_title.trim(),
+        meta_description: data.meta_description.trim(),
+        keywords: data.keywords,
+        primary_price: Number(data.primary_price),
+        secondary_price: Number(data.secondary_price) || 0,
+        category_id: data.category_id || undefined,
+        cover_id: coverId ? coverId : null,
+        published: data.published,
+        is_featured: data.is_featured,
+        base_price_active: data.base_price_active,
+        allow_downloads: data.allow_downloads,
+        apply_downloads_to_lessons:
+          data.apply_downloads_to_lessons || undefined,
         seasons: curriculum.seasons.map((s, i) => ({
           id: s.id,
           client_key: s.clientKey,
@@ -161,7 +147,7 @@ export function useCourseForm(
           removedLessonIds.length > 0 ? removedLessonIds : undefined
       };
     },
-    [t, curriculumOnly]
+    [t]
   );
 
   // ── Load existing course for edit ─────────────────────────────────────────
@@ -433,7 +419,7 @@ export function useCourseForm(
       return;
     }
     const values = form.getValues();
-    if (!curriculumOnly && !courseFormSchema.safeParse(values).success) return;
+    if (!courseFormSchema.safeParse(values).success) return;
     void save(values, { silent: true });
   }, AUTOSAVE_DELAY_MS);
   autosaveRef.current = autosave;
@@ -516,15 +502,13 @@ export function useCourseForm(
    * saves immediately and confirms with a toast.
    */
   const saveNow = useCallback(async () => {
-    if (!curriculumOnly) {
-      const valid = await form.trigger();
-      if (!valid) {
-        toast.error(t('courses.fixErrorsBeforeSaving'));
-        return false;
-      }
+    const valid = await form.trigger();
+    if (!valid) {
+      toast.error(t('courses.fixErrorsBeforeSaving'));
+      return false;
     }
     return save(form.getValues());
-  }, [form, save, t, curriculumOnly]);
+  }, [form, save, t]);
 
   /**
    * Save and exit to the courses list — used by the explicit Save button.

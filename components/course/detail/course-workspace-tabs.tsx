@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Award, BarChart3, Layers, Radio } from 'lucide-react';
+import { Award, BarChart3, Pencil, Radio } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
@@ -27,13 +27,8 @@ export function CourseWorkspaceTabs({
   const base = `/courses/${courseId}`;
 
   const tabs = [
-    {
-      href: base,
-      label: t('courseDetail.tabOverview'),
-      icon: BarChart3,
-      exact: true
-    },
-    // A live course has no lessons to curate: its content is the timetable.
+    // Building the course comes first — a live course is built on its
+    // timetable, a recorded one in the step builder.
     courseType === 'LIVE'
       ? {
           href: `${base}/live`,
@@ -42,11 +37,17 @@ export function CourseWorkspaceTabs({
           exact: false
         }
       : {
-          href: `${base}/seasons`,
-          label: t('courseDetail.curriculum'),
-          icon: Layers,
+          href: `${base}/edit`,
+          label: t('courses.wizard.tabBuilder'),
+          icon: Pencil,
           exact: false
-        }
+        },
+    {
+      href: base,
+      label: t('courseDetail.tabFinancial'),
+      icon: BarChart3,
+      exact: true
+    }
     // Instalment plans are hidden until a gateway supports them; the page and
     // its route still exist, so restoring this entry is the whole change.
   ];

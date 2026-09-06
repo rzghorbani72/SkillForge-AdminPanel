@@ -193,21 +193,13 @@ export function clearIncompatibleMedia(type: LessonType): Partial<LessonDraft> {
     documentPreviewName: undefined
   };
 
+  // The attachment survives a type change between VIDEO/AUDIO/TEXT: it is a
+  // resource beside the lesson, not the lesson's own medium.
   if (type === 'VIDEO') {
-    return {
-      audio_id: undefined,
-      audioPreviewUrl: undefined,
-      document_id: undefined,
-      documentPreviewName: undefined
-    };
+    return { audio_id: undefined, audioPreviewUrl: undefined };
   }
   if (type === 'AUDIO') {
-    return {
-      video_id: undefined,
-      videoPreviewUrl: undefined,
-      document_id: undefined,
-      documentPreviewName: undefined
-    };
+    return { video_id: undefined, videoPreviewUrl: undefined };
   }
   if (type === 'TEXT' || type === 'QUIZ' || type === 'ASSIGNMENT') {
     return {

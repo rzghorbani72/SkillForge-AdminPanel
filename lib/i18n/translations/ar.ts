@@ -1094,8 +1094,6 @@ export const ar = {
     courseDescription: 'وصف الدورة',
     basicInformation: 'المعلومات الأساسية',
     creatingCourse: 'جارٍ إنشاء الدورة…',
-    quickCreateHint:
-      'ابدأ بالاسم — ستضيف الصورة والسعر والدروس في الشاشة التالية.',
     viewCourse: 'عرض صفحة الدورة',
     builderDraftHint:
       'هذه الدورة مسودة يراها أنت فقط. أضف الدروس ثم فعّل «منشورة» عندما تكون جاهزة.',

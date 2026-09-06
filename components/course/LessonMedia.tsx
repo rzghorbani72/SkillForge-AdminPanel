@@ -213,8 +213,9 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   const type = lesson.lesson_type;
   const showVideo = type === 'VIDEO';
   const showAudio = type === 'AUDIO';
-  const showDocument =
-    type === 'TEXT' || type === 'QUIZ' || type === 'ASSIGNMENT';
+  // Every lesson except a live one may carry an attachment: slides next to a
+  // video, a worksheet next to a reading. The student player shows it either way.
+  const showDocument = type !== 'LIVE';
   const showCover = showVideo || showAudio;
   const tone = toneFor(type);
   const DocIcon = LESSON_TYPE_BY_KEY[type]?.Icon ?? FileText;

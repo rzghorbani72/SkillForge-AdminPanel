@@ -1868,7 +1868,35 @@ export const fa = {
     manageAudios: 'مدیریت صوت‌ها',
     manageDocuments: 'مدیریت اسناد',
     createCourse: 'ایجاد دوره',
-    createAndContinue: 'ایجاد و افزودن محتوا',
+    wizard: {
+      tabBuilder: 'گام‌های دوره',
+      stepBasics: 'مشخصات دوره',
+      stepBasicsHint: 'نام دوره، توضیح آن، نوع دوره و تصویر جلد را مشخص کنید.',
+      stepContent: 'محتوا',
+      stepContentHint:
+        'دسته‌بندی را انتخاب کنید و سپس فصل‌ها و درس‌ها را بسازید: برای هر درس ویدیو و فایل پیوست.',
+      stepAccess: 'دسترسی',
+      stepAccessHint:
+        'تعیین کنید چه کسی این دوره را ببیند: همه در سایت شما، یا فقط دانشجویان و گروه‌هایی که انتخاب می‌کنید.',
+      stepPricing: 'قیمت',
+      stepPricingHint: 'قیمت دوره و همهٔ راه‌های ثبت‌نام در آن را مشخص کنید.',
+      stepPreview: 'پیش‌نمایش',
+      stepPreviewHint:
+        'این چیزی است که دانشجو می‌بیند. آن را بررسی کنید و سپس دوره را ذخیره کنید.',
+      typeLockedHint: 'نوع دوره یک‌بار انتخاب می‌شود و قابل تغییر نیست.',
+      visibilityTitle: 'چه کسی این دوره را می‌بیند',
+      visibilityPublicTitle: 'عمومی',
+      visibilityPublicHint:
+        'در وب‌سایت شما نمایش داده می‌شود — هر کسی می‌تواند آن را ببیند و با قیمت تعیین‌شده ثبت‌نام کند.',
+      visibilityPrivateTitle: 'فقط دانشجویان دعوت‌شده',
+      visibilityPrivateHint:
+        'در وب‌سایت نمایش داده نمی‌شود. فقط دانشجویان و گروه‌هایی که به آن‌ها دسترسی می‌دهید می‌توانند آن را باز کنند.',
+      saveCourse: 'ذخیرهٔ دوره',
+      previewUntitled: 'دورهٔ بدون عنوان',
+      previewUntitledLesson: 'درس بدون عنوان',
+      previewEmptySeason: 'هنوز درسی در این فصل نیست',
+      previewNoContent: 'هنوز فصلی ساخته نشده — در گام محتوا درس اضافه کنید.'
+    },
     editCourse: 'ویرایش دوره',
     courseName: 'نام دوره',
     description: 'توضیحات',
@@ -1882,8 +1910,6 @@ export const fa = {
     courseDescription: 'توضیحات دوره',
     basicInformation: 'اطلاعات پایه',
     creatingCourse: 'در حال ساخت دوره…',
-    quickCreateHint:
-      'ابتدا نام دوره را بنویسید — تصویر، قیمت و درس‌ها را در صفحهٔ بعد اضافه می‌کنید.',
     builderDraftHint:
       'این دوره پیش‌نویس است و فقط شما آن را می‌بینید. درس‌ها را اضافه کنید و وقتی آماده شد، «منتشر شده» را روشن کنید.',
     builderPublishedHint:
@@ -5775,7 +5801,7 @@ export const fa = {
     manageClassroom: 'رفتن به کلاس آنلاین',
     liveLeftoverLessons:
       'این دوره {{count}} درس ضبط‌شده از پیش از تبدیل‌شدن به دورهٔ زنده دارد. دانشجو آن‌ها را اینجا نمی‌بیند؛ چیزی که دریافت می‌کند کلاس آنلاین است.',
-    tabOverview: 'نمای کلی',
+    tabFinancial: 'آمار مالی',
     moreActions: 'اقدامات بیشتر',
     quickSettings: 'تنظیمات سریع',
     quickSettingsDesc: 'تغییرهای کوچک، بدون خارج شدن از این صفحه',

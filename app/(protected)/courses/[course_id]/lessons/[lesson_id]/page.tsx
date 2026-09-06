@@ -50,7 +50,7 @@ export default function LessonSettingsPage() {
   return (
     <main className="space-y-6 p-4 sm:p-6">
       <Link
-        href={`/courses/${courseId}/seasons`}
+        href={`/courses/${courseId}/edit?step=content`}
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:underline"
       >
         <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
