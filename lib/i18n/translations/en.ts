@@ -5817,13 +5817,14 @@ export const en = {
     manageClassroom: 'Open classroom',
     liveLeftoverLessons:
       'This course still has {{count}} recorded lesson(s) from before it was switched to live. Students do not see them here — the live classroom is what they get.',
+    tabOverview: 'Overview',
+    overviewHint: 'This is the course exactly as a student sees it.',
     tabFinancial: 'Financial statistics',
     moreActions: 'More actions',
     quickSettings: 'Quick settings',
     quickSettingsDesc: 'Small changes, without leaving this page',
     featuredHint: 'Featured courses are shown higher on the academy homepage',
     settingsSaved: 'Changes saved',
-    fullEdit: 'Full course editor',
     unpublishConfirmTitle: 'Unpublish this course?',
     unpublishConfirmDesc:
       'The public page will no longer open for visitors and no new enrollment is possible. Current students keep their access, and you can publish it again at any time.',

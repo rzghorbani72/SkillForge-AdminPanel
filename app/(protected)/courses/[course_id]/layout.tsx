@@ -11,14 +11,14 @@ export default function CourseWorkspaceLayout({
   children: ReactNode;
 }) {
   const { course_id: courseId } = useParams<{ course_id: string }>();
-  // The builder pins its own step bar to the top, so only one of the two bars
-  // may be sticky or they stack and eat the screen.
+  // The builder pins its own step bar to the top: only one of the two bars may
+  // be sticky or they stack and eat the screen, and the steps replace the tabs.
   const isBuilder = usePathname().endsWith('/edit');
 
   return (
     <CourseWorkspaceProvider courseId={courseId}>
       <div className="flex min-h-full flex-1 flex-col">
-        <CourseWorkspaceHeader sticky={!isBuilder} />
+        <CourseWorkspaceHeader sticky={!isBuilder} showTabs={!isBuilder} />
         {children}
       </div>
     </CourseWorkspaceProvider>

@@ -66,6 +66,8 @@ const DYNAMIC_SEGMENT_KEYS: Record<string, string> = {
   seasons: 'pageTitles.seasons',
   lessons: 'pageTitles.lessons',
   live: 'pageTitles.courseLive',
+  financial: 'courseDetail.tabFinancial',
+  certificates: 'certificates.tab',
   plans: 'navigation.studentPlans',
   learning: 'pageTitles.userLearning',
   create: 'pageTitles.create',

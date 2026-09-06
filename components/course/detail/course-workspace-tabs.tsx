@@ -2,64 +2,42 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Award, BarChart3, Pencil, Radio } from 'lucide-react';
+import { Award, BarChart3, Eye } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
-type CourseWorkspaceTabsProps = {
-  courseId: string;
-  courseType?: 'OFFLINE' | 'LIVE';
-  /** The certificates tab only exists for a course that awards one. */
-  hasCertificate?: boolean;
-};
-
 /**
  * Real links, not a JS tab widget: every tab is a URL the manager can share,
- * bookmark or open in a new tab.
+ * bookmark or open in a new tab. Only the three reading views live here —
+ * building the course is its own step-by-step page, reached from the header.
  */
-export function CourseWorkspaceTabs({
-  courseId,
-  courseType = 'OFFLINE',
-  hasCertificate = false
-}: CourseWorkspaceTabsProps) {
+export function CourseWorkspaceTabs({ courseId }: { courseId: string }) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const base = `/courses/${courseId}`;
 
   const tabs = [
-    // Building the course comes first — a live course is built on its
-    // timetable, a recorded one in the step builder.
-    courseType === 'LIVE'
-      ? {
-          href: `${base}/live`,
-          label: t('courseDetail.classroom'),
-          icon: Radio,
-          exact: false
-        }
-      : {
-          href: `${base}/edit`,
-          label: t('courses.wizard.tabBuilder'),
-          icon: Pencil,
-          exact: false
-        },
     {
       href: base,
+      label: t('courseDetail.tabOverview'),
+      icon: Eye,
+      exact: true
+    },
+    {
+      href: `${base}/financial`,
       label: t('courseDetail.tabFinancial'),
       icon: BarChart3,
-      exact: true
-    }
-    // Instalment plans are hidden until a gateway supports them; the page and
-    // its route still exist, so restoring this entry is the whole change.
-  ];
-
-  if (hasCertificate) {
-    tabs.push({
+      exact: false
+    },
+    {
       href: `${base}/certificates`,
       label: t('certificates.tab'),
       icon: Award,
       exact: false
-    });
-  }
+    }
+    // Instalment plans are hidden until a gateway supports them; the page and
+    // its route still exist, so restoring this entry is the whole change.
+  ];
 
   return (
     <nav className="-mb-px flex gap-1 overflow-x-auto">

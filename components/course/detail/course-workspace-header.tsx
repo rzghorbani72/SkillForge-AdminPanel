@@ -9,6 +9,7 @@ import {
   ExternalLink,
   MoreHorizontal,
   Pencil,
+  Radio,
   Settings2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -43,9 +44,16 @@ function thumbUrl(course: CourseDetail): string | null {
 /**
  * Stays mounted across every course tab, so switching from the overview to the
  * builder feels like moving inside the course, not leaving it. `sticky` is off
- * on the builder, which pins its own step bar to the top instead.
+ * on the builder, which pins its own step bar to the top instead — and the
+ * builder hides the tabs too, so the step indicator is the only bar there.
  */
-export function CourseWorkspaceHeader({ sticky = true }: { sticky?: boolean }) {
+export function CourseWorkspaceHeader({
+  sticky = true,
+  showTabs = true
+}: {
+  sticky?: boolean;
+  showTabs?: boolean;
+}) {
   const { t } = useTranslation();
   const { courseId, course, loading } = useCourseWorkspace();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -63,6 +71,8 @@ export function CourseWorkspaceHeader({ sticky = true }: { sticky?: boolean }) {
 
   const thumb = thumbUrl(course);
   const hue = courseHue(course.id);
+  const isLive = course.course_type === 'LIVE';
+  const base = `/courses/${courseId}`;
 
   return (
     <div
@@ -118,6 +128,22 @@ export function CourseWorkspaceHeader({ sticky = true }: { sticky?: boolean }) {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
+          {showTabs && (
+            <Button variant="outline" size="sm" className="h-8" asChild>
+              <Link href={isLive ? `${base}/live` : `${base}/edit`}>
+                {isLive ? (
+                  <Radio className="me-1.5 h-4 w-4" />
+                ) : (
+                  <Pencil className="me-1.5 h-4 w-4" />
+                )}
+                {t(
+                  isLive
+                    ? 'courseDetail.classroom'
+                    : 'courses.wizard.tabBuilder'
+                )}
+              </Link>
+            </Button>
+          )}
           <CoursePublishButton />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -134,12 +160,6 @@ export function CourseWorkspaceHeader({ sticky = true }: { sticky?: boolean }) {
               <DropdownMenuItem onSelect={() => setSettingsOpen(true)}>
                 <Settings2 className="me-2 h-4 w-4" />
                 {t('courseDetail.quickSettings')}
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href={`/courses/${courseId}/edit`}>
-                  <Pencil className="me-2 h-4 w-4" />
-                  {t('courseDetail.fullEdit')}
-                </Link>
               </DropdownMenuItem>
               {course.is_published && course.slug && (
                 <DropdownMenuItem asChild>
@@ -158,11 +178,11 @@ export function CourseWorkspaceHeader({ sticky = true }: { sticky?: boolean }) {
         </div>
       </div>
 
-      <CourseWorkspaceTabs
-        courseId={courseId}
-        courseType={course?.course_type}
-        hasCertificate={course.is_certificate}
-      />
+      {showTabs ? (
+        <CourseWorkspaceTabs courseId={courseId} />
+      ) : (
+        <div className="h-3" />
+      )}
 
       <CourseQuickSettingsDialog
         open={settingsOpen}
