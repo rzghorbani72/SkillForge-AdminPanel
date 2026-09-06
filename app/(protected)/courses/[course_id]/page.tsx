@@ -6,9 +6,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import NoAcademyState from '@/components/course/NoAcademyState';
 import { secondsToDuration } from '@/components/course/course-drafts';
 import { CourseStudentPreview } from '@/components/course/student-preview';
+import { CourseFactsCard } from '@/components/course/detail/course-facts-card';
+import {
+  CourseAccessCard,
+  CourseIdentityCard,
+  CourseSearchCard
+} from '@/components/course/detail/course-spec-cards';
 import { countLessons } from '@/components/course/detail/types';
 import type { CourseDetail } from '@/components/course/detail/types';
 import { useCourseWorkspace } from '@/components/course/detail/course-workspace-context';
+import { useTutoringOffers } from '@/components/course/detail/use-tutoring-offers';
 import { useStore } from '@/hooks/useStore';
 import { langApiVersionPath } from '@/lib/api-lang';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -22,15 +29,28 @@ function coverUrl(course: CourseDetail): string | null {
   );
 }
 
+function totalSeconds(course: CourseDetail): number {
+  return (course.Season ?? []).reduce(
+    (total, season) =>
+      total + season.Lesson.reduce((sum, lesson) => sum + lesson.duration, 0),
+    0
+  );
+}
+
 /**
- * The course exactly as a student sees it on the public site. It is the first
- * thing a manager should check, so it is the workspace's landing tab.
+ * Everything the course is, on one page: the student's view on the left, and
+ * its settings — pricing, access, search — as read-only cards on the right.
+ * Editing any of it happens in the builder.
  */
 export default function CourseOverviewPage() {
   const router = useRouter();
   const { selectedAcademy } = useStore();
   const { t } = useTranslation();
   const { course, loading } = useCourseWorkspace();
+  const offers = useTutoringOffers(
+    course?.id ?? '',
+    course?.course_type === 'LIVE'
+  );
 
   if (!selectedAcademy) return <NoAcademyState />;
 
@@ -61,41 +81,46 @@ export default function CourseOverviewPage() {
   }
 
   const seasons = course.Season ?? [];
-  const totalSeconds = seasons.reduce(
-    (total, season) =>
-      total + season.Lesson.reduce((sum, lesson) => sum + lesson.duration, 0),
-    0
-  );
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] flex-1 space-y-4 p-4 sm:p-6">
-      <p className="text-sm text-muted-foreground">
-        {t('courseDetail.overviewHint')}
-      </p>
+    <div className="mx-auto w-full max-w-[1400px] flex-1 p-4 sm:p-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="min-w-0 space-y-3">
+          <p className="text-sm text-muted-foreground">
+            {t('courseDetail.overviewHint')}
+          </p>
+          <CourseStudentPreview
+            course={{
+              title: course.title,
+              description: course.description ?? '',
+              coverUrl: coverUrl(course),
+              categoryName: course.Category?.name ?? null,
+              published: course.is_published,
+              price: course.price,
+              beforeDiscount: course.original_price || null,
+              lessonCount: countLessons(seasons),
+              totalSeconds: totalSeconds(course),
+              seasons: seasons.map((season) => ({
+                key: season.id,
+                title: season.title,
+                lessons: season.Lesson.map((lesson) => ({
+                  key: lesson.id,
+                  title: lesson.title,
+                  isFree: lesson.is_free,
+                  duration: secondsToDuration(lesson.duration)
+                }))
+              }))
+            }}
+          />
+        </div>
 
-      <CourseStudentPreview
-        course={{
-          title: course.title,
-          description: course.description ?? '',
-          coverUrl: coverUrl(course),
-          categoryName: course.Category?.name ?? null,
-          published: course.is_published,
-          price: course.price,
-          beforeDiscount: course.original_price || null,
-          lessonCount: countLessons(seasons),
-          totalSeconds,
-          seasons: seasons.map((season) => ({
-            key: season.id,
-            title: season.title,
-            lessons: season.Lesson.map((lesson) => ({
-              key: lesson.id,
-              title: lesson.title,
-              isFree: lesson.is_free,
-              duration: secondsToDuration(lesson.duration)
-            }))
-          }))
-        }}
-      />
+        <aside className="space-y-4 lg:sticky lg:top-32 lg:self-start">
+          <CourseFactsCard course={course} offers={offers} />
+          <CourseIdentityCard course={course} />
+          <CourseAccessCard course={course} />
+          <CourseSearchCard course={course} />
+        </aside>
+      </div>
     </div>
   );
 }

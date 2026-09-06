@@ -1,22 +1,12 @@
 'use client';
 
-import type { ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatNumber } from '@/components/course/courseUtils';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import type { TutoringOffer } from '@/types/learning-operations';
+import { Fact } from './fact-row';
 import type { CourseDetail } from './types';
-
-function Fact({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="flex items-center justify-between gap-3 py-1.5">
-      <span className="shrink-0 text-muted-foreground">{label}</span>
-      <span className="min-w-0 truncate text-end font-medium">{children}</span>
-    </div>
-  );
-}
 
 type CourseFactsCardProps = {
   course: CourseDetail;
@@ -24,9 +14,9 @@ type CourseFactsCardProps = {
   offers?: TutoringOffer[];
 };
 
+/** What this course charges. The rest of its settings live on the overview. */
 export function CourseFactsCard({ course, offers = [] }: CourseFactsCardProps) {
   const { t } = useTranslation();
-  const formatDate = useDateFormat();
   const percentLabel = usePercentLabel();
 
   const isLive = course.course_type === 'LIVE';
@@ -98,28 +88,6 @@ export function CourseFactsCard({ course, offers = [] }: CourseFactsCardProps) {
               {percentLabel(course.discount_percent)}
             </Fact>
           )}
-
-        <Fact label={t('courseDetail.certificate')}>
-          {course.is_certificate ? t('common.yes') : t('common.no')}
-        </Fact>
-
-        {!isLive && (
-          <Fact label={t('courseDetail.accessDuration')}>
-            {course.access_duration_days
-              ? t('courseDetail.daysCount', {
-                  count: formatNumber(course.access_duration_days)
-                })
-              : t('courseDetail.lifetimeAccess')}
-          </Fact>
-        )}
-
-        <Fact label={t('courseDetail.createdAt')}>
-          {formatDate(course.created_at)}
-        </Fact>
-
-        <Fact label={t('courseDetail.updatedAt')}>
-          {formatDate(course.updated_at)}
-        </Fact>
       </CardContent>
     </Card>
   );

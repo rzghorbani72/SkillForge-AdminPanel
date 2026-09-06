@@ -83,6 +83,12 @@ export type CourseDetail = {
   access_control?: CourseAccessControl;
   availability?: string;
   active_enrollment_count?: number;
+  /** Search metadata: empty means the title and description are used instead. */
+  meta_title?: string | null;
+  meta_description?: string | null;
+  keywords?: string[] | null;
+  /** False = paid students may download the media; true = stream only. */
+  allow_downloads?: boolean;
 };
 
 export type CoursePayment = {
