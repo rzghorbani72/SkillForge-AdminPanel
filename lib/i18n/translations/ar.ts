@@ -3007,7 +3007,16 @@ export const ar = {
     sidebarMasterNotice:
       'هذا هو القالب الأساسي؛ الحفظ يحدّث النسخة الأساسية لجميع المديرين',
     tabSections: 'الأقسام',
-    saveSiteChanges: 'حفظ تغييرات موقعي',
+    saveSiteChanges: 'حفظ',
+    saveCopyDone: 'تم حفظ نسختك الخاصة',
+    saveOriginalDone: 'تم حفظ القالب الأصلي',
+    resetDone: 'عدت إلى القالب الأصلي',
+    resetConfirmTitle: 'العودة إلى القالب الأصلي؟',
+    resetConfirmBody:
+      'سيتم حذف نسختك المخصصة ويعود القالب الأصلي. لا يمكن التراجع عن ذلك.',
+    resetConfirmAction: 'حذف نسختي',
+    originalLockedBadge: 'قالب أصلي — للعرض فقط',
+    customizedBadge: 'مخصص',
     saveTemplate: 'حفظ القالب',
     saveAndPublish: 'حفظ ونشر',
     resetToOriginal: 'العودة إلى الحالة الأصلية',

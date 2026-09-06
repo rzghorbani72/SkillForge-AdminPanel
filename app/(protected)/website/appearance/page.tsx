@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   X,
   Check,
@@ -23,6 +24,7 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import type { TemplatePreset, UIBlockConfig } from '@/types/api';
+import { presetSourceKey } from '@/lib/ui-template/preset-source';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import {
   buildTemplatePreviewUrl,
@@ -73,18 +75,26 @@ import type {
   ViewportMode
 } from '@/components/ui-template/sidebar-types';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
+import { useTranslation } from '@/lib/i18n/hooks';
 
-// Commit action awaiting explicit confirmation. Drafts keep auto-saving;
-// only the committing step (publish/override/fork/delete) is gated.
+// Commit action awaiting explicit confirmation. Saving is never gated — it
+// always lands on the academy's one copy — so only the destructive or
+// outward-facing steps ask first.
 type PendingSave =
   | { kind: 'publish' }
-  | { kind: 'override' }
-  | { kind: 'fork' }
+  | { kind: 'reset' }
   | { kind: 'delete'; preset: TemplatePreset };
 
 const HISTORY_LIMIT = 30;
 
 export default function UITemplateSettingsPage() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  // Every template is addressable: ?template=<id> opens its editor directly, so
+  // the link can be shared, bookmarked and survives a refresh or Back.
+  const templateParam = searchParams.get('template');
   const { user } = useAuthUser();
   const currentAcademy = useCurrentAcademy();
 
@@ -153,6 +163,9 @@ export default function UITemplateSettingsPage() {
   // A typing burst captures the pre-burst block state once; it is committed to
   // history only after the user pauses, so undo jumps per edit, not per key.
   const pendingHistoryRef = useRef<UIBlockConfig[] | null>(null);
+  // Ctrl+S must always call the CURRENT save closure without re-binding the
+  // keydown listener on every render.
+  const saveRef = useRef<() => Promise<void>>(async () => {});
   const previewIframeRef = useRef<HTMLIFrameElement | null>(null);
   const storefrontBaseRef = useRef(storefrontBase);
   useEffect(() => {
@@ -427,6 +440,21 @@ export default function UITemplateSettingsPage() {
     })();
   }, []);
 
+  // Deep link: open the requested template once the gallery has loaded. The ref
+  // makes it a one-shot per id, so closing the editor does not reopen it.
+  const openedFromUrlRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!templateParam || isLoading || presets.length === 0) return;
+    if (openedFromUrlRef.current === templateParam) return;
+    const preset = presets.find((p) => p.id === templateParam);
+    if (!preset) return;
+    openedFromUrlRef.current = templateParam;
+    void handleCardClick(preset);
+    // handleCardClick is recreated every render; the ref guard is what keeps
+    // this from re-firing, so it is deliberately not a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [templateParam, isLoading, presets]);
+
   const handleCardClick = async (
     preset: TemplatePreset,
     opts?: {
@@ -450,9 +478,12 @@ export default function UITemplateSettingsPage() {
     setLastSavedAt(null);
     setViewport('desktop');
     setIsPreviewLoading(true);
+    router.replace(`${pathname}?template=${encodeURIComponent(preset.id)}`, {
+      scroll: false
+    });
 
     const isDedicated = preset.visibility === 'DEDICATED';
-    const ds = getDesignSystem(preset.id);
+    const ds = getDesignSystem(presetSourceKey(preset));
     if (!isDedicated) {
       setPrimaryColor(ds.colors.primary);
       setBorderRadius(ds.shape.borderRadius);
@@ -565,7 +596,7 @@ export default function UITemplateSettingsPage() {
     try {
       setIsPreviewLoading(true);
       await apiClient.applyTemplatePreset(preset.id);
-      const ds = getDesignSystem(preset.id);
+      const ds = getDesignSystem(presetSourceKey(preset));
       const { name: _omit, ...themeSeed } = buildThemePayload(ds);
       await apiClient.saveThemeDraft(themeSeed);
       await apiClient.publishSite();
@@ -592,6 +623,7 @@ export default function UITemplateSettingsPage() {
   };
 
   const handleClosePreview = () => {
+    router.replace(pathname, { scroll: false });
     setSelectedPreset(null);
     setBaseIframeSrc(null);
     setPreviewToken(null);
@@ -640,11 +672,10 @@ export default function UITemplateSettingsPage() {
   const isAdmin = user?.role === 'ADMIN';
   const isPublicPreset = selectedPreset?.visibility === 'PUBLIC';
   const academyName = user?.currentAcademy?.name ?? '';
-  const saveMode: SaveMode = isAdmin
-    ? isPublicPreset
-      ? 'both'
-      : 'admin-override'
-    : 'copy';
+  // Managers always save to their own copy; only platform admins editing a
+  // public preset write the original.
+  const saveMode: SaveMode =
+    isAdmin && isPublicPreset ? 'admin-override' : 'copy';
 
   // Committing (fork/override) snapshots whatever the draft holds server-side.
   // Colour edits are debounced by 800ms, so a save clicked right after picking a
@@ -667,27 +698,11 @@ export default function UITemplateSettingsPage() {
     await apiClient.saveThemeDraft(buildFullThemePayload(themeState));
   };
 
-  const doSaveAsCopy = async (name: string) => {
-    setIsSaving(true);
-    try {
-      await flushStyleDraft();
-      await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
-      const saved = (await apiClient.saveDraftAsTemplate({
-        name
-      })) as TemplatePreset | null;
-      if (saved) setSelectedPreset(saved);
-      await refreshPresets();
-      ErrorHandler.showSuccess(`قالب اختصاصی "${name}" ذخیره شد`);
-      handleClosePreview();
-    } catch (error) {
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const doSaveOverride = async () => {
-    if (!selectedPreset) return;
+  // One save for managers: it always lands on this academy's single copy of the
+  // selected template, created on first save and updated afterwards. No dialog,
+  // no name to invent — the manager just gets a confirmation snackbar.
+  const doSave = async () => {
+    if (!selectedPreset || isSaving) return;
     setIsSaving(true);
     try {
       await flushStyleDraft();
@@ -696,21 +711,25 @@ export default function UITemplateSettingsPage() {
         await apiClient.overridePublicTemplate(selectedPreset.id, {
           blocks: draftBlocks
         });
+        ErrorHandler.showSuccess(t('sitePreview.saveOriginalDone'));
       } else {
-        const saved = (await apiClient.saveDraftAsTemplate({
-          name: selectedPreset.name
-        })) as TemplatePreset | null;
+        const saved = (await apiClient.saveDraftAsTemplate()) as
+          | TemplatePreset
+          | null
+          | undefined;
         if (saved) setSelectedPreset(saved);
+        ErrorHandler.showSuccess(t('sitePreview.saveCopyDone'));
       }
       await refreshPresets();
-      ErrorHandler.showSuccess(`قالب "${selectedPreset.name}" به‌روزرسانی شد`);
-      handleClosePreview();
+      setLastSavedAt(Date.now());
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSaving(false);
     }
   };
+
+  saveRef.current = doSave;
 
   // ── Draft save helpers ──────────────────────────────────────────────────────
 
@@ -849,6 +868,9 @@ export default function UITemplateSettingsPage() {
       } else if (key === 'y' || (key === 'z' && e.shiftKey)) {
         e.preventDefault();
         redo();
+      } else if (key === 's') {
+        e.preventDefault();
+        void saveRef.current();
       }
     };
     window.addEventListener('keydown', onKey);
@@ -1133,38 +1155,35 @@ export default function UITemplateSettingsPage() {
     }
   };
 
-  const handleReset = async () => {
+  // Reset throws the academy's copy away on the server and re-applies the
+  // untouched original, so the editor and the gallery agree afterwards.
+  const doReset = async () => {
     if (!selectedPreset) return;
-    const ds = getDesignSystem(selectedPreset.id);
-    if (ds) {
-      setPrimaryColor(ds.colors.primary);
-      setBorderRadius(ds.shape.borderRadius);
-      setShadow(ds.shape.shadow);
-      setDarkMode(ds.darkMode);
-      setFontFamily(ds.typography.fontFamily as FontFamily);
-      setElementAnimation('subtle');
-      await saveThemeDraft(
-        ds.colors.primary,
-        ds.shape.borderRadius,
-        ds.shape.shadow,
-        ds.darkMode
-      );
+    setIsSaving(true);
+    try {
+      await apiClient.resetTemplateToOriginal();
+      const presets = (await apiClient
+        .getAvailableTemplatePresets()
+        .catch(() => [])) as TemplatePreset[];
+      setPresets(presets);
+      const original =
+        presets.find((p) => p.id === selectedPreset.id) ??
+        presets.find((p) => p.visibility === 'PUBLIC');
+      setHistory([]);
+      setFuture([]);
+      pendingHistoryRef.current = null;
+      if (original) {
+        await handleCardClick(original);
+      }
+      ErrorHandler.showSuccess(t('sitePreview.resetDone'));
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsSaving(false);
     }
-    setDraftBlocks(selectedPreset.blocks);
-    setHistory([]);
-    setFuture([]);
-    pendingHistoryRef.current = null;
-    await saveBlocksDraft(selectedPreset.blocks);
-    // Reset restores the preset wholesale — too broad to patch node by node.
-    setRefreshKey((k) => k + 1);
   };
 
   // ── Save confirmation ───────────────────────────────────────────────────────
-
-  const defaultForkName =
-    selectedPreset && academyName
-      ? `${academyName} - ${selectedPreset.name}`
-      : (selectedPreset?.name ?? '');
 
   const closeConfirm = () => setPendingSave(null);
 
@@ -1185,37 +1204,17 @@ export default function UITemplateSettingsPage() {
             onCancel={closeConfirm}
           />
         );
-      case 'override': {
-        const isMasterOverride = isAdmin && isPublicPreset;
+      case 'reset':
         return (
           <TemplateConfirmDialog
             open
-            title={isMasterOverride ? 'ذخیره قالب اصلی' : 'ذخیره قالب اختصاصی'}
-            description={
-              isMasterOverride
-                ? 'این تغییرات روی قالب همه مدیران اعمال می‌شود.'
-                : 'تغییرات روی قالب اختصاصی شما ذخیره می‌شود.'
-            }
-            confirmLabel="ذخیره"
+            destructive
+            title={t('sitePreview.resetConfirmTitle')}
+            description={t('sitePreview.resetConfirmBody')}
+            confirmLabel={t('sitePreview.resetConfirmAction')}
             onConfirm={() => {
               closeConfirm();
-              void doSaveOverride();
-            }}
-            onCancel={closeConfirm}
-          />
-        );
-      }
-      case 'fork':
-        return (
-          <TemplateConfirmDialog
-            open
-            title="ساخت نسخهٔ اختصاصی"
-            description="یک نسخهٔ اختصاصی برای آکادمی شما با این نام ساخته می‌شود."
-            confirmLabel="ساخت نسخهٔ اختصاصی"
-            defaultName={defaultForkName}
-            onConfirm={(name) => {
-              closeConfirm();
-              if (name) void doSaveAsCopy(name);
+              void doReset();
             }}
             onCancel={closeConfirm}
           />
@@ -1264,7 +1263,7 @@ export default function UITemplateSettingsPage() {
   // ── Preview / editor mode ─────────────────────────────────────────────────
 
   if (selectedPreset) {
-    const ds = getDesignSystem(selectedPreset.id);
+    const ds = getDesignSystem(presetSourceKey(selectedPreset));
     const colors = resolveTemplateColors(selectedPreset);
     const isEditingMaster = isAdmin && isPublicPreset && showCustomizer;
 
@@ -1482,10 +1481,10 @@ export default function UITemplateSettingsPage() {
               onPickBlockType={handlePickBlockType}
               onToggleVisibleBlock={handleBlockToggleVisible}
               onDeleteBlock={handleBlockDelete}
-              onReset={handleReset}
+              onReset={() => setPendingSave({ kind: 'reset' })}
+              isOriginalSelected={isPublicPreset}
               saveMode={saveMode}
-              onSaveAsCopy={() => setPendingSave({ kind: 'fork' })}
-              onSaveOverride={() => setPendingSave({ kind: 'override' })}
+              onSave={doSave}
               onClose={() => setShowCustomizer(false)}
               onCloseSection={() => setSelectedBlockId(null)}
               selectedBlockId={selectedBlockId}
@@ -1523,6 +1522,11 @@ export default function UITemplateSettingsPage() {
 
   // ── Gallery mode ──────────────────────────────────────────────────────────
 
+  // A customized template is still ONE design, so its copy stands in for the
+  // original card instead of adding a second, near-identical card next to it.
+  // Two shelves, the academy's own first: a manager looks for their site before
+  // they look for a new design. Copies are already academy-scoped by the API, so
+  // this shelf is never visible to another academy.
   const academyPresets = presets.filter((p) => p.visibility === 'DEDICATED');
   const platformPresets = presets.filter((p) => p.visibility === 'PUBLIC');
   const filteredPlatform =
@@ -1603,11 +1607,11 @@ export default function UITemplateSettingsPage() {
         </div>
       ) : (
         <div className="space-y-10">
-          {filteredPlatform.length > 0 && (
+          {academyPresets.length > 0 && (
             <TemplateSection
-              title="قالب‌های پلتفرم"
-              description="کاتالوگ آماده پلتفرم؛ برای شروع یک قالب را انتخاب و سفارشی کنید."
-              presets={filteredPlatform}
+              title="قالب‌های آکادمی من"
+              description="نسخه‌های سفارشی‌شدهٔ شما. فقط برای همین آکادمی دیده می‌شوند."
+              presets={academyPresets}
               activePresetId={activePresetId}
               previewToken={galleryPreviewToken}
               storefrontBaseUrl={galleryStorefrontUrl}
@@ -1617,11 +1621,11 @@ export default function UITemplateSettingsPage() {
               onRate={handleRate}
             />
           )}
-          {academyPresets.length > 0 && (
+          {filteredPlatform.length > 0 && (
             <TemplateSection
-              title="قالب‌های آکادمی ها"
-              description="قالب‌های اختصاصی."
-              presets={academyPresets}
+              title="قالب‌های اصلی"
+              description="کاتالوگ آمادهٔ پلتفرم. سفارشی‌سازی و ذخیره، نسخهٔ اختصاصی خودتان را می‌سازد."
+              presets={filteredPlatform}
               activePresetId={activePresetId}
               previewToken={galleryPreviewToken}
               storefrontBaseUrl={galleryStorefrontUrl}

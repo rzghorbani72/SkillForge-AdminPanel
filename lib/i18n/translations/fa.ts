@@ -6316,7 +6316,16 @@ export const fa = {
     sidebarMasterNotice:
       'این قالب اصلی است؛ ذخیره، نسخهٔ پایه همه مدیران را به‌روز می‌کند',
     tabSections: 'بخش‌ها',
-    saveSiteChanges: 'ذخیره تغییرات سایت من',
+    saveSiteChanges: 'ذخیره',
+    saveCopyDone: 'نسخهٔ اختصاصی شما ذخیره شد',
+    saveOriginalDone: 'قالب اصلی ذخیره شد',
+    resetDone: 'به قالب اصلی برگشتید',
+    resetConfirmTitle: 'بازگشت به قالب اصلی؟',
+    resetConfirmBody:
+      'نسخهٔ سفارشی‌شدهٔ شما حذف می‌شود و قالب اصلی برمی‌گردد. این کار قابل بازگشت نیست.',
+    resetConfirmAction: 'حذف نسخهٔ من',
+    originalLockedBadge: 'قالب اصلی — فقط نمایش',
+    customizedBadge: 'سفارشی‌شده',
     saveTemplate: 'ذخیره قالب',
     saveAndPublish: 'ذخیره و انتشار',
     resetToOriginal: 'بازگشت به حالت اولیه',

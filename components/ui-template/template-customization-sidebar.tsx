@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, RotateCcw, Save, Globe, Palette, Layers } from 'lucide-react';
+import { X, RotateCcw, Save, Globe, Palette, Layers, Lock } from 'lucide-react';
 import type { UIBlockConfig } from '@/types/api';
 import type {
   BorderRadius,
@@ -55,9 +55,10 @@ export interface TemplateCustomizationSidebarProps {
   onToggleVisibleBlock: (id: string, visible: boolean) => void;
   onDeleteBlock: (id: string) => void;
   onReset: () => void;
+  /** True while a public original is selected and no copy exists yet. */
+  isOriginalSelected?: boolean;
   saveMode?: SaveMode;
-  onSaveAsCopy?: () => void;
-  onSaveOverride?: () => void;
+  onSave?: () => void;
   onClose: () => void;
   onCloseSection: () => void;
   selectedBlockId?: string | null;
@@ -95,9 +96,9 @@ export function TemplateCustomizationSidebar({
   onToggleVisibleBlock,
   onDeleteBlock,
   onReset,
+  isOriginalSelected,
   saveMode,
-  onSaveAsCopy,
-  onSaveOverride,
+  onSave,
   onClose,
   onCloseSection,
   selectedBlockId,
@@ -107,20 +108,13 @@ export function TemplateCustomizationSidebar({
 }: TemplateCustomizationSidebarProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('sections');
-  const isAdminEditing = saveMode === 'both' || saveMode === 'admin-override';
+  const isAdminEditing = saveMode === 'admin-override';
 
-  // One save button whose label and handler follow the mode — the four modes
-  // differ only in wording, so they share a single control.
-  const saveAction =
-    saveMode === 'copy' && onSaveAsCopy
-      ? { label: t('sitePreview.saveSiteChanges'), run: onSaveAsCopy }
-      : saveMode === 'override' && onSaveOverride
-        ? { label: t('sitePreview.saveTemplate'), run: onSaveOverride }
-        : saveMode === 'admin-override' && onSaveOverride
-          ? { label: t('sitePreview.saveAndPublish'), run: onSaveOverride }
-          : saveMode === 'both' && onSaveOverride
-            ? { label: t('common.save'), run: onSaveOverride }
-            : null;
+  // One save, one label. A manager's save always lands on their own copy, so
+  // there is nothing left to disambiguate in the wording.
+  const saveLabel = isAdminEditing
+    ? t('sitePreview.saveAndPublish')
+    : t('sitePreview.saveSiteChanges');
 
   // Selecting a section in the preview should reveal its editor, which lives in
   // the Sections tab.
@@ -158,8 +152,17 @@ export function TemplateCustomizationSidebar({
         </button>
       </div>
 
+      {/* Originals are read-only for managers: editing forks into their own
+          copy, so say that up front instead of letting the save surprise them. */}
+      {!isAdminEditing && isOriginalSelected && (
+        <div className="flex items-start gap-2 border-b border-zinc-200 bg-zinc-50 px-4 py-2 text-[11px] leading-relaxed text-zinc-600">
+          <Lock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+          {t('sitePreview.originalLockedBadge')}
+        </div>
+      )}
+
       {/* Master-template notice */}
-      {saveMode === 'both' && (
+      {isAdminEditing && (
         <div className="flex items-start gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-[11px] leading-relaxed text-amber-800">
           <Globe className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
           {t('sitePreview.sidebarMasterNotice')}
@@ -236,15 +239,16 @@ export function TemplateCustomizationSidebar({
 
       {/* Footer – save buttons + reset */}
       <div className="flex-shrink-0 space-y-2 border-t border-zinc-200 p-4">
-        {saveAction && (
+        {onSave && (
           <button
             type="button"
-            onClick={saveAction.run}
+            onClick={onSave}
             disabled={isSaving}
+            title="Ctrl+S"
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
           >
             <Save className="h-4 w-4" />
-            {saveAction.label}
+            {saveLabel}
           </button>
         )}
 

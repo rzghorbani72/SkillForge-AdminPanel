@@ -3090,7 +3090,16 @@ export const tr = {
     sidebarMasterNotice:
       'Bu ana şablondur; kaydetmek tüm yöneticiler için temel sürümü günceller',
     tabSections: 'Bölümler',
-    saveSiteChanges: 'Site değişikliklerimi kaydet',
+    saveSiteChanges: 'Kaydet',
+    saveCopyDone: 'Kendi sürümünüz kaydedildi',
+    saveOriginalDone: 'Orijinal şablon kaydedildi',
+    resetDone: 'Orijinal şablona dönüldü',
+    resetConfirmTitle: 'Orijinal şablona dönülsün mü?',
+    resetConfirmBody:
+      'Özelleştirilmiş sürümünüz silinir ve orijinal şablon geri gelir. Bu işlem geri alınamaz.',
+    resetConfirmAction: 'Sürümümü sil',
+    originalLockedBadge: 'Orijinal şablon — yalnızca görüntüleme',
+    customizedBadge: 'Özelleştirilmiş',
     saveTemplate: 'Şablonu kaydet',
     saveAndPublish: 'Kaydet ve yayınla',
     resetToOriginal: 'Orijinal haline döndür',

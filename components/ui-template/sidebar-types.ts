@@ -66,4 +66,6 @@ export type FontFamily = (typeof FONT_OPTIONS)[number]['slug'];
  * - 'both'          : Admin editing the master public template
  * - 'admin-override': Admin on a dedicated template — save & publish base
  */
-export type SaveMode = 'copy' | 'override' | 'both' | 'admin-override';
+// 'copy' = the manager's own version; 'admin-override' = platform staff editing
+// the public original in place.
+export type SaveMode = 'copy' | 'admin-override';

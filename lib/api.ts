@@ -4575,11 +4575,15 @@ class ApiClient {
     return (response.data as any)?.data ?? null;
   }
 
-  async saveDraftAsTemplate(payload: {
-    name: string;
-    description?: string;
-    preview?: string;
-  }) {
+  // The platform names the copy server-side, so `name` is only sent when a
+  // caller genuinely needs to override it.
+  async saveDraftAsTemplate(
+    payload: {
+      name?: string;
+      description?: string;
+      preview?: string;
+    } = {}
+  ) {
     const response = await this.request(
       '/ui-template/current/save-as-template',
       {
@@ -4588,6 +4592,14 @@ class ApiClient {
       }
     );
     return (response.data as { data?: unknown })?.data ?? null;
+  }
+
+  // Drops this academy's dedicated copy and re-applies the original preset.
+  async resetTemplateToOriginal() {
+    const response = await this.request('/ui-template/current/copy', {
+      method: 'DELETE'
+    });
+    return (response.data as any)?.data as { presetId: string } | undefined;
   }
 
   async deleteDedicatedTemplate(key: string) {

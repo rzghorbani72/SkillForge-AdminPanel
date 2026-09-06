@@ -809,6 +809,8 @@ export interface TemplatePreset {
   theme?: Record<string, string> | null;
   visibility?: TemplateVisibility;
   isOwned?: boolean;
+  /** For a DEDICATED copy: the public preset it was forked from. */
+  sourcePresetKey?: string | null;
   /** Average of every academy's stars; also drives the gallery order. */
   rating?: number;
   ratingCount?: number;

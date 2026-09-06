@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { TemplatePreview } from './template-preview';
 import type { TemplatePreset } from '@/types/api';
+import { presetSourceKey } from '@/lib/ui-template/preset-source';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getDesignSystem } from '@/lib/design-systems';
 
@@ -349,7 +350,7 @@ function TemplateCard({
   onDelete,
   large
 }: TemplateCardProps) {
-  const ds = getDesignSystem(preset.id);
+  const ds = getDesignSystem(presetSourceKey(preset));
   const isDedicated = preset.visibility === 'DEDICATED';
   const category = isDedicated ? 'dedicated' : 'classic';
 

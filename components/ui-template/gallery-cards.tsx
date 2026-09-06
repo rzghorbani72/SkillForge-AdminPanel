@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, Lock, Trash2, Check } from 'lucide-react';
+import { Eye, Lock, Trash2, Check, Pencil } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
 import type { TemplatePreset } from '@/types/api';
+import { presetSourceKey } from '@/lib/ui-template/preset-source';
 import { getDesignSystem } from '@/lib/design-systems';
 import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
 import { SectionPreviewFrame } from './section-preview-frame';
@@ -15,7 +17,7 @@ import { TemplateStarRating } from './template-star-rating';
 // Card/preview swatches follow the template's saved theme when present, so a
 // dedicated template shows its real palette instead of the design-system default.
 export function resolveTemplateColors(preset: TemplatePreset) {
-  const ds = getDesignSystem(preset.id);
+  const ds = getDesignSystem(presetSourceKey(preset));
   const t = preset.theme ?? null;
   const pick = (key: string, fallback: string) =>
     t && typeof t[key] === 'string' && t[key] ? t[key] : fallback;
@@ -30,7 +32,7 @@ export function resolveTemplateColors(preset: TemplatePreset) {
 // PUBLIC presets map to a known catalog category; until the API returns one,
 // derive it from the preset id. DEDICATED templates have no fixed category.
 export function getTemplateCategory(preset: TemplatePreset): TemplateCategory {
-  return getTemplateCategoryByKey(preset.id);
+  return getTemplateCategoryByKey(presetSourceKey(preset));
 }
 
 interface TemplateSectionProps {
@@ -108,9 +110,13 @@ function GalleryCard({
   onDelete,
   onRate
 }: GalleryCardProps) {
+  const { t } = useTranslation();
   const [frameLoaded, setFrameLoaded] = useState(false);
-  const ds = getDesignSystem(preset.id);
+  const ds = getDesignSystem(presetSourceKey(preset));
   const isDedicated = preset.visibility === 'DEDICATED';
+  // A copy that stands in for its original is the SAME design, just customized —
+  // it keeps the original's tagline and gets a softer badge.
+  const isCustomized = isDedicated && !!preset.sourcePresetKey;
   const colors = resolveTemplateColors(preset);
   const swatches = [
     colors.background,
@@ -144,9 +150,17 @@ function GalleryCard({
       {/* Dedicated badge + owner delete */}
       <div className="absolute start-2.5 top-2.5 z-20 flex items-center gap-1.5">
         {isDedicated && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
-            <Lock className="h-2.5 w-2.5" />
-            اختصاصی
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold text-white shadow-sm ${
+              isCustomized ? 'bg-emerald-600' : 'bg-indigo-600'
+            }`}
+          >
+            {isCustomized ? (
+              <Pencil className="h-2.5 w-2.5" />
+            ) : (
+              <Lock className="h-2.5 w-2.5" />
+            )}
+            {isCustomized ? t('sitePreview.customizedBadge') : 'اختصاصی'}
           </span>
         )}
         {onDelete && (
@@ -271,7 +285,7 @@ function GalleryCard({
           </div>
         )}
 
-        {!isDedicated && ds.tagline && (
+        {(!isDedicated || isCustomized) && ds.tagline && (
           <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
             {ds.tagline.split('·').map((tag) => (
               <span

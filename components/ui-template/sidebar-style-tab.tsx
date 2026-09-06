@@ -164,11 +164,25 @@ function BrandColorSection({
   const [hexInput, setHexInput] = useState(primaryColor);
   const [showCustom, setShowCustom] = useState(false);
 
+  // Keep the text field in step when the colour changes elsewhere (a palette
+  // click, a reset). Adjusting during render, not in an effect, avoids a second
+  // paint with the stale value.
+  const [lastColor, setLastColor] = useState(primaryColor);
+  if (primaryColor !== lastColor) {
+    setLastColor(primaryColor);
+    setHexInput(primaryColor);
+  }
+
+  const commit = (value: string) => {
+    setHexInput(value);
+    onColorChange(value);
+  };
+
   const applyHex = () => {
     const val = hexInput.trim();
     const normalized = val.startsWith('#') ? val : `#${val}`;
     if (/^#[0-9a-fA-F]{6}$/.test(normalized)) {
-      onColorChange(normalized);
+      commit(normalized);
     }
   };
 
@@ -188,10 +202,7 @@ function BrandColorSection({
               name={t(p.nameKey)}
               primary={p.primary}
               selected={primaryColor.toLowerCase() === p.primary.toLowerCase()}
-              onSelect={() => {
-                onColorChange(p.primary);
-                setHexInput(p.primary);
-              }}
+              onSelect={() => commit(p.primary)}
             />
           ))}
         </div>
@@ -208,12 +219,19 @@ function BrandColorSection({
 
         {(showCustom || !isPreset) && (
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              aria-label={t('sitePreview.colorCustomPreview')}
+            {/* Native picker and hex field write the same value, so a manager
+                can either point at a colour or paste a brand code. */}
+            <input
+              type="color"
+              aria-label={t('sitePreview.colorCustom')}
               title={t('sitePreview.colorCustom')}
-              className="h-8 w-9 flex-shrink-0 rounded-lg border border-zinc-300"
-              style={{ backgroundColor: primaryColor }}
+              value={
+                /^#[0-9a-fA-F]{6}$/.test(primaryColor)
+                  ? primaryColor
+                  : '#3B82F6'
+              }
+              onChange={(e) => commit(e.target.value)}
+              className="h-8 w-9 flex-shrink-0 cursor-pointer rounded-lg border border-zinc-300 bg-transparent p-0.5"
             />
             <Input
               value={hexInput}
@@ -221,7 +239,8 @@ function BrandColorSection({
               onBlur={applyHex}
               onKeyDown={(e) => e.key === 'Enter' && applyHex()}
               placeholder="#3B82F6"
-              className="h-8 flex-1 border-zinc-300 bg-zinc-100 font-mono text-xs text-zinc-800 placeholder:text-zinc-600"
+              dir="ltr"
+              className="h-8 flex-1 border-zinc-300 bg-zinc-100 text-xs text-zinc-800 placeholder:text-zinc-600"
             />
           </div>
         )}

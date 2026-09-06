@@ -6336,7 +6336,16 @@ export const en = {
     sidebarMasterNotice:
       'This is the master template; saving updates the base version for every manager',
     tabSections: 'Sections',
-    saveSiteChanges: 'Save my site changes',
+    saveSiteChanges: 'Save',
+    saveCopyDone: 'Your version was saved',
+    saveOriginalDone: 'Original template saved',
+    resetDone: 'Back to the original template',
+    resetConfirmTitle: 'Reset to the original template?',
+    resetConfirmBody:
+      'Your customized version is deleted and the original template comes back. This cannot be undone.',
+    resetConfirmAction: 'Delete my version',
+    originalLockedBadge: 'Original template — view only',
+    customizedBadge: 'Customized',
     saveTemplate: 'Save template',
     saveAndPublish: 'Save and publish',
     resetToOriginal: 'Reset to original',
