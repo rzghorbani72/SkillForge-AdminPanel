@@ -1188,7 +1188,8 @@ export const tr = {
     optional: 'İsteğe bağlı',
     lessonVideo: 'Video',
     lessonCover: 'Kapak Görseli',
-    lessonCoverHint: 'Bu ders için küçük resim olarak gösterilir',
+    lessonCoverHint:
+      'Bu ders için küçük resim olarak gösterilir — küçük dosya daha hızlı yüklenir',
     uploadCoverImage: 'Kapak görseli yükle',
     removeVideo: 'Videoyu kaldır',
     removeCover: 'Kapak görselini kaldır',
@@ -1538,10 +1539,10 @@ export const tr = {
       'Tanıtım için iki görsel: kare kart ve telefon ekranı. Yalnızca platform yöneticileri.',
     showcaseDesktop: 'Kart fotoğrafı',
     showcaseDesktopHint:
-      'Tanıtım kartı için kare fotoğraf — en iyisi 1080 x 1080 piksel',
+      'Tanıtım kartı için kare fotoğraf — en iyisi 1080 x 1080 piksel, hızlı yükleme için dosyayı küçük tutun',
     showcaseMobile: 'Telefon ekran görüntüsü',
     showcaseMobileHint:
-      'Telefon çerçevesindeki mobil site görüntüsü — en iyisi 390 x 844 piksel',
+      'Telefon çerçevesindeki mobil site görüntüsü — en iyisi 390 x 844 piksel, hızlı yükleme için dosyayı küçük tutun',
     showcaseSaved: 'Vitrin görselleri kaydedildi',
     storeSettingsSubtitle:
       'Enstitünüzün آکادمی ekosisteminde nasıl göründüğünü yönetin.',
@@ -1874,7 +1875,8 @@ export const tr = {
     noImageSelected: 'Görsel seçilmedi',
     videoPoster: 'Video kapağı',
     noPosterSelected: 'Kapak seçilmedi',
-    dropImageHint: 'Seçmek için tıklayın veya bir görseli buraya sürükleyin',
+    dropImageHint:
+      'Seçmek için tıklayın veya bir görseli buraya sürükleyin — küçük dosyalar sayfaların daha hızlı yüklenmesini sağlar',
     dropVideoHint: 'Seçmek için tıklayın veya bir videoyu buraya sürükleyin',
     dropAudioHint:
       'Seçmek için tıklayın veya bir ses dosyasını buraya sürükleyin',

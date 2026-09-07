@@ -1563,7 +1563,7 @@ export const en = {
     categoryOther: 'Other',
     categoryFinance: 'Finance',
     brandingLogo: 'Academy Logo',
-    brandingLogoHint: 'PNG or JPG · max 2 MB',
+    brandingLogoHint: 'PNG or JPG · max 2 MB · smaller loads faster',
     brandingFavicon: 'Browser tab icon',
     brandingFaviconHint: 'Square PNG · min 64×64',
     brandingReplaceHint: 'Click to replace',
@@ -1979,7 +1979,8 @@ export const en = {
     coverImage: 'Cover Image',
     courseCoverPreview: 'Course cover preview',
     noCoverImageSelected: 'No cover image selected',
-    uploadImageToPreview: 'Click to browse or drag an image here',
+    uploadImageToPreview:
+      'Click to browse or drag an image here — smaller files help pages load faster',
     uploadCoverImage: 'Upload Cover Image',
     selectImageFirst: 'Select an image first',
     pricePlaceholder: '0 (0-999,999,999)',
@@ -2031,7 +2032,8 @@ export const en = {
       'Organize your course into seasons, then add lessons to each season',
     lessonVideo: 'Video',
     lessonCover: 'Cover Image',
-    lessonCoverHint: 'Shown as the thumbnail for this lesson',
+    lessonCoverHint:
+      'Shown as the thumbnail for this lesson — a smaller image loads faster',
     removeVideo: 'Remove video',
     removeCover: 'Remove cover image',
     cancelUpload: 'Cancel',
@@ -2538,7 +2540,8 @@ export const en = {
     productCoverImage: 'Product cover image',
     productCoverPreview: 'Product cover preview',
     noCoverImageSelected: 'No cover image selected',
-    uploadImageToPreview: 'Click to browse or drag an image here',
+    uploadImageToPreview:
+      'Click to browse or drag an image here — smaller files help pages load faster',
     uploadCoverImage: 'Upload Cover Image',
     selectImageFirst: 'Select an image first',
     inStock: 'In Stock',
@@ -3155,10 +3158,10 @@ export const en = {
       'Two photos for the public landing: the square card and the phone screen. Platform admins only.',
     showcaseDesktop: 'Card photo',
     showcaseDesktopHint:
-      'Square photo for the landing card — 1080 x 1080 pixels works best',
+      'Square photo for the landing card — 1080 x 1080 pixels works best, keep the file small for faster loading',
     showcaseMobile: 'Phone screenshot',
     showcaseMobileHint:
-      'Mobile site screenshot inside the phone frame — 390 x 844 pixels works best',
+      'Mobile site screenshot inside the phone frame — 390 x 844 pixels works best, keep the file small for faster loading',
     showcaseSaved: 'Showcase images saved',
     storeSettingsSubtitle:
       'Sets your academy name, site address, and description on the platform.',
@@ -3662,7 +3665,8 @@ export const en = {
     noImageSelected: 'No image selected',
     videoPoster: 'Video poster',
     noPosterSelected: 'No poster selected',
-    dropImageHint: 'Click to browse or drag an image here',
+    dropImageHint:
+      'Click to browse or drag an image here — smaller files help pages load faster',
     dropVideoHint: 'Click to browse or drag a video here',
     dropAudioHint: 'Click to browse or drag an audio file here',
     dropDocumentHint: 'Click to browse or drag a file here',

@@ -1553,7 +1553,7 @@ export const fa = {
     categoryOther: 'سایر',
     categoryFinance: 'مالی',
     brandingLogo: 'لوگوی آکادمی',
-    brandingLogoHint: 'PNG یا JPG · حداکثر ۲ مگابایت',
+    brandingLogoHint: 'PNG یا JPG · حداکثر ۲ مگابایت · کوچک‌تر یعنی سریع‌تر',
     brandingFavicon: 'آیکون تب مرورگر',
     brandingFaviconHint: 'PNG مربعی · حداقل ۶۴×۶۴',
     brandingReplaceHint: 'برای تغییر کلیک کنید',
@@ -1966,7 +1966,8 @@ export const fa = {
     coverImage: 'تصویر کاور',
     courseCoverPreview: 'پیش‌نمایش کاور دوره',
     noCoverImageSelected: 'تصویر کاوری انتخاب نشده',
-    uploadImageToPreview: 'برای انتخاب کلیک کنید یا تصویر را بکشید و رها کنید',
+    uploadImageToPreview:
+      'برای انتخاب کلیک کنید یا تصویر را بکشید و رها کنید — تصاویر کوچک‌تر باعث سرعت بیشتر سایت می‌شوند',
     uploadCoverImage: 'آپلود تصویر کاور',
     selectImageFirst: 'ابتدا یک تصویر انتخاب کنید',
     pricePlaceholder: '۰ (۰-۹۹۹،۹۹۹،۹۹۹)',
@@ -2010,7 +2011,8 @@ export const fa = {
     optional: 'اختیاری',
     lessonVideo: 'ویدیو',
     lessonCover: 'تصویر پوشش',
-    lessonCoverHint: 'به عنوان تصویر شاخص این درس نمایش داده می‌شود',
+    lessonCoverHint:
+      'به عنوان تصویر شاخص این درس نمایش داده می‌شود — تصویر کوچک‌تر سریع‌تر بارگذاری می‌شود',
     removeVideo: 'حذف ویدیو',
     removeCover: 'حذف تصویر پوشش',
     cancelUpload: 'لغو',
@@ -2950,10 +2952,10 @@ export const fa = {
       'دو تصویر برای صفحهٔ معرفی: کارت مربعی و صفحهٔ داخل موبایل. فقط مدیران پلتفرم.',
     showcaseDesktop: 'تصویر کارت',
     showcaseDesktopHint:
-      'عکس مربعی برای کارت صفحهٔ اصلی — اندازهٔ پیشنهادی ۱۰۸۰ × ۱۰۸۰ پیکسل',
+      'عکس مربعی برای کارت صفحهٔ اصلی — اندازهٔ پیشنهادی ۱۰۸۰ × ۱۰۸۰ پیکسل، حجم فایل را کم نگه دارید تا سریع‌تر بارگذاری شود',
     showcaseMobile: 'تصویر داخل موبایل',
     showcaseMobileHint:
-      'اسکرین‌شات سایت موبایل داخل قاب گوشی — اندازهٔ پیشنهادی ۳۹۰ × ۸۴۴ پیکسل',
+      'اسکرین‌شات سایت موبایل داخل قاب گوشی — اندازهٔ پیشنهادی ۳۹۰ × ۸۴۴ پیکسل، حجم فایل را کم نگه دارید تا سریع‌تر بارگذاری شود',
     showcaseSaved: 'تصویرهای نمایش ذخیره شد',
     storeSettingsSubtitle:
       'نام، آدرس سایت و معرفی آکادمی شما را در سامانه تعیین می‌کند.',
@@ -3440,7 +3442,8 @@ export const fa = {
     productCoverImage: 'تصویر کاور محصول',
     productCoverPreview: 'پیش‌نمایش کاور محصول',
     noCoverImageSelected: 'تصویر کاوری انتخاب نشده',
-    uploadImageToPreview: 'برای انتخاب کلیک کنید یا تصویر را بکشید و رها کنید',
+    uploadImageToPreview:
+      'برای انتخاب کلیک کنید یا تصویر را بکشید و رها کنید — تصاویر کوچک‌تر باعث سرعت بیشتر سایت می‌شوند',
     uploadCoverImage: 'آپلود تصویر کاور',
     selectImageFirst: 'ابتدا یک تصویر انتخاب کنید',
     inStock: 'موجود',
@@ -3638,7 +3641,8 @@ export const fa = {
     noImageSelected: 'تصویری انتخاب نشده است',
     videoPoster: 'تصویر شاخص ویدیو',
     noPosterSelected: 'تصویر شاخصی انتخاب نشده است',
-    dropImageHint: 'برای انتخاب کلیک کنید یا تصویر را اینجا رها کنید',
+    dropImageHint:
+      'برای انتخاب کلیک کنید یا تصویر را اینجا رها کنید — تصاویر کوچک‌تر باعث سرعت بیشتر سایت می‌شوند',
     dropVideoHint: 'برای انتخاب کلیک کنید یا ویدیو را اینجا رها کنید',
     dropAudioHint: 'برای انتخاب کلیک کنید یا فایل صوتی را اینجا رها کنید',
     dropDocumentHint: 'برای انتخاب کلیک کنید یا فایل را اینجا رها کنید',
