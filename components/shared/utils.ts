@@ -70,26 +70,42 @@ const SIZE_UNIT_KEYS = [
   'media.unitTb'
 ];
 
+/**
+ * Picks the display unit by a 1000 cutoff, not the strict 1024 binary
+ * boundary — "1006 MB" is technically correct but reads worse than "1.0 GB".
+ * The value itself still divides by 1024 per step (real binary size).
+ */
+const sizeExponent = (bytes: number): number => {
+  let exponent = 0;
+  let value = bytes;
+  while (value >= 1000 && exponent < SIZE_UNIT_KEYS.length - 1) {
+    value /= 1024;
+    exponent++;
+  }
+  return exponent;
+};
+
 /** Returns an empty string when unknown, so callers can simply hide the field. */
 export const formatFileSize = (bytes?: number | null) => {
   if (bytes == null || bytes <= 0) return '';
-  const exponent = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(1024)),
-    SIZE_UNIT_KEYS.length - 1
-  );
+  const exponent = sizeExponent(bytes);
   const value = bytes / Math.pow(1024, exponent);
   const amount = localeDigits(Number(value.toFixed(exponent === 0 ? 0 : 1)));
   return `${amount} ${tNow(SIZE_UNIT_KEYS[exponent])}`;
 };
 
-/** Rounded-down size for limits and error messages (no fractional units). */
+/**
+ * Rounded-down size for limits and error messages. Whole numbers in the
+ * original unit (e.g. "700 MB"); once `sizeExponent` bumps the unit early for
+ * readability, a plain floor would turn "1006 MB" into a misleading "0 GB",
+ * so that case rounds to one decimal instead ("1.0 GB").
+ */
 export const formatFileSizeFloor = (bytes?: number | null) => {
   if (bytes == null || bytes <= 0) return '';
-  const exponent = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(1024)),
-    SIZE_UNIT_KEYS.length - 1
-  );
-  const value = Math.floor(bytes / Math.pow(1024, exponent));
+  const exponent = sizeExponent(bytes);
+  const rawValue = bytes / Math.pow(1024, exponent);
+  const value =
+    exponent === 0 ? Math.floor(rawValue) : Math.round(rawValue * 10) / 10;
   const amount = localeDigits(value);
   return `${amount} ${tNow(SIZE_UNIT_KEYS[exponent])}`;
 };
