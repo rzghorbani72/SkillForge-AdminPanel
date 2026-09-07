@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLogin } from './use-login';
 import { IdentifyStep } from '@/components/auth/identify-step';
 import { PasswordStep } from '@/components/auth/password-step';
@@ -10,10 +12,46 @@ import { SetNewPasswordScreen } from '@/components/auth/set-new-password-screen'
 import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { apiClient } from '@/lib/api';
+import { homeRouteFor, resolveSessionRole } from '@/lib/auth-routing';
 
 export default function LoginPage() {
+  const router = useRouter();
   const login = useLogin();
   const { t } = useTranslation();
+
+  // The session cookie is HttpOnly, so this is the only way a client component
+  // can know "already logged in" before rendering the form. Without this check,
+  // an already-authenticated visitor sees the login form for a moment (and can
+  // start typing) before the check resolves and sends them to their dashboard.
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    apiClient
+      .getCurrentUser()
+      .then((user) => {
+        if (cancelled) return;
+        const home = homeRouteFor(resolveSessionRole(user));
+        if (home) {
+          router.replace(home);
+          return;
+        }
+        setCheckingSession(false);
+      })
+      .catch(() => {
+        if (!cancelled) setCheckingSession(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
+  if (checkingSession) {
+    return null;
+  }
 
   if (login.redirectPending) {
     return (
