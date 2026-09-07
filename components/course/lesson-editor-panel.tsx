@@ -148,10 +148,8 @@ export function LessonEditorPanel({
             )}
           </div>
 
-          {/* Settings read as one list of "label → value" rows, so they stay
-              aligned instead of floating around the player. */}
-          {/* Stretches to whatever height the media column takes, so the two
-              columns end level however the 16:9 box resizes. */}
+          {/* One list of "label → value" rows, stretched to whatever height the
+              media column takes so the two columns end level. */}
           <div
             className={cn(LESSON_SETTINGS_COLUMN_CLASS, 'flex flex-col gap-2')}
           >
