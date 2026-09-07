@@ -31,6 +31,8 @@ export interface LessonDraft {
   audio_id?: string;
   cover_id?: string;
   document_id?: string;
+  /** Lets students save a copy of this lesson's media, free lesson or not. */
+  allow_download?: boolean;
   /** Read-only, set from the server response — not sent back on save. */
   videoHlsStatus?: VideoHlsStatus;
   videoPreviewUrl?: string;

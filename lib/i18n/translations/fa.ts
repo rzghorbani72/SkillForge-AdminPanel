@@ -2008,6 +2008,9 @@ export const fa = {
     publishNeedsLesson: 'پیش از انتشار حداقل یک درس اضافه کنید.',
     enterLessonTitle: 'عنوان درس را وارد کنید',
     freePreview: 'پیش‌نمایش رایگان',
+    allowDownload: 'اجازه دانلود',
+    allowDownloadHint:
+      'دانشجو می‌تواند فایل این درس را ذخیره کند — حدود دو برابر فضا مصرف می‌کند.',
     optional: 'اختیاری',
     lessonVideo: 'ویدیو',
     lessonCover: 'تصویر پوشش',

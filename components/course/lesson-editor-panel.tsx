@@ -197,6 +197,22 @@ export function LessonEditorPanel({
                   onCheckedChange={(v) => onUpdate({ is_free: v })}
                 />
               </label>
+
+              {/* Keeping the original file for students to save costs the
+                  academy roughly double the storage for this lesson, so say so
+                  rather than let it show up as a full quota later. */}
+              <label className={cn(SETTING_ROW_CLASS, 'cursor-pointer')}>
+                <span className="flex flex-col gap-0.5 pe-2">
+                  <span className="text-sm">{t('courses.allowDownload')}</span>
+                  <span className="text-[11px] leading-snug text-muted-foreground">
+                    {t('courses.allowDownloadHint')}
+                  </span>
+                </span>
+                <Switch
+                  checked={lesson.allow_download ?? false}
+                  onCheckedChange={(v) => onUpdate({ allow_download: v })}
+                />
+              </label>
             </div>
           </div>
         </div>

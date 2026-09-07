@@ -1185,6 +1185,9 @@ export const tr = {
     publishNeedsLesson: 'Yayınlamadan önce en az bir ders ekleyin.',
     enterLessonTitle: 'Ders başlığını girin',
     freePreview: 'Ücretsiz önizleme',
+    allowDownload: 'İndirmeye izin ver',
+    allowDownloadHint:
+      'Öğrenciler bu dersin dosyasını kaydedebilir — yaklaşık iki katı alan kullanır.',
     optional: 'İsteğe bağlı',
     lessonVideo: 'Video',
     lessonCover: 'Kapak Görseli',

@@ -1149,6 +1149,9 @@ export const ar = {
     publishNeedsLesson: 'أضف درساً واحداً على الأقل قبل النشر.',
     enterLessonTitle: 'أدخل عنوان الدرس',
     freePreview: 'معاينة مجانية',
+    allowDownload: 'السماح بالتنزيل',
+    allowDownloadHint:
+      'يمكن للطالب حفظ ملف هذا الدرس — يستهلك نحو ضعف المساحة.',
     optional: 'اختياري',
     lessonVideo: 'فيديو',
     lessonCover: 'صورة الغلاف',

@@ -2022,6 +2022,9 @@ export const en = {
     publishNeedsLesson: 'Add at least one lesson before publishing.',
     enterLessonTitle: 'Enter lesson title',
     freePreview: 'Free preview',
+    allowDownload: 'Allow download',
+    allowDownloadHint:
+      "Students can save this lesson's file — uses about twice the storage.",
     optional: 'Optional',
     saving: 'Saving…',
     saved: 'Saved',

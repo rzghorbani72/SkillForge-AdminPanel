@@ -137,6 +137,7 @@ export function useCourseForm(courseId: string) {
           audio_id: l.audio_id,
           cover_id: l.cover_id,
           document_id: l.document_id,
+          allow_download: l.allow_download,
           season_client_key: l.seasonClientKey
         })),
         deleted_season_ids:
@@ -239,6 +240,14 @@ export function useCourseForm(courseId: string) {
           audio_id: l.audio_id,
           cover_id: l.image_id,
           document_id: l.document_id,
+          // One switch stands for the four per-route flags. The lesson settings
+          // page still edits them individually when a course needs that.
+          allow_download: Boolean(
+            l.allow_download_enrollment ||
+              l.allow_download_subscription ||
+              l.allow_download_tutoring ||
+              l.allow_download_free
+          ),
           videoHlsStatus: l.Video?.hls_status,
           videoPreviewUrl:
             l.Video?.publicUrl ??
